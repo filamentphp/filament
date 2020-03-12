@@ -22,7 +22,7 @@ class AlpineServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    protected $packagePath = __DIR__ . '/../';
+    protected $packagePath = __DIR__.'/../';
 
     /**
      * Register bindings in the container.
