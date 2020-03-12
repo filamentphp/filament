@@ -26,6 +26,7 @@ Route::name('auth.')->namespace('Auth')->group(function () {
 
     Route::get('login', 'LoginController@showLoginForm')->name('login');
     Route::post('login', 'LoginController@login');
+    Route::post('logout', 'LoginController@logout')->name('logout');
 
     Route::prefix('password')->name('password.')->group(function () {
         Route::get('forgot', 'ForgotPasswordController@showLinkRequestForm')->name('forgot');

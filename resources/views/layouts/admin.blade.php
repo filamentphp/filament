@@ -159,7 +159,9 @@
                             <div class="py-1 rounded-md bg-white shadow-xs">
                                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">Your Profile</a>
                                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">Settings</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">Sign out</a>
+                                <x-alpine-form :action="route('alpine.auth.logout')" class="block">
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">{{ __('Logout') }}</button>
+                                </x-alpine-form>
                             </div>
                         </div>
                     </div>
