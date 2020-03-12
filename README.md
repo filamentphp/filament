@@ -36,4 +36,4 @@ php artisan alpine:create-user
 
 ## Upgrading
 
-There are no special requirements for upgrading from v2 to v3, other than `changing ^x.xx version` in your composer.json and running `composer update` as well as `php artisan migrate`. _Your app must meet the minimum requirements as well_.
+There are no special requirements for upgrading, other than `changing ^x.xx` version in your composer.json and running `composer update` as well as `php artisan migrate`. _Your app must meet the minimum requirements as well_.
