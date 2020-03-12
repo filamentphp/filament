@@ -33,6 +33,7 @@ Route::name('auth.')->namespace('Auth')->group(function () {
         Route::get('reset/{token}', 'ResetPasswordController@showResetForm')->name('reset');
         Route::post('reset', 'ResetPasswordController@reset')->name('update');        
     });
+    
 });
 
 // protected admin routes...
