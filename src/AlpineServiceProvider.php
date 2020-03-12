@@ -54,16 +54,6 @@ class AlpineServiceProvider extends ServiceProvider
         $this->handleTranslations();
     }
 
-        /**
-     * Get the model for the default guard's user provider.
-     *
-     * @return string|null
-     */
-    protected function userProviderModel()
-    {
-
-    }
-
     /**
      * Register the package's singletons.
      * 
