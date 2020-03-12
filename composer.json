@@ -22,7 +22,8 @@
     "php": "^7.2.5",
     "graham-campbell/markdown": "^12.0",
     "kris/laravel-form-builder": "1.*",
-    "laravel/ui": "^2.0"
+    "laravel/ui": "^2.0",
+    "thomaswelton/laravel-gravatar": "~1.0"
   },
   "require-dev": {
     "ext-pdo_sqlite": "*",

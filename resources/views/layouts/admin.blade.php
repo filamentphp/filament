@@ -65,7 +65,12 @@
                     <div @click.away="open = false" class="relative" x-data="{ open: false }">
                         <button @click="open = !open" class="flex items-center">
                             <div class="mr-3">
-                                <img class="inline-block h-9 w-9 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                                <img src="{{ Gravatar::src(auth()->user()->email, 36) }}" 
+                                    srcset="{{ Gravatar::src(auth()->user()->email, 72) }} 2x" 
+                                    class="inline-block h-9 w-9 rounded-full"
+                                    alt="{{ auth()->user()->name }}" 
+                                    width="36" 
+                                    height="36">
                             </div>
                             <div class="text-sm leading-5 font-medium text-white">
                                 {{ auth()->user()->name }}
@@ -139,7 +144,12 @@
                     <div @click.away="open = false" class="relative" x-data="{ open: false }">
                         <button @click="open = !open" class="flex items-center">
                             <div class="mr-3">
-                                <img class="inline-block h-9 w-9 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                                <img src="{{ Gravatar::src(auth()->user()->email, 36) }}" 
+                                    srcset="{{ Gravatar::src(auth()->user()->email, 72) }} 2x" 
+                                    class="inline-block h-9 w-9 rounded-full"
+                                    alt="{{ auth()->user()->name }}" 
+                                    width="36" 
+                                    height="36">
                             </div>
                             <div class="text-sm leading-5 font-medium text-white">
                                 {{ auth()->user()->name }}
