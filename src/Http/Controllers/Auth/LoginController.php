@@ -5,7 +5,6 @@ namespace Alpine\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Alpine\Http\Controllers\Controller;
-use Alpine\Http\Forms\LoginForm;
 
 class LoginController extends Controller 
 {
@@ -43,11 +42,6 @@ class LoginController extends Controller
 
         $title = 'Sign in to '.config('app.name');
 
-        $form = $this->form(LoginForm::class, [
-            'method' => 'POST',
-            'url' => route('alpine.auth.login'),
-        ]);
-
-        return view('alpine::auth.login', compact('title', 'form'));
+        return view('alpine::auth.login', compact('title'));
     }
 }

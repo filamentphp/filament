@@ -1,0 +1,1 @@
+<button type="{{ $type }}" {{ $attributes->merge(['class' => 'btn']) }}>{{ __($label) }}</button>

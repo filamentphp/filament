@@ -13,7 +13,7 @@ class Alpine {
      * @param string $path
      * @return string
      */
-    public function basePath($path)
+    public function basePath($path = '')
     {
         return __DIR__.'/../'.ltrim($path, '/');
     }
@@ -24,7 +24,7 @@ class Alpine {
      * @param string $path
      * @return string
      */
-    public function routePath($path)
+    public function routePath($path = '')
     {
         return $this->basePath('routes/'.ltrim($path, '/'));
     }
@@ -35,7 +35,7 @@ class Alpine {
      * @param string $path
      * @return string
      */
-    public function resourcePath($path)
+    public function resourcePath($path = '')
     {
         return $this->basePath('resources/'.ltrim($path, '/'));
     }
@@ -46,7 +46,7 @@ class Alpine {
      * @param string $path
      * @return string
      */
-    public function distPath($path)
+    public function distPath($path = '')
     {
         return $this->basePath('dist/'.ltrim($path, '/'));
     }

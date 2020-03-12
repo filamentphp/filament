@@ -5,7 +5,6 @@ namespace Alpine\Http\Controllers\Auth;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 use Alpine\Http\Controllers\Controller;
-use Alpine\Http\Forms\ResetPasswordForm;
 
 class ResetPasswordController extends Controller
 {
@@ -40,17 +39,9 @@ class ResetPasswordController extends Controller
     public function showResetForm(Request $request, $token = null)
     {
         $title = __('Reset Password');
-        
-        $form = $this->form(ResetPasswordForm::class, [
-            'method' => 'POST',
-            'url' => route('alpine.auth.password.update'),
-            'model' => [
-                'token' => $token, 
-                'email' => $request->email,
-            ],
-        ]);
+        $email = $request->email;
 
-        return view('alpine::auth.passwords.reset', compact('title', 'form'));
+        return view('alpine::auth.passwords.reset', compact('title', 'email', 'token'));
     }
 
     /**

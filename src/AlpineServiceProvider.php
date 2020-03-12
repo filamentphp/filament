@@ -4,14 +4,17 @@ namespace Alpine;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Events\Dispatcher;
 use Alpine\Contracts\User as UserContract;
 use Alpine\Traits\EventMap;
 use Alpine\Http\Middleware\Authenticate;
 use Alpine\Console\Commands\CreateUserCommand;
 use Alpine\Http\Components\Alert as AlertComponent;
+use Alpine\Http\Components\InputGroup as InputGroupComponent;
 
 class AlpineServiceProvider extends ServiceProvider
 {
@@ -73,7 +76,7 @@ class AlpineServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom($this->packagePath.'config/alpine.php', 'alpine');
         if ($this->app['alpine']->handling()) {
-            $this->mergeFromConfig('laravel-form-builder', $this->app['config']->get('alpine.laravel-form-builder', []));
+            // $this->mergeFromConfig('existing-package-config', $this->app['config']->get('alpine.existing-package-config', []));
         }
     }
 
@@ -205,8 +208,14 @@ class AlpineServiceProvider extends ServiceProvider
      */
     public function handleBlade()
     {
+        // Register package directives
         Blade::directive('alpineAssets', [AlpineBladeDirectives::class, 'alpineAssets']);
-        Blade::component(AlertComponent::class, 'alpine-alert');
+
+        // Automatically register package components
+        foreach (File::glob(__DIR__.'/Http/Components/*.php') as $path) {
+            $baseName = basename($path, '.php');
+            Blade::component("\\Alpine\\Http\\Components\\{$baseName}", 'alpine-'.Str::of($baseName)->kebab());
+        }
     }
 
     /**
