@@ -1,0 +1,22 @@
+/**
+ * `x-cloak` attributes are removed from elements when Alpine initializes. 
+ * This is useful for hiding pre-initialized DOM.
+ * 
+ * https://github.com/alpinejs/alpine#x-cloak
+ * 
+ */
+[x-cloak] {
+  @apply hidden;
+}
+
+a {
+  @apply text-blue-600 transition ease-in-out duration-150;
+
+  &:hover {
+    @apply text-blue-700;
+  }
+
+  &:focus {
+    @apply outline-none underline;
+  }
+}

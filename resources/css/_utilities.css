@@ -1,0 +1,4 @@
+.required:after {
+  content: ' *';
+  @apply text-xs align-top text-red-800;
+}

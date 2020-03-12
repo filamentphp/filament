@@ -1,0 +1,51 @@
+{
+  "name": "madewithalpine/alpine",
+  "description": "A lightweight admin for your Laravel app.",
+  "keywords": [
+    "laravel",
+    "admin",
+    "tailwindcss",
+    "tailwindui",
+    "alpine.js"
+  ],
+  "homepage": "https://madewithalpine.com",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ryan Scherler",
+      "email": "ryan@eastslope.studio",
+      "homepage": "https://eastslope.studio",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^7.2.5",
+    "graham-campbell/markdown": "^12.0",
+    "kris/laravel-form-builder": "1.*",
+    "laravel/ui": "^2.0"
+  },
+  "require-dev": {
+    "ext-pdo_sqlite": "*",
+    "doctrine/dbal": "^2.10.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Alpine\\": "src"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Alpine\\AlpineServiceProvider"
+      ],
+      "aliases": {
+        "Alpine": "Alpine\\AlpineFacade"
+      }
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

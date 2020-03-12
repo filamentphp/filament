@@ -1,0 +1,27 @@
+{
+  "name": "alpine",
+  "private": true,
+  "scripts": {
+    "dev": "npm run development",
+    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "npm run development -- --watch",
+    "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "prod": "npm run production",
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+  },
+  "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^2.1.0",
+    "@tailwindcss/ui": "^0.1.3",
+    "cross-env": "^7.0.2",
+    "laravel-mix": "^5.0.1",
+    "postcss-nested": "^4.2.1",
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.2",
+    "tailwindcss": "^1.2.0",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "dependencies": {
+    "alpinejs": "^2.1.2",
+    "turbolinks": "^5.2.0"
+  }
+}
