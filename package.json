@@ -14,6 +14,7 @@
     "@tailwindcss/ui": "^0.1.3",
     "cross-env": "^7.0.2",
     "laravel-mix": "^5.0.1",
+    "postcss-import": "^12.0.1",
     "postcss-nested": "^4.2.1",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.2",

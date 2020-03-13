@@ -22,9 +22,7 @@
                     </div>
                     <nav class="mt-5 px-2">
                         <a href="#" class="group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md text-white bg-gray-900 focus:outline-none focus:bg-gray-700 transition ease-in-out duration-150">
-                            <svg class="mr-4 h-6 w-6 text-gray-300 group-hover:text-gray-300 group-focus:text-gray-300 transition ease-in-out duration-150" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10M9 21h6"/>
-                            </svg>
+                            {{ Alpine::svg('icon-home', 'mr-4 h-6 w-6 text-gray-300 group-hover:text-gray-300 group-focus:text-gray-300 transition ease-in-out duration-150') }}
                             Dashboard
                         </a>
                         {{-- 
@@ -76,11 +74,28 @@
                                 {{ auth()->user()->name }}
                             </div>
                         </button>
-                        <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-bottom-left absolute left-0 bottom-0 mb-12 w-48 rounded-md shadow-lg">
-                            <div class="py-1 rounded-md bg-white shadow-xs">
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">Your Profile</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">Settings</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">Sign out</a>
+                        <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-bottom-left absolute left-0 bottom-0 mb-12 w-56 rounded-md shadow-lg">
+                            <div class="rounded-md bg-white shadow-xs">
+                                <div class="px-4 py-3">
+                                    <p class="text-sm leading-5">
+                                        Signed in as
+                                    </p>
+                                    <p class="text-sm leading-5 font-medium text-gray-900">
+                                        {{ auth()->user()->email }}
+                                    </p>
+                                </div>
+                                <div class="border-t border-gray-100"></div>
+                                <div class="py-1">
+                                    <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900">Account settings</a>
+                                </div>
+                                <div class="border-t border-gray-100"></div>
+                                <div class="py-1">
+                                    <x-alpine-form :action="route('alpine.auth.logout')">
+                                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900">
+                                            {{ __('Sign Out') }}
+                                        </button>
+                                    </x-alpine-form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -101,9 +116,7 @@
                     <!-- Sidebar component, swap this element with another sidebar if you like -->
                     <nav class="mt-5 flex-1 px-2 bg-gray-800">
                         <a href="#" class="group flex items-center px-2 py-2 text-sm leading-5 font-medium text-white rounded-md bg-gray-900 focus:outline-none focus:bg-gray-700 transition ease-in-out duration-150">
-                            <svg class="mr-3 h-6 w-6 text-gray-300 group-hover:text-gray-300 group-focus:text-gray-300 transition ease-in-out duration-150" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10M9 21h6"/>
-                            </svg>
+                            {{ Alpine::svg('icon-home', 'mr-3 h-6 w-6 text-gray-300 group-hover:text-gray-300 group-focus:text-gray-300 transition ease-in-out duration-150') }}
                             Dashboard
                         </a>
                         {{--
@@ -155,13 +168,28 @@
                                 {{ auth()->user()->name }}
                             </div>
                         </button>
-                        <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-bottom-left absolute left-0 bottom-0 mb-12 w-48 rounded-md shadow-lg">
-                            <div class="py-1 rounded-md bg-white shadow-xs">
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">Your Profile</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">Settings</a>
-                                <x-alpine-form :action="route('alpine.auth.logout')" class="block">
-                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">{{ __('Logout') }}</button>
-                                </x-alpine-form>
+                        <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-bottom-left absolute left-0 bottom-0 mb-12 w-56 rounded-md shadow-lg">
+                            <div class="rounded-md bg-white shadow-xs">
+                                <div class="px-4 py-3">
+                                    <p class="text-sm leading-5">
+                                        Signed in as
+                                    </p>
+                                    <p class="text-sm leading-5 font-medium text-gray-900">
+                                        {{ auth()->user()->email }}
+                                    </p>
+                                </div>
+                                <div class="border-t border-gray-100"></div>
+                                <div class="py-1">
+                                    <a href="#" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900">Account settings</a>
+                                </div>
+                                <div class="border-t border-gray-100"></div>
+                                <div class="py-1">
+                                    <x-alpine-form :action="route('alpine.auth.logout')">
+                                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900">
+                                            {{ __('Sign Out') }}
+                                        </button>
+                                    </x-alpine-form>
+                                </div>
                             </div>
                         </div>
                     </div>

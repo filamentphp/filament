@@ -8,7 +8,7 @@ const purgecss = require('@fullhuman/postcss-purgecss')({
     './resources/js/**/*.js',
   ],
   defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [],
-  // whitelistPatterns: [/help/,],
+  whitelistPatterns: [/alert/],
 })
 
 /*
@@ -27,6 +27,7 @@ mix
   .setResourceRoot('/resources/')
   .js('resources/js/app.js', 'js')
   .postCss('resources/css/app.css', 'css', [
+    require('postcss-import'),
     require('tailwindcss'),
     require('postcss-nested'),
     ...(process.env.NODE_ENV === 'production' ? [purgecss] : []),
