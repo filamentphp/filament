@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Events\Dispatcher;
@@ -46,6 +47,7 @@ class AlpineServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->handleAuth();
         $this->handleCommands();
         $this->handleEvents();
         $this->handleMiddleware();
@@ -89,6 +91,21 @@ class AlpineServiceProvider extends ServiceProvider
     {
         $this->app->bind(UserContract::class, config('auth.providers.users.model'));
         // $this->app->bind(ResourceContract::class, config('alpine.models.resource'));
+    }
+
+    /**
+     * Register the package's auth.
+     * 
+     * @return void
+     */
+    protected function handleAuth()
+    {
+        // Implicitly grant "Super Admin" role all permissions
+        // This works in the app by using gate-related functions like auth()->user->can() and @can()
+        // @link https://docs.spatie.be/laravel-permission/v3/basic-usage/super-admin/
+        Gate::before(function ($user, $ability) {
+            return $user->is_super_admin ? true : null;
+        });
     }
 
     /**

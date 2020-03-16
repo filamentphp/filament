@@ -19,15 +19,12 @@
     }
   ],
   "require": {
-    "php": "^7.2.5",
+    "doctrine/dbal": "^2.10.0",
     "graham-campbell/markdown": "^12.0",
     "laravel/ui": "^2.0",
+    "spatie/laravel-permission": "^3.11",
     "thomaswelton/laravel-gravatar": "~1.0",
     "watson/active": "^5.0"
-  },
-  "require-dev": {
-    "ext-pdo_sqlite": "*",
-    "doctrine/dbal": "^2.10.0"
   },
   "autoload": {
     "psr-4": {

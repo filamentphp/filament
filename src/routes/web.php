@@ -40,8 +40,6 @@ Route::name('auth.')->namespace('Auth')->group(function () {
 // protected admin routes...
 Route::name('admin.')->middleware('auth.alpine')->group(function () {
 
-    Route::get('/', function () {
-        return view('alpine::dashboard');
-    })->name('dashboard');
+    Route::get('/', 'DashboardController')->name('dashboard');
 
 });
