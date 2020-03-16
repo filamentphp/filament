@@ -31,7 +31,7 @@ Add the necessary `Alpine\Traits\AlpineUser` trait to your `App\User` model.
 ### Create a user
 
 ```bash
-php artisan alpine:create-user
+php artisan alpine:user
 ```
 
 ## Upgrading

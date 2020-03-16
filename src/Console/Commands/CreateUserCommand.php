@@ -15,7 +15,7 @@ class CreateUserCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'alpine:create-user';
+    protected $signature = 'alpine:user';
 
     /**
      * The console command description.
@@ -43,11 +43,14 @@ class CreateUserCommand extends Command
             return $this->secret('Password');
         }, ['password', 'required|min:8']);
 
+        $superAdmin = $this->confirm("Make `{$name}` a super admin?") ? true : false;
+
         $userClass = app(UserContract::class);
         $user = $userClass::create([
             'name' => $name,
             'email' => $email,
             'password' => $password,
+            'is_super_admin' => $superAdmin,
         ]);
 
         $appName = config('alpine.name');
