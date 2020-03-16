@@ -26,6 +26,77 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Redirects
+    |--------------------------------------------------------------------------
+    |
+    | This is the URI path where Alpine will be accessible from.
+    |
+    */
+
+    'redirects' => [
+
+        'admin' => 'alpine.admin.dashboard', // string or named route to redirect users when successfully authenticated.
+
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Navigation
+    |--------------------------------------------------------------------------
+    |
+    | Navigations used by Alpine.
+    |
+    */
+
+    'nav' => [
+
+        'admin' => [
+
+            'dashboard' => [
+                'label' => 'alpine::admin.dashboard',
+                'icon' => 'heroicons/outline-md/md-home', // path to SVG icon using Alpine::svg() helper
+                'url' => 'alpine.admin.dashboard', // string or named route
+                'active' => 'alpine.admin.dashboard', // string or named route (may also be an array @link https://github.com/dwightwatson/active)
+            ],
+
+            /* TODO
+
+            'Resources' => [
+                'label' => 'alpine::admin.resources',
+                'icon' => 'heroicons/outline-md/md-collection',
+                'url' => '#',
+            ],
+
+            'globals' => [
+                'label' => 'alpine::admin.globals',
+                'icon' => 'heroicons/outline-md/md-globe',
+                'url' => '#',
+            ],
+
+            */
+
+            'users' => [
+                'label' => 'alpine::admin.users',
+                'icon' => 'heroicons/outline-md/md-user-group',
+                'url' => '#',
+            ],
+
+            /* TODO 
+
+            'Permissions' => [
+                'label' => 'alpine::admin.permissions',
+                'icon' => 'heroicons/outline-md/md-lock-closed',
+                'url' => '#',
+            ],
+
+            */
+
+        ],
+
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Models
     |--------------------------------------------------------------------------
     |

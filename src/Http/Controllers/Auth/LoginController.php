@@ -4,18 +4,13 @@ namespace Alpine\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Route;
+
 use Alpine\Http\Controllers\Controller;
 
 class LoginController extends Controller 
 {
     use AuthenticatesUsers;
-
-    /**
-     * Named route to redirect users when successfully authenticated.
-     *
-     * @var string
-     */
-    protected $redirectRouteName = 'alpine.admin.dashboard';
 
     /**
      * Where to redirect users when successfully authenticated.
@@ -24,7 +19,9 @@ class LoginController extends Controller
      */
     protected function redirectTo()
     {
-        return route($this->redirectRouteName);
+        $redirect = config('alpine.redirects.admin');
+
+        return Route::has($redirect) ? route($redirect) : $redirect;
     }
 
     /**
@@ -37,7 +34,7 @@ class LoginController extends Controller
     {
         // check if already logged in
         if ($request->user()) {
-            return redirect()->route($this->redirectRouteName);
+            return redirect($this->redirectTo());
         }
 
         $title = 'Sign in to '.config('app.name');
@@ -67,7 +64,7 @@ class LoginController extends Controller
             ? new Response('', 204)
             : redirect(route('alpine.auth.login'))->with('alert', [
                 'type' => 'success',
-                'message' => trans('alpine::auth.logout'),
+                'message' => __('alpine::auth.logout'),
             ]);
     }
 }
