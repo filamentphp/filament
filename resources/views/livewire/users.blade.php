@@ -6,11 +6,11 @@
                     @livewire('alpine::user-avatar', [
                         'user' => $user, 
                         'size' => 96, 
-                        'classes' => 'h-12 w-12 rounded-full overflow-hidden'
+                        'classes' => 'h-12 w-12 rounded-full'
                     ], key($user->id))
                     <div class="ml-3">
-                        <strong class="text-lg font-medium">{{ $user->name }}</strong>
-                        <div class="text-xs font-mono text-gray-400">
+                        <div class="text-lg font-medium">{{ $user->name }}</div>
+                        <div class="text-xs leading-none font-mono text-gray-400">
                             {{ $user->email }}
                         </div>
                     </div>            

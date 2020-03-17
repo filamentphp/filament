@@ -1,13 +1,11 @@
 <div @click.away="open = false" class="relative" x-data="{ open: false }">
     <button @click="open = !open" class="flex items-center">
-        <div class="mr-3">
-            @livewire('alpine::user-avatar', [
-                'user' => auth()->user(), 
-                'size' => 36, 
-                'classes' => 'h-9 w-9 rounded-full overflow-hidden'
-            ])
-        </div>
-        <div class="text-sm leading-5 font-medium text-white">
+        @livewire('alpine::user-avatar', [
+            'user' => auth()->user(), 
+            'size' => 36, 
+            'classes' => 'h-9 w-9 rounded-full'
+        ])
+        <div class="ml-3 text-sm leading-5 font-medium text-white">
             {{ auth()->user()->name }}
         </div>
     </button>
