@@ -30,6 +30,8 @@ class UserEditForm extends Component
 
         $this->user->update($validatedData);
 
+        $this->emit('userUpdated');
+
         session()->flash('alert', [
             'type' => 'success',
             'message' => "User {$this->name} updated successfully.",

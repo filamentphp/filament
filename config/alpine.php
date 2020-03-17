@@ -79,7 +79,7 @@ return [
                 'label' => 'alpine::admin.users',
                 'icon' => 'heroicons/outline-md/md-user-group',
                 'url' => 'alpine.admin.users.index',
-                'active' => 'alpine.admin.users.index',
+                'active' => 'alpine.admin.users.*',
                 'ability' => 'view users',
             ],
 
@@ -88,7 +88,8 @@ return [
             'Permissions' => [
                 'label' => 'alpine::admin.permissions',
                 'icon' => 'heroicons/outline-md/md-lock-closed',
-                'url' => '#',
+                'url' => 'alpine.admin.permissions.index',
+                'active' => 'alpine.admin.permissions.*',
                 'ability' => 'view permissions',
             ],
 
