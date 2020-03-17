@@ -1,6 +1,6 @@
 # Alpine
 
-A lightweight base admin for your Laravel app.
+A lightweight admin for your Laravel app.
 
 _[In Active Development]_
 
