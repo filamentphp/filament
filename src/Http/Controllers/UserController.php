@@ -6,6 +6,21 @@ use Alpine\Contracts\User as UserContract;
 
 class UserController extends Controller
 {
+
+    /**
+     * Show the users.
+     *
+     * @return View
+     */
+    public function index()
+    {
+        $this->authorize('view', app(UserContract::class));
+
+        $title = __('alpine::admin.users');
+
+        return view('alpine::users.index', compact('title'));
+    }
+
     /**
      * Show the user edit form.
      *
@@ -21,6 +36,6 @@ class UserController extends Controller
 
         $title = __('alpine::admin.user_edit', ['name' => $user->name]);
 
-        return view('alpine::user.edit', compact('title', 'user'));
+        return view('alpine::users.edit', compact('title', 'user'));
     }
 }

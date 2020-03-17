@@ -42,8 +42,8 @@ Route::name('admin.')->middleware('auth.alpine')->group(function () {
 
     Route::get('/', 'DashboardController')->name('dashboard');
 
-    Route::resource('user', 'UserController')->only([
-        // 'index', 
+    Route::resource('users', 'UserController')->only([
+        'index', 
         'edit',
     ]);
 

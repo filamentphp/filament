@@ -78,7 +78,8 @@ return [
             'users' => [
                 'label' => 'alpine::admin.users',
                 'icon' => 'heroicons/outline-md/md-user-group',
-                'url' => '#',
+                'url' => 'alpine.admin.users.index',
+                'active' => 'alpine.admin.users.index',
                 'ability' => 'view users',
             ],
 

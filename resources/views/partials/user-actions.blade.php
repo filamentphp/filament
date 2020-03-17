@@ -24,7 +24,7 @@
             </p>
             <div class="border-t border-gray-100"></div>
             <div class="py-1">
-                <a href="{{ route('alpine.admin.user.edit', ['user' => auth()->user()->id]) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900">{{ __('alpine::admin.account_settings') }}</a>
+                <a href="{{ route('alpine.admin.users.edit', ['user' => auth()->user()->id]) }}" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900">{{ __('alpine::admin.account_settings') }}</a>
             </div>
             <div class="border-t border-gray-100"></div>
             <div class="py-1">

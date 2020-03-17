@@ -599,12 +599,24 @@ video {
  * `x-cloak` attributes are removed from elements when Alpine initializes. 
  * This is useful for hiding pre-initialized DOM.
  * 
- * https://github.com/alpinejs/alpine#x-cloak
+ * @link https://github.com/alpinejs/alpine#x-cloak
  * 
  */
 
 [x-cloak] {
   display: none;
+}
+
+/**
+ * Customize Turbolinks progress bar
+ * 
+ * @link https://github.com/turbolinks/turbolinks#displaying-progress
+ *
+ */
+
+.turbolinks-progress-bar {
+  height: 0.25rem;
+  background-color: #3f83f8;
 }
 
 .container {
