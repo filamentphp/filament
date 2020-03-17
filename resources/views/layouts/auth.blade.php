@@ -6,10 +6,8 @@
         <h2 class="mt-4 text-center text-3xl leading-9 font-extrabold text-gray-900">
             @yield('title')
         </h2>
-        <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-            <div class="bg-white py-8 px-4 shadow rounded-md sm:px-10">
-                @yield('main')
-            </div>
+        <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-sm">
+            @yield('main')
         </div>
     </main>
 @endsection

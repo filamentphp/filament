@@ -1,12 +1,13 @@
 <div @click.away="open = false" class="relative" x-data="{ open: false }">
     <button @click="open = !open" class="flex items-center">
         <div class="mr-3">
-            <img src="{{ Gravatar::src(auth()->user()->email, 36) }}" 
-                srcset="{{ Gravatar::src(auth()->user()->email, 72) }} 2x" 
+            <img src="{{ auth()->user()->avatar(36) }}" 
+                srcset="{{ auth()->user()->avatar(72) }} 2x" 
                 class="inline-block h-9 w-9 rounded-full"
                 alt="{{ auth()->user()->name }}" 
                 width="36" 
-                height="36">
+                height="36"
+                load="lazy">
         </div>
         <div class="text-sm leading-5 font-medium text-white">
             {{ auth()->user()->name }}

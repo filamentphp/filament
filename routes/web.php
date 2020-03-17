@@ -48,3 +48,6 @@ Route::name('admin.')->middleware('auth.alpine')->group(function () {
     ]);
 
 });
+
+// 404
+Route::fallback('Controller@notFound');

@@ -4,11 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddIsSuperAdminToUsersTable extends Migration
+class AddAvatarToUsersTable extends Migration
 {
     /**
      * The name of the table for the migration.
-     *
+     * 
      * @var string
      */
     protected $tableName = 'users';
@@ -21,8 +21,8 @@ class AddIsSuperAdminToUsersTable extends Migration
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {
-            if (!Schema::hasColumn($this->tableName, 'is_super_admin')) {
-                $table->boolean('is_super_admin')->default(0)->after('email');
+            if (!Schema::hasColumn($this->tableName, 'avatar')) {
+                $table->string('avatar')->nullable()->after('email');
             }
         });
     }
@@ -35,8 +35,8 @@ class AddIsSuperAdminToUsersTable extends Migration
     public function down()
     {
         Schema::table($this->tableName, function (Blueprint $table) {
-            if (Schema::hasColumn($this->tableName, 'is_super_admin')) {
-                $table->dropColumn('is_super_admin');
+            if (Schema::hasColumn($this->tableName, 'avatar')) {
+                $table->dropColumn('avatar');
             }
         });
     }

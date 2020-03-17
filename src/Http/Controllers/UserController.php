@@ -17,7 +17,7 @@ class UserController extends Controller
         $this->authorize('view', app(UserContract::class));
 
         $title = __('alpine::admin.users');
-
+        
         return view('alpine::users.index', compact('title'));
     }
 

@@ -4,6 +4,7 @@ namespace Alpine\Traits;
 
 use Alpine\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Hash;
+use Thomaswelton\LaravelGravatar\Facades\Gravatar;
 
 trait AlpineUser 
 {    
@@ -14,8 +15,19 @@ trait AlpineUser
      */
     public function initializeAlpineUser()
     {
-        $this->mergeFillable(['is_super_admin']);
+        $this->mergeFillable(['is_super_admin', 'avatar']);
         $this->mergeCasts(['is_super_admin' => 'boolean']);
+    }
+
+    /**
+     * Get the user's avatar.
+     * 
+     * @param int $size
+     * @return string
+     */
+    public function avatar($size = 48)
+    {
+        return Gravatar::src($this->email, (int) $size);
     }
 
     /**
