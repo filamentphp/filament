@@ -12,4 +12,8 @@
   &:active {
     @apply bg-gray-700;
   }
+
+  &[disabled] {
+    @apply opacity-50 cursor-not-allowed;
+  }
 }

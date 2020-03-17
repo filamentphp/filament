@@ -12,6 +12,8 @@ return [
     |
     */
 
+    'login' => 'Sign in to :name',
+
     'logout' => 'You have been logged out successfully.',
 
 ];

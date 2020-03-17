@@ -3,5 +3,5 @@
 @section('title', $title)
 
 @section('main')
-    <div class="border-2 border-dashed border-gray-300 rounded-lg h-96"></div>
+    @livewire('alpine::user-edit-form', ['user' => $user])
 @endsection

@@ -37,7 +37,7 @@ class LoginController extends Controller
             return redirect($this->redirectTo());
         }
 
-        $title = 'Sign in to '.config('app.name');
+        $title = __('alpine::auth.login', ['name' => config('app.name')]);
 
         return view('alpine::auth.login', compact('title'));
     }

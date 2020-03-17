@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="noindex, nofollow">
     <title>@yield('title') &bull; {{ config('alpine.name') }}</title>
+    @livewireStyles
     @alpineAssets
     @stack('head')
 </head>
@@ -17,5 +18,6 @@
 ">
     @yield('content')
     @stack('footer')
+    @livewireScripts
 </body>
 </html>

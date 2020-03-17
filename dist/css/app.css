@@ -963,6 +963,11 @@ video {
     background-color: #374151;
   }
 
+.btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
 .sr-only {
   position: absolute;
   width: 1px;

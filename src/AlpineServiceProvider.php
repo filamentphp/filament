@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Events\Dispatcher;
+use Livewire\Livewire;
 use Alpine\Contracts\User as UserContract;
 use Alpine\Traits\EventMap;
 use Alpine\Http\Middleware\Authenticate;
@@ -55,6 +56,7 @@ class AlpineServiceProvider extends ServiceProvider
         $this->handleMigrations();
         $this->handlePublishing();
         $this->handleBlade();
+        $this->handleLivewire();
         $this->handleResources();
         $this->handleTranslations();
     }
@@ -231,6 +233,25 @@ class AlpineServiceProvider extends ServiceProvider
         foreach (File::glob(__DIR__.'/Http/Components/*.php') as $path) {
             $baseName = basename($path, '.php');
             Blade::component("\\Alpine\\Http\\Components\\{$baseName}", 'alpine-'.Str::of($baseName)->kebab());
+        }
+    }
+
+    /**
+     * Livewire setup.
+     * 
+     * @return void
+     */
+    public function handleLivewire()
+    {
+        // Ensure Livewire directory exists in the app
+        if (!File::exists(app_path('Http/Livewire'))) {
+            File::makeDirectory(app_path('Http/Livewire'));
+        }
+
+        // Automatically register Livewire package components
+        foreach (File::glob(__DIR__.'/Http/Livewire/*.php') as $path) {
+            $baseName = basename($path, '.php');
+            Livewire::component('alpine::'.Str::of($baseName)->kebab(), "\\Alpine\\Http\\Livewire\\{$baseName}");
         }
     }
 

@@ -3,11 +3,11 @@
 @section('title', $title)
 
 @section('main')
-    
-    <x-alpine-alert :type="session('alert.type')" :message="session('alert.message')" />
 
     <x-alpine-form :action="route('alpine.auth.login')">
 
+        <x-alpine-alert :type="session('alert.type')" :message="session('alert.message')" />
+        
         <x-alpine-input-group id="email" label="E-Mail Address" required>
             <x-alpine-input id="email" type="email" name="email" autocomplete="email" autofocus required />
         </x-alpine-input-group>
