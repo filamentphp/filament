@@ -3,13 +3,10 @@
 namespace Alpine\Http\Livewire;
 
 use Livewire\Component;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Validation\Rule;
 
 class UserEditForm extends Component
 {
-    use AuthorizesRequests;
-
     public $user;
     public $name;
     public $email;
@@ -23,8 +20,6 @@ class UserEditForm extends Component
 
     public function update()
     {
-        $this->authorize('update', $this->user);
-
         $validatedData = $this->validate([
             'name' => 'required',
             'email' => [

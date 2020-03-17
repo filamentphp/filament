@@ -1,0 +1,1 @@
+{{ Alpine::svg('logo', $classes ?? '') }}

@@ -79,6 +79,7 @@ return [
                 'label' => 'alpine::admin.users',
                 'icon' => 'heroicons/outline-md/md-user-group',
                 'url' => '#',
+                'ability' => 'view users',
             ],
 
             /* TODO 
@@ -87,6 +88,7 @@ return [
                 'label' => 'alpine::admin.permissions',
                 'icon' => 'heroicons/outline-md/md-lock-closed',
                 'url' => '#',
+                'ability' => 'view permissions',
             ],
 
             */

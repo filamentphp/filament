@@ -23,7 +23,7 @@
             <x-alpine-checkbox name="remember" label="Remember Me" />
         </x-alpine-input-group>
 
-        <x-alpine-button label="Login" />
+        <x-alpine-button label="Login" class="w-full" />
 
     </x-alpine-form>
     

@@ -2,7 +2,7 @@
 
 @section('content')
     <main class="sm:mx-auto sm:w-full sm:max-w-md">
-        {{ Alpine::svg('logo', 'mx-auto w-16 h-16 rounded-full') }}
+        @include('alpine::partials.logo', ['classes' => 'mx-auto w-16 h-16 rounded-full'])
         <h2 class="mt-4 text-center text-3xl leading-9 font-extrabold text-gray-900">
             @yield('title')
         </h2>

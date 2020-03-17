@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Console\Commands;
+namespace Alpine\Commands;
 
 use Illuminate\Console\Command;
 use Alpine\Traits\ConsoleValidation;

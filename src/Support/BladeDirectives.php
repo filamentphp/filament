@@ -1,8 +1,8 @@
 <?php
 
-namespace Alpine;
+namespace Alpine\Support;
 
-class AlpineBladeDirectives {
+class BladeDirectives {
     public static function alpineAssets()
     {
         return '{!! \Alpine::assets() !!}';

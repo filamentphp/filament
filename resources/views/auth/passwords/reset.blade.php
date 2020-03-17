@@ -20,7 +20,11 @@
             <x-alpine-input id="password-confirm" type="password" name="password_confirmation" autocomplete="new-password" required />
         </x-alpine-input-group>
 
-        <x-alpine-button label="Reset Password" />
+        <x-alpine-button label="Reset Password" class="w-full" />
+
+        <x-slot name="hint">
+            <a href="{{ route('alpine.auth.login') }}">&larr; {{ __('Back to Login') }}</a>
+        </x-slot>
 
     </x-alpine-form>
 

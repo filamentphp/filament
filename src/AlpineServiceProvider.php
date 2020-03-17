@@ -2,32 +2,23 @@
 
 namespace Alpine;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Events\Dispatcher;
 use Livewire\Livewire;
+use Alpine\Support\ServiceProvider;
+use Alpine\Providers\AuthServiceProvider;
+use Alpine\Support\BladeDirectives;
 use Alpine\Contracts\User as UserContract;
 use Alpine\Traits\EventMap;
 use Alpine\Http\Middleware\Authenticate;
-use Alpine\Console\Commands\CreateUserCommand;
-use Alpine\Http\Components\Alert as AlertComponent;
-use Alpine\Http\Components\InputGroup as InputGroupComponent;
+use Alpine\Commands\CreateUserCommand;
 
 class AlpineServiceProvider extends ServiceProvider
 {
     use EventMap;
-    
-    /**
-     * Directory path to this package
-     *
-     * @var string
-     */
-    protected $packagePath = __DIR__.'/../';
 
     /**
      * Register bindings in the container.
@@ -36,9 +27,9 @@ class AlpineServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->handleSingeltons();
-        $this->handleConfig();
-        $this->handleBindings();
+        $this->registerSingeltons();
+        $this->registerConfig();
+        $this->registerBindings();
     }
 
     /**
@@ -48,17 +39,17 @@ class AlpineServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->handleAuth();
-        $this->handleCommands();
-        $this->handleEvents();
-        $this->handleMiddleware();
-        $this->handleRoutes();
-        $this->handleMigrations();
-        $this->handlePublishing();
-        $this->handleBlade();
-        $this->handleLivewire();
-        $this->handleResources();
-        $this->handleTranslations();
+        $this->registerAuth();
+        $this->registerCommands();
+        $this->registerEvents();
+        $this->registerMiddleware();
+        $this->registerRoutes();
+        $this->registerMigrations();
+        $this->registerPublishing();
+        $this->registerBlade();
+        $this->registerLivewire();
+        $this->registerResources();
+        $this->registerTranslations();
     }
 
     /**
@@ -66,7 +57,7 @@ class AlpineServiceProvider extends ServiceProvider
      * 
      * @return void
      */
-    protected function handleSingeltons()
+    protected function registerSingeltons()
     {
         $this->app->singleton('alpine', Alpine::class);
     }
@@ -76,7 +67,7 @@ class AlpineServiceProvider extends ServiceProvider
      * 
      * @return void
      */
-    protected function handleConfig()
+    protected function registerConfig()
     {
         $this->mergeConfigFrom($this->packagePath.'config/alpine.php', 'alpine');
         if ($this->app['alpine']->handling()) {
@@ -89,7 +80,7 @@ class AlpineServiceProvider extends ServiceProvider
      * 
      * @return void
      */
-    protected function handleBindings()
+    protected function registerBindings()
     {
         $this->app->bind(UserContract::class, config('auth.providers.users.model'));
         // $this->app->bind(ResourceContract::class, config('alpine.models.resource'));
@@ -100,13 +91,9 @@ class AlpineServiceProvider extends ServiceProvider
      * 
      * @return void
      */
-    protected function handleAuth()
+    protected function registerAuth()
     {
-        // Implicitly grant "Super Admin" role all permissions
-        // @link https://docs.spatie.be/laravel-permission/v3/basic-usage/super-admin/
-        Gate::after(function ($user, $ability) {
-            return $user->is_super_admin;
-        });
+        $this->app->register(AuthServiceProvider::class);
     }
 
     /**
@@ -114,7 +101,7 @@ class AlpineServiceProvider extends ServiceProvider
      * 
      * @return void
      */
-    protected function handleCommands()
+    protected function registerCommands()
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -129,7 +116,7 @@ class AlpineServiceProvider extends ServiceProvider
      * @return void
      * @throws BindingResolutionException
      */
-    protected function handleEvents()
+    protected function registerEvents()
     {
         $events = $this->app->make(Dispatcher::class);
 
@@ -145,7 +132,7 @@ class AlpineServiceProvider extends ServiceProvider
      * 
      * @return void
      */
-    protected function handleMiddleware()
+    protected function registerMiddleware()
     {
         Route::aliasMiddleware('auth.alpine', Authenticate::class);
     }
@@ -155,7 +142,7 @@ class AlpineServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function handleRoutes()
+    protected function registerRoutes()
     {
         $namespace = 'Alpine\Http\Controllers';
         $name = 'alpine.';
@@ -164,13 +151,13 @@ class AlpineServiceProvider extends ServiceProvider
             ->prefix(config('alpine.path')) 
             ->namespace($namespace) 
             ->name($name) 
-            ->group(__DIR__.'/routes/web.php');
+            ->group($this->packagePath.'routes/web.php');
 
         Route::middleware(config('alpine.middleware.api'))
             ->prefix(config('alpine.path').'/api') 
             ->namespace($namespace) 
             ->name($name) 
-            ->group(__DIR__.'/routes/api.php');
+            ->group($this->packagePath.'routes/api.php');
     }
 
     /**
@@ -178,7 +165,7 @@ class AlpineServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function handleResources()
+    protected function registerResources()
     {
         $this->loadViewsFrom($this->packagePath.'resources/views', 'alpine');
     }
@@ -188,7 +175,7 @@ class AlpineServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function handleTranslations()
+    protected function registerTranslations()
     {
         $this->loadTranslationsFrom($this->packagePath.'resources/lang', 'alpine');
     }
@@ -198,7 +185,7 @@ class AlpineServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function handleMigrations()
+    protected function registerMigrations()
     {
         if ($this->app->runningInConsole()) {
             $this->loadMigrationsFrom($this->packagePath.'database/migrations');
@@ -210,7 +197,7 @@ class AlpineServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function handlePublishing()
+    protected function registerPublishing()
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
@@ -224,10 +211,10 @@ class AlpineServiceProvider extends ServiceProvider
      * 
      * @return void
      */
-    public function handleBlade()
+    public function registerBlade()
     {
         // Register package directives
-        Blade::directive('alpineAssets', [AlpineBladeDirectives::class, 'alpineAssets']);
+        Blade::directive('alpineAssets', [BladeDirectives::class, 'alpineAssets']);
 
         // Automatically register package components
         foreach (File::glob(__DIR__.'/Http/Components/*.php') as $path) {
@@ -237,78 +224,21 @@ class AlpineServiceProvider extends ServiceProvider
     }
 
     /**
-     * Livewire setup.
+     * Livewire component registration / setup.
      * 
      * @return void
      */
-    public function handleLivewire()
+    public function registerLivewire()
     {
-        // Ensure Livewire directory exists in the app
+        // Ensure Livewire directory exists in the app 
         if (!File::exists(app_path('Http/Livewire'))) {
             File::makeDirectory(app_path('Http/Livewire'));
         }
 
-        // Automatically register Livewire package components
+        // Automatically register package components
         foreach (File::glob(__DIR__.'/Http/Livewire/*.php') as $path) {
             $baseName = basename($path, '.php');
             Livewire::component('alpine::'.Str::of($baseName)->kebab(), "\\Alpine\\Http\\Livewire\\{$baseName}");
         }
     }
-
-    /**
-     * Merge the given configuration with the existing configuration.
-     *
-     * @param  string  $path
-     * @param  string  $key
-     * @return void
-     */
-    protected function mergeConfigFrom($path, $key)
-    {
-        $config = $this->app['config']->get($key, []);
-
-        $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
-    }
-
-    /**
-     * Merge the existing configuration with the given configuration.
-     *
-     * @param  string  $key
-     * @param  string  $path
-     * @return void
-     */
-    protected function mergeFromConfig($key, $config)
-    {
-        $this->app['config']->set($key, $this->mergeConfig($this->app['config']->get($key, []), $config));
-    }
-
-    /**
-     * Merges the configs together and takes multi-dimensional arrays into account.
-     *
-     * @param  array  $original
-     * @param  array  $merging
-     * @return array
-     */
-    protected function mergeConfig(array $original, array $merging)
-    {
-        $array = array_merge($original, $merging);
-
-        foreach ($original as $key => $value) {
-            if (! is_array($value)) {
-                continue;
-            }
-
-            if (! Arr::exists($merging, $key)) {
-                continue;
-            }
-
-            if (is_numeric($key)) {
-                continue;
-            }
-
-            $array[$key] = $this->mergeConfig($value, $merging[$key]);
-        }
-
-        return $array;
-    }
-    
 }
