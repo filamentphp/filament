@@ -16,6 +16,7 @@
         {{ $classes['body'] }}
     @endisset
 ">
+    <a href="#content" class="sr-only">Skip to content</a>
     @yield('content')
     @stack('footer')
     @livewireScripts

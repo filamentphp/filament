@@ -26,6 +26,6 @@ return [
 
     'account_settings' => 'Account settings',
 
-    'user_edit' => 'Edit user: :name',
+    'user_edit' => 'Edit user',
 
 ];

@@ -3,21 +3,30 @@
         @livewire('filament::user-avatar', [
             'user' => auth()->user(), 
             'size' => 36, 
-            'classes' => 'h-9 w-9 rounded-full'
+            'classes' => 'h-9 w-9 rounded-full',
         ])
-        <div class="ml-3 text-sm leading-5 font-medium text-white">
-            {{ auth()->user()->name }}
-        </div>
+        @livewire('filament::user-name', [
+            'name' => auth()->user()->name, 
+            'classes' => 'ml-3 text-sm leading-5 font-medium text-white',
+        ])
     </button>
-    <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-bottom-left absolute left-0 bottom-0 mb-12 w-56 rounded-md shadow-lg">
+    <div x-show="open" 
+        x-transition:enter="transition ease-out duration-100" 
+        x-transition:enter-start="transform opacity-0 scale-95" 
+        x-transition:enter-end="transform opacity-100 scale-100" 
+        x-transition:leave="transition ease-in duration-75" 
+        x-transition:leave-start="transform opacity-100 scale-100" 
+        x-transition:leave-end="transform opacity-0 scale-95" 
+        class="origin-bottom-left absolute left-0 bottom-0 mb-12 w-56 rounded-md shadow-lg">
         <div class="rounded-md bg-white shadow-xs">
             <p class="px-4 py-3">
                 <span class="block text-sm leading-5">
                     {{ __('filament::admin.signed_in_as') }}
                 </span>
-                <span class="text-sm leading-5 font-medium text-gray-900">
-                    {{ auth()->user()->email }}
-                </span>
+                @livewire('filament::user-email', [
+                    'email' => auth()->user()->email, 
+                    'classes' => 'text-sm leading-5 font-medium text-gray-900',
+                ])
             </p>
             <div class="border-t border-gray-100"></div>
             <div class="py-1">

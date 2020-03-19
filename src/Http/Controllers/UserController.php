@@ -29,12 +29,12 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $userModel = app(UserContract::class);  
-        $user = $userModel::findOrFail($id);
+        $userClass = app(UserContract::class);  
+        $user = $userClass::findOrFail($id);
         
         $this->authorize('edit', $user);
 
-        $title = __('filament::admin.user_edit', ['name' => $user->name]);
+        $title = __('filament::admin.user_edit');
 
         return view('filament::users.edit', compact('title', 'user'));
     }

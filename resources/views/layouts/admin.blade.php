@@ -44,17 +44,16 @@
         </div>
         {{-- Main content --}}
         <div class="flex flex-col w-0 flex-1 overflow-hidden">
-            <div class="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
-                <button @click.stop="sidebarOpen = true" class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:bg-gray-200 transition ease-in-out duration-150">
-                    {{ Filament::svg('heroicons/outline-md/md-menu-alt-1', 'h-6 w-6') }}
-                </button>
-            </div>
-            <main class="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabindex="0" x-data x-init="$el.focus()">
-                <div class="max-w-7xl mx-auto p-4 sm:px-6 lg:px-8">
+            <main id="content" class="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabindex="0">
+                <div class="max-w-7xl mx-auto p-4 sm:px-6 lg:py-6 lg:px-8 flex items-center justify-between">
                     <h1 class="text-2xl font-semibold text-gray-900">@yield('title')</h1>
+                    <button @click.stop="sidebarOpen = true" class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 transition ease-in-out duration-150 hover:text-gray-900 focus:outline-none focus:bg-gray-200 md:hidden">
+                        {{ Filament::svg('heroicons/outline-md/md-menu-alt-1', 'h-6 w-6') }}
+                    </button>
                 </div>       
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
                     @yield('main')
+                    @livewire('filament::notification')
                 </div>
             </main>
         </div>

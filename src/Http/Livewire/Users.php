@@ -12,10 +12,10 @@ class Users extends Component
 
     public function render()
     {
-        $userModel = app(UserContract::class);
+        $userClass = app(UserContract::class);
 
         return view('filament::livewire.users', [
-            'users' => $userModel::paginate(9),
+            'users' => $userClass::paginate(9),
         ]);
     }
 }
