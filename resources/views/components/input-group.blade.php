@@ -16,4 +16,7 @@
         </div>
     @endif 
     {{ $slot }}
+    @if ($info)
+        <p class="mt-1 text-xs leading-5 text-gray-500">{{ $info }}</p>
+    @endif
 </div>

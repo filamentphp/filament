@@ -21,6 +21,13 @@ class InputGroup extends Component
     public $label;
 
     /**
+     * Determins if input group is required.
+     *
+     * @var boolean
+     */
+    public $required;
+
+    /**
      * The input group hint.
      *
      * @var string
@@ -28,11 +35,11 @@ class InputGroup extends Component
     public $hint;
 
     /**
-     * Determins if input group is required.
+     * The input group info.
      *
-     * @var boolean
+     * @var string
      */
-    public $required;
+    public $info;
 
     /**
      * Create the component instance.
@@ -42,11 +49,10 @@ class InputGroup extends Component
      * @param  boolean  $required
      * @return void
      */
-    public function __construct($id = '', $label = '', $hint = '', $required = false)
+    public function __construct($id = '', $label = '', $required = false)
     {
         $this->id = $id;
         $this->label = $label;
-        $this->hint = $hint;
         $this->required = (bool) $required;
     }
 
