@@ -6,13 +6,13 @@ use Livewire\Component;
 
 class Notification extends Component
 {
-    public $type;
+    public $type = 'info';
     public $message;
     public $notificationVisible = false;
 
     protected $listeners = [
-        'notificationClose' => 'close',
-        'notification' => 'notify',
+        'notification.close' => 'close',
+        'notification.notify' => 'notify',
     ];
 
     public function close()
@@ -23,7 +23,7 @@ class Notification extends Component
     public function notify(array $data)
     {
         $notification = collect($data);
-        $this->type = $notification->get('type');
+        $this->type = $notification->get('type', $this->type);
         $this->message = $notification->get('message');
         $this->notificationVisible = true;
     }

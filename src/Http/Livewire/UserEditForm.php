@@ -21,7 +21,7 @@ class UserEditForm extends Component
 
     public function update()
     {
-        $this->emit('notificationClose');
+        $this->emit('notification.close');
 
         $validatedData = $this->validate([
             'name' => 'required',
@@ -33,7 +33,7 @@ class UserEditForm extends Component
 
         $this->user->update($validatedData);
 
-        $this->emit('notification', [
+        $this->emit('notification.notify', [
             'type' => 'success',
             'message' => "User {$this->name} updated successfully.",
         ]);

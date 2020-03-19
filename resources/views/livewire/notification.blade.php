@@ -9,19 +9,19 @@
     x-transition:leave-end="transform opacity-0 scale-95" 
     class="fixed top-0 right-0 mt-4 mr-4 shadow-lg rounded-md bg-gray-800 text-white p-4 flex items-start"
     role="alert">
-    @if ($type)
-        <div class="mr-2">
-            @switch($type)
-                @case('success')
-                    {{ Filament::svg('heroicons/outline-md/md-check-circle', 'w-5 h-5 text-green-400') }}
-                    @break
+    <div class="mr-2">
+        @switch($type)
+            @case('success')
+                {{ Filament::svg('heroicons/outline-md/md-check-circle', 'w-5 h-5 text-green-400') }}
+                @break
 
-                @case('error')
-                    {{ Filament::svg('heroicons/solid-sm/sm-exclamation-circle', 'h-5 w-5 text-red-500') }}
-                    @break
-            @endswitch
-        </div>
-    @endif
+            @case('error')
+                {{ Filament::svg('heroicons/solid-sm/sm-exclamation-circle', 'h-5 w-5 text-red-500') }}
+                @break
+            @default
+                {{ Filament::svg('heroicons/outline-md/md-information-circle', 'w-5 h-5 text-green-400') }}
+        @endswitch
+    </div>
     <div class="flex-grow mr-4 text-sm">
         @markdown($message)
     </div>

@@ -18,6 +18,7 @@
 ">
     <a href="#content" class="sr-only">Skip to content</a>
     @yield('content')
+    @livewire('filament::notification')
     @stack('footer')
     @livewireScripts
 </body>
