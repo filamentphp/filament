@@ -12,7 +12,7 @@
         </div>
         <button @click="open = false">
             <span aria-hidden="true">
-                {{ Alpine::svg('heroicons/outline-md/md-x', 'w-auto h-5 fill-current')}}
+                {{ Filament::svg('heroicons/outline-md/md-x', 'w-auto h-5 fill-current')}}
             </span>
             <span class="sr-only">{{ __('Close') }}</span>
         </button>

@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Route;
 // asset routes...
 Route::name('assets.')->group(function () {
 
-    Route::get('alpine.css', 'AssetController@css')->name('css');
-    Route::get('alpine.js', 'AssetController@js')->name('js');
+    Route::get('filament.css', 'AssetController@css')->name('css');
+    Route::get('filament.js', 'AssetController@js')->name('js');
     
 });
 
@@ -38,7 +38,7 @@ Route::name('auth.')->namespace('Auth')->group(function () {
 });
 
 // protected admin routes...
-Route::name('admin.')->middleware('auth.alpine')->group(function () {
+Route::name('admin.')->middleware('auth.filament')->group(function () {
 
     Route::get('/', 'DashboardController')->name('dashboard');
 

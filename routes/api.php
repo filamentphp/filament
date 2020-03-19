@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 */
 
 // protected routes...
-Route::middleware('auth.alpine:api')->group(function () {
+Route::middleware('auth.filament:api')->group(function () {
 
     // curl -H "Accept: application/json" -X GET http://localhost:8000/cp/api/user
     Route::get('/user', function (Request $request) {

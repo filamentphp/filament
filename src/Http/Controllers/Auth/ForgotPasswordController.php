@@ -1,9 +1,9 @@
 <?php
 
-namespace Alpine\Http\Controllers\Auth;
+namespace Filament\Http\Controllers\Auth;
 
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
-use Alpine\Http\Controllers\Controller;
+use Filament\Http\Controllers\Controller;
 
 class ForgotPasswordController extends Controller
 {
@@ -18,6 +18,6 @@ class ForgotPasswordController extends Controller
     {
         $title = __('Reset Password');
 
-        return view('alpine::auth.passwords.email', compact('title'));
+        return view('filament::auth.passwords.email', compact('title'));
     }
 }

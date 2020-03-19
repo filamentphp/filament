@@ -1,15 +1,15 @@
 <form wire:submit.prevent="update">
 
-    <x-alpine-alert :type="session('alert.type')" :message="session('alert.message')" />
+    <x-filament-alert :type="session('alert.type')" :message="session('alert.message')" />
 
-    <x-alpine-input-group wire:key="input-name" id="name" label="Name" required>
-        <x-alpine-input id="name" name="name" wire:model="name" required />
-    </x-alpine-input-group>
+    <x-filament-input-group wire:key="input-name" id="name" label="Name" required>
+        <x-filament-input id="name" name="name" wire:model="name" required />
+    </x-filament-input-group>
 
-    <x-alpine-input-group wire:key="input-email" id="email" label="E-Mail Address" required>
-        <x-alpine-input id="email" type="email" name="email" wire:model="email" required />
-    </x-alpine-input-group>
+    <x-filament-input-group wire:key="input-email" id="email" label="E-Mail Address" required>
+        <x-filament-input id="email" type="email" name="email" wire:model="email" required />
+    </x-filament-input-group>
     
-    <x-alpine-button wire:key="input-submit" label="Update" />
+    <x-filament-button wire:key="input-submit" label="Update" />
 
 </form>

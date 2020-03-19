@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Contracts;
+namespace Filament\Contracts;
 
 interface User
 {

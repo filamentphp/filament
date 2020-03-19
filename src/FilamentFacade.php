@@ -1,13 +1,13 @@
 <?php
 
-namespace Alpine;
+namespace Filament;
 
 use Illuminate\Support\Facades\Facade;
 
-class AlpineFacade extends Facade
+class FilamentFacade extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'alpine';
+        return 'filament';
     }
 }

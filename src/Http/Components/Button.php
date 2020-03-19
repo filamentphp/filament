@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Http\Components;
+namespace Filament\Http\Components;
 
 use Illuminate\View\Component;
 
@@ -40,6 +40,6 @@ class Button extends Component
      */
     public function render()
     {
-        return view('alpine::components.button');
+        return view('filament::components.button');
     }
 }

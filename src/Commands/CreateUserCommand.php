@@ -1,10 +1,10 @@
 <?php
 
-namespace Alpine\Commands;
+namespace Filament\Commands;
 
 use Illuminate\Console\Command;
-use Alpine\Traits\ConsoleValidation;
-use Alpine\Contracts\User as UserContract;
+use Filament\Traits\ConsoleValidation;
+use Filament\Contracts\User as UserContract;
 
 class CreateUserCommand extends Command
 {
@@ -15,7 +15,7 @@ class CreateUserCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'alpine:user';
+    protected $signature = 'filament:user';
 
     /**
      * The console command description.
@@ -53,8 +53,8 @@ class CreateUserCommand extends Command
             'is_super_admin' => $superAdmin,
         ]);
 
-        $appName = config('alpine.name');
-        $loginURL = route('alpine.auth.login');
+        $appName = config('filament.name');
+        $loginURL = route('filament.auth.login');
         $this->info("Success! You may now login to {$appName} ( {$loginURL} ) with user `{$user->name}`.");
     }
 }

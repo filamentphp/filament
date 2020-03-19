@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Http\Components;
+namespace Filament\Http\Components;
 
 use Illuminate\View\Component;
 
@@ -40,6 +40,6 @@ class Alert extends Component
      */
     public function render()
     {
-        return view('alpine::components.alert');
+        return view('filament::components.alert');
     }
 }

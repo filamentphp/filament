@@ -1,5 +1,5 @@
 {
-  "name": "alpine",
+  "name": "filament",
   "private": true,
   "scripts": {
     "dev": "npm run development",

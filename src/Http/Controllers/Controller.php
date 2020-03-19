@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Http\Controllers;
+namespace Filament\Http\Controllers;
 
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -21,6 +21,6 @@ class Controller extends BaseController
     {
         $title = 404;
 
-        return view('alpine::404', compact('title'));
+        return view('filament::404', compact('title'));
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace Alpine\Http\Controllers\Auth;
+namespace Filament\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Route;
 
-use Alpine\Http\Controllers\Controller;
+use Filament\Http\Controllers\Controller;
 
 class LoginController extends Controller 
 {
@@ -19,7 +19,7 @@ class LoginController extends Controller
      */
     protected function redirectTo()
     {
-        $redirect = config('alpine.redirects.admin');
+        $redirect = config('filament.redirects.admin');
 
         return Route::has($redirect) ? route($redirect) : $redirect;
     }
@@ -37,9 +37,9 @@ class LoginController extends Controller
             return redirect($this->redirectTo());
         }
 
-        $title = __('alpine::auth.login', ['name' => config('app.name')]);
+        $title = __('filament::auth.login', ['name' => config('app.name')]);
 
-        return view('alpine::auth.login', compact('title'));
+        return view('filament::auth.login', compact('title'));
     }
 
     /**
@@ -62,9 +62,9 @@ class LoginController extends Controller
 
         return $request->wantsJson()
             ? new Response('', 204)
-            : redirect(route('alpine.auth.login'))->with('alert', [
+            : redirect(route('filament.auth.login'))->with('alert', [
                 'type' => 'success',
-                'message' => __('alpine::auth.logout'),
+                'message' => __('filament::auth.logout'),
             ]);
     }
 }

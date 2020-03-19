@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Traits;
+namespace Filament\Traits;
 
 trait EventMap
 {

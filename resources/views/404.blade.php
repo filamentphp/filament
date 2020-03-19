@@ -1,4 +1,4 @@
-@extends('alpine::layouts.auth')
+@extends('filament::layouts.auth')
 
 @section('title', $title)
 

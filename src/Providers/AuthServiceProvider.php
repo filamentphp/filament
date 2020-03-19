@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Providers;
+namespace Filament\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -16,7 +16,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         // Package policy discovery logic
         Gate::guessPolicyNamesUsing(function ($modelClass) {
-            return 'Alpine\\Policies\\'.class_basename($modelClass).'Policy';
+            return 'Filament\\Policies\\'.class_basename($modelClass).'Policy';
         });
 
         // Implicitly grant "Super Admin" role all permissions

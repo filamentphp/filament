@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine;
+namespace Filament;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
@@ -8,15 +8,15 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use Illuminate\Events\Dispatcher;
 use Livewire\Livewire;
-use Alpine\Support\ServiceProvider;
-use Alpine\Providers\AuthServiceProvider;
-use Alpine\Support\BladeDirectives;
-use Alpine\Contracts\User as UserContract;
-use Alpine\Traits\EventMap;
-use Alpine\Http\Middleware\Authenticate;
-use Alpine\Commands\CreateUserCommand;
+use Filament\Support\ServiceProvider;
+use Filament\Providers\AuthServiceProvider;
+use Filament\Support\BladeDirectives;
+use Filament\Contracts\User as UserContract;
+use Filament\Traits\EventMap;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Commands\CreateUserCommand;
 
-class AlpineServiceProvider extends ServiceProvider
+class FilamentServiceProvider extends ServiceProvider
 {
     use EventMap;
 
@@ -59,7 +59,7 @@ class AlpineServiceProvider extends ServiceProvider
      */
     protected function registerSingeltons()
     {
-        $this->app->singleton('alpine', Alpine::class);
+        $this->app->singleton('filament', Filament::class);
     }
 
     /**
@@ -69,9 +69,9 @@ class AlpineServiceProvider extends ServiceProvider
      */
     protected function registerConfig()
     {
-        $this->mergeConfigFrom($this->packagePath.'config/alpine.php', 'alpine');
-        if ($this->app['alpine']->handling()) {
-            // $this->mergeFromConfig('existing-package-config', $this->app['config']->get('alpine.existing-package-config', []));
+        $this->mergeConfigFrom($this->packagePath.'config/filament.php', 'filament');
+        if ($this->app['filament']->handling()) {
+            // $this->mergeFromConfig('existing-package-config', $this->app['config']->get('filament.existing-package-config', []));
         }
     }
 
@@ -83,7 +83,7 @@ class AlpineServiceProvider extends ServiceProvider
     protected function registerBindings()
     {
         $this->app->bind(UserContract::class, config('auth.providers.users.model'));
-        // $this->app->bind(ResourceContract::class, config('alpine.models.resource'));
+        // $this->app->bind(ResourceContract::class, config('filament.models.resource'));
     }
 
     /**
@@ -134,7 +134,7 @@ class AlpineServiceProvider extends ServiceProvider
      */
     protected function registerMiddleware()
     {
-        Route::aliasMiddleware('auth.alpine', Authenticate::class);
+        Route::aliasMiddleware('auth.filament', Authenticate::class);
     }
 
     /**
@@ -144,17 +144,17 @@ class AlpineServiceProvider extends ServiceProvider
      */
     protected function registerRoutes()
     {
-        $namespace = 'Alpine\Http\Controllers';
-        $name = 'alpine.';
+        $namespace = 'Filament\Http\Controllers';
+        $name = 'filament.';
 
-        Route::middleware(config('alpine.middleware.web'))
-            ->prefix(config('alpine.path')) 
+        Route::middleware(config('filament.middleware.web'))
+            ->prefix(config('filament.path')) 
             ->namespace($namespace) 
             ->name($name) 
             ->group($this->packagePath.'routes/web.php');
 
-        Route::middleware(config('alpine.middleware.api'))
-            ->prefix(config('alpine.path').'/api') 
+        Route::middleware(config('filament.middleware.api'))
+            ->prefix(config('filament.path').'/api') 
             ->namespace($namespace) 
             ->name($name) 
             ->group($this->packagePath.'routes/api.php');
@@ -167,7 +167,7 @@ class AlpineServiceProvider extends ServiceProvider
      */
     protected function registerResources()
     {
-        $this->loadViewsFrom($this->packagePath.'resources/views', 'alpine');
+        $this->loadViewsFrom($this->packagePath.'resources/views', 'filament');
     }
 
     /**
@@ -177,7 +177,7 @@ class AlpineServiceProvider extends ServiceProvider
      */
     protected function registerTranslations()
     {
-        $this->loadTranslationsFrom($this->packagePath.'resources/lang', 'alpine');
+        $this->loadTranslationsFrom($this->packagePath.'resources/lang', 'filament');
     }
 
     /**
@@ -201,8 +201,8 @@ class AlpineServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                $this->packagePath.'config/alpine.php' => config_path('alpine.php'),
-            ], 'alpine-config');
+                $this->packagePath.'config/filament.php' => config_path('filament.php'),
+            ], 'filament-config');
         }
     }
 
@@ -214,12 +214,12 @@ class AlpineServiceProvider extends ServiceProvider
     public function registerBlade()
     {
         // Register package directives
-        Blade::directive('alpineAssets', [BladeDirectives::class, 'alpineAssets']);
+        Blade::directive('filamentAssets', [BladeDirectives::class, 'filamentAssets']);
 
         // Automatically register package components
         foreach (File::glob(__DIR__.'/Http/Components/*.php') as $path) {
             $baseName = basename($path, '.php');
-            Blade::component("\\Alpine\\Http\\Components\\{$baseName}", 'alpine-'.Str::of($baseName)->kebab());
+            Blade::component("\\Filament\\Http\\Components\\{$baseName}", 'filament-'.Str::of($baseName)->kebab());
         }
     }
 
@@ -238,7 +238,7 @@ class AlpineServiceProvider extends ServiceProvider
         // Automatically register package components
         foreach (File::glob(__DIR__.'/Http/Livewire/*.php') as $path) {
             $baseName = basename($path, '.php');
-            Livewire::component('alpine::'.Str::of($baseName)->kebab(), "\\Alpine\\Http\\Livewire\\{$baseName}");
+            Livewire::component('filament::'.Str::of($baseName)->kebab(), "\\Filament\\Http\\Livewire\\{$baseName}");
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Support;
+namespace Filament\Support;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Illuminate\Support\Facades\Gate;

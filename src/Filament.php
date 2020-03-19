@@ -1,11 +1,11 @@
 <?php
 
-namespace Alpine;
+namespace Filament;
 
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\HtmlString;
 
-class Alpine {
+class Filament {
 
     /**
      * `base` path
@@ -52,13 +52,13 @@ class Alpine {
     }
 
     /**
-     * Check if user has requested an alpine path.
+     * Check if user has requested an filament path.
      *
      * @return boolean
      */
     public function handling()
     {
-        return preg_match('#^'.config('alpine.path').'($|/)'.'#i', Request::path());
+        return preg_match('#^'.config('filament.path').'($|/)'.'#i', Request::path());
     }
 
     /**
@@ -73,12 +73,12 @@ class Alpine {
         parse_str(parse_url($manifest['/js/app.js'], PHP_URL_QUERY), $jsInfo);
 
         return new HtmlString('
-            <!-- Alpine Styles -->
+            <!-- Filament Styles -->
             <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-            <link rel="stylesheet" href="'.route('alpine.assets.css', $cssInfo).'" />
+            <link rel="stylesheet" href="'.route('filament.assets.css', $cssInfo).'" />
                  
-            <!-- Alpine Scripts -->
-            <script src="'.route('alpine.assets.js', $jsInfo).'" defer></script>
+            <!-- Filament Scripts -->
+            <script src="'.route('filament.assets.js', $jsInfo).'" defer></script>
         ');
     }
 

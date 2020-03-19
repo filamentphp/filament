@@ -1,8 +1,8 @@
 <?php
 
-namespace Alpine\Http\Controllers;
+namespace Filament\Http\Controllers;
 
-use Alpine;
+use Filament;
 
 class AssetController
 {
@@ -18,7 +18,7 @@ class AssetController
 
     protected function pretendResponseIsFile($file, $contentType)
     {
-        $path = Alpine::distPath($file);
+        $path = Filament::distPath($file);
 
         if (!file_exists($path)) {
             abort(404);

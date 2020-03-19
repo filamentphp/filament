@@ -1,4 +1,4 @@
-# Alpine
+# Filament
 
 A lightweight admin for your Laravel app.
 
@@ -20,20 +20,20 @@ cd [appName]
 ### Install the package via composer
 
 ```bash
-composer install madewithalpine/alpine # See note below
+composer install filament/filament # See note below
 php artisan migrate
 ```
 
 > ToDo: Add to Packagist (for now you will need to clone and [symlink the package](https://calebporzio.com/bash-alias-composer-link-use-local-folders-as-composer-dependancies)).
 
-Add the necessary `Alpine\Traits\AlpineUser` trait to your `App\User` model.
+Add the necessary `Filament\Traits\FilamentUser` trait to your `App\User` model.
 
 ### Create a user
 
 ```bash
-php artisan alpine:user
+php artisan filament:user
 ```
 
 ## Upgrading
 
-There are no special requirements for upgrading, other than `changing ^x.xx` version in your composer.json and running `composer update` as well as `php artisan migrate`. _Your app must meet the minimum requirements as well_.
+There are no special requirements for upgrading, other than changing `^x.xx` version in your composer.json and running `composer update` as well as `php artisan migrate`.

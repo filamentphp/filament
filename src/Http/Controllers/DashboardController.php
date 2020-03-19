@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Http\Controllers;
+namespace Filament\Http\Controllers;
 
 use App\User;
 
@@ -13,8 +13,8 @@ class DashboardController extends Controller
      */
     public function __invoke()
     {
-        $title = __('alpine::admin.dashboard');
+        $title = __('filament::admin.dashboard');
 
-        return view('alpine::dashboard', compact('title'));
+        return view('filament::dashboard', compact('title'));
     }
 }

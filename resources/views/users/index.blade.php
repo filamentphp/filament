@@ -1,7 +1,7 @@
-@extends('alpine::layouts.admin')
+@extends('filament::layouts.admin')
 
 @section('title', $title)
 
 @section('main')
-    @livewire('alpine::users')
+    @livewire('filament::users')
 @endsection

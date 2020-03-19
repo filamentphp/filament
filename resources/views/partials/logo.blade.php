@@ -1,1 +1,1 @@
-{{ Alpine::svg('logo', $classes ?? '') }}
+{{ Filament::svg('logo', $classes ?? '') }}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Traits;
+namespace Filament\Traits;
 
 use Illuminate\Support\Facades\Validator;
 

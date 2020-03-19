@@ -8,7 +8,7 @@
     <meta name="robots" content="noindex, nofollow">
     <title>@yield('title') &bull; {{ config('app.name') }}</title>
     @livewireStyles
-    @alpineAssets
+    @filamentAssets
     @stack('head')
 </head>
 <body class="font-sans antialiased text-gray-900 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Http\Livewire;
+namespace Filament\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Validation\Rule;
@@ -40,6 +40,6 @@ class UserEditForm extends Component
 
     public function render()
     {
-        return view('alpine::livewire.user-edit-form');
+        return view('filament::livewire.user-edit-form');
     }
 }

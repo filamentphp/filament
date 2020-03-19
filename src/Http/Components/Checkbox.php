@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Http\Components;
+namespace Filament\Http\Components;
 
 use Illuminate\View\Component;
 
@@ -56,6 +56,6 @@ class Checkbox extends Component
      */
     public function render()
     {
-        return view('alpine::components.checkbox');
+        return view('filament::components.checkbox');
     }
 }

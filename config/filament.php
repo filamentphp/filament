@@ -7,35 +7,35 @@ return [
     | Name
     |--------------------------------------------------------------------------
     |
-    | This is the name used by Alpine.
+    | This is the name used by Filament.
     |
     */
 
-    'name' => env('ALPINE_NAME', 'Alpine'),
+    'name' => env('FILAMENT_NAME', 'Filament'),
 
     /*
     |--------------------------------------------------------------------------
     | Base Route Prefix
     |--------------------------------------------------------------------------
     |
-    | This is the URI path where Alpine will be accessible from.
+    | This is the URI path where Filament will be accessible from.
     |
     */
 
-    'path' => env('ALPINE_PATH_NAME', 'cp'),
+    'path' => env('FILAMENT_PATH_NAME', 'cp'),
 
     /*
     |--------------------------------------------------------------------------
     | Redirects
     |--------------------------------------------------------------------------
     |
-    | This is the URI path where Alpine will be accessible from.
+    | This is the URI path where Filament will be accessible from.
     |
     */
 
     'redirects' => [
 
-        'admin' => 'alpine.admin.dashboard', // string or named route to redirect users when successfully authenticated.
+        'admin' => 'filament.admin.dashboard', // string or named route to redirect users when successfully authenticated.
 
     ],
 
@@ -44,7 +44,7 @@ return [
     | Navigation
     |--------------------------------------------------------------------------
     |
-    | Navigations used by Alpine.
+    | Navigations used by Filament.
     |
     */
 
@@ -53,22 +53,22 @@ return [
         'admin' => [
 
             'dashboard' => [
-                'label' => 'alpine::admin.dashboard',
-                'icon' => 'heroicons/outline-md/md-home', // path to SVG icon using Alpine::svg() helper
-                'url' => 'alpine.admin.dashboard', // string or named route
-                'active' => 'alpine.admin.dashboard', // string or named route (may also be an array @link https://github.com/dwightwatson/active)
+                'label' => 'filament::admin.dashboard',
+                'icon' => 'heroicons/outline-md/md-home', // path to SVG icon using Filament::svg() helper
+                'url' => 'filament.admin.dashboard', // string or named route
+                'active' => 'filament.admin.dashboard', // string or named route (may also be an array @link https://github.com/dwightwatson/active)
             ],
 
             /* TODO
 
             'Resources' => [
-                'label' => 'alpine::admin.resources',
+                'label' => 'filament::admin.resources',
                 'icon' => 'heroicons/outline-md/md-collection',
                 'url' => '#',
             ],
 
             'globals' => [
-                'label' => 'alpine::admin.globals',
+                'label' => 'filament::admin.globals',
                 'icon' => 'heroicons/outline-md/md-globe',
                 'url' => '#',
             ],
@@ -76,20 +76,20 @@ return [
             */
 
             'users' => [
-                'label' => 'alpine::admin.users',
+                'label' => 'filament::admin.users',
                 'icon' => 'heroicons/outline-md/md-user-group',
-                'url' => 'alpine.admin.users.index',
-                'active' => 'alpine.admin.users.*',
+                'url' => 'filament.admin.users.index',
+                'active' => 'filament.admin.users.*',
                 'ability' => 'view users',
             ],
 
             /* TODO 
 
             'Permissions' => [
-                'label' => 'alpine::admin.permissions',
+                'label' => 'filament::admin.permissions',
                 'icon' => 'heroicons/outline-md/md-lock-closed',
-                'url' => 'alpine.admin.permissions.index',
-                'active' => 'alpine.admin.permissions.*',
+                'url' => 'filament.admin.permissions.index',
+                'active' => 'filament.admin.permissions.*',
                 'ability' => 'view permissions',
             ],
 
@@ -104,12 +104,12 @@ return [
     | Models
     |--------------------------------------------------------------------------
     |
-    | The Eloquent Models used by Alpine.
+    | The Eloquent Models used by Filament.
     |
     */
     
     'models' => [
-        // 'resource' => Alpine\Models\Resource::class,
+        // 'resource' => Filament\Models\Resource::class,
     ],    
 
     /*
@@ -117,7 +117,7 @@ return [
     | Route Middleware
     |--------------------------------------------------------------------------
     |
-    | These middleware will be attached to every route type in Alpine.
+    | These middleware will be attached to every route type in Filament.
     |
     */
     
@@ -135,12 +135,12 @@ return [
     | Storage
     |--------------------------------------------------------------------------
     |
-    | This is the storage disk Alpine will use to put file uploads, you may
+    | This is the storage disk Filament will use to put file uploads, you may
     | use any of the disks defined in the `config/filesystems.php`.
     |
     */
 
-    'storage_disk' => env('ALPINE_STORAGE_DISK', 'local'),
-    'storage_path' => env('ALPINE_STORAGE_PATH', 'public/alpine'),
+    'storage_disk' => env('FILAMENT_STORAGE_DISK', 'local'),
+    'storage_path' => env('FILAMENT_STORAGE_PATH', 'public/filament'),
     
 ];

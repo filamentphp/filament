@@ -1,4 +1,4 @@
-@extends('alpine::layouts.admin')
+@extends('filament::layouts.admin')
 
 @section('title', $title)
 

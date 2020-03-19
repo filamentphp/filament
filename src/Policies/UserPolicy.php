@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Policies;
+namespace Filament\Policies;
 
 use Illuminate\Auth\Access\Response;
 

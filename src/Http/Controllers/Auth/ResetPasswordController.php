@@ -1,10 +1,10 @@
 <?php
 
-namespace Alpine\Http\Controllers\Auth;
+namespace Filament\Http\Controllers\Auth;
 
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
-use Alpine\Http\Controllers\Controller;
+use Filament\Http\Controllers\Controller;
 
 class ResetPasswordController extends Controller
 {
@@ -15,7 +15,7 @@ class ResetPasswordController extends Controller
      *
      * @var string
      */
-    protected $redirectRouteName = 'alpine.auth.login';
+    protected $redirectRouteName = 'filament.auth.login';
 
     /**
      * Where to redirect users after resetting their password.
@@ -41,7 +41,7 @@ class ResetPasswordController extends Controller
         $title = __('Reset Password');
         $email = $request->email;
 
-        return view('alpine::auth.passwords.reset', compact('title', 'email', 'token'));
+        return view('filament::auth.passwords.reset', compact('title', 'email', 'token'));
     }
 
     /**

@@ -1,5 +1,5 @@
 {
-  "name": "madewithalpine/alpine",
+  "name": "filament/filament",
   "description": "A lightweight admin for your Laravel app.",
   "keywords": [
     "laravel",
@@ -8,7 +8,7 @@
     "tailwindui",
     "alpine.js"
   ],
-  "homepage": "https://madewithalpine.com",
+  "homepage": "https://github.com/eastslopestudio/filament",
   "license": "MIT",
   "authors": [
     {
@@ -29,16 +29,16 @@
   },
   "autoload": {
     "psr-4": {
-      "Alpine\\": "src"
+      "Filament\\": "src"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Alpine\\AlpineServiceProvider"
+        "Filament\\FilamentServiceProvider"
       ],
       "aliases": {
-        "Alpine": "Alpine\\AlpineFacade"
+        "Filament": "Filament\\FilamentFacade"
       }
     }
   },

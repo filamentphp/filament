@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Http\Livewire;
+namespace Filament\Http\Livewire;
 
 use Livewire\Component;
 
@@ -21,6 +21,6 @@ class UserAvatar extends Component
 
     public function render()
     {
-        return view('alpine::livewire.user-avatar');
+        return view('filament::livewire.user-avatar');
     }
 }

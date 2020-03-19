@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Http\Middleware;
+namespace Filament\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
@@ -15,7 +15,7 @@ class Authenticate extends Middleware
     protected function redirectTo($request)
     {        
         if (! $request->expectsJson()) {
-            return route('alpine.auth.login');
+            return route('filament.auth.login');
         }
     }
 }

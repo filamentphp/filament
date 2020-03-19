@@ -1,6 +1,6 @@
 <?php
 
-namespace Alpine\Notifications;
+namespace Filament\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -66,7 +66,7 @@ class ResetPassword extends Notification
         if (static::$createUrlCallback) {
             $url = call_user_func(static::$createUrlCallback, $notifiable, $this->token);
         } else {
-            $url = url(config('app.url').route('alpine.auth.password.reset', [
+            $url = url(config('app.url').route('filament.auth.password.reset', [
                 'token' => $this->token,
                 'email' => $notifiable->getEmailForPasswordReset(),
             ], false));

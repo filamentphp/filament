@@ -1,10 +1,10 @@
 <?php
 
-namespace Alpine\Support;
+namespace Filament\Support;
 
 class BladeDirectives {
-    public static function alpineAssets()
+    public static function filamentAssets()
     {
-        return '{!! \Alpine::assets() !!}';
+        return '{!! \Filament::assets() !!}';
     }
 }

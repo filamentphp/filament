@@ -1,8 +1,8 @@
 <?php
 
-namespace Alpine\Http\Controllers;
+namespace Filament\Http\Controllers;
 
-use Alpine\Contracts\User as UserContract;
+use Filament\Contracts\User as UserContract;
 
 class UserController extends Controller
 {
@@ -16,9 +16,9 @@ class UserController extends Controller
     {
         $this->authorize('view', app(UserContract::class));
 
-        $title = __('alpine::admin.users');
+        $title = __('filament::admin.users');
         
-        return view('alpine::users.index', compact('title'));
+        return view('filament::users.index', compact('title'));
     }
 
     /**
@@ -34,8 +34,8 @@ class UserController extends Controller
         
         $this->authorize('edit', $user);
 
-        $title = __('alpine::admin.user_edit', ['name' => $user->name]);
+        $title = __('filament::admin.user_edit', ['name' => $user->name]);
 
-        return view('alpine::users.edit', compact('title', 'user'));
+        return view('filament::users.edit', compact('title', 'user'));
     }
 }

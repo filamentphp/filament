@@ -1,19 +1,19 @@
 <?php
 
-namespace Alpine\Traits;
+namespace Filament\Traits;
 
-use Alpine\Notifications\ResetPassword;
+use Filament\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Hash;
 use Thomaswelton\LaravelGravatar\Facades\Gravatar;
 
-trait AlpineUser 
+trait FilamentUser 
 {    
     /**
      * Initialize the trait.
      * 
      * @return void
      */
-    public function initializeAlpineUser()
+    public function initializeFilamentUser()
     {
         $this->mergeFillable(['is_super_admin', 'avatar']);
         $this->mergeCasts(['is_super_admin' => 'boolean']);
