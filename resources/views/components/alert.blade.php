@@ -12,7 +12,7 @@
         </div>
         <button @click="open = false">
             <span aria-hidden="true">
-                {{ Filament::svg('heroicons/outline-md/md-x', 'w-auto h-5 fill-current')}}
+                {{ Filament::svg('heroicons/outline-md/md-x', 'w-5 h-5')}}
             </span>
             <span class="sr-only">{{ __('Close') }}</span>
         </button>

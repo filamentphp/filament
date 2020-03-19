@@ -23,7 +23,7 @@ class Notification extends Component
     public function notify(array $data)
     {
         $notification = collect($data);
-        $this->type = $notification->get('type', 'info');
+        $this->type = $notification->get('type');
         $this->message = $notification->get('message');
         $this->notificationVisible = true;
     }
