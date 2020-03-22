@@ -12,6 +12,7 @@ class UserEditForm extends Component
     public $name;
     public $email;
     public $is_super_admin;
+    public $user_roles;
 
     public function mount($user)
     {
@@ -19,6 +20,7 @@ class UserEditForm extends Component
         $this->name = $user->name;
         $this->email = $user->email;
         $this->is_super_admin = $user->is_super_admin;
+        $this->user_roles = $user->roles;
     }
 
     public function update()
@@ -32,6 +34,7 @@ class UserEditForm extends Component
                 Rule::unique('users')->ignore($this->user->id),
             ],
             'is_super_admin' => 'boolean',
+            'user_roles.*' => 'exists:roles,id',
         ]);
 
         $this->user->update($validatedData);

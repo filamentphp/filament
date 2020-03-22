@@ -22,7 +22,7 @@ return [
     |
     */
 
-    'path' => env('FILAMENT_PATH_NAME', 'cp'),
+    'path' => env('FILAMENT_PATH_NAME', 'filament'),
 
     /*
     |--------------------------------------------------------------------------

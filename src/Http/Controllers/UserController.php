@@ -3,6 +3,7 @@
 namespace Filament\Http\Controllers;
 
 use Filament\Contracts\User as UserContract;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -34,7 +35,7 @@ class UserController extends Controller
         
         $this->authorize('edit', $user);
 
-        $title = __('filament::admin.user_edit');
+        $title = __('filament::admin.user_account', ['name' => $user->name]);
 
         return view('filament::users.edit', compact('title', 'user'));
     }
