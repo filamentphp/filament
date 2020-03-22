@@ -22,10 +22,8 @@ return [
 
     'permissions' => 'Permissions',
 
-    'signed_in_as' => 'Signed in as',
+    'created_at' => 'Created',
 
-    'account_settings' => 'Account settings',
-
-    'user_account' => ':name\'s Account',
+    'updated_at' => 'Last updated',
 
 ];

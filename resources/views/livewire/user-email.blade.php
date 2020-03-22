@@ -1,1 +1,0 @@
-<span @if ($classes) class="{{ $classes }}" @endif>{{ $email }}</span>

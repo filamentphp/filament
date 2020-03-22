@@ -1,6 +1,6 @@
-<div class="grid grid-cols-1 md:grid-cols-3 md:gap-4 lg:gap-8">
+<div class="grid grid-cols-1 md:grid-cols-7 gap-4 lg:gap-8">
 
-    <form wire:submit.prevent="update" class="col-span-2">
+    <form wire:submit.prevent="update" class="md:col-span-5">
 
         <x-filament-tabs tab="account" :tabs="['account' => 'Account', 'permissions' => 'Permissions']">
 
@@ -19,9 +19,9 @@
             <x-filament-tab id="permissions">
               
                 <x-filament-input-group>
-                    <x-filament-checkbox name="is_super_admin" label="Super admin?" wire:model="is_super_admin" />
+                    <x-filament-checkbox name="is_super_admin" label="filament::permissions.super_admin" wire:model="is_super_admin" />
                     <x-slot name="info">
-                        Super admins have access to all of {{ config('app.name') }}.
+                        {{ __('filament::permissions.super_admin_info', ['name' => config('app.name')]) }}
                     </x-slot>
                 </x-filament-input-group>
             
@@ -43,5 +43,27 @@
         </x-filament-tabs>
     
     </form>
+
+    <x-filament-well class="md:col-span-2">
+
+        <dl class="grid grid-cols-2 gap-2 text-xs leading-tight">
+
+            <dt class="text-gray-400">{{ __('filament::admin.created_at') }}</dt>
+            <dd class="text-right">{{ $user->created_at->fromNow() }}</dd>
+
+            <dt class="text-gray-400">{{ __('filament::admin.updated_at') }}</dt>
+            <dd class="text-right">{{ $user->updated_at->fromNow() }}</dd>
+
+            <dt class="text-gray-400">{{ __('filament::user.last_login_at') }}</dt>
+            <dd class="text-right">{{ $user->last_login_at ? $user->last_login_at->fromNow() : __('filament::user.last_login_never') }}</dd>
+
+            @if ($user->last_login_ip)
+                <dt class="text-gray-400">{{ __('filament::user.last_login_ip') }}</dt>
+                <dd class="text-right">{{ $user->last_login_ip }}</dd>
+            @endif 
+
+        </dl>
+
+    </x-filament-well>
 
 </div>

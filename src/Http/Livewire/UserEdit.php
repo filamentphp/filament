@@ -6,7 +6,7 @@ use Livewire\Component;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Contracts\Role as RoleContract;
 
-class UserEditForm extends Component
+class UserEdit extends Component
 {
     public $user;
     public $name;
@@ -39,21 +39,27 @@ class UserEditForm extends Component
 
         $this->user->update($validatedData);
 
-        $this->emit('notification.notify', [
-            'type' => 'success',
-            'message' => "User {$this->name} updated successfully.",
-        ]);
+        if (isset($validatedData['user_roles'])) {
+            $this->user->syncRoles($validatedData['user_roles']);
+        }
+
+        $this->emit('userUpdated', $this->user->id);
 
         if (auth()->user()->id === $this->user->id) {
-            $this->emit('userUpdated', $this->user);
+            $this->emit('authUserUpdated');
         }
+
+        $this->emit('notification.notify', [
+            'type' => 'success',
+            'message' => __('filament::user.updated', ['name' => $this->name]),
+        ]);
     }
 
     public function render()
     {
         $roleClass = app(RoleContract::class);
 
-        return view('filament::livewire.user-edit-form', [
+        return view('filament::livewire.user-edit', [
             'roles' => $roleClass::all(),
         ]);
     }

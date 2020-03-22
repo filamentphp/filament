@@ -15,8 +15,17 @@ trait FilamentUser
      */
     public function initializeFilamentUser()
     {
-        $this->mergeFillable(['is_super_admin', 'avatar']);
-        $this->mergeCasts(['is_super_admin' => 'boolean']);
+        $this->mergeFillable([
+            'is_super_admin', 
+            'avatar', 
+            'last_login_at',
+            'last_login_ip',
+        ]);
+
+        $this->mergeCasts([
+            'is_super_admin' => 'boolean',
+            'last_login_at' => 'datetime',
+        ]);
     }
 
     /**
@@ -28,16 +37,6 @@ trait FilamentUser
     public function avatar($size = 48)
     {
         return Gravatar::src($this->email, (int) $size);
-    }
-
-    /**
-     * Merge fillable attributes.
-     * 
-     * @return void
-     */
-    protected function mergeFillable(array $fillable)
-    {
-        $this->fillable(collect($this->fillable)->merge($fillable)->all());
     }
 
     /**
@@ -60,5 +59,15 @@ trait FilamentUser
     public function setPasswordAttribute($pass)
     {
         $this->attributes['password'] = Hash::make($pass);
+    }
+
+    /**
+     * Merge fillable attributes.
+     * 
+     * @return void
+     */
+    protected function mergeFillable(array $fillable)
+    {
+        $this->fillable(collect($this->fillable)->merge($fillable)->all());
     }
 }

@@ -4,7 +4,7 @@
             <li wire:key="{{ $user->id }}" class="flex">
                 <a class="flex-grow p-4 bg-white shadow-sm rounded-md flex items-center" href="{{ route('filament.admin.users.edit', ['user' => $user->id]) }}">
                     @livewire('filament::user-avatar', [
-                        'user' => $user, 
+                        'userId' => $user->id, 
                         'size' => 96, 
                         'classes' => 'h-12 w-12 rounded-full'
                     ], key($user->id))

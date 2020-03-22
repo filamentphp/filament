@@ -3,5 +3,5 @@
 @section('title', $title)
 
 @section('main')
-    @livewire('filament::user-edit-form', ['user' => $user])
+    @livewire('filament::user-edit', ['user' => $user])
 @endsection

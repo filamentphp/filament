@@ -35,7 +35,7 @@ class UserController extends Controller
         
         $this->authorize('edit', $user);
 
-        $title = __('filament::admin.user_account', ['name' => $user->name]);
+        $title = __('filament::user.account', ['name' => $user->name]);
 
         return view('filament::users.edit', compact('title', 'user'));
     }
