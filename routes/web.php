@@ -48,6 +48,3 @@ Route::name('admin.')->middleware('auth.filament')->group(function () {
     ]);
 
 });
-
-// 404
-Route::fallback('Controller@notFound');

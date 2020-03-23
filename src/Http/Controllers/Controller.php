@@ -10,17 +10,4 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-
-
-    /**
-     * Show 404
-     *
-     * @return View
-     */
-    public function notFound()
-    {
-        $title = 404;
-
-        return view('filament::404', compact('title'));
-    }
 }
