@@ -14,9 +14,8 @@
             @case('success')
                 {{ Filament::svg('heroicons/outline-md/md-check-circle', 'w-5 h-5 text-green-400') }}
                 @break
-
             @case('error')
-                {{ Filament::svg('heroicons/solid-sm/sm-exclamation-circle', 'h-5 w-5 text-red-500') }}
+                {{ Filament::svg('heroicons/solid-sm/sm-exclamation-circle', 'h-5 w-5 text-red-400') }}
                 @break
             @default
                 {{ Filament::svg('heroicons/outline-md/md-information-circle', 'w-5 h-5 text-green-400') }}
