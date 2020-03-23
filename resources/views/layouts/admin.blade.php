@@ -47,7 +47,7 @@
             <main id="content" class="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabindex="0">
                 <div class="max-w-7xl mx-auto p-4 sm:px-6 lg:py-6 lg:px-8 flex items-center justify-between">
                     <h1 class="text-2xl font-semibold text-gray-900">@yield('title')</h1>
-                    <button @click.stop="sidebarOpen = true" class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 transition ease-in-out duration-150 hover:text-gray-900 focus:outline-none focus:bg-gray-200 md:hidden">
+                    <button @click.stop="sidebarOpen = true" class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded text-gray-500 transition ease-in-out duration-150 hover:text-gray-900 focus:outline-none focus:bg-gray-200 md:hidden">
                         {{ Filament::svg('heroicons/outline-md/md-menu-alt-1', 'h-6 w-6') }}
                     </button>
                 </div>       

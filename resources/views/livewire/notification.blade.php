@@ -7,7 +7,7 @@
     x-transition:leave="transition ease-in duration-75" 
     x-transition:leave-start="transform opacity-100 scale-100" 
     x-transition:leave-end="transform opacity-0 scale-95" 
-    class="fixed top-0 right-0 mt-4 mr-4 shadow-lg rounded-md bg-gray-800 text-white p-4 flex items-start"
+    class="fixed top-0 right-0 mt-4 mr-4 shadow-lg rounded bg-gray-800 text-white p-4 flex items-start"
     role="alert">
     <div class="mr-2">
         @switch($type)

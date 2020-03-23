@@ -17,8 +17,8 @@
         x-transition:leave="transition ease-in duration-75" 
         x-transition:leave-start="transform opacity-100 scale-100" 
         x-transition:leave-end="transform opacity-0 scale-95" 
-        class="origin-bottom-left absolute left-0 bottom-0 mb-12 w-56 rounded-md shadow-lg">
-        <div class="rounded-md bg-white shadow-xs">
+        class="origin-bottom-left absolute left-0 bottom-0 mb-12 w-56 rounded shadow-lg">
+        <div class="rounded bg-white shadow-xs">
             <p class="px-4 py-3">
                 <span class="block text-sm leading-5">
                     {{ __('filament::auth.signed_in_as') }}

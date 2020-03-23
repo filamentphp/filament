@@ -2,7 +2,7 @@
     <ul class="mb-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         @foreach ($users as $user)
             <li wire:key="{{ $user->id }}" class="flex">
-                <a class="flex-grow p-4 bg-white shadow-sm rounded-md flex items-center" href="{{ route('filament.admin.users.edit', ['user' => $user->id]) }}">
+                <a class="flex-grow p-4 bg-white shadow rounded flex items-center" href="{{ route('filament.admin.users.edit', ['user' => $user->id]) }}">
                     @livewire('filament::user-avatar', [
                         'userId' => $user->id, 
                         'size' => 96, 
