@@ -8,17 +8,7 @@
 
         <input type="hidden" name="token" value="{{ $token }}" required />
 
-        <x-filament-input-group id="email" label="E-Mail Address" required>
-            <x-filament-input id="email" type="email" name="email" :value="$email" autocomplete="email" autofocus required />
-        </x-filament-input-group>
-
-        <x-filament-input-group id="password" label="Password" required>
-            <x-filament-input id="password" type="password" name="password" autocomplete="new-password" required />
-        </x-filament-input-group>
-
-        <x-filament-input-group id="password-confirm" label="Confirm Password" required>
-            <x-filament-input id="password-confirm" type="password" name="password_confirmation" autocomplete="new-password" required />
-        </x-filament-input-group>
+        @include('filament::partials.fields', ['fields' => $fields])
 
         <x-filament-button label="Reset Password" class="w-full" />
 

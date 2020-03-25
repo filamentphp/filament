@@ -8,7 +8,7 @@ use Filament\Support\Fields\ArrayField;
 use Filament\Support\Fields\Field;
 use Spatie\Permission\Contracts\Role as RoleContract;
 
-class UserEdit extends FormComponent
+class UserAccountEdit extends FormComponent
 {
     public function fields()
     {
@@ -25,13 +25,21 @@ class UserEdit extends FormComponent
                 ->input('password')
                 ->rules(['sometimes', 'confirmed'])
                 ->help('Leave blank to keep current password.'),
-            Field::make('Confirm Password', 'password_confirmation')->input('password'),
+            Field::make('Confirm Password', 'password_confirmation')
+                ->input('password'),
         ];
     }
 
     public function success()
     {
-        $this->model->update($this->form_data);
+        $input = collect($this->form_data);
+
+        // if password is left blank then remove from input to update
+        if (!$input->get('password')) {
+            $input->forget('password');
+        }
+        
+        $this->model->update($input->all());
 
         $this->emit('notification.notify', [
             'type' => 'success',

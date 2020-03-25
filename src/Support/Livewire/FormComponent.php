@@ -54,9 +54,7 @@ class FormComponent extends Component
 
     public function fields()
     {
-        return [
-            // Field::make('Name')->input()->rules(['required', 'string', 'max:255']),
-        ];
+        return [];
     }
 
     public function updated($field)
@@ -77,11 +75,6 @@ class FormComponent extends Component
         $this->success();
     }
 
-    public function errorMessage($message)
-    {
-        return str_replace('form data.', '', $message);
-    }
-
     public function success()
     {
         $this->emit('notification.notify', [
@@ -90,7 +83,7 @@ class FormComponent extends Component
         ]);
     }
 
-    public function saveAndStay()
+    public function save()
     {
         $this->emit('notification.close');
         $this->submit();

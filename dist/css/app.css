@@ -961,7 +961,7 @@ video {
           transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn:not(.btn-dropdown):hover {
+.btn:not(.btn-with-dropdown):hover {
     background-color: #1e429f;
   }
 
@@ -979,7 +979,7 @@ video {
     cursor: not-allowed;
   }
 
-.btn-dropdown {
+.btn-with-dropdown {
     display: -webkit-inline-box;
     display: inline-flex;
     -webkit-box-pack: justify;
@@ -1008,48 +1008,15 @@ video {
       background-color: #1e429f;
     }
 
-.btn-actions {
-    padding: 0.5rem;
-    background-color: #1c64f2;
-    border-top-right-radius: 0.25rem;
-    border-bottom-right-radius: 0.25rem;
-    -webkit-transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, -webkit-transform;
-    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, -webkit-transform;
-    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
-    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, -webkit-transform;
-    -webkit-transition-duration: 150ms;
-            transition-duration: 150ms;
-    -webkit-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+.btn-dropdown {
+    position: relative;
   }
 
-.btn-actions:hover {
-      background-color: #1e429f;
-    }
-
-.btn-dropdown-content {
-    position: absolute;
-    left: 0;
-    margin-top: 0.5rem;
-    width: 12rem;
-    border-radius: 0.375rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    color: currentColor;
-    text-align: center;
-    overflow: hidden;
-  }
-
-.btn-dropdown-content button,
-    .btn-dropdown-content a {
-      display: inline-block;
-      width: 100%;
-      padding-left: 1.25rem;
-      padding-right: 1.25rem;
-      padding-top: 0.5rem;
-      padding-bottom: 0.5rem;
-      font-size: 0.875rem;
-      line-height: 1.25rem;
-      color: #161e2e;
+.btn-dropdown-actions {
+      padding: 0.5rem;
+      background-color: #1c64f2;
+      border-top-right-radius: 0.25rem;
+      border-bottom-right-radius: 0.25rem;
       -webkit-transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, -webkit-transform;
       transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, -webkit-transform;
       transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
@@ -1060,14 +1027,48 @@ video {
               transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-.btn-dropdown-content button:hover, .btn-dropdown-content a:hover {
-        background-color: #f9fafb;
+.btn-dropdown-content {
+      position: absolute;
+      left: 0;
+      margin-top: 0.5rem;
+      width: 12rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      border-radius: 0.25rem;
+      background-color: #1a56db;
+      color: #ffffff;
+      text-align: center;
+      overflow: hidden;
+    }
+
+.btn-dropdown-content button,
+      .btn-dropdown-content a {
+        display: inline-block;
+        width: 100%;
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        color: currentColor;
+        -webkit-transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, -webkit-transform;
+        transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, -webkit-transform;
+        transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+        transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, -webkit-transform;
+        -webkit-transition-duration: 150ms;
+                transition-duration: 150ms;
+        -webkit-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+                transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       }
 
+.btn-dropdown-content button:hover, .btn-dropdown-content a:hover {
+          background-color: #1e429f;
+        }
+
 .btn-dropdown-content button + *, .btn-dropdown-content a + * {
-        border-top-width: 1px;
-        border-color: #f4f5f7;
-      }
+          border-top-width: 1px;
+          border-color: #f4f5f7;
+        }
 
 .sr-only {
   position: absolute;

@@ -10,7 +10,7 @@
 
             <x-filament-tab id="account">
 
-                @livewire('filament::user-edit', [
+                @livewire('filament::user-account-edit', [
                     'model' => $user, 
                     'goback' => 'alpine.admin.users.index'
                 ])

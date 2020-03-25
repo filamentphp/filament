@@ -1,4 +1,4 @@
-<div class="mb-6">
+<div class="mb-5">
     @if ($field->label)
         <label for="{{ $field->name }}" class="block mb-2 text-sm font-medium leading-5 text-gray-700">
             {{ __($field->label) }}
@@ -10,14 +10,18 @@
     @endif
     <div class="relative mb-2">
         <input
-            id="{{ $field->name }}"
             type="{{ $field->input_type }}"
+            name="{{ $field->name }}"
+            id="{{ $field->name }}"
             class="form-input block w-full sm:text-sm sm:leading-5 
                 @error($field->key)
                     pr-10 border-red-300 text-red-900 placeholder-red-300 focus:border-red-300 focus:shadow-outline-red
                 @enderror"
             autocomplete="{{ $field->autocomplete }}"
             placeholder="{{ $field->placeholder }}"
+            @if ($field->value)
+                value="{{ $field->value }}"
+            @endif 
             wire:model.lazy="{{ $field->key }}"
         >
         @error($field->key) 

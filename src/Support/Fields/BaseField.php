@@ -8,6 +8,7 @@ class BaseField
 {
     protected $name;
     protected $type;
+    protected $value;
     protected $input_type;
     protected $textarea_rows;
     protected $options;
@@ -73,6 +74,12 @@ class BaseField
     public function default($default)
     {
         $this->default = $default;
+        return $this;
+    }
+
+    public function value($value)
+    {
+        $this->value = old($this->key, $value);
         return $this;
     }
 

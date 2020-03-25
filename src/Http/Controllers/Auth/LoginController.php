@@ -6,22 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Route;
 use Filament\Http\Controllers\Controller;
+use Filament\Support\Fields\Field;
 
 class LoginController extends Controller 
 {
     use AuthenticatesUsers;
-
-    /**
-     * Where to redirect users when successfully authenticated.
-     *
-     * @return string
-     */
-    protected function redirectTo()
-    {
-        $redirect = config('filament.redirects.admin');
-
-        return Route::has($redirect) ? route($redirect) : $redirect;
-    }
 
     /**
      * Show the application's login form.
@@ -38,7 +27,30 @@ class LoginController extends Controller
 
         $title = __('filament::auth.login', ['name' => config('app.name')]);
 
-        return view('filament::auth.login', compact('title'));
+        $fields = [
+            Field::make('E-mail Address', 'email', false)
+                ->input('email')
+                ->value('')
+                ->rules(['required']),
+            Field::make('Password', 'password', false)
+                ->input('password')
+                ->rules(['required'])
+                ->help('<a href="'.route('filament.auth.password.forgot').'">'.__('Forgot Your Password?').'</a>'),
+        ];
+
+        return view('filament::auth.login', compact('title', 'fields'));
+    }
+
+    /**
+     * Where to redirect users when successfully authenticated.
+     *
+     * @return string
+     */
+    protected function redirectTo()
+    {
+        $redirect = config('filament.redirects.admin');
+
+        return Route::has($redirect) ? route($redirect) : $redirect;
     }
 
     /**

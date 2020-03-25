@@ -28,25 +28,17 @@ class Form extends Component
     public $action;
 
     /**
-     * The form hint.
-     *
-     * @var string
-     */
-    public $hint;
-
-    /**
      * Create the component instance.
      *
      * @param  string  $method
      * @param  string  $action
      * @return void
      */
-    public function __construct($method = 'POST', $httpVerb = null, $action, $hint = '')
+    public function __construct($method = 'POST', $httpVerb = null, $action)
     {
         $this->method = $method;
         $this->httpVerb = $httpVerb ?? $this->method;
         $this->action = $action;
-        $this->hint = $hint;
     }
 
     /**
@@ -56,6 +48,12 @@ class Form extends Component
      */
     public function render()
     {
-        return view('filament::components.form');
+        return <<<'blade'
+            <form method="{{ $method }}" action="{{ $action }}" {{ $attributes }}>
+                @csrf
+                @method($httpVerb)
+                {{ $slot }}
+            </form>
+        blade;
     }
 }

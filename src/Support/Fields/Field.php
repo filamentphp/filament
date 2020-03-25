@@ -12,16 +12,16 @@ class Field extends BaseField
     protected $array_fields = [];
     protected $array_sortable = false;
 
-    public function __construct($label, $name)
+    public function __construct($label, $name, $key_prefix = true)
     {
-        $this->label = $label;
+        $this->label = __($label);
         $this->name = $name ?? Str::snake(Str::lower($label));
-        $this->key = 'form_data.' . $this->name;
+        $this->key = $key_prefix ? 'form_data.' . $this->name : $this->name;
     }
 
-    public static function make($label, $name = null)
+    public static function make($label, $name = null, $key_prefix = true)
     {
-        return new static($label, $name);
+        return new static($label, $name, $key_prefix);
     }
 
     public function file()
@@ -47,5 +47,10 @@ class Field extends BaseField
     {
         $this->array_sortable = true;
         return $this;
+    }
+
+    public function errorMessage($message)
+    {
+        return str_replace('form data.', '', $message);
     }
 }

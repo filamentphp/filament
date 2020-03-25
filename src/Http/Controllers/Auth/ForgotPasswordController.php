@@ -4,6 +4,7 @@ namespace Filament\Http\Controllers\Auth;
 
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Filament\Http\Controllers\Controller;
+use Filament\Support\Fields\Field;
 
 class ForgotPasswordController extends Controller
 {
@@ -18,6 +19,14 @@ class ForgotPasswordController extends Controller
     {
         $title = __('Reset Password');
 
-        return view('filament::auth.passwords.email', compact('title'));
+        $fields = [
+            Field::make('E-mail Address', 'email', false)
+                ->input('email')
+                ->value('')
+                ->rules(['required'])
+                ->help('<a href="'.route('filament.auth.login').'">&larr; '.__('Back to Login').'</a>'),
+        ];
+
+        return view('filament::auth.passwords.email', compact('title', 'fields'));
     }
 }
