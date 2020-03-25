@@ -37,14 +37,14 @@
     }
 
     &-content {
-      @apply absolute left-0 mt-2 w-48 shadow-lg rounded bg-blue-700 text-white text-center overflow-hidden;
+      @apply absolute left-0 mt-2 w-48 shadow-lg rounded bg-white text-gray-900 text-center overflow-hidden;
 
       button,
       a {
         @apply inline-block w-full px-5 py-2 text-sm leading-5 text-current transition duration-150 ease-in-out;
 
         &:hover {
-          @apply bg-blue-800;
+          @apply bg-gray-50;
         }
 
         & + * {

@@ -4,16 +4,16 @@
     </div>
 
     <div class="col-md">
-        @if(isset($form_data[$field->name]) && $form_data[$field->name])
+        @if (isset($form_data[$field->name]) && $form_data[$field->name])
             <ul class="list-group mb-2">
-                @foreach($form_data[$field->name] as $key => $value)
+                @foreach ($form_data[$field->name] as $key => $value)
                     <div class="list-group-item list-group-item-action p-2">
                         <div class="form-row">
-                            @foreach($field->array_fields as $array_field)
+                            @foreach ($field->array_fields as $array_field)
                                 @include('filament::fields.array-fields.' . $array_field->type)
                             @endforeach
                             <div class="col-md-auto">
-                                @if($field->array_sortable)
+                                @if ($field->array_sortable)
                                     <button class="btn btn-sm btn-primary" wire:click="arrayMoveUp('{{ $field->name }}', '{{ $key }}')">
                                         <i class="fa fa-arrow-up"></i>
                                     </button>

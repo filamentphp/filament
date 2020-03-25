@@ -1,5 +1,5 @@
 <div class="col-md{{ $array_field->column_width ? '-' . $array_field->column_width : '' }} mb-2 mb-md-0">
-    @foreach($array_field->options as $value => $label)
+    @foreach ($array_field->options as $value => $label)
         <div class="form-check">
             <input
                 id="{{ $field->key . '.' . $key . '.' . $array_field->name . '.' . $loop->index }}"

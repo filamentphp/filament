@@ -1,9 +1,11 @@
 @isset($fields)
     @foreach ($fields as $field)
-    @if ($field->view)
-        @include($field->view)
-    @else
-        @include('filament::fields.' . $field->type)
-    @endif
+        @isset ($group)
+            @if ($group === $field->group)
+                @include($field->getView())
+            @endif
+        @else
+            @include($field->getView())
+        @endisset
     @endforeach
 @endisset

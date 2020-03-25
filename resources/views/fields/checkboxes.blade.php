@@ -4,7 +4,7 @@
     </div>
 
     <div class="col-md">
-        @foreach($field->options as $value => $label)
+        @foreach ($field->options as $value => $label)
             <div class="form-check">
                 <input
                     id="{{ $field->name . '.' . $loop->index }}"

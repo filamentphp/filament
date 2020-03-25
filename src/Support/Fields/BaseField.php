@@ -9,6 +9,7 @@ class BaseField
     protected $name;
     protected $type;
     protected $value;
+    protected $group;
     protected $input_type;
     protected $textarea_rows;
     protected $options;
@@ -83,6 +84,12 @@ class BaseField
         return $this;
     }
 
+    public function group($group)
+    {
+        $this->group = $group;
+        return $this;
+    }
+
     public function autocomplete($autocomplete)
     {
         $this->autocomplete = $autocomplete;
@@ -112,5 +119,10 @@ class BaseField
     {
         $this->view = $view;
         return $this;
+    }
+
+    public function getView()
+    {
+        return $this->view ?? 'filament::fields.' . $this->type;
     }
 }

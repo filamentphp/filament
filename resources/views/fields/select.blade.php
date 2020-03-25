@@ -11,7 +11,7 @@
 
             <option value="">{{ $field->placeholder }}</option>
 
-            @foreach($field->options as $value => $label)
+            @foreach ($field->options as $value => $label)
                 <option value="{{ $value }}">{{ $label }}</option>
             @endforeach
         </select>

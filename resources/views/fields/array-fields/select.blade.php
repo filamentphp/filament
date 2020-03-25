@@ -5,7 +5,7 @@
 
         <option value="">{{ $array_field->placeholder }}</option>
 
-        @foreach($array_field->options as $value => $label)
+        @foreach ($array_field->options as $value => $label)
             <option value="{{ $value }}">{{ $label }}</option>
         @endforeach
     </select>

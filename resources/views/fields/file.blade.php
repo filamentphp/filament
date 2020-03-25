@@ -16,9 +16,9 @@
             </label>
         </div>
 
-        @if($form_data[$field->name])
+        @if ($form_data[$field->name])
             <ul class="list-group mt-2">
-                @foreach($form_data[$field->name] as $key => $value)
+                @foreach ($form_data[$field->name] as $key => $value)
                     <li class="list-group-item p-2">
                         <div class="row align-items-center">
                             <div class="col">

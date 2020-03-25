@@ -8,34 +8,49 @@ use Filament\Support\Fields\ArrayField;
 use Filament\Support\Fields\Field;
 use Spatie\Permission\Contracts\Role as RoleContract;
 
-class UserAccountEdit extends FormComponent
+class UserEdit extends FormComponent
 {
     public function fields()
     {
         return [
-            Field::make('Name')->input()->rules(['required', 'string', 'max:255']),
-            Field::make('Email')->input('email')->rules([
-                'required', 
-                'string', 
-                'email', 
-                'max:255', 
-                Rule::unique('users', 'email')->ignore($this->model->id),
-            ]),
+            Field::make('Name')
+                ->input()
+                ->rules(['required', 'string', 'max:255'])
+                ->group('account'),
+            Field::make('Email')
+                ->input('email')
+                ->rules([
+                    'required', 
+                    'string', 
+                    'email', 
+                    'max:255', 
+                    Rule::unique('users', 'email')->ignore($this->model->id),
+                ])
+                ->group('account'),
             Field::make('Password')
                 ->input('password')
                 ->rules(['sometimes', 'confirmed'])
-                ->help('Leave blank to keep current password.'),
+                ->help('Leave blank to keep current password.')
+                ->group('account'),
             Field::make('Confirm Password', 'password_confirmation')
-                ->input('password'),
+                ->input('password')
+                ->group('account'),
+            Field::make('filament::permissions.super_admin', 'is_super_admin')
+                ->checkbox()
+                ->group('permissions'),
         ];
+    }
+
+    public function rulesIgnoreRealtime()
+    {
+        return ['confirmed'];
     }
 
     public function success()
     {
         $input = collect($this->form_data);
 
-        // if password is left blank then remove from input to update
-        if (!$input->get('password')) {
+        if (is_null($input->get('password'))) {
             $input->forget('password');
         }
         
@@ -62,5 +77,13 @@ class UserAccountEdit extends FormComponent
     {
         $roleClass = app(RoleContract::class);
         return $roleClass::all();
+    }
+
+    public function render()
+    {
+        return view('filament::livewire.user-edit', [
+            'fields' => $this->fields(),
+            'user' => $this->model,
+        ]);
     }
 }

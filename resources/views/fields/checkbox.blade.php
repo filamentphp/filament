@@ -1,21 +1,17 @@
-<div class="form-group row">
-    <div class="col-md-2 col-form-label text-md-right py-md-0">
-        {{ $field->placeholder ? $field->label : '' }}
-    </div>
-
-    <div class="col-md">
-        <div class="form-check">
-            <input
-                id="{{ $field->name }}"
-                type="checkbox"
-                class="form-check-input @error($field->key) is-invalid @enderror"
-                wire:model.lazy="{{ $field->key }}">
-
-            <label class="form-check-label" for="{{ $field->name }}">
-                {{ $field->placeholder ?? $field->label }}
-            </label>
-        </div>
-
-        @include('filament::fields.error-help')
-    </div>
+<div class="mb-5">
+    <label class="inline-flex items-center">
+        <input
+            id="{{ $field->name }}"
+            type="checkbox"
+            class="form-checkbox h-4 w-4 transition duration-150 ease-in-out 
+                @error($field->key) 
+                    text-red-500 
+                @else 
+                    text-blue-500 
+                @enderror
+            "
+            wire:model.lazy="{{ $field->key }}">
+        <span class="ml-2 text-sm leading-5 text-gray-700">{{ __($field->placeholder ?? $field->label) }}</span>
+    </label>
+    @include('filament::fields.error-help')
 </div>

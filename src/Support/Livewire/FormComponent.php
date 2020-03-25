@@ -40,18 +40,6 @@ class FormComponent extends Component
         }
     }
 
-    public function render()
-    {
-        return $this->formView();
-    }
-
-    public function formView()
-    {
-        return view('filament::form', [
-            'fields' => $this->fields(),
-        ]);
-    }
-
     public function fields()
     {
         return [];
