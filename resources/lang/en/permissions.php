@@ -14,6 +14,8 @@ return [
 
     'super_admin' => 'Super admin',
     
-    'super_admin_info' => 'Super admins have access to all of :name.',
+    'super_admin_info' => 'Super admins supersede all assigned permissions below.',
+
+    'roles' => 'Roles',
 
 ];

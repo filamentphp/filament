@@ -36,6 +36,9 @@ class LoginController extends Controller
                 ->input('password')
                 ->rules(['required'])
                 ->help('<a href="'.route('filament.auth.password.forgot').'">'.__('Forgot Your Password?').'</a>'),
+            Field::make('Remember me', 'remember')
+                ->checkbox()
+                ->value(1),
         ];
 
         return view('filament::auth.login', compact('title', 'fields'));

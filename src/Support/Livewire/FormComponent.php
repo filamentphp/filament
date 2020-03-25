@@ -23,14 +23,16 @@ class FormComponent extends Component
 
     public function mount($model = null, $goback = null)
     {
-        $this->goback = $goback;
         $this->setFormProperties($model);
+        $this->goback = $goback;
     }
 
     public function setFormProperties($model = null)
     {
         $this->model = $model;
-        if ($model) $this->form_data = $model->toArray();
+        if ($model) {
+            $this->form_data = $model->toArray();
+        }
 
         foreach ($this->fields() as $field) {
             if (!isset($this->form_data[$field->name])) {

@@ -37,6 +37,11 @@ class UserEdit extends FormComponent
                 ->group('account'),
             Field::make('filament::permissions.super_admin', 'is_super_admin')
                 ->checkbox()
+                ->help(__('filament::permissions.super_admin_info'))
+                ->group('permissions'),
+            Field::make('filament::permissions.roles', 'roles')
+                ->checkboxes($this->roles->pluck('id', 'name')->all())
+                ->default($this->model->roles->pluck('id')->all())
                 ->group('permissions'),
         ];
     }
@@ -55,6 +60,7 @@ class UserEdit extends FormComponent
         }
         
         $this->model->update($input->all());
+        $this->model->syncRoles($this->getRoleIds($input->get('roles')));
 
         $this->emit('notification.notify', [
             'type' => 'success',
@@ -68,6 +74,12 @@ class UserEdit extends FormComponent
         }
     }
 
+    public function getRoleIds(array $roles)
+    {
+        $roleInput = array_filter($roles);
+        return $this->roles->intersectByKeys($roleInput)->pluck('id')->toArray();
+    }
+
     public function saveAndGoBackResponse()
     {
         return redirect()->route('filament.admin.users.index');
@@ -76,11 +88,13 @@ class UserEdit extends FormComponent
     public function getRolesProperty()
     {
         $roleClass = app(RoleContract::class);
-        return $roleClass::all();
+        return $roleClass::orderBy('name')->get();
     }
 
     public function render()
     {
+        // dd($this->fields());
+        
         return view('filament::livewire.user-edit', [
             'fields' => $this->fields(),
             'user' => $this->model,

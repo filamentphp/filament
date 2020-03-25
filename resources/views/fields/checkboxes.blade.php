@@ -1,24 +1,23 @@
-<div class="form-group row">
-    <div class="col-md-2 col-form-label text-md-right py-md-0">
+<fieldset class="mb-5">
+    <legend class="text-sm font-medium leading-5 text-gray-700 mb-1">
         {{ $field->label }}
-    </div>
-
-    <div class="col-md">
-        @foreach ($field->options as $value => $label)
-            <div class="form-check">
-                <input
-                    id="{{ $field->name . '.' . $loop->index }}"
-                    type="checkbox"
-                    class="form-check-input @error($field->key) is-invalid @enderror"
-                    value="{{ $value }}"
-                    wire:model.lazy="{{ $field->key }}">
-
-                <label class="form-check-label" for="{{ $field->name . '.' . $loop->index }}">
-                    {{ $label }}
-                </label>
-            </div>
-        @endforeach
-
-        @include('filament::fields.error-help')
-    </div>
-</div>
+    </legend>
+    @foreach ($field->options as $value => $label)
+        <label class="flex items-center mb-1">
+            <input
+                type="checkbox"
+                class="form-checkbox h-4 w-4 transition duration-150 ease-in-out 
+                    @error($field->key) 
+                        text-red-500 
+                    @else 
+                        text-blue-500 
+                    @enderror
+                "
+                value="{{ $value }}"
+                wire:model.lazy="{{ $field->key }}.{{ $loop->index }}"
+            >
+            <span class="ml-2 text-sm leading-5 text-gray-700">{{ __($label) }}</span>
+        </label>
+    @endforeach
+    @include('filament::fields.error-help')
+</fieldset>

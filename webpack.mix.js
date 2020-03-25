@@ -7,7 +7,7 @@ const purgecss = require('@fullhuman/postcss-purgecss')({
     './resources/views/**/*.php',
     './resources/js/**/*.js',
   ],
-  defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [],
+  defaultExtractor: content => content.match(/[\w-/.:]+(?<!:)/g) || [],
   whitelistPatterns: [/alert/],
 })
 
