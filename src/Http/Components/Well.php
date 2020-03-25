@@ -15,7 +15,7 @@ class Well extends Component
     {
         return <<<'blade'
             <div {{ $attributes->merge(['class' => 'border border-gray-200 bg-gray-50 overflow-hidden rounded']) }}>
-                <div class="px-4 py-5 sm:p-6">
+                <div class="p-5">
                     {{ $slot }}
                 </div>      
             </div>

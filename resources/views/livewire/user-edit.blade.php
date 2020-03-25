@@ -25,15 +25,22 @@
                     </x-slot>
                 </x-filament-input-group>
             
-                @if (count($roles) && !$is_super_admin)
-                    <fieldset>
-                        <legend>Roles</legend>
+                @if (count($this->roles) && !$is_super_admin)
+                    <fieldset class="mb-2">
+                        <legend class="mb-2">Roles</legend>
                         <ol>
-                            @foreach($roles as $role)
-                                <li>{{ $role->name }}</li>
+                            @foreach($this->roles as $role)
+                                <li>
+                                    <x-filament-checkbox 
+                                        name="user_roles" 
+                                        :label="ucfirst($role->name)" 
+                                        :wire:model="'user_roles.'.$loop->index"
+                                    />
+                                </li>
                             @endforeach
                         </ol>
                     </fieldset>
+                    <pre class="mb-4">{{ var_dump($user_roles) }}</pre>
                 @endif
 
             </x-filament-tab>
@@ -46,7 +53,7 @@
 
     <x-filament-well class="md:col-span-2">
 
-        <dl class="grid grid-cols-2 gap-2 text-xs leading-tight">
+        <dl class="grid grid-cols-2 gap-2 md:gap-3 text-xs leading-tight">
 
             <dt class="text-gray-400">{{ __('filament::admin.created_at') }}</dt>
             <dd class="text-right">{{ $user->created_at->fromNow() }}</dd>

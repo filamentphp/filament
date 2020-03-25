@@ -15,6 +15,7 @@ use Filament\Contracts\User as UserContract;
 use Filament\Traits\EventMap;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Commands\CreateUserCommand;
+use Filament\Commands\MakeForm;
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -106,6 +107,7 @@ class FilamentServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CreateUserCommand::class,
+                MakeForm::class,
             ]);
         }
     }

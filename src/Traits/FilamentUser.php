@@ -5,9 +5,13 @@ namespace Filament\Traits;
 use Filament\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Hash;
 use Thomaswelton\LaravelGravatar\Facades\Gravatar;
+use Spatie\Permission\Traits\HasRoles;
+use Filament\Traits\FillsColumns;
 
 trait FilamentUser 
-{    
+{
+    use HasRoles, FillsColumns;
+        
     /**
      * Initialize the trait.
      * 
@@ -15,14 +19,8 @@ trait FilamentUser
      */
     public function initializeFilamentUser()
     {
-        $this->mergeFillable([
-            'is_super_admin', 
-            'avatar', 
-            'last_login_at',
-            'last_login_ip',
-        ]);
-
         $this->mergeCasts([
+            'avatar' => 'array',
             'is_super_admin' => 'boolean',
             'last_login_at' => 'datetime',
         ]);
@@ -59,15 +57,5 @@ trait FilamentUser
     public function setPasswordAttribute($pass)
     {
         $this->attributes['password'] = Hash::make($pass);
-    }
-
-    /**
-     * Merge fillable attributes.
-     * 
-     * @return void
-     */
-    protected function mergeFillable(array $fillable)
-    {
-        $this->fillable(collect($this->fillable)->merge($fillable)->all());
     }
 }

@@ -140,7 +140,7 @@ return [
     |
     */
 
-    'storage_disk' => env('FILAMENT_STORAGE_DISK', 'local'),
-    'storage_path' => env('FILAMENT_STORAGE_PATH', 'public/filament'),
+    'storage_disk' => env('FILAMENT_STORAGE_DISK', 'public'),
+    'storage_path' => env('FILAMENT_STORAGE_PATH', 'uploads'),
     
 ];

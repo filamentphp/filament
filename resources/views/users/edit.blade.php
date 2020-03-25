@@ -3,5 +3,8 @@
 @section('title', $title)
 
 @section('main')
-    @livewire('filament::user-edit', ['user' => $user])
+    @livewire('filament::user-edit', [
+        'model' => $user, 
+        'goback' => 'alpine.admin.users.index'
+    ])
 @endsection
