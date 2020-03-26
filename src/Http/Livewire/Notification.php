@@ -11,8 +11,8 @@ class Notification extends Component
     public $notificationVisible = false;
 
     protected $listeners = [
-        'notification.close' => 'close',
-        'notification.notify' => 'notify',
+        'filament.notification.close' => 'close',
+        'filament.notification.notify' => 'notify',
     ];
 
     public function close()

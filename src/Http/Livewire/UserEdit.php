@@ -62,15 +62,15 @@ class UserEdit extends FormComponent
         $this->model->update($input->all());
         $this->model->syncRoles($this->getRoleIds($input->get('roles')));
 
-        $this->emit('notification.notify', [
+        $this->emit('filament.notification.notify', [
             'type' => 'success',
             'message' => __('filament::user.updated', ['name' => $this->model->name]),
         ]);
 
-        $this->emit('userUpdated', $this->model->id);
+        $this->emit('filament.userUpdated', $this->model->id);
 
         if (auth()->user()->id === $this->model->id) {
-            $this->emit('authUserUpdated');
+            $this->emit('filament.authUserUpdated');
         }
     }
 

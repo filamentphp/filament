@@ -19,7 +19,7 @@ class FormComponent extends Component
     private static $storage_disk;
     private static $storage_path;
 
-    protected $listeners = ['fileUpdate'];
+    protected $listeners = ['filament.fileUpdate'];
 
     public function mount($model = null, $goback = null)
     {
@@ -67,7 +67,7 @@ class FormComponent extends Component
 
     public function success()
     {
-        $this->emit('notification.notify', [
+        $this->emit('filament.notification.notify', [
             'type' => 'success',
             'message' => __('Success!'),
         ]);
@@ -75,7 +75,7 @@ class FormComponent extends Component
 
     public function save()
     {
-        $this->emit('notification.close');
+        $this->emit('filament.notification.close');
         $this->submit();
     }
 

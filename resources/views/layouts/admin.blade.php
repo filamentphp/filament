@@ -91,7 +91,7 @@
                         }
                         return Promise.reject(response);
                     }).then(function (data) {
-                        window.livewire.emit('fileUpdate', data.field_name, data.uploaded_files);
+                        window.livewire.emit('filament.fileUpdate', data.field_name, data.uploaded_files);
                     }).catch(function (error) {
                         console.warn('File upload error', error);
                     });

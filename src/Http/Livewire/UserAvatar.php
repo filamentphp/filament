@@ -11,7 +11,7 @@ class UserAvatar extends Component
     public $size;
     public $classes;
 
-    protected $listeners = ['userUpdated' => 'render'];
+    protected $listeners = ['filament.userUpdated' => 'render'];
 
     public function mount(int $userId, int $size, string $classes = '')
     {
