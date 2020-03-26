@@ -14,7 +14,7 @@ return [
 
     'super_admin' => 'Super admin',
     
-    'super_admin_info' => 'Super admins supersede all assigned permissions below.',
+    'super_admin_info' => 'Super admins supersede all assigned roles and permissions.',
 
     'roles' => 'Roles',
 

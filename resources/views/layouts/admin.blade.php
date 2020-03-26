@@ -13,8 +13,8 @@
                 </div>
                 <div class="h-0 flex-1 overflow-y-auto pt-5 pb-4">
                     <div class="flex-shrink-0 flex items-center px-4">
-                        @include('filament::partials.logo', ['classes' => 'h-8 w-auto rounded-full mr-4'])
-                        <h2 class="text-xl leading-5 font-bold text-gray-200">
+                        @include('filament::partials.logo', ['classes' => 'h-8 w-auto rounded-full mr-3'])
+                        <h2 class="text-lg leading-5 font-medium text-gray-200">
                             {{ config('app.name') }}
                         </h2>
                     </div>
@@ -30,8 +30,8 @@
             <div class="flex flex-col w-64 bg-gray-800">
                 <div class="h-0 flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
                     <div class="flex items-center flex-shrink-0 px-4">
-                        @include('filament::partials.logo', ['classes' => 'h-8 w-auto rounded-full mr-4'])
-                        <h2 class="text-xl leading-5 font-bold text-gray-200">
+                        @include('filament::partials.logo', ['classes' => 'h-8 w-auto rounded-full mr-3'])
+                        <h2 class="text-lg leading-5 font-medium text-gray-200">
                             {{ config('app.name') }}
                         </h2>
                     </div>
