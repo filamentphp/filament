@@ -21,6 +21,7 @@ class MakeForm extends Command
         $stub = str_replace('DummyClass', lcFirst($this->option('model')).'Class', $stub);
         $stub = str_replace('DummyContract', $this->option('model').'Contract', $stub);
         $stub = str_replace('DummyRoute', Str::slug(Str::plural($this->option('model'))), $stub);
+        $stub = str_replace('DummyView', Str::kebab($this->argument('name')), $stub);
 
         $path = __DIR__ . '/../Http/Livewire/' . $this->argument('name') . '.php';
 

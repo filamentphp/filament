@@ -12,8 +12,13 @@ class DummyComponent extends FormComponent
     public function fields()
     {
         return [
-            Field::make('Name')->input()->rules('required'),
+            // Field::make('Name')->input()->rules('required'),
         ];
+    }
+
+    public function rulesIgnoreRealtime()
+    {
+        return []; // ['confirmed'];
     }
 
     public function success()
@@ -25,5 +30,10 @@ class DummyComponent extends FormComponent
     public function saveAndGoBackResponse()
     {
         return redirect()->route('filament.admin.DummyRoute.index');
+    }
+
+    public function render()
+    {        
+        return view('filament::livewire.DummyView');
     }
 }

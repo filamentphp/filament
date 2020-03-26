@@ -74,23 +74,6 @@ class UserEdit extends FormComponent
         }
     }
 
-    public function getRoleIds(array $roles)
-    {
-        $roleInput = array_filter($roles);
-        return $this->roles->intersectByKeys($roleInput)->pluck('id')->toArray();
-    }
-
-    public function saveAndGoBackResponse()
-    {
-        return redirect()->route('filament.admin.users.index');
-    }
-
-    public function getRolesProperty()
-    {
-        $roleClass = app(RoleContract::class);
-        return $roleClass::orderBy('name')->get();
-    }
-
     public function render()
     {
         // dd($this->fields());
@@ -99,5 +82,22 @@ class UserEdit extends FormComponent
             'fields' => $this->fields(),
             'user' => $this->model,
         ]);
+    }
+
+    public function saveAndGoBackResponse()
+    {
+        return redirect()->route('filament.admin.users.index');
+    }
+
+    public function getRoleIds(array $roles)
+    {
+        $roleInput = array_filter($roles);
+        return $this->roles->intersectByKeys($roleInput)->pluck('id')->toArray();
+    }
+
+    public function getRolesProperty()
+    {
+        $roleClass = app(RoleContract::class);
+        return $roleClass::orderBy('name')->get();
     }
 }
