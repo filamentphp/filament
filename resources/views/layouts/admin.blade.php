@@ -1,10 +1,10 @@
-@extends('filament::layouts.app', ['classes' => ['body' => '']])
+@extends('filament::layouts.app')
 
 @section('content')
-    <div class="h-screen flex overflow-hidden bg-gray-100" x-data="{ sidebarOpen: false }" @keydown.window.escape="sidebarOpen = false">    
+    <div class="h-screen flex overflow-hidden bg-gray-100 dark:bg-gray-900" x-data="{ sidebarOpen: false }" @keydown.window.escape="sidebarOpen = false">    
         {{-- Off-canvas menu for mobile --}}
         <div class="md:hidden">
-            <div @click="sidebarOpen = false" class="fixed inset-0 z-30 bg-gray-600 opacity-0 pointer-events-none transition-opacity ease-linear duration-300" :class="{'opacity-75 pointer-events-auto': sidebarOpen, 'opacity-0 pointer-events-none': !sidebarOpen}"></div>
+            <div @click="sidebarOpen = false" class="fixed inset-0 z-30 bg-black opacity-0 pointer-events-none transition-opacity ease-linear duration-300" :class="{'opacity-50 pointer-events-auto': sidebarOpen, 'opacity-0 pointer-events-none': !sidebarOpen}"></div>
             <div class="fixed inset-y-0 left-0 flex flex-col z-40 max-w-xs w-full bg-gray-800 transform ease-in-out duration-300 -translate-x-full" :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}">
                 <div class="absolute top-0 right-0 -mr-14 p-1">
                     <button x-show="sidebarOpen" @click="sidebarOpen = false" class="flex items-center justify-center h-12 w-12 rounded-full focus:outline-none focus:bg-gray-600">
@@ -46,8 +46,8 @@
         <div class="flex flex-col w-0 flex-1 overflow-hidden">
             <main id="content" class="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabindex="0">
                 <div class="max-w-7xl mx-auto p-4 sm:px-6 lg:py-6 lg:px-8 flex items-center justify-between">
-                    <h1 class="text-2xl font-semibold text-gray-900">@yield('title')</h1>
-                    <button @click.stop="sidebarOpen = true" class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded text-gray-500 transition ease-in-out duration-150 hover:text-gray-900 focus:outline-none focus:bg-gray-200 md:hidden">
+                    <h1 class="text-2xl font-semibold">@yield('title')</h1>
+                    <button @click.stop="sidebarOpen = true" class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded text-gray-500 dark:text-gray-400 transition ease-in-out duration-150 hover:text-gray-900 dark-hover:text-gray-300 focus:outline-none focus:bg-gray-200 md:hidden">
                         {{ Filament::svg('heroicons/outline-md/md-menu-alt-1', 'h-6 w-6') }}
                     </button>
                 </div>       
@@ -57,46 +57,4 @@
             </main>
         </div>
     </div>
-
 @endsection
-
-@push('scripts')
-    <script data-turbolinks-eval="false">
-        /*
-         * Code is modified from kdion4891 and inspired by Pastor Ryan Hayden
-         * https://github.com/livewire/livewire/issues/106
-         * https://github.com/kdion4891/laravel-livewire-forms/blob/master/resources/views/form.blade.php
-         * Thank you, gentlemen!
-         */
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('input[type="file"]').forEach(file => {
-                file.addEventListener('input', event => {
-                    let form_data = new FormData();
-                    form_data.append('component', @json(get_class($this)));
-                    form_data.append('field_name', file.id);
-
-                    for (let i = 0; i < event.target.files.length; i++) {
-                        form_data.append('files[]', event.target.files[i]);
-                    }
-
-                    fetch('{{ route('filament.admin.file-upload') }}', {
-                        method: 'POST',
-                        body: form_data,
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }).then(function (response) {
-                        if (response.ok) {
-                            return response.json();
-                        }
-                        return Promise.reject(response);
-                    }).then(function (data) {
-                        window.livewire.emit('filament.fileUpdate', data.field_name, data.uploaded_files);
-                    }).catch(function (error) {
-                        console.warn('File upload error', error);
-                    });
-                })
-            });
-        });
-    </script>
-@endpush

@@ -11,7 +11,7 @@
     @filamentAssets
     @stack('head')
 </head>
-<body class="font-sans antialiased text-gray-900 
+<body class="font-sans antialiased text-gray-900 dark:text-gray-50
     @isset($classes['body']) 
         {{ $classes['body'] }}
     @endisset

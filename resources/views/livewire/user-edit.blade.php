@@ -51,3 +51,7 @@
     </x-filament-well>
 
 </div>
+
+@push('scripts')
+    @include('filament::partials.file-upload')
+@endpush

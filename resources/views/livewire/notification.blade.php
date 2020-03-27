@@ -8,7 +8,7 @@
         x-transition:leave="transition ease-in duration-100" 
         x-transition:leave-start="opacity-100" 
         x-transition:leave-end="opacity-0"
-        class="max-w-sm w-full pointer-events-auto shadow-lg rounded bg-gray-800 text-white p-4 flex items-start"
+        class="max-w-sm w-full pointer-events-auto shadow-lg rounded bg-gray-800 dark:bg-black text-gray-50 p-4 flex items-start"
         role="alert"
     >
         <div class="flex-shrink-0">
