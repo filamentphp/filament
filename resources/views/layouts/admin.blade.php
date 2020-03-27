@@ -51,7 +51,7 @@
                     </div>
                     <div class="flex-shrink-0 flex items-center">
                         @include('filament::partials.dark-mode-toggle')
-                        <div class="flex">
+                        <div class="ml-2 flex">
                             <button @click.stop="sidebarOpen = true" class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded text-gray-500 dark:text-gray-400 transition ease-in-out duration-150 hover:text-gray-900 dark-hover:text-gray-300 focus:outline-none focus:bg-gray-200 md:hidden">
                                 {{ Filament::svg('heroicons/outline-md/md-menu-alt-1', 'h-6 w-6') }}
                             </button>
