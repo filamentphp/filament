@@ -2,7 +2,7 @@
   @apply my-4 px-3 py-2 rounded text-gray-500 border border-current text-sm leading-5;
 
   &-info {
-    @apply text-blue-500;
+    @apply text-indigo-500;
   }
 
   &-success {

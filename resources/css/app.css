@@ -2,6 +2,7 @@
 @import './_base.css';
 
 @import 'tailwindcss/components';
+@import './components/_dropdown.css';
 @import './components/_alerts.css';
 @import './components/_buttons.css';
 

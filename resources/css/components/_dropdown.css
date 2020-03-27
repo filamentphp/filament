@@ -1,0 +1,28 @@
+.dropdown {
+  @apply shadow rounded bg-white text-sm leading-5 text-gray-900 overflow-hidden;
+
+  .mode-dark & {
+    @apply text-white bg-black;
+  }
+
+  > * + * {
+    @apply border-t border-gray-200;
+
+    .mode-dark & {
+      @apply border-gray-900;
+    }
+  }
+
+  button,
+  a {
+    @apply inline-block w-full px-5 py-2 text-left transition duration-150 ease-in-out;
+
+    &:hover {
+      @apply bg-gray-50;
+
+      .mode-dark & {
+        @apply bg-gray-700;
+      }
+    }
+  }
+}

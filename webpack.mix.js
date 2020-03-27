@@ -6,7 +6,6 @@ const purgecss = require('@fullhuman/postcss-purgecss')({
     './src/**/*.php',
     './resources/views/**/*.php',
     './resources/js/**/*.js',
-    './node_modules/tailwindcss-dark-mode/prefers-dark.js',
   ],
   defaultExtractor: (content) => content.match(/[\w-/.:]+(?<!:)/g) || [],
   whitelistPatterns: [/alert/],

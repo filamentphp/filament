@@ -18,5 +18,5 @@
  */
 
 .turbolinks-progress-bar {
-  @apply h-1 bg-blue-500;
+  @apply h-1 bg-indigo-500;
 }

@@ -1,8 +1,8 @@
 .btn {
-  @apply flex justify-center py-2 px-5 text-sm leading-tight font-medium rounded shadow text-white bg-blue-700 transition duration-150 ease-in-out;
+  @apply flex justify-center py-3 px-5 text-sm leading-tight font-medium rounded shadow text-white bg-indigo-700 transition duration-150 ease-in-out;
 
   &:not(.btn-with-dropdown):hover {
-    @apply bg-blue-800;
+    @apply bg-indigo-800;
   }
 
   &:focus {
@@ -10,7 +10,7 @@
   }
 
   &:active {
-    @apply bg-blue-800;
+    @apply bg-indigo-800;
   }
 
   &[disabled] {
@@ -25,7 +25,7 @@
     @apply px-5 py-2 rounded-l transition duration-150 ease-in-out;
 
     &:hover {
-      @apply bg-blue-800;
+      @apply bg-indigo-800;
     }
   }
 
@@ -33,24 +33,11 @@
     @apply relative;
 
     &-actions {
-      @apply p-2 bg-blue-600 rounded-r transition duration-150 ease-in-out;
+      @apply p-2 bg-indigo-600 rounded-r transition duration-150 ease-in-out;
     }
 
     &-content {
-      @apply absolute left-0 mt-2 w-48 shadow-lg rounded bg-white text-gray-900 text-center overflow-hidden;
-
-      button,
-      a {
-        @apply inline-block w-full px-5 py-2 text-sm leading-5 text-current transition duration-150 ease-in-out;
-
-        &:hover {
-          @apply bg-gray-50;
-        }
-
-        & + * {
-          @apply border-t border-gray-100;
-        }
-      }
+      @apply absolute left-0 mt-2 w-48;
     }
   }
 }
