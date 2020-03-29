@@ -18,7 +18,7 @@
                             {{ config('app.name') }}
                         </h2>
                     </div>
-                    @includeWhen(config('filament.nav.admin'), 'filament::partials.nav', ['nav' => config('filament.nav.admin')])
+                    @include('filament::partials.nav', ['nav' => config('filament.nav.admin')])
                 </div>
                 <div class="flex-shrink-0 flex bg-gray-700 p-4">
                     @include('filament::partials.user-actions')
@@ -35,7 +35,7 @@
                             {{ config('app.name') }}
                         </h2>
                     </div>
-                    @includeWhen(config('filament.nav.admin'), 'filament::partials.nav', ['nav' => config('filament.nav.admin')])
+                    @include('filament::partials.nav', ['nav' => config('filament.nav.admin')])
                 </div>
                 <div class="flex-shrink-0 flex bg-gray-700 p-4">
                     @include('filament::partials.user-actions')

@@ -216,7 +216,9 @@ class FilamentServiceProvider extends ServiceProvider
     public function registerBlade()
     {
         // Register package directives
-        Blade::directive('filamentAssets', [BladeDirectives::class, 'filamentAssets']);
+        Blade::directive('filamentAssets', [BladeDirectives::class, 'assets']);
+        Blade::directive('pushonce', [BladeDirectives::class, 'pushOnce']);
+        Blade::directive('endpushonce', [BladeDirectives::class, 'endPushOnce']);
 
         // Automatically register package components
         foreach (File::glob(__DIR__.'/Http/Components/*.php') as $path) {

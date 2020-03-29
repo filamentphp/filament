@@ -1,13 +1,15 @@
-<div @click.away="open = false" class="relative" x-data="{ open: false }">
-    <button @click="open = !open" class="flex items-center">
-        @livewire('filament::user-avatar', [
-            'userId' => auth()->user()->id, 
-            'size' => 36, 
-            'classes' => 'h-9 w-9 rounded-full',
-        ])
+<div @click.away="open = false" class="flex-grow relative" x-data="{ open: false }">
+    <button @click="open = !open" class="w-full text-left flex items-center">
+        <div class="flex-shrink-0">
+            @livewire('filament::user-avatar', [
+                'userId' => auth()->user()->id, 
+                'size' => 36, 
+                'classes' => 'h-9 w-9 rounded-full',
+            ])
+        </div>
         @livewire('filament::auth-user-attribute', [
             'attribute' => 'name', 
-            'classes' => 'ml-3 text-sm leading-5 font-medium text-white',
+            'classes' => 'flex-grow ml-3 text-sm leading-5 font-medium text-white',
         ])
     </button>
     <div x-show="open" 

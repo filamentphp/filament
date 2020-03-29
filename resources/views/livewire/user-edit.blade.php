@@ -18,9 +18,7 @@
 
             <x-filament-button label="Save">
                 @if ($goback)
-                    <x-slot name="dropdown">
-                        <button wire:click.prevent="saveAndGoBack">{{ __('Save & Go Back') }}</button>
-                    </x-slot>
+                    <button wire:click.prevent="saveAndGoBack">{{ __('Save & Go Back') }}</button>
                 @endif
             </x-filament-button>
 
@@ -51,7 +49,3 @@
     </x-filament-well>
 
 </div>
-
-@push('scripts')
-    @include('filament::partials.file-upload')
-@endpush

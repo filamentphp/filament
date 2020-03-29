@@ -9,3 +9,7 @@
         @endisset
     @endforeach
 @endisset
+
+@pushonce('scripts')
+    @include('filament::partials.file-upload')
+@endpushonce
