@@ -1,14 +1,12 @@
-@isset($fields)
-    @foreach ($fields as $field)
-        @isset ($group)
-            @if ($group === $field->group)
-                @include($field->getView())
-            @endif
-        @else
+@foreach ($fields as $field)
+    @if ($group)
+        @if ($group === $field->group)
             @include($field->getView())
-        @endisset
-    @endforeach
-@endisset
+        @endif
+    @else
+        @include($field->getView())
+    @endisset
+@endforeach
 
 @auth
     @pushonce('scripts')

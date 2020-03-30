@@ -7,46 +7,57 @@ use Illuminate\View\Component;
 class Checkbox extends Component
 {
     /**
-     * The input type.
+     * Input type.
      *
      * @var string
      */
     public $type;
 
     /**
-     * The input name.
+     * Input name.
      *
      * @var string
      */
     public $name;
 
     /**
-     * The input label.
+     * Input label.
      *
      * @var string
      */
     public $label;
 
     /**
-     * The input status.
+     * Input value.
      *
-     * @var boolean
+     * @var string
      */
-    public $checked;
+    public $value;
+
+    /**
+     * Input model.
+     *
+     * @var string
+     */
+    public $model;
 
     /**
      * Create the component instance.
      *
      * @param  string  $type
      * @param  string  $name
+     * @param  string  $label
+     * @param  string  $value
+     * @param  string  $model
      * @return void
      */
-    public function __construct($type = 'checkbox', $name, $label, $checked = false)
+    public function __construct($type = 'checkbox', $name, $label = null, $value = null, $model = null)
     {
         $this->type = $type;
         $this->name = $name;
-        $this->label = $label;
-        $this->checked = (bool) old($name, $checked);
+        $this->label = $label ?? $name;
+        $this->value = $value;
+        $this->model = $model;
     }
 
     /**

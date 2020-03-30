@@ -8,7 +8,7 @@
 
         <input type="hidden" name="token" value="{{ $token }}" required />
 
-        @include('filament::partials.fields', ['fields' => $fields])
+        <x-filament-fields :fields="$fields" />
 
         <x-filament-button label="Reset Password" class="w-full" />
 

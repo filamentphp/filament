@@ -6,13 +6,13 @@
 
             <x-filament-tab id="account">
 
-                @include('filament::partials.fields', ['fields' => $fields, 'group' => 'account'])
+                <x-filament-fields :fields="$fields" group="account" />
 
             </x-filament-tab>
         
             <x-filament-tab id="permissions">
                 
-                @include('filament::partials.fields', ['fields' => $fields, 'group' => 'permissions'])
+                <x-filament-fields :fields="$fields" group="permissions" />
 
             </x-filament-tab>
 

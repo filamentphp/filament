@@ -8,7 +8,7 @@
 
         <x-filament-alert type="success" :message="session('status')" />
 
-        @include('filament::partials.fields', ['fields' => $fields])
+        <x-filament-fields :fields="$fields" />
 
         <x-filament-button label="Send Password Reset Link" class="w-full" />
 
