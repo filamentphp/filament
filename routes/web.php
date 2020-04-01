@@ -48,7 +48,7 @@ Route::name('admin.')->middleware('auth.filament')->group(function () {
     ]);
 
     Route::post('file-upload', function () {
-        return call_user_func([request()->input('component'), 'fileUpload']);
+        return call_user_func(request()->input('component').'::fileUpload');
     })->name('file-upload');
 
 });

@@ -4,7 +4,6 @@ namespace Filament\Http\Livewire;
 
 use Illuminate\Validation\Rule;
 use Filament\Support\Livewire\FormComponent;
-use Filament\Support\Fields\ArrayField;
 use Filament\Support\Fields\Field;
 use Spatie\Permission\Contracts\Role as RoleContract;
 
@@ -16,6 +15,9 @@ class UserEdit extends FormComponent
             Field::make('Name')
                 ->input()
                 ->rules(['required', 'string', 'max:255'])
+                ->group('account'),
+            Field::make('Avatar')
+                ->file()
                 ->group('account'),
             Field::make('Email')
                 ->input('email')
@@ -29,11 +31,13 @@ class UserEdit extends FormComponent
                 ->group('account'),
             Field::make('Password')
                 ->input('password')
+                ->autocomplete('new-password')
                 ->rules(['sometimes', 'confirmed'])
                 ->help('Leave blank to keep current password.')
                 ->group('account'),
             Field::make('Confirm Password', 'password_confirmation')
                 ->input('password')
+                ->autocomplete('new-password')
                 ->group('account'),
             Field::make('filament::permissions.super_admin', 'is_super_admin')
                 ->checkbox()
@@ -75,9 +79,7 @@ class UserEdit extends FormComponent
     }
 
     public function render()
-    {
-        // dd($this->fields());
-        
+    {        
         return view('filament::livewire.user-edit', [
             'fields' => $this->fields(),
             'user' => $this->model,

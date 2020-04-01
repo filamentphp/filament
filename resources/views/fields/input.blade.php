@@ -1,6 +1,6 @@
 <div class="mb-5">
     @if ($field->label)
-        <label for="{{ $field->name }}" class="block mb-2 text-sm font-medium leading-5 text-gray-700 dark:text-gray-50">
+        <label for="input-{{ $field->name }}" class="block mb-2 text-sm font-medium leading-5 text-gray-700 dark:text-gray-50">
             {{ __($field->label) }}
             @if ($field->required)
                 <sup class="text-red-600">*</sup>
@@ -12,7 +12,7 @@
         <input
             type="{{ $field->input_type }}"
             name="{{ $field->name }}"
-            id="{{ $field->name }}"
+            id="input-{{ $field->name }}"
             class="form-input dark:text-gray-50 dark:bg-gray-900 dark:border-gray-700 block w-full sm:text-sm sm:leading-5 
                 @error($field->key)
                     pr-10 border-red-300 dark:border-red-500 text-red-900 placeholder-red-500 dark:placeholder-red-500 focus:border-red-500 dark-focus:border-red-500 focus:shadow-outline-red dark-focus:shadow-outline-red

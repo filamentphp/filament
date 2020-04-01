@@ -1,21 +1,24 @@
-<div class="form-group row">
-    <label for="{{ $field->name }}" class="col-md-2 col-form-label text-md-right">
-        {{ $field->label }}
-    </label>
-
-    <div class="col-md">
+<div class="mb-5">
+    @if ($field->label)
+        <label for="input-{{ $field->name }}" class="block mb-2 text-sm font-medium leading-5 text-gray-700 dark:text-gray-50">
+            {{ __($field->label) }}
+            @if ($field->required)
+                <sup class="text-red-600">*</sup>
+                <span class="sr-only">(required)</span>
+            @endif
+        </label>
+    @endif
+    <div class="relative mb-2">
         <select
-            id="{{ $field->name }}"
-            class="custom-select @error($field->key) is-invalid @enderror"
+            id="input-{{ $field->name }}"
             wire:model.lazy="{{ $field->key }}">
-
-            <option value="">{{ $field->placeholder }}</option>
-
+            @if ($field->placeholder)
+                <option value="">{{ $field->placeholder }}</option>
+            @endif
             @foreach ($field->options as $value => $label)
                 <option value="{{ $value }}">{{ $label }}</option>
             @endforeach
         </select>
-
-        @include('filament::fields.error-help')
     </div>
+    @include('filament::fields.error-help')
 </div>

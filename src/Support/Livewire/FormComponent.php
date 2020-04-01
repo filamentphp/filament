@@ -6,8 +6,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
 use Filament\Traits\Fields\FollowsRules;
-use Filament\Traits\Fields\HandlesArrays;
 use Filament\Traits\Fields\UploadsFiles;
+use Filament\Traits\Fields\HandlesArrays;
 
 class FormComponent extends Component
 {
@@ -19,7 +19,7 @@ class FormComponent extends Component
     private static $storage_disk;
     private static $storage_path;
 
-    protected $listeners = ['filament.fileUpdate'];
+    protected $listeners = ['filament.fileUpdate' => 'fileUpdate'];
 
     public function mount($model = null, $goback = null)
     {

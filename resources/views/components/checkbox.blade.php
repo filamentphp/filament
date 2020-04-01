@@ -1,6 +1,6 @@
 <label {{ $attributes->merge(['class' => 'inline-flex items-center']) }}>
     <input
-        type="checkbox"
+        type="{{ $type }}"
         class="form-checkbox dark:bg-gray-900 dark:border-gray-700 h-4 w-4 transition duration-150 ease-in-out 
             @error($name) 
                 text-red-500 
