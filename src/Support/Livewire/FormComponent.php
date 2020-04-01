@@ -19,7 +19,10 @@ class FormComponent extends Component
     private static $storage_disk;
     private static $storage_path;
 
-    protected $listeners = ['filament.fileUpdate' => 'fileUpdate'];
+    protected $listeners = [
+        'filament.fileUploadError' => 'fileUploadError',
+        'filament.fileUpdate' => 'fileUpdate',
+    ];
 
     public function mount($model = null, $goback = null)
     {
@@ -45,6 +48,16 @@ class FormComponent extends Component
     public function fields()
     {
         return [];
+    }
+
+    public function getField($name)
+    {
+        foreach ($this->fields() as $field) {
+            if ($field->name == $name) {
+                return $field;
+                break;
+            }
+        }
     }
 
     public function updated($field)

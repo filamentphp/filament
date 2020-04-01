@@ -14,13 +14,13 @@
         <div class="flex-shrink-0">
             @switch($type)
                 @case('success')
-                    {{ Filament::svg('heroicons/outline-md/md-check-circle', 'w-5 h-5 text-green-400') }}
+                    {{ Filament::svg('heroicons/outline-md/md-check-circle', 'w-5 h-5 text-green-500') }}
                     @break
                 @case('error')
-                    {{ Filament::svg('heroicons/solid-sm/sm-exclamation-circle', 'h-5 w-5 text-red-400') }}
+                    {{ Filament::svg('heroicons/outline-md/md-exclamation-circle', 'h-5 w-5 text-red-500') }}
                     @break
                 @default
-                    {{ Filament::svg('heroicons/outline-md/md-information-circle', 'w-5 h-5 text-green-400') }}
+                    {{ Filament::svg('heroicons/outline-md/md-information-circle', 'w-5 h-5 text-green-500') }}
             @endswitch
         </div>
         <div class="ml-3 flex-grow mr-4 text-sm leading-5">

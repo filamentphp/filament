@@ -12,11 +12,15 @@
         <input
             name="{{ $field->name }}"
             type="file"
-            class="form-input dark:text-gray-50 dark:bg-gray-900 dark:border-gray-700 block w-full sm:text-sm sm:leading-5 
+            class="
+                form-input dark:text-gray-50 dark:bg-gray-900 dark:border-gray-700 block w-full sm:text-sm sm:leading-5 
                 @error($field->key)
                     pr-10 border-red-300 dark:border-red-500 text-red-900 placeholder-red-500 dark:placeholder-red-500 focus:border-red-500 dark-focus:border-red-500 focus:shadow-outline-red dark-focus:shadow-outline-red
-                @enderror"
+                @enderror
+            "
             {{ $field->file_multiple ? 'multiple' : '' }}
+            data-validation-rules='@json($field->file_rules)'
+            data-validation-messages='@json($field->file_validation_messages)'
         >
         @error($field->key) 
             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -40,7 +44,6 @@
                 </li>
             @endforeach
         </ul>
-        {{ var_dump($this->form_data[$field->name]) }}
     @endif
     @include('filament::fields.error-help')
 </fieldset>

@@ -2,10 +2,28 @@
 
 namespace Filament\Traits\Fields;
 
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Arr;
+
 trait UploadsFiles
 {
     public static function fileUpload()
     {
+        $field_name = request()->input('field_name');
+        $validation_rules = json_decode(request()->input('validation_rules'), true);
+        $validation_messages = json_decode(request()->input('validation_messages'), true);
+
+        $validator = Validator::make(request()->all(), [
+            'files.*' => $validation_rules,
+        ], $validation_messages);
+
+        if ($validator->fails()) {
+            return [
+                'field_name' => $field_name,
+                'errors' => $validator->errors()->get('files.*'),
+            ];
+        }
+
         $storage_disk = self::$storage_disk ?? config('filament.storage_disk');
         $storage_path = self::$storage_path ?? config('filament.storage_path');
         $files = [];
@@ -20,7 +38,17 @@ trait UploadsFiles
             ];
         }
 
-        return ['field_name' => request()->input('field_name'), 'uploaded_files' => $files];
+        return ['field_name' => $field_name, 'uploaded_files' => $files];
+    }
+
+    public function fileUploadError($field_name, $error)
+    {
+        $message = is_array($error) ? collect(Arr::first($error))->implode(PHP_EOL) : $error;
+        $field = $this->getField($field_name);
+        if ($field) {
+            $errorBag = $this->getErrorBag();
+            $errorBag->add($field->key, $message);
+        }
     }
 
     public function fileUpdate($field_name, $uploaded_files)

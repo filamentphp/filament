@@ -5,7 +5,7 @@
     <ol class="list-unstyled">
         @foreach ($field->options as $value => $label)
             <li class="mb-1">
-                <x-filament-checkbox :name="$field->key" :label="$label" :value="$value" :model="$field->key.'.'.$loop->index" />
+                <x-filament-checkbox :name="$field->key" :label="$label" :value="$value" :model="$field->key" />
             </li>
         @endforeach
     </ol>

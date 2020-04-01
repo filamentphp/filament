@@ -17,7 +17,12 @@ class UserEdit extends FormComponent
                 ->rules(['required', 'string', 'max:255'])
                 ->group('account'),
             Field::make('Avatar')
+                ->rules('array')
                 ->file()
+                ->fileRules('image')
+                ->fileValidationMessages([
+                    'image' => __('The Avatar must be a valid image.'),
+                ])
                 ->group('account'),
             Field::make('Email')
                 ->input('email')
@@ -44,8 +49,9 @@ class UserEdit extends FormComponent
                 ->help(__('filament::permissions.super_admin_info'))
                 ->group('permissions'),
             Field::make('filament::permissions.roles', 'roles')
-                ->checkboxes($this->roles->pluck('id', 'name')->all())
-                ->default($this->model->roles->pluck('id')->all())
+                ->checkboxes($this->roleIds)
+                ->default($this->userRoleIds)
+                ->rules([Rule::exists('roles', 'id')])
                 ->group('permissions'),
         ];
     }
@@ -64,7 +70,7 @@ class UserEdit extends FormComponent
         }
         
         $this->model->update($input->all());
-        $this->model->syncRoles($this->getRoleIds($input->get('roles')));
+        $this->model->syncRoles($input->get('roles'));
 
         $this->emit('filament.notification.notify', [
             'type' => 'success',
@@ -91,15 +97,14 @@ class UserEdit extends FormComponent
         return redirect()->route('filament.admin.users.index');
     }
 
-    public function getRoleIds(array $roles)
-    {
-        $roleInput = array_filter($roles);
-        return $this->roles->intersectByKeys($roleInput)->pluck('id')->toArray();
-    }
-
-    public function getRolesProperty()
+    public function getRoleIdsProperty()
     {
         $roleClass = app(RoleContract::class);
-        return $roleClass::orderBy('name')->get();
+        return $roleClass::orderBy('name')->pluck('id', 'name')->all();
+    }
+
+    public function getUserRoleIdsProperty()
+    {
+        return array_map('strval', $this->model->roles->pluck('id')->all());
     }
 }

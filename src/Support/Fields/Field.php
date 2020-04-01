@@ -9,8 +9,8 @@ class Field extends BaseField
     protected $label;
     protected $key;
     protected $file_multiple;
-    protected $array_fields = [];
-    protected $array_sortable = false;
+    protected $file_rules = ['file'];
+    protected $file_validation_messages = ['file' => 'Must be a valid file.'];
 
     public function __construct($label, $name, $key_prefix = true)
     {
@@ -30,22 +30,21 @@ class Field extends BaseField
         return $this;
     }
 
+    public function fileRules($rules)
+    {
+        $this->file_rules = (array) $rules;
+        return $this;
+    }
+
+    public function fileValidationMessages(array $messages)
+    {
+        $this->file_validation_messages = $messages;
+        return $this;
+    }
+
     public function multiple()
     {
         $this->file_multiple = true;
-        return $this;
-    }
-
-    public function array($fields = [])
-    {
-        $this->type = 'array';
-        $this->array_fields = $fields;
-        return $this;
-    }
-
-    public function sortable()
-    {
-        $this->array_sortable = true;
         return $this;
     }
 
