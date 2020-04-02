@@ -26,4 +26,6 @@ return [
 
     'updated_at' => 'Last updated',
 
+    'remove' => 'Remove :item',
+
 ];

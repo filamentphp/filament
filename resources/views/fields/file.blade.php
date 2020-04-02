@@ -32,14 +32,24 @@
     @if ($this->form_data[$field->name])
         <ul class="mb-2">
             @foreach ($this->form_data[$field->name] as $key => $value)
-                <li>
-                    <a href="{{ Storage::url($value['file']) }}" target="_blank" rel="noopener noreferrer">
-                        {{ $this->fileIcon($value['mime_type']) }}
-                        {{ $value['name'] }}
+                <li class="text-sm leading-5 bg-gray-50 dark:bg-gray-700 rounded overflow-hidden shadow flex items-center justify-between">
+                    <a href="{{ Storage::url($value['file']) }}" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="p-2 flex-grow flex items-center mr-2"
+                    >
+                        {{ Filament::svg($this->fileIcon($value['mime_type']), 'flex-shrink-0 w-5 h-5 mr-2') }}
+                        <span class="flex-grow">
+                            {{ $value['name'] }}
+                        </span>
                     </a>
-                    <button onclick="confirm('{{ __('Are you sure?') }}')"
-                        wire:click.prevent="arrayRemove('{{ $field->name }}', '{{ $key }}')">
-                        remove
+                    <button type="button"
+                        onclick="confirm('{{ __('Are you sure?') }}') || event.stopImmediatePropagation();"
+                        wire:click.prevent="arrayRemove('{{ $field->name }}', '{{ $key }}')"
+                        class="flex-shrink-0 flex items-center p-2"
+                    >
+                        {{ Filament::svg('heroicons/outline-md/md-x', 'h-4 w-4 text-red-500') }}
+                        <span class="sr-only">{{ __('filament::admin.remove', ['item' => $value['name']]) }}</span>
                     </button>
                 </li>
             @endforeach
