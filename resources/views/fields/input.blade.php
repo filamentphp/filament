@@ -26,7 +26,7 @@
         >
         @error($field->key) 
             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                {{ Filament::svg('heroicons/solid-sm/sm-exclamation-circle', 'h-5 w-5 text-red-600') }}
+                <x-heroicon-o-exclamation-circle class="h-5 w-5 text-red-600" />
             </div>
         @enderror
     </div>

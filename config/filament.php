@@ -54,7 +54,7 @@ return [
 
             'dashboard' => [
                 'label' => 'filament::admin.dashboard',
-                'icon' => 'heroicons/outline-md/md-home', // path to SVG icon using Filament::svg() helper
+                'icon' => 'heroicons/heroicon-o-home', // path to SVG icon using Filament::icon() SVG icon helper
                 'url' => 'filament.admin.dashboard', // string or named route
                 'active' => 'filament.admin.dashboard', // string or named route (may also be an array @link https://github.com/dwightwatson/active)
             ],
@@ -63,13 +63,13 @@ return [
 
             'Resources' => [
                 'label' => 'filament::admin.resources',
-                'icon' => 'heroicons/outline-md/md-collection',
+                'icon' => 'heroicons/heroicon-o-collection',
                 'url' => '#',
             ],
 
             'globals' => [
                 'label' => 'filament::admin.globals',
-                'icon' => 'heroicons/outline-md/md-globe',
+                'icon' => 'heroicons/heroicon-o-globe',
                 'url' => '#',
             ],
 
@@ -77,7 +77,7 @@ return [
 
             'users' => [
                 'label' => 'filament::admin.users',
-                'icon' => 'heroicons/outline-md/md-user-group',
+                'icon' => 'heroicons/heroicon-o-user-group',
                 'url' => 'filament.admin.users.index',
                 'active' => 'filament.admin.users.*',
                 'ability' => 'view users',
@@ -87,7 +87,7 @@ return [
 
             'Permissions' => [
                 'label' => 'filament::admin.permissions',
-                'icon' => 'heroicons/outline-md/md-lock-closed',
+                'icon' => 'heroicons/heroicon-o-lock-closed',
                 'url' => 'filament.admin.permissions.index',
                 'active' => 'filament.admin.permissions.*',
                 'ability' => 'view permissions',

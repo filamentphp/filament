@@ -85,20 +85,32 @@ class Filament {
     /**
      * SVG's
      *
-     * @param string $fileName
+     * @param string $path
      * @param string $class
      * @return mixed
      */
-    public function svg($fileName, $class = null)
+    public function svg($path, $class = null, $icon = false)
     {
-        $path = (string) $fileName;
-        $file = $this->resourcePath("svg/$path.svg");
+        $file = $icon ? "$path.svg" : $this->resourcePath("svg/$path.svg");
         if (file_exists($file)) {
             $contents = file_get_contents($file);
             $contents = preg_replace('#\s(id|class)="[^"]+"#', '', $contents); // remove ID's and classes
             $result = (is_null($class)) ? $contents : str_replace('viewBox', 'class="'.$class.'" viewBox', $contents);
             return new HtmlString($result);
         }
+    }
+
+    /**
+     * SVG icon's
+     *
+     * @param string $icon
+     * @param string $class
+     * @return mixed
+     */
+    public function icon($icon, $class = null)
+    {
+        $path = base_path("vendor/driesvints/blade-icons/resources/images/$icon");
+        return $this->svg($path, $class, true);
     }
 
     /**

@@ -8,12 +8,12 @@
             <div class="fixed inset-y-0 left-0 flex flex-col z-40 max-w-xs w-full bg-gray-800 transform ease-in-out duration-300 -translate-x-full" :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}">
                 <div class="absolute top-0 right-0 -mr-14 p-1">
                     <button x-show="sidebarOpen" @click="sidebarOpen = false" class="flex items-center justify-center h-12 w-12 rounded-full focus:outline-none focus:bg-gray-600">
-                        {{ Filament::svg('heroicons/outline-md/md-x', 'h-6 w-6 text-white') }}
+                        <x-heroicon-o-x class="h-6 w-6 text-white" />
                     </button>
                 </div>
                 <div class="h-0 flex-1 overflow-y-auto pt-5 pb-4">
                     <div class="flex-shrink-0 flex items-center px-4">
-                        @include('filament::partials.logo', ['classes' => 'h-8 w-auto rounded-full mr-3'])
+                        <x-filament-logo class="w-10 mr-3" />
                         <h2 class="text-lg leading-5 font-medium text-gray-200">
                             {{ config('app.name') }}
                         </h2>
@@ -30,7 +30,7 @@
             <div class="flex flex-col w-64 bg-gray-800">
                 <div class="h-0 flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
                     <div class="flex items-center flex-shrink-0 px-4">
-                        @include('filament::partials.logo', ['classes' => 'h-8 w-auto rounded-full mr-3'])
+                        <x-filament-logo class="w-10 mr-3" />
                         <h2 class="text-lg leading-5 font-medium text-gray-200">
                             {{ config('app.name') }}
                         </h2>
@@ -53,7 +53,7 @@
                         @include('filament::partials.dark-mode-toggle')
                         <div class="ml-2 flex">
                             <button @click.stop="sidebarOpen = true" class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded text-gray-500 dark:text-gray-400 transition ease-in-out duration-150 hover:text-gray-900 dark-hover:text-gray-300 focus:outline-none focus:bg-gray-200 md:hidden">
-                                {{ Filament::svg('heroicons/outline-md/md-menu-alt-1', 'h-6 w-6') }}
+                                <x-heroicon-o-menu-alt-1 class="h-6 w-6" />
                             </button>
                         </div>
                     </div>

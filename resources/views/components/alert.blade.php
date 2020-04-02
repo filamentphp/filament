@@ -10,9 +10,9 @@
         <div class="flex-grow mr-2">
             @markdown($message)
         </div>
-        <button @click="open = false">
+        <button type="button" @click.prevent="open = false">
             <span aria-hidden="true">
-                {{ Filament::svg('heroicons/outline-md/md-x', 'w-5 h-5')}}
+                <x-heroicon-o-x class="w-5 h-5" />
             </span>
             <span class="sr-only">{{ __('Close') }}</span>
         </button>

@@ -1,1 +1,0 @@
-{{ Filament::svg('logo', $classes ?? '') }}

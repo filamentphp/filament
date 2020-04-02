@@ -23,6 +23,7 @@ class UserEdit extends FormComponent
                 ->fileValidationMessages([
                     'image' => __('The Avatar must be a valid image.'),
                 ])
+                ->multiple()
                 ->group('account'),
             Field::make('Email')
                 ->input('email')

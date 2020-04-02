@@ -111,7 +111,7 @@ class BaseField
     public function rules($rules)
     {
         $this->rules = $rules;
-        $this->required = in_array('required', (array) $rules);
+        $this->required = is_array($rules) ? in_array('required', $rules) : stristr($rules, 'required');
         return $this;
     }
 

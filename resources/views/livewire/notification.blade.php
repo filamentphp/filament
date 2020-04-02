@@ -14,13 +14,13 @@
         <div class="flex-shrink-0">
             @switch($type)
                 @case('success')
-                    {{ Filament::svg('heroicons/outline-md/md-check-circle', 'w-5 h-5 text-green-500') }}
+                    <x-heroicon-o-check-circle class="w-5 h-5 text-green-500" />
                     @break
                 @case('error')
-                    {{ Filament::svg('heroicons/outline-md/md-exclamation-circle', 'h-5 w-5 text-red-500') }}
+                    <x-heroicon-o-exclamation-circle class="w-5 h-5 text-red-500" />
                     @break
                 @default
-                    {{ Filament::svg('heroicons/outline-md/md-information-circle', 'w-5 h-5 text-green-500') }}
+                    <x-heroicon-o-information-circle class="w-5 h-5 text-green-500" />
             @endswitch
         </div>
         <div class="ml-3 flex-grow mr-4 text-sm leading-5">
@@ -28,7 +28,7 @@
         </div>
         <div class="ml-4 flex-shrink-0 flex">
             <button wire:click="close" class="text-gray-500 hover:text-gray-300 transition ease-in-out duration-200">
-                {{ Filament::svg('heroicons/outline-md/md-x', 'w-5 h-5') }}
+                <x-heroicon-o-x class="w-5 h-5" />
             </button>
         </div>
     </div>

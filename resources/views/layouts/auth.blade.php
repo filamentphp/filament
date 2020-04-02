@@ -2,7 +2,7 @@
 
 @section('content')
     <main id="content" class="sm:mx-auto sm:w-full sm:max-w-md" tabindex="0">
-        @include('filament::partials.logo', ['classes' => 'mx-auto w-16 h-16 rounded-full'])
+        <x-filament-logo class="w-16 mx-auto" />
         <h2 class="mt-4 text-center text-3xl leading-9 font-extrabold">
             @yield('title')
         </h2>

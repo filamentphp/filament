@@ -12,7 +12,7 @@
                     @endisset
                 >
                     @if (isset($item['icon']))
-                        {{ Filament::svg($item['icon'], 'mr-3 h-6 w-6 text-gray-400') }}
+                        {{ Filament::icon($item['icon'], 'mr-3 h-6 w-6 text-gray-400') }}
                     @endif
                     {{ __($item['label']) }}
                 </a>

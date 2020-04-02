@@ -26,6 +26,6 @@ return [
 
     'updated_at' => 'Last updated',
 
-    'remove' => 'Remove :item',
+    'confirm' => 'Are you sure?',
 
 ];

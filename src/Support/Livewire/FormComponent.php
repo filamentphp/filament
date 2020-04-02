@@ -6,12 +6,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
 use Filament\Traits\Fields\FollowsRules;
-use Filament\Traits\Fields\UploadsFiles;
+use Filament\Traits\Fields\HasFields;
+use Filament\Traits\Fields\HandlesFiles;
 use Filament\Traits\Fields\HandlesArrays;
 
 class FormComponent extends Component
 {
-    use FollowsRules, UploadsFiles, HandlesArrays;
+    use FollowsRules, HasFields, HandlesFiles, HandlesArrays;
 
     public $model;
     public $form_data;
@@ -41,21 +42,6 @@ class FormComponent extends Component
             if (!isset($this->form_data[$field->name])) {
                 $array = in_array($field->type, ['checkbox', 'file']);
                 $this->form_data[$field->name] = $field->default ?? ($array ? [] : null);
-            }
-        }
-    }
-
-    public function fields()
-    {
-        return [];
-    }
-
-    public function getField($name)
-    {
-        foreach ($this->fields() as $field) {
-            if ($field->name == $name) {
-                return $field;
-                break;
             }
         }
     }
