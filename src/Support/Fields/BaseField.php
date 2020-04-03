@@ -6,7 +6,6 @@ use Illuminate\Support\Arr;
 
 class BaseField
 {
-    protected $name;
     protected $type;
     protected $value;
     protected $group;
@@ -20,6 +19,10 @@ class BaseField
     protected $rules;
     protected $required = false;
     protected $view;
+    protected $file_multiple;
+    protected $file_rules = ['file'];
+    protected $file_validation_messages = ['file' => 'Must be a valid file.'];
+    protected $disabled = false;
 
     public function __get($property)
     {
@@ -67,6 +70,41 @@ class BaseField
         return $this;
     }
 
+    public function file()
+    {
+        $this->type = 'file';
+        return $this;
+    }
+
+    public function disabled()
+    {
+        $this->disabled = true;
+        return $this;
+    }
+
+    public function fileRules($rules)
+    {
+        $this->file_rules = (array) $rules;
+        return $this;
+    }
+
+    public function fileValidationMessages(array $messages)
+    {
+        $this->file_validation_messages = $messages;
+        return $this;
+    }
+
+    public function multiple()
+    {
+        $this->file_multiple = true;
+        return $this;
+    }
+
+    public function errorMessage($message)
+    {
+        return str_replace('form data.', '', $message);
+    }
+    
     protected function options($options)
     {
         $this->options = Arr::isAssoc($options) ? array_flip($options) : array_combine($options, $options);

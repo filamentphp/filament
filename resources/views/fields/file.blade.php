@@ -1,3 +1,4 @@
+@php($disabled = $field->disabled || (!$field->file_multiple && count($this->form_data[$field->name])) >= 1)
 <fieldset x-data="file()" class="mb-5">
     @if ($field->label)
         <legend class="block mb-2 text-sm font-medium leading-5 text-gray-700 dark:text-gray-50">
@@ -8,43 +9,51 @@
             @endif
         </legend>
     @endif
-    <label class="relative block mb-2">
-        <input
-            name="{{ $field->name }}"
-            type="file"
-            class="
-                form-input dark:text-gray-50 dark:bg-gray-900 dark:border-gray-700 block w-full sm:text-sm sm:leading-5 
-                @error($field->key)
-                    pr-10 border-red-300 dark:border-red-500 text-red-900 placeholder-red-500 dark:placeholder-red-500 focus:border-red-500 dark-focus:border-red-500 focus:shadow-outline-red dark-focus:shadow-outline-red
-                @enderror
-            "
-            {{ $field->file_multiple ? 'multiple' : '' }}
-            @change="add"
-        >
-        @error($field->key) 
-            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <x-heroicon-o-exclamation-circle class="h-5 w-5 text-red-600" />
-            </div>
-        @enderror
-        {{ $field->placeholder }}
-    </label>
-
+    <div class="mb-1 flex items-center">
+        <label class="mr-2">
+            <input
+                name="{{ $field->name }}"
+                type="file"
+                {{ $field->file_multiple ? 'multiple' : '' }}
+                @change="add"
+                class="sr-only"
+                @if ($disabled) 
+                    disabled
+                @endif
+            >
+            <span class="btn btn-file-input" :class="{ 'btn-is-disabled': {{ $disabled ? 'true' : 'false' }} }">{{ $field->placeholder ?? __('filament::actions.upload', ['item' => Str::singular($field->name)]) }}</span>
+        </label>
+        <div class="flex-shrink-0" x-show="isLoading()">
+            {{ Filament::svg('puff', 'w-5 h-5') }}
+        </div>
+    </div>
+    @include('filament::fields.error-help')
     @if ($this->form_data[$field->name])
-        <ul class="mb-2">
+        <ul>
             @foreach ($this->form_data[$field->name] as $key => $value)
-                <li class="{{ !$loop->last ? 'mb-2 ' : '' }}text-sm leading-5 bg-gray-50 dark:bg-gray-700 rounded overflow-hidden shadow flex items-center justify-between">
+                <li class="mt-2 text-sm leading-5 bg-gray-50 dark:bg-gray-700 rounded overflow-hidden shadow flex items-center justify-between">
                     <a href="{{ Storage::url($value['file']) }}" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        class="p-2 flex-grow flex items-center mr-2"
+                        class="p-2 mr-2 flex-grow flex items-center"
                     >
-                        {{ Filament::icon($this->fileIcon($value['mime_type']), 'flex-shrink-0 w-5 h-5 mr-2') }}
-                        <span class="flex-grow">
-                            {{ $value['name'] }}
-                        </span>
+                        <div class="mr-2">
+                            @php($info = $this->fileInfo($value['mime_type']))
+                            @if ($info['is_image']) 
+                                <img src="{{ Storage::url($value['file']) }}" alt="{{ $value['name'] }}" class="h-10 w-auto rounded" />
+                            @else
+                                {{ Filament::icon($info['icon'], 'flex-shrink-0 w-10 h-10 text-gray-300') }}
+                            @endif
+                        </div>
+                        <dl class="flex-grow">
+                            <dt class="sr-only">Name</dt>
+                            <dd>{{ $value['name'] }}</dd>
+                            <dt class="sr-only">Size</dt>
+                            <dd class="text-xs font-mono text-gray-400">{{ Filament::formatBytes($value['size']) }}</dd>
+                        </dl>
                     </a>
                     <button type="button"
-                        wire:click.prevent="fileRemove('{{ $field->name }}', {{ $key }}, '{{ $value['file'] }}')"
+                        wire:click.prevent="fileRemove('{{ $field->name }}', {{ $key }})"
                         class="flex-shrink-0 flex items-center p-2"
                     >   
                         <x-heroicon-o-x class="h-4 w-4 text-red-500" />
@@ -54,23 +63,26 @@
             @endforeach
         </ul>
     @endif
-    @include('filament::fields.error-help')
 </fieldset>
 
 <script>
     function file() {
         return {
+            loading: false,
+            isLoading() { 
+                return this.loading === true; 
+            },
             add(event) {
+                let self = this;
+                self.loading = true;
                 let form_data = new FormData();
                 form_data.append('component', @json(get_class($this)));
                 form_data.append('field_name', '{{ $field->name }}');
                 form_data.append('validation_rules', '@json($field->file_rules)');
                 form_data.append('validation_messages', '@json($field->file_validation_messages)');
-
                 for (let i = 0; i < event.target.files.length; i++) {
                     form_data.append('files[]', event.target.files[i]);
                 }
-
                 fetch('{{ route('filament.admin.file-upload') }}', {
                     method: 'POST',
                     body: form_data,
@@ -89,8 +101,10 @@
                         window.livewire.emit('filament.fileUpdate', data.field_name, data.uploaded_files);
                     }
                 }).catch(function (error) {
-                    window.livewire.emit('filament.fileUploadError', file.name, error.statusText);
-                });                    
+                    window.livewire.emit('filament.fileUploadError', '{{ $field->name }}', error.statusText);
+                }).finally(function() {
+                    self.loading = false;
+                });                  
             }
         }
     }

@@ -42,6 +42,13 @@ class Checkbox extends Component
     public $model;
 
     /**
+     * Input is disabled?
+     *
+     * @var string
+     */
+    public $disabled;
+
+    /**
      * Create the component instance.
      *
      * @param  string  $type
@@ -51,13 +58,14 @@ class Checkbox extends Component
      * @param  string  $model
      * @return void
      */
-    public function __construct($type = 'checkbox', $name, $label = null, $value = null, $model = null)
+    public function __construct($type = 'checkbox', $name, $label = null, $value = null, $model = null, $disabled = false)
     {
         $this->type = $type;
         $this->name = $name;
         $this->label = $label ?? $name;
         $this->value = $value;
         $this->model = $model;
+        $this->disabled = $disabled;
     }
 
     /**

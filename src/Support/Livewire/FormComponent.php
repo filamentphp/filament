@@ -65,7 +65,7 @@ class FormComponent extends Component
     }
 
     public function success()
-    {
+    {       
         $this->emit('filament.notification.notify', [
             'type' => 'success',
             'message' => __('Success!'),

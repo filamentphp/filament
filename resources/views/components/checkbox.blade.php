@@ -14,6 +14,9 @@
         @if ($model)
             wire:model.lazy="{{ $model }}"
         @endif
+        @if ($disabled) 
+            disabled
+        @endif
     >
     <span class="ml-2 text-sm leading-5">{{ __($label) }}</span>
 </label>

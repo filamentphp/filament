@@ -1,20 +1,58 @@
 .btn {
-  @apply flex justify-center py-3 px-5 text-sm leading-tight font-medium rounded shadow text-white bg-indigo-700 transition duration-150 ease-in-out;
-
-  &:not(.btn-with-dropdown):hover {
-    @apply bg-indigo-800;
-  }
+  @apply flex justify-center py-3 px-5 text-sm leading-tight font-medium rounded shadow text-white bg-indigo-700 transition duration-150 ease-in-out cursor-pointer;
 
   &:focus {
     @apply outline-none shadow-outline-gray;
   }
 
+  &[disabled],
+  &-is-disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  &:hover,
   &:active {
     @apply bg-indigo-800;
   }
 
-  &[disabled] {
-    @apply opacity-50 cursor-not-allowed;
+  &-small {
+    @apply text-xs py-2 px-3;
+  }
+
+  &-action {
+    @apply shadow-none text-gray-900 border border-gray-200 bg-gray-100;
+
+    &:hover,
+    &:active {
+      @apply border-gray-300 bg-gray-200;
+    }
+
+    .mode-dark & {
+      @apply text-white border-gray-700 bg-gray-900;
+
+      &:hover,
+      &:active {
+        @apply border-gray-600;
+      }
+    }
+  }
+
+  &-file-input {
+    @apply shadow-none text-indigo-500 bg-transparent border border-dashed border-current;
+
+    &:hover,
+    &:active {
+      @apply bg-transparent text-indigo-600;
+    }
+
+    .mode-dark & {
+      @apply text-indigo-400;
+
+      &:hover,
+      &:active {
+        @apply text-indigo-500;
+      }
+    }
   }
 
   &-with-dropdown {
@@ -22,7 +60,7 @@
   }
 
   &-primary-action {
-    @apply px-5 py-2 rounded-l transition duration-150 ease-in-out;
+    @apply px-5 py-3 rounded-l transition duration-150 ease-in-out;
 
     &:hover {
       @apply bg-indigo-800;
@@ -33,7 +71,7 @@
     @apply relative;
 
     &-actions {
-      @apply p-2 bg-indigo-600 rounded-r transition duration-150 ease-in-out;
+      @apply p-3 bg-indigo-600 rounded-r transition duration-150 ease-in-out;
     }
 
     &-content {

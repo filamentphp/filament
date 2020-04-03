@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Admin Language Lines
+    | Actions Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines are used in the admin for various
@@ -12,18 +12,6 @@ return [
     |
     */
 
-    'dashboard' => 'Dashboard',
-
-    'resources' => 'Resources',
-
-    'globals' => 'Globals',
-
-    'users' => 'Users',
-
-    'permissions' => 'Permissions',
-
-    'created_at' => 'Created',
-
-    'updated_at' => 'Last updated',
+    'upload' => 'Upload :item',
 
 ];

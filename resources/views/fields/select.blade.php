@@ -11,7 +11,11 @@
     <div class="relative mb-2">
         <select
             id="input-{{ $field->name }}"
-            wire:model.lazy="{{ $field->key }}">
+            wire:model.lazy="{{ $field->key }}"
+            @if ($field->disabled) 
+                disabled
+            @endif
+        >
             @if ($field->placeholder)
                 <option value="">{{ $field->placeholder }}</option>
             @endif

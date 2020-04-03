@@ -65,13 +65,13 @@ trait HandlesFiles
         $this->updated('form_data.' . $field_name);
     }
 
-    public function fileRemove($field_name, $key, $file)
+    public function fileRemove($field_name, $key)
     {
         $this->arrayRemove($field_name, $key);
         $this->updated('form_data.' . $field_name);
     }
 
-    public function fileIcon($mime_type)
+    public function fileInfo($mime_type)
     {
         $icons = [
             'image' => 'heroicons/heroicon-o-photograph',
@@ -87,6 +87,9 @@ trait HandlesFiles
 
         $mime_group = explode('/', $mime_type, 2)[0];
 
-        return (isset($icons[$mime_group])) ? $icons[$mime_group] : 'heroicons/heroicon-o-document';
+        return [
+            'is_image' => $mime_group === 'image',
+            'icon' => (isset($icons[$mime_group])) ? $icons[$mime_group] : 'heroicons/heroicon-o-document',
+        ];
     }
 }
