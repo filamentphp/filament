@@ -16,8 +16,6 @@ return [
 
     'account' => ':name\'s Account',
 
-    'updated' => '**:name** updated successfully.',
-
     'last_login_at' => 'Last login',
 
     'last_login_never' => 'never',

@@ -3,12 +3,12 @@
 namespace Filament\Traits\Fields;
 
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
-use Filament\Traits\Fields\HandlesArrays;
 
 trait HandlesFiles
 {
-    use HandlesArrays;
+    use HasFields, HandlesArrays;
 
     public static function fileUpload()
     {
@@ -62,12 +62,24 @@ trait HandlesFiles
         }
 
         $this->form_data[$field_name] = $value ?? [];
+
+        $this->saveField($field_name);
         $this->updated('form_data.' . $field_name);
     }
 
-    public function fileRemove($field_name, $key)
+    public function fileRemove($field_name, $file_name, $key)
     {
+        $files = $this->form_data[$field_name];
+        foreach($files as $file) {
+            $storage = Storage::disk($file['disk']);
+            if ($storage->exists($file['file']) && $file['name'] === $file_name) {
+                $storage->delete($file['file']);
+                break;
+            }
+        }
+        
         $this->arrayRemove($field_name, $key);
+        $this->saveField($field_name);
         $this->updated('form_data.' . $field_name);
     }
 

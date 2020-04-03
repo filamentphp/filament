@@ -19,6 +19,7 @@ class UserEdit extends FormComponent
             Field::make('Avatar')
                 ->rules('array')
                 ->file()
+                ->multiple()
                 ->fileRules('image')
                 ->fileValidationMessages([
                     'image' => __('The Avatar must be a valid image.'),
@@ -74,7 +75,7 @@ class UserEdit extends FormComponent
 
         $this->emit('filament.notification.notify', [
             'type' => 'success',
-            'message' => __('filament::user.updated', ['name' => $this->model->name]),
+            'message' => __('filament::actions.updated', ['item' => $this->model->name]),
         ]);
 
         $this->emit('filament.userUpdated', $this->model->id);
@@ -82,6 +83,16 @@ class UserEdit extends FormComponent
         if (auth()->user()->id === $this->model->id) {
             $this->emit('filament.authUserUpdated');
         }
+    }
+
+    public function saveField($field_name)
+    {
+        $this->model->$field_name = $this->form_data[$field_name];
+        $this->model->save();
+        $this->emit('filament.notification.notify', [
+            'type' => 'success',
+            'message' => __('filament::actions.updated', ['item' => $field_name]),
+        ]);
     }
 
     public function render()

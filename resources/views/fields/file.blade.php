@@ -53,7 +53,7 @@
                         </dl>
                     </a>
                     <button type="button"
-                        wire:click.prevent="fileRemove('{{ $field->name }}', {{ $key }})"
+                        wire:click.prevent="fileRemove('{{ $field->name }}', '{{ $value['name'] }}', {{ $key }})"
                         class="flex-shrink-0 flex items-center p-2"
                     >   
                         <x-heroicon-o-x class="h-4 w-4 text-red-500" />

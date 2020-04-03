@@ -12,6 +12,8 @@ return [
     |
     */
 
+    'updated' => '**:item** updated successfully.',
+    
     'upload' => 'Upload :item',
 
 ];
