@@ -4,9 +4,11 @@ namespace Filament\Traits;
 
 use Filament\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Arr;
 use Thomaswelton\LaravelGravatar\Facades\Gravatar;
 use Spatie\Permission\Traits\HasRoles;
 use Filament\Traits\FillsColumns;
+use Filament;
 
 trait FilamentUser 
 {
@@ -34,6 +36,16 @@ trait FilamentUser
      */
     public function avatar($size = 48)
     {
+        if ($this->avatar) {
+            $path = collect(Arr::first($this->avatar))->get('file');
+            return Filament::image($path, [
+                'w' => 48,
+                'h' => 48,
+                'fit' => 'crop',
+                'dpr' => 2,
+            ]);
+        }
+
         return Gravatar::src($this->email, (int) $size);
     }
 
