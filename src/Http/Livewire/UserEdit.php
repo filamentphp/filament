@@ -80,7 +80,7 @@ class UserEdit extends FormComponent
         $this->emit('filament.userUpdated', $this->model->id);
 
         if (auth()->user()->id === $this->model->id) {
-            $this->emit('filament.authUserUpdated');
+            $this->emit('filament.userUpdated');
         }
     }
 
@@ -92,6 +92,10 @@ class UserEdit extends FormComponent
             'type' => 'success',
             'message' => __('filament::actions.updated', ['item' => $field_name]),
         ]);
+
+        if (auth()->user()->id === $this->model->id) {
+            $this->emit('filament.userUpdated');
+        }
     }
 
     public function render()

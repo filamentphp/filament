@@ -28,10 +28,11 @@ trait HandlesFiles
         }
         
         $files = [];
-
+        $storage_disk = config('filament.storage_disk');
+        
         foreach (request()->file('files') as $file) {
             $files[] = [
-                'file' => $file->store(config('filament.storage_path'), config('filament.storage_disk')),
+                'file' => $file->store(config('filament.storage_path'), $storage_disk),
                 'disk' => $storage_disk,
                 'name' => $file->getClientOriginalName(),
                 'size' => $file->getSize(),
