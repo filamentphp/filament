@@ -19,7 +19,6 @@ class UserEdit extends FormComponent
             Field::make('Avatar')
                 ->rules('array')
                 ->file()
-                ->multiple()
                 ->fileRules('image')
                 ->fileValidationMessages([
                     'image' => __('The Avatar must be a valid image.'),

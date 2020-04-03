@@ -16,4 +16,6 @@ return [
     
     'upload' => 'Upload :item',
 
+    'uploading' => 'Uploading...',
+
 ];

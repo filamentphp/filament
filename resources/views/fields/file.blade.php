@@ -21,7 +21,11 @@
                     disabled
                 @endif
             >
-            <span class="btn btn-file-input" :class="{ 'btn-is-disabled': {{ $disabled ? 'true' : 'false' }} }">{{ $field->placeholder ?? __('filament::actions.upload', ['item' => Str::singular($field->name)]) }}</span>
+            <span 
+                class="btn btn-file-input" 
+                :class="{ 'btn-is-disabled': {{ $disabled ? 'true' : 'false' }} }"
+                x-text="isLoading() ? '{{ __('filament::actions.uploading') }}' : '{{ $field->placeholder ?? __('filament::actions.upload', ['item' => Str::singular($field->name)]) }}'"
+            ></span>
         </label>
         <div class="flex-shrink-0" x-show="isLoading()">
             {{ Filament::svg('puff', 'w-5 h-5') }}
