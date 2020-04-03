@@ -79,9 +79,7 @@ class UserEdit extends FormComponent
 
         $this->emit('filament.userUpdated', $this->model->id);
 
-        if (auth()->user()->id === $this->model->id) {
-            $this->emit('filament.userUpdated');
-        }
+        $this->updateAuthUser();
     }
 
     public function saveField($field_name)
@@ -93,6 +91,11 @@ class UserEdit extends FormComponent
             'message' => __('filament::actions.updated', ['item' => $field_name]),
         ]);
 
+        $this->updateAuthUser();
+    }
+
+    protected function updateAuthUser()
+    {
         if (auth()->user()->id === $this->model->id) {
             $this->emit('filament.userUpdated');
         }
