@@ -35,21 +35,28 @@
     @if ($this->form_data[$field->name])
         <ul>
             @foreach ($this->form_data[$field->name] as $key => $value)
-                <li class="mt-2 text-sm leading-5 bg-gray-50 dark:bg-gray-700 rounded overflow-hidden shadow flex items-center justify-between">
+                <li class="mt-2 p-2 text-sm leading-5 bg-gray-50 dark:bg-gray-700 rounded overflow-hidden shadow flex items-center justify-between">
                     <a href="{{ Storage::url($value['file']) }}" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        class="p-2 mr-2 flex-grow flex items-center"
+                        class="flex items-center"
                     >
                         <div class="mr-2">
                             @php($info = $this->fileInfo($value['mime_type']))
                             @if ($info['is_image']) 
-                                <img src="{{ Storage::url($value['file']) }}" alt="{{ $value['name'] }}" class="h-10 w-auto rounded" />
+                                <img src="{{ Filament::image($value['file'], [
+                                    'w' => 40, 
+                                    'h' => 40, 
+                                    'fit' => 'crop', 
+                                    'dpr' => 2
+                                ]) }}" 
+                                alt="{{ $value['name'] }}" 
+                                class="h-10 w-auto rounded" />
                             @else
                                 {{ Filament::icon($info['icon'], 'flex-shrink-0 w-10 h-10 text-gray-300') }}
                             @endif
                         </div>
-                        <dl class="flex-grow">
+                        <dl>
                             <dt class="sr-only">Name</dt>
                             <dd>{{ $value['name'] }}</dd>
                             <dt class="sr-only">Size</dt>

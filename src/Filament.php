@@ -3,7 +3,9 @@
 namespace Filament;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
+use League\Glide\Urls\UrlBuilderFactory;
 
 class Filament {
 
@@ -130,5 +132,37 @@ class Filament {
         } else {
             return $size;
         }
+    }
+
+    /**
+     * Generates an asset URL.
+     * 
+     * @param string $path
+     *  
+     * @return mixed
+     */
+    public function asset($path)
+    {
+        return Storage::disk(config('filament.disk'))->url($path);
+    }
+
+    /**
+     * Generates a secure Glide image URL.
+     * 
+     * @link https://glide.thephpleague.com/1.0/config/security/
+     * 
+     * @param string $path
+     * @param array  $manipulations
+     *  
+     * @return mixed
+     */
+    public function image($path, $manipulations = [])
+    {
+        if (empty($manipulations)) {
+            return $this->asset($path);
+        }
+
+        $urlBuilder = UrlBuilderFactory::create(null, config('app.key'));
+        return route('filament.image', ['path' => ltrim($urlBuilder->getUrl($path, $manipulations), '/')]);
     }
 }

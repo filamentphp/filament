@@ -26,14 +26,12 @@ trait HandlesFiles
                 'errors' => $validator->errors()->get('files.*'),
             ];
         }
-
-        $storage_disk = self::$storage_disk ?? config('filament.storage_disk');
-        $storage_path = self::$storage_path ?? config('filament.storage_path');
+        
         $files = [];
 
         foreach (request()->file('files') as $file) {
             $files[] = [
-                'file' => $file->store($storage_path, $storage_disk),
+                'file' => $file->store(config('filament.storage_path'), config('filament.storage_disk')),
                 'disk' => $storage_disk,
                 'name' => $file->getClientOriginalName(),
                 'size' => $file->getSize(),

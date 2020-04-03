@@ -132,6 +132,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Cache
+    |--------------------------------------------------------------------------
+    |
+    | This is the cache disk Filament will use, you may
+    | use any of the disks defined in the `config/filesystems.php`.
+    |
+    */
+
+    'cache_disk' => env('FILAMENT_CACHE_DISK', 'local'),
+    'cache_path' =>  '.cache',
+
+    /*
+    |--------------------------------------------------------------------------
     | Storage
     |--------------------------------------------------------------------------
     |
@@ -139,8 +152,9 @@ return [
     | use any of the disks defined in the `config/filesystems.php`.
     |
     */
-
+    
     'storage_disk' => env('FILAMENT_STORAGE_DISK', 'public'),
     'storage_path' => env('FILAMENT_STORAGE_PATH', 'uploads'),
+    
     
 ];

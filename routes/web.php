@@ -52,3 +52,6 @@ Route::name('admin.')->middleware('auth.filament')->group(function () {
     })->name('file-upload');
 
 });
+
+// Images
+Route::get('/image/{path}', 'ImageController')->where('path', '.*')->name('image');

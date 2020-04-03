@@ -17,8 +17,6 @@ class FormComponent extends Component
     public $model;
     public $form_data;
     public $goback;
-    private static $storage_disk;
-    private static $storage_path;
 
     protected $listeners = [
         'filament.fileUploadError' => 'fileUploadError',
