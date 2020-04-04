@@ -1,4 +1,4 @@
-<fieldset class="mb-5">
+<fieldset class="col-span-4 {{ $field->class }}">
     <legend class="block mb-2 text-sm font-medium leading-5 text-gray-700 dark:text-gray-50">
         {{ $field->label }}
         @if ($field->required)

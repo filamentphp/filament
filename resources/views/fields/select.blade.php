@@ -1,4 +1,4 @@
-<div class="mb-5">
+<div class="col-span-4 {{ $field->class }}">
     @if ($field->label)
         <label for="input-{{ $field->name }}" class="block mb-2 text-sm font-medium leading-5 text-gray-700 dark:text-gray-50">
             {{ __($field->label) }}

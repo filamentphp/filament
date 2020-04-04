@@ -8,6 +8,7 @@ class BaseField
 {
     protected $type;
     protected $value;
+    protected $class;
     protected $group;
     protected $input_type;
     protected $textarea_rows;
@@ -119,6 +120,12 @@ class BaseField
     public function value($value)
     {
         $this->value = old($this->key, $value);
+        return $this;
+    }
+
+    public function class($class)
+    {
+        $this->class = $class;
         return $this;
     }
 

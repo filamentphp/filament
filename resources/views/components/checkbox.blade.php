@@ -1,7 +1,7 @@
 <label {{ $attributes->merge(['class' => 'inline-flex items-center']) }}>
     <input
         type="{{ $type }}"
-        class="form-{{ $type }} dark:bg-gray-900 dark:border-gray-700 h-4 w-4 transition duration-150 ease-in-out 
+        class="form-{{ $type }} shadow dark:bg-gray-900 dark:border-gray-700 h-4 w-4 transition duration-150 ease-in-out 
             @error($name) 
                 text-red-500 
             @else 

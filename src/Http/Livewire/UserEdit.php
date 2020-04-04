@@ -15,14 +15,7 @@ class UserEdit extends FormComponent
             Field::make('Name')
                 ->input()
                 ->rules(['required', 'string', 'max:255'])
-                ->group('account'),
-            Field::make('Avatar')
-                ->rules('array')
-                ->file()
-                ->fileRules('image')
-                ->fileValidationMessages([
-                    'image' => __('The Avatar must be a valid image.'),
-                ])
+                ->class('lg:col-span-2')
                 ->group('account'),
             Field::make('Email')
                 ->input('email')
@@ -33,16 +26,27 @@ class UserEdit extends FormComponent
                     'max:255', 
                     Rule::unique('users', 'email')->ignore($this->model->id),
                 ])
+                ->class('lg:col-span-2')
+                ->group('account'),
+            Field::make('Avatar')
+                ->rules('array')
+                ->file()
+                ->fileRules('image')
+                ->fileValidationMessages([
+                    'image' => __('The Avatar must be a valid image.'),
+                ])
                 ->group('account'),
             Field::make('Password')
                 ->input('password')
                 ->autocomplete('new-password')
                 ->rules(['sometimes', 'confirmed'])
                 ->help('Leave blank to keep current password.')
+                ->class('lg:col-span-2')
                 ->group('account'),
             Field::make('Confirm Password', 'password_confirmation')
                 ->input('password')
                 ->autocomplete('new-password')
+                ->class('lg:col-span-2')
                 ->group('account'),
             Field::make('filament::permissions.super_admin', 'is_super_admin')
                 ->checkbox()
