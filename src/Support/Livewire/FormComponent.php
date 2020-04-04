@@ -12,7 +12,7 @@ use Filament\Traits\Fields\HandlesArrays;
 
 class FormComponent extends Component
 {
-    use FollowsRules, HasFields, HandlesFiles, HandlesArrays;
+    use HasFields, FollowsRules, HandlesFiles, HandlesArrays;
 
     public $model;
     public $form_data;
