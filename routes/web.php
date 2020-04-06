@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// asset routes...
+// Asset routes...
 Route::name('assets.')->group(function () {
 
     Route::get('filament.css', 'AssetController@css')->name('css');
@@ -21,7 +21,7 @@ Route::name('assets.')->group(function () {
     
 });
 
-// authentication routes...
+// Authentication routes...
 Route::name('auth.')->namespace('Auth')->group(function () {
 
     Route::get('login', 'LoginController@showLoginForm')->name('login');
@@ -37,7 +37,7 @@ Route::name('auth.')->namespace('Auth')->group(function () {
     
 });
 
-// protected admin routes...
+// Authenticated routes...
 Route::name('admin.')->middleware('auth.filament')->group(function () {
 
     Route::get('/', 'DashboardController')->name('dashboard');

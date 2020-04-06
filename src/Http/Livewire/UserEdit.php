@@ -10,12 +10,19 @@ class UserEdit extends FormComponent
     {
         $input = collect($this->form_data);
 
+        if (!auth()->user()->is_super_admin) {
+            $input->forget('is_super_admin');
+        }
+
         if (is_null($input->get('password'))) {
             $input->forget('password');
         }
-        
+
         $this->model->update($input->all());
-        $this->model->syncRoles($input->get('roles'));
+
+        if (auth()->user()->can('edit user roles')) {
+            $this->model->syncRoles($input->get('roles'));
+        }
 
         $this->emit('filament.notification.notify', [
             'type' => 'success',

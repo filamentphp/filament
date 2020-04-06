@@ -18,7 +18,6 @@ class ImageController extends Controller
      */
     public function __invoke($path)
     {
-
         try {
             // Validate HTTP signature
             SignatureFactory::create(config('app.key'))->validateRequest($path, request()->all());

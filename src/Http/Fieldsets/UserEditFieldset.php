@@ -54,7 +54,8 @@ class UserEditFieldset implements Fieldset
             Field::make('filament::permissions.super_admin', 'is_super_admin')
                 ->checkbox()
                 ->help(__('filament::permissions.super_admin_info'))
-                ->group('permissions'),
+                ->group('permissions')
+                ->enabled(auth()->user()->is_super_admin),
             Field::make('filament::permissions.roles', 'roles')
                 ->checkboxes(app(RoleContract::class)::orderBy('name')
                     ->pluck('id', 'name')
@@ -63,7 +64,8 @@ class UserEditFieldset implements Fieldset
                     ->pluck('id')
                     ->all()))
                 ->rules([Rule::exists('roles', 'id')])
-                ->group('permissions'),
+                ->group('permissions')
+                ->enabled(auth()->user()->can('edit user roles')),
         ];
     }
 

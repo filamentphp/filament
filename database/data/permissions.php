@@ -31,7 +31,7 @@ return [
     ],
 
     [
-        'name' => 'edit user permissions',
+        'name' => 'edit user roles',
         'guard_name' => 'web',
         'is_system' => 1,
     ],

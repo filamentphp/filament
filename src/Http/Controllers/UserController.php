@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-
     /**
      * Show the users.
      *
