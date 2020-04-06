@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Fieldsets;
+namespace Filament\Http\Fieldsets;
 
 use Filament\Contracts\Fieldset;
 use Filament\Support\Fields\Field;
