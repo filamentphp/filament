@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Filament\Traits\ConsoleValidation;
 use Filament\Contracts\User as UserContract;
 
-class CreateUserCommand extends Command
+class MakeUser extends Command
 {
     use ConsoleValidation;
 

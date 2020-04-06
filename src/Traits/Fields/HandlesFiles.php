@@ -63,7 +63,7 @@ trait HandlesFiles
         $this->form_data[$field_name] = $value ?? [];
 
         $this->saveField($field_name);
-        $this->updated('form_data.' . $field_name);
+        $this->updated('form_data.'.$field_name);
     }
 
     public function fileRemove($field_name, $file_name, $key)
@@ -79,7 +79,7 @@ trait HandlesFiles
         
         $this->arrayRemove($field_name, $key);
         $this->saveField($field_name);
-        $this->updated('form_data.' . $field_name);
+        $this->updated('form_data.'.$field_name);
     }
 
     public function fileInfo($mime_type)

@@ -1,0 +1,28 @@
+<?php
+
+namespace Filament\Http\Fieldsets;
+
+use Filament\Contracts\Fieldset;
+use Filament\Support\Fields\Field;
+
+class DummyFieldset implements Fieldset
+{
+    public static function title(): string
+    {
+        return 'Dummy';
+    }
+
+    public static function fields($model): array
+    {
+        return [
+            Field::make('Name')
+                ->input()
+                ->rules(['required', 'string', 'max:255']),
+        ];
+    }
+
+    public static function rulesIgnoreRealtime(): array
+    {
+        return [];
+    }
+} 

@@ -25,7 +25,7 @@ class BladeDirectives {
      */
     public static function pushOnce($expression)
     {
-        $var = '$__env->{"__pushonce_" . md5(__FILE__ . ":" . __LINE__)}';
+        $var = '$__env->{"__pushonce_".md5(__FILE__.":".__LINE__)}';
         return "<?php if (!isset({$var})): {$var} = true; \$__env->startPush({$expression}); ?>";
     }
 

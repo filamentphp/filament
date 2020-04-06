@@ -14,7 +14,7 @@ class Field extends BaseField
     {
         $this->name = $name ?? Str::snake(Str::lower($label));
         $this->label = __($label);
-        $this->key = $key_prefix ? 'form_data.' . $this->name : $this->name;
+        $this->key = $key_prefix ? 'form_data.'.$this->name : $this->name;
     }
 
     public static function make($label, $name = null, $key_prefix = true)

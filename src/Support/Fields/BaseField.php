@@ -168,6 +168,6 @@ class BaseField
 
     public function getView()
     {
-        return $this->view ?? 'filament::fields.' . $this->type;
+        return $this->view ?? 'filament::fields.'.$this->type;
     }
 }
