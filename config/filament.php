@@ -36,7 +36,7 @@ return [
     */
 
     'namespaces' => [
-        'fieldsets' => ['App\\Filament\\Fieldsets', 'Filament\\Fieldsets'],
+        'fieldsets' => ['App\\Http\\Filament\\Fieldsets', 'Filament\\Http\\Fieldsets'],
     ],
 
     /*
