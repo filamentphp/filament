@@ -36,7 +36,7 @@ return [
     */
 
     'namespaces' => [
-        'fieldsets' => ['App\\Fieldsets', 'Filament\\Fieldsets'],
+        'fieldsets' => ['App\\Filament\\Fieldsets', 'Filament\\Fieldsets'],
     ],
 
     /*
@@ -49,9 +49,7 @@ return [
     */
 
     'redirects' => [
-
         'admin' => 'filament.admin.dashboard', // string or named route to redirect users when successfully authenticated.
-
     ],
 
     /*

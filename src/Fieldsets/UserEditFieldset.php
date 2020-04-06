@@ -67,7 +67,7 @@ class UserEditFieldset implements Fieldset
         ];
     }
 
-    public static function rulesIgnoreRealtime()
+    public static function rulesIgnoreRealtime(): array
     {
         return ['confirmed'];
     }

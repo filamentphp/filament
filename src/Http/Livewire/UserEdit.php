@@ -5,15 +5,15 @@ namespace Filament\Http\Livewire;
 use Filament\Support\Livewire\FormComponent;
 
 class UserEdit extends FormComponent
-{
+{    
     public function fields()
     {
-        return $this->fieldset()::fields($this->model);
+        return $this->getFieldset(__FILE__)::fields($this->model);
     }
 
     public function rulesIgnoreRealtime()
     {
-        return $this->fieldset()::rulesIgnoreRealtime();
+        return $this->getFieldset(__FILE__)::rulesIgnoreRealtime();
     }
 
     public function success()
@@ -67,10 +67,5 @@ class UserEdit extends FormComponent
     public function saveAndGoBackResponse()
     {
         return redirect()->route('filament.admin.users.index');
-    }
-
-    protected function fieldset()
-    {
-        return $this->getFieldset(__FILE__);
     }
 }
