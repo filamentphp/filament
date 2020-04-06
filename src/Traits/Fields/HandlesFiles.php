@@ -8,7 +8,7 @@ use Illuminate\Support\Arr;
 
 trait HandlesFiles
 {
-    use HasFields, HandlesArrays;
+    use HandlesArrays;
 
     public static function fileUpload()
     {

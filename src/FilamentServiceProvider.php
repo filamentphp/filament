@@ -71,9 +71,11 @@ class FilamentServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->mergeConfigFrom($this->packagePath.'config/filament.php', 'filament');
+        /*
         if ($this->app['filament']->handling()) {
-            // $this->mergeFromConfig('existing-package-config', $this->app['config']->get('filament.existing-package-config', []));
+            $this->mergeFromConfig('existing-package-config', $this->app['config']->get('filament.existing-package-config', []));
         }
+        */
     }
 
     /**
@@ -83,8 +85,25 @@ class FilamentServiceProvider extends ServiceProvider
      */
     protected function registerBindings()
     {
-        $this->app->bind(UserContract::class, config('auth.providers.users.model'));
-        // $this->app->bind(ResourceContract::class, config('filament.models.resource'));
+        $this->bindModelContract(UserContract::class, config('auth.providers.users.model'), 'Filament\Traits\FilamentUser');
+    }
+
+
+    /**
+     * Bind a given model to the container checking for optional trait.
+     * 
+     * @param mixed $contract
+     * @param mixed $model
+     * @param string|null $trait
+     * @return void
+     */
+    protected function bindModelContract($contract, $model, $trait = null)
+    {
+        if ($trait && !in_array($trait, class_uses($model, $trait))) {
+            throw new \Error("{$model} must use `{$trait}` trait.");
+        }
+
+        $this->app->bind($contract, $model);
     }
 
     /**

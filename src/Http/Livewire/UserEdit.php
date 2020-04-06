@@ -2,67 +2,18 @@
 
 namespace Filament\Http\Livewire;
 
-use Illuminate\Validation\Rule;
 use Filament\Support\Livewire\FormComponent;
-use Filament\Support\Fields\Field;
-use Spatie\Permission\Contracts\Role as RoleContract;
 
 class UserEdit extends FormComponent
 {
     public function fields()
     {
-        return [
-            Field::make('Name')
-                ->input()
-                ->rules(['required', 'string', 'max:255'])
-                ->class('lg:col-span-2')
-                ->group('account'),
-            Field::make('Email')
-                ->input('email')
-                ->rules([
-                    'required', 
-                    'string', 
-                    'email', 
-                    'max:255', 
-                    Rule::unique('users', 'email')->ignore($this->model->id),
-                ])
-                ->class('lg:col-span-2')
-                ->group('account'),
-            Field::make('Avatar')
-                ->rules('array')
-                ->file()
-                ->fileRules('image')
-                ->fileValidationMessages([
-                    'image' => __('The Avatar must be a valid image.'),
-                ])
-                ->group('account'),
-            Field::make('Password')
-                ->input('password')
-                ->autocomplete('new-password')
-                ->rules(['sometimes', 'confirmed'])
-                ->help('Leave blank to keep current password.')
-                ->class('lg:col-span-2')
-                ->group('account'),
-            Field::make('Confirm Password', 'password_confirmation')
-                ->input('password')
-                ->autocomplete('new-password')
-                ->class('lg:col-span-2')
-                ->group('account'),
-            Field::make('filament::permissions.super_admin', 'is_super_admin')
-                ->checkbox()
-                ->help(__('filament::permissions.super_admin_info'))
-                ->group('permissions'),
-            Field::make('filament::permissions.roles', 'roles')
-                ->checkboxes($this->roleIds)
-                ->default($this->userRoleIds)
-                ->rules([Rule::exists('roles', 'id')])
-                ->group('permissions'),
-        ];
+        return $this->fieldset()::fields($this->model);
     }
 
     public function rulesIgnoreRealtime()
     {
-        return ['confirmed'];
+        return $this->fieldset()::rulesIgnoreRealtime();
     }
 
     public function success()
@@ -118,14 +69,8 @@ class UserEdit extends FormComponent
         return redirect()->route('filament.admin.users.index');
     }
 
-    public function getRoleIdsProperty()
+    protected function fieldset()
     {
-        $roleClass = app(RoleContract::class);
-        return $roleClass::orderBy('name')->pluck('id', 'name')->all();
-    }
-
-    public function getUserRoleIdsProperty()
-    {
-        return array_map('strval', $this->model->roles->pluck('id')->all());
+        return $this->getFieldset(__FILE__);
     }
 }
