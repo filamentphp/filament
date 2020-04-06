@@ -5,7 +5,7 @@ namespace Filament\Http\Livewire;
 use Filament\Support\Livewire\FormComponent;
 use Filament\Support\Fields\ArrayField;
 use Filament\Support\Fields\Field;
-use Filament\Contracts\Dummy as DummyContract;
+// use Filament\Contracts\Dummy as DummyContract;
 
 class DummyComponent extends FormComponent
 {
@@ -23,13 +23,13 @@ class DummyComponent extends FormComponent
 
     public function success()
     {
-        $DummyClass = app(DummyContract::class);
-        $DummyClass::create($this->form_data);
+        // $DummyClass = app(DummyContract::class);
+        // $DummyClass::create($this->form_data);
     }
 
     public function saveAndGoBackResponse()
     {
-        return redirect()->route('filament.admin.DummyRoute.index');
+        return redirect('/'); // redirect()->route('filament.admin.dashboard');
     }
 
     public function render()
