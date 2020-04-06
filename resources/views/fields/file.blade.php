@@ -1,7 +1,15 @@
 @php($disabled = $field->disabled || (!$field->file_multiple && count($this->form_data[$field->name])) >= 1)
 <fieldset x-data="file()" class="col-span-4 {{ $field->class }}">
     @if ($field->label)
-        <legend class="block mb-2 text-sm font-medium leading-5 text-gray-700 dark:text-gray-50">
+        <legend 
+            class="
+                label 
+                @if ($disabled) 
+                    label-disabled
+                @endif
+                block mb-2
+            "
+        >
             {{ __($field->label) }}
             @if ($field->required)
                 <sup class="text-red-600">*</sup>

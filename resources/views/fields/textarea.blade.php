@@ -1,6 +1,15 @@
 <div class="col-span-4 {{ $field->class }}">
     @if ($field->label)
-        <label for="input-{{ $field->name }}" class="block mb-2 text-sm font-medium leading-5 text-gray-700 dark:text-gray-50">
+        <label 
+            for="input-{{ $field->name }}" 
+            class="
+                label 
+                @if ($field->disabled) 
+                    label-disabled
+                @endif
+                block mb-2
+            "
+        >
             {{ __($field->label) }}
             @if ($field->required)
                 <sup class="text-red-600">*</sup>

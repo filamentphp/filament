@@ -24,7 +24,7 @@ class BaseField
     protected $file_rules = ['file'];
     protected $file_validation_messages = ['file' => 'Must be a valid file.'];
     protected $disabled = false;
-    protected $enabled = true;
+    protected $allowed = true;
 
     public function __get($property)
     {
@@ -78,15 +78,15 @@ class BaseField
         return $this;
     }
 
-    public function disabled()
+    public function disabled($is_disabled = true)
     {
-        $this->disabled = true;
+        $this->disabled = (bool) $is_disabled;
         return $this;
     }
 
-    public function enabled($enabled)
+    public function allowed($is_allowed)
     {
-        $this->enabled = (bool) $enabled;
+        $this->allowed = (bool) $is_allowed;
         return $this;
     }
 

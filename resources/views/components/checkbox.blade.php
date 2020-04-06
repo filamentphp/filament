@@ -18,5 +18,13 @@
             disabled
         @endif
     >
-    <span class="ml-2 text-sm leading-5">{{ __($label) }}</span>
+    <span 
+        class="
+            label
+            @if ($disabled) 
+                label-disabled
+            @endif
+            ml-2
+        "
+    >{{ __($label) }}</span>
 </label>
