@@ -226,6 +226,11 @@ class FilamentServiceProvider extends ServiceProvider
             $this->publishes([
                 $this->packagePath.'config/filament.php' => config_path('filament.php'),
             ], 'filament-config');
+            
+            $this->publishes([
+                $this->packagePath.'database/seeds/FilamentSeeder.php' => database_path('seeds/FilamentSeeder.php'),
+                $this->packagePath.'database/seeds/FilamentPermissionSeeder.php' => database_path('seeds/FilamentPermissionSeeder.php'),
+            ], 'filament-seeds');
         }
     }
 

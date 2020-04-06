@@ -22,6 +22,9 @@ cd [appName]
 ```bash
 composer install filament/filament # See note below
 php artisan migrate
+php artisan vendor:publish --tag=filament-seeds
+composer dump-autoload
+php artisan db:seed --class=FilamentSeeder
 ```
 
 > ToDo: Add to Packagist (for now you will need to clone and [symlink the package](https://calebporzio.com/bash-alias-composer-link-use-local-folders-as-composer-dependancies)).
@@ -36,4 +39,14 @@ php artisan filament:user
 
 ## Upgrading
 
-There are no special requirements for upgrading, other than changing `^x.xx` version in your composer.json and running `composer update` as well as `php artisan migrate`.
+Changing `^x.xx` version in your composer.json.
+
+Run the following commands:
+
+```bash
+composer update
+php artisan migrate
+php artisan vendor:publish --tag=filament-seeds --force
+composer dump-autoload
+php artisan db:seed --class=FilamentSeeder
+```

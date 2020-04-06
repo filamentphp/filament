@@ -21,6 +21,17 @@ class Filament {
     }
 
     /**
+     * `database` path
+     *
+     * @param string $path
+     * @return string
+     */
+    public function databasePath($path = '')
+    {
+        return $this->basePath('database/'.ltrim($path, '/'));
+    }
+
+    /**
      * `route` path
      *
      * @param string $path
