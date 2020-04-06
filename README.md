@@ -17,7 +17,7 @@ laravel new [appName] # follow installation instructions to get your Laravel app
 cd [appName]
 ```
 
-### Install the package via composer
+## Installation
 
 ```bash
 composer install filament/filament # See note below
@@ -39,7 +39,9 @@ php artisan filament:user
 
 ## Upgrading
 
-Changing `^x.xx` version in your composer.json.
+Change the `filament/filament` version `^x.xx` in your composer.json.
+
+> Note: This is not yet a composer package, so for now the above referenced version will be `@dev` (_symlinked_ as noted in the installation instructions).
 
 Run the following commands:
 
