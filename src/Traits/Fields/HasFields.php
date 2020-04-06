@@ -16,6 +16,7 @@ trait HasFields
         $className = basename($path, '.php').'Fieldset';
         foreach(config('filament.namespaces.fieldsets') as $namespace) {
             $class = $namespace.'\\'.$className;
+            
             if (class_exists($class)) {
                 if (!in_array(Fieldset::class, class_implements($class))) {
                     throw new \Error($class.' must implement '.Fieldset::class);
