@@ -33,6 +33,6 @@ trait FollowsRules
 
     public function rulesIgnoreRealtime()
     {
-        return [];
+        return $this->fieldset ? $this->fieldset::rulesIgnoreRealtime() : [];
     }
 }

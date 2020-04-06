@@ -6,16 +6,6 @@ use Filament\Support\Livewire\FormComponent;
 
 class UserEdit extends FormComponent
 {    
-    public function fields()
-    {
-        return $this->getFieldset(__FILE__)::fields($this->model);
-    }
-
-    public function rulesIgnoreRealtime()
-    {
-        return $this->getFieldset(__FILE__)::rulesIgnoreRealtime();
-    }
-
     public function success()
     {
         $input = collect($this->form_data);
