@@ -173,8 +173,14 @@ class BaseField
         return $this;
     }
 
-    public function getView()
+    public function render()
     {
-        return $this->view ?? 'filament::fields.'.$this->type;
+        if (!$this->allowed) {
+            return;
+        }
+
+        $view = $this->view ?? 'filament::fields.'.$this->type;
+
+        return view($view, ['field' => $this]);
     }
 }

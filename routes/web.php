@@ -39,23 +39,17 @@ Route::name('auth.')->namespace('Auth')->group(function () {
 
 // Authenticated routes...
 Route::name('admin.')->middleware('auth.filament')->group(function () {
+    
+    Route::layout('filament::layouts.admin')->section('main')->group(function () {
 
-    Route::get('/', 'DashboardController')->name('dashboard');
+        Route::livewire('/', 'filament::dashboard')->name('dashboard');
 
-    Route::resource('users', 'UserController')->only([
-        'index', 
-        'edit',
-    ]);
+        Route::livewire('users', 'filament::users')->name('users.index');
+        Route::livewire('user/{id}', 'filament::user-edit')->name('users.edit');
 
-    Route::resource('roles', 'RoleController')->only([
-        'index', 
-        //'edit',
-    ]);
+        Route::livewire('roles', 'filament::roles')->name('roles.index');
 
-    Route::resource('permissions', 'PermissionController')->only([
-        'index', 
-        //'edit',
-    ]);
+    });
 
     Route::post('file-upload', function () {
         return call_user_func(request()->input('component').'::fileUpload');

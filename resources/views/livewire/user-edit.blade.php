@@ -1,3 +1,5 @@
+@section('title', __('filament::user.account', ['name' => $this->model->name]))
+
 <div class="grid grid-cols-1 md:grid-cols-7 gap-4 lg:gap-8">
 
     <form wire:submit.prevent="save" class="md:col-span-5">

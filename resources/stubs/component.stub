@@ -9,27 +9,20 @@ use Filament\Support\Fields\Field;
 
 class DummyComponent extends FormComponent
 {
-    public function fields()
+    public function mount()
     {
-        return [
-            // Field::make('Name')->input()->rules('required'),
-        ];
-    }
-
-    public function rulesIgnoreRealtime()
-    {
-        return []; // ['confirmed'];
+        $this->setFieldset();
+        $this->setFormProperties();
     }
 
     public function success()
     {
-        // $DummyClass = app(DummyContract::class);
-        // $DummyClass::create($this->form_data);
+        //
     }
 
     public function saveAndGoBackResponse()
     {
-        return redirect('/'); // redirect()->route('filament.admin.dashboard');
+        return redirect('/');
     }
 
     public function render()

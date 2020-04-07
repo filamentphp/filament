@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Livewire;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
@@ -13,7 +14,7 @@ use Filament\Contracts\Fieldset;
 
 class FormComponent extends Component
 {
-    use HasFields, FollowsRules, HandlesFiles, HandlesArrays;
+    use AuthorizesRequests, HasFields, FollowsRules, HandlesFiles, HandlesArrays;
 
     public $model;
     public $fieldset;
@@ -24,15 +25,6 @@ class FormComponent extends Component
         'filament.fileUploadError' => 'fileUploadError',
         'filament.fileUpdate' => 'fileUpdate',
     ];
-
-    public function mount($model = null, $goback = null)
-    {
-        $this->model = $model;
-        $this->goback = $goback;
-
-        $this->setFieldset();
-        $this->setFormProperties();
-    }
 
     public function setFieldset()
     {

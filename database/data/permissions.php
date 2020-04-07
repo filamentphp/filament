@@ -36,4 +36,10 @@ return [
         'is_system' => 1,
     ],
 
+    [
+        'name' => 'view roles',
+        'guard_name' => 'web',
+        'is_system' => 1,
+    ],
+
 ];

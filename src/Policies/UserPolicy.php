@@ -7,7 +7,7 @@ use Illuminate\Auth\Access\Response;
 class UserPolicy
 {
     /**
-     * Determine if the authenticated user view users.
+     * Determine if the authenticated user can view users.
      *
      * @param  User  $authenticated
      * @param  User  $user
@@ -21,7 +21,7 @@ class UserPolicy
     }
 
     /**
-     * Determine if the authenticated user can update a user.
+     * Determine if the authenticated user can edit a user.
      *
      * @param  User  $authenticated
      * @param  User  $user

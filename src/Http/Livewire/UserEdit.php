@@ -3,9 +3,21 @@
 namespace Filament\Http\Livewire;
 
 use Filament\Support\Livewire\FormComponent;
+use Filament\Contracts\User as UserContract;
 
 class UserEdit extends FormComponent
 {    
+    public function mount($id)
+    {        
+        $userClass = app(UserContract::class);  
+        $this->model = $userClass::findOrFail($id);
+        $this->authorize('edit', $this->model);
+
+        $this->goback = 'alpine.admin.users.index';
+        $this->setFieldset();
+        $this->setFormProperties();
+    }
+
     public function success()
     {
         $input = collect($this->form_data);

@@ -31,7 +31,7 @@
             ])
         </p>
         <a 
-            href="{{ route('filament.admin.users.edit', ['user' => auth()->user()->id]) }}" 
+            href="{{ route('filament.admin.users.edit', ['id' => auth()->user()->id]) }}" 
         >
             {{ __('filament::user.settings') }}
         </a>

@@ -3,6 +3,9 @@
 namespace Filament;
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Routing\Router;
+use Livewire\Macros\RouteMacros;
+use Livewire\Macros\RouterMacros;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
@@ -45,6 +48,7 @@ class FilamentServiceProvider extends ServiceProvider
         $this->registerCommands();
         $this->registerEvents();
         $this->registerMiddleware();
+        $this->registerRouteMacros();
         $this->registerRoutes();
         $this->registerMigrations();
         $this->registerPublishing();
@@ -158,6 +162,17 @@ class FilamentServiceProvider extends ServiceProvider
     protected function registerMiddleware()
     {
         Route::aliasMiddleware('auth.filament', Authenticate::class);
+    }
+
+    /**
+     * Register the package custom route macros.
+     *
+     * @return void
+     */
+    protected function registerRouteMacros()
+    {
+        Route::mixin(new RouteMacros);
+        Router::mixin(new RouterMacros);
     }
 
     /**
