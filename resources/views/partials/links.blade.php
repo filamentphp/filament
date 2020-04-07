@@ -1,5 +1,5 @@
 @if ($paginator->hasPages())
-    <ul class="relative z-0 inline-flex shadow-sm rounded" role="navigation">
+    <ul class="mt-6 relative z-0 inline-flex shadow-sm rounded" role="navigation">
         {{-- Previous Page Link --}}
         @if ($paginator->onFirstPage())
             <li class="relative inline-flex items-center px-2 py-2 rounded-l border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm leading-5 font-medium text-gray-400" aria-disabled="true" aria-label="@lang('pagination.previous')">

@@ -45,9 +45,10 @@ Route::name('admin.')->middleware('auth.filament')->group(function () {
         Route::livewire('/', 'filament::dashboard')->name('dashboard');
 
         Route::livewire('users', 'filament::users')->name('users.index');
-        Route::livewire('user/{id}', 'filament::user-edit')->name('users.edit');
+        Route::livewire('users/{id}', 'filament::user-edit')->name('users.edit');
 
         Route::livewire('roles', 'filament::roles')->name('roles.index');
+        Route::livewire('roles/{id}', 'filament::role-edit')->name('roles.edit');
 
     });
 
