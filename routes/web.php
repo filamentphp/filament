@@ -47,6 +47,16 @@ Route::name('admin.')->middleware('auth.filament')->group(function () {
         'edit',
     ]);
 
+    Route::resource('roles', 'RoleController')->only([
+        'index', 
+        //'edit',
+    ]);
+
+    Route::resource('permissions', 'PermissionController')->only([
+        'index', 
+        //'edit',
+    ]);
+
     Route::post('file-upload', function () {
         return call_user_func(request()->input('component').'::fileUpload');
     })->name('file-upload');

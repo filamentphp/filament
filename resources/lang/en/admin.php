@@ -20,6 +20,8 @@ return [
 
     'users' => 'Users',
 
+    'roles' => 'Roles',
+
     'permissions' => 'Permissions',
 
     'created_at' => 'Created',

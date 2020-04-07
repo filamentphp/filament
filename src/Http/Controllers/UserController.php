@@ -3,7 +3,6 @@
 namespace Filament\Http\Controllers;
 
 use Filament\Contracts\User as UserContract;
-use Illuminate\Support\Str;
 
 class UserController extends Controller
 {

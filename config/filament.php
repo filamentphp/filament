@@ -96,7 +96,13 @@ return [
                 'ability' => 'view users',
             ],
 
-            /* TODO 
+            'Roles' => [
+                'label' => 'filament::admin.roles',
+                'icon' => 'heroicons/heroicon-o-key',
+                'url' => 'filament.admin.roles.index',
+                'active' => 'filament.admin.roles.*',
+                'ability' => 'view roles',
+            ],
 
             'Permissions' => [
                 'label' => 'filament::admin.permissions',
@@ -105,8 +111,6 @@ return [
                 'active' => 'filament.admin.permissions.*',
                 'ability' => 'view permissions',
             ],
-
-            */
 
         ],
 
