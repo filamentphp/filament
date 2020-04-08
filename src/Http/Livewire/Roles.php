@@ -16,7 +16,7 @@ class Roles extends Component
         $roleClass = app(RoleContract::class);
         $this->authorize('view', $roleClass);
 
-        $roles = $roleClass::paginate(48);
+        $roles = $roleClass::paginate(24);
 
         return view('filament::livewire.roles', [
             'roles' => $roles,
@@ -26,12 +26,10 @@ class Roles extends Component
                 'description' => __('Description'),
             ],
             'rows' => $roles->map(function ($role) {
-                /*
                 $role->row_action = [
                     'url' => route('filament.admin.roles.edit', ['id' => $role->id]),
                     'label' => __('Edit'),
                 ];
-                */
                 return $role;
             })->values()->toArray(),
         ]);
