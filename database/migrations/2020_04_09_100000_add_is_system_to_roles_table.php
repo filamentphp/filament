@@ -4,14 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddIsSystemToPermissionsTable extends Migration
+class AddIsSystemToRolesTable extends Migration
 {
     /**
      * The name of the table for the migration.
      * 
      * @var string
      */
-    protected $tableName = 'permissions';
+    protected $tableName = 'roles';
 
     /**
      * Run the migrations.

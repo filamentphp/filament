@@ -1,11 +1,11 @@
 .alert {
-  @apply my-4 px-3 py-2 rounded text-gray-500 border border-current text-sm leading-5;
-
-  &-info {
-    @apply text-indigo-500;
-  }
+  @apply my-4 p-4 rounded shadow text-blue-700 bg-blue-100 text-sm leading-5;
 
   &-success {
-    @apply text-green-500;
+    @apply text-green-700 bg-green-100;
+  }
+
+  &-error {
+    @apply text-red-900 bg-red-100;
   }
 }

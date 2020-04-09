@@ -17,6 +17,7 @@ class Users extends Component
         $this->authorize('view', $userClass);
 
         return view('filament::livewire.users.index', [
+            'title' => __('filament::admin.users'),
             'users' => $userClass::paginate(12),
         ]);
     }

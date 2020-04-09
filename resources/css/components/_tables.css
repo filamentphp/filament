@@ -6,14 +6,23 @@
   }
 
   thead {
-    @apply bg-gray-50 text-left text-xs leading-4 text-gray-500 uppercase tracking-wider;
+    @apply bg-gray-50 text-left;
 
     .mode-dark & {
-      @apply bg-gray-700 text-gray-400;
+      @apply bg-gray-700;
     }
 
     th {
-      @apply px-6 py-3 font-medium;
+      @apply px-6 py-3;
+    }
+
+    th,
+    button {
+      @apply font-medium text-xs leading-4 text-gray-500 uppercase tracking-wider;
+
+      .mode-dark & {
+        @apply text-gray-400;
+      }
     }
   }
 

@@ -22,8 +22,23 @@
                 <table>
                     <thead>                    
                         <tr>
-                            <th>{{ __('Name') }}</th>
-                            <th colspan="2">{{ __('Description') }}</th>
+                            <th>
+                                <button class="flex" wire:click.prevent="sortBy('name')">
+                                    @include('filament::partials.sort-header', [
+                                        'field' => 'name',
+                                        'label' => __('Name'),
+                                    ])
+                                </button>
+                            </th>
+                            <th>
+                                <button class="flex" wire:click.prevent="sortBy('description')">
+                                    @include('filament::partials.sort-header', [
+                                        'field' => 'description',
+                                        'label' => __('Description'),
+                                    ])
+                                </button>
+                            </th>
+                            <th colspan="2">{{ __('Type') }}</th>
                         </tr> 
                     </thead>
                     <tbody>
@@ -31,6 +46,15 @@
                             <tr>
                                 <td class="font-medium">{{ $item->name }}</td>
                                 <td>{{ $item->description }}</td>
+                                <td>       
+                                    <x-filament-pill>
+                                        @if ($item->is_system)
+                                            {{ __('system') }}
+                                        @else
+                                            {{ __('custom') }}
+                                        @endif
+                                    </x-filament-pill>
+                                </td>
                                 <td class="font-medium text-right">
                                     {{ $item->action }}
                                 </td>
