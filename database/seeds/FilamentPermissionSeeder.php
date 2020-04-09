@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Contracts\Permission as PermissionContract;
+use Filament\Models\Permission;
 
 class FilamentPermissionSeeder extends Seeder
 {
@@ -13,9 +13,8 @@ class FilamentPermissionSeeder extends Seeder
     public function run()
     {
         $permissions = require(Filament::databasePath('data/permissions.php'));
-        $permissionClass = app(PermissionContract::class);
         foreach($permissions as $permission) {
-            $permissionClass::firstOrCreate($permission);
+            Permission::firstOrCreate($permission);
         }
     }
 }

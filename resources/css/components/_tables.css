@@ -1,0 +1,35 @@
+.table-simple {
+  @apply align-middle inline-block min-w-full shadow rounded overflow-hidden;
+
+  table {
+    @apply min-w-full;
+  }
+
+  thead {
+    @apply bg-gray-50 text-left text-xs leading-4 text-gray-500 uppercase tracking-wider;
+
+    .mode-dark & {
+      @apply bg-gray-700 text-gray-400;
+    }
+
+    th {
+      @apply px-6 py-3 font-medium;
+    }
+  }
+
+  tbody {
+    @apply bg-white text-gray-500 text-sm leading-5;
+
+    .mode-dark & {
+      @apply bg-gray-800 text-white;
+    }
+
+    td {
+      @apply px-6 py-4 whitespace-no-wrap border-t border-gray-200;
+
+      .mode-dark & {
+        @apply border-gray-700;
+      }
+    }
+  }
+}

@@ -50,6 +50,9 @@ Route::name('admin.')->middleware('auth.filament')->group(function () {
         Route::livewire('roles', 'filament::roles')->name('roles.index');
         Route::livewire('roles/{id}', 'filament::role-edit')->name('roles.edit');
 
+        Route::livewire('permissions', 'filament::permissions')->name('permissions.index');
+        Route::livewire('permissions/{id}', 'filament::permission-edit')->name('permissions.edit');
+
     });
 
     Route::post('file-upload', function () {

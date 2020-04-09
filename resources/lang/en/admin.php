@@ -28,4 +28,6 @@ return [
 
     'updated_at' => 'Last updated',
 
+    'pagination_results' => 'Showing :firstItem to :lastItem out of :total results.',
+
 ];

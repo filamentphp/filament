@@ -1,5 +1,5 @@
 .btn {
-  @apply flex justify-center py-3 px-5 text-sm leading-tight font-medium rounded shadow text-white bg-indigo-700 transition duration-150 ease-in-out cursor-pointer;
+  @apply flex justify-center py-2 px-5 text-sm leading-tight font-medium rounded shadow text-white bg-indigo-700 transition duration-150 ease-in-out cursor-pointer;
 
   &:focus {
     @apply outline-none shadow-outline-gray;
@@ -60,7 +60,7 @@
   }
 
   &-primary-action {
-    @apply px-5 py-3 rounded-l transition duration-150 ease-in-out;
+    @apply px-5 py-2 rounded-l transition duration-150 ease-in-out;
 
     &:hover {
       @apply bg-indigo-800;
@@ -71,7 +71,7 @@
     @apply relative;
 
     &-actions {
-      @apply p-3 bg-indigo-600 rounded-r transition duration-150 ease-in-out;
+      @apply p-2 bg-indigo-600 rounded-r transition duration-150 ease-in-out;
     }
 
     &-content {

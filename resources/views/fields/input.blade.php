@@ -22,9 +22,9 @@
             type="{{ $field->input_type }}"
             name="{{ $field->name }}"
             id="input-{{ $field->name }}"
-            class="form-input shadow dark:text-gray-50 dark:bg-gray-900 dark:border-gray-700 block w-full sm:text-sm sm:leading-5 
+            class="form-input input w-full
                 @error($field->key)
-                    pr-10 border-red-300 dark:border-red-500 text-red-900 placeholder-red-500 dark:placeholder-red-500 focus:border-red-500 dark-focus:border-red-500 focus:shadow-outline-red dark-focus:shadow-outline-red
+                    input-error
                 @enderror"
             autocomplete="{{ $field->autocomplete }}"
             placeholder="{{ $field->placeholder }}"

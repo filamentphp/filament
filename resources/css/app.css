@@ -2,10 +2,12 @@
 @import './_base.css';
 
 @import 'tailwindcss/components';
-@import './components/_dropdown.css';
+@import './components/_dropdowns.css';
 @import './components/_alerts.css';
 @import './components/_labels.css';
+@import './components/_inputs.css';
 @import './components/_buttons.css';
+@import './components/_tables.css';
 
 @import 'tailwindcss/utilities';
 @import './_utilities.css';

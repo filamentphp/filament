@@ -1,7 +1,7 @@
 @section('title', __('filament::admin.users'))
 
 <div>
-    <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <ul class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         @foreach ($users as $user)
             <li wire:key="{{ $user->id }}" class="flex">
                 <a class="flex-grow p-4 bg-white dark:bg-gray-800 shadow rounded flex items-center" href="{{ route('filament.admin.users.edit', ['id' => $user->id]) }}">

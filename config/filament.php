@@ -104,8 +104,6 @@ return [
                 'ability' => 'view roles',
             ],
 
-            /* TODO
-
             'Permissions' => [
                 'label' => 'filament::admin.permissions',
                 'icon' => 'heroicons/heroicon-o-lock-closed',
@@ -113,8 +111,6 @@ return [
                 'active' => 'filament.admin.permissions.*',
                 'ability' => 'view permissions',
             ],
-
-            */
 
         ],
 

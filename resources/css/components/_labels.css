@@ -1,5 +1,5 @@
 .label {
-  @apply font-medium text-sm leading-5 cursor-pointer;
+  @apply font-medium text-sm leading-5 cursor-pointer whitespace-no-wrap;
 
   &-disabled {
     @apply opacity-50 cursor-not-allowed;

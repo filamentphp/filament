@@ -16,7 +16,7 @@ class Users extends Component
         $userClass = app(UserContract::class);
         $this->authorize('view', $userClass);
 
-        return view('filament::livewire.users', [
+        return view('filament::livewire.users.index', [
             'users' => $userClass::paginate(12),
         ]);
     }

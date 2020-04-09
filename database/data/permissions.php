@@ -54,4 +54,18 @@ return [
         'is_system' => 1,
     ],
 
+    [
+        'name' => 'view permissions',
+        'description' => 'Allow a user to view permissions.',
+        'guard_name' => 'web',
+        'is_system' => 1,
+    ],
+
+    [
+        'name' => 'create permissions',
+        'description' => 'Allow a user to create permissions.',
+        'guard_name' => 'web',
+        'is_system' => 1,
+    ],
+
 ];
