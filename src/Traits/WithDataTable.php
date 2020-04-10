@@ -8,7 +8,8 @@ trait WithDataTable
 {
     use WithPagination;
     
-    public $perPage = 10;
+    public $perPage = 12;
+    public $pagingOptions = [12, 24, 36];
     public $sortField;
     public $sortAsc = true;
     public $search = '';
