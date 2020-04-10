@@ -38,7 +38,14 @@
                                     ])
                                 </button>
                             </th>
-                            <th colspan="2">{{ __('Type') }}</th>
+                            <th colspan="2">
+                                <button class="flex" wire:click.prevent="sortBy('is_system')">
+                                    @include('filament::partials.sort-header', [
+                                        'field' => 'is_system',
+                                        'label' => __('Type'),
+                                    ])
+                                </button>
+                            </th>
                         </tr> 
                     </thead>
                     <tbody>
