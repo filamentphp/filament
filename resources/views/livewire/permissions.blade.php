@@ -68,7 +68,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td class="text-center" colspan="3">{{ __('No items found.') }}</td>
+                                <td class="text-center" colspan="3">{{ __('No permissions found.') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

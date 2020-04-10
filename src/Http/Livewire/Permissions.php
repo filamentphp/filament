@@ -20,7 +20,7 @@ class Permissions extends Component
             ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
             ->paginate($this->perPage);
 
-        return view('filament::livewire.datatables.permissions', [
+        return view('filament::livewire.permissions', [
             'title' => __('filament::admin.permissions'),
             'results' => $results,
             'items' => $results->map(function($item) {

@@ -16,11 +16,10 @@ class Roles extends Component
     {
         $this->authorize('view', Role::class);
 
-        $results = Role::search($this->search)
-            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-            ->paginate($this->perPage);
+        $results = Role::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+            ->paginate(25);
 
-        return view('filament::livewire.datatables.permissions', [
+        return view('filament::livewire.roles', [
             'title' => __('filament::admin.roles'),
             'results' => $results,
             'items' => $results->map(function($item) {
