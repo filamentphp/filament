@@ -1,7 +1,7 @@
 <div class="col-span-4 {{ $field->class }}">
     @if ($field->label)
         <label 
-            for="input-{{ $field->name }}" 
+            for="{{ $field->id }}" 
             class="
                 label
                 @if ($field->disabled) 
@@ -19,7 +19,8 @@
     @endif
     <div class="relative mb-2">
         <select
-            id="input-{{ $field->name }}"
+            id="{{ $field->id }}"
+            name="{{ $field->name }}"
             wire:model.lazy="{{ $field->key }}"
             @if ($field->disabled) 
                 disabled

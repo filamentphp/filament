@@ -1,7 +1,7 @@
 <div class="col-span-4 {{ $field->class }}">
     @if ($field->label)
         <label 
-            for="input-{{ $field->name }}" 
+            for="{{ $field->id }}" 
             class="
                 label 
                 @if ($field->disabled) 
@@ -20,8 +20,8 @@
     <div class="relative mb-2">
         <input
             type="{{ $field->input_type }}"
+            id="{{ $field->id }}"
             name="{{ $field->name }}"
-            id="input-{{ $field->name }}"
             class="form-input input w-full
                 @error($field->key)
                     input-error

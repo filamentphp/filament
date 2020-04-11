@@ -1,5 +1,7 @@
-@php($disabled = $field->disabled || (!$field->file_multiple && count($this->form_data[$field->name])) >= 1)
-<fieldset x-data="{{ Str::camel($field->name) }}()" class="col-span-4 {{ $field->class }}">
+@php
+$disabled = $field->disabled || (!$field->file_multiple && count($this->form_data[$field->name])) >= 1;
+@endphp
+<fieldset x-data="{{ $field->name }}()" class="col-span-4 {{ $field->class }}">
     @if ($field->label)
         <legend 
             class="
@@ -20,6 +22,7 @@
     <div class="mb-1 flex items-center">
         <label class="mr-2">
             <input
+                id="{{ $field->id }}"
                 name="{{ $field->name }}"
                 type="file"
                 {{ $field->file_multiple ? 'multiple' : '' }}
@@ -85,7 +88,7 @@
 </fieldset>
 
 <script>
-    function {{ Str::camel($field->name) }}() {
+    function {{ $field->name }}() {
         return {
             loading: false,
             isLoading() { 

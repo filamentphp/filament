@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 
 class Field extends BaseField
 {
+    protected $id;
     protected $name;
     protected $label;
     protected $key;
@@ -15,6 +16,7 @@ class Field extends BaseField
         $this->name = $name ?? Str::snake(Str::lower($label));
         $this->label = __($label);
         $this->key = $key_prefix ? 'form_data.'.$this->name : $this->name;
+        $this->id = Str::uuid();
     }
 
     public static function make($label, $name = null, $key_prefix = true)

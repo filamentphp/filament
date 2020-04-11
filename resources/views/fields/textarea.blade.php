@@ -1,7 +1,7 @@
 <div class="col-span-4 {{ $field->class }}">
     @if ($field->label)
         <label 
-            for="input-{{ $field->name }}" 
+            for="{{ $field->id }}" 
             class="
                 label 
                 @if ($field->disabled) 
@@ -19,12 +19,13 @@
     @endif
     <div class="relative mb-2">
         <textarea
-            id="input-{{ $field->name }}"
-            rows="{{ $field->textarea_rows }}"
+            id="{{ $field->id }}"
+            name="{{ $field->name }}"
             class="form-input input w-full
                 @error($field->key)
                     input-error
                 @enderror"            
+            rows="{{ $field->textarea_rows }}"
             placeholder="{{ $field->placeholder }}"
             @if ($field->value)
                 value="{{ $field->value }}"
