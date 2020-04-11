@@ -74,16 +74,20 @@ return [
 
             /* TODO
 
-            'Resources' => [
-                'label' => 'filament::admin.resources',
-                'icon' => 'heroicons/heroicon-o-collection',
-                'url' => '#',
-            ],
-
             'globals' => [
                 'label' => 'filament::admin.globals',
                 'icon' => 'heroicons/heroicon-o-globe',
-                'url' => '#',
+                'url' => 'filament.admin.globals.index',
+                'active' => 'filament.admin.globals.*',
+                'ability' => 'view globals',
+            ],
+
+            'Resources' => [
+                'label' => 'filament::admin.collections',
+                'icon' => 'heroicons/heroicon-o-collection',
+                'url' => 'filament.admin.collections.index',
+                'active' => 'filament.admin.collections.*',
+                'ability' => 'view collections',
             ],
 
             */
