@@ -8,7 +8,7 @@ _[In Active Development]_
 
 ## Installation in laravel
 
-This package can be used with `Laravel 6.x` or higher.
+This package can be used with `Laravel 7.x` or higher.
 
 > The following instructions assume a new installation of Laravel.
 
