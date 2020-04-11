@@ -39,6 +39,18 @@
       .mode-dark & {
         @apply border-gray-700;
       }
+
+      a {
+        @apply text-indigo-400;
+
+        &:hover {
+          @apply text-indigo-600;
+
+          .mode-dark & {
+            @apply text-indigo-200;
+          }
+        }
+      }
     }
   }
 }

@@ -1,5 +1,5 @@
 @php($disabled = $field->disabled || (!$field->file_multiple && count($this->form_data[$field->name])) >= 1)
-<fieldset x-data="file()" class="col-span-4 {{ $field->class }}">
+<fieldset x-data="{{ Str::camel($field->name) }}()" class="col-span-4 {{ $field->class }}">
     @if ($field->label)
         <legend 
             class="
@@ -85,7 +85,7 @@
 </fieldset>
 
 <script>
-    function file() {
+    function {{ Str::camel($field->name) }}() {
         return {
             loading: false,
             isLoading() { 

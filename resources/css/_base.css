@@ -20,3 +20,12 @@
 .turbolinks-progress-bar {
   @apply h-1 bg-indigo-500;
 }
+
+/**
+ * Links
+ */
+
+.link,
+a {
+  @apply transition-all duration-200;
+}
