@@ -1,7 +1,8 @@
 @php
-$disabled = $field->disabled || (!$field->file_multiple && count($this->form_data[$field->name])) >= 1;
+    $disabled = $field->disabled || (!$field->file_multiple && count($this->form_data[$field->name])) >= 1;
+    $x_data_function = 'file'.Str::studly($field->name).'()';
 @endphp
-<fieldset x-data="{{ $field->name }}()" class="col-span-4 {{ $field->class }}">
+<fieldset x-data="{{ $x_data_function }}" class="col-span-4 {{ $field->class }}">
     @if ($field->label)
         <legend 
             class="
@@ -88,7 +89,7 @@ $disabled = $field->disabled || (!$field->file_multiple && count($this->form_dat
 </fieldset>
 
 <script>
-    function {{ $field->name }}() {
+    function {{ $x_data_function }} {
         return {
             loading: false,
             isLoading() { 
