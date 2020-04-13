@@ -16,17 +16,13 @@ class Permissions extends Component
     {
         $this->authorize('view', Permission::class);
 
-        $results = Permission::search($this->search)
+        $permissions = Permission::search($this->search)
             ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
             ->paginate($this->perPage);
 
         return view('filament::livewire.permissions', [
             'title' => __('filament::admin.permissions'),
-            'results' => $results,
-            'items' => $results->map(function($item) {
-                $item->action = new HtmlString('<a href="'.route('filament.admin.permissions.edit', ['id' => $item->id]).'">'.__('Edit').'</a>');
-                return $item;
-            }),
+            'permissions' => $permissions,
         ]);
     }
 }

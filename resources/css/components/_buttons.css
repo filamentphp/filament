@@ -1,8 +1,13 @@
 .btn {
-  @apply flex justify-center py-2 px-5 text-sm leading-tight font-medium rounded shadow text-white bg-indigo-700 transition duration-150 ease-in-out cursor-pointer;
+  @apply flex items-center justify-center py-2 px-5 text-sm leading-tight font-medium rounded shadow text-white bg-indigo-700 transition duration-150 ease-in-out cursor-pointer;
 
   &:focus {
     @apply outline-none shadow-outline-gray;
+  }
+
+  &:hover,
+  &:active {
+    @apply bg-indigo-800;
   }
 
   &[disabled],
@@ -10,9 +15,22 @@
     @apply opacity-50 cursor-not-allowed;
   }
 
-  &:hover,
-  &:active {
-    @apply bg-indigo-800;
+  &-add {
+    @apply bg-green-500;
+
+    &:hover,
+    &:active {
+      @apply bg-green-600;
+    }
+
+    .mode-dark & {
+      @apply bg-green-600;
+
+      &:hover,
+      &:active {
+        @apply bg-green-700;
+      }
+    }
   }
 
   &-small {
@@ -52,30 +70,6 @@
       &:active {
         @apply text-indigo-500;
       }
-    }
-  }
-
-  &-with-dropdown {
-    @apply inline-flex justify-between p-0;
-  }
-
-  &-primary-action {
-    @apply px-5 py-2 rounded-l transition duration-150 ease-in-out;
-
-    &:hover {
-      @apply bg-indigo-800;
-    }
-  }
-
-  &-dropdown {
-    @apply relative;
-
-    &-actions {
-      @apply p-2 bg-indigo-600 rounded-r transition duration-150 ease-in-out;
-    }
-
-    &-content {
-      @apply absolute left-0 mt-2 w-48;
     }
   }
 }

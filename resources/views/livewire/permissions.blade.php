@@ -16,75 +16,75 @@
         </label>
     </div>
 
-    <div class="flex flex-col">
-        <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-            <div class="table-simple">
-                <table>
-                    <thead>                    
-                        <tr>
-                            <th>
-                                <button class="flex" wire:click.prevent="sortBy('name')">
-                                    @include('filament::partials.sort-header', [
-                                        'field' => 'name',
-                                        'label' => __('Name'),
-                                    ])
-                                </button>
-                            </th>
-                            <th>
-                                <button class="flex" wire:click.prevent="sortBy('description')">
-                                    @include('filament::partials.sort-header', [
-                                        'field' => 'description',
-                                        'label' => __('Description'),
-                                    ])
-                                </button>
-                            </th>
-                            <th colspan="2">
-                                <button class="flex" wire:click.prevent="sortBy('is_system')">
-                                    @include('filament::partials.sort-header', [
-                                        'field' => 'is_system',
-                                        'label' => __('Type'),
-                                    ])
-                                </button>
-                            </th>
-                        </tr> 
-                    </thead>
-                    <tbody>
-                        @forelse ($items as $item)
-                            <tr>
-                                <td class="font-medium">{{ $item->name }}</td>
-                                <td>{{ $item->description }}</td>
-                                <td>       
-                                    <x-filament-pill>
-                                        @if ($item->is_system)
-                                            {{ __('system') }}
-                                        @else
-                                            {{ __('custom') }}
-                                        @endif
-                                    </x-filament-pill>
-                                </td>
-                                <td class="font-medium text-right">
-                                    {{ $item->action }}
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td class="text-center" colspan="3">{{ __('No permissions found.') }}</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    <table class="table-simple">
+        <thead>                    
+            <tr>
+                <th>
+                    <button class="flex" wire:click.prevent="sortBy('name')">
+                        @include('filament::partials.sort-header', [
+                            'field' => 'name',
+                            'label' => __('Name'),
+                        ])
+                    </button>
+                </th>
+                <th>
+                    <button class="flex" wire:click.prevent="sortBy('description')">
+                        @include('filament::partials.sort-header', [
+                            'field' => 'description',
+                            'label' => __('Description'),
+                        ])
+                    </button>
+                </th>
+                <th colspan="2">
+                    <button class="flex" wire:click.prevent="sortBy('is_system')">
+                        @include('filament::partials.sort-header', [
+                            'field' => 'is_system',
+                            'label' => __('Type'),
+                        ])
+                    </button>
+                </th>
+            </tr> 
+        </thead>
+        <tbody>
+            @forelse ($permissions as $permission)
+                <tr>
+                    <td class="font-medium">{{ $permission->name }}</td>
+                    <td>{{ $permission->description }}</td>
+                    <td>       
+                        <x-filament-pill>
+                            @if ($permission->is_system)
+                                {{ __('system') }}
+                            @else
+                                {{ __('custom') }}
+                            @endif
+                        </x-filament-pill>
+                    </td>
+                    <td class="text-right">
+                        <x-filament-dropdown dropdown-class="origin-top-right right-0 w-48">
+                            <x-slot name="button">
+                                <x-heroicon-o-dots-horizontal class="h-5 w-5" />
+                            </x-slot>
+                            <a href="{{ route('filament.admin.permissions.edit', ['id' => $permission->id]) }}">{{ __('Edit') }}</a>
+                            <button type="button" class="text-red-500">{{ __('Delete') }}</button>
+                        </x-filament-dropdown>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td class="text-center" colspan="3">{{ __('No permissions found.') }}</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
 
     <div class="flex justify-between mt-6">
-        {{ $results->links('filament::partials.links') }}
-        @if (count($results))
+        {{ $permissions->links('filament::partials.links') }}
+        @if (count($permissions))
             <p class="text-xs font-mono leading-5 text-gray-500 dark:text-gray-400">
                 {{ __('filament::admin.pagination_results', [
-                    'firstItem' => $results->firstItem(),
-                    'lastItem' => $results->lastItem(),
-                    'total' => $results->total(),
+                    'firstItem' => $permissions->firstItem(),
+                    'lastItem' => $permissions->lastItem(),
+                    'total' => $permissions->total(),
                 ]) }}
             </p>
         @endif

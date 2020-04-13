@@ -1,27 +1,35 @@
 .dropdown {
-  @apply shadow rounded bg-white text-sm leading-5 text-gray-900 overflow-hidden;
+  @apply relative;
 
-  .mode-dark & {
-    @apply text-white bg-black;
+  &-button {
+    @apply relative z-0;
   }
 
-  > * + * {
-    @apply border-t border-gray-200;
+  &-content {
+    @apply absolute z-10 shadow rounded bg-white font-normal text-sm leading-5 text-gray-900 overflow-hidden my-2 flex flex-col;
 
     .mode-dark & {
-      @apply border-gray-900;
+      @apply text-white bg-black;
     }
-  }
 
-  button,
-  a {
-    @apply inline-block w-full px-5 py-2 text-left transition duration-150 ease-in-out;
-
-    &:hover {
-      @apply bg-gray-50;
+    > * + * {
+      @apply border-t border-gray-200;
 
       .mode-dark & {
-        @apply bg-gray-700;
+        @apply border-gray-900;
+      }
+    }
+
+    button,
+    a {
+      @apply w-full whitespace-no-wrap px-5 py-2 text-left transition duration-150 ease-in-out;
+
+      &:hover {
+        @apply bg-gray-50;
+
+        .mode-dark & {
+          @apply bg-gray-700;
+        }
       }
     }
   }

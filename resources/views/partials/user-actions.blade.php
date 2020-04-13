@@ -1,5 +1,9 @@
-<div @click.away="open = false" class="flex-grow relative" x-data="{ open: false }">
-    <button @click="open = !open" class="w-full text-left flex items-center">
+<x-filament-dropdown 
+    class="flex-grow" 
+    button-class="w-full text-left flex items-center"
+    dropdown-class="origin-bottom-left left-0 bottom-0 w-56 mb-12"
+>
+    <x-slot name="button">
         <div class="flex-shrink-0">
             @livewire('filament::user-avatar', [
                 'userId' => auth()->user()->id, 
@@ -11,34 +15,24 @@
             'attribute' => 'name', 
             'classes' => 'flex-grow ml-3 text-sm leading-5 font-medium text-white',
         ])
-    </button>
-    <div x-show="open" 
-        x-transition:enter="transition ease-out duration-100" 
-        x-transition:enter-start="transform opacity-0 scale-95" 
-        x-transition:enter-end="transform opacity-100 scale-100" 
-        x-transition:leave="transition ease-in duration-75" 
-        x-transition:leave-start="transform opacity-100 scale-100" 
-        x-transition:leave-end="transform opacity-0 scale-95" 
-        class="origin-bottom-left absolute left-0 bottom-0 mb-12 w-56 dropdown"
+    </x-slot>
+    <p class="px-4 py-3">
+        <span class="block text-xs leading-5 text-gray-400">
+            {{ __('filament::auth.signed_in_as') }}
+        </span>
+        @livewire('filament::auth-user-attribute', [
+            'attribute' => 'email', 
+            'classes' => 'font-medium',
+        ])
+    </p>
+    <a 
+        href="{{ route('filament.admin.users.edit', ['id' => auth()->user()->id]) }}" 
     >
-        <p class="px-4 py-3">
-            <span class="block text-xs leading-5 text-gray-400">
-                {{ __('filament::auth.signed_in_as') }}
-            </span>
-            @livewire('filament::auth-user-attribute', [
-                'attribute' => 'email', 
-                'classes' => 'font-medium',
-            ])
-        </p>
-        <a 
-            href="{{ route('filament.admin.users.edit', ['id' => auth()->user()->id]) }}" 
-        >
-            {{ __('filament::user.settings') }}
-        </a>
-        <x-filament-form :action="route('filament.auth.logout')">
-            <button type="submit">
-                {{ __('Sign Out') }}
-            </button>
-        </x-filament-form>
-    </div>
-</div>
+        {{ __('filament::user.settings') }}
+    </a>
+    <x-filament-form :action="route('filament.auth.logout')">
+        <button type="submit">
+            {{ __('Sign Out') }}
+        </button>
+    </x-filament-form>
+</x-filament-dropdown>

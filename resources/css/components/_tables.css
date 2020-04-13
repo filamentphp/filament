@@ -1,9 +1,5 @@
 .table-simple {
-  @apply align-middle inline-block min-w-full shadow rounded overflow-hidden;
-
-  table {
-    @apply min-w-full;
-  }
+  @apply min-w-full shadow;
 
   thead {
     @apply bg-gray-50 text-left;
@@ -38,18 +34,6 @@
 
       .mode-dark & {
         @apply border-gray-700;
-      }
-
-      a {
-        @apply text-indigo-400;
-
-        &:hover {
-          @apply text-indigo-600;
-
-          .mode-dark & {
-            @apply text-indigo-200;
-          }
-        }
       }
     }
   }

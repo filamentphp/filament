@@ -43,25 +43,28 @@
             </div>
         </div>
         {{-- Main content --}}
-        <div class="flex flex-col w-0 flex-1 overflow-hidden">
-            <main id="content" class="flex-1 relative z-0 overflow-y-auto focus:outline-none" tabindex="0">
-                <div class="max-w-7xl mx-auto p-4 sm:px-8 lg:py-6 lg:px-8 flex items-center justify-between">
-                    <div class="flex-grow">
-                        <h1 class="text-xl lg:text-2xl font-semibold">@yield('title')</h1>
-                    </div>
-                    <div class="flex-shrink-0 flex items-center">
-                        @include('filament::partials.dark-mode-toggle')
-                        <div class="ml-2 flex">
-                            <button @click.stop="sidebarOpen = true" class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded text-gray-500 dark:text-gray-400 transition ease-in-out duration-150 hover:text-gray-900 dark-hover:text-gray-300 focus:outline-none focus:bg-gray-200 md:hidden">
-                                <x-heroicon-o-menu-alt-1 class="h-6 w-6" />
-                            </button>
-                        </div>
-                    </div>
-                </div>       
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-                    @yield('main')
+        <main id="content" class="w-full max-w-7xl mx-auto my-4 sm:my-8 focus:outline-none flex flex-col" tabindex="0">
+            <div class="flex items-center justify-between px-4 sm:px-8">
+                <div class="flex-grow">
+                    <h1 class="text-xl lg:text-2xl font-semibold">@yield('title')</h1>
                 </div>
-            </main>
-        </div>
+                <ul class="flex-shrink-0 flex items-center">
+                    <li>
+                        @yield('actions')
+                    </li>
+                    <li class="ml-4 flex">
+                        @include('filament::partials.dark-mode-toggle')
+                    </li>
+                    <li class="ml-4 flex">
+                        <button @click.stop="sidebarOpen = true" class="inline-flex items-center transition ease-in-out duration-150 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark-hover:text-gray-300 focus:outline-none focus:bg-gray-200 md:hidden">
+                            <x-heroicon-o-menu-alt-1 class="h-6 w-6" />
+                        </button>
+                    </li>
+                </ul>
+            </div>       
+            <div class="flex-grow max-w-full overflow-auto p-4 sm:p-8">
+                @yield('main')
+            </div>
+        </main>
     </div>
 @endsection
