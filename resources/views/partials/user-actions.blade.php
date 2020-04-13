@@ -13,7 +13,7 @@
         </div>
         @livewire('filament::auth-user-attribute', [
             'attribute' => 'name', 
-            'classes' => 'flex-grow ml-3 text-sm leading-5 font-medium text-white',
+            'classes' => 'flex-grow ml-3 text-sm leading-5 font-medium text-gray-50',
         ])
     </x-slot>
     <p class="px-4 py-3">

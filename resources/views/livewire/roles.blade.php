@@ -1,9 +1,9 @@
 @section('title', $title)
 
 @section('actions')
-    <button class="btn btn-small btn-add">
-        <x-heroicon-o-plus class="h-4 w-4 mr-2" />
-        {{ __('Add Role') }}
+    <button @click.prevent="$dispatch('open-modal', { id: 'create-role' })" class="btn btn-small btn-add">
+        <x-heroicon-o-plus class="h-3 w-3 mr-2" />
+        {{ __('New Role') }}
     </button>
 @endsection
 
@@ -40,8 +40,8 @@
                             <x-slot name="button">
                                 <x-heroicon-o-dots-horizontal class="h-5 w-5" />
                             </x-slot>
-                            <a href="{{ route('filament.admin.roles.edit', ['id' => $role->id]) }}">{{ __('Edit') }}</a>
-                            <button type="button" class="text-red-500">{{ __('Delete') }}</button>
+                            <button @click.prevent="open = false; $dispatch('open-modal', { id: 'role-{{ $role->id }}' })" type="button">{{ __('Edit') }}</button>
+                            <button type="button" class="text-red-500" type="button">{{ __('Delete') }}</button>
                         </x-filament-dropdown>
                     </td>
                 </tr>
@@ -58,3 +58,15 @@
     </div>
 
 </div>
+
+@push('footer')
+    <x-filament-modal id="create-role" :esc-close="true" :click-outside="true">
+        <h2>{{ __('New Role') }}</h2>
+    </x-filament-modal>
+
+    @foreach ($roles as $role)
+        <x-filament-modal :id="'role-'.$role->id">
+            <h2>{{ $role->name }}</h2>
+        </x-filament-modal>
+    @endforeach
+@endpush

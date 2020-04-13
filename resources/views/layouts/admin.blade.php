@@ -8,7 +8,7 @@
             <div class="fixed inset-y-0 left-0 flex flex-col z-40 max-w-xs w-full bg-gray-800 transform ease-in-out duration-300 -translate-x-full" :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}">
                 <div class="absolute top-0 right-0 -mr-14 p-1">
                     <button x-show="sidebarOpen" @click="sidebarOpen = false" class="flex items-center justify-center h-12 w-12 rounded-full focus:outline-none focus:bg-gray-600">
-                        <x-heroicon-o-x class="h-6 w-6 text-white" />
+                        <x-heroicon-o-x class="h-6 w-6 text-gray-50" />
                     </button>
                 </div>
                 <div class="h-0 flex-1 overflow-y-auto pt-5 pb-4">

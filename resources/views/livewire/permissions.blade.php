@@ -8,7 +8,7 @@
         </div>
         <label class="flex-shrink-0 flex items-center">
             <span class="label mr-2">Per Page:</span>
-            <select wire:model="perPage" class="form-select select">
+            <select wire:model="perPage" class="form-select input">
                 @foreach($this->pagingOptions as $option)
                     <option>{{ $option }}</option>
                 @endforeach

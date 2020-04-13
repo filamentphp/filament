@@ -1,5 +1,5 @@
 .btn {
-  @apply flex items-center justify-center py-2 px-5 text-sm leading-tight font-medium rounded shadow text-white bg-indigo-700 transition duration-150 ease-in-out cursor-pointer;
+  @apply flex items-center justify-center py-2 px-5 text-sm leading-tight font-medium rounded shadow text-gray-50 bg-indigo-700 transition duration-150 ease-in-out cursor-pointer;
 
   &:focus {
     @apply outline-none shadow-outline-gray;
@@ -46,7 +46,7 @@
     }
 
     .mode-dark & {
-      @apply text-white border-gray-700 bg-gray-900;
+      @apply text-gray-50 border-gray-700 bg-gray-900;
 
       &:hover,
       &:active {

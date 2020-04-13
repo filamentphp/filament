@@ -9,7 +9,7 @@
     @apply absolute z-10 shadow rounded bg-white font-normal text-sm leading-5 text-gray-900 overflow-hidden my-2 flex flex-col;
 
     .mode-dark & {
-      @apply text-white bg-black;
+      @apply text-gray-50 bg-black;
     }
 
     > * + * {

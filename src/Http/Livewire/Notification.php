@@ -8,7 +8,7 @@ class Notification extends Component
 {
     public $type = 'info';
     public $message;
-    public $notificationVisible = false;
+    public $isOpen = false;
 
     protected $listeners = [
         'filament.notification.close' => 'close',
@@ -17,7 +17,7 @@ class Notification extends Component
 
     public function close()
     {
-        $this->notificationVisible = false;
+        $this->isOpen = false;
     }
 
     public function notify(array $data)
@@ -25,7 +25,7 @@ class Notification extends Component
         $notification = collect($data);
         $this->type = $notification->get('type', $this->type);
         $this->message = $notification->get('message');
-        $this->notificationVisible = true;
+        $this->isOpen = true;
     }
 
     public function render()

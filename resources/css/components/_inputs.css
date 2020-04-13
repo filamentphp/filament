@@ -33,9 +33,3 @@
     @apply appearance-none;
   }
 }
-
-.select {
-  .mode-dark & {
-    @apply text-gray-50 bg-gray-900 border-gray-700;
-  }
-}

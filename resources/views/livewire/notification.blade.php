@@ -1,6 +1,5 @@
-<div class="fixed inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end">
-    <div 
-        x-data="{ open: {{ $notificationVisible ? 'true' : 'false' }} }" 
+<div x-data="{ open: {{ $isOpen ? 'true' : 'false' }} }" class="fixed inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end">
+    <div  
         x-show="open" 
         x-transition:enter="transform ease-out duration-300 transition" 
         x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2" 

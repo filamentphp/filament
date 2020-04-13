@@ -26,7 +26,7 @@
     @apply bg-white text-gray-500 text-sm leading-5;
 
     .mode-dark & {
-      @apply bg-gray-800 text-white;
+      @apply bg-gray-800 text-gray-50;
     }
 
     td {
