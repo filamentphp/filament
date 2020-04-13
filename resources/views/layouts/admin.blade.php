@@ -52,10 +52,10 @@
                     <li>
                         @yield('actions')
                     </li>
-                    <li class="ml-4 flex">
+                    <li class="ml-4">
                         @include('filament::partials.dark-mode-toggle')
                     </li>
-                    <li class="ml-4 flex">
+                    <li class="ml-4">
                         <button @click.stop="sidebarOpen = true" class="inline-flex items-center transition ease-in-out duration-150 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark-hover:text-gray-300 focus:outline-none focus:bg-gray-200 md:hidden">
                             <x-heroicon-o-menu-alt-1 class="h-6 w-6" />
                         </button>
