@@ -50,7 +50,7 @@
                 <tr>
                     <td class="font-medium">{{ $permission->name }}</td>
                     <td>{{ $permission->description }}</td>
-                    <td>       
+                    <td {!! $permission->is_system ? 'colspan="2"' : '' !!}>       
                         <x-filament-pill>
                             @if ($permission->is_system)
                                 {{ __('system') }}
@@ -59,15 +59,17 @@
                             @endif
                         </x-filament-pill>
                     </td>
-                    <td class="text-right">
-                        <x-filament-dropdown dropdown-class="origin-top-right right-0 w-48">
-                            <x-slot name="button">
-                                <x-heroicon-o-dots-horizontal class="h-5 w-5" />
-                            </x-slot>
-                            <a href="{{ route('filament.admin.permissions.edit', ['id' => $permission->id]) }}">{{ __('Edit') }}</a>
-                            <button type="button" class="text-red-500">{{ __('Delete') }}</button>
-                        </x-filament-dropdown>
-                    </td>
+                    @if (!$permission->is_system)
+                        <td class="text-right">
+                            <x-filament-dropdown dropdown-class="origin-top-right right-0 w-48">
+                                <x-slot name="button">
+                                    <x-heroicon-o-dots-horizontal class="h-5 w-5" />
+                                </x-slot>
+                                <a href="{{ route('filament.admin.permissions.edit', ['id' => $permission->id]) }}">{{ __('Edit') }}</a>
+                                <button type="button" class="text-red-500">{{ __('Delete') }}</button>
+                            </x-filament-dropdown>
+                        </td>
+                    @endif
                 </tr>
             @empty
                 <tr>

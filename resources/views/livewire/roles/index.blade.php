@@ -46,7 +46,7 @@
                     </td>
                 </tr>
                 @push('footer')
-                    <x-filament-modal :id="$role->id" :label="__('filament::permissions.role', ['role' => $role->name])">
+                    <x-filament-modal :id="$role->id" :label="__('filament::permissions.role.edit')">
                         @livewire('filament::role-edit', ['id' => $role->id])
                     </x-filament-modal>
                 @endpush

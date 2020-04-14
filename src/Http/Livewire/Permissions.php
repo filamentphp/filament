@@ -12,6 +12,18 @@ class Permissions extends Component
 {
     use AuthorizesRequests, WithDataTable;
 
+    protected $listeners = ['filament.permissionUpdated' => 'showPermissionUpdatedNotification'];
+
+    public function showPermissionUpdatedNotification($permission)
+    {
+        $this->emit('filament.notification.notify', [
+            'type' => 'success',
+            'message' => __('filament::notifications.updated', ['item' => $permission['name']]),
+        ]);
+
+        $this->render();
+    }
+
     public function render()
     {
         $this->authorize('view', Permission::class);
@@ -20,7 +32,7 @@ class Permissions extends Component
             ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
             ->paginate($this->perPage);
 
-        return view('filament::livewire.permissions', [
+        return view('filament::livewire.permissions.index', [
             'title' => __('filament::admin.permissions'),
             'permissions' => $permissions,
         ]);

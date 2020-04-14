@@ -18,6 +18,12 @@ return [
 
     'roles' => 'Roles',
 
-    'role' => ':role Role',
+    'role' => [
+
+        'edit' => 'Edit Role',
+
+        'update' => 'Update Role',
+
+    ],
 
 ];

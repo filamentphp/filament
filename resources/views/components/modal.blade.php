@@ -34,15 +34,24 @@
         x-transition:leave="ease-in duration-200" 
         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
-        class="bg-white dark:bg-gray-800 rounded px-4 pt-5 pb-4 overflow-hidden shadow-xl transform transition-all sm:max-w-xl sm:w-full sm:p-6"
+        class="relative sm:max-w-xl sm:w-full"
         role="dialog"
         id="dialog1"
         aria-label="{{ $label }}"
         aria-modal="true"
         x-bind:aria-hidden="open === false"
     >
-        {{ $slot }}
-        <button @click.prevent="open = false" type="button">Close</button>
+        <div class="bg-white dark:bg-gray-800 rounded px-4 pt-5 pb-4 overflow-hidden shadow-xl transform transition-all sm:p-6">
+            {{ $slot }}
+        </div>
+        <button 
+            type="button"
+            @click.prevent="open = false"  
+            class="absolute top-0 right-3 -mt-10 flex transition ease-in-out duration-150 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark-hover:text-gray-300 focus:outline-none"
+        >
+            <x-heroicon-o-x class="h-6 w-6 text-gray-50" aria-hidden="true" />
+            <span class="sr-only">{{ __('Close') }}</span>
+        </button>
     </div>
 </div>
 
