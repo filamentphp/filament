@@ -23,12 +23,11 @@ class RolePolicy
      * Determine if the authenticated user can edit a role.
      *
      * @param  User  $authenticated
-     * @param  Role  $role
      * @return bool
      */
-    public function edit($authenticated, $role): Response
+    public function edit($authenticated): Response
     {
-        return !$role->is_system && $authenticated->can('edit roles')
+        return $authenticated->can('edit roles')
                 ? Response::allow()
                 : Response::deny(__('You are not allowed to edit roles.'));
     }
@@ -50,12 +49,11 @@ class RolePolicy
      * Determine if the authenticated user can delete a role.
      *
      * @param  User  $authenticated
-     * @param  Role  $role
      * @return bool
      */
-    public function delete($authenticated, $role): Response
+    public function delete($authenticated): Response
     {
-        return !$role->is_system && $authenticated->can('delete roles')
+        return $authenticated->can('delete roles')
                 ? Response::allow()
                 : Response::deny(__('You are not allowed to delete roles.'));
     }
