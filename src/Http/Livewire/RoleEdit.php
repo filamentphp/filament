@@ -18,15 +18,10 @@ class RoleEdit extends FormComponent
 
     public function success()
     {
-        $input = collect($this->form_data);
-        $this->model->update($input->all());
+        $this->model->update($this->form_data);
 
+        $this->emit('filament.roleUpdated', $this->model);
         $this->emit('filament.toggleModal', $this->model->id);
-
-        $this->emit('filament.notification.notify', [
-            'type' => 'success',
-            'message' => __('filament::notifications.updated', ['item' => $this->model->name]),
-        ]);
     }
 
     public function render()

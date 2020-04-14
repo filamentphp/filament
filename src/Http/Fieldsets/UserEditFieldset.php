@@ -5,7 +5,7 @@ namespace Filament\Http\Fieldsets;
 use Filament\Contracts\Fieldset;
 use Filament\Support\Fields\Field;
 use Illuminate\Validation\Rule;
-use Spatie\Permission\Contracts\Role as RoleContract;
+use Filament\Models\Role;
 
 class UserEditFieldset implements Fieldset
 {
@@ -57,7 +57,7 @@ class UserEditFieldset implements Fieldset
                 ->group('permissions')
                 ->disabled(!auth()->user()->is_super_admin),
             Field::make('filament::permissions.roles', 'roles')
-                ->checkboxes(app(RoleContract::class)::orderBy('name')
+                ->checkboxes(Role::orderBy('name')
                     ->pluck('id', 'name')
                     ->all())
                 ->default(array_map('strval', $model->roles

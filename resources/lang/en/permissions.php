@@ -12,7 +12,7 @@ return [
     |
     */
 
-    'super_admin' => 'Super admin',
+    'super_admin' => 'super admin',
     
     'super_admin_info' => 'Super admins supersede all assigned roles and permissions.',
 

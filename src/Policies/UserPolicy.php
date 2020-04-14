@@ -37,4 +37,36 @@ class UserPolicy
                 ? Response::allow()
                 : Response::deny(__('You are not allowed to edit other users.'));
     }
+
+    /**
+     * Determine if the authenticated user can create users.
+     *
+     * @param  User  $authenticated
+     * @param  User  $user
+     * @return bool
+     */
+    public function create($authenticated): Response
+    {
+        return $authenticated->can('create users')
+                ? Response::allow()
+                : Response::deny(__('You are not allowed to create users.'));
+    }
+
+    /**
+     * Determine if the authenticated user can delete a user.
+     *
+     * @param  User  $authenticated
+     * @param  User  $user
+     * @return bool
+     */
+    public function delete($authenticated, $user): Response
+    {
+        if ($authenticated->can('delete users')) {
+            return Response::allow();
+        }
+
+        return $authenticated->id === $user->id
+                ? Response::allow()
+                : Response::deny(__('You are not allowed to delete other users.'));
+    }
 }

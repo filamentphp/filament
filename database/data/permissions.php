@@ -34,6 +34,13 @@ return [
     ],
 
     [
+        'name' => 'delete users',
+        'description' => 'Allow a user to delete users.',
+        'guard_name' => 'web',
+        'is_system' => 1,
+    ],
+
+    [
         'name' => 'edit user roles',
         'description' => 'Allow a user to edit user roles.',
         'guard_name' => 'web',
@@ -48,8 +55,22 @@ return [
     ],
 
     [
+        'name' => 'edit roles',
+        'description' => 'Allow a user to edit roles.',
+        'guard_name' => 'web',
+        'is_system' => 1,
+    ],
+
+    [
         'name' => 'create roles',
         'description' => 'Allow a user to create roles.',
+        'guard_name' => 'web',
+        'is_system' => 1,
+    ],
+
+    [
+        'name' => 'delete roles',
+        'description' => 'Allow a user to delete roles.',
         'guard_name' => 'web',
         'is_system' => 1,
     ],
@@ -62,8 +83,22 @@ return [
     ],
 
     [
+        'name' => 'edit permissions',
+        'description' => 'Allow a user to edit permissions.',
+        'guard_name' => 'web',
+        'is_system' => 1,
+    ],
+
+    [
         'name' => 'create permissions',
         'description' => 'Allow a user to create permissions.',
+        'guard_name' => 'web',
+        'is_system' => 1,
+    ],
+
+    [
+        'name' => 'delete permissions',
+        'description' => 'Allow a user to delete permissions.',
         'guard_name' => 'web',
         'is_system' => 1,
     ],

@@ -12,6 +12,18 @@ class Roles extends Component
 {
     use AuthorizesRequests, WithDataTable;
 
+    protected $listeners = ['filament.roleUpdated' => 'showRoleUpdatedNotification'];
+
+    public function showRoleUpdatedNotification($role)
+    {
+        $this->emit('filament.notification.notify', [
+            'type' => 'success',
+            'message' => __('filament::notifications.updated', ['item' => $role['name']]),
+        ]);
+
+        $this->render();
+    }
+
     public function render()
     {
         $this->authorize('view', Role::class);

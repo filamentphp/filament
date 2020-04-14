@@ -1,7 +1,7 @@
 <form wire:submit.prevent="save">
 
-    <h2>{{ __('filament::permissions.role', ['role' => $role->name]) }}</h2>
+    <x-filament-fields :fields="$fields" />
 
-    <x-filament-button label="Save" />
+    <x-filament-button label="Update Role" />
 
 </form>
