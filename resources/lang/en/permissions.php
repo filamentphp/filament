@@ -18,4 +18,6 @@ return [
 
     'roles' => 'Roles',
 
+    'role' => ':role Role',
+
 ];

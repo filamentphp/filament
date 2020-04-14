@@ -13,7 +13,6 @@ class UserEdit extends FormComponent
         $this->model = $userClass::findOrFail($id);
         $this->authorize('edit', $this->model);
 
-        $this->goback = 'alpine.admin.users.index';
         $this->setFieldset();
         $this->setFormProperties();
     }
@@ -38,7 +37,7 @@ class UserEdit extends FormComponent
 
         $this->emit('filament.notification.notify', [
             'type' => 'success',
-            'message' => __('filament::actions.updated', ['item' => $this->model->name]),
+            'message' => __('filament::notifications.updated', ['item' => $this->model->name]),
         ]);
 
         $this->emit('filament.userUpdated', $this->model->id);
@@ -52,7 +51,7 @@ class UserEdit extends FormComponent
         $this->model->save();
         $this->emit('filament.notification.notify', [
             'type' => 'success',
-            'message' => __('filament::actions.updated', ['item' => $field_name]),
+            'message' => __('filament::notifications.updated', ['item' => $field_name]),
         ]);
 
         $this->updateAuthUser();
@@ -72,10 +71,5 @@ class UserEdit extends FormComponent
             'fields' => $this->fields(),
             'user' => $this->model,
         ]);
-    }
-
-    public function saveAndGoBackResponse()
-    {
-        return redirect()->route('filament.admin.users.index');
     }
 }

@@ -4,18 +4,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Actions Language Lines
+    | Fields Language Lines
     |--------------------------------------------------------------------------
     |
-    | The following language lines are used in the admin for various
+    | The following language lines are used in the admin for field
     | messages and labels that we need to display to the user.
     |
     */
 
-    'updated' => '**:item** updated successfully.',
-    
-    'upload' => 'Upload :item',
+    'file' => [
 
-    'uploading' => 'Uploading...',
+        'upload' => 'Upload :item',
+
+        'uploading' => 'Uploading...',
+
+    ],
 
 ];

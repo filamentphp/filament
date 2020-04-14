@@ -2,7 +2,10 @@
     x-data="{ open: {{ $isOpen ? 'true' : 'false' }} }" 
     x-show="open" 
     {{ $attributes->merge(['class' => 'fixed bottom-0 inset-x-0 px-4 pb-6 sm:inset-0 sm:p-0 sm:flex sm:items-center sm:justify-center']) }}
-    @toggle-modal.window="if ($event.detail.id === '{{ $id }}') { open = !open; $event.stopPropagation() }"
+    @filament-toggle-modal.window="if ($event.detail.id === '{{ $id }}') { 
+        $event.stopPropagation();
+        open = !open; 
+    }"
     @if ($escClose)
         @keydown.escape.window="open = false"
     @endif
@@ -32,8 +35,24 @@
         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
         class="bg-white dark:bg-gray-800 rounded px-4 pt-5 pb-4 overflow-hidden shadow-xl transform transition-all sm:max-w-xl sm:w-full sm:p-6"
+        role="dialog"
+        id="dialog1"
+        aria-label="{{ $label }}"
+        aria-modal="true"
+        x-bind:aria-hidden="open === false"
     >
         {{ $slot }}
         <button @click.prevent="open = false" type="button">Close</button>
     </div>
 </div>
+
+@pushonce('scripts')
+    <script>
+        window.livewire.on('filament.toggleModal', modalId => {
+            window.dispatchEvent(new CustomEvent('filament-toggle-modal', { 
+                bubbles: true,
+                detail: { id: modalId.toString() }
+            }));
+        })
+    </script>
+@endpushonce

@@ -19,7 +19,6 @@ class FormComponent extends Component
     public $model;
     public $fieldset;
     public $form_data;
-    public $goback;
 
     protected $listeners = [
         'filament.fileUploadError' => 'fileUploadError',
@@ -87,17 +86,5 @@ class FormComponent extends Component
     {
         $this->emit('filament.notification.close');
         $this->submit();
-    }
-
-    public function saveAndGoBack()
-    {
-        $this->submit();
-        $this->saveAndGoBackResponse();
-    }
-
-    public function saveAndGoBackResponse()
-    {
-        $path = Route::has($this->goback) ? route($this->goback) : $this->goback;
-        return redirect($path);
     }
 }

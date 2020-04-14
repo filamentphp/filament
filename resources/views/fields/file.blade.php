@@ -36,7 +36,7 @@
             <span 
                 class="btn btn-file-input" 
                 :class="{ 'btn-is-disabled': {{ $disabled ? 'true' : 'false' }} }"
-                x-text="isLoading() ? '{{ __('filament::actions.uploading') }}' : '{{ $field->placeholder ?? __('filament::actions.upload', ['item' => Str::singular($field->name)]) }}'"
+                x-text="isLoading() ? '{{ __('filament::fields.file.uploading') }}' : '{{ $field->placeholder ?? __('filament::fields.file.upload', ['item' => Str::singular($field->name)]) }}'"
             ></span>
         </label>
         <div class="flex-shrink-0" x-show="isLoading()">
