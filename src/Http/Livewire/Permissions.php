@@ -29,8 +29,8 @@ class Permissions extends Component
         $this->authorize('view', Permission::class);
 
         $permissions = Permission::search($this->search)
-            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-            ->paginate($this->perPage);
+                            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                            ->paginate($this->perPage);
 
         return view('filament::livewire.permissions.index', [
             'title' => __('filament::admin.permissions'),

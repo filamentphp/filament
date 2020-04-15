@@ -4,7 +4,7 @@ namespace Filament\Http\Components;
 
 use Illuminate\View\Component;
 
-class Button extends Component
+class DropdownButton extends Component
 {
     /**
      * The button type.
@@ -27,7 +27,7 @@ class Button extends Component
      * @param  string  $message
      * @return void
      */
-    public function __construct($type = 'submit', $label = 'Submit')
+    public function __construct($type = 'button', $label)
     {
         $this->type = $type;
         $this->label = $label;
@@ -40,6 +40,6 @@ class Button extends Component
      */
     public function render()
     {
-        return view('filament::components.button');
+        return view('filament::components.dropdown-button');
     }
 }

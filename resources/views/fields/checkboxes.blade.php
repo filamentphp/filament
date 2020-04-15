@@ -1,9 +1,9 @@
 <fieldset class="col-span-4 {{ $field->class }}">
-    <legend class="block mb-2 text-sm font-medium leading-5 text-gray-700 dark:text-gray-50">
+    <legend class="label w-full mb-2">
         {{ $field->label }}
         @if ($field->required)
             <sup class="text-red-600">*</sup>
-            <span class="sr-only">(required)</span>
+            <span class="sr-only">{{ __('required') }}</span>
         @endif
     </legend>
     <ol class="list-unstyled">

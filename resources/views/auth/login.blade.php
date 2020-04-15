@@ -10,7 +10,7 @@
         
         <x-filament-fields :fields="$fields" />
 
-        <x-filament-button label="Login" class="w-full" />
+        <button type="submit" class="btn w-full">{{ __('Login') }}</button>
 
     </x-filament-form>
     

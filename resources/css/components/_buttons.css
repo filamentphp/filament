@@ -1,5 +1,5 @@
 .btn {
-  @apply flex items-center justify-center py-2 px-5 text-sm leading-tight font-medium rounded shadow text-gray-50 bg-indigo-700 transition duration-150 ease-in-out cursor-pointer;
+  @apply flex items-center justify-center py-3 px-5 text-sm leading-tight font-medium rounded shadow text-gray-50 bg-indigo-700 transition duration-150 ease-in-out cursor-pointer;
 
   &:focus {
     @apply outline-none shadow-outline-gray;
@@ -37,20 +37,29 @@
     @apply text-xs py-2 px-3;
   }
 
-  &-action {
-    @apply shadow-none text-gray-900 border border-gray-200 bg-gray-100;
+  &-danger {
+    @apply text-white bg-red-600;
 
     &:hover,
     &:active {
-      @apply border-gray-300 bg-gray-200;
+      @apply bg-red-500;
+    }
+  }
+
+  &-action {
+    @apply text-gray-900 bg-white;
+
+    &:hover,
+    &:active {
+      @apply bg-gray-50;
     }
 
     .mode-dark & {
-      @apply text-gray-50 border-gray-700 bg-gray-900;
+      @apply text-gray-50 bg-gray-900;
 
       &:hover,
       &:active {
-        @apply border-gray-600;
+        @apply bg-black;
       }
     }
   }

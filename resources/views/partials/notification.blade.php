@@ -8,7 +8,6 @@
         open = true;
         setTimeout(() => open = false, 3000);
     "
-    @filament-notification-close.window="open = false"
 >
     <div  
         x-transition:enter="transform ease-out duration-300 transition" 
@@ -48,14 +47,6 @@
                 detail: { 
                     type: data.type, 
                     message: data.message,
-                }
-            }));
-        })
-
-        window.livewire.on('filament.notification.close', () => {
-            window.dispatchEvent(new CustomEvent('filament-notification-close', { 
-                detail: { 
-                    open: false,
                 }
             }));
         })

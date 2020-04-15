@@ -84,7 +84,6 @@ class FormComponent extends Component
 
     public function save()
     {
-        $this->emit('filament.notification.close');
         $this->submit();
     }
 }

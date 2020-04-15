@@ -48,6 +48,13 @@ return [
     ],
 
     [
+        'name' => 'edit user permissions',
+        'description' => 'Allow a user to edit user permissions.',
+        'guard_name' => 'web',
+        'is_system' => 1,
+    ],
+
+    [
         'name' => 'view roles',
         'description' => 'Allow a user to view roles.',
         'guard_name' => 'web',

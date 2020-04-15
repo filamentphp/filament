@@ -20,6 +20,14 @@
         <thead>                    
             <tr>
                 <th>
+                    <button class="flex" wire:click.prevent="sortBy('id')">
+                        @include('filament::partials.sort-header', [
+                            'field' => 'id',
+                            'label' => __('ID'),
+                        ])
+                    </button>
+                </th>
+                <th>
                     <button class="flex" wire:click.prevent="sortBy('name')">
                         @include('filament::partials.sort-header', [
                             'field' => 'name',
@@ -48,6 +56,7 @@
         <tbody>
             @forelse ($permissions as $permission)
                 <tr>
+                    <td>{{ $permission->id }}</td>
                     <td class="font-medium">{{ $permission->name }}</td>
                     <td>{{ $permission->description }}</td>
                     <td {!! $permission->is_system ? 'colspan="2"' : '' !!}>       
@@ -73,7 +82,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td class="text-center" colspan="3">{{ __('No permissions found.') }}</td>
+                    <td class="text-center" colspan="4">{{ __('No permissions found.') }}</td>
                 </tr>
             @endforelse
         </tbody>

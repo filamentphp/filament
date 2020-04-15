@@ -12,7 +12,10 @@ class Roles extends Component
 {
     use AuthorizesRequests, WithDataTable;
 
-    protected $listeners = ['filament.roleUpdated' => 'showRoleUpdatedNotification'];
+    protected $listeners = [
+        'filament.roleUpdated' => 'showRoleUpdatedNotification',
+        'filament.roleDeleted' => 'showRoleDeletedNotification',
+    ];
 
     public function showRoleUpdatedNotification($role)
     {
@@ -24,12 +27,21 @@ class Roles extends Component
         $this->render();
     }
 
+    public function showRoleDeletedNotification($role)
+    {
+        $this->emit('filament.notification.notify', [
+            'type' => 'success',
+            'message' => __('filament::notifications.deleted', ['item' => $role['name']]),
+        ]);
+
+        $this->render();
+    }
+
     public function render()
     {
         $this->authorize('view', Role::class);
 
-        $roles = Role::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-            ->paginate($this->perPage);
+        $roles = Role::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate($this->perPage);
 
         return view('filament::livewire.roles.index', [
             'title' => __('filament::admin.roles'),

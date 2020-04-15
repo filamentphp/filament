@@ -4,6 +4,6 @@
 
     <x-filament-fields :fields="$fields" />
 
-    <x-filament-button label="filament::permissions.role.update" />
+    <button type="submit" class="btn">{{ __('Save') }}</button>
 
 </form>

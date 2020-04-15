@@ -10,7 +10,7 @@
 
         <x-filament-fields :fields="$fields" />
 
-        <x-filament-button label="Send Password Reset Link" class="w-full" />
+        <button type="submit" class="btn w-full">{{ __('Send Password Reset Link') }}</button>
 
     </x-filament-form>
 

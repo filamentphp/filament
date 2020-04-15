@@ -10,7 +10,7 @@
 
         <x-filament-fields :fields="$fields" />
 
-        <x-filament-button label="Reset Password" class="w-full" />
+        <button class="btn w-full">{{ __('Reset Password') }}</button>
 
         <x-slot name="hint">
             <a href="{{ route('filament.auth.login') }}">&larr; {{ __('Back to Login') }}</a>

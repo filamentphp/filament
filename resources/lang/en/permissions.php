@@ -16,13 +16,23 @@ return [
     
     'super_admin_info' => 'Super admins supersede all assigned roles and permissions.',
 
-    'roles' => 'Roles',
-
-    'role' => [
+    'roles' => [
 
         'edit' => 'Edit Role',
 
-        'update' => 'Update Role',
+        'delete' => 'Delete Role',
+
+        'delete_confirm' => 'Are you sure you want to delete the :role role? This action cannot be undone.',
+
+    ],
+
+    'permissions_from_roles_info' => 'Permissions are inherited from the assigned roles. You may add additional direct permissions as needed.',
+
+    'permissions' => [
+
+        'edit' => 'Edit Permission',
+
+        'delete' => 'Delete Permission',
 
     ],
 

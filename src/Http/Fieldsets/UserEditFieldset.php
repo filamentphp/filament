@@ -6,6 +6,7 @@ use Filament\Contracts\Fieldset;
 use Filament\Support\Fields\Field;
 use Illuminate\Validation\Rule;
 use Filament\Models\Role;
+use Filament\Models\Permission;
 
 class UserEditFieldset implements Fieldset
 {
@@ -56,7 +57,7 @@ class UserEditFieldset implements Fieldset
                 ->help(__('filament::permissions.super_admin_info'))
                 ->group('permissions')
                 ->disabled(!auth()->user()->is_super_admin),
-            Field::make('filament::permissions.roles', 'roles')
+            Field::make('filament::admin.roles', 'roles')
                 ->checkboxes(Role::orderBy('name')
                     ->pluck('id', 'name')
                     ->all())
@@ -66,6 +67,17 @@ class UserEditFieldset implements Fieldset
                 ->rules([Rule::exists('roles', 'id')])
                 ->group('permissions')
                 ->disabled(!auth()->user()->can('edit user roles')),
+            Field::make('filament::admin.permissions', 'permissions')
+                ->checkboxes(Permission::orderBy('name')
+                    ->pluck('id', 'name')
+                    ->all())
+                ->default(array_map('strval', $model->getAllPermissions()
+                    ->pluck('id')
+                    ->all()))
+                ->rules([Rule::exists('permissions', 'id')])
+                ->help(__('filament::permissions.permissions_from_roles_info'))
+                ->group('permissions')
+                ->disabled(!auth()->user()->can('edit user permissions')),
         ];
     }
 

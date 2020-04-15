@@ -1,5 +1,5 @@
 .alert {
-  @apply my-4 p-4 rounded shadow text-blue-700 bg-blue-100 text-sm leading-5;
+  @apply my-4 py-3 px-5 rounded shadow text-blue-700 bg-blue-100 text-sm leading-5;
 
   &-success {
     @apply text-green-700 bg-green-100;

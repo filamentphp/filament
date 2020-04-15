@@ -16,7 +16,7 @@
             {{ __($field->label) }}
             @if ($field->required)
                 <sup class="text-red-600">*</sup>
-                <span class="sr-only">(required)</span>
+                <span class="sr-only">{{ __('required') }}</span>
             @endif
         </legend>
     @endif

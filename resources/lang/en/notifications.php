@@ -14,4 +14,6 @@ return [
 
     'updated' => '<strong>:item</strong> updated successfully.',
 
+    'deleted' => '<strong>:item</strong> deleted successfully.',
+
 ];

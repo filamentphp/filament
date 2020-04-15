@@ -1,5 +1,18 @@
 @section('title', $title)
 
+@section('actions')
+    @can('create users')
+        <button 
+            type="button" 
+            @click.prevent="$dispatch('filament-toggle-modal', { id: 'new-role' })" 
+            class="btn btn-small btn-add"
+        >
+            <x-heroicon-o-plus class="h-3 w-3 mr-2" />
+            {{ __('New User') }}
+        </button>
+    @endcan
+@endsection
+
 <div>
     <ul class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         @foreach ($users as $user)

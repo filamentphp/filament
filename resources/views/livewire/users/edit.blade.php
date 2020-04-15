@@ -18,7 +18,7 @@
 
             </x-filament-tab>
 
-            <x-filament-button label="Save" />
+            <button type="submit" class="btn">{{ __('Save') }}</button>
 
         </x-filament-tabs>
 

@@ -5,7 +5,7 @@ namespace Filament\Http\Fieldsets;
 use Filament\Contracts\Fieldset;
 use Filament\Support\Fields\Field;
 use Illuminate\Validation\Rule;
-// use Filament\Models\Permission;
+use Filament\Models\Permission;
 
 class RoleEditFieldset implements Fieldset
 {
@@ -27,7 +27,15 @@ class RoleEditFieldset implements Fieldset
                 ]),
             Field::make('Description')
                 ->textarea()
-                ->rules(['string'])
+                ->rules(['string']),
+            Field::make('filament::admin.permissions', 'permissions')
+                ->checkboxes(Permission::orderBy('name')
+                    ->pluck('id', 'name')
+                    ->all())
+                ->default(array_map('strval', $model->permissions
+                    ->pluck('id')
+                    ->all()))
+                ->rules([Rule::exists('permissions', 'id')])
         ];
     }
 

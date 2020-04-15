@@ -2,12 +2,9 @@
 
 namespace Filament\Models;
 
+use Filament\Traits\FillsColumns;
+
 class Role extends \Spatie\Permission\Models\Role
 {
-    public static function search($query)
-    {
-        return empty($query) ? static::query()
-            : static::where('name', 'like', '%'.$query.'%')
-                ->orWhere('description', 'like', '%'.$query.'%');
-    }
+    use FillsColumns;
 }

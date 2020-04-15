@@ -21,6 +21,7 @@
     <span 
         class="
             label
+            label-inline
             @if ($disabled) 
                 label-disabled
             @endif
