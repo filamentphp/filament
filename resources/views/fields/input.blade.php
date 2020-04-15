@@ -26,8 +26,12 @@
                 @error($field->key)
                     input-error
                 @enderror"
-            autocomplete="{{ $field->autocomplete }}"
-            placeholder="{{ __($field->placeholder) }}"
+            @if ($field->autocomplete)
+                autocomplete="{{ $field->autocomplete }}"
+            @endif
+            @if ($field->placeholder)
+                placeholder="{{ __($field->placeholder) }}"
+            @endif
             @if ($field->value)
                 value="{{ $field->value }}"
             @endif 

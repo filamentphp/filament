@@ -3,7 +3,6 @@
 
 @import 'tailwindcss/components';
 @import './components/_dropdowns.css';
-@import './components/_alerts.css';
 @import './components/_labels.css';
 @import './components/_inputs.css';
 @import './components/_buttons.css';

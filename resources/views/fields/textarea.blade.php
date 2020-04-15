@@ -26,7 +26,12 @@
                     input-error
                 @enderror"            
             rows="{{ $field->textarea_rows }}"
-            placeholder="{{ __($field->placeholder) }}"
+            @if ($field->autocomplete)
+                autocomplete="{{ $field->autocomplete }}"
+            @endif
+            @if ($field->placeholder)
+                placeholder="{{ __($field->placeholder) }}"
+            @endif
             @if ($field->value)
                 value="{{ $field->value }}"
             @endif
