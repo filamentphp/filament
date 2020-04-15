@@ -26,7 +26,7 @@ return [
 
     ],
 
-    'permissions_from_roles_info' => 'Permissions are inherited from the assigned roles. You may add additional direct permissions as needed.',
+    'permissions_from_roles_info' => 'Permissions are inherited from the assigned roles. You may add direct permissions as needed.',
 
     'permissions' => [
 
