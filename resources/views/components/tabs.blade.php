@@ -1,5 +1,5 @@
 <div x-data="{ tab: '{{ $tab }}' }" {{ $attributes }}>
-    <div role="tablist" class="rounded-t overflow-hidden bg-gray-100 dark:bg-gray-700 flex">
+    <div role="tablist" class="rounded-t shadow overflow-hidden bg-gray-100 dark:bg-gray-700 flex">
         @foreach ($tabs as $value => $label)
             <button 
                 role="tab" 
@@ -14,7 +14,7 @@
             </button>
         @endforeach
     </div>
-    <div class="p-5 rounded-b bg-white dark:bg-gray-800">
+    <div class="p-5 rounded-b shadow bg-white dark:bg-gray-800">
         {{ $slot }}
     </div>
 </div>

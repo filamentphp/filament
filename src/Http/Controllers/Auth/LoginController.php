@@ -53,11 +53,6 @@ class LoginController extends Controller
      */
     protected function redirectTo()
     {
-        session()->flash('notification', [
-            'type' => 'success',
-            'message' => __('filament::auth.loggedin'),
-        ]);
-
         $redirect = config('filament.redirects.admin');
 
         return Route::has($redirect) ? route($redirect) : $redirect;
@@ -102,5 +97,10 @@ class LoginController extends Controller
         $user->last_login_at = now();
         $user->last_login_ip = $request->ip();
         $user->save();
+
+        session()->flash('notification', [
+            'type' => 'success',
+            'message' => __('filament::auth.loggedin', ['name' => $user->name]),
+        ]);
     }
 }

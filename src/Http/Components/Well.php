@@ -14,7 +14,7 @@ class Well extends Component
     public function render()
     {
         return <<<'blade'
-            <div {{ $attributes->merge(['class' => 'border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-transparent overflow-hidden']) }}>
+            <div {{ $attributes->merge(['class' => 'rounded border border-gray-100 dark:border-gray-700 bg-gray-100 dark:bg-transparent overflow-hidden']) }}>
                 <div class="p-5">
                     {{ $slot }}
                 </div>      
