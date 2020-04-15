@@ -19,7 +19,9 @@
     }
   ],
   "require": {
-    "doctrine/dbal": "^2.10.0",
+    "appstract/laravel-blade-directives": "^1.9",
+    "appstract/laravel-meta": "^2.0",
+    "doctrine/dbal": "^2.10",
     "driesvints/blade-icons": "^2.1",
     "graham-campbell/markdown": "^12.0",
     "laravel/ui": "^2.0",

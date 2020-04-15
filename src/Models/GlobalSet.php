@@ -4,10 +4,11 @@ namespace Filament\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Filament\Traits\FillsColumns;
+use Appstract\Meta\Metable;
 
 class GlobalSet extends Model
 {
-    use FillsColumns;
+    use FillsColumns, Metable;
 
     /**
      * The attributes that should be cast.

@@ -257,8 +257,6 @@ class FilamentServiceProvider extends ServiceProvider
     {
         // Register directives
         Blade::directive('filamentAssets', [BladeDirectives::class, 'assets']);
-        Blade::directive('pushonce', [BladeDirectives::class, 'pushOnce']);
-        Blade::directive('endpushonce', [BladeDirectives::class, 'endPushOnce']);
 
         // Register components
         $components = [];
