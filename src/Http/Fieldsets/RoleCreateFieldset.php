@@ -7,14 +7,14 @@ use Filament\Support\Fields\Field;
 use Illuminate\Validation\Rule;
 use Filament\Models\Permission;
 
-class RoleEditFieldset implements Fieldset
+class RoleCreateFieldset implements Fieldset
 {
     public static function title(): string
     {
-        return 'Edit Role';
+        return 'Create Role';
     }
 
-    public static function fields($model): array
+    public static function fields($model = null): array
     {
         return [
             Field::make('Name')
@@ -23,7 +23,7 @@ class RoleEditFieldset implements Fieldset
                     'required', 
                     'string', 
                     'max:255', 
-                    Rule::unique('roles', 'name')->ignore($model->id),
+                    Rule::unique('roles', 'name'),
                 ])
                 ->group('info'),
             Field::make('Description')
@@ -34,9 +34,6 @@ class RoleEditFieldset implements Fieldset
                 ->checkboxes(Permission::orderBy('name')
                     ->pluck('id', 'name')
                     ->all())
-                ->default(array_map('strval', $model->permissions
-                    ->pluck('id')
-                    ->all()))
                 ->rules([Rule::exists('permissions', 'id')])
                 ->group('permissions'),
         ];

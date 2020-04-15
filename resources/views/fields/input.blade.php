@@ -27,7 +27,7 @@
                     input-error
                 @enderror"
             autocomplete="{{ $field->autocomplete }}"
-            placeholder="{{ $field->placeholder }}"
+            placeholder="{{ __($field->placeholder) }}"
             @if ($field->value)
                 value="{{ $field->value }}"
             @endif 

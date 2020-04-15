@@ -12,6 +12,8 @@ return [
     |
     */
 
+    'created' => '<strong>:item</strong> created successfully.',
+
     'updated' => '<strong>:item</strong> updated successfully.',
 
     'deleted' => '<strong>:item</strong> deleted successfully.',

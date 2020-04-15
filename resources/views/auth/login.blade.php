@@ -5,8 +5,6 @@
 @section('main')
 
     <x-filament-form :action="route('filament.auth.login')">
-
-        <x-filament-alert :type="session('alert.type')" :message="session('alert.message')" />
         
         <x-filament-fields :fields="$fields" />
 

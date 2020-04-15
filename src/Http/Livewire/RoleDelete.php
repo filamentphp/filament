@@ -16,9 +16,15 @@ class RoleDelete extends Component
 
     public function delete()
     {
-        $this->emit('filament.roleDeleted', $this->role);
-        $this->emit('filament.toggleModal', 'delete-role-'.$this->role->id);
+        $role = $this->role;
         $this->role->delete();
+
+        session()->flash('notification', [
+            'type' => 'success',
+            'message' => __('filament::notifications.deleted', ['item' => $role->name]),
+        ]);
+
+        return redirect()->route('filament.admin.roles.index');
     }
 
     public function render()

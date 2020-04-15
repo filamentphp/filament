@@ -4,6 +4,7 @@ namespace Filament\Support\Livewire;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Route;
 use Livewire\Component;
 use Filament\Traits\Fields\HasFields;
@@ -25,12 +26,11 @@ class FormComponent extends Component
         'filament.fileUpdate' => 'fileUpdate',
     ];
 
-    public function setFieldset()
+    public function setFieldset($className = null)
     {
-        $className = (new \ReflectionClass(get_called_class()))->getShortName();
-        $fieldsetName = $className.'Fieldset';
+        $class = $className ? $className : get_called_class().'Fieldset';
         foreach(config('filament.namespaces.fieldsets') as $namespace) {
-            $class = $namespace.'\\'.$fieldsetName;
+            $class = $namespace.'\\'.class_basename($class);
             if (class_exists($class)) {
                 if (!in_array(Fieldset::class, class_implements($class))) {
                     throw new \Error($class.' must implement '.Fieldset::class);
@@ -50,7 +50,7 @@ class FormComponent extends Component
 
         foreach ($this->fields() as $field) {
             if (!isset($this->form_data[$field->name])) {
-                $array = in_array($field->type, ['checkbox', 'file']);
+                $array = in_array($field->type, ['checkboxes', 'file']);
                 $this->form_data[$field->name] = $field->default ?? ($array ? [] : null);
             }
         }

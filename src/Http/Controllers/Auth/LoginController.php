@@ -28,11 +28,13 @@ class LoginController extends Controller
         $title = __('filament::auth.login', ['name' => config('app.name')]);
 
         $fields = [
-            Field::make('E-mail Address', 'email', false)
+            Field::make(false, 'email', false)
+                ->placeholder('E-mail Address')
                 ->input('email')
                 ->value('')
                 ->rules(['required']),
-            Field::make('Password', 'password', false)
+            Field::make(false, 'password', false)
+                ->placeholder('Password')
                 ->input('password')
                 ->rules(['required'])
                 ->help('<a href="'.route('filament.auth.password.forgot').'">'.__('Forgot Your Password?').'</a>'),
@@ -51,6 +53,11 @@ class LoginController extends Controller
      */
     protected function redirectTo()
     {
+        session()->flash('notification', [
+            'type' => 'success',
+            'message' => __('filament::auth.loggedin'),
+        ]);
+
         $redirect = config('filament.redirects.admin');
 
         return Route::has($redirect) ? route($redirect) : $redirect;
@@ -76,7 +83,7 @@ class LoginController extends Controller
 
         return $request->wantsJson()
             ? new Response('', 204)
-            : redirect(route('filament.auth.login'))->with('alert', [
+            : redirect(route('filament.auth.login'))->with('notification', [
                 'type' => 'success',
                 'message' => __('filament::auth.logout'),
             ]);

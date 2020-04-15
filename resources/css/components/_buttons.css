@@ -55,11 +55,11 @@
     }
 
     .mode-dark & {
-      @apply text-gray-50 bg-gray-900;
+      @apply text-gray-50 bg-gray-800;
 
       &:hover,
       &:active {
-        @apply bg-black;
+        @apply bg-gray-700;
       }
     }
   }

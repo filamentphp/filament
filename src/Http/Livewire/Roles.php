@@ -6,36 +6,10 @@ use Livewire\Component;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Filament\Traits\WithDataTable;
 use Filament\Models\Role;
-use Illuminate\Support\HtmlString;
 
 class Roles extends Component
 {
     use AuthorizesRequests, WithDataTable;
-
-    protected $listeners = [
-        'filament.roleUpdated' => 'showRoleUpdatedNotification',
-        'filament.roleDeleted' => 'showRoleDeletedNotification',
-    ];
-
-    public function showRoleUpdatedNotification($role)
-    {
-        $this->emit('filament.notification.notify', [
-            'type' => 'success',
-            'message' => __('filament::notifications.updated', ['item' => $role['name']]),
-        ]);
-
-        $this->render();
-    }
-
-    public function showRoleDeletedNotification($role)
-    {
-        $this->emit('filament.notification.notify', [
-            'type' => 'success',
-            'message' => __('filament::notifications.deleted', ['item' => $role['name']]),
-        ]);
-
-        $this->render();
-    }
 
     public function render()
     {

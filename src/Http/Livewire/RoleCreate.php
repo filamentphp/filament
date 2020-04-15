@@ -5,12 +5,11 @@ namespace Filament\Http\Livewire;
 use Filament\Support\Livewire\FormComponent;
 use Filament\Models\Role;
 
-class RoleEdit extends FormComponent
+class RoleCreate extends FormComponent
 {    
-    public function mount(Role $role)
+    public function mount()
     {        
-        $this->model = $role;
-        $this->authorize('view', $this->model);
+        $this->authorize('view', Role::class);
 
         $this->setFieldset();
         $this->setFormProperties();
@@ -18,7 +17,7 @@ class RoleEdit extends FormComponent
 
     public function save()
     {
-        $this->authorize('edit', $this->model);
+        $this->authorize('create', Role::class);
         $this->submit();
     }
 
@@ -26,12 +25,12 @@ class RoleEdit extends FormComponent
     {
         $input = collect($this->form_data);
 
-        $this->model->update($input->all());        
-        $this->model->syncPermissions($input->get('permissions'));
+        $role = Role::create($input->all());        
+        $role->syncPermissions($input->get('permissions'));
 
         session()->flash('notification', [
             'type' => 'success',
-            'message' => __('filament::notifications.updated', ['item' => $this->model->name]),
+            'message' => __('filament::notifications.created', ['item' => $role->name]),
         ]);
 
         return redirect()->route('filament.admin.roles.index');
@@ -40,7 +39,7 @@ class RoleEdit extends FormComponent
     public function render()
     {        
         return view('filament::livewire.roles.create-edit', [
-            'title' => __('filament::permissions.roles.edit'),
+            'title' => __('filament::permissions.roles.create'),
             'fields' => $this->fields(),
         ]);
     }

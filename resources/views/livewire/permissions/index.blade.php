@@ -4,7 +4,12 @@
 
     <div class="mb-4 flex justify-between">
         <div class="flex-grow mr-6">
-            <input wire:model="search" type="search" class="form-input input w-full" placeholder="{{ __('Search...') }}">
+            <input 
+                type="search"
+                wire:model="search" 
+                class="form-input input w-full" 
+                placeholder="{{ __('Search...') }}"
+            >
         </div>
         <label class="flex-shrink-0 flex items-center">
             <span class="label mr-2">Per Page:</span>

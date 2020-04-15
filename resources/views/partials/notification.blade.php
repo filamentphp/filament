@@ -1,12 +1,12 @@
 <div 
-    x-data="{ type: 'info', message: '', open: false }" 
+    x-data="{ type: 'info', message: '', open: false, timeout: 3000 }" 
     class="fixed inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end"
     @filament-notification-notify.window="
         console.log($event.detail);
         type = $event.detail.type; 
         message = $event.detail.message; 
         open = true;
-        setTimeout(() => open = false, 3000);
+        setTimeout(() => open = false, timeout);
     "
 >
     <div  
@@ -16,7 +16,7 @@
         x-transition:leave="transition ease-in duration-100" 
         x-transition:leave-start="opacity-100" 
         x-transition:leave-end="opacity-0"
-        class="max-w-sm w-full pointer-events-auto shadow-lg rounded bg-gray-800 dark:bg-black text-gray-50 p-4 flex items-start"
+        class="max-w-sm w-full pointer-events-auto shadow-xl rounded bg-gray-800 dark:bg-black text-gray-50 p-4 flex items-start"
         role="alert"
         x-show="open" 
     >
@@ -50,5 +50,13 @@
                 }
             }));
         })
+
+        @if (session()->has('notification'))
+            document.addEventListener('turbolinks:load', () => {
+                window.dispatchEvent(new CustomEvent('filament-notification-notify', { 
+                    detail: @json(session('notification'))
+                }));
+            })
+        @endif
     </script>
 @endpush

@@ -1,7 +1,7 @@
 @extends('filament::layouts.app')
 
 @section('content')
-    <div class="h-screen flex overflow-hidden bg-gray-100 dark:bg-gray-900" x-data="{ sidebarOpen: false }" @keydown.window.escape="sidebarOpen = false">    
+    <div class="h-screen flex overflow-hidden bg-gray-200 dark:bg-gray-900" x-data="{ sidebarOpen: false }" @keydown.window.escape="sidebarOpen = false">    
         {{-- Off-canvas menu for mobile --}}
         <div class="md:hidden">
             <div @click="sidebarOpen = false" class="fixed inset-0 z-30 bg-black opacity-0 pointer-events-none transition-opacity ease-linear duration-300" :class="{'opacity-50 pointer-events-auto': sidebarOpen, 'opacity-0 pointer-events-none': !sidebarOpen}"></div>

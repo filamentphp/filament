@@ -3,11 +3,11 @@
 @section('actions')
     <button 
         type="button" 
-        @click.prevent="$dispatch('filament-toggle-modal', { id: 'new-role' })" 
+        @click.prevent="$dispatch('filament-toggle-modal', { id: 'role-create' })" 
         class="btn btn-small btn-add"
     >
         <x-heroicon-o-plus class="h-3 w-3 mr-2" />
-        {{ __('New Role') }}
+        {{ __('filament::permissions.roles.create') }}
     </button>
 @endsection
 
@@ -67,8 +67,7 @@
                         class="sm:max-w-xl"
                     >
                         @livewire('filament::role-edit', ['role' => $role])
-                    </x-filament-modal>
-
+                    </x-filament-modal>       
                     <x-filament-modal 
                         :id="'delete-role-'.$role->id" 
                         :label="__('filament::permissions.roles.delete')" 
@@ -95,12 +94,12 @@
 
 @push('footer')
     <x-filament-modal 
-        id="new-role" 
-        :label="__('New Role')" 
+        id="role-create" 
+        :label="__('filament::permissions.roles.create')" 
         :esc-close="true" 
         :click-outside="true"
         class="sm:max-w-xl"
     >
-        <h2>{{ __('New Role') }}</h2>
+        @livewire('filament::role-create')
     </x-filament-modal>
 @endpush

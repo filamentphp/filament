@@ -42,14 +42,17 @@ class ResetPasswordController extends Controller
         $title = __('Reset Password');
 
         $fields = [
-            Field::make('E-mail Address', 'email', false)
+            Field::make(false, 'email', false)
+                ->placeholder('E-mail Address')
                 ->input('email')
                 ->value($request->email)
                 ->rules(['required']),
-            Field::make('Password', 'password', false)
+            Field::make(false, 'password', false)
+                ->placeholder('Password')
                 ->input('password')
                 ->rules(['required', 'confirmed']),
-            Field::make('Confirm Password', 'password_confirmation', false)
+            Field::make(false, 'password_confirmation', false)
+                ->placeholder('Confirm Password')
                 ->input('password'),
         ];
 

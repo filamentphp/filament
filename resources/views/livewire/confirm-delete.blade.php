@@ -16,10 +16,10 @@
     </div>
     <ul class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
         <li>
-            <button class="btn btn-danger w-full md:w-auto">{{ __('Delete') }}</button>
+            <button type="button" wire:click.prevent="delete" class="btn btn-danger w-full md:w-auto">{{ __('Delete') }}</button>
         </li>
         <li class="mt-2 sm:mt-0 sm:mr-4">
-            <button @click.prevent="open = false" class="btn btn-action w-full md:w-auto">{{ __('Cancel') }}</button>
+            <button type="button" @click.prevent="open = false" class="btn btn-action w-full md:w-auto">{{ __('Cancel') }}</button>
         </li>
     </ul>
 </div>

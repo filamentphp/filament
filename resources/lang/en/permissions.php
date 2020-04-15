@@ -18,6 +18,8 @@ return [
 
     'roles' => [
 
+        'create' => 'New Role',
+
         'edit' => 'Edit Role',
 
         'delete' => 'Delete Role',

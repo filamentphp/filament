@@ -16,6 +16,8 @@ return [
 
     'signed_in_as' => 'Signed in as',
 
+    'loggedin' => 'You have logged in successfully.',
+
     'logout' => 'You have been logged out successfully.',
 
 ];

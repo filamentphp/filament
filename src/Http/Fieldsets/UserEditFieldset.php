@@ -12,7 +12,7 @@ class UserEditFieldset implements Fieldset
 {
     public static function title(): string
     {
-        return 'User';
+        return 'Edit User';
     }
 
     public static function fields($model): array
@@ -21,6 +21,7 @@ class UserEditFieldset implements Fieldset
             Field::make('Name')
                 ->input()
                 ->rules(['required', 'string', 'max:255'])
+                ->class('md:col-span-2')
                 ->group('account'),
             Field::make('Email')
                 ->input('email')
@@ -31,6 +32,7 @@ class UserEditFieldset implements Fieldset
                     'max:255', 
                     Rule::unique('users', 'email')->ignore($model->id),
                 ])
+                ->class('md:col-span-2')
                 ->group('account'),
             Field::make('Avatar')
                 ->rules('array')
@@ -40,17 +42,16 @@ class UserEditFieldset implements Fieldset
                     'image' => __('The Avatar must be a valid image.'),
                 ])
                 ->group('account'),
-            Field::make('Password')
+            Field::make('New Password', 'password')
                 ->input('password')
                 ->autocomplete('new-password')
                 ->rules(['sometimes', 'confirmed'])
                 ->help('Leave blank to keep current password.')
-                ->class('md:col-span-2')
                 ->group('account'),
-            Field::make('Confirm Password', 'password_confirmation')
+            Field::make(false, 'password_confirmation')
+                ->placeholder('Confirm New Password')
                 ->input('password')
                 ->autocomplete('new-password')
-                ->class('md:col-span-2')
                 ->group('account'),
             Field::make('filament::permissions.super_admin', 'is_super_admin')
                 ->checkbox()

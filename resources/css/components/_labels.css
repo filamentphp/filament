@@ -1,11 +1,11 @@
 .label {
-  @apply font-medium text-base leading-5 cursor-pointer whitespace-no-wrap;
+  @apply font-medium text-sm leading-5 cursor-pointer whitespace-no-wrap;
 
   &-disabled {
     @apply opacity-50 cursor-not-allowed;
   }
 
   &-inline {
-    @apply font-normal text-sm leading-4;
+    @apply font-normal;
   }
 }

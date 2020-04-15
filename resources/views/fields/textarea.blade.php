@@ -26,7 +26,7 @@
                     input-error
                 @enderror"            
             rows="{{ $field->textarea_rows }}"
-            placeholder="{{ $field->placeholder }}"
+            placeholder="{{ __($field->placeholder) }}"
             @if ($field->value)
                 value="{{ $field->value }}"
             @endif
