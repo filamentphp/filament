@@ -40,7 +40,7 @@
         x-bind:aria-hidden="open === false"
         {{ $attributes->merge(['class' => 'relative sm:w-full']) }}
     >
-        <div class="bg-gray-100 dark:bg-gray-800 rounded px-4 pt-5 pb-4 overflow-hidden shadow-xl transform transition-all sm:p-6">
+        <div class="bg-gray-100 dark:bg-gray-900 rounded px-4 pt-5 pb-4 overflow-hidden shadow-xl transform transition-all sm:p-6">
             {{ $slot }}
         </div>
         <button 

@@ -24,10 +24,12 @@ class RoleEditFieldset implements Fieldset
                     'string', 
                     'max:255', 
                     Rule::unique('roles', 'name')->ignore($model->id),
-                ]),
+                ])
+                ->group('info'),
             Field::make('Description')
                 ->textarea()
-                ->rules(['string']),
+                ->rules(['string'])
+                ->group('info'),
             Field::make('filament::admin.permissions', 'permissions')
                 ->checkboxes(Permission::orderBy('name')
                     ->pluck('id', 'name')
@@ -36,6 +38,7 @@ class RoleEditFieldset implements Fieldset
                     ->pluck('id')
                     ->all()))
                 ->rules([Rule::exists('permissions', 'id')])
+                ->group('permissions'),
         ];
     }
 
