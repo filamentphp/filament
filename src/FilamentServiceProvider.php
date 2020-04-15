@@ -35,6 +35,7 @@ class FilamentServiceProvider extends ServiceProvider
         $this->registerSingeltons();
         $this->registerConfig();
         $this->registerBindings();
+        $this->registerBlade();
     }
 
     /**
@@ -52,7 +53,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->registerRoutes();
         $this->registerMigrations();
         $this->registerPublishing();
-        $this->registerBlade();
         $this->registerLivewire();
         $this->registerResources();
         $this->registerTranslations();
@@ -255,16 +255,18 @@ class FilamentServiceProvider extends ServiceProvider
      */
     public function registerBlade()
     {
-        // Register package directives
+        // Register directives
         Blade::directive('filamentAssets', [BladeDirectives::class, 'assets']);
         Blade::directive('pushonce', [BladeDirectives::class, 'pushOnce']);
         Blade::directive('endpushonce', [BladeDirectives::class, 'endPushOnce']);
 
-        // Automatically register package components
+        // Register components
+        $components = [];
         foreach (File::glob(__DIR__.'/Http/Components/*.php') as $path) {
-            $baseName = basename($path, '.php');
-            Blade::component("\\Filament\\Http\\Components\\{$baseName}", 'filament-'.Str::of($baseName)->kebab());
+            $baseName= basename($path, '.php');
+            $components[] = "\\Filament\\Http\\Components\\{$baseName}";
         }
+        $this->loadViewComponentsAs('filament', $components);
     }
 
     /**

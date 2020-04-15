@@ -4,14 +4,14 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateGlobalsTable extends Migration
+class CreateGlobalSetsTable extends Migration
 {
     /**
      * The name of the table for the migration.
      * 
      * @var string
      */
-    protected $tableName = 'globals';
+    protected $tableName = 'global_sets';
 
     /**
      * Run the migrations.
