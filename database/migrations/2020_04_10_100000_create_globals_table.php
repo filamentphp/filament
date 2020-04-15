@@ -23,8 +23,7 @@ class CreateGlobalsTable extends Migration
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('title')->nullable();
-            $table->text('description')->nullable();
+            $table->text('fields')->nullable();
         });
     }
 
