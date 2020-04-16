@@ -36,7 +36,7 @@ class UserEdit extends FormComponent
         }
 
         if (auth()->user()->can('edit user permissions')) {
-            $this->model->syncPermissions($input->get('permissions'));
+            $this->model->syncPermissions($input->get('direct_permissions'));
         }
 
         $this->emit('filament.notification.notify', [

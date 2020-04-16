@@ -68,15 +68,15 @@ class UserEditFieldset implements Fieldset
                 ->rules([Rule::exists('roles', 'id')])
                 ->group('permissions')
                 ->disabled(!auth()->user()->can('edit user roles')),
-            Field::make('filament::admin.permissions', 'permissions')
+            Field::make('filament::permissions.permissions.direct', 'direct_permissions')
                 ->checkboxes(Permission::orderBy('name')
                     ->pluck('id', 'name')
                     ->all())
-                ->default(array_map('strval', $model->getAllPermissions()
+                ->default(array_map('strval', $model->getDirectPermissions()
                     ->pluck('id')
                     ->all()))
                 ->rules([Rule::exists('permissions', 'id')])
-                ->help(__('filament::permissions.permissions_from_roles_info'))
+                ->help(__('filament::permissions.permissions.from_roles'))
                 ->group('permissions')
                 ->disabled(!auth()->user()->can('edit user permissions')),
         ];
