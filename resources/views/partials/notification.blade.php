@@ -1,12 +1,14 @@
 <div 
-    x-data="{ type: 'info', message: '', open: false, timeout: 3000 }" 
+x-data="{ 
+        type: '{{ session('notification.type') ?? 'info' }}', 
+        message: '{{ session('notification.message') ?? '' }}', 
+        open: {{ session()->has('notification') ? 'true' : 'false' }} 
+    }" 
     class="fixed inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:p-6 sm:items-start sm:justify-end"
     @filament-notification-notify.window="
-        console.log($event.detail);
         type = $event.detail.type; 
         message = $event.detail.message; 
         open = true;
-        setTimeout(() => open = false, timeout);
     "
 >
     <div  
@@ -50,13 +52,5 @@
                 }
             }));
         })
-
-        @if (session()->has('notification'))
-            document.addEventListener('turbolinks:load', () => {
-                window.dispatchEvent(new CustomEvent('filament-notification-notify', { 
-                    detail: @json(session('notification'))
-                }));
-            })
-        @endif
     </script>
 @endpush
