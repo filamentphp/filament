@@ -49,5 +49,5 @@
         @endforeach
     </ul>
 
-    {{ $users->links('filament::partials.links') }}
+    {{ $users->links('filament::partials.pagination') }}
 </div>

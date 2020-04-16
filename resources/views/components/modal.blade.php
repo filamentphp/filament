@@ -20,7 +20,7 @@
         x-transition:leave-end="opacity-0" 
         class="fixed inset-0 transition-opacity"
     >
-        <div class="absolute inset-0 bg-black opacity-50"></div>
+        <div class="absolute inset-0 bg-gray-700 opacity-50"></div>
     </div>
     
     <div 
@@ -54,7 +54,7 @@
     </div>
 </div>
 
-@pushonce('scripts')
+@pushonce('scripts:modal')
     <script>
         window.livewire.on('filament.toggleModal', modalId => {
             window.dispatchEvent(new CustomEvent('filament-toggle-modal', { 

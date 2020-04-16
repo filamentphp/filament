@@ -24,7 +24,7 @@ return [
 
         'delete' => 'Delete Role',
 
-        'delete_confirm' => 'Are you sure you want to delete the :role role? This action cannot be undone.',
+        'delete_confirm' => 'Are you sure you want to delete the :name role? This action cannot be undone.',
 
     ],
 
@@ -32,9 +32,13 @@ return [
 
     'permissions' => [
 
+        'create' => 'New Permission',
+
         'edit' => 'Edit Permission',
 
         'delete' => 'Delete Permission',
+
+        'delete_confirm' => 'Are you sure you want to delete the :name permission? This action cannot be undone.',
 
     ],
 

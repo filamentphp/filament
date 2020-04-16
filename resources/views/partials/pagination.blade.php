@@ -26,7 +26,7 @@
             @if (is_array($element))
                 @foreach ($element as $page => $url)
                     @if ($page == $paginator->currentPage())
-                        <li class="hidden md:inline-flex -ml-px relative items-center px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm leading-5 font-medium text-gray-400 dark:text-gray-300" aria-current="page">
+                        <li class="hidden md:inline-flex -ml-px relative items-center px-4 py-2 border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 text-sm leading-5 font-medium" aria-current="page">
                             {{ $page }}
                         </li>
                     @else

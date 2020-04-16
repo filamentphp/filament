@@ -32,13 +32,29 @@
                         ])
                     </button>
                 </th>
-                <th colspan="2">
+                <th>
                     <button class="flex" wire:click.prevent="sortBy('description')">
                         @include('filament::partials.sort-header', [
                             'field' => 'description',
                             'label' => __('Description'),
                         ])
                     </button>
+                </th>
+                <th>
+                    <button class="flex" wire:click.prevent="sortBy('created_at')">
+                        @include('filament::partials.sort-header', [
+                            'field' => 'created_at',
+                            'label' => __('filament::admin.created_at'),
+                        ])
+                    </button>
+                </th>
+                <th colspan="2">
+                    <button class="flex" wire:click.prevent="sortBy('updated_at')">
+                        @include('filament::partials.sort-header', [
+                            'field' => 'updated_at',
+                            'label' => __('filament::admin.updated_at'),
+                        ])
+                    </button>    
                 </th>
             </tr> 
         </thead>
@@ -48,6 +64,8 @@
                     <td>{{ $role->id }}</td>
                     <td class="font-medium">{{ $role->name }}</td>
                     <td>{{ $role->description }}</td>
+                    <td>{{ $role->created_at->fromNow() }}</td>
+                    <td>{{ $role->updated_at->fromNow() }}</td>
                     <td class="text-right">
                         <x-filament-dropdown dropdown-class="origin-top-right right-0 w-48">
                             <x-slot name="button">
@@ -87,7 +105,7 @@
     </table>
 
     <div class="mt-6">
-        {{ $roles->links('filament::partials.links') }}
+        {{ $roles->links('filament::partials.pagination') }}
     </div>
 
 </div>

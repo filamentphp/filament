@@ -30,4 +30,6 @@ return [
 
     'pagination_results' => 'Showing :firstItem to :lastItem out of :total results.',
 
+    'search' => 'Search',
+
 ];

@@ -1,5 +1,16 @@
 @section('title', $title)
 
+@section('actions')
+    <button 
+        type="button" 
+        @click.prevent="$dispatch('filament-toggle-modal', { id: 'permission-create' })" 
+        class="btn btn-small btn-add"
+    >
+        <x-heroicon-o-plus class="h-3 w-3 mr-2" />
+        {{ __('filament::permissions.permissions.create') }}
+    </button>
+@endsection
+
 <div>
 
     <div class="mb-4 flex justify-between">
@@ -8,7 +19,7 @@
                 type="search"
                 wire:model="search" 
                 class="form-input input w-full" 
-                placeholder="{{ __('Search...') }}"
+                placeholder="{{ __('filament::admin.search') }}"
             >
         </div>
         <label class="flex-shrink-0 flex items-center">
@@ -48,13 +59,29 @@
                         ])
                     </button>
                 </th>
-                <th colspan="2">
+                <th>
                     <button class="flex" wire:click.prevent="sortBy('is_system')">
                         @include('filament::partials.sort-header', [
                             'field' => 'is_system',
                             'label' => __('Type'),
                         ])
                     </button>
+                </th>
+                <th>
+                    <button class="flex" wire:click.prevent="sortBy('created_at')">
+                        @include('filament::partials.sort-header', [
+                            'field' => 'created_at',
+                            'label' => __('filament::admin.created_at'),
+                        ])
+                    </button>
+                </th>
+                <th colspan="2">
+                    <button class="flex" wire:click.prevent="sortBy('updated_at')">
+                        @include('filament::partials.sort-header', [
+                            'field' => 'updated_at',
+                            'label' => __('filament::admin.updated_at'),
+                        ])
+                    </button>    
                 </th>
             </tr> 
         </thead>
@@ -64,7 +91,7 @@
                     <td>{{ $permission->id }}</td>
                     <td class="font-medium">{{ $permission->name }}</td>
                     <td>{{ $permission->description }}</td>
-                    <td {!! $permission->is_system ? 'colspan="2"' : '' !!}>       
+                    <td>       
                         <x-filament-pill>
                             @if ($permission->is_system)
                                 {{ __('system') }}
@@ -73,7 +100,9 @@
                             @endif
                         </x-filament-pill>
                     </td>
-                    @if (!$permission->is_system)
+                    <td>{{ $permission->created_at->fromNow() }}</td>
+                    <td @istrue ($permission->is_system, ' colspan="2"')>{{ $permission->updated_at->fromNow() }}</td>
+                    @isfalse ($permission->is_system)
                         <td class="text-right">
                             <x-filament-dropdown dropdown-class="origin-top-right right-0 w-48">
                                 <x-slot name="button">
@@ -83,18 +112,18 @@
                                 <button type="button" class="text-red-500">{{ __('Delete') }}</button>
                             </x-filament-dropdown>
                         </td>
-                    @endif
+                    @endisfalse
                 </tr>
             @empty
                 <tr>
-                    <td class="text-center" colspan="4">{{ __('No permissions found.') }}</td>
+                    <td class="text-center" colspan="7">{{ __('No permissions found.') }}</td>
                 </tr>
             @endforelse
         </tbody>
     </table>
 
     <div class="flex justify-between mt-6">
-        {{ $permissions->links('filament::partials.links') }}
+        {{ $permissions->links('filament::partials.pagination') }}
         @if (count($permissions))
             <p class="text-xs font-mono leading-5 text-gray-500 dark:text-gray-400">
                 {{ __('filament::admin.pagination_results', [
@@ -107,3 +136,15 @@
     </div>
 
 </div>
+
+@push('footer')
+    <x-filament-modal 
+        id="permission-create" 
+        :label="__('filament::permissions.permissions.create')" 
+        :esc-close="true" 
+        :click-outside="true"
+        class="sm:max-w-xl"
+    >
+        create permission...
+    </x-filament-modal>
+@endpush
