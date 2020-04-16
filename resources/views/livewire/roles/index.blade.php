@@ -44,7 +44,7 @@
                     <button class="flex" wire:click.prevent="sortBy('created_at')">
                         @include('filament::partials.sort-header', [
                             'field' => 'created_at',
-                            'label' => __('filament::admin.created_at'),
+                            'label' => __('filament::fields.created_at'),
                         ])
                     </button>
                 </th>
@@ -52,7 +52,7 @@
                     <button class="flex" wire:click.prevent="sortBy('updated_at')">
                         @include('filament::partials.sort-header', [
                             'field' => 'updated_at',
-                            'label' => __('filament::admin.updated_at'),
+                            'label' => __('filament::fields.updated_at'),
                         ])
                     </button>    
                 </th>
@@ -71,14 +71,14 @@
                             <x-slot name="button">
                                 <x-heroicon-o-dots-horizontal class="h-5 w-5" />
                             </x-slot>
-                            <button @click.prevent="open = false; $dispatch('filament-toggle-modal', { id: 'edit-role-{{ $role->id }}' })" type="button">{{ __('Edit') }}</button>
-                            <button @click.prevent="open = false; $dispatch('filament-toggle-modal', { id: 'delete-role-{{ $role->id }}' })" type="button" class="text-red-500" type="button">{{ __('Delete') }}</button>
+                            <button @click.prevent="open = false; $dispatch('filament-toggle-modal', { id: 'role-edit-{{ $role->id }}' })" type="button">{{ __('Edit') }}</button>
+                            <button @click.prevent="open = false; $dispatch('filament-toggle-modal', { id: 'role-delete-{{ $role->id }}' })" type="button" class="text-red-500" type="button">{{ __('Delete') }}</button>
                         </x-filament-dropdown>
                     </td>
                 </tr>
                 @push('footer')
                     <x-filament-modal 
-                        :id="'edit-role-'.$role->id" 
+                        :id="'role-edit-'.$role->id" 
                         :label="__('filament::permissions.roles.edit')" 
                         :esc-close="true" 
                         :click-outside="true" 
@@ -87,7 +87,7 @@
                         @livewire('filament::role-edit', ['role' => $role])
                     </x-filament-modal>       
                     <x-filament-modal 
-                        :id="'delete-role-'.$role->id" 
+                        :id="'role-delete-'.$role->id" 
                         :label="__('filament::permissions.roles.delete')" 
                         :esc-close="true" 
                         :click-outside="true" 

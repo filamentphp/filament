@@ -71,7 +71,7 @@
                     <button class="flex" wire:click.prevent="sortBy('created_at')">
                         @include('filament::partials.sort-header', [
                             'field' => 'created_at',
-                            'label' => __('filament::admin.created_at'),
+                            'label' => __('filament::fields.created_at'),
                         ])
                     </button>
                 </th>
@@ -79,7 +79,7 @@
                     <button class="flex" wire:click.prevent="sortBy('updated_at')">
                         @include('filament::partials.sort-header', [
                             'field' => 'updated_at',
-                            'label' => __('filament::admin.updated_at'),
+                            'label' => __('filament::fields.updated_at'),
                         ])
                     </button>    
                 </th>

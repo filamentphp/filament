@@ -22,4 +22,8 @@ return [
 
     'last_login_ip' => 'Last login IP',
 
+    'delete' => 'Delete User',
+
+    'delete_confirm' => 'Are you sure you want to delete :name? This action cannot be undone.',
+
 ];

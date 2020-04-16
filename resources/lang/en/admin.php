@@ -12,6 +12,8 @@ return [
     |
     */
 
+    'search' => 'Search',
+
     'dashboard' => 'Dashboard',
 
     'resources' => 'Resources',
@@ -24,12 +26,6 @@ return [
 
     'permissions' => 'Permissions',
 
-    'created_at' => 'Created',
-
-    'updated_at' => 'Last updated',
-
     'pagination_results' => 'Showing :firstItem to :lastItem out of :total results.',
-
-    'search' => 'Search',
 
 ];

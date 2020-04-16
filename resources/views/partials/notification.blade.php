@@ -29,6 +29,9 @@
             <template x-if="type === 'error'">
                 <x-heroicon-o-exclamation-circle class="w-5 h-5 text-red-500" />
             </template>
+            <template x-if="type === 'warning'">
+                <x-heroicon-o-exclamation class="w-5 h-5 text-yellow-500" />
+            </template>
             <template x-if="type === 'info'">
                 <x-heroicon-o-information-circle class="w-5 h-5 text-blue-500" />
             </template>

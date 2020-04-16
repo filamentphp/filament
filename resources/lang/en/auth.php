@@ -12,11 +12,15 @@ return [
     |
     */
 
+    'unauthenticated' => 'Unauthenticated.',
+
+    'sign_in' => 'Please sign in.',
+
     'login' => 'Sign in to :name',
 
     'signed_in_as' => 'Signed in as',
 
-    'loggedin' => 'Welcome <b>:name</b>! You have been logged in successfully.',
+    'logged_in' => 'Welcome <b>:name</b>! You have been logged in successfully.',
 
     'logout' => 'You have been logged out successfully.',
 

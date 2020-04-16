@@ -38,10 +38,6 @@ return [
 
         'delete_confirm' => 'Are you sure you want to delete the :name permission? This action cannot be undone.',
 
-        'direct' => 'Direct Permissions',
-
-        'from_roles' => 'Permissions are inherited from assigned roles. You may add direct permissions as needed.',
-
     ],
 
 ];

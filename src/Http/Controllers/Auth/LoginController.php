@@ -100,7 +100,7 @@ class LoginController extends Controller
 
         session()->flash('notification', [
             'type' => 'success',
-            'message' => __('filament::auth.loggedin', ['name' => $user->name]),
+            'message' => __('filament::auth.logged_in', ['name' => $user->name]),
         ]);
     }
 }

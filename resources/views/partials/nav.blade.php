@@ -1,5 +1,5 @@
 @isset($nav)
-    <nav class="mt-5 flex-1 px-2 bg-gray-800">
+    <nav class="mt-5 flex-1 px-2">
         @foreach ($nav as $item)
             @if (!isset($item['ability']) || auth()->user()->can($item['ability']))
                 <a href="{{ Route::has($item['url']) ? route($item['url']) : $item['url'] }}" 

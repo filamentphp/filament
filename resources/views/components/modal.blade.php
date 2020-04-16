@@ -20,7 +20,7 @@
         x-transition:leave-end="opacity-0" 
         class="fixed inset-0 transition-opacity"
     >
-        <div class="absolute inset-0 bg-gray-700 opacity-50"></div>
+        <div class="absolute inset-0 bg-black opacity-75"></div>
     </div>
     
     <div 
@@ -46,7 +46,7 @@
         <button 
             type="button"
             @click.prevent="open = false"  
-            class="absolute top-0 right-3 -mt-10 flex transition ease-in-out duration-150 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark-hover:text-gray-300 focus:outline-none"
+            class="absolute top-0 right-0 -mt-10 flex transition ease-in-out duration-150 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark-hover:text-gray-300 focus:outline-none"
         >
             <x-heroicon-o-x class="h-6 w-6 text-gray-50" aria-hidden="true" />
             <span class="sr-only">{{ __('Close') }}</span>
