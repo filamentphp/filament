@@ -8,11 +8,11 @@ use Illuminate\Validation\Rule;
 use Filament\Models\Role;
 use Filament\Models\Permission;
 
-class UserEditFieldset implements Fieldset
+class UserCreateFieldset implements Fieldset
 {
     public static function title(): string
     {
-        return 'Edit User';
+        return __('filament::users.create');
     }
 
     public static function fields($model): array
@@ -21,64 +21,50 @@ class UserEditFieldset implements Fieldset
             Field::make('name')
                 ->input()
                 ->rules(['required', 'string', 'max:255'])
-                ->class('md:col-span-2')
                 ->group('account'),
-            Field::make('email', 'E-mail Address')
+            Field::make('email')
                 ->input('email')
                 ->rules([
                     'required', 
                     'string', 
                     'email', 
                     'max:255', 
-                    Rule::unique('users', 'email')->ignore($model->id),
-                ])
-                ->class('md:col-span-2')
-                ->group('account'),
-            Field::make('avatar')
-                ->rules('array')
-                ->file()
-                ->fileRules('image')
-                ->fileValidationMessages([
-                    'image' => __('The Avatar must be a valid image.'),
+                    Rule::unique('users', 'email'),
                 ])
                 ->group('account'),
-            Field::make('password', 'New password')
+            Field::make('password')
                 ->input('password')
                 ->autocomplete('new-password')
-                ->rules(['nullable', 'min:8', 'confirmed'])
-                ->help('Leave blank to keep current password.')
+                ->rules(['required', 'min:8', 'confirmed'])
                 ->group('account'),
             Field::make('password_confirmation', false)
-                ->placeholder('Confirm New Password')
+                ->placeholder('Confirm Password')
                 ->input('password')
                 ->autocomplete('new-password')
+                ->rules('required')
                 ->group('account'),
             Field::make('is_super_admin')
                 ->checkbox()
+                ->default(false)
                 ->help(__('filament::permissions.super_admin_info'))
                 ->group('permissions')
-                ->disabled(!auth()->user()->is_super_admin),
+                ->disabled(!auth()->user()->is_super_admin)
+                ->group('permissions'),
             Field::make('roles')
                 ->checkboxes(Role::orderBy('name')
                     ->pluck('id', 'name')
                     ->all())
-                ->default(array_map('strval', $model->roles
-                    ->pluck('id')
-                    ->all()))
                 ->rules([Rule::exists('roles', 'id')])
-                ->group('permissions')
-                ->disabled(!auth()->user()->can('edit user roles')),
+                ->disabled(!auth()->user()->can('edit user roles'))
+                ->group('permissions'),
             Field::make('direct_permissions')
                 ->checkboxes(Permission::orderBy('name')
                     ->pluck('id', 'name')
                     ->all())
-                ->default(array_map('strval', $model->getDirectPermissions()
-                    ->pluck('id')
-                    ->all()))
                 ->rules([Rule::exists('permissions', 'id')])
                 ->help(__('filament::permissions.permissions.permissions_from_roles'))
-                ->group('permissions')
-                ->disabled(!auth()->user()->can('edit user permissions')),
+                ->disabled(!auth()->user()->can('edit user permissions'))
+                ->group('permissions'),
         ];
     }
 

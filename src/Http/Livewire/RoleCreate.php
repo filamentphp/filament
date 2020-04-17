@@ -15,12 +15,6 @@ class RoleCreate extends FormComponent
         $this->setFormProperties();
     }
 
-    public function save()
-    {
-        $this->authorize('create', Role::class);
-        $this->submit();
-    }
-
     public function success()
     {
         $input = collect($this->form_data);

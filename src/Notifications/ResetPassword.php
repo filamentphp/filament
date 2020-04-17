@@ -69,7 +69,7 @@ class ResetPassword extends Notification
             $url = url(config('app.url').route('filament.auth.password.reset', [
                 'token' => $this->token,
                 'email' => $notifiable->getEmailForPasswordReset(),
-            ], false));
+            ]));
         }
 
         return (new MailMessage)

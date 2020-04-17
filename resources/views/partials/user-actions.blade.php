@@ -28,7 +28,7 @@
     <a 
         href="{{ route('filament.admin.users.edit', ['id' => auth()->user()->id]) }}" 
     >
-        {{ __('filament::user.settings') }}
+        {{ __('filament::users.settings') }}
     </a>
     <x-filament-form :action="route('filament.auth.logout')">
         <button type="submit">

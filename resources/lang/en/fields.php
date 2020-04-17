@@ -24,8 +24,4 @@ return [
 
     'updated_at' => 'Last updated',
 
-    'direct_permissions' => 'Direct Permissions',
-
-    'permissions_from_roles' => 'Permissions are inherited from assigned roles. You may add direct permissions as needed.',
-
 ];

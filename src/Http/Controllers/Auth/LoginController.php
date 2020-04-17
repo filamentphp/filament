@@ -28,17 +28,16 @@ class LoginController extends Controller
         $title = __('filament::auth.login', ['name' => config('app.name')]);
 
         $fields = [
-            Field::make(false, 'email', false)
-                ->placeholder('E-mail Address')
+            Field::make('email', false, 'email')
                 ->input('email')
-                ->value('')
+                ->placeholder('E-mail Address')
                 ->rules(['required']),
-            Field::make(false, 'password', false)
-                ->placeholder('Password')
+            Field::make('password', false, 'password')
                 ->input('password')
+                ->placeholder('Password')
                 ->rules(['required'])
                 ->help('<a href="'.route('filament.auth.password.forgot').'">'.__('Forgot Your Password?').'</a>'),
-            Field::make('Remember me', 'remember')
+            Field::make('remember', 'Remember me', 'remember')
                 ->checkbox()
                 ->value(1),
         ];

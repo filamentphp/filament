@@ -1,14 +1,27 @@
 @section('title', $title)
 
 @section('actions')
-    <button 
-        type="button" 
-        @click.prevent="$dispatch('filament-toggle-modal', { id: 'permission-create' })" 
-        class="btn btn-small btn-add"
-    >
-        <x-heroicon-o-plus class="h-3 w-3 mr-2" />
-        {{ __('filament::permissions.permissions.create') }}
-    </button>
+    @can('create permissions')
+        <button 
+            type="button" 
+            @click.prevent="$dispatch('filament-toggle-modal', { id: 'permission-create' })" 
+            class="btn btn-small btn-add"
+        >
+            <x-heroicon-o-plus class="h-3 w-3 mr-2" />
+            {{ __('filament::permissions.permissions.create') }}
+        </button>
+        @push('footer')
+            <x-filament-modal 
+                id="permission-create" 
+                :label="__('filament::permissions.permissions.create')" 
+                :esc-close="true" 
+                :click-outside="true"
+                class="sm:max-w-xl"
+            >
+                create permission...
+            </x-filament-modal>
+        @endpush
+    @endcan
 @endsection
 
 <div>
@@ -104,13 +117,14 @@
                     <td @istrue ($permission->is_system, ' colspan="2"')>{{ $permission->updated_at->fromNow() }}</td>
                     @isfalse ($permission->is_system)
                         <td class="text-right">
+                            {{--
                             <x-filament-dropdown dropdown-class="origin-top-right right-0 w-48">
                                 <x-slot name="button">
                                     <x-heroicon-o-dots-horizontal class="h-5 w-5" />
                                 </x-slot>
-                                <a href="{{ route('filament.admin.permissions.edit', ['id' => $permission->id]) }}">{{ __('Edit') }}</a>
-                                <button type="button" class="text-red-500">{{ __('Delete') }}</button>
+                                
                             </x-filament-dropdown>
+                            --}}
                         </td>
                     @endisfalse
                 </tr>
@@ -136,15 +150,3 @@
     </div>
 
 </div>
-
-@push('footer')
-    <x-filament-modal 
-        id="permission-create" 
-        :label="__('filament::permissions.permissions.create')" 
-        :esc-close="true" 
-        :click-outside="true"
-        class="sm:max-w-xl"
-    >
-        create permission...
-    </x-filament-modal>
-@endpush

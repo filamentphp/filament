@@ -23,11 +23,11 @@ trait FollowsRules
         $field_rules = is_array($field->rules) ? $field->rules : explode('|', $field->rules);
 
         if ($rules_ignore) {
-            $field_rules = array_udiff($field_rules, $rules_ignore, function ($a, $b) {
-                return $a != $b;
-            });
+            $field_rules = collect($field_rules)->filter(function ($value, $key) use ($rules_ignore) {
+                return !in_array($value, $rules_ignore);
+            })->all();
         }
-
+        
         return $field_rules;
     }
 

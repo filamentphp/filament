@@ -32,7 +32,7 @@ class Tab extends Component
     public function render()
     {
         return <<<'blade'
-            <div role="tabpanel" id="{{ $id }}-tab" aria-labelledby="{{ $id }}" x-show="tab === '{{ $id }}'" :hidden="tab !== '{{ $id }}'">
+            <div tabindex="0" role="tabpanel" id="{{ $id }}-tab" aria-labelledby="{{ $id }}" x-show="tab === '{{ $id }}'" :hidden="tab !== '{{ $id }}'">
                 {{ $slot }}
             </div>
         blade;

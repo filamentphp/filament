@@ -34,11 +34,6 @@ class Authenticate extends Middleware
     protected function redirectTo($request)
     {        
         if (! $request->expectsJson()) {
-            session()->flash('notification', [
-                'type' => 'warning',
-                'message' => __('filament::auth.sign_in'),
-            ]);
-
             return route('filament.auth.login');
         }
     }

@@ -58,7 +58,7 @@ class Checkbox extends Component
      * @param  string  $model
      * @return void
      */
-    public function __construct($type = 'checkbox', $name, $label = null, $value = null, $model = null, $disabled = false)
+    public function __construct($type = 'checkbox', $name, $label = null, $value, $model = null, $disabled = false)
     {
         $this->type = $type;
         $this->name = $name;

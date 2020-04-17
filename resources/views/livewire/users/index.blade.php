@@ -4,12 +4,23 @@
     @can('create users')
         <button 
             type="button" 
-            @click.prevent="$dispatch('filament-toggle-modal', { id: 'new-role' })" 
+            @click.prevent="$dispatch('filament-toggle-modal', { id: 'user-create' })" 
             class="btn btn-small btn-add"
         >
             <x-heroicon-o-plus class="h-3 w-3 mr-2" />
-            {{ __('New User') }}
+            {{ __('filament::users.create') }}
         </button>
+        @push('footer')
+            <x-filament-modal 
+                id="user-create" 
+                :label="__('filament::permissions.permissions.create')" 
+                :esc-close="true" 
+                :click-outside="true"
+                class="sm:max-w-3xl"
+            >
+                @livewire('filament::user-create')
+            </x-filament-modal>
+        @endpush
     @endcan
 @endsection
 

@@ -6,21 +6,29 @@ use Illuminate\Support\Str;
 
 class Field extends BaseField
 {
-    protected $id;
     protected $name;
     protected $label;
     protected $key;
+    protected $id;
 
-    public function __construct($label, $name, $key_prefix = true)
+    public function __construct($name, $label = null, $key = null)
     {
-        $this->name = $name ?? Str::snake(Str::lower($label));
-        $this->label = __($label);
-        $this->key = $key_prefix ? 'form_data.'.$this->name : $this->name;
-        $this->id = Str::uuid();
+        $this->name = $name;
+        $this->label = is_null($label) ? $this->formatLabel($name) : $label;
+        $this->key = $key ?? 'form_data.'.$this->name;
+        $this->id = Str::slug($this->key);
     }
 
-    public static function make($label, $name = null, $key_prefix = true)
+    public static function make($name, $label = null, $key = null)
     {
-        return new static($label, $name, $key_prefix);
+        return new static($name, $label, $key);
+    }
+
+    protected function formatLabel($value)
+    {
+        return Str::of($value)
+            ->replaceMatches('/[\-_]/', ' ')
+            ->title()
+            ->__toString();
     }
 }

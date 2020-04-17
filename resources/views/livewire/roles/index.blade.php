@@ -1,14 +1,27 @@
 @section('title', $title)
 
 @section('actions')
-    <button 
-        type="button" 
-        @click.prevent="$dispatch('filament-toggle-modal', { id: 'role-create' })" 
-        class="btn btn-small btn-add"
-    >
-        <x-heroicon-o-plus class="h-3 w-3 mr-2" />
-        {{ __('filament::permissions.roles.create') }}
-    </button>
+    @can('create roles')
+        <button 
+            type="button" 
+            @click.prevent="$dispatch('filament-toggle-modal', { id: 'role-create' })" 
+            class="btn btn-small btn-add"
+        >
+            <x-heroicon-o-plus class="h-3 w-3 mr-2" />
+            {{ __('filament::permissions.roles.create') }}
+        </button>
+        @push('footer')
+            <x-filament-modal 
+                id="role-create" 
+                :label="__('filament::permissions.roles.create')" 
+                :esc-close="true" 
+                :click-outside="true"
+                class="sm:max-w-xl"
+            >
+                @livewire('filament::role-create')
+            </x-filament-modal>
+        @endpush
+    @endcan
 @endsection
 
 <div>
@@ -71,31 +84,37 @@
                             <x-slot name="button">
                                 <x-heroicon-o-dots-horizontal class="h-5 w-5" />
                             </x-slot>
-                            <button @click.prevent="open = false; $dispatch('filament-toggle-modal', { id: 'role-edit-{{ $role->id }}' })" type="button">{{ __('Edit') }}</button>
-                            <button @click.prevent="open = false; $dispatch('filament-toggle-modal', { id: 'role-delete-{{ $role->id }}' })" type="button" class="text-red-500" type="button">{{ __('Delete') }}</button>
+                            @can('edit roles')
+                                <button @click.prevent="open = false; $dispatch('filament-toggle-modal', { id: 'role-edit-{{ $role->id }}' })" type="button">{{ __('Edit') }}</button>
+                                @push('footer')
+                                    <x-filament-modal 
+                                        :id="'role-edit-'.$role->id" 
+                                        :label="__('filament::permissions.roles.edit')" 
+                                        :esc-close="true" 
+                                        :click-outside="true" 
+                                        class="sm:max-w-xl"
+                                    >
+                                        @livewire('filament::role-edit', ['role' => $role])
+                                    </x-filament-modal> 
+                                @endpush
+                            @endcan
+                            @can('delete roles')
+                                <button @click.prevent="open = false; $dispatch('filament-toggle-modal', { id: 'role-delete-{{ $role->id }}' })" type="button" class="text-red-500" type="button">{{ __('Delete') }}</button>
+                                @push('footer')      
+                                    <x-filament-modal 
+                                        :id="'role-delete-'.$role->id" 
+                                        :label="__('filament::permissions.roles.delete')" 
+                                        :esc-close="true" 
+                                        :click-outside="true" 
+                                        class="sm:max-w-md"
+                                    >
+                                        @livewire('filament::role-delete', ['role' => $role])
+                                    </x-filament-modal>
+                                @endpush
+                            @endcan
                         </x-filament-dropdown>
                     </td>
                 </tr>
-                @push('footer')
-                    <x-filament-modal 
-                        :id="'role-edit-'.$role->id" 
-                        :label="__('filament::permissions.roles.edit')" 
-                        :esc-close="true" 
-                        :click-outside="true" 
-                        class="sm:max-w-xl"
-                    >
-                        @livewire('filament::role-edit', ['role' => $role])
-                    </x-filament-modal>       
-                    <x-filament-modal 
-                        :id="'role-delete-'.$role->id" 
-                        :label="__('filament::permissions.roles.delete')" 
-                        :esc-close="true" 
-                        :click-outside="true" 
-                        class="sm:max-w-md"
-                    >
-                        @livewire('filament::role-delete', ['role' => $role])
-                    </x-filament-modal>
-                @endpush
             @empty
                 <tr>
                     <td class="text-center" colspan="4">{{ __('No roles found.') }}</td>
@@ -109,15 +128,3 @@
     </div>
 
 </div>
-
-@push('footer')
-    <x-filament-modal 
-        id="role-create" 
-        :label="__('filament::permissions.roles.create')" 
-        :esc-close="true" 
-        :click-outside="true"
-        class="sm:max-w-xl"
-    >
-        @livewire('filament::role-create')
-    </x-filament-modal>
-@endpush

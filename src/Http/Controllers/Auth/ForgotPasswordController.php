@@ -21,7 +21,7 @@ class ForgotPasswordController extends Controller
         $title = __('Reset Password');
 
         $fields = [
-            Field::make(false, 'email', false)
+            Field::make('email', false, 'email')
                 ->placeholder('E-mail Address')
                 ->input('email')
                 ->value('')

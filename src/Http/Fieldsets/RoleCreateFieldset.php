@@ -11,13 +11,13 @@ class RoleCreateFieldset implements Fieldset
 {
     public static function title(): string
     {
-        return 'Create Role';
+        return __('filament::permissions.roles.create');
     }
 
-    public static function fields($model = null): array
+    public static function fields($model): array
     {
         return [
-            Field::make('Name')
+            Field::make('name')
                 ->input()
                 ->rules([
                     'required', 
@@ -26,11 +26,11 @@ class RoleCreateFieldset implements Fieldset
                     Rule::unique('roles', 'name'),
                 ])
                 ->group('info'),
-            Field::make('Description')
+            Field::make('description')
                 ->textarea()
                 ->rules(['string', 'nullable'])
                 ->group('info'),
-            Field::make('filament::admin.permissions', 'permissions')
+            Field::make('permissions')
                 ->checkboxes(Permission::orderBy('name')
                     ->pluck('id', 'name')
                     ->all())
