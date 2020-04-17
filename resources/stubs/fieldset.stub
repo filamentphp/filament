@@ -15,7 +15,7 @@ class DummyFieldset implements Fieldset
     public static function fields($model): array
     {
         return [
-            Field::make('Name')
+            Field::make('name')
                 ->input()
                 ->rules(['required', 'string', 'max:255']),
         ];

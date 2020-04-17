@@ -8,12 +8,12 @@
             class="btn btn-small btn-add"
         >
             <x-heroicon-o-plus class="h-3 w-3 mr-2" />
-            {{ __('filament::permissions.permissions.create') }}
+            {{ __('filament::permissions.create') }}
         </button>
         @push('footer')
             <x-filament-modal 
                 id="permission-create" 
-                :label="__('filament::permissions.permissions.create')" 
+                :label="__('filament::permissions.create')" 
                 :esc-close="true" 
                 :click-outside="true"
                 class="sm:max-w-xl"
@@ -32,7 +32,7 @@
                 type="search"
                 wire:model="search" 
                 class="form-input input w-full" 
-                placeholder="{{ __('filament::admin.search') }}"
+                placeholder="{{ __('Search') }}"
             >
         </div>
         <label class="flex-shrink-0 flex items-center">
@@ -84,7 +84,7 @@
                     <button class="flex" wire:click.prevent="sortBy('created_at')">
                         @include('filament::partials.sort-header', [
                             'field' => 'created_at',
-                            'label' => __('filament::fields.created_at'),
+                            'label' => __('filament::labels.created_at'),
                         ])
                     </button>
                 </th>
@@ -92,7 +92,7 @@
                     <button class="flex" wire:click.prevent="sortBy('updated_at')">
                         @include('filament::partials.sort-header', [
                             'field' => 'updated_at',
-                            'label' => __('filament::fields.updated_at'),
+                            'label' => __('filament::labels.updated_at'),
                         ])
                     </button>    
                 </th>
@@ -140,7 +140,7 @@
         {{ $permissions->links('filament::partials.pagination') }}
         @if (count($permissions))
             <p class="text-xs font-mono leading-5 text-gray-500 dark:text-gray-400">
-                {{ __('filament::admin.pagination_results', [
+                {{ __('filament::pagination.results', [
                     'firstItem' => $permissions->firstItem(),
                     'lastItem' => $permissions->lastItem(),
                     'total' => $permissions->total(),

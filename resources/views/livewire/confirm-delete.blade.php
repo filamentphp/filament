@@ -9,7 +9,7 @@
             </h3>
             <div class="mt-2">
                 <p class="text-sm leading-5 text-gray-500 dark:text-gray-400">
-                    {{ $message }}
+                    {{ __('filament::confirmations.delete', ['item' => $item]) }}
                 </p>
             </div>
         </div>

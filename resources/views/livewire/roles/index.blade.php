@@ -8,12 +8,12 @@
             class="btn btn-small btn-add"
         >
             <x-heroicon-o-plus class="h-3 w-3 mr-2" />
-            {{ __('filament::permissions.roles.create') }}
+            {{ __('filament::roles.create') }}
         </button>
         @push('footer')
             <x-filament-modal 
                 id="role-create" 
-                :label="__('filament::permissions.roles.create')" 
+                :label="__('filament::roles.create')" 
                 :esc-close="true" 
                 :click-outside="true"
                 class="sm:max-w-xl"
@@ -57,7 +57,7 @@
                     <button class="flex" wire:click.prevent="sortBy('created_at')">
                         @include('filament::partials.sort-header', [
                             'field' => 'created_at',
-                            'label' => __('filament::fields.created_at'),
+                            'label' => __('filament::labels.created_at'),
                         ])
                     </button>
                 </th>
@@ -65,7 +65,7 @@
                     <button class="flex" wire:click.prevent="sortBy('updated_at')">
                         @include('filament::partials.sort-header', [
                             'field' => 'updated_at',
-                            'label' => __('filament::fields.updated_at'),
+                            'label' => __('filament::labels.updated_at'),
                         ])
                     </button>    
                 </th>
@@ -89,7 +89,7 @@
                                 @push('footer')
                                     <x-filament-modal 
                                         :id="'role-edit-'.$role->id" 
-                                        :label="__('filament::permissions.roles.edit')" 
+                                        :label="__('filament::roles.edit')" 
                                         :esc-close="true" 
                                         :click-outside="true" 
                                         class="sm:max-w-xl"
@@ -103,7 +103,7 @@
                                 @push('footer')      
                                     <x-filament-modal 
                                         :id="'role-delete-'.$role->id" 
-                                        :label="__('filament::permissions.roles.delete')" 
+                                        :label="__('filament::roles.delete')" 
                                         :esc-close="true" 
                                         :click-outside="true" 
                                         class="sm:max-w-md"

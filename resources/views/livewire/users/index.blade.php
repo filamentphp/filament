@@ -13,7 +13,7 @@
         @push('footer')
             <x-filament-modal 
                 id="user-create" 
-                :label="__('filament::permissions.permissions.create')" 
+                :label="__('filament::permissions.create')" 
                 :esc-close="true" 
                 :click-outside="true"
                 class="sm:max-w-3xl"
@@ -45,7 +45,7 @@
                         </div>                        
                         <div class="flex-shrink-0">
                             @if ($user->is_super_admin)
-                                <x-filament-pill>{{ __('filament::permissions.super_admin') }}</x-filament-pill>
+                                <x-filament-pill>{{ __('filament::users.super_admin') }}</x-filament-pill>
                             @elseif (count($user->roles))
                                 <ul>
                                     @foreach($user->roles as $role)

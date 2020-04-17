@@ -12,7 +12,7 @@ class UserCreateFieldset implements Fieldset
 {
     public static function title(): string
     {
-        return __('filament::users.create');
+        return 'New User';
     }
 
     public static function fields($model): array
@@ -46,7 +46,7 @@ class UserCreateFieldset implements Fieldset
             Field::make('is_super_admin')
                 ->checkbox()
                 ->default(false)
-                ->help(__('filament::permissions.super_admin_info'))
+                ->help(__('filament::users.super_admin_info'))
                 ->group('permissions')
                 ->disabled(!auth()->user()->is_super_admin)
                 ->group('permissions'),
@@ -62,7 +62,7 @@ class UserCreateFieldset implements Fieldset
                     ->pluck('id', 'name')
                     ->all())
                 ->rules([Rule::exists('permissions', 'id')])
-                ->help(__('filament::permissions.permissions.permissions_from_roles'))
+                ->help(__('filament::permissions.permissions_from_roles'))
                 ->disabled(!auth()->user()->can('edit user permissions'))
                 ->group('permissions'),
         ];

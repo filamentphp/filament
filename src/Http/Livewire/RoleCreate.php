@@ -33,7 +33,7 @@ class RoleCreate extends FormComponent
     public function render()
     {        
         return view('filament::livewire.roles.create-edit', [
-            'title' => __('filament::permissions.roles.create'),
+            'title' => __('filament::roles.create'),
             'fields' => $this->fields(),
         ]);
     }

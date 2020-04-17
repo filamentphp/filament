@@ -66,7 +66,7 @@ return [
         'admin' => [
 
             'dashboard' => [
-                'label' => 'filament::admin.dashboard',
+                'label' => 'Dashboard',
                 'icon' => 'heroicons/heroicon-o-home', // path to SVG icon using Filament::icon() SVG icon helper
                 'url' => 'filament.admin.dashboard', // string or named route
                 'active' => 'filament.admin.dashboard', // string or named route (may also be an array @link https://github.com/dwightwatson/active)
@@ -75,7 +75,7 @@ return [
             /* TODO
 
             'globals' => [
-                'label' => 'filament::admin.globals',
+                'label' => 'Globals',
                 'icon' => 'heroicons/heroicon-o-globe',
                 'url' => 'filament.admin.globals.index',
                 'active' => 'filament.admin.globals.*',
@@ -83,7 +83,7 @@ return [
             ],
 
             'Resources' => [
-                'label' => 'filament::admin.collections',
+                'label' => 'Collections',
                 'icon' => 'heroicons/heroicon-o-collection',
                 'url' => 'filament.admin.collections.index',
                 'active' => 'filament.admin.collections.*',
@@ -93,7 +93,7 @@ return [
             */
 
             'users' => [
-                'label' => 'filament::admin.users',
+                'label' => 'Users',
                 'icon' => 'heroicons/heroicon-o-user-group',
                 'url' => 'filament.admin.users.index',
                 'active' => 'filament.admin.users.*',
@@ -101,7 +101,7 @@ return [
             ],
 
             'Roles' => [
-                'label' => 'filament::admin.roles',
+                'label' => 'Roles',
                 'icon' => 'heroicons/heroicon-o-key',
                 'url' => 'filament.admin.roles.index',
                 'active' => 'filament.admin.roles.*',
@@ -109,7 +109,7 @@ return [
             ],
 
             'Permissions' => [
-                'label' => 'filament::admin.permissions',
+                'label' => 'Permissions',
                 'icon' => 'heroicons/heroicon-o-lock-closed',
                 'url' => 'filament.admin.permissions.index',
                 'active' => 'filament.admin.permissions.*',

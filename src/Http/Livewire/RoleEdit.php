@@ -40,7 +40,7 @@ class RoleEdit extends FormComponent
     public function render()
     {        
         return view('filament::livewire.roles.create-edit', [
-            'title' => __('filament::permissions.roles.edit'),
+            'title' => __('filament::roles.edit'),
             'fields' => $this->fields(),
         ]);
     }

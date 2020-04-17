@@ -36,7 +36,7 @@
             <span 
                 class="btn btn-file-input" 
                 :class="{ 'btn-is-disabled': {{ $disabled ? 'true' : 'false' }} }"
-                x-text="isLoading() ? '{{ __('filament::fields.file.uploading') }}' : '{{ $field->placeholder ?? __('filament::fields.file.upload', ['item' => Str::singular($field->name)]) }}'"
+                x-text="isLoading() ? '{{ __('Uploading') }}' : '{{ $field->placeholder ?? __('filament::fields/file.upload', ['file' => Str::singular($field->name)]) }}'"
             ></span>
         </label>
         <div class="flex-shrink-0" x-show="isLoading()">
@@ -80,7 +80,7 @@
                         class="flex-shrink-0 flex items-center p-2"
                     >   
                         <x-heroicon-o-x class="h-4 w-4 text-red-500" />
-                        <span class="sr-only">{{ __('filament::admin.remove', ['item' => $value['name']]) }}</span>
+                        <span class="sr-only">{{ __('filament::fields/file.delete', ['file' => $value['name']]) }}</span>
                     </button>
                 </li>
             @endforeach

@@ -11,7 +11,7 @@ class RoleCreateFieldset implements Fieldset
 {
     public static function title(): string
     {
-        return __('filament::permissions.roles.create');
+        return __('filament::roles.create');
     }
 
     public static function fields($model): array

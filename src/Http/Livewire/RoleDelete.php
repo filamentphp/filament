@@ -30,8 +30,8 @@ class RoleDelete extends Component
     public function render()
     {        
         return view('filament::livewire.confirm-delete', [
-            'title' => __('filament::permissions.roles.delete'),
-            'message' => __('filament::permissions.roles.delete_confirm', ['name' => $this->role->name]),
+            'title' => __('filament::roles.delete'),
+            'item' => $this->role->name,
         ]);
     }
 }

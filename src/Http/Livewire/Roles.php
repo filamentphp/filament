@@ -18,7 +18,7 @@ class Roles extends Component
         $roles = Role::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate($this->perPage);
 
         return view('filament::livewire.roles.index', [
-            'title' => __('filament::admin.roles'),
+            'title' => __('Roles'),
             'roles' => $roles,
         ]);
     }

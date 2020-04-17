@@ -18,7 +18,7 @@
     </x-slot>
     <p class="px-4 py-3">
         <span class="block text-xs leading-5 text-gray-400">
-            {{ __('filament::auth.signed_in_as') }}
+            {{ __('Signed in as') }}
         </span>
         @livewire('filament::auth-user-attribute', [
             'attribute' => 'email', 
@@ -28,7 +28,7 @@
     <a 
         href="{{ route('filament.admin.users.edit', ['id' => auth()->user()->id]) }}" 
     >
-        {{ __('filament::users.settings') }}
+        {{ __('Account settings') }}
     </a>
     <x-filament-form :action="route('filament.auth.logout')">
         <button type="submit">

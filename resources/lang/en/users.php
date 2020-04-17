@@ -11,29 +11,16 @@ return [
     | messages that we need to display to the user.
     |
     */
+
+
+    'super_admin' => 'super admin',
     
-    'name' => 'Name',
-
-    'avatar' => 'Avatar',
-
-    'new_password' => 'New password',
-
-    'new_password_confirmation' => 'Confirm new password',
-
-    'settings' => 'Account settings',
-
-    'last_login_at' => 'Last login',
-
-    'last_login_never' => 'never',
-
-    'last_login_ip' => 'Last login IP',
+    'super_admin_info' => 'Super admins supersede all assigned roles and permissions.',
 
     'create' => 'New User',
 
     'edit' => ':name\'s Account',
 
     'delete' => 'Delete User',
-
-    'delete_confirm' => 'Are you sure you want to delete :name? This action cannot be undone.',
 
 ];

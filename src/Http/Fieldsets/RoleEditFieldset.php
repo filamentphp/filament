@@ -11,7 +11,7 @@ class RoleEditFieldset implements Fieldset
 {
     public static function title(): string
     {
-        return __('filament::permissions.roles.edit');
+        return __('filament::roles.edit');
     }
 
     public static function fields($model): array

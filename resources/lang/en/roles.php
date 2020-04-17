@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Permissions Language Lines
+    | Roles Language Lines
     |--------------------------------------------------------------------------
     |
     | The following language lines are used for user specific
@@ -12,14 +12,10 @@ return [
     |
     */
 
-    'create' => 'New Permission',
+    'create' => 'New Role',
 
-    'edit' => 'Edit Permission',
+    'edit' => 'Edit Role',
 
-    'delete' => 'Delete Permission',
-
-    'direct_permissions' => 'Direct Permissions',
-
-    'permissions_from_roles' => 'Permissions are inherited from assigned roles. You may add direct permissions as needed.',
+    'delete' => 'Delete Role',
 
 ];

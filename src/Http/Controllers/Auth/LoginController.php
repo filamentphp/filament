@@ -25,7 +25,7 @@ class LoginController extends Controller
             return redirect($this->redirectTo());
         }
 
-        $title = __('filament::auth.login', ['name' => config('app.name')]);
+        $title = config('app.name');
 
         $fields = [
             Field::make('email', false, 'email')
@@ -65,6 +65,8 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
+        $name = $request->user()->name;
+
         $this->guard()->logout();
 
         $request->session()->invalidate();
@@ -79,7 +81,7 @@ class LoginController extends Controller
             ? new Response('', 204)
             : redirect(route('filament.auth.login'))->with('notification', [
                 'type' => 'success',
-                'message' => __('filament::auth.logout'),
+                'message' => __('filament::notifications.logged_out', ['name' => $name]),
             ]);
     }
 
@@ -99,7 +101,7 @@ class LoginController extends Controller
 
         session()->flash('notification', [
             'type' => 'success',
-            'message' => __('filament::auth.logged_in', ['name' => $user->name]),
+            'message' => __('filament::notifications.logged_in', ['name' => $user->name]),
         ]);
     }
 }
