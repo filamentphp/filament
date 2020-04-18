@@ -3,14 +3,19 @@
 namespace Filament\Http\Livewire;
 
 use Livewire\Component;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Filament\Models\Role;
 
 class RoleDelete extends Component
 {
+    use AuthorizesRequests;
+    
     public $role;
 
     public function mount(Role $role)
     {
+        $this->authorize('delete', $role);
+
         $this->role = $role;
     }
 

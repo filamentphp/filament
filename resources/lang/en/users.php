@@ -19,8 +19,10 @@ return [
 
     'create' => 'New User',
 
-    'edit' => ':name\'s Account',
+    'edit' => 'Edit User',
 
     'delete' => 'Delete User',
+
+    'account' => ':name\'s Account',
 
 ];

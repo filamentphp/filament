@@ -85,7 +85,12 @@
                                 <x-heroicon-o-dots-horizontal class="h-5 w-5" />
                             </x-slot>
                             @can('edit roles')
-                                <button @click.prevent="open = false; $dispatch('filament-toggle-modal', { id: 'role-edit-{{ $role->id }}' })" type="button">{{ __('Edit') }}</button>
+                                <button 
+                                    type="button" 
+                                    @click.prevent="open = false; $dispatch('filament-toggle-modal', { id: 'role-edit-{{ $role->id }}' })"
+                                >
+                                    {{ __('Edit') }}
+                                </button>
                                 @push('footer')
                                     <x-filament-modal 
                                         :id="'role-edit-'.$role->id" 
@@ -99,7 +104,13 @@
                                 @endpush
                             @endcan
                             @can('delete roles')
-                                <button @click.prevent="open = false; $dispatch('filament-toggle-modal', { id: 'role-delete-{{ $role->id }}' })" type="button" class="text-red-500" type="button">{{ __('Delete') }}</button>
+                                <button 
+                                    type="button" 
+                                    @click.prevent="open = false; $dispatch('filament-toggle-modal', { id: 'role-delete-{{ $role->id }}' })"
+                                    class="text-red-500"
+                                >
+                                    {{ __('Delete') }}
+                                </button>
                                 @push('footer')      
                                     <x-filament-modal 
                                         :id="'role-delete-'.$role->id" 

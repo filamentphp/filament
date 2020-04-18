@@ -1,7 +1,7 @@
 <div
     x-data="{ open: {{ $isOpen ? 'true' : 'false' }} }" 
     x-show="open" 
-    class="fixed bottom-0 inset-x-0 px-4 pb-6 sm:inset-0 sm:p-0 sm:flex sm:items-center sm:justify-center"
+    class="fixed z-50 bottom-0 inset-x-0 px-4 pb-6 sm:inset-0 sm:p-0 sm:flex sm:items-center sm:justify-center"
     @filament-toggle-modal.window="if ($event.detail.id === '{{ $id }}') { 
         $event.stopPropagation();
         open = !open; 

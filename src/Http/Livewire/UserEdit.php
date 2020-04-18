@@ -50,7 +50,7 @@ class UserEdit extends FormComponent
     public function render()
     {        
         return view('filament::livewire.users.edit', [
-            'title' => __('filament::users.edit', ['name' => $this->model->name]),
+            'title' => __('filament::users.account', ['name' => $this->model->name]),
             'fields' => $this->fields(),
             'user' => $this->model,
         ]);

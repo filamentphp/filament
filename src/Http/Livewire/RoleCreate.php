@@ -9,7 +9,7 @@ class RoleCreate extends FormComponent
 {    
     public function mount()
     {        
-        $this->authorize('view', Role::class);
+        $this->authorize('create', Role::class);
 
         $this->setFieldset();
         $this->setFormProperties();

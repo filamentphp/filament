@@ -10,7 +10,7 @@ class RoleEdit extends FormComponent
     public function mount(Role $role)
     {        
         $this->model = $role;
-        $this->authorize('view', $this->model);
+        $this->authorize('edit', $this->model);
 
         $this->setFieldset();
         $this->setFormProperties();
