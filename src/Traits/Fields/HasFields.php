@@ -23,6 +23,7 @@ trait HasFields
     {
         $this->model->$field_name = $this->form_data[$field_name];
         $this->model->save();
+        
         $this->emit('filament.notification.notify', [
             'type' => 'success',
             'message' => __('filament::notifications.updated', ['item' => $field_name]),
