@@ -20,7 +20,7 @@ class Permissions extends Component
                             ->paginate($this->perPage);
 
         return view('filament::livewire.permissions.index', [
-            'title' => __('Permissions'),
+            'title' => __('filament::permissions.index'),
             'permissions' => $permissions,
         ]);
     }

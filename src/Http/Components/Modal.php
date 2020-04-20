@@ -14,11 +14,11 @@ class Modal extends Component
     public $id;
 
     /**
-     * The label for the modal.
+     * The title for the modal.
      * 
      * @var string
      */
-    public $label;
+    public $title;
 
     /**
      * Visible state of the modal.
@@ -47,10 +47,10 @@ class Modal extends Component
      * @param  bool  $isOpen
      * @return void
      */
-    public function __construct($id, $label, $isOpen = false, $escClose = false, $clickOutside = false)
+    public function __construct($id, $title, $isOpen = false, $escClose = false, $clickOutside = false)
     {
         $this->id = $id;
-        $this->label = $label;
+        $this->title = $title;
         $this->isOpen = $isOpen;
         $this->escClose = $escClose;
         $this->clickOutside = $clickOutside;

@@ -12,6 +12,8 @@ return [
     |
     */
 
+    'index' => 'Permissions',
+
     'create' => 'New Permission',
 
     'edit' => 'Edit Permission',

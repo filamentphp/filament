@@ -13,7 +13,7 @@
         @push('footer')
             <x-filament-modal 
                 id="permission-create" 
-                :label="__('filament::permissions.create')" 
+                :title="__('filament::permissions.create')" 
                 :esc-close="true" 
                 :click-outside="true"
                 class="sm:max-w-xl"

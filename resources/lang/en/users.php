@@ -17,6 +17,8 @@ return [
     
     'super_admin_info' => 'Super admins supersede all assigned roles and permissions.',
 
+    'index' => 'Users',
+
     'create' => 'New User',
 
     'edit' => 'Edit User',

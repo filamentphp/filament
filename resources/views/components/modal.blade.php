@@ -35,12 +35,13 @@
         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
         role="dialog"
-        aria-label="{{ $label }}"
+        aria-labelledby="modal-heading-{{ $id }}"
         aria-modal="true"
         x-bind:aria-hidden="open === false"
         {{ $attributes->merge(['class' => 'relative sm:w-full']) }}
     >
         <div class="bg-gray-50 dark:bg-gray-900 rounded px-4 pt-5 pb-4 overflow-hidden shadow-xl transform transition-all sm:p-6">
+            <h2 class="text-xl lg:text-2xl font-semibold mb-4" id="modal-heading-{{ $id }}">{{ $title }}</h2>
             {{ $slot }}
         </div>
         <button 

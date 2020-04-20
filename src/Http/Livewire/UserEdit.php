@@ -3,15 +3,13 @@
 namespace Filament\Http\Livewire;
 
 use Filament\Support\Livewire\FormComponent;
-use Filament\Contracts\User as UserContract;
 
 class UserEdit extends FormComponent
 {    
-    public function mount($id)
+    public function mount($user)
     {        
-        $userClass = app(UserContract::class);  
-        $this->model = $userClass::findOrFail($id);
-        $this->authorize('edit', $this->model);
+        $this->authorize('edit', $user);
+        $this->model = $user;
 
         $this->setFieldset();
         $this->setFormProperties();
@@ -39,20 +37,11 @@ class UserEdit extends FormComponent
             $this->model->syncPermissions($input->get('direct_permissions'));
         }
 
-        $this->emit('filament.notification.notify', [
-            'type' => 'success',
-            'message' => __('filament::notifications.updated', ['item' => $this->model->name]),
-        ]);
-
-        $this->emit('filament.userUpdated', $this->model->id);
+        $this->emitUp('userUpdated', $this->model->id);
     }
 
     public function render()
     {        
-        return view('filament::livewire.users.edit', [
-            'title' => __('filament::users.account', ['name' => $this->model->name]),
-            'fields' => $this->fields(),
-            'user' => $this->model,
-        ]);
+        return view('filament::livewire.users.create-edit', ['fields' => $this->fields()]);
     }
 }

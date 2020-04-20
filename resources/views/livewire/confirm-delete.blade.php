@@ -4,14 +4,9 @@
             <x-heroicon-o-exclamation class="h-6 w-6 text-red-600" />
         </div>
         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-            <h3 class="text-lg leading-6 font-medium">
-                {{ $title }}
-            </h3>
-            <div class="mt-2">
-                <p class="text-sm leading-5 text-gray-500 dark:text-gray-400">
-                    {{ __('filament::confirmations.delete', ['item' => $item]) }}
-                </p>
-            </div>
+            <p class="text-sm leading-5 text-gray-500 dark:text-gray-400">
+                {{ __('filament::confirmations.delete', ['item' => $item]) }}
+            </p>
         </div>
     </div>
     <ul class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">

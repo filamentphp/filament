@@ -9,8 +9,6 @@ class AuthUserAttribute extends Component
     public $attribute;
     public $classes;
 
-    protected $listeners = ['filament.userUpdated' => 'render'];
-
     public function mount(string $attribute, string $classes = '')
     {
         $this->attribute = $attribute;

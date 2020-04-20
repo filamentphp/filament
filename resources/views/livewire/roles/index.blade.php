@@ -13,7 +13,7 @@
         @push('footer')
             <x-filament-modal 
                 id="role-create" 
-                :label="__('filament::roles.create')" 
+                :title="__('filament::roles.create')" 
                 :esc-close="true" 
                 :click-outside="true"
                 class="sm:max-w-xl"
@@ -94,7 +94,7 @@
                                 @push('footer')
                                     <x-filament-modal 
                                         :id="'role-edit-'.$role->id" 
-                                        :label="__('filament::roles.edit')" 
+                                        :title="__('filament::roles.edit')" 
                                         :esc-close="true" 
                                         :click-outside="true" 
                                         class="sm:max-w-xl"
@@ -114,7 +114,7 @@
                                 @push('footer')      
                                     <x-filament-modal 
                                         :id="'role-delete-'.$role->id" 
-                                        :label="__('filament::roles.delete')" 
+                                        :title="__('filament::roles.delete')" 
                                         :esc-close="true" 
                                         :click-outside="true" 
                                         class="sm:max-w-md"

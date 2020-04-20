@@ -1,28 +1,32 @@
 @section('title', $title)
 
+@section('actions')
+    <button 
+        type="button" 
+        @click.prevent="$dispatch('filament-toggle-modal', { id: 'user-delete' })" 
+        class="btn btn-small btn-danger"
+    >
+        <x-heroicon-o-trash class="h-3 w-3 mr-2" />
+        {{ __('filament::users.delete') }}
+    </button>
+    @push('footer')
+        <x-filament-modal 
+            id="user-delete" 
+            :title="__('filament::users.delete')" 
+            :esc-close="true" 
+            :click-outside="true"
+            class="sm:max-w-md"
+        >
+            @livewire('filament::user-delete', ['user' => $user])
+        </x-filament-modal>
+    @endpush
+@endsection
+
 <div class="grid grid-cols-1 md:grid-cols-7 gap-4 lg:gap-8">
 
-    <form wire:submit.prevent="save" class="md:col-span-5">
-
-        <x-filament-tabs tab="account" :tabs="['account' => 'Account', 'permissions' => 'Permissions']">
-
-            <x-filament-tab id="account">
-
-                <x-filament-fields :fields="$fields" group="account" />
-
-            </x-filament-tab>
-        
-            <x-filament-tab id="permissions">
-                
-                <x-filament-fields :fields="$fields" group="permissions" />
-
-            </x-filament-tab>
-
-            <button type="submit" class="btn">{{ __('Save') }}</button>
-
-        </x-filament-tabs>
-
-    </form>
+    <div class="md:col-span-5">
+        @livewire('filament::user-edit', ['user' => $user])
+    </div>
 
     <x-filament-well class="md:col-span-2">
 

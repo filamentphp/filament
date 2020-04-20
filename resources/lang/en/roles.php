@@ -12,6 +12,8 @@ return [
     |
     */
 
+    'index' => 'Roles',
+
     'create' => 'New Role',
 
     'edit' => 'Edit Role',

@@ -31,7 +31,7 @@ class UserCreate extends FormComponent
 
     public function render()
     {        
-        return view('filament::livewire.users.create', [
+        return view('filament::livewire.users.create-edit', [
             'title' => __('filament::users.create'),
             'fields' => $this->fields(),
         ]);
