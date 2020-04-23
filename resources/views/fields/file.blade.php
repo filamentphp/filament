@@ -48,7 +48,7 @@
         <ul>
             @foreach ($this->form_data[$field->name] as $key => $value)
                 <li class="mt-2 p-2 text-sm leading-5 bg-gray-50 dark:bg-gray-700 rounded overflow-hidden shadow flex items-center justify-between">
-                    <a href="{{ Storage::url($value['file']) }}" 
+                    <a href="{{ Storage::url($value['path']) }}" 
                         target="_blank" 
                         rel="noopener noreferrer"
                         class="flex items-center"
@@ -56,7 +56,7 @@
                         <div class="mr-2">
                             @php($info = $this->fileInfo($value['mime_type']))
                             @if ($info['is_image']) 
-                                <img src="{{ Filament::image($value['file'], [
+                                <img src="{{ Filament::image($value['path'], [
                                     'w' => 40, 
                                     'h' => 40, 
                                     'fit' => 'crop', 
@@ -76,7 +76,7 @@
                         </dl>
                     </a>
                     <button type="button"
-                        wire:click.prevent="fileRemove('{{ $field->name }}', '{{ $value['name'] }}', {{ $key }})"
+                        wire:click.prevent="fileRemove('{{ $field->name }}', '{{ $value['path'] }}', {{ $key }})"
                         class="flex-shrink-0 flex items-center p-2"
                     >   
                         <x-heroicon-o-x class="h-4 w-4 text-red-500" />

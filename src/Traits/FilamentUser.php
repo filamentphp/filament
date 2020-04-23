@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Thomaswelton\LaravelGravatar\Facades\Gravatar;
 use Spatie\Permission\Traits\HasRoles;
 use Filament\Traits\FillsColumns;
+use Filament\Models\Media;
 use Filament;
 
 trait FilamentUser 
@@ -37,7 +38,7 @@ trait FilamentUser
     public function avatar($size = 48)
     {
         if ($this->avatar) {
-            $path = collect(Arr::first($this->avatar))->get('file');
+            $path = collect(Arr::first($this->avatar))->get('path');
             return Filament::image($path, [
                 'w' => 48,
                 'h' => 48,
@@ -69,5 +70,13 @@ trait FilamentUser
     public function setPasswordAttribute($pass)
     {
         $this->attributes['password'] = Hash::make($pass);
+    }
+
+    /**
+     * Get all of the user's media.
+     */
+    public function media()
+    {
+        return $this->morphMany(Media::class, 'mediable');
     }
 }

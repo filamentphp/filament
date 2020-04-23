@@ -5,6 +5,7 @@ namespace Filament\Traits\Fields;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 trait HandlesFiles
 {
@@ -29,12 +30,13 @@ trait HandlesFiles
         
         $files = [];
         $storage_disk = config('filament.storage_disk');
-        
+        $folder = Str::uuid();
+
         foreach (request()->file('files') as $file) {
             $files[] = [
-                'file' => $file->store(config('filament.storage_path'), $storage_disk),
-                'disk' => $storage_disk,
+                'path' => $file->storeAs(config('filament.storage_path').'/'.$folder, $file->getClientOriginalName(), $storage_disk),
                 'name' => $file->getClientOriginalName(),
+                'disk' => $storage_disk,
                 'size' => $file->getSize(),
                 'mime_type' => $file->getMimeType(),
             ];
@@ -66,13 +68,13 @@ trait HandlesFiles
         $this->updated('form_data.'.$field_name);
     }
 
-    public function fileRemove($field_name, $file_name, $key)
+    public function fileRemove($field_name, $file_path, $key)
     {
         $files = $this->form_data[$field_name];
         foreach($files as $file) {
             $storage = Storage::disk($file['disk']);
-            if ($storage->exists($file['file']) && $file['name'] === $file_name) {
-                $storage->delete($file['file']);
+            if ($storage->exists($file['path']) && $file['path'] === $file_path) {
+                $storage->deleteDirectory(dirname($file['path']));
                 break;
             }
         }
