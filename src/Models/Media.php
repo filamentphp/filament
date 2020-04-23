@@ -2,7 +2,9 @@
 
 namespace Filament\Models;
 
+use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Filament\Contracts\User as UserContract;
 
 class Media extends Model
@@ -13,6 +15,18 @@ class Media extends Model
      * @var string
      */
     protected $table = 'media';
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::deleted(function ($media) {
+            Storage::disk($media->value['disk'])->deleteDirectory($media->value['dir']);
+        });
+    }
 
     /**
      * The attributes that should be cast.

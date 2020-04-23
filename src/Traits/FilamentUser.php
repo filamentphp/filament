@@ -15,7 +15,7 @@ use Filament;
 trait FilamentUser 
 {
     use CastsAttributes, FillsColumns, HasRoles;
-        
+
     /**
      * Initialize the trait.
      * 
@@ -28,6 +28,20 @@ trait FilamentUser
             'is_super_admin' => 'boolean',
             'last_login_at' => 'datetime',
         ]);
+    }
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::deleted(function ($user) {
+            Media::where('mediable_id', $user->id)->get()->each(function($media) {
+                $media->delete();
+            });
+        });
     }
 
     /**

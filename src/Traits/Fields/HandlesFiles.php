@@ -3,7 +3,6 @@
 namespace Filament\Traits\Fields;
 
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Filament\Models\Media;
@@ -33,8 +32,10 @@ trait HandlesFiles
         $storage_disk = config('filament.storage_disk');
 
         foreach (request()->file('files') as $file) {
+            $dir = config('filament.storage_path').'/'.Str::uuid();
             $files[] = [
-                'path' => $file->storeAs(config('filament.storage_path').'/'.Str::uuid(), $file->getClientOriginalName(), $storage_disk),
+                'dir' => $dir,
+                'path' => $file->storeAs($dir, $file->getClientOriginalName(), $storage_disk),
                 'name' => $file->getClientOriginalName(),
                 'disk' => $storage_disk,
                 'size' => $file->getSize(),
@@ -78,7 +79,8 @@ trait HandlesFiles
 
     public function fileRemove($field_name, $id, $key)
     {
-        $this->model->media()->where('id', $id)->delete();
+        $media = Media::findOrFail($id);
+        $media->delete();
         $this->arrayRemove($field_name, $key);
         $this->saveField($field_name);
         $this->updated('form_data.'.$field_name);

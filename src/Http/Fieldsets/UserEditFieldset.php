@@ -43,7 +43,7 @@ class UserEditFieldset implements Fieldset
                     'image' => __('The Avatar must be a valid image.'),
                 ])
                 ->files(Media::whereIn('id', $model->avatar)->pluck('value', 'id')->all())
-                ->multiple()
+                // ->multiple()
                 ->group('account'),
             Field::make('password', 'New password')
                 ->input('password')
