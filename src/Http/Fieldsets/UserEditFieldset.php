@@ -7,6 +7,7 @@ use Filament\Support\Fields\Field;
 use Illuminate\Validation\Rule;
 use Filament\Models\Role;
 use Filament\Models\Permission;
+use Filament\Models\Media;
 
 class UserEditFieldset implements Fieldset
 {
@@ -41,6 +42,8 @@ class UserEditFieldset implements Fieldset
                 ->fileValidationMessages([
                     'image' => __('The Avatar must be a valid image.'),
                 ])
+                ->files(Media::whereIn('id', $model->avatar)->pluck('value', 'id')->all())
+                ->multiple()
                 ->group('account'),
             Field::make('password', 'New password')
                 ->input('password')

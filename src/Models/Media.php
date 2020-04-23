@@ -24,6 +24,13 @@ class Media extends Model
     ];
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['value'];
+
+    /**
      * Get the owning mediable model.
      */
     public function mediable()

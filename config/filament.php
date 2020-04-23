@@ -169,13 +169,12 @@ return [
     | Storage
     |--------------------------------------------------------------------------
     |
-    | This is the storage disk Filament will use to put file uploads, you may
+    | This is the storage disk Filament will use to put media, you may
     | use any of the disks defined in the `config/filesystems.php`.
     |
     */
     
     'storage_disk' => env('FILAMENT_STORAGE_DISK', 'public'),
-    'storage_path' => env('FILAMENT_STORAGE_PATH', 'uploads'),
-    
+    'storage_path' => env('FILAMENT_STORAGE_PATH', 'media'),
     
 ];

@@ -44,9 +44,9 @@
         </div>
     </div>
     @include('filament::fields.error-help')
-    @if ($this->form_data[$field->name])
+    @if ($field->files)
         <ul>
-            @foreach ($this->form_data[$field->name] as $key => $value)
+            @foreach ($field->files as $id => $value)
                 <li class="mt-2 p-2 text-sm leading-5 bg-gray-50 dark:bg-gray-700 rounded overflow-hidden shadow flex items-center justify-between">
                     <a href="{{ Storage::url($value['path']) }}" 
                         target="_blank" 
@@ -76,7 +76,7 @@
                         </dl>
                     </a>
                     <button type="button"
-                        wire:click.prevent="fileRemove('{{ $field->name }}', '{{ $value['path'] }}', {{ $key }})"
+                        wire:click.prevent="fileRemove('{{ $field->name }}', {{ $id }}, {{ $loop->index }})"
                         class="flex-shrink-0 flex items-center p-2"
                     >   
                         <x-heroicon-o-x class="h-4 w-4 text-red-500" />

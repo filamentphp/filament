@@ -38,8 +38,8 @@ trait FilamentUser
     public function avatar($size = 48)
     {
         if ($this->avatar) {
-            $path = collect(Arr::first($this->avatar))->get('path');
-            return Filament::image($path, [
+            $value = collect(Media::find($this->avatar)->pluck('value')->first());
+            return Filament::image($value->get('path'), [
                 'w' => 48,
                 'h' => 48,
                 'fit' => 'crop',

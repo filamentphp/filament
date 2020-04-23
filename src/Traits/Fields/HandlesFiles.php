@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Filament\Models\Media;
 
 trait HandlesFiles
 {
@@ -30,11 +31,10 @@ trait HandlesFiles
         
         $files = [];
         $storage_disk = config('filament.storage_disk');
-        $folder = Str::uuid();
 
         foreach (request()->file('files') as $file) {
             $files[] = [
-                'path' => $file->storeAs(config('filament.storage_path').'/'.$folder, $file->getClientOriginalName(), $storage_disk),
+                'path' => $file->storeAs(config('filament.storage_path').'/'.Str::uuid(), $file->getClientOriginalName(), $storage_disk),
                 'name' => $file->getClientOriginalName(),
                 'disk' => $storage_disk,
                 'size' => $file->getSize(),
@@ -57,9 +57,17 @@ trait HandlesFiles
 
     public function fileUpdate($field_name, $uploaded_files)
     {
+        $media = [];
+        foreach($uploaded_files as $file) {
+            $media[] = new Media(['value' => $file]);
+        }
+
+        $this->model->media()->saveMany($media);
+        
         $field = $this->getField($field_name);
         if ($field) {
-            $value = $field->file_multiple ? array_merge($this->form_data[$field_name], $uploaded_files) : $uploaded_files;
+            $media_ids = collect($media)->pluck('id')->all();
+            $value = $field->file_multiple ? array_merge($this->form_data[$field_name], $media_ids) : $media_ids;
         }
 
         $this->form_data[$field_name] = $value ?? [];
@@ -68,17 +76,9 @@ trait HandlesFiles
         $this->updated('form_data.'.$field_name);
     }
 
-    public function fileRemove($field_name, $file_path, $key)
+    public function fileRemove($field_name, $id, $key)
     {
-        $files = $this->form_data[$field_name];
-        foreach($files as $file) {
-            $storage = Storage::disk($file['disk']);
-            if ($storage->exists($file['path']) && $file['path'] === $file_path) {
-                $storage->deleteDirectory(dirname($file['path']));
-                break;
-            }
-        }
-        
+        $this->model->media()->where('id', $id)->delete();
         $this->arrayRemove($field_name, $key);
         $this->saveField($field_name);
         $this->updated('form_data.'.$field_name);

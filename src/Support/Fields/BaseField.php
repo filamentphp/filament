@@ -20,9 +20,10 @@ class BaseField
     protected $rules;
     protected $required = false;
     protected $view;
-    protected $file_multiple;
+    protected $file_multiple = false;
     protected $file_rules = ['file'];
     protected $file_validation_messages = ['file' => 'Must be a valid file.'];
+    protected $files = [];
     protected $disabled = false;
     protected $allowed = true;
 
@@ -75,6 +76,12 @@ class BaseField
     public function file()
     {
         $this->type = 'file';
+        return $this;
+    }
+
+    public function files($files)
+    {
+        $this->files = (array) $files;
         return $this;
     }
 

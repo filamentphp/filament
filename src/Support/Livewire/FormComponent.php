@@ -12,6 +12,7 @@ use Filament\Traits\Fields\FollowsRules;
 use Filament\Traits\Fields\HandlesFiles;
 use Filament\Traits\Fields\HandlesArrays;
 use Filament\Contracts\Fieldset;
+use Filament\Models\Media;
 
 class FormComponent extends Component
 {
