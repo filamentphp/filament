@@ -28,7 +28,11 @@ class PermissionPolicy
      */
     public function edit($authenticated, $permission): Response
     {
-        return !$permission->is_system && $authenticated->can('edit permissions')
+        if ($permission->is_system) {
+            return Response::deny(__('You are not allowed to edit a system permission.'));
+        }
+
+        return $authenticated->can('edit permissions')
                 ? Response::allow()
                 : Response::deny(__('You are not allowed to edit permissions.'));
     }

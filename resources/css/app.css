@@ -1,5 +1,7 @@
+/* purgecss start ignore */
 @import 'tailwindcss/base';
 @import './_base.css';
+/* purgecss end ignore */
 
 @import 'tailwindcss/components';
 @import './components/_dropdowns.css';

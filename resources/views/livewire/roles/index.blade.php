@@ -91,17 +91,6 @@
                                 >
                                     {{ __('Edit') }}
                                 </button>
-                                @push('footer')
-                                    <x-filament-modal 
-                                        :id="'role-edit-'.$role->id" 
-                                        :title="__('filament::roles.edit')" 
-                                        :esc-close="true" 
-                                        :click-outside="true" 
-                                        class="sm:max-w-xl"
-                                    >
-                                        @livewire('filament::role-edit', ['role' => $role])
-                                    </x-filament-modal> 
-                                @endpush
                             @endcan
                             @can('delete roles')
                                 <button 
@@ -111,17 +100,6 @@
                                 >
                                     {{ __('Delete') }}
                                 </button>
-                                @push('footer')      
-                                    <x-filament-modal 
-                                        :id="'role-delete-'.$role->id" 
-                                        :title="__('filament::roles.delete')" 
-                                        :esc-close="true" 
-                                        :click-outside="true" 
-                                        class="sm:max-w-md"
-                                    >
-                                        @livewire('filament::role-delete', ['role' => $role])
-                                    </x-filament-modal>
-                                @endpush
                             @endcan
                         </x-filament-dropdown>
                     </td>
@@ -139,3 +117,26 @@
     </div>
 
 </div>
+
+@foreach($allRoles as $role)
+    @push('footer')      
+        <x-filament-modal 
+            :id="'role-edit-'.$role->id" 
+            :title="__('filament::roles.edit')" 
+            :esc-close="true" 
+            :click-outside="true" 
+            class="sm:max-w-xl"
+        >
+            @livewire('filament::role-edit', ['role' => $role])
+        </x-filament-modal> 
+        <x-filament-modal 
+            :id="'role-delete-'.$role->id" 
+            :title="__('filament::roles.delete')" 
+            :esc-close="true" 
+            :click-outside="true" 
+            class="sm:max-w-md"
+        >
+            @livewire('filament::role-delete', ['role' => $role])
+        </x-filament-modal>
+    @endpush
+@endforeach

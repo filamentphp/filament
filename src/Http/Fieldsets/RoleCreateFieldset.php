@@ -35,6 +35,7 @@ class RoleCreateFieldset implements Fieldset
                     ->pluck('id', 'name')
                     ->all())
                 ->rules([Rule::exists('permissions', 'id')])
+                ->disabled(!auth()->user()->can('edit permissions'))
                 ->group('permissions'),
         ];
     }

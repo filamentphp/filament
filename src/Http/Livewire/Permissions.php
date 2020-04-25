@@ -19,9 +19,12 @@ class Permissions extends Component
                             ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                             ->paginate($this->perPage);
 
+        $customPermissions = Permission::where('is_system', false)->get();
+
         return view('filament::livewire.permissions.index', [
             'title' => __('filament::permissions.index'),
             'permissions' => $permissions,
+            'customPermissions' => $customPermissions,
         ]);
     }
 }

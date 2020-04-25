@@ -15,11 +15,15 @@ class Roles extends Component
     {
         $this->authorize('view', Role::class);
 
-        $roles = Role::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')->paginate($this->perPage);
+        $roles = Role::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                    ->paginate($this->perPage);
+                    
+        $allRoles = Role::all();
 
         return view('filament::livewire.roles.index', [
             'title' => __('filament::roles.index'),
             'roles' => $roles,
+            'allRoles' => $allRoles,
         ]);
     }
 }

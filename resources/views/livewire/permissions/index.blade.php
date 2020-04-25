@@ -18,7 +18,7 @@
                 :click-outside="true"
                 class="sm:max-w-xl"
             >
-                create permission...
+                @livewire('filament::permission-create')
             </x-filament-modal>
         @endpush
     @endcan
@@ -117,14 +117,28 @@
                     <td @istrue ($permission->is_system, ' colspan="2"')>{{ $permission->updated_at->fromNow() }}</td>
                     @isfalse ($permission->is_system)
                         <td class="text-right">
-                            {{--
                             <x-filament-dropdown dropdown-class="origin-top-right right-0 w-48">
                                 <x-slot name="button">
                                     <x-heroicon-o-dots-horizontal class="h-5 w-5" />
                                 </x-slot>
-                                
+                                @can('edit permissions')
+                                    <button 
+                                        type="button" 
+                                        @click.prevent="open = false; $dispatch('filament-toggle-modal', { id: 'permission-edit-{{ $permission->id }}' })"
+                                    >
+                                        {{ __('Edit') }}
+                                    </button>
+                                @endcan
+                                @can('delete permissions')
+                                    <button 
+                                        type="button" 
+                                        @click.prevent="open = false; $dispatch('filament-toggle-modal', { id: 'permission-delete-{{ $permission->id }}' })"
+                                        class="text-red-500"
+                                    >
+                                        {{ __('Delete') }}
+                                    </button>
+                                @endcan
                             </x-filament-dropdown>
-                            --}}
                         </td>
                     @endisfalse
                 </tr>
@@ -150,3 +164,26 @@
     </div>
 
 </div>
+
+@foreach ($customPermissions as $permission)
+    @push('footer')
+        <x-filament-modal 
+            :id="'permission-edit-'.$permission->id" 
+            :title="__('filament::permissions.edit')" 
+            :esc-close="true" 
+            :click-outside="true" 
+            class="sm:max-w-xl"
+        >
+            @livewire('filament::permission-edit', ['permission' => $permission])
+        </x-filament-modal> 
+        <x-filament-modal 
+            :id="'permission-delete-'.$permission->id" 
+            :title="__('filament::permissions.delete')" 
+            :esc-close="true" 
+            :click-outside="true" 
+            class="sm:max-w-md"
+        >
+            @livewire('filament::permission-delete', ['permission' => $permission])
+        </x-filament-modal>
+    @endpush
+@endforeach

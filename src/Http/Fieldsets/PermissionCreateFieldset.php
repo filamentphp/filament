@@ -5,13 +5,13 @@ namespace Filament\Http\Fieldsets;
 use Filament\Contracts\Fieldset;
 use Filament\Support\Fields\Field;
 use Illuminate\Validation\Rule;
-use Filament\Models\Permission;
+use Filament\Models\Role;
 
-class RoleEditFieldset implements Fieldset
+class PermissionCreateFieldset implements Fieldset
 {
     public static function title(): string
     {
-        return __('filament::roles.edit');
+        return __('filament::permissions.create');
     }
 
     public static function fields($model): array
@@ -23,23 +23,20 @@ class RoleEditFieldset implements Fieldset
                     'required', 
                     'string', 
                     'max:255', 
-                    Rule::unique('roles', 'name')->ignore($model->id),
+                    Rule::unique('permissions', 'name'),
                 ])
                 ->group('info'),
             Field::make('description')
                 ->textarea()
                 ->rules(['string', 'nullable'])
                 ->group('info'),
-            Field::make('permissions')
-                ->checkboxes(Permission::orderBy('name')
+            Field::make('roles')
+                ->checkboxes(Role::orderBy('name')
                     ->pluck('id', 'name')
                     ->all())
-                ->default(array_map('strval', $model->permissions
-                    ->pluck('id')
-                    ->all()))
-                ->rules([Rule::exists('permissions', 'id')])
-                ->disabled(!auth()->user()->can('edit permissions'))
-                ->group('permissions'),
+                ->rules([Rule::exists('roles', 'id')])
+                ->disabled(!auth()->user()->can('edit roles'))
+                ->group('roles'),
         ];
     }
 

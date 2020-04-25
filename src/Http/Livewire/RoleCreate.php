@@ -19,8 +19,11 @@ class RoleCreate extends FormComponent
     {
         $input = collect($this->form_data);
 
-        $role = Role::create($input->all());        
-        $role->syncPermissions($input->get('permissions'));
+        $role = Role::create($input->all());     
+        
+        if (auth()->user()->can('edit permissions')) {
+            $role->syncPermissions($input->get('permissions'));
+        }
 
         session()->flash('notification', [
             'type' => 'success',

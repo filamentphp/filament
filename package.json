@@ -10,20 +10,20 @@
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
-    "@fullhuman/postcss-purgecss": "^2.1.0",
-    "@tailwindcss/ui": "^0.1.3",
+    "@fullhuman/postcss-purgecss": "^2.1.2",
+    "@tailwindcss/ui": "^0.2.2",
     "cross-env": "^7.0.2",
     "laravel-mix": "^5.0.4",
     "postcss-import": "^12.0.1",
     "postcss-nested": "^4.2.1",
-    "prettier": "^2.0.2",
+    "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
-    "tailwindcss": "^1.2.0",
+    "tailwindcss": "^1.3.5",
     "vue-template-compiler": "^2.6.11"
   },
   "dependencies": {
-    "alpinejs": "^2.2.1",
-    "tailwindcss-dark-mode": "^1.1.3",
+    "alpinejs": "^2.3.1",
+    "tailwindcss-dark-mode": "^1.1.4",
     "turbolinks": "^5.2.0"
   }
 }
