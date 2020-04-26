@@ -8,13 +8,12 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
-use Filament\Traits\Fields\FollowsRules;
 use Filament\Contracts\Fieldset;
 use Filament\Models\Media;
 
 class FormComponent extends Component
 {
-    use AuthorizesRequests, FollowsRules;
+    use AuthorizesRequests;
 
     public $model;
     public $fieldset;
@@ -213,5 +212,37 @@ class FormComponent extends Component
     {
         unset($this->form_data[$field_name][$key]);
         $this->form_data[$field_name] = array_values($this->form_data[$field_name]);
+    }
+
+    public function rules($realtime = false)
+    {
+        $rules = [];
+        $rules_ignore = $realtime ? $this->rulesIgnoreRealtime() : [];
+
+        foreach ($this->fields() as $field) {
+            if ($field->rules) {
+                $rules[$field->key] = $this->fieldRules($field, $rules_ignore);
+            }
+        }
+
+        return $rules;
+    }
+
+    public function fieldRules($field, $rules_ignore)
+    {
+        $field_rules = is_array($field->rules) ? $field->rules : explode('|', $field->rules);
+
+        if ($rules_ignore) {
+            $field_rules = collect($field_rules)->filter(function ($value, $key) use ($rules_ignore) {
+                return !in_array($value, $rules_ignore);
+            })->all();
+        }
+        
+        return $field_rules;
+    }
+
+    public function rulesIgnoreRealtime()
+    {
+        return $this->fieldset ? $this->fieldset::rulesIgnoreRealtime() : [];
     }
 }

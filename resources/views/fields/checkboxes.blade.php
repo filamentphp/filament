@@ -9,7 +9,7 @@
     <ol class="list-unstyled">
         @foreach ($field->options as $value => $label)
             <li class="mb-1">
-                <x-filament-checkbox :type="$type ?? 'checkbox'" :name="$field->key" :label="$label" :value="$value" :model="$field->key" :disabled="$field->disabled" />
+                <x-filament-checkbox :type="$type ?? 'checkbox'" :name="$field->name" :label="$label" :value="$value" :model="$field->key" :disabled="$field->disabled" />
             </li>
         @endforeach
     </ol>
