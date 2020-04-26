@@ -30,8 +30,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | These are the default namespaces where Filament looks for classes to
-    | extend functionality. You may pass in either a string
-    | or an array, they are tried in order and the first match is used.
+    | extend functionality. They are tried in order and the first match is used.
     |
     */
 
