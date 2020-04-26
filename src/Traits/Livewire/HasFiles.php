@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Filament\Models\Media;
 
-trait HasFileUploads
+trait HasFiles
 {
     public static function fileUpload()
     {
