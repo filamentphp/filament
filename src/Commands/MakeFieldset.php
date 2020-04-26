@@ -23,7 +23,7 @@ class MakeFieldset extends Command
             $stub = str_replace('namespace Filament', 'namespace App', $stub);
         }
 
-        $fieldsetPath = $this->option('package') ? __DIR__.'/../Http/Fieldsets/' : app_path('Http/Fieldsets/');
+        $fieldsetPath = $this->option('package') ? __DIR__.'/../Http/Fieldsets/' : app_path('Http/Filament/Fieldsets/');
         $path = $fieldsetPath.$fieldsetName.'.php';
 
         if (!File::exists($path) || $this->confirm($fieldsetName.' already exists. Overwrite it?')) {
