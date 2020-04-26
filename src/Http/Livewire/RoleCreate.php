@@ -2,11 +2,15 @@
 
 namespace Filament\Http\Livewire;
 
-use Filament\Support\Livewire\FormComponent;
+use Livewire\Component;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Filament\Traits\Livewire\HasForm;
 use Filament\Models\Role;
 
-class RoleCreate extends FormComponent
+class RoleCreate extends Component
 {    
+    use AuthorizesRequests, HasForm;
+
     public function mount()
     {        
         $this->authorize('create', Role::class);

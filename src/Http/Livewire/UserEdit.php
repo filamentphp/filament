@@ -2,10 +2,20 @@
 
 namespace Filament\Http\Livewire;
 
-use Filament\Support\Livewire\FormComponent;
+use Livewire\Component;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Filament\Traits\Livewire\HasForm;
+use Filament\Traits\Livewire\HasFileUploads;
 
-class UserEdit extends FormComponent
+class UserEdit extends Component
 {    
+    use AuthorizesRequests, HasForm, HasFileUploads;
+
+    protected $listeners = [
+        'filament.fileUploadError' => 'fileUploadError',
+        'filament.fileUpdate' => 'fileUpdate',
+    ];
+
     public function mount($user)
     {        
         $this->authorize('edit', $user);
