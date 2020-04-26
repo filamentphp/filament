@@ -1,5 +1,5 @@
 @php
-    $disabled = $field->disabled || (!$field->file_multiple && count($this->form_data[$field->name])) >= 1;
+    $disabled = $field->disabled || (!$field->multiple && count($this->form_data[$field->name])) >= 1;
     $x_data_function = 'file'.Str::studly($field->name).'()';
 @endphp
 <fieldset x-data="{{ $x_data_function }}" class="col-span-4 {{ $field->class }}">
@@ -26,7 +26,7 @@
                 id="{{ $field->id }}"
                 name="{{ $field->name }}"
                 type="file"
-                {{ $field->file_multiple ? 'multiple' : '' }}
+                {{ $field->multiple ? 'multiple' : '' }}
                 @change="add"
                 class="sr-only"
                 @if ($disabled) 

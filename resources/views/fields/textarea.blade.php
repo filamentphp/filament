@@ -25,7 +25,7 @@
                 @error($field->key)
                     input-error
                 @enderror"            
-            rows="{{ $field->textarea_rows }}"
+            rows="{{ $field->rows }}"
             @if ($field->autocomplete)
                 autocomplete="{{ $field->autocomplete }}"
             @endif

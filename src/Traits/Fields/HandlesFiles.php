@@ -68,7 +68,7 @@ trait HandlesFiles
         $field = $this->getField($field_name);
         if ($field) {
             $media_ids = collect($media)->pluck('id')->all();
-            $value = $field->file_multiple ? array_merge($this->form_data[$field_name], $media_ids) : $media_ids;
+            $value = $field->multiple ? array_merge($this->form_data[$field_name], $media_ids) : $media_ids;
         }
 
         $this->form_data[$field_name] = $value ?? [];
