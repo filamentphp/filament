@@ -3,7 +3,9 @@
 namespace Filament\Http\Fieldsets;
 
 use Filament\Contracts\Fieldset;
-use Filament\Support\Fields\Field;
+use Filament\Fields\Input;
+use Filament\Fields\Checkbox;
+use Filament\Fields\Checkboxes;
 use Illuminate\Validation\Rule;
 use Filament\Models\Role;
 use Filament\Models\Permission;
@@ -18,12 +20,11 @@ class UserCreateFieldset implements Fieldset
     public static function fields($model): array
     {
         return [
-            Field::make('name')
-                ->input()
+            Input::make('name')
                 ->rules(['required', 'string', 'max:255'])
                 ->group('account'),
-            Field::make('email')
-                ->input('email')
+            Input::make('email')
+                ->type('email')
                 ->rules([
                     'required', 
                     'string', 
@@ -32,33 +33,30 @@ class UserCreateFieldset implements Fieldset
                     Rule::unique('users', 'email'),
                 ])
                 ->group('account'),
-            Field::make('password')
-                ->input('password')
+            Input::make('password')
+                ->type('password')
                 ->autocomplete('new-password')
                 ->rules(['required', 'min:8', 'confirmed'])
                 ->group('account'),
-            Field::make('password_confirmation', false)
+            Input::make('password_confirmation', false)
+                ->type('password')
                 ->placeholder('Confirm Password')
-                ->input('password')
                 ->autocomplete('new-password')
                 ->rules('required')
                 ->group('account'),
-            Field::make('is_super_admin')
-                ->checkbox()
+            Checkbox::make('is_super_admin')
                 ->default(false)
                 ->help(__('filament::users.super_admin_info'))
                 ->group('permissions')
                 ->disabled(!auth()->user()->is_super_admin)
                 ->group('permissions'),
-            Field::make('roles')
-                ->checkboxes(Role::orderBy('name')
-                    ->pluck('id', 'name')
-                    ->all())
+            Checkboxes::make('roles')
+                ->options(Role::orderBy('name')->pluck('id', 'name')->all())
                 ->rules([Rule::exists('roles', 'id')])
                 ->disabled(!auth()->user()->can('edit user roles'))
                 ->group('permissions'),
-            Field::make('direct_permissions')
-                ->checkboxes(Permission::orderBy('name')
+            Checkboxes::make('direct_permissions')
+                ->options(Permission::orderBy('name')
                     ->pluck('id', 'name')
                     ->all())
                 ->rules([Rule::exists('permissions', 'id')])

@@ -19,7 +19,7 @@
     @endif
     <div class="relative mb-2">
         <input
-            type="{{ $field->input_type }}"
+            type="{{ $field->type }}"
             id="{{ $field->id }}"
             name="{{ $field->name }}"
             class="form-input input w-full

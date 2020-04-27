@@ -3,7 +3,9 @@
 namespace Filament\Http\Fieldsets;
 
 use Filament\Contracts\Fieldset;
-use Filament\Support\Fields\Field;
+use Filament\Fields\Input;
+use Filament\Fields\Textarea;
+use Filament\Fields\Checkboxes;
 use Illuminate\Validation\Rule;
 use Filament\Models\Role;
 
@@ -17,8 +19,7 @@ class PermissionCreateFieldset implements Fieldset
     public static function fields($model): array
     {
         return [
-            Field::make('name')
-                ->input()
+            Input::make('name')
                 ->rules([
                     'required', 
                     'string', 
@@ -26,12 +27,11 @@ class PermissionCreateFieldset implements Fieldset
                     Rule::unique('permissions', 'name'),
                 ])
                 ->group('info'),
-            Field::make('description')
-                ->textarea()
+            Textarea::make('description')
                 ->rules(['string', 'nullable'])
                 ->group('info'),
-            Field::make('roles')
-                ->checkboxes(Role::orderBy('name')
+            Checkboxes::make('roles')
+                ->options(Role::orderBy('name')
                     ->pluck('id', 'name')
                     ->all())
                 ->rules([Rule::exists('roles', 'id')])

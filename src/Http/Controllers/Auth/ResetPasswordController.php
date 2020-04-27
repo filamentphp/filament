@@ -5,7 +5,7 @@ namespace Filament\Http\Controllers\Auth;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 use Filament\Http\Controllers\Controller;
-use Filament\Support\Fields\Field;
+use Filament\Fields\Input;
 
 class ResetPasswordController extends Controller
 {
@@ -42,18 +42,18 @@ class ResetPasswordController extends Controller
         $title = __('Reset Password');
 
         $fields = [
-            Field::make('email', false, 'email')
+            Input::make('email', false, 'email')
+                ->type('email')
                 ->placeholder('E-mail Address')
-                ->input('email')
                 ->value($request->email)
                 ->rules(['required']),
-            Field::make('password', false, 'password')
+            Input::make('password', false, 'password')
+                ->type('password')
                 ->placeholder('Password')
-                ->input('password')
                 ->rules(['required', 'confirmed']),
-            Field::make('password_confirmation', false, 'password_confirmation')
-                ->placeholder('Confirm Password')
-                ->input('password'),
+            Input::make('password_confirmation', false, 'password_confirmation')
+                ->type('password')
+                ->placeholder('Confirm Password'),
         ];
 
         return view('filament::auth.passwords.reset', compact('title', 'fields', 'token'));

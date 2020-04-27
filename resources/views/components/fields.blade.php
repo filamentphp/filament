@@ -1,6 +1,6 @@
 <div class="mb-6 grid grid-cols-4 gap-4">
     @foreach ($fields as $field)
-        @if ($group)
+        @if ($field->group)
             @if ($group === $field->group)
                 {{ $field->render() }}
             @endif

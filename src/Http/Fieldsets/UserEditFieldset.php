@@ -3,7 +3,10 @@
 namespace Filament\Http\Fieldsets;
 
 use Filament\Contracts\Fieldset;
-use Filament\Support\Fields\Field;
+use Filament\Fields\Input;
+use Filament\Fields\File;
+use Filament\Fields\Checkbox;
+use Filament\Fields\Checkboxes;
 use Illuminate\Validation\Rule;
 use Filament\Models\Role;
 use Filament\Models\Permission;
@@ -19,13 +22,12 @@ class UserEditFieldset implements Fieldset
     public static function fields($model): array
     {
         return [
-            Field::make('name')
-                ->input()
+            Input::make('name')
                 ->rules(['required', 'string', 'max:255'])
                 ->class('md:col-span-2')
                 ->group('account'),
-            Field::make('email', 'E-mail Address')
-                ->input('email')
+            Input::make('email', 'E-mail Address')
+                ->type('email')
                 ->rules([
                     'required', 
                     'string', 
@@ -35,9 +37,8 @@ class UserEditFieldset implements Fieldset
                 ])
                 ->class('md:col-span-2')
                 ->group('account'),
-            Field::make('avatar')
+            File::make('avatar')
                 ->rules('array')
-                ->file()
                 ->fileRules('image')
                 ->fileValidationMessages([
                     'image' => __('The Avatar must be a valid image.'),
@@ -45,24 +46,23 @@ class UserEditFieldset implements Fieldset
                 ->files(Media::whereIn('id', $model->avatar)->pluck('value', 'id')->all())
                 // ->multiple()
                 ->group('account'),
-            Field::make('password', 'New password')
-                ->input('password')
+            Input::make('password', 'New password')
+                ->type('password')
                 ->autocomplete('new-password')
                 ->rules(['nullable', 'min:8', 'confirmed'])
                 ->help('Leave blank to keep current password.')
                 ->group('account'),
-            Field::make('password_confirmation', false)
+            Input::make('password_confirmation', false)
+                ->type('password')
                 ->placeholder('Confirm New Password')
-                ->input('password')
                 ->autocomplete('new-password')
                 ->group('account'),
-            Field::make('is_super_admin')
-                ->checkbox()
+            Checkbox::make('is_super_admin')
                 ->help(__('filament::users.super_admin_info'))
                 ->group('permissions')
                 ->disabled(!auth()->user()->is_super_admin),
-            Field::make('roles')
-                ->checkboxes(Role::orderBy('name')
+            Checkboxes::make('roles')
+                ->options(Role::orderBy('name')
                     ->pluck('id', 'name')
                     ->all())
                 ->default(array_map('strval', $model->roles
@@ -71,13 +71,11 @@ class UserEditFieldset implements Fieldset
                 ->rules([Rule::exists('roles', 'id')])
                 ->group('permissions')
                 ->disabled(!auth()->user()->can('edit user roles')),
-            Field::make('direct_permissions')
-                ->checkboxes(Permission::orderBy('name')
+            Checkboxes::make('direct_permissions')
+                ->options(Permission::orderBy('name')
                     ->pluck('id', 'name')
                     ->all())
-                ->default(array_map('strval', $model->getDirectPermissions()
-                    ->pluck('id')
-                    ->all()))
+                ->default(array_map('strval', $model->getDirectPermissions()->pluck('id')->all()))
                 ->rules([Rule::exists('permissions', 'id')])
                 ->help(__('filament::permissions.permissions_from_roles'))
                 ->group('permissions')

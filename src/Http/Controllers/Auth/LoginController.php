@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Route;
 use Filament\Http\Controllers\Controller;
-use Filament\Support\Fields\Field;
+use Filament\Fields\Input;
+use Filament\Fields\Checkbox;
 
 class LoginController extends Controller 
 {
@@ -28,17 +29,16 @@ class LoginController extends Controller
         $title = config('app.name');
 
         $fields = [
-            Field::make('email', false, 'email')
-                ->input('email')
+            Input::make('email', false, 'email')
+                ->type('email')
                 ->placeholder('E-mail Address')
                 ->rules(['required']),
-            Field::make('password', false, 'password')
-                ->input('password')
+            Input::make('password', false, 'password')
+                ->type('password')
                 ->placeholder('Password')
                 ->rules(['required'])
                 ->help('<a href="'.route('filament.auth.password.forgot').'">'.__('Forgot Your Password?').'</a>'),
-            Field::make('remember', 'Remember me', 'remember')
-                ->checkbox()
+            Checkbox::make('remember', 'Remember me', 'remember')
                 ->value(1),
         ];
 

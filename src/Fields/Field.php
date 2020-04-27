@@ -1,39 +1,34 @@
 <?php
 
-namespace Filament\Support\Fields;
+namespace Filament\Fields;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class Field
 {
+    protected $field_type;
     protected $name;
     protected $label;
     protected $key;
     protected $id;
-    protected $type;
     protected $value;
     protected $class;
     protected $group;
-    protected $input_type;
-    protected $rows;
     protected $options;
     protected $default;
     protected $autocomplete;
     protected $placeholder;
     protected $help;
     protected $rules;
-    protected $required = false;
+    protected $required;
     protected $view;
-    protected $multiple = false;
-    protected $file_rules = ['file'];
-    protected $file_validation_messages = ['file' => 'Must be a valid file.'];
-    protected $files = [];
-    protected $disabled = false;
-    protected $allowed = true;
+    protected $multiple;
+    protected $disabled;
 
     public function __construct($name, $label = null, $key = null)
     {
+        $this->field_type = Str::of(class_basename(get_called_class()))->kebab();
         $this->name = $name;
         $this->label = is_null($label) ? $this->formatLabel($name) : $label;
         $this->key = $key ?? 'form_data.'.$this->name;
@@ -50,80 +45,9 @@ class Field
         return $this->$property;
     }
 
-    public function input($type = 'text')
-    {
-        $this->type = 'input';
-        $this->input_type = $type;
-        return $this;
-    }
-
-    public function textarea($rows = 2)
-    {
-        $this->type = 'textarea';
-        $this->rows = $rows;
-        return $this;
-    }
-
-    public function select($options = [])
-    {
-        $this->type = 'select';
-        $this->options($options);
-        return $this;
-    }
-
-    public function checkbox()
-    {
-        $this->type = 'checkbox';
-        return $this;
-    }
-
-    public function checkboxes($options = [])
-    {
-        $this->type = 'checkboxes';
-        $this->options($options);
-        return $this;
-    }
-
-    public function radio($options = [])
-    {
-        $this->type = 'radio';
-        $this->options($options);
-        return $this;
-    }
-
-    public function file()
-    {
-        $this->type = 'file';
-        return $this;
-    }
-
-    public function files($files)
-    {
-        $this->files = (array) $files;
-        return $this;
-    }
-
     public function disabled($is_disabled = true)
     {
         $this->disabled = (bool) $is_disabled;
-        return $this;
-    }
-
-    public function allowed($is_allowed)
-    {
-        $this->allowed = (bool) $is_allowed;
-        return $this;
-    }
-
-    public function fileRules($rules)
-    {
-        $this->file_rules = (array) $rules;
-        return $this;
-    }
-
-    public function fileValidationMessages(array $messages)
-    {
-        $this->file_validation_messages = $messages;
         return $this;
     }
 
@@ -132,15 +56,11 @@ class Field
         $this->multiple = true;
         return $this;
     }
-
-    public function errorMessage($message)
-    {
-        return str_replace('form data.', '', $message);
-    }
     
-    protected function options($options)
+    public function options($options)
     {
         $this->options = Arr::isAssoc($options) ? array_flip($options) : array_combine($options, $options);
+        return $this;
     }
 
     public function default($default)
@@ -198,13 +118,14 @@ class Field
         return $this;
     }
 
+    public function errorMessage($message)
+    {
+        return str_replace('form data.', '', $message);
+    }
+
     public function render()
     {
-        if (!$this->allowed) {
-            return;
-        }
-
-        $view = $this->view ?? 'filament::fields.'.$this->type;
+        $view = $this->view ?? "filament::fields.{$this->field_type}";
 
         return view($view, ['field' => $this]);
     }

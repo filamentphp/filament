@@ -35,7 +35,7 @@ trait HasForm
 
         foreach ($this->fields() as $field) {
             if (!isset($this->form_data[$field->name])) {
-                $array = in_array($field->type, ['checkboxes', 'file']);
+                $array = in_array($field->field_type, ['checkboxes', 'file']);
                 $this->form_data[$field->name] = $field->default ?? ($array ? [] : null);
             }
         }

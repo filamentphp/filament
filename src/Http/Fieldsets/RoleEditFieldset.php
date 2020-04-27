@@ -3,7 +3,9 @@
 namespace Filament\Http\Fieldsets;
 
 use Filament\Contracts\Fieldset;
-use Filament\Support\Fields\Field;
+use Filament\Fields\Input;
+use Filament\Fields\Textarea;
+use Filament\Fields\Checkboxes;
 use Illuminate\Validation\Rule;
 use Filament\Models\Permission;
 
@@ -17,8 +19,7 @@ class RoleEditFieldset implements Fieldset
     public static function fields($model): array
     {
         return [
-            Field::make('name')
-                ->input()
+            Input::make('name')
                 ->rules([
                     'required', 
                     'string', 
@@ -26,12 +27,11 @@ class RoleEditFieldset implements Fieldset
                     Rule::unique('roles', 'name')->ignore($model->id),
                 ])
                 ->group('info'),
-            Field::make('description')
-                ->textarea()
+            Textarea::make('description')
                 ->rules(['string', 'nullable'])
                 ->group('info'),
-            Field::make('permissions')
-                ->checkboxes(Permission::orderBy('name')
+            Checkboxes::make('permissions')
+                ->options(Permission::orderBy('name')
                     ->pluck('id', 'name')
                     ->all())
                 ->default(array_map('strval', $model->permissions
