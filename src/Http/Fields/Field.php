@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Fields;
+namespace Filament\Http\Fields;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

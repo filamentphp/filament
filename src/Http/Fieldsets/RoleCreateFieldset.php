@@ -3,9 +3,9 @@
 namespace Filament\Http\Fieldsets;
 
 use Filament\Contracts\Fieldset;
-use Filament\Fields\Input;
-use Filament\Fields\Textarea;
-use Filament\Fields\Checkboxes;
+use Filament\Http\Fields\Input;
+use Filament\Http\Fields\Textarea;
+use Filament\Http\Fields\Checkboxes;
 use Illuminate\Validation\Rule;
 use Filament\Models\Permission;
 

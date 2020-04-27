@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Fields;
+namespace Filament\Http\Fields;
 
 class Input extends Field
 {

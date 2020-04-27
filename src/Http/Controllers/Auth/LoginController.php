@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Route;
 use Filament\Http\Controllers\Controller;
-use Filament\Fields\Input;
-use Filament\Fields\Checkbox;
+use Filament\Http\Fields\Input;
+use Filament\Http\Fields\Checkbox;
 
 class LoginController extends Controller 
 {

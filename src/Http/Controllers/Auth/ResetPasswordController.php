@@ -5,7 +5,7 @@ namespace Filament\Http\Controllers\Auth;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 use Filament\Http\Controllers\Controller;
-use Filament\Fields\Input;
+use Filament\Http\Fields\Input;
 
 class ResetPasswordController extends Controller
 {

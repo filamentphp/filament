@@ -5,7 +5,7 @@ namespace Filament\Http\Controllers\Auth;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
 use Filament\Http\Controllers\Controller;
-use Filament\Fields\Input;
+use Filament\Http\Fields\Input;
 
 class ForgotPasswordController extends Controller
 {
