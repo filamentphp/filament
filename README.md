@@ -30,7 +30,7 @@ cd site # setup laravel with a DB, mail etc. like normal, then return to these i
 "repositories": [
     {
         "type": "path",
-        "url": "../local-path-to-filament-packages-folder/*"
+        "url": "../packages/*"
     }
 ]
 ```
