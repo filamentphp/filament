@@ -2,7 +2,7 @@
 
 A lightweight admin for your Laravel app.
 
-## _[This is a pre-release (0.0.x) in very active development – we would love help to make it awesome!]_
+## _[This package is in very active development – we would love help to make it awesome!]_
 
 ---
 
