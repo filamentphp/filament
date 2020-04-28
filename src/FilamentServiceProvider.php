@@ -2,22 +2,28 @@
 
 namespace Filament;
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Routing\Router;
-use Livewire\Macros\RouteMacros;
-use Livewire\Macros\RouterMacros;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\{
+    File,
+    Blade,
+};
 use Illuminate\Support\Str;
-use Illuminate\Events\Dispatcher;
-use Livewire\Livewire;
-use Filament\Providers\ServiceProvider;
-use Filament\Providers\AuthServiceProvider;
+use Illuminate\Filesystem\Filesystem;
+use Symfony\Component\Finder\SplFileInfo;
+use Livewire\{
+    Livewire,
+    Component,
+};
+use Filament\Providers\{
+    ServiceProvider,
+    AuthServiceProvider,
+    RouteServiceProvider,
+};
 use Filament\BladeDirectives;
 use Filament\Contracts\User as UserContract;
-use Filament\Http\Middleware\Authenticate;
-use Filament\Commands\MakeUser;
-use Filament\Commands\MakeFieldset;
+use Filament\Commands\{
+    MakeUser,
+    MakeFieldset,
+};
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -31,7 +37,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->registerSingeltons();
         $this->registerConfig();
         $this->registerBindings();
-        $this->registerBlade();
     }
 
     /**
@@ -41,16 +46,15 @@ class FilamentServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->registerAuth();
-        $this->registerCommands();
-        $this->registerMiddleware();
-        $this->registerRouteMacros();
-        $this->registerRoutes();
-        $this->registerMigrations();
-        $this->registerPublishing();
-        $this->registerLivewire();
-        $this->registerResources();
-        $this->registerTranslations();
+        $this->bootProviders();
+        $this->bootCommands();
+        $this->bootMigrations();
+        $this->bootPublishing();
+        $this->bootBladeDirectives();
+        $this->bootBladeComponentAutoDiscovery();
+        $this->bootLivewireComponentAutoDiscovery();
+        $this->bootResources();
+        $this->bootTranslations();
     }
 
     /**
@@ -106,13 +110,14 @@ class FilamentServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the package's auth.
+     * Register the package's providers.
      * 
      * @return void
      */
-    protected function registerAuth()
+    protected function bootProviders()
     {
         $this->app->register(AuthServiceProvider::class);
+        $this->app->register(RouteServiceProvider::class);
     }
 
     /**
@@ -120,7 +125,7 @@ class FilamentServiceProvider extends ServiceProvider
      * 
      * @return void
      */
-    protected function registerCommands()
+    protected function bootCommands()
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -131,55 +136,11 @@ class FilamentServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register package middleware.
-     * 
-     * @return void
-     */
-    protected function registerMiddleware()
-    {
-        Route::aliasMiddleware('auth.filament', Authenticate::class);
-    }
-
-    /**
-     * Register the package custom route macros.
-     *
-     * @return void
-     */
-    protected function registerRouteMacros()
-    {
-        Route::mixin(new RouteMacros);
-        Router::mixin(new RouterMacros);
-    }
-
-    /**
-     * Register the package routes.
-     *
-     * @return void
-     */
-    protected function registerRoutes()
-    {
-        $namespace = 'Filament\Http\Controllers';
-        $name = 'filament.';
-
-        Route::middleware(config('filament.middleware.web'))
-            ->prefix(config('filament.path')) 
-            ->namespace($namespace) 
-            ->name($name) 
-            ->group($this->app['filament']->basePath('routes/web.php'));
-
-        Route::middleware(config('filament.middleware.api'))
-            ->prefix(config('filament.path').'/api') 
-            ->namespace($namespace) 
-            ->name($name) 
-            ->group($this->app['filament']->basePath('routes/api.php'));
-    }
-
-    /**
      * Register the resources.
      *
      * @return void
      */
-    protected function registerResources()
+    protected function bootResources()
     {
         $this->loadViewsFrom($this->app['filament']->basePath('resources/views'), 'filament');
     }
@@ -189,7 +150,7 @@ class FilamentServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function registerTranslations()
+    protected function bootTranslations()
     {
         $this->loadTranslationsFrom($this->app['filament']->basePath('resources/lang'), 'filament');
     }
@@ -199,7 +160,7 @@ class FilamentServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function registerMigrations()
+    protected function bootMigrations()
     {
         if ($this->app->runningInConsole()) {
             $this->loadMigrationsFrom($this->app['filament']->basePath('database/migrations'));
@@ -212,7 +173,7 @@ class FilamentServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function registerPublishing()
+    protected function bootPublishing()
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
@@ -227,40 +188,44 @@ class FilamentServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the package's custom blade components and directives.
+     * Blade directives
+     */
+    public function bootBladeDirectives()
+    {
+        Blade::directive('filamentAssets', [BladeDirectives::class, 'assets']);
+    }
+
+    /**
+     * Blade component auto-discovery
      * 
      * @return void
      */
-    public function registerBlade()
+    public function bootBladeComponentAutoDiscovery()
     {
-        // Register directives
-        Blade::directive('filamentAssets', [BladeDirectives::class, 'assets']);
+        $components = collect((new Filesystem)->allFiles(__DIR__.'/Http/Components'))->map(function (SplFileInfo $file) {
+            $baseName = class_basename(str_replace('.php', '', $file->getPathname()));
+            return "\\Filament\\Http\\Livewire\\{$baseName}";
+        })->all();
 
-        // Register components
-        $components = [];
-        foreach (File::glob(__DIR__.'/Http/Components/*.php') as $path) {
-            $baseName= basename($path, '.php');
-            $components[] = "\\Filament\\Http\\Components\\{$baseName}";
-        }
         $this->loadViewComponentsAs('filament', $components);
     }
 
     /**
-     * Livewire component registration / setup.
+     * Livewire component auto-discovery
      * 
      * @return void
      */
-    public function registerLivewire()
+    public function bootLivewireComponentAutoDiscovery()
     {
         // Ensure Livewire directory exists in the app 
         if (!File::exists(app_path('Http/Livewire'))) {
             File::makeDirectory(app_path('Http/Livewire'));
         }
 
-        // Automatically register package components
-        foreach (File::glob(__DIR__.'/Http/Livewire/*.php') as $path) {
-            $baseName = basename($path, '.php');
+        // Automatically register Livewire components
+        collect((new Filesystem)->allFiles(__DIR__.'/Http/Livewire'))->map(function (SplFileInfo $file) {
+            $baseName = class_basename(str_replace('.php', '', $file->getPathname()));
             Livewire::component('filament::'.Str::of($baseName)->kebab(), "\\Filament\\Http\\Livewire\\{$baseName}");
-        }
+        });     
     }
 }
