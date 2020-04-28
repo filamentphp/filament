@@ -2,7 +2,7 @@
 
 A lightweight admin for your Laravel app.
 
-_[In Active Development]_
+_[This is a pre-release (0.0.x) in very active development – we would love help to make it awesome!]_
 
 ---
 
@@ -10,40 +10,10 @@ _[In Active Development]_
 
 This package can be used with `Laravel 7.x` or higher.
 
-> The following instructions assume a new installation of Laravel.
+> The following instructions assume a new installation of Laravel with database and mail setup.
 
 ```bash
-mkdir packages
-cd packages
-git clone git@github.com:laravel-filament/filament.git filament
-git clone git@github.com:laravel-filament/field-file.git filament-field-file
-cd ../
-laravel new site
-cd site # setup laravel with a DB, mail etc. like normal, then return to these instructions for adding Filament.
-```
-
-> !!! **VERY IMPORTANT** This package is not yet submitted to Packagist _(for now you will need to clone and symlink the required packages)_ with the following instructions:
-
-#### Add local path directory for packages:
-
-```json
-"repositories": [
-    {
-        "type": "path",
-        "url": "../packages/*"
-    }
-]
-```
-
-> This is relative to your core Laravel installation.
-
-#### Include the required filament packages:
-
-```json
-"require": {
-    "filament/filament": "*",
-    "filament/field-file": "*"
-}
+composer require filament/filament
 ```
 
 Add the necessary `Filament\Traits\FilamentUser` trait to your `App\User` model.

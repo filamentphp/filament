@@ -23,6 +23,7 @@
     "doctrine/dbal": "^2.10",
     "driesvints/blade-icons": "^2.1",
     "graham-campbell/markdown": "^12.0",
+    "filament/field-file": "^0.0",
     "laravel/ui": "^2.0",
     "league/glide-laravel": "^1.0",
     "livewire/livewire": "^1.0",
