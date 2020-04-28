@@ -17,6 +17,7 @@ The theme of this admin is "Light and Fast" – just enough to get you started a
 > This is more of a proposed feature list then a solid roadmap. I am _totally open_ to new ideas, with the overall goal of keeping this core package pretty minimal allowing total customization via your main Laravel app / additional add-on packages.
 
 - Setup tests (via [Testbench Component](https://github.com/orchestral/testbench)) and start creating them for existing features.
+  - _I'm going to be honest, I don't know much about testing within a package, so this will be completely new to me and I would really appreciate some help on getting things setup for best practices etc.).
 - Create new `Globals` feature for managing arbitrary app data.
   - Considering implementing [laravel-metable](https://github.com/plank/laravel-metable).
 - Create new `Resources` feature. Allowing a user to create a generic resource with schemaless attributes managed by custom fields.
