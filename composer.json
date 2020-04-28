@@ -32,7 +32,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Filament\\": "src"
+      "Filament\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Filament\\Tests\\": "tests/"
     }
   },
   "extra": {
@@ -44,9 +49,6 @@
         "Filament": "Filament\\FilamentFacade"
       }
     }
-  },
-  "config": {
-    "sort-packages": true
   },
   "minimum-stability": "dev",
   "prefer-stable": true

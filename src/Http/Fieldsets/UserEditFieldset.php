@@ -4,7 +4,7 @@ namespace Filament\Http\Fieldsets;
 
 use Filament\Contracts\Fieldset;
 use Filament\Http\Fields\Input;
-use Filament\Http\Fields\File;
+use Filament\Fields\File\File;
 use Filament\Http\Fields\Checkbox;
 use Filament\Http\Fields\Checkboxes;
 use Illuminate\Validation\Rule;

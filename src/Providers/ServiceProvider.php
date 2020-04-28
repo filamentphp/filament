@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Support;
+namespace Filament\Providers;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -8,13 +8,6 @@ use Illuminate\Support\Arr;
 
 abstract class ServiceProvider extends BaseServiceProvider
 {
-    /**
-     * Directory path to this package
-     *
-     * @var string
-     */
-    protected $packagePath = __DIR__.'/../../';
-
     /**
      * Merge the given configuration with the existing configuration.
      *

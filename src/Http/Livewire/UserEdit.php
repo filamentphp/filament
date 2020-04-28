@@ -5,7 +5,7 @@ namespace Filament\Http\Livewire;
 use Livewire\Component;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Filament\Traits\Livewire\HasForm;
-use Filament\Traits\Livewire\HasFiles;
+use Filament\Fields\File\Traits\HasFiles;
 
 class UserEdit extends Component
 {    

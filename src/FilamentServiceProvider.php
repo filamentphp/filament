@@ -11,19 +11,16 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use Illuminate\Events\Dispatcher;
 use Livewire\Livewire;
-use Filament\Support\ServiceProvider;
+use Filament\Providers\ServiceProvider;
 use Filament\Providers\AuthServiceProvider;
-use Filament\Support\BladeDirectives;
+use Filament\BladeDirectives;
 use Filament\Contracts\User as UserContract;
-use Filament\Traits\EventMap;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Commands\MakeUser;
 use Filament\Commands\MakeFieldset;
 
 class FilamentServiceProvider extends ServiceProvider
 {
-    use EventMap;
-
     /**
      * Register bindings in the container.
      *
@@ -46,7 +43,6 @@ class FilamentServiceProvider extends ServiceProvider
     {
         $this->registerAuth();
         $this->registerCommands();
-        $this->registerEvents();
         $this->registerMiddleware();
         $this->registerRouteMacros();
         $this->registerRoutes();
@@ -74,7 +70,7 @@ class FilamentServiceProvider extends ServiceProvider
      */
     protected function registerConfig()
     {
-        $this->mergeConfigFrom($this->packagePath.'config/filament.php', 'filament');
+        $this->mergeConfigFrom($this->app['filament']->basePath('config/filament.php'), 'filament');
         /*
         if ($this->app['filament']->handling()) {
             $this->mergeFromConfig('existing-package-config', $this->app['config']->get('filament.existing-package-config', []));
@@ -135,23 +131,6 @@ class FilamentServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the events and listeners.
-     *
-     * @return void
-     * @throws BindingResolutionException
-     */
-    protected function registerEvents()
-    {
-        $events = $this->app->make(Dispatcher::class);
-
-        foreach ($this->events as $event => $listeners) {
-            foreach ($listeners as $listener) {
-                $events->listen($event, $listener);
-            }
-        }
-    }
-
-    /**
      * Register package middleware.
      * 
      * @return void
@@ -186,13 +165,13 @@ class FilamentServiceProvider extends ServiceProvider
             ->prefix(config('filament.path')) 
             ->namespace($namespace) 
             ->name($name) 
-            ->group($this->packagePath.'routes/web.php');
+            ->group($this->app['filament']->basePath('routes/web.php'));
 
         Route::middleware(config('filament.middleware.api'))
             ->prefix(config('filament.path').'/api') 
             ->namespace($namespace) 
             ->name($name) 
-            ->group($this->packagePath.'routes/api.php');
+            ->group($this->app['filament']->basePath('routes/api.php'));
     }
 
     /**
@@ -202,7 +181,7 @@ class FilamentServiceProvider extends ServiceProvider
      */
     protected function registerResources()
     {
-        $this->loadViewsFrom($this->packagePath.'resources/views', 'filament');
+        $this->loadViewsFrom($this->app['filament']->basePath('resources/views'), 'filament');
     }
 
     /**
@@ -212,7 +191,7 @@ class FilamentServiceProvider extends ServiceProvider
      */
     protected function registerTranslations()
     {
-        $this->loadTranslationsFrom($this->packagePath.'resources/lang', 'filament');
+        $this->loadTranslationsFrom($this->app['filament']->basePath('resources/lang'), 'filament');
     }
 
     /**
@@ -223,7 +202,7 @@ class FilamentServiceProvider extends ServiceProvider
     protected function registerMigrations()
     {
         if ($this->app->runningInConsole()) {
-            $this->loadMigrationsFrom($this->packagePath.'database/migrations');
+            $this->loadMigrationsFrom($this->app['filament']->basePath('database/migrations'));
             $this->loadMigrationsFrom(base_path('vendor/appstract/laravel-meta/database/migrations'));
         }
     }
@@ -237,12 +216,12 @@ class FilamentServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                $this->packagePath.'config/filament.php' => config_path('filament.php'),
+                $this->app['filament']->basePath('config/filament.php') => config_path('filament.php'),
             ], 'filament-config');
             
             $this->publishes([
-                $this->packagePath.'database/seeds/FilamentSeeder.php' => database_path('seeds/FilamentSeeder.php'),
-                $this->packagePath.'database/seeds/FilamentPermissionSeeder.php' => database_path('seeds/FilamentPermissionSeeder.php'),
+                $this->app['filament']->basePath('database/seeds/FilamentSeeder.php') => database_path('seeds/FilamentSeeder.php'),
+                $this->app['filament']->basePath('database/seeds/FilamentPermissionSeeder.php') => database_path('seeds/FilamentPermissionSeeder.php'),
             ], 'filament-seeds');
         }
     }

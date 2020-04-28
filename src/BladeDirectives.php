@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Support;
+namespace Filament;
 
 class BladeDirectives {
     /**
