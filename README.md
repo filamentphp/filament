@@ -63,8 +63,8 @@ php artisan filament:fieldset {name} {--package}
 
 - [Login](https://raw.githubusercontent.com/laravel-filament/filament/master/resources/images/screenshots/login-darkmode.jpg)
 - Users
-  - [Light mode](https://raw.githubusercontent.com/laravel-filament/filament/master/resources/images/screenshots/users-darkmode.jpg)
-  - [Dark mode](https://raw.githubusercontent.com/laravel-filament/filament/master/resources/images/screenshots/users-lightmode.jpg)
+  - [Dark mode](https://raw.githubusercontent.com/laravel-filament/filament/master/resources/images/screenshots/users-darkmode.jpg)
+  - [Light mode](https://raw.githubusercontent.com/laravel-filament/filament/master/resources/images/screenshots/users-lightmode.jpg)
 - [Edit user](https://raw.githubusercontent.com/laravel-filament/filament/master/resources/images/screenshots/edit-user-darkmode.jpg)
 - [Roles](https://raw.githubusercontent.com/laravel-filament/filament/master/resources/images/screenshots/roles-darkmode.jpg)
 - [Permissions](https://raw.githubusercontent.com/laravel-filament/filament/master/resources/images/screenshots/permissions-darkmode.jpg)
