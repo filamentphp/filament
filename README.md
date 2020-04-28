@@ -15,8 +15,8 @@ This package can be used with `Laravel 7.x` or higher.
 ```bash
 mkdir packages
 cd packages
-git clone git@github.com:eastslopestudio/filament.git filament
-git clone git@github.com:eastslopestudio/filament-field-file.git filament-field-file
+git clone git@github.com:laravel-filament/filament.git filament
+git clone git@github.com:laravel-filament/field-file.git filament-field-file
 cd ../
 laravel new site
 cd site # setup laravel with a DB, mail etc. like normal, then return to these instructions for adding Filament.
