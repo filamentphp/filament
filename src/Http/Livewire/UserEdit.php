@@ -5,11 +5,11 @@ namespace Filament\Http\Livewire;
 use Livewire\Component;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Filament\Traits\Livewire\HasForm;
-use Filament\Fields\File\Traits\HasFiles;
+use Filament\Fields\File\Traits\HasFileUploads;
 
 class UserEdit extends Component
 {    
-    use AuthorizesRequests, HasForm, HasFiles;
+    use AuthorizesRequests, HasForm, HasFileUploads;
 
     protected $listeners = [
         'filament.fileUploadError' => 'fileUploadError',
