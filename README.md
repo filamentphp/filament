@@ -2,7 +2,7 @@
 
 A lightweight admin for your Laravel app.
 
-_[This is a pre-release (0.0.x) in very active development – we would love help to make it awesome!]_
+## _[This is a pre-release (0.0.x) in very active development – we would love help to make it awesome!]_
 
 ---
 
@@ -14,19 +14,13 @@ This package can be used with `Laravel 7.x` or higher.
 
 ```bash
 composer require filament/filament
-```
-
-Add the necessary `Filament\Traits\FilamentUser` trait to your `App\User` model.
-
-### Update Composer
-
-```bash
-composer update
 php artisan migrate
 php artisan vendor:publish --tag=filament-seeds
 composer dump-autoload
 php artisan db:seed --class=FilamentSeeder
 ```
+
+Add the necessary `Filament\Traits\FilamentUser` trait to your `App\User` model.
 
 ---
 

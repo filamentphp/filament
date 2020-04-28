@@ -19,6 +19,7 @@
     }
   ],
   "require": {
+    "php": "^7.2",
     "appstract/laravel-blade-directives": "^1.9",
     "doctrine/dbal": "^2.10",
     "driesvints/blade-icons": "^2.1",
