@@ -13,7 +13,7 @@ This package can be used with `Laravel 7.x` or higher.
 > The following instructions assume a new installation of Laravel with database and mail setup.
 
 ```bash
-composer require filament/filament
+composer require filament/filament dev-master
 php artisan migrate
 php artisan vendor:publish --tag=filament-seeds
 composer dump-autoload
