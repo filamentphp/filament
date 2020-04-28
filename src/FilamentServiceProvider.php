@@ -204,7 +204,7 @@ class FilamentServiceProvider extends ServiceProvider
     {
         $components = collect((new Filesystem)->allFiles(__DIR__.'/Http/Components'))->map(function (SplFileInfo $file) {
             $baseName = class_basename(str_replace('.php', '', $file->getPathname()));
-            return "\\Filament\\Http\\Livewire\\{$baseName}";
+            return "\\Filament\\Http\\Components\\{$baseName}";
         })->all();
 
         $this->loadViewComponentsAs('filament', $components);
