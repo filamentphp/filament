@@ -89,24 +89,7 @@ class FilamentServiceProvider extends ServiceProvider
      */
     protected function registerBindings()
     {
-        $this->bindModelContract(UserContract::class, config('auth.providers.users.model'), 'Filament\Traits\FilamentUser');
-    }
-
-    /**
-     * Bind a given model to the container checking for a trait (optional).
-     * 
-     * @param mixed $contract
-     * @param mixed $model
-     * @param string|null $trait
-     * @return void
-     */
-    protected function bindModelContract($contract, $model, $trait = null)
-    {
-        if ($trait && !in_array($trait, class_uses($model))) {
-            throw new \Error("{$model} must use `{$trait}` trait.");
-        }
-
-        $this->app->bind($contract, $model);
+        $this->app->bind(UserContract::class, config('auth.providers.users.model'));
     }
 
     /**
