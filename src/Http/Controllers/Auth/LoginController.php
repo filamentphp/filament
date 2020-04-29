@@ -29,12 +29,14 @@ class LoginController extends Controller
         $title = config('app.name');
 
         $fields = [
-            Input::make('email', false, 'email')
+            Input::make('email')
                 ->type('email')
+                ->label(false)
                 ->placeholder('E-mail Address')
                 ->rules(['required']),
-            Input::make('password', false, 'password')
+            Input::make('password')
                 ->type('password')
+                ->label(false)
                 ->placeholder('Password')
                 ->rules(['required'])
                 ->help('<a href="'.route('filament.auth.password.forgot').'">'.__('Forgot Your Password?').'</a>'),

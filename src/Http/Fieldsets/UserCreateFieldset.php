@@ -24,6 +24,7 @@ class UserCreateFieldset
                 ->group('account'),
             Input::make('email')
                 ->type('email')
+                ->label('E-mail Address')
                 ->rules([
                     'required', 
                     'string', 
@@ -37,8 +38,9 @@ class UserCreateFieldset
                 ->autocomplete('new-password')
                 ->rules(['required', 'min:8', 'confirmed'])
                 ->group('account'),
-            Input::make('password_confirmation', false)
+            Input::make('password_confirmation')
                 ->type('password')
+                ->label(false)
                 ->placeholder('Confirm Password')
                 ->autocomplete('new-password')
                 ->rules('required')

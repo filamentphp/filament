@@ -7,11 +7,11 @@ use Illuminate\Support\Str;
 
 class Field
 {
-    protected $field_type;
     protected $name;
-    protected $label;
     protected $key;
     protected $id;
+    protected $field_type;
+    protected $label;
     protected $value;
     protected $class;
     protected $group;
@@ -26,18 +26,18 @@ class Field
     protected $multiple;
     protected $disabled;
 
-    public function __construct($name, $label = null, $key = null)
+    public function __construct($name)
     {
-        $this->field_type = Str::of(class_basename(get_called_class()))->kebab();
         $this->name = $name;
-        $this->label = is_null($label) ? $this->formatLabel($name) : $label;
-        $this->key = $key ?? 'form_data.'.$this->name;
+        $this->key = 'form_data.'.$this->name;
         $this->id = Str::slug($this->key);
+        $this->field_type = $this->getFieldType();
+        $this->label = $this->formatLabel($name);
     }
 
-    public static function make($name, $label = null, $key = null)
+    public static function make($name)
     {
-        return new static($name, $label, $key);
+        return new static($name);
     }
 
     public function __get($property)
@@ -48,6 +48,18 @@ class Field
     public function disabled($is_disabled = true)
     {
         $this->disabled = (bool) $is_disabled;
+        return $this;
+    }
+
+    public function key($key)
+    {
+        $this->key = $key;
+        return $this;
+    }
+    
+    public function label($label)
+    {
+        $this->label = $label;
         return $this;
     }
 
@@ -128,6 +140,12 @@ class Field
         $view = $this->view ?? "filament::fields.{$this->field_type}";
 
         return view($view, ['field' => $this]);
+    }
+
+    protected function getFieldType()
+    {
+        $baseName = class_basename(get_called_class());
+        return Str::of($baseName)->kebab();
     }
 
     protected function formatLabel($value)

@@ -25,8 +25,9 @@ class UserEditFieldset
                 ->rules(['required', 'string', 'max:255'])
                 ->class('md:col-span-2')
                 ->group('account'),
-            Input::make('email', 'E-mail Address')
+            Input::make('email')
                 ->type('email')
+                ->label('E-mail Address')
                 ->rules([
                     'required', 
                     'string', 
@@ -45,14 +46,16 @@ class UserEditFieldset
                 ->files(Media::whereIn('id', $model->avatar)->pluck('value', 'id')->all())
                 ->multiple()
                 ->group('account'),
-            Input::make('password', 'New password')
+            Input::make('password')
                 ->type('password')
+                ->label('New password')
                 ->autocomplete('new-password')
                 ->rules(['nullable', 'min:8', 'confirmed'])
                 ->help('Leave blank to keep current password.')
                 ->group('account'),
-            Input::make('password_confirmation', false)
+            Input::make('password_confirmation')
                 ->type('password')
+                ->label(false)
                 ->placeholder('Confirm New Password')
                 ->autocomplete('new-password')
                 ->group('account'),
