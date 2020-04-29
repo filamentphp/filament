@@ -6,7 +6,6 @@ use Filament\Support\Fields\Field;
 
 class DummyFieldset
 {
-
     /**
      * Return the name of the fieldset.
      * 

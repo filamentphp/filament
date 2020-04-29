@@ -13,7 +13,7 @@ class UserEdit extends Component
 
     protected $listeners = [
         'filament.fileUploadError' => 'fileUploadError',
-        'filament.fileUpdate' => 'fileUpdate',
+        'filament.saveFileField' => 'saveFileField',
     ];
 
     public function mount($user)
