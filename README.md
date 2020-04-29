@@ -17,11 +17,12 @@ The theme of this admin is "Light and Fast" – just enough to get you started a
 > This is more of a proposed feature list then a solid roadmap. I am _totally open_ to new ideas, with the overall goal of keeping this core package pretty minimal allowing total customization via your main Laravel app / additional add-on packages.
 
 - Setup tests (via [Testbench Component](https://github.com/orchestral/testbench)) and start creating them for existing features.
+  - _I'm going to be very honest here, I don't know much about testing within a package, so this will be completely new to me and I would really appreciate some help on getting things setup for best practices etc._
 - Create new `Globals` feature for managing arbitrary app data.
   - Considering implementing [laravel-metable](https://github.com/plank/laravel-metable).
 - Create new `Resources` feature. Allowing a user to create a generic resource with schemaless attributes managed by custom fields.
-
   - Considering implementing [laravel-metable](https://github.com/plank/laravel-metable) in this feature as well, as it would allow custom fields in a pretty flexible way.
+- Create a `GraphQL` API using [Lighthouse](https://github.com/nuwave/lighthouse) and corresponding admin section (likely using [GraphiQL](https://github.com/graphql/graphiql)) for previewing the API. _This one is pretty opinionated_ and needs to be in the core (our team at [East Slope Studio](https://eastslope.studio) uses it extensively for our decoupled front-end web and app development projects (built with Eleventy, React, React Native etc.).
 
 ---
 
