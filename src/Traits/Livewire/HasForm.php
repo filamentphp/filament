@@ -11,36 +11,34 @@ trait HasForm
     public $form_data;
     public $fieldset;
 
-    public function setFieldset($className = null)
+    /**
+     * Setup our form, set the model and 
+     * corresponding form data as an array
+     * 
+     * @return void
+     */
+    public function setupForm($model)
     {
-        $class = $className ? $className : get_called_class().'Fieldset';
-        foreach(config('filament.namespaces.fieldsets') as $namespace) {
-            $class = $namespace.'\\'.class_basename($class);
-            if (class_exists($class)) {
-                if (!in_array(Fieldset::class, class_implements($class))) {
-                    throw new \Error($class.' must implement '.Fieldset::class);
-                }
-
-                $this->fieldset = $class;
-                break;
-            }
-        }
+        $this->model = $model;
+        $this->form_data = $this->model->toArray();
     }
 
-    public function setFormProperties()
+    /**
+     * Save the form
+     * 
+     * @return void
+     */
+    public function save()
     {
-        if ($this->model) {
-            $this->form_data = $this->model->toArray();
-        }
-
-        foreach ($this->fields() as $field) {
-            if (!isset($this->form_data[$field->name])) {
-                $array = in_array($field->field_type, ['checkboxes', 'file']);
-                $this->form_data[$field->name] = $field->default ?? ($array ? [] : null);
-            }
-        }
+        $this->submit();
     }
 
+    /**
+     * Submit and validate form
+     * 
+     * @throws Illuminate\Validation|ValidationException
+     * @return void
+     */
     public function submit()
     {        
         $this->validate($this->rules());
@@ -54,6 +52,11 @@ trait HasForm
         $this->success();
     }
 
+    /**
+     * Successful form submission
+     * 
+     * @return void
+     */
     public function success()
     {       
         $this->emit('filament.notification.notify', [
@@ -62,12 +65,13 @@ trait HasForm
         ]);
     }
 
-    public function save()
-    {
-        $this->submit();
-    }
-
-    public function saveField($field_name)
+    /**
+     * Save an individual field.
+     * 
+     * @var string $field_name
+     * @return void
+     */
+    public function saveField(string $field_name)
     {
         $this->model->$field_name = $this->form_data[$field_name];
         $this->model->save();
@@ -77,22 +81,13 @@ trait HasForm
             'message' => __('filament::notifications.updated', ['item' => $field_name]),
         ]);
     }
-
-    public function fields()
-    {
-        return $this->fieldset ? $this->fieldset::fields($this->model) : [];
-    }
-
-    public function getField($field_name)
-    {
-        foreach ($this->fields() as $field) {
-            if ($field->name == $field_name) {
-                return $field;
-                break;
-            }
-        }
-    }
     
+    /**
+     * Get all rules from the fieldset fields.
+     * 
+     * @var boolean $realtime
+     * @return array
+     */
     public function rules($realtime = false)
     {
         $rules = [];
@@ -107,6 +102,14 @@ trait HasForm
         return $rules;
     }
 
+    /**
+     * Get the rules for a given field.
+     * 
+     * @var object $field
+     * @var array $rules_ignore
+     * 
+     * @return array
+     */
     protected function fieldRules($field, $rules_ignore)
     {
         $field_rules = is_array($field->rules) ? $field->rules : explode('|', $field->rules);
@@ -120,13 +123,78 @@ trait HasForm
         return $field_rules;
     }
 
-    public function updated($field)
+    /**
+     * Runs after any update to the Livewire component's data
+     * 
+     * @var string $name
+     * @return void
+     */
+    public function updated($name)
     {
-        $this->validateOnly($field, $this->rules(true));
+        $this->validateOnly($name, $this->rules(true));
     }
 
+    /**
+     * Return fieldset classpath for a given called class
+     * 
+     * @return null|string
+     */
+    public function fieldset()
+    {
+        $baseName = class_basename(get_called_class()).'Fieldset';
+        $namespace = collect(config('filament.namespaces.fieldsets'))->filter(function ($namespace, $key) use ($baseName) {
+            return class_exists("{$namespace}\\{$baseName}");
+        })->first();
+
+        if ($namespace) {
+            return "{$namespace}\\{$baseName}";
+        }
+    }
+
+    /**
+     * Return fields as a collection from a given fieldset.
+     * 
+     * @return Illuminate\Support\Collection
+     */
+    public function fields()
+    {
+        $fields = [];
+        if ($fieldset = $this->fieldset()) {
+            if (method_exists($fieldset, 'fields')) {
+                $fields = call_user_func("{$fieldset}::fields", $this->model);
+            }
+        }
+
+        return collect($fields);
+    }
+
+    /**
+     * Get a field from a fields collection.
+     * 
+     * @var string $field_name
+     * @return null|object
+     */
+    public function getField(string $field_name)
+    {
+        return $this->fields()->filter(function ($field, $key) use ($field_name) {
+            return $field->name === $field_name;
+        })->first();
+    }
+
+    /**
+     * Return realtime rules to ignore from a given fieldset.
+     * 
+     * @return array
+     */
     public function rulesIgnoreRealtime()
     {
-        return $this->fieldset ? $this->fieldset::rulesIgnoreRealtime() : [];
+        $rules = [];
+        if ($fieldset = $this->fieldset()) {
+            if (method_exists($fieldset, 'rulesIgnoreRealtime')) {
+                $rules = call_user_func("{$fieldset}::rulesIgnoreRealtime");
+            }
+        }
+
+        return $rules;
     }
 }

@@ -19,10 +19,7 @@ class UserEdit extends Component
     public function mount($user)
     {        
         $this->authorize('edit', $user);
-        $this->model = $user;
-
-        $this->setFieldset();
-        $this->setFormProperties();
+        $this->setupForm($user);
     }
 
     public function success()

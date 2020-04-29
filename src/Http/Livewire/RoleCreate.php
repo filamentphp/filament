@@ -14,9 +14,6 @@ class RoleCreate extends Component
     public function mount()
     {        
         $this->authorize('create', Role::class);
-
-        $this->setFieldset();
-        $this->setFormProperties();
     }
 
     public function success()

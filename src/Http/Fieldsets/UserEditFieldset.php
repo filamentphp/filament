@@ -2,7 +2,6 @@
 
 namespace Filament\Http\Fieldsets;
 
-use Filament\Contracts\Fieldset;
 use Filament\Http\Fields\Input;
 use Filament\Fields\File\File;
 use Filament\Http\Fields\Checkbox;
@@ -12,14 +11,14 @@ use Filament\Models\Role;
 use Filament\Models\Permission;
 use Filament\Models\Media;
 
-class UserEditFieldset implements Fieldset
+class UserEditFieldset
 {
-    public static function title(): string
+    public static function name()
     {
         return 'Edit User';
     }
 
-    public static function fields($model): array
+    public static function fields($model)
     {
         return [
             Input::make('name')
@@ -44,7 +43,7 @@ class UserEditFieldset implements Fieldset
                     'image' => __('The Avatar must be a valid image.'),
                 ])
                 ->files(Media::whereIn('id', $model->avatar)->pluck('value', 'id')->all())
-                // ->multiple()
+                ->multiple()
                 ->group('account'),
             Input::make('password', 'New password')
                 ->type('password')
@@ -83,7 +82,7 @@ class UserEditFieldset implements Fieldset
         ];
     }
 
-    public static function rulesIgnoreRealtime(): array
+    public static function rulesIgnoreRealtime()
     {
         return ['confirmed'];
     }

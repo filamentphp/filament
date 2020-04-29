@@ -2,7 +2,6 @@
 
 namespace Filament\Http\Fieldsets;
 
-use Filament\Contracts\Fieldset;
 use Filament\Http\Fields\Input;
 use Filament\Http\Fields\Checkbox;
 use Filament\Http\Fields\Checkboxes;
@@ -10,14 +9,14 @@ use Illuminate\Validation\Rule;
 use Filament\Models\Role;
 use Filament\Models\Permission;
 
-class UserCreateFieldset implements Fieldset
+class UserCreateFieldset
 {
-    public static function title(): string
+    public static function name()
     {
         return 'New User';
     }
 
-    public static function fields($model): array
+    public static function fields()
     {
         return [
             Input::make('name')
@@ -66,7 +65,7 @@ class UserCreateFieldset implements Fieldset
         ];
     }
 
-    public static function rulesIgnoreRealtime(): array
+    public static function rulesIgnoreRealtime()
     {
         return ['confirmed'];
     }

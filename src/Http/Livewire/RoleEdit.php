@@ -13,11 +13,8 @@ class RoleEdit extends Component
 
     public function mount(Role $role)
     {        
-        $this->model = $role;
-        $this->authorize('edit', $this->model);
-
-        $this->setFieldset();
-        $this->setFormProperties();
+        $this->authorize('edit', $role);
+        $this->setupForm($role);
     }
 
     public function save()

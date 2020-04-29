@@ -13,11 +13,8 @@ class PermissionEdit extends Component
     
     public function mount(Permission $permission)
     {        
-        $this->model = $permission;
-        $this->authorize('edit', $this->model);
-
-        $this->setFieldset();
-        $this->setFormProperties();
+        $this->authorize('edit', $permission);
+        $this->setupForm($permission);
     }
 
     public function save()

@@ -2,17 +2,29 @@
 
 namespace Filament\Http\Fieldsets;
 
-use Filament\Contracts\Fieldset;
 use Filament\Support\Fields\Field;
 
-class DummyFieldset implements Fieldset
+class DummyFieldset
 {
-    public static function title(): string
+
+    /**
+     * Return the name of the fieldset.
+     * 
+     * @var object $model
+     * @return array
+     */
+    public static function name()
     {
         return 'Dummy';
     }
 
-    public static function fields($model): array
+    /**
+     * Return the fields for the given form.
+     * 
+     * @var object $model
+     * @return array
+     */
+    public static function fields($model)
     {
         return [
             Field::make('name')
@@ -21,7 +33,12 @@ class DummyFieldset implements Fieldset
         ];
     }
 
-    public static function rulesIgnoreRealtime(): array
+    /**
+     * Return the realtime rules to ignore for the given form.
+     *
+     * @return array
+     */
+    public static function rulesIgnoreRealtime()
     {
         return [];
     }

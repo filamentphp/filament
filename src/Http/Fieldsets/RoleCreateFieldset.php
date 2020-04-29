@@ -2,21 +2,20 @@
 
 namespace Filament\Http\Fieldsets;
 
-use Filament\Contracts\Fieldset;
 use Filament\Http\Fields\Input;
 use Filament\Http\Fields\Textarea;
 use Filament\Http\Fields\Checkboxes;
 use Illuminate\Validation\Rule;
 use Filament\Models\Permission;
 
-class RoleCreateFieldset implements Fieldset
+class RoleCreateFieldset
 {
-    public static function title(): string
+    public static function name()
     {
         return __('filament::roles.create');
     }
 
-    public static function fields($model): array
+    public static function fields()
     {
         return [
             Input::make('name')
@@ -38,10 +37,5 @@ class RoleCreateFieldset implements Fieldset
                 ->disabled(!auth()->user()->can('edit permissions'))
                 ->group('permissions'),
         ];
-    }
-
-    public static function rulesIgnoreRealtime(): array
-    {
-        return [];
     }
 } 
