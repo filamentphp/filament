@@ -32,9 +32,13 @@ class UserCreate extends Component
 
     public function render()
     {        
+        $fields = $this->fields()->groupBy(function ($field, $key) {
+            return $field->group;
+        });
+        
         return view('filament::livewire.users.create-edit', [
             'title' => __('filament::users.create'),
-            'fields' => $this->fields(),
+            'fields' => $fields,
         ]);
     }
 }

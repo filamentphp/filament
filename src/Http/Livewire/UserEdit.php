@@ -49,6 +49,10 @@ class UserEdit extends Component
 
     public function render()
     {        
-        return view('filament::livewire.users.create-edit', ['fields' => $this->fields()]);
+        $fields = $this->fields()->groupBy(function ($field, $key) {
+            return $field->group;
+        });
+        
+        return view('filament::livewire.users.create-edit', compact('fields'));
     }
 }

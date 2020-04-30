@@ -14,22 +14,14 @@ class Fields extends Component
     public $fields;
 
     /**
-     * Optional assigned field group.
-     *
-     * @var string|null
-     */
-    public $group;
-
-    /**
      * Create the component instance.
      *
      * @param  array  $fields
      * @return void
      */
-    public function __construct($fields, $group = null)
+    public function __construct($fields)
     {
         $this->fields = $fields;
-        $this->group = $group;
     }
 
     /**

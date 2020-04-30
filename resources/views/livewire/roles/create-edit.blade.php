@@ -4,13 +4,13 @@
 
         <x-filament-tab id="info">
 
-            <x-filament-fields :fields="$fields" group="info" />
+            <x-filament-fields :fields="$fields->get('info')" />
 
         </x-filament-tab>
 
         <x-filament-tab id="permissions">
 
-            <x-filament-fields :fields="$fields" group="permissions" />
+            <x-filament-fields :fields="$fields->get('permissions')" />
 
         </x-filament-tab>
 

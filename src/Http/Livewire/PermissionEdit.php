@@ -43,9 +43,13 @@ class PermissionEdit extends Component
 
     public function render()
     {        
+        $fields = $this->fields()->groupBy(function ($field, $key) {
+            return $field->group;
+        });
+
         return view('filament::livewire.permissions.create-edit', [
             'title' => __('filament::permissions.edit'),
-            'fields' => $this->fields(),
+            'fields' => $fields,
         ]);
     }
 }
