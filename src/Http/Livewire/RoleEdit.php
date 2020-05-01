@@ -4,7 +4,7 @@ namespace Filament\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Filament\Traits\Livewire\HasForm;
+use Filament\Traits\HasForm;
 use Filament\Models\Role;
 
 class RoleEdit extends Component
@@ -14,7 +14,7 @@ class RoleEdit extends Component
     public function mount(Role $role)
     {        
         $this->authorize('edit', $role);
-        $this->setupForm($role);
+        $this->initForm($role);
     }
 
     public function save()

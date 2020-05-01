@@ -4,7 +4,7 @@ namespace Filament\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Filament\Traits\Livewire\HasForm;
+use Filament\Traits\HasForm;
 use Filament\Models\Permission;
 
 class PermissionEdit extends Component
@@ -14,7 +14,7 @@ class PermissionEdit extends Component
     public function mount(Permission $permission)
     {        
         $this->authorize('edit', $permission);
-        $this->setupForm($permission);
+        $this->initForm($permission);
     }
 
     public function save()

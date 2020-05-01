@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Traits\Livewire;
+namespace Filament\Traits;
 
 use Illuminate\Support\Arr;
 use Filament\Contracts\Fieldset;
@@ -12,12 +12,12 @@ trait HasForm
     public $fieldset;
 
     /**
-     * Setup our form, set the model and 
-     * corresponding form data as an array
+     * Setup our form, sets the model and 
+     * corresponding data for the form.
      * 
      * @return void
      */
-    public function setupForm($model)
+    public function initForm($model)
     {
         $this->model = $model;
         $this->form_data = $this->model->toArray();

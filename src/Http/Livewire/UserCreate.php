@@ -4,7 +4,7 @@ namespace Filament\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Filament\Traits\Livewire\HasForm;
+use Filament\Traits\HasForm;
 use Filament\Contracts\User as UserContract;
 
 class UserCreate extends Component

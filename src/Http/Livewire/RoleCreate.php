@@ -4,7 +4,7 @@ namespace Filament\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Filament\Traits\Livewire\HasForm;
+use Filament\Traits\HasForm;
 use Filament\Models\Role;
 
 class RoleCreate extends Component

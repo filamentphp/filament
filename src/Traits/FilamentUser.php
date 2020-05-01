@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Arr;
 use Thomaswelton\LaravelGravatar\Facades\Gravatar;
 use Spatie\Permission\Traits\HasRoles;
+use Plank\Metable\Metable;
 use Filament\Traits\CastsAttributes;
 use Filament\Traits\FillsColumns;
 use Filament\Models\Media;
@@ -14,7 +15,7 @@ use Filament;
 
 trait FilamentUser 
 {
-    use CastsAttributes, FillsColumns, HasRoles;
+    use CastsAttributes, FillsColumns, HasRoles, Metable;
 
     /**
      * Initialize the trait.

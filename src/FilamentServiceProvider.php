@@ -147,7 +147,7 @@ class FilamentServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->loadMigrationsFrom($this->app['filament']->basePath('database/migrations'));
-            $this->loadMigrationsFrom(base_path('vendor/appstract/laravel-meta/database/migrations'));
+            $this->loadMigrationsFrom(base_path('vendor/plank/laravel-metable/migrations'));
         }
     }
 
