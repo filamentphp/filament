@@ -7,8 +7,8 @@ return [
     | Permissions
     |--------------------------------------------------------------------------
     |
-    | The initial system permissions needed by Filament. These are create using
-    | the `php artisan filament:install` command.
+    | The initial system permissions needed by Filament. These are added when
+    | running the initial seed `php artisan db:seed --class=FilamentSeeder`
     |
     */
 
