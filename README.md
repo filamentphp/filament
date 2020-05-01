@@ -74,7 +74,7 @@ php artisan filament:user
 
 ## Create a fieldset
 
-> This feature will eventually allow you to create a fieldset in your own app for `Globals` or `Resources`. More documentation to come as these features are added to the core package.
+> This feature will eventually allow you to create a fieldset (either core schema fields, or schemaless meta-fields) in your own app for `Users`, `Globals` and `Resources`. More documentation to come as these features are added to the core package.
 
 ```bash
 php artisan filament:fieldset {name} {--package}
