@@ -5,6 +5,7 @@ namespace Filament;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use League\Glide\Urls\UrlBuilderFactory;
 
 class Filament {
@@ -175,5 +176,19 @@ class Filament {
 
         $urlBuilder = UrlBuilderFactory::create(null, config('app.key'));
         return route('filament.image', ['path' => ltrim($urlBuilder->getUrl($path, $manipulations), '/')]);
+    }
+
+    /**
+     * Format a label from a given value
+     * 
+     * @param string $value
+     * @return string
+     */
+    public function formatLabel(string $value)
+    {
+        return Str::of($value)
+            ->replaceMatches('/[\-_]/', ' ')
+            ->title()
+            ->__toString();
     }
 }

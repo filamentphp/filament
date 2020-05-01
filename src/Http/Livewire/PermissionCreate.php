@@ -36,13 +36,13 @@ class PermissionCreate extends Component
 
     public function render()
     {        
-        $fields = $this->fields()->groupBy(function ($field, $key) {
+        $groupedFields = $this->fields()->groupBy(function ($field, $key) {
             return $field->group;
         });
 
-        return view('filament::livewire.permissions.create-edit', [
+        return view('filament::livewire.tabbed-form', [
             'title' => __('filament::permissions.create'),
-            'fields' => $fields,
+            'groupedFields' => $groupedFields,
         ]);
     }
 }

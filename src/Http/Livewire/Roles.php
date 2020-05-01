@@ -20,7 +20,7 @@ class Roles extends Component
                     
         $allRoles = Role::all();
 
-        return view('filament::livewire.roles.index', [
+        return view('filament::livewire.roles', [
             'title' => __('filament::roles.index'),
             'roles' => $roles,
             'allRoles' => $allRoles,

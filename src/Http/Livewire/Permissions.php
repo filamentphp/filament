@@ -21,7 +21,7 @@ class Permissions extends Component
 
         $customPermissions = Permission::where('is_system', false)->get();
 
-        return view('filament::livewire.permissions.index', [
+        return view('filament::livewire.permissions', [
             'title' => __('filament::permissions.index'),
             'permissions' => $permissions,
             'customPermissions' => $customPermissions,

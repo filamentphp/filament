@@ -7,13 +7,6 @@ use Illuminate\View\Component;
 class Tabs extends Component
 {
     /**
-     * The initally selected tab.
-     *
-     * @var string
-     */
-    public $tab;
-
-    /**
      * The tabs.
      *
      * @var array
@@ -27,9 +20,8 @@ class Tabs extends Component
      * @param  array  $tabs
      * @return void
      */
-    public function __construct(string $tab, array $tabs)
+    public function __construct(array $tabs)
     {
-        $this->tab = $tab;
         $this->tabs = $tabs;
     }
 

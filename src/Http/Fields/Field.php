@@ -4,6 +4,7 @@ namespace Filament\Http\Fields;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Filament;
 
 class Field
 {
@@ -32,7 +33,7 @@ class Field
         $this->key = 'form_data.'.$this->name;
         $this->id = Str::slug($this->key);
         $this->field_type = $this->getFieldType();
-        $this->label = $this->formatLabel($name);
+        $this->label = Filament::formatLabel($name);
     }
 
     public static function make($name)
@@ -146,13 +147,5 @@ class Field
     {
         $baseName = class_basename(get_called_class());
         return Str::of($baseName)->kebab();
-    }
-
-    protected function formatLabel($value)
-    {
-        return Str::of($value)
-            ->replaceMatches('/[\-_]/', ' ')
-            ->title()
-            ->__toString();
     }
 }

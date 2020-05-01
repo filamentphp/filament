@@ -43,13 +43,13 @@ class RoleEdit extends Component
 
     public function render()
     {        
-        $fields = $this->fields()->groupBy(function ($field, $key) {
+        $groupedFields = $this->fields()->groupBy(function ($field, $key) {
             return $field->group;
         });
         
-        return view('filament::livewire.roles.create-edit', [
+        return view('filament::livewire.tabbed-form', [
             'title' => __('filament::roles.edit'),
-            'fields' => $fields,
+            'groupedFields' => $groupedFields,
         ]);
     }
 }
