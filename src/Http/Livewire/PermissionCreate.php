@@ -19,10 +19,11 @@ class PermissionCreate extends Component
 
     public function success()
     {
-        $input = collect($this->model_data);
+        $model_input = collect($this->model_data);
 
-        $permission = Permission::create($input->all());      
-        
+        $permission = Permission::create($model_input->all());      
+        $permission->syncMeta($this->model_meta);
+
         if (auth()->user()->can('edit roles')) {
             $permission->syncRoles($input->get('roles'));
         }

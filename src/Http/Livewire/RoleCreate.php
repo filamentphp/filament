@@ -19,12 +19,13 @@ class RoleCreate extends Component
 
     public function success()
     {
-        $input = collect($this->model_data);
+        $model_input = collect($this->model_data);
 
-        $role = Role::create($input->all());     
-        
+        $role = Role::create($model_input->all());     
+        $role->syncMeta($this->model_meta);
+
         if (auth()->user()->can('edit permissions')) {
-            $role->syncPermissions($input->get('permissions'));
+            $role->syncPermissions($model_input->get('permissions'));
         }
 
         session()->flash('notification', [

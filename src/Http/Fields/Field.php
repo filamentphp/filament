@@ -35,7 +35,7 @@ class Field
         $this->field_type = $this->getFieldType();
         $this->id = Str::slug($this->field_type.'-'.$this->name);
         $this->label = Filament::formatLabel($name);
-        $this->key = ($is_meta ? 'meta_data' : 'model_data').'.'.$this->name;
+        $this->key = ($is_meta ? 'model_meta' : 'model_data').'.'.$this->name;
     }
 
     public static function make($name)

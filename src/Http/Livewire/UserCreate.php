@@ -19,9 +19,8 @@ class UserCreate extends Component
 
     public function success()
     {
-        $input = collect($this->model_data);
-
-        $user = app(UserContract::class)::create($input->all());        
+        $user = app(UserContract::class)::create($this->model_data);    
+        $user->syncMeta($this->model_meta);
 
         session()->flash('notification', [
             'type' => 'success',

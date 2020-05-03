@@ -9,7 +9,7 @@ trait HasForm
 {
     public $model;
     public $model_data;
-    public $meta_data;
+    public $model_meta;
 
     /**
      * Setup our form, sets the model (if provided) and 
@@ -58,7 +58,7 @@ trait HasForm
             }
         }
 
-        $this->meta_data = $data;
+        $this->model_meta = $data;
     }
 
     /**
@@ -106,7 +106,7 @@ trait HasForm
     {
         if ($field = $this->getField($field_name)) {
             if ($field->is_meta) {
-                $this->model->setMeta($field->name, $this->meta_data[$field->name]);
+                $this->model->setMeta($field->name, $this->model_meta[$field->name]);
             } else {
                 $this->model->$field_name = $this->model_data[$field->name];
                 $this->model->save();

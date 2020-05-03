@@ -35,8 +35,7 @@ class UserEdit extends Component
         }
 
         $this->model->update($model_input->all());
-
-        $this->model->syncMeta($this->meta_data);
+        $this->model->syncMeta($this->model_meta);
 
         if (auth()->user()->can('edit user roles')) {
             $this->model->syncRoles($model_input->get('roles'));
