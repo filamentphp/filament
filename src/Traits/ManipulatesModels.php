@@ -24,7 +24,7 @@ trait ManipulatesModels
      */
     protected function castAttribute($key, $value)
     {
-        if ($this->getCastType($key) === 'array' && is_null($value)) {
+        if ($this->getCastType($key) === 'array' && $value === null) {
             return [];
         }
 

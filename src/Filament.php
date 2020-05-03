@@ -109,7 +109,7 @@ class Filament {
         if (file_exists($file)) {
             $contents = file_get_contents($file);
             $contents = preg_replace('#\s(id|class)="[^"]+"#', '', $contents); // remove ID's and classes
-            $result = (is_null($class)) ? $contents : str_replace('viewBox', 'class="'.$class.'" viewBox', $contents);
+            $result = $class === null ? $contents : str_replace('viewBox', 'class="'.$class.'" viewBox', $contents);
             return new HtmlString($result);
         }
     }

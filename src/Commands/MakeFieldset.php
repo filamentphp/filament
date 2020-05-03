@@ -19,7 +19,7 @@ class MakeFieldset extends Command
         $stub = str_replace('DummyFieldset', $fieldsetName, $stub);
         $stub = str_replace('Dummy', $this->argument('name'), $stub);
         
-        if (!$this->option('package')) {
+        if (! $this->option('package')) {
             $stub = str_replace('namespace Filament', 'namespace App', $stub);
         }
 

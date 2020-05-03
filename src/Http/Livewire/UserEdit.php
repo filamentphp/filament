@@ -30,7 +30,7 @@ class UserEdit extends Component
             $input->forget('is_super_admin');
         }
 
-        if (is_null($input->get('password'))) {
+        if ($input->get('password') === null) {
             $input->forget('password');
         }
 
