@@ -18,7 +18,7 @@ The theme of this admin is "Light and Fast" – just enough to get you started a
 
 - Setup tests (via [Testbench Component](https://github.com/orchestral/testbench)) and start creating them for existing features.
   - _I'm going to be very honest here, I don't know much about testing within a package, so this will be completely new to me and I would really appreciate some help on getting things setup for best practices etc._
-- Update the `User` model to implement [laravel-metable](https://github.com/plank/laravel-metable), allowing the addition of custom meta fields in a pretty flexible way beyond the core required schema.
+- [✓] <strike>Update the `User` model to implement [laravel-metable](https://github.com/plank/laravel-metable), allowing the addition of custom meta fields in a pretty flexible way beyond the core required schema.</strike>
 - Create new `Globals` feature for managing arbitrary app data.
   - Entirely composed of [laravel-metable](https://github.com/plank/laravel-metable)
 - Create new `Resources` feature. Allowing a user to create a generic resource with schemaless attributes managed by custom fields.
