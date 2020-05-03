@@ -10,19 +10,40 @@ trait HasForm
     public $model;
     public $model_data;
     public $model_meta;
-
+    public $fieldset;
+    
     /**
      * Setup our form, sets the model (if provided) and 
      * corresponding data for the form.
      * 
      * @var mixed $model
+     * @var string $fieldset
      * @return void
      */
-    public function initForm($model = null)
+    public function initForm($model = null, $fieldset = null)
     {
         $this->model = $model;
         $this->setModelData();
         $this->setMetaData();
+        $this->setFieldset($fieldset);
+    }
+
+    /**
+     * Sets the fieldset used by the form.
+     * 
+     * @var string $fieldset
+     * @return void
+     */
+    protected function setFieldset($fieldset)
+    {
+        $baseName = $fieldset ?? class_basename(get_called_class()).'Fieldset';
+        $namespace = collect(config('filament.namespaces.fieldsets'))->filter(function ($namespace, $key) use ($baseName) {
+            return class_exists("{$namespace}\\{$baseName}");
+        })->first();
+
+        if ($namespace) {
+            $this->fieldset = "{$namespace}\\{$baseName}";
+        }
     }
 
     /**
@@ -172,23 +193,6 @@ trait HasForm
     }
 
     /**
-     * Return fieldset classpath for a given called class.
-     * 
-     * @return null|string
-     */
-    public function fieldset()
-    {
-        $baseName = class_basename(get_called_class()).'Fieldset';
-        $namespace = collect(config('filament.namespaces.fieldsets'))->filter(function ($namespace, $key) use ($baseName) {
-            return class_exists("{$namespace}\\{$baseName}");
-        })->first();
-
-        if ($namespace) {
-            return "{$namespace}\\{$baseName}";
-        }
-    }
-
-    /**
      * Return realtime rules to ignore from a given fieldset.
      * 
      * @return array
@@ -196,7 +200,7 @@ trait HasForm
     public function rulesIgnoreRealtime()
     {
         $rules = [];
-        if ($fieldset = $this->fieldset()) {
+        if ($fieldset = $this->fieldset) {
             if (method_exists($fieldset, 'rulesIgnoreRealtime')) {
                 $rules = call_user_func("{$fieldset}::rulesIgnoreRealtime");
             }
@@ -213,7 +217,7 @@ trait HasForm
     public function fields()
     {
         $fields = [];
-        if ($fieldset = $this->fieldset()) {
+        if ($fieldset = $this->fieldset) {
             if (method_exists($fieldset, 'fields')) {
                 $fields = call_user_func("{$fieldset}::fields", $this->model);
             }
