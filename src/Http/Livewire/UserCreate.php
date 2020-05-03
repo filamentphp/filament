@@ -14,6 +14,7 @@ class UserCreate extends Component
     public function mount()
     {        
         $this->authorize('create', app(UserContract::class));
+        $this->initForm();
     }
 
     public function success()

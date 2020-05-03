@@ -12,12 +12,13 @@ trait HasForm
     public $meta_data;
 
     /**
-     * Setup our form, sets the model and 
+     * Setup our form, sets the model (if provided) and 
      * corresponding data for the form.
      * 
+     * @var mixed $model
      * @return void
      */
-    public function initForm($model)
+    public function initForm($model = null)
     {
         $this->model = $model;
         $this->setModelData();
@@ -200,7 +201,7 @@ trait HasForm
 
     protected function setModelData()
     {
-        $data = $this->model->toArray();
+        $data = $this->model ? $this->model->toArray() : [];
 
         foreach($this->fields() as $field) {
             if (!isset($data[$field->name]) && !$field->is_meta) {
@@ -213,7 +214,7 @@ trait HasForm
 
     protected function setMetaData()
     {
-        $data = $this->model->getAllMeta()->toArray();
+        $data = $this->model ? $this->model->getAllMeta()->toArray() : [];
 
         foreach($this->fields() as $field) {
             if (!isset($data[$field->name]) && $field->is_meta) {

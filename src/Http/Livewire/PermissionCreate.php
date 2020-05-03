@@ -14,6 +14,7 @@ class PermissionCreate extends Component
     public function mount()
     {        
         $this->authorize('create', Permission::class);
+        $this->initForm();
     }
 
     public function success()
