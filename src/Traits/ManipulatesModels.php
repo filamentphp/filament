@@ -2,8 +2,19 @@
 
 namespace Filament\Traits;
 
-trait CastsAttributes 
+trait ManipulatesModels 
 {
+    /**
+     * Merge fillable attributes.
+     * 
+     * @param array $fillable
+     * @return void
+     */
+    protected function mergeFillable(array $fillable)
+    {
+        $this->fillable = array_merge($fillable, $this->fillable);
+    }
+
     /**
      * Cast an attribute to a native PHP type.
      *

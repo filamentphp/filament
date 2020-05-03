@@ -20,17 +20,17 @@ class DummyFieldset
     /**
      * Return the fields for the given form.
      * 
-     * Note: these are core database columns defined by the model schema.
-     * If you add a field, first create a migration and then add the referring field here.
-     * If you want to attach arbitrary data then add the field to the `metaFields()` method defined below.
-     * 
      * @var object $model
      * @return array
      */
     public static function fields($model)
     {
         return [
-            Field::make('name')
+            Field::make('model-field-name')
+                ->input()
+                ->rules(['required', 'string', 'max:255']),
+
+            Field::makeMeta('meta-field-name')
                 ->input()
                 ->rules(['required', 'string', 'max:255']),
         ];

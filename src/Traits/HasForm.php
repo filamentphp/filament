@@ -8,8 +8,8 @@ use Filament\Contracts\Fieldset;
 trait HasForm
 {
     public $model;
-    public $form_data;
-    public $fieldset;
+    public $model_data;
+    public $meta_data;
 
     /**
      * Setup our form, sets the model and 
@@ -20,7 +20,8 @@ trait HasForm
     public function initForm($model)
     {
         $this->model = $model;
-        $this->form_data = $this->model->toArray();
+        $this->setModelData();
+        $this->setMetaData();
     }
 
     /**
@@ -42,13 +43,6 @@ trait HasForm
     public function submit()
     {        
         $this->validate($this->rules());
-
-        $field_names = [];
-        foreach ($this->fields() as $field) {
-            $field_names[] = $field->name;
-        }
-        $this->form_data = Arr::only($this->form_data, $field_names);
-
         $this->success();
     }
 
@@ -73,13 +67,19 @@ trait HasForm
      */
     public function saveField(string $field_name)
     {
-        $this->model->$field_name = $this->form_data[$field_name];
-        $this->model->save();
-        
-        $this->emit('filament.notification.notify', [
-            'type' => 'success',
-            'message' => __('filament::notifications.updated', ['item' => $field_name]),
-        ]);
+        if ($field = $this->getField($field_name)) {
+            if ($field->is_meta) {
+                $this->model->setMeta($field->name, $this->meta_data[$field->name]);
+            } else {
+                $this->model->$field_name = $this->model_data[$field->name];
+                $this->model->save();
+            }
+
+            $this->emit('filament.notification.notify', [
+                'type' => 'success',
+                'message' => __('filament::notifications.updated', ['item' => $field->name]),
+            ]);
+        }
     }
     
     /**
@@ -196,5 +196,31 @@ trait HasForm
         return $this->fields()->filter(function ($field, $key) use ($field_name) {
             return $field->name === $field_name;
         })->first();
+    }
+
+    protected function setModelData()
+    {
+        $data = $this->model->toArray();
+
+        foreach($this->fields() as $field) {
+            if (!isset($data[$field->name]) && !$field->is_meta) {
+                $data[$field->name] = $field->default;
+            }
+        }
+
+        $this->model_data = $data;
+    }
+
+    protected function setMetaData()
+    {
+        $data = $this->model->getAllMeta()->toArray();
+
+        foreach($this->fields() as $field) {
+            if (!isset($data[$field->name]) && $field->is_meta) {
+                $data[$field->name] = $field->default;
+            }
+        }
+
+        $this->meta_data = $data;
     }
 }

@@ -8,14 +8,13 @@ use Illuminate\Support\Arr;
 use Thomaswelton\LaravelGravatar\Facades\Gravatar;
 use Spatie\Permission\Traits\HasRoles;
 use Plank\Metable\Metable;
-use Filament\Traits\CastsAttributes;
-use Filament\Traits\FillsColumns;
+use Filament\Traits\ManipulatesModels;
 use Filament\Models\Media;
 use Filament;
 
 trait FilamentUser 
 {
-    use CastsAttributes, FillsColumns, HasRoles, Metable;
+    use ManipulatesModels, HasRoles, Metable;
 
     /**
      * Initialize the trait.
@@ -24,6 +23,11 @@ trait FilamentUser
      */
     public function initializeFilamentUser()
     {
+        $this->mergeFillable([
+            'is_super_admin', 
+            'avatar',
+        ]);
+
         $this->mergeCasts([
             'avatar' => 'array',
             'is_super_admin' => 'boolean',

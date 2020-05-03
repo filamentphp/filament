@@ -18,7 +18,7 @@ class RoleCreate extends Component
 
     public function success()
     {
-        $input = collect($this->form_data);
+        $input = collect($this->model_data);
 
         $role = Role::create($input->all());     
         

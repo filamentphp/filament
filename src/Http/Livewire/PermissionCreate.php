@@ -18,7 +18,7 @@ class PermissionCreate extends Component
 
     public function success()
     {
-        $input = collect($this->form_data);
+        $input = collect($this->model_data);
 
         $permission = Permission::create($input->all());      
         

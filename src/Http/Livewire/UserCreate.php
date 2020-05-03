@@ -18,7 +18,7 @@ class UserCreate extends Component
 
     public function success()
     {
-        $input = collect($this->form_data);
+        $input = collect($this->model_data);
 
         $user = app(UserContract::class)::create($input->all());        
 

@@ -44,7 +44,6 @@ class UserEditFieldset
                     'image' => __('The Avatar must be a valid image.'),
                 ])
                 ->files(Media::whereIn('id', $model->avatar)->pluck('value', 'id')->all())
-                ->multiple()
                 ->group('account'),
             Input::make('password')
                 ->type('password')

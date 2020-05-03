@@ -8,11 +8,12 @@ use Filament;
 
 class Field
 {
+    protected $is_meta;
     protected $name;
-    protected $key;
     protected $id;
     protected $field_type;
     protected $label;
+    protected $key;
     protected $value;
     protected $class;
     protected $group;
@@ -27,18 +28,24 @@ class Field
     protected $multiple;
     protected $disabled;
 
-    public function __construct($name)
+    public function __construct($name, $is_meta = false)
     {
+        $this->is_meta = $is_meta;
         $this->name = $name;
-        $this->key = 'form_data.'.$this->name;
-        $this->id = Str::slug($this->key);
         $this->field_type = $this->getFieldType();
+        $this->id = Str::slug($this->field_type.'-'.$this->name);
         $this->label = Filament::formatLabel($name);
+        $this->key = ($is_meta ? 'meta_data' : 'model_data').'.'.$this->name;
     }
 
     public static function make($name)
     {
         return new static($name);
+    }
+
+    public static function makeMeta($name)
+    {
+        return new static($name, true);
     }
 
     public function __get($property)
