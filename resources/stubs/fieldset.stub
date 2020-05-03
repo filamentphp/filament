@@ -37,25 +37,6 @@ class DummyFieldset
     }
 
     /**
-     * Return the meta data fields for the given form. 
-     * 
-     * This will allow for easily attaching arbitrary custom fields 
-     * without needing to adjust the database schema.
-     * 
-     * @var object $model
-     * @return array
-     */
-    public static function metaFields($model)
-    {
-        return [
-            Field::make('meta-field')
-                ->input()
-                ->label('A Custom Meta Field')
-                ->rules(['string', 'max:255']),
-        ];
-    }
-
-    /**
      * Return the realtime rules to ignore for the given form.
      *
      * @return array

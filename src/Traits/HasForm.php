@@ -197,34 +197,4 @@ trait HasForm
             return $field->name === $field_name;
         })->first();
     }
-
-    /**
-     * Return the meta fields as a collection from a given fieldset.
-     * 
-     * @return Illuminate\Support\Collection
-     */
-    public function metaFields()
-    {
-        $metaFields = [];
-        if ($fieldset = $this->fieldset()) {
-            if (method_exists($fieldset, 'metaFields')) {
-                $metaFields = call_user_func("{$fieldset}::metaFields", $this->model);
-            }
-        }
-
-        return collect($metaFields);
-    }
-
-    /**
-     * Get a meta field from the metaFields collection.
-     * 
-     * @var string $field_name
-     * @return null|object
-     */
-    public function getMetaField(string $field_name)
-    {
-        return $this->metaFields()->filter(function ($metaField, $key) use ($field_name) {
-            return $metaField->name === $field_name;
-        })->first();
-    }
 }
