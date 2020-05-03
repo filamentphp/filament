@@ -26,7 +26,43 @@ trait HasForm
     }
 
     /**
-     * Save the form
+     * Set the model data used by the form.
+     *
+     * @return void
+     */
+    protected function setModelData()
+    {
+        $data = $this->model ? $this->model->toArray() : [];
+
+        foreach($this->fields() as $field) {
+            if (!isset($data[$field->name]) && !$field->is_meta) {
+                $data[$field->name] = $field->default;
+            }
+        }
+
+        $this->model_data = $data;
+    }
+
+    /**
+     * Set the meta data used by the form.
+     * 
+     * @return void
+     */
+    protected function setMetaData()
+    {
+        $data = $this->model ? $this->model->getAllMeta()->toArray() : [];
+
+        foreach($this->fields() as $field) {
+            if (!isset($data[$field->name]) && $field->is_meta) {
+                $data[$field->name] = $field->default;
+            }
+        }
+
+        $this->meta_data = $data;
+    }
+
+    /**
+     * Save the form.
      * 
      * @return void
      */
@@ -36,7 +72,7 @@ trait HasForm
     }
 
     /**
-     * Submit and validate form
+     * Submit and validate form.
      * 
      * @throws Illuminate\Validation|ValidationException
      * @return void
@@ -48,7 +84,7 @@ trait HasForm
     }
 
     /**
-     * Successful form submission
+     * Successful form submission.
      * 
      * @return void
      */
@@ -125,7 +161,7 @@ trait HasForm
     }
 
     /**
-     * Runs after any update to the Livewire component's data
+     * Runs after any update to the Livewire component's data.
      * 
      * @var string $name
      * @return void
@@ -136,7 +172,7 @@ trait HasForm
     }
 
     /**
-     * Return fieldset classpath for a given called class
+     * Return fieldset classpath for a given called class.
      * 
      * @return null|string
      */
@@ -197,31 +233,5 @@ trait HasForm
         return $this->fields()->filter(function ($field, $key) use ($field_name) {
             return $field->name === $field_name;
         })->first();
-    }
-
-    protected function setModelData()
-    {
-        $data = $this->model ? $this->model->toArray() : [];
-
-        foreach($this->fields() as $field) {
-            if (!isset($data[$field->name]) && !$field->is_meta) {
-                $data[$field->name] = $field->default;
-            }
-        }
-
-        $this->model_data = $data;
-    }
-
-    protected function setMetaData()
-    {
-        $data = $this->model ? $this->model->getAllMeta()->toArray() : [];
-
-        foreach($this->fields() as $field) {
-            if (!isset($data[$field->name]) && $field->is_meta) {
-                $data[$field->name] = $field->default;
-            }
-        }
-
-        $this->meta_data = $data;
     }
 }
