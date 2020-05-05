@@ -42,7 +42,7 @@ class UserEditFieldset
                 ->fileValidationMessages([
                     'image' => __('The Avatar must be a valid image.'),
                 ])
-                ->files($model->avatar)
+                ->mediaIds($model->avatar)
                 ->group('account'),
             Input::make('password')
                 ->type('password')
