@@ -6,9 +6,10 @@ const purgecss = require('@fullhuman/postcss-purgecss')({
     './src/**/*.php',
     './resources/views/**/*.php',
     './resources/js/**/*.js',
+    '../field-file/resources/views/**/*.php', // used for locally developing sibling packages
   ],
   defaultExtractor: (content) => content.match(/[\w-/.:]+(?<!:)/g) || [],
-  whitelistPatterns: [/alert/, /form/, /btn/, /w-/, /h-/],
+  whitelistPatterns: [/alert/, /form/, /btn/],
 })
 
 /*
