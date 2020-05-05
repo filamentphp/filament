@@ -29,8 +29,9 @@
     "laravel/ui": "^2.0",
     "league/glide-laravel": "^1.0",
     "livewire/livewire": "^1.0",
+    "nicolaslopezj/searchable": "^1.0",
     "spatie/laravel-permission": "^3.11",
-    "thomaswelton/laravel-gravatar": "~1.0",
+    "thomaswelton/laravel-gravatar": "^1.0",
     "watson/active": "^5.0"
   },
   "autoload": {
