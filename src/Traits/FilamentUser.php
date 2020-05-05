@@ -23,10 +23,10 @@ trait FilamentUser
      */
     public function initializeFilamentUser()
     {
-        $this->mergeFillable([
+        $this->fillable(array_merge($this->getFillable(), [
             'is_super_admin', 
             'avatar',
-        ]);
+        ]));
 
         $this->mergeCasts([
             'avatar' => 'array',
