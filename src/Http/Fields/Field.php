@@ -26,6 +26,7 @@ class Field
     protected $required;
     protected $view;
     protected $multiple;
+    protected $sortable;
     protected $disabled;
 
     public function __construct($name, $is_meta = false)
@@ -74,6 +75,12 @@ class Field
     public function multiple()
     {
         $this->multiple = true;
+        return $this;
+    }
+
+    public function sortable()
+    {
+        $this->sortable = true;
         return $this;
     }
     

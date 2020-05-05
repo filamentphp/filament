@@ -9,7 +9,6 @@ use Filament\Http\Fields\Checkboxes;
 use Illuminate\Validation\Rule;
 use Filament\Models\Role;
 use Filament\Models\Permission;
-use Filament\Models\Media;
 
 class UserEditFieldset
 {
@@ -43,7 +42,7 @@ class UserEditFieldset
                 ->fileValidationMessages([
                     'image' => __('The Avatar must be a valid image.'),
                 ])
-                ->files(Media::whereIn('id', $model->avatar)->pluck('value', 'id')->all())
+                ->files($model->avatar)
                 ->group('account'),
             Input::make('password')
                 ->type('password')
