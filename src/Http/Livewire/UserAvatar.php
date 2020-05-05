@@ -27,7 +27,7 @@ class UserAvatar extends Component
                 alt="{{ $user->name }}" 
                 width="{{ $size }}" 
                 height="{{ $size }}"
-                load="lazy">
+                loading="lazy">
         blade;
     }
 
