@@ -22,8 +22,7 @@ class CreateMediaTable extends Migration
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id();
-            $table->integer('mediable_id')->integer();
-            $table->integer('mediable_type')->string();
+            $table->morphs('mediable');
             $table->string('value');
             $table->timestamps();
         });
