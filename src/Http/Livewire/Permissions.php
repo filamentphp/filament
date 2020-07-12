@@ -16,7 +16,9 @@ class Permissions extends Component
         $this->authorize('view', Permission::class);
 
         $permissions = Permission::search($this->search)
-                            ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                            ->when($this->sortField, function ($q) {
+                                return $q->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc');
+                            })
                             ->paginate($this->perPage);
 
         $customPermissions = Permission::where('is_system', false)->get();

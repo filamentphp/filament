@@ -15,7 +15,9 @@ class Roles extends Component
     {
         $this->authorize('view', Role::class);
 
-        $roles = Role::orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+        $roles = Role::when($this->sortField, function ($q) {
+                        return $q->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc');
+                    })
                     ->paginate($this->perPage);
                     
         $allRoles = Role::all();
