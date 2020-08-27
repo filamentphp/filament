@@ -106,7 +106,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td class="text-center" colspan="4">{{ __('No roles found.') }}</td>
+                    <td class="text-center" colspan="5">{{ __('No roles found.') }}</td>
                 </tr>
             @endforelse
         </tbody>
