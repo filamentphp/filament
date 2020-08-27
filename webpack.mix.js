@@ -1,17 +1,5 @@
 const mix = require('laravel-mix')
 
-const purgecss = require('@fullhuman/postcss-purgecss')({
-  content: [
-    './config/*.php',
-    './src/**/*.php',
-    './resources/views/**/*.php',
-    './resources/js/**/*.js',
-    '../field-file/resources/views/**/*.php', // used for locally developing sibling packages
-  ],
-  defaultExtractor: (content) => content.match(/[\w-/.:]+(?<!:)/g) || [],
-  whitelistPatterns: [/alert/, /form/, /btn/],
-})
-
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
@@ -31,6 +19,5 @@ mix
     require('postcss-import'),
     require('tailwindcss'),
     require('postcss-nested'),
-    ...(process.env.NODE_ENV === 'production' ? [purgecss] : []),
   ])
   .version()

@@ -1,6 +1,16 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
+  future: {
+    removeDeprecatedGapUtilities: true,
+  },
+  purge: [
+    './config/*.php',
+    './src/**/*.php',
+    './resources/views/**/*.php',
+    './resources/js/**/*.js',
+    '../field-file/resources/views/**/*.php', // used for locally developing sibling packages
+  ],
   theme: {
     extend: {
       colors: {
