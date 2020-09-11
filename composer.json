@@ -28,7 +28,7 @@
     "plank/laravel-metable": "^2.1",
     "laravel/ui": "^2.0",
     "league/glide-laravel": "^1.0",
-    "livewire/livewire": "^1.1",
+    "livewire/livewire": "^2.0",
     "nicolaslopezj/searchable": "^1.0",
     "spatie/laravel-permission": "^3.12",
     "thomaswelton/laravel-gravatar": "^1.2",
