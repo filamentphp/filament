@@ -1,4 +1,4 @@
-> **This Repo is Archived (Read Only)** in favor of using **[Laravel Jetstream](https://jetstream.laravel.com)** (a first-party application scaffolding for Laravel)
+> **PLEASE NOTE: This Repo is going to be making some considerable changes** Future _2.x_ versions will be developed as an add-on resource for extending **[Laravel Jetstream](https://jetstream.laravel.com)** (a first-party application scaffolding for Laravel).
 
 ![Filament User Listing Screenshot](https://raw.githubusercontent.com/laravel-filament/filament/master/resources/images/screenshots/edit-user-darkmode.jpg)
 
