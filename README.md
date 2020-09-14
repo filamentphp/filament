@@ -1,19 +1,22 @@
+> **This Repo is Archived (Read Only)** in favor of using **[Laravel Jetstream](https://jetstream.laravel.com)** (a first-party application scaffolding for Laravel)
+
 ![Filament User Listing Screenshot](https://raw.githubusercontent.com/laravel-filament/filament/master/resources/images/screenshots/edit-user-darkmode.jpg)
 
-# Filament
+## Filament
 
 A lightweight admin for your Laravel app.
 
-#### **_This package is in very active development – I would love help to make it awesome!_**
+### Notes
 
-## Notes
-
-### Keep it Minimal
+#### Keep it Minimal
 
 The theme of this admin is "Light and Fast" – just enough to get you started and creating your next project – keeping setup to a minimum with hardly any changes to the default Laravel app. Let's use as little Javascript as possible by adhereing to using [Livewire](https://laravel-livewire.com) as much as possible (using [Alpine JS](https://github.com/alpinejs/alpine) when absolutely needed and use [Spruce](https://github.com/ryangjchandler/spruce) for some simple state management between front-end components when absolutely necessary).
 
-### Roadmap
+#### Roadmap
 
+> **Note**: If you're looking for an application boilerplate that supports the TALL stack, you should check out [Laravel Jetstream](https://github.com/laravel/jetstream). It comes with authentication scaffolding, account management, teams support.
+
+<strike>
 > This is more of a proposed feature list then a solid roadmap. I am _totally open_ to new ideas, with the overall goal of keeping this core package pretty minimal allowing total customization via your main Laravel app / additional add-on packages.
 
 - Setup tests (via [Testbench Component](https://github.com/orchestral/testbench)) and start creating them for existing features.
@@ -24,6 +27,7 @@ The theme of this admin is "Light and Fast" – just enough to get you started a
 - Create new `Resources` feature. Allowing a user to create a generic resource with schemaless attributes managed by custom fields.
   - Implement [laravel-metable](https://github.com/plank/laravel-metable) in this feature as well, as it would allow the addition of custom meta fields in a pretty flexible way beyond the core required schema.
 - Create a `GraphQL` API using [Lighthouse](https://github.com/nuwave/lighthouse) and corresponding admin section (likely using [GraphiQL](https://github.com/graphql/graphiql)) for previewing the API. _This one is pretty opinionated_ and needs to be in the core (our team at [East Slope Studio](https://eastslope.studio) uses it extensively for our decoupled front-end web and app development projects (built with Eleventy, React, React Native etc.).
+</strike>
 
 ---
 
