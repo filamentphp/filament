@@ -3,7 +3,6 @@
 namespace Filament\Http\Fieldsets;
 
 use Filament\Http\Fields\Input;
-use Filament\Fields\File\File;
 use Filament\Http\Fields\Checkbox;
 use Filament\Http\Fields\Checkboxes;
 use Illuminate\Validation\Rule;
@@ -35,14 +34,6 @@ class UserEditFieldset
                     Rule::unique('users', 'email')->ignore($model->id),
                 ])
                 ->class('md:col-span-2')
-                ->group('account'),
-            File::make('avatar')
-                ->rules('array')
-                ->fileRules('image')
-                ->fileValidationMessages([
-                    'image' => __('The Avatar must be a valid image.'),
-                ])
-                ->mediaIds($model->avatar)
                 ->group('account'),
             Input::make('password')
                 ->type('password')
