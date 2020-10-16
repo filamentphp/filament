@@ -16,7 +16,7 @@ class FilamentServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/filament.php', 'filament');
-        $this->registerFacade();
+        $this->app->singleton('filament', Filament::class);
         $this->registerLivewireComponents();      
     }
 
@@ -28,11 +28,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->bootRoutes();
         $this->bootCommands();
         $this->bootPublishing();
-    }
-
-    protected function registerFacade()
-    {
-        $this->app->singleton('filament', Filament::class);
     }
 
     protected function registerLivewireComponents(): void
