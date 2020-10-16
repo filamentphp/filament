@@ -2,14 +2,15 @@
 
 namespace Filament;
 
-class BladeDirectives {
-    /**
-     * Get Filament Assets
-     * 
-     * @return string
-     */
-    public static function assets()
+class BladeDirectives 
+{
+    public static function styles(): string
     {
-        return '{!! \Filament::assets() !!}';
+        return '{!! \Filament::styles() !!}';
+    }
+
+    public static function scripts(): string
+    {
+        return '{!! \Filament::scripts() !!}';
     }
 }

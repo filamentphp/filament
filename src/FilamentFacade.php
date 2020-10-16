@@ -6,8 +6,11 @@ use Illuminate\Support\Facades\Facade;
 
 class FilamentFacade extends Facade
 {
+    /**
+     * {@inheritDoc}
+     */
     protected static function getFacadeAccessor()
     {
-        return 'filament';
+        return Filament::class;
     }
 }

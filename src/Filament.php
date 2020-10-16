@@ -3,13 +3,29 @@
 namespace Filament;
 
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
-use League\Glide\Urls\UrlBuilderFactory;
 
-class Filament {
+class Filament
+{
+    /**
+     * Indicates if Filament routes will be registered.
+     *
+     * @var bool
+     */
+    public static $registersRoutes = true;
 
+    /**
+     * Configure Filament to not register its routes.
+     *
+     * @return static
+     */
+    public function ignoreRoutes()
+    {
+        static::$registersRoutes = false;
+
+        return new static;
+    }
+    
     /**
      * `base` path
      *
@@ -19,39 +35,6 @@ class Filament {
     public function basePath($path = '')
     {
         return __DIR__.'/../'.ltrim($path, '/');
-    }
-
-    /**
-     * `database` path
-     *
-     * @param string $path
-     * @return string
-     */
-    public function databasePath($path = '')
-    {
-        return $this->basePath('database/'.ltrim($path, '/'));
-    }
-
-    /**
-     * `route` path
-     *
-     * @param string $path
-     * @return string
-     */
-    public function routePath($path = '')
-    {
-        return $this->basePath('routes/'.ltrim($path, '/'));
-    }
-
-    /**
-     * `resource` path
-     *
-     * @param string $path
-     * @return string
-     */
-    public function resourcePath($path = '')
-    {
-        return $this->basePath('resources/'.ltrim($path, '/'));
     }
 
     /**
@@ -65,130 +48,79 @@ class Filament {
         return $this->basePath('dist/'.ltrim($path, '/'));
     }
 
-    /**
-     * Check if user has requested an filament path.
-     *
-     * @return boolean
-     */
-    public function handling()
+    public function handling(): boolean
     {
-        return preg_match('#^'.config('filament.path').'($|/)'.'#i', Request::path());
+        return preg_match('#^'.config('filament.prefix.route').'($|/)'.'#i', Request::path());
     }
 
-    /**
-     * Generate markup needed for CP assets.
-     * 
-     * @return Illuminate\Support\HtmlString
-     */
-    public function assets()
+    public function styles(): HtmlString
     {
-        $manifest = json_decode(file_get_contents($this->distPath('mix-manifest.json')), true);
-        parse_str(parse_url($manifest['/css/app.css'], PHP_URL_QUERY), $cssInfo);
-        parse_str(parse_url($manifest['/js/app.js'], PHP_URL_QUERY), $jsInfo);
+        $key = '/css/filament.css';
+        $asset = $this->getAsset($key);
+        $publishedAsset = $this->getPublicAsset($key);
+
+        if ($publishedAsset) {
+            $assetWarning = ($publishedAsset !== $asset) ? 
+                '<script>console.warn("Filament: The published style assets are out of date.\n");</script>' : null;
+
+            return new HtmlString("
+                <!-- Filament Published Styles -->
+                {$assetWarning}
+                <link rel=\"stylesheet\" href=\"/vendor/filament{$publishedAsset}\">
+            ");
+        }
+
+        parse_str(parse_url($asset, PHP_URL_QUERY), $cssInfo);
+        $src = route('filament.assets.css', $cssInfo);
 
         return new HtmlString('
             <!-- Filament Styles -->
-            <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-            <link rel="stylesheet" href="'.route('filament.assets.css', $cssInfo).'" />
-                 
-            <!-- Filament Scripts -->
-            <script src="'.route('filament.assets.js', $jsInfo).'" defer></script>
+            <link rel="stylesheet" href="'.$src.'">
         ');
     }
 
-    /**
-     * SVG's
-     *
-     * @param string $path
-     * @param string $class
-     * @return mixed
-     */
-    public function svg($path, $class = null, $icon = false)
+    public function scripts(): Htmlstring
     {
-        $file = $icon ? "$path.svg" : $this->resourcePath("svg/$path.svg");
-        if (file_exists($file)) {
-            $contents = file_get_contents($file);
-            $contents = preg_replace('#\s(id|class)="[^"]+"#', '', $contents); // remove ID's and classes
-            $result = $class === null ? $contents : str_replace('viewBox', 'class="'.$class.'" viewBox', $contents);
-            return new HtmlString($result);
-        }
-    }
+        $key = '/js/filament.js'; 
+        $asset = $this->getAsset($key);
+        $publishedAsset = $this->getPublicAsset($key);
 
-    /**
-     * SVG icon's
-     *
-     * @param string $icon
-     * @param string $class
-     * @return mixed
-     */
-    public function icon($icon, $class = null)
-    {
-        $path = base_path("vendor/driesvints/blade-icons/resources/images/$icon");
-        return $this->svg($path, $class, true);
-    }
+        if ($publishedAsset) {
+            $assetWarning = ($publishedAsset !== $asset) ? 
+                '<script>console.warn("Filament: The published javascript assets are out of date.\n");</script>' : null;
 
-    /**
-     * Format bytes to kb, mb, gb, tb
-     *
-     * @param  integer $size
-     * @param  integer $precision
-     * @return integer
-     */
-    public function formatBytes($size, $precision = 2)
-    {
-        if ($size > 0) {
-            $size = (int) $size;
-            $base = log($size) / log(1024);
-            $suffixes = array('bytes', 'KB', 'MB', 'GB', 'TB');
-            return round(pow(1024, $base - floor($base)), $precision).$suffixes[floor($base)];
-        } else {
-            return $size;
-        }
-    }
-
-    /**
-     * Generates an asset URL.
-     * 
-     * @param string $path
-     *  
-     * @return mixed
-     */
-    public function asset($path)
-    {
-        return Storage::disk(config('filament.disk'))->url($path);
-    }
-
-    /**
-     * Generates a secure Glide image URL.
-     * 
-     * @link https://glide.thephpleague.com/1.0/config/security/
-     * 
-     * @param string $path
-     * @param array  $manipulations
-     *  
-     * @return mixed
-     */
-    public function image($path, $manipulations = [])
-    {
-        if (empty($manipulations)) {
-            return $this->asset($path);
+            return new HtmlString("
+                <!-- Filament Published Scripts -->
+                {$assetWarning}
+                <script src=\"/vendor/filament{$publishedAsset}\" data-turbolinks-eval=\"false\"></script>
+            ");
         }
 
-        $urlBuilder = UrlBuilderFactory::create(null, config('app.key'));
-        return route('filament.image', ['path' => ltrim($urlBuilder->getUrl($path, $manipulations), '/')]);
+        parse_str(parse_url($asset, PHP_URL_QUERY), $jsInfo);
+        $src = route('filament.assets.js', $jsInfo);
+
+        return new HtmlString('
+            <!-- Filament Scripts -->
+            <script src="'.$src.'" data-turbolinks-eval="false"></script>
+        ');
     }
 
-    /**
-     * Format a label from a given value
-     * 
-     * @param string $value
-     * @return string
-     */
-    public function formatLabel(string $value)
+    protected function getAsset($key): string
     {
-        return Str::of($value)
-            ->replaceMatches('/[\-_]/', ' ')
-            ->title()
-            ->__toString();
+        $manifest = json_decode(file_get_contents($this->distPath('mix-manifest.json')), true);
+
+        return $manifest[$key];
+    }
+
+    /** @return mixed */
+    protected function getPublicAsset($key)
+    {
+        if (!file_exists(public_path('vendor/filament/mix-manifest.json'))) {
+            return;
+        }
+
+        $manifest = json_decode(file_get_contents(public_path('vendor/filament/mix-manifest.json')), true);
+
+        return $manifest[$key];
     }
 }
