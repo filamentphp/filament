@@ -3,89 +3,72 @@
 namespace Filament;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\Support\Facades\{
     Route,
     Gate,
+    Blade,
 };
-use Illuminate\Support\Str;
-use Illuminate\Filesystem\Filesystem;
-use Symfony\Component\Finder\SplFileInfo;
-use Livewire\{
-    Livewire,
-    Component,
-};
+use Livewire\Livewire;
 
 class FilamentServiceProvider extends ServiceProvider
 {
-    /**
-     * Register bindings in the container.
-     *
-     * @return void
-     */
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/filament.php', 'filament');
+        $this->registerFacade();
+        $this->registerLivewireComponents();      
     }
 
-    /**
-     * Bootstrap any package services.
-     *
-     * @return void
-     */
-    public function boot()
+    public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'filament');
-        $this->configurePolicies();
-        $this->configureComponents();
-        $this->configureLivewireComponents();
-        $this->configurePublishing();
-        $this->configureRoutes();
+        $this->bootPolicies();
+        $this->bootResources();
+        $this->bootDirectives();
+        $this->bootRoutes();
+        $this->bootCommands();
+        $this->bootPublishing();
     }
 
-    /**
-     * Configure the package policies.
-     */
-    protected function configurePolicies()
+    protected function registerFacade()
+    {
+        $this->app->singleton('filament', Filament::class);
+    }
+
+    protected function registerLivewireComponents(): void
+    {
+        $this->app->afterResolving(BladeCompiler::class, function () {
+            $prefix = config('filament.prefix.component', '');
+
+            /** @var LivewireComponent $component */
+            foreach (config('filament.livewire', []) as $alias => $component) {
+                $alias = $prefix ? "$prefix-$alias" : $alias;
+
+                Livewire::component($alias, $component);
+            }
+        });
+    }
+
+    protected function bootPolicies(): void
     {
         Gate::guessPolicyNamesUsing(function ($modelClass) {
             return 'Filament\\Policies\\'.class_basename($modelClass).'Policy';
         });
     }
 
-    /**
-     * Configure the Filament Blade components.
-     *
-     * @return void
-     */
-    protected function configureComponents()
+    protected function bootResources(): void
     {
-        $components = collect((new Filesystem)->allFiles(__DIR__.'/View/Components'))->map(function (SplFileInfo $file) {
-            $baseName = class_basename(str_replace('.php', '', $file->getPathname()));
-            return "\\Filament\\View\\Components\\{$baseName}";
-        })->all();
-
-        $this->loadViewComponentsAs('filament', $components);
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'filament');
+        $this->loadViewComponentsAs(config('filament.prefix.component', 'filament'), config('filament.components', []));
     }
 
-    /**
-     * Configure the Filament Livewire components.
-     * 
-     * @return void
-     */
-    protected function configureLivewireComponents()
+    protected function bootDirectives(): void
     {
-        collect((new Filesystem)->allFiles(__DIR__.'/Http/Livewire'))->map(function (SplFileInfo $file) {
-            $baseName = class_basename(str_replace('.php', '', $file->getPathname()));
-            Livewire::component('filament::'.Str::of($baseName)->kebab(), "\\Filament\\Http\\Livewire\\{$baseName}");
-        });     
+        Blade::directive('filamentStyles', [BladeDirectives::class, 'styles']);
+        Blade::directive('filamentScripts', [BladeDirectives::class, 'scripts']);
     }
 
-    /**
-     * Configure publishing for the package.
-     *
-     * @return void
-     */
-    protected function configurePublishing()
+    protected function bootPublishing(): void
     {
         if (! $this->app->runningInConsole()) {
             return;
@@ -100,37 +83,30 @@ class FilamentServiceProvider extends ServiceProvider
         ], 'filament-views');
 
         $this->publishes([
-            // __DIR__.'/../database/migrations/2020_09_13_200000_create_resources_table.php' => database_path('migrations/2020_09_13_200000_create_resources_table.php'),
-        ], 'filament-resources-migrations');
-
-        $this->publishes([
-            $this->getRoutes() => base_path('routes/filament.php'),
-        ], 'filament-routes');
+            __DIR__.'/../dist' => public_path('vendor/filament'),
+        ], 'filament-assets');
     }
 
-    /**
-     * Configure the routes offered by the application.
-     *
-     * @return void
-     */
-    protected function configureRoutes()
+    protected function bootRoutes(): void
     {
         if (Filament::$registersRoutes) {
-            Route::group([
-                'namespace' => 'Filament\Http\Controllers',
-            ], function () {
-                $this->loadRoutesFrom($this->getRoutes());
-            });
+            $this->loadRoutesFrom($this->getRoutes());
         }
     }
 
-    /**
-     * Get the routes for the application.
-     * 
-     * @return string
-     */
-    protected function getRoutes()
+    protected function bootCommands(): void
     {
-        return __DIR__.'/../routes/'.config('filament.stack').'.php';
+        if (!$this->app->runningInConsole()) {
+            return;
+        }
+            
+        $this->commands([
+            //...
+        ]);
+    }
+
+    protected function getRoutes(): string
+    {
+        return __DIR__.'/../routes/filament.php';
     }
 }

@@ -1,11 +1,10 @@
 {
     "name": "filament/filament",
-    "description": "Extend Laravel Jetstream with Filament.",
-    "keywords": ["laravel", "laravel-jetstream", "tailwind", "livewire"],
+    "description": "A lightweight admin for your Laravel app.",
+    "keywords": ["laravel", "tailwind", "livewire"],
     "license": "MIT",
     "require": {
-        "laravel/jetstream": "^1.1",
-        "livewire/livewire": "^2.0"
+        "livewire/livewire": "^2.2"
     },
     "require-dev": {
         "mockery/mockery": "^1.0",
@@ -26,7 +25,10 @@
         "laravel": {
             "providers": [
                 "Filament\\FilamentServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Filament": "Filament\\FilamentFacade"
+            }
         }
     },
     "scripts": {

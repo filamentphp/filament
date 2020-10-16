@@ -16,21 +16,21 @@ class Features
     }
 
     /**
-     * Determine if the application is using any user features.
+     * Determine if the application manages users.
      *
      * @return bool
      */
-    public static function hasUserManagementFeatures()
+    public static function managesUsers()
     {
-        return static::enabled(static::managesUsers());
+        return static::enabled(static::users());
     }
 
     /**
-     * Enable the user management feature.
+     * Enable the users feature.
      *
      * @return string
      */
-    public static function managesUsers()
+    public static function users()
     {
         return 'users';
     }

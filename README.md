@@ -1,13 +1,5 @@
 # Filament
 
-Extend Laravel Jetstream with Filament.
+A lightweight admin for your Laravel app.
 
-## Features
-
-### User management
-
-- [ ] Register new users from within Jetstream.
-
-#### Permissions
-
-- [ ] User permissions not bound to teams for more granular access control.
+> This is a new version that is very much a work in progress!

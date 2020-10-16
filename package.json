@@ -1,0 +1,32 @@
+{
+  "name": "filament",
+  "scripts": {
+    "dev": "npm run development",
+    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "npm run development -- --watch",
+    "prod": "npm run production",
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "start": "npm run watch"
+  },
+  "author": {
+    "name": "Ryan Scherler",
+    "email": "ryan@eastslope.studio"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "browser-sync": "^2.26.12",
+    "browser-sync-webpack-plugin": "^2.2.2",
+    "cross-env": "^7.0.2",
+    "dotenv": "^8.2.0",
+    "laravel-mix": "^5.0.7",
+    "postcss-import": "^12.0.1",
+    "postcss-nested": "^4.2.3",
+    "prettier": "^2.1.2",
+    "tailwindcss": "^1.9.3",
+    "vue-template-compiler": "^2.6.12"
+  },
+  "dependencies": {
+    "alpinejs": "^2.7.0",
+    "focus-visible": "^5.1.0"
+  }
+}
