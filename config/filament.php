@@ -65,14 +65,14 @@ return [
     | Components
     |--------------------------------------------------------------------------
     |
-    | Below you reference all components that should be loaded for your app.
-    | By default all components from Filament are loaded in. You can
-    | disable or overwrite any component class or alias that you want.
+    | Below you reference all class-based components that should be loaded 
+    | for your app.By default all components from Filament are loaded in. 
+    | You can disable or overwrite any component class or alias that you want.
     |
     */
 
     'components' => [
-        //...
+        // 'alert' => Components\Alerts\Alert::class,
     ],
 
     /*

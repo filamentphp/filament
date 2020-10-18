@@ -1,8 +1,7 @@
 @props([
+    'type' => 'text',
     'name',
-    'class' => null,
-    'label' => null,
-    'type' => 'text'
+    'hasError' => $errors->has($name) ? ' border-red-600' : '',
 ])
 
-<input {{ $attributes }} name="{{ $name }}" type="{{ $type }}" class="{{ $class ?? 'form-input' }} @error($name) border-red-400 @enderror">
+<input type="{{ $type }}" name="{{ $name }}" {{ $attributes->merge(['class' => 'form-input w-full'.$hasError]) }}>
