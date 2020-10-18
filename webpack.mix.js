@@ -3,15 +3,6 @@ let mix = require('laravel-mix')
 
 /*
  |--------------------------------------------------------------------------
- | Config
- |--------------------------------------------------------------------------
- |
- */
-const SRC = 'resources'
-const DIST = 'dist'
-
-/*
- |--------------------------------------------------------------------------
  | Mix Asset Management
  |--------------------------------------------------------------------------
  |
@@ -19,6 +10,10 @@ const DIST = 'dist'
  | for your application.
  |
  */
+
+// Config
+const SRC = 'resources'
+const DIST = 'dist'
 
 // set paths
 mix.setPublicPath(DIST)

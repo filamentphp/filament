@@ -1,6 +1,4 @@
 {
-    "/js/filament.js": "/js/filament.js?id=1faaac0d122aa02f8bf6",
-    "/css/filament.css": "/css/filament.css?id=a88feaa8e5c631116abb",
-    "/js/filament.js.map": "/js/filament.js.map?id=7eb1b0da03c81ab3ba1b",
-    "/css/filament.css.map": "/css/filament.css.map?id=96617d0d1a6152e58710"
+    "/js/filament.js": "/js/filament.js",
+    "/css/filament.css": "/css/filament.css"
 }

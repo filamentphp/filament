@@ -1,7 +1,14 @@
 @import 'tailwindcss/base';
-@import './base.css';
-
 @import 'tailwindcss/components';
-/* @import './components/button.css'; */
-
 @import 'tailwindcss/utilities';
+
+@layer base {
+  @import './base.css';
+}
+
+@layer components {
+  /* @import './components/button.css'; */
+}
+
+@layer utilities {
+}

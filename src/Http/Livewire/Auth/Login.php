@@ -27,6 +27,7 @@ class Login extends Component
 
     public function render()
     {
-        return view('filament::livewire.auth.login')->layout('filament::layouts.app');
+        return view('filament::livewire.auth.login')
+            ->layout('filament::layouts.auth');
     }
 }
