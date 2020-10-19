@@ -1,5 +1,5 @@
 // tailwind.config.js
-const { colors } = require('tailwindcss/defaultTheme')
+// const { colors, ... } = require('tailwindcss/defaultTheme')
 
 module.exports = {
   future: {
@@ -10,14 +10,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        gray: {
-          ...colors.gray,
-          100: '#F8FAFC',
-        },
         blue: {
-          ...colors.blue,
-          800: '#0C1D50',
-          700: '#173673',
+          default: '#5487DE',
+          100: '#FFFFFF',
+          200: '#D4E1F7',
+          300: '#A9C3EF',
+          400: '#7EA5E7',
+          500: '#5487DE',
+          600: '#2968D6',
+          700: '#2154AB',
+          800: '#183F81',
+          900: '#102A56',
         },
       },
     },

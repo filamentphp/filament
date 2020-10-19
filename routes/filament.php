@@ -23,6 +23,7 @@ Route::group([
 
     // Auth
     Route::get('/login', config('filament.livewire.login'))->name('login');
+    Route::get('/forgot-password', config('filament.livewire.forgot-password'))->name('password.forgot');
 
     // Authenticated routes
     Route::group(['middleware' => ['auth', 'verified']], function () {

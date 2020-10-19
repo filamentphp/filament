@@ -14,6 +14,7 @@ class Login extends Component
 
     public $email;
     public $password;
+    public $remember = false;
 
     public function login(Request $request)
     {
@@ -32,7 +33,7 @@ class Login extends Component
             return $this->sendLockoutResponse($request);
         }
 
-        if (Auth::attempt($data)) {
+        if (Auth::attempt($data, (bool) $this->remember)) {
             return redirect()->intended(RouteServiceProvider::HOME);
         }
 
@@ -47,6 +48,6 @@ class Login extends Component
     public function render()
     {
         return view('filament::livewire.auth.login')
-            ->layout('filament::layouts.auth');
+            ->layout('filament::layouts.auth', ['title' => 'Sign in to your account']);
     }
 }
