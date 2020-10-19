@@ -30,6 +30,9 @@ module.exports = {
           borderColor: theme('colors.gray.400'),
           boxShadow: theme('boxShadow.sm'),
         },
+        checkbox: {
+          borderColor: theme('colors.gray.400'),
+        },
       },
     }),
   },

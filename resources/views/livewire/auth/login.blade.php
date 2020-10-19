@@ -1,4 +1,4 @@
-<form wire:submit.prevent="login" class="space-y-4" novalidate>
+<form wire:submit.prevent="login" class="flex flex-col space-y-4" novalidate>
     <x-filament::input-group-stacked name="email" :label="__('E-Mail Address')" required>
         <x-filament::input type="email" name="email" wire:model.defer="email" id="email" :placeholder="__('E-Mail Address')" required autocomplete="email" />
     </x-filament::input-group-stacked>
@@ -14,7 +14,7 @@
         <x-filament::input type="password" name="password" wire:model.defer="password" id="password" :placeholder="__('Password')" required autocomplete="current-password" />
     </x-filament::input-group-stacked>
 
-    <x-filament::checkbox name="remember" class="block">
+    <x-filament::checkbox name="remember">
         {{ __('Remember Me') }}
     </x-filament::checkbox>
 
