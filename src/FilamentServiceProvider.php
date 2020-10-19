@@ -55,6 +55,7 @@ class FilamentServiceProvider extends ServiceProvider
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'filament');
         $this->loadViewComponentsAs(config('filament.prefix.component', 'filament'), config('filament.components', []));
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'filament');
     }
 
     protected function bootDirectives(): void
@@ -76,6 +77,10 @@ class FilamentServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/filament'),
         ], 'filament-views');
+
+        $this->publishes([
+            __DIR__.'/../resources/lang' => resource_path('lang/vendor/filament'),
+        ], 'filament-lang');
 
         $this->publishes([
             __DIR__.'/../dist' => public_path('vendor/filament'),

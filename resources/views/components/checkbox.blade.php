@@ -1,6 +1,6 @@
 @props([
     'name',
-    'hasError' => $errors->has($name) ? ' bg-red-600' : '',
+    'hasError' => $errors->has($name) ? ' text-red-600' : '',
 ])
 
 <x-filament::label {{ $attributes }}>

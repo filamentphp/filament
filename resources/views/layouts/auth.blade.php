@@ -7,7 +7,7 @@
         <div class="w-full max-w-md">
             <header class="text-center space-y-2 mb-6">
                 <div class="flex items-center justify-center">
-                    <a href="{{ url('/') }}" rel="home" class="text-blue-600 hover:text-blue-800">
+                    <a href="{{ url('/') }}" rel="home" class="text-blue-600 hover:text-blue-800 transition-colors duration-200">
                         <x-filament::logo class="w-12 h-12 fill-current" />
                     </a>
                 </div>

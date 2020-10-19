@@ -1,5 +1,5 @@
 // tailwind.config.js
-// const { colors, ... } = require('tailwindcss/defaultTheme')
+// const { colors,  } = require('tailwindcss/defaultTheme')
 
 module.exports = {
   future: {
@@ -24,6 +24,14 @@ module.exports = {
         },
       },
     },
+    customForms: (theme) => ({
+      default: {
+        input: {
+          borderColor: theme('colors.gray.400'),
+          boxShadow: theme('boxShadow.sm'),
+        },
+      },
+    }),
   },
   variants: {},
   plugins: [

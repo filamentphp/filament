@@ -48,6 +48,6 @@ class Login extends Component
     public function render()
     {
         return view('filament::livewire.auth.login')
-            ->layout('filament::layouts.auth', ['title' => 'Sign in to your account']);
+            ->layout('filament::layouts.auth', ['title' => trans('filament::auth.signin')]);
     }
 }

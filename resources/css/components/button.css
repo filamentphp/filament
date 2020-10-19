@@ -1,5 +1,5 @@
 .btn {
-  @apply font-medium py-2 px-4 bg-blue-600 text-white rounded-lg transition duration-200 shadow;
+  @apply font-medium py-2 px-4 bg-blue-600 text-white rounded transition duration-200 shadow;
 
   &:focus {
     @apply shadow-outline outline-none;

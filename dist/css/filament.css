@@ -1,10 +1,70 @@
-/*
-    This will hide the focus indicator if the element receives focus via the mouse,
-    but it will still show up on keyboard focus.
-    */
+/**
+ * Smoothly animate the scroll position, instead of a straight jump.
+ */
 
-.js-focus-visible :focus:not(.focus-visible) {
-  outline: none;
+html {
+  scroll-behavior: smooth;
+}
+
+/**
+ * Disable animations if the user has turned on the a11y option for reduced motion due to
+ * vestibular disorders etc.
+ *
+ * @link https://css-tricks.com/introduction-reduced-motion-media-query/#article-header-id-3
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    -webkit-animation-duration: 0.01s !important;
+            animation-duration: 0.01s !important;
+    transition-duration: 0.01s !important;
+  }
+}
+
+/**
+   * ::selection selector: color, background, cursor, and outline.
+   */
+
+::-moz-selection {
+  --bg-opacity: 1;
+  background-color: #2968D6;
+  background-color: rgba(41, 104, 214, var(--bg-opacity));
+  --text-opacity: 1;
+  color: #fff;
+  color: rgba(255, 255, 255, var(--text-opacity));
+}
+
+::selection {
+  --bg-opacity: 1;
+  background-color: #2968D6;
+  background-color: rgba(41, 104, 214, var(--bg-opacity));
+  --text-opacity: 1;
+  color: #fff;
+  color: rgba(255, 255, 255, var(--text-opacity));
+}
+
+/**
+   * `x-cloak` attributes are removed from elements when Alpine initializes.
+   * This is useful for hiding pre-initialized DOM.
+   *
+   * @link https://github.com/alpinejs/alpine#x-cloak
+   *
+   */
+
+[x-cloak] {
+  display: none;
+}
+
+/**
+   * Selectively disable the default focus style by selecting for the case when the polyfill
+   * is loaded and [data-focus-visible-added] attribute is not applied to the element:
+   *
+   * @link https://github.com/WICG/focus-visible#2-update-your-css
+   */
+
+.js-focus-visible :focus:not([data-focus-visible-added]) {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
 }
 .btn {
   font-weight: 500;
@@ -18,7 +78,7 @@
   --text-opacity: 1;
   color: #fff;
   color: rgba(255, 255, 255, var(--text-opacity));
-  border-radius: 0.5rem;
+  border-radius: 0.25rem;
   transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
   transition-duration: 200ms;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -654,7 +714,7 @@ video {
      -moz-appearance: none;
           appearance: none;
   background-color: #fff;
-  border-color: #e2e8f0;
+  border-color: #cbd5e0;
   border-width: 1px;
   border-radius: 0.25rem;
   padding-top: 0.5rem;
@@ -684,6 +744,10 @@ video {
   outline: none;
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
   border-color: #63b3ed;
+}
+
+.form-input {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .form-textarea {

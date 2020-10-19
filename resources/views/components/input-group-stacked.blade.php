@@ -7,7 +7,7 @@
 ])
 
 <div>
-    <div class="flex items-center justify-between mb-2 space-x-2">
+    <div class="flex items-center justify-between mb-1 space-x-2">
         <x-filament::label :for="$name">
             {{ $label ?? $name }}
             @if ($required)
@@ -19,8 +19,8 @@
         @endif
     </div>
     {{ $slot }}
-    <x-filament::error :name="$name" class="mt-2" />
+    <x-filament::error :name="$name" class="mt-1" />
     @if ($help)
-        <div class="text-sm leading-tight text-gray-600 mt-2">{{ $help }}</div>
+        <div class="text-sm leading-tight text-gray-600 mt-1">{{ $help }}</div>
     @endif
 </div>
