@@ -6,8 +6,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
-use Filament\Http\Livewire\Auth\Login;
 use Filament\Tests\TestCase;
+use Filament\Http\Livewire\Auth\Login;
+
 
 class LoginTest extends TestCase
 {
@@ -15,11 +16,12 @@ class LoginTest extends TestCase
 
     public function test_can_see_login_form()
     {
+        $this->withoutExceptionHandling();
         $this->get('/filament/login')
             ->assertSuccessful()
-            ->assertSeeLivewire('auth.login');
+            ->assertSee(trans('filament::auth.signin'));
     }
-    
+
     /*
     public function test_existing_user_can_log_in()
     {
@@ -33,7 +35,9 @@ class LoginTest extends TestCase
 
         $this->assertAuthenticated();
     }
-
+    */
+    
+    /*
     public function test_email_is_required()
     {
         Livewire::test(Login::class)

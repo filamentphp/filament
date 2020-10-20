@@ -7,7 +7,9 @@ use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Facade;
 use Livewire\LivewireServiceProvider;
+use Livewire\Livewire;
 use Filament\FilamentServiceProvider;
+use Filament\FilamentFacade;
 
 abstract class TestCase extends OrchestraTestCase
 {
@@ -40,6 +42,14 @@ abstract class TestCase extends OrchestraTestCase
         return [
             LivewireServiceProvider::class,
             FilamentServiceProvider::class,
+        ];
+    }
+
+    protected function getPackageAliases($app)
+    {
+        return [
+            'Livewire' => Livewire::class,
+            'Filament' => FilamentFacade::class,
         ];
     }
 
