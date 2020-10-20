@@ -90,7 +90,7 @@ class FilamentServiceProvider extends ServiceProvider
     protected function bootRoutes(): void
     {
         if (Filament::$registersRoutes) {
-            $this->loadRoutesFrom($this->getRoutes());
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         }
     }
 
@@ -103,10 +103,5 @@ class FilamentServiceProvider extends ServiceProvider
         $this->commands([
             //...
         ]);
-    }
-
-    protected function getRoutes(): string
-    {
-        return __DIR__.'/../routes/filament.php';
     }
 }
