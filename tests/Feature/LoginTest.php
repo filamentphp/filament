@@ -17,9 +17,9 @@ class LoginTest extends TestCase
     {
         $this->get('/filament/login')
             ->assertSuccessful()
-            ->assertSeeLivewire('login');
+            ->assertSeeLivewire('auth.login');
     }
-
+    
     /*
     public function test_existing_user_can_log_in()
     {
