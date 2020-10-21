@@ -6,13 +6,11 @@ use Filament\Http\Controllers\{
     AssetController,
 };
 
-$routeNamePrefix = config('filament.prefix.name', 'filament.');
-
 Route::group([
     'prefix' => config('filament.prefix.route'),
     'middleware' => config('filament.middleware', ['web']),
-    'as' => $routeNamePrefix,
-], function () use ($routeNamePrefix) {
+    'as' => 'filament.',
+], function () {
     // Assets
     Route::name('assets.')->group(function () {
         Route::get('filament.css', [AssetController::class, 'css'])->name('css');
@@ -23,10 +21,14 @@ Route::group([
 
     // Auth
     Route::get('/login', config('filament.livewire.login'))->name('login');
-    Route::get('/forgot-password', config('filament.livewire.forgot-password'))->name('password.forgot');
+    // Route::get('/forgot-password', config('filament.livewire.forgot-password'))->name('password.forgot');
 
     // Authenticated routes
     Route::group(['middleware' => ['auth', 'verified']], function () {
+        // Dashboard
+        Route::get('/', config('filament.livewire.dashboard'))->name('dashboard');
+
+        /*
         // User profile
         Route::get('/profile', config('filament.livewire.profile'))->name('profile');
 
@@ -37,12 +39,13 @@ Route::group([
                 Route::get('/user/{user}', config('filament.livewire.user'))->name('show');
             });
         }
+        */
     });
 });
 
 // Conditional route login alias
 if (!Route::has('login')) {
-    Route::get('/login', function () use ($routeNamePrefix) {
-        return redirect()->route("{$routeNamePrefix}login");
+    Route::get('/login', function () {
+        return redirect()->route("filament.login");
     })->name('login');
 }

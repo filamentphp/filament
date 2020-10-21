@@ -24,6 +24,8 @@ abstract class TestCase extends OrchestraTestCase
         });
 
         parent::setUp();
+        $this->loadLaravelMigrations(['--database' => 'testbench']);
+        $this->artisan('migrate', ['--database' => 'testbench'])->run();
         Facade::setFacadeApplication(app());
     }
 

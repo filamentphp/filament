@@ -2,10 +2,9 @@
 
 namespace Filament\Http\Livewire\Auth;
 
-use App\Providers\RouteServiceProvider;
+use Livewire\Component;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 use Filament\Traits\ThrottlesLogins;
 
 class Login extends Component
@@ -34,7 +33,7 @@ class Login extends Component
         }
 
         if (Auth::attempt($data, (bool) $this->remember)) {
-            return redirect()->intended(RouteServiceProvider::HOME);
+            return redirect()->intended(route('filament.dashboard'));
         }
 
         // If the login attempt was unsuccessful we will increment the number of attempts

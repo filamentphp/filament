@@ -2,13 +2,11 @@
 
 namespace Tests\Feature;
 
+use Filament\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use App\Models\User;
-use App\Providers\RouteServiceProvider;
-use Filament\Tests\TestCase;
+use Filament\Tests\Database\Models\User;
 use Filament\Http\Livewire\Auth\Login;
-
 
 class LoginTest extends TestCase
 {
@@ -16,13 +14,12 @@ class LoginTest extends TestCase
 
     public function test_can_see_login_form()
     {
-        $this->withoutExceptionHandling();
-        $this->get('/filament/login')
+        // $this->withoutExceptionHandling();
+        $this->get(route('filament.login'))
             ->assertSuccessful()
             ->assertSee(trans('filament::auth.signin'));
     }
 
-    /*
     public function test_existing_user_can_log_in()
     {
         $user = User::factory()->create();
@@ -31,12 +28,11 @@ class LoginTest extends TestCase
             ->set('email', $user->email)
             ->set('password', 'password')
             ->call('login')
-            ->assertRedirect(RouteServiceProvider::HOME);
+            ->assertRedirect(route('filament.dashboard'));
 
         $this->assertAuthenticated();
     }
-    */
-    
+      
     /*
     public function test_email_is_required()
     {

@@ -22,21 +22,8 @@ return [
 
         /*
         |--------------------------------------------------------------------------
-        | Route Name Prefix
-        |--------------------------------------------------------------------------
-        |
-        | This value will set a prefix for all Filament route names.
-        |
-        */
-
-        'name' => 'filament.',
-
-        /*
-        |--------------------------------------------------------------------------
         | Route Prefix
         |--------------------------------------------------------------------------
-        |
-        | This value will set a prefix for all Filament routes.
         |
         */
 
@@ -46,8 +33,6 @@ return [
         |--------------------------------------------------------------------------
         | Component Prefix
         |--------------------------------------------------------------------------
-        |
-        | This value will set a prefix for all Filament components.
         |
         | If set with the default "filament", for example, you can reference components like:
         |
@@ -87,7 +72,8 @@ return [
 
     'livewire' => [
         'login' => Filament\Http\Livewire\Auth\Login::class,
-        'forgot-password' => Filament\Http\Livewire\Auth\ForgotPassword::class,
+        // 'forgot-password' => Filament\Http\Livewire\Auth\ForgotPassword::class,
+        'dashboard' => Filament\Http\Livewire\Dashboard::class,
     ],
 
 ];
