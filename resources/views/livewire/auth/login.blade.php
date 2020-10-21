@@ -1,4 +1,4 @@
-<form wire:submit.prevent="login" class="flex flex-col space-y-4" novalidate>
+<form wire:submit.prevent="login" class="flex flex-col space-y-4">
     <x-filament::input-group-stacked name="email" :label="__('E-Mail Address')" required>
         <x-filament::input type="email" name="email" wire:model.defer="email" id="email" :placeholder="__('E-Mail Address')" required autocomplete="email" />
     </x-filament::input-group-stacked>
