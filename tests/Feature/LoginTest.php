@@ -32,8 +32,7 @@ class LoginTest extends TestCase
 
         $this->assertAuthenticated();
     }
-      
-    /*
+
     public function test_email_is_required()
     {
         Livewire::test(Login::class)
@@ -72,5 +71,4 @@ class LoginTest extends TestCase
             ->call('login')
             ->assertHasErrors('password');
     }
-    */
 }
