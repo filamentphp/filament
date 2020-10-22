@@ -2,9 +2,9 @@
 
 namespace Filament\Tests\Database\Factories;
 
-use Filament\Tests\Database\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use Filament\Tests\Database\Models\User;
 
 class UserFactory extends Factory
 {
