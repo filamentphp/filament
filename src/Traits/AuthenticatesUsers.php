@@ -23,7 +23,7 @@ trait AuthenticatesUsers
     }
 
     /**
-     * Get the translated label based on the username.
+     * Get the translated input type based on the username.
      * 
      * @return string
      */
