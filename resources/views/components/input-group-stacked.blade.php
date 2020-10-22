@@ -8,7 +8,7 @@
 ])
 
 <div {{ $attributes->merge(['class' => $errorClasses]) }}>
-    <div class="flex items-center justify-between mb-1 space-x-2">
+    <div class="flex items-center justify-between mb-2 space-x-2">
         <x-filament::label :for="$name">
             {{ $label ?? $name }}
             @if ($required)
@@ -16,12 +16,16 @@
             @endif
         </x-filament::label>
         @if ($hint)
-            <div class="font-mono text-xs leading-tight text-gray-600">{{ $hint }}</div>
+            <x-filament::hint>
+                {{ $hint }}
+            </x-filament::hint>
         @endif
     </div>
     {{ $slot }}
     <x-filament::error :name="$name" class="mt-1" />
     @if ($help)
-        <div class="text-sm leading-tight text-gray-600 mt-1">{{ $help }}</div>
+        <x-filament::help class="mt-1">
+            {{ $help }}
+        </x-filament::help>
     @endif
 </div>

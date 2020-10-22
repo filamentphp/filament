@@ -63,12 +63,30 @@ class LoginTest extends TestCase
             ->assertHasErrors(['password' => 'min']);
     }
 
-    public function test_bad_credentials_show_error_on_login()
+    public function test_bad_credentials_show_error()
+    {
+        $this->invalid_login()
+            ->assertHasErrors('email');
+    }
+
+    public function test_bad_credentials_show_error_due_to_login_throttling()
+    {
+        foreach (range(0, 3) as $attempt) { // attempt 4 invalid logins
+            $this->invalid_login();
+        }
+
+        // 5th invalid login attempt should return validation error
+        $this->invalid_login()
+            ->assertHasErrors('email');
+    }
+
+    private function invalid_login()
     {
         $component = Livewire::test(Login::class)
-            ->set('email', 'example@example.com')
-            ->set('password', 'wrongpassword')
-            ->call('login')
-            ->assertHasErrors('password');
+                        ->set('email', 'example@example.com')
+                        ->set('password', 'wrongpassword')
+                        ->call('login');
+
+        return $component;
     }
 }

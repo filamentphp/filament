@@ -699,7 +699,7 @@ video {
      -moz-appearance: none;
           appearance: none;
   background-color: #fff;
-  border-color: #E0E3E6;
+  border-color: #A4ACB7;
   border-width: 1px;
   border-radius: 0.25rem;
   padding-top: 0.5rem;
@@ -876,7 +876,7 @@ video {
   width: 1em;
   color: #4299e1;
   background-color: #fff;
-  border-color: #E0E3E6;
+  border-color: #A4ACB7;
   border-width: 1px;
   border-radius: 0.25rem;
 }

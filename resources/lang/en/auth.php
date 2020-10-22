@@ -15,12 +15,12 @@ return [
 
     'signin' => 'Sign in to your account',
 
-    'username' => [
+    'labels' => [
 
         'email' => 'E-mail Address',
 
-        'username' => 'Username',
-
+        'password' => 'Password',
+    
     ],
 
 ];
