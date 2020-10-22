@@ -39,7 +39,6 @@ trait AuthenticatesUsers
      */
     public function label()
     {
-        $username = ($this->username() === 'email') ? 'filament::auth.username.email' : 'filament::auth.username.username';
-        return trans($username);
+        return trans('filament::auth.username'.$this->username());
     }
 }
