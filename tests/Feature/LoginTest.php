@@ -71,7 +71,7 @@ class LoginTest extends TestCase
 
     public function test_bad_credentials_show_error_due_to_login_throttling()
     {
-        foreach (range(0, 3) as $attempt) { // attempt 4 invalid logins
+        for ($i = 0; $i < 4; $i++) { // 4 invalid login attemps
             $this->invalid_login();
         }
 
