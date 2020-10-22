@@ -5,18 +5,19 @@ namespace Filament\Http\Livewire\Auth;
 use Livewire\Component;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Filament\Traits\AuthenticatesUsers;
 use Filament\Traits\ThrottlesLogins;
 
 class Login extends Component
 {
-    use ThrottlesLogins;
+    use AuthenticatesUsers, ThrottlesLogins;
 
     public $email;
     public $password;
     public $remember = false;
 
     public function login(Request $request)
-    {
+    {        
         $data = $this->validate([
             $this->username() => 'required|email',
             'password' => 'required|min:8',
@@ -41,7 +42,7 @@ class Login extends Component
         // user surpasses their maximum number of attempts they will get locked out.
         $this->incrementLoginAttempts($request);
 
-        $this->addError('password', trans('auth.failed'));
+        $this->addError($this->username(), trans('auth.failed'));
     }
     
     public function render()

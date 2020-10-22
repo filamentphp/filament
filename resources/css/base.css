@@ -6,19 +6,6 @@ html {
 }
 
 /**
- * Disable animations if the user has turned on the a11y option for reduced motion due to
- * vestibular disorders etc.
- *
- * @link https://css-tricks.com/introduction-reduced-motion-media-query/#article-header-id-3
- */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01s !important;
-    transition-duration: 0.01s !important;
-  }
-}
-
-/**
    * ::selection selector: color, background, cursor, and outline.
    */
 ::selection {

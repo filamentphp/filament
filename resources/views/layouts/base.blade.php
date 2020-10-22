@@ -9,7 +9,7 @@
         @livewireStyles
         @stack('head')
     </head>
-    <body class="text-gray-800 font-sans">
+    <body class="text-gray-900 font-sans">
         @yield('content')
         @filamentScripts
         @livewireScripts

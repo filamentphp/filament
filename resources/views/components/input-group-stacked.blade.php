@@ -4,9 +4,10 @@
     'hint' => false,
     'help' => false,
     'required' => false,
+    'errorClasses' => $errors->has($name) ? 'motion-safe:animate-shake' : '',
 ])
 
-<div>
+<div {{ $attributes->merge(['class' => $errorClasses]) }}>
     <div class="flex items-center justify-between mb-1 space-x-2">
         <x-filament::label :for="$name">
             {{ $label ?? $name }}

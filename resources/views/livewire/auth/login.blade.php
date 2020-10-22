@@ -1,6 +1,6 @@
 <form wire:submit.prevent="login" class="flex flex-col space-y-4">
-    <x-filament::input-group-stacked name="email" :label="__('E-Mail Address')" required>
-        <x-filament::input type="email" name="email" wire:model.defer="email" id="email" :placeholder="__('E-Mail Address')" required autocomplete="email" />
+    <x-filament::input-group-stacked :name="$this->username()" :label="$this->label()" required>
+        <x-filament::input :type="$this->type()" :name="$this->username()" :wire:model.defer="$this->username()" :id="$this->username()" required :autocomplete="$this->username()" />
     </x-filament::input-group-stacked>
 
     <x-filament::input-group-stacked name="password" :label="__('Password')" required>   

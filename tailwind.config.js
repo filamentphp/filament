@@ -22,6 +22,37 @@ module.exports = {
           800: '#183F81',
           900: '#102A56',
         },
+        gray: {
+          default: '#D4D8DD',
+          100: '#FFFFFF',
+          200: '#F6F7F8',
+          300: '#EBEDEF',
+          400: '#E0E3E6',
+          500: '#D4D8DD',
+          600: '#A4ACB7',
+          700: '#738191',
+          800: '#4C5661',
+          900: '#262B31',
+        },
+      },
+      keyframes: {
+        shake: {
+          '10%, 90%': {
+            transform: 'translate3d(-1px, 0, 0)',
+          },
+          '20%, 80%': {
+            transform: 'translate3d(2px, 0, 0)',
+          },
+          '30%, 50%, 70%': {
+            transform: 'translate3d(-4px, 0, 0)',
+          },
+          '40%, 60%': {
+            transform: 'translate3d(4px, 0, 0)',
+          },
+        },
+      },
+      animation: {
+        shake: 'shake 0.82s cubic-bezier(.36, .07, .19, .97) both',
       },
     },
     customForms: (theme) => ({
@@ -36,7 +67,9 @@ module.exports = {
       },
     }),
   },
-  variants: {},
+  variants: {
+    animation: ['responsive', 'motion-safe', 'motion-reduce'],
+  },
   plugins: [
     require('@tailwindcss/custom-forms'),
     require('@tailwindcss/typography'),

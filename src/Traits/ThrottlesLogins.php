@@ -61,16 +61,6 @@ trait ThrottlesLogins
     }
 
     /**
-     * Get the login username to be used by the controller.
-     *
-     * @return string
-     */
-    public function username()
-    {
-        return 'email';
-    }
-
-    /**
      * Clear the login locks for the given user credentials.
      *
      * @param  \Illuminate\Http\Request  $request
