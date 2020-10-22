@@ -39,6 +39,6 @@ trait AuthenticatesUsers
      */
     public function label()
     {
-        return trans('filament::auth.username'.$this->username());
+        return trans('filament::auth.username.'.$this->username());
     }
 }
