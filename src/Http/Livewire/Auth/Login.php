@@ -15,12 +15,14 @@ class Login extends Component
     public $password;
     public $remember = false;
 
+    protected $rules = [
+        'email' => 'required|email',
+        'password' => 'required|min:8',
+    ];
+
     public function login(Request $request)
     {
-        $data = $this->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:8',
-        ]);
+        $data = $this->validate();
 
         if ($this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);

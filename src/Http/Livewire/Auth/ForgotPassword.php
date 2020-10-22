@@ -15,7 +15,7 @@ class ForgotPassword extends Component
     ];
 
     public function sendEmail()
-    {
+    {       
         $this->validate();
         $status = Password::sendResetLink(['email' => $this->email]);
         if ($status === Password::RESET_LINK_SENT) {
@@ -28,6 +28,6 @@ class ForgotPassword extends Component
     public function render()
     {
         return view('filament::livewire.auth.forgot-password')
-            ->layout('filament::layouts.auth');
+            ->layout('filament::layouts.auth', ['title' => __('Reset Password')]);
     }
 }

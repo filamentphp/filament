@@ -34,7 +34,8 @@ return [
         | Component Prefix
         |--------------------------------------------------------------------------
         |
-        | If set with the default "filament", for example, you can reference components like:
+        | If set with the default "filament", for example, 
+        | you can reference components like:
         |
         | <x-filament-alert />
         | <x-filament::input />
@@ -50,9 +51,8 @@ return [
     | Components
     |--------------------------------------------------------------------------
     |
-    | Below you reference all class-based components that should be loaded 
-    | for your app.By default all components from Filament are loaded in. 
-    | You can disable or overwrite any component class or alias that you want.
+    | Below you reference all class-based components use by Filament.
+    | You may override these components for customization in your own app.
     |
     */
 
@@ -65,14 +65,14 @@ return [
     | Livewire Components
     |--------------------------------------------------------------------------
     |
-    | Below you reference all the Livewire components that should be loaded
-    | for your app. By default all components from Filament are loaded in.
+    | Below you reference all the required Livewire components used by Filament. 
+    | You may override these components for customization in your own app.
     |
     */
 
     'livewire' => [
         'login' => Filament\Http\Livewire\Auth\Login::class,
-        // 'forgot-password' => Filament\Http\Livewire\Auth\ForgotPassword::class,
+        'forgot-password' => Filament\Http\Livewire\Auth\ForgotPassword::class,
         'dashboard' => Filament\Http\Livewire\Dashboard::class,
     ],
 

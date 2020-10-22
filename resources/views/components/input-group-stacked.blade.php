@@ -4,11 +4,11 @@
     'hint' => false,
     'help' => false,
     'required' => false,
-    'errorClasses' => $errors->has($name) ? 'motion-safe:animate-shake' : '',
+    'errorClasses' => $errors->has($name) ? ' motion-safe:animate-shake' : '',
 ])
 
-<div {{ $attributes->merge(['class' => $errorClasses]) }}>
-    <div class="flex items-center justify-between mb-2 space-x-2">
+<div {{ $attributes->merge(['class' => 'space-y-1'.$errorClasses]) }}>
+    <div class="flex items-center justify-between space-x-2">
         <x-filament::label :for="$name">
             {{ $label ?? $name }}
             @if ($required)
@@ -22,9 +22,9 @@
         @endif
     </div>
     {{ $slot }}
-    <x-filament::error :name="$name" class="mt-1" />
+    <x-filament::error :name="$name" />
     @if ($help)
-        <x-filament::help class="mt-1">
+        <x-filament::help>
             {{ $help }}
         </x-filament::help>
     @endif

@@ -34,6 +34,18 @@ module.exports = {
           800: '#4C5661',
           900: '#262B31',
         },
+        green: {
+          default: '#4E7E76',
+          100: '#D9E8E5',
+          200: '#B3D0CC',
+          300: '#8DB9B2',
+          400: '#67A298',
+          500: '#4E7E76',
+          600: '#406862',
+          700: '#32524D',
+          800: '#253C38',
+          900: '#172623',
+        },
       },
       keyframes: {
         shake: {
@@ -58,11 +70,11 @@ module.exports = {
     customForms: (theme) => ({
       default: {
         input: {
-          borderColor: theme('colors.gray.600'),
+          borderColor: theme('colors.gray.500'),
           boxShadow: theme('boxShadow.sm'),
         },
         checkbox: {
-          borderColor: theme('colors.gray.600'),
+          borderColor: theme('colors.gray.500'),
         },
       },
     }),
