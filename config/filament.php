@@ -18,6 +18,12 @@ return [
         Features::users(),
     ],
 
+    'models' => [
+
+        // 'model' => App\Models\Model::class,
+    
+    ],
+
     'prefix' => [
 
         /*

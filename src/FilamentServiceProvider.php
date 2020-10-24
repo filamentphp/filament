@@ -25,6 +25,7 @@ class FilamentServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->bootModelBindings();
         $this->bootPolicies();
         $this->bootResources();
         $this->bootDirectives();
@@ -45,6 +46,17 @@ class FilamentServiceProvider extends ServiceProvider
                 Livewire::component($alias, $component);
             }
         });
+    }
+
+    protected function bootModelBindings(): void
+    {
+        $config = $this->app->config['filament.models'];
+
+        if (! $config) {
+            return;
+        }
+
+        // $this->app->bind(ModelContract::class, $config['model']);
     }
 
     protected function bootPolicies(): void

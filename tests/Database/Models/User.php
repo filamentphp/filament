@@ -6,11 +6,12 @@ namespace Filament\Tests\Database\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use Filament\Traits\FilamentUser;
 use Filament\Tests\Database\Factories\UserFactory;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, FilamentUser;
 
     /**
      * Disable Laravel's mass assignment protection

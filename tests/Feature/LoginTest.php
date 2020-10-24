@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use Filament\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Filament\Tests\TestCase;
 use Filament\Tests\Database\Models\User;
 use Filament\Http\Livewire\Auth\Login;
 
