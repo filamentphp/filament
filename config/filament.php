@@ -73,6 +73,7 @@ return [
     'livewire' => [
         'login' => Filament\Http\Livewire\Auth\Login::class,
         'forgot-password' => Filament\Http\Livewire\Auth\ForgotPassword::class,
+        'reset-password' => Filament\Http\Livewire\Auth\ResetPassword::class,
         'dashboard' => Filament\Http\Livewire\Dashboard::class,
     ],
 
