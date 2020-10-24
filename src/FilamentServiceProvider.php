@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\{
     Blade,
 };
 use Livewire\Livewire;
+use Filament\Commands\{
+    MakeUser,
+};
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -101,7 +104,7 @@ class FilamentServiceProvider extends ServiceProvider
         }
             
         $this->commands([
-            //...
+            MakeUser::class,
         ]);
     }
 }
