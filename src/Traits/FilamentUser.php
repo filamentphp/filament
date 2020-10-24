@@ -2,7 +2,6 @@
 
 namespace Filament\Traits;
 
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Notifications\ResetPassword;
 
 trait FilamentUser {

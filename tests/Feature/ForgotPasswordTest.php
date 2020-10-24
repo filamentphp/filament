@@ -16,6 +16,8 @@ class ForgotPasswordTest extends TestCase
 {
     use WithoutMiddleware, RefreshDatabase;
 
+    public $user;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -27,7 +29,7 @@ class ForgotPasswordTest extends TestCase
     {
         $this->get(route('filament.password.forgot')) 
             ->assertSuccessful()
-            ->assertSee(trans('Reset Password'));
+            ->assertSee(__('Reset Password'));
     }
 
     public function test_email_is_required()
@@ -64,10 +66,11 @@ class ForgotPasswordTest extends TestCase
             ->assertSee(__('passwords.throttled'));
     }
 
-    /*
     public function test_can_request_password_reset_token()
     {
         $this->withoutExceptionHandling();
+        Notification::assertNothingSent();
+
         Livewire::test(ForgotPassword::class)
             ->set('email', $this->user->email)
             ->call('sendEmail')
@@ -79,5 +82,4 @@ class ForgotPasswordTest extends TestCase
 
         Notification::assertSentTo([$this->user], ResetPasswordNotification::class);
     }
-    */
 }
