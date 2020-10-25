@@ -58,8 +58,8 @@ html {
   padding-left: 1rem;
   padding-right: 1rem;
   --bg-opacity: 1;
-  background-color: #4E7E76;
-  background-color: rgba(78, 126, 118, var(--bg-opacity));
+  background-color: #2968D6;
+  background-color: rgba(41, 104, 214, var(--bg-opacity));
   --text-opacity: 1;
   color: #fff;
   color: rgba(255, 255, 255, var(--text-opacity));
@@ -67,6 +67,8 @@ html {
   transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
   transition-duration: 200ms;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  display: inline-block;
+  position: relative;
 }
   .btn:focus {
     box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
@@ -75,8 +77,11 @@ html {
   }
   .btn:hover {
     --bg-opacity: 1;
-    background-color: #406862;
-    background-color: rgba(64, 104, 98, var(--bg-opacity));
+    background-color: #2154AB;
+    background-color: rgba(33, 84, 171, var(--bg-opacity));
+  }
+  .btn[disabled] {
+    opacity: 0.5;
   }
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 

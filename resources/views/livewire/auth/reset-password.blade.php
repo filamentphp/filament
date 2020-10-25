@@ -11,7 +11,8 @@
         <x-filament::input type="password" name="password_confirmation" wire:model.defer="password_confirmation" id="password_confirmation" required autocomplete="new-password" />
     </x-filament::input-group-stacked>
 
-    <x-filament::button type="submit" class="w-full">
+    <x-filament::button type="submit" class="w-full" wire:loading.attr="disabled">
+        <x-filament::loader class="w-6 h-6 absolute left-0 ml-2 pointer-events-none" wire:loading />
         {{ __('Reset Password') }}
     </x-filament::button>
 </form>
