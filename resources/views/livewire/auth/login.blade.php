@@ -19,7 +19,7 @@
     </x-filament::checkbox>
 
     <x-filament::button type="submit" class="w-full" wire:loading.attr="disabled">
-        <x-filament::loader class="w-6 h-6 absolute left-0 ml-2 pointer-events-none" wire:loading.remove />
+        <x-filament::loader class="w-6 h-6 absolute left-0 ml-2 pointer-events-none" wire:loading />
         {{ __('Login') }}
     </x-filament::button>
 </form>
