@@ -56,7 +56,7 @@ class ResetPassword extends Component
         
         if ($status === Password::PASSWORD_RESET) {
             Auth::login($this->user);
-            $this->redirect(route('filament.dashboard'));
+            return redirect()->route('filament.dashboard');
         } else {
             $this->addError('email', __($status));
         }

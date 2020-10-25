@@ -71,11 +71,10 @@ class Filament
         }
 
         parse_str(parse_url($asset, PHP_URL_QUERY), $cssInfo);
-        $src = route('filament.assets.css', $cssInfo);
 
         return new HtmlString('
             <!-- Filament Styles -->
-            <link rel="stylesheet" href="'.$src.'">
+            <link rel="stylesheet" href="'.route('filament.assets.css', $cssInfo).'">
         ');
     }
 
@@ -97,17 +96,21 @@ class Filament
         }
 
         parse_str(parse_url($asset, PHP_URL_QUERY), $jsInfo);
-        $src = route('filament.assets.js', $jsInfo);
 
         return new HtmlString('
             <!-- Filament Scripts -->
-            <script src="'.$src.'" data-turbolinks-eval="false"></script>
+            <script src="'.route('filament.assets.js', $jsInfo).'" data-turbolinks-eval="false"></script>
         ');
     }
 
-    protected function getAsset($key): string
+    /** @return mixed */
+    protected function getAsset($key)
     {
         $manifest = json_decode(file_get_contents($this->distPath('mix-manifest.json')), true);
+
+        if (!isset($manifest[$key])) {
+            return;
+        }
 
         return $manifest[$key];
     }
@@ -115,11 +118,17 @@ class Filament
     /** @return mixed */
     protected function getPublicAsset($key)
     {
-        if (!file_exists(public_path('vendor/filament/mix-manifest.json'))) {
+        $manifestFile = public_path('vendor/filament/mix-manifest.json');
+        
+        if (!file_exists($manifestFile)) {
             return;
         }
 
-        $manifest = json_decode(file_get_contents(public_path('vendor/filament/mix-manifest.json')), true);
+        $manifest = json_decode(file_get_contents($manifestFile), true);
+
+        if (!isset($manifest[$key])) {
+            return;
+        }
 
         return $manifest[$key];
     }
