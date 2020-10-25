@@ -15,12 +15,4 @@ return [
 
     'signin' => 'Sign in to your account',
 
-    'labels' => [
-
-        'email' => 'E-mail Address',
-
-        'password' => 'Password',
-    
-    ],
-
 ];

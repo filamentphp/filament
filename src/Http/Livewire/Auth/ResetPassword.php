@@ -4,10 +4,13 @@ namespace Filament\Http\Livewire\Auth;
 
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\{
+    Auth,
+    Hash,
+    Password,
+};
 use Livewire\Component;
 
 class ResetPassword extends Component
@@ -23,9 +26,10 @@ class ResetPassword extends Component
         'password_confirmation' => 'required',
     ];
 
-    public function mount($token)
+    public function mount(Request $request, $token)
     {
         $this->token = $token;
+        $this->email = $request->input('email');
     }
 
     protected function credentials()
@@ -49,6 +53,7 @@ class ResetPassword extends Component
                 $this->user = $user;
             }
         );
+        
         if ($status === Password::PASSWORD_RESET) {
             Auth::login($this->user);
             $this->redirect(route('filament.dashboard'));

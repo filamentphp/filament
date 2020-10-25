@@ -36,12 +36,12 @@ class Login extends Component
 
         $this->incrementLoginAttempts($request);
 
-        $this->addError('email', trans('auth.failed'));
+        $this->addError('email', __('auth.failed'));
     }
     
     public function render()
     {
         return view('filament::livewire.auth.login')
-            ->layout('filament::layouts.auth', ['title' => trans('filament::auth.signin')]);
+            ->layout('filament::layouts.auth', ['title' => __('filament::auth.signin')]);
     }
 }

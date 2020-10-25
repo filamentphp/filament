@@ -17,7 +17,7 @@ class LoginTest extends TestCase
         // $this->withoutExceptionHandling();
         $this->get(route('filament.login'))
             ->assertSuccessful()
-            ->assertSee(trans('filament::auth.signin'));
+            ->assertSee(__('filament::auth.signin'));
     }
 
     public function test_existing_user_can_log_in()
