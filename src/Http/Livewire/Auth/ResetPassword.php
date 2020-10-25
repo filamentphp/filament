@@ -22,6 +22,7 @@ class ResetPassword extends Component
     public $user;
 
     protected $rules = [
+        'email' => 'required|email',
         'password' => 'min:8|confirmed',
         'password_confirmation' => 'required',
     ];
@@ -30,16 +31,6 @@ class ResetPassword extends Component
     {
         $this->token = $token;
         $this->email = $request->input('email');
-    }
-
-    protected function credentials()
-    {
-        return [
-            'email' => $this->email,
-            'password' => $this->password,
-            'password_confirmation' => $this->password_confirmation,
-            'token' => $this->token,
-        ];
     }
 
     public function resetPassword()
@@ -66,5 +57,15 @@ class ResetPassword extends Component
     {
         return view('filament::livewire.auth.reset-password')
             ->layout('filament::layouts.auth', ['title' => __('Reset Password')]);
+    }
+
+    protected function credentials()
+    {
+        return [
+            'email' => $this->email,
+            'password' => $this->password,
+            'password_confirmation' => $this->password_confirmation,
+            'token' => $this->token,
+        ];
     }
 }
