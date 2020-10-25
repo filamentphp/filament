@@ -21,7 +21,10 @@ class ForgotPasswordTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         Notification::fake();
+        Notification::assertNothingSent();
+
         $this->user = User::factory()->create();
     }
 
@@ -68,9 +71,8 @@ class ForgotPasswordTest extends TestCase
 
     public function test_can_request_password_reset_token()
     {
-        $this->withoutExceptionHandling();
-        Notification::assertNothingSent();
-
+        // $this->withoutExceptionHandling();
+        
         Livewire::test(ForgotPassword::class)
             ->set('email', $this->user->email)
             ->call('sendEmail')

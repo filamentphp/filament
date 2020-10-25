@@ -10,6 +10,7 @@ use Livewire\LivewireServiceProvider;
 use Livewire\Livewire;
 use Filament\FilamentServiceProvider;
 use Filament\FilamentFacade;
+use Filament\Tests\Database\Models\User;
 
 abstract class TestCase extends OrchestraTestCase
 {
@@ -75,5 +76,7 @@ abstract class TestCase extends OrchestraTestCase
             'database' => ':memory:',
             'prefix'   => '',
         ]);
+
+        $app['config']->set('auth.providers.users.model', User::class);
     }
 }
