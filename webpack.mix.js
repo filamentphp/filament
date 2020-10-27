@@ -22,7 +22,7 @@ mix.setResourceRoot(`/${SRC}/`)
 /**
  * Process Javascript
  *
- * https://laravel.com/docs/master/mix#working-with-scripts
+ * @link https://laravel.com/docs/master/mix#working-with-scripts
  */
 mix.js(`${SRC}/js/filament.js`, 'js')
 
@@ -30,7 +30,7 @@ mix.js(`${SRC}/js/filament.js`, 'js')
  * Process CSS via PostCSS
  *
  *
- * https://laravel.com/docs/master/mix#postcss
+ * @link https://laravel.com/docs/master/mix#postcss
  */
 mix.postCss(`${SRC}/css/filament.css`, 'css', [
   require('postcss-import'),
@@ -44,7 +44,7 @@ mix.postCss(`${SRC}/css/filament.css`, 'css', [
  * Provide extra debugging information to your browser's
  * developer tools when using compiled assets.
  *
- * https://laravel.com/docs/master/mix#css-source-maps
+ * @link https://laravel.com/docs/master/mix#css-source-maps
  */
 mix.sourceMaps()
 
@@ -56,7 +56,7 @@ if (mix.inProduction()) {
    * So, you should use Laravel's global mix function within your views
    * to load the appropriately hashed asset.
    *
-   * https://laravel.com/docs/master/mix#versioning-and-cache-busting
+   * @link https://laravel.com/docs/master/mix#versioning-and-cache-busting
    */
   mix.version()
 }
@@ -67,7 +67,7 @@ if (mix.inProduction()) {
  * Automatically monitor your files for changes,
  * and inject your changes into the browser without requiring a manual refresh
  *
- * https://laravel.com/docs/master/mix#browsersync-reloading
+ * @link https://laravel.com/docs/master/mix#browsersync-reloading
  */
 mix.browserSync({
   proxy: process.env.BROWSERSYNC_PROXY || 'http://127.0.0.1:8000',

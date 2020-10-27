@@ -23,7 +23,7 @@ class ResetPassword extends Component
 
     protected $rules = [
         'email' => 'required|email',
-        'password' => 'min:8|confirmed',
+        'password' => 'required|min:8|confirmed',
         'password_confirmation' => 'required',
     ];
 
@@ -35,6 +35,7 @@ class ResetPassword extends Component
 
     public function resetPassword()
     {
+        $this->validate();
         $status = Password::reset(
             $this->credentials(),
             function ($user, $password) {
@@ -62,10 +63,10 @@ class ResetPassword extends Component
     protected function credentials()
     {
         return [
+            'token' => $this->token,
             'email' => $this->email,
             'password' => $this->password,
             'password_confirmation' => $this->password_confirmation,
-            'token' => $this->token,
         ];
     }
 }
