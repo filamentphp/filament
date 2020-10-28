@@ -4,6 +4,7 @@ namespace Filament\Http\Livewire\Auth;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 use Livewire\Component;
 use Filament\Contracts\User as UserContract;
 
@@ -35,6 +36,7 @@ class Register extends Component
             'email' => $this->email,
             'password' => Hash::make($this->password),
         ]);
+        event(new Registered($user));
         Auth::login($user);
         return redirect()->route('filament.dashboard');
     }

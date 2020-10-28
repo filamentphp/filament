@@ -35,6 +35,9 @@ Route::group([
     Route::group(['middleware' => ['auth']], function () {
         // Dashboard
         Route::get('/', config('filament.livewire.dashboard'))->name('dashboard');
+
+        // Profile
+        // Route::get('profile', config('filament.livewire.profile'))->middleware('verified');
     });
 });
 
