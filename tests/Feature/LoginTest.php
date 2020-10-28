@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Filament\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;

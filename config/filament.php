@@ -15,12 +15,12 @@ return [
     */
 
     'features' => [
-        Features::users(),
+        Features::registration(),
     ],
 
     'models' => [
 
-        // 'model' => App\Models\Model::class,
+        'user' => config('auth.providers.users.model'),
     
     ],
 
@@ -80,6 +80,7 @@ return [
         'login' => Filament\Http\Livewire\Auth\Login::class,
         'forgot-password' => Filament\Http\Livewire\Auth\ForgotPassword::class,
         'reset-password' => Filament\Http\Livewire\Auth\ResetPassword::class,
+        'register' => Filament\Http\Livewire\Auth\Register::class,
         'dashboard' => Filament\Http\Livewire\Dashboard::class,
     ],
 

@@ -24,23 +24,15 @@ Route::group([
     Route::get('/forgot-password', config('filament.livewire.forgot-password'))->name('password.forgot');
     Route::get('/reset-password/{token}', config('filament.livewire.reset-password'))->name('password.reset');
 
+    // Registration
+    if (Features::registersUsers()) {
+        Route::get('/register', config('filament.livewire.register'))->name('register');
+    }
+
     // Authenticated routes
     Route::group(['middleware' => ['auth', 'verified']], function () {
         // Dashboard
         Route::get('/', config('filament.livewire.dashboard'))->name('dashboard');
-
-        /*
-        // User profile
-        Route::get('/profile', config('filament.livewire.profile'))->name('profile');
-
-        // Users
-        if (Features::managesUsers()) {
-            Route::name('users.')->group(function () {
-                Route::get('/users', config('filament.livewire.users'))->name('index');
-                Route::get('/user/{user}', config('filament.livewire.user'))->name('show');
-            });
-        }
-        */
     });
 });
 

@@ -1,6 +1,13 @@
 <form wire:submit.prevent="login" class="space-y-4">
     <x-filament::input-group-stacked name="email" :label="__('E-Mail Address')" required>
         <x-filament::input type="email" name="email" wire:model.defer="email" id="email" required autocomplete="email" autofocus />
+        @if (Route::has('filament.register'))
+            <x-slot name="hint">
+                <a href="{{ route('filament.register') }}" class="text-current hover:text-blue">
+                    {{ __('filament::auth.register') }}
+                </a>
+            </x-slot>
+        @endif
     </x-filament::input-group-stacked>
 
     <x-filament::input-group-stacked name="password" :label="__('Password')" required>   

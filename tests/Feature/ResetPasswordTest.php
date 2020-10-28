@@ -1,15 +1,15 @@
 <?php
 
-namespace Tests\Feature;
+namespace Filament\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 use Livewire\Livewire;
 use Filament\Tests\TestCase;
+use Filament\Tests\Database\Models\User;
 use Filament\Http\Livewire\Auth\Login;
 use Filament\Http\Livewire\Auth\ResetPassword;
-use Filament\Tests\Database\Models\User;
 
 class ResetPasswordTest extends TestCase
 {

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\{
     Blade,
 };
 use Livewire\Livewire;
+use Filament\Contracts\User as UserContract;
 use Filament\Commands\{
     MakeUser,
 };
@@ -50,13 +51,13 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootModelBindings(): void
     {
-        $config = $this->app->config['filament.models'];
+        $models = $this->app->config['filament.models'];
 
-        if (! $config) {
+        if (! $models) {
             return;
         }
 
-        // $this->app->bind(ModelContract::class, $config['model']);
+        $this->app->bind(UserContract::class, $models['user']);
     }
 
     protected function bootPolicies(): void

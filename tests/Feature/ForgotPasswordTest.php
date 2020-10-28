@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Filament\Tests\Feature;
 
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 use Livewire\Livewire;
 use Filament\Tests\TestCase;
-use Filament\Http\Livewire\Auth\ForgotPassword;
 use Filament\Tests\Database\Models\User;
+use Filament\Http\Livewire\Auth\ForgotPassword;
 
 class ForgotPasswordTest extends TestCase
 {

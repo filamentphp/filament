@@ -15,4 +15,6 @@ return [
 
     'signin' => 'Sign in to your account',
 
+    'register' => 'Create a new account',
+
 ];

@@ -24,7 +24,7 @@ class ResetPassword extends Component
     protected $rules = [
         'email' => 'required|email',
         'password' => 'required|min:8|confirmed',
-        'password_confirmation' => 'required',
+        'password_confirmation' => 'required|same:password',
     ];
 
     public function mount(Request $request, $token)

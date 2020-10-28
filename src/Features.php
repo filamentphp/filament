@@ -16,22 +16,22 @@ class Features
     }
 
     /**
-     * Determine if the application manages users.
+     * Determine if the application allows user registration.
      *
      * @return bool
      */
-    public static function managesUsers()
+    public static function registersUsers()
     {
-        return static::enabled(static::users());
+        return static::enabled(static::registration());
     }
 
     /**
-     * Enable the users feature.
+     * Enable the user registration feature.
      *
      * @return string
      */
-    public static function users()
+    public static function registration()
     {
-        return 'users';
+        return 'registration';
     }
 }
