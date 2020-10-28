@@ -20,9 +20,11 @@ Route::group([
     });
 
     // Auth
-    Route::get('/login', config('filament.livewire.login'))->name('login');
-    Route::get('/forgot-password', config('filament.livewire.forgot-password'))->name('password.forgot');
-    Route::get('/reset-password/{token}', config('filament.livewire.reset-password'))->name('password.reset');
+    Route::prefix('auth')->group(function () {
+        Route::get('login', config('filament.livewire.login'))->name('login');
+        Route::get('forgot-password', config('filament.livewire.forgot-password'))->name('password.forgot');
+        Route::get('reset-password/{token}', config('filament.livewire.reset-password'))->name('password.reset');
+    });
 
     // Registration
     if (Features::registersUsers()) {
@@ -30,7 +32,7 @@ Route::group([
     }
 
     // Authenticated routes
-    Route::group(['middleware' => ['auth', 'verified']], function () {
+    Route::group(['middleware' => ['auth']], function () {
         // Dashboard
         Route::get('/', config('filament.livewire.dashboard'))->name('dashboard');
     });
