@@ -13,7 +13,7 @@ composer require filament/filament dev-master
 php artisan migrate
 ```
 
-## Filament User
+## Setup
 
 Before you can use Filament, you must add the necessary `Filament\Traits\FilamentUser` trait to your `App\User` model.
 
