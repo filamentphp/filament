@@ -22,7 +22,6 @@ class Logout extends Component
 
     public function render()
     {
-        return view('filament::livewire.auth.logout', ['label' => __('filament::auth.logout')])
-            ->layout('filament::layouts.auth');
+        return view('filament::livewire.auth.logout', ['label' => __('filament::auth.logout')]);
     }
 }

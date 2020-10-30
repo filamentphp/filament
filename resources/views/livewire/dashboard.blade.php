@@ -1,4 +1,3 @@
-<div class="flex justify-between space-x-2">
-    <h1>{{ __('Dashboard') }}</h1>
+<div>
     <livewire:filament-logout />
 </div>
