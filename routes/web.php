@@ -34,10 +34,14 @@ Route::group([
     // Authenticated routes
     Route::group(['middleware' => ['auth']], function () {
         // Dashboard
-        Route::get('/', config('filament.livewire.dashboard'))->name('dashboard');
+        Route::get('/', config('filament.livewire.dashboard'))
+            // ->middleware('verified')
+            ->name('dashboard');
 
         // Profile
-        // Route::get('profile', config('filament.livewire.profile'))->middleware('verified');
+        // Route::get('profile', config('filament.livewire.profile'))
+        //  ->middleware('verified')
+        //  ->name('profile');
     });
 });
 

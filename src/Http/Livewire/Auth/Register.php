@@ -30,14 +30,17 @@ class Register extends Component
     public function register()
     {
         $this->validate();
+        
         $userClass = app(UserContract::class);
         $user = $userClass::create([
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make($this->password),
         ]);
+        
         event(new Registered($user));
         Auth::login($user);
+
         return redirect()->route('filament.dashboard');
     }
 

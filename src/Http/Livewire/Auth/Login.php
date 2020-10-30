@@ -11,6 +11,7 @@ class Login extends Component
 {
     use ThrottlesLogins;
 
+    public $message;
     public $email;
     public $password;
     public $remember = false;
@@ -19,6 +20,11 @@ class Login extends Component
         'email' => 'required|email',
         'password' => 'required|min:8',
     ];
+
+    public function mount()
+    {
+        $this->message = session('message');
+    }
 
     public function login(Request $request)
     {

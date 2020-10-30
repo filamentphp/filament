@@ -17,4 +17,8 @@ return [
 
     'register' => 'Create a new account',
 
+    'logout' => 'Sign out',
+
+    'loggedout' => 'You have been successfully signed out.',
+
 ];

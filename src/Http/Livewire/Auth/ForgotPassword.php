@@ -7,8 +7,8 @@ use Livewire\Component;
 
 class ForgotPassword extends Component
 {
-    public $email;
     public $message;
+    public $email;
 
     protected $rules = [
         'email' => 'required|email',

@@ -4,8 +4,9 @@ namespace Filament\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 use Filament\Traits\ConsoleValidation;
-use App\Models\User;
+use Filament\Contracts\User as UserContract;
 
 class MakeUser extends Command
 {
@@ -44,14 +45,17 @@ class MakeUser extends Command
             return $this->secret('Password');
         }, ['password', 'required|min:8']);
 
-        $user = User::create([
+        $userClass = app(UserContract::class);
+        $user = $userClass::create([
             'name' => $name,
             'email' => $email,
             'password' => Hash::make($password),
         ]);
+        event(new Registered($user));
 
         $appName = config('app.name', 'Laravel');
         $loginURL = route('filament.login');
+        
         $this->info("Success! You may now login to {$appName} at {$loginURL} with user `{$user->name}`.");
     }
 }
