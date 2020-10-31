@@ -6,6 +6,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Name
+    |--------------------------------------------------------------------------
+    |
+    | This value is the name of the Filament application. This value is used 
+    | when the package needs to place the application's name in a notification 
+    | or any other location as required by the package.
+    |
+    */
+
+    'name' => env('FILAMENT_NAME', 'Filament'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Features
     |--------------------------------------------------------------------------
     |

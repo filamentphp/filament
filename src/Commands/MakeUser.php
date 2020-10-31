@@ -53,7 +53,7 @@ class MakeUser extends Command
         ]);
         event(new Registered($user));
 
-        $appName = config('app.name', 'Laravel');
+        $appName = config('filament.name');
         $loginURL = route('filament.login');
         
         $this->info("Success! You may now login to {$appName} at {$loginURL} with user `{$user->name}`.");

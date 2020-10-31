@@ -58,8 +58,8 @@ html {
   padding-left: 1rem;
   padding-right: 1rem;
   --bg-opacity: 1;
-  background-color: #2968D6;
-  background-color: rgba(41, 104, 214, var(--bg-opacity));
+  background-color: #9c4221;
+  background-color: rgba(156, 66, 33, var(--bg-opacity));
   --text-opacity: 1;
   color: #fff;
   color: rgba(255, 255, 255, var(--text-opacity));
@@ -77,8 +77,8 @@ html {
   }
   .btn:hover {
     --bg-opacity: 1;
-    background-color: #2154AB;
-    background-color: rgba(33, 84, 171, var(--bg-opacity));
+    background-color: #7b341e;
+    background-color: rgba(123, 52, 30, var(--bg-opacity));
   }
   .btn[disabled] {
     opacity: 0.5;

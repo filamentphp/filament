@@ -1,12 +1,12 @@
 .btn {
-  @apply font-medium py-2 px-4 bg-blue-600 text-white rounded transition duration-200 shadow inline-block relative;
+  @apply font-medium py-2 px-4 bg-orange-800 text-white rounded transition duration-200 shadow inline-block relative;
 
   &:focus {
     @apply shadow-outline outline-none;
   }
 
   &:hover {
-    @apply bg-blue-700;
+    @apply bg-orange-900;
   }
 
   &[disabled] {
