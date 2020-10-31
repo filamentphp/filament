@@ -22,18 +22,6 @@ module.exports = {
           800: '#183F81',
           900: '#102A56',
         },
-        gray: {
-          default: '#D4D8DD',
-          100: '#FFFFFF',
-          200: '#F6F7F8',
-          300: '#EBEDEF',
-          400: '#E0E3E6',
-          500: '#D4D8DD',
-          600: '#A4ACB7',
-          700: '#738191',
-          800: '#4C5661',
-          900: '#262B31',
-        },
         green: {
           default: '#4E7E76',
           100: '#D9E8E5',
@@ -66,6 +54,9 @@ module.exports = {
       animation: {
         shake: 'shake 0.82s cubic-bezier(.36, .07, .19, .97) both',
       },
+    },
+    container: {
+      center: true,
     },
     customForms: (theme) => ({
       default: {
