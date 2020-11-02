@@ -33,6 +33,16 @@ return [
 
     'models' => [
 
+        /*
+        |--------------------------------------------------------------------------
+        | User Model
+        |--------------------------------------------------------------------------
+        |
+        | The Eloquent User model use by Filament 
+        | via the `Filament\Contracts\User` container binding.
+        |
+        */
+
         'user' => config('auth.providers.users.model'),
     
     ],
