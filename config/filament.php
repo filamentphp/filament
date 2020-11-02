@@ -76,7 +76,7 @@ return [
 
     'nav' => [
 
-        'dashboard' => [
+        [
             'path' => 'filament.dashboard', // string or named route
             'active' => 'filament.dashboard', // string or named route (may also be an array @link https://github.com/dwightwatson/active)
             'label' => 'Dashboard',

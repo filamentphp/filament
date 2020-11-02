@@ -11,10 +11,7 @@ use Illuminate\Support\Facades\{
 };
 use Livewire\Livewire;
 use Filament\Contracts\User as UserContract;
-use Filament\Helpers\{
-    Navigation,
-    BladeDirectives,
-};
+use Filament\BladeDirectives;
 use Filament\Commands\{
     MakeUser,
 };
@@ -42,10 +39,6 @@ class FilamentServiceProvider extends ServiceProvider
     protected function registerSingletons(): void
     {
         $this->app->singleton('filament', Filament::class);
-
-        $this->app->singleton(Navigation::class, function () {
-            return new Navigation(config('filament.nav', []));
-        });
     }
 
     protected function registerLivewireComponents(): void
