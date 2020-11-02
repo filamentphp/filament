@@ -3,7 +3,10 @@
 namespace Filament;
 
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\HtmlString;
+use Illuminate\Support\{
+    Collection,
+    HtmlString,
+};
 
 class Filament
 {

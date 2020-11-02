@@ -67,6 +67,26 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Navigation
+    |--------------------------------------------------------------------------
+    |
+    | Navigations used by Filament.
+    |
+    */
+
+    'nav' => [
+
+        'dashboard' => [
+            'path' => 'filament.dashboard', // string or named route
+            'active' => 'filament.dashboard', // string or named route (may also be an array @link https://github.com/dwightwatson/active)
+            'label' => 'Dashboard',
+            'icon' => 'heroicon-o-home', // optional icon name (Blade UI Kit @link https://github.com/blade-ui-kit/blade-heroicons)
+        ],
+    
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Components
     |--------------------------------------------------------------------------
     |
