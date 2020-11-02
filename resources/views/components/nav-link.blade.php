@@ -1,6 +1,6 @@
 @props([
     'label',
-    'icon' => false,
+    'icon',
     'path',
     'active',
 ])
