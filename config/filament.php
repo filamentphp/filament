@@ -38,7 +38,7 @@ return [
         | User Model
         |--------------------------------------------------------------------------
         |
-        | The Eloquent User model use by Filament 
+        | The Eloquent User model used by Filament 
         | via the `Filament\Contracts\User` container binding.
         |
         */
