@@ -1,4 +1,4 @@
-@inject('nav', 'Filament\Models\Navigation')
+@inject('nav', 'Filament\Navigation')
 
 <nav aria-label="primary" class="flex-grow px-4">
     <ol>

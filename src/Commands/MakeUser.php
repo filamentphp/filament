@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Filament\Traits\ConsoleValidation;
-use Filament\Contracts\User as UserContract;
 
 class MakeUser extends Command
 {
@@ -45,8 +44,7 @@ class MakeUser extends Command
             return $this->secret('Password');
         }, ['password', 'required|min:8']);
 
-        $userClass = app(UserContract::class);
-        $user = $userClass::create([
+        $user = app('Filament\User')::create([
             'name' => $name,
             'email' => $email,
             'password' => Hash::make($password),

@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\{
     Blade,
 };
 use Livewire\Livewire;
-use Filament\Contracts\User as UserContract;
 use Filament\BladeDirectives;
 use Filament\Commands\{
     MakeUser,
@@ -63,7 +62,8 @@ class FilamentServiceProvider extends ServiceProvider
             return;
         }
 
-        $this->app->bind(UserContract::class, $models['user']);
+        $this->app->bind('Filament\Navigation', $models['navigation']);
+        $this->app->bind('Filament\User', $models['user']);
     }
 
     protected function bootPolicies(): void

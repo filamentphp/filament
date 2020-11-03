@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Facade;
 use Livewire\LivewireServiceProvider;
 use Livewire\Livewire;
+use Watson\Active\ActiveServiceProvider;
+use Watson\Watson\Facades\Active;
+use BladeUI\Icons\BladeIconsServiceProvider;
+use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use Filament\FilamentServiceProvider;
 use Filament\FilamentFacade;
 use Filament\Tests\Database\Models\User;
@@ -44,6 +48,9 @@ abstract class TestCase extends OrchestraTestCase
     {
         return [
             LivewireServiceProvider::class,
+            ActiveServiceProvider::class,
+            BladeIconsServiceProvider::class,
+            BladeHeroiconsServiceProvider::class,
             FilamentServiceProvider::class,
         ];
     }
@@ -52,6 +59,7 @@ abstract class TestCase extends OrchestraTestCase
     {
         return [
             'Livewire' => Livewire::class,
+            'Active' => Active::class,
             'Filament' => FilamentFacade::class,
         ];
     }

@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Livewire\Component;
-use Filament\Contracts\User as UserContract;
 
 class Register extends Component
 {
@@ -31,8 +30,7 @@ class Register extends Component
     {
         $this->validate();
         
-        $userClass = app(UserContract::class);
-        $user = $userClass::create([
+        $user = app('Filament\User')::create([
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make($this->password),
