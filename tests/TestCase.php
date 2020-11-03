@@ -4,7 +4,6 @@ namespace Filament\Tests;
 
 use Mockery;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Facade;
 use Livewire\LivewireServiceProvider;
 use Livewire\Livewire;
@@ -12,12 +11,14 @@ use Watson\Active\ActiveServiceProvider;
 use Watson\Watson\Facades\Active;
 use BladeUI\Icons\BladeIconsServiceProvider;
 use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
+use Thomaswelton\LaravelGravatar\LaravelGravatarServiceProvider;
+use Thomaswelton\LaravelGravatar\Facades\Gravatar;
 use Filament\FilamentServiceProvider;
 use Filament\FilamentFacade;
 use Filament\Tests\Database\Models\User;
 
 abstract class TestCase extends OrchestraTestCase
-{
+{    
     public function setUp(): void
     {
         $this->afterApplicationCreated(function () {
@@ -31,12 +32,13 @@ abstract class TestCase extends OrchestraTestCase
         parent::setUp();
         $this->loadLaravelMigrations(['--database' => 'testbench']);
         $this->artisan('migrate', ['--database' => 'testbench'])->run();
+        
         Facade::setFacadeApplication(app());
     }
 
     public function makeACleanSlate()
     {
-        Artisan::call('view:clear');
+        $this->artisan('view:clear');
     }
 
     public function tearDown(): void
@@ -51,6 +53,7 @@ abstract class TestCase extends OrchestraTestCase
             ActiveServiceProvider::class,
             BladeIconsServiceProvider::class,
             BladeHeroiconsServiceProvider::class,
+            LaravelGravatarServiceProvider::class,
             FilamentServiceProvider::class,
         ];
     }
@@ -60,6 +63,7 @@ abstract class TestCase extends OrchestraTestCase
         return [
             'Livewire' => Livewire::class,
             'Active' => Active::class,
+            'Gravatar' => Gravatar::class,
             'Filament' => FilamentFacade::class,
         ];
     }

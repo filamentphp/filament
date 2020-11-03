@@ -28,6 +28,7 @@
     "vue-template-compiler": "^2.6.12"
   },
   "dependencies": {
+    "@popperjs/core": "^2.5.4",
     "alpinejs": "^2.7.0",
     "focus-visible": "^5.1.0"
   }

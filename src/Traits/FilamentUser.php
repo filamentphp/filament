@@ -3,15 +3,11 @@
 namespace Filament\Traits;
 
 use Illuminate\Auth\Notifications\ResetPassword;
+use Thomaswelton\LaravelGravatar\Facades\Gravatar;
 
 trait FilamentUser {
-    /**
-     * Send the password reset notification.
-     *
-     * @param  string  $token
-     * @return void
-     */
-    public function sendPasswordResetNotification($token) {
+    public function sendPasswordResetNotification($token): void
+    {
         $notification = new ResetPassword($token);
         $notification->createUrlUsing(function ($notifiable, $token) {
             return route('filament.password.reset', [
@@ -21,5 +17,14 @@ trait FilamentUser {
         });
 
         $this->notify($notification);
+    }
+
+    public function avatar(int $size = 48): string
+    {
+        if (!$this->avatar) {
+            return Gravatar::src($this->email, $size);
+        }        
+
+        return '';
     }
 }

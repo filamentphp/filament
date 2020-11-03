@@ -2,7 +2,6 @@
 
 namespace Filament\Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Filament\Tests\TestCase;
 use Filament\Http\Livewire\Auth\Register;
@@ -10,8 +9,6 @@ use Filament\Tests\Database\Models\User;
 
 class RegisterTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_can_see_register_form()
     {
         $this->get(route('filament.register'))

@@ -11,7 +11,17 @@
                 <span class="text-sm leading-tight font-semibold">{{ config('app.name') }}</span>
             </a>
             <x-filament::nav />
-            <livewire:filament-logout class="p-4 text-xs bg-black" />
+            <x-filament::dropdown class="flex-grow flex items-center space-x-3 p-4" id="dropdown-user">
+                <x-slot name="content">
+                    <ul class="list-dropdown" aria-label="{{ __('User actions') }}">
+                        <li><a href="#">{{ __('Edit Profile') }}</a></li>
+                        <li><livewire:filament-logout /></li>
+                    </ul>
+                </x-slot>
+
+                <img src="{{ Auth::user()->avatar(32) }}" alt="{{ Auth::user()->name }}" srcset="{{ Auth::user()->avatar(32) }} 1x, {{ Auth::user()->avatar(64) }} 2x" class="flex-shrink-0 w-8 h-8 rounded" />
+                <span class="flex-grow text-sm leading-tight font-semibold">{{ Auth::user()->name }}</span>
+            </x-filament::dropdown>
         </header>
         <div class="flex-grow flex flex-col">
             <header class="p-6 flex justify-between items-center space-x-4">

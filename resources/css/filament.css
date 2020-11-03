@@ -7,7 +7,8 @@
 }
 
 @layer components {
-  @import './components/button.css';
+  @import './components/buttons.css';
+  @import './components/lists.css';
 }
 
 @layer utilities {

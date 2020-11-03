@@ -77,6 +77,7 @@ class FilamentServiceProvider extends ServiceProvider
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'filament');
         $this->loadViewComponentsAs(config('filament.prefix.component', 'filament'), config('filament.components', []));
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'filament');
     }
 

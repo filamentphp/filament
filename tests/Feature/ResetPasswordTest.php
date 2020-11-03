@@ -2,7 +2,6 @@
 
 namespace Filament\Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 use Livewire\Livewire;
@@ -13,8 +12,6 @@ use Filament\Http\Livewire\Auth\ResetPassword;
 
 class ResetPasswordTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function setUp(): void
     {
         parent::setUp();

@@ -3,7 +3,6 @@
 namespace Filament\Tests\Feature;
 
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
@@ -14,7 +13,7 @@ use Filament\Http\Livewire\Auth\ForgotPassword;
 
 class ForgotPasswordTest extends TestCase
 {
-    use WithoutMiddleware, RefreshDatabase;
+    use WithoutMiddleware;
 
     public $user;
 

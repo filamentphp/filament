@@ -2,7 +2,6 @@
 
 namespace Filament\Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Filament\Tests\TestCase;
 use Filament\Tests\Database\Models\User;
@@ -10,8 +9,6 @@ use Filament\Http\Livewire\Auth\Login;
 
 class LoginTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_can_see_login_form()
     {
         // $this->withoutExceptionHandling();
@@ -66,7 +63,7 @@ class LoginTest extends TestCase
     public function test_bad_credentials_show_error()
     {
         $this->invalid_login()
-            ->assertHasErrors('email');
+            ->assertHasErrors('password');
     }
 
     public function test_bad_credentials_show_error_due_to_login_throttling()
@@ -77,7 +74,7 @@ class LoginTest extends TestCase
 
         // 5th invalid login attempt should return validation error
         $this->invalid_login()
-            ->assertHasErrors('email');
+            ->assertHasErrors('password');
     }
 
     private function invalid_login()

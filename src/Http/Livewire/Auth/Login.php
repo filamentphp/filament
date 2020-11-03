@@ -42,7 +42,7 @@ class Login extends Component
 
         $this->incrementLoginAttempts($request);
 
-        $this->addError('email', __('auth.failed'));
+        $this->addError('password', __('auth.failed'));
     }
     
     public function render()

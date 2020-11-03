@@ -1,0 +1,21 @@
+.list-dropdown {
+  @apply bg-white shadow rounded text-sm leading-tight text-left overflow-hidden;
+
+  > li {
+    @apply whitespace-no-wrap;
+
+    & + * {
+      @apply border-t border-gray-300;
+    }
+  }
+
+  a,
+  button,
+  [role='menuitem'] {
+    @apply inline-block w-full py-2 px-4 transition-colors duration-200 text-gray-600;
+
+    &:hover {
+      @apply bg-gray-200;
+    }
+  }
+}
