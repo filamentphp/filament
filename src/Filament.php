@@ -2,11 +2,17 @@
 
 namespace Filament;
 
-use Illuminate\Support\Facades\Request;
+use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\{
+    Request,
+    File,
+};
 use Illuminate\Support\{
     Collection,
     HtmlString,
 };
+use Filament\Traits\FilamentResource;
 
 class Filament
 {
@@ -134,5 +140,30 @@ class Filament
         }
 
         return $manifest[$key];
+    }
+
+    public function getResourceModels(string $path): Collection
+    {
+        $models = collect(File::allFiles($path))
+            ->map(function ($item) {
+                $path = $item->getRelativePathName();
+                $class = sprintf('\%s%s',
+                    Container::getInstance()->getNamespace(),
+                    strtr(substr($path, 0, strrpos($path, '.')), '/', '\\'));
+
+                return $class;
+            })
+            ->filter(function ($class) {
+                if (!class_exists($class)) {
+                    return false;
+                }
+
+                $reflection = new \ReflectionClass($class);
+                return $reflection->isSubclassOf(Model::class) &&
+                    in_array(FilamentResource::class, class_uses_recursive($class)) && 
+                    !$reflection->isAbstract();
+            });
+
+        return $models->values();
     }
 }

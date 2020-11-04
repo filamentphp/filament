@@ -8,12 +8,17 @@ use Illuminate\Support\Facades\{
     Route,
     Gate,
     Blade,
+    File,
+    Cache,
 };
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Filament\BladeDirectives;
 use Filament\Commands\{
     MakeUser,
 };
+use Filament\Features;
+use Filament\Models\Navigation;
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -31,6 +36,7 @@ class FilamentServiceProvider extends ServiceProvider
         $this->bootResources();
         $this->bootDirectives();
         $this->bootRoutes();
+        $this->bootResourceModels();
         $this->bootCommands();
         $this->bootPublishing();
     }
@@ -58,7 +64,7 @@ class FilamentServiceProvider extends ServiceProvider
     {
         $models = $this->app->config['filament.models'];
 
-        if (! $models) {
+        if (!$models) {
             return;
         }
 
@@ -89,7 +95,7 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootPublishing(): void
     {
-        if (! $this->app->runningInConsole()) {
+        if (!$this->app->runningInConsole()) {
             return;
         }
 
@@ -114,6 +120,26 @@ class FilamentServiceProvider extends ServiceProvider
     {
         if (Filament::$registersRoutes) {
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        }
+    }
+
+    protected function bootResourceModels(): void
+    {   
+        if (Features::hasResourceModels()) {
+            $models = $this->app->filament->getResourceModels(app_path());
+            
+            $models->each(function ($model) {
+                $reflection = new \ReflectionClass($model);
+                $staticProperties = collect($reflection->getStaticProperties());
+                $model = $reflection->getShortName();
+                
+                Navigation::create([
+                    'path' => $staticProperties->get('path', route('filament.resource', ['model' => $model])),
+                    'active' => $staticProperties->get('active', []),
+                    'label' => $staticProperties->get('label', Str::plural($model)),
+                    'icon' => $staticProperties->get('icon', 'heroicon-o-document-text'),
+                ]);
+            });
         }
     }
 

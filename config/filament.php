@@ -29,6 +29,7 @@ return [
 
     'features' => [
         Features::registration(),
+        // Features::resourceModels()
     ],
 
     'models' => [

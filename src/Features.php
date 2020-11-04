@@ -26,6 +26,16 @@ class Features
     }
 
     /**
+     * Determine if the application has resource models.
+     *
+     * @return bool
+     */
+    public static function hasResourceModels()
+    {
+        return static::enabled(static::resourceModels());
+    }
+
+    /**
      * Enable the user registration feature.
      *
      * @return string
@@ -33,5 +43,15 @@ class Features
     public static function registration()
     {
         return 'registration';
+    }
+
+    /**
+     * Enable the resources feature.
+     *
+     * @return string
+     */
+    public static function resourceModels()
+    {
+        return 'resourceModels';
     }
 }
