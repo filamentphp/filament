@@ -2,7 +2,6 @@
 
 namespace Filament\Http\Livewire\Auth;
 
-use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;

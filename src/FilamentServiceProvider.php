@@ -34,7 +34,6 @@ class FilamentServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->bootModelBindings();
-        $this->bootPolicies();
         $this->bootResources();
         $this->bootDirectives();
         $this->bootResourceModels();
@@ -76,13 +75,6 @@ class FilamentServiceProvider extends ServiceProvider
 
         $this->app->bind('Filament\Navigation', $models['navigation']);
         $this->app->bind('Filament\User', $models['user']);
-    }
-
-    protected function bootPolicies(): void
-    {
-        Gate::guessPolicyNamesUsing(function ($modelClass) {
-            return 'Filament\\Policies\\'.class_basename($modelClass).'Policy';
-        });
     }
 
     protected function bootResources(): void
