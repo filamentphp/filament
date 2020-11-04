@@ -17,6 +17,7 @@ use Filament\BladeDirectives;
 use Filament\Commands\{
     MakeUser,
 };
+use Filament\Providers\RouteServiceProvider;
 use Filament\Features;
 use Filament\Models\Navigation;
 
@@ -27,6 +28,7 @@ class FilamentServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/filament.php', 'filament');
         $this->registerSingletons();
         $this->registerLivewireComponents();      
+        $this->registerProviders();
     }
 
     public function boot(): void
@@ -35,7 +37,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->bootPolicies();
         $this->bootResources();
         $this->bootDirectives();
-        $this->bootRoutes();
         $this->bootResourceModels();
         $this->bootCommands();
         $this->bootPublishing();
@@ -58,6 +59,11 @@ class FilamentServiceProvider extends ServiceProvider
                 Livewire::component($alias, $component);
             }
         });
+    }
+
+    protected function registerProviders(): void
+    {
+        $this->app->register(RouteServiceProvider::class);
     }
 
     protected function bootModelBindings(): void
@@ -116,29 +122,25 @@ class FilamentServiceProvider extends ServiceProvider
         ], 'filament-assets');
     }
 
-    protected function bootRoutes(): void
-    {
-        if (Filament::$registersRoutes) {
-            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-        }
-    }
-
     protected function bootResourceModels(): void
     {   
         if (Features::hasResourceModels()) {
-            $models = $this->app->filament->getResourceModels(app_path());
-            
-            $models->each(function ($model) {
-                $reflection = new \ReflectionClass($model);
-                $staticProperties = collect($reflection->getStaticProperties());
-                $model = $reflection->getShortName();
+            $this->app->booted(function () {
+                $models = $this->app->filament->getResourceModels(app_path());
                 
-                Navigation::create([
-                    'path' => $staticProperties->get('path', route('filament.resource', ['model' => $model])),
-                    'active' => $staticProperties->get('active', []),
-                    'label' => $staticProperties->get('label', Str::plural($model)),
-                    'icon' => $staticProperties->get('icon', 'heroicon-o-document-text'),
-                ]);
+                $models->each(function ($class) {
+                    $model = $this->app->make($class);
+                    $actions = $model->actions() ?? [];
+
+                    if (array_key_exists('index', $actions)) {
+                        Navigation::create([
+                            'path' => route('filament.resource', ['model' => class_basename($model)]),
+                            'active' => $model->active ?? [],
+                            'label' => $model->label ?? Str::plural(class_basename($model)),
+                            'icon' => $model->icon ?? 'heroicon-o-database',
+                        ]);
+                    }
+                });
             });
         }
     }

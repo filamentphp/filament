@@ -12,7 +12,7 @@ use Illuminate\Support\{
     Collection,
     HtmlString,
 };
-use Filament\Traits\FilamentResource;
+use Filament\Contracts\FilamentResource;
 
 class Filament
 {
@@ -160,7 +160,7 @@ class Filament
 
                 $reflection = new \ReflectionClass($class);
                 return $reflection->isSubclassOf(Model::class) &&
-                    in_array(FilamentResource::class, class_uses_recursive($class)) && 
+                    in_array(FilamentResource::class, class_implements($class)) && 
                     !$reflection->isAbstract();
             });
 
