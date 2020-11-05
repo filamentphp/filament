@@ -19,7 +19,7 @@
                 <x-filament::app-icon class="w-10 h-10 fill-current" />
                 <span class="text-sm leading-tight font-semibold">{{ config('app.name') }}</span>
             </a>
-            <x-filament::nav />
+            <x-filament-nav />
             <x-filament::dropdown class="w-full text-left flex-grow flex items-center p-4 space-x-3 text-gray-600 transition-colors duration-200 hover:text-white hover:bg-gray-800" id="dropdown-user">
                 <img src="{{ Auth::user()->avatar(32) }}" alt="{{ Auth::user()->name }}" srcset="{{ Auth::user()->avatar(32) }} 1x, {{ Auth::user()->avatar(64) }} 2x" class="flex-shrink-0 w-8 h-8 rounded" />
                 <span class="flex-grow text-sm leading-tight font-semibold">{{ Auth::user()->name }}</span>

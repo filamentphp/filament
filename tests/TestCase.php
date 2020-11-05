@@ -89,6 +89,7 @@ abstract class TestCase extends OrchestraTestCase
             'prefix'   => '',
         ]);
 
+        $app['config']->set('filament.paths.models', __DIR__.'/Database/Models');
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('filament.models.user', User::class);
     }

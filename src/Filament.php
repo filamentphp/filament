@@ -12,7 +12,7 @@ use Illuminate\Support\{
     Collection,
     HtmlString,
 };
-use Filament\Contracts\FilamentResource;
+use Filament\Traits\FilamentResource;
 
 class Filament
 {
@@ -144,7 +144,8 @@ class Filament
 
     public function getResourceModels(): Collection
     {
-        $models = collect(File::allFiles(app_path()))
+        $app_path = config('filament.paths.models', app_path());
+        $models = collect(File::allFiles($app_path))
             ->map(function ($item) {
                 $path = $item->getRelativePathName();
                 $class = sprintf('\%s%s',
@@ -160,7 +161,7 @@ class Filament
 
                 $reflection = new \ReflectionClass($class);
                 return $reflection->isSubclassOf(Model::class) &&
-                    in_array(FilamentResource::class, class_implements($class)) && 
+                    in_array(FilamentResource::class, class_uses_recursive($class)) && 
                     !$reflection->isAbstract();
             })->mapWithKeys(function ($class) {
                 return [class_basename($class) => $class];

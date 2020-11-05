@@ -131,6 +131,7 @@ class FilamentServiceProvider extends ServiceProvider
                             'active' => $route.'*',
                             'label' => $model->label ?? Str::plural($key),
                             'icon' => $model->icon ?? 'heroicon-o-database',
+                            'sort' => $model->sort ?? 0,
                         ]);
                     }
                 });

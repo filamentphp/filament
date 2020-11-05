@@ -84,6 +84,7 @@ return [
             'active' => 'filament.dashboard', // string or named route (may also be an array @link https://github.com/dwightwatson/active)
             'label' => 'Dashboard',
             'icon' => 'heroicon-o-home', // optional icon name (Blade UI Kit @link https://github.com/blade-ui-kit/blade-heroicons)
+            'sort' => -1, // sort order used by the navigation
         ],
     
     ],
@@ -99,7 +100,7 @@ return [
     */
 
     'components' => [
-        // 'alert' => Components\Alerts\Alert::class,
+        'nav' => Filament\View\Components\Nav::class,
     ],
 
     /*
