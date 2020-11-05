@@ -40,6 +40,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Resource Models
     if (Features::hasResourceModels()) {
-        Route::get('/resources/{model}/{action?}', ResourceModelController::class)->name('resource');
+        Route::get('/resources/{model}/{action?}/{id?}', ResourceModelController::class)->name('resource');
     }
 });
