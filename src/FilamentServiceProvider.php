@@ -118,17 +118,18 @@ class FilamentServiceProvider extends ServiceProvider
     {   
         if (Features::hasResourceModels()) {
             $this->app->booted(function () {
-                $models = $this->app->filament->getResourceModels(app_path());
+                $models = $this->app->filament->getResourceModels();
                 
-                $models->each(function ($class) {
-                    $model = $this->app->make($class);
-                    $actions = $model->actions() ?? [];
+                $models->each(function ($item, $key) {
+                    $model = $this->app->make($item);
 
-                    if (array_key_exists('index', $actions)) {
+                    if (array_key_exists('index', $model->actions())) {
+                        $route = route('filament.resource', ['model' => $key]);
+
                         Navigation::create([
-                            'path' => route('filament.resource', ['model' => class_basename($model)]),
-                            'active' => $model->active ?? [],
-                            'label' => $model->label ?? Str::plural(class_basename($model)),
+                            'path' => $route,
+                            'active' => $route.'*',
+                            'label' => $model->label ?? Str::plural($key),
                             'icon' => $model->icon ?? 'heroicon-o-database',
                         ]);
                     }

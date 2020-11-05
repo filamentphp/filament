@@ -142,9 +142,9 @@ class Filament
         return $manifest[$key];
     }
 
-    public function getResourceModels(string $path): Collection
+    public function getResourceModels(): Collection
     {
-        $models = collect(File::allFiles($path))
+        $models = collect(File::allFiles(app_path()))
             ->map(function ($item) {
                 $path = $item->getRelativePathName();
                 $class = sprintf('\%s%s',
@@ -162,8 +162,10 @@ class Filament
                 return $reflection->isSubclassOf(Model::class) &&
                     in_array(FilamentResource::class, class_implements($class)) && 
                     !$reflection->isAbstract();
+            })->mapWithKeys(function ($class) {
+                return [class_basename($class) => $class];
             });
 
-        return $models->values();
+        return $models;
     }
 }
