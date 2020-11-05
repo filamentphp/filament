@@ -1,8 +1,8 @@
 @props([
-    'label',
-    'icon',
     'path',
     'active',
+    'label',
+    'icon' => false,
 ])
 
 <a href="{{ Route::has($path) ? route($path) : $path }}" {{ $attributes->merge(['class' => 'py-2 px-3 flex items-center space-x-2 rounded transition-color duration-200 hover:text-white hover:bg-gray-800'.active($active, ' text-white bg-gray-800', 'text-gray-400')]) }}>

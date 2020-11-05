@@ -32,10 +32,11 @@ Route::group(['middleware' => ['auth']], function () {
     // Dashboard
     Route::get('/', config('filament.livewire.dashboard'))->name('dashboard');
 
-    // Profile
-    // Route::get('profile', config('filament.livewire.profile'))
-    //  ->middleware('verified')
-    //  ->name('profile');
+    // Users
+    Route::group(['prefix' => 'users', 'middleware' => ['verified']], function () {
+        Route::get('/', config('filament.livewire.users'))->name('users.index');
+        // Route::get('/{user}', config('filament.livewire.user'))->name('users.show');
+    });
 
     // Resource Models
     if (Features::hasResourceModels()) {

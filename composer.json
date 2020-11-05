@@ -9,7 +9,6 @@
   "license": "MIT",
   "require": {
     "blade-ui-kit/blade-heroicons": "^0.3",
-    "calebporzio/sushi": "^2.1",
     "livewire/livewire": "^2.2",
     "thomaswelton/laravel-gravatar": "~1.0",
     "watson/active": "^6.0"

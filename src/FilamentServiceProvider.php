@@ -13,13 +13,15 @@ use Illuminate\Support\Facades\{
 };
 use Illuminate\Support\Str;
 use Livewire\Livewire;
-use Filament\BladeDirectives;
+use Filament\Providers\RouteServiceProvider;
+use Filament\Features;
+use Filament\Helpers\{
+    BladeDirectives,
+    Navigation,
+};
 use Filament\Commands\{
     MakeUser,
 };
-use Filament\Providers\RouteServiceProvider;
-use Filament\Features;
-use Filament\Models\Navigation;
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -44,6 +46,10 @@ class FilamentServiceProvider extends ServiceProvider
     protected function registerSingletons(): void
     {
         $this->app->singleton('filament', Filament::class);
+
+        $this->app->singleton(Navigation::class, function () {
+            return new Navigation(config('filament.nav', []));
+        });
     }
 
     protected function registerLivewireComponents(): void
@@ -73,7 +79,6 @@ class FilamentServiceProvider extends ServiceProvider
             return;
         }
 
-        $this->app->bind('Filament\Navigation', $models['navigation']);
         $this->app->bind('Filament\User', $models['user']);
     }
 
@@ -126,13 +131,14 @@ class FilamentServiceProvider extends ServiceProvider
                     if (array_key_exists('index', $model->actions())) {
                         $route = route('filament.resource', ['model' => $key]);
 
-                        Navigation::create([
+                        app(Navigation::class)->$key = [
                             'path' => $route,
                             'active' => $route.'*',
                             'label' => $model->label ?? Str::plural($key),
                             'icon' => $model->icon ?? 'heroicon-o-database',
                             'sort' => $model->sort ?? 0,
-                        ]);
+                            'hideFromNav' => $model->hideFromNav ?? false,
+                        ];
                     }
                 });
             });

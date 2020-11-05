@@ -3,10 +3,10 @@
     @foreach($nav as $item)
         <li>
             <x-filament::nav-link 
-                :path="$item->path" 
-                :active="$item->active" 
-                :label="$item->label" 
-                :icon="$item->icon ?? false" />
+                :path="$item['path']" 
+                :active="$item['active']" 
+                :label="$item['label']" 
+                :icon="$item['icon']" />
         </li>
     @endforeach
     </ol>
