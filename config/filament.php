@@ -85,15 +85,6 @@ return [
             'sort' => -9999, // sort order used by the navigation
             'hideFromNav' => false,
         ],
-
-        'users' => [
-            'path' => 'filament.users.index', // string or named route
-            'active' => 'filament.users.*', // string or named route (may also be an array @link https://github.com/dwightwatson/active)
-            'label' => 'Users',
-            'icon' => 'heroicon-o-users', // optional icon name (Blade UI Kit @link https://github.com/blade-ui-kit/blade-heroicons)
-            'sort' => 9999, // sort order used by the navigation
-            'hideFromNav' => false,
-        ],
     
     ],
 
@@ -126,7 +117,6 @@ return [
         'forgot-password' => Filament\Http\Livewire\Auth\ForgotPassword::class,
         'reset-password' => Filament\Http\Livewire\Auth\ResetPassword::class,
         'register' => Filament\Http\Livewire\Auth\Register::class,
-        'users' => Filament\Http\Livewire\Users\Index::class,
         'logout' => Filament\Http\Livewire\Auth\Logout::class,
         'dashboard' => Filament\Http\Livewire\Dashboard::class,
     ],
