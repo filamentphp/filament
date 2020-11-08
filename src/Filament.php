@@ -145,7 +145,7 @@ class Filament
     /** @return null|Collection */
     public function resources()
     {
-        $resources_path = config('filament.resources', app_path('Filament/Resources'));
+        $resources_path = app_path('Filament/Resources');
 
         if (!File::isDirectory($resources_path)) {
             File::makeDirectory($resources_path, 0755, true);
