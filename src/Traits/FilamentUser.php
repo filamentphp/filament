@@ -25,6 +25,6 @@ trait FilamentUser {
             return Gravatar::src($this->email, $size);
         }        
 
-        return '';
+        return $this->avatar;
     }
 }
