@@ -142,9 +142,15 @@ class Filament
         return $manifest[$key];
     }
 
-    public function resources(): Collection
+    /** @return null|Collection */
+    public function resources()
     {
         $resources_path = config('filament.resources', app_path('Filament/Resources'));
+
+        if (!File::isDirectory($resources_path)) {
+            File::makeDirectory($resources_path, 0755, true);
+        }
+
         $models = collect(File::allFiles($resources_path))->map(function ($item) {
                 $path = $item->getRelativePathName();
                 $class = sprintf(
