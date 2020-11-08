@@ -150,20 +150,18 @@ class Filament
             File::makeDirectory($resources_path, 0755, true);
         }
 
-        $models = collect(File::files($resources_path))->map(function ($item) {
-                $basename = $item->getBasename('.' . $item->getExtension());
-                return Container::getInstance()->getNamespace().'Filament\\Resources\\'.$basename;
-            })->filter(function ($class) {
-                if (!class_exists($class)) {
-                    return false;
-                }
+        return collect(File::files($resources_path))->map(function ($item) {
+            $basename = $item->getBasename('.' . $item->getExtension());
+            return Container::getInstance()->getNamespace().'Filament\\Resources\\'.$basename;
+        })->filter(function ($class) {
+            if (!class_exists($class)) {
+                return false;
+            }
 
-                $reflection = new \ReflectionClass($class);
-                return !$reflection->isAbstract() && $reflection->isSubclassOf(FilamentResource::class);
-            })->mapWithKeys(function ($class) {
-                return [class_basename($class) => $class];
-            });
-
-        return $models;
+            $reflection = new \ReflectionClass($class);
+            return !$reflection->isAbstract() && $reflection->isSubclassOf(FilamentResource::class);
+        })->mapWithKeys(function ($class) {
+            return [class_basename($class) => $class];
+        });
     }
 }
