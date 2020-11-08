@@ -37,28 +37,22 @@ class User extends Authenticatable
 }
 ```
 
-### Define a Resource
+### Create a Resource
 
-To define a Resource Model, add the `Filament\Traits\FilamentResource` trait to your model.
-
-> Make note of the properties and methods added to the model example below for how to configure a resource.
+To define a Resource, create a new resource file in `app/Filament/Resources` like the following `Page.php`:
 
 ```php
 <?php
 
-namespace App\Models;
+namespace App\Filament\Resources;
 
-use Illuminate\Database\Eloquent\Model;
-use Filament\Traits\FilamentResource;
+use Filament\FilamentResource;
 use App\Http\Livewire\Pages\Index;
+// use App\Http\Livewire\Pages\Show;
 
-class Page extends Model
+class Page extends FilamentResource
 {
-    use FilamentResource;
-
-    protected $guarded = [];
-
-    public $label = 'Pages';
+    public $label = 'My Pages'; // defaults to pluralized classname
     public $icon = 'heroicon-o-database';
     public $sort = 0;
     public $hideFromNav = false;
@@ -70,8 +64,6 @@ class Page extends Model
             // 'show' => Show::class,
         ];
     }
-
-    //...
 }
 ```
 

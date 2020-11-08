@@ -29,7 +29,7 @@ return [
 
     'features' => [
         Features::registration(),
-        Features::resourceModels()
+        Features::resources()
     ],
 
     'models' => [

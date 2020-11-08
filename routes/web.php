@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Filament\Features;
 use Filament\Http\Controllers\{
     AssetController,
-    ResourceModelController,
+    ResourceController,
 };
 
 // Assets
@@ -32,8 +32,8 @@ Route::group(['middleware' => ['auth']], function () {
     // Dashboard
     Route::get('/', config('filament.livewire.dashboard'))->name('dashboard');
 
-    // Resource Models
-    if (Features::hasResourceModels()) {
-        Route::get('/resources/{model}/{action?}/{id?}', ResourceModelController::class)->name('resource');
+    // Resources
+    if (Features::hasResources()) {
+        Route::get('/resources/{resource}/{action?}/{id?}', ResourceController::class)->name('resource');
     }
 });

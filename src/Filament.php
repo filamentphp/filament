@@ -12,7 +12,7 @@ use Illuminate\Support\{
     Collection,
     HtmlString,
 };
-use Filament\Traits\FilamentResource;
+use Filament\FilamentResource;
 
 class Filament
 {
@@ -142,27 +142,25 @@ class Filament
         return $manifest[$key];
     }
 
-    public function getResourceModels(): Collection
+    public function resources(): Collection
     {
-        $app_path = config('filament.paths.models', app_path());
-        $models = collect(File::allFiles($app_path))
-            ->map(function ($item) {
+        $resources_path = config('filament.resources', app_path('Filament/Resources'));
+        $models = collect(File::allFiles($resources_path))->map(function ($item) {
                 $path = $item->getRelativePathName();
-                $class = sprintf('\%s%s',
-                    Container::getInstance()->getNamespace(),
-                    strtr(substr($path, 0, strrpos($path, '.')), '/', '\\'));
+                $class = sprintf(
+                    '\%s%s', 
+                    Container::getInstance()->getNamespace().'Filament\\Resources\\', 
+                    strtr(substr($path, 0, strrpos($path, '.')), '/', '\\')
+                );
 
                 return $class;
-            })
-            ->filter(function ($class) {
+            })->filter(function ($class) {
                 if (!class_exists($class)) {
                     return false;
                 }
 
                 $reflection = new \ReflectionClass($class);
-                return $reflection->isSubclassOf(Model::class) &&
-                    in_array(FilamentResource::class, class_uses_recursive($class)) && 
-                    !$reflection->isAbstract();
+                return $reflection->isSubclassOf(FilamentResource::class) && !$reflection->isAbstract();
             })->mapWithKeys(function ($class) {
                 return [class_basename($class) => $class];
             });

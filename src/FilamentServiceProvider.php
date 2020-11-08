@@ -36,9 +36,9 @@ class FilamentServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->bootModelBindings();
-        $this->bootResources();
+        $this->bootLoaders();
         $this->bootDirectives();
-        $this->bootResourceModels();
+        $this->bootResources();
         $this->bootCommands();
         $this->bootPublishing();
     }
@@ -82,7 +82,7 @@ class FilamentServiceProvider extends ServiceProvider
         $this->app->bind('Filament\User', $models['user']);
     }
 
-    protected function bootResources(): void
+    protected function bootLoaders(): void
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'filament');
         $this->loadViewComponentsAs(config('filament.prefix.component', 'filament'), config('filament.components', []));
@@ -119,25 +119,23 @@ class FilamentServiceProvider extends ServiceProvider
         ], 'filament-assets');
     }
 
-    protected function bootResourceModels(): void
+    protected function bootResources(): void
     {   
-        if (Features::hasResourceModels()) {
+        if (Features::hasResources()) {
             $this->app->booted(function () {
-                $models = $this->app->filament->getResourceModels();
-                
-                $models->each(function ($item, $key) {
-                    $model = $this->app->make($item);
+                $this->app->filament->resources()->each(function ($item, $key) {
+                    $resource = $this->app->make($item);
 
-                    if (array_key_exists('index', $model->actions())) {
-                        $route = route('filament.resource', ['model' => $key]);
+                    if (array_key_exists('index', $resource->actions())) {
+                        $route = route('filament.resource', ['resource' => $key]);
 
                         app(Navigation::class)->$key = [
                             'path' => $route,
                             'active' => $route.'*',
-                            'label' => $model->label ?? Str::plural($key),
-                            'icon' => $model->icon ?? 'heroicon-o-database',
-                            'sort' => $model->sort ?? 0,
-                            'hideFromNav' => $model->hideFromNav ?? false,
+                            'label' => $resource->label ?? Str::plural($key),
+                            'icon' => $resource->icon,
+                            'sort' => $resource->sort,
+                            'hideFromNav' => $resource->hideFromNav,
                         ];
                     }
                 });

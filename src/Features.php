@@ -26,13 +26,13 @@ class Features
     }
 
     /**
-     * Determine if the application has resource models.
+     * Determine if the application has resources.
      *
      * @return bool
      */
-    public static function hasResourceModels()
+    public static function hasResources()
     {
-        return static::enabled(static::resourceModels());
+        return static::enabled(static::resources());
     }
 
     /**
@@ -50,7 +50,7 @@ class Features
      *
      * @return string
      */
-    public static function resourceModels()
+    public static function resources()
     {
         return 'resourceModels';
     }
