@@ -151,7 +151,7 @@ class Filament
         }
 
         return collect(File::files($resources_path))->map(function ($item) {
-            $basename = $item->getBasename('.' . $item->getExtension());
+            $basename = $item->getBasename('.'.$item->getExtension());
             return Container::getInstance()->getNamespace().'Filament\\Resources\\'.$basename;
         })->filter(function ($class) {
             if (!class_exists($class)) {
