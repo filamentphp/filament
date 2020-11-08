@@ -150,8 +150,8 @@ class Filament
             File::makeDirectory($resources_path, 0755, true);
         }
 
-        return collect(File::files($resources_path))->map(function ($item) {
-            $basename = $item->getBasename('.'.$item->getExtension());
+        return collect(File::files($resources_path))->map(function ($file) {
+            $basename = $file->getBasename('.'.$file->getExtension());
             return Container::getInstance()->getNamespace().'Filament\\Resources\\'.$basename;
         })->filter(function ($class) {
             if (!class_exists($class)) {
