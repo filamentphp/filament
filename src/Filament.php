@@ -142,8 +142,7 @@ class Filament
         return $manifest[$key];
     }
 
-    /** @return null|Collection */
-    public function resources()
+    public function resources(): Collection
     {
         $resources_path = app_path('Filament/Resources');
 
