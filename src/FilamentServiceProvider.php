@@ -135,7 +135,6 @@ class FilamentServiceProvider extends ServiceProvider
                             'label' => $resource->label ?? Str::plural($key),
                             'icon' => $resource->icon,
                             'sort' => $resource->sort,
-                            'hideFromNav' => $resource->hideFromNav,
                         ];
                     }
                 });

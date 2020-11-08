@@ -18,7 +18,6 @@ class Nav extends Component
     public function __construct()
     {
         $this->nav = app('Filament\Helpers\Navigation')->items()
-                        ->where('hideFromNav', false)
                         ->sortBy('sort')
                         ->all();
     }

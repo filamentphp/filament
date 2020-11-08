@@ -55,7 +55,6 @@ class Page extends FilamentResource
     public $label = 'My Pages'; // defaults to pluralized classname
     public $icon = 'heroicon-o-database';
     public $sort = 0;
-    public $hideFromNav = false;
 
     public function actions()
     {
