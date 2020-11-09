@@ -71,3 +71,11 @@ class Page extends FilamentResource
 ```bash
 php artisan filament:user
 ```
+
+---
+
+## Roadmap
+
+- [ ] User profile & related tests
+- [ ] Dynamic image sizing via Glide & related tests
+- [ ] Avatar (other than current Gravatar implementation)
