@@ -49,9 +49,6 @@
             <main id="content" class="flex-grow flex flex-col">
                 {{ $slot }}
             </main>
-            <footer role="contentinfo" class="p-4 md:p-6 flex items-center justify-between">
-                <span class="text-xs font-mono text-gray-500">{{ config('filament.name') }}</span>
-            </footer>
         </div>
     </div>
 @endsection
