@@ -7,9 +7,7 @@
         <div class="w-full max-w-sm">
             <header class="text-center space-y-4 mb-6">
                 <div class="flex items-center justify-center">
-                    <a href="{{ url('/') }}" rel="home" class="inline-flex">
-                        <x-filament::app-icon class="w-12 h-12" />
-                    </a>
+                    <x-filament::auth-branding />
                 </div>
                 <h2 class="font-light text-2xl md:text-3xl leading-tight">{{ $title ?? config('filament.name') }}</h2>
             </header>

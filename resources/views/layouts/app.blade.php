@@ -15,10 +15,7 @@
             :class="headerIsOpen ? 'translate-x-0' : '-translate-x-full'" 
             tabindex="-1"
             id="banner">
-            <a href="{{ url('/') }}" rel="home" class="p-4 flex items-center space-x-3 transition-colors duration-200 hover:text-white" target="_blank" rel="noopener noreferrer">
-                <x-filament::app-icon class="w-8 h-8" />
-                <span class="text-sm leading-tight font-semibold">{{ config('app.name') }}</span>
-            </a>
+            <x-filament::app-branding />
             <x-filament-nav />
             <x-filament::dropdown class="w-full text-left flex-grow flex items-center p-4 space-x-3 text-gray-600 transition-colors duration-200 hover:text-white hover:bg-gray-800" id="dropdown-user">
                 <img src="{{ Auth::user()->avatar(32) }}" alt="{{ Auth::user()->name }}" srcset="{{ Auth::user()->avatar(32) }} 1x, {{ Auth::user()->avatar(64) }} 2x" class="flex-shrink-0 w-8 h-8 rounded-full" />
