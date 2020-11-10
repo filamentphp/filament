@@ -76,5 +76,7 @@ php artisan filament:user
 
 ## Roadmap
 
-- [ ] User profile & related package tests
 - [ ] League Glide Image package tests
+- [ ] User profile, related field components & related package tests
+- [ ] Resource stubs and associated Artisan commands (e.g. `artisan filament:resource --options`)
+- [ ] DOCUMENTATION FOR ALL THE THINGS.
