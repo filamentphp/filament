@@ -16,7 +16,10 @@ Route::name('assets.')->group(function () {
     Route::get('filament.js.map', [AssetController::class, 'jsMap']);  
 });
 
-// Auth
+// Images
+Route::get('/image/{path}', ImageController::class)->where('path', '.*')->name('image');
+
+// Authentication
 Route::prefix('auth')->group(function () {
     Route::get('login', config('filament.livewire.login'))->name('login');
     Route::get('forgot-password', config('filament.livewire.forgot-password'))->name('password.forgot');
@@ -38,6 +41,3 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/resources/{resource}/{action?}/{id?}', ResourceController::class)->name('resource');
     }
 });
-
-// Images
-Route::get('/image/{path}', ImageController::class)->where('path', '.*')->name('image');
