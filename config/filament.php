@@ -94,7 +94,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Below you reference all class-based components use by Filament.
-    | You may override these components for customization in your own app.
+    | You may override these for customization in your own app.
     |
     */
 
@@ -120,5 +120,30 @@ return [
         'logout' => Filament\Http\Livewire\Auth\Logout::class,
         'dashboard' => Filament\Http\Livewire\Dashboard::class,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cache
+    |--------------------------------------------------------------------------
+    |
+    | This is the cache disk Filament will use, you may
+    | use any of the disks defined in the `config/filesystems.php`.
+    |
+    */
+
+    'cache_disk' => env('FILAMENT_CACHE_DISK', 'local'),
+    'cache_path' =>  '.cache',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Storage
+    |--------------------------------------------------------------------------
+    |
+    | This is the storage disk Filament will use to put media, you may
+    | use any of the disks defined in the `config/filesystems.php`.
+    |
+    */
+    
+    'storage_disk' => env('FILAMENT_STORAGE_DISK', 'public'),
 
 ];

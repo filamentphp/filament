@@ -5,6 +5,7 @@ use Filament\Features;
 use Filament\Http\Controllers\{
     AssetController,
     ResourceController,
+    ImageController,
 };
 
 // Assets
@@ -37,3 +38,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/resources/{resource}/{action?}/{id?}', ResourceController::class)->name('resource');
     }
 });
+
+// Images
+Route::get('/image/{path}', ImageController::class)->where('path', '.*')->name('image');

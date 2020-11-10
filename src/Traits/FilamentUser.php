@@ -4,6 +4,7 @@ namespace Filament\Traits;
 
 use Illuminate\Auth\Notifications\ResetPassword;
 use Thomaswelton\LaravelGravatar\Facades\Gravatar;
+use Filament;
 
 trait FilamentUser {
     public function sendPasswordResetNotification($token): void
@@ -25,6 +26,10 @@ trait FilamentUser {
             return Gravatar::src($this->email, $size);
         }        
 
-        return $this->avatar;
+        return Filament::image($this->avatar, [
+            'w' => $size,
+            'h' => $size,
+            'fit' => 'crop',
+        ]);
     }
 }

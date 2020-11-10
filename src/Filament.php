@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\{
     Request,
     File,
+    Storage,
 };
 use Illuminate\Support\{
     Collection,
     HtmlString,
 };
+use League\Glide\Urls\UrlBuilderFactory;
 use Filament\FilamentResource;
 
 class Filament
@@ -146,9 +148,7 @@ class Filament
     {
         $resources_path = app_path('Filament/Resources');
 
-        if (!File::isDirectory($resources_path)) {
-            File::makeDirectory($resources_path, 0755, true);
-        }
+        File::ensureDirectoryExists($resources_path);
 
         return collect(File::files($resources_path))->map(function ($file) {
             $basename = $file->getBasename('.'.$file->getExtension());
@@ -163,5 +163,25 @@ class Filament
         })->mapWithKeys(function ($class) {
             return [class_basename($class) => $class];
         });
+    }
+
+    /**
+     * Generates a secure Glide image URL.
+     * 
+     * @link https://glide.thephpleague.com/1.0/config/security/
+     * 
+     * @param string $path
+     * @param array  $manipulations
+     *  
+     * @return mixed
+     */
+    public function image($path, $manipulations = [])
+    {
+        if (empty($manipulations)) {
+            return Storage::disk(config('filament.disk'))->url($path);
+        }
+
+        $urlBuilder = UrlBuilderFactory::create(null, config('app.key'));
+        return route('filament.image', ['path' => ltrim($urlBuilder->getUrl($path, $manipulations), '/')]);
     }
 }
