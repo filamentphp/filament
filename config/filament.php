@@ -45,9 +45,12 @@ return [
         | Route Prefix
         |--------------------------------------------------------------------------
         |
+        | The default is `admin` but you can change it to whatever works best and
+        | doesn't conflict with the routing in your application.
+        | 
         */
 
-        'route' => 'filament',
+        'route' => 'admin',
 
         /*
         |--------------------------------------------------------------------------
