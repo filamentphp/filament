@@ -61,7 +61,7 @@ module.exports = {
     customForms: (theme) => ({
       default: {
         input: {
-          borderColor: theme('colors.gray.500'),
+          borderColor: theme('colors.gray.400'),
           boxShadow: theme('boxShadow.sm'),
         },
         checkbox: {

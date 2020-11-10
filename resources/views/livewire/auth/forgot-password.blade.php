@@ -8,7 +8,7 @@
         </x-slot>
     </x-filament::input-group-stacked>
 
-    <x-filament::button type="submit" class="w-full" wire:loading.attr="disabled">
+    <x-filament::button type="submit" class="btn-primary w-full" wire:loading.attr="disabled">
         <x-filament::loader class="w-6 h-6 absolute left-0 ml-2 pointer-events-none" wire:loading />
         {{ __('Send Password Reset Link') }}
     </x-filament::button>

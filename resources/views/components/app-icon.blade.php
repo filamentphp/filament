@@ -1,5 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 102 102" {{ $attributes->merge(['class' => 'rounded-lg w-12 h-12 overflow-hidden']) }}>
-    <title>{{ config('filament.name') }}</title>
     <polygon fill="#D69E2E" points="0 66 102 66 102 102 0 102"/>
     <polygon fill="#DD6B20" points="0 48 102 48 102 66 0 66"/>
     <polygon fill="#E53E3E" points="0 35 102 35 102 48 0 48"/>

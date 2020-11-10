@@ -20,11 +20,9 @@ Route::name('assets.')->group(function () {
 Route::get('/image/{path}', ImageController::class)->where('path', '.*')->name('image');
 
 // Authentication
-Route::prefix('auth')->group(function () {
-    Route::get('login', config('filament.livewire.login'))->name('login');
-    Route::get('forgot-password', config('filament.livewire.forgot-password'))->name('password.forgot');
-    Route::get('reset-password/{token}', config('filament.livewire.reset-password'))->name('password.reset');
-});
+Route::get('login', config('filament.livewire.login'))->name('login');
+Route::get('forgot-password', config('filament.livewire.forgot-password'))->name('password.forgot');
+Route::get('reset-password/{token}', config('filament.livewire.reset-password'))->name('password.reset');
 
 // Registration
 if (Features::registersUsers()) {
