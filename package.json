@@ -13,23 +13,27 @@
     "email": "ryan@eastslope.studio"
   },
   "license": "MIT",
+  "dependencies": {
+    "@popperjs/core": "^2.5.4",
+    "alpinejs": "^2.7.3",
+    "focus-visible": "^5.2.0"
+  },
   "devDependencies": {
-    "@tailwindcss/custom-forms": "^0.2.1",
-    "@tailwindcss/typography": "^0.2.0",
-    "browser-sync": "^2.26.12",
+    "@tailwindcss/forms": "^0.2.1",
+    "@tailwindcss/typography": "^0.3.1",
+    "autoprefixer": "^9.8.6",
+    "browser-sync": "^2.26.13",
     "browser-sync-webpack-plugin": "^2.2.2",
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
-    "laravel-mix": "^5.0.7",
+    "laravel-mix": "^5.0.9",
     "postcss-import": "^12.0.1",
     "postcss-nested": "^4.2.3",
-    "prettier": "^2.1.2",
-    "tailwindcss": "^1.9.3",
+    "prettier": "^2.2.0",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.1",
     "vue-template-compiler": "^2.6.12"
   },
-  "dependencies": {
-    "@popperjs/core": "^2.5.4",
-    "alpinejs": "^2.7.0",
-    "focus-visible": "^5.1.0"
+  "optionalDependencies": {
+    "fsevents": "^2.2.1"
   }
 }

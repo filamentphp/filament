@@ -8,7 +8,7 @@
 <div class="space-y-1">
     <x-filament::label>
         <span class="inline-flex items-center space-x-2">
-            <input type="checkbox" name="{{ $name }}" {{ $attributes->merge(['class' => 'form-checkbox'.$hasError]) }}{{ old($name) ? ' checked' : '' }}>
+            <input type="checkbox" name="{{ $name }}" {{ $attributes->merge(['class' => 'rounded border-gray-300 text-gray-600 shadow-sm focus:border-gray-600 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'.$hasError]) }}{{ old($name) ? ' checked' : '' }}>
             <span class="inline-flex items-baseline space-x-4">
                 <span>{{ $slot }}</span>
                 @if ($help)
