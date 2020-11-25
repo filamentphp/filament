@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\{
     Storage,
 };
 use Illuminate\Support\{
+    Str,
     Collection,
     HtmlString,
 };
@@ -161,7 +162,7 @@ class Filament
             $reflection = new \ReflectionClass($class);
             return !$reflection->isAbstract() && $reflection->isSubclassOf(FilamentResource::class);
         })->mapWithKeys(function ($class) {
-            return [class_basename($class) => $class];
+            return [Str::kebab(class_basename($class)) => $class];
         });
     }
 
