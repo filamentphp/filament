@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Livewire\Component;
+use Filament;
 
 class Register extends Component
 {
@@ -39,7 +40,7 @@ class Register extends Component
         event(new Registered($user));
         Auth::login($user);
 
-        return redirect()->route('filament.dashboard');
+        return redirect()->to(Filament::home());
     }
 
     public function render()

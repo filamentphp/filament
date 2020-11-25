@@ -4,6 +4,7 @@ namespace Filament\Tests\Feature;
 
 use Livewire\Livewire;
 use Filament\Tests\TestCase;
+use Filament;
 use Filament\Tests\Database\Models\User;
 use Filament\Http\Livewire\Auth\Login;
 
@@ -25,7 +26,7 @@ class LoginTest extends TestCase
             ->set('email', $user->email)
             ->set('password', 'password')
             ->call('login')
-            ->assertRedirect(route('filament.dashboard'));
+            ->assertRedirect(Filament::home());
 
         $this->assertAuthenticated();
     }

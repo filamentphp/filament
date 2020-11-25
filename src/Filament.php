@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\{
     Request,
     File,
     Storage,
+    Route,
 };
 use Illuminate\Support\{
     Str,
@@ -164,6 +165,17 @@ class Filament
         })->mapWithKeys(function ($class) {
             return [Str::kebab(class_basename($class)) => $class];
         });
+    }
+
+    /**
+     * Returns the path to the "home" route for Filament.
+     * 
+     * @return string
+     */
+    public function home()
+    {
+        $home = config('filament.home');
+        return Route::has($home) ? route($home) : $home;
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Filament\Tests\Feature;
 
 use Livewire\Livewire;
 use Filament\Tests\TestCase;
+use Filament;
 use Filament\Tests\Database\Models\User;
 use Filament\Http\Livewire\Auth\Logout;
 
@@ -14,7 +15,7 @@ class LogoutTest extends TestCase
         $this->withoutExceptionHandling();
         $user = User::factory()->create();
         $this->actingAs($user)
-            ->get(route('filament.dashboard'))
+            ->get(Filament::home())
             ->assertSeeLivewire('filament-logout');
     }
 

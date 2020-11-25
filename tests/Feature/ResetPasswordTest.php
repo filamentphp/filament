@@ -6,9 +6,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 use Livewire\Livewire;
 use Filament\Tests\TestCase;
+use Filament;
 use Filament\Tests\Database\Models\User;
-use Filament\Http\Livewire\Auth\Login;
-use Filament\Http\Livewire\Auth\ResetPassword;
+use Filament\Http\Livewire\Auth\{
+    Login,
+    ResetPassword,
+};
 
 class ResetPasswordTest extends TestCase
 {
@@ -93,7 +96,7 @@ class ResetPasswordTest extends TestCase
 
     public function test_user_can_reset_password_with_valid_token()
     {
-        $dashboard = route('filament.dashboard');
+        $dashboard = Filament::home();
         
         Livewire::test(ResetPassword::class, ['token' => $this->token])
             ->set('email', $this->user->email)

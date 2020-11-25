@@ -4,6 +4,7 @@ namespace Filament\Tests\Feature;
 
 use Livewire\Livewire;
 use Filament\Tests\TestCase;
+use Filament;
 use Filament\Http\Livewire\Auth\Register;
 use Filament\Tests\Database\Models\User;
 
@@ -25,7 +26,7 @@ class RegisterTest extends TestCase
             ->set('password_confirmation', 'password')
             ->call('register')
             ->assertHasNoErrors(['name', 'email', 'password', 'password_confirmation'])
-            ->assertRedirect(route('filament.dashboard'));
+            ->assertRedirect(Filament::home());
 
         $this->assertDatabaseHas('users', [
             'name' => 'Me',
