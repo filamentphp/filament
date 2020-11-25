@@ -4,5 +4,5 @@ namespace Filament\Contracts;
 
 interface Resource
 {
-    public function actions(): array;
+    public function actions();
 }

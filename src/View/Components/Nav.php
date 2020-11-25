@@ -19,6 +19,7 @@ class Nav extends Component
     public function __construct()
     {
         $this->nav = app(Navigation::class)->items()
+                        ->groupBy('group')
                         ->sortBy('sort')
                         ->all();
     }

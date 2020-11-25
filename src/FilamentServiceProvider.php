@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\{
     File,
     Cache,
 };
-use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Filament\Providers\RouteServiceProvider;
 use Filament\Features;
@@ -136,7 +135,8 @@ class FilamentServiceProvider extends ServiceProvider
                                 $routePath,
                                 $routePath.'/*',
                             ],
-                            'label' => $resource->label ?? (string) Str::of($key)->kebab()->replace('-', ' ')->plural()->title(),
+                            'group' => $resource->group,
+                            'label' => $resource->label(),
                             'icon' => $resource->icon,
                             'sort' => $resource->sort,
                         ];

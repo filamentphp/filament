@@ -52,7 +52,8 @@ use App\Http\Livewire\Page\Index;
 
 class Page extends FilamentResource
 {
-    public $label = 'My Pages'; // defaults to pluralized classname
+    public $group = 'Content'; // ability to group resources for organization
+    public $label = 'My Pages'; // defaults to formatted & pluralized classname
     public $icon = 'heroicon-o-database';
     public $sort = 0;
 
