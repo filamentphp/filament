@@ -85,7 +85,6 @@ return [
             'label' => 'Dashboard',
             'icon' => 'heroicon-o-home', // optional icon name (Blade UI Kit @link https://github.com/blade-ui-kit/blade-heroicons)
             'sort' => -9999, // sort order used by the navigation
-            'hideFromNav' => false,
         ],
     
     ],

@@ -3,6 +3,7 @@
 namespace Filament\View\Components;
 
 use Illuminate\View\Component;
+use Filament\Helpers\Navigation;
 
 class Nav extends Component
 {
@@ -17,7 +18,7 @@ class Nav extends Component
      */
     public function __construct()
     {
-        $this->nav = app('Filament\Helpers\Navigation')->items()
+        $this->nav = app(Navigation::class)->items()
                         ->sortBy('sort')
                         ->all();
     }
