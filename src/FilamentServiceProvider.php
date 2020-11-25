@@ -128,11 +128,15 @@ class FilamentServiceProvider extends ServiceProvider
 
                     if (array_key_exists('index', $resource->actions())) {
                         $route = route('filament.resource', ['resource' => $key]);
+                        $routePath = implode('/', array_slice(explode('/', $route), -3, 2, true)).'/'.$key;
 
                         app(Navigation::class)->$key = [
                             'path' => $route,
-                            'active' => $route.'*',
-                            'label' => $resource->label ?? Str::plural($key),
+                            'active' => [
+                                $routePath,
+                                $routePath.'/*',
+                            ],
+                            'label' => $resource->label ?? (string) Str::of($key)->kebab()->replace('-', ' ')->plural()->title(),
                             'icon' => $resource->icon,
                             'sort' => $resource->sort,
                         ];
