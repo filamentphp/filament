@@ -36,6 +36,7 @@ mix.postCss(`${SRC}/css/filament.css`, 'css', [
   require('postcss-import'),
   require('tailwindcss'),
   require('postcss-nested'),
+  require('autoprefixer'),
 ])
 
 /**
