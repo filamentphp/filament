@@ -26,6 +26,16 @@ class Features
     }
 
     /**
+     * Determine if the application has a user profile.
+     *
+     * @return bool
+     */
+    public static function hasUserProfile()
+    {
+        return static::enabled(static::profile());
+    }
+
+    /**
      * Determine if the application has resources.
      *
      * @return bool
@@ -43,6 +53,16 @@ class Features
     public static function registration()
     {
         return 'registration';
+    }
+
+    /**
+     * Enable the user profile feature.
+     *
+     * @return string
+     */
+    public static function profile()
+    {
+        return 'profile';
     }
 
     /**

@@ -34,6 +34,11 @@ Route::group(['middleware' => ['auth']], function () {
     // Dashboard
     Route::get('/', config('filament.livewire.dashboard'))->name('dashboard');
 
+    // Profile
+    if (Features::hasUserProfile()) {
+        Route::get('/profile', config('filament.livewire.profile'))->name('profile');
+    }
+
     // Resources
     if (Features::hasResources()) {
         Route::get('/resources/{resource}/{action?}/{id?}', ResourceController::class)->name('resource');

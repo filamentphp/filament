@@ -16,7 +16,8 @@ return [
 
     'features' => [
         Features::registration(),
-        Features::resources()
+        Features::profile(),
+        Features::resources(),
     ],
 
     'models' => [
@@ -120,6 +121,7 @@ return [
         'register' => Filament\Http\Livewire\Auth\Register::class,
         'logout' => Filament\Http\Livewire\Auth\Logout::class,
         'dashboard' => Filament\Http\Livewire\Dashboard::class,
+        'profile' => Filament\Http\Livewire\Profile::class,
     ],
 
     /*

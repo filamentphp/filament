@@ -23,7 +23,9 @@
 
                 <x-slot name="content">
                     <ul class="list-dropdown" aria-label="{{ __('User actions') }}">
-                        {{-- <li><a href="#">{{ __('Edit Profile') }}</a></li> --}}
+                        @if (Filament\Features::hasUserProfile())
+                            <li><a href="{{ route('filament.profile') }}">{{ __('Edit Profile') }}</a></li>
+                        @endif
                         <li><livewire:filament-logout /></li>
                     </ul>
                 </x-slot>
