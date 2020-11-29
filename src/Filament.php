@@ -16,7 +16,7 @@ use Illuminate\Support\{
     HtmlString,
 };
 use League\Glide\Urls\UrlBuilderFactory;
-use Filament\FilamentResource;
+use Filament\Resource;
 
 class Filament
 {
@@ -161,7 +161,7 @@ class Filament
             }
 
             $reflection = new \ReflectionClass($class);
-            return !$reflection->isAbstract() && $reflection->isSubclassOf(FilamentResource::class);
+            return !$reflection->isAbstract() && $reflection->isSubclassOf(Resource::class);
         })->mapWithKeys(function ($class) {
             return [Str::kebab(class_basename($class)) => $class];
         });

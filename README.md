@@ -46,11 +46,11 @@ To define a Resource, create a new resource file in `app/Filament/Resources` lik
 
 namespace App\Filament\Resources;
 
-use Filament\FilamentResource;
+use Filament\Resource;
 use App\Http\Livewire\Page\Index;
 // use App\Http\Livewire\Page\Show;
 
-class Page extends FilamentResource
+class Page extends Resource
 {
     public $group = 'Content'; // ability to group resources for organization
     public $label = 'My Pages'; // defaults to formatted & pluralized classname

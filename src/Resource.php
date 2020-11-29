@@ -3,9 +3,9 @@
 namespace Filament;
 
 use Illuminate\Support\Str;
-use Filament\Contracts\Resource;
+use Filament\Contracts\Resource as ResourceContract;
 
-abstract class FilamentResource implements Resource
+abstract class Resource implements ResourceContract
 { 
     public $group = null;
     public $icon = 'heroicon-o-document-text';
