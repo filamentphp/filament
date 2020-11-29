@@ -72,6 +72,6 @@ class Features
      */
     public static function resources()
     {
-        return 'resourceModels';
+        return 'resources';
     }
 }
