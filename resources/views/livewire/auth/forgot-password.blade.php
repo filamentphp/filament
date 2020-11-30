@@ -1,4 +1,4 @@
-<form wire:submit.prevent="sendEmail" class="space-y-6">
+<x-filament::form submit="sendEmail">
     <x-filament::input-group-stacked name="email" :label="__('E-Mail Address')" required>
         <x-filament::input type="email" name="email" wire:model.defer="email" id="email" required autocomplete="email" autofocus tabindex="1" />
         <x-slot name="hint">
@@ -14,4 +14,4 @@
     </x-filament::button>
 
     <x-filament::message />
-</form>
+</x-filament::form>

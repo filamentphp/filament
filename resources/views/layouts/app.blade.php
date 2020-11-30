@@ -18,7 +18,7 @@
             <x-filament::app-branding />
             <x-filament-nav />
             <x-filament::dropdown class="w-full text-left flex-grow flex items-center p-4 space-x-3 transition-colors duration-200 hover:text-white hover:bg-gray-800" id="dropdown-user">
-                <img src="{{ Auth::user()->avatar(32) }}" alt="{{ Auth::user()->name }}" srcset="{{ Auth::user()->avatar(32) }} 1x, {{ Auth::user()->avatar(64) }} 2x" class="flex-shrink-0 w-8 h-8 rounded-full" />
+                <x-filament-avatar :user="Auth::user()" :size="32" class="flex-shrink-0 w-8 h-8 rounded-full" />
                 <span class="flex-grow text-sm leading-tight font-semibold">{{ Auth::user()->name }}</span>
 
                 <x-slot name="content">
@@ -30,11 +30,11 @@
                     </ul>
                 </x-slot>
             </x-filament::dropdown>
-            <button type="button" aria-controls="banner" @click.prevent="headerIsOpen = false" :aria-expanded="headerIsOpen" x-cloak x-show.opacity="headerIsOpen" class="md:hidden absolute top-0 right-0 transform translate-x-full -translate-y-2 p-3 text-gray-400 hover:text-white transition-colors duration-200">
+            <button type="button" aria-controls="banner" @click.prevent="headerIsOpen = false" :aria-expanded="headerIsOpen" x-cloak x-show.opacity="headerIsOpen" class="md:hidden absolute top-0 right-0 transform translate-x-full -translate-y-2 p-3 text-gray-200 hover:text-white transition-colors duration-200">
                 <x-heroicon-o-x class="w-6 h-6" />
             </button>
         </header>
-        <span class="absolute z-0 inset-0 bg-black opacity-50 md:hidden flex items-start justify-end" x-cloak x-show="headerIsOpen" @click="headerIsOpen = false"></span>
+        <span class="absolute z-0 inset-0 bg-black bg-opacity-50 md:hidden flex items-start justify-end" x-cloak x-show="headerIsOpen" @click="headerIsOpen = false"></span>
         <div class="flex-grow flex flex-col">
             <header class="p-4 md:p-6 flex justify-between items-center space-x-4">
                 <div class="flex items-center">
@@ -45,7 +45,7 @@
                 </div>
                 {{ $actions ?? null }}
             </header>
-            <main id="content" class="flex-grow flex flex-col">
+            <main id="content" class="flex-grow px-4 md:px-6 flex flex-col">
                 {{ $slot }}
             </main>
         </div>

@@ -1,4 +1,4 @@
-<form wire:submit.prevent="resetPassword" class="space-y-4">
+<x-filament::form submit="resetPassword">
     <x-filament::input-group-stacked name="email" :label="__('E-Mail Address')" required>
         <x-filament::input type="email" name="email" wire:model.defer="email" id="email" required autocomplete="email" />
     </x-filament::input-group-stacked>
@@ -15,4 +15,4 @@
         <x-filament::loader class="w-6 h-6 absolute left-0 ml-2 pointer-events-none" wire:loading />
         {{ __('Reset Password') }}
     </x-filament::button>
-</form>
+</x-filament::form>

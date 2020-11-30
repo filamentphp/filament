@@ -1,4 +1,4 @@
-<form wire:submit.prevent="register" class="space-y-4">
+<x-filament::form submit="register">
     <x-filament::input-group-stacked name="name" :label="__('Name')" required>
         <x-filament::input name="name" wire:model.defer="name" id="name" required autofocus tabindex="1" />
         <x-slot name="hint">
@@ -24,4 +24,4 @@
         <x-filament::loader class="w-6 h-6 absolute left-0 ml-2 pointer-events-none" wire:loading />
         {{ __('Register') }}
     </x-filament::button>
-</form>
+</x-filament::form>

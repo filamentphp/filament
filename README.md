@@ -54,7 +54,7 @@ class Page extends Resource
 {
     public $group = 'Content'; // ability to group resources for organization
     public $label = 'My Pages'; // defaults to formatted & pluralized classname
-    public $icon = 'heroicon-o-database';
+    public $icon = 'heroicon-o-document-text';
     public $sort = 0;
 
     public function actions()

@@ -17,6 +17,7 @@ return [
     'features' => [
         Features::registration(),
         // Features::profile(),
+        // Features::permissions(),
         Features::resources(),
     ],
 
@@ -102,6 +103,7 @@ return [
 
     'components' => [
         'nav' => Filament\View\Components\Nav::class,
+        'avatar' => Filament\View\Components\Avatar::class,
     ],
 
     /*
@@ -122,6 +124,7 @@ return [
         'logout' => Filament\Http\Livewire\Auth\Logout::class,
         'dashboard' => Filament\Http\Livewire\Dashboard::class,
         'profile' => Filament\Http\Livewire\Profile::class,
+        'account' => Filament\Http\Livewire\Account::class,
     ],
 
     /*

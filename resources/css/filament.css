@@ -9,6 +9,7 @@
 @layer components {
   @import './components/buttons.css';
   @import './components/lists.css';
+  @import './components/cards.css';
 }
 
 @layer utilities {
