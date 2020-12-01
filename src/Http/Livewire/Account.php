@@ -12,16 +12,17 @@ class Account extends Component
     use WithFileUploads;
     
     public $user;
+    public $avatar;
     public $password;
     public $password_confirmation;
 
     protected $rules = [
-        'user.avatar' => 'nullable|image',
         'user.name' => 'required|min:2',
         'user.email' => [
             'required', 
             'email', 
         ],
+        'avatar' => 'nullable|image|max:20',
         'password' => 'nullable',
     ];
 
@@ -38,9 +39,13 @@ class Account extends Component
         ]);
     }
 
-    public function update()
+    public function submit()
     {
         $this->validate();
+
+        if ($this->avatar) {
+            dd($this->avatar);
+        }
         
         if ($this->password) {
             $this->user->password = Hash::make($this->password);
@@ -49,6 +54,8 @@ class Account extends Component
         $this->user->save();
 
         $this->reset(['password', 'password_confirmation']);
+
+        $this->dispatchBrowserEvent('notify', __('Account saved!'));
     }
 
     public function render()

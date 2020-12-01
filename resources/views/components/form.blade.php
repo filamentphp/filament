@@ -1,5 +1,5 @@
 @props([
-    'submit',
+    'submit' => 'submit',
 ])
 
 <form wire:submit.prevent="{{ $submit }}" {{ $attributes->merge(['class' => 'space-y-4']) }}>

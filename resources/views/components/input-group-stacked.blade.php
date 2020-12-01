@@ -1,15 +1,15 @@
 @props([
-    'name',
+    'field',
+    'for',
     'label',
     'hint' => false,
     'help' => false,
     'required' => false,
-    'errorClasses' => $errors->has($name) ? ' motion-safe:animate-shake' : '',
 ])
 
-<div {{ $attributes->merge(['class' => 'space-y-2'.$errorClasses]) }}>
+<div {{ $attributes->merge(['class' => 'space-y-2']) }}>
     <div class="flex items-center justify-between space-x-2">
-        <x-filament::label :for="$name">
+        <x-filament::label :for="$for">
             {{ $label ?? $name }}
             @if ($required)
                 <sup class="text-red-600">*</sup>
@@ -22,7 +22,7 @@
         @endif
     </div>
     {{ $slot }}
-    <x-filament::error :name="$name" />
+    <x-filament::error :field="$field" />
     @if ($help)
         <x-filament::help>
             {{ $help }}
