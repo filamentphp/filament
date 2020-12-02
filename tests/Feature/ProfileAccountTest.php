@@ -3,6 +3,8 @@
 namespace Filament\Tests\Feature;
 
 use Livewire\Livewire;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 use Filament\Tests\TestCase;
 use Filament\Tests\Database\Models\User;
 use Filament\Http\Livewire\Account;
@@ -104,6 +106,46 @@ class ProfileAccountTest extends TestCase
         $this->accountComponent()
             ->call('submit')
             ->assertDispatchedBrowserEvent('notify', __('Account saved!'));
+    }
+
+    public function test_can_upload_avatar()
+    {
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        Storage::fake(config('filament.storage_disk'));
+
+        $this->accountComponent()
+            ->set('avatar', $file)
+            ->call('submit');
+
+        $this->user->refresh();
+
+        $this->assertNotNull($this->user->avatar);
+
+        Storage::disk(config('filament.storage_disk'))->assertExists($this->user->avatar);
+    }
+
+    public function test_can_delete_avatar()
+    {
+        $file = UploadedFile::fake()->image('avatar.jpg');
+
+        Storage::fake(config('filament.storage_disk'));
+
+        $this->accountComponent()
+            ->set('avatar', $file)
+            ->call('submit');
+
+        $this->user->refresh();
+
+        $this->assertNotNull($this->user->avatar);
+
+        Storage::disk(config('filament.storage_disk'))->assertExists($this->user->avatar);
+
+        $this->accountComponent()
+            ->call('deleteAvatar')
+            ->assertDispatchedBrowserEvent('notify', __('Avatar removed for :name', ['name' => $this->user->name]));
+
+        Storage::disk(config('filament.storage_disk'))->assertMissing($this->user->avatar);
     }
 
     public function accountComponent()
