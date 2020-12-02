@@ -21,25 +21,9 @@ class Account extends Component
     public $password_confirmation;
 
     protected $rules = [
-        'user.name' => 'required|min:2',
-        'user.email' => [
-            'required', 
-            'email', 
-        ],
-        'password' => 'nullable|required_with:password_confirmation|min:8|confirmed',
-        'password_confirmation' => 'nullable|same:password',
+        'user.name' => 'required',
+        'user.email' => 'required',
     ];
-
-    public function updated($user)
-    {
-        $this->validateOnly($user, [
-            'user.email' => [
-                'required',
-                'email',
-                Rule::unique('users', 'email')->ignore($this->user->id),
-            ],
-        ]);
-    }
 
     public function updatedAvatar($value)
     {
@@ -70,7 +54,16 @@ class Account extends Component
 
     public function submit()
     {
-        $this->validate();
+        $this->validate([
+            'user.name' => 'required|min:2',
+            'user.email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($this->user->id)
+            ],
+            'password' => 'nullable|required_with:password_confirmation|min:8|confirmed',
+            'password_confirmation' => 'nullable|same:password',
+        ]);
 
         if ($this->avatar) {
             $this->user->avatar = $this->avatar->store('avatars', config('filament.storage_disk'));
