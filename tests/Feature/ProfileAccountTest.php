@@ -148,7 +148,7 @@ class ProfileAccountTest extends TestCase
         Storage::disk(config('filament.storage_disk'))->assertMissing($this->user->avatar);
     }
 
-    public function accountComponent()
+    protected function accountComponent()
     {
         return Livewire::test(Account::class, ['user' => $this->user]);
     }
