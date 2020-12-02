@@ -46,16 +46,6 @@ class Features
     }
 
     /**
-     * Determine if the application has user permissions.
-     *
-     * @return bool
-     */
-    public static function hasPermissions()
-    {
-        return static::enabled(static::permissions());
-    }
-
-    /**
      * Enable the user registration feature.
      *
      * @return string
@@ -73,16 +63,6 @@ class Features
     public static function profile()
     {
         return 'profile';
-    }
-
-    /**
-     * Enable the user permissions feature.
-     *
-     * @return string
-     */
-    public static function permissions()
-    {
-        return 'permissions';
     }
 
     /**

@@ -31,6 +31,14 @@ class LoginTest extends TestCase
         $this->assertAuthenticated();
     }
 
+    public function test_redirect_if_logged_in()
+    {
+        $user = User::factory()->create();
+        Livewire::actingAs($user)
+            ->test(Login::class)
+            ->assertRedirect(Filament::home());
+    }
+
     public function test_email_is_required()
     {
         Livewire::test(Login::class)

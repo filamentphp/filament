@@ -7,15 +7,10 @@
         <x-filament::input type="email" field="user.email" wire:model.lazy="user.email" id="email" required autocomplete="email" tabindex="2" />
     </x-filament::input-group-stacked>
 
-    <x-filament::input-group-stacked field="avatar" for="photo" :label="__('Photo')">
-        <div>
-            <input type="file" wire:model="avatar" id="photo" tabindex="3" />
-        </div>
+    <x-filament::input-group-stacked field="avatar" for="photo" :label="__('Avatar')">
+        <x-filament::input-avatar field="avatar" :avatar="$avatar" :user="$user" delete="deleteAvatar" id="photo" tabindex="3" />
         <x-slot name="hint">
             {{ __('Optional') }}
-        </x-slot>
-        <x-slot name="help">
-            {{ __('Your user avatar photo.') }}
         </x-slot>
     </x-filament::input-group-stacked>
 

@@ -24,6 +24,10 @@ class Login extends Component
 
     public function mount()
     {
+        if (Auth::check()) {
+            return redirect()->to(Filament::home());
+        }
+
         $this->message = session('message');
     }
 

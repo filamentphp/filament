@@ -13,4 +13,5 @@
 }
 
 @layer utilities {
+  @import './utilities/typography.css';
 }

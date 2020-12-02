@@ -15,15 +15,14 @@ class RouteServiceProvider extends ServiceProvider
         parent::boot();
     }
 
-    protected function prefix()
-    {
-        return config('filament.prefix.route');
-    }
-
     public function map(): void
     {
         $this->mapWebRoutes();
-        $this->mapAliasRoutes();
+    }
+
+    protected function prefix()
+    {
+        return config('filament.prefix.route');
     }
 
     protected function mapWebRoutes(): void
@@ -33,15 +32,6 @@ class RouteServiceProvider extends ServiceProvider
                 ->middleware(config('filament.middleware', ['web']))
                 ->name($this->name)
                 ->group(__DIR__.'/../../routes/web.php');
-        }
-    }
-
-    protected function mapAliasRoutes(): void
-    {
-        if (!Route::has('login')) {
-            Route::get('/login', function () {
-                return redirect()->route('filament.login');
-            })->name('login');
         }
     }
 }

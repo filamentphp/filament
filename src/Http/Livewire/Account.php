@@ -5,7 +5,11 @@ namespace Filament\Http\Livewire;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\{
+    Hash,
+    Storage,
+};
 
 class Account extends Component
 {
@@ -22,7 +26,6 @@ class Account extends Component
             'required', 
             'email', 
         ],
-        'avatar' => 'nullable|image|max:20',
         'password' => 'nullable',
     ];
 
@@ -39,12 +42,39 @@ class Account extends Component
         ]);
     }
 
+    public function updatedAvatar($value)
+    {
+        $extension = pathinfo($value->getFilename(), PATHINFO_EXTENSION);
+        if (!in_array($extension, ['png', 'jpeg', 'bmp', 'gif'])) {
+            $this->reset('avatar');
+        }
+
+        $this->validate([
+            'avatar' => 'mimes:png,jpeg,bmp,gif|max:512', // .5MB Max
+        ]);
+    }
+
+    public function deleteAvatar()
+    {
+        $avatar = $this->user->avatar;
+        
+        if ($avatar) {
+            Storage::disk(config('filament.storage_disk'))->delete($avatar);
+            $this->avatar = null;
+            
+            $this->user->avatar = null;
+            $this->user->save();
+
+            $this->dispatchBrowserEvent('notify', __('Avatar removed for :name', ['name' => $this->user->name]));
+        }
+    }
+
     public function submit()
     {
         $this->validate();
 
         if ($this->avatar) {
-            dd($this->avatar);
+            $this->user->avatar = $this->avatar->store('avatars', config('filament.storage_disk'));
         }
         
         if ($this->password) {

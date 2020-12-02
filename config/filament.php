@@ -17,7 +17,6 @@ return [
     'features' => [
         Features::registration(),
         // Features::profile(),
-        // Features::permissions(),
         Features::resources(),
     ],
 
@@ -138,7 +137,7 @@ return [
     */
 
     'cache_disk' => env('FILAMENT_CACHE_DISK', 'local'),
-    'cache_path' =>  '.cache',
+    'cache_path' =>  'filament-tmp',
 
     /*
     |--------------------------------------------------------------------------

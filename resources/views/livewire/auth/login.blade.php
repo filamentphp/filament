@@ -3,7 +3,7 @@
         <x-filament::input type="email" field="email" wire:model.defer="email" id="email" required autocomplete="email" autofocus tabindex="1" />
         @if (Route::has('filament.register'))
             <x-slot name="hint">
-                <a href="{{ route('filament.register') }}" class="text-current hover:text-blue-600" tabindex="6">
+                <a href="{{ route('filament.register') }}" tabindex="6">
                     {{ __('filament::auth.register') }}
                 </a>
             </x-slot>
@@ -12,7 +12,7 @@
 
     <x-filament::input-group-stacked field="password" for="password" :label="__('Password')" required>   
         <x-slot name="hint">
-            <a href="{{ route('filament.password.forgot') }}" class="text-current hover:text-blue-600" tabindex="5">
+            <a href="{{ route('filament.password.forgot') }}" tabindex="5">
                 {{ __('Forgot Your Password?') }}
             </a>
         </x-slot>

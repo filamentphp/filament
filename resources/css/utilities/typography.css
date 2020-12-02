@@ -1,0 +1,12 @@
+.help,
+.hint {
+  @apply text-xs font-normal leading-tight text-gray-500;
+
+  a {
+    @apply text-blue-600 hover:text-blue-800;
+  }
+}
+
+.hint {
+  @apply font-mono;
+}
