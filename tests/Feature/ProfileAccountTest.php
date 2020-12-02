@@ -106,7 +106,7 @@ class ProfileAccountTest extends TestCase
             ->assertDispatchedBrowserEvent('notify', __('Account saved!'));
     }
 
-    public function accountComponent()
+    protected function accountComponent()
     {
         return Livewire::test(Account::class, ['user' => $this->user]);
     }
