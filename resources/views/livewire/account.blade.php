@@ -8,15 +8,15 @@
     </x-filament::input-group-stacked>
 
     <x-filament::input-group-stacked field="avatar" for="photo" :label="__('Avatar')">
-        <x-filament::input-avatar field="avatar" :avatar="$avatar" :user="$user" delete="deleteAvatar" id="photo" tabindex="3" />
+        <x-filament::input-avatar field="avatar" wire:model="avatar" :avatar="$avatar" :user="$user" delete="deleteAvatar" id="photo" tabindex="3" />
         <x-slot name="hint">
             {{ __('Optional') }}
         </x-slot>
     </x-filament::input-group-stacked>
 
-    <x-filament::fieldset :legend="__('Update Password')" cols="2">
+    <x-filament::fieldset :legend="__('Update Password')" class="grid grid-cols-1 gap-2 lg:gap-6 lg:grid-cols-2">
         <x-filament::input-group-stacked field="password" for="password" :label="__('New Password')">   
-            <x-filament::input type="password" field="password" wire:model.lazy="password" id="password" autocomplete="new-password" tabindex="4" />
+            <x-filament::input type="password" field="password" wire:model="password" id="password" autocomplete="new-password" tabindex="4" />
             <x-slot name="hint">
                 {{ __('Optional') }}
             </x-slot>
@@ -26,7 +26,7 @@
         </x-filament::input-group-stacked>
 
         <x-filament::input-group-stacked field="password_confirmation" for="password_confirmation" :label="__('Confirm New Password')">   
-            <x-filament::input type="password" field="password_confirmation" wire:model.lazy="password_confirmation" id="password_confirmation" autocomplete="new-password" tabindex="5" />
+            <x-filament::input type="password" field="password_confirmation" wire:model="password_confirmation" id="password_confirmation" autocomplete="new-password" tabindex="5" />
         </x-filament::input-group-stacked>
     </x-filament::fieldset>
 

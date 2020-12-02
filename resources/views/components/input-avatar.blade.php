@@ -34,7 +34,7 @@
     </div>
     <div class="flex-grow relative">
         <label class="btn" for="{{ $id }}">{{ __('Change') }}</label>
-        <input type="file" wire:model="{{ $field }}" class="sr-only" id="{{ $id }}" {{ $attributes }}>
+        <input type="file" class="sr-only" id="{{ $id }}" {{ $attributes }}>
         <div x-show="isUploading" :aria-hidden="!isUploading" class="absolute bottom-0 -mb-3 w-48 max-w-full">
             <x-filament::progress progress="progress" />     
         </div>

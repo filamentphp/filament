@@ -16,7 +16,7 @@ return [
 
     'features' => [
         Features::registration(),
-        // Features::profile(),
+        Features::profile(),
         Features::resources(),
     ],
 

@@ -26,7 +26,8 @@ class Account extends Component
             'required', 
             'email', 
         ],
-        'password' => 'nullable',
+        'password' => 'nullable|required_with:password_confirmation|min:8|confirmed',
+        'password_confirmation' => 'nullable|same:password',
     ];
 
     public function updated($user)
@@ -37,8 +38,6 @@ class Account extends Component
                 'email',
                 Rule::unique('users', 'email')->ignore($this->user->id),
             ],
-            'password' => 'nullable|required_with:password_confirmation|min:8',
-            'password_confirmation' => 'nullable|same:password',
         ]);
     }
 
