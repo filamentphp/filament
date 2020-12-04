@@ -1,7 +1,6 @@
 @props([
     'field',
     'for',
-    'name',
     'label',
     'hint' => false,
     'help' => false,
@@ -11,9 +10,11 @@
 <div {{ $attributes->merge(['class' => 'space-y-2']) }}>
     <div class="flex items-center justify-between space-x-2">
         <x-filament::label :for="$for">
-            {{ $label ?? $name }}
+            {{ $label }}
             @if ($required)
-                <sup class="text-red-600">*</sup>
+                <sup class="text-red-600">
+                    <span class="sr-only">{{ __('Required field') }}</span>*
+                </sup>
             @endif
         </x-filament::label>
         @if ($hint)
