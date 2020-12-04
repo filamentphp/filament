@@ -28,12 +28,12 @@ class Account extends Component
     public function updatedAvatar($value)
     {
         $extension = pathinfo($value->getFilename(), PATHINFO_EXTENSION);
-        if (!in_array($extension, ['png', 'jpeg', 'bmp', 'gif'])) {
+        if (!in_array($extension, ['png', 'jpg', 'jpeg', 'bmp', 'gif'])) {
             $this->reset('avatar');
         }
 
         $this->validate([
-            'avatar' => 'mimes:png,jpeg,bmp,gif|max:512', // .5MB Max
+            'avatar' => 'mimes:png,jpg,jpeg,bmp,gif|max:512',
         ]);
     }
 
@@ -61,6 +61,7 @@ class Account extends Component
                 'email',
                 Rule::unique('users', 'email')->ignore($this->user->id)
             ],
+            'avatar' => 'nullable|mimes:png,jpg,jpeg,bmp,gif|max:512',
             'password' => 'nullable|required_with:password_confirmation|min:8|confirmed',
             'password_confirmation' => 'nullable|same:password',
         ]);
