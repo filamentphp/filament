@@ -1,6 +1,7 @@
 @props([
     'field',
     'for',
+    'name',
     'label',
     'hint' => false,
     'help' => false,
