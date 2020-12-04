@@ -30,7 +30,7 @@ if (Features::registersUsers()) {
 }
 
 // Authenticated routes
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth.filament']], function () {
     // Dashboard
     Route::get('/', config('filament.livewire.dashboard'))->name('dashboard');
 

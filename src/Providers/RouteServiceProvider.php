@@ -4,6 +4,7 @@ namespace Filament\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Filament\Http\Middleware\Authenticate;
 use Filament\Filament;
 
 class RouteServiceProvider extends ServiceProvider
@@ -13,6 +14,7 @@ class RouteServiceProvider extends ServiceProvider
     public function boot(): void
     {
         parent::boot();
+        Route::aliasMiddleware('auth.filament', Authenticate::class);
     }
 
     public function map(): void
