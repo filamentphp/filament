@@ -77,8 +77,5 @@ php artisan filament:user
 
 ## Roadmap
 
-- [ ] User profile feature & related package tests
-- [ ] User management feature & related package tests
-- [ ] Permissions management feature via Spatie Permissions
 - [ ] Resource stubs and associated Artisan commands (e.g. `artisan filament:resource Page --options`)
 - [ ] DOCUMENTATION FOR ALL THE THINGS.
