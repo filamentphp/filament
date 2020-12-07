@@ -15,10 +15,6 @@ use Livewire\Livewire;
 use Spatie\Valuestore\Valuestore;
 use Filament\Providers\RouteServiceProvider;
 use Filament\Features;
-use Filament\Helpers\{
-    BladeDirectives,
-    Navigation,
-};
 use Filament\Commands\{
     MakeUser,
 };
@@ -48,7 +44,7 @@ class FilamentServiceProvider extends ServiceProvider
         $this->app->singleton('filament', Filament::class);
 
         $this->app->singleton('Filament\Navigation', function () {
-            return new Navigation(config('filament.nav', []));
+            return new Navigation();
         });
         
         if (Features::hasSettings()) {
@@ -130,23 +126,23 @@ class FilamentServiceProvider extends ServiceProvider
         $this->app->booted(function () {
 
             if (Features::hasDashboard()) {
-                app('Filament\Navigation')->dashboard = [
+                app('Filament\Navigation')->dashboard = config('filament.nav.dashboard', [
                     'path' => 'filament.dashboard',
                     'active' => 'filament.dashboard',
                     'label' => 'Dashboard',
                     'icon' => 'heroicon-o-home',
                     'sort' => -9999,
-                ];
+                ]);
             }
 
             if (Features::hasSettings()) {
-                app('Filament\Navigation')->settings = [
+                app('Filament\Navigation')->settings = config('filament.nav.settings', [
                     'path' => 'filament.settings',
                     'active' => 'filament.settings',
                     'label' => 'Settings',
                     'icon' => 'heroicon-o-adjustments',
                     'sort' => -9998,
-                ];
+                ]);
             }
 
             if (Features::hasResources()) {         

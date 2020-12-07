@@ -1,16 +1,11 @@
 <?php
 
-namespace Filament\Helpers;
+namespace Filament;
 
 use Illuminate\Support\Collection;
 
 class Navigation {
-    public array $items;
-
-    public function __construct(array $items)
-    {
-        $this->items = $items;
-    }
+    protected array $items = [];
 
     public function __set(string $name, array $item): void
     {

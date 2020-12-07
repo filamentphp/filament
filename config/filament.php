@@ -18,7 +18,7 @@ return [
         Features::registration(),
         Features::dashboard(),
         Features::profile(),
-        // Features::settings(),
+        Features::settings(),
         Features::resources(),
     ],
 
