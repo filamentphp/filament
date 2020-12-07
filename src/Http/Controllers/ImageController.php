@@ -26,7 +26,7 @@ class ImageController extends Controller
                 'response' => new LaravelResponseFactory(app('request')),
                 'source' => Storage::disk(config('filament.storage_disk'))->getDriver(),
                 'cache' => Storage::disk(config('filament.cache_disk'))->getDriver(),
-                'cache_path_prefix' => config('filament.cache_path'),
+                'cache_path_prefix' => config('filament.cache_path_prefix'),
                 'base_url' => 'image',            
             ]);
     

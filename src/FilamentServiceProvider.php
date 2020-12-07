@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\{
     Cache,
 };
 use Livewire\Livewire;
+use Spatie\Valuestore\Valuestore;
 use Filament\Providers\RouteServiceProvider;
 use Filament\Features;
 use Filament\Helpers\{
@@ -37,7 +38,7 @@ class FilamentServiceProvider extends ServiceProvider
         $this->bootModelBindings();
         $this->bootLoaders();
         $this->bootDirectives();
-        $this->bootResources();
+        $this->bootNavigation();
         $this->bootCommands();
         $this->bootPublishing();
     }
@@ -46,9 +47,15 @@ class FilamentServiceProvider extends ServiceProvider
     {
         $this->app->singleton('filament', Filament::class);
 
-        $this->app->singleton(Navigation::class, function () {
+        $this->app->singleton('Filament\Navigation', function () {
             return new Navigation(config('filament.nav', []));
         });
+        
+        if (Features::hasSettings()) {
+            $this->app->singleton('Filament\Settings', function () {
+                return Valuestore::make(config('filament.settings_path'));
+            });
+        }
     }
 
     protected function registerLivewireComponents(): void
@@ -118,10 +125,31 @@ class FilamentServiceProvider extends ServiceProvider
         ], 'filament-assets');
     }
 
-    protected function bootResources(): void
+    protected function bootNavigation(): void
     {   
-        if (Features::hasResources()) {
-            $this->app->booted(function () {
+        $this->app->booted(function () {
+
+            if (Features::hasDashboard()) {
+                app('Filament\Navigation')->dashboard = [
+                    'path' => 'filament.dashboard',
+                    'active' => 'filament.dashboard',
+                    'label' => 'Dashboard',
+                    'icon' => 'heroicon-o-home',
+                    'sort' => -9999,
+                ];
+            }
+
+            if (Features::hasSettings()) {
+                app('Filament\Navigation')->settings = [
+                    'path' => 'filament.settings',
+                    'active' => 'filament.settings',
+                    'label' => 'Settings',
+                    'icon' => 'heroicon-o-adjustments',
+                    'sort' => -9998,
+                ];
+            }
+
+            if (Features::hasResources()) {         
                 $this->app->filament->resources()->each(function ($item, $key) {
                     $resource = $this->app->make($item);
 
@@ -129,7 +157,7 @@ class FilamentServiceProvider extends ServiceProvider
                         $route = route('filament.resource', ['resource' => $key]);
                         $routePath = implode('/', array_slice(explode('/', $route), -3, 2, true)).'/'.$key;
 
-                        app(Navigation::class)->$key = [
+                        app('Filament\Navigation')->$key = [
                             'path' => $route,
                             'active' => [
                                 $routePath,
@@ -142,8 +170,8 @@ class FilamentServiceProvider extends ServiceProvider
                         ];
                     }
                 });
-            });
-        }
+            }
+        });
     }
 
     protected function bootCommands(): void

@@ -16,7 +16,9 @@ return [
 
     'features' => [
         Features::registration(),
+        Features::dashboard(),
         Features::profile(),
+        // Features::settings(),
         Features::resources(),
     ],
 
@@ -59,39 +61,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Home
-    |--------------------------------------------------------------------------
-    |
-    | The path to the "home" route for Filament.
-    | This is used by Filament authentication to redirect users after login.
-    |
-    */
-
-    'home' => 'filament.dashboard', // string or named route
-
-    /*
-    |--------------------------------------------------------------------------
-    | Navigation
-    |--------------------------------------------------------------------------
-    |
-    | Navigations used by Filament.
-    |
-    */
-
-    'nav' => [
-
-        'dashboard' => [
-            'path' => 'filament.dashboard', // string or named route
-            'active' => 'filament.dashboard', // string or named route (may also be an array @link https://github.com/dwightwatson/active)
-            'label' => 'Dashboard',
-            'icon' => 'heroicon-o-home', // optional icon name (Blade UI Kit @link https://github.com/blade-ui-kit/blade-heroicons)
-            'sort' => -9999, // sort order used by the navigation
-        ],
-    
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Components
     |--------------------------------------------------------------------------
     |
@@ -124,20 +93,8 @@ return [
         'dashboard' => Filament\Http\Livewire\Dashboard::class,
         'profile' => Filament\Http\Livewire\Profile::class,
         'account' => Filament\Http\Livewire\Account::class,
+        'settings' => Filament\Http\Livewire\Settings::class,
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Cache
-    |--------------------------------------------------------------------------
-    |
-    | This is the cache disk Filament will use, you may
-    | use any of the disks defined in the `config/filesystems.php`.
-    |
-    */
-
-    'cache_disk' => env('FILAMENT_CACHE_DISK', 'local'),
-    'cache_path' =>  'filament-tmp',
 
     /*
     |--------------------------------------------------------------------------
@@ -150,5 +107,30 @@ return [
     */
     
     'storage_disk' => env('FILAMENT_STORAGE_DISK', 'public'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cache
+    |--------------------------------------------------------------------------
+    |
+    | This is the cache disk Filament will use, you may
+    | use any of the disks defined in the `config/filesystems.php`.
+    |
+    */
+
+    'cache_disk' => env('FILAMENT_CACHE_DISK', 'local'),
+    'cache_path_prefix' =>  'filament/cache',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Settings
+    |--------------------------------------------------------------------------
+    |
+    | This is the path Filament will use to store and retrieve settings as  
+    | loose values. Stored values are saved as a json file.
+    |
+    */
+
+    'settings_path' => storage_path('app/filament/settings.json'),
 
 ];

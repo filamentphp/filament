@@ -26,6 +26,16 @@ class Features
     }
 
     /**
+     * Determine if the application has a dashboard.
+     *
+     * @return bool
+     */
+    public static function hasDashboard()
+    {
+        return static::enabled(static::dashboard());
+    }
+
+    /**
      * Determine if the application has a user profile.
      *
      * @return bool
@@ -36,6 +46,16 @@ class Features
     }
 
     /**
+     * Determine if the application has settings.
+     *
+     * @return bool
+     */
+    public static function hasSettings()
+    {
+        return static::enabled(static::settings());
+    }
+
+    /**
      * Determine if the application has resources.
      *
      * @return bool
@@ -43,6 +63,16 @@ class Features
     public static function hasResources()
     {
         return static::enabled(static::resources());
+    }
+
+    /**
+     * Enable the dashboard feature.
+     *
+     * @return string
+     */
+    public static function dashboard()
+    {
+        return 'dashboard';
     }
 
     /**
@@ -63,6 +93,16 @@ class Features
     public static function profile()
     {
         return 'profile';
+    }
+
+    /**
+     * Enable the settings feature.
+     *
+     * @return string
+     */
+    public static function settings()
+    {
+        return 'settings';
     }
 
     /**

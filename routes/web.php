@@ -39,6 +39,11 @@ Route::group(['middleware' => ['auth.filament']], function () {
         Route::get('/profile', config('filament.livewire.profile'))->name('profile');
     }
 
+    // Settings
+    if (Features::hasSettings()) {
+        Route::get('/settings', config('filament.livewire.settings'))->name('settings');
+    }
+
     // Resources
     if (Features::hasResources()) {
         Route::get('/resources/{resource}/{action?}/{id?}', ResourceController::class)->name('resource');

@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use App\Providers\RouteServiceProvider;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\{
@@ -174,8 +175,9 @@ class Filament
      */
     public function home()
     {
-        $home = config('filament.home');
-        return Route::has($home) ? route($home) : $home;
+        return Features::hasDashboard() ? 
+            config('filament.home', route('filament.dashboard')) 
+            : RouteServiceProvider::HOME;
     }
 
     /**
