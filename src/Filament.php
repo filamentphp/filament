@@ -62,7 +62,7 @@ class Filament
         return $this->basePath('dist/'.ltrim($path, '/'));
     }
 
-    public function handling(): boolean
+    public function handling(): bool
     {
         return preg_match('#^'.config('filament.prefix.route').'($|/)'.'#i', Request::path());
     }
