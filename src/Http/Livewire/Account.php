@@ -10,10 +10,11 @@ use Illuminate\Support\Facades\{
     Hash,
     Storage,
 };
+use Filament\Traits\WithNotifications;
 
 class Account extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithNotifications;
     
     public $user;
     public $avatar;
@@ -48,7 +49,7 @@ class Account extends Component
             $this->user->avatar = null;
             $this->user->save();
 
-            $this->dispatchBrowserEvent('notify', __('Avatar removed for :name', ['name' => $this->user->name]));
+            $this->notify(__('Avatar removed for :name', ['name' => $this->user->name]));
         }
     }
 
@@ -78,7 +79,7 @@ class Account extends Component
 
         $this->reset(['password', 'password_confirmation']);
 
-        $this->dispatchBrowserEvent('notify', __('Account saved!'));
+        $this->notify(__('Account saved!'));
     }
 
     public function render()
