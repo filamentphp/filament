@@ -77,6 +77,5 @@ php artisan filament:user
 
 ## Roadmap
 
-- [ ] Settings feature & related tests
 - [ ] Resource stubs and associated Artisan commands (e.g. `artisan filament:resource Page --options`)
 - [ ] DOCUMENTATION FOR ALL THE THINGS.
