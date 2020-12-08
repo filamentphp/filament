@@ -15,7 +15,7 @@
         "watson/active": "^6.0"
     },
     "require-dev": {
-        "mockery/mockery": "^1.0",
+        "mockery/mockery": "^1.4.2",
         "orchestra/testbench": "^6.0",
         "pestphp/pest": "^0.3"
     },
