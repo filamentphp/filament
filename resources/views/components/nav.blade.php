@@ -1,10 +1,10 @@
 <nav aria-label="primary" class="flex-grow px-4">
-    <ol class="space-y-1">
+    <ol class="space-y-0.5">
         @foreach($nav as $group => $items)
         @if ($group)
             <li>          
                 <h3 class="text-xs font-semibold text-gray-600 leading-tight tracking-wider uppercase my-2">{{ $group }}</h3>            
-                <ol class="space-y-1">
+                <ol class="space-y-0.5">
         @endif
                 @foreach($items as $item)
                     <li>
