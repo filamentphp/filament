@@ -46,16 +46,6 @@ class Features
     }
 
     /**
-     * Determine if the application has settings.
-     *
-     * @return bool
-     */
-    public static function hasSettings()
-    {
-        return static::enabled(static::settings());
-    }
-
-    /**
      * Determine if the application has resources.
      *
      * @return bool
@@ -93,16 +83,6 @@ class Features
     public static function profile()
     {
         return 'profile';
-    }
-
-    /**
-     * Enable the settings feature.
-     *
-     * @return string
-     */
-    public static function settings()
-    {
-        return 'settings';
     }
 
     /**

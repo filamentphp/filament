@@ -46,12 +46,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->app->singleton('Filament\Navigation', function () {
             return new Navigation();
         });
-        
-        if (Features::hasSettings()) {
-            $this->app->singleton('Filament\Settings', function () {
-                return Valuestore::make(config('filament.settings_path'));
-            });
-        }
     }
 
     protected function registerLivewireComponents(): void
@@ -132,16 +126,6 @@ class FilamentServiceProvider extends ServiceProvider
                     'label' => 'Dashboard',
                     'icon' => 'heroicon-o-home',
                     'sort' => -9999,
-                ]);
-            }
-
-            if (Features::hasSettings()) {
-                app('Filament\Navigation')->settings = config('filament.nav.settings', [
-                    'path' => 'filament.settings',
-                    'active' => 'filament.settings',
-                    'label' => 'Settings',
-                    'icon' => 'heroicon-o-adjustments',
-                    'sort' => -9998,
                 ]);
             }
 

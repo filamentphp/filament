@@ -10,7 +10,14 @@
         x-data="{ headerIsOpen: false }" 
         x-on:keydown.escape="headerIsOpen = false"
         x-on:resize.window="if (window.outerWidth > 768) headerIsOpen = false">
-        <x-filament::app-header />
+        <div class="flex-shrink-0 flex w-56 absolute md:relative z-10 inset-y-0 transform transition-transform duration-200 md:translate-x-0"
+            :class="headerIsOpen ? 'translate-x-0' : '-translate-x-full'">
+            <x-filament::app-header class="flex-grow" />
+            <button type="button" aria-controls="banner" @click.prevent="headerIsOpen = false" :aria-expanded="headerIsOpen" x-cloak x-show.opacity="headerIsOpen" class="md:hidden absolute top-2 right-0 transform translate-x-full p-3 text-gray-200 hover:text-white transition-colors duration-200">
+                <x-heroicon-o-x class="w-6 h-6" />
+            </button>
+        </div>
+        <span class="absolute z-0 inset-0 bg-black bg-opacity-50 md:hidden" x-cloak x-show="headerIsOpen" @click="headerIsOpen = false"></span>
         <div class="flex-grow flex flex-col">
             <header class="p-4 md:p-6 flex justify-between items-center space-x-4">
                 <div class="flex items-center">

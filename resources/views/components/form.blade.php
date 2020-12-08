@@ -2,6 +2,6 @@
     'submit' => 'submit',
 ])
 
-<form wire:submit.prevent="{{ $submit }}" {{ $attributes->merge(['class' => 'space-y-6']) }}>
+<form wire:submit.prevent="{{ $submit }}" {{ $attributes }}>
     {{ $slot }}
 </form>

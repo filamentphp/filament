@@ -18,7 +18,6 @@ return [
         Features::registration(),
         Features::dashboard(),
         Features::profile(),
-        Features::settings(),
         Features::resources(),
     ],
 
@@ -93,7 +92,6 @@ return [
         'dashboard' => Filament\Http\Livewire\Dashboard::class,
         'profile' => Filament\Http\Livewire\Profile::class,
         'account' => Filament\Http\Livewire\Account::class,
-        'settings' => Filament\Http\Livewire\Settings::class,
     ],
 
     /*
@@ -120,17 +118,5 @@ return [
 
     'cache_disk' => env('FILAMENT_CACHE_DISK', 'local'),
     'cache_path_prefix' =>  'filament/cache',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Settings
-    |--------------------------------------------------------------------------
-    |
-    | This is the path Filament will use to store and retrieve settings as  
-    | loose values. Stored values are saved as a json file.
-    |
-    */
-
-    'settings_path' => storage_path('app/filament/settings.json'),
 
 ];

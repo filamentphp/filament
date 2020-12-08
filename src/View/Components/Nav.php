@@ -20,8 +20,9 @@ class Nav extends Component
         $nav = app('Filament\Navigation');
 
         $this->nav = $nav->items()
-                        ->groupBy('group')
+                        
                         ->sortBy('sort')
+                        ->groupBy('group')
                         ->all();
     }
 

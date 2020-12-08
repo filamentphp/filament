@@ -1,4 +1,4 @@
-<x-filament::form submit="register">
+<x-filament::form submit="register" class="space-y-6">
     <x-filament::input-group field="name" for="name" :label="__('Name')" required>
         <x-filament::input field="name" wire:model.defer="name" id="name" required autofocus tabindex="1" />
         <x-slot name="hint">

@@ -1,4 +1,4 @@
-<x-filament::form>
+<x-filament::form class="space-y-6">
     <x-filament::input-group field="user.name" for="name" :label="__('Name')" required>
         <x-filament::input field="user.name" wire:model="user.name" id="name" required tabindex="1" />
     </x-filament::input-group>

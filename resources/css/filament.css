@@ -7,9 +7,10 @@
 }
 
 @layer components {
-  @import './components/buttons.css';
   @import './components/lists.css';
   @import './components/cards.css';
+  @import './components/buttons.css';
+  @import './components/forms.css';
 }
 
 @layer utilities {

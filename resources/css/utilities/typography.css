@@ -1,6 +1,6 @@
 .help,
 .hint {
-  @apply text-xs font-normal leading-tight text-gray-500;
+  @apply text-xs font-normal leading-none text-gray-500;
 
   a {
     @apply text-blue-600 hover:text-blue-800;
