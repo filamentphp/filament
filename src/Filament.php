@@ -181,7 +181,7 @@ class Filament
     }
 
     /**
-     * Generates a secure Glide image URL.
+     * Generates an asset URL with optional image manipulations.
      * 
      * @link https://glide.thephpleague.com/1.0/config/security/
      * 
@@ -190,7 +190,7 @@ class Filament
      *  
      * @return mixed
      */
-    public function image($path, $manipulations = [])
+    public function url($path, $manipulations = [])
     {
         if (empty($manipulations)) {
             return Storage::disk(config('filament.disk'))->url($path);
