@@ -21,6 +21,15 @@ return [
         Features::resources(),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Models
+    |--------------------------------------------------------------------------
+    |
+    | Eloquent models used by Filament.
+    |
+    */    
+    
     'models' => [
 
         'user' => config('auth.providers.users.model'),
@@ -117,6 +126,17 @@ return [
     */
 
     'cache_disk' => env('FILAMENT_CACHE_DISK', 'local'),
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Cache Path Prefix
+    |--------------------------------------------------------------------------
+    |
+    | This is the cache path prefix used by Filament. It is relative to the
+    | disk defined above.
+    |
+    */
+    
     'cache_path_prefix' =>  'filament/cache',
 
 ];
