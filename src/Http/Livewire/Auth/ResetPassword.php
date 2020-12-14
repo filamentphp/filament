@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\{
 };
 use Livewire\Component;
 use Filament;
+use Filament\Fields\Text;
 
 class ResetPassword extends Component
 {
@@ -52,6 +53,37 @@ class ResetPassword extends Component
         } else {
             $this->addError('email', __($status));
         }
+    }
+
+    public function fields()
+    {
+        return [
+            Text::make('email')
+                ->type('email')
+                ->label('E-Mail Address')
+                ->model('email', 'wire:model.lazy')
+                ->extraAttributes([
+                    'required' => 'true',
+                    'autocomplete' => 'email',
+                ]),
+            Text::make('password')
+                ->type('password')
+                ->label('Password')
+                ->model('password',)
+                ->extraAttributes([
+                    'required' => 'true',
+                    'autofocus' => 'true',
+                    'autocomplete' => 'new-password',
+                ]),
+            Text::make('password_confirmation')
+                ->type('password')
+                ->label('Confirm New Password')
+                ->model('password_confirmation',)
+                ->extraAttributes([
+                    'required' => 'true',
+                    'autocomplete' => 'new-password',
+                ]),
+        ];
     }
 
     public function render()

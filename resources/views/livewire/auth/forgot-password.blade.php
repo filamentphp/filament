@@ -1,14 +1,7 @@
-<x-filament::form submit="sendEmail">
-    <x-filament::input-group field="email" for="email" :label="__('E-Mail Address')" required>
-        <x-filament::input type="email" field="email" wire:model.defer="email" id="email" required autocomplete="email" autofocus tabindex="1" />
-        <x-slot name="hint">
-            <a href="{{ route('filament.login') }}" class="text-current hover:text-blue-600" tabindex="3">
-                &larr; {{ __('Back to login') }}
-            </a>
-        </x-slot>
-    </x-filament::input-group>
+<x-filament::form submit="sendEmail" class="space-y-6">
+    <x-filament::fields :fields="$this->fields()" />
 
-    <x-filament::button type="submit" class="btn-primary w-full" wire:loading.attr="disabled" tabindex="2">
+    <x-filament::button type="submit" class="btn-primary w-full" wire:loading.attr="disabled">
         <x-filament::loader class="w-6 h-6 absolute left-0 ml-2 pointer-events-none" wire:loading />
         {{ __('Send Password Reset Link') }}
     </x-filament::button>

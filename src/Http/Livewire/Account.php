@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\{
     Storage,
 };
 use Filament\Traits\WithNotifications;
+use Filament\Fields\{
+    Text,
+    Avatar,
+    Fieldset,
+};
 
 class Account extends Component
 {
@@ -22,8 +27,14 @@ class Account extends Component
     public $password_confirmation;
 
     protected $rules = [
-        'user.name' => 'required',
-        'user.email' => 'required',
+        'user.name' => 'required|min:2',
+        'user.email' => [
+            'required',
+            'email',
+        ],
+        'avatar' => 'nullable|mimes:png,jpg,jpeg,bmp,gif|max:512',
+        'password' => 'nullable|required_with:password_confirmation|min:8|confirmed',
+        'password_confirmation' => 'nullable|same:password',
     ];
 
     public function updatedAvatar($value)
@@ -34,7 +45,16 @@ class Account extends Component
         }
 
         $this->validate([
-            'avatar' => 'mimes:png,jpg,jpeg,bmp,gif|max:512',
+            'avatar' => $this->rules['avatar'],
+        ]);
+    }
+
+    public function updatedUserEmail($value)
+    {
+        $this->validate([
+            'user.email' => [
+                Rule::unique('users', 'email')->ignore($this->user->id),
+            ],
         ]);
     }
 
@@ -53,19 +73,57 @@ class Account extends Component
         }
     }
 
+    public function fields()
+    {
+        return [
+            Text::make('name')
+                ->label('Name')
+                ->model('user.name')
+                ->extraAttributes([
+                    'required' => 'true',
+                ]),
+            Text::make('email')
+                ->type('email')
+                ->label('E-Mail Address')
+                ->model('user.email', 'wire:model.lazy')
+                ->extraAttributes([
+                    'required' => 'true',
+                    'autocomplete' => 'email',
+                ]),
+            Avatar::make('avatar')
+                ->label('User Photo')
+                ->model('avatar')
+                ->avatar($this->avatar)
+                ->user($this->user)
+                ->delete('deleteAvatar')
+                ->hint(__('Optional')),
+            Fieldset::legend('Update Password')
+                ->fields([
+                    Text::make('password')
+                        ->type('password')
+                        ->label('Password')
+                        ->model('password',)
+                        ->extraAttributes([
+                            'autocomplete' => 'new-password',
+                        ])
+                        ->hint(__('Optional'))
+                        ->help('Leave blank to keep current password.'),
+                    Text::make('password_confirmation')
+                        ->type('password')
+                        ->label('Confirm New Password')
+                        ->model('password_confirmation',)
+                        ->extraAttributes([
+                            'autocomplete' => 'new-password',
+                        ])
+                        ->hint(__('Optional')),
+                ])
+                ->class('grid grid-cols-1 gap-6 lg:grid-cols-2'),
+        ];
+    }
+
     public function submit()
     {
-        $this->validate([
-            'user.name' => 'required|min:2',
-            'user.email' => [
-                'required',
-                'email',
-                Rule::unique('users', 'email')->ignore($this->user->id)
-            ],
-            'avatar' => 'nullable|mimes:png,jpg,jpeg,bmp,gif|max:512',
-            'password' => 'nullable|required_with:password_confirmation|min:8|confirmed',
-            'password_confirmation' => 'nullable|same:password',
-        ]);
+        $this->validate();
 
         if ($this->avatar) {
             $this->user->avatar = $this->avatar->store('avatars', config('filament.storage_disk'));

@@ -14,7 +14,7 @@ abstract class Resource implements ResourceContract
     /** @return string */
     public function label()
     {
-        return $this->label ?? (string) Str::of(class_basename(get_class($this)))->kebab()->replace('-', ' ')->plural()->title();
+        return $this->label ?? (string) Str::of(class_basename(get_called_class()))->kebab()->replace('-', ' ')->plural()->title();
     }
 
     /** @return array */

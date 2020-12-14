@@ -14,4 +14,4 @@
             {{ $slot }}
         </div>
     </main>
-@endsection
+@overwrite

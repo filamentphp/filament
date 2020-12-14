@@ -4,9 +4,16 @@ namespace Filament\Http\Livewire\Auth;
 
 use Livewire\Component;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\{
+    Auth,
+    Route,
+};
 use Filament;
 use Filament\Traits\ThrottlesLogins;
+use Filament\Fields\{
+    Text,
+    Checkbox,
+};
 
 class Login extends Component
 {
@@ -16,7 +23,7 @@ class Login extends Component
     public $email;
     public $password;
     public $remember = false;
-
+    
     protected $rules = [
         'email' => 'required|email',
         'password' => 'required|min:8',
@@ -29,6 +36,37 @@ class Login extends Component
         }
 
         $this->message = session('message');
+    }
+
+    public function fields()
+    {
+        return [
+            Text::make('email')
+                ->type('email')
+                ->label('E-Mail Address')
+                ->model('email')
+                ->extraAttributes([
+                    'required' => 'true',
+                    'autocomplete' => 'email',
+                    'autofocus' => 'true',
+                ])
+                ->hint(Route::has('filament.register') 
+                    ? '['.__('filament::auth.register').']('.route('filament.register').')' 
+                    : null
+                ),
+            Text::make('password')
+                ->type('password')
+                ->label('Password')
+                ->model('password')
+                ->extraAttributes([
+                    'required' => 'true',
+                    'autocomplete' => 'current-password',
+                ])
+                ->hint('['.__('Forgot Your Password?').']('.route('filament.password.forgot').')'),
+            Checkbox::make('remember')
+                ->label('Remember me')
+                ->model('remember'),
+        ];
     }
 
     public function login(Request $request)

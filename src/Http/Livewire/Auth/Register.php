@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Livewire\Component;
 use Filament;
+use Filament\Fields\Text;
 
 class Register extends Component
 {
@@ -25,6 +26,44 @@ class Register extends Component
     public function updatedEmail($value)
     {
         $this->validateOnly('email', ['email' => 'unique:users']);
+    }
+
+    public function fields()
+    {
+        return [
+            Text::make('name')
+                ->label('Name')
+                ->model('name')
+                ->extraAttributes([
+                    'required' => 'true',
+                    'autofocus' => 'true',
+                ])
+                ->hint('['.__('Back to login').']('.route('filament.login').')'),
+            Text::make('email')
+                ->type('email')
+                ->label('E-Mail Address')
+                ->model('email', 'wire:model.lazy')
+                ->extraAttributes([
+                    'required' => 'true',
+                    'autocomplete' => 'email',
+                ]),
+            Text::make('password')
+                ->type('password')
+                ->label('Password')
+                ->model('password',)
+                ->extraAttributes([
+                    'required' => 'true',
+                    'autocomplete' => 'new-password',
+                ]),
+            Text::make('password_confirmation')
+                ->type('password')
+                ->label('Confirm New Password')
+                ->model('password_confirmation',)
+                ->extraAttributes([
+                    'required' => 'true',
+                    'autocomplete' => 'new-password',
+                ]),
+        ];
     }
 
     public function register()
