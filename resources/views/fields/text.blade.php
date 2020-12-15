@@ -2,7 +2,6 @@
 
 @section('field')
     <input type="{{ $type }}" 
-        name="{{ $name }}"
         id="{{ $id ?? $name }}"
         value="{{ $value ?? '' }}"
         @if ($model)

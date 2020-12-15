@@ -1,11 +1,11 @@
 @extends('filament::layouts.field-group')
 
-@pushonce('head:trix')
-    @style('https://www.unpkg.com/trix@1.3.1/dist/trix.css')
+@pushonce('head')
+    <link rel="stylesheet" href="https://www.unpkg.com/trix@1.3.1/dist/trix.css">
 @endpushonce
 
-@pushonce('js:trix')
-    @script('https://www.unpkg.com/trix@1.3.1/dist/trix.js')
+@pushonce('js')
+    <script src="https://www.unpkg.com/trix@1.3.1/dist/trix.js"></script>
 @endpushonce
 
 @section('field')

@@ -2,7 +2,6 @@
 
 @section('field')
     <textarea 
-        name="{{ $name }}"
         id="{{ $id ?? $name }}"
         @if ($model)
             {{ $modelDirective }}="{{ $model }}"

@@ -2,7 +2,6 @@
     <x-filament::label>
         <span class="inline-flex items-center space-x-2">
             <input type="{{ $type }}" 
-                name="{{ $name }}"
                 @if ($model)
                     {{ $modelDirective }}="{{ $model }}"
                 @endif

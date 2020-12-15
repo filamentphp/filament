@@ -90,6 +90,8 @@ class FilamentServiceProvider extends ServiceProvider
     {
         Blade::directive('filamentStyles', [BladeDirectives::class, 'styles']);
         Blade::directive('filamentScripts', [BladeDirectives::class, 'scripts']);
+        Blade::directive('pushonce', [BladeDirectives::class, 'pushOnce']);
+        Blade::directive('endpushonce', [BladeDirectives::class, 'endPushOnce']);
     }
 
     protected function bootPublishing(): void
