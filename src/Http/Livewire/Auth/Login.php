@@ -69,7 +69,7 @@ class Login extends Component
         ];
     }
 
-    public function login(Request $request)
+    public function submit(Request $request)
     {
         $data = $this->validate();
 

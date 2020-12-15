@@ -1,4 +1,4 @@
-<x-filament::form submit="login" class="space-y-6">
+<x-filament::form class="space-y-6">
     <x-filament::fields :fields="$this->fields()" />
 
     <x-filament::button type="submit" class="btn-primary w-full" wire:loading.attr="disabled">

@@ -24,7 +24,7 @@ class RegisterTest extends TestCase
             ->set('email', 'me@example.com')
             ->set('password', 'password')
             ->set('password_confirmation', 'password')
-            ->call('register')
+            ->call('submit')
             ->assertHasNoErrors(['name', 'email', 'password', 'password_confirmation'])
             ->assertRedirect(Filament::home());
 
@@ -39,7 +39,7 @@ class RegisterTest extends TestCase
     public function test_name_is_required()
     {
         Livewire::test(Register::class)
-            ->call('register')
+            ->call('submit')
             ->assertHasErrors(['name' => 'required']);
     }
 
@@ -47,14 +47,14 @@ class RegisterTest extends TestCase
     {
         Livewire::test(Register::class)
             ->set('name', 'a')
-            ->call('register')
+            ->call('submit')
             ->assertHasErrors(['name' => 'min']);
     }
 
     public function test_email_is_required()
     {
         Livewire::test(Register::class)
-            ->call('register')
+            ->call('submit')
             ->assertHasErrors(['email' => 'required']);
     }
 
@@ -62,7 +62,7 @@ class RegisterTest extends TestCase
     {
         Livewire::test(Register::class)
             ->set('email', 'Something')
-            ->call('register')
+            ->call('submit')
             ->assertHasErrors(['email' => 'email']);
     }
 
@@ -78,7 +78,7 @@ class RegisterTest extends TestCase
     public function test_password_is_required()
     {
         Livewire::test(Register::class)
-            ->call('register')
+            ->call('submit')
             ->assertHasErrors(['password' => 'required']);
     }
 
@@ -86,7 +86,7 @@ class RegisterTest extends TestCase
     {
         Livewire::test(Register::class)
             ->set('password', 'test')
-            ->call('register')
+            ->call('submit')
             ->assertHasErrors(['password' => 'min']);
     }
 
@@ -94,14 +94,14 @@ class RegisterTest extends TestCase
     {
         Livewire::test(Register::class)
             ->set('password', 'test')
-            ->call('register')
+            ->call('submit')
             ->assertHasErrors(['password' => 'confirmed']);
     }
 
     public function test_password_confirmation_is_required()
     {
         Livewire::test(Register::class)
-            ->call('register')
+            ->call('submit')
             ->assertHasErrors(['password_confirmation' => 'required']);
     }
 
@@ -110,7 +110,7 @@ class RegisterTest extends TestCase
         Livewire::test(Register::class)
             ->set('password', 'test')
             ->set('password_confirmation', 'test2')
-            ->call('register')
+            ->call('submit')
             ->assertHasErrors(['password_confirmation' => 'same']);
     }
 }

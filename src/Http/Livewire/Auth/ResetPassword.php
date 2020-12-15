@@ -34,7 +34,7 @@ class ResetPassword extends Component
         $this->email = $request->input('email');
     }
 
-    public function resetPassword()
+    public function submit()
     {
         $this->validate();
         $status = Password::reset(

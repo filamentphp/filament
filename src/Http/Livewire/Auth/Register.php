@@ -66,7 +66,7 @@ class Register extends Component
         ];
     }
 
-    public function register()
+    public function submit()
     {
         $this->validate();
         

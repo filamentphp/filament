@@ -37,7 +37,7 @@ class ForgotPasswordTest extends TestCase
     public function test_email_is_required()
     {
         Livewire::test(ForgotPassword::class)
-            ->call('sendEmail')
+            ->call('submit')
             ->assertHasErrors(['email' => 'required']);
     }
 
@@ -45,7 +45,7 @@ class ForgotPasswordTest extends TestCase
     {
         Livewire::test(ForgotPassword::class)
             ->set('email', 'invalid')
-            ->call('sendEmail')
+            ->call('submit')
             ->assertHasErrors(['email' => 'email']);
     }
 
@@ -53,7 +53,7 @@ class ForgotPasswordTest extends TestCase
     {
         Livewire::test(ForgotPassword::class)
             ->set('email', 'not@exists.com')
-            ->call('sendEmail')
+            ->call('submit')
             ->assertHasErrors('email')
             ->assertSee(__('passwords.user'));
     }
@@ -63,7 +63,7 @@ class ForgotPasswordTest extends TestCase
         Password::createToken($this->user);
         Livewire::test(ForgotPassword::class)
             ->set('email', $this->user->email)
-            ->call('sendEmail')
+            ->call('submit')
             ->assertHasErrors('email')
             ->assertSee(__('passwords.throttled'));
     }
@@ -74,7 +74,7 @@ class ForgotPasswordTest extends TestCase
         
         Livewire::test(ForgotPassword::class)
             ->set('email', $this->user->email)
-            ->call('sendEmail')
+            ->call('submit')
             ->assertSet('message', __('passwords.sent'));
 
         $this->assertDatabaseHas('password_resets', [

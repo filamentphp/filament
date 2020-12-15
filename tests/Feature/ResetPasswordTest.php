@@ -32,7 +32,7 @@ class ResetPasswordTest extends TestCase
     public function test_email_is_required()
     {
         Livewire::test(ResetPassword::class, ['token' => $this->token])
-            ->call('resetPassword')
+            ->call('submit')
             ->assertHasErrors(['email' => 'required']);
     }
 
@@ -40,14 +40,14 @@ class ResetPasswordTest extends TestCase
     {
         Livewire::test(ResetPassword::class, ['token' => $this->token])
             ->set('email', 'Something')
-            ->call('resetPassword')
+            ->call('submit')
             ->assertHasErrors(['email' => 'email']);
     }
 
     public function test_password_is_required()
     {
         Livewire::test(ResetPassword::class, ['token' => $this->token])
-            ->call('resetPassword')
+            ->call('submit')
             ->assertHasErrors(['password' => 'required']);
     }
 
@@ -55,7 +55,7 @@ class ResetPasswordTest extends TestCase
     {
         Livewire::test(ResetPassword::class, ['token' => $this->token])
             ->set('password', 'test')
-            ->call('resetPassword')
+            ->call('submit')
             ->assertHasErrors(['password' => 'min']);
     }
 
@@ -64,7 +64,7 @@ class ResetPasswordTest extends TestCase
         Livewire::test(ResetPassword::class, ['token' => $this->token])
             ->set('password', 'test')
             ->set('password_confirmation', 'testzz')
-            ->call('resetPassword')
+            ->call('submit')
             ->assertHasErrors(['password' => 'confirmed']);
     }
 
@@ -78,7 +78,7 @@ class ResetPasswordTest extends TestCase
             ->set('email', $this->user->email)
             ->set('password', 'newpassword')
             ->set('password_confirmation', 'newpassword')
-            ->call('resetPassword')
+            ->call('submit')
             ->assertHasErrors('email')
             ->assertSee(__('passwords.token'));
     }
@@ -89,7 +89,7 @@ class ResetPasswordTest extends TestCase
             ->set('email', 'other@example.com')
             ->set('password', 'newpassword')
             ->set('password_confirmation', 'newpassword')
-            ->call('resetPassword')
+            ->call('submit')
             ->assertHasErrors('email')
             ->assertSee(__('passwords.user'));
     }
@@ -102,14 +102,14 @@ class ResetPasswordTest extends TestCase
             ->set('email', $this->user->email)
             ->set('password', 'newpassword')
             ->set('password_confirmation', 'newpassword')
-            ->call('resetPassword')
+            ->call('submit')
             ->assertHasNoErrors()
             ->assertRedirect($dashboard);
 
         Livewire::test(Login::class)
             ->set('email', $this->user->email)
             ->set('password', 'newpassword')
-            ->call('login')
+            ->call('submit')
             ->assertRedirect($dashboard);
     }
 }

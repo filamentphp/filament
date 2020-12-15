@@ -25,7 +25,7 @@ class LoginTest extends TestCase
         Livewire::test(Login::class)
             ->set('email', $user->email)
             ->set('password', 'password')
-            ->call('login')
+            ->call('submit')
             ->assertRedirect(Filament::home());
 
         $this->assertAuthenticated();
@@ -42,7 +42,7 @@ class LoginTest extends TestCase
     public function test_email_is_required()
     {
         Livewire::test(Login::class)
-            ->call('login')
+            ->call('submit')
             ->assertHasErrors(['email' => 'required']);
     }
 
@@ -50,14 +50,14 @@ class LoginTest extends TestCase
     {
         Livewire::test(Login::class)
             ->set('email', 'Something')
-            ->call('login')
+            ->call('submit')
             ->assertHasErrors(['email' => 'email']);
     }
 
     public function test_password_is_required()
     {
         Livewire::test(Login::class)
-            ->call('login')
+            ->call('submit')
             ->assertHasErrors(['password' => 'required']);
     }
 
@@ -65,7 +65,7 @@ class LoginTest extends TestCase
     {
         Livewire::test(Login::class)
             ->set('password', 'test')
-            ->call('login')
+            ->call('submit')
             ->assertHasErrors(['password' => 'min']);
     }
 
@@ -91,7 +91,7 @@ class LoginTest extends TestCase
         $component = Livewire::test(Login::class)
                         ->set('email', 'example@example.com')
                         ->set('password', 'wrongpassword')
-                        ->call('login');
+                        ->call('submit');
 
         return $component;
     }

@@ -15,7 +15,7 @@ class ForgotPassword extends Component
         'email' => 'required|string|email',
     ];
 
-    public function sendEmail()
+    public function submit()
     {       
         $this->validate();
         
