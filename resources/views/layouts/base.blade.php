@@ -13,6 +13,6 @@
         @yield('content')    
         @livewireScripts
         @filamentScripts
-        @stack('scripts')
+        @stack('js')
     </body>
 </html>

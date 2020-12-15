@@ -6,7 +6,9 @@
                 @if ($model)
                     {{ $modelDirective }}="{{ $model }}"
                 @endif
-                {{ old($model ?? $name) ? 'checked' : '' }}
+                @isset($checked)
+                    checked
+                @endisset
                 @if ($extraAttributes)
                     @foreach ($extraAttributes as $attribute => $value)
                         {{ $attribute }}="{{ $value }}"

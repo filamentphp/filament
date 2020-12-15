@@ -8,6 +8,7 @@
   ],
   "license": "MIT",
   "require": {
+    "appstract/laravel-blade-directives": "^1.10",
     "blade-ui-kit/blade-heroicons": "^0.3",
     "graham-campbell/markdown": "^13.1",
     "league/glide-laravel": "^1.0",
