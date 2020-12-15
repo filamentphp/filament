@@ -1,10 +1,7 @@
-<x-filament::tabs :label="__('Profile')" tab="account">
-    <x-slot name="tablist">
-        <x-filament::tab id="account">
-            {{ __('Account') }}
-        </x-filament::tab>
-    </x-slot>
-    <x-filament::tab-panel id="account">
-        <livewire:filament-account :user="Auth::user()" />
-    </x-filament::tab-panel>
-</x-filament::tabs>
+<x-filament::form class="space-y-6">
+    <x-filament::fields :fields="$this->fields()" />
+
+    <x-filament::button type="submit" class="btn-primary" wire:loading.attr="disabled">
+        {{ __('Update Profile') }}
+    </x-filament::button>
+</x-filament::form>

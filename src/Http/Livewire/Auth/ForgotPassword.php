@@ -12,7 +12,7 @@ class ForgotPassword extends Component
     public $email;
 
     protected $rules = [
-        'email' => 'required|email',
+        'email' => 'required|string|email',
     ];
 
     public function sendEmail()

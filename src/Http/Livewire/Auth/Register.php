@@ -17,10 +17,10 @@ class Register extends Component
     public $password_confirmation;
 
     protected $rules = [
-        'name' => 'required|min:2',
-        'email' => 'required|email|unique:users',
-        'password' => 'required|min:8|confirmed',
-        'password_confirmation' => 'required|same:password',
+        'name' => 'required|string|min:2|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:6|confirmed',
+        'password_confirmation' => 'required|string|same:password',
     ];
 
     public function updatedEmail($value)
