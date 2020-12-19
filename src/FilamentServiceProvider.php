@@ -127,7 +127,6 @@ class FilamentServiceProvider extends ServiceProvider
                     'active' => 'filament.dashboard',
                     'label' => 'Dashboard',
                     'icon' => 'heroicon-o-home',
-                    'enabled' => true,
                     'sort' => -9999,
                 ]);
             }
