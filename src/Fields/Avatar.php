@@ -5,7 +5,7 @@ namespace Filament\Fields;
 class Avatar extends Field {
     public $avatar;
     public $user;
-    public $delete;
+    public $deleteMethod;
     public $size = 64;
 
     public function avatar($avatar)
@@ -20,9 +20,9 @@ class Avatar extends Field {
         return $this;
     }
 
-    public function delete($delete)
+    public function deleteMethod($method)
     {
-        $this->delete = $delete;
+        $this->deleteMethod = $method;
         return $this;
     }
 

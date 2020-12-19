@@ -2,13 +2,14 @@
 
 namespace Filament\Fields;
 
-use Illuminate\Support\Str;
-
 class Field extends BaseField {
     public $model;
-    public $value;
-    public $label;
     public $modelDirective = 'wire:model.defer';
+    public $value;
+    public $id;
+    public $label;
+    public $hint;
+    public $help;
     public $extraAttributes = [];
     protected $view;
     
@@ -22,9 +23,21 @@ class Field extends BaseField {
         return new static($model);
     }
 
+    public function modelDirective($modelDirective)
+    {
+        $this->modelDirective = $modelDirective;
+        return $this;
+    }
+
     public function value($value)
     {
         $this->value = $value;
+        return $this;
+    }
+
+    public function id($id)
+    {
+        $this->id = $id;
         return $this;
     }
 
@@ -34,9 +47,15 @@ class Field extends BaseField {
         return $this;
     }
 
-    public function modelDirective($modelDirective)
+    public function hint($hint)
     {
-        $this->modelDirective = $modelDirective;
+        $this->hint = $hint;
+        return $this;
+    }
+
+    public function help($help)
+    {
+        $this->help = $help;
         return $this;
     }
 

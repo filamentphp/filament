@@ -12,7 +12,7 @@ class Fieldset extends BaseField {
         $this->legend = $legend;
     }
 
-    public static function legend($legend)
+    public static function make($legend)
     {
         return new static($legend);
     }

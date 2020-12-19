@@ -16,9 +16,9 @@
                     <x-filament-avatar :size="$size" :user="$user" />
                 @endif
             </label>
-            @if ($user->avatar && $delete)
+            @if ($user->avatar && $deleteMethod)
                 <button type="button"     
-                    wire:click="{{ $delete }}"   
+                    wire:click="{{ $deleteMethod }}"   
                     class="absolute top-0 right-0 w-4 h-4 rounded-full bg-gray-800 text-white flex items-center justify-center hover:bg-red-700">
                     <span class="sr-only">{{ __('Delete Avatar') }}</span>
                     <x-heroicon-o-x class="w-3 h-3" />

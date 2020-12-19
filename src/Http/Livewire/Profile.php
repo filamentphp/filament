@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\{
 use Filament\Traits\WithNotifications;
 use Filament\Fields\{
     Tabs,
+    Layout,
     Text,
     Avatar,
     Fieldset,
@@ -82,26 +83,28 @@ class Profile extends Component
         return [
             Tabs::label('Profile')
                 ->tab('Account', [
-                    Text::make('user.name')
-                        ->label('Name')
-                        ->extraAttributes([
-                            'required' => 'true',
-                        ]),
-                    Text::make('user.email')
-                        ->type('email')
-                        ->label('E-Mail Address')
-                        ->modelDirective('wire:model.lazy')
-                        ->extraAttributes([
-                            'required' => 'true',
-                            'autocomplete' => 'email',
-                        ]),
+                    Layout::make('grid grid-cols-1 lg:grid-cols-2 gap-6')->fields([
+                        Text::make('user.name')
+                            ->label('Name')
+                            ->extraAttributes([
+                                'required' => 'true',
+                            ]),
+                        Text::make('user.email')
+                            ->type('email')
+                            ->label('E-Mail Address')
+                            ->modelDirective('wire:model.lazy')
+                            ->extraAttributes([
+                                'required' => 'true',
+                                'autocomplete' => 'email',
+                            ]),
+                    ]),
                     Avatar::make('avatar')
                         ->label('User Photo')
                         ->avatar($this->avatar)
                         ->user($this->user)
-                        ->delete('deleteAvatar')
+                        ->deleteMethod('deleteAvatar')
                         ->hint(__('Optional')),
-                    Fieldset::legend('Update Password')
+                    Fieldset::make('Update Password')
                         ->fields([
                             Text::make('password')
                                 ->type('password')
@@ -119,7 +122,7 @@ class Profile extends Component
                                 ])
                                 ->hint(__('Optional')),
                         ])
-                        ->class('grid grid-cols-1 gap-6 lg:grid-cols-2'),
+                        ->class('grid grid-cols-1 lg:grid-cols-2 gap-6'),
                 ]),
         ];
     }
