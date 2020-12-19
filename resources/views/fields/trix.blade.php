@@ -9,15 +9,22 @@
 @endpushonce
 
 @section('field')
-    <div x-data="{ content: @entangle($model ?? $name).defer }">
-        <input type="hidden" id="value-{{ $id ?? $name }}" value="{{ $value ?? '' }}" />
+    <div x-data="{ content: @entangle($model).defer }">
+        <input 
+            type="hidden" 
+            value="{{ $value }}"
+            id="value-{{ $id ?? $model }}"                 
+            @foreach ($extraAttributes as $attribute => $value)
+                {{ $attribute }}="{{ $value }}"
+            @endforeach 
+        />
     
         <div 
             wire:ignore
             @trix-change="content = $event.target.value"
             @trix-file-accept="$event.preventDefault()"
         >
-            <trix-toolbar id="toolbar-{{ $id ?? $name }}">
+            <trix-toolbar id="toolbar-{{ $id ?? $model }}">
                 <div class="trix-button-row">
                     <span class="trix-button-group trix-button-group--text-tools" data-trix-button-group="text-tools">
                         <button type="button" class="trix-button trix-button--icon trix-button--icon-bold" data-trix-attribute="bold" data-trix-key="b" title="Bold" tabindex="-1">Bold</button>
@@ -58,15 +65,10 @@
             </trix-toolbar>
 
             <trix-editor 
-                id="{{ $id ?? $name }}"
-                toolbar="toolbar-{{ $id ?? $name }}"
-                input="value-{{ $id ?? $name }}" 
+                id="{{ $id ?? $model }}"
+                toolbar="toolbar-{{ $id ?? $model }}"
+                input="value-{{ $id ?? $model }}" 
                 class="block w-full rounded shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border-gray-300 prose max-w-none"
-                @if ($extraAttributes)
-                    @foreach ($extraAttributes as $attribute => $value)
-                        {{ $attribute }}="{{ $value }}"
-                    @endforeach
-                @endif
             ></trix-editor>
         </div>
     </div>

@@ -82,23 +82,21 @@ class Profile extends Component
         return [
             Tabs::label('Profile')
                 ->tab('Account', [
-                    Text::make('name')
+                    Text::make('user.name')
                         ->label('Name')
-                        ->model('user.name')
                         ->extraAttributes([
                             'required' => 'true',
                         ]),
-                    Text::make('email')
+                    Text::make('user.email')
                         ->type('email')
                         ->label('E-Mail Address')
-                        ->model('user.email', 'wire:model.lazy')
+                        ->modelDirective('wire:model.lazy')
                         ->extraAttributes([
                             'required' => 'true',
                             'autocomplete' => 'email',
                         ]),
                     Avatar::make('avatar')
                         ->label('User Photo')
-                        ->model('avatar')
                         ->avatar($this->avatar)
                         ->user($this->user)
                         ->delete('deleteAvatar')
@@ -108,7 +106,6 @@ class Profile extends Component
                             Text::make('password')
                                 ->type('password')
                                 ->label('Password')
-                                ->model('password',)
                                 ->extraAttributes([
                                     'autocomplete' => 'new-password',
                                 ])
@@ -117,7 +114,6 @@ class Profile extends Component
                             Text::make('password_confirmation')
                                 ->type('password')
                                 ->label('Confirm New Password')
-                                ->model('password_confirmation',)
                                 ->extraAttributes([
                                     'autocomplete' => 'new-password',
                                 ])

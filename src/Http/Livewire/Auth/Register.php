@@ -33,7 +33,6 @@ class Register extends Component
         return [
             Text::make('name')
                 ->label('Name')
-                ->model('name')
                 ->extraAttributes([
                     'required' => 'true',
                     'autofocus' => 'true',
@@ -42,7 +41,7 @@ class Register extends Component
             Text::make('email')
                 ->type('email')
                 ->label('E-Mail Address')
-                ->model('email', 'wire:model.lazy')
+                ->modelDirective('wire:model.lazy')
                 ->extraAttributes([
                     'required' => 'true',
                     'autocomplete' => 'email',
@@ -50,7 +49,6 @@ class Register extends Component
             Text::make('password')
                 ->type('password')
                 ->label('Password')
-                ->model('password',)
                 ->extraAttributes([
                     'required' => 'true',
                     'autocomplete' => 'new-password',
@@ -58,7 +56,6 @@ class Register extends Component
             Text::make('password_confirmation')
                 ->type('password')
                 ->label('Confirm New Password')
-                ->model('password_confirmation',)
                 ->extraAttributes([
                     'required' => 'true',
                     'autocomplete' => 'new-password',

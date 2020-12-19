@@ -9,7 +9,7 @@
         x-on:livewire-upload-progress="progress = $event.detail.progress" 
         class="flex items-center space-x-4">
         <div class="flex-shrink-0 relative">
-            <label for="{{ $id ?? $name }}" class="cursor-pointer rounded-full shadow flex overflow-hidden">
+            <label for="{{ $id ?? $model }}" class="cursor-pointer rounded-full shadow flex overflow-hidden">
                 @if ($avatar)
                     <img src="{{ $avatar->temporaryUrl() }}" alt="{{ $user->name }}" class="h-full object-cover" width="{{ $size }}" height="{{ $size }}" loading="lazy">
                 @else 
@@ -26,18 +26,15 @@
             @endif
         </div>
         <div class="flex-grow relative">
-            <label class="btn" for="{{ $id ?? $name }}">{{ __('Change') }}</label>
+            <label class="btn" for="{{ $id ?? $model }}">{{ __('Change') }}</label>
             <input type="file" 
+                {{ $modelDirective }}="{{ $model }}"
+                value="{{ $value }}"
                 class="sr-only" 
-                id="{{ $id ?? $name }}"
-                @if ($extraAttributes)
-                    @foreach ($extraAttributes as $attribute => $value)
-                        {{ $attribute }}="{{ $value }}"
-                    @endforeach
-                @endif   
-                @if ($model)
-                    {{ $modelDirective }}="{{ $model }}"
-                @endif
+                id="{{ $id ?? $model }}"
+                @foreach ($extraAttributes as $attribute => $value)
+                    {{ $attribute }}="{{ $value }}"
+                @endforeach  
             />
             <div x-show="isUploading" :aria-hidden="!isUploading" class="absolute bottom-0 -mb-3 w-48 max-w-full">
                 <x-filament::progress progress="progress" />     

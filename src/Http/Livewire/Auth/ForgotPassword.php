@@ -33,7 +33,6 @@ class ForgotPassword extends Component
             Text::make('email')
                 ->type('email')
                 ->label('E-Mail Address')
-                ->model('email')
                 ->extraAttributes([
                     'required' => 'true',
                     'autofocus' => 'true',

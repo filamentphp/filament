@@ -44,7 +44,6 @@ class Login extends Component
             Text::make('email')
                 ->type('email')
                 ->label('E-Mail Address')
-                ->model('email')
                 ->extraAttributes([
                     'required' => 'true',
                     'autocomplete' => 'email',
@@ -57,15 +56,13 @@ class Login extends Component
             Text::make('password')
                 ->type('password')
                 ->label('Password')
-                ->model('password')
                 ->extraAttributes([
                     'required' => 'true',
                     'autocomplete' => 'current-password',
                 ])
                 ->hint('['.__('Forgot Your Password?').']('.route('filament.password.forgot').')'),
             Checkbox::make('remember')
-                ->label('Remember me')
-                ->model('remember'),
+                ->label('Remember me'),
         ];
     }
 

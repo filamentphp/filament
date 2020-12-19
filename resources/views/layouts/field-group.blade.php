@@ -1,7 +1,7 @@
 <div class="space-y-2">
     <div class="flex items-center justify-between space-x-2">
         @if ($label)
-            <x-filament::label :for="$id ?? $name">
+            <x-filament::label :for="$id ?? $model">
                 {{ __($label) }}
             </x-filament::label>
         @endif
@@ -12,7 +12,7 @@
         @endif
     </div>
     @yield('field')
-    <x-filament::error :field="$model ?? $name" />
+    <x-filament::error :field="$model" />
     @if ($help)
         <x-filament::help>
             @markdown($help)

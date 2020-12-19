@@ -5,21 +5,27 @@ namespace Filament\Fields;
 use Illuminate\Support\Str;
 
 class Field extends BaseField {
-    public $name;
-    public $label;
     public $model;
-    public $modelDirective;
-    public $extraAttributes;
+    public $value;
+    public $label;
+    public $modelDirective = 'wire:model.defer';
+    public $extraAttributes = [];
     protected $view;
     
-    public function __construct($name)
+    public function __construct($model)
     {
-        $this->name = $name;
+        $this->model = $model;
     }
 
-    public static function make($name)
+    public static function make($model)
     {
-        return new static($name);
+        return new static($model);
+    }
+
+    public function value($value)
+    {
+        $this->value = $value;
+        return $this;
     }
 
     public function label($label)
@@ -28,10 +34,9 @@ class Field extends BaseField {
         return $this;
     }
 
-    public function model($model, $directive = 'wire:model.defer')
+    public function modelDirective($modelDirective)
     {
-        $this->model = $model;
-        $this->modelDirective = $directive;
+        $this->modelDirective = $modelDirective;
         return $this;
     }
 
