@@ -11,7 +11,6 @@ class Field extends BaseField {
     public $hint;
     public $help;
     public $extraAttributes = [];
-    protected $view;
     
     public function __construct($model)
     {

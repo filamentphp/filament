@@ -7,8 +7,8 @@ use Filament\Contracts\Resource as ResourceContract;
 
 abstract class Resource implements ResourceContract
 { 
-    public $group = null;
     public $icon = 'heroicon-o-database';
+    public $enabled = true;
     public $sort = 0;
 
     /** @return string */
