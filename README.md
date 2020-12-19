@@ -46,6 +46,7 @@ To define a Resource, create a new resource file in `app/Filament/Resources` lik
 
 namespace App\Filament\Resources;
 
+use Illuminate\Support\Facades\Auth;
 use Filament\Resource;
 use App\Http\Livewire\Page\Index;
 // use App\Http\Livewire\Page\Show;
@@ -54,8 +55,12 @@ class Page extends Resource
 {
     public $label = 'My Pages'; // defaults to formatted & pluralized classname
     public $icon = 'heroicon-o-document-text';
-    public $enabled = true;
     public $sort = 0;
+
+    public function __construct()
+    {
+        $this->enabled = Auth::user()->can('Access My Pages'); // Enable navigation visibilty and access to entire resource via policy etc.
+    }
 
     public function actions()
     {
