@@ -8,18 +8,27 @@ class BaseField {
     protected $enabled = true;
     protected $view;
 
-    public function enabled(bool $enabled)
+    /**
+     * @return static
+     */
+    public function enabled(bool $enabled): self
     {
         $this->enabled = $enabled;
         return $this;
     }
 
-    public function view($view)
+    /**
+     * @return static
+     */
+    public function view($view): self
     {
         $this->view = $view;
         return $this;
     }
 
+    /**
+     * @return \Illuminate\View\View|null
+     */
     public function render()
     {        
         if (! $this->enabled) {

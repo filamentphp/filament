@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Livewire\Component;
-use Filament;
+use Filament\Facades\Filament;
 use Filament\Fields\Text;
 
 class Register extends Component
@@ -23,12 +23,17 @@ class Register extends Component
         'password_confirmation' => 'required|string|same:password',
     ];
 
-    public function updatedEmail($value)
+    public function updatedEmail($value): void
     {
         $this->validateOnly('email', ['email' => 'unique:users']);
     }
 
-    public function fields()
+    /**
+     * @return array
+     *
+     * @psalm-return array{0: mixed, 1: mixed, 2: mixed, 3: mixed}
+     */
+    public function fields(): array
     {
         return [
             Text::make('name')
@@ -63,6 +68,9 @@ class Register extends Component
         ];
     }
 
+    /**
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function submit()
     {
         $this->validate();
@@ -79,7 +87,7 @@ class Register extends Component
         return redirect()->to(Filament::home());
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('filament::livewire.auth.register')
             ->layout('filament::layouts.auth', ['title' => __('filament::auth.register')]);

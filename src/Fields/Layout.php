@@ -11,12 +11,18 @@ class Layout extends BaseField {
         $this->class = $class;
     }
 
-    public static function make($class)
+    /**
+     * @return static
+     */
+    public static function make(string $class): self
     {
         return new static($class);
     }
 
-    public function fields(array $fields)
+    /**
+     * @return static
+     */
+    public function fields(array $fields): self
     {
         $this->fields = $fields;
         return $this;

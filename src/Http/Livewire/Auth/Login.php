@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\{
     Auth,
     Route,
 };
-use Filament;
+use Filament\Facades\Filament;
 use Filament\Traits\ThrottlesLogins;
 use Filament\Fields\{
     Text,
@@ -29,6 +29,9 @@ class Login extends Component
         'password' => 'required|min:8',
     ];
 
+    /**
+     * @return \Illuminate\Http\RedirectResponse|null
+     */
     public function mount()
     {
         if (Auth::check()) {
@@ -38,7 +41,12 @@ class Login extends Component
         $this->message = session('message');
     }
 
-    public function fields()
+    /**
+     * @return array
+     *
+     * @psalm-return array{0: mixed, 1: mixed, 2: mixed}
+     */
+    public function fields(): array
     {
         return [
             Text::make('email')
@@ -66,6 +74,9 @@ class Login extends Component
         ];
     }
 
+    /**
+     * @return \Illuminate\Http\RedirectResponse|null
+     */
     public function submit(Request $request)
     {
         $data = $this->validate();
@@ -85,7 +96,7 @@ class Login extends Component
         $this->addError('password', __('auth.failed'));
     }
     
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('filament::livewire.auth.login')
             ->layout('filament::layouts.auth', ['title' => __('filament::auth.signin')]);

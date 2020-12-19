@@ -15,7 +15,7 @@ class ForgotPassword extends Component
         'email' => 'required|string|email',
     ];
 
-    public function submit()
+    public function submit(): void
     {       
         $this->validate();
         
@@ -27,7 +27,12 @@ class ForgotPassword extends Component
         }
     }
 
-    public function fields()
+    /**
+     * @return array
+     *
+     * @psalm-return array{0: mixed}
+     */
+    public function fields(): array
     {
         return [
             Text::make('email')
@@ -42,7 +47,7 @@ class ForgotPassword extends Component
         ];
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('filament::livewire.auth.forgot-password')
             ->layout('filament::layouts.auth', ['title' => __('Reset Password')]);

@@ -3,7 +3,7 @@
 namespace Filament\Traits;
 
 use Illuminate\Auth\Notifications\ResetPassword;
-use Filament;
+use Filament\Facades\Filament;
 
 trait FilamentUser {
     public function sendPasswordResetNotification($token): void

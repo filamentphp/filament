@@ -28,9 +28,9 @@ class MakeUser extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $name = $this->validateInput(function() {
             return $this->ask('Name');

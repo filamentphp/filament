@@ -37,12 +37,12 @@ class Profile extends Component
         'password_confirmation' => 'nullable|string|same:password',
     ];
 
-    public function mount()
+    public function mount(): void
     {
         $this->user = Auth::user();
     }
 
-    public function updatedAvatar($value)
+    public function updatedAvatar($value): void
     {
         $extension = pathinfo($value->getFilename(), PATHINFO_EXTENSION);
         if (!in_array($extension, ['png', 'jpg', 'jpeg', 'bmp', 'gif'])) {
@@ -54,7 +54,7 @@ class Profile extends Component
         ]);
     }
 
-    public function updatedUserEmail($value)
+    public function updatedUserEmail($value): void
     {
         $this->validate([
             'user.email' => [
@@ -63,7 +63,7 @@ class Profile extends Component
         ]);
     }
 
-    public function deleteAvatar()
+    public function deleteAvatar(): void
     {
         $avatar = $this->user->avatar;
         
@@ -78,7 +78,12 @@ class Profile extends Component
         }
     }
 
-    public function fields()
+    /**
+     * @return array
+     *
+     * @psalm-return array{0: mixed}
+     */
+    public function fields(): array
     {
         return [
             Tabs::label('Profile')
@@ -127,7 +132,7 @@ class Profile extends Component
         ];
     }
 
-    public function submit()
+    public function submit(): void
     {
         $this->validate();
 
@@ -146,7 +151,7 @@ class Profile extends Component
         $this->notify(__('Profile saved!'));
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('filament::livewire.profile')
             ->layout('filament::layouts.app', ['title' => __('Profile')]);;

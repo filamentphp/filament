@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\{
     Password,
 };
 use Livewire\Component;
-use Filament;
+use Filament\Facades\Filament;
 use Filament\Fields\Text;
 
 class ResetPassword extends Component
@@ -28,12 +28,15 @@ class ResetPassword extends Component
         'password_confirmation' => 'required|string|same:password',
     ];
 
-    public function mount(Request $request, $token)
+    public function mount(Request $request, $token): void
     {
         $this->token = $token;
         $this->email = $request->input('email');
     }
 
+    /**
+     * @return \Illuminate\Http\RedirectResponse|null
+     */
     public function submit()
     {
         $this->validate();
@@ -55,7 +58,12 @@ class ResetPassword extends Component
         }
     }
 
-    public function fields()
+    /**
+     * @return array
+     *
+     * @psalm-return array{0: mixed, 1: mixed, 2: mixed}
+     */
+    public function fields(): array
     {
         return [
             Text::make('email')
@@ -84,13 +92,18 @@ class ResetPassword extends Component
         ];
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('filament::livewire.auth.reset-password')
             ->layout('filament::layouts.auth', ['title' => __('Reset Password')]);
     }
 
-    protected function credentials()
+    /**
+     * @return array
+     *
+     * @psalm-return array{token: mixed, email: mixed, password: mixed, password_confirmation: mixed}
+     */
+    protected function credentials(): array
     {
         return [
             'token' => $this->token,

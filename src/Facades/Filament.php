@@ -1,16 +1,16 @@
 <?php
 
-namespace Filament;
+namespace Filament\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class FilamentFacade extends Facade
+class Filament extends Facade
 {
     /**
      * {@inheritDoc}
      */
     protected static function getFacadeAccessor()
     {
-        return Filament::class;
+        return \Filament\Filament::class;
     }
 }

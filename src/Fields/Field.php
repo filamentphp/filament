@@ -17,48 +17,74 @@ class Field extends BaseField {
         $this->model = $model;
     }
 
-    public static function make($model)
+    /**
+     * @return static
+     */
+    public static function make(string $model): self
     {
         return new static($model);
     }
 
-    public function modelDirective($modelDirective)
+    /**
+     * @return static
+     */
+    public function modelDirective(string $modelDirective): self
     {
         $this->modelDirective = $modelDirective;
         return $this;
     }
 
-    public function value($value)
+    /**
+     * @return static
+     */
+    public function value($value): self
     {
         $this->value = $value;
         return $this;
     }
 
-    public function id($id)
+    /**
+     * @return static
+     */
+    public function id($id): self
     {
         $this->id = $id;
         return $this;
     }
 
-    public function label($label)
+    /**
+     * @return static
+     */
+    public function label(string $label): self
     {
         $this->label = $label;
         return $this;
     }
 
-    public function hint($hint)
+    /**
+     * @return static
+     *
+     * @param array|null|string $hint
+     */
+    public function hint($hint): self
     {
         $this->hint = $hint;
         return $this;
     }
 
-    public function help($help)
+    /**
+     * @return static
+     */
+    public function help(string $help): self
     {
         $this->help = $help;
         return $this;
     }
 
-    public function extraAttributes(array $attributes)
+    /**
+     * @return static
+     */
+    public function extraAttributes(array $attributes): self
     {
         $this->extraAttributes = $attributes;
         return $this;

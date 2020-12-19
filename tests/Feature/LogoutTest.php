@@ -4,7 +4,7 @@ namespace Filament\Tests\Feature;
 
 use Livewire\Livewire;
 use Filament\Tests\TestCase;
-use Filament;
+use Filament\Facades\Filament;
 use Filament\Tests\Database\Models\User;
 use Filament\Http\Livewire\Auth\Logout;
 

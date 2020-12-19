@@ -14,7 +14,7 @@ use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
 use Thomaswelton\LaravelGravatar\LaravelGravatarServiceProvider;
 use Thomaswelton\LaravelGravatar\Facades\Gravatar;
 use Filament\FilamentServiceProvider;
-use Filament\FilamentFacade;
+use Filament\Facades\Filament;
 use Filament\Tests\Database\Models\User;
 
 abstract class TestCase extends OrchestraTestCase
@@ -64,7 +64,7 @@ abstract class TestCase extends OrchestraTestCase
             'Livewire' => Livewire::class,
             'Active' => Active::class,
             'Gravatar' => Gravatar::class,
-            'Filament' => FilamentFacade::class,
+            'Filament' => Filament::class,
         ];
     }
 

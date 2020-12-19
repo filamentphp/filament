@@ -13,8 +13,10 @@ class ImageController extends Controller
     /**
      * Show a secure Glide image URL response.
      *
+     * @psalm-suppress UndefinedInterfaceMethod
+     * 
      * @param  string  $path
-     * @return View
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
     public function __invoke($path)
     {

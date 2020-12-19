@@ -8,6 +8,8 @@
   ],
   "license": "MIT",
   "require": {
+    "php": "^7.4|^8.0",
+    "illuminate/contracts": "^8.0",
     "blade-ui-kit/blade-heroicons": "^0.3",
     "graham-campbell/markdown": "^13.1",
     "league/glide-laravel": "^1.0",
@@ -16,9 +18,12 @@
     "watson/active": "^6.0"
   },
   "require-dev": {
+    "laravel/framework": "^8.19",
     "mockery/mockery": "^1.4.2",
     "orchestra/testbench": "^6.0",
-    "pestphp/pest": "^0.3"
+    "pestphp/pest": "^0.3",
+    "vimeo/psalm": "^4.3",
+    "psalm/plugin-laravel": "^1.4"
   },
   "autoload": {
     "psr-4": {
@@ -36,12 +41,13 @@
         "Filament\\FilamentServiceProvider"
       ],
       "aliases": {
-        "Filament": "Filament\\FilamentFacade"
+        "Filament": "Filament\\Facades\\Filament"
       }
     }
   },
   "scripts": {
-    "test": "./vendor/bin/pest"
+    "test": "./vendor/bin/pest",
+    "bless": "./vendor/bin/psalm"
   },
   "minimum-stability": "dev",
   "prefer-stable": true

@@ -4,7 +4,7 @@ namespace Filament\View\Components;
 
 use Illuminate\View\Component;
 use Thomaswelton\LaravelGravatar\Facades\Gravatar;
-use Filament;
+use Filament\Facades\Filament;
 
 class Avatar extends Component
 {

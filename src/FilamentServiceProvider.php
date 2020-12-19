@@ -53,7 +53,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->app->afterResolving(BladeCompiler::class, function () {
             $prefix = config('filament.prefix.component', '');
 
-            /** @var LivewireComponent $component */
             foreach (config('filament.livewire', []) as $alias => $component) {
                 $alias = $prefix ? "$prefix-$alias" : $alias;
 
@@ -69,7 +68,7 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootModelBindings(): void
     {
-        $models = $this->app->config['filament.models'];
+        $models = config('filament.models');
 
         if (!$models) {
             return;
@@ -132,7 +131,7 @@ class FilamentServiceProvider extends ServiceProvider
             }
 
             if (Features::hasResources()) {         
-                $this->app->filament->resources()->each(function ($item, $key) {
+                app('filament')->resources()->each(function ($item, $key) {
                     $resource = $this->app->make($item);
 
                     if ($resource->enabled && array_key_exists('index', $resource->actions())) {

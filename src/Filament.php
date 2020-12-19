@@ -62,7 +62,10 @@ class Filament
         return $this->basePath('dist/'.ltrim($path, '/'));
     }
 
-    public function handling(): bool
+    /**
+     * @return false|int
+     */
+    public function handling()
     {
         return preg_match('#^'.config('filament.prefix.route').'($|/)'.'#i', Request::path());
     }
@@ -118,7 +121,7 @@ class Filament
     }
 
     /** @return mixed */
-    protected function getAsset($key)
+    protected function getAsset(string $key)
     {
         $manifest = json_decode(file_get_contents($this->distPath('mix-manifest.json')), true);
 
@@ -130,7 +133,7 @@ class Filament
     }
 
     /** @return mixed */
-    protected function getPublicAsset($key)
+    protected function getPublicAsset(string $key)
     {
         $manifestFile = public_path('vendor/filament/mix-manifest.json');
         
@@ -147,6 +150,9 @@ class Filament
         return $manifest[$key];
     }
 
+    /**
+     * @psalm-suppress UndefinedMethod
+     */
     public function resources(): Collection
     {
         $resources_path = app_path('Filament/Resources');
@@ -171,6 +177,8 @@ class Filament
     /**
      * Returns the path to the "home" route for Filament.
      * 
+     * @psalm-suppress UndefinedClass
+     * 
      * @return string
      */
     public function home()
@@ -182,6 +190,8 @@ class Filament
 
     /**
      * Generates an asset URL with optional image manipulations.
+     * 
+     * @psalm-suppress UndefinedInterfaceMethod
      * 
      * @link https://glide.thephpleague.com/1.0/config/security/
      * 
@@ -196,7 +206,7 @@ class Filament
             return Storage::disk(config('filament.disk'))->url($path);
         }
 
-        $urlBuilder = UrlBuilderFactory::create(null, config('app.key'));
+        $urlBuilder = UrlBuilderFactory::create('', config('app.key'));
         return route('filament.image', ['path' => ltrim($urlBuilder->getUrl($path, $manipulations), '/')]);
     }
 }

@@ -9,6 +9,9 @@ class Logout extends Component
 {
     public $class;
     
+    /**
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function logout()
     {
         if (Auth::guest()) {
@@ -20,7 +23,7 @@ class Logout extends Component
         return redirect()->route('filament.login');
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('filament::livewire.auth.logout', ['label' => __('filament::auth.logout')]);
     }

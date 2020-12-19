@@ -11,12 +11,18 @@ class Tabs extends BaseField {
         $this->label = $label;
     }
 
-    public static function label($label)
+    /**
+     * @return static
+     */
+    public static function label(string $label): self
     {
         return new static($label);
     }
 
-    public function tab($label, array $fields)
+    /**
+     * @return static
+     */
+    public function tab(string $label, array $fields): self
     {
         $this->tabs[$label] = $fields;
         return $this;

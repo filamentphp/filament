@@ -8,25 +8,37 @@ class Avatar extends Field {
     public $deleteMethod;
     public $size = 64;
 
-    public function avatar($avatar)
+    /**
+     * @return static
+     */
+    public function avatar($avatar): self
     {
         $this->avatar = $avatar;
         return $this;
     }
 
-    public function user($user)
+    /**
+     * @return static
+     */
+    public function user($user): self
     {
         $this->user = $user;
         return $this;
     }
 
-    public function deleteMethod($method)
+    /**
+     * @return static
+     */
+    public function deleteMethod(string $method): self
     {
         $this->deleteMethod = $method;
         return $this;
     }
 
-    public function size($size)
+    /**
+     * @return static
+     */
+    public function size($size): self
     {
         $this->size = $size;
         return $this;

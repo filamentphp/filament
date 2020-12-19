@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 use Livewire\Livewire;
 use Filament\Tests\TestCase;
-use Filament;
+use Filament\Facades\Filament;
 use Filament\Tests\Database\Models\User;
 use Filament\Http\Livewire\Auth\{
     Login,
