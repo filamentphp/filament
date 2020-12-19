@@ -9,7 +9,10 @@
 @endpushonce
 
 @section('field')
-    <div x-data="{ content: @entangle($model).defer }">
+    <div 
+        x-data="{ content: @entangle($model).defer }" 
+        x-cloak
+    >
         <input 
             type="hidden" 
             value="{{ $value }}"
