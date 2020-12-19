@@ -136,7 +136,7 @@ class FilamentServiceProvider extends ServiceProvider
                 $this->app->filament->resources()->each(function ($item, $key) {
                     $resource = $this->app->make($item);
 
-                    if (array_key_exists('index', $resource->actions())) {
+                    if ($resource->enabled && array_key_exists('index', $resource->actions())) {
                         $route = route('filament.resource', ['resource' => $key]);
                         $routePath = implode('/', array_slice(explode('/', $route), -3, 2, true)).'/'.$key;
 
@@ -148,7 +148,6 @@ class FilamentServiceProvider extends ServiceProvider
                             ],
                             'label' => $resource->label(),
                             'icon' => $resource->icon,
-                            'enabled' => $resource->enabled,
                             'sort' => $resource->sort,
                         ];
                     }
