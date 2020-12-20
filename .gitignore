@@ -1,7 +1,10 @@
-/vendor/
-/node_modules/
-SCRATCH.md
-COMMIT_MSG.aim.txt
-composer.lock
-.phpunit.result.cache
 .idea
+.php_cs
+.php_cs.cache
+.phpunit.result.cache
+/build
+coverage
+phpunit.xml
+psalm.xml
+/vendor
+/node_modules
