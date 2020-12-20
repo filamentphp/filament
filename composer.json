@@ -9,6 +9,7 @@
   "license": "MIT",
   "require": {
     "php": "^7.4|^8.0",
+    "illuminate/contracts": "^8.0",
     "blade-ui-kit/blade-heroicons": "^0.3",
     "graham-campbell/markdown": "^13.1",
     "league/glide-laravel": "^1.0",
@@ -17,7 +18,7 @@
     "watson/active": "^6.0"
   },
   "require-dev": {
-    "laravel/framework": "^8.19",
+    "laravel/framework": "^8.0",
     "mockery/mockery": "^1.4.2",
     "orchestra/testbench": "^6.0",
     "pestphp/pest": "^0.3",
