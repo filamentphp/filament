@@ -1,4 +1,4 @@
-name: Filament Package Tests
+name: Package Tests
 
 on: [push, pull_request]
 
