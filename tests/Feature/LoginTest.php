@@ -72,7 +72,7 @@ class LoginTest extends TestCase
     public function test_bad_credentials_show_error()
     {
         $this->invalid_login()
-            ->assertHasErrors('password');
+            ->assertHasErrors('email');
     }
 
     public function test_bad_credentials_show_error_due_to_login_throttling()
@@ -83,7 +83,7 @@ class LoginTest extends TestCase
 
         // 5th invalid login attempt should return validation error
         $this->invalid_login()
-            ->assertHasErrors('password');
+            ->assertHasErrors('email');
     }
 
     private function invalid_login()

@@ -2,14 +2,17 @@
 
 namespace Filament\Http\Livewire\Auth;
 
-use Livewire\Component;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\{
+    RateLimiter,
     Auth,
     Route,
 };
+use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\Events\Lockout;
+use Livewire\Component;
 use Filament\Facades\Filament;
-use Filament\Traits\ThrottlesLogins;
 use Filament\Fields\{
     Text,
     Checkbox,
@@ -17,8 +20,6 @@ use Filament\Fields\{
 
 class Login extends Component
 {
-    use ThrottlesLogins;
-
     public $message;
     public $email;
     public $password;
@@ -79,26 +80,59 @@ class Login extends Component
      */
     public function submit(Request $request)
     {
+        $this->ensureIsNotRateLimited($request);
+
         $data = $this->validate();
 
-        if ($this->hasTooManyLoginAttempts($request)) {
-            $this->fireLockoutEvent($request);
-
-            return $this->sendLockoutResponse($request);
-        }
-
         if (Auth::attempt($data, (bool) $this->remember)) {
+            RateLimiter::clear($this->throttleKey());
+
             return redirect()->intended(Filament::home());
         }
 
-        $this->incrementLoginAttempts($request);
+        RateLimiter::hit($this->throttleKey());
 
-        $this->addError('password', __('auth.failed'));
+        $this->addError('email', __('auth.failed'));
     }
     
     public function render(): \Illuminate\View\View
     {
         return view('filament::livewire.auth.login')
             ->layout('filament::layouts.auth', ['title' => __('filament::auth.signin')]);
+    }
+
+    /**
+     * Ensure the login request is not rate limited.
+     *
+     * @return void
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    protected function ensureIsNotRateLimited(Request $request)
+    {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+            return;
+        }
+
+        event(new Lockout($request));
+
+        $seconds = RateLimiter::availableIn($this->throttleKey());
+
+        throw ValidationException::withMessages([
+            'email' => trans('auth.throttle', [
+                'seconds' => $seconds,
+                'minutes' => ceil($seconds / 60),
+            ]),
+        ]);
+    }
+
+    /**
+    * Get the rate limiting throttle key for the request.
+    *
+    * @return string
+    */
+    protected function throttleKey()
+    {
+        return Str::lower($this->email.'|'.request()->ip());
     }
 }

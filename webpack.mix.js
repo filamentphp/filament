@@ -32,12 +32,7 @@ mix.js(`${SRC}/js/filament.js`, 'js')
  *
  * @link https://laravel.com/docs/master/mix#postcss
  */
-mix.postCss(`${SRC}/css/filament.css`, 'css', [
-  require('postcss-import'),
-  require('tailwindcss'),
-  require('postcss-nested'),
-  require('autoprefixer'),
-])
+mix.postCss(`${SRC}/css/filament.css`, 'css')
 
 /**
  * Sourcemaps

@@ -1,11 +1,11 @@
 {
   "name": "filament",
   "scripts": {
-    "dev": "npm run development",
-    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "watch": "npm run development -- --watch",
-    "prod": "npm run production",
-    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "dev": "mix",
+    "watch": "mix watch",
+    "watch-poll": "mix watch -- --watch-options-poll=1000",
+    "hot": "mix watch --hot",
+    "prod": "mix --production",
     "start": "npm run watch"
   },
   "author": {
@@ -14,24 +14,23 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@popperjs/core": "^2.5.4",
-    "alpinejs": "^2.7.3",
+    "@popperjs/core": "^2.6.0",
+    "alpinejs": "^2.8.0",
     "focus-visible": "^5.2.0"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.2.1",
     "@tailwindcss/typography": "^0.3.1",
-    "autoprefixer": "^9.8.6",
     "browser-sync": "^2.26.13",
     "browser-sync-webpack-plugin": "^2.2.2",
-    "cross-env": "^7.0.2",
+    "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
-    "laravel-mix": "^5.0.9",
-    "postcss-import": "^12.0.1",
-    "postcss-nested": "^4.2.3",
-    "prettier": "^2.2.0",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.1",
-    "vue-template-compiler": "^2.6.12"
+    "laravel-mix": "^6.0.0",
+    "postcss": "^8.2.1",
+    "postcss-import": "^14.0.0",
+    "postcss-nested": "^5.0.3",
+    "prettier": "^2.2.1",
+    "tailwindcss": "^2.0.2"
   },
   "optionalDependencies": {
     "fsevents": "^2.2.1"
