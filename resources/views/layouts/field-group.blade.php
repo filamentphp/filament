@@ -1,7 +1,7 @@
 <div class="space-y-2">
     <div class="flex items-center justify-between space-x-2">
         @if ($label)
-            <x-filament::label :for="$id ?? $model">
+            <x-filament::label :for="$id">
                 {{ __($label) }}
             </x-filament::label>
         @endif

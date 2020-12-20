@@ -2,7 +2,7 @@
 
 @section('field')
     <textarea 
-        id="{{ $id ?? $model }}"
+        id="{{ $id }}"
         {{ $modelDirective }}="{{ $model }}"
         @foreach ($extraAttributes as $attribute => $value)
             {{ $attribute }}="{{ $value }}"

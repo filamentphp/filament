@@ -16,7 +16,7 @@
         <input 
             type="hidden" 
             value="{{ $value }}"
-            id="value-{{ $id ?? $model }}"                 
+            id="value-{{ $id }}"                 
             @foreach ($extraAttributes as $attribute => $value)
                 {{ $attribute }}="{{ $value }}"
             @endforeach 
@@ -27,12 +27,12 @@
             @trix-change="content = $event.target.value"
             @trix-file-accept="$event.preventDefault()"
         >
-            <x-filament::trix-toolbar id="toolbar-{{ $id ?? $model }}" />
+            <x-filament::trix-toolbar id="toolbar-{{ $id }}" />
 
             <trix-editor 
-                id="{{ $id ?? $model }}"
-                toolbar="toolbar-{{ $id ?? $model }}"
-                input="value-{{ $id ?? $model }}" 
+                id="{{ $id }}"
+                toolbar="toolbar-{{ $id }}"
+                input="value-{{ $id }}" 
                 class="block w-full rounded shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border-gray-300 prose max-w-none"
             ></trix-editor>
         </div>

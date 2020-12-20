@@ -4,7 +4,7 @@
     <input type="{{ $type }}" 
         {{ $modelDirective }}="{{ $model }}"
         value="{{ $value }}"
-        id="{{ $id ?? $model }}"
+        id="{{ $id }}"
         @foreach ($extraAttributes as $attribute => $value)
             {{ $attribute }}="{{ $value }}"
         @endforeach

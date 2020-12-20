@@ -9,7 +9,7 @@
         x-on:livewire-upload-progress="progress = $event.detail.progress" 
         class="flex items-center space-x-4">
         <div class="flex-shrink-0 relative">
-            <label for="{{ $id ?? $model }}" class="cursor-pointer rounded-full shadow flex overflow-hidden">
+            <label for="{{ $id }}" class="cursor-pointer rounded-full shadow flex overflow-hidden">
                 @if ($avatar)
                     <img src="{{ $avatar->temporaryUrl() }}" alt="{{ $user->name }}" class="h-full object-cover" width="{{ $size }}" height="{{ $size }}" loading="lazy">
                 @else 
@@ -26,12 +26,12 @@
             @endif
         </div>
         <div class="flex-grow relative">
-            <label class="btn" for="{{ $id ?? $model }}">{{ __($buttonLabel) }}</label>
+            <label class="btn" for="{{ $id }}">{{ __($buttonLabel) }}</label>
             <input type="file" 
                 {{ $modelDirective }}="{{ $model }}"
                 value="{{ $value }}"
                 class="sr-only" 
-                id="{{ $id ?? $model }}"
+                id="{{ $id }}"
                 @foreach ($extraAttributes as $attribute => $value)
                     {{ $attribute }}="{{ $value }}"
                 @endforeach  
