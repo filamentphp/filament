@@ -5,6 +5,7 @@ namespace Filament\Fields;
 class Avatar extends Field {
     public $avatar;
     public $user;
+    public $buttonLabel = 'Change';
     public $deleteMethod;
     public $size = 64;
 
@@ -23,6 +24,15 @@ class Avatar extends Field {
     public function user($user): self
     {
         $this->user = $user;
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
+    public function buttonLabel(string $label): self
+    {
+        $this->buttonLabel = $label;
         return $this;
     }
 

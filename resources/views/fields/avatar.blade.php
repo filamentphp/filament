@@ -19,14 +19,14 @@
             @if ($user->avatar && $deleteMethod)
                 <button type="button"     
                     wire:click="{{ $deleteMethod }}"   
-                    class="absolute top-0 right-0 w-4 h-4 rounded-full bg-gray-800 text-white flex items-center justify-center hover:bg-red-700">
+                    class="absolute top-0 right-0 w-4 h-4 rounded-full bg-gray-800 text-white flex items-center justify-center hover:bg-red-700 transition-colors duration-200">
                     <span class="sr-only">{{ __('Delete Avatar') }}</span>
                     <x-heroicon-o-x class="w-3 h-3" />
                 </button>
             @endif
         </div>
         <div class="flex-grow relative">
-            <label class="btn" for="{{ $id ?? $model }}">{{ __('Change') }}</label>
+            <label class="btn" for="{{ $id ?? $model }}">{{ __($buttonLabel) }}</label>
             <input type="file" 
                 {{ $modelDirective }}="{{ $model }}"
                 value="{{ $value }}"

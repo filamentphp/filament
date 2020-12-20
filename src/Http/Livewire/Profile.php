@@ -101,14 +101,13 @@ class Profile extends Component
                             ->extraAttributes([
                                 'required' => 'true',
                                 'autocomplete' => 'email',
-                            ]),
-                    ]),
+                            ]),                      
+                    ]),   
                     Avatar::make('avatar')
                         ->label('User Photo')
                         ->avatar($this->avatar)
                         ->user($this->user)
-                        ->deleteMethod('deleteAvatar')
-                        ->hint(__('Optional')),
+                        ->deleteMethod('deleteAvatar'),
                     Fieldset::make('Update Password')
                         ->fields([
                             Text::make('password')
