@@ -5,8 +5,33 @@ namespace Filament\Fields;
 use Illuminate\Support\Str;
 
 class BaseField {
+    public $model;
+    public $id;
     protected $enabled = true;
     protected $view;
+
+    public function __construct($model)
+    {
+        $this->model = $model;
+        $this->id = Str::slug($model);
+    }
+   
+    /**
+     * @return static
+     */
+    public static function make(string $model): self
+    {
+        return new static($model);
+    }
+
+    /**
+     * @return static
+     */
+    public function id($id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
 
     /**
      * @return static

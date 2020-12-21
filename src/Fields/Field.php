@@ -3,27 +3,12 @@
 namespace Filament\Fields;
 
 class Field extends BaseField {
-    public $model;
     public $modelDirective = 'wire:model.defer';
     public $value;
-    public $id;
     public $label;
     public $hint;
     public $help;
     public $extraAttributes = [];
-    
-    public function __construct($model)
-    {
-        $this->model = $this->id = $model;
-    }
-
-    /**
-     * @return static
-     */
-    public static function make(string $model): self
-    {
-        return new static($model);
-    }
 
     /**
      * @return static
@@ -40,15 +25,6 @@ class Field extends BaseField {
     public function value($value): self
     {
         $this->value = $value;
-        return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function id($id): self
-    {
-        $this->id = $id;
         return $this;
     }
 
