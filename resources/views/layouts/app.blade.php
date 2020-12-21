@@ -18,7 +18,7 @@
             </button>
         </div>
         <span class="absolute z-0 inset-0 bg-black bg-opacity-50 md:hidden" x-cloak x-show="headerIsOpen" @click="headerIsOpen = false"></span>
-        <div class="flex-grow flex flex-col">
+        <div class="flex-grow w-full flex flex-col">
             <header class="p-4 md:p-6 flex justify-between items-center space-x-4">
                 <div class="flex items-center">
                     <button type="button" aria-controls="banner" @click.prevent="headerIsOpen = true" :aria-expanded="headerIsOpen" class="md:hidden text-blue-600 hover:text-blue-800 transition-colors duration-200 mr-4">
@@ -28,7 +28,7 @@
                 </div>
                 {{ $actions ?? null }}
             </header>
-            <main id="content" class="flex-grow px-4 md:px-6 flex flex-col">
+            <main id="content" class="flex-grow max-w-full px-4 md:px-6">
                 {{ $slot }}
             </main>
         </div>
