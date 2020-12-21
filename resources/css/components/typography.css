@@ -5,10 +5,11 @@
 .help,
 .hint {
   @apply text-xs font-normal leading-tight text-gray-500;
+}
 
-  a {
-    @apply link;
-  }
+.help a,
+.hint a {
+  @apply link underline;
 }
 
 .hint {
