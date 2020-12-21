@@ -104,7 +104,7 @@ class Login extends Component
     /**
      * Ensure the login request is not rate limited.
      *
-     * @param Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      * @return void
      *
      * @throws \Illuminate\Validation\ValidationException
