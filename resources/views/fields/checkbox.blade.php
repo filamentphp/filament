@@ -20,7 +20,9 @@
             </span>
         </span>
     </x-filament::label>
-    <x-filament::error :field="$model" />
+    @if ($showErrors)
+        <x-filament::error :field="$model" />
+    @endif
     @if ($help)
         <x-filament::help>
             @markdown($help)

@@ -2,5 +2,12 @@
     <legend class="text-sm leading-tight font-semibold px-2">
         {{ __($legend) }}
     </legend>
-    <x-filament::fields :fields="$fields" :class="$class" />
+    <div class="space-y-2">
+        <x-filament::fields :fields="$fields" :class="$class" />
+        @if ($info)
+            <x-filament::help>
+                @markdown($info)
+            </x-filament::help>
+        @endif
+    </div>
 </fieldset>
