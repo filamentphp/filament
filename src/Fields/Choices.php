@@ -6,7 +6,6 @@ use Filament\Fields\Checkbox;
 
 class Choices extends BaseField {
     public $type = 'checkbox';
-    public $multiple = true;
     public $options = [];
 
     /**
