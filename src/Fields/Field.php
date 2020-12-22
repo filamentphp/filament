@@ -7,7 +7,6 @@ class Field extends BaseField {
     public $value;
     public $label;
     public $hint;
-    public $help;
     public $extraAttributes = [];
 
     /**
@@ -45,15 +44,6 @@ class Field extends BaseField {
     public function hint($hint): self
     {
         $this->hint = $hint;
-        return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function help(string $help): self
-    {
-        $this->help = $help;
         return $this;
     }
 

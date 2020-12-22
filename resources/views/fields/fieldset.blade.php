@@ -4,9 +4,9 @@
     </legend>
     <div class="space-y-2">
         <x-filament::fields :fields="$fields" :class="$class" />
-        @if ($info)
+        @if ($help)
             <x-filament::help>
-                @markdown($info)
+                @markdown($help)
             </x-filament::help>
         @endif
     </div>

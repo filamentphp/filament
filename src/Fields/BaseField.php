@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 class BaseField {
     public $model;
     public $id;
+    public $help;
     protected $enabled = true;
     protected $view;
 
@@ -30,6 +31,15 @@ class BaseField {
     public function id($id): self
     {
         $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
+    public function help(string $help): self
+    {
+        $this->help = $help;
         return $this;
     }
 

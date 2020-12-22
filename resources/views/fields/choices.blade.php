@@ -7,4 +7,9 @@
         @endforeach
     </ol>
     <x-filament::error :field="$model" />
+    @if ($help)
+        <x-filament::help>
+            @markdown($help)
+        </x-filament::help>
+    @endif
 </div>

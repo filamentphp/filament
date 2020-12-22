@@ -6,7 +6,6 @@ class Fieldset extends BaseField {
     public $legend;
     public $fields;
     public $class;
-    public $info;
     
     public function __construct($legend)
     {
@@ -36,15 +35,6 @@ class Fieldset extends BaseField {
     public function class(string $class): self
     {
         $this->class = $class;
-        return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function info(string $info): self
-    {
-        $this->info = $info;
         return $this;
     }
 }
