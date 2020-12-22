@@ -26,7 +26,7 @@
             @endif
         </div>
         <div class="flex-grow relative">
-            <label class="btn" for="{{ $id }}">{{ __($buttonLabel) }}</label>
+            <label class="btn btn-sm" for="{{ $id }}">{{ __($buttonLabel) }}</label>
             <input type="file" 
                 {{ $modelDirective }}="{{ $model }}"
                 value="{{ $value }}"

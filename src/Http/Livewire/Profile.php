@@ -2,8 +2,10 @@
 
 namespace Filament\Http\Livewire;
 
-use Livewire\Component;
-use Livewire\WithFileUploads;
+use Livewire\{
+    Component,
+    WithFileUploads,
+};
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\{

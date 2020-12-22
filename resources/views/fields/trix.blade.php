@@ -17,9 +17,6 @@
             type="hidden" 
             value="{{ $value }}"
             id="value-{{ $id }}"                 
-            @foreach ($extraAttributes as $attribute => $value)
-                {{ $attribute }}="{{ $value }}"
-            @endforeach 
         />
     
         <div 
@@ -34,6 +31,9 @@
                 toolbar="toolbar-{{ $id }}"
                 input="value-{{ $id }}" 
                 class="block w-full rounded shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border-gray-300 prose max-w-none"
+                @foreach ($extraAttributes as $attribute => $value)
+                    {{ $attribute }}="{{ $value }}"
+                @endforeach 
             ></trix-editor>
         </div>
     </div>
