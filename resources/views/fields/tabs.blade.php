@@ -14,7 +14,7 @@
 </x-filament::tabs>
 
 @if (count($tabs) > 1 && $errors->any())
-    <p class="text-red-700 font-medium text-sm leading-tight">
+    <p role="alert" class="text-red-700 font-medium text-sm leading-tight">
         {{ __('Errors found. Please check the form and try again.') }}
     </p>
 @endif
