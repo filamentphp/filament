@@ -10,13 +10,13 @@
 
 @section('field')
     <div 
-        x-data="{ content: @entangle($model).defer }" 
+        x-data="{ content: @entangle($field->model).defer }" 
         x-cloak
     >
         <input 
             type="hidden" 
-            value="{{ $value }}"
-            id="value-{{ $id }}"                 
+            value="{{ $field->value }}"
+            id="value-{{ $field->id }}"                 
         />
     
         <div 
@@ -24,14 +24,14 @@
             @trix-change="content = $event.target.value"
             @trix-file-accept="$event.preventDefault()"
         >
-            <x-filament::trix-toolbar id="toolbar-{{ $id }}" />
+            <x-filament::trix-toolbar id="toolbar-{{ $field->id }}" />
 
             <trix-editor 
-                id="{{ $id }}"
-                toolbar="toolbar-{{ $id }}"
-                input="value-{{ $id }}" 
-                class="block w-full rounded shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border-gray-300 prose max-w-none"
-                @foreach ($extraAttributes as $attribute => $value)
+                id="{{ $field->id }}"
+                toolbar="toolbar-{{ $field->id }}"
+                input="value-{{ $field->id }}" 
+                class="block w-full rounded shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-white border-gray-300 prose max-w-none"
+                @foreach ($field->extraAttributes as $attribute => $value)
                     {{ $attribute }}="{{ $value }}"
                 @endforeach 
             ></trix-editor>

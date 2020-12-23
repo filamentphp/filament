@@ -7,6 +7,10 @@
   @apply text-xs font-normal leading-tight text-gray-500;
 }
 
+.help code {
+  @apply rounded-sm bg-gray-200 px-1 py-0.5;
+}
+
 .help a,
 .hint a {
   @apply link underline;

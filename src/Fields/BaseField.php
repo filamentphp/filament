@@ -6,8 +6,9 @@ use Illuminate\Support\Str;
 
 class BaseField {
     public $model;
+    public $modelDirective = 'wire:model.defer';
     public $id;
-    public $help;
+    public $value;
     protected $enabled = true;
     protected $view;
 
@@ -28,6 +29,24 @@ class BaseField {
     /**
      * @return static
      */
+    public function model(string $model): self
+    {
+        $this->model = $model;
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
+    public function modelDirective(string $modelDirective): self
+    {
+        $this->modelDirective = $modelDirective;
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
     public function id($id): self
     {
         $this->id = $id;
@@ -37,9 +56,9 @@ class BaseField {
     /**
      * @return static
      */
-    public function help(string $help): self
+    public function value($value): self
     {
-        $this->help = $help;
+        $this->value = $value;
         return $this;
     }
 
@@ -72,6 +91,6 @@ class BaseField {
 
         $view = $this->view ?? 'filament::fields.'.Str::kebab(class_basename(get_called_class()));
 
-        return view($view, get_object_vars($this));
+        return view($view, ['field' => $this]);
     }
 }

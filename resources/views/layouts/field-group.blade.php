@@ -1,23 +1,23 @@
 <div class="space-y-2">
-    @if ($label || $hint)
+    @if ($field->label || $field->hint)
         <div class="flex items-center justify-between space-x-2">
-            @if ($label)
-                <x-filament::label :for="$id">
-                    {{ __($label) }}
+            @if ($field->label)
+                <x-filament::label :for="$field->id">
+                    {{ __($field->label) }}
                 </x-filament::label>
             @endif
-            @if ($hint)
+            @if ($field->hint)
                 <x-filament::hint>
-                    @markdown($hint)
+                    @markdown($field->hint)
                 </x-filament::hint>
             @endif
         </div>
     @endif
     @yield('field')
-    <x-filament::error :field="$model" />
-    @if ($help)
+    <x-filament::error :field="$field->model" />
+    @if ($field->help)
         <x-filament::help>
-            @markdown($help)
+            @markdown($field->help)
         </x-filament::help>
     @endif
 </div>

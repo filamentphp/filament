@@ -1,20 +1,20 @@
-<x-filament::tabs :label="__($label)" :tab="array_key_first($tabs)">
+<x-filament::tabs :label="__($field->label)" :tab="array_key_first($field->tabs)">
     <x-slot name="tablist">
-        @foreach (array_keys($tabs) as $label)
+        @foreach (array_keys($field->tabs) as $label)
             <x-filament::tab :id="$label">
                 {{ __($label) }}
             </x-filament::tab>
         @endforeach
     </x-slot>
-    @foreach($tabs as $label => $fields)
+    @foreach($field->tabs as $label => $fields)
         <x-filament::tab-panel :id="$label">
             <x-filament::fields :fields="$fields" />
         </x-filament::tab-panel>
     @endforeach
 </x-filament::tabs>
 
-@if (count($tabs) > 1 && $errors->any())
+@if (count($field->tabs) > 1 && $errors->any())
     <p role="alert" class="text-red-700 font-medium text-sm leading-tight">
-        {{ __('Errors found. Please check the form and try again.') }}
+        {{ __('Errors found. Please check all form tabs for errors and try again.') }}
     </p>
 @endif

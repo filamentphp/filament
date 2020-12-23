@@ -1,1 +1,1 @@
-<x-filament::fields :fields="$fields" :class="$class" />
+<x-filament::fields :fields="$field->fields" :class="$field->class" />

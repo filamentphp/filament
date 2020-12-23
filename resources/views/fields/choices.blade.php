@@ -1,15 +1,10 @@
 <div class="space-y-2">
     <ol>
-        @foreach ($options as $options)
+        @foreach ($field->options as $options)
             <li>
                 {{ $options->render() }}
             </li>
         @endforeach
     </ol>
-    <x-filament::error :field="$model" />
-    @if ($help)
-        <x-filament::help>
-            @markdown($help)
-        </x-filament::help>
-    @endif
+    <x-filament::error :field="$field->model" />
 </div>

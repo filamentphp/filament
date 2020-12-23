@@ -9,16 +9,16 @@
         x-on:livewire-upload-progress="progress = $event.detail.progress" 
         class="flex items-center space-x-4">
         <div class="flex-shrink-0 relative">
-            <label for="{{ $id }}" class="cursor-pointer rounded-full shadow flex overflow-hidden">
-                @if ($avatar)
-                    <img src="{{ $avatar->temporaryUrl() }}" alt="{{ $user->name }}" class="h-full object-cover" width="{{ $size }}" height="{{ $size }}" loading="lazy">
+            <label for="{{ $field->id }}" class="cursor-pointer rounded-full shadow flex overflow-hidden">
+                @if ($field->avatar)
+                    <img src="{{ $field->avatar->temporaryUrl() }}" alt="{{ $field->user->name }}" class="h-full object-cover" width="{{ $field->size }}" height="{{ $field->size }}" loading="lazy">
                 @else 
-                    <x-filament-avatar :size="$size" :user="$user" />
+                    <x-filament-avatar :size="$field->size" :user="$field->user" />
                 @endif
             </label>
-            @if ($user->avatar && $deleteMethod)
+            @if ($field->user->avatar && $field->deleteMethod)
                 <button type="button"     
-                    wire:click="{{ $deleteMethod }}"   
+                    wire:click="{{ $field->deleteMethod }}"   
                     class="absolute top-0 right-0 w-4 h-4 rounded-full bg-gray-800 text-white flex items-center justify-center hover:bg-red-700 transition-colors duration-200">
                     <span class="sr-only">{{ __('Delete Avatar') }}</span>
                     <x-heroicon-o-x class="w-3 h-3" />
@@ -26,13 +26,13 @@
             @endif
         </div>
         <div class="flex-grow relative">
-            <label class="btn btn-sm" for="{{ $id }}">{{ __($buttonLabel) }}</label>
+            <label class="btn btn-sm" for="{{ $field->id }}">{{ __($field->buttonLabel) }}</label>
             <input type="file" 
-                {{ $modelDirective }}="{{ $model }}"
-                value="{{ $value }}"
+                {{ $field->modelDirective }}="{{ $field->model }}"
+                value="{{ $field->value }}"
                 class="sr-only" 
-                id="{{ $id }}"
-                @foreach ($extraAttributes as $attribute => $value)
+                id="{{ $field->id }}"
+                @foreach ($field->extraAttributes as $attribute => $value)
                     {{ $attribute }}="{{ $value }}"
                 @endforeach  
             />
