@@ -25,8 +25,7 @@ class LogoutTest extends TestCase
         Livewire::actingAs($user)
             ->test(Logout::class)
             ->call('logout')
-            ->assertRedirect(route('filament.login'))
-            ->assertSessionHas('message', __('filament::auth.loggedout'));
+            ->assertRedirect(route('filament.login'));
 
         $this->assertGuest();
     }

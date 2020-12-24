@@ -4,11 +4,13 @@ namespace Filament\Http\Livewire\Auth;
 
 use Illuminate\Support\Facades\Password;
 use Livewire\Component;
+use Filament\Traits\WithNotifications;
 use Filament\Fields\Text;
 
 class ForgotPassword extends Component
 {
-    public $message;
+    use WithNotifications;
+
     public $email;
 
     protected $rules = [
@@ -21,7 +23,7 @@ class ForgotPassword extends Component
         
         $status = Password::sendResetLink(['email' => $this->email]);
         if ($status === Password::RESET_LINK_SENT) {
-            $this->message = __($status);
+            $this->notify(__($status));
         } else {
             $this->addError('email', __($status));
         }

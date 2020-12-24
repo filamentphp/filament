@@ -20,7 +20,6 @@ use Filament\Fields\{
 
 class Login extends Component
 {
-    public $message;
     public $email;
     public $password;
     public $remember = false;
@@ -38,8 +37,6 @@ class Login extends Component
         if (Auth::check()) {
             return redirect()->to(Filament::home());
         }
-
-        $this->message = session('message');
     }
 
     /**

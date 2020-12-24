@@ -33,5 +33,4 @@
             </main>
         </div>
     </div>
-    <x-filament::notification />
 @overwrite

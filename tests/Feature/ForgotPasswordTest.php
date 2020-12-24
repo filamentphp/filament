@@ -75,7 +75,7 @@ class ForgotPasswordTest extends TestCase
         Livewire::test(ForgotPassword::class)
             ->set('email', $this->user->email)
             ->call('submit')
-            ->assertSet('message', __('passwords.sent'));
+            ->assertDispatchedBrowserEvent('notify', __('passwords.sent'));
 
         $this->assertDatabaseHas('password_resets', [
             'email' => $this->user->email,

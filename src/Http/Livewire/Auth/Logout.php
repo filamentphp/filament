@@ -19,7 +19,7 @@ class Logout extends Component
         }
 
         Auth::logout();
-        session()->flash('message', __('filament::auth.loggedout'));
+
         return redirect()->route('filament.login');
     }
 
