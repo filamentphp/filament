@@ -2,7 +2,6 @@
 
 namespace Filament;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\Support\Facades\{
     Route,
@@ -13,13 +12,16 @@ use Illuminate\Support\Facades\{
 };
 use Livewire\Livewire;
 use Spatie\Valuestore\Valuestore;
-use Filament\Providers\RouteServiceProvider;
+use Filament\Providers\{
+    PackageServiceProvider,
+    RouteServiceProvider,
+};
 use Filament\Features;
 use Filament\Commands\{
     MakeUser,
 };
 
-class FilamentServiceProvider extends ServiceProvider
+class FilamentServiceProvider extends PackageServiceProvider
 {
     public function register(): void
     {
