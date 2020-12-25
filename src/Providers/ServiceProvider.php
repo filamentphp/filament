@@ -3,9 +3,9 @@
 namespace Filament\Providers;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
-class PackageServiceProvider extends ServiceProvider
+class ServiceProvider extends BaseServiceProvider
 {
     /**
      * Merge the given configuration with the existing configuration.

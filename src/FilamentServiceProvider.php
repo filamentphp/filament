@@ -11,9 +11,8 @@ use Illuminate\Support\Facades\{
     Cache,
 };
 use Livewire\Livewire;
-use Spatie\Valuestore\Valuestore;
 use Filament\Providers\{
-    PackageServiceProvider,
+    ServiceProvider,
     RouteServiceProvider,
 };
 use Filament\Features;
@@ -21,7 +20,7 @@ use Filament\Commands\{
     MakeUser,
 };
 
-class FilamentServiceProvider extends PackageServiceProvider
+class FilamentServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
