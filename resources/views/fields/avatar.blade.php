@@ -10,7 +10,7 @@
         class="flex items-center space-x-4">
         <div class="flex-shrink-0 relative">
             <label for="{{ $field->id }}" class="cursor-pointer rounded-full shadow flex overflow-hidden">
-                @if ($field->avatar)
+                @if ($field->avatar && !$errors->has($field->model))
                     <img src="{{ $field->avatar->temporaryUrl() }}" alt="{{ $field->user->name }}" class="h-full object-cover" width="{{ $field->size }}" height="{{ $field->size }}" loading="lazy">
                 @else 
                     <x-filament-avatar :size="$field->size" :user="$field->user" />

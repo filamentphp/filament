@@ -3,6 +3,7 @@
 namespace Filament\Fields;
 
 class Avatar extends Field {
+    public $modelDirective = 'wire:model';
     public $avatar;
     public $user;
     public $buttonLabel = 'Change';

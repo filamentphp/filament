@@ -34,7 +34,7 @@ class Profile extends Component
     protected $rules = [
         'user.name' => 'required|string|min:2|max:255',
         'user.email' => 'required|string|email|max:255',
-        'avatar' => 'nullable|mimes:png,jpg,jpeg,bmp,gif|max:512',
+        'avatar' => 'nullable|image|max:1024',
         'password' => 'nullable|string|required_with:password_confirmation|min:6|confirmed',
         'password_confirmation' => 'nullable|string|same:password',
     ];
@@ -46,11 +46,6 @@ class Profile extends Component
 
     public function updatedAvatar($value): void
     {
-        $extension = pathinfo($value->getFilename(), PATHINFO_EXTENSION);
-        if (!in_array($extension, ['png', 'jpg', 'jpeg', 'bmp', 'gif'])) {
-            $this->reset('avatar');
-        }
-
         $this->validate([
             'avatar' => $this->rules['avatar'],
         ]);
