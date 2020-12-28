@@ -43,7 +43,7 @@ class Avatar extends Component
             return Gravatar::src($this->user->email, $this->size * $dpr);
         }        
 
-        return Filament::url($this->user->avatar, [
+        return Filament::assetUrl($this->user->avatar, [
             'w' => $this->size,
             'h' => $this->size,
             'fit' => 'crop',

@@ -189,6 +189,29 @@ class Filament
     }
 
     /**
+     * Format bytes
+     *
+     * @param  integer $size
+     * @param  integer $precision
+     * @return string|integer
+     */
+    public function formatBytes($size, $precision = 0)
+    {
+        if ($size > 0) {
+            $base = log($size) / log(1024);
+            $suffixes = ['bytes', 'KB', 'MB', 'GB', 'TB'];
+            return round(pow(1024, $base - floor($base)), $precision).$suffixes[intval($base)];
+        } else {
+            return $size;
+        }
+    }
+
+    public function assetDisk(): \Illuminate\Filesystem\FilesystemAdapter
+    {   
+        return Storage::disk(config('filament.storage_disk'));
+    }
+
+    /**
      * Determines if a given asset is an image.
      * 
      * @psalm-suppress UndefinedInterfaceMethod
@@ -196,15 +219,13 @@ class Filament
      * @param string $file
      * @return bool
      */
-    public function isImage(string $file): bool
+    public function assetIsImage(string $file): bool
     {
-        $disk = Storage::disk(config('filament.storage_disk'));
-
-        if (! $disk->exists($file)) {
+        if (! $this->assetDisk()->exists($file)) {
             return false;
         }
 
-        if (! exif_imagetype($disk->path($file))) {
+        if (! exif_imagetype($this->assetDisk()->path($file))) {
             return false;
         }
 
@@ -223,12 +244,8 @@ class Filament
      *  
      * @return mixed
      */
-    public function url($path, $manipulations = [])
+    public function assetUrl($path, $manipulations = [])
     {
-        if (empty($manipulations)) {
-            return Storage::disk(config('filament.storage_disk'))->url($path);
-        }
-
         $urlBuilder = UrlBuilderFactory::create('', config('app.key'));
         return route('filament.image', ['path' => ltrim($urlBuilder->getUrl($path, $manipulations), '/')]);
     }

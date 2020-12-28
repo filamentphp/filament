@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-class Filepond extends Field {
+class File extends Field {
     public $deleteMethod;
 
     /**

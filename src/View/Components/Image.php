@@ -29,7 +29,7 @@ class Image extends Component
 
     public function src($dpr = 1): string
     {
-        return Filament::url($this->src, array_merge($this->manipulations, ['dpr' => $dpr]));
+        return Filament::assetUrl($this->src, array_merge($this->manipulations, ['dpr' => $dpr]));
     }
 
     public function srcSet(): string
