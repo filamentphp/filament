@@ -40,7 +40,9 @@
                         <li class="w-full md:w-auto p-2">
                             <div class="shadow-sm rounded border border-gray-300 p-2 flex items-center space-x-2">
                                 @if (Filament::isImage($file))
-                                    <x-filament-image :src="$file" alt="{{ $file }}" :manipulations="[ 'w' => 32, 'h' => 32, 'fit' => 'crop' ]" class="flex-shrink-0 w-8 h-8 rounded" />    
+                                    <a href="{{ Filament::url($file) }}" target="_blank" rel="noopener noreferrer" class="flex-shrink-0">
+                                        <x-filament-image :src="$file" alt="{{ $file }}" :manipulations="[ 'w' => 32, 'h' => 32, 'fit' => 'crop' ]" width="32px" height="32px" loading="lazy" class="w-8 h-8 rounded" />    
+                                    </a>
                                 @endif
                                 <a href="{{ Filament::url($file) }}" target="_blank" rel="noopener noreferrer" class="font-mono text-xs leading-tight text-gray-500">
                                     {{ $file }}
