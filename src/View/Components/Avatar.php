@@ -37,19 +37,9 @@ class Avatar extends Component
         return view('filament::components.avatar');
     }
 
-    public function srcSet(): string
-    {
-        $srcSet = [];
-        foreach($this->dprs as $dpr) {
-            $srcSet[] = $this->src($dpr).' '.$dpr.'x';
-        }
-        
-        return implode(', ', $srcSet);
-    }
-
     public function src(int $dpr = 1): string
     {
-        if (!$this->user->avatar) {
+        if (! $this->user->avatar) {
             return Gravatar::src($this->user->email, $this->size * $dpr);
         }        
 
@@ -59,5 +49,15 @@ class Avatar extends Component
             'fit' => 'crop',
             'dpr' => $dpr,
         ]);
+    }
+
+    public function srcSet(): string
+    {
+        $srcSet = [];
+        foreach($this->dprs as $dpr) {
+            $srcSet[] = $this->src($dpr).' '.$dpr.'x';
+        }
+        
+        return implode(', ', $srcSet);
     }
 }

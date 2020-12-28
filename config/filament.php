@@ -78,8 +78,9 @@ return [
     */
 
     'components' => [
-        'nav' => Filament\View\Components\Nav::class,
         'avatar' => Filament\View\Components\Avatar::class,
+        'image' => Filament\View\Components\Image::class,
+        'nav' => Filament\View\Components\Nav::class,
     ],
 
     /*

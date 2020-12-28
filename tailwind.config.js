@@ -2,11 +2,18 @@
 const colors = require('tailwindcss/colors')
 
 module.exports = {
-  purge: [
-    './src/**/*.php',
-    './resources/views/**/*.php',
-    './resources/js/**/*.js',
-  ],
+  purge: {
+    content: [
+      './src/**/*.php',
+      './resources/views/**/*.php',
+      './resources/js/**/*.js',
+    ],
+    options: {
+      safelist: {
+        greedy: [/filepond$/],
+      },
+    },
+  },
   theme: {
     extend: {
       colors: {

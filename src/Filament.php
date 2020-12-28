@@ -125,7 +125,7 @@ class Filament
     {
         $manifest = json_decode(file_get_contents($this->distPath('mix-manifest.json')), true);
 
-        if (!isset($manifest[$key])) {
+        if (! isset($manifest[$key])) {
             return;
         }
 
@@ -137,13 +137,13 @@ class Filament
     {
         $manifestFile = public_path('vendor/filament/mix-manifest.json');
         
-        if (!file_exists($manifestFile)) {
+        if (! file_exists($manifestFile)) {
             return;
         }
 
         $manifest = json_decode(file_get_contents($manifestFile), true);
 
-        if (!isset($manifest[$key])) {
+        if (! isset($manifest[$key])) {
             return;
         }
 
@@ -163,7 +163,7 @@ class Filament
             $basename = $file->getBasename('.'.$file->getExtension());
             return Container::getInstance()->getNamespace().'Filament\\Resources\\'.$basename;
         })->filter(function ($class) {
-            if (!class_exists($class)) {
+            if (! class_exists($class)) {
                 return false;
             }
 
@@ -189,6 +189,29 @@ class Filament
     }
 
     /**
+     * Determines if a given asset is an image.
+     * 
+     * @psalm-suppress UndefinedInterfaceMethod
+     * 
+     * @param string $file
+     * @return bool
+     */
+    public function isImage(string $file): bool
+    {
+        $disk = Storage::disk(config('filament.storage_disk'));
+
+        if (! $disk->exists($file)) {
+            return false;
+        }
+
+        if (! exif_imagetype($disk->path($file))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Generates an asset URL with optional image manipulations.
      * 
      * @psalm-suppress UndefinedInterfaceMethod
@@ -203,7 +226,7 @@ class Filament
     public function url($path, $manipulations = [])
     {
         if (empty($manipulations)) {
-            return Storage::disk(config('filament.disk'))->url($path);
+            return Storage::disk(config('filament.storage_disk'))->url($path);
         }
 
         $urlBuilder = UrlBuilderFactory::create('', config('app.key'));

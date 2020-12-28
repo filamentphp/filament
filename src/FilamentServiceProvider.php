@@ -71,7 +71,7 @@ class FilamentServiceProvider extends ServiceProvider
     {
         $models = config('filament.models');
 
-        if (!$models) {
+        if (! $models) {
             return;
         }
 
@@ -96,7 +96,7 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootPublishing(): void
     {
-        if (!$this->app->runningInConsole()) {
+        if (! $this->app->runningInConsole()) {
             return;
         }
 
@@ -157,7 +157,7 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootCommands(): void
     {
-        if (!$this->app->runningInConsole()) {
+        if (! $this->app->runningInConsole()) {
             return;
         }
             

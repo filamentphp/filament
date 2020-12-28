@@ -14,7 +14,7 @@
         </div>
     @endif
     @yield('field')
-    <x-filament::error :field="$field->model" />
+    <x-filament::error :field="$field->error ?? $field->model" />
     @if ($field->help)
         <x-filament::help>
             @markdown($field->help)

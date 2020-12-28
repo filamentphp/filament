@@ -13,7 +13,7 @@ trait CanPretendToBeAFile
     {
         $path = Filament::distPath($file);
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             abort(404);
         }
 

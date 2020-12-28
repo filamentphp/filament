@@ -134,15 +134,15 @@ class Profile extends Component
 
         if ($this->avatar) {
             $this->user->avatar = $this->avatar->store('avatars', config('filament.storage_disk'));
+            $this->reset('avatar');
         }
         
         if ($this->password) {
             $this->user->password = Hash::make($this->password);
+            $this->reset(['password', 'password_confirmation']);
         }
 
         $this->user->save();
-
-        $this->reset(['password', 'password_confirmation']);
 
         $this->notify(__('Profile saved!'));
     }

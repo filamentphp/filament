@@ -1,0 +1,19 @@
+.filepond--root {
+  @apply font-sans;
+
+  .filepond--panel-root {
+    @apply rounded bg-gray-100 shadow-sm border border-dashed border-gray-300;
+  }
+
+  .filepond--drop-label {
+    @apply text-current;
+
+    label {
+      @apply text-sm;
+    }
+  }
+
+  .filepond--label-action {
+    @apply text-blue-600 hover:text-blue-800 transition-colors duration-200;
+  }
+}
