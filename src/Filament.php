@@ -206,30 +206,9 @@ class Filament
         }
     }
 
-    public function assetDisk(): \Illuminate\Filesystem\FilesystemAdapter
+    public function storage(): \Illuminate\Filesystem\FilesystemAdapter
     {   
         return Storage::disk(config('filament.storage_disk'));
-    }
-
-    /**
-     * Determines if a given asset is an image.
-     * 
-     * @psalm-suppress UndefinedInterfaceMethod
-     * 
-     * @param string $file
-     * @return bool
-     */
-    public function assetIsImage(string $file): bool
-    {
-        if (! $this->assetDisk()->exists($file)) {
-            return false;
-        }
-
-        if (! exif_imagetype($this->assetDisk()->path($file))) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -244,7 +223,7 @@ class Filament
      *  
      * @return mixed
      */
-    public function assetUrl($path, $manipulations = [])
+    public function image($path, $manipulations = [])
     {
         $urlBuilder = UrlBuilderFactory::create('', config('app.key'));
         return route('filament.image', ['path' => ltrim($urlBuilder->getUrl($path, $manipulations), '/')]);

@@ -20,7 +20,7 @@ class Image extends Component
      * 
      * @return  void
      */
-    public function __construct($src, $manipulations, $dprs = [1, 2, 3])
+    public function __construct($src, $manipulations, $dprs = [1, 1.5, 2, 3])
     {
         $this->src = $src;
         $this->manipulations = $manipulations;
@@ -29,7 +29,7 @@ class Image extends Component
 
     public function src($dpr = 1): string
     {
-        return Filament::assetUrl($this->src, array_merge($this->manipulations, ['dpr' => $dpr]));
+        return Filament::image($this->src, array_merge(['dpr' => $dpr], $this->manipulations));
     }
 
     public function srcSet(): string
