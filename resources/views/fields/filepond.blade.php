@@ -47,11 +47,15 @@
                                 <a href="{{ Filament::url($file) }}" target="_blank" rel="noopener noreferrer" class="font-mono text-xs leading-tight text-gray-500">
                                     {{ $file }}
                                 </a>
-                                {{--
-                                <button class="flex-shrink-0 text-gray-500 hover:text-red-600">
-                                    <x-heroicon-o-x class="w-4 h-4" />
-                                </button>
-                                --}}
+                                @if ($field->deleteMethod)
+                                    <button 
+                                        type="button" 
+                                        wire:click="{{ $field->deleteMethod }}('{{ $file }}')" 
+                                        class="flex-shrink-0 text-gray-500 hover:text-red-600"
+                                    >
+                                        <x-heroicon-o-x class="w-4 h-4" />
+                                    </button>
+                                @endif
                             </div>
                         </li>
                     @endforeach
