@@ -16,7 +16,8 @@
   "dependencies": {
     "@popperjs/core": "^2.6.0",
     "alpinejs": "^2.8.0",
-    "focus-visible": "^5.2.0"
+    "focus-visible": "^5.2.0",
+    "microlite": "^0.9.1"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.2.1",
