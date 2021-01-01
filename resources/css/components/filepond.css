@@ -2,7 +2,7 @@
   @apply font-sans;
 
   .filepond--panel-root {
-    @apply rounded bg-gray-100 shadow-sm border border-dashed border-gray-300;
+    @apply rounded bg-gray-100 border border-dashed border-gray-300;
   }
 
   .filepond--drop-label {

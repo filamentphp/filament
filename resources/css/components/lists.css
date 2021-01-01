@@ -1,5 +1,5 @@
 .list-dropdown {
-  @apply bg-white shadow rounded text-sm leading-tight text-left overflow-hidden;
+  @apply bg-white shadow-sm rounded text-sm leading-tight text-left overflow-hidden;
 
   > li {
     @apply whitespace-nowrap;

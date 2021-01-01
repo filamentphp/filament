@@ -1,4 +1,4 @@
-<div class="fixed z-20 inset-0 flex items-end justify-center p-4 md:py-3 md:px-6 pointer-events-none sm:items-start sm:justify-end">
+<div class="fixed z-50 inset-0 flex items-end justify-center p-4 md:py-3 md:px-6 pointer-events-none sm:items-start sm:justify-end">
     <div 
         x-data="{ show: false, message: '' }" 
         x-on:notify.window="show = true; message = event.detail; setTimeout(() => { show = false }, 2500)" 

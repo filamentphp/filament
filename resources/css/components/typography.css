@@ -8,7 +8,7 @@
 }
 
 .help code {
-  @apply rounded-sm bg-gray-200 px-1 py-0.5;
+  @apply rounded bg-gray-200 px-1 py-0.5;
 }
 
 .help a,
