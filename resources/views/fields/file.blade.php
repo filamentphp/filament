@@ -56,7 +56,7 @@
                                         <x-slot name="button">
                                             <x-filament-image :src="$file" alt="{{ $file }}" :manipulations="[ 'w' => 48, 'h' => 48, 'fit' => 'crop' ]" width="48px" height="48px" loading="lazy" class="w-12 h-12 rounded" />    
                                         </x-slot>
-                                        <x-filament-image :src="$file" alt="{{ $file }}" :manipulations="[ 'w' => 1024, 'fit' => 'max' ]" loading="lazy" />
+                                        <img src="{{ Filament::storage()->url($file) }}" alt="{{ $file }}" />
                                     </x-filament::modal>
                                 @endif
                                 <div class="flex-grow overflow-scroll flex flex-col leading-tight">
