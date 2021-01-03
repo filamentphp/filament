@@ -35,60 +35,57 @@
             />
         </div>
         @if ($field->value)
-            <div class="overflow-hidden">
-                <ol 
-                    class="flex flex-wrap -m-2" 
-                    @if ($field->sortMethod)
-                        wire:sortable="{{ $field->sortMethod }}"
-                    @endif
-                >
-                    @foreach ($field->value as $file)
-                        <li 
-                            wire:key="file-{{ $file }}"
-                            @if ($field->sortMethod)
-                                wire:sortable.item="{{ $file }}" 
+            <ol 
+                class="space-y-4" 
+                @if ($field->sortMethod)
+                    wire:sortable="{{ $field->sortMethod }}"
+                @endif
+            >
+                @foreach ($field->value as $file)
+                    <li 
+                        wire:key="file-{{ $file }}"
+                        @if ($field->sortMethod)
+                            wire:sortable.item="{{ $file }}" 
+                        @endif
+                    >
+                        <div class="p-2 bg-white shadow-sm rounded border border-gray-300 flex items-center space-x-4">
+                            @if (exif_imagetype(Filament::storage()->path($file)))
+                                <x-filament::modal class="flex-shrink-0">
+                                    <x-slot name="button">
+                                        <x-filament-image :src="$file" alt="{{ $file }}" :manipulations="[ 'w' => 48, 'h' => 48, 'fit' => 'crop' ]" width="48px" height="48px" loading="lazy" class="w-12 h-12 rounded" />    
+                                    </x-slot>
+                                    <img src="{{ Filament::storage()->url($file) }}" alt="{{ $file }}" />
+                                </x-filament::modal>
                             @endif
-                            class="w-full md:w-1/2 max-w-full p-2"
-                        >
-                            <div class="p-2 bg-white shadow-sm rounded border border-gray-300 flex items-center space-x-4">
-                                @if (exif_imagetype(Filament::storage()->path($file)))
-                                    <x-filament::modal class="flex-shrink-0">
-                                        <x-slot name="button">
-                                            <x-filament-image :src="$file" alt="{{ $file }}" :manipulations="[ 'w' => 48, 'h' => 48, 'fit' => 'crop' ]" width="48px" height="48px" loading="lazy" class="w-12 h-12 rounded" />    
-                                        </x-slot>
-                                        <img src="{{ Filament::storage()->url($file) }}" alt="{{ $file }}" />
-                                    </x-filament::modal>
-                                @endif
-                                <div class="flex-grow overflow-scroll flex flex-col leading-tight">
-                                    <a 
-                                        href="{{ Filament::storage()->url($file) }}" 
-                                        target="_blank" 
-                                        rel="noopener noreferrer" 
-                                        class="text-sm link"
-                                    >
-                                        {{ $file }}
-                                    </a>
-                                    <dl class="font-mono text-xs text-gray-500">
-                                        <dt class="sr-only">{{ __('MIME Type') }}</dt>
-                                        <dd>{{ Filament::storage()->getMimeType($file) }}</dd>
-                                        <dt class="sr-only">{{ __('File Size') }}</dt>
-                                        <dd>{{ Filament::formatBytes(Filament::storage()->size($file)) }}</dd>
-                                    </dl>
-                                </div>
-                                @if ($field->deleteMethod)
-                                    <button 
-                                        type="button" 
-                                        wire:click="{{ $field->deleteMethod }}('{{ $file }}')" 
-                                        class="flex-shrink-0 text-gray-500 hover:text-red-600 transition-colors duration-200"
-                                    >
-                                        <x-heroicon-o-x class="w-4 h-4" />
-                                    </button>
-                                @endif
+                            <div class="flex-grow overflow-scroll flex flex-col leading-tight">
+                                <a 
+                                    href="{{ Filament::storage()->url($file) }}" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    class="text-sm link"
+                                >
+                                    {{ $file }}
+                                </a>
+                                <dl class="font-mono text-xs text-gray-500">
+                                    <dt class="sr-only">{{ __('MIME Type') }}</dt>
+                                    <dd>{{ Filament::storage()->getMimeType($file) }}</dd>
+                                    <dt class="sr-only">{{ __('File Size') }}</dt>
+                                    <dd>{{ Filament::formatBytes(Filament::storage()->size($file)) }}</dd>
+                                </dl>
                             </div>
-                        </li>
-                    @endforeach
-                </ol>
-            </div>
+                            @if ($field->deleteMethod)
+                                <button 
+                                    type="button" 
+                                    wire:click="{{ $field->deleteMethod }}('{{ $file }}')" 
+                                    class="flex-shrink-0 text-gray-500 hover:text-red-600 transition-colors duration-200"
+                                >
+                                    <x-heroicon-o-x class="w-4 h-4" />
+                                </button>
+                            @endif
+                        </div>
+                    </li>
+                @endforeach
+            </ol>
         @endif
     </div>
 @overwrite
