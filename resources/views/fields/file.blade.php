@@ -36,7 +36,7 @@
         </div>
         @if ($field->value)
             <ol 
-                class="space-y-4" 
+                class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4" 
                 @if ($field->sortMethod)
                     wire:sortable="{{ $field->sortMethod }}"
                 @endif
@@ -48,25 +48,25 @@
                             wire:sortable.item="{{ $file }}" 
                         @endif
                     >
-                        <div class="p-2 bg-white shadow-sm rounded border border-gray-300 flex items-center space-x-4">
+                        <div class="col-span-1 p-2 bg-white shadow-sm rounded border border-gray-300 flex items-center space-x-4 @if ($field->sortMethod) cursor-move @endif">
                             @if (exif_imagetype(Filament::storage()->path($file)))
                                 <x-filament::modal class="flex-shrink-0">
-                                    <x-slot name="button">
-                                        <x-filament-image :src="$file" alt="{{ $file }}" :manipulations="[ 'w' => 48, 'h' => 48, 'fit' => 'crop' ]" width="48px" height="48px" loading="lazy" class="w-12 h-12 rounded" />    
+                                    <x-filament-image :src="$file" alt="{{ $file }}" :manipulations="[ 'w' => 48, 'h' => 48, 'fit' => 'crop' ]" width="48px" height="48px" loading="lazy" class="w-12 h-12 rounded" />    
+                                    <x-slot name="content">
+                                        <img src="{{ Filament::storage()->url($file) }}" alt="{{ $file }}" />
                                     </x-slot>
-                                    <img src="{{ Filament::storage()->url($file) }}" alt="{{ $file }}" />
                                 </x-filament::modal>
                             @endif
-                            <div class="flex-grow overflow-scroll flex flex-col leading-tight">
+                            <div class="flex-grow overflow-scroll flex flex-col">
                                 <a 
                                     href="{{ Filament::storage()->url($file) }}" 
                                     target="_blank" 
                                     rel="noopener noreferrer" 
-                                    class="text-sm link"
+                                    class="text-sm leading-none link"
                                 >
                                     {{ $file }}
                                 </a>
-                                <dl class="font-mono text-xs text-gray-500">
+                                <dl class="font-mono text-xs leading-tight text-gray-500">
                                     <dt class="sr-only">{{ __('MIME Type') }}</dt>
                                     <dd>{{ Filament::storage()->getMimeType($file) }}</dd>
                                     <dt class="sr-only">{{ __('File Size') }}</dt>

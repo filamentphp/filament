@@ -16,7 +16,7 @@
         type="button"
         @click="modalIsOpen = true"
     >
-        {{ $button }}
+        {{ $slot }}
     </button>
 
     <div 
@@ -65,7 +65,7 @@
                         <x-heroicon-o-x class="w-6 h-6" />
                     </button>
                     <div class="flex-grow">
-                        {{ $slot }}
+                        {{ $content }}
                     </div>
                 </div>
             </div>
