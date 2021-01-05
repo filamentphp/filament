@@ -1,13 +1,13 @@
 @extends('filament::layouts.field-group')
 
 @section('field')
-    <input type="{{ $field->type }}" 
-        {{ $field->modelDirective }}="{{ $field->model }}"
-        value="{{ $field->value }}"
-        id="{{ $field->id }}"
-        @foreach ($field->extraAttributes as $attribute => $value)
-            {{ $attribute }}="{{ $value }}"
-        @endforeach
-        class="block w-full rounded shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 @error($field->error ?? $field->model) border-red-600 motion-safe:animate-shake @else border-gray-300 @enderror"
+    <x-filament::input
+        :type="$field->type"
+        :value="$field->value"
+        :id="$field->id"
+        :model-directive="$field->modelDirective"
+        :model="$field->model"
+        :error-key="$field->error ?? $field->model"
+        :extra-attributes="$field->extraAttributes"
     />
 @overwrite

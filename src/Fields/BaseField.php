@@ -55,6 +55,8 @@ class BaseField {
 
     /**
      * @return static
+     *
+     * @param (int|string) $value
      */
     public function value($value): self
     {

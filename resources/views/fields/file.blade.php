@@ -21,6 +21,7 @@
                             @this.upload('{{ $field->model }}', file, load, error, progress)
                         },
                         revert: (filename, load, error) => {
+                            console.log(filename, load)
                             @this.removeUpload('{{ $field->model }}', filename, load)
                         },
                     },
@@ -48,25 +49,25 @@
                             wire:sortable.item="{{ $file }}" 
                         @endif
                     >
-                        <div class="col-span-1 p-2 bg-white shadow-sm rounded border border-gray-300 flex items-center space-x-4 @if ($field->sortMethod) cursor-move @endif">
+                        <div class="col-span-1 p-2 bg-white shadow-sm rounded border border-gray-300 flex items-center space-x-2 @if ($field->sortMethod) cursor-move @endif">
                             @if (exif_imagetype(Filament::storage()->path($file)))
-                                <x-filament::modal class="flex-shrink-0">
+                                <x-filament::modal class="flex-shrink-0 flex">
                                     <x-filament-image :src="$file" alt="{{ $file }}" :manipulations="[ 'w' => 48, 'h' => 48, 'fit' => 'crop' ]" width="48px" height="48px" loading="lazy" class="w-12 h-12 rounded" />    
                                     <x-slot name="content">
                                         <img src="{{ Filament::storage()->url($file) }}" alt="{{ $file }}" />
                                     </x-slot>
                                 </x-filament::modal>
                             @endif
-                            <div class="flex-grow overflow-scroll flex flex-col">
+                            <div class="flex-grow overflow-scroll flex flex-col text-xs leading-tight">
                                 <a 
                                     href="{{ Filament::storage()->url($file) }}" 
                                     target="_blank" 
                                     rel="noopener noreferrer" 
-                                    class="text-sm leading-none link"
+                                    class="link"
                                 >
                                     {{ $file }}
                                 </a>
-                                <dl class="font-mono text-xs leading-tight text-gray-500">
+                                <dl class="font-mono text-gray-500">
                                     <dt class="sr-only">{{ __('MIME Type') }}</dt>
                                     <dd>{{ Filament::storage()->getMimeType($file) }}</dd>
                                     <dt class="sr-only">{{ __('File Size') }}</dt>

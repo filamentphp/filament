@@ -14,6 +14,6 @@
   }
 
   .filepond--label-action {
-    @apply text-blue-600 hover:text-blue-800 transition-colors duration-200;
+    @apply no-underline text-blue-600 hover:text-blue-800 transition-colors duration-200;
   }
 }

@@ -14,15 +14,15 @@
         x-data 
         x-init='flatpickr($refs.input, @json($field->config))'
     >
-        <input type="date" 
-            {{ $field->modelDirective }}="{{ $field->model }}"
-            value="{{ $field->value }}"
-            id="{{ $field->id }}"
+        <x-filament::input
+            type="date"
+            :value="$field->value"
+            :id="$field->id"
+            :model-directive="$field->modelDirective"
+            :model="$field->model"
+            :error-key="$field->error ?? $field->model"
+            :extra-attributes="$field->extraAttributes"
             x-ref="input"
-            @foreach ($field->extraAttributes as $attribute => $value)
-                {{ $attribute }}="{{ $value }}"
-            @endforeach
-            class="block w-full rounded shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 @error($field->error ?? $field->model) border-red-600 motion-safe:animate-shake @else border-gray-300 @enderror"
         />
     </div>
 @overwrite

@@ -9,13 +9,18 @@
         x-on:livewire-upload-progress="progress = $event.detail.progress" 
         class="flex items-center space-x-4">
         <div class="flex-shrink-0 relative">
-            <label for="{{ $field->id }}" class="cursor-pointer rounded-full shadow-sm flex overflow-hidden">
+            <div class="rounded-full shadow-sm flex overflow-hidden">
                 @if ($field->avatar && !$errors->has($field->model))
                     <img src="{{ $field->avatar->temporaryUrl() }}" alt="{{ $field->user->name }}" class="h-full object-cover" width="{{ $field->size }}" height="{{ $field->size }}" loading="lazy">
                 @else 
-                    <x-filament-avatar :size="$field->size" :user="$field->user" />
+                    <x-filament::modal class="flex">
+                        <x-filament-avatar :size="$field->size" :user="$field->user" />
+                        <x-slot name="content">
+                            <x-filament-avatar :size="320" :user="$field->user" />
+                        </x-slot>
+                    </x-filament::modal>
                 @endif
-            </label>
+            </div>
             @if ($field->user->avatar && $field->deleteMethod)
                 <button type="button"     
                     wire:click="{{ $field->deleteMethod }}"   
