@@ -8,7 +8,7 @@
         role="group" 
         tabindex="-1" 
         x-data="{ headerIsOpen: false }" 
-        x-on:keydown.escape.window="headerIsOpen = false"
+        @keydown.window.escape="headerIsOpen = false"
         x-on:resize.window="if (window.outerWidth > 768) headerIsOpen = false">
         <div class="flex-shrink-0 flex w-56 absolute md:relative z-20 inset-y-0 transform transition-transform duration-200 md:translate-x-0"
             :class="headerIsOpen ? 'translate-x-0' : '-translate-x-full'">

@@ -10,7 +10,7 @@
             }
         });
     "
-    x-on:keydown.escape.window="modalIsOpen = false"
+    @keydown.window.escape="modalIsOpen = false"
 >
     <button
         type="button"
