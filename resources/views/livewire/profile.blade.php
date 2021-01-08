@@ -5,7 +5,6 @@
         type="submit" 
         class="btn-primary" 
         wire:loading.attr="disabled"
-        :disabled="$errors->any()"
     >
         {{ __('Update Profile') }}
     </x-filament::button>

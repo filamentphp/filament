@@ -101,6 +101,10 @@ class Filament
         $asset = $this->getAsset($key);
         $publishedAsset = $this->getPublicAsset($key);
 
+        $additionalAssets = '
+            <script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
+        ';
+
         if ($publishedAsset) {
             $assetWarning = ($publishedAsset !== $asset) ? 
                 '<script>console.warn("Filament: The published javascript assets are out of date.\n");</script>' : null;
@@ -109,15 +113,17 @@ class Filament
                 <!-- Filament Published Scripts -->
                 {$assetWarning}
                 <script src=\"/vendor/filament{$publishedAsset}\" data-turbolinks-eval=\"false\"></script>
+                {$additionalAssets}
             ");
         }
 
         parse_str(parse_url($asset, PHP_URL_QUERY), $jsInfo);
 
-        return new HtmlString('
+        return new HtmlString("
             <!-- Filament Scripts -->
-            <script src="'.route('filament.assets.js', $jsInfo).'" data-turbolinks-eval="false"></script>
-        ');
+            <script src=\"".route('filament.assets.js', $jsInfo)."\" data-turbolinks-eval=\"false\"></script>
+            {$additionalAssets}
+        ");
     }
 
     /** @return mixed */

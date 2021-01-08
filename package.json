@@ -25,7 +25,7 @@
     "browser-sync-webpack-plugin": "^2.3.0",
     "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
-    "laravel-mix": "^6.0.6",
+    "laravel-mix": "^6.0.8",
     "postcss": "^8.2.2",
     "postcss-import": "^14.0.0",
     "postcss-nested": "^5.0.3",

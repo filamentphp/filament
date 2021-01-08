@@ -82,5 +82,7 @@ php artisan filament:user
 
 ## Roadmap
 
+- [ ] Dashboard widgets
+  - Bookmarks Feature with associated widget
 - [ ] Resource stubs and associated Artisan commands (e.g. `artisan filament:resource Page --options`)
 - [ ] DOCUMENTATION FOR ALL THE THINGS.

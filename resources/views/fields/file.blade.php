@@ -6,11 +6,10 @@
 
 @pushonce('js')
     <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
 @endpushonce
 
 @section('field')
-    <div class="p-4 rounded focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border @error($field->error ?? $field->model) border-red-600 motion-safe:animate-shake @else border-gray-100 @enderror space-y-6">
+    <div class="p-4 rounded focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border @error($field->error ?? $field->model) border-red-600 motion-safe:animate-shake @else border-gray-100 @enderror space-y-6">
         <div 
             x-data 
             x-init="
@@ -43,9 +42,9 @@
                 @endif
             >
                 @foreach ($field->value as $file)
-                    <li 
-                        wire:key="file-{{ $file }}"
+                    <li            
                         @if ($field->sortMethod)
+                            wire:key="file-{{ $file }}"
                             wire:sortable.item="{{ $file }}" 
                         @endif
                     >
@@ -78,9 +77,10 @@
                                 <button 
                                     type="button" 
                                     wire:click="{{ $field->deleteMethod }}('{{ $file }}')" 
-                                    class="flex-shrink-0 text-gray-500 hover:text-red-600 transition-colors duration-200"
+                                    class="flex-shrink-0 text-gray-500 hover:text-red-600 transition-colors duration-200 flex"
                                 >
                                     <x-heroicon-o-x class="w-4 h-4" />
+                                    <span class="sr-only">{{ __('Remove file') }}</span>
                                 </button>
                             @endif
                         </div>
