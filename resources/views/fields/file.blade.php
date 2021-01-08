@@ -1,10 +1,14 @@
 @extends('filament::layouts.field-group')
 
-@pushonce('head')
+@pushonce('head:filepond-css')
     <link rel="stylesheet" href="https://unpkg.com/filepond/dist/filepond.css">
 @endpushonce
 
-@pushonce('js')
+@pushonce('js:livewire-sortable')
+    <script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
+@endpushonce
+
+@pushonce('js:filepond')
     <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 @endpushonce
 
@@ -14,6 +18,9 @@
             x-data 
             x-init="
                 FilePond.setOptions({
+                    @isset($field->extraAttributes['placeholder'])
+                        labelIdle: '{{ $field->extraAttributes['placeholder'] }}',
+                    @endisset
                     allowMultiple: {{ isset($field->extraAttributes['multiple']) ? 'true' : 'false' }},
                     server: {
                         process:(fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
@@ -49,7 +56,7 @@
                         @endif
                     >
                         <div class="col-span-1 p-2 bg-white shadow-sm rounded border border-gray-300 flex items-center space-x-2 @if ($field->sortMethod) cursor-move @endif">
-                            @if (exif_imagetype(Filament::storage()->path($file)))
+                            @if (Filament::isImage($file))
                                 <x-filament::modal class="flex-shrink-0 flex">
                                     <x-filament-image :src="$file" alt="{{ $file }}" :manipulations="[ 'w' => 48, 'h' => 48, 'fit' => 'crop' ]" width="48px" height="48px" loading="lazy" class="w-12 h-12 rounded" />    
                                     <x-slot name="content">

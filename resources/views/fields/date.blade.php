@@ -1,10 +1,10 @@
 @extends('filament::layouts.field-group')
 
-@pushonce('head')
+@pushonce('head:flatpickr-css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endpushonce
 
-@pushonce('js')
+@pushonce('js:flatpickr')
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 @endpushonce
 

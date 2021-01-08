@@ -101,10 +101,6 @@ class Filament
         $asset = $this->getAsset($key);
         $publishedAsset = $this->getPublicAsset($key);
 
-        $additionalAssets = '
-            <script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
-        ';
-
         if ($publishedAsset) {
             $assetWarning = ($publishedAsset !== $asset) ? 
                 '<script>console.warn("Filament: The published javascript assets are out of date.\n");</script>' : null;
@@ -113,7 +109,6 @@ class Filament
                 <!-- Filament Published Scripts -->
                 {$assetWarning}
                 <script src=\"/vendor/filament{$publishedAsset}\" data-turbolinks-eval=\"false\"></script>
-                {$additionalAssets}
             ");
         }
 
@@ -122,7 +117,6 @@ class Filament
         return new HtmlString("
             <!-- Filament Scripts -->
             <script src=\"".route('filament.assets.js', $jsInfo)."\" data-turbolinks-eval=\"false\"></script>
-            {$additionalAssets}
         ");
     }
 
@@ -233,5 +227,21 @@ class Filament
     {
         $urlBuilder = UrlBuilderFactory::create('', config('app.key'));
         return route('filament.image', ['path' => ltrim($urlBuilder->getUrl($path, $manipulations), '/')]);
+    }
+
+    /**
+     * Determines if an asset is a valid image based on approved MIME Types.
+     * 
+     * @param string $file
+     *  
+     * @return bool
+     */
+    public function isImage($file)
+    {
+        return in_array($this->storage()->getMimeType($file), [
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+        ]);
     }
 }

@@ -1,5 +1,9 @@
 @extends('filament::layouts.field-group')
 
+@pushonce('js:livewire-sortable')
+    <script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
+@endpushonce
+
 @section('field')
     <div class="space-y-4">
         <x-filament::select

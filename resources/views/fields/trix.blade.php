@@ -1,10 +1,10 @@
 @extends('filament::layouts.field-group')
 
-@pushonce('head')
+@pushonce('head:trix-css')
     <link rel="stylesheet" href="https://www.unpkg.com/trix@1.3.1/dist/trix.css">
 @endpushonce
 
-@pushonce('js')
+@pushonce('js:trix')
     <script src="https://www.unpkg.com/trix@1.3.1/dist/trix.js"></script>
     <script>
         Trix.config.blockAttributes.heading = {
