@@ -31,32 +31,31 @@ class Profile extends Component
     public $password;
     public $password_confirmation;
 
-    protected $rules = [
-        'user.name' => 'required|string|min:2|max:255',
-        'user.email' => 'required|string|email|max:255',
-        'avatar' => 'nullable|image|max:1024',
-        'password' => 'nullable|string|required_with:password_confirmation|min:6|confirmed',
-        'password_confirmation' => 'nullable|string|same:password',
-    ];
-
     public function mount(): void
     {
         $this->user = Auth::user();
     }
 
+    public function rules()
+    {
+        return [
+            'user.name' => 'required|string|min:2|max:255',
+            'user.email' => [
+                'required',
+                'string',
+                'email',
+                Rule::unique('users', 'email')->ignore($this->user->id),
+            ],
+            'avatar' => 'nullable|image|max:1024',
+            'password' => 'nullable|string|required_with:password_confirmation|min:6|confirmed',
+            'password_confirmation' => 'nullable|string|same:password',
+        ];
+    }
+
     public function updatedAvatar($value): void
     {
         $this->validate([
-            'avatar' => $this->rules['avatar'],
-        ]);
-    }
-
-    public function updatedUserEmail($value): void
-    {
-        $this->validate([
-            'user.email' => [
-                Rule::unique('users', 'email')->ignore($this->user->id),
-            ],
+            'avatar' => $this->rules()['avatar'],
         ]);
     }
 

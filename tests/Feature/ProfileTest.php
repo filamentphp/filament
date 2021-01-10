@@ -56,6 +56,7 @@ class ProfileTest extends TestCase
 
         $this->getComponent()
             ->set('user.email', 'test@example.com')
+            ->call('submit')
             ->assertHasErrors(['user.email' => 'unique']);
     }
 
