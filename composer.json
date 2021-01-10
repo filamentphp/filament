@@ -20,7 +20,7 @@
   "require-dev": {
     "mockery/mockery": "^1.4.2",
     "orchestra/testbench": "^6.0",
-    "pestphp/pest": "^0.3",
+    "pestphp/pest": "^1.0",
     "vimeo/psalm": "^4.3",
     "psalm/plugin-laravel": "^1.4"
   },

@@ -1,4 +1,4 @@
-<nav aria-label="primary" class="flex-grow px-4">
+<nav aria-label="primary" {{ $attributes }}>
     <ol class="space-y-1">
         @foreach($nav as $item)
             <li>
