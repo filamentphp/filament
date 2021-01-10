@@ -1,6 +1,7 @@
 <div
     {{ $attributes }}
     x-data="{ modalIsOpen: false }" 
+    x-cloak
     x-init="
         $watch('modalIsOpen', value => {
             if (value === true) { 
