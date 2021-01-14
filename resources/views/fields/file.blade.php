@@ -37,6 +37,7 @@
             wire:ignore
         >
             <input 
+                id="{{ $field->id }}"
                 type="file" 
                 x-ref="input"
             />

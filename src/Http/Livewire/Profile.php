@@ -93,21 +93,22 @@ class Profile extends Component
         return [
             Tabs::label('Profile')
                 ->tab('Account', array_merge_recursive([
-                    Layout::make('grid grid-cols-1 lg:grid-cols-2 gap-6')->fields([
-                        Text::make('user.name')
-                            ->label('Name')
-                            ->extraAttributes([
-                                'required' => 'true',
-                            ]),
-                        Text::make('user.email')
-                            ->type('email')
-                            ->label('E-Mail Address')
-                            ->modelDirective('wire:model.lazy')
-                            ->extraAttributes([
-                                'required' => 'true',
-                                'autocomplete' => 'email',
-                            ]),                      
-                    ]),   
+                    Layout::make('grid grid-cols-1 lg:grid-cols-2 gap-6')
+                        ->fields([
+                            Text::make('user.name')
+                                ->label('Name')
+                                ->extraAttributes([
+                                    'required' => 'true',
+                                ]),
+                            Text::make('user.email')
+                                ->type('email')
+                                ->label('E-Mail Address')
+                                ->modelDirective('wire:model.lazy')
+                                ->extraAttributes([
+                                    'required' => 'true',
+                                    'autocomplete' => 'email',
+                                ]),                      
+                        ]),   
                     Avatar::make('avatar')
                         ->label('User Photo')
                         ->avatar($this->avatar)
