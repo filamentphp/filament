@@ -7,12 +7,11 @@ use Livewire\{
     WithFileUploads,
 };
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\{
     Auth,
     Hash,
-    Storage,
 };
+use Filament\Facades\Filament;
 use Filament\Traits\WithNotifications;
 use Filament\Fields\{
     Tabs,
@@ -64,7 +63,7 @@ class Profile extends Component
         $avatar = $this->user->avatar;
         
         if ($avatar) {
-            Storage::disk(config('filament.storage_disk'))->delete($avatar);
+            Filament::storage()->delete($avatar);
             $this->avatar = null;
             
             $this->user->avatar = null;
