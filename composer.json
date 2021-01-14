@@ -21,7 +21,7 @@
     "mockery/mockery": "^1.4.2",
     "orchestra/testbench": "^6.0",
     "pestphp/pest": "^1.0",
-    "vimeo/psalm": "^4.3",
+    "vimeo/psalm": "4.3.2",
     "psalm/plugin-laravel": "^1.4"
   },
   "autoload": {
