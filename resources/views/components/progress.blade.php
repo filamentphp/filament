@@ -1,6 +1,6 @@
 @props([
     'max' => 100,
-    'progress',
+    'progress' => 0,
 ])
 <div {{ $attributes }}>
     <progress max="{{ $max }}" x-bind:value="{{ $progress }}" class="sr-only"></progress>
