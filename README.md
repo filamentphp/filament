@@ -39,7 +39,7 @@ class User extends Authenticatable
 
 ### Create a Resource
 
-To define a Resource, create a new resource file in `app/Filament/Resources` like the following `Page.php`:
+To define a Resource, create a new resource file in `app/Filament/Resources` like the following `Page.php`.
 
 ```php
 <?php
@@ -49,7 +49,6 @@ namespace App\Filament\Resources;
 use Illuminate\Support\Facades\Auth;
 use Filament\Resource;
 use App\Http\Livewire\Page\Index;
-// use App\Http\Livewire\Page\Show;
 
 class Page extends Resource
 {
@@ -59,15 +58,36 @@ class Page extends Resource
 
     public function __construct()
     {
-        $this->enabled = Auth::user()->can('Access My Pages'); // Enable navigation visibilty and access to entire resource via policy etc.
+        // Enable navigation visibilty and access to entire resource via policy etc.
+        $this->enabled = Auth::user()->can('Access My Pages');
     }
 
     public function actions()
     {
         return [
             'index' => Index::class,
-            // 'show' => Show::class,
         ];
+    }
+}
+```
+
+> Below is an example of a corresponding Livewire component defined in the resource above:
+
+```php
+<?php
+
+namespace App\Http\Livewire\Page;
+
+use Livewire\Component;
+use App\Models\Page;
+
+class Index extends Component
+{
+    public function render()
+    {
+        return view('livewire.page.index', [
+            'pages' => Page::paginate(12),
+        ])->layout('filament::layouts.app', ['title' => __('Pages')]);
     }
 }
 ```
