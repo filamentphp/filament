@@ -74,6 +74,16 @@ class Profile extends Component
     }
 
     /**
+     * Ability to merge and append account fields.
+     * 
+     * @return array
+     */
+    public function accountFields()
+    {
+        return [];
+    }
+
+    /**
      * @return array
      *
      * @psalm-return array{0: mixed}
@@ -82,7 +92,7 @@ class Profile extends Component
     {
         return [
             Tabs::label('Profile')
-                ->tab('Account', [
+                ->tab('Account', array_merge_recursive([
                     Layout::make('grid grid-cols-1 lg:grid-cols-2 gap-6')->fields([
                         Text::make('user.name')
                             ->label('Name')
@@ -121,9 +131,19 @@ class Profile extends Component
                                 ])
                                 ->hint(__('Optional')),
                         ])
-                        ->class('grid grid-cols-1 lg:grid-cols-2 gap-6'),
-                ]),
+                        ->class('grid grid-cols-1 lg:grid-cols-2 gap-6'),   
+                ], $this->accountFields())),
         ];
+    }
+
+    /**
+     * A hook for saving additional fields within the submit method.
+     * 
+     * @return void
+     */
+    public function save()
+    {
+        return;
     }
 
     public function submit(): void
@@ -139,6 +159,8 @@ class Profile extends Component
             $this->user->password = Hash::make($this->password);
             $this->reset(['password', 'password_confirmation']);
         }
+
+        $this->save();
 
         $this->user->save();
 
