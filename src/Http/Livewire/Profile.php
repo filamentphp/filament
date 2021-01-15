@@ -92,7 +92,7 @@ class Profile extends Component
     public function fields(): array
     {
         return [
-            Tabs::label('Profile')
+            Tabs::make('Profile')
                 ->tab('Account', array_merge_recursive([
                     Layout::make('grid grid-cols-1 lg:grid-cols-2 gap-6')
                         ->fields([

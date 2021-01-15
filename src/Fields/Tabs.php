@@ -14,7 +14,7 @@ class Tabs extends BaseField {
     /**
      * @return static
      */
-    public static function label(string $label): self
+    public static function make(string $label): self
     {
         return new static($label);
     }
