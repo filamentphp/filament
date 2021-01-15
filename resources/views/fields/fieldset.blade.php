@@ -1,4 +1,4 @@
-<fieldset class="border rounded border-grey-50 p-4 md:px-6">
+<fieldset class="rounded border border-gray-200 p-4 md:px-6">
     <legend class="text-sm leading-tight font-semibold px-2">
         {{ __($field->legend) }}
     </legend>

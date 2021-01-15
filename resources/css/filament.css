@@ -8,7 +8,6 @@
 
 @layer components {
   @import './components/typography.css';
-  @import './components/lists.css';
   @import './components/buttons.css';
   @import './components/filepond.css';
 }
