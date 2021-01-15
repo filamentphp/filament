@@ -30,7 +30,8 @@ class Profile extends Component
     public $password;
     public $password_confirmation;
 
-    public function mount(): void
+    /** @return void */
+    public function mount()
     {
         $this->user = Auth::user();
     }
