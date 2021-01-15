@@ -44,7 +44,7 @@
         </div>
         @if ($field->value)
             <ol 
-                class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4" 
+                class="grid grid-cols-1 xl:grid-cols-2 gap-2 xl:gap-4" 
                 @if ($field->sortMethod)
                     wire:sortable="{{ $field->sortMethod }}"
                 @endif
