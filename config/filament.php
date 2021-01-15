@@ -9,16 +9,16 @@ return [
     | Features
     |--------------------------------------------------------------------------
     |
-    | By default all of Filament's features are enabled. You may enable 
-    | or disable features as needed by your application.
+    | All of Filament's features are optional. You may enable the features
+    | by adding / uncommenting items in this array as needed.
     |
     */
 
     'features' => [
-        Features::registration(),
-        Features::dashboard(),
-        Features::profile(),
-        Features::resources(),
+        // Features::registration(),
+        // Features::dashboard(),
+        // Features::profile(),
+        // Features::resources(),
     ],
 
     /*

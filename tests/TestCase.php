@@ -15,6 +15,7 @@ use Thomaswelton\LaravelGravatar\LaravelGravatarServiceProvider;
 use Thomaswelton\LaravelGravatar\Facades\Gravatar;
 use Filament\FilamentServiceProvider;
 use Filament\Facades\Filament;
+use Filament\Features;
 use Filament\Tests\Database\Models\User;
 
 abstract class TestCase extends OrchestraTestCase
@@ -90,6 +91,14 @@ abstract class TestCase extends OrchestraTestCase
         ]);
 
         $app['config']->set('auth.providers.users.model', User::class);
+
+        $app['config']->set('filament.features', [
+            Features::registration(),
+            Features::dashboard(),
+            Features::profile(),
+            Features::resources(),
+        ]);
+        
         $app['config']->set('filament.models.user', User::class);
     }
 }
