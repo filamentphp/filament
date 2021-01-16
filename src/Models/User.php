@@ -38,6 +38,13 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'filament_users';
+
     public function sendPasswordResetNotification($token): void
     {
         $notification = new ResetPassword($token);
