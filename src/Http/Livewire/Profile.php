@@ -75,25 +75,15 @@ class Profile extends Component
     }
 
     /**
-     * Ability to merge and append account fields.
-     * 
-     * @return array
-     */
-    public function accountFields()
-    {
-        return [];
-    }
-
-    /**
      * @return array
      *
      * @psalm-return array{0: mixed}
      */
-    public function fields(): array
+    public function fields()
     {
         return [
-            Tabs::make('Profile')
-                ->tab('Account', array_merge_recursive([
+            'profile' => Tabs::make('Profile')
+                ->tab('Account', [
                     Layout::make('grid grid-cols-1 lg:grid-cols-2 gap-6')
                         ->fields([
                             Text::make('user.name')
@@ -134,7 +124,7 @@ class Profile extends Component
                                 ->hint(__('Optional')),
                         ])
                         ->class('grid grid-cols-1 lg:grid-cols-2 gap-6'),   
-                ], $this->accountFields())),
+                ]),
         ];
     }
 
