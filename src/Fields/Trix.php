@@ -2,6 +2,7 @@
 
 namespace Filament\Fields;
 
-class Trix extends Field {
-    // 
+class Trix extends Field
+{
+    //
 }

@@ -2,25 +2,23 @@
 
 namespace Filament\Fields;
 
-class Checkbox extends Field {
-    public $type = 'checkbox';
+class Checkbox extends Field
+{
     public $showErrors = true;
 
-    /**
-     * @return static
-     */
-    public function type($type): self
+    public $type = 'checkbox';
+
+    public function hideErrorOutput()
     {
-        $this->type = $type;
+        $this->showErrors = false;
+
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function hideErrorOutput(): self
+    public function type($type)
     {
-        $this->showErrors = false;
+        $this->type = $type;
+
         return $this;
     }
 }

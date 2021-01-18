@@ -2,25 +2,23 @@
 
 namespace Filament\Fields;
 
-class File extends Field {
-    public $sortMethod;
+class File extends Field
+{
     public $deleteMethod;
 
-    /**
-     * @return static
-     */
-    public function sortMethod(string $method): self
+    public $sortMethod;
+
+    public function deleteMethod(string $method)
     {
-        $this->sortMethod = $method;
+        $this->deleteMethod = $method;
+
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function deleteMethod(string $method): self
+    public function sortMethod(string $method)
     {
-        $this->deleteMethod = $method;
+        $this->sortMethod = $method;
+
         return $this;
     }
 }

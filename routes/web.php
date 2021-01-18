@@ -1,36 +1,29 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Filament\Features;
-use Filament\Http\Controllers\{
-    AssetController,
-    ResourceController,
-    ImageController,
-};
+use Filament\Http\Controllers\{AssetController, ImageController, ResourceController,};
+use Illuminate\Support\Facades\Route;
 
 // Assets
 Route::name('assets.')->group(function () {
     Route::get('filament.css', [AssetController::class, 'css'])->name('css');
     Route::get('filament.css.map', [AssetController::class, 'cssMap']);
-    Route::get('filament.js', [AssetController::class, 'js'])->name('js');   
-    Route::get('filament.js.map', [AssetController::class, 'jsMap']);  
+    Route::get('filament.js', [AssetController::class, 'js'])->name('js');
+    Route::get('filament.js.map', [AssetController::class, 'jsMap']);
 });
 
 // Images
 Route::get('/image/{path}', ImageController::class)->where('path', '.*')->name('image');
 
 // Authentication
-Route::get('login', config('filament.livewire.login'))->name('login');
-Route::get('forgot-password', config('filament.livewire.forgot-password'))->name('password.forgot');
-Route::get('reset-password/{token}', config('filament.livewire.reset-password'))->name('password.reset');
-
-// Registration
-if (Features::registersUsers()) {
-    Route::get('/register', config('filament.livewire.register'))->name('register');
-}
+Route::middleware(['guest:filament'])->group(function () {
+    Route::get('login', config('filament.livewire.login'))->name('login');
+    Route::get('forgot-password', config('filament.livewire.forgot-password'))->name('password.forgot');
+    Route::get('reset-password/{token}', config('filament.livewire.reset-password'))->name('password.reset');
+});
 
 // Authenticated routes
-Route::group(['middleware' => ['auth.filament']], function () {
+Route::middleware(['auth.filament:filament'])->group(function () {
     // Dashboard
     if (Features::hasDashboard()) {
         Route::get('/', config('filament.livewire.dashboard'))->name('dashboard');

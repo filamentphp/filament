@@ -2,10 +2,10 @@
 
 namespace Filament\Http\Livewire\Auth;
 
+use Filament\Fields\Text;
+use Filament\Traits\WithNotifications;
 use Illuminate\Support\Facades\Password;
 use Livewire\Component;
-use Filament\Traits\WithNotifications;
-use Filament\Fields\Text;
 
 class ForgotPassword extends Component
 {
@@ -17,24 +17,7 @@ class ForgotPassword extends Component
         'email' => 'required|string|email',
     ];
 
-    public function submit(): void
-    {       
-        $this->validate();
-        
-        $status = Password::sendResetLink(['email' => $this->email]);
-        if ($status === Password::RESET_LINK_SENT) {
-            $this->notify(__($status));
-        } else {
-            $this->addError('email', __($status));
-        }
-    }
-
-    /**
-     * @return array
-     *
-     * @psalm-return array{0: mixed}
-     */
-    public function fields(): array
+    public function fields()
     {
         return [
             Text::make('email')
@@ -45,11 +28,23 @@ class ForgotPassword extends Component
                     'autofocus' => 'true',
                     'autocomplete' => 'email',
                 ])
-                ->hint('['.__('Back to login').']('.route('filament.login').')'),
+                ->hint('[' . __('Back to login') . '](' . route('filament.login') . ')'),
         ];
     }
 
-    public function render(): \Illuminate\View\View
+    public function submit()
+    {
+        $this->validate();
+
+        $status = Password::sendResetLink(['email' => $this->email]);
+        if ($status === Password::RESET_LINK_SENT) {
+            $this->notify(__($status));
+        } else {
+            $this->addError('email', __($status));
+        }
+    }
+
+    public function render()
     {
         return view('filament::livewire.auth.forgot-password')
             ->layout('filament::layouts.auth', ['title' => __('Reset Password')]);

@@ -2,16 +2,13 @@
 
 namespace Filament\Http\Controllers;
 
+use Filament\Filament;
 use Illuminate\Container\Container;
 use Illuminate\Routing\Route;
-use Filament\Facades\Filament;
 
 class ResourceController extends Controller
 {
-    /**
-     * @psalm-suppress InvalidFunctionCall
-     */
-    public function __invoke(Container $container, Route $route, string $resource, string $action = 'index'): \Illuminate\View\View
+    public function __invoke(Container $container, Route $route, string $resource, string $action = 'index')
     {
         $resourceClass = Filament::resources()->get($resource);
         abort_unless($resourceClass, 400, __("`$resource` is not a valid resource."));

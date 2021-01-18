@@ -2,91 +2,59 @@
 
 namespace Filament;
 
+use Filament\Commands\MakeUser;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Compilers\BladeCompiler;
-use Illuminate\Support\Facades\{
-    Route,
-    Gate,
-    Blade,
-    File,
-    Cache,
-};
 use Livewire\Livewire;
-use Filament\Providers\{
-    ServiceProvider,
-    RouteServiceProvider,
-};
-use Filament\Features;
-use Filament\Commands\{
-    MakeUser,
-};
+use Filament\Providers\{RouteServiceProvider, ServiceProvider};
 
 class FilamentServiceProvider extends ServiceProvider
 {
-    public function register(): void
-    {
-        $this->mergeConfigFrom(__DIR__.'/../config/filament.php', 'filament');
-        $this->registerSingletons();
-        $this->registerLivewireComponents();      
-        $this->registerProviders();
-    }
+    public $singletons = [
+        FilamentManager::class => FilamentManager::class,
+        Navigation::class => Navigation::class,
+    ];
 
-    public function boot(): void
+    public function boot()
     {
-        $this->bootModelBindings();
-        $this->bootLoaders();
-        $this->bootDirectives();
-        $this->bootNavigation();
+        $this->bootAuthConfiguration();
         $this->bootCommands();
+        $this->bootDirectives();
+        $this->bootLoaders();
+        $this->bootNavigation();
         $this->bootPublishing();
     }
 
-    protected function registerSingletons(): void
+    protected function bootAuthConfiguration()
     {
-        $this->app->singleton('filament', Filament::class);
+        $this->app['config']->set('auth.guards.filament', [
+            'driver' => 'session',
+            'provider' => 'filament_users',
+        ]);
 
-        $this->app->singleton('Filament\Navigation', function () {
-            return new Navigation();
-        });
+        $this->app['config']->set('auth.passwords.filament_users', [
+            'provider' => 'filament_users',
+            'table' => 'filament_password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ]);
+
+        $this->app['config']->set('auth.providers.filament_users', [
+            'driver' => 'eloquent',
+            'model' => \Filament\Models\User::class,
+        ]);
     }
 
-    protected function registerLivewireComponents(): void
+    protected function bootCommands()
     {
-        $this->app->afterResolving(BladeCompiler::class, function () {
-            $prefix = config('filament.prefix.component', '');
+        if (! $this->app->runningInConsole()) return;
 
-            foreach (config('filament.livewire', []) as $alias => $component) {
-                $alias = $prefix ? "$prefix-$alias" : $alias;
-
-                Livewire::component($alias, $component);
-            }
-        });
+        $this->commands([
+            MakeUser::class,
+        ]);
     }
 
-    protected function registerProviders(): void
-    {
-        $this->app->register(RouteServiceProvider::class);
-    }
-
-    protected function bootModelBindings(): void
-    {
-        $models = config('filament.models');
-
-        if (! $models) {
-            return;
-        }
-
-        $this->app->bind('Filament\User', $models['user']);
-    }
-
-    protected function bootLoaders(): void
-    {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'filament');
-        $this->loadViewComponentsAs(config('filament.prefix.component', 'filament'), config('filament.components', []));
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'filament');
-    }
-
-    protected function bootDirectives(): void
+    protected function bootDirectives()
     {
         Blade::directive('filamentStyles', [BladeDirectives::class, 'styles']);
         Blade::directive('filamentScripts', [BladeDirectives::class, 'scripts']);
@@ -94,35 +62,22 @@ class FilamentServiceProvider extends ServiceProvider
         Blade::directive('endpushonce', [BladeDirectives::class, 'endPushOnce']);
     }
 
-    protected function bootPublishing(): void
+    protected function bootLoaders()
     {
-        if (! $this->app->runningInConsole()) {
-            return;
-        }
+        $this->loadViewComponentsAs('filament', config('filament.components', []));
 
-        $this->publishes([
-            __DIR__.'/../config/filament.php' => config_path('filament.php'),
-        ], 'filament-config');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'filament');
 
-        $this->publishes([
-            __DIR__.'/../resources/views' => resource_path('views/vendor/filament'),
-        ], 'filament-views');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
-        $this->publishes([
-            __DIR__.'/../resources/lang' => resource_path('lang/vendor/filament'),
-        ], 'filament-lang');
-
-        $this->publishes([
-            __DIR__.'/../dist' => public_path('vendor/filament'),
-        ], 'filament-assets');
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'filament');
     }
 
-    protected function bootNavigation(): void
-    {   
+    protected function bootNavigation()
+    {
         $this->app->booted(function () {
-
             if (Features::hasDashboard()) {
-                app('Filament\Navigation')->dashboard = config('filament.nav.dashboard', [
+                $this->app[Navigation::class]->dashboard = config('filament.nav.dashboard', [
                     'path' => 'filament.dashboard',
                     'active' => 'filament.dashboard',
                     'label' => 'Dashboard',
@@ -131,15 +86,15 @@ class FilamentServiceProvider extends ServiceProvider
                 ]);
             }
 
-            if (Features::hasResources()) {         
-                app('filament')->resources()->each(function ($item, $key) {
+            if (Features::hasResources()) {
+                $this->app[FilamentManager::class]->resources()->each(function ($item, $key) {
                     $resource = $this->app->make($item);
 
                     if ($resource->enabled && array_key_exists('index', $resource->actions())) {
                         $route = route('filament.resource', ['resource' => $key]);
                         $routePath = implode('/', array_slice(explode('/', $route), -3, 2, true)).'/'.$key;
 
-                        app('Filament\Navigation')->$key = [
+                        $this->app[Navigation::class]->$key = [
                             'path' => $route,
                             'active' => [
                                 $routePath,
@@ -155,14 +110,47 @@ class FilamentServiceProvider extends ServiceProvider
         });
     }
 
-    protected function bootCommands(): void
+    protected function bootPublishing()
     {
-        if (! $this->app->runningInConsole()) {
-            return;
-        }
-            
-        $this->commands([
-            MakeUser::class,
-        ]);
+        if (! $this->app->runningInConsole()) return;
+
+        $this->publishes([
+            __DIR__.'/../dist' => public_path('vendor/filament'),
+        ], 'filament-assets');
+
+        $this->publishes([
+            __DIR__.'/../config/filament.php.stub' => config_path('filament.php'),
+        ], 'filament-config');
+
+        $this->publishes([
+            __DIR__.'/../resources/lang' => resource_path('lang/vendor/filament'),
+        ], 'filament-lang');
+
+        $this->publishes([
+            __DIR__.'/../resources/views' => resource_path('views/vendor/filament'),
+        ], 'filament-views');
+    }
+
+    public function register()
+    {
+        $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
+
+        $this->registerLivewireComponents();
+
+        $this->registerProviders();
+    }
+
+    protected function registerLivewireComponents()
+    {
+        $this->app->afterResolving(BladeCompiler::class, function () {
+            foreach (config('filament.livewire', []) as $alias => $component) {
+                Livewire::component("filament-$alias", $component);
+            }
+        });
+    }
+
+    protected function registerProviders()
+    {
+        $this->app->register(RouteServiceProvider::class);
     }
 }

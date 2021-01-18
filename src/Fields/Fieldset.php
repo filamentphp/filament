@@ -2,39 +2,35 @@
 
 namespace Filament\Fields;
 
-class Fieldset extends BaseField {
-    public $legend;
-    public $fields;
+class Fieldset extends BaseField
+{
     public $class;
-    
+
+    public $legend;
+
+    public $fields;
+
     public function __construct($legend)
     {
         $this->legend = $legend;
     }
 
-    /**
-     * @return static
-     */
-    public static function make(string $legend): self
+    public static function make(string $legend)
     {
         return new static($legend);
     }
 
-    /**
-     * @return static
-     */
-    public function fields(array $fields): self
+    public function class(string $class)
     {
-        $this->fields = $fields;
+        $this->class = $class;
+
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function class(string $class): self
+    public function fields(array $fields)
     {
-        $this->class = $class;
+        $this->fields = $fields;
+
         return $this;
     }
 }
