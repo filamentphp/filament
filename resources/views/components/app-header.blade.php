@@ -11,7 +11,7 @@
         </x-slot>
 
         @if (Filament\Features::hasUserProfile())
-            <x-filament::dropdown-link href="{{ route('filament.profile') }}">{{ __('Edit Profile') }}</x-filament::dropdown-link>
+            <x-filament::dropdown-link href="{{ route('filament.profile') }}">{{ __('filament::profile.edit') }}</x-filament::dropdown-link>
         @endif
         <livewire:filament-logout class="w-full py-2 px-4 transition-colors duration-200 text-gray-600 hover:bg-gray-200" />
     </x-filament::dropdown>

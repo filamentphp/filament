@@ -75,9 +75,9 @@
                                     {{ $file }}
                                 </a>
                                 <dl class="font-mono text-gray-500">
-                                    <dt class="sr-only">{{ __('MIME Type') }}</dt>
+                                    <dt class="sr-only">{{ __('filament::file.mimeType') }}</dt>
                                     <dd>{{ Filament::storage()->getMimeType($file) }}</dd>
-                                    <dt class="sr-only">{{ __('File Size') }}</dt>
+                                    <dt class="sr-only">{{ __('filament::file.fileSize') }}</dt>
                                     <dd>{{ Filament::formatBytes(Filament::storage()->size($file)) }}</dd>
                                 </dl>
                             </div>
@@ -88,7 +88,7 @@
                                     class="flex-shrink-0 text-gray-500 hover:text-red-600 transition-colors duration-200 flex"
                                 >
                                     <x-heroicon-o-x class="w-4 h-4" />
-                                    <span class="sr-only">{{ __('Remove file') }}</span>
+                                    <span class="sr-only">{{ __('filament::file.delete') }}</span>
                                 </button>
                             @endif
                         </div>

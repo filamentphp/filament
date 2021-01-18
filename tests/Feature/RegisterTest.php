@@ -14,7 +14,7 @@ class RegisterTest extends TestCase
     {
         $this->get(route('filament.register'))
             ->assertSuccessful()
-            ->assertSee(__('filament::auth.register'));
+            ->assertSee(__('filament::auth.createAccount'));
     }
 
     public function test_can_register()

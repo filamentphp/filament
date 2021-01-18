@@ -68,7 +68,7 @@ class ResetPassword extends Component
         return [
             Text::make('email')
                 ->type('email')
-                ->label('E-Mail Address')
+                ->label('filament::fields.labels.email')
                 ->modelDirective('wire:model.lazy')
                 ->extraAttributes([
                     'required' => 'true',
@@ -76,7 +76,7 @@ class ResetPassword extends Component
                 ]),
             Text::make('password')
                 ->type('password')
-                ->label('Password')
+                ->label('filament::fields.labels.password')
                 ->extraAttributes([
                     'required' => 'true',
                     'autofocus' => 'true',
@@ -84,7 +84,7 @@ class ResetPassword extends Component
                 ]),
             Text::make('password_confirmation')
                 ->type('password')
-                ->label('Confirm New Password')
+                ->label('filament::fields.labels.newPassword')
                 ->extraAttributes([
                     'required' => 'true',
                     'autocomplete' => 'new-password',
@@ -95,7 +95,7 @@ class ResetPassword extends Component
     public function render(): \Illuminate\View\View
     {
         return view('filament::livewire.auth.reset-password')
-            ->layout('filament::layouts.auth', ['title' => __('Reset Password')]);
+            ->layout('filament::layouts.auth', ['title' => __('filament::auth.resetPassword')]);
     }
 
     /**

@@ -15,6 +15,6 @@
 
 @if (count($field->tabs) > 1 && $errors->any())
     <p role="alert" class="text-red-700 font-medium text-sm leading-tight">
-        {{ __('Errors found. Please check all form tabs for errors and try again.') }}
+        {{ __('filament::tabs.error') }}
     </p>
 @endif

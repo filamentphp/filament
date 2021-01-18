@@ -49,24 +49,24 @@ class Login extends Component
         return [
             Text::make('email')
                 ->type('email')
-                ->label('E-Mail Address')
+                ->label('filament::fields.labels.email')
                 ->extraAttributes([
                     'required' => 'true',
                     'autocomplete' => 'email',
                     'autofocus' => 'true',
                 ])
                 ->hint(Route::has('filament.register') 
-                    ? '['.__('filament::auth.register').']('.route('filament.register').')' 
+                    ? '['.__('filament::auth.createAccount').']('.route('filament.register').')' 
                     : null
                 ),
             Text::make('password')
                 ->type('password')
-                ->label('Password')
+                ->label('filament::fields.labels.password')
                 ->extraAttributes([
                     'required' => 'true',
                     'autocomplete' => 'current-password',
                 ])
-                ->hint('['.__('Forgot Your Password?').']('.route('filament.password.forgot').')'),
+                ->hint('['.__('filament::auth.forgotPassword').']('.route('filament.password.forgot').')'),
             Checkbox::make('remember')
                 ->label('Remember me'),
         ];
