@@ -105,7 +105,7 @@ class Profile extends Component
                         ->avatar($this->avatar)
                         ->user($this->user)
                         ->deleteMethod('deleteAvatar'),
-                    Fieldset::make('Update Password')
+                    Fieldset::make('filament::profile.labels.updatePassword')
                         ->fields([
                             Text::make('password')
                                 ->type('password')
