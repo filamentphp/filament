@@ -10,8 +10,9 @@
     "require": {
         "php": "^7.4|^8.0",
         "blade-ui-kit/blade-heroicons": "^0.3",
-        "illuminate/contracts": "^8.0",
+        "danharrin/livewire-rate-limiting": "^0.1.0",
         "graham-campbell/markdown": "^13.1",
+        "illuminate/contracts": "^8.0",
         "league/glide-laravel": "^1.0",
         "livewire/livewire": "^2.2",
         "thomaswelton/laravel-gravatar": "^1.0",
