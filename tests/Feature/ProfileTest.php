@@ -105,7 +105,7 @@ class ProfileTest extends TestCase
     {
         $this->getComponent()
             ->call('submit')
-            ->assertDispatchedBrowserEvent('notify', __('Profile saved!'));
+            ->assertDispatchedBrowserEvent('notify', __('filament::profile.updated'));
     }
 
     public function test_can_upload_avatar()
@@ -143,7 +143,7 @@ class ProfileTest extends TestCase
 
         $this->getComponent()
             ->call('deleteAvatar')
-            ->assertDispatchedBrowserEvent('notify', __('Avatar removed for :name', ['name' => $this->user->name]));
+            ->assertDispatchedBrowserEvent('notify', __('filament::avatar.delete', ['name' => $this->user->name]));
 
         Storage::disk(config('filament.storage_disk'))->assertMissing($this->user->avatar);
     }

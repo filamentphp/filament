@@ -31,7 +31,7 @@ class ForgotPasswordTest extends TestCase
     {
         $this->get(route('filament.password.forgot')) 
             ->assertSuccessful()
-            ->assertSee(__('Reset Password'));
+            ->assertSee(__('filament::auth.resetPassword'));
     }
 
     public function test_email_is_required()

@@ -41,7 +41,7 @@ class MakeUser extends Command
         }, ['email','required|email|unique:users']);
 
         $password = $this->validateInput(function() {
-            return $this->secret('Password');
+            return $this->secret('filament::fields.labels.password');
         }, ['password', 'required|min:8']);
 
         $user = app('Filament\User')::create([

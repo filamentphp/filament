@@ -70,7 +70,7 @@ class Profile extends Component
             $this->user->avatar = null;
             $this->user->save();
 
-            $this->notify(__('Avatar removed for :name', ['name' => $this->user->name]));
+            $this->notify(__('filament::avatar.delete', ['name' => $this->user->name]));
         }
     }
 
@@ -82,8 +82,8 @@ class Profile extends Component
     public function fields()
     {
         return [
-            Tabs::make('Profile')
-                ->tab('Account', [
+            Tabs::make('filament::profile.title')
+                ->tab('filament::profile.tabs.account', [
                     Layout::make('grid grid-cols-1 lg:grid-cols-2 gap-6')
                         ->fields([
                             Text::make('user.name')
@@ -93,7 +93,7 @@ class Profile extends Component
                                 ]),
                             Text::make('user.email')
                                 ->type('email')
-                                ->label('E-Mail Address')
+                                ->label('filament::fields.labels.email')
                                 ->modelDirective('wire:model.lazy')
                                 ->extraAttributes([
                                     'required' => 'true',
@@ -101,7 +101,7 @@ class Profile extends Component
                                 ]),                      
                         ]),   
                     Avatar::make('avatar')
-                        ->label('User Photo')
+                        ->label('filament::profile.labels.userPhoto')
                         ->avatar($this->avatar)
                         ->user($this->user)
                         ->deleteMethod('deleteAvatar'),
@@ -109,19 +109,19 @@ class Profile extends Component
                         ->fields([
                             Text::make('password')
                                 ->type('password')
-                                ->label('Password')
+                                ->label('filament::fields.labels.password')
                                 ->extraAttributes([
                                     'autocomplete' => 'new-password',
                                 ])
-                                ->hint(__('Optional'))
-                                ->help('Leave blank to keep current password.'),
+                                ->hint(__('filament::fields.hints.optional'))
+                                ->help(__('filament::profile.help.passwordKeep')),
                             Text::make('password_confirmation')
                                 ->type('password')
-                                ->label('Confirm New Password')
+                                ->label('filament::fields.labels.newPassword')
                                 ->extraAttributes([
                                     'autocomplete' => 'new-password',
                                 ])
-                                ->hint(__('Optional')),
+                                ->hint(__('filament::fields.hints.optional')),
                         ])
                         ->class('grid grid-cols-1 lg:grid-cols-2 gap-6'),   
                 ]),
@@ -156,12 +156,12 @@ class Profile extends Component
 
         $this->user->save();
 
-        $this->notify(__('Profile saved!'));
+        $this->notify(__('filament::profile.updated'));
     }
 
     public function render(): \Illuminate\View\View
     {
         return view('filament::livewire.profile')
-            ->layout('filament::layouts.app', ['title' => __('Profile')]);;
+            ->layout('filament::layouts.app', ['title' => __('filament::profile.title')]);;
     }
 }

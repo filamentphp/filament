@@ -42,10 +42,10 @@ class Register extends Component
                     'required' => 'true',
                     'autofocus' => 'true',
                 ])
-                ->hint('['.__('Back to login').']('.route('filament.login').')'),
+                ->hint('['.__('filament::auth.backToLogin').']('.route('filament.login').')'),
             Text::make('email')
                 ->type('email')
-                ->label('E-Mail Address')
+                ->label('filament::fields.labels.email')
                 ->modelDirective('wire:model.lazy')
                 ->extraAttributes([
                     'required' => 'true',
@@ -53,14 +53,14 @@ class Register extends Component
                 ]),
             Text::make('password')
                 ->type('password')
-                ->label('Password')
+                ->label('filament::fields.labels.password')
                 ->extraAttributes([
                     'required' => 'true',
                     'autocomplete' => 'new-password',
                 ]),
             Text::make('password_confirmation')
                 ->type('password')
-                ->label('Confirm New Password')
+                ->label('filament::fields.labels.newPassword')
                 ->extraAttributes([
                     'required' => 'true',
                     'autocomplete' => 'new-password',
@@ -90,6 +90,6 @@ class Register extends Component
     public function render(): \Illuminate\View\View
     {
         return view('filament::livewire.auth.register')
-            ->layout('filament::layouts.auth', ['title' => __('filament::auth.register')]);
+            ->layout('filament::layouts.auth', ['title' => __('filament::auth.createAccount')]);
     }
 }

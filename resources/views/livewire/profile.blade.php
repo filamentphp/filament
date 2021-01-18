@@ -6,6 +6,6 @@
         class="btn-primary" 
         wire:loading.attr="disabled"
     >
-        {{ __('Update Profile') }}
+        {{ __('filament::profile.update') }}
     </x-filament::button>
 </x-filament::form>
