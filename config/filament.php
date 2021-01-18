@@ -15,57 +15,22 @@ return [
     */
 
     'features' => [
-        // Features::registration(),
-        // Features::dashboard(),
-        // Features::profile(),
-        // Features::resources(),
+         Features::dashboard(),
+         Features::profile(),
+         Features::resources(),
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Models
+    | Route Prefix
     |--------------------------------------------------------------------------
     |
-    | Eloquent models used by Filament.
+    | The default is `admin` but you can change it to whatever works best and
+    | doesn't conflict with the routing in your application.
     |
-    */    
-    
-    'models' => [
+    */
 
-        'user' => config('auth.providers.users.model'),
-    
-    ],
-
-    'prefix' => [
-
-        /*
-        |--------------------------------------------------------------------------
-        | Route Prefix
-        |--------------------------------------------------------------------------
-        |
-        | The default is `admin` but you can change it to whatever works best and
-        | doesn't conflict with the routing in your application.
-        | 
-        */
-
-        'route' => 'admin',
-
-        /*
-        |--------------------------------------------------------------------------
-        | Component Prefix
-        |--------------------------------------------------------------------------
-        |
-        | If set with the default "filament", for example, 
-        | you can reference components like:
-        |
-        | <x-filament-alert />
-        | <x-filament::input />
-        |
-        */
-
-        'component' => 'filament',
-        
-    ],
+    'prefix' => 'admin',
 
     /*
     |--------------------------------------------------------------------------
@@ -97,7 +62,6 @@ return [
         'login' => Filament\Http\Livewire\Auth\Login::class,
         'forgot-password' => Filament\Http\Livewire\Auth\ForgotPassword::class,
         'reset-password' => Filament\Http\Livewire\Auth\ResetPassword::class,
-        'register' => Filament\Http\Livewire\Auth\Register::class,
         'logout' => Filament\Http\Livewire\Auth\Logout::class,
         'dashboard' => Filament\Http\Livewire\Dashboard::class,
         'profile' => Filament\Http\Livewire\Profile::class,
@@ -113,7 +77,7 @@ return [
     | use any of the disks defined in the `config/filesystems.php`.
     |
     */
-    
+
     'storage_disk' => env('FILAMENT_STORAGE_DISK', 'public'),
 
     /*
@@ -127,7 +91,7 @@ return [
     */
 
     'cache_disk' => env('FILAMENT_CACHE_DISK', 'local'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Cache Path Prefix
@@ -137,7 +101,7 @@ return [
     | disk defined above.
     |
     */
-    
-    'cache_path_prefix' =>  'filament/cache',
+
+    'cache_path_prefix' => 'filament/cache',
 
 ];
