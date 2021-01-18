@@ -83,7 +83,7 @@ class Profile extends Component
     {
         return [
             Tabs::make('filament::profile.title')
-                ->tab('filament::profile.tabs.account', array_merge_recursive([
+                ->tab('filament::profile.tabs.account', [
                     Layout::make('grid grid-cols-1 lg:grid-cols-2 gap-6')
                         ->fields([
                             Text::make('user.name')
