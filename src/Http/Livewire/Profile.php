@@ -82,7 +82,7 @@ class Profile extends Component
     public function fields()
     {
         return [
-            'profile' => Tabs::make('Profile')
+            Tabs::make('Profile')
                 ->tab('Account', [
                     Layout::make('grid grid-cols-1 lg:grid-cols-2 gap-6')
                         ->fields([
