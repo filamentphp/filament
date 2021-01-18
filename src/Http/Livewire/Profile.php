@@ -75,21 +75,11 @@ class Profile extends Component
     }
 
     /**
-     * Ability to merge and append account fields.
-     * 
-     * @return array
-     */
-    public function accountFields()
-    {
-        return [];
-    }
-
-    /**
      * @return array
      *
      * @psalm-return array{0: mixed}
      */
-    public function fields(): array
+    public function fields()
     {
         return [
             Tabs::make('filament::profile.title')
@@ -134,7 +124,7 @@ class Profile extends Component
                                 ->hint(__('filament::fields.hints.optional')),
                         ])
                         ->class('grid grid-cols-1 lg:grid-cols-2 gap-6'),   
-                ], $this->accountFields())),
+                ]),
         ];
     }
 
