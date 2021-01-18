@@ -80,7 +80,7 @@ class FilamentServiceProvider extends ServiceProvider
                 $this->app[Navigation::class]->dashboard = config('filament.nav.dashboard', [
                     'path' => 'filament.dashboard',
                     'active' => 'filament.dashboard',
-                    'label' => 'Dashboard',
+                    'label' => __('filament::dashboard.title'),
                     'icon' => 'heroicon-o-home',
                     'sort' => -9999,
                 ]);

@@ -6,7 +6,7 @@ class Avatar extends Field
 {
     public $avatar;
 
-    public $buttonLabel = 'Change';
+    public $buttonLabel = 'filament::avatar.change';
 
     public $deleteMethod;
 

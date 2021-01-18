@@ -47,7 +47,7 @@
                                     wire:sortable.handle
                                 >
                                     <x-heroicon-o-menu-alt-4 class="w-4 h-4" aria-hidden="true" />
-                                    <span class="sr-only">{{ __('Sort item') }}</span>
+                                    <span class="sr-only">{{ __('filament::relation.sort') }}</span>
                                 </button>
                             @endif
                             <div class="flex-grow overflow-x-auto">
@@ -61,7 +61,7 @@
                                 wire:click="{{ $field->deleteMethod }}('{{ $key }}')"
                             >
                                 <x-heroicon-o-x class="w-4 h-4" />
-                                <span class="sr-only">{{ __('Remove item') }}</span>
+                                <span class="sr-only">{{ __('filament::relation.delete') }}</span>
                             </button>
                         @endif
                     </li>

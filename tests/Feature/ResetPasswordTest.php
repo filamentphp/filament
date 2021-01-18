@@ -2,6 +2,17 @@
 
 namespace Filament\Tests\Feature;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Password;
+use Livewire\Livewire;
+use Filament\Tests\TestCase;
+use Filament\Facades\Filament;
+use Filament\Tests\Database\Models\User;
+use Filament\Http\Livewire\Auth\{
+    Login,
+    ResetPassword,
+};
+
 //class ResetPasswordTest extends TestCase
 //{
 //    public function setUp(): void
@@ -15,7 +26,7 @@ namespace Filament\Tests\Feature;
 //    {
 //        $this->get(route('filament.password.reset', $this->token))
 //            ->assertSuccessful()
-//            ->assertSee(__('Reset Password'));
+//            ->assertSee(__('filament::auth.resetPassword'));
 //    }
 //
 //    public function test_email_is_required()
@@ -85,7 +96,7 @@ namespace Filament\Tests\Feature;
 //
 //    public function test_user_can_reset_password_with_valid_token()
 //    {
-//        $dashboard = FilamentManager::home();
+//        $dashboard = Filament::home();
 //
 //        Livewire::test(ResetPassword::class, ['token' => $this->token])
 //            ->set('email', $this->user->email)

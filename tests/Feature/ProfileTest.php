@@ -2,6 +2,13 @@
 
 namespace Filament\Tests\Feature;
 
+use Livewire\Livewire;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
+use Filament\Tests\TestCase;
+use Filament\Tests\Database\Models\User;
+use Filament\Http\Livewire\Profile;
+
 //class ProfileTest extends TestCase
 //{
 //    public $user;
@@ -17,12 +24,6 @@ namespace Filament\Tests\Feature;
 //            ->set('user.name', '')
 //            ->call('submit')
 //            ->assertHasErrors(['user.name' => 'required']);
-//    }
-//
-//    protected function getComponent()
-//    {
-//        return Livewire::actingAs($this->user)
-//            ->test(Profile::class);
 //    }
 //
 //    public function test_name_is_minimum_two_characters()
@@ -104,7 +105,7 @@ namespace Filament\Tests\Feature;
 //    {
 //        $this->getComponent()
 //            ->call('submit')
-//            ->assertDispatchedBrowserEvent('notify', __('Profile saved!'));
+//            ->assertDispatchedBrowserEvent('notify', __('filament::profile.updated'));
 //    }
 //
 //    public function test_can_upload_avatar()
@@ -142,8 +143,14 @@ namespace Filament\Tests\Feature;
 //
 //        $this->getComponent()
 //            ->call('deleteAvatar')
-//            ->assertDispatchedBrowserEvent('notify', __('Avatar removed for :name', ['name' => $this->user->name]));
+//            ->assertDispatchedBrowserEvent('notify', __('filament::avatar.delete', ['name' => $this->user->name]));
 //
 //        Storage::disk(config('filament.storage_disk'))->assertMissing($this->user->avatar);
+//    }
+//
+//    protected function getComponent()
+//    {
+//        return Livewire::actingAs($this->user)
+//            ->test(Profile::class);
 //    }
 //}

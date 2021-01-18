@@ -2,6 +2,15 @@
 
 namespace Filament\Tests\Feature;
 
+use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
+use Livewire\Livewire;
+use Filament\Tests\TestCase;
+use Filament\Tests\Database\Models\User;
+use Filament\Http\Livewire\Auth\ForgotPassword;
+
 //class ForgotPasswordTest extends TestCase
 //{
 //    use WithoutMiddleware;
@@ -22,7 +31,7 @@ namespace Filament\Tests\Feature;
 //    {
 //        $this->get(route('filament.password.forgot'))
 //            ->assertSuccessful()
-//            ->assertSee(__('Reset Password'));
+//            ->assertSee(__('filament::auth.resetPassword'));
 //    }
 //
 //    public function test_email_is_required()

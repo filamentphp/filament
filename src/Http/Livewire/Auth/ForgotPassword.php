@@ -22,13 +22,13 @@ class ForgotPassword extends Component
         return [
             Text::make('email')
                 ->type('email')
-                ->label('E-Mail Address')
+                ->label('filament::fields.labels.email')
                 ->extraAttributes([
                     'required' => 'true',
                     'autofocus' => 'true',
                     'autocomplete' => 'email',
                 ])
-                ->hint('[' . __('Back to login') . '](' . route('filament.login') . ')'),
+                ->hint('[' . __('filament::auth.backToLogin') . '](' . route('filament.login') . ')'),
         ];
     }
 
@@ -47,6 +47,6 @@ class ForgotPassword extends Component
     public function render()
     {
         return view('filament::livewire.auth.forgot-password')
-            ->layout('filament::layouts.auth', ['title' => __('Reset Password')]);
+            ->layout('filament::layouts.auth', ['title' => __('filament::auth.resetPassword')]);
     }
 }
