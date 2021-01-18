@@ -1,11 +1,13 @@
-<x-filament::form class="space-y-6">
-    <x-filament::fields :fields="$this->fields()" />
+<x-filament::form>
+    <x-filament::card class="space-y-6">
+        <x-filament::fields :fields="$this->fields()" />
 
-    <x-filament::button 
-        type="submit" 
-        class="btn-primary" 
-        wire:loading.attr="disabled"
-    >
-        {{ __('filament::profile.update') }}
-    </x-filament::button>
+        <x-filament::button 
+            type="submit" 
+            class="btn-primary" 
+            wire:loading.attr="disabled"
+        >
+            {{ __('filament::profile.update') }}
+        </x-filament::button>
+    </x-filament::card>
 </x-filament::form>
