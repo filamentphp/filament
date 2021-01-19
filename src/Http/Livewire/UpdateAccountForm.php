@@ -121,7 +121,7 @@ class UpdateAccountForm extends Component
                 'required',
                 'string',
                 'email',
-                Rule::unique('users', 'email')->ignore($this->user->id),
+                Rule::unique('filament_users', 'email')->ignore($this->user->id),
             ],
             'user.name' => 'required|min:2|max:255',
         ];

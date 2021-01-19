@@ -4,7 +4,6 @@ namespace Filament\Commands;
 
 use Filament\Models\FilamentUser;
 use Filament\Traits\ConsoleValidation;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 
@@ -20,15 +19,15 @@ class MakeUser extends Command
     {
         $name = $this->validateInput(function () {
             return $this->ask('Name');
-        }, ['name', 'required|string']);
+        }, 'name', ['required']);
 
         $email = $this->validateInput(function () {
             return $this->ask('Email');
-        }, ['email', 'required|email|unique:users']);
+        }, 'email', ['required', 'email', 'unique:filament_users']);
 
         $password = $this->validateInput(function () {
-            return $this->secret('filament::fields.labels.password');
-        }, ['password', 'required|min:8']);
+            return $this->secret('Password');
+        }, 'password', ['required', 'min:8']);
 
         $user = FilamentUser::create([
             'name' => $name,
@@ -36,11 +35,7 @@ class MakeUser extends Command
             'password' => Hash::make($password),
         ]);
 
-        event(new Registered($user));
-
-        $appName = config('app.name');
-        $loginURL = route('filament.auth.login');
-
-        $this->info("Success! You may now login to {$appName} at {$loginURL} with user `{$user->name}`.");
+        $loginUrl = route('filament.auth.login');
+        $this->info("Success! $user->email may now log in at $loginUrl.");
     }
 }

@@ -6,29 +6,21 @@ use Illuminate\Support\Facades\Validator;
 
 trait ConsoleValidation
 {
-    public function validateInput($method, $rules)
+    protected function validateInput($callback, $field, $rules)
     {
-        $value = $method();
-        $validate = $this->doValidation($rules, $value);
+        $input = $callback();
 
-        if ($validate !== true) {
-            $this->error($validate);
-            $value = $this->validateInput($method, $rules);
-        }
-
-        return $value;
-    }
-
-    private function doValidation($rules, $value)
-    {
-        $validator = Validator::make([$rules[0] => $value], [$rules[0] => $rules[1]]);
+        $validator = Validator::make(
+            [$field => $input],
+            [$field => $rules],
+        );
 
         if ($validator->fails()) {
-            $error = $validator->errors();
+            $this->error($validator->errors()->first());
 
-            return $error->first($rules[0]);
-        } else {
-            return true;
+            $input = $this->validateInput($callback, $field, $rules);
         }
+
+        return $input;
     }
 }

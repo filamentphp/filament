@@ -6,11 +6,23 @@ use Filament\Filament;
 
 trait CanPretendToBeAFile
 {
+    protected function httpDate($timestamp)
+    {
+        return sprintf('%s GMT', gmdate('D, d M Y H:i:s', $timestamp));
+    }
+
+    protected function matchesCache($lastModified)
+    {
+        $ifModifiedSince = $_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? '';
+
+        return @strtotime($ifModifiedSince) === $lastModified;
+    }
+
     protected function pretendResponseIsFile($file, $contentType)
     {
         $path = Filament::distPath($file);
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             abort(404);
         }
 
@@ -31,17 +43,5 @@ trait CanPretendToBeAFile
             'Cache-Control' => $cacheControl,
             'Last-Modified' => $this->httpDate($lastModified),
         ]);
-    }
-
-    protected function matchesCache($lastModified)
-    {
-        $ifModifiedSince = $_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? '';
-
-        return @strtotime($ifModifiedSince) === $lastModified;
-    }
-
-    protected function httpDate($timestamp)
-    {
-        return sprintf('%s GMT', gmdate('D, d M Y H:i:s', $timestamp));
     }
 }

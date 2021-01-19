@@ -71,7 +71,7 @@ class Index extends Component
 ### Create a user
 
 ```bash
-php artisan filament:user
+php artisan make:filament-user
 ```
 
 ---
