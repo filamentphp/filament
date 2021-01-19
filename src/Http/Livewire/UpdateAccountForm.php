@@ -136,6 +136,5 @@ class UpdateAccountForm extends Component
     {
         return view('filament::update-account-form')
             ->layout('filament::layouts.app', ['title' => __('filament::update-account-form.title')]);
-        ;
     }
 }

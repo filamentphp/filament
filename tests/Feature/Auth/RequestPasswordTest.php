@@ -12,7 +12,7 @@ use Livewire\Livewire;
 class RequestPasswordTest extends TestCase
 {
     /** @test */
-    public function can_view_password_reset_request_page()
+    public function canViewPasswordResetRequestPage()
     {
         $this->get(route('filament.auth.password.request'))
             ->assertSuccessful()
@@ -20,7 +20,7 @@ class RequestPasswordTest extends TestCase
     }
 
     /** @test */
-    public function can_request_password_reset()
+    public function canRequestPasswordReset()
     {
         Notification::fake();
 
@@ -36,7 +36,7 @@ class RequestPasswordTest extends TestCase
     }
 
     /** @test */
-    public function is_redirected_if_already_logged_in()
+    public function isRedirectedIfAlreadyLoggedIn()
     {
         $user = FilamentUser::factory()->create();
 
@@ -47,7 +47,7 @@ class RequestPasswordTest extends TestCase
     }
 
     /** @test */
-    public function shows_an_error_when_bad_request_attempt()
+    public function showsAnErrorWhenBadRequestAttempt()
     {
         Notification::fake();
 
@@ -62,7 +62,7 @@ class RequestPasswordTest extends TestCase
     }
 
     /** @test */
-    public function email_is_required()
+    public function emailIsRequired()
     {
         Livewire::test(RequestPassword::class)
             ->set('email', null)
@@ -71,7 +71,7 @@ class RequestPasswordTest extends TestCase
     }
 
     /** @test */
-    public function email_is_valid_email()
+    public function emailIsValidEmail()
     {
         Livewire::test(RequestPassword::class)
             ->set('email', 'invalid-email')

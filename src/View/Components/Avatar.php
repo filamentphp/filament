@@ -33,7 +33,7 @@ class Avatar extends Component
 
     public function src(int $dpr = 1)
     {
-        if (!$this->user->avatar) {
+        if (! $this->user->avatar) {
             return Gravatar::src($this->user->email, $this->size * $dpr);
         }
 

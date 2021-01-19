@@ -77,7 +77,7 @@ class ResetPassword extends Component
             $this->user = $user;
         });
 
-        if ($resetStatus !== Password::PASSWORD_RESET) {
+        if (Password::PASSWORD_RESET !== $resetStatus) {
             $this->addError('email', __('filament::auth.' . $resetStatus));
 
             return;

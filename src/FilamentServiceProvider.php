@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
+use ReflectionClass;
 use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentServiceProvider extends ServiceProvider
@@ -28,6 +29,13 @@ class FilamentServiceProvider extends ServiceProvider
         $this->bootLivewireComponents();
         $this->bootNavigation();
         $this->bootPublishing();
+    }
+
+    public function register()
+    {
+        $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
+
+        $this->registerProviders();
     }
 
     protected function bootAuthConfiguration()
@@ -52,7 +60,7 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootCommands()
     {
-        if (!$this->app->runningInConsole()) {
+        if (! $this->app->runningInConsole()) {
             return;
         }
 
@@ -94,13 +102,13 @@ class FilamentServiceProvider extends ServiceProvider
                     ->replace(['/', '.php'], ['\\', ''])->__toString();
             })
             ->filter(function ($class) {
-                return is_subclass_of($class, Component::class) &&
-                    !(new \ReflectionClass($class))->isAbstract();
+                return is_subclass_of($class, Component::class)
+                    && ! (new ReflectionClass($class))->isAbstract();
             })
             ->each(function ($class) {
                 $name = 'filament.' . collect(explode('.', str_replace(['/', '\\'], '.', Str::after($class, 'Filament\\Http\\Livewire\\'))))
-                        ->map([Str::class, 'kebab'])
-                        ->implode('.');
+                    ->map([Str::class, 'kebab'])
+                    ->implode('.');
 
                 Livewire::component($name, $class);
             });
@@ -124,7 +132,7 @@ class FilamentServiceProvider extends ServiceProvider
                     $route = route('filament.resource', ['resource' => $key]);
                     $routePath = implode('/', array_slice(explode('/', $route), -3, 2, true)) . '/' . $key;
 
-                    $this->app[Navigation::class]->$key = [
+                    $this->app[Navigation::class]->{$key} = [
                         'path' => $route,
                         'active' => [
                             $routePath,
@@ -141,7 +149,7 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootPublishing()
     {
-        if (!$this->app->runningInConsole()) {
+        if (! $this->app->runningInConsole()) {
             return;
         }
 
@@ -160,13 +168,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/filament'),
         ], 'filament-views');
-    }
-
-    public function register()
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
-
-        $this->registerProviders();
     }
 
     protected function registerProviders()

@@ -48,7 +48,7 @@ class RequestPassword extends Component
 
         $requestStatus = Password::broker('filament_users')->sendResetLink($this->validate());
 
-        if ($requestStatus !== Password::RESET_LINK_SENT) {
+        if (Password::RESET_LINK_SENT !== $requestStatus) {
             $this->addError('email', __('filament::auth.' . $requestStatus));
 
             return;

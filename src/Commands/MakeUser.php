@@ -17,17 +17,11 @@ class MakeUser extends Command
 
     public function handle()
     {
-        $name = $this->validateInput(function () {
-            return $this->ask('Name');
-        }, 'name', ['required']);
+        $name = $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']);
 
-        $email = $this->validateInput(function () {
-            return $this->ask('Email');
-        }, 'email', ['required', 'email', 'unique:filament_users']);
+        $email = $this->validateInput(fn () => $this->ask('Email'), 'email', ['required', 'email', 'unique:filament_users']);
 
-        $password = $this->validateInput(function () {
-            return $this->secret('Password');
-        }, 'password', ['required', 'min:8']);
+        $password = $this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8']);
 
         $user = FilamentUser::create([
             'name' => $name,
@@ -36,6 +30,6 @@ class MakeUser extends Command
         ]);
 
         $loginUrl = route('filament.auth.login');
-        $this->info("Success! $user->email may now log in at $loginUrl.");
+        $this->info("Success! {$user->email} may now log in at {$loginUrl}.");
     }
 }

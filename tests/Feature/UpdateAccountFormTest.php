@@ -13,14 +13,14 @@ class UpdateAccountFormTest extends TestCase
 {
     public $user;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->user = FilamentUser::factory()->create();
 
         $this->be($this->user);
     }
 
-    public function test_name_is_required()
+    public function testNameIsRequired()
     {
         Livewire::test(UpdateAccountForm::class)
             ->set('user.name', '')
@@ -28,7 +28,7 @@ class UpdateAccountFormTest extends TestCase
             ->assertHasErrors(['user.name' => 'required']);
     }
 
-    public function test_name_is_minimum_two_characters()
+    public function testNameIsMinimumTwoCharacters()
     {
         Livewire::test(UpdateAccountForm::class)
             ->set('user.name', 'a')
@@ -36,7 +36,7 @@ class UpdateAccountFormTest extends TestCase
             ->assertHasErrors(['user.name' => 'min']);
     }
 
-    public function test_email_is_required()
+    public function testEmailIsRequired()
     {
         Livewire::test(UpdateAccountForm::class)
             ->set('user.email', '')
@@ -44,7 +44,7 @@ class UpdateAccountFormTest extends TestCase
             ->assertHasErrors(['user.email' => 'required']);
     }
 
-    public function test_email_is_valid_email()
+    public function testEmailIsValidEmail()
     {
         Livewire::test(UpdateAccountForm::class)
             ->set('user.email', 'Something')
@@ -52,7 +52,7 @@ class UpdateAccountFormTest extends TestCase
             ->assertHasErrors(['user.email' => 'email']);
     }
 
-    public function test_email_is_unique()
+    public function testEmailIsUnique()
     {
         User::factory()->create(['email' => 'test@example.com']);
 
@@ -62,7 +62,7 @@ class UpdateAccountFormTest extends TestCase
             ->assertHasErrors(['user.email' => 'unique']);
     }
 
-    public function test_password_may_be_left_blank()
+    public function testPasswordMayBeLeftBlank()
     {
         Livewire::test(UpdateAccountForm::class)
             ->set('password', '')
@@ -70,7 +70,7 @@ class UpdateAccountFormTest extends TestCase
             ->assertHasNoErrors(['password' => 'nullable']);
     }
 
-    public function test_password_is_minimum_eight_characters()
+    public function testPasswordIsMinimumEightCharacters()
     {
         Livewire::test(UpdateAccountForm::class)
             ->set('password', 'test')
@@ -78,7 +78,7 @@ class UpdateAccountFormTest extends TestCase
             ->assertHasErrors(['password' => 'min']);
     }
 
-    public function test_password_must_be_confirmed()
+    public function testPasswordMustBeConfirmed()
     {
         Livewire::test(UpdateAccountForm::class)
             ->set('password', 'test')
@@ -86,7 +86,7 @@ class UpdateAccountFormTest extends TestCase
             ->assertHasErrors(['password' => 'confirmed']);
     }
 
-    public function test_password_confirmation_may_be_left_blank()
+    public function testPasswordConfirmationMayBeLeftBlank()
     {
         Livewire::test(UpdateAccountForm::class)
             ->set('password_confirmation', '')
@@ -94,7 +94,7 @@ class UpdateAccountFormTest extends TestCase
             ->assertHasNoErrors(['password_confirmation' => 'nullable']);
     }
 
-    public function test_password_confirmation_matches_password()
+    public function testPasswordConfirmationMatchesPassword()
     {
         Livewire::test(UpdateAccountForm::class)
             ->set('password', 'test')
@@ -103,14 +103,14 @@ class UpdateAccountFormTest extends TestCase
             ->assertHasErrors(['password_confirmation' => 'same']);
     }
 
-    public function test_account_saved()
+    public function testAccountSaved()
     {
         Livewire::test(UpdateAccountForm::class)
             ->call('submit')
             ->assertDispatchedBrowserEvent('notify', __('filament::update-account-form.updated'));
     }
 
-    public function test_can_upload_avatar()
+    public function testCanUploadAvatar()
     {
         $file = UploadedFile::fake()->image('avatar.jpg');
 
@@ -122,12 +122,12 @@ class UpdateAccountFormTest extends TestCase
 
         $this->user->refresh();
 
-        $this->assertNotNull($this->user->avatar);
+        static::assertNotNull($this->user->avatar);
 
         Storage::disk(config('filament.storage_disk'))->assertExists($this->user->avatar);
     }
 
-    public function test_can_delete_avatar()
+    public function testCanDeleteAvatar()
     {
         $file = UploadedFile::fake()->image('avatar.jpg');
 
@@ -139,7 +139,7 @@ class UpdateAccountFormTest extends TestCase
 
         $this->user->refresh();
 
-        $this->assertNotNull($this->user->avatar);
+        static::assertNotNull($this->user->avatar);
 
         Storage::disk(config('filament.storage_disk'))->assertExists($this->user->avatar);
 

@@ -13,7 +13,7 @@ class Layout extends BaseField
         $this->class = $class;
     }
 
-    public static function make(string $class = null)
+    public static function make(?string $class = null)
     {
         return new static($class);
     }

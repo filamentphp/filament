@@ -24,15 +24,15 @@ class Choices extends BaseField
         return $this;
     }
 
-    protected function name()
-    {
-        return $this->type === 'radio' ? $this->model : $this->model . '[]';
-    }
-
     public function radio()
     {
         $this->type = 'radio';
 
         return $this;
+    }
+
+    protected function name()
+    {
+        return 'radio' === $this->type ? $this->model : $this->model . '[]';
     }
 }

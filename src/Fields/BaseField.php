@@ -73,7 +73,7 @@ class BaseField
 
     public function render()
     {
-        if (!$this->enabled) {
+        if (! $this->enabled) {
             return;
         }
 

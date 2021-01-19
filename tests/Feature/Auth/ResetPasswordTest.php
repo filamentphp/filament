@@ -14,7 +14,7 @@ use Livewire\Livewire;
 class ResetPasswordTest extends TestCase
 {
     /** @test */
-    public function can_view_password_reset_page()
+    public function canViewPasswordResetPage()
     {
         $this->get(URL::signedRoute('filament.auth.password.reset', [
             'token' => $this->generateToken(),
@@ -23,17 +23,8 @@ class ResetPasswordTest extends TestCase
             ->assertSeeLivewire('filament.auth.reset-password');
     }
 
-    protected function generateToken($user = null)
-    {
-        if (!$user) {
-            $user = FilamentUser::factory()->create();
-        }
-
-        return Password::broker('filament_users')->createToken($user);
-    }
-
     /** @test */
-    public function can_reset_password()
+    public function canResetPassword()
     {
         $user = FilamentUser::factory()->create();
         $newPassword = Str::random();
@@ -50,14 +41,14 @@ class ResetPasswordTest extends TestCase
 
         $this->assertAuthenticatedAs($user, 'filament');
 
-        $this->assertTrue(Auth::guard('filament')->attempt([
+        static::assertTrue(Auth::guard('filament')->attempt([
             'email' => $user->email,
             'password' => $newPassword,
         ]));
     }
 
     /** @test */
-    public function is_forbidden_if_request_is_unsigned()
+    public function isForbiddenIfRequestIsUnsigned()
     {
         $this->get(route('filament.auth.password.reset', [
             'token' => $this->generateToken(),
@@ -66,7 +57,7 @@ class ResetPasswordTest extends TestCase
     }
 
     /** @test */
-    public function is_redirected_if_already_logged_in()
+    public function isRedirectedIfAlreadyLoggedIn()
     {
         $user = FilamentUser::factory()->create();
 
@@ -79,7 +70,7 @@ class ResetPasswordTest extends TestCase
     }
 
     /** @test */
-    public function shows_an_error_when_invalid_token()
+    public function showsAnErrorWhenInvalidToken()
     {
         $user = FilamentUser::factory()->create();
         $newPassword = Str::random();
@@ -95,7 +86,7 @@ class ResetPasswordTest extends TestCase
     }
 
     /** @test */
-    public function email_is_required()
+    public function emailIsRequired()
     {
         Livewire::test(ResetPassword::class, [
             'token' => $this->generateToken(),
@@ -106,7 +97,7 @@ class ResetPasswordTest extends TestCase
     }
 
     /** @test */
-    public function email_is_valid_email()
+    public function emailIsValidEmail()
     {
         Livewire::test(ResetPassword::class, [
             'token' => $this->generateToken(),
@@ -117,7 +108,7 @@ class ResetPasswordTest extends TestCase
     }
 
     /** @test */
-    public function password_is_required()
+    public function passwordIsRequired()
     {
         Livewire::test(ResetPassword::class, [
             'token' => $this->generateToken(),
@@ -128,7 +119,7 @@ class ResetPasswordTest extends TestCase
     }
 
     /** @test */
-    public function password_contains_minimum_8_characters()
+    public function passwordContainsMinimum8Characters()
     {
         Livewire::test(ResetPassword::class, [
             'token' => $this->generateToken(),
@@ -139,7 +130,7 @@ class ResetPasswordTest extends TestCase
     }
 
     /** @test */
-    public function password_is_confirmed()
+    public function passwordIsConfirmed()
     {
         Livewire::test(ResetPassword::class, [
             'token' => $this->generateToken(),
@@ -151,5 +142,14 @@ class ResetPasswordTest extends TestCase
             ->set('passwordConfirmation', 'different-password')
             ->call('submit')
             ->assertHasErrors(['passwordConfirmation' => 'same']);
+    }
+
+    protected function generateToken($user = null)
+    {
+        if (! $user) {
+            $user = FilamentUser::factory()->create();
+        }
+
+        return Password::broker('filament_users')->createToken($user);
     }
 }

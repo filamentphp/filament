@@ -19,11 +19,11 @@ class ServiceProvider extends BaseServiceProvider
         $array = array_merge($original, $merging);
 
         foreach ($original as $key => $value) {
-            if (!is_array($value)) {
+            if (! is_array($value)) {
                 continue;
             }
 
-            if (!Arr::exists($merging, $key)) {
+            if (! Arr::exists($merging, $key)) {
                 continue;
             }
 

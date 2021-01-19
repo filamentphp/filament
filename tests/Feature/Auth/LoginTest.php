@@ -10,7 +10,7 @@ use Livewire\Livewire;
 class LoginTest extends TestCase
 {
     /** @test */
-    public function can_view_login_page()
+    public function canViewLoginPage()
     {
         $this->get(route('filament.auth.login'))
             ->assertSuccessful()
@@ -18,7 +18,7 @@ class LoginTest extends TestCase
     }
 
     /** @test */
-    public function can_login()
+    public function canLogin()
     {
         $user = FilamentUser::factory()->create();
 
@@ -32,7 +32,7 @@ class LoginTest extends TestCase
     }
 
     /** @test */
-    public function is_redirected_if_already_logged_in()
+    public function isRedirectedIfAlreadyLoggedIn()
     {
         $user = FilamentUser::factory()->create();
 
@@ -43,7 +43,7 @@ class LoginTest extends TestCase
     }
 
     /** @test */
-    public function shows_an_error_when_bad_login_attempt()
+    public function showsAnErrorWhenBadLoginAttempt()
     {
         $user = FilamentUser::factory()->create();
 
@@ -57,7 +57,7 @@ class LoginTest extends TestCase
     }
 
     /** @test */
-    public function email_is_required()
+    public function emailIsRequired()
     {
         Livewire::test(Login::class)
             ->set('email', null)
@@ -66,7 +66,7 @@ class LoginTest extends TestCase
     }
 
     /** @test */
-    public function email_is_valid_email()
+    public function emailIsValidEmail()
     {
         Livewire::test(Login::class)
             ->set('email', 'invalid-email')
@@ -75,7 +75,7 @@ class LoginTest extends TestCase
     }
 
     /** @test */
-    public function password_is_required()
+    public function passwordIsRequired()
     {
         $user = FilamentUser::factory()->create();
 

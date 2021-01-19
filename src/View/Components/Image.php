@@ -27,9 +27,7 @@ class Image extends Component
 
     public function srcSet()
     {
-        collect($this->dprs)->map(function ($dpr) {
-            return $this->src($dpr) . ' ' . $dpr . 'x';
-        })->implode(', ')->toArray();
+        collect($this->dprs)->map(fn ($dpr) => $this->src($dpr) . ' ' . $dpr . 'x')->implode(', ')->toArray();
     }
 
     public function render()

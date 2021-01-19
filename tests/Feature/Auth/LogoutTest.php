@@ -10,7 +10,7 @@ use Livewire\Livewire;
 class LogoutTest extends TestCase
 {
     /** @test */
-    public function can_log_out()
+    public function canLogOut()
     {
         $user = FilamentUser::factory()->create();
 
