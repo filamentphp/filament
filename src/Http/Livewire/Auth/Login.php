@@ -22,8 +22,30 @@ class Login extends Component
 
     protected $rules = [
         'email' => 'required|email',
-        'password' => 'required|min:8',
+        'password' => 'required',
     ];
+
+    public function authenticate()
+    {
+        try {
+            $this->rateLimit(5);
+        } catch (TooManyRequestsException $exception) {
+            $this->addError('email', __('auth.throttle', [
+                'seconds' => $exception->secondsUntilAvailable,
+                'minutes' => ceil($exception->secondsUntilAvailable / 60),
+            ]));
+
+            return;
+        }
+
+        if (! Auth::guard('filament')->attempt($this->validate(), $this->remember)) {
+            $this->addError('email', __('auth.failed'));
+
+            return;
+        }
+
+        return redirect()->intended(route('filament.dashboard'));
+    }
 
     public function fields()
     {
@@ -43,36 +65,10 @@ class Login extends Component
                     'required' => 'true',
                     'autocomplete' => 'current-password',
                 ])
-                ->hint('[' . __('filament::auth.forgotPassword') . '](' . route('filament.password.forgot') . ')'),
+                ->hint('[' . __('filament::auth.forgotPassword') . '](' . route('filament.auth.password.forgot') . ')'),
             Checkbox::make('remember')
                 ->label('Remember me'),
         ];
-    }
-
-    public function submit(Request $request)
-    {
-        try {
-            $this->rateLimit(5);
-        } catch (TooManyRequestsException $exception) {
-            throw ValidationException::withMessages([
-                'email' => trans('auth.throttle', [
-                    'seconds' => $exception->secondsUntilAvailable,
-                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
-                ]),
-            ]);
-
-            return;
-        }
-
-        $data = $this->validate();
-
-        if (Auth::guard('filament')->attempt($data, (bool) $this->remember)) {
-            $this->clearRateLimiter();
-
-            return redirect()->intended(Filament::home());
-        }
-
-        $this->addError('email', __('auth.failed'));
     }
 
     public function render()

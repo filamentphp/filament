@@ -2,10 +2,9 @@
 
 namespace Filament;
 
-use App\Providers\RouteServiceProvider;
 use Illuminate\Container\Container;
-use Illuminate\Support\{HtmlString, Str,};
-use Illuminate\Support\Facades\{File, Request, Storage,};
+use Illuminate\Support\{HtmlString, Str};
+use Illuminate\Support\Facades\{File, Request, Storage};
 use League\Glide\Urls\UrlBuilderFactory;
 
 class FilamentManager
@@ -24,14 +23,7 @@ class FilamentManager
 
     public function handling()
     {
-        return preg_match('#^' . config('filament.prefix') . '($|/)' . '#i', Request::path());
-    }
-
-    public function home()
-    {
-        return Features::hasDashboard() ?
-            config('filament.home', route('filament.dashboard'))
-            : RouteServiceProvider::HOME;
+        return preg_match('#^' . config('filament.path') . '($|/)' . '#i', Request::path());
     }
 
     public function image($path, $manipulations = [])
@@ -45,8 +37,8 @@ class FilamentManager
     {
         return in_array($this->storage()->getMimeType($file), [
             'image/jpeg',
-            'image/png',
             'image/gif',
+            'image/png',
         ]);
     }
 

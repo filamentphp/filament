@@ -1,13 +1,13 @@
 <?php
 
-namespace Filament\Tests\Feature;
+namespace Filament\Tests\Feature\Auth;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 use Livewire\Livewire;
 use Filament\Tests\TestCase;
 use Filament\Facades\Filament;
-use Filament\Tests\Database\Models\User;
+use Filament\Tests\Database\Models\FilamentUser;
 use Filament\Http\Livewire\Auth\{
     Login,
     ResetPassword,
@@ -24,7 +24,7 @@ use Filament\Http\Livewire\Auth\{
 //
 //    public function test_can_see_forgot_password_form_with_valid_token()
 //    {
-//        $this->get(route('filament.password.reset', $this->token))
+//        $this->get(route('filament.auth.password.reset', $this->token))
 //            ->assertSuccessful()
 //            ->assertSee(__('filament::auth.resetPassword'));
 //    }
@@ -96,20 +96,18 @@ use Filament\Http\Livewire\Auth\{
 //
 //    public function test_user_can_reset_password_with_valid_token()
 //    {
-//        $dashboard = Filament::home();
-//
 //        Livewire::test(ResetPassword::class, ['token' => $this->token])
 //            ->set('email', $this->user->email)
 //            ->set('password', 'newpassword')
 //            ->set('password_confirmation', 'newpassword')
 //            ->call('submit')
 //            ->assertHasNoErrors()
-//            ->assertRedirect($dashboard);
+//            ->assertRedirect(route('filament.dashboard'));
 //
 //        Livewire::test(Login::class)
 //            ->set('email', $this->user->email)
 //            ->set('password', 'newpassword')
 //            ->call('submit')
-//            ->assertRedirect($dashboard);
+//            ->assertRedirect(route('filament.dashboard'));
 //    }
 //}

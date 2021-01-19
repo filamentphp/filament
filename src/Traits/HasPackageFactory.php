@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tests\Database\Traits;
+namespace Filament\Traits;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;

@@ -2,12 +2,12 @@
 
 namespace Filament\Models;
 
-use Filament\Tests\Database\Traits\HasPackageFactory;
+use Filament\Traits\HasPackageFactory;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class FilamentUser extends Authenticatable
 {
     use HasPackageFactory, Notifiable;
 
@@ -18,13 +18,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $table = 'filament_users';
-
     public function sendPasswordResetNotification($token)
     {
         $notification = new ResetPassword($token);
         $notification->createUrlUsing(function ($notifiable, $token) {
-            return route('filament.password.reset', [
+            return route('filament.auth.password.reset', [
                 'token' => $token,
                 'email' => $notifiable->getEmailForPasswordReset(),
             ]);

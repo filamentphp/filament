@@ -1,12 +1,12 @@
 <?php
 
-namespace Filament\Tests\Feature;
+namespace Filament\Tests\Feature\Auth;
 
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Filament\Tests\TestCase;
-use Filament\Tests\Database\Models\User;
+use Filament\Tests\Database\Models\FilamentUser;
 use Filament\Http\Livewire\Profile;
 
 //class ProfileTest extends TestCase

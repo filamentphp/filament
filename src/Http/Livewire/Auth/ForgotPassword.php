@@ -28,7 +28,7 @@ class ForgotPassword extends Component
                     'autofocus' => 'true',
                     'autocomplete' => 'email',
                 ])
-                ->hint('[' . __('filament::auth.backToLogin') . '](' . route('filament.login') . ')'),
+                ->hint('[' . __('filament::auth.backToLogin') . '](' . route('filament.auth.login') . ')'),
         ];
     }
 

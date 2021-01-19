@@ -20,11 +20,11 @@ class BladeDirectives
 
     public static function scripts()
     {
-        return '{!! \Filament::scripts() !!}';
+        return '{!! \Filament\Filament::scripts() !!}';
     }
 
     public static function styles()
     {
-        return '{!! \Filament::styles() !!}';
+        return '{!! \Filament\Filament::styles() !!}';
     }
 }

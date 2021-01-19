@@ -1,41 +1,31 @@
 <?php
 
-use Filament\Features;
-use Filament\Http\Controllers\{AssetController, ImageController, ResourceController,};
+use Filament\Http\Controllers;
+use Filament\Http\Livewire;
+use Filament\Http\Middleware\{Authenticate, RedirectIfAuthenticated};
 use Illuminate\Support\Facades\Route;
 
 // Assets
 Route::name('assets.')->group(function () {
-    Route::get('filament.css', [AssetController::class, 'css'])->name('css');
-    Route::get('filament.css.map', [AssetController::class, 'cssMap']);
-    Route::get('filament.js', [AssetController::class, 'js'])->name('js');
-    Route::get('filament.js.map', [AssetController::class, 'jsMap']);
+    Route::get('filament.css', [Controllers\AssetController::class, 'css'])->name('css');
+    Route::get('filament.css.map', [Controllers\AssetController::class, 'cssMap']);
+    Route::get('filament.js', [Controllers\AssetController::class, 'js'])->name('js');
+    Route::get('filament.js.map', [Controllers\AssetController::class, 'jsMap']);
 });
 
 // Images
-Route::get('/image/{path}', ImageController::class)->where('path', '.*')->name('image');
+Route::get('/image/{path}', Controllers\ImageController::class)->where('path', '.*')->name('image');
 
 // Authentication
-Route::middleware(['guest:filament'])->group(function () {
-    Route::get('login', config('filament.livewire.login'))->name('login');
-    Route::get('forgot-password', config('filament.livewire.forgot-password'))->name('password.forgot');
-    Route::get('reset-password/{token}', config('filament.livewire.reset-password'))->name('password.reset');
+Route::middleware([RedirectIfAuthenticated::class])->name('auth.')->group(function () {
+    Route::get('login', Livewire\Auth\Login::class)->name('login');
+    Route::get('forgot-password', Livewire\Auth\ForgotPassword::class)->name('password.forgot');
+    Route::get('reset-password/{token}', Livewire\Auth\ResetPassword::class)->name('password.reset');
 });
 
 // Authenticated routes
-Route::middleware(['auth.filament:filament'])->group(function () {
-    // Dashboard
-    if (Features::hasDashboard()) {
-        Route::get('/', config('filament.livewire.dashboard'))->name('dashboard');
-    }
-
-    // Profile
-    if (Features::hasUserProfile()) {
-        Route::get('/profile', config('filament.livewire.profile'))->name('profile');
-    }
-
-    // Resources
-    if (Features::hasResources()) {
-        Route::get('/resources/{resource}/{action?}/{id?}', ResourceController::class)->name('resource');
-    }
+Route::middleware([Authenticate::class])->group(function () {
+    Route::get('/', Livewire\Dashboard::class)->name('dashboard');
+    Route::get('/profile', Livewire\Profile::class)->name('profile');
+    Route::get('/resources/{resource}/{action?}/{id?}', Controllers\ResourceController::class)->name('resource');
 });

@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tests\Feature;
+namespace Filament\Tests\Feature\Auth;
 
 //class LogoutTest extends TestCase
 //{
@@ -9,7 +9,7 @@ namespace Filament\Tests\Feature;
 //        $this->withoutExceptionHandling();
 //        $user = User::factory()->create();
 //        $this->actingAs($user)
-//            ->get(FilamentManager::home())
+//            ->get(route('filament.dashboard'))
 //            ->assertSeeLivewire('filament-logout');
 //    }
 //
@@ -19,7 +19,7 @@ namespace Filament\Tests\Feature;
 //        Livewire::actingAs($user)
 //            ->test(Logout::class)
 //            ->call('logout')
-//            ->assertRedirect(route('filament.login'));
+//            ->assertRedirect(route('filament.auth.login'));
 //
 //        $this->assertGuest();
 //    }
@@ -28,6 +28,6 @@ namespace Filament\Tests\Feature;
 //    {
 //        Livewire::test(Logout::class)
 //            ->call('logout')
-//            ->assertRedirect(route('filament.login'));
+//            ->assertRedirect(route('filament.auth.login'));
 //    }
 //}

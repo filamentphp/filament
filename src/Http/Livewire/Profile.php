@@ -92,7 +92,7 @@ class Profile extends Component
 
     public function mount()
     {
-        $this->user = Auth::user();
+        $this->user = Auth::guard('filament')->user();
     }
 
     public function submit()

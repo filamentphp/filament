@@ -2,7 +2,7 @@
 
 namespace Filament\Commands;
 
-use Filament\Models\User;
+use Filament\Models\FilamentUser;
 use Filament\Traits\ConsoleValidation;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Console\Command;
@@ -30,7 +30,7 @@ class MakeUser extends Command
             return $this->secret('filament::fields.labels.password');
         }, ['password', 'required|min:8']);
 
-        $user = User::create([
+        $user = FilamentUser::create([
             'name' => $name,
             'email' => $email,
             'password' => Hash::make($password),
@@ -39,7 +39,7 @@ class MakeUser extends Command
         event(new Registered($user));
 
         $appName = config('app.name');
-        $loginURL = route('filament.login');
+        $loginURL = route('filament.auth.login');
 
         $this->info("Success! You may now login to {$appName} at {$loginURL} with user `{$user->name}`.");
     }

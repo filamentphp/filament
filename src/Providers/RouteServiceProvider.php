@@ -2,25 +2,24 @@
 
 namespace Filament\Providers;
 
-use Filament\Http\Middleware\Authenticate;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    public function boot()
-    {
-        parent::boot();
-
-        Route::aliasMiddleware('auth.filament', Authenticate::class);
-    }
-
     public function map()
     {
         Route::name('filament.')
-            ->middleware(config('filament.middleware', ['web']))
-            ->prefix(config('filament.prefix'))
+            ->middleware([
+                \Filament\Http\Middleware\EncryptCookies::class,
+                \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+                \Illuminate\Session\Middleware\StartSession::class,
+                \Illuminate\Session\Middleware\AuthenticateSession::class,
+                \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+                \Filament\Http\Middleware\VerifyCsrfToken::class,
+                \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            ])
+            ->prefix(config('filament.path'))
             ->group(__DIR__ . '/../../routes/web.php');
     }
 }

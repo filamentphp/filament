@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tests\Feature;
+namespace Filament\Tests\Feature\Auth;
 
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 use Livewire\Livewire;
 use Filament\Tests\TestCase;
-use Filament\Tests\Database\Models\User;
+use Filament\Tests\Database\Models\FilamentUser;
 use Filament\Http\Livewire\Auth\ForgotPassword;
 
 //class ForgotPasswordTest extends TestCase
@@ -29,7 +29,7 @@ use Filament\Http\Livewire\Auth\ForgotPassword;
 //
 //    public function test_can_see_forgot_password_form()
 //    {
-//        $this->get(route('filament.password.forgot'))
+//        $this->get(route('filament.auth.password.forgot'))
 //            ->assertSuccessful()
 //            ->assertSee(__('filament::auth.resetPassword'));
 //    }

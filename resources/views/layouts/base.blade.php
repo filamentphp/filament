@@ -10,8 +10,8 @@
         @stack('head')
     </head>
     <body class="text-gray-700 font-sans">
-        @yield('content')  
-        <x-filament::notification />  
+        @yield('content')
+        <x-filament::notification />
         @livewireScripts
         @filamentScripts
         @stack('js')

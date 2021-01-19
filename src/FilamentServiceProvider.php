@@ -3,10 +3,14 @@
 namespace Filament;
 
 use Filament\Commands\MakeUser;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\View\Compilers\BladeCompiler;
+use Illuminate\Support\Str;
+use Livewire\Component;
 use Livewire\Livewire;
 use Filament\Providers\{RouteServiceProvider, ServiceProvider};
+use Symfony\Component\Finder\SplFileInfo;
+use function Livewire\str;
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -21,6 +25,7 @@ class FilamentServiceProvider extends ServiceProvider
         $this->bootCommands();
         $this->bootDirectives();
         $this->bootLoaders();
+        $this->bootLivewireComponents();
         $this->bootNavigation();
         $this->bootPublishing();
     }
@@ -41,7 +46,7 @@ class FilamentServiceProvider extends ServiceProvider
 
         $this->app['config']->set('auth.providers.filament_users', [
             'driver' => 'eloquent',
-            'model' => \Filament\Models\User::class,
+            'model' => \Filament\Models\FilamentUser::class,
         ]);
     }
 
@@ -64,7 +69,11 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootLoaders()
     {
-        $this->loadViewComponentsAs('filament', config('filament.components', []));
+        $this->loadViewComponentsAs('filament', [
+            'avatar' => \Filament\View\Components\Avatar::class,
+            'image' => \Filament\View\Components\Image::class,
+            'nav' => \Filament\View\Components\Nav::class,
+        ]);
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'filament');
 
@@ -73,40 +82,58 @@ class FilamentServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'filament');
     }
 
+    protected function bootLivewireComponents()
+    {
+        $filesystem = new Filesystem();
+
+        collect($filesystem->allFiles(__DIR__ . '/Http/Livewire'))
+            ->map(function (SplFileInfo $file) {
+                return Str::of('Filament/Http/Livewire/' . $file->getRelativePathname())
+                    ->replace(['/', '.php'], ['\\', ''])->__toString();
+            })
+            ->filter(function ($class) {
+                return is_subclass_of($class, Component::class) &&
+                    ! (new \ReflectionClass($class))->isAbstract();
+            })
+            ->each(function ($class) {
+                $name = 'filament.' . collect(explode('.', str_replace(['/', '\\'], '.', Str::after($class, 'Filament\\Http\\Livewire\\'))))
+                        ->map([Str::class, 'kebab'])
+                        ->implode('.');
+
+                Livewire::component($name, $class);
+            });
+    }
+
     protected function bootNavigation()
     {
         $this->app->booted(function () {
-            if (Features::hasDashboard()) {
-                $this->app[Navigation::class]->dashboard = config('filament.nav.dashboard', [
-                    'path' => 'filament.dashboard',
-                    'active' => 'filament.dashboard',
-                    'label' => __('filament::dashboard.title'),
-                    'icon' => 'heroicon-o-home',
-                    'sort' => -9999,
-                ]);
-            }
+            $this->app[Navigation::class]->dashboard = [
+                'path' => 'filament.dashboard',
+                'active' => 'filament.dashboard',
+                'label' => __('filament::dashboard.title'),
+                'icon' => 'heroicon-o-home',
+                'sort' => -9999,
+            ];
 
-            if (Features::hasResources()) {
-                $this->app[FilamentManager::class]->resources()->each(function ($item, $key) {
-                    $resource = $this->app->make($item);
+            $this->app[FilamentManager::class]->resources()->each(function ($item, $key) {
+                $resource = $this->app->make($item);
 
-                    if ($resource->enabled && array_key_exists('index', $resource->actions())) {
-                        $route = route('filament.resource', ['resource' => $key]);
-                        $routePath = implode('/', array_slice(explode('/', $route), -3, 2, true)).'/'.$key;
+                if ($resource->enabled && array_key_exists('index', $resource->actions())) {
+                    $route = route('filament.resource', ['resource' => $key]);
+                    $routePath = implode('/', array_slice(explode('/', $route), -3, 2, true)).'/'.$key;
 
-                        $this->app[Navigation::class]->$key = [
-                            'path' => $route,
-                            'active' => [
-                                $routePath,
-                                $routePath.'/*',
-                            ],
-                            'label' => $resource->label(),
-                            'icon' => $resource->icon,
-                            'sort' => $resource->sort,
-                        ];
-                    }
-                });
-            }
+                    $this->app[Navigation::class]->$key = [
+                        'path' => $route,
+                        'active' => [
+                            $routePath,
+                            $routePath.'/*',
+                        ],
+                        'label' => $resource->label(),
+                        'icon' => $resource->icon,
+                        'sort' => $resource->sort,
+                    ];
+                }
+            });
         });
     }
 
@@ -119,7 +146,7 @@ class FilamentServiceProvider extends ServiceProvider
         ], 'filament-assets');
 
         $this->publishes([
-            __DIR__.'/../config/filament.php.stub' => config_path('filament.php'),
+            __DIR__.'/../config/filament.php' => config_path('filament.php'),
         ], 'filament-config');
 
         $this->publishes([
@@ -135,18 +162,7 @@ class FilamentServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
 
-        $this->registerLivewireComponents();
-
         $this->registerProviders();
-    }
-
-    protected function registerLivewireComponents()
-    {
-        $this->app->afterResolving(BladeCompiler::class, function () {
-            foreach (config('filament.livewire', []) as $alias => $component) {
-                Livewire::component("filament-$alias", $component);
-            }
-        });
     }
 
     protected function registerProviders()

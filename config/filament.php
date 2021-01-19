@@ -1,24 +1,6 @@
 <?php
 
-use Filament\Features;
-
 return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Features
-    |--------------------------------------------------------------------------
-    |
-    | All of Filament's features are optional. You may enable the features
-    | by adding / uncommenting items in this array as needed.
-    |
-    */
-
-    'features' => [
-        Features::dashboard(),
-        Features::profile(),
-        Features::resources(),
-    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -30,43 +12,7 @@ return [
     |
     */
 
-    'prefix' => 'admin',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Components
-    |--------------------------------------------------------------------------
-    |
-    | Below you reference all class-based components use by Filament.
-    | You may override these for customization in your own app.
-    |
-    */
-
-    'components' => [
-        'avatar' => Filament\View\Components\Avatar::class,
-        'image' => Filament\View\Components\Image::class,
-        'nav' => Filament\View\Components\Nav::class,
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Livewire Components
-    |--------------------------------------------------------------------------
-    |
-    | Below you reference all the required Livewire components used by Filament.
-    | You may override these components for customization in your own app.
-    |
-    */
-
-    'livewire' => [
-        'login' => Filament\Http\Livewire\Auth\Login::class,
-        'forgot-password' => Filament\Http\Livewire\Auth\ForgotPassword::class,
-        'reset-password' => Filament\Http\Livewire\Auth\ResetPassword::class,
-        'logout' => Filament\Http\Livewire\Auth\Logout::class,
-        'dashboard' => Filament\Http\Livewire\Dashboard::class,
-        'profile' => Filament\Http\Livewire\Profile::class,
-        'account' => Filament\Http\Livewire\Account::class,
-    ],
+    'path' => 'admin',
 
     /*
     |--------------------------------------------------------------------------

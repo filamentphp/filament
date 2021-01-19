@@ -11,13 +11,9 @@ class Logout extends Component
 
     public function logout()
     {
-        if (Auth::guest()) {
-            return redirect()->route('filament.login');
-        }
+        Auth::guard('filament')->logout();
 
-        Auth::logout();
-
-        return redirect()->route('filament.login');
+        return redirect()->route('filament.auth.login');
     }
 
     public function render()
