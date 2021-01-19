@@ -2,13 +2,13 @@
 
 return [
 
-    'title' => 'Profile',
+    'title' => 'Account',
 
-    'edit' => 'Edit Profile',
+    'edit' => 'Edit Account',
 
-    'update' => 'Update Profile',
+    'update' => 'Update Account',
 
-    'updated' => 'Profile updated!',
+    'updated' => 'Account updated!',
 
     'tabs' => [
 

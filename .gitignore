@@ -11,5 +11,4 @@
 composer.phar
 composer.lock
 phpunit.xml
-psalm.xml
 Thumbs.db

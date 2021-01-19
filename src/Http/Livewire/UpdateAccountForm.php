@@ -2,14 +2,14 @@
 
 namespace Filament\Http\Livewire;
 
-use Filament\Fields\{Avatar, Fieldset, Layout, Tabs, Text,};
+use Filament\Fields\{Avatar, Fieldset, Layout, Text,};
 use Filament\Filament;
 use Filament\Traits\WithNotifications;
 use Illuminate\Support\Facades\{Auth, Hash,};
 use Illuminate\Validation\Rule;
 use Livewire\{Component, WithFileUploads,};
 
-class Profile extends Component
+class UpdateAccountForm extends Component
 {
     use WithFileUploads, WithNotifications;
 
@@ -17,7 +17,7 @@ class Profile extends Component
 
     public $password;
 
-    public $password_confirmation;
+    public $passwordConfirmation;
 
     public $user;
 
@@ -56,11 +56,11 @@ class Profile extends Component
                         ]),
                 ]),
             Avatar::make('avatar')
-                ->label('filament::profile.labels.userPhoto')
+                ->label('filament::update-account-form.labels.userPhoto')
                 ->avatar($this->avatar)
                 ->user($this->user)
                 ->deleteMethod('deleteAvatar'),
-            Fieldset::make('filament::profile.labels.updatePassword')
+            Fieldset::make('filament::update-account-form.labels.updatePassword')
                 ->fields([
                     Text::make('password')
                         ->type('password')
@@ -69,8 +69,8 @@ class Profile extends Component
                             'autocomplete' => 'new-password',
                         ])
                         ->hint(__('filament::fields.hints.optional'))
-                        ->help(__('filament::profile.help.passwordKeep')),
-                    Text::make('password_confirmation')
+                        ->help(__('filament::update-account-form.help.passwordKeep')),
+                    Text::make('passwordConfirmation')
                         ->type('password')
                         ->label('filament::fields.labels.newPassword')
                         ->extraAttributes([
@@ -80,11 +80,6 @@ class Profile extends Component
                 ])
                 ->class('grid grid-cols-1 lg:grid-cols-2 gap-6'),
         ];
-    }
-
-    public function accountFields()
-    {
-        return [];
     }
 
     public function mount()
@@ -106,44 +101,35 @@ class Profile extends Component
             $this->reset(['password', 'password_confirmation']);
         }
 
-        $this->save();
-
         $this->user->save();
 
-        $this->notify(__('filament::profile.updated'));
-    }
-
-    public function save()
-    {
-        return;
+        $this->notify(__('filament::update-account-form.updated'));
     }
 
     public function updatedAvatar($value)
     {
-        $this->validate([
-            'avatar' => $this->rules()['avatar'],
-        ]);
+        $this->validateOnly('avatar');
     }
 
     public function rules()
     {
         return [
-            'user.name' => 'required|string|min:2|max:255',
+            'avatar' => 'nullable|image|max:1024',
+            'password' => 'nullable|string|required_with:password_confirmation|min:6|confirmed',
+            'password_confirmation' => 'nullable|string|same:password',
             'user.email' => [
                 'required',
                 'string',
                 'email',
                 Rule::unique('users', 'email')->ignore($this->user->id),
             ],
-            'avatar' => 'nullable|image|max:1024',
-            'password' => 'nullable|string|required_with:password_confirmation|min:6|confirmed',
-            'password_confirmation' => 'nullable|string|same:password',
+            'user.name' => 'required|min:2|max:255',
         ];
     }
 
     public function render()
     {
-        return view('filament::.profile')
-            ->layout('filament::layouts.app', ['title' => __('filament::profile.title')]);;
+        return view('filament::update-account-form')
+            ->layout('filament::layouts.app', ['title' => __('filament::update-account-form.title')]);;
     }
 }

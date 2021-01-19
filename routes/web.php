@@ -27,6 +27,6 @@ Route::middleware([RedirectIfAuthenticated::class])->name('auth.')->group(functi
 // Authenticated routes
 Route::middleware([Authenticate::class])->group(function () {
     Route::get('/', Livewire\Dashboard::class)->name('dashboard');
-    Route::get('/profile', Livewire\Profile::class)->name('profile');
+    Route::get('/account', Livewire\UpdateAccountForm::class)->name('account');
     Route::get('/resources/{resource}/{action?}/{id?}', Controllers\ResourceController::class)->name('resource');
 });

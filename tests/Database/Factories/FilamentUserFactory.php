@@ -4,7 +4,6 @@ namespace Filament\Tests\Database\Factories;
 
 use Filament\Models\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class FilamentUserFactory extends Factory
