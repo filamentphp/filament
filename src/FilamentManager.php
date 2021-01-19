@@ -54,16 +54,6 @@ class FilamentManager
         })->mapWithKeys(fn ($class) => [Str::kebab(class_basename($class)) => $class]);
     }
 
-    public function distPath($path = '')
-    {
-        return $this->basePath('dist/' . ltrim($path, '/'));
-    }
-
-    public function basePath($path = '')
-    {
-        return __DIR__ . '/../' . ltrim($path, '/');
-    }
-
     public function scripts()
     {
         $key = '/js/filament.js';
@@ -89,6 +79,44 @@ class FilamentManager
         ');
     }
 
+    protected function getAsset(string $key)
+    {
+        $manifest = json_decode(file_get_contents($this->distPath('mix-manifest.json')), true);
+
+        if (! isset($manifest[$key])) {
+            return;
+        }
+
+        return $manifest[$key];
+    }
+
+    public function distPath($path = '')
+    {
+        return $this->basePath('dist/' . ltrim($path, '/'));
+    }
+
+    public function basePath($path = '')
+    {
+        return __DIR__ . '/../' . ltrim($path, '/');
+    }
+
+    protected function getPublicAsset(string $key)
+    {
+        $manifestFile = public_path('vendor/filament/mix-manifest.json');
+
+        if (! file_exists($manifestFile)) {
+            return;
+        }
+
+        $manifest = json_decode(file_get_contents($manifestFile), true);
+
+        if (! isset($manifest[$key])) {
+            return;
+        }
+
+        return $manifest[$key];
+    }
+
     public function styles()
     {
         $key = '/css/filament.css';
@@ -112,33 +140,5 @@ class FilamentManager
             <!-- Filament Styles -->
             <link rel="stylesheet" href="' . route('filament.assets.css', $cssInfo) . '">
         ');
-    }
-
-    protected function getAsset(string $key)
-    {
-        $manifest = json_decode(file_get_contents($this->distPath('mix-manifest.json')), true);
-
-        if (! isset($manifest[$key])) {
-            return;
-        }
-
-        return $manifest[$key];
-    }
-
-    protected function getPublicAsset(string $key)
-    {
-        $manifestFile = public_path('vendor/filament/mix-manifest.json');
-
-        if (! file_exists($manifestFile)) {
-            return;
-        }
-
-        $manifest = json_decode(file_get_contents($manifestFile), true);
-
-        if (! isset($manifest[$key])) {
-            return;
-        }
-
-        return $manifest[$key];
     }
 }

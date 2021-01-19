@@ -13,13 +13,6 @@ class UpdateAccountFormTest extends TestCase
 {
     public $user;
 
-    protected function setUp(): void
-    {
-        $this->user = FilamentUser::factory()->create();
-
-        $this->be($this->user);
-    }
-
     public function testNameIsRequired()
     {
         Livewire::test(UpdateAccountForm::class)
@@ -148,5 +141,12 @@ class UpdateAccountFormTest extends TestCase
             ->assertDispatchedBrowserEvent('notify', __('filament::avatar.delete', ['name' => $this->user->name]));
 
         Storage::disk(config('filament.storage_disk'))->assertMissing($this->user->avatar);
+    }
+
+    protected function setUp(): void
+    {
+        $this->user = FilamentUser::factory()->create();
+
+        $this->be($this->user);
     }
 }

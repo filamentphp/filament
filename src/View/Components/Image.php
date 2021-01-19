@@ -20,14 +20,14 @@ class Image extends Component
         $this->manipulations = $manipulations;
     }
 
-    public function src($dpr = 1)
-    {
-        return Filament::image($this->src, array_merge(['dpr' => $dpr], $this->manipulations));
-    }
-
     public function srcSet()
     {
         collect($this->dprs)->map(fn ($dpr) => $this->src($dpr) . ' ' . $dpr . 'x')->implode(', ')->toArray();
+    }
+
+    public function src($dpr = 1)
+    {
+        return Filament::image($this->src, array_merge(['dpr' => $dpr], $this->manipulations));
     }
 
     public function render()

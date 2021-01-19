@@ -9,7 +9,7 @@ if (! function_exists('Filament\format_bytes')) {
             $base = log($size) / log(1024);
             $suffixes = ['bytes', 'KB', 'MB', 'GB', 'TB'];
 
-            return round(1024**($base - floor($base)), $precision) . $suffixes[(int) $base];
+            return round(1024 ** ($base - floor($base)), $precision) . $suffixes[(int) $base];
         }
 
         return $size;
