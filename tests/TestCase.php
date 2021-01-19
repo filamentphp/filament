@@ -28,6 +28,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     {
         return [
             \BladeUI\Heroicons\BladeHeroiconsServiceProvider::class,
+            \BladeUI\Icons\BladeIconsServiceProvider::class,
             \Filament\FilamentServiceProvider::class,
             \Livewire\LivewireServiceProvider::class,
         ];
