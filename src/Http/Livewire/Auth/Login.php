@@ -22,7 +22,31 @@ class Login extends Component
         'password' => 'required',
     ];
 
-    public function authenticate()
+    public function fields()
+    {
+        return [
+            Fields\Text::make('email')
+                ->type('email')
+                ->label('filament::fields.labels.email')
+                ->extraAttributes([
+                    'required' => 'true',
+                    'autocomplete' => 'email',
+                    'autofocus' => 'true',
+                ]),
+            Fields\Text::make('password')
+                ->type('password')
+                ->label('filament::fields.labels.password')
+                ->extraAttributes([
+                    'required' => 'true',
+                    'autocomplete' => 'current-password',
+                ])
+                ->hint('[' . __('filament::auth.requestPassword') . '](' . route('filament.auth.password.request') . ')'),
+            Fields\Checkbox::make('remember')
+                ->label('Remember me'),
+        ];
+    }
+
+    public function submit()
     {
         try {
             $this->rateLimit(5);
@@ -44,33 +68,9 @@ class Login extends Component
         return redirect()->intended(route('filament.dashboard'));
     }
 
-    public function fields()
-    {
-        return [
-            Fields\Text::make('email')
-                ->type('email')
-                ->label('filament::fields.labels.email')
-                ->extraAttributes([
-                    'required' => 'true',
-                    'autocomplete' => 'email',
-                    'autofocus' => 'true',
-                ]),
-            Fields\Text::make('password')
-                ->type('password')
-                ->label('filament::fields.labels.password')
-                ->extraAttributes([
-                    'required' => 'true',
-                    'autocomplete' => 'current-password',
-                ])
-                ->hint('[' . __('filament::auth.forgotPassword') . '](' . route('filament.auth.password.forgot') . ')'),
-            Fields\Checkbox::make('remember')
-                ->label('Remember me'),
-        ];
-    }
-
     public function render()
     {
-        return view('filament::livewire.auth.login')
+        return view('filament::.auth.login')
             ->layout('filament::layouts.auth', ['title' => __('filament::auth.signin')]);
     }
 }

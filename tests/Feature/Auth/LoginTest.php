@@ -18,6 +18,20 @@ class LoginTest extends TestCase
     }
 
     /** @test */
+    public function can_login()
+    {
+        $user = FilamentUser::factory()->create();
+
+        Livewire::test(Login::class)
+            ->set('email', $user->email)
+            ->set('password', 'password')
+            ->call('submit')
+            ->assertRedirect(route('filament.dashboard'));
+
+        $this->assertAuthenticatedAs($user, 'filament');
+    }
+
+    /** @test */
     public function is_redirected_if_already_logged_in()
     {
         $user = FilamentUser::factory()->create();
@@ -29,28 +43,14 @@ class LoginTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_login()
-    {
-        $user = FilamentUser::factory()->create();
-
-        Livewire::test(Login::class)
-            ->set('email', $user->email)
-            ->set('password', 'password')
-            ->call('authenticate')
-            ->assertRedirect(route('filament.dashboard'));
-
-        $this->assertAuthenticatedAs($user, 'filament');
-    }
-
-    /** @test */
-    public function bad_login_attempt_shows_message()
+    public function shows_an_error_when_bad_login_attempt()
     {
         $user = FilamentUser::factory()->create();
 
         Livewire::test(Login::class)
             ->set('email', $user->email)
             ->set('password', 'bad-password')
-            ->call('authenticate')
+            ->call('submit')
             ->assertHasErrors('email');
 
         $this->assertGuest('filament');
@@ -60,18 +60,17 @@ class LoginTest extends TestCase
     public function email_is_required()
     {
         Livewire::test(Login::class)
-            ->set('password', 'password')
-            ->call('authenticate')
+            ->set('email', null)
+            ->call('submit')
             ->assertHasErrors(['email' => 'required']);
     }
 
     /** @test */
-    public function email_must_be_valid_email()
+    public function email_is_valid_email()
     {
         Livewire::test(Login::class)
             ->set('email', 'invalid-email')
-            ->set('password', 'password')
-            ->call('authenticate')
+            ->call('submit')
             ->assertHasErrors(['email' => 'email']);
     }
 
@@ -81,8 +80,8 @@ class LoginTest extends TestCase
         $user = FilamentUser::factory()->create();
 
         Livewire::test(Login::class)
-            ->set('email', $user->email)
-            ->call('authenticate')
+            ->set('password', null)
+            ->call('submit')
             ->assertHasErrors(['password' => 'required']);
     }
 }

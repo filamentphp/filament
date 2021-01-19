@@ -9,7 +9,7 @@ class Logout extends Component
 {
     public $class;
 
-    public function logout()
+    public function submit()
     {
         Auth::guard('filament')->logout();
 
@@ -18,6 +18,6 @@ class Logout extends Component
 
     public function render()
     {
-        return view('filament::livewire.auth.logout', ['label' => __('filament::auth.logout')]);
+        return view('filament::.auth.logout', ['label' => __('filament::auth.logout')]);
     }
 }

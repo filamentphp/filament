@@ -4,10 +4,11 @@ namespace Filament\Tests;
 
 use Filament\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     protected function getPackageAliases($app)
     {

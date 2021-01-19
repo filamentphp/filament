@@ -2,19 +2,20 @@
 
 namespace Filament\Http\Livewire\Auth;
 
+use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Fields;
 use Filament\Traits\WithNotifications;
 use Illuminate\Support\Facades\Password;
 use Livewire\Component;
 
-class ForgotPassword extends Component
+class RequestPassword extends Component
 {
-    use WithNotifications;
+    use WithNotifications, WithRateLimiting;
 
     public $email;
 
     protected $rules = [
-        'email' => 'required|email',
+        'email' => ['required', 'email'],
     ];
 
     public function fields()
@@ -34,19 +35,31 @@ class ForgotPassword extends Component
 
     public function submit()
     {
-        $this->validate();
+        try {
+            $this->rateLimit(5);
+        } catch (TooManyRequestsException $exception) {
+            $this->addError('email', __('auth.throttle', [
+                'seconds' => $exception->secondsUntilAvailable,
+                'minutes' => ceil($exception->secondsUntilAvailable / 60),
+            ]));
 
-        $status = Password::sendResetLink(['email' => $this->email]);
-        if ($status === Password::RESET_LINK_SENT) {
-            $this->notify(__($status));
-        } else {
-            $this->addError('email', __($status));
+            return;
         }
+
+        $requestStatus = Password::broker('filament_users')->sendResetLink($this->validate());
+
+        if ($requestStatus !== Password::RESET_LINK_SENT) {
+            $this->addError('email', __('filament::auth.' . $requestStatus));
+
+            return;
+        }
+
+        $this->notify(__('filament::auth.' . $requestStatus));
     }
 
     public function render()
     {
-        return view('filament::livewire.auth.forgot-password')
+        return view('filament::.auth.request-password')
             ->layout('filament::layouts.auth', ['title' => __('filament::auth.resetPassword')]);
     }
 }

@@ -3,6 +3,7 @@
 use Filament\Http\Controllers;
 use Filament\Http\Livewire;
 use Filament\Http\Middleware\{Authenticate, RedirectIfAuthenticated};
+use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Support\Facades\Route;
 
 // Assets
@@ -19,8 +20,8 @@ Route::get('/image/{path}', Controllers\ImageController::class)->where('path', '
 // Authentication
 Route::middleware([RedirectIfAuthenticated::class])->name('auth.')->group(function () {
     Route::get('login', Livewire\Auth\Login::class)->name('login');
-    Route::get('forgot-password', Livewire\Auth\ForgotPassword::class)->name('password.forgot');
-    Route::get('reset-password/{token}', Livewire\Auth\ResetPassword::class)->name('password.reset');
+    Route::get('forgot-password', Livewire\Auth\RequestPassword::class)->name('password.request');
+    Route::get('reset-password/{token}', Livewire\Auth\ResetPassword::class)->middleware([ValidateSignature::class])->name('password.reset');
 });
 
 // Authenticated routes

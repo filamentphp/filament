@@ -2,112 +2,152 @@
 
 namespace Filament\Tests\Feature\Auth;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Filament\Tests\TestCase;
-use Filament\Facades\Filament;
-use Filament\Tests\Database\Models\FilamentUser;
-use Filament\Http\Livewire\Auth\{
-    Login,
-    ResetPassword,
-};
+use Filament\Models\FilamentUser;
+use Filament\Http\Livewire\Auth\ResetPassword;
 
-//class ResetPasswordTest extends TestCase
-//{
-//    public function setUp(): void
-//    {
-//        parent::setUp();
-//        $this->user = User::factory()->create();
-//        $this->token = Password::createToken($this->user);
-//    }
-//
-//    public function test_can_see_forgot_password_form_with_valid_token()
-//    {
-//        $this->get(route('filament.auth.password.reset', $this->token))
-//            ->assertSuccessful()
-//            ->assertSee(__('filament::auth.resetPassword'));
-//    }
-//
-//    public function test_email_is_required()
-//    {
-//        Livewire::test(ResetPassword::class, ['token' => $this->token])
-//            ->call('submit')
-//            ->assertHasErrors(['email' => 'required']);
-//    }
-//
-//    public function test_email_is_valid_email()
-//    {
-//        Livewire::test(ResetPassword::class, ['token' => $this->token])
-//            ->set('email', 'Something')
-//            ->call('submit')
-//            ->assertHasErrors(['email' => 'email']);
-//    }
-//
-//    public function test_password_is_required()
-//    {
-//        Livewire::test(ResetPassword::class, ['token' => $this->token])
-//            ->call('submit')
-//            ->assertHasErrors(['password' => 'required']);
-//    }
-//
-//    public function test_password_is_minimum_eight_characters()
-//    {
-//        Livewire::test(ResetPassword::class, ['token' => $this->token])
-//            ->set('password', 'test')
-//            ->call('submit')
-//            ->assertHasErrors(['password' => 'min']);
-//    }
-//
-//    public function test_password_is_confirmed()
-//    {
-//        Livewire::test(ResetPassword::class, ['token' => $this->token])
-//            ->set('password', 'test')
-//            ->set('password_confirmation', 'testzz')
-//            ->call('submit')
-//            ->assertHasErrors(['password' => 'confirmed']);
-//    }
-//
-//    public function test_cant_reset_password_with_expired_token()
-//    {
-//        DB::table('password_resets')
-//            ->where('email', $this->user->email)
-//            ->update(['created_at' => now()->subDay()]);
-//
-//        Livewire::test(ResetPassword::class, ['token' => $this->token])
-//            ->set('email', $this->user->email)
-//            ->set('password', 'newpassword')
-//            ->set('password_confirmation', 'newpassword')
-//            ->call('submit')
-//            ->assertHasErrors('email')
-//            ->assertSee(__('passwords.token'));
-//    }
-//
-//    public function test_email_must_match_token_to_reset_password()
-//    {
-//        Livewire::test(ResetPassword::class, ['token' => $this->token])
-//            ->set('email', 'other@example.com')
-//            ->set('password', 'newpassword')
-//            ->set('password_confirmation', 'newpassword')
-//            ->call('submit')
-//            ->assertHasErrors('email')
-//            ->assertSee(__('passwords.user'));
-//    }
-//
-//    public function test_user_can_reset_password_with_valid_token()
-//    {
-//        Livewire::test(ResetPassword::class, ['token' => $this->token])
-//            ->set('email', $this->user->email)
-//            ->set('password', 'newpassword')
-//            ->set('password_confirmation', 'newpassword')
-//            ->call('submit')
-//            ->assertHasNoErrors()
-//            ->assertRedirect(route('filament.dashboard'));
-//
-//        Livewire::test(Login::class)
-//            ->set('email', $this->user->email)
-//            ->set('password', 'newpassword')
-//            ->call('submit')
-//            ->assertRedirect(route('filament.dashboard'));
-//    }
-//}
+class ResetPasswordTest extends TestCase
+{
+    /** @test */
+    public function can_view_password_reset_page()
+    {
+        $this->get(URL::signedRoute('filament.auth.password.reset', [
+            'token' => $this->generateToken(),
+        ]))
+            ->assertSuccessful()
+            ->assertSeeLivewire('filament.auth.reset-password');
+    }
+
+    /** @test */
+    public function can_reset_password()
+    {
+        $user = FilamentUser::factory()->create();
+        $newPassword = Str::random();
+
+        Livewire::test(ResetPassword::class, [
+            'token' => $this->generateToken($user),
+        ])
+            ->set('email', $user->email)
+            ->set('password', $newPassword)
+            ->set('passwordConfirmation', $newPassword)
+            ->call('submit')
+            ->assertHasNoErrors()
+            ->assertRedirect(route('filament.dashboard'));
+
+        $this->assertAuthenticatedAs($user, 'filament');
+
+        $this->assertTrue(Auth::guard('filament')->attempt([
+            'email' => $user->email,
+            'password' => $newPassword,
+        ]));
+    }
+
+    /** @test */
+    public function is_forbidden_if_request_is_unsigned()
+    {
+        $this->get(route('filament.auth.password.reset', [
+            'token' => $this->generateToken(),
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function is_redirected_if_already_logged_in()
+    {
+        $user = FilamentUser::factory()->create();
+
+        $this->be($user, 'filament');
+
+        $this->get(URL::signedRoute('filament.auth.password.reset', [
+            'token' => $this->generateToken($user),
+        ]))
+            ->assertRedirect(route('filament.dashboard'));
+    }
+
+    /** @test */
+    public function shows_an_error_when_invalid_token()
+    {
+        $user = FilamentUser::factory()->create();
+        $newPassword = Str::random();
+
+        Livewire::test(ResetPassword::class, [
+            'token' => 'invalid-token',
+        ])
+            ->set('email', $user->email)
+            ->set('password', $newPassword)
+            ->set('passwordConfirmation', $newPassword)
+            ->call('submit')
+            ->assertHasErrors('email');
+    }
+
+    /** @test */
+    public function email_is_required()
+    {
+        Livewire::test(ResetPassword::class, [
+            'token' => $this->generateToken(),
+        ])
+            ->set('email', null)
+            ->call('submit')
+            ->assertHasErrors(['email' => 'required']);
+    }
+
+    /** @test */
+    public function email_is_valid_email()
+    {
+        Livewire::test(ResetPassword::class, [
+            'token' => $this->generateToken(),
+        ])
+            ->set('email', 'invalid-email')
+            ->call('submit')
+            ->assertHasErrors(['email' => 'email']);
+    }
+
+    /** @test */
+    public function password_is_required()
+    {
+        Livewire::test(ResetPassword::class, [
+            'token' => $this->generateToken(),
+        ])
+            ->set('password', null)
+            ->call('submit')
+            ->assertHasErrors(['password' => 'required']);
+    }
+
+    /** @test */
+    public function password_contains_minimum_8_characters()
+    {
+        Livewire::test(ResetPassword::class, [
+            'token' => $this->generateToken(),
+        ])
+            ->set('password', 'pass')
+            ->call('submit')
+            ->assertHasErrors(['password' => 'min']);
+    }
+
+    /** @test */
+    public function password_is_confirmed()
+    {
+        Livewire::test(ResetPassword::class, [
+            'token' => $this->generateToken(),
+        ])
+            ->set('passwordConfirmation', null)
+            ->call('submit')
+            ->assertHasErrors(['passwordConfirmation' => 'required'])
+            ->set('password', 'password')
+            ->set('passwordConfirmation', 'different-password')
+            ->call('submit')
+            ->assertHasErrors(['passwordConfirmation' => 'same']);
+    }
+
+    protected function generateToken($user = null)
+    {
+        if (! $user) $user = FilamentUser::factory()->create();
+
+        return Password::broker('filament_users')->createToken($user);
+    }
+}
