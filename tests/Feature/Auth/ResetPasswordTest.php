@@ -2,14 +2,14 @@
 
 namespace Filament\Tests\Feature\Auth;
 
+use Filament\Http\Livewire\Auth\ResetPassword;
+use Filament\Models\FilamentUser;
+use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
-use Filament\Tests\TestCase;
-use Filament\Models\FilamentUser;
-use Filament\Http\Livewire\Auth\ResetPassword;
 
 class ResetPasswordTest extends TestCase
 {
@@ -21,6 +21,13 @@ class ResetPasswordTest extends TestCase
         ]))
             ->assertSuccessful()
             ->assertSeeLivewire('filament.auth.reset-password');
+    }
+
+    protected function generateToken($user = null)
+    {
+        if (!$user) $user = FilamentUser::factory()->create();
+
+        return Password::broker('filament_users')->createToken($user);
     }
 
     /** @test */
@@ -142,12 +149,5 @@ class ResetPasswordTest extends TestCase
             ->set('passwordConfirmation', 'different-password')
             ->call('submit')
             ->assertHasErrors(['passwordConfirmation' => 'same']);
-    }
-
-    protected function generateToken($user = null)
-    {
-        if (! $user) $user = FilamentUser::factory()->create();
-
-        return Password::broker('filament_users')->createToken($user);
     }
 }

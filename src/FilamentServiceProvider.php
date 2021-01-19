@@ -3,14 +3,13 @@
 namespace Filament;
 
 use Filament\Commands\MakeUser;
+use Filament\Providers\{RouteServiceProvider, ServiceProvider};
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
-use Filament\Providers\{RouteServiceProvider, ServiceProvider};
 use Symfony\Component\Finder\SplFileInfo;
-use function Livewire\str;
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -52,7 +51,7 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootCommands()
     {
-        if (! $this->app->runningInConsole()) return;
+        if (!$this->app->runningInConsole()) return;
 
         $this->commands([
             MakeUser::class,
@@ -75,11 +74,11 @@ class FilamentServiceProvider extends ServiceProvider
             'nav' => \Filament\View\Components\Nav::class,
         ]);
 
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'filament');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'filament');
 
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'filament');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'filament');
     }
 
     protected function bootLivewireComponents()
@@ -93,7 +92,7 @@ class FilamentServiceProvider extends ServiceProvider
             })
             ->filter(function ($class) {
                 return is_subclass_of($class, Component::class) &&
-                    ! (new \ReflectionClass($class))->isAbstract();
+                    !(new \ReflectionClass($class))->isAbstract();
             })
             ->each(function ($class) {
                 $name = 'filament.' . collect(explode('.', str_replace(['/', '\\'], '.', Str::after($class, 'Filament\\Http\\Livewire\\'))))
@@ -120,13 +119,13 @@ class FilamentServiceProvider extends ServiceProvider
 
                 if ($resource->enabled && array_key_exists('index', $resource->actions())) {
                     $route = route('filament.resource', ['resource' => $key]);
-                    $routePath = implode('/', array_slice(explode('/', $route), -3, 2, true)).'/'.$key;
+                    $routePath = implode('/', array_slice(explode('/', $route), -3, 2, true)) . '/' . $key;
 
                     $this->app[Navigation::class]->$key = [
                         'path' => $route,
                         'active' => [
                             $routePath,
-                            $routePath.'/*',
+                            $routePath . '/*',
                         ],
                         'label' => $resource->label(),
                         'icon' => $resource->icon,
@@ -139,22 +138,22 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootPublishing()
     {
-        if (! $this->app->runningInConsole()) return;
+        if (!$this->app->runningInConsole()) return;
 
         $this->publishes([
-            __DIR__.'/../dist' => public_path('vendor/filament'),
+            __DIR__ . '/../dist' => public_path('vendor/filament'),
         ], 'filament-assets');
 
         $this->publishes([
-            __DIR__.'/../config/filament.php' => config_path('filament.php'),
+            __DIR__ . '/../config/filament.php' => config_path('filament.php'),
         ], 'filament-config');
 
         $this->publishes([
-            __DIR__.'/../resources/lang' => resource_path('lang/vendor/filament'),
+            __DIR__ . '/../resources/lang' => resource_path('lang/vendor/filament'),
         ], 'filament-lang');
 
         $this->publishes([
-            __DIR__.'/../resources/views' => resource_path('views/vendor/filament'),
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/filament'),
         ], 'filament-views');
     }
 

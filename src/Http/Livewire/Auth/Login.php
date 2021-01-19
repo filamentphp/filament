@@ -59,7 +59,7 @@ class Login extends Component
             return;
         }
 
-        if (! Auth::guard('filament')->attempt($this->validate(), $this->remember)) {
+        if (!Auth::guard('filament')->attempt($this->validate(), $this->remember)) {
             $this->addError('email', __('auth.failed'));
 
             return;

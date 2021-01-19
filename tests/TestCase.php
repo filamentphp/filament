@@ -10,6 +10,13 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
     use RefreshDatabase, WithFaker;
 
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->loadLaravelMigrations();
+    }
+
     protected function getPackageAliases($app)
     {
         return [
@@ -24,12 +31,5 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             \Filament\FilamentServiceProvider::class,
             \Livewire\LivewireServiceProvider::class,
         ];
-    }
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->loadLaravelMigrations();
     }
 }

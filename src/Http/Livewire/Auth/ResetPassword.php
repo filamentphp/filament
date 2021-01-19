@@ -3,11 +3,8 @@
 namespace Filament\Http\Livewire\Auth;
 
 use Filament\Fields\Text;
-use Filament\Filament;
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Hash, Password,};
-use Illuminate\Support\Str;
 use Livewire\Component;
 
 class ResetPassword extends Component
@@ -18,15 +15,15 @@ class ResetPassword extends Component
 
     public $passwordConfirmation;
 
+    public $token;
+
+    public $user;
+
     protected $rules = [
         'email' => ['required', 'email'],
         'password' => ['required', 'min:8'],
         'passwordConfirmation' => ['required', 'same:password'],
     ];
-
-    public $token;
-
-    public $user;
 
     public function fields()
     {
