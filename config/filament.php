@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Route Prefix
+    | Filament Path
     |--------------------------------------------------------------------------
     |
     | The default is `admin` but you can change it to whatever works best and

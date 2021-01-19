@@ -15,24 +15,21 @@ class Image extends Component
 
     public function __construct($src, $manipulations, $dprs = [1, 1.5, 2, 3])
     {
+        $this->dprs = $dprs;
         $this->src = $src;
         $this->manipulations = $manipulations;
-        $this->dprs = $dprs;
-    }
-
-    public function srcSet()
-    {
-        $srcSet = [];
-        foreach ($this->dprs as $dpr) {
-            $srcSet[] = $this->src($dpr) . ' ' . $dpr . 'x';
-        }
-
-        return implode(', ', $srcSet);
     }
 
     public function src($dpr = 1)
     {
         return Filament::image($this->src, array_merge(['dpr' => $dpr], $this->manipulations));
+    }
+
+    public function srcSet()
+    {
+        collect($this->dprs)->map(function ($dpr) {
+            return $this->src($dpr) . ' ' . $dpr . 'x';
+        })->implode(', ')->toArray();
     }
 
     public function render()

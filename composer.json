@@ -24,6 +24,9 @@
         "phpunit/phpunit": "^9.5"
     },
     "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
         "psr-4": {
             "Filament\\": "src/"
         }
