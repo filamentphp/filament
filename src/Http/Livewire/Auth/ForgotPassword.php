@@ -2,7 +2,7 @@
 
 namespace Filament\Http\Livewire\Auth;
 
-use Filament\Fields\Text;
+use Filament\Fields;
 use Filament\Traits\WithNotifications;
 use Illuminate\Support\Facades\Password;
 use Livewire\Component;
@@ -14,13 +14,13 @@ class ForgotPassword extends Component
     public $email;
 
     protected $rules = [
-        'email' => 'required|string|email',
+        'email' => 'required|email',
     ];
 
     public function fields()
     {
         return [
-            Text::make('email')
+            Fields\Text::make('email')
                 ->type('email')
                 ->label('filament::fields.labels.email')
                 ->extraAttributes([

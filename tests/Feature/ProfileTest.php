@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tests\Feature\Auth;
+namespace Filament\Tests\Feature;
 
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Storage;

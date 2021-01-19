@@ -2,11 +2,9 @@
 
 namespace Filament\Tests\Feature\Auth;
 
-use Filament\Filament;
 use Filament\Http\Livewire\Auth\Login;
 use Filament\Models\FilamentUser;
 use Filament\Tests\TestCase;
-use Illuminate\Support\Str;
 use Livewire\Livewire;
 
 class LoginTest extends TestCase

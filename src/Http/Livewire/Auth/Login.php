@@ -3,11 +3,8 @@
 namespace Filament\Http\Livewire\Auth;
 
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
-use Filament\Fields\{Checkbox, Text};
-use Filament\Filament;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\{Auth};
-use Illuminate\Validation\ValidationException;
+use Filament\Fields;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Login extends Component
@@ -21,7 +18,7 @@ class Login extends Component
     public $remember = false;
 
     protected $rules = [
-        'email' => 'required|email',
+        'email' => ['required', 'email'],
         'password' => 'required',
     ];
 
@@ -50,7 +47,7 @@ class Login extends Component
     public function fields()
     {
         return [
-            Text::make('email')
+            Fields\Text::make('email')
                 ->type('email')
                 ->label('filament::fields.labels.email')
                 ->extraAttributes([
@@ -58,7 +55,7 @@ class Login extends Component
                     'autocomplete' => 'email',
                     'autofocus' => 'true',
                 ]),
-            Text::make('password')
+            Fields\Text::make('password')
                 ->type('password')
                 ->label('filament::fields.labels.password')
                 ->extraAttributes([
@@ -66,7 +63,7 @@ class Login extends Component
                     'autocomplete' => 'current-password',
                 ])
                 ->hint('[' . __('filament::auth.forgotPassword') . '](' . route('filament.auth.password.forgot') . ')'),
-            Checkbox::make('remember')
+            Fields\Checkbox::make('remember')
                 ->label('Remember me'),
         ];
     }
