@@ -20,6 +20,8 @@ return [
 
         'userPhoto' => 'User photo',
 
+        'updatePassword' => 'Update password',
+
     ],
 
     'help' => [

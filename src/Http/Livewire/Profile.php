@@ -39,49 +39,46 @@ class Profile extends Component
     public function fields()
     {
         return [
-            Tabs::make('filament::profile.title')
-                ->tab('filament::profile.tabs.account', [
-                    Layout::make('grid grid-cols-1 lg:grid-cols-2 gap-6')
-                        ->fields([
-                            Text::make('user.name')
-                                ->label('Name')
-                                ->extraAttributes([
-                                    'required' => 'true',
-                                ]),
-                            Text::make('user.email')
-                                ->type('email')
-                                ->label('filament::fields.labels.email')
-                                ->modelDirective('wire:model.lazy')
-                                ->extraAttributes([
-                                    'required' => 'true',
-                                    'autocomplete' => 'email',
-                                ]),
+            Layout::make('grid grid-cols-1 lg:grid-cols-2 gap-6')
+                ->fields([
+                    Text::make('user.name')
+                        ->label('Name')
+                        ->extraAttributes([
+                            'required' => 'true',
                         ]),
-                    Avatar::make('avatar')
-                        ->label('filament::profile.labels.userPhoto')
-                        ->avatar($this->avatar)
-                        ->user($this->user)
-                        ->deleteMethod('deleteAvatar'),
-                    Fieldset::make('Update Password')
-                        ->fields([
-                            Text::make('password')
-                                ->type('password')
-                                ->label('filament::fields.labels.password')
-                                ->extraAttributes([
-                                    'autocomplete' => 'new-password',
-                                ])
-                                ->hint(__('filament::fields.hints.optional'))
-                                ->help(__('filament::profile.help.passwordKeep')),
-                            Text::make('password_confirmation')
-                                ->type('password')
-                                ->label('filament::fields.labels.newPassword')
-                                ->extraAttributes([
-                                    'autocomplete' => 'new-password',
-                                ])
-                                ->hint(__('filament::fields.hints.optional')),
-                        ])
-                        ->class('grid grid-cols-1 lg:grid-cols-2 gap-6'),
+                    Text::make('user.email')
+                        ->type('email')
+                        ->label('filament::fields.labels.email')
+                        ->modelDirective('wire:model.lazy')
+                        ->extraAttributes([
+                            'required' => 'true',
+                            'autocomplete' => 'email',
+                        ]),
                 ]),
+            Avatar::make('avatar')
+                ->label('filament::profile.labels.userPhoto')
+                ->avatar($this->avatar)
+                ->user($this->user)
+                ->deleteMethod('deleteAvatar'),
+            Fieldset::make('filament::profile.labels.updatePassword')
+                ->fields([
+                    Text::make('password')
+                        ->type('password')
+                        ->label('filament::fields.labels.password')
+                        ->extraAttributes([
+                            'autocomplete' => 'new-password',
+                        ])
+                        ->hint(__('filament::fields.hints.optional'))
+                        ->help(__('filament::profile.help.passwordKeep')),
+                    Text::make('password_confirmation')
+                        ->type('password')
+                        ->label('filament::fields.labels.newPassword')
+                        ->extraAttributes([
+                            'autocomplete' => 'new-password',
+                        ])
+                        ->hint(__('filament::fields.hints.optional')),
+                ])
+                ->class('grid grid-cols-1 lg:grid-cols-2 gap-6'),
         ];
     }
 
