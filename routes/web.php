@@ -2,7 +2,8 @@
 
 use Filament\Http\Controllers;
 use Filament\Http\Livewire;
-use Filament\Http\Middleware\{Authenticate, RedirectIfAuthenticated};
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\RedirectIfAuthenticated;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Support\Facades\Route;
 

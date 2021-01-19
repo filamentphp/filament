@@ -4,7 +4,9 @@ namespace Filament\Http\Livewire\Auth;
 
 use Filament\Fields\Text;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\{Auth, Hash, Password,};
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Livewire\Component;
 
 class ResetPassword extends Component

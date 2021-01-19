@@ -2,12 +2,17 @@
 
 namespace Filament\Http\Livewire;
 
-use Filament\Fields\{Avatar, Fieldset, Layout, Text,};
+use Filament\Fields\Avatar;
+use Filament\Fields\Fieldset;
+use Filament\Fields\Layout;
+use Filament\Fields\Text;
 use Filament\Filament;
 use Filament\Traits\WithNotifications;
-use Illuminate\Support\Facades\{Auth, Hash,};
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use Livewire\{Component, WithFileUploads,};
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class UpdateAccountForm extends Component
 {
@@ -130,6 +135,7 @@ class UpdateAccountForm extends Component
     public function render()
     {
         return view('filament::update-account-form')
-            ->layout('filament::layouts.app', ['title' => __('filament::update-account-form.title')]);;
+            ->layout('filament::layouts.app', ['title' => __('filament::update-account-form.title')]);
+        ;
     }
 }

@@ -25,7 +25,9 @@ class ResetPasswordTest extends TestCase
 
     protected function generateToken($user = null)
     {
-        if (!$user) $user = FilamentUser::factory()->create();
+        if (!$user) {
+            $user = FilamentUser::factory()->create();
+        }
 
         return Password::broker('filament_users')->createToken($user);
     }

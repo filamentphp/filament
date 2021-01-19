@@ -24,7 +24,6 @@ class ImageController extends Controller
             ]);
 
             return $server->getImageResponse($path, request()->all());
-
         } catch (SignatureException $e) {
             abort(403, $e->getMessage());
         }

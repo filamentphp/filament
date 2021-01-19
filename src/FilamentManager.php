@@ -3,8 +3,11 @@
 namespace Filament;
 
 use Illuminate\Container\Container;
-use Illuminate\Support\{HtmlString, Str};
-use Illuminate\Support\Facades\{File, Request, Storage};
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Storage;
 use League\Glide\Urls\UrlBuilderFactory;
 
 class FilamentManager

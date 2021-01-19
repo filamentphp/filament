@@ -3,7 +3,8 @@
 namespace Filament;
 
 use Filament\Commands\MakeUser;
-use Filament\Providers\{RouteServiceProvider, ServiceProvider};
+use Filament\Providers\RouteServiceProvider;
+use Filament\Providers\ServiceProvider;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
@@ -51,7 +52,9 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootCommands()
     {
-        if (!$this->app->runningInConsole()) return;
+        if (!$this->app->runningInConsole()) {
+            return;
+        }
 
         $this->commands([
             MakeUser::class,
@@ -138,7 +141,9 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootPublishing()
     {
-        if (!$this->app->runningInConsole()) return;
+        if (!$this->app->runningInConsole()) {
+            return;
+        }
 
         $this->publishes([
             __DIR__ . '/../dist' => public_path('vendor/filament'),
