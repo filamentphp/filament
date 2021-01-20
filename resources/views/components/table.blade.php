@@ -5,6 +5,7 @@
                 {{ $head }}
             </tr>
         </thead>
+
         <tbody class="divide-y divide-gray-200">
             {{ $body }}
         </tbody>

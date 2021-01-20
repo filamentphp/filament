@@ -2,57 +2,50 @@
 
 namespace Filament\Fields;
 
-class Field extends BaseField {
-    public $label;
-    public $hint;
-    public $help;
+class Field extends BaseField
+{
     public $error;
+
     public $extraAttributes = [];
 
-    /**
-     * @return static
-     */
-    public function label(string $label): self
-    {
-        $this->label = $label;
-        return $this;
-    }
+    public $help;
 
-    /**
-     * @return static
-     *
-     * @param array|null|string $hint
-     */
-    public function hint($hint): self
-    {
-        $this->hint = $hint;
-        return $this;
-    }
+    public $hint;
 
-    /**
-     * @return static
-     */
-    public function help(string $help): self
-    {
-        $this->help = $help;
-        return $this;
-    }
+    public $label;
 
-    /**
-     * @return static
-     */
-    public function error(string $error): self
+    public function error(string $error)
     {
         $this->error = $error;
+
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function extraAttributes(array $attributes): self
+    public function extraAttributes(array $attributes)
     {
         $this->extraAttributes = $attributes;
+
+        return $this;
+    }
+
+    public function help(string $help)
+    {
+        $this->help = $help;
+
+        return $this;
+    }
+
+    public function hint($hint)
+    {
+        $this->hint = $hint;
+
+        return $this;
+    }
+
+    public function label(string $label)
+    {
+        $this->label = $label;
+
         return $this;
     }
 }

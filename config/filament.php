@@ -1,108 +1,18 @@
 <?php
 
-use Filament\Features;
-
 return [
 
     /*
     |--------------------------------------------------------------------------
-    | Features
+    | Filament Path
     |--------------------------------------------------------------------------
     |
-    | All of Filament's features are optional. You may enable the features
-    | by adding / uncommenting items in this array as needed.
+    | The default is `admin` but you can change it to whatever works best and
+    | doesn't conflict with the routing in your application.
     |
     */
 
-    'features' => [
-        // Features::registration(),
-        // Features::dashboard(),
-        // Features::profile(),
-        // Features::resources(),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Models
-    |--------------------------------------------------------------------------
-    |
-    | Eloquent models used by Filament.
-    |
-    */    
-    
-    'models' => [
-
-        'user' => config('auth.providers.users.model'),
-    
-    ],
-
-    'prefix' => [
-
-        /*
-        |--------------------------------------------------------------------------
-        | Route Prefix
-        |--------------------------------------------------------------------------
-        |
-        | The default is `admin` but you can change it to whatever works best and
-        | doesn't conflict with the routing in your application.
-        | 
-        */
-
-        'route' => 'admin',
-
-        /*
-        |--------------------------------------------------------------------------
-        | Component Prefix
-        |--------------------------------------------------------------------------
-        |
-        | If set with the default "filament", for example, 
-        | you can reference components like:
-        |
-        | <x-filament-alert />
-        | <x-filament::input />
-        |
-        */
-
-        'component' => 'filament',
-        
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Components
-    |--------------------------------------------------------------------------
-    |
-    | Below you reference all class-based components use by Filament.
-    | You may override these for customization in your own app.
-    |
-    */
-
-    'components' => [
-        'avatar' => Filament\View\Components\Avatar::class,
-        'image' => Filament\View\Components\Image::class,
-        'nav' => Filament\View\Components\Nav::class,
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Livewire Components
-    |--------------------------------------------------------------------------
-    |
-    | Below you reference all the required Livewire components used by Filament. 
-    | You may override these components for customization in your own app.
-    |
-    */
-
-    'livewire' => [
-        'login' => Filament\Http\Livewire\Auth\Login::class,
-        'forgot-password' => Filament\Http\Livewire\Auth\ForgotPassword::class,
-        'reset-password' => Filament\Http\Livewire\Auth\ResetPassword::class,
-        'register' => Filament\Http\Livewire\Auth\Register::class,
-        'logout' => Filament\Http\Livewire\Auth\Logout::class,
-        'dashboard' => Filament\Http\Livewire\Dashboard::class,
-        'profile' => Filament\Http\Livewire\Profile::class,
-        'account' => Filament\Http\Livewire\Account::class,
-    ],
+    'path' => 'admin',
 
     /*
     |--------------------------------------------------------------------------
@@ -113,7 +23,7 @@ return [
     | use any of the disks defined in the `config/filesystems.php`.
     |
     */
-    
+
     'storage_disk' => env('FILAMENT_STORAGE_DISK', 'public'),
 
     /*
@@ -127,7 +37,7 @@ return [
     */
 
     'cache_disk' => env('FILAMENT_CACHE_DISK', 'local'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Cache Path Prefix
@@ -137,7 +47,7 @@ return [
     | disk defined above.
     |
     */
-    
-    'cache_path_prefix' =>  'filament/cache',
+
+    'cache_path_prefix' => 'filament/cache',
 
 ];

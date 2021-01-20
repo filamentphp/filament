@@ -8,23 +8,16 @@ use Livewire\Component;
 class Logout extends Component
 {
     public $class;
-    
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function logout()
+
+    public function submit()
     {
-        if (Auth::guest()) {
-            return redirect()->route('filament.login');
-        }
+        Auth::guard('filament')->logout();
 
-        Auth::logout();
-
-        return redirect()->route('filament.login');
+        return redirect()->route('filament.auth.login');
     }
 
-    public function render(): \Illuminate\View\View
+    public function render()
     {
-        return view('filament::livewire.auth.logout', ['label' => __('filament::auth.logout')]);
+        return view('filament::.auth.logout', ['label' => __('filament::auth.logout')]);
     }
 }

@@ -2,8 +2,10 @@
 
 namespace Filament\Fields;
 
-class Tabs extends BaseField {
+class Tabs extends BaseField
+{
     public $label;
+
     public $tabs = [];
 
     public function __construct($label)
@@ -11,20 +13,15 @@ class Tabs extends BaseField {
         $this->label = $label;
     }
 
-    /**
-     * @return static
-     */
-    public static function make(string $label): self
+    public static function make(string $label)
     {
         return new static($label);
     }
 
-    /**
-     * @return static
-     */
-    public function tab(string $label, array $fields): self
+    public function tab(string $label, array $fields)
     {
         $this->tabs[$label] = $fields;
+
         return $this;
     }
 }

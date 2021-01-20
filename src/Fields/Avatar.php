@@ -2,56 +2,52 @@
 
 namespace Filament\Fields;
 
-class Avatar extends Field {
-    public $modelDirective = 'wire:model';
+class Avatar extends Field
+{
     public $avatar;
-    public $user;
+
     public $buttonLabel = 'filament::avatar.change';
+
     public $deleteMethod;
+
+    public $modelDirective = 'wire:model';
+
     public $size = 64;
 
-    /**
-     * @return static
-     */
-    public function avatar($avatar): self
+    public $user;
+
+    public function avatar($avatar)
     {
         $this->avatar = $avatar;
+
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function user($user): self
-    {
-        $this->user = $user;
-        return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function buttonLabel(string $label): self
+    public function buttonLabel(string $label)
     {
         $this->buttonLabel = $label;
+
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function deleteMethod(string $method): self
+    public function deleteMethod(string $method)
     {
         $this->deleteMethod = $method;
+
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function size($size): self
+    public function size($size)
     {
         $this->size = $size;
+
+        return $this;
+    }
+
+    public function user($user)
+    {
+        $this->user = $user;
+
         return $this;
     }
 }

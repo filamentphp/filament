@@ -1,9 +1,9 @@
-import 'focus-visible'
 import 'alpinejs'
-import { createPopper } from '@popperjs/core/lib/popper-lite.js'
-import preventOverflow from '@popperjs/core/lib/modifiers/preventOverflow.js'
+import 'focus-visible'
+import {createPopper} from '@popperjs/core/lib/popper-lite.js'
 import flip from '@popperjs/core/lib/modifiers/flip.js'
+import preventOverflow from '@popperjs/core/lib/modifiers/preventOverflow.js'
 
 window.createPopper = createPopper
-window.preventOverflow = preventOverflow
 window.flip = flip
+window.preventOverflow = preventOverflow

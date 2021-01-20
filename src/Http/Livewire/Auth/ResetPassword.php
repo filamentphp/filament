@@ -2,68 +2,32 @@
 
 namespace Filament\Http\Livewire\Auth;
 
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\{
-    Auth,
-    Hash,
-    Password,
-};
-use Livewire\Component;
-use Filament\Facades\Filament;
 use Filament\Fields\Text;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Livewire\Component;
 
 class ResetPassword extends Component
 {
     public $email;
+
     public $password;
-    public $password_confirmation;
+
+    public $passwordConfirmation;
+
     public $token;
+
     public $user;
 
     protected $rules = [
-        'email' => 'required|string|email',
-        'password' => 'required|string|min:6|confirmed',
-        'password_confirmation' => 'required|string|same:password',
+        'email' => ['required', 'email'],
+        'password' => ['required', 'min:8'],
+        'passwordConfirmation' => ['required', 'same:password'],
     ];
 
-    public function mount(Request $request, $token): void
-    {
-        $this->token = $token;
-        $this->email = $request->input('email');
-    }
-
-    /**
-     * @return \Illuminate\Http\RedirectResponse|null
-     */
-    public function submit()
-    {
-        $this->validate();
-        $status = Password::reset(
-            $this->credentials(),
-            function ($user, $password) {
-                $user->forceFill(['password' => Hash::make($password)])->save();
-                $user->setRememberToken(Str::random(60));
-                event(new PasswordReset($user));
-                $this->user = $user;
-            }
-        );
-        
-        if ($status === Password::PASSWORD_RESET) {
-            Auth::login($this->user);
-            return redirect()->to(Filament::home());
-        } else {
-            $this->addError('email', __($status));
-        }
-    }
-
-    /**
-     * @return array
-     *
-     * @psalm-return array{0: mixed, 1: mixed, 2: mixed}
-     */
-    public function fields(): array
+    public function fields()
     {
         return [
             Text::make('email')
@@ -82,7 +46,7 @@ class ResetPassword extends Component
                     'autofocus' => 'true',
                     'autocomplete' => 'new-password',
                 ]),
-            Text::make('password_confirmation')
+            Text::make('passwordConfirmation')
                 ->type('password')
                 ->label('filament::fields.labels.newPassword')
                 ->extraAttributes([
@@ -92,24 +56,41 @@ class ResetPassword extends Component
         ];
     }
 
-    public function render(): \Illuminate\View\View
+    public function mount(Request $request, $token)
     {
-        return view('filament::livewire.auth.reset-password')
-            ->layout('filament::layouts.auth', ['title' => __('filament::auth.resetPassword')]);
+        $this->email = $request->input('email');
+        $this->token = $token;
     }
 
-    /**
-     * @return array
-     *
-     * @psalm-return array{token: mixed, email: mixed, password: mixed, password_confirmation: mixed}
-     */
-    protected function credentials(): array
+    public function submit()
     {
-        return [
-            'token' => $this->token,
+        $this->validate();
+
+        $resetStatus = Password::broker('filament_users')->reset([
             'email' => $this->email,
             'password' => $this->password,
-            'password_confirmation' => $this->password_confirmation,
-        ];
+            'token' => $this->token,
+        ], function ($user, $password) {
+            $user->password = Hash::make($password);
+            $user->save();
+
+            $this->user = $user;
+        });
+
+        if (Password::PASSWORD_RESET !== $resetStatus) {
+            $this->addError('email', __('filament::auth.' . $resetStatus));
+
+            return;
+        }
+
+        Auth::guard('filament')->login($this->user, true);
+
+        return redirect()->to(route('filament.dashboard'));
+    }
+
+    public function render()
+    {
+        return view('filament::.auth.reset-password')
+            ->layout('filament::layouts.auth', ['title' => __('filament::auth.resetPassword')]);
     }
 }

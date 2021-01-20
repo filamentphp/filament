@@ -2,44 +2,37 @@
 
 namespace Filament\Fields;
 
-use Filament\Fields\Checkbox;
-
-class Choices extends BaseField {
-    public $type = 'checkbox';
+class Choices extends BaseField
+{
     public $options = [];
 
-    /**
-     * @return static
-     */
-    public function options(array $options): self
+    public $type = 'checkbox';
+
+    public function options(array $options)
     {
         foreach ($options as $value => $label) {
             $this->options[] = Checkbox::make($this->model)
-                                    ->type($this->type)
-                                    ->label($label)
-                                    ->hideErrorOutput()
-                                    ->extraAttributes([
-                                        'name' => $this->name(),
-                                    ])
-                                    ->value($value);
+                ->type($this->type)
+                ->label($label)
+                ->hideErrorOutput()
+                ->extraAttributes([
+                    'name' => $this->name(),
+                ])
+                ->value($value);
         }
+
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function radio(): self
+    protected function name()
+    {
+        return 'radio' === $this->type ? $this->model : $this->model . '[]';
+    }
+
+    public function radio()
     {
         $this->type = 'radio';
-        return $this;
-    }
 
-    /**
-     * @return string
-     */
-    protected function name(): string
-    {
-        return $this->type === 'radio' ? $this->model : $this->model.'[]';
+        return $this;
     }
 }

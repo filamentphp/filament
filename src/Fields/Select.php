@@ -2,25 +2,23 @@
 
 namespace Filament\Fields;
 
-class Select extends Field {
-    public $placeholder = 'Choose';
+class Select extends Field
+{
     public $options = [];
 
-    /**
-     * @return static
-     */
-    public function placeholder($placeholder): self
+    public $placeholder = 'Choose';
+
+    public function options(array $options)
     {
-        $this->placeholder = $placeholder;
+        $this->options = $options;
+
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function options(array $options): self
+    public function placeholder($placeholder)
     {
-        $this->options = $options;
+        $this->placeholder = $placeholder;
+
         return $this;
     }
 }

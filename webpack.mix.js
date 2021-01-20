@@ -11,11 +11,9 @@ let mix = require('laravel-mix')
  |
  */
 
-// Config
 const SRC = 'resources'
 const DIST = 'dist'
 
-// set paths
 mix.setPublicPath(DIST)
 mix.setResourceRoot(`/${SRC}/`)
 
@@ -33,7 +31,7 @@ mix.js(`${SRC}/js/filament.js`, 'js')
  * @link https://laravel.com/docs/master/mix#postcss
  */
 mix.postCss(`${SRC}/css/filament.css`, 'css').options({
-  processCssUrls: false,
+    processCssUrls: false,
 })
 
 /**
@@ -47,16 +45,16 @@ mix.postCss(`${SRC}/css/filament.css`, 'css').options({
 mix.sourceMaps()
 
 if (mix.inProduction()) {
-  /**
-   * Versioning / Cache Busting
-   *
-   * After generating the versioned file, you won't know the exact file name.
-   * So, you should use Laravel's global mix function within your views
-   * to load the appropriately hashed asset.
-   *
-   * @link https://laravel.com/docs/master/mix#versioning-and-cache-busting
-   */
-  mix.version()
+    /**
+     * Versioning / Cache Busting
+     *
+     * After generating the versioned file, you won't know the exact file name.
+     * So, you should use Laravel's global mix function within your views
+     * to load the appropriately hashed asset.
+     *
+     * @link https://laravel.com/docs/master/mix#versioning-and-cache-busting
+     */
+    mix.version()
 }
 
 /**
@@ -68,6 +66,6 @@ if (mix.inProduction()) {
  * @link https://laravel.com/docs/master/mix#browsersync-reloading
  */
 mix.browserSync({
-  proxy: process.env.BROWSERSYNC_PROXY || 'http://127.0.0.1:8000',
-  https: process.env.BROWSERSYNC_HTTPS || false,
+    proxy: process.env.BROWSERSYNC_PROXY || 'http://127.0.0.1:8000',
+    https: process.env.BROWSERSYNC_HTTPS || false,
 })

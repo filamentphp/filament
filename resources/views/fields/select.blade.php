@@ -11,6 +11,7 @@
         @if ($field->placeholder)
             <option>{{ __($field->placeholder) }}</option>
         @endif
+
         @foreach ($field->options as $key => $value)
             <option value="{{ $key }}">{{ __($value) }}</option>
         @endforeach

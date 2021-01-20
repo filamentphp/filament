@@ -2,24 +2,18 @@
 
 namespace Filament\View\Components;
 
+use Filament\Filament;
 use Illuminate\View\Component;
 use Thomaswelton\LaravelGravatar\Facades\Gravatar;
-use Filament\Facades\Filament;
 
 class Avatar extends Component
 {
-    public $user;
-    public $size;
     public $dprs;
 
-    /**
-     * Create the component instance.
-     *
-     * @param   object  $user
-     * @param   int     $size 
-     * 
-     * @return  void
-     */
+    public $size;
+
+    public $user;
+
     public function __construct($user, $size = 48, $dprs = [1, 2, 3])
     {
         $this->user = $user;
@@ -27,21 +21,21 @@ class Avatar extends Component
         $this->dprs = $dprs;
     }
 
-    /**
-     * Get the view / contents that represent the component.
-     *
-     * @return \Illuminate\View\View|\Closure|string
-     */
-    public function render()
+    public function srcSet()
     {
-        return view('filament::components.avatar');
+        $srcSet = [];
+        foreach ($this->dprs as $dpr) {
+            $srcSet[] = $this->src($dpr) . ' ' . $dpr . 'x';
+        }
+
+        return implode(', ', $srcSet);
     }
 
-    public function src(int $dpr = 1): string
+    public function src(int $dpr = 1)
     {
         if (! $this->user->avatar) {
             return Gravatar::src($this->user->email, $this->size * $dpr);
-        }        
+        }
 
         return Filament::image($this->user->avatar, [
             'w' => $this->size,
@@ -51,13 +45,8 @@ class Avatar extends Component
         ]);
     }
 
-    public function srcSet(): string
+    public function render()
     {
-        $srcSet = [];
-        foreach($this->dprs as $dpr) {
-            $srcSet[] = $this->src($dpr).' '.$dpr.'x';
-        }
-        
-        return implode(', ', $srcSet);
+        return view('filament::components.avatar');
     }
 }

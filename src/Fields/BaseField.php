@@ -4,12 +4,18 @@ namespace Filament\Fields;
 
 use Illuminate\Support\Str;
 
-class BaseField {
-    public $model;
-    public $modelDirective = 'wire:model.defer';
+class BaseField
+{
     public $id;
+
+    public $model;
+
+    public $modelDirective = 'wire:model.defer';
+
     public $value;
+
     protected $enabled = true;
+
     protected $view;
 
     public function __construct($model)
@@ -17,81 +23,61 @@ class BaseField {
         $this->model = $model;
         $this->id = Str::slug($model);
     }
-   
-    /**
-     * @return static
-     */
-    public static function make(string $model): self
+
+    public static function make(string $model)
     {
         return new static($model);
     }
 
-    /**
-     * @return static
-     */
-    public function model(string $model): self
-    {
-        $this->model = $model;
-        return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function modelDirective(string $modelDirective): self
-    {
-        $this->modelDirective = $modelDirective;
-        return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function id($id): self
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
-     * @return static
-     *
-     * @param (int|string) $value
-     */
-    public function value($value): self
-    {
-        $this->value = $value;
-        return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function enabled(bool $enabled): self
+    public function enabled(bool $enabled)
     {
         $this->enabled = $enabled;
+
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function view($view): self
+    public function id($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public function model(string $model)
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
+    public function modelDirective(string $modelDirective)
+    {
+        $this->modelDirective = $modelDirective;
+
+        return $this;
+    }
+
+    public function value($value)
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
+    public function view($view)
     {
         $this->view = $view;
+
         return $this;
     }
 
-    /**
-     * @return \Illuminate\View\View|null
-     */
     public function render()
-    {        
+    {
         if (! $this->enabled) {
             return;
         }
 
-        $view = $this->view ?? 'filament::fields.'.Str::kebab(class_basename(get_called_class()));
+        $view = $this->view ?? 'filament::fields.' . Str::kebab(class_basename(get_called_class()));
 
         return view($view, ['field' => $this]);
     }

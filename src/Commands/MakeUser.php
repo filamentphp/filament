@@ -2,58 +2,34 @@
 
 namespace Filament\Commands;
 
+use Filament\Models\FilamentUser;
+use Filament\Traits\ConsoleValidation;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Auth\Events\Registered;
-use Filament\Traits\ConsoleValidation;
 
 class MakeUser extends Command
 {
     use ConsoleValidation;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'filament:user';
+    protected $description = 'Creates a Filament user.';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Creates a user.';
+    protected $signature = 'make:filament-user';
 
-    /**
-     * Execute the console command.
-     *
-     * @return void
-     */
-    public function handle(): void
+    public function handle()
     {
-        $name = $this->validateInput(function() {
-            return $this->ask('Name');
-        }, ['name', 'required|string']);
+        $name = $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']);
 
-        $email = $this->validateInput(function() {
-            return $this->ask('Email');
-        }, ['email','required|email|unique:users']);
+        $email = $this->validateInput(fn () => $this->ask('Email'), 'email', ['required', 'email', 'unique:filament_users']);
 
-        $password = $this->validateInput(function() {
-            return $this->secret('filament::fields.labels.password');
-        }, ['password', 'required|min:8']);
+        $password = $this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8']);
 
-        $user = app('Filament\User')::create([
+        $user = FilamentUser::create([
             'name' => $name,
             'email' => $email,
             'password' => Hash::make($password),
         ]);
-        event(new Registered($user));
 
-        $appName = config('app.name');
-        $loginURL = route('filament.login');
-        
-        $this->info("Success! You may now login to {$appName} at {$loginURL} with user `{$user->name}`.");
+        $loginUrl = route('filament.auth.login');
+        $this->info("Success! {$user->email} may now log in at {$loginUrl}.");
     }
 }

@@ -6,6 +6,7 @@
             </x-filament::tab>
         @endforeach
     </x-slot>
+
     @foreach($field->tabs as $label => $fields)
         <x-filament::tab-panel :id="$label">
             <x-filament::fields :fields="$fields" />
