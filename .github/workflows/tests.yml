@@ -5,34 +5,32 @@ on:
   pull_request:
 
 jobs:
-  run-tests:
+  tests:
+
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
-        php: [ 8.0, 7.4 ]
-        laravel: [ 8.* ]
-        dependency-version: [ prefer-lowest, prefer-stable ]
-        include:
-          - laravel: 8.*
-            testbench: 6.*
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
+        php: [7.4, 8.0]
+        laravel: [^8.0]
+
+    name: P${{ matrix.php }} - L${{ matrix.laravel }}
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.composer/cache/files
-          key: dependencies-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, pdo, pdo_sqlite
+          extensions: dom, curl, libxml, mbstring, zip
+          tools: composer:v2
           coverage: none
+
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
+          composer require "laravel/framework=${{ matrix.laravel }}" --no-update
+          composer update --prefer-dist --no-interaction --no-progress
       - name: Execute tests
         run: vendor/bin/phpunit --verbose
