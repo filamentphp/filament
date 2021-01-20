@@ -4,7 +4,7 @@ namespace Filament\Fields;
 
 class Fieldset extends BaseField
 {
-    public $class;
+    public $columns;
 
     public $legend;
 
@@ -15,14 +15,9 @@ class Fieldset extends BaseField
         $this->legend = $legend;
     }
 
-    public static function make(string $legend)
+    public function columns(string $columns)
     {
-        return new static($legend);
-    }
-
-    public function class(string $class)
-    {
-        $this->class = $class;
+        $this->columns = $columns;
 
         return $this;
     }
@@ -32,5 +27,10 @@ class Fieldset extends BaseField
         $this->fields = $fields;
 
         return $this;
+    }
+
+    public static function make(string $legend)
+    {
+        return new static($legend);
     }
 }

@@ -44,7 +44,7 @@ class UpdateAccountForm extends Component
     public function fields()
     {
         return [
-            Layout::make('grid grid-cols-1 lg:grid-cols-2 gap-6')
+            Layout::columns(2)
                 ->fields([
                     Text::make('user.name')
                         ->label('Name')
@@ -83,7 +83,7 @@ class UpdateAccountForm extends Component
                         ])
                         ->hint(__('filament::fields.hints.optional')),
                 ])
-                ->class('grid grid-cols-1 lg:grid-cols-2 gap-6'),
+                ->columns(2),
         ];
     }
 
