@@ -5,16 +5,13 @@ namespace Filament;
 use Filament\Commands\MakeUser;
 use Filament\Providers\RouteServiceProvider;
 use Filament\Providers\ServiceProvider;
-use Illuminate\Filesystem\Filesystem;
+use Filament\Traits\CanRegisterLivewireComponentDirectories;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Str;
-use Livewire\Component;
-use Livewire\Livewire;
-use ReflectionClass;
-use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentServiceProvider extends ServiceProvider
 {
+    use CanRegisterLivewireComponentDirectories;
+
     public $singletons = [
         FilamentManager::class => FilamentManager::class,
         Navigation::class => Navigation::class,
@@ -87,24 +84,7 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootLivewireComponents()
     {
-        $filesystem = new Filesystem();
-
-        collect($filesystem->allFiles(__DIR__ . '/Http/Livewire'))
-            ->map(function (SplFileInfo $file) {
-                return Str::of('Filament/Http/Livewire/' . $file->getRelativePathname())
-                    ->replace(['/', '.php'], ['\\', ''])->__toString();
-            })
-            ->filter(function ($class) {
-                return is_subclass_of($class, Component::class)
-                    && ! (new ReflectionClass($class))->isAbstract();
-            })
-            ->each(function ($class) {
-                $name = 'filament.' . collect(explode('.', str_replace(['/', '\\'], '.', Str::after($class, 'Filament\\Http\\Livewire\\'))))
-                        ->map([Str::class, 'kebab'])
-                        ->implode('.');
-
-                Livewire::component($name, $class);
-            });
+        $this->registerLivewireComponentDirectory(__DIR__ . '/Http/Livewire', 'Filament\\Http\\Livewire', 'filament.');
     }
 
     protected function bootNavigation()
