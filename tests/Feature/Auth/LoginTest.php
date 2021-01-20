@@ -10,7 +10,7 @@ use Livewire\Livewire;
 class LoginTest extends TestCase
 {
     /** @test */
-    public function canViewLoginPage()
+    public function can_view_login_page()
     {
         $this->get(route('filament.auth.login'))
             ->assertSuccessful()
@@ -18,7 +18,7 @@ class LoginTest extends TestCase
     }
 
     /** @test */
-    public function canLogin()
+    public function can_login()
     {
         $user = FilamentUser::factory()->create();
 
@@ -28,22 +28,11 @@ class LoginTest extends TestCase
             ->call('submit')
             ->assertRedirect(route('filament.dashboard'));
 
-        $this->assertAuthenticatedAs($user, 'filament');
+        $this->assertAuthenticatedAs($user);
     }
 
     /** @test */
-    public function isRedirectedIfAlreadyLoggedIn()
-    {
-        $user = FilamentUser::factory()->create();
-
-        $this->be($user, 'filament');
-
-        $this->get(route('filament.auth.login'))
-            ->assertRedirect(route('filament.dashboard'));
-    }
-
-    /** @test */
-    public function showsAnErrorWhenBadLoginAttempt()
+    public function shows_an_error_when_bad_login_attempt()
     {
         $user = FilamentUser::factory()->create();
 
@@ -53,11 +42,11 @@ class LoginTest extends TestCase
             ->call('submit')
             ->assertHasErrors('email');
 
-        $this->assertGuest('filament');
+        $this->assertGuest();
     }
 
     /** @test */
-    public function emailIsRequired()
+    public function email_is_required()
     {
         Livewire::test(Login::class)
             ->set('email', null)
@@ -66,7 +55,7 @@ class LoginTest extends TestCase
     }
 
     /** @test */
-    public function emailIsValidEmail()
+    public function email_is_valid_email()
     {
         Livewire::test(Login::class)
             ->set('email', 'invalid-email')
@@ -75,10 +64,8 @@ class LoginTest extends TestCase
     }
 
     /** @test */
-    public function passwordIsRequired()
+    public function password_is_required()
     {
-        $user = FilamentUser::factory()->create();
-
         Livewire::test(Login::class)
             ->set('password', null)
             ->call('submit')

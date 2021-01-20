@@ -17,6 +17,11 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
         $this->loadLaravelMigrations();
     }
 
+    protected function getEnvironmentSetUp($app)
+    {
+        $app['auth']->shouldUse('filament');
+    }
+
     protected function getPackageAliases($app)
     {
         return [
@@ -31,6 +36,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             \BladeUI\Icons\BladeIconsServiceProvider::class,
             \Filament\FilamentServiceProvider::class,
             \Livewire\LivewireServiceProvider::class,
+            \Thomaswelton\LaravelGravatar\LaravelGravatarServiceProvider::class,
+            \Watson\Active\ActiveServiceProvider::class,
         ];
     }
 }

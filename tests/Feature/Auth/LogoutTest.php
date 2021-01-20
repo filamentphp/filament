@@ -10,16 +10,16 @@ use Livewire\Livewire;
 class LogoutTest extends TestCase
 {
     /** @test */
-    public function canLogOut()
+    public function can_log_out()
     {
         $user = FilamentUser::factory()->create();
 
-        $this->be($user, 'filament');
+        $this->be($user);
 
         Livewire::test(Logout::class)
             ->call('submit')
             ->assertRedirect(route('filament.auth.login'));
 
-        $this->assertGuest('filament');
+        $this->assertGuest();
     }
 }
