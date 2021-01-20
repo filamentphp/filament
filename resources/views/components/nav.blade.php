@@ -6,7 +6,8 @@
                     :path="$item['path']"
                     :active="$item['active']"
                     :label="$item['label']"
-                    :icon="$item['icon']" />
+                    :icon="$item['icon']"
+                />
             </li>
         @endforeach
     </ol>

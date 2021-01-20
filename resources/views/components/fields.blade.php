@@ -1,6 +1,6 @@
 @props([
-'fields' => [],
-'columns' => 1,
+    'fields' => [],
+    'columns' => 1,
 ])
 
 <div {{ $attributes }} class="grid grid-cols-1 lg:grid-cols-{{ $columns }} gap-6">

@@ -13,19 +13,23 @@
         x-transition:leave-end="opacity-0"
         class="max-w-sm w-full bg-gray-800 shadow-lg rounded pointer-events-auto overflow-hidden"
         role="status"
-        aria-live="polite">
+        aria-live="polite"
+    >
         <div class="p-4">
             <div class="flex items-start space-x-4">
                 <div class="flex-grow flex items-center space-x-2">
                     <x-heroicon-o-information-circle class="flex-shrink-0 w-5 h-5 text-blue-400 stroke-current" />
+
                     <div class="flex-grow">
                         <p x-text="message" class="text-sm text-white"></p>
                     </div>
                 </div>
+
                 <div class="flex-shrink-0 flex">
                     <button @click="show = false"
                             class="text-gray-400 hover:text-white transition-colors duration-200 focus:outline-none">
                         <span class="sr-only">Close</span>
+
                         <x-heroicon-o-x class="w-5 h-5 fill-current" />
                     </button>
                 </div>

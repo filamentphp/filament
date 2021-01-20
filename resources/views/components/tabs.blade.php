@@ -1,6 +1,6 @@
 @props([
-'label',
-'tab',
+    'label',
+    'tab',
 ])
 
 <x-filament::card
@@ -12,6 +12,7 @@
         <div class="bg-gray-100 border-b border-gray-200 flex" class="tablist" role="tablist" aria-label="{{ $label }}">
             {{ $tablist }}
         </div>
+
         {{ $slot }}
     </div>
 </x-filament::card>

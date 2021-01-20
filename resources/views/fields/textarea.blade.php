@@ -7,5 +7,7 @@
         :model="$field->model"
         :error-key="$field->error ?? $field->model"
         :extra-attributes="$field->extraAttributes"
-    >{{ $field->value }}</x-filament::textarea>
+    >
+        {{ $field->value }}
+    </x-filament::textarea>
 @overwrite
