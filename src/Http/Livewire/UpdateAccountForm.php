@@ -18,27 +18,26 @@ class UpdateAccountForm extends Component
 {
     use WithFileUploads, WithNotifications;
 
-    public $avatar;
+    public $newAvatar;
 
-    public $password;
+    public $newPassword;
 
-    public $passwordConfirmation;
+    public $newPasswordConfirmation;
 
     public $user;
 
     public function deleteAvatar()
     {
-        $avatar = $this->user->avatar;
+        if (! $this->user->avatar) return;
 
-        if ($avatar) {
-            Filament::storage()->delete($avatar);
-            $this->avatar = null;
+        Filament::storage()->delete($this->user->avatar);
 
-            $this->user->avatar = null;
-            $this->user->save();
+        $this->reset('newAvatar');
 
-            $this->notify(__('filament::avatar.delete', ['name' => $this->user->name]));
-        }
+        $this->user->avatar = null;
+        $this->user->save();
+
+        $this->notify(__('filament::avatar.delete', ['name' => $this->user->name]));
     }
 
     public function fields()
@@ -56,18 +55,18 @@ class UpdateAccountForm extends Component
                         ->label('filament::fields.labels.email')
                         ->modelDirective('wire:model.lazy')
                         ->extraAttributes([
-                            'required' => 'true',
                             'autocomplete' => 'email',
+                            'required' => 'true',
                         ]),
                 ]),
-            Avatar::make('avatar')
+            Avatar::make('newAvatar')
                 ->label('filament::update-account-form.labels.userPhoto')
-                ->avatar($this->avatar)
+                ->avatar($this->newAvatar)
                 ->user($this->user)
                 ->deleteMethod('deleteAvatar'),
             Fieldset::make('filament::update-account-form.labels.updatePassword')
                 ->fields([
-                    Text::make('password')
+                    Text::make('newPassword')
                         ->type('password')
                         ->label('filament::fields.labels.password')
                         ->extraAttributes([
@@ -75,7 +74,7 @@ class UpdateAccountForm extends Component
                         ])
                         ->hint(__('filament::fields.hints.optional'))
                         ->help(__('filament::update-account-form.help.passwordKeep')),
-                    Text::make('passwordConfirmation')
+                    Text::make('newPasswordConfirmation')
                         ->type('password')
                         ->label('filament::fields.labels.newPassword')
                         ->extraAttributes([
@@ -92,18 +91,35 @@ class UpdateAccountForm extends Component
         $this->user = Auth::guard('filament')->user();
     }
 
+    public function rules()
+    {
+        return [
+            'newAvatar' => ['nullable', 'image', 'max:1024'],
+            'newPassword' => ['nullable', 'min:8'],
+            'newPasswordConfirmation' => ['required_with:newPassword', 'same:newPassword'],
+            'user.email' => [
+                'required',
+                'email',
+                Rule::unique('filament_users', 'email')->ignore($this->user->id),
+            ],
+            'user.name' => ['required'],
+        ];
+    }
+
     public function submit()
     {
         $this->validate();
 
-        if ($this->avatar) {
-            $this->user->avatar = $this->avatar->store('avatars', config('filament.storage_disk'));
-            $this->reset('avatar');
+        if ($this->newAvatar) {
+            $this->user->avatar = $this->newAvatar->store('avatars', config('filament.storage_disk'));
+
+            $this->reset('newAvatar');
         }
 
-        if ($this->password) {
-            $this->user->password = Hash::make($this->password);
-            $this->reset(['password', 'password_confirmation']);
+        if ($this->newPassword) {
+            $this->user->password = Hash::make($this->newPassword);
+
+            $this->reset(['newPassword', 'newPasswordConfirmation']);
         }
 
         $this->user->save();
@@ -111,25 +127,9 @@ class UpdateAccountForm extends Component
         $this->notify(__('filament::update-account-form.updated'));
     }
 
-    public function updatedAvatar($value)
+    public function updatedNewAvatar($value)
     {
-        $this->validateOnly('avatar');
-    }
-
-    public function rules()
-    {
-        return [
-            'avatar' => 'nullable|image|max:1024',
-            'password' => 'nullable|string|required_with:password_confirmation|min:6|confirmed',
-            'password_confirmation' => 'nullable|string|same:password',
-            'user.email' => [
-                'required',
-                'string',
-                'email',
-                Rule::unique('filament_users', 'email')->ignore($this->user->id),
-            ],
-            'user.name' => 'required|min:2|max:255',
-        ];
+        $this->validateOnly('newAvatar');
     }
 
     public function render()
