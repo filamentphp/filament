@@ -10,6 +10,7 @@ module.exports = {
     ],
     options: {
       safelist: {
+        deep: [/grid/],
         greedy: [/filepond$/],
       },
     },

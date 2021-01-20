@@ -3,20 +3,20 @@
 namespace Filament\Fields;
 
 class Layout extends BaseField {
-    public $class = 'space-y-6';
+    public $columns;
     public $fields;
     
-    public function __construct($class)
+    public function __construct($columns)
     {
-        $this->class = $class;
+        $this->columns = $columns;
     }
 
     /**
      * @return static
      */
-    public static function make(string $class = null): self
+    public static function columns($columns): self
     {
-        return new static($class);
+        return new static($columns);
     }
 
     /**
