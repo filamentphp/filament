@@ -2,13 +2,10 @@
 
 namespace Filament\Traits;
 
-use Filament\Facades\Filament;
+use Filament\Filament;
 
 trait CanPretendToBeAFile
 {
-    /**
-     * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse
-     */
     protected function pretendResponseIsFile($file, $contentType)
     {
         $path = Filament::distPath($file);
@@ -36,14 +33,14 @@ trait CanPretendToBeAFile
         ]);
     }
 
-    protected function matchesCache($lastModified): bool
+    protected function matchesCache($lastModified)
     {
         $ifModifiedSince = $_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? '';
 
         return @strtotime($ifModifiedSince) === $lastModified;
     }
 
-    protected function httpDate($timestamp): string
+    protected function httpDate($timestamp)
     {
         return sprintf('%s GMT', gmdate('D, d M Y H:i:s', $timestamp));
     }

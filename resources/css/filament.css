@@ -3,15 +3,15 @@
 @import 'tailwindcss/utilities';
 
 @layer base {
-  @import './base.css';
+    @import './base.css';
 }
 
 @layer components {
-  @import './components/typography.css';
-  @import './components/buttons.css';
-  @import './components/filepond.css';
+    @import './components/typography.css';
+    @import './components/buttons.css';
+    @import './components/filepond.css';
 }
 
 @layer utilities {
-  /* @import './utilities/spacing.css'; */
+    /* @import './utilities/spacing.css'; */
 }

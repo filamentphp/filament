@@ -1,35 +1,29 @@
 {
-  "name": "filament",
-  "scripts": {
-    "dev": "mix",
-    "watch": "mix watch",
-    "watch-poll": "mix watch -- --watch-options-poll=1000",
-    "hot": "mix watch --hot",
-    "prod": "mix --production",
-    "start": "npm run watch"
-  },
-  "author": {
-    "name": "Ryan Scherler",
-    "email": "ryan@eastslope.studio"
-  },
-  "license": "MIT",
-  "dependencies": {
-    "@popperjs/core": "^2.6.0",
-    "alpinejs": "^2.8.0",
-    "focus-visible": "^5.2.0"
-  },
-  "devDependencies": {
-    "@tailwindcss/forms": "^0.2.1",
-    "@tailwindcss/typography": "^0.3.1",
-    "browser-sync": "^2.26.13",
-    "browser-sync-webpack-plugin": "^2.3.0",
-    "cross-env": "^7.0.3",
-    "dotenv": "^8.2.0",
-    "laravel-mix": "^6.0.9",
-    "postcss": "^8.2.4",
-    "postcss-import": "^14.0.0",
-    "postcss-nested": "^5.0.3",
-    "prettier": "^2.2.1",
-    "tailwindcss": "^2.0.2"
-  }
+    "private": true,
+    "scripts": {
+        "dev": "npm run development",
+        "development": "mix",
+        "hot": "mix watch --hot",
+        "prod": "npm run production",
+        "production": "mix --production",
+        "watch": "mix watch",
+        "watch-poll": "mix watch -- --watch-options-poll=1000"
+    },
+    "devDependencies": {
+        "@popperjs/core": "^2.6.0",
+        "@tailwindcss/forms": "^0.2.1",
+        "@tailwindcss/typography": "^0.4.0",
+        "alpinejs": "^2.8.0",
+        "axios": "^0.21",
+        "browser-sync": "^2.26.13",
+        "browser-sync-webpack-plugin": "^2.3.0",
+        "dotenv": "^8.2.0",
+        "focus-visible": "^5.2.0",
+        "laravel-mix": "^6.0.10",
+        "lodash": "^4.17.20",
+        "postcss": "^8.2.4",
+        "postcss-import": "^14.0.0",
+        "postcss-nested": "^5.0.3",
+        "tailwindcss": "^2.0.2"
+    }
 }

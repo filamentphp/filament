@@ -2,36 +2,34 @@
 
 namespace Filament\Fields;
 
-class Relation extends Select {
-    public $modelDirective = 'wire:model';
+class Relation extends Select
+{
     public $addMethod;
+
     public $deleteMethod;
+
+    public $modelDirective = 'wire:model';
+
     public $sortMethod;
 
-    /**
-     * @return static
-     */
-    public function addMethod(string $method): self
+    public function addMethod(string $method)
     {
         $this->addMethod = $method;
+
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function deleteMethod(string $method): self
+    public function deleteMethod(string $method)
     {
         $this->deleteMethod = $method;
+
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function sortMethod(string $method): self
+    public function sortMethod(string $method)
     {
         $this->sortMethod = $method;
+
         return $this;
     }
 }

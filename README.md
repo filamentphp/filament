@@ -13,30 +13,6 @@ composer require filament/filament dev-master
 php artisan migrate
 ```
 
-## Setup
-
-Before you can use Filament, you must add the necessary `Filament\Traits\FilamentUser` trait to your `App\User` model.
-
-Example:
-
-```php
-<?php
-
-namespace App\Models;
-
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Filament\Traits\FilamentUser;
-
-class User extends Authenticatable
-{
-    use Notifiable, FilamentUser;
-
-    //...
-}
-```
-
 ### Create a Resource
 
 To define a Resource, create a new resource file in `app/Filament/Resources` like the following `Page.php`.
@@ -95,7 +71,7 @@ class Index extends Component
 ### Create a user
 
 ```bash
-php artisan filament:user
+php artisan make:filament-user
 ```
 
 ---
@@ -103,6 +79,6 @@ php artisan filament:user
 ## Roadmap
 
 - [ ] Dashboard widgets
-  - Bookmarks Feature with associated widget
+    - Bookmarks Feature with associated widget
 - [ ] Resource stubs and associated Artisan commands (e.g. `artisan filament:resource Page --options`)
 - [ ] DOCUMENTATION FOR ALL THE THINGS.

@@ -2,20 +2,10 @@
 
 namespace Filament;
 
-use Illuminate\Support\Collection;
-
-class Navigation {
+class Navigation
+{
     protected array $items = [];
 
-    public function __set(string $name, array $item): void
-    {
-        $this->items[$name] = $item;
-    }
-
-    /**
-     * @param string $name
-     * @return null|array
-     */
     public function __get(string $name)
     {
         if (array_key_exists($name, $this->items)) {
@@ -23,7 +13,12 @@ class Navigation {
         }
     }
 
-    public function items(): Collection
+    public function __set(string $name, array $item)
+    {
+        $this->items[$name] = $item;
+    }
+
+    public function items()
     {
         return collect($this->items);
     }

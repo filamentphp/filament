@@ -9,9 +9,9 @@
 @endpushonce
 
 @section('field')
-    <div 
-        wire:ignore 
-        x-data 
+    <div
+        wire:ignore
+        x-data
         x-init='flatpickr($refs.input, @json($field->config))'
     >
         <x-filament::input

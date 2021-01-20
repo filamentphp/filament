@@ -2,20 +2,29 @@
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines are used during authentication for various
-    | messages that we need to display to the user. You are free to modify
-    | these language lines according to your application's requirements.
-    |
-    */
-
     'signin' => 'Sign in to your account',
 
-    'register' => 'Create a new account',
+    'login' => 'Login',
+
+    'backToLogin' => 'Back to login',
+
+    'createAccount' => 'Create a new account',
+
+    'register' => 'Register',
 
     'logout' => 'Sign out',
+
+    'requestPassword' => 'Forgot Your Password?',
+
+    'sendPasswordReset' => 'Send password reset link',
+
+    'resetPassword' => 'Reset password',
+
+    'passwords' => [
+        'reset' => 'Your password has been reset!',
+        'sent' => 'We have emailed your password reset link!',
+        'throttled' => 'Please wait before retrying.',
+        'token' => 'This password reset token is invalid.',
+        'user' => "We can't find a user with that email address.",
+    ],
 ];

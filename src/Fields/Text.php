@@ -2,15 +2,14 @@
 
 namespace Filament\Fields;
 
-class Text extends Field {
+class Text extends Field
+{
     public $type = 'text';
 
-    /**
-     * @return static
-     */
-    public function type(string $type): self
+    public function type(string $type)
     {
         $this->type = $type;
+
         return $this;
     }
 }

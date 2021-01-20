@@ -6,6 +6,7 @@
                     {{ __($field->label) }}
                 </x-filament::label>
             @endif
+
             @if ($field->hint)
                 <x-filament::hint>
                     @markdown($field->hint)
@@ -13,8 +14,11 @@
             @endif
         </div>
     @endif
+
     @yield('field')
+
     <x-filament::error :field="$field->error ?? $field->model" />
+
     @if ($field->help)
         <x-filament::help>
             @markdown($field->help)

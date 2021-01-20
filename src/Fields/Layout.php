@@ -2,29 +2,26 @@
 
 namespace Filament\Fields;
 
-class Layout extends BaseField {
-    public $class = 'space-y-6';
+class Layout extends BaseField
+{
+    public $columns;
+
     public $fields;
-    
-    public function __construct($class)
+
+    public function __construct($columns)
     {
-        $this->class = $class;
+        $this->columns = $columns;
     }
 
-    /**
-     * @return static
-     */
-    public static function make(string $class = null): self
+    public static function columns($columns)
     {
-        return new static($class);
+        return new static($columns);
     }
 
-    /**
-     * @return static
-     */
-    public function fields(array $fields): self
+    public function fields(array $fields)
     {
         $this->fields = $fields;
+
         return $this;
     }
 }

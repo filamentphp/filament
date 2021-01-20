@@ -2,103 +2,42 @@
 
 namespace Filament\Tests;
 
-use Mockery;
-use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use Illuminate\Support\Facades\Facade;
-use Livewire\LivewireServiceProvider;
-use Livewire\Livewire;
-use Watson\Active\ActiveServiceProvider;
-use Watson\Watson\Facades\Active;
-use BladeUI\Icons\BladeIconsServiceProvider;
-use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
-use Thomaswelton\LaravelGravatar\LaravelGravatarServiceProvider;
-use Thomaswelton\LaravelGravatar\Facades\Gravatar;
-use Filament\FilamentServiceProvider;
-use Filament\Facades\Filament;
-use Filament\Features;
-use Filament\Tests\Database\Models\User;
+use Filament\Filament;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 
-abstract class TestCase extends OrchestraTestCase
-{    
-    public function setUp(): void
+abstract class TestCase extends \Orchestra\Testbench\TestCase
+{
+    use RefreshDatabase, WithFaker;
+
+    protected function setUp(): void
     {
-        $this->afterApplicationCreated(function () {
-            $this->makeACleanSlate();
-        });
-
-        $this->beforeApplicationDestroyed(function () {
-            $this->makeACleanSlate();
-        });
-
         parent::setUp();
-        $this->loadLaravelMigrations(['--database' => 'testbench']);
-        $this->artisan('migrate', ['--database' => 'testbench'])->run();
-        
-        Facade::setFacadeApplication(app());
+
+        $this->loadLaravelMigrations();
     }
 
-    public function makeACleanSlate()
+    protected function getEnvironmentSetUp($app)
     {
-        $this->artisan('view:clear');
-    }
-
-    public function tearDown(): void
-    {
-        Mockery::close();
-    }
-
-    protected function getPackageProviders($app)
-    {
-        return [
-            LivewireServiceProvider::class,
-            ActiveServiceProvider::class,
-            BladeIconsServiceProvider::class,
-            BladeHeroiconsServiceProvider::class,
-            LaravelGravatarServiceProvider::class,
-            FilamentServiceProvider::class,
-        ];
+        $app['auth']->shouldUse('filament');
     }
 
     protected function getPackageAliases($app)
     {
         return [
-            'Livewire' => Livewire::class,
-            'Active' => Active::class,
-            'Gravatar' => Gravatar::class,
-            'Filament' => Filament::class,
+            'FilamentManager' => Filament::class,
         ];
     }
 
-    protected function getEnvironmentSetUp($app)
+    protected function getPackageProviders($app)
     {
-        $app['migrator']->path(__DIR__.'/../database/migrations');
-
-        $app['config']->set('session.driver', 'file');
-
-        $app['config']->set('view.paths', [
-            __DIR__.'/../resources/views',
-            resource_path('views'),
-        ]);
-
-        $app['config']->set('app.key', 'base64:Hupj4yAgSjLrM2/edkZQNQHslgDWZfjBfCuSThJ5SK8=');
-
-        $app['config']->set('database.default', 'testbench');
-
-        $app['config']->set('database.connections.testbench', [
-            'driver'   => 'sqlite',
-            'database' => ':memory:',
-            'prefix'   => '',
-        ]);
-
-        $app['config']->set('auth.providers.users.model', User::class);
-
-        $app['config']->set('filament.features', [
-            Features::registration(),
-            Features::dashboard(),
-            Features::profile(),
-            Features::resources(),
-        ]);
-        
-        $app['config']->set('filament.models.user', User::class);
+        return [
+            \BladeUI\Heroicons\BladeHeroiconsServiceProvider::class,
+            \BladeUI\Icons\BladeIconsServiceProvider::class,
+            \Filament\FilamentServiceProvider::class,
+            \Livewire\LivewireServiceProvider::class,
+            \Thomaswelton\LaravelGravatar\LaravelGravatarServiceProvider::class,
+            \Watson\Active\ActiveServiceProvider::class,
+        ];
     }
 }

@@ -2,14 +2,14 @@
  * Smoothly animate the scroll position, instead of a straight jump.
  */
 html {
-  scroll-behavior: smooth;
+    scroll-behavior: smooth;
 }
 
 /**
    * ::selection selector: color, background, cursor, and outline.
    */
 ::selection {
-  @apply bg-blue-600 text-white;
+    @apply bg-blue-600 text-white;
 }
 
 /**
@@ -20,7 +20,7 @@ html {
    *
    */
 [x-cloak] {
-  @apply hidden;
+    @apply hidden;
 }
 
 /**
@@ -30,5 +30,5 @@ html {
    * @link https://github.com/WICG/focus-visible#2-update-your-css
    */
 .js-focus-visible :focus:not([data-focus-visible-added]) {
-  @apply outline-none;
+    @apply outline-none;
 }
