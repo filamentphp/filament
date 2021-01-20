@@ -7,7 +7,7 @@ use Filament\Traits\ConsoleValidation;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 
-class MakeUser extends Command
+class MakeUserCommand extends Command
 {
     use ConsoleValidation;
 

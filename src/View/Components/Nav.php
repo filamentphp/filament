@@ -2,17 +2,16 @@
 
 namespace Filament\View\Components;
 
+use Filament\Filament;
 use Illuminate\View\Component;
 
 class Nav extends Component
 {
-    public $nav;
+    public $items;
 
     public function __construct()
     {
-        $nav = app('Filament\Navigation');
-
-        $this->nav = $nav->items()
+        $this->items = collect(Filament::getNavigation())
             ->sortBy('sort')
             ->all();
     }

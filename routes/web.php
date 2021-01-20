@@ -29,5 +29,5 @@ Route::get('/image/{path}', Controllers\ImageController::class)->where('path', '
 Route::middleware([Authenticate::class])->group(function () {
     Route::get('/', Livewire\Dashboard::class)->name('dashboard');
     Route::get('/account', Livewire\UpdateAccountForm::class)->name('account');
-    Route::get('/resources/{resource}/{action?}/{id?}', Controllers\ResourceController::class)->name('resource');
+    Route::get('/resources/{resource}/{action?}/{record?}', Controllers\ResourceController::class)->name('resource');
 });

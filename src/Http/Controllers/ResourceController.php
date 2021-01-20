@@ -8,18 +8,22 @@ use Illuminate\Routing\Route;
 
 class ResourceController extends Controller
 {
-    public function __invoke(Container $container, Route $route, string $resource, string $action = 'index')
+    public function __invoke(Container $container, Route $route, $resource, $actionKey = null, $parameter = null)
     {
-        $resourceClass = Filament::resources()->get($resource);
-        abort_unless($resourceClass, 400, __("`{$resource}` is not a valid resource."));
+        $resourceClass = Filament::getResources()->get($resource);
 
-        $resourceInstance = app($resourceClass);
+        abort_unless($resourceClass, 404);
 
-        abort_unless($resourceInstance->enabled, 403, __('You are not allowed to access this resource.'));
+        $resource = new $resourceClass;
 
-        $component = collect($resourceInstance->actions())->get($action);
-        abort_unless($component, 400, __("`{$action}` is not a valid resource action in `{$resourceClass}`."));
+        $actionClass = $resource->getAction($actionKey);
 
-        return call_user_func((new $component()), $container, $route);
+        abort_unless($actionClass, 404);
+
+        $action = new $actionClass;
+
+        abort_unless(! $action->hasRouteParameter xor $parameter !== null, 404);
+
+        return call_user_func($action, $container, $route);
     }
 }

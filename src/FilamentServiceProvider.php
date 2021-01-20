@@ -2,7 +2,7 @@
 
 namespace Filament;
 
-use Filament\Commands\MakeUser;
+use Filament\Commands\MakeUserCommand;
 use Filament\Providers\RouteServiceProvider;
 use Filament\Providers\ServiceProvider;
 use Filament\Traits\CanRegisterLivewireComponentDirectories;
@@ -24,7 +24,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->bootDirectives();
         $this->bootLoaders();
         $this->bootLivewireComponents();
-        $this->bootNavigation();
         $this->bootPublishing();
     }
 
@@ -55,7 +54,7 @@ class FilamentServiceProvider extends ServiceProvider
         }
 
         $this->commands([
-            MakeUser::class,
+            MakeUserCommand::class,
         ]);
     }
 
@@ -85,39 +84,6 @@ class FilamentServiceProvider extends ServiceProvider
     protected function bootLivewireComponents()
     {
         $this->registerLivewireComponentDirectory(__DIR__ . '/Http/Livewire', 'Filament\\Http\\Livewire', 'filament.');
-    }
-
-    protected function bootNavigation()
-    {
-        $this->app->booted(function () {
-            $this->app[Navigation::class]->dashboard = [
-                'path' => 'filament.dashboard',
-                'active' => 'filament.dashboard',
-                'label' => __('filament::dashboard.title'),
-                'icon' => 'heroicon-o-home',
-                'sort' => -9999,
-            ];
-
-            $this->app[FilamentManager::class]->resources()->each(function ($item, $key) {
-                $resource = $this->app->make($item);
-
-                if ($resource->enabled && array_key_exists('index', $resource->actions())) {
-                    $route = route('filament.resource', ['resource' => $key]);
-                    $routePath = implode('/', array_slice(explode('/', $route), -3, 2, true)) . '/' . $key;
-
-                    $this->app[Navigation::class]->{$key} = [
-                        'path' => $route,
-                        'active' => [
-                            $routePath,
-                            $routePath . '/*',
-                        ],
-                        'label' => $resource->label(),
-                        'icon' => $resource->icon,
-                        'sort' => $resource->sort,
-                    ];
-                }
-            });
-        });
     }
 
     protected function bootPublishing()

@@ -2,16 +2,69 @@
 
 namespace Filament;
 
-use Illuminate\Container\Container;
-use Illuminate\Support\Facades\File;
+use Filament\Http\Livewire\Dashboard;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use League\Glide\Urls\UrlBuilderFactory;
 use ReflectionClass;
+use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentManager
 {
+    public function getNavigation()
+    {
+        $navigation = [];
+
+        $navigation[Dashboard::class] = (object) [
+            'active' => ['filament.dashboard'],
+            'icon' => 'heroicon-o-home',
+            'label' => __('filament::dashboard.title'),
+            'path' => route('filament.dashboard'),
+            'sort' => 0,
+        ];
+
+        $this->getResources()->each(function ($resourceClass) use (&$navigation) {
+            $resource = new $resourceClass;
+
+            if ($resource->getDefaultAction()) {
+                $path = route('filament.resource', ['resource' => $resource->getSlug()]);
+
+                $navigation[$resourceClass] = (object) [
+                    'active' => [
+                        parse_url($path, PHP_URL_PATH),
+                        parse_url($path, PHP_URL_PATH) . '/*',
+                    ],
+                    'icon' => $resource->getIcon(),
+                    'label' => (string) Str::of($resource->getLabel())->plural()->title(),
+                    'path' => $path,
+                    'sort' => $resource->getSort(),
+                ];
+            }
+        });
+
+        return $navigation;
+    }
+
+    public function getResources()
+    {
+        return collect((new Filesystem())->allFiles(app_path('Filament/Resources')))
+            ->map(function (SplFileInfo $file) {
+                return (string) Str::of('App\\Filament\\Resources')
+                    ->append('\\', $file->getRelativePathname())
+                    ->replace(['/', '.php'], ['\\', '']);
+            })
+            ->filter(function ($class) {
+                return is_subclass_of($class, Resource::class) && ! (new ReflectionClass($class))->isAbstract();
+            })
+            ->mapWithKeys(function ($class) {
+                $resource = new $class;
+
+                return [$resource->getSlug() => $class];
+            });
+    }
+
     public function image($path, $manipulations = [])
     {
         $urlBuilder = UrlBuilderFactory::create('', config('app.key'));
@@ -31,27 +84,6 @@ class FilamentManager
     public function storage()
     {
         return Storage::disk(config('filament.storage_disk'));
-    }
-
-    public function resources()
-    {
-        $path = app_path('Filament/Resources');
-
-        File::ensureDirectoryExists($path);
-
-        return collect(File::files($path))->map(function ($file) {
-            $basename = $file->getBasename('.' . $file->getExtension());
-
-            return Container::getInstance()->getNamespace() . 'Filament\\Resources\\' . $basename;
-        })->filter(function ($class) {
-            if (! class_exists($class)) {
-                return false;
-            }
-
-            $reflection = new ReflectionClass($class);
-
-            return ! $reflection->isAbstract() && $reflection->isSubclassOf(Resource::class);
-        })->mapWithKeys(fn ($class) => [Str::kebab(class_basename($class)) => $class]);
     }
 
     public function scripts()
