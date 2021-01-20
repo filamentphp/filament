@@ -13,7 +13,7 @@
     >
         <div class="w-56 fixed z-20 h-screen transform transition-transform duration-200 md:translate-x-0 flex"
              :class="headerIsOpen ? 'translate-x-0' : '-translate-x-full'">
-            <x-filament::app-header class="flex-grow overflow-y-auto"/>
+            <x-filament::app-header class="flex-grow overflow-y-auto" />
             <button
                 type="button"
                 aria-controls="banner"
@@ -22,7 +22,7 @@
                 x-cloak
                 x-show.opacity="headerIsOpen"
                 class="md:hidden absolute top-2 right-0 transform translate-x-full p-3 text-gray-200 hover:text-white transition-colors duration-200">
-                <x-heroicon-o-x class="w-6 h-6"/>
+                <x-heroicon-o-x class="w-6 h-6" />
             </button>
         </div>
         <span class="absolute z-10 inset-0 bg-gray-800 bg-opacity-50 md:hidden" x-cloak x-show="headerIsOpen"
@@ -33,7 +33,7 @@
                     <button type="button" aria-controls="banner" @click.prevent="headerIsOpen = true"
                             :aria-expanded="headerIsOpen"
                             class="md:hidden text-blue-600 hover:text-blue-800 transition-colors duration-200 mr-4">
-                        <x-heroicon-o-menu-alt-2 class="w-6 h-6"/>
+                        <x-heroicon-o-menu-alt-2 class="w-6 h-6" />
                     </button>
                     <h1 class="font-light text-2xl leading-tight text-red-700">{{ $title }}</h1>
                 </div>

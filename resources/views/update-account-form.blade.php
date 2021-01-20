@@ -1,6 +1,6 @@
 <x-filament::form>
     <x-filament::card class="space-y-6">
-        <x-filament::fields :fields="$this->fields()"/>
+        <x-filament::fields :fields="$this->fields()" />
 
         <x-filament::button
             type="submit"

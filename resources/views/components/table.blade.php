@@ -1,12 +1,12 @@
 <div class="shadow-sm rounded bg-white overflow-x-scroll">
     <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-100">
-            <tr>
-                {{ $head }}
-            </tr>
+        <tr>
+            {{ $head }}
+        </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
-            {{ $body }}
+        {{ $body }}
         </tbody>
     </table>
 </div>

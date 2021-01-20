@@ -1,10 +1,10 @@
 @props([
-    'label',
-    'tab',
+'label',
+'tab',
 ])
 
-<x-filament::card 
-    x-data="{ tab: '{{ $tab }}' }" 
+<x-filament::card
+    x-data="{ tab: '{{ $tab }}' }"
     x-cloak
     class="overflow-hidden"
 >

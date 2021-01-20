@@ -1,7 +1,7 @@
 @extends('filament::layouts.field-group')
 
 @pushonce('js:livewire-sortable')
-    <script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
 @endpushonce
 
 @section('field')
@@ -16,33 +16,33 @@
                 <option value="">{{ __($field->placeholder) }}</option>
             @endif
             @foreach ($field->options as $value => $label)
-                <option 
-                    value="{{ $value }}" 
+                <option
+                    value="{{ $value }}"
                     @if (in_array($value, $this->{$field->model}))
-                        disabled
+                    disabled
                     @endif
                 >{{ $label }}</option>
             @endforeach
         </x-filament::select>
 
         @if ($this->{$field->model})
-            <ol 
+            <ol
                 class="rounded shadow-sm border border-gray-300 divide-y divide-gray-300"
                 @if ($field->sortMethod)
-                    wire:sortable="{{ $field->sortMethod }}"
-                @endif    
+                wire:sortable="{{ $field->sortMethod }}"
+                @endif
             >
                 @foreach ($this->{$field->model} as $key => $id)
-                    <li 
+                    <li
                         class="w-full px-3 py-2 flex items-center justify-between space-x-6"
                         @if ($field->sortMethod)
-                            wire:key="value-{{ $key }}"
-                            wire:sortable.item="{{ $id }}" 
-                        @endif    
+                        wire:key="value-{{ $key }}"
+                        wire:sortable.item="{{ $id }}"
+                        @endif
                     >
                         <div class="flex-grow flex items-center space-x-3">
                             @if ($field->sortMethod)
-                                <button 
+                                <button
                                     class="flex-shrink-0 text-gray-300 hover:text-gray-600 transition-colors duration-200 flex cursor-move"
                                     wire:sortable.handle
                                 >
@@ -51,12 +51,13 @@
                                 </button>
                             @endif
                             <div class="flex-grow overflow-x-auto">
-                                <span class="text-sm leading-tight">{{ isset($field->options[$id]) ? $field->options[$id] : $id }}</span>
+                                <span
+                                    class="text-sm leading-tight">{{ isset($field->options[$id]) ? $field->options[$id] : $id }}</span>
                             </div>
                         </div>
                         @if ($field->deleteMethod)
-                            <button 
-                                type="button" 
+                            <button
+                                type="button"
                                 class="flex-shrink-0 text-gray-500 hover:text-red-600 transition-colors duration-200 flex"
                                 wire:click="{{ $field->deleteMethod }}('{{ $key }}')"
                             >

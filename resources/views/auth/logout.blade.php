@@ -1,6 +1,6 @@
 <button type="button"
-    wire:click="submit"
-    @if ($class)
+        wire:click="submit"
+        @if ($class)
         class="{{ $class }}"
     @endif>
     {{ $label }}

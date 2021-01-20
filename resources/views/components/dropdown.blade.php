@@ -1,8 +1,8 @@
 @props([
-    'id' => Str::uuid(),
+'id' => Str::uuid(),
 ])
 
-<div 
+<div
     class="relative"
     x-data="{ menuIsOpen: false, popper: null }"
     x-cloak
@@ -10,7 +10,7 @@
     @click.away="menuIsOpen = false"
     wire:ignore.self
 >
-    <button 
+    <button
         type="button"
         x-ref="btn"
         @click="menuIsOpen = !menuIsOpen; $nextTick(() => popper.update())"
@@ -21,8 +21,8 @@
     >
         {{ $button }}
     </button>
-    <div 
-        x-show="menuIsOpen" 
+    <div
+        x-show="menuIsOpen"
         x-ref="menu"
         role="menu"
         id="{{ $id }}"
