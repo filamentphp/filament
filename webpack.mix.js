@@ -11,11 +11,9 @@ let mix = require('laravel-mix')
  |
  */
 
-// Config
 const SRC = 'resources'
 const DIST = 'dist'
 
-// set paths
 mix.setPublicPath(DIST)
 mix.setResourceRoot(`/${SRC}/`)
 

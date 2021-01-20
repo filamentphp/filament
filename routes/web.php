@@ -15,15 +15,15 @@ Route::name('assets.')->group(function () {
     Route::get('filament.js.map', [Controllers\AssetController::class, 'jsMap']);
 });
 
-// Images
-Route::get('/image/{path}', Controllers\ImageController::class)->where('path', '.*')->name('image');
-
 // Authentication
 Route::middleware([RedirectIfAuthenticated::class])->name('auth.')->group(function () {
     Route::get('login', Livewire\Auth\Login::class)->name('login');
     Route::get('forgot-password', Livewire\Auth\RequestPassword::class)->name('password.request');
     Route::get('reset-password/{token}', Livewire\Auth\ResetPassword::class)->middleware([ValidateSignature::class])->name('password.reset');
 });
+
+// Images
+Route::get('/image/{path}', Controllers\ImageController::class)->where('path', '.*')->name('image');
 
 // Authenticated routes
 Route::middleware([Authenticate::class])->group(function () {
