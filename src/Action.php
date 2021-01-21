@@ -13,10 +13,6 @@ abstract class Action extends Component
 
     public $title;
 
-    public $record;
-
-    public $records;
-
     protected static function getClassName()
     {
         return class_basename(static::class);

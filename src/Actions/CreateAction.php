@@ -10,6 +10,6 @@ abstract class CreateAction extends Action
 
     public function mount()
     {
-        dd($this->getTitle());
+        //
     }
 }
