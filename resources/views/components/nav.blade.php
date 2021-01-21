@@ -3,7 +3,7 @@
         @foreach ($items as $item)
             <li>
                 <x-filament::nav-link
-                    :path="$item->path"
+                    :url="$item->url"
                     :active="$item->active"
                     :label="$item->label"
                     :icon="$item->icon"

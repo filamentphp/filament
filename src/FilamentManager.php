@@ -13,43 +13,48 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentManager
 {
+    protected $navigation;
+
+    protected $resources;
+
     public function getNavigation()
     {
-        $navigation = [];
+        if ($this->navigation) return $this->navigation;
 
-        $navigation[Dashboard::class] = (object) [
-            'active' => ['filament.dashboard'],
+        $this->navigation = collect();
+
+        $this->navigation->put(Dashboard::class, (object) [
+            'active' => 'filament.dashboard',
             'icon' => 'heroicon-o-home',
             'label' => __('filament::dashboard.title'),
-            'path' => route('filament.dashboard'),
             'sort' => 0,
-        ];
+            'url' => route('filament.dashboard'),
+        ]);
 
-        $this->getResources()->each(function ($resourceClass) use (&$navigation) {
+        $this->getResources()->each(function ($resourceClass) {
             $resource = new $resourceClass;
 
             if ($resource->getDefaultAction()) {
-                $path = route('filament.resource', ['resource' => $resource->getSlug()]);
+                $url = route('filament.resource', ['resource' => $resource->getSlug()]);
 
-                $navigation[$resourceClass] = (object) [
-                    'active' => [
-                        parse_url($path, PHP_URL_PATH),
-                        parse_url($path, PHP_URL_PATH) . '/*',
-                    ],
+                $this->navigation->put($resourceClass, (object) [
+                    'active' => (string) Str::of(parse_url($url, PHP_URL_PATH))->after('/')->append('*'),
                     'icon' => $resource->getIcon(),
                     'label' => (string) Str::of($resource->getLabel())->plural()->title(),
-                    'path' => $path,
                     'sort' => $resource->getSort(),
-                ];
+                    'url' => $url,
+                ]);
             }
         });
 
-        return $navigation;
+        return $this->navigation;
     }
 
     public function getResources()
     {
-        return collect((new Filesystem())->allFiles(app_path('Filament/Resources')))
+        if ($this->resources) return $this->resources;
+
+        return $this->resources = collect((new Filesystem())->allFiles(app_path('Filament/Resources')))
             ->map(function (SplFileInfo $file) {
                 return (string) Str::of('App\\Filament\\Resources')
                     ->append('\\', $file->getRelativePathname())

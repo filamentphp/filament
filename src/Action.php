@@ -9,20 +9,32 @@ abstract class Action extends Component
 {
     public $hasRouteParameter = true;
 
-    protected $resource;
+    public $resource;
 
     public $title;
 
-    protected static function getClassName()
+    public function getClassName()
     {
         return class_basename(static::class);
+    }
+
+    public function getModel()
+    {
+        $resourceClass = $this->getResource();
+
+        return (new $resourceClass)->getModel();
+    }
+
+    public function getResource()
+    {
+        return $this->resource;
     }
 
     public function getTitle()
     {
         if ($this->title) return $this->title;
 
-        return (string) Str::of(static::getClassName())
+        return (string) Str::of($this->getClassName())
             ->kebab()
             ->replace('-', ' ')
             ->title();

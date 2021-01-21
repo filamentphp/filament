@@ -53,7 +53,6 @@ class UpdateAccountForm extends Component
                     Text::make('user.email')
                         ->type('email')
                         ->label('filament::fields.labels.email')
-                        ->modelDirective('wire:model.lazy')
                         ->extraAttributes([
                             'autocomplete' => 'email',
                             'required' => 'true',
