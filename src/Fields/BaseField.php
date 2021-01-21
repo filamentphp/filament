@@ -2,6 +2,7 @@
 
 namespace Filament\Fields;
 
+use Filament\View\Components\Fields;
 use Illuminate\Support\Str;
 
 class BaseField
@@ -11,6 +12,8 @@ class BaseField
     public $model;
 
     public $modelDirective = 'wire:model.defer';
+
+    public $rules = [];
 
     public $value;
 
@@ -22,6 +25,16 @@ class BaseField
     {
         $this->model = $model;
         $this->id = Str::slug($model);
+    }
+
+    public function getFields()
+    {
+        return new Fields;
+    }
+
+    public function getRules()
+    {
+        return $this->rules;
     }
 
     public static function make(string $model)

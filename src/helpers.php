@@ -2,6 +2,8 @@
 
 namespace Filament;
 
+use League\Glide\Urls\UrlBuilderFactory;
+
 if (! function_exists('Filament\format_bytes')) {
     function format_bytes($size, $precision = 0)
     {
@@ -13,5 +15,25 @@ if (! function_exists('Filament\format_bytes')) {
         }
 
         return $size;
+    }
+}
+
+if (! function_exists('Filament\get_image_url')) {
+    function get_image_url($path, $manipulations = [])
+    {
+        $urlBuilder = UrlBuilderFactory::create('', config('app.key'));
+
+        return route('filament.image', ['path' => ltrim($urlBuilder->getUrl($path, $manipulations), '/')]);
+    }
+}
+
+if (! function_exists('Filament\is_image')) {
+    function is_image($file)
+    {
+        return in_array(Filament::storage()->getMimeType($file), [
+            'image/jpeg',
+            'image/gif',
+            'image/png',
+        ], true);
     }
 }

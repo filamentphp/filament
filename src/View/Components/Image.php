@@ -27,7 +27,7 @@ class Image extends Component
 
     public function src($dpr = 1)
     {
-        return Filament::image($this->src, array_merge(['dpr' => $dpr], $this->manipulations));
+        return \Filament\get_image_url($this->src, array_merge(['dpr' => $dpr], $this->manipulations));
     }
 
     public function render()

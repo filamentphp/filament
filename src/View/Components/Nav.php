@@ -11,7 +11,8 @@ class Nav extends Component
 
     public function __construct()
     {
-        $this->items = collect(Filament::getNavigation())
+        $this->items = collect(Filament::navigation())
+            ->sortBy('label')
             ->sortBy('sort')
             ->all();
     }

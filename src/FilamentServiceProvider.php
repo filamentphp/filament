@@ -3,6 +3,8 @@
 namespace Filament;
 
 use Filament\Commands\MakeUserCommand;
+use Filament\Models\FilamentRole;
+use Filament\Models\FilamentUser;
 use Filament\Providers\RouteServiceProvider;
 use Filament\Providers\ServiceProvider;
 use Filament\Traits\CanRegisterLivewireComponentDirectories;

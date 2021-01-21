@@ -6,69 +6,73 @@ use Illuminate\Support\Str;
 
 abstract class Resource
 {
-    public $actions = [];
+    public static $icon = 'heroicon-o-database';
 
-    public $defaultAction = 'index';
+    public static $label;
 
-    public $icon = 'heroicon-o-database';
+    public static $model;
 
-    public $label;
+    public static $slug;
 
-    public $model;
+    public static $sort = 0;
 
-    public $slug;
-
-    public $sort;
-
-    public function getAction($name = null)
+    public static function actions()
     {
-        if (! $name) return static::getDefaultAction();
-
-        return static::getActions()[$name] ?? null;
+        return [];
     }
 
-    public function getActions()
+    public static function authorization()
     {
-        return $this->actions;
+        return [];
     }
 
-    public function getDefaultAction()
+    public static function authorizationManager()
     {
-        $actionClass = static::getAction($this->defaultAction);
-
-        if ((new $actionClass)->hasRouteParameter) return;
-
-        return $actionClass;
+        return new ResourceAuthorizationManager(static::class);
     }
 
-    public function getIcon()
+    public static function columns()
     {
-        return $this->icon;
+        return [];
     }
 
-    public function getLabel()
+    public static function fields()
     {
-        if ($this->label) return $this->label;
+        return [];
+    }
 
-        return (string) Str::of($this->model)
+    public static function getLabel()
+    {
+        if (static::$label) return static::$label;
+
+        return Str::of(class_basename(static::$model))
             ->kebab()
             ->replace('-', ' ');
     }
 
-    public function getModel()
+    public static function getSlug()
     {
-        return $this->model;
+        if (static::$slug) return static::$slug;
+
+        return Str::of(class_basename(static::$model))
+            ->plural()
+            ->kebab();
     }
 
-    public function getSlug()
+    public static function hasAction($action)
     {
-        if ($this->slug) return $this->slug;
-
-        return (string) Str::of(class_basename($this->model))->kebab()->plural();
+        return in_array($action, static::actions());
     }
 
-    public function getSort()
+    public static function hasRoute($route)
     {
-        return $this->sort;
+        return in_array($route, array_keys(static::actions()));
+    }
+
+    public static function resolveRouteAction($route)
+    {
+        if (! static::hasRoute($route)) return null;
+
+        return static::actions()[$route];
     }
 }

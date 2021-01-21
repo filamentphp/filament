@@ -19,6 +19,14 @@ class FilamentUser extends Authenticatable
         'remember_token',
     ];
 
+    public function hasRole($role)
+    {
+        return FilamentRoleUser::where([
+            ['role_id', $role],
+            ['user_id', $this->attributes['id']],
+        ])->exists();
+    }
+
     public function sendPasswordResetNotification($token)
     {
         $notification = new ResetPasswordNotification($token);
