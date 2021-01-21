@@ -6,6 +6,8 @@ use Illuminate\Support\Str;
 
 abstract class Resource
 {
+    public static $actions = [];
+
     public static $icon = 'heroicon-o-database';
 
     public static $label;
@@ -18,7 +20,12 @@ abstract class Resource
 
     public static function actions()
     {
-        return [];
+        return collect(static::$actions)
+            ->mapWithKeys(function ($action, $route) {
+                $route = is_string($route) ? trim($route, '/') : '';
+
+                return [$route => $action];
+            })->toArray();
     }
 
     public static function authorization()
@@ -41,11 +48,18 @@ abstract class Resource
         return [];
     }
 
+    public static function getActionFromRoute($route = '')
+    {
+        if (! static::hasRoute($route)) return null;
+
+        return static::actions()[$route];
+    }
+
     public static function getLabel()
     {
         if (static::$label) return static::$label;
 
-        return Str::of(class_basename(static::$model))
+        return (string) Str::of(class_basename(static::$model))
             ->kebab()
             ->replace('-', ' ');
     }
@@ -54,7 +68,7 @@ abstract class Resource
     {
         if (static::$slug) return static::$slug;
 
-        return Str::of(class_basename(static::$model))
+        return (string) Str::of(class_basename(static::$model))
             ->plural()
             ->kebab();
     }
@@ -67,12 +81,5 @@ abstract class Resource
     public static function hasRoute($route)
     {
         return in_array($route, array_keys(static::actions()));
-    }
-
-    public static function resolveRouteAction($route)
-    {
-        if (! static::hasRoute($route)) return null;
-
-        return static::actions()[$route];
     }
 }

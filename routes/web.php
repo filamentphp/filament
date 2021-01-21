@@ -29,5 +29,11 @@ Route::get('/image/{path}', Controllers\ImageController::class)->where('path', '
 Route::middleware([Authenticate::class])->group(function () {
     Route::get('/', Livewire\Dashboard::class)->name('dashboard');
     Route::get('/account', Livewire\UpdateAccountForm::class)->name('account');
-    Route::get('/resources/{resource}/{action?}/{record?}', Controllers\ResourceController::class)->name('resource');
+
+    // Resources
+    \Filament\Filament::resources()->each(function ($resource) {
+        collect($resource::actions())->each(function ($action, $route) use ($resource) {
+            Route::get('/resources/' . $resource::getSlug() . '/' . $route, $action)->name('resources.' . $resource::getSlug() . '.' . $action);
+        });
+    });
 });
