@@ -2,7 +2,7 @@
 
 namespace Filament\View\Components;
 
-use Filament\Filament;
+use Filament\Models\NavigationItem;
 use Illuminate\View\Component;
 
 class Nav extends Component
@@ -11,10 +11,7 @@ class Nav extends Component
 
     public function __construct()
     {
-        $this->items = collect(Filament::navigation())
-            ->sortBy('label')
-            ->sortBy('sort')
-            ->all();
+        $this->items = NavigationItem::all()->sortBy('label')->sortBy('sort');
     }
 
     public function render()

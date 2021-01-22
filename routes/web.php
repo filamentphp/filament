@@ -1,10 +1,10 @@
 <?php
 
-use Filament\Filament;
 use Filament\Http\Controllers;
 use Filament\Http\Livewire;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\RedirectIfAuthenticated;
+use Filament\Models\Resource;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Support\Facades\Route;
 
@@ -32,11 +32,11 @@ Route::middleware([Authenticate::class])->group(function () {
     Route::get('/account', Livewire\UpdateAccountForm::class)->name('account');
 
     // Resources
-    Filament::resources()->each(function ($resource) {
-        collect($resource::router()->routes)->each(function ($route) use ($resource) {
-            Route::get('/resources/' . $resource::getSlug() . '/' . $route->uri, $route->action)
-                ->middleware('filament.authorize.resource-route:' . $resource . ',' . $route->name)
-                ->name('resources.' . $resource::getSlug() . '.' . $route->name);
+    Resource::all()->each(function ($resource) {
+        collect($resource->router()->routes)->each(function ($route) use ($resource) {
+            Route::get('/resources/' . $resource->slug . '/' . $route->uri, $route->action)
+                ->middleware('filament.authorize.resource-route:' . $resource->id . ',' . $route->name)
+                ->name('resources.' . $resource->slug . '.' . $route->name);
         });
     });
 });

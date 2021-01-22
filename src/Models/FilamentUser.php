@@ -19,6 +19,11 @@ class FilamentUser extends Authenticatable
         'remember_token',
     ];
 
+    public function can($resource, $route = 'index')
+    {
+        return $resource::authorizationManager()->can($resource, $route);
+    }
+
     public function hasRole($role)
     {
         return FilamentRoleUser::where([

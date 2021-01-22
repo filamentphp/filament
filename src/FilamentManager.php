@@ -2,22 +2,11 @@
 
 namespace Filament;
 
-use Filament\Http\Livewire\Dashboard;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
-use ReflectionClass;
-use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentManager
 {
-    public $navigation;
-
-    public $resources;
-
-    public $roles;
-
     public $scripts;
 
     public $storage;
@@ -50,67 +39,6 @@ class FilamentManager
         }
 
         return $manifest[$key];
-    }
-
-    public function navigation()
-    {
-        if ($this->navigation) return $this->navigation;
-
-        $this->navigation = collect();
-
-        $this->navigation->put(Dashboard::class, (object) [
-            'active' => 'filament.dashboard',
-            'icon' => 'heroicon-o-home',
-            'label' => __('filament::dashboard.title'),
-            'sort' => -1,
-            'url' => route('filament.dashboard'),
-        ]);
-
-        $this->resources()
-            ->filter(fn ($resource) => $resource::authorizationManager()->can($resource::router()->getIndexRoute()->action))
-            ->each(function ($resource) {
-                $url = route('filament.resources.' . $resource::getSlug() . '.' . $resource::router()->getIndexRoute()->name);
-
-                $this->navigation->put($resource, (object) [
-                    'active' => (string) Str::of(parse_url($url, PHP_URL_PATH))->after('/')->append('*'),
-                    'icon' => $resource::$icon,
-                    'label' => (string) Str::of($resource::getLabel())->plural()->title(),
-                    'sort' => $resource::$sort,
-                    'url' => $url,
-                ]);
-            });
-
-        return $this->navigation;
-    }
-
-    public function resources()
-    {
-        if ($this->resources) return $this->resources;
-
-        return $this->resources = collect((new Filesystem())->allFiles(app_path('Filament/Resources')))
-            ->map(function (SplFileInfo $file) {
-                return (string) Str::of('App\\Filament\\Resources')
-                    ->append('\\', $file->getRelativePathname())
-                    ->replace(['/', '.php'], ['\\', '']);
-            })
-            ->filter(function ($class) {
-                return is_subclass_of($class, Resource::class) && ! (new ReflectionClass($class))->isAbstract();
-            });
-    }
-
-    public function roles()
-    {
-        if ($this->roles) return $this->roles;
-
-        return $this->roles = collect((new Filesystem())->allFiles(app_path('Filament/Roles')))
-            ->map(function (SplFileInfo $file) {
-                return (string) Str::of('App\\Filament\\Roles')
-                    ->append('\\', $file->getRelativePathname())
-                    ->replace(['/', '.php'], ['\\', '']);
-            })
-            ->filter(function ($class) {
-                return is_subclass_of($class, Role::class) && ! (new ReflectionClass($class))->isAbstract();
-            });
     }
 
     public function scripts()
