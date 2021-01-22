@@ -54,6 +54,11 @@ abstract class Resource
             ->kebab();
     }
 
+    public static function route($name, $parameters = [], $absolute = true)
+    {
+        return route('filament.resources.' . static::getSlug() . '.' . $name, $parameters, $absolute);
+    }
+
     public static function router()
     {
         return new ResourceRouter(static::class);
