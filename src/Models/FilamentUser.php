@@ -21,7 +21,7 @@ class FilamentUser extends Authenticatable
 
     public function can($resource, $route = 'index')
     {
-        return $resource::authorizationManager()->can($resource, $route);
+        return $resource::authorizationManager()->can($route, $this);
     }
 
     public function hasRole($role)

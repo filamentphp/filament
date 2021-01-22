@@ -34,15 +34,17 @@ class ResourceAuthorizationManager
         return $this;
     }
 
-    public function can($route)
+    public function can($route, $user = null)
     {
+        if (! $user) $user = Auth::guard('filament')->user();
+
         if (! count($this->authorizations)) return true;
 
         if (! $this->resource::router()->hasRoute($route)) return $this->type === 'deny';
 
         return collect($this->authorizations)
-            ->contains(function ($authorization) use ($route) {
-                if (! Auth::guard('filament')->user()->hasRole($authorization->role)) return false;
+            ->contains(function ($authorization) use ($route, $user) {
+                if (! $user->hasRole($authorization->role)) return false;
 
                 if (in_array($route, $authorization->onlyRoutes)) return $this->type === 'allow';
 
