@@ -10,12 +10,12 @@ abstract class Role
 
     public static function allow()
     {
-        return new RoleAuthorization(static::class, 'allow');
+        return new ResourceAuthorization(static::class, 'allow');
     }
 
     public static function deny()
     {
-        return new RoleAuthorization(static::class, 'deny');
+        return new ResourceAuthorization(static::class, 'deny');
     }
 
     public static function getLabel()

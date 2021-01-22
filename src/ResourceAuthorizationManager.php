@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Auth;
 
 class ResourceAuthorizationManager
 {
-    public $resource;
+    public $authorizations = [];
 
-    public $roleAuthorizations = [];
+    public $resource;
 
     public $type = 'deny';
 
@@ -16,39 +16,37 @@ class ResourceAuthorizationManager
     {
         $this->resource = $resource;
 
-        $this->authorize((new $resource)->authorization());
+        $this->authorize($resource::authorization());
     }
 
-    public function authorize($roleAuthorizations)
+    public function authorize($authorizations)
     {
-        if (! $roleAuthorizations) return;
+        if (! $authorizations) return;
 
-        if (! is_array($roleAuthorizations)) $roleAuthorizations = [$roleAuthorizations];
+        if (! is_array($authorizations)) $authorizations = [$authorizations];
 
-        if (! count($this->roleAuthorizations)) $this->type = $roleAuthorizations[0]->type;
+        if (! count($this->authorizations)) $this->type = $authorizations[0]->type;
 
-        $roleAuthorizations = array_filter($roleAuthorizations, fn ($roleAuthorization) => $roleAuthorization->type === $this->type);
+        $authorizations = array_filter($authorizations, fn ($authorization) => $authorization->type === $this->type);
 
-        $this->roleAuthorizations = array_merge($this->roleAuthorizations, $roleAuthorizations);
+        $this->authorizations = array_merge($this->authorizations, $authorizations);
 
         return $this;
     }
 
-    public function can($action)
+    public function can($route)
     {
-        if (! count($this->roleAuthorizations)) return true;
+        if (! count($this->authorizations)) return true;
 
-        $actions = $this->resource::actions();
+        if (! $this->resource::router()->hasRoute($route)) return $this->type === 'deny';
 
-        if (! in_array($action, array_values($actions))) return $this->type === 'deny';
+        return collect($this->authorizations)
+            ->contains(function ($authorization) use ($route) {
+                if (! Auth::guard('filament')->user()->hasRole($authorization->role)) return false;
 
-        return collect($this->roleAuthorizations)
-            ->contains(function ($roleAuthorization) use ($action) {
-                if (! Auth::guard('filament')->user()->hasRole($roleAuthorization->role)) return false;
+                if (in_array($route, $authorization->onlyRoutes)) return $this->type === 'allow';
 
-                if (in_array($action, $roleAuthorization->onlyActions)) return $this->type === 'allow';
-
-                if (in_array($action, $roleAuthorization->exceptActions)) return $this->type === 'deny';
+                if (in_array($route, $authorization->exceptRoutes)) return $this->type === 'deny';
 
                 return $this->type === 'deny';
             }) || $this->type === 'deny';

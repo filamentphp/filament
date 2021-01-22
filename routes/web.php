@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Filament;
 use Filament\Http\Controllers;
 use Filament\Http\Livewire;
 use Filament\Http\Middleware\Authenticate;
@@ -31,9 +32,11 @@ Route::middleware([Authenticate::class])->group(function () {
     Route::get('/account', Livewire\UpdateAccountForm::class)->name('account');
 
     // Resources
-    \Filament\Filament::resources()->each(function ($resource) {
-        collect($resource::actions())->each(function ($action, $route) use ($resource) {
-            Route::get('/resources/' . $resource::getSlug() . '/' . $route, $action)->name('resources.' . $resource::getSlug() . '.' . $action);
+    Filament::resources()->each(function ($resource) {
+        collect($resource::router()->routes)->each(function ($route) use ($resource) {
+            Route::get('/resources/' . $resource::getSlug() . '/' . $route->uri, $route->action)
+                ->middleware('filament.authorize.resource-route:' . $resource . ',' . $route->name)
+                ->name('resources.' . $resource::getSlug() . '.' . $route->name);
         });
     });
 });

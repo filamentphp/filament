@@ -3,11 +3,13 @@
 namespace Filament;
 
 use Filament\Commands\MakeUserCommand;
+use Filament\Http\Middleware\AuthorizeResourceRoute;
 use Filament\Models\FilamentRole;
 use Filament\Models\FilamentUser;
 use Filament\Providers\RouteServiceProvider;
 use Filament\Providers\ServiceProvider;
 use Filament\Traits\CanRegisterLivewireComponentDirectories;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 
 class FilamentServiceProvider extends ServiceProvider
@@ -26,6 +28,7 @@ class FilamentServiceProvider extends ServiceProvider
         $this->bootDirectives();
         $this->bootLoaders();
         $this->bootLivewireComponents();
+        $this->bootMiddleware();
         $this->bootPublishing();
     }
 
@@ -87,6 +90,12 @@ class FilamentServiceProvider extends ServiceProvider
     {
         $this->registerLivewireComponentDirectory(__DIR__ . '/Http/Livewire', 'Filament\\Http\\Livewire', 'filament.');
         $this->registerLivewireComponentDirectory(app_path('Filament/Resources'), 'App\\Filament\\Resources', 'filament.resources.');
+    }
+
+    protected function bootMiddleware()
+    {
+        $router = $this->app->make(Router::class);
+        $router->aliasMiddleware('filament.authorize.resource-route', AuthorizeResourceRoute::class);
     }
 
     protected function bootPublishing()

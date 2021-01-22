@@ -9,11 +9,7 @@ abstract class EditAction extends Action
 {
     use WithNotifications;
 
-    public $hasRouteParameter = true;
-
     public $record;
-
-    protected $rules = [];
 
     public function fields()
     {
@@ -22,7 +18,12 @@ abstract class EditAction extends Action
 
     public function mount($record)
     {
-        $this->record = $this->getModel()::findOrFail($record);
+        $this->record = static::$model::findOrFail($record);
+    }
+
+    public function rules()
+    {
+        return [];
     }
 
     public function submit()
@@ -37,6 +38,6 @@ abstract class EditAction extends Action
     public function render()
     {
         return view('filament::actions.edit')
-            ->layout('filament::layouts.app', ['title' => $this->getTitle()]);
+            ->layout('filament::layouts.app', ['title' => static::getTitle()]);
     }
 }

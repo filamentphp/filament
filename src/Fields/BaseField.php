@@ -27,6 +27,11 @@ class BaseField
         $this->id = Str::slug($model);
     }
 
+    public static function make(string $model)
+    {
+        return new static($model);
+    }
+
     public function getFields()
     {
         return new Fields;
@@ -35,11 +40,6 @@ class BaseField
     public function getRules()
     {
         return $this->rules;
-    }
-
-    public static function make(string $model)
-    {
-        return new static($model);
     }
 
     public function enabled(bool $enabled)

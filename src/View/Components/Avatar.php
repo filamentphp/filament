@@ -4,6 +4,7 @@ namespace Filament\View\Components;
 
 use Illuminate\View\Component;
 use Thomaswelton\LaravelGravatar\Facades\Gravatar;
+use function Filament\get_image_url;
 
 class Avatar extends Component
 {
@@ -36,7 +37,7 @@ class Avatar extends Component
             return Gravatar::src($this->user->email, $this->size * $dpr);
         }
 
-        return \Filament\get_image_url($this->user->avatar, [
+        return get_image_url($this->user->avatar, [
             'w' => $this->size,
             'h' => $this->size,
             'fit' => 'crop',

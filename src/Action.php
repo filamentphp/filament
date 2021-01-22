@@ -7,36 +7,24 @@ use Livewire\Component;
 
 abstract class Action extends Component
 {
-    public $hasRouteParameter = true;
+    public static $model;
 
-    public $resource;
+    public static $resource;
 
-    public $title;
+    public static $title;
 
-    public function getClassName()
+    public static function getTitle()
     {
-        return class_basename(static::class);
-    }
+        if (static::$title) return static::$title;
 
-    public function getModel()
-    {
-        $resourceClass = $this->getResource();
-
-        return (new $resourceClass)->getModel();
-    }
-
-    public function getResource()
-    {
-        return $this->resource;
-    }
-
-    public function getTitle()
-    {
-        if ($this->title) return $this->title;
-
-        return (string) Str::of($this->getClassName())
+        return (string) Str::of(class_basename(static::class))
             ->kebab()
             ->replace('-', ' ')
             ->title();
+    }
+
+    public static function route($uri, $name)
+    {
+        return new ResourceRoute(static::class, $uri, $name);
     }
 }

@@ -67,9 +67,9 @@ class FilamentManager
         ]);
 
         $this->resources()
-            ->filter(fn ($resource) => $resource::authorizationManager()->can($resource::getActionFromRoute()))
+            ->filter(fn ($resource) => $resource::authorizationManager()->can($resource::router()->getIndexRoute()->action))
             ->each(function ($resource) {
-                $url = route('filament.resources.' . $resource::getSlug() . '.' . $resource::getActionFromRoute());
+                $url = route('filament.resources.' . $resource::getSlug() . '.' . $resource::router()->getIndexRoute()->name);
 
                 $this->navigation->put($resource, (object) [
                     'active' => (string) Str::of(parse_url($url, PHP_URL_PATH))->after('/')->append('*'),

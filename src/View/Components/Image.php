@@ -2,8 +2,8 @@
 
 namespace Filament\View\Components;
 
-use Filament\Filament;
 use Illuminate\View\Component;
+use function Filament\get_image_url;
 
 class Image extends Component
 {
@@ -27,7 +27,7 @@ class Image extends Component
 
     public function src($dpr = 1)
     {
-        return \Filament\get_image_url($this->src, array_merge(['dpr' => $dpr], $this->manipulations));
+        return get_image_url($this->src, array_merge(['dpr' => $dpr], $this->manipulations));
     }
 
     public function render()

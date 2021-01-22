@@ -6,8 +6,6 @@ use Illuminate\Support\Str;
 
 abstract class Resource
 {
-    public static $actions = [];
-
     public static $icon = 'heroicon-o-database';
 
     public static $label;
@@ -17,16 +15,6 @@ abstract class Resource
     public static $slug;
 
     public static $sort = 0;
-
-    public static function actions()
-    {
-        return collect(static::$actions)
-            ->mapWithKeys(function ($action, $route) {
-                $route = is_string($route) ? trim($route, '/') : '';
-
-                return [$route => $action];
-            })->toArray();
-    }
 
     public static function authorization()
     {
@@ -48,13 +36,6 @@ abstract class Resource
         return [];
     }
 
-    public static function getActionFromRoute($route = '')
-    {
-        if (! static::hasRoute($route)) return null;
-
-        return static::actions()[$route];
-    }
-
     public static function getLabel()
     {
         if (static::$label) return static::$label;
@@ -73,13 +54,13 @@ abstract class Resource
             ->kebab();
     }
 
-    public static function hasAction($action)
+    public static function router()
     {
-        return in_array($action, static::actions());
+        return new ResourceRouter(static::class);
     }
 
-    public static function hasRoute($route)
+    public static function routes()
     {
-        return in_array($route, array_keys(static::actions()));
+        return [];
     }
 }

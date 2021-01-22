@@ -6,14 +6,12 @@ use Filament\Action;
 
 abstract class IndexAction extends Action
 {
-    public $createAction = 'create';
-
-    public $hasRouteParameter = false;
+    public $createRoute = 'create';
 
     public function render()
     {
         return view('filament::actions.index', [
-            'records' => $this->getModel()::paginate(10),
-        ])->layout('filament::layouts.app', ['title' => $this->getTitle()]);
+            'records' => static::$model::paginate(10),
+        ])->layout('filament::layouts.app', ['title' => static::getTitle()]);
     }
 }

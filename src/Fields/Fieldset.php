@@ -10,6 +10,11 @@ class Fieldset extends BaseField
 
     public $fields;
 
+    public static function make($legend)
+    {
+        return new static($legend);
+    }
+
     public function columns($columns)
     {
         $this->columns = $columns;
@@ -22,10 +27,5 @@ class Fieldset extends BaseField
         $this->fields = $fields;
 
         return $this;
-    }
-
-    public static function make($legend)
-    {
-        return new static($legend);
     }
 }
