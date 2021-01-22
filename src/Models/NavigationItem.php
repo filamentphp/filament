@@ -27,7 +27,7 @@ class NavigationItem extends Model
         Resource::all()
             ->filter(fn ($resource) => $resource->authorizationManager()->can($resource->router()->getIndexRoute()->action))
             ->map(function ($resource) use (&$items) {
-                $url = $resource::route();
+                $url = $resource->className::route();
 
                 $items->push([
                     'class' => $resource->className,
