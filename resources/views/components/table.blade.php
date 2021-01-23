@@ -6,7 +6,7 @@
             </tr>
         </thead>
 
-        <tbody class="divide-y divide-gray-200">
+        <tbody class="divide-y divide-gray-200 text-sm leading-tight">
             {{ $body }}
         </tbody>
     </table>

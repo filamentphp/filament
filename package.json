@@ -7,23 +7,25 @@
         "prod": "npm run production",
         "production": "mix --production",
         "watch": "mix watch",
-        "watch-poll": "mix watch -- --watch-options-poll=1000"
+        "watch-poll": "mix watch -- --watch-options-poll=1000",
+        "start": "npm run watch"
     },
     "devDependencies": {
-        "@popperjs/core": "^2.6.0",
         "@tailwindcss/forms": "^0.2.1",
         "@tailwindcss/typography": "^0.4.0",
-        "alpinejs": "^2.8.0",
-        "axios": "^0.21",
         "browser-sync": "^2.26.13",
         "browser-sync-webpack-plugin": "^2.3.0",
         "dotenv": "^8.2.0",
-        "focus-visible": "^5.2.0",
         "laravel-mix": "^6.0.10",
         "lodash": "^4.17.20",
         "postcss": "^8.2.4",
         "postcss-import": "^14.0.0",
         "postcss-nested": "^5.0.3",
         "tailwindcss": "^2.0.2"
+    },
+    "dependencies": {
+        "@popperjs/core": "^2.6.0",
+        "alpinejs": "^2.8.0",
+        "focus-visible": "^5.2.0"
     }
 }
