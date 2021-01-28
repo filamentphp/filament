@@ -1,4 +1,4 @@
-<div class="shadow-sm rounded bg-white overflow-x-scroll">
+<div class="shadow-xl rounded bg-white overflow-x-scroll">
     <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-100">
             <tr>
