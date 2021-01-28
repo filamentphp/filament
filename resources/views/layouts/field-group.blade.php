@@ -4,6 +4,9 @@
             @if ($field->label)
                 <x-filament::label :for="$field->id">
                     {{ __($field->label) }}
+                    @if (array_key_exists('required', $field->extraAttributes))
+                        <sup class="text-lg font-semibold text-red-700">*</sup>
+                    @endif
                 </x-filament::label>
             @endif
 
