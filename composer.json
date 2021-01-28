@@ -1,6 +1,6 @@
 {
     "name": "filament/filament",
-    "description": "A lightweight admin package to jumpstart your Laravel app.",
+    "description": "Core package for Filament - a lightweight admin panel for the TALL stack.",
     "keywords": [
         "laravel",
         "tailwind",
