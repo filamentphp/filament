@@ -9,7 +9,7 @@
         :extra-attributes="$field->extraAttributes"
     >
         @if ($field->placeholder)
-            <option>{{ __($field->placeholder) }}</option>
+            <option value="">{{ __($field->placeholder) }}</option>
         @endif
 
         @foreach ($field->options as $key => $value)
