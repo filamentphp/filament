@@ -8,7 +8,7 @@
     x-cloak
     x-init="popper = createPopper($refs.btn, $refs.menu, { modifiers: [flip, preventOverflow] })"
     @click.away="menuIsOpen = false"
-    wire:ignore.self
+    wire:ignore
 >
     <button
         type="button"
