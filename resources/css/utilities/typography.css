@@ -1,5 +1,5 @@
 .link {
-    @apply text-blue-600 hover:text-blue-800 transition-colors duration-200;
+    @apply underline text-blue-600 hover:text-blue-800 transition-colors duration-200;
 }
 
 .help,
@@ -13,7 +13,7 @@
 
 .help a,
 .hint a {
-    @apply link underline;
+    @apply link;
 }
 
 .hint {
