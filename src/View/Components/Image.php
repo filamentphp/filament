@@ -22,7 +22,7 @@ class Image extends Component
 
     public function srcSet()
     {
-        collect($this->dprs)->map(fn ($dpr) => $this->src($dpr) . ' ' . $dpr . 'x')->implode(', ')->toArray();
+        return collect($this->dprs)->map(fn ($dpr) => $this->src($dpr) . ' ' . $dpr . 'x')->implode(', ');
     }
 
     public function src($dpr = 1)
