@@ -56,7 +56,7 @@
                         @endif
                     >
                         <div class="col-span-1 p-2 bg-white shadow-sm rounded border border-gray-300 flex items-center space-x-2 @if ($field->sortMethod) cursor-move @endif">
-                            @if (Filament::isImage($file))
+                            @if (FilamentManager::isImage($file))
                                 <x-filament::modal class="flex-shrink-0 flex">
                                     <x-filament-image :src="$file" alt="{{ $file }}"
                                         :manipulations="[ 'w' => 48, 'h' => 48, 'fit' => 'crop' ]"
@@ -65,14 +65,14 @@
                                     />
 
                                     <x-slot name="content">
-                                        <img src="{{ Filament::storage()->url($file) }}" alt="{{ $file }}" />
+                                        <img src="{{ FilamentManager::storage()->url($file) }}" alt="{{ $file }}" />
                                     </x-slot>
                                 </x-filament::modal>
                             @endif
 
                             <div class="flex-grow overflow-scroll flex flex-col text-xs leading-tight">
                                 <a
-                                    href="{{ Filament::storage()->url($file) }}"
+                                    href="{{ FilamentManager::storage()->url($file) }}"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     class="link"
@@ -83,11 +83,11 @@
                                 <dl class="font-mono text-gray-500">
                                     <dt class="sr-only">{{ __('filament::file.mimeType') }}</dt>
 
-                                    <dd>{{ Filament::storage()->getMimeType($file) }}</dd>
+                                    <dd>{{ FilamentManager::storage()->getMimeType($file) }}</dd>
 
                                     <dt class="sr-only">{{ __('filament::file.fileSize') }}</dt>
 
-                                    <dd>{{ \Filament\format_bytes(Filament::storage()->size($file)) }}</dd>
+                                    <dd>{{ \Filament\format_bytes(FilamentManager::storage()->size($file)) }}</dd>
                                 </dl>
                             </div>
 

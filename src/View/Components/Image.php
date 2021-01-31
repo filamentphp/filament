@@ -2,7 +2,7 @@
 
 namespace Filament\View\Components;
 
-use Filament\FilamentManager;
+use Filament\Filament;
 use Illuminate\View\Component;
 
 class Image extends Component
@@ -27,7 +27,7 @@ class Image extends Component
 
     public function src($dpr = 1)
     {
-        return FilamentManager::image($this->src, array_merge(['dpr' => $dpr], $this->manipulations));
+        return Filament::image($this->src, array_merge(['dpr' => $dpr], $this->manipulations));
     }
 
     public function render()
