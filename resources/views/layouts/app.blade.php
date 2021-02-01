@@ -49,6 +49,9 @@
             <main id="content" class="flex-grow max-w-full pb-6 px-4 md:px-6">
                 {{ $slot }}
             </main>
+            <footer rel="contentinfo" class="p-4 md:px-6 text-center">
+                <x-filament::branding-footer />
+            </footer>
         </div>
     </div>
 @overwrite
