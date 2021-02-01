@@ -12,26 +12,24 @@
             :extra-attributes="$field->extraAttributes"
             wire:change="{{ $field->addMethod }}($event.target.value)"
         >
-            @if ($field->placeholder)
-                <option value="">{{ __($field->placeholder) }}</option>
-            @endif
+            <option value="">{{ __($field->placeholder) }}</option>
 
             @foreach ($field->options as $value => $label)
                 <option
                     value="{{ $value }}"
-                    @if (in_array($value, $this->{$field->model})) disabled @endif
+                    @if (in_array($value, (array) $field->value)) disabled @endif
                 >
                     {{ $label }}
                 </option>
             @endforeach
         </x-filament::select>
 
-        @if ($this->{$field->model})
+        @if ($field->value)
             <ol
                 class="rounded shadow-sm border border-gray-300 divide-y divide-gray-300"
                 @if ($field->sortMethod) wire:sortable="{{ $field->sortMethod }}" @endif
             >
-                @foreach ($this->{$field->model} as $key => $id)
+                @foreach ((array) $field->value as $key => $id)
                     <li
                         class="w-full px-3 py-2 flex items-center justify-between space-x-6"
                         @if ($field->sortMethod)
