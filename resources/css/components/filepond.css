@@ -1,4 +1,4 @@
-@layer components {
+@layer base {
     .filepond--root {
         @apply font-sans;
 

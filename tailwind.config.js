@@ -3,6 +3,7 @@ const colors = require("tailwindcss/colors");
 
 module.exports = {
     purge: {
+        layers: ["utilities"],
         content: [
             "./src/**/*.php",
             "./resources/views/**/*.php",
