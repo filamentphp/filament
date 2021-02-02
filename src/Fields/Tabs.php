@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-class Tabs extends BaseField
+class Tabs extends Field
 {
     public $label;
 

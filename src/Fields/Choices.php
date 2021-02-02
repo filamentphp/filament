@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-class Choices extends BaseField
+class Choices extends Field
 {
     public $options = [];
 

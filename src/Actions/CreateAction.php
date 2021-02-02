@@ -11,18 +11,6 @@ abstract class CreateAction extends Action
 
     public $record = [];
 
-    protected $rules = [];
-
-    public function fields()
-    {
-        return [];
-    }
-
-    public function rules()
-    {
-        return [];
-    }
-
     public function submit()
     {
         $this->validate();

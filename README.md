@@ -63,7 +63,7 @@ class Index extends Component
     {
         return view('livewire.page.index', [
             'pages' => Page::paginate(12),
-        ])->layout('filament::layouts.app', ['title' => __('Pages')]);
+        ])->layout('filament::layouts.app', ['title' => 'Pages']);
     }
 }
 ```

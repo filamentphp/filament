@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-class Date extends Field
+class Date extends InputField
 {
     public $config = [
         'altInput' => true,

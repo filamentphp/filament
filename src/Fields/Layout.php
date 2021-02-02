@@ -4,26 +4,24 @@ namespace Filament\Fields;
 
 use Filament\View\Components\Fields;
 
-class Layout extends BaseField
+class Layout extends Field
 {
     public $columns = 1;
 
-    public $fields;
-
-    public static function columns($columns)
+    public function columns($columns)
     {
-        return new static($columns);
-    }
-
-    public function fields($fields = [])
-    {
-        $this->fields = $fields;
+        $this->columns = $columns;
 
         return $this;
     }
 
     public function getFields()
     {
-        return new Fields($this->fields, $this->columns);
+        return parent::getFields()->columns($this->columns);
+    }
+
+    public static function make($fields)
+    {
+        return (new static())->fields($fields);
     }
 }

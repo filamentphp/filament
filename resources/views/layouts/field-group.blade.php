@@ -17,7 +17,7 @@
 
     @yield('field')
 
-    <x-filament::error :field="$field->error ?? $field->model" />
+    <x-filament::error :field="$field->errorKey ?? $field->name" />
 
     @if ($field->help)
         <x-filament::help>

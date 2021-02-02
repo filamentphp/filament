@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-class Textarea extends Field
+class Textarea extends InputField
 {
     //
 }

@@ -1,6 +1,6 @@
 @extends('filament::layouts.base')
 
-@section('title', $title)
+@section('title', __($title))
 
 @section('content')
     <main class="flex h-screen items-center justify-center p-4">
@@ -10,7 +10,7 @@
                     <x-filament::auth-branding />
                 </div>
 
-                <h2 class="font-light text-2xl md:text-3xl leading-tight">{{ $title ?? config('app.name') }}</h2>
+                <h2 class="font-light text-2xl md:text-3xl leading-tight">{{ __($title) ?? config('app.name') }}</h2>
             </header>
 
             {{ $slot }}

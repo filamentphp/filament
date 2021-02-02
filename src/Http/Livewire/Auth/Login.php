@@ -71,6 +71,6 @@ class Login extends Component
     public function render()
     {
         return view('filament::.auth.login')
-            ->layout('filament::layouts.auth', ['title' => __('filament::auth.signin')]);
+            ->layout('filament::layouts.auth', ['title' => 'filament::auth.signin']);
     }
 }

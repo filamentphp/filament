@@ -91,6 +91,6 @@ class ResetPassword extends Component
     public function render()
     {
         return view('filament::.auth.reset-password')
-            ->layout('filament::layouts.auth', ['title' => __('filament::auth.resetPassword')]);
+            ->layout('filament::layouts.auth', ['title' => 'filament::auth.resetPassword']);
     }
 }

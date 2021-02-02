@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-class Avatar extends Field
+class Avatar extends InputField
 {
     public $avatar;
 
@@ -35,6 +35,11 @@ class Avatar extends Field
         $this->deleteMethod = $method;
 
         return $this;
+    }
+
+    public static function make($name)
+    {
+        return parent::make($name)->image();
     }
 
     public function size($size)

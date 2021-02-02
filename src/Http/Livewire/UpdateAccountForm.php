@@ -2,19 +2,15 @@
 
 namespace Filament\Http\Livewire;
 
-use Filament\Fields\Avatar;
-use Filament\Fields\Fieldset;
-use Filament\Fields\Layout;
-use Filament\Fields\Text;
+use Filament\Action;
+use Filament\Fields;
 use Filament\Filament;
 use Filament\Traits\WithNotifications;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
-use Livewire\Component;
 use Livewire\WithFileUploads;
 
-class UpdateAccountForm extends Component
+class UpdateAccountForm extends Action
 {
     use WithFileUploads, WithNotifications;
 
@@ -24,104 +20,81 @@ class UpdateAccountForm extends Component
 
     public $newPasswordConfirmation;
 
-    public $user;
+    public $record;
 
     public function deleteAvatar()
     {
-        if (! $this->user->avatar) return;
+        if (! $this->record->avatar) return;
 
-        Filament::storage()->delete($this->user->avatar);
+        Filament::storage()->delete($this->record->avatar);
 
         $this->reset('newAvatar');
 
-        $this->user->avatar = null;
-        $this->user->save();
+        $this->record->avatar = null;
+        $this->record->save();
 
-        $this->notify(__('filament::avatar.delete', ['name' => $this->user->name]));
+        $this->notify(__('filament::avatar.delete', ['name' => $this->record->name]));
     }
 
     public function fields()
     {
         return [
-            Layout::columns(2)
-                ->fields([
-                    Text::make('user.name')
-                        ->label('Name')
-                        ->extraAttributes([
-                            'required' => 'true',
-                        ]),
-                    Text::make('user.email')
-                        ->type('email')
-                        ->label('filament::fields.labels.email')
-                        ->extraAttributes([
-                            'autocomplete' => 'email',
-                            'required' => 'true',
-                        ]),
-                ]),
-            Avatar::make('newAvatar')
-                ->label('filament::update-account-form.labels.userPhoto')
+            Fields\Layout::make([
+                Fields\Text::make('record.name')
+                    ->label('Name')
+                    ->required(),
+                Fields\Text::make('record.email')
+                    ->label('Email')
+                    ->email()
+                    ->required()
+                    ->unique('users', 'email', true),
+            ])
+                ->columns(2),
+            Fields\Avatar::make('newAvatar')
+                ->label('User photo')
                 ->avatar($this->newAvatar)
-                ->user($this->user)
-                ->deleteMethod('deleteAvatar'),
-            Fieldset::make('filament::update-account-form.labels.updatePassword')
-                ->fields([
-                    Text::make('newPassword')
-                        ->type('password')
-                        ->label('filament::fields.labels.password')
-                        ->extraAttributes([
-                            'autocomplete' => 'new-password',
-                        ])
-                        ->hint(__('filament::fields.hints.optional'))
-                        ->help(__('filament::update-account-form.help.passwordKeep')),
-                    Text::make('newPasswordConfirmation')
-                        ->type('password')
-                        ->label('filament::fields.labels.newPassword')
-                        ->extraAttributes([
-                            'autocomplete' => 'new-password',
-                        ])
-                        ->hint(__('filament::fields.hints.optional')),
-                ])
+                ->user($this->record)
+                ->deleteMethod('deleteAvatar')
+                ->maxSize(1024),
+            Fields\Fieldset::make('Set a new password', [
+                Fields\Text::make('newPassword')
+                    ->label('Password')
+                    ->password()
+                    ->confirmed()
+                    ->minLength(8),
+                Fields\Text::make('newPasswordConfirmation')
+                    ->label('Confirm Password')
+                    ->password()
+                    ->requiredWith('newPassword'),
+            ])
                 ->columns(2),
         ];
     }
 
     public function mount()
     {
-        $this->user = Auth::guard('filament')->user();
-    }
-
-    public function rules()
-    {
-        return [
-            'newAvatar' => ['nullable', 'image', 'max:1024'],
-            'newPassword' => ['nullable', 'min:8'],
-            'newPasswordConfirmation' => ['required_with:newPassword', 'same:newPassword'],
-            'user.email' => [
-                'required',
-                'email',
-                Rule::unique('filament_users', 'email')->ignore($this->user->id),
-            ],
-            'user.name' => ['required'],
-        ];
+        $this->record = Auth::guard('filament')->user();
     }
 
     public function submit()
     {
         $this->validate();
 
+        $this->callHooks('submit');
+
         if ($this->newAvatar) {
-            $this->user->avatar = $this->newAvatar->store('avatars', config('filament.storage_disk'));
+            $this->record->avatar = $this->newAvatar->store('avatars', config('filament.storage_disk'));
 
             $this->reset('newAvatar');
         }
 
         if ($this->newPassword) {
-            $this->user->password = Hash::make($this->newPassword);
+            $this->record->password = Hash::make($this->newPassword);
 
             $this->reset(['newPassword', 'newPasswordConfirmation']);
         }
 
-        $this->user->save();
+        $this->record->save();
 
         $this->notify(__('filament::update-account-form.updated'));
     }
@@ -134,6 +107,6 @@ class UpdateAccountForm extends Component
     public function render()
     {
         return view('filament::update-account-form')
-            ->layout('filament::layouts.app', ['title' => __('filament::update-account-form.title')]);
+            ->layout('filament::layouts.app', ['title' => 'filament::update-account-form.title']);
     }
 }

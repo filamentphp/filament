@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-class File extends Field
+class File extends InputField
 {
     public $deleteMethod;
 

@@ -2,13 +2,13 @@
 
 namespace Filament\Fields;
 
-class Checkbox extends Field
+class Checkbox extends InputField
 {
     public $showErrors = true;
 
     public $type = 'checkbox';
 
-    public function hideErrorOutput()
+    public function hideErrors()
     {
         $this->showErrors = false;
 
@@ -18,6 +18,13 @@ class Checkbox extends Field
     public function type($type)
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function showErrors()
+    {
+        $this->showErrors = true;
 
         return $this;
     }

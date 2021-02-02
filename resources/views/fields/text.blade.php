@@ -3,11 +3,13 @@
 @section('field')
     <x-filament::input
         :type="$field->type"
-        :value="$field->value"
         :id="$field->id"
         :model-directive="$field->modelDirective"
-        :model="$field->model"
-        :error-key="$field->error ?? $field->model"
+        :name="$field->name"
+        :error-key="$field->errorKey ?? $field->name"
         :extra-attributes="$field->extraAttributes"
+        :required="$field->required"
+        :minLength="$field->minLength"
+        :maxLength="$field->maxLength"
     />
 @overwrite

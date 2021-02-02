@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Filament\Action;
 use Filament\Traits\WithNotifications;
+use Filament\View\Components\Fields;
 
 abstract class EditAction extends Action
 {
@@ -11,19 +12,9 @@ abstract class EditAction extends Action
 
     public $record;
 
-    public function fields()
-    {
-        return [];
-    }
-
     public function mount($record)
     {
         $this->record = static::$model::findOrFail($record);
-    }
-
-    public function rules()
-    {
-        return [];
     }
 
     public function submit()

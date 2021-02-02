@@ -10,7 +10,7 @@
          class="flex items-center space-x-4">
         <div class="flex-shrink-0 relative">
             <div class="rounded-full shadow-sm flex overflow-hidden">
-                @if ($field->avatar && !$errors->has($field->model))
+                @if ($field->avatar && ! $errors->has($field->name))
                     <img src="{{ $field->avatar->temporaryUrl() }}" alt="{{ $field->user->name }}"
                          class="h-full object-cover" width="{{ $field->size }}" height="{{ $field->size }}"
                          loading="lazy">
@@ -35,13 +35,12 @@
         <div class="flex-grow relative">
             <label class="btn btn-sm" for="{{ $field->id }}">{{ __($field->buttonLabel) }}</label>
             <input type="file"
-            {{ $field->modelDirective }}="{{ $field->model }}"
-            value="{{ $field->value }}"
-            class="sr-only"
-            id="{{ $field->id }}"
-            @foreach ($field->extraAttributes as $attribute => $value)
-                {{ $attribute }}="{{ $value }}"
-            @endforeach
+                {{ $field->modelDirective }}="{{ $field->name }}"
+                class="sr-only"
+                id="{{ $field->id }}"
+                @foreach ($field->extraAttributes as $attribute => $value)
+                    {{ $attribute }}="{{ $value }}"
+                @endforeach
             />
             <div x-show="isUploading" :aria-hidden="!isUploading" class="absolute bottom-0 -mb-3 w-48 max-w-full">
                 <x-filament::progress progress="progress" />
