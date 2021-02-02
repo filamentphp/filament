@@ -2,7 +2,7 @@
 
 namespace Filament;
 
-use Filament\View\Components\Fields;
+use Filament\View\Components\Form;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -29,7 +29,7 @@ abstract class Action extends Component
         $record = null;
         if (property_exists($this, 'record')) $record = $this->record;
 
-        return new Fields($this->fields(), $record);
+        return new Form($this->fields(), $record);
     }
 
     public function getRules()

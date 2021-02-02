@@ -4,7 +4,7 @@ namespace Filament\View\Components;
 
 use Illuminate\View\Component;
 
-class Fields extends Component
+class Form extends Component
 {
     public $columns = 1;
 

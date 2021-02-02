@@ -1,7 +1,5 @@
-<x-filament::form>
-    <x-filament::card class="space-y-6">
-        <x-filament::fields :fields="$this->fields()" />
-
+<x-filament::card>
+    <x-filament::form :fields="$this->fields()" class="space-y-6">
         <x-filament::button
             type="submit"
             class="btn-primary"
@@ -9,5 +7,5 @@
         >
             Update
         </x-filament::button>
-    </x-filament::card>
-</x-filament::form>
+    </x-filament::form>
+</x-filament::card>

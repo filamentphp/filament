@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-use Filament\View\Components\Fields;
+use Filament\View\Components\Form;
 
 class Layout extends Field
 {

@@ -3,5 +3,5 @@
         {{ __($field->legend) }}
     </legend>
 
-    <x-filament::fields :fields="$field->fields" :columns="$field->columns" />
+    <x-filament::form :fields="$field->fields" :columns="$field->columns" />
 </fieldset>

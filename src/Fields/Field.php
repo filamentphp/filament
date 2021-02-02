@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-use Filament\View\Components\Fields;
+use Filament\View\Components\Form;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Tappable;
 
@@ -97,7 +97,7 @@ class Field
 
     public function getFields()
     {
-        return new Fields($this->fields, $this->record);
+        return new Form($this->fields, $this->record);
     }
 
     public function getHooks()

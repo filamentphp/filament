@@ -9,7 +9,7 @@
 
     @foreach($field->tabs as $label => $fields)
         <x-filament::tab-panel :id="$label">
-            <x-filament::fields :fields="$fields" />
+            <x-filament::form :fields="$fields" />
         </x-filament::tab-panel>
     @endforeach
 </x-filament::tabs>
