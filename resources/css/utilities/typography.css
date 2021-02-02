@@ -1,0 +1,23 @@
+@layer utilities {
+    .link {
+        @apply underline text-blue-600 hover:text-blue-800 transition-colors duration-200;
+    }
+
+    .help,
+    .hint {
+        @apply text-xs font-normal leading-tight text-gray-500;
+    }
+
+    .help code {
+        @apply rounded bg-gray-200 px-1 py-0.5;
+    }
+
+    .help a,
+    .hint a {
+        @apply link;
+    }
+
+    .hint {
+        @apply font-mono;
+    }
+}

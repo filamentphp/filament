@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-class Relation extends Select
+class SelectSortable extends Select
 {
     public $addMethod;
 

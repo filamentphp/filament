@@ -65,14 +65,14 @@
                                     />
 
                                     <x-slot name="content">
-                                        <img src="{{ Filament::storage()->url($file) }}" alt="{{ $file }}" />
+                                        <img src="{{ FilamentManager::storage()->url($file) }}" alt="{{ $file }}" />
                                     </x-slot>
                                 </x-filament::modal>
                             @endif
 
                             <div class="flex-grow overflow-scroll flex flex-col text-xs leading-tight">
                                 <a
-                                    href="{{ Filament::storage()->url($file) }}"
+                                    href="{{ FilamentManager::storage()->url($file) }}"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     class="link"
@@ -83,11 +83,11 @@
                                 <dl class="font-mono text-gray-500">
                                     <dt class="sr-only">{{ __('filament::file.mimeType') }}</dt>
 
-                                    <dd>{{ Filament::storage()->getMimeType($file) }}</dd>
+                                    <dd>{{ FilamentManager::storage()->getMimeType($file) }}</dd>
 
                                     <dt class="sr-only">{{ __('filament::file.fileSize') }}</dt>
 
-                                    <dd>{{ \Filament\format_bytes(Filament::storage()->size($file)) }}</dd>
+                                    <dd>{{ \Filament\format_bytes(FilamentManager::storage()->size($file)) }}</dd>
                                 </dl>
                             </div>
 

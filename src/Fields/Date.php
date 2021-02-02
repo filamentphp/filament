@@ -6,8 +6,6 @@ class Date extends InputField
 {
     public $config = [
         'altInput' => true,
-        'altFormat' => 'F j, Y',
-        'dateFormat' => 'Y-m-d',
     ];
 
     public function config(array $config)
