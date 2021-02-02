@@ -83,6 +83,11 @@ class FilamentManager
         $asset = $this->getAsset($key);
         $publishedAsset = $this->getPublicAsset($key);
 
+        $externalAssets = '
+            <link rel="preconnect" href="https://fonts.gstatic.com">
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400;500;600;700&family=JetBrains+Mono:ital@0;1&display=swap">
+        ';
+
         if ($publishedAsset) {
             $assetWarning = ($publishedAsset !== $asset)
                 ? '<script>console.warn("Filament: The published style assets are out of date.\n");</script>' : null;
@@ -90,16 +95,18 @@ class FilamentManager
             return $this->styles = new HtmlString("
                 <!-- Filament Published Styles -->
                 {$assetWarning}
+                {$externalAssets}
                 <link rel=\"stylesheet\" href=\"/vendor/filament{$publishedAsset}\">
             ");
         }
 
         parse_str(parse_url($asset, PHP_URL_QUERY), $cssInfo);
 
-        return $this->styles = new HtmlString('
+        return $this->styles = new HtmlString("
             <!-- Filament Styles -->
-            <link rel="stylesheet" href="' . route('filament.assets.css', $cssInfo) . '">
-        ');
+            {$externalAssets}
+            <link rel=\"stylesheet\" href=\"" . route('filament.assets.css', $cssInfo) . "\">
+        ");
     }
 
     public function basePath($path = '')
