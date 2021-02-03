@@ -8,7 +8,7 @@
         class="w-full text-left flex-grow flex items-center px-4 py-3 space-x-3 transition-colors duration-200 hover:text-white hover:bg-gray-800">
         <x-slot name="button">
             <x-filament-avatar :user="Auth::user()" :size="32" class="flex-shrink-0 w-8 h-8 rounded-full" />
-            <span class="flex-grow text-sm leading-tight font-semibold">{{ Auth::user()->name }}</span>
+            <span class="flex-grow text-sm leading-tight font-medium">{{ Auth::user()->name }}</span>
         </x-slot>
 
         <x-filament::dropdown-link
