@@ -80,7 +80,7 @@ class UpdateAccountForm extends Action
     {
         $this->validate();
 
-        $this->callHooks('submit');
+        $this->callFormHooks('submit');
 
         if ($this->newAvatar) {
             $this->record->avatar = $this->newAvatar->store('avatars', config('filament.storage_disk'));

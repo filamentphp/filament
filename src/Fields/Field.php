@@ -10,11 +10,11 @@ class Field
 {
     use Tappable;
 
+    public $actionHooks = [];
+
     public $enabled = true;
 
     public $fields = [];
-
-    public $hooks = [];
 
     public $id;
 
@@ -95,16 +95,16 @@ class Field
         return $this;
     }
 
-    public function getFields()
+    public function getForm()
     {
         return new Form($this->fields, $this->record);
     }
 
-    public function getHooks()
+    public function getActionHooks()
     {
-        $hooks = $this->hooks;
+        $hooks = $this->actionHooks;
 
-        collect($this->getFields()->getHooks())
+        collect($this->getForm()->getActionHooks())
             ->each(function ($callbacks, $event) use (&$hooks) {
                 $hooks[$event] = array_merge($hooks[$event] ?? [], $callbacks);
             });
@@ -116,13 +116,13 @@ class Field
     {
         $rules = $this->rules;
 
-        collect($this->getFields()->getRules())
+        collect($this->getForm()->getRules())
             ->each(function ($conditions, $field) use (&$rules) {
                 $conditions = collect($conditions)
                     ->map(function ($condition) {
                         if (! is_string($condition)) return $condition;
 
-                        return (string) Str::of($condition)->replace('{{record}}', $this->record->getKey());
+                        return (string) Str::of($condition)->replace('{{record}}', $this->record ? $this->record->getKey() : '');
                     })
                     ->toArray();
 
@@ -148,9 +148,9 @@ class Field
 
     public function registerHook($event, $callback)
     {
-        if (! array_key_exists($event, $this->hooks)) $this->hooks[$event] = [];
+        if (! array_key_exists($event, $this->actionHooks)) $this->actionHooks[$event] = [];
 
-        $this->hooks[$event][] = $callback;
+        $this->actionHooks[$event][] = $callback;
 
         return $this;
     }

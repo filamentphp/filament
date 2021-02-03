@@ -20,9 +20,9 @@ class Fieldset extends Field
         return $this;
     }
 
-    public function getFields()
+    public function getForm()
     {
-        return parent::getFields()->columns($this->columns);
+        return parent::getForm()->columns($this->columns);
     }
 
     public function legend($legend = null)

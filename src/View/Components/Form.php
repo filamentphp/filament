@@ -6,11 +6,11 @@ use Illuminate\View\Component;
 
 class Form extends Component
 {
+    public $actionHooks = [];
+
     public $columns = 1;
 
     public $fields = [];
-
-    public $hooks = [];
 
     public $rules = [];
 
@@ -21,9 +21,14 @@ class Form extends Component
         if ($record) $this->passRecordToFields($record);
     }
 
-    public function callHooks($event, $action)
+    public function actionHooks($hooks)
     {
-        $hooks = $this->getHooks();
+        $this->actionHooks = $hooks;
+    }
+
+    public function callActionHooks($action, $event)
+    {
+        $hooks = $this->getActionHooks();
 
         if (! array_key_exists($event, $hooks)) return $action;
 
@@ -43,13 +48,13 @@ class Form extends Component
         return $this;
     }
 
-    public function getHooks()
+    public function getActionHooks()
     {
-        $hooks = $this->hooks;
+        $hooks = $this->actionHooks;
 
         collect($this->fields)
             ->each(function ($field) use (&$hooks) {
-                collect($field->getHooks())
+                collect($field->getActionHooks())
                     ->each(function ($callbacks, $event) use (&$hooks) {
                         $hooks[$event] = array_merge($hooks[$event] ?? [], $callbacks);
                     });
@@ -73,11 +78,6 @@ class Form extends Component
         return $rules;
     }
 
-    public function hooks($hooks)
-    {
-        $this->hooks = $hooks;
-    }
-
     public function passRecordToFields($record = null)
     {
         if (! $record) return $this->fields;
@@ -86,7 +86,7 @@ class Form extends Component
             ->map(function ($field) use ($record) {
                 return $field
                     ->record($record)
-                    ->fields($field->getFields()->passRecordToFields($record));
+                    ->fields($field->getForm()->passRecordToFields($record));
             })
             ->toArray();
     }

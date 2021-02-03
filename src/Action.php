@@ -14,17 +14,17 @@ abstract class Action extends Component
 
     public static $title;
 
-    public function callHooks($event)
+    public function callFormHooks($event)
     {
-        return $this->getFields()->callHooks($event, $this);
+        return $this->getForm()->callActionHooks($this, $event);
     }
 
     public function fields()
     {
-        return [];
+        return static::$resource::fields();
     }
 
-    public function getFields()
+    public function getForm()
     {
         $record = null;
         if (property_exists($this, 'record')) $record = $this->record;
@@ -34,7 +34,7 @@ abstract class Action extends Component
 
     public function getRules()
     {
-        return $this->getFields()->getRules();
+        return $this->getForm()->getRules();
     }
 
     public static function getTitle()
