@@ -39,7 +39,7 @@ class UpdateAccountForm extends Action
     public function fields()
     {
         return [
-            Fields\Layout::make([
+            Fields\Fieldset::make()->fields([
                 Fields\Text::make('record.name')
                     ->label('Name')
                     ->required(),
@@ -56,7 +56,7 @@ class UpdateAccountForm extends Action
                 ->user($this->record)
                 ->deleteMethod('deleteAvatar')
                 ->maxSize(1024),
-            Fields\Fieldset::make('Set a new password', [
+            Fields\Fieldset::make('Set a new password')->fields([
                 Fields\Text::make('newPassword')
                     ->label('Password')
                     ->password()

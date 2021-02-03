@@ -8,9 +8,9 @@ class Fieldset extends Field
 
     public $legend;
 
-    public static function make($legend, $fields)
+    public static function make($legend = null)
     {
-        return (new static())->fields($fields)->legend($legend);
+        return (new static())->legend($legend);
     }
 
     public function columns($columns)
@@ -25,7 +25,7 @@ class Fieldset extends Field
         return parent::getFields()->columns($this->columns);
     }
 
-    public function legend($legend)
+    public function legend($legend = null)
     {
         $this->legend = $legend;
 
