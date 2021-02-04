@@ -2,12 +2,21 @@
 
 namespace Filament;
 
+use Filament\Traits\WithNotifications;
 use Filament\View\Components\Form;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
 abstract class Action extends Component
 {
+    use WithNotifications;
+
+    public $files = [];
+
+    protected $listeners = [
+        'deleteFile' => 'deleteFile',
+    ];
+
     public static $model;
 
     public static $resource;
@@ -17,6 +26,19 @@ abstract class Action extends Component
     public function callFormHooks($event)
     {
         return $this->getForm()->callActionHooks($this, $event);
+    }
+
+    public function deleteFile($name)
+    {
+        $file = $this->getPropertyValue($name);
+
+        if (! $file) return;
+
+        Filament::storage()->delete($file);
+
+        $this->syncInput($name, null);
+
+        $this->resource->save();
     }
 
     public function fields()

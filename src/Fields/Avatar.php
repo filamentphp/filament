@@ -8,8 +8,6 @@ class Avatar extends InputField
 
     public $buttonLabel = 'filament::avatar.change';
 
-    public $deleteMethod;
-
     public $modelDirective = 'wire:model';
 
     public $size = 64;
@@ -30,16 +28,9 @@ class Avatar extends InputField
         return $this;
     }
 
-    public function deleteMethod(string $method)
-    {
-        $this->deleteMethod = $method;
-
-        return $this;
-    }
-
     public static function make($name)
     {
-        return parent::make($name)->image();
+        return static::make($name)->image();
     }
 
     public function size($size)

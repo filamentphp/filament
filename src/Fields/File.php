@@ -4,20 +4,18 @@ namespace Filament\Fields;
 
 class File extends InputField
 {
-    public $deleteMethod;
+    public $multiple;
 
-    public $sortMethod;
-
-    public function deleteMethod(string $method)
+    public function multiple()
     {
-        $this->deleteMethod = $method;
+        $this->multiple = true;
 
         return $this;
     }
 
-    public function sortMethod(string $method)
+    public function single()
     {
-        $this->sortMethod = $method;
+        $this->multiple = false;
 
         return $this;
     }

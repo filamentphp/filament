@@ -5,36 +5,16 @@ namespace Filament\Http\Livewire;
 use Filament\Action;
 use Filament\Fields;
 use Filament\Filament;
-use Filament\Traits\WithNotifications;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Livewire\WithFileUploads;
 
 class UpdateAccountForm extends Action
 {
-    use WithFileUploads, WithNotifications;
-
-    public $newAvatar;
-
     public $newPassword;
 
     public $newPasswordConfirmation;
 
     public $record;
-
-    public function deleteAvatar()
-    {
-        if (! $this->record->avatar) return;
-
-        Filament::storage()->delete($this->record->avatar);
-
-        $this->reset('newAvatar');
-
-        $this->record->avatar = null;
-        $this->record->save();
-
-        $this->notify(__('filament::avatar.delete', ['name' => $this->record->name]));
-    }
 
     public function fields()
     {
@@ -54,7 +34,6 @@ class UpdateAccountForm extends Action
                 ->label('User photo')
                 ->avatar($this->newAvatar)
                 ->user($this->record)
-                ->deleteMethod('deleteAvatar')
                 ->maxSize(1024),
             Fields\Fieldset::make('Set a new password')->fields([
                 Fields\Text::make('newPassword')
@@ -82,10 +61,10 @@ class UpdateAccountForm extends Action
 
         $this->callFormHooks('submit');
 
-        if ($this->newAvatar) {
-            $this->record->avatar = $this->newAvatar->store('avatars', config('filament.storage_disk'));
+        if ($this->files['avatar']) {
+            $this->record->avatar = $this->files['avatar']->store('avatars', config('filament.storage_disk'));
 
-            $this->reset('newAvatar');
+            unset($this->files['avatar']);
         }
 
         if ($this->newPassword) {
@@ -99,9 +78,9 @@ class UpdateAccountForm extends Action
         $this->notify(__('filament::update-account-form.updated'));
     }
 
-    public function updatedNewAvatar($value)
+    public function updatedFilesAvatar($value)
     {
-        $this->validateOnly('newAvatar');
+        $this->validateOnly('files.avatar');
     }
 
     public function render()

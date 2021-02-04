@@ -17,23 +17,27 @@
                 @else
                     <x-filament::modal class="flex">
                         <x-filament-avatar :size="$field->size" :user="$field->user" />
+
                         <x-slot name="content">
                             <x-filament-avatar :size="320" :user="$field->user" />
                         </x-slot>
                     </x-filament::modal>
                 @endif
             </div>
-            @if ($field->user->avatar && $field->deleteMethod)
+
+            @if ($field->user->avatar)
                 <button type="button"
-                        wire:click="{{ $field->deleteMethod }}"
+                        wire:click="deleteFile($field->name)"
                         class="absolute top-0 right-0 w-4 h-4 rounded-full bg-gray-800 text-white flex items-center justify-center hover:bg-red-700 transition-colors duration-200">
                     <span class="sr-only">{{ __('filament::avatar.delete') }}</span>
                     <x-heroicon-o-x class="w-3 h-3" />
                 </button>
             @endif
         </div>
+
         <div class="flex-grow relative">
             <label class="btn btn-sm" for="{{ $field->id }}">{{ __($field->buttonLabel) }}</label>
+
             <input type="file"
                 {{ $field->modelDirective }}="{{ $field->name }}"
                 class="sr-only"
@@ -42,6 +46,7 @@
                     {{ $attribute }}="{{ $value }}"
                 @endforeach
             />
+
             <div x-show="isUploading" :aria-hidden="!isUploading" class="absolute bottom-0 -mb-3 w-48 max-w-full">
                 <x-filament::progress progress="progress" />
             </div>
