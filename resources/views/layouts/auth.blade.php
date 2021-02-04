@@ -4,9 +4,9 @@
 
 @section('content')
     <main class="flex h-screen items-center justify-center p-4">
-        <div class="w-full max-w-sm space-y-6">
+        <div class="w-full max-w-sm space-y-8">
             <header class="text-center">
-                <h2 class="font-light font-thin text-2xl md:text-3xl leading-tight text-red-700">{{ $title ?? config('app.name') }}</h2>
+                <h2 class="text-2xl md:text-3xl leading-tight text-red-700">{{ $title ?? config('app.name') }}</h2>
             </header>
 
             {{ $slot }}
