@@ -9,5 +9,5 @@
         <span class="font-bold italic">{{ substr(config('app.name'), 0, 1) }}</span>
     </div>
 
-    <span class="text-sm leading-tight font-medium transition-colors duration-200 group-hover:text-white">{{ config('app.name') }}</span>
+    <span class="text-sm leading-tight font-bold transition-colors duration-200 group-hover:text-white">{{ config('app.name') }}</span>
 </a>
