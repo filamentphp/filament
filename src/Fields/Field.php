@@ -12,15 +12,17 @@ class Field
 
     public $actionHooks = [];
 
+    public $context;
+
     public $enabled = true;
 
-    public $excludedActions = [];
+    public $excludedContexts = [];
 
     public $fields = [];
 
     public $id;
 
-    public $includedActions = [];
+    public $includedContexts = [];
 
     public $label;
 
@@ -71,6 +73,13 @@ class Field
         return $this;
     }
 
+    public function context($context)
+    {
+        $this->context = $context;
+
+        return $this;
+    }
+
     public function dd()
     {
         dd($this);
@@ -92,11 +101,11 @@ class Field
         return $this;
     }
 
-    public function except($actions)
+    public function except($contexts)
     {
-        if (! is_array($actions)) $actions = [$actions];
+        if (! is_array($contexts)) $contexts = [$contexts];
 
-        $this->excludedActions = array_merge($this->excludedActions, $actions);
+        $this->excludedContexts = array_merge($this->excludedContexts, $contexts);
 
         return $this;
     }
@@ -122,11 +131,13 @@ class Field
 
     public function getForm()
     {
-        return new Form($this->fields, $this->record);
+        return new Form($this->fields, $this->context, $this->record);
     }
 
     public function getRules()
     {
+        if ($this->isDisabled()) return [];
+
         $rules = $this->rules;
 
         collect($this->getForm()->getRules())
@@ -147,6 +158,8 @@ class Field
 
     public function getValidationAttributes()
     {
+        if ($this->isDisabled()) return [];
+
         $attributes = [];
 
         if ($this->name !== null && $this->label !== null) {
@@ -170,11 +183,27 @@ class Field
         return $this;
     }
 
-    public function only($actions)
+    public function isDisabled()
     {
-        if (! is_array($actions)) $actions = [$actions];
+        return ! $this->isEnabled();
+    }
 
-        $this->includedActions = array_merge($this->includedActions, $actions);
+    public function isEnabled()
+    {
+        if (! $this->enabled) return false;
+
+        if (in_array($this->context, $this->includedContexts)) return true;
+
+        if (in_array($this->context, $this->excludedContexts)) return false;
+
+        return count($this->includedContexts) === 0;
+    }
+
+    public function only($contexts)
+    {
+        if (! is_array($contexts)) $contexts = [$contexts];
+
+        $this->includedContexts = array_merge($this->includedContexts, $contexts);
 
         return $this;
     }
@@ -245,9 +274,7 @@ class Field
 
     public function render()
     {
-        if (! $this->enabled) {
-            return;
-        }
+        if ($this->isDisabled()) return;
 
         $view = $this->view ?? 'filament::fields.' . Str::of(class_basename(static::class))->kebab();
 

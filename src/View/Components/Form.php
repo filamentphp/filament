@@ -14,9 +14,11 @@ class Form extends Component
 
     public $rules = [];
 
-    public function __construct($fields = [], $record = null)
+    public function __construct($fields = [], $context = null, $record = null)
     {
         $this->fields = $fields;
+
+        if ($context) $this->passContextToFields($context);
 
         if ($record) $this->passRecordToFields($record);
     }
@@ -91,6 +93,19 @@ class Form extends Component
             });
 
         return $attributes;
+    }
+
+    public function passContextToFields($context = null)
+    {
+        if (! $context) return $this->fields;
+
+        return $this->fields = collect($this->fields)
+            ->map(function ($field) use ($context) {
+                return $field
+                    ->context($context)
+                    ->fields($field->getForm()->passContextToFields($context));
+            })
+            ->toArray();
     }
 
     public function passRecordToFields($record = null)

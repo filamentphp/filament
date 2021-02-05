@@ -27,7 +27,7 @@ abstract class Action extends Component
 
     public function getForm()
     {
-        return new Form($this->fields());
+        return new Form($this->fields(), static::class);
     }
 
     public static function getModel()
@@ -46,7 +46,7 @@ abstract class Action extends Component
     {
         $rules = $this->getForm()->getRules();
 
-        collect($this->rules())
+        collect(parent::getRules())
             ->each(function ($conditions, $field) use (&$rules) {
                 if (! is_array($conditions)) $conditions = explode('|', $conditions);
 
@@ -70,7 +70,7 @@ abstract class Action extends Component
     {
         $attributes = $this->getForm()->getValidationAttributes();
 
-        collect($this->validationAttributes())
+        collect(parent::getValidationAttributes())
             ->each(function ($label, $name) use (&$attributes) {
                 $attributes[$name] = $label;
             });
@@ -81,15 +81,5 @@ abstract class Action extends Component
     public static function route($uri, $name)
     {
         return new ResourceRoute(static::class, $uri, $name);
-    }
-
-    public function rules()
-    {
-        return [];
-    }
-
-    public function validationAttributes()
-    {
-        return [];
     }
 }

@@ -2,10 +2,11 @@
 
 namespace Filament\Http\Livewire\Auth;
 
+use Filament\Action;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
-class Logout extends Component
+class Logout extends Action
 {
     public $class;
 

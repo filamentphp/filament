@@ -3,14 +3,16 @@
 namespace Filament\Http\Livewire\Auth;
 
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
+use Filament\Action;
 use Filament\Fields;
 use Filament\Traits\WithNotifications;
 use Illuminate\Support\Facades\Password;
 use Livewire\Component;
 
-class RequestPassword extends Component
+class RequestPassword extends Action
 {
-    use WithNotifications, WithRateLimiting;
+    use WithNotifications;
+    use WithRateLimiting;
 
     public $email;
 

@@ -12,7 +12,7 @@ abstract class EditAction extends Action
 
     public function getForm()
     {
-        return new Form($this->fields(), $this->record);
+        return new Form($this->fields(), static::class, $this->record);
     }
 
     public function mount($record)
