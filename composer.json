@@ -41,7 +41,8 @@
             "src/helpers.php"
         ],
         "psr-4": {
-            "Filament\\": "src/"
+            "Filament\\": "src/",
+            "Filament\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {

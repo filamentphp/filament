@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tests\Database\Factories;
+namespace Filament\Database\Factories;
 
 use Filament\Models\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\Factory;

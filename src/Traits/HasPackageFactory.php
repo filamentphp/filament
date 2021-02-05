@@ -12,7 +12,7 @@ trait HasPackageFactory
     protected static function newFactory()
     {
         $modelName = Str::after(get_called_class(), 'Models\\');
-        $path = "Filament\\Tests\\Database\\Factories\\{$modelName}Factory";
+        $path = "Filament\\Database\\Factories\\{$modelName}Factory";
 
         return $path::new();
     }
