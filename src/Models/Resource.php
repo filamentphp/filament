@@ -2,16 +2,25 @@
 
 namespace Filament\Models;
 
+use Filament\Traits\Sushi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 use ReflectionClass;
-use Sushi\Sushi;
 use Symfony\Component\Finder\SplFileInfo;
 
 class Resource extends Model
 {
     use Sushi;
+
+    protected $schema = [
+        'className' => 'string',
+        'icon' => 'string',
+        'label' => 'string',
+        'model' => 'string',
+        'slug' => 'string',
+        'sort' => 'integer',
+    ];
 
     public function authorizationManager()
     {
@@ -25,9 +34,11 @@ class Resource extends Model
 
     public function getRows()
     {
-        return collect((new Filesystem())->allFiles(app_path('Filament/Resources')))
+        $filesystem = new Filesystem();
+
+        return collect($filesystem->allFiles(config('filament.resources.path')))
             ->map(function (SplFileInfo $file) {
-                return (string) Str::of('App\\Filament\\Resources')
+                return (string) Str::of(config('filament.resources.namespace'))
                     ->append('\\', $file->getRelativePathname())
                     ->replace(['/', '.php'], ['\\', '']);
             })

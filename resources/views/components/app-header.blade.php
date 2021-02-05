@@ -12,7 +12,7 @@
         </x-slot>
 
         <x-filament::dropdown-link
-            href="{{ route('filament.account') }}">{{ __('filament::update-account-form.edit') }}</x-filament::dropdown-link>
+            href="{{ route('filament.account') }}">{{ __('filament::edit-account.edit') }}</x-filament::dropdown-link>
         <livewire:filament.auth.logout
             class="w-full py-2 px-4 transition-colors duration-200 text-gray-600 hover:bg-gray-200" />
     </x-filament::dropdown>

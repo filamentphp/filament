@@ -64,13 +64,6 @@ class InputField extends Field
         return $this;
     }
 
-    public function label($label)
-    {
-        $this->label = $label;
-
-        return $this;
-    }
-
     public static function make($name)
     {
         return new static($name);

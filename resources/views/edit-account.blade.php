@@ -5,7 +5,7 @@
             class="btn-primary"
             wire:loading.attr="disabled"
         >
-            {{ __('filament::update-account-form.update') }}
+            {{ __('filament::edit-account.update') }}
         </x-filament::button>
     </x-filament::form>
 </x-filament::card>

@@ -5,10 +5,11 @@ namespace Filament\Http\Livewire;
 use Filament\Action;
 use Filament\Fields;
 use Filament\Models\FilamentUser;
+use Filament\View\Components\Form;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class UpdateAccountForm extends Action
+class EditAccount extends Action
 {
     public $newPassword;
 
@@ -37,12 +38,17 @@ class UpdateAccountForm extends Action
                     ->confirmed()
                     ->minLength(8),
                 Fields\Text::make('newPasswordConfirmation')
-                    ->label('Confirm Password')
+                    ->label('Confirm password')
                     ->password()
                     ->requiredWith('newPassword'),
             ])
                 ->columns(2),
         ];
+    }
+
+    public function getForm()
+    {
+        return new Form($this->fields(), static::class, $this->record);
     }
 
     public function mount()
@@ -62,12 +68,12 @@ class UpdateAccountForm extends Action
 
         $this->record->save();
 
-        $this->notify(__('filament::update-account-form.updated'));
+        $this->notify(__('filament::edit-account.updated'));
     }
 
     public function render()
     {
-        return view('filament::update-account-form')
-            ->layout('filament::layouts.app', ['title' => 'filament::update-account-form.title']);
+        return view('filament::edit-account')
+            ->layout('filament::layouts.app', ['title' => 'filament::edit-account.title']);
     }
 }

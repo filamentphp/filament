@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\URL;
 
 class FilamentUser extends Authenticatable
 {
-    use HasPackageFactory, Notifiable;
+    use HasPackageFactory;
+    use Notifiable;
 
     protected $guarded = [];
 

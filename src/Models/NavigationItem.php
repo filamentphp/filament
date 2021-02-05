@@ -3,13 +3,22 @@
 namespace Filament\Models;
 
 use Filament\Http\Livewire\Dashboard;
+use Filament\Traits\Sushi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Sushi\Sushi;
 
 class NavigationItem extends Model
 {
     use Sushi;
+
+    protected $schema = [
+        'class' => 'string',
+        'active' => 'string',
+        'icon' => 'string',
+        'label' => 'string',
+        'sort' => 'integer',
+        'url' => 'string',
+    ];
 
     public function getRows()
     {
@@ -19,7 +28,7 @@ class NavigationItem extends Model
             'class' => Dashboard::class,
             'active' => 'filament.dashboard',
             'icon' => 'heroicon-o-home',
-            'label' => __('filament::dashboard.title'),
+            'label' => 'filament::dashboard.title',
             'sort' => -1,
             'url' => route('filament.dashboard'),
         ]);

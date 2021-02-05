@@ -3,16 +3,21 @@
 namespace Filament\Models;
 
 use Filament\Role;
+use Filament\Traits\Sushi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 use ReflectionClass;
-use Sushi\Sushi;
 use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentRole extends Model
 {
     use Sushi;
+
+    protected $schema = [
+        'id' => 'string',
+        'label' => 'string',
+    ];
 
     public function getRows()
     {

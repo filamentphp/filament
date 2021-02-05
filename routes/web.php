@@ -29,7 +29,7 @@ Route::get('/image/{path}', Controllers\ImageController::class)->where('path', '
 // Authenticated routes
 Route::middleware([Authenticate::class])->group(function () {
     Route::get('/', Livewire\Dashboard::class)->name('dashboard');
-    Route::get('/account', Livewire\UpdateAccountForm::class)->name('account');
+    Route::get('/account', Livewire\EditAccount::class)->name('account');
 
     // Resources
     Resource::all()->each(function ($resource) {

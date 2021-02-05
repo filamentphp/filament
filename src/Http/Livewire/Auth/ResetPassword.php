@@ -67,16 +67,16 @@ class ResetPassword extends Action
     {
         $this->validate();
 
-        $resetStatus = Password::broker('filament_users')->reset([
-            'email' => $this->email,
-            'password' => $this->password,
-            'token' => $this->token,
-        ], function ($user, $password) {
-            $user->password = Hash::make($password);
-            $user->save();
+        $resetStatus = Password::broker('filament_users')
+            ->reset(
+                $this->only(['email', 'password', 'token']),
+                function ($user, $password) {
+                    $user->password = Hash::make($password);
+                    $user->save();
 
-            $this->user = $user;
-        });
+                    $this->user = $user;
+                },
+            );
 
         if (Password::PASSWORD_RESET !== $resetStatus) {
             $this->addError('email', __('filament::auth.' . $resetStatus));

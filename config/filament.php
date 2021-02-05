@@ -38,6 +38,36 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Resources
+    |--------------------------------------------------------------------------
+    |
+    | This is the namespace and directory that Filament will automatically
+    | register resources from.
+    |
+    */
+
+    'resources' => [
+        'namespace' => 'App\\Filament\\Resources',
+        'path' => app_path('Filament/Resources'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Roles
+    |--------------------------------------------------------------------------
+    |
+    | This is the namespace and directory that Filament will automatically
+    | register roles from.
+    |
+    */
+
+    'roles' => [
+        'namespace' => 'App\\Filament\\Roles',
+        'path' => app_path('Filament/Roles'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Storage
     |--------------------------------------------------------------------------
     |

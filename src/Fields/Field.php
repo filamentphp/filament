@@ -14,19 +14,19 @@ class Field
 
     public $enabled = true;
 
-    public $excludedContexts = [];
-
     public $fields = [];
 
     public $hooks = [];
 
     public $id;
 
-    public $includedContexts = [];
-
     public $label;
 
     public $name;
+
+    public $pendingExcludedContextModifications = [];
+
+    public $pendingIncludedContextModifications = [];
 
     public $record;
 
@@ -40,8 +40,9 @@ class Field
 
         if ($this->name === null) return;
 
-        $this->id(Str::slug($this->name));
-        $this->rules = [$this->name => ['nullable']];
+        $this->id((string) Str::of($this->name)->slug());
+        $this->label((string) Str::of($this->name)->afterLast('.')->kebab()->replace('-', ' ')->ucfirst());
+        $this->rules(['nullable']);
     }
 
     public function addRules($rules)
@@ -77,6 +78,22 @@ class Field
     {
         $this->context = $context;
 
+        if (array_key_exists($this->context, $this->pendingIncludedContextModifications)) {
+            collect($this->pendingIncludedContextModifications[$this->context])
+                ->each(fn($callback) => $callback($this));
+        }
+
+        $this->pendingIncludedContextModifications = [];
+
+        collect($this->pendingExcludedContextModifications)
+            ->filter(fn($callbacks, $context) => $context !== $this->context)
+            ->each(function ($callbacks) {
+                collect($callbacks)
+                    ->each(fn($callback) => $callback($this));
+            });
+
+        $this->pendingExcludedContextModifications = [];
+
         return $this;
     }
 
@@ -101,11 +118,32 @@ class Field
         return $this;
     }
 
-    public function except($contexts)
+    public function except($contexts, $callback = null)
     {
         if (! is_array($contexts)) $contexts = [$contexts];
 
-        $this->excludedContexts = array_merge($this->excludedContexts, $contexts);
+        if (! $callback) {
+            $this->disable();
+
+            $callback = fn($field) => $field->enable();
+        }
+
+        if (! $this->context) {
+            collect($contexts)
+                ->each(function ($context) use ($callback) {
+                    if (! array_key_exists($context, $this->pendingExcludedContextModifications)) {
+                        $this->pendingExcludedContextModifications[$context] = [];
+                    }
+
+                    $this->pendingExcludedContextModifications[$context][] = $callback;
+                });
+
+            return $this;
+        }
+
+        if (in_array($this->context, $contexts)) return $this;
+
+        $callback($this);
 
         return $this;
     }
@@ -136,7 +174,7 @@ class Field
 
     public function getRules()
     {
-        if ($this->isDisabled()) return [];
+        if (! $this->enabled) return [];
 
         $rules = $this->rules;
 
@@ -158,7 +196,7 @@ class Field
 
     public function getValidationAttributes()
     {
-        if ($this->isDisabled()) return [];
+        if (! $this->enabled) return [];
 
         $attributes = [];
 
@@ -183,27 +221,39 @@ class Field
         return $this;
     }
 
-    public function isDisabled()
+    public function label($label)
     {
-        return ! $this->isEnabled();
+        $this->label = $label;
+
+        return $this;
     }
 
-    public function isEnabled()
-    {
-        if (! $this->enabled) return false;
-
-        if (in_array($this->context, $this->includedContexts)) return true;
-
-        if (in_array($this->context, $this->excludedContexts)) return false;
-
-        return count($this->includedContexts) === 0;
-    }
-
-    public function only($contexts)
+    public function only($contexts, $callback = null)
     {
         if (! is_array($contexts)) $contexts = [$contexts];
 
-        $this->includedContexts = array_merge($this->includedContexts, $contexts);
+        if (! $callback) {
+            $this->disable();
+
+            $callback = fn($field) => $field->enable();
+        }
+
+        if (! $this->context) {
+            collect($contexts)
+                ->each(function ($context) use ($callback) {
+                    if (! array_key_exists($context, $this->pendingIncludedContextModifications)) {
+                        $this->pendingIncludedContextModifications[$context] = [];
+                    }
+
+                    $this->pendingIncludedContextModifications[$context][] = $callback;
+            });
+
+            return $this;
+        }
+
+        if (! in_array($this->context, $contexts)) return $this;
+
+        $callback($this);
 
         return $this;
     }
@@ -258,9 +308,9 @@ class Field
         return $this;
     }
 
-    public function rules($rules)
+    public function rules($conditions)
     {
-        $this->rules = [$this->name => $rules];
+        $this->rules = [$this->name => $conditions];
 
         return $this;
     }
@@ -274,7 +324,7 @@ class Field
 
     public function render()
     {
-        if ($this->isDisabled()) return;
+        if (! $this->enabled) return;
 
         $view = $this->view ?? 'filament::fields.' . Str::of(class_basename(static::class))->kebab();
 
