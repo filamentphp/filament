@@ -11,34 +11,13 @@ abstract class Action extends Component
 {
     use WithNotifications;
 
-    public $files = [];
+    protected static $resource;
 
-    protected $listeners = [
-        'deleteFile' => 'deleteFile',
-    ];
+    protected static $title;
 
-    public static $model;
-
-    public static $resource;
-
-    public static $title;
-
-    public function callFormHooks($event)
+    protected function callFormHooks($event)
     {
         return $this->getForm()->callActionHooks($this, $event);
-    }
-
-    public function deleteFile($name)
-    {
-        $file = $this->getPropertyValue($name);
-
-        if (! $file) return;
-
-        Filament::storage()->delete($file);
-
-        $this->syncInput($name, null);
-
-        $this->resource->save();
     }
 
     public function fields()
@@ -46,20 +25,38 @@ abstract class Action extends Component
         return static::$resource::fields();
     }
 
-    public function getForm()
+    protected function getForm()
     {
-        $record = null;
-        if (property_exists($this, 'record')) $record = $this->record;
-
-        return new Form($this->fields(), $record);
+        return new Form($this->fields());
     }
 
-    public function getRules()
+    protected static function getModel()
     {
-        return $this->getForm()->getRules();
+        $resource = static::getResource();
+
+        return $resource::$model;
     }
 
-    public static function getTitle()
+    protected static function getResource()
+    {
+        return static::$resource;
+    }
+
+    protected function getRules()
+    {
+        $rules = $this->getForm()->getRules();
+
+        collect($this->rules())
+            ->each(function ($conditions, $field) use (&$rules) {
+                if (is_string($conditions)) $conditions = explode('|', $conditions);
+
+                $rules[$field] = array_merge($rules[$field] ?? [], $conditions);
+            });
+
+        return $rules;
+    }
+
+    protected static function getTitle()
     {
         if (static::$title) return static::$title;
 
@@ -69,6 +66,18 @@ abstract class Action extends Component
             ->title();
     }
 
+    protected function getValidationAttributes()
+    {
+        $attributes = $this->getForm()->getValidationAttributes();
+
+        collect($this->validationAttributes())
+            ->each(function ($label, $name) use (&$attributes) {
+                $attributes[$name] = $label;
+            });
+
+        return $attributes;
+    }
+
     public static function route($uri, $name)
     {
         return new ResourceRoute(static::class, $uri, $name);
@@ -76,6 +85,11 @@ abstract class Action extends Component
 
     public function rules()
     {
-        return $this->getRules();
+        return [];
+    }
+
+    public function validationAttributes()
+    {
+        return [];
     }
 }

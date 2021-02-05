@@ -12,8 +12,6 @@ class InputField extends Field
 
     public $hint;
 
-    public $label;
-
     public $maxLength;
 
     public $minLength;

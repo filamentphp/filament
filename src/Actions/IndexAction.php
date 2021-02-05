@@ -11,7 +11,7 @@ abstract class IndexAction extends Action
     public function render()
     {
         return view('filament::actions.index', [
-            'records' => static::$model::paginate(10),
+            'records' => static::getModel()::paginate(10),
         ])->layout('filament::layouts.app', ['title' => static::getTitle()]);
     }
 }

@@ -15,7 +15,7 @@ abstract class CreateAction extends Action
     {
         $this->validate();
 
-        static::$model::create($this->record);
+        static::getModel()::create($this->record);
 
         $this->notify('Created!');
     }

@@ -18,6 +18,8 @@ class Field
 
     public $id;
 
+    public $label;
+
     public $name;
 
     public $record;
@@ -30,19 +32,17 @@ class Field
     {
         $this->name = $name;
 
-        if ($this->name !== null) {
-            $this->id(Str::slug($this->name));
-            $this->rules = [$this->name => ['nullable']];
-        }
+        if ($this->name === null) return;
 
-        return $this;
+        $this->id(Str::slug($this->name));
+        $this->rules = [$this->name => ['nullable']];
     }
 
     public function addRules($rules)
     {
         collect($rules)
             ->each(function ($conditionsToAdd, $field) {
-                if (! is_array($conditionsToAdd)) $conditionsToAdd = explode('|', $conditionsToAdd);
+                if (is_string($conditionsToAdd)) $conditionsToAdd = explode('|', $conditionsToAdd);
 
                 $this->rules[$field] = collect($this->rules[$field] ?? [])
                     ->filter(function ($originalCondition) use ($conditionsToAdd) {
@@ -95,11 +95,6 @@ class Field
         return $this;
     }
 
-    public function getForm()
-    {
-        return new Form($this->fields, $this->record);
-    }
-
     public function getActionHooks()
     {
         $hooks = $this->actionHooks;
@@ -110,6 +105,11 @@ class Field
             });
 
         return $hooks;
+    }
+
+    public function getForm()
+    {
+        return new Form($this->fields, $this->record);
     }
 
     public function getRules()
@@ -132,6 +132,24 @@ class Field
         return $rules;
     }
 
+    public function getValidationAttributes()
+    {
+        $attributes = [];
+
+        if ($this->name !== null && $this->label !== null) {
+            $label = Str::of($this->label)->lower();
+
+            $attributes[$this->name] = $label;
+        }
+
+        collect($this->getForm()->getValidationAttributes())
+            ->each(function ($label, $name) use (&$attributes) {
+                $attributes[$name] = $label;
+            });
+
+        return $attributes;
+    }
+
     public function id($id)
     {
         $this->id = $id;
@@ -146,7 +164,7 @@ class Field
         return $this;
     }
 
-    public function registerHook($event, $callback)
+    public function registerActionHook($event, $callback)
     {
         if (! array_key_exists($event, $this->actionHooks)) $this->actionHooks[$event] = [];
 
@@ -159,7 +177,7 @@ class Field
     {
         collect($rules)
             ->each(function ($conditionsToRemove, $field) {
-                if (! is_array($conditionsToRemove)) $conditionsToRemove = explode('|', $conditionsToRemove);
+                if (is_string($conditionsToRemove)) $conditionsToRemove = explode('|', $conditionsToRemove);
 
                 if (empty($conditionsToRemove)) {
                     unset($this->rules[$field]);

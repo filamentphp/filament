@@ -78,6 +78,21 @@ class Form extends Component
         return $rules;
     }
 
+    public function getValidationAttributes()
+    {
+        $attributes = [];
+
+        collect($this->fields)
+            ->each(function ($field) use (&$attributes) {
+                collect($field->getValidationAttributes())
+                    ->each(function ($label, $name) use (&$attributes) {
+                        $attributes[$name] = $label;
+                    });
+            });
+
+        return $attributes;
+    }
+
     public function passRecordToFields($record = null)
     {
         if (! $record) return $this->fields;

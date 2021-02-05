@@ -4,7 +4,7 @@ namespace Filament\Http\Livewire;
 
 use Filament\Action;
 use Filament\Fields;
-use Filament\Filament;
+use Filament\Models\FilamentUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -27,14 +27,9 @@ class UpdateAccountForm extends Action
                     ->label('Email')
                     ->email()
                     ->required()
-                    ->unique('users', 'email', true),
+                    ->unique(FilamentUser::class, 'email', true),
             ])
                 ->columns(2),
-            Fields\Avatar::make('newAvatar')
-                ->label('User photo')
-                ->avatar($this->newAvatar)
-                ->user($this->record)
-                ->maxSize(1024),
             Fields\Fieldset::make('Set a new password')->fields([
                 Fields\Text::make('newPassword')
                     ->label('Password')
@@ -59,14 +54,6 @@ class UpdateAccountForm extends Action
     {
         $this->validate();
 
-        $this->callFormHooks('submit');
-
-        if ($this->files['avatar']) {
-            $this->record->avatar = $this->files['avatar']->store('avatars', config('filament.storage_disk'));
-
-            unset($this->files['avatar']);
-        }
-
         if ($this->newPassword) {
             $this->record->password = Hash::make($this->newPassword);
 
@@ -76,11 +63,6 @@ class UpdateAccountForm extends Action
         $this->record->save();
 
         $this->notify(__('filament::update-account-form.updated'));
-    }
-
-    public function updatedFilesAvatar($value)
-    {
-        $this->validateOnly('files.avatar');
     }
 
     public function render()
