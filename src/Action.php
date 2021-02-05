@@ -25,19 +25,19 @@ abstract class Action extends Component
         return static::$resource::fields();
     }
 
-    protected function getForm()
+    public function getForm()
     {
         return new Form($this->fields());
     }
 
-    protected static function getModel()
+    public static function getModel()
     {
         $resource = static::getResource();
 
         return $resource::$model;
     }
 
-    protected static function getResource()
+    public static function getResource()
     {
         return static::$resource;
     }
@@ -56,7 +56,7 @@ abstract class Action extends Component
         return $rules;
     }
 
-    protected static function getTitle()
+    public static function getTitle()
     {
         if (static::$title) return static::$title;
 

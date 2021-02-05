@@ -7,17 +7,19 @@ use Filament\Traits\WithNotifications;
 
 abstract class CreateAction extends Action
 {
-    use WithNotifications;
-
     public $record = [];
+
+    public $showRoute = 'edit';
 
     public function submit()
     {
         $this->validate();
 
-        static::getModel()::create($this->record);
+        $record = static::getModel()::create($this->record);
 
-        $this->notify('Created!');
+        $this->redirect($this->getResource()::route($this->showRoute, [
+            'record' => $record,
+        ]));
     }
 
     public function render()

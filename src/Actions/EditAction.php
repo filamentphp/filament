@@ -8,11 +8,9 @@ use Filament\View\Components\Form;
 
 abstract class EditAction extends Action
 {
-    use WithNotifications;
-
     public $record;
 
-    protected function getForm()
+    public function getForm()
     {
         return new Form($this->fields(), $this->record);
     }
