@@ -48,7 +48,7 @@ abstract class Action extends Component
 
         collect($this->rules())
             ->each(function ($conditions, $field) use (&$rules) {
-                if (is_string($conditions)) $conditions = explode('|', $conditions);
+                if (! is_array($conditions)) $conditions = explode('|', $conditions);
 
                 $rules[$field] = array_merge($rules[$field] ?? [], $conditions);
             });

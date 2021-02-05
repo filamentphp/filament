@@ -14,9 +14,13 @@ class Field
 
     public $enabled = true;
 
+    public $excludedActions = [];
+
     public $fields = [];
 
     public $id;
+
+    public $includedActions = [];
 
     public $label;
 
@@ -42,7 +46,7 @@ class Field
     {
         collect($rules)
             ->each(function ($conditionsToAdd, $field) {
-                if (is_string($conditionsToAdd)) $conditionsToAdd = explode('|', $conditionsToAdd);
+                if (! is_array($conditionsToAdd)) $conditionsToAdd = explode('|', $conditionsToAdd);
 
                 $this->rules[$field] = collect($this->rules[$field] ?? [])
                     ->filter(function ($originalCondition) use ($conditionsToAdd) {
@@ -84,6 +88,15 @@ class Field
     public function enable()
     {
         $this->enabled = true;
+
+        return $this;
+    }
+
+    public function except($actions)
+    {
+        if (! is_array($actions)) $actions = [$actions];
+
+        $this->excludedActions = array_merge($this->excludedActions, $actions);
 
         return $this;
     }
@@ -157,6 +170,15 @@ class Field
         return $this;
     }
 
+    public function only($actions)
+    {
+        if (! is_array($actions)) $actions = [$actions];
+
+        $this->includedActions = array_merge($this->includedActions, $actions);
+
+        return $this;
+    }
+
     public function record($record)
     {
         $this->record = $record;
@@ -177,7 +199,7 @@ class Field
     {
         collect($rules)
             ->each(function ($conditionsToRemove, $field) {
-                if (is_string($conditionsToRemove)) $conditionsToRemove = explode('|', $conditionsToRemove);
+                if (! is_array($conditionsToRemove)) $conditionsToRemove = explode('|', $conditionsToRemove);
 
                 if (empty($conditionsToRemove)) {
                     unset($this->rules[$field]);
