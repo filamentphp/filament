@@ -6,11 +6,11 @@ use Illuminate\View\Component;
 
 class Form extends Component
 {
-    public $actionHooks = [];
-
     public $columns = 1;
 
     public $fields = [];
+
+    public $hooks = [];
 
     public $rules = [];
 
@@ -23,14 +23,9 @@ class Form extends Component
         if ($record) $this->passRecordToFields($record);
     }
 
-    public function actionHooks($hooks)
+    public function callHooks($action, $event)
     {
-        $this->actionHooks = $hooks;
-    }
-
-    public function callActionHooks($action, $event)
-    {
-        $hooks = $this->getActionHooks();
+        $hooks = $this->getHooks();
 
         if (! array_key_exists($event, $hooks)) return $action;
 
@@ -93,6 +88,11 @@ class Form extends Component
             });
 
         return $attributes;
+    }
+
+    public function hooks($hooks)
+    {
+        $this->hooks = $hooks;
     }
 
     public function passContextToFields($context = null)

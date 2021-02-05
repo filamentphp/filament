@@ -10,7 +10,7 @@ class Field
 {
     use Tappable;
 
-    public $context;
+    protected $context;
 
     public $enabled = true;
 
@@ -24,11 +24,11 @@ class Field
 
     public $name;
 
-    public $pendingExcludedContextModifications = [];
+    protected $pendingExcludedContextModifications = [];
 
-    public $pendingIncludedContextModifications = [];
+    protected $pendingIncludedContextModifications = [];
 
-    public $record;
+    protected $record;
 
     public $rules = [];
 

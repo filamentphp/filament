@@ -13,7 +13,11 @@ trait CanRegisterLivewireComponentDirectories
 {
     protected function registerLivewireComponentDirectory($directory, $namespace, $aliasPrefix = '')
     {
-        collect((new Filesystem())->allFiles($directory))
+        $filesystem = new Filesystem();
+
+        if (! $filesystem->isDirectory($directory)) return;
+
+        collect($filesystem->allFiles($directory))
             ->map(function (SplFileInfo $file) use ($namespace) {
                 return (string) Str::of($namespace)
                     ->append('\\', $file->getRelativePathname())

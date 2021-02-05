@@ -21,9 +21,13 @@ class FilamentRole extends Model
 
     public function getRows()
     {
-        return collect((new Filesystem())->allFiles(app_path('Filament/Roles')))
+        $filesystem = new Filesystem();
+
+        if (! $filesystem->isDirectory(config('filament.roles.path'))) return [];
+
+        return collect($filesystem->allFiles(config('filament.roles.path')))
             ->map(function (SplFileInfo $file) {
-                return (string) Str::of('App\\Filament\\Roles')
+                return (string) Str::of(config('filament.roles.namespace'))
                     ->append('\\', $file->getRelativePathname())
                     ->replace(['/', '.php'], ['\\', '']);
             })

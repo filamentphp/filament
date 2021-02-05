@@ -36,6 +36,8 @@ class Resource extends Model
     {
         $filesystem = new Filesystem();
 
+        if (! $filesystem->isDirectory(config('filament.resources.path'))) return [];
+
         return collect($filesystem->allFiles(config('filament.resources.path')))
             ->map(function (SplFileInfo $file) {
                 return (string) Str::of(config('filament.resources.namespace'))
