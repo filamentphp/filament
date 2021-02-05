@@ -10,8 +10,6 @@ class Field
 {
     use Tappable;
 
-    public $actionHooks = [];
-
     public $context;
 
     public $enabled = true;
@@ -19,6 +17,8 @@ class Field
     public $excludedContexts = [];
 
     public $fields = [];
+
+    public $hooks = [];
 
     public $id;
 
@@ -117,21 +117,21 @@ class Field
         return $this;
     }
 
-    public function getActionHooks()
+    public function getForm()
     {
-        $hooks = $this->actionHooks;
+        return new Form($this->fields, $this->context, $this->record);
+    }
 
-        collect($this->getForm()->getActionHooks())
+    public function getHooks()
+    {
+        $hooks = $this->hooks;
+
+        collect($this->getForm()->getHooks())
             ->each(function ($callbacks, $event) use (&$hooks) {
                 $hooks[$event] = array_merge($hooks[$event] ?? [], $callbacks);
             });
 
         return $hooks;
-    }
-
-    public function getForm()
-    {
-        return new Form($this->fields, $this->context, $this->record);
     }
 
     public function getRules()
@@ -215,11 +215,11 @@ class Field
         return $this;
     }
 
-    public function registerActionHook($event, $callback)
+    public function registerHook($event, $callback)
     {
-        if (! array_key_exists($event, $this->actionHooks)) $this->actionHooks[$event] = [];
+        if (! array_key_exists($event, $this->hooks)) $this->hooks[$event] = [];
 
-        $this->actionHooks[$event][] = $callback;
+        $this->hooks[$event][] = $callback;
 
         return $this;
     }

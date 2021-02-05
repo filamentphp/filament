@@ -50,13 +50,13 @@ class Form extends Component
         return $this;
     }
 
-    public function getActionHooks()
+    public function getHooks()
     {
-        $hooks = $this->actionHooks;
+        $hooks = $this->hooks;
 
         collect($this->fields)
             ->each(function ($field) use (&$hooks) {
-                collect($field->getActionHooks())
+                collect($field->getHooks())
                     ->each(function ($callbacks, $event) use (&$hooks) {
                         $hooks[$event] = array_merge($hooks[$event] ?? [], $callbacks);
                     });

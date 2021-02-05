@@ -17,7 +17,7 @@ abstract class Action extends Component
 
     protected function callFormHooks($event)
     {
-        return $this->getForm()->callActionHooks($this, $event);
+        return $this->getForm()->callHook($this, $event);
     }
 
     public function fields()
