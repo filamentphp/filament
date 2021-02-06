@@ -2,6 +2,8 @@
 
 namespace Filament\Fields;
 
+use Filament\Traits\FieldConcerns;
+
 class Textarea extends InputField
 {
     use FieldConcerns\CanBeCompared;

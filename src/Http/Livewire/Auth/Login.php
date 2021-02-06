@@ -18,27 +18,22 @@ class Login extends Action
 
     public $remember = false;
 
-    protected $rules = [
-        'email' => ['required', 'email'],
-        'password' => 'required',
-    ];
-
     public function fields()
     {
         return [
             Fields\Text::make('email')
-                ->type('email')
                 ->label('filament::fields.labels.email')
+                ->required()
+                ->email()
                 ->attributes([
-                    'required' => 'true',
                     'autocomplete' => 'email',
                     'autofocus' => 'true',
                 ]),
             Fields\Text::make('password')
-                ->type('password')
                 ->label('filament::fields.labels.password')
+                ->password()
+                ->required()
                 ->attributes([
-                    'required' => 'true',
                     'autocomplete' => 'current-password',
                 ])
                 ->hint('[' . __('filament::auth.requestPassword') . '](' . route('filament.auth.password.request') . ')'),

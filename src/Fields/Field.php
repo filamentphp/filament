@@ -40,7 +40,7 @@ class Field
 
     public function __construct($name = null)
     {
-        if ($this->name !== null) $this->name($name);
+        if ($name !== null) $this->name($name);
     }
 
     public function attributes($attributes)

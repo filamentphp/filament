@@ -13,7 +13,7 @@
 @endpushonce
 
 @section('field')
-    <div class="p-4 rounded border @error($field->error ?? $field->model) border-red-600 motion-safe:animate-shake @else border-gray-200 @enderror space-y-6">
+    <div class="p-4 rounded border @error($field->errorKey) border-red-600 motion-safe:animate-shake @else border-gray-200 @enderror space-y-6">
         <div
             x-data
             x-init="

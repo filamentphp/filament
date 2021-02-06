@@ -8,7 +8,7 @@
     <div class="space-y-4">
         <x-filament::select
             :id="$field->id"
-            :error-key="$field->error ?? $field->model"
+            :error-key="$field->errorKey"
             :extra-attributes="$field->attributes"
             wire:change="{{ $field->addMethod }}($event.target.value)"
         >

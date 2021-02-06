@@ -6,7 +6,7 @@
                 @foreach ($field->attributes as $attribute => $value)
                     {{ $attribute }}="{{ $value }}"
                 @endforeach
-                class="{{ $field->type === 'radio' ? 'rounded-full' : 'rounded' }} text-blue-700 shadow-sm focus:border-blue-700 focus:ring focus:ring-blue-200 focus:ring-opacity-50 @error($field->errorKey ?? $field->name) border-red-600 @else border-gray-300 @enderror" />
+                class="{{ $field->type === 'radio' ? 'rounded-full' : 'rounded' }} text-blue-700 shadow-sm focus:border-blue-700 focus:ring focus:ring-blue-200 focus:ring-opacity-50 @error($field->errorKey) border-red-600 @else border-gray-300 @enderror" />
                 <span class="inline-flex items-baseline space-x-4">
                     @if ($field->label)
                         <span>{{ $field->label }}</span>
@@ -22,7 +22,7 @@
     </x-filament::label>
 
     @if ($field->showErrors)
-        <x-filament::error :field="$field->errorKey ?? $field->name" />
+        <x-filament::error :field="$field->errorKey" />
     @endif
 
     @if ($field->help)

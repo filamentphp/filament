@@ -19,8 +19,8 @@
             :value="$field->value"
             :id="$field->id"
             :model-directive="$field->modelDirective"
-            :model="$field->model"
-            :error-key="$field->error ?? $field->model"
+            :name="$field->name"
+            :error-key="$field->errorKey"
             :extra-attributes="$field->attributes"
             x-ref="input"
         />

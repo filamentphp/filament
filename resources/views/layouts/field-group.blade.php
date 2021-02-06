@@ -4,7 +4,8 @@
             @if ($field->label)
                 <x-filament::label :for="$field->id">
                     {{ __($field->label) }}
-                    @if (array_key_exists('required', $field->attributes))
+
+                    @if ($field->required)
                         <sup class="text-lg font-medium text-red-700">*</sup>
                     @endif
                 </x-filament::label>
@@ -20,7 +21,7 @@
 
     @yield('field')
 
-    <x-filament::error :field="$field->errorKey ?? $field->name" />
+    <x-filament::error :field="$field->errorKey" />
 
     @if ($field->help)
         <x-filament::help>

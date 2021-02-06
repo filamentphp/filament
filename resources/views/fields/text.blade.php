@@ -2,14 +2,16 @@
 
 @section('field')
     <x-filament::input
-        :type="$field->type"
+        :disabled="$field->disabled"
+        :error-key="$field->errorKey"
+        :extra-attributes="$field->attributes"
         :id="$field->id"
+        :maxLength="$field->maxLength"
+        :minLength="$field->minLength"
         :model-directive="$field->modelDirective"
         :name="$field->name"
-        :error-key="$field->errorKey ?? $field->name"
-        :extra-attributes="$field->attributes"
+        :placeholder="$field->placeholder"
         :required="$field->required"
-        :minLength="$field->minLength"
-        :maxLength="$field->maxLength"
+        :type="$field->type"
     />
 @overwrite

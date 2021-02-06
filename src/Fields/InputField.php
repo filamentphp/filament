@@ -44,6 +44,13 @@ class InputField extends Field
         return $this;
     }
 
+    public function default($default)
+    {
+        $this->default = $default;
+
+        return $this;
+    }
+
     public function errorKey($errorKey)
     {
         $this->errorKey = $errorKey;
