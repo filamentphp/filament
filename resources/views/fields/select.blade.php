@@ -8,7 +8,7 @@
         :error-key="$field->errorKey"
         :extra-attributes="$field->attributes"
         :required="$field->required"
-        :placeholder="$field->placeholder"
+        :placeholder="__($field->placeholder)"
         :options="$field->options"
     />
 @overwrite

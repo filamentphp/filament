@@ -4,6 +4,7 @@ namespace Filament;
 
 use Filament\Traits\WithNotifications;
 use Filament\View\Components\Form;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -41,10 +42,13 @@ abstract class Action extends Component
 
     public function getForm()
     {
+        $record = null;
+        if (property_exists($this, 'record') && $this->record instanceof Model) $record = $this->record;
+
         return new Form(
             $this->getFields(),
             static::class,
-            property_exists($this, 'record') ? $this->record : null,
+            $record,
         );
     }
 

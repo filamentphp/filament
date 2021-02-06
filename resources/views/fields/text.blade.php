@@ -2,6 +2,8 @@
 
 @section('field')
     <x-filament::input
+        :autocomplete="$field->autocomplete"
+        :autofocus="$field->autofocus"
         :disabled="$field->disabled"
         :error-key="$field->errorKey"
         :extra-attributes="$field->attributes"
@@ -10,7 +12,7 @@
         :minLength="$field->minLength"
         :model-directive="$field->modelDirective"
         :name="$field->name"
-        :placeholder="$field->placeholder"
+        :placeholder="__($field->placeholder)"
         :required="$field->required"
         :type="$field->type"
     />

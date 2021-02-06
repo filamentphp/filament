@@ -25,21 +25,24 @@
 
 @section('field')
     <div
-        x-data="{ content: @entangle($field->model).defer }"
+        x-data="{
+            value: @entangle($field->name).defer,
+            @unless ($field->disabled)
+                isFocused() { return document.activeElement !== this.$refs.trix },
+                setValue() { this.$refs.trix.editor.loadHTML(this.value) },
+            @endunless
+        }"
+        @unless ($field->disabled)
+            x-init="setValue(); $watch('value', () => isFocused() && setValue())"
+            x-on:trix-change="value = $event.target.value"
+        @endunless
         x-cloak
+        wire:ignore
     >
-        <input
-            type="hidden"
-            value="{{ $field->value }}"
-            id="value-{{ $field->id }}"
-        />
+        @unless ($field->disabled)
+            <input id="trix-value-{{ $field->id }}" type="hidden" />
 
-        <div
-            wire:ignore
-            @trix-change="content = $event.target.value"
-            @trix-file-accept="$event.preventDefault()"
-        >
-            <trix-toolbar id="toolbar-{{ $field->id }}">
+            <trix-toolbar id="trix-toolbar-{{ $field->id }}">
                 <div class="trix-button-row">
                     <span class="trix-button-group trix-button-group--text-tools" data-trix-button-group="text-tools">
                         <button type="button" class="trix-button trix-button--icon trix-button--icon-bold"
@@ -104,14 +107,17 @@
             </trix-toolbar>
 
             <trix-editor
+                @if ($field->autofocus) autofocus @endif
                 id="{{ $field->id }}"
-                toolbar="toolbar-{{ $field->id }}"
-                input="value-{{ $field->id }}"
+                input="trix-value-{{ $field->id }}"
+                placeholder="{{ __($field->placeholder) }}"
+                toolbar="trix-toolbar-{{ $field->id }}"
+                x-ref="trix"
                 class="block w-full rounded shadow-sm border-gray-400 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 bg-white border-gray-300 prose max-w-none"
-                @foreach ($field->attributes as $attribute => $value)
-                    {{ $attribute }}="{{ $value }}"
-                @endforeach
-            ></trix-editor>
-        </div>
+                {{ Filament\format_attributes($field->attributes) }}
+            />
+        @else
+            <div x-html="value" class="p-3 rounded shadow-sm border border-gray-400"></div>
+        @endunless
     </div>
 @overwrite

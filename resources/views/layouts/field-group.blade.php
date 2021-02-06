@@ -6,14 +6,14 @@
                     {{ __($field->label) }}
 
                     @if ($field->required)
-                        <sup class="text-lg font-medium text-red-700">*</sup>
+                        <sup class="font-medium text-red-700">*</sup>
                     @endif
                 </x-filament::label>
             @endif
 
             @if ($field->hint)
                 <x-filament::hint>
-                    @markdown($field->hint)
+                    @markdown(__($field->hint))
                 </x-filament::hint>
             @endif
         </div>
@@ -25,7 +25,7 @@
 
     @if ($field->help)
         <x-filament::help>
-            @markdown($field->help)
+            @markdown(__($field->help))
         </x-filament::help>
     @endif
 </div>

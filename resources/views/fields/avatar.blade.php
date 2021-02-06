@@ -42,9 +42,7 @@
                 {{ $field->modelDirective }}="{{ $field->name }}"
                 class="sr-only"
                 id="{{ $field->id }}"
-                @foreach ($field->attributes as $attribute => $value)
-                    {{ $attribute }}="{{ $value }}"
-                @endforeach
+                {{ Filament\format_attributes($field->attributes) }}
             />
 
             <div x-show="isUploading" :aria-hidden="!isUploading" class="absolute bottom-0 -mb-3 w-48 max-w-full">
