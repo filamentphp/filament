@@ -35,14 +35,14 @@ class ResetPassword extends Action
                 ->type('email')
                 ->label('filament::fields.labels.email')
                 ->modelDirective('wire:model.lazy')
-                ->extraAttributes([
+                ->attributes([
                     'required' => 'true',
                     'autocomplete' => 'email',
                 ]),
             Text::make('password')
                 ->type('password')
                 ->label('filament::fields.labels.password')
-                ->extraAttributes([
+                ->attributes([
                     'required' => 'true',
                     'autofocus' => 'true',
                     'autocomplete' => 'new-password',
@@ -50,7 +50,7 @@ class ResetPassword extends Action
             Text::make('passwordConfirmation')
                 ->type('password')
                 ->label('filament::fields.labels.newPassword')
-                ->extraAttributes([
+                ->attributes([
                     'required' => 'true',
                     'autocomplete' => 'new-password',
                 ]),

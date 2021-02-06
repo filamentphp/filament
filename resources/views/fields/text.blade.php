@@ -7,7 +7,7 @@
         :model-directive="$field->modelDirective"
         :name="$field->name"
         :error-key="$field->errorKey ?? $field->name"
-        :extra-attributes="$field->extraAttributes"
+        :extra-attributes="$field->attributes"
         :required="$field->required"
         :minLength="$field->minLength"
         :maxLength="$field->maxLength"

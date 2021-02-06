@@ -6,11 +6,9 @@ class Fieldset extends Field
 {
     public $columns = 1;
 
-    public $legend;
-
-    public static function make($legend = null)
+    public static function make($label = null)
     {
-        return (new static())->legend($legend);
+        return (new static())->label($label);
     }
 
     public function columns($columns)
@@ -23,12 +21,5 @@ class Fieldset extends Field
     public function getForm()
     {
         return parent::getForm()->columns($this->columns);
-    }
-
-    public function legend($legend = null)
-    {
-        $this->legend = $legend;
-
-        return $this;
     }
 }

@@ -11,6 +11,11 @@ abstract class CreateAction extends Action
 
     public $showRoute = 'edit';
 
+    public function mount()
+    {
+        $this->fillWithFormDefaults();
+    }
+
     public function submit()
     {
         $this->validate();

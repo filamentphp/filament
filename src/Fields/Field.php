@@ -10,11 +10,17 @@ class Field
 {
     use Tappable;
 
+    public $attributes = [];
+
     protected $context;
 
-    public $enabled = true;
-
     public $fields = [];
+
+    public $help;
+
+    public $hidden = false;
+
+    public $hint;
 
     public $hooks = [];
 
@@ -30,46 +36,16 @@ class Field
 
     protected $record;
 
-    public $rules = [];
-
     protected $view;
 
     public function __construct($name = null)
     {
-        $this->name = $name;
-
-        if ($this->name === null) return;
-
-        $this->id((string) Str::of($this->name)->slug());
-        $this->label((string) Str::of($this->name)->afterLast('.')->kebab()->replace('-', ' ')->ucfirst());
-        $this->rules(['nullable']);
+        if ($this->name !== null) $this->name($name);
     }
 
-    public function addRules($rules)
+    public function attributes($attributes)
     {
-        collect($rules)
-            ->each(function ($conditionsToAdd, $field) {
-                if (! is_array($conditionsToAdd)) $conditionsToAdd = explode('|', $conditionsToAdd);
-
-                $this->rules[$field] = collect($this->rules[$field] ?? [])
-                    ->filter(function ($originalCondition) use ($conditionsToAdd) {
-                        if (! is_string($originalCondition)) return true;
-
-                        $conditionsToAdd = collect($conditionsToAdd);
-
-                        if ($conditionsToAdd->contains($originalCondition)) return false;
-
-                        if (! Str::of($originalCondition)->contains(':')) return true;
-
-                        $originalConditionType = (string) Str::of($originalCondition)->before(':');
-
-                        return ! $conditionsToAdd->contains(function ($conditionToAdd) use ($originalConditionType) {
-                            return $originalConditionType === (string) Str::of($conditionToAdd)->before(':');
-                        });
-                    })
-                    ->push(...$conditionsToAdd)
-                    ->toArray();
-            });
+        $this->attributes = $attributes;
 
         return $this;
     }
@@ -79,8 +55,9 @@ class Field
         $this->context = $context;
 
         if (array_key_exists($this->context, $this->pendingIncludedContextModifications)) {
-            collect($this->pendingIncludedContextModifications[$this->context])
-                ->each(fn($callback) => $callback($this));
+            foreach ($this->pendingIncludedContextModifications[$this->context] as $callback) {
+                $callback($this);
+            }
         }
 
         $this->pendingIncludedContextModifications = [];
@@ -88,8 +65,9 @@ class Field
         collect($this->pendingExcludedContextModifications)
             ->filter(fn($callbacks, $context) => $context !== $this->context)
             ->each(function ($callbacks) {
-                collect($callbacks)
-                    ->each(fn($callback) => $callback($this));
+                foreach ($callbacks as $callback) {
+                    $callback($this);
+                }
             });
 
         $this->pendingExcludedContextModifications = [];
@@ -104,39 +82,24 @@ class Field
         return $this;
     }
 
-    public function disable()
-    {
-        $this->enabled = false;
-
-        return $this;
-    }
-
-    public function enable()
-    {
-        $this->enabled = true;
-
-        return $this;
-    }
-
     public function except($contexts, $callback = null)
     {
         if (! is_array($contexts)) $contexts = [$contexts];
 
         if (! $callback) {
-            $this->disable();
+            $this->hidden();
 
-            $callback = fn($field) => $field->enable();
+            $callback = fn($field) => $field->visible();
         }
 
         if (! $this->context) {
-            collect($contexts)
-                ->each(function ($context) use ($callback) {
-                    if (! array_key_exists($context, $this->pendingExcludedContextModifications)) {
-                        $this->pendingExcludedContextModifications[$context] = [];
-                    }
+            foreach ($contexts as $context) {
+                if (! array_key_exists($context, $this->pendingExcludedContextModifications)) {
+                    $this->pendingExcludedContextModifications[$context] = [];
+                }
 
-                    $this->pendingExcludedContextModifications[$context][] = $callback;
-                });
+                $this->pendingExcludedContextModifications[$context][] = $callback;
+            }
 
             return $this;
         }
@@ -155,6 +118,21 @@ class Field
         return $this;
     }
 
+    public function getDefaults()
+    {
+        if ($this->hidden) return [];
+
+        $defaults = [];
+
+        if ($this->name !== null && property_exists($this, 'default')) {
+            $defaults[$this->name] = $this->default;
+        }
+
+        $defaults = array_merge($defaults, $this->getForm()->getDefaults());
+
+        return $defaults;
+    }
+
     public function getForm()
     {
         return new Form($this->fields, $this->context, $this->record);
@@ -164,39 +142,37 @@ class Field
     {
         $hooks = $this->hooks;
 
-        collect($this->getForm()->getHooks())
-            ->each(function ($callbacks, $event) use (&$hooks) {
-                $hooks[$event] = array_merge($hooks[$event] ?? [], $callbacks);
-            });
+        foreach ($this->getForm()->getHooks() as $event => $callbacks) {
+            $hooks[$event] = array_merge($hooks[$event] ?? [], $callbacks);
+        }
 
         return $hooks;
     }
 
     public function getRules()
     {
-        if (! $this->enabled) return [];
+        if ($this->hidden) return [];
 
-        $rules = $this->rules;
+        $rules = property_exists($this, 'rules') ? $this->rules : [];
 
-        collect($this->getForm()->getRules())
-            ->each(function ($conditions, $field) use (&$rules) {
-                $conditions = collect($conditions)
-                    ->map(function ($condition) {
-                        if (! is_string($condition)) return $condition;
+        foreach ($this->getForm()->getRules() as $field => $conditions) {
+            $conditions = collect($conditions)
+                ->map(function ($condition) {
+                    if (! is_string($condition)) return $condition;
 
-                        return (string) Str::of($condition)->replace('{{record}}', $this->record ? $this->record->getKey() : '');
-                    })
-                    ->toArray();
+                    return (string) Str::of($condition)->replace('{{record}}', $this->record ? $this->record->getKey() : '');
+                })
+                ->toArray();
 
-                $rules[$field] = array_merge($rules[$field] ?? [], $conditions);
-            });
+            $rules[$field] = array_merge($rules[$field] ?? [], $conditions);
+        }
 
         return $rules;
     }
 
     public function getValidationAttributes()
     {
-        if (! $this->enabled) return [];
+        if ($this->hidden) return [];
 
         $attributes = [];
 
@@ -206,12 +182,30 @@ class Field
             $attributes[$this->name] = $label;
         }
 
-        collect($this->getForm()->getValidationAttributes())
-            ->each(function ($label, $name) use (&$attributes) {
-                $attributes[$name] = $label;
-            });
+        $attributes = array_merge($attributes, $this->getForm()->getValidationAttributes());
 
         return $attributes;
+    }
+
+    public function help($help)
+    {
+        $this->help = $help;
+
+        return $this;
+    }
+
+    public function hidden()
+    {
+        $this->hidden = true;
+
+        return $this;
+    }
+
+    public function hint($hint)
+    {
+        $this->hint = $hint;
+
+        return $this;
     }
 
     public function id($id)
@@ -228,25 +222,40 @@ class Field
         return $this;
     }
 
+    public function name($name)
+    {
+        $this->name = $name;
+
+        $this->id((string) Str::of($this->name)->slug());
+        $this->label(
+            (string) Str::of($this->name)
+                ->afterLast('.')
+                ->kebab()
+                ->replace('-', ' ')
+                ->ucfirst(),
+        );
+
+        return $this;
+    }
+
     public function only($contexts, $callback = null)
     {
         if (! is_array($contexts)) $contexts = [$contexts];
 
         if (! $callback) {
-            $this->disable();
+            $this->hidden();
 
-            $callback = fn($field) => $field->enable();
+            $callback = fn($field) => $field->visible();
         }
 
         if (! $this->context) {
-            collect($contexts)
-                ->each(function ($context) use ($callback) {
-                    if (! array_key_exists($context, $this->pendingIncludedContextModifications)) {
-                        $this->pendingIncludedContextModifications[$context] = [];
-                    }
+            foreach ($contexts as $context) {
+                if (! array_key_exists($context, $this->pendingIncludedContextModifications)) {
+                    $this->pendingIncludedContextModifications[$context] = [];
+                }
 
-                    $this->pendingIncludedContextModifications[$context][] = $callback;
-            });
+                $this->pendingIncludedContextModifications[$context][] = $callback;
+            }
 
             return $this;
         }
@@ -274,47 +283,6 @@ class Field
         return $this;
     }
 
-    public function removeRules($rules)
-    {
-        collect($rules)
-            ->each(function ($conditionsToRemove, $field) {
-                if (! is_array($conditionsToRemove)) $conditionsToRemove = explode('|', $conditionsToRemove);
-
-                if (empty($conditionsToRemove)) {
-                    unset($this->rules[$field]);
-
-                    return;
-                }
-
-                $this->rules[$field] = collect($this->rules[$field] ?? [])
-                    ->filter(function ($originalCondition) use ($conditionsToRemove) {
-                        if (! is_string($originalCondition)) return true;
-
-                        $conditionsToRemove = collect($conditionsToRemove);
-
-                        if ($conditionsToRemove->contains($originalCondition)) return false;
-
-                        if (! Str::of($originalCondition)->contains(':')) return true;
-
-                        $originalConditionType = (string) Str::of($originalCondition)->before(':');
-
-                        return ! $conditionsToRemove->contains(function ($conditionToRemove) use ($originalConditionType) {
-                            return $originalConditionType === (string) Str::of($conditionToRemove)->before(':');
-                        });
-                    })
-                    ->toArray();
-            });
-
-        return $this;
-    }
-
-    public function rules($conditions)
-    {
-        $this->rules = [$this->name => $conditions];
-
-        return $this;
-    }
-
     public function view($view)
     {
         $this->view = $view;
@@ -322,9 +290,16 @@ class Field
         return $this;
     }
 
+    public function visible()
+    {
+        $this->hidden = false;
+
+        return $this;
+    }
+
     public function render()
     {
-        if (! $this->enabled) return;
+        if ($this->hidden) return;
 
         $view = $this->view ?? 'filament::fields.' . Str::of(class_basename(static::class))->kebab();
 

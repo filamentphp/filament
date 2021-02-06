@@ -4,16 +4,11 @@
     <x-filament::select
         :id="$field->id"
         :model-directive="$field->modelDirective"
-        :model="$field->model"
-        :error-key="$field->error ?? $field->model"
-        :extra-attributes="$field->extraAttributes"
-    >
-        @if ($field->placeholder)
-            <option value="">{{ __($field->placeholder) }}</option>
-        @endif
-
-        @foreach ($field->options as $key => $value)
-            <option value="{{ $key }}">{{ __($value) }}</option>
-        @endforeach
-    </x-filament::select>
+        :name="$field->name"
+        :error-key="$field->errorKey ?? $field->name"
+        :extra-attributes="$field->attributes"
+        :required="$field->required"
+        :placeholder="$field->placeholder"
+        :options="$field->options"
+    />
 @overwrite

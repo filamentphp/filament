@@ -20,14 +20,32 @@ abstract class Action extends Component
         return $this->getForm()->callHook($this, $event);
     }
 
-    public function fields()
+    protected function fillWithFormDefaults()
     {
-        return static::$resource::fields();
+        $this->fill($this->getPropertyDefaults());
+    }
+
+    protected function getPropertyDefaults()
+    {
+        return $this->getForm()->getDefaults();
+    }
+
+    protected function getFields()
+    {
+        $fields = static::$resource ? static::$resource::fields() : [];
+
+        if (method_exists($this, 'fields')) return array_merge($fields, $this->fields());
+
+        return $fields;
     }
 
     public function getForm()
     {
-        return new Form($this->fields(), static::class);
+        return new Form(
+            $this->getFields(),
+            static::class,
+            property_exists($this, 'record') ? $this->record : null,
+        );
     }
 
     public static function getModel()
@@ -46,17 +64,16 @@ abstract class Action extends Component
     {
         $rules = $this->getForm()->getRules();
 
-        collect(parent::getRules())
-            ->each(function ($conditions, $field) use (&$rules) {
-                if (! is_array($conditions)) $conditions = explode('|', $conditions);
+        foreach (parent::getRules() as $field => $conditions) {
+            if (! is_array($conditions)) $conditions = explode('|', $conditions);
 
-                $rules[$field] = array_merge($rules[$field] ?? [], $conditions);
-            });
+            $rules[$field] = array_merge($rules[$field] ?? [], $conditions);
+        }
 
         return $rules;
     }
 
-    public static function getTitle()
+    protected static function getTitle()
     {
         if (static::$title) return static::$title;
 
@@ -70,12 +87,29 @@ abstract class Action extends Component
     {
         $attributes = $this->getForm()->getValidationAttributes();
 
-        collect(parent::getValidationAttributes())
-            ->each(function ($label, $name) use (&$attributes) {
-                $attributes[$name] = $label;
-            });
+        foreach (parent::getValidationAttributes() as $name => $label) {
+            $attributes[$name] = $label;
+        }
 
         return $attributes;
+    }
+
+    public function reset(...$properties)
+    {
+        parent::reset(...$properties);
+
+        $defaults = $this->getPropertyDefaults();
+
+        if (count($properties) && is_array($properties[0])) $properties = $properties[0];
+
+        if (empty($properties)) $properties = array_keys($defaults);
+
+        $propertiesToFill = collect($properties)
+            ->filter(fn($property) => in_array($property, $defaults))
+            ->mapWithKeys(fn($property) => [$property => $defaults[$property]])
+            ->toArray();
+
+        $this->fill($propertiesToFill);
     }
 
     public static function route($uri, $name)

@@ -26,7 +26,7 @@ class RequestPassword extends Action
             Fields\Text::make('email')
                 ->type('email')
                 ->label('filament::fields.labels.email')
-                ->extraAttributes([
+                ->attributes([
                     'required' => 'true',
                     'autofocus' => 'true',
                     'autocomplete' => 'email',

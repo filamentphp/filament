@@ -21,7 +21,7 @@
             :model-directive="$field->modelDirective"
             :model="$field->model"
             :error-key="$field->error ?? $field->model"
-            :extra-attributes="$field->extraAttributes"
+            :extra-attributes="$field->attributes"
             x-ref="input"
         />
     </div>

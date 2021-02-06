@@ -45,17 +45,26 @@ class Form extends Component
         return $this;
     }
 
+    public function getDefaults()
+    {
+        $defaults = [];
+
+        foreach ($this->fields as $field) {
+            $defaults = array_merge($defaults, $field->getDefaults());
+        }
+
+        return $defaults;
+    }
+
     public function getHooks()
     {
         $hooks = $this->hooks;
 
-        collect($this->fields)
-            ->each(function ($field) use (&$hooks) {
-                collect($field->getHooks())
-                    ->each(function ($callbacks, $event) use (&$hooks) {
-                        $hooks[$event] = array_merge($hooks[$event] ?? [], $callbacks);
-                    });
-            });
+        foreach ($this->fields as $field) {
+            foreach ($field->getHooks as $event => $callbacks) {
+                $hooks[$event] = array_merge($hooks[$event] ?? [], $callbacks);
+            }
+        }
 
         return $hooks;
     }
@@ -64,13 +73,11 @@ class Form extends Component
     {
         $rules = $this->rules;
 
-        collect($this->fields)
-            ->each(function ($field) use (&$rules) {
-                collect($field->getRules())
-                    ->each(function ($conditions, $field) use (&$rules) {
-                        $rules[$field] = array_merge($rules[$field] ?? [], $conditions);
-                    });
-            });
+        foreach ($this->fields as $field) {
+            foreach ($field->getRules() as $name => $conditions) {
+                $rules[$name] = array_merge($rules[$name] ?? [], $conditions);
+            }
+        }
 
         return $rules;
     }
@@ -79,13 +86,9 @@ class Form extends Component
     {
         $attributes = [];
 
-        collect($this->fields)
-            ->each(function ($field) use (&$attributes) {
-                collect($field->getValidationAttributes())
-                    ->each(function ($label, $name) use (&$attributes) {
-                        $attributes[$name] = $label;
-                    });
-            });
+        foreach ($this->fields as $field) {
+            $attributes = array_merge($attributes, $field->getValidationAttributes());
+        }
 
         return $attributes;
     }

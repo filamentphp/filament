@@ -8,7 +8,7 @@ class Select extends InputField
 
     public $placeholder = 'Choose';
 
-    public function options(array $options)
+    public function options($options)
     {
         $this->options = $options;
 

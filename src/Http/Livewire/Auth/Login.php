@@ -29,7 +29,7 @@ class Login extends Action
             Fields\Text::make('email')
                 ->type('email')
                 ->label('filament::fields.labels.email')
-                ->extraAttributes([
+                ->attributes([
                     'required' => 'true',
                     'autocomplete' => 'email',
                     'autofocus' => 'true',
@@ -37,7 +37,7 @@ class Login extends Action
             Fields\Text::make('password')
                 ->type('password')
                 ->label('filament::fields.labels.password')
-                ->extraAttributes([
+                ->attributes([
                     'required' => 'true',
                     'autocomplete' => 'current-password',
                 ])

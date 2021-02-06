@@ -18,10 +18,10 @@
             x-data
             x-init="
                 FilePond.setOptions({
-                    @isset($field->extraAttributes['placeholder'])
-                labelIdle: '{{ $field->extraAttributes['placeholder'] }}',
+                    @isset($field->attributes['placeholder'])
+                labelIdle: '{{ $field->attributes['placeholder'] }}',
                     @endisset
-                allowMultiple: {{ isset($field->extraAttributes['multiple']) ? 'true' : 'false' }},
+                allowMultiple: {{ isset($field->attributes['multiple']) ? 'true' : 'false' }},
                     server: {
                         process:(fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
                             @this.upload('{{ $field->model }}', file, load, error, progress)

@@ -15,7 +15,7 @@ class Choices extends Field
                 ->type($this->type)
                 ->label($label)
                 ->hideErrorOutput()
-                ->extraAttributes([
+                ->attributes([
                     'name' => $this->name(),
                 ])
                 ->value($value);

@@ -3,7 +3,7 @@
         <span class="inline-flex items-center space-x-2">
             <input type="{{ $field->type }}"
                 {{ $field->modelDirective }}="{{ $field->name }}"
-                @foreach ($field->extraAttributes as $attribute => $value)
+                @foreach ($field->attributes as $attribute => $value)
                     {{ $attribute }}="{{ $value }}"
                 @endforeach
                 class="{{ $field->type === 'radio' ? 'rounded-full' : 'rounded' }} text-blue-700 shadow-sm focus:border-blue-700 focus:ring focus:ring-blue-200 focus:ring-opacity-50 @error($field->errorKey ?? $field->name) border-red-600 @else border-gray-300 @enderror" />

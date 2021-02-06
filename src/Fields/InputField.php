@@ -2,29 +2,44 @@
 
 namespace Filament\Fields;
 
+use Illuminate\Support\Str;
+
 class InputField extends Field
 {
+    public $default = '';
+
     public $errorKey;
-
-    public $extraAttributes = [];
-
-    public $help;
-
-    public $hint;
-
-    public $maxLength;
-
-    public $minLength;
 
     public $modelDirective = 'wire:model.defer';
 
     public $required = false;
 
-    public function confirmed($confirmationFieldName = null)
-    {
-        if ($confirmationFieldName === null) $confirmationFieldName = "{$this->name}Confirmation";
+    public $rules = [];
 
-        $this->addRules([$confirmationFieldName => ["same:$this->name"]]);
+    public function addRules($rules)
+    {
+        foreach ($rules as $field => $conditionsToAdd) {
+            if (! is_array($conditionsToAdd)) $conditionsToAdd = explode('|', $conditionsToAdd);
+
+            $this->rules[$field] = collect($this->rules[$field] ?? [])
+                ->filter(function ($originalCondition) use ($conditionsToAdd) {
+                    if (! is_string($originalCondition)) return true;
+
+                    $conditionsToAdd = collect($conditionsToAdd);
+
+                    if ($conditionsToAdd->contains($originalCondition)) return false;
+
+                    if (! Str::of($originalCondition)->contains(':')) return true;
+
+                    $originalConditionType = (string) Str::of($originalCondition)->before(':');
+
+                    return ! $conditionsToAdd->contains(function ($conditionToAdd) use ($originalConditionType) {
+                        return $originalConditionType === (string) Str::of($conditionToAdd)->before(':');
+                    });
+                })
+                ->push(...$conditionsToAdd)
+                ->toArray();
+        }
 
         return $this;
     }
@@ -36,69 +51,9 @@ class InputField extends Field
         return $this;
     }
 
-    public function extraAttributes($attributes)
-    {
-        $this->extraAttributes = $attributes;
-
-        return $this;
-    }
-
-    public function help($help)
-    {
-        $this->help = $help;
-
-        return $this;
-    }
-
-    public function hint($hint)
-    {
-        $this->hint = $hint;
-
-        return $this;
-    }
-
-    public function image()
-    {
-        $this->addRules([$this->name => ['image']]);
-
-        return $this;
-    }
-
     public static function make($name)
     {
         return new static($name);
-    }
-
-    public function maxLength($value)
-    {
-        $this->maxLength = $value;
-
-        $this->addRules([$this->name => ["max:$value"]]);
-
-        return $this;
-    }
-
-    public function maxSize($value)
-    {
-        $this->addRules([$this->name => ["max:$value"]]);
-
-        return $this;
-    }
-
-    public function minLength($value)
-    {
-        $this->minLength = $value;
-
-        $this->addRules([$this->name => ["min:$value"]]);
-
-        return $this;
-    }
-
-    public function minSize($value)
-    {
-        $this->addRules([$this->name => ["min:$value"]]);
-
-        return $this;
     }
 
     public function modelDirective($modelDirective)
@@ -108,12 +63,53 @@ class InputField extends Field
         return $this;
     }
 
+    public function name($name)
+    {
+        parent::name($name);
+
+        $this->errorKey($this->name);
+        $this->rules(['nullable']);
+    }
+
     public function nullable()
     {
         $this->required = false;
 
         $this->removeRules([$this->name => ['required']]);
         $this->addRules([$this->name => ['nullable']]);
+
+        return $this;
+    }
+
+    public function removeRules($rules)
+    {
+        foreach ($rules as $field => $conditionsToRemove) {
+            if (! is_array($conditionsToRemove)) $conditionsToRemove = explode('|', $conditionsToRemove);
+
+            if (empty($conditionsToRemove)) {
+                unset($this->rules[$field]);
+
+                return;
+            }
+
+            $this->rules[$field] = collect($this->rules[$field] ?? [])
+                ->filter(function ($originalCondition) use ($conditionsToRemove) {
+                    if (! is_string($originalCondition)) return true;
+
+                    $conditionsToRemove = collect($conditionsToRemove);
+
+                    if ($conditionsToRemove->contains($originalCondition)) return false;
+
+                    if (! Str::of($originalCondition)->contains(':')) return true;
+
+                    $originalConditionType = (string) Str::of($originalCondition)->before(':');
+
+                    return ! $conditionsToRemove->contains(function ($conditionToRemove) use ($originalConditionType) {
+                        return $originalConditionType === (string) Str::of($conditionToRemove)->before(':');
+                    });
+                })
+                ->toArray();
+        }
 
         return $this;
     }
@@ -128,29 +124,19 @@ class InputField extends Field
         return $this;
     }
 
+    public function rules($conditions)
+    {
+        $this->rules = [$this->name => $conditions];
+
+        return $this;
+    }
+
     public function requiredWith($field)
     {
         $this->required = false;
 
         $this->removeRules([$this->name => ['nullable', 'required']]);
         $this->addRules([$this->name => ["required_with:$field"]]);
-
-        return $this;
-    }
-
-    public function same($field)
-    {
-        $this->addRules([$this->name => ["same:$field"]]);
-
-        return $this;
-    }
-
-    public function unique($table, $column = null, $exceptCurrentRecord = false)
-    {
-        $rule = "unique:$table,$column";
-        if ($exceptCurrentRecord) $rule .= ',{{record}}';
-
-        $this->addRules([$this->name => [$rule]]);
 
         return $this;
     }

@@ -6,7 +6,7 @@
         :model-directive="$field->modelDirective"
         :model="$field->model"
         :error-key="$field->error ?? $field->model"
-        :extra-attributes="$field->extraAttributes"
+        :extra-attributes="$field->attributes"
     >
         {{ $field->value }}
     </x-filament::textarea>

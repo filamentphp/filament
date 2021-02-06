@@ -3,7 +3,7 @@
     'modelDirective' => 'wire:model',
     'name' => null,
     'errorKey' => null,
-    'extraAttributes' => [],
+    'attributes' => [],
     'required' => false,
     'minLength' => null,
     'maxLength' => null,
@@ -17,5 +17,5 @@
     @if ($maxLength) maxlength="{{ $maxLength }}" @endif
     {{ $attributes->merge(array_merge([
         'class' => 'block w-full rounded shadow-sm border-gray-400 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 '.($errors->has($errorKey) ? 'border-red-600 motion-safe:animate-shake' : 'border-gray-300')
-    ], $extraAttributes)) }}
+    ], $attributes)) }}
 />

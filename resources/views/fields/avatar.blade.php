@@ -42,7 +42,7 @@
                 {{ $field->modelDirective }}="{{ $field->name }}"
                 class="sr-only"
                 id="{{ $field->id }}"
-                @foreach ($field->extraAttributes as $attribute => $value)
+                @foreach ($field->attributes as $attribute => $value)
                     {{ $attribute }}="{{ $value }}"
                 @endforeach
             />

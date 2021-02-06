@@ -9,7 +9,7 @@
         <x-filament::select
             :id="$field->id"
             :error-key="$field->error ?? $field->model"
-            :extra-attributes="$field->extraAttributes"
+            :extra-attributes="$field->attributes"
             wire:change="{{ $field->addMethod }}($event.target.value)"
         >
             <option value="">{{ __($field->placeholder) }}</option>

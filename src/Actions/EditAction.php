@@ -10,11 +10,6 @@ abstract class EditAction extends Action
 {
     public $record;
 
-    public function getForm()
-    {
-        return new Form($this->fields(), static::class, $this->record);
-    }
-
     public function mount($record)
     {
         $this->record = static::getModel()::findOrFail($record);

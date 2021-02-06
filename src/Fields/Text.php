@@ -2,8 +2,16 @@
 
 namespace Filament\Fields;
 
+use Filament\Traits\FieldConcerns;
+
 class Text extends InputField
 {
+    use FieldConcerns\CanBeCompared;
+    use FieldConcerns\CanBeDisabled;
+    use FieldConcerns\CanBeUnique;
+    use FieldConcerns\CanHaveLengthConstraints;
+    use FieldConcerns\CanHavePlaceholder;
+
     public $type = 'text';
 
     public function email()

@@ -33,10 +33,10 @@ Route::middleware([Authenticate::class])->group(function () {
 
     // Resources
     Resource::all()->each(function ($resource) {
-        collect($resource->router()->routes)->each(function ($route) use ($resource) {
+        foreach ($resource->router()->routes as $route) {
             Route::get('/resources/' . $resource->slug . '/' . $route->uri, $route->action)
                 ->middleware('filament.authorize.resource-route:' . $resource->id . ',' . $route->name)
                 ->name('resources.' . $resource->slug . '.' . $route->name);
-        });
+        }
     });
 });
