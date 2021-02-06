@@ -4,12 +4,17 @@ namespace Filament\Traits\FieldConcerns;
 
 trait CanBeAutocompleted
 {
-    public $autocomplete = false;
+    public $autocomplete;
 
-    public function autocomplete($key = null)
+    public function autocomplete($autocomplete = 'on')
     {
-        $this->autocomplete = $key !== null ? $key : true;
+        $this->autocomplete = $autocomplete;
 
         return $this;
+    }
+
+    public function disableAutocomplete()
+    {
+        $this->autocomplete('off');
     }
 }
