@@ -40,7 +40,7 @@
                         <x-heroicon-o-menu-alt-2 class="w-6 h-6" />
                     </button>
 
-                    <h1 class="font-bold text-2xl leading-tight text-red-700">{{ __($title) }}</h1>
+                    <h1 class="text-2xl leading-tight text-red-700">{{ __($title) }}</h1>
                 </div>
 
                 {{ $actions ?? null }}
