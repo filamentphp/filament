@@ -16,5 +16,7 @@ trait CanBeAutocompleted
     public function disableAutocomplete()
     {
         $this->autocomplete('off');
+
+        return $this;
     }
 }

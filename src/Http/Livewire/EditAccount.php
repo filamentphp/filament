@@ -23,10 +23,12 @@ class EditAccount extends Action
             Fields\Fieldset::make()->fields([
                 Fields\Text::make('record.name')
                     ->label('Name')
+                    ->disableAutocomplete()
                     ->required(),
                 Fields\Text::make('record.email')
                     ->label('Email')
                     ->email()
+                    ->disableAutocomplete()
                     ->required()
                     ->unique(FilamentUser::class, 'email', true),
             ])
@@ -35,11 +37,13 @@ class EditAccount extends Action
                 Fields\Text::make('newPassword')
                     ->label('Password')
                     ->password()
+                    ->autocomplete('new-password')
                     ->confirmed()
                     ->minLength(8),
                 Fields\Text::make('newPasswordConfirmation')
                     ->label('Confirm password')
                     ->password()
+                    ->autocomplete('new-password')
                     ->requiredWith('newPassword'),
             ])
                 ->columns(2),

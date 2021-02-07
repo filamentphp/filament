@@ -22,38 +22,29 @@ class ResetPassword extends Action
 
     public $user;
 
-    protected $rules = [
-        'email' => ['required', 'email'],
-        'password' => ['required', 'min:8'],
-        'passwordConfirmation' => ['required', 'same:password'],
-    ];
-
     public function fields()
     {
         return [
             Text::make('email')
-                ->type('email')
                 ->label('filament::fields.labels.email')
+                ->email()
                 ->modelDirective('wire:model.lazy')
-                ->attributes([
-                    'required' => 'true',
-                    'autocomplete' => 'email',
-                ]),
+                ->autocomplete()
+                ->required(),
             Text::make('password')
-                ->type('password')
                 ->label('filament::fields.labels.password')
-                ->attributes([
-                    'required' => 'true',
-                    'autofocus' => 'true',
-                    'autocomplete' => 'new-password',
-                ]),
+                ->password()
+                ->autofocus()
+                ->autocomplete('new-password')
+                ->required()
+                ->minLength(8)
+                ->confirmed(),
             Text::make('passwordConfirmation')
-                ->type('password')
                 ->label('filament::fields.labels.newPassword')
-                ->attributes([
-                    'required' => 'true',
-                    'autocomplete' => 'new-password',
-                ]),
+                ->password()
+                ->autocomplete('new-password')
+                ->required()
+                ->password(),
         ];
     }
 

@@ -16,22 +16,17 @@ class RequestPassword extends Action
 
     public $email;
 
-    protected $rules = [
-        'email' => ['required', 'email'],
-    ];
-
     public function fields()
     {
         return [
             Fields\Text::make('email')
-                ->type('email')
                 ->label('filament::fields.labels.email')
-                ->attributes([
-                    'required' => 'true',
-                    'autofocus' => 'true',
-                    'autocomplete' => 'email',
-                ])
-                ->hint('[' . __('filament::auth.backToLogin') . '](' . route('filament.auth.login') . ')'),
+                ->hint('[' . __('filament::auth.backToLogin') . '](' . route('filament.auth.login') . ')')
+                ->email()
+                ->autofocus()
+                ->autocomplete('email')
+                ->required()
+                ->email(),
         ];
     }
 

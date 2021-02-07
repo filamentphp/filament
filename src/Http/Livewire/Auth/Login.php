@@ -23,22 +23,17 @@ class Login extends Action
         return [
             Fields\Text::make('email')
                 ->label('filament::fields.labels.email')
-                ->required()
                 ->email()
-                ->attributes([
-                    'autocomplete' => 'email',
-                    'autofocus' => 'true',
-                ]),
+                ->autofocus()
+                ->autocomplete('email')
+                ->required(),
             Fields\Text::make('password')
                 ->label('filament::fields.labels.password')
+                ->hint('[' . __('filament::auth.requestPassword') . '](' . route('filament.auth.password.request') . ')')
                 ->password()
-                ->required()
-                ->attributes([
-                    'autocomplete' => 'current-password',
-                ])
-                ->hint('[' . __('filament::auth.requestPassword') . '](' . route('filament.auth.password.request') . ')'),
-            Fields\Checkbox::make('remember')
-                ->label('Remember me'),
+                ->autocomplete('current-password')
+                ->required(),
+            Fields\Checkbox::make('remember')->label('Remember me'),
         ];
     }
 
