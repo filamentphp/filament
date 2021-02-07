@@ -8,7 +8,7 @@ class Avatar extends InputField
 
     public $buttonLabel = 'filament::avatar.change';
 
-    public $modelDirective = 'wire:model';
+    public $nameAttribute = 'wire:model';
 
     public $size = 64;
 

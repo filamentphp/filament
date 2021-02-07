@@ -10,7 +10,7 @@ class InputField extends Field
 
     public $errorKey;
 
-    public $modelDirective = 'wire:model.defer';
+    public $nameAttribute = 'wire:model.defer';
 
     public $required = false;
 
@@ -63,19 +63,19 @@ class InputField extends Field
         return new static($name);
     }
 
-    public function modelDirective($modelDirective)
-    {
-        $this->modelDirective = $modelDirective;
-
-        return $this;
-    }
-
     public function name($name)
     {
         parent::name($name);
 
         $this->errorKey($this->name);
         $this->rules(['nullable']);
+    }
+
+    public function nameAttribute($nameAttribute)
+    {
+        $this->nameAttribute = $nameAttribute;
+
+        return $this;
     }
 
     public function nullable()

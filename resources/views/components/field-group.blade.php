@@ -11,21 +11,23 @@
 <div class="space-y-2">
     @if ($label || $hint)
         <div class="flex items-center justify-between space-x-2">
-            @if ($label)
-                <x-filament::label :for="$for">
-                    {{ $labelPrefix }}
+            <div class="flex space-x-2">
+                {{ $labelPrefix }}
 
-                    {{ __($label) }}
+                @if ($label)
+                    <x-filament::label :for="$for">
+                        {{ $label }}
 
-                    @if ($required)
-                        <sup class="font-medium text-red-700">*</sup>
-                    @endif
-                </x-filament::label>
-            @endif
+                        @if ($required)
+                            <sup class="font-medium text-red-700">*</sup>
+                        @endif
+                    </x-filament::label>
+                @endif
+            </div>
 
             @if ($hint)
                 <x-filament::hint>
-                    @markdown(__($hint))
+                    @markdown($hint)
                 </x-filament::hint>
             @endif
         </div>
@@ -39,7 +41,7 @@
 
     @if ($help)
         <x-filament::help>
-            @markdown(__($help))
+            @markdown($help)
         </x-filament::help>
     @endif
 </div>

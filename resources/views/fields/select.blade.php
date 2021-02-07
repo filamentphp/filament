@@ -1,15 +1,15 @@
 <x-filament::field-group
     :errorKey="$field->errorKey"
     :for="$field->id"
-    :help="$field->help"
-    :hint="$field->hint"
-    :label="$field->label"
+    :help="__($field->help)"
+    :hint="__($field->hint)"
+    :label="__($field->label)"
     :required="$field->required"
 >
     <x-filament::select
         :id="$field->id"
-        :model-directive="$field->modelDirective"
         :name="$field->name"
+        :name-attribute="$field->nameAttribute"
         :error-key="$field->errorKey"
         :extra-attributes="$field->attributes"
         :required="$field->required"

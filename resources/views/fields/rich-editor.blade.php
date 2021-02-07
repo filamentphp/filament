@@ -24,9 +24,9 @@
 <x-filament::field-group
     :errorKey="$field->errorKey"
     :for="$field->id"
-    :help="$field->help"
-    :hint="$field->hint"
-    :label="$field->label"
+    :help="__($field->help)"
+    :hint="__($field->hint)"
+    :label="__($field->label)"
     :required="$field->required"
 >
     <div

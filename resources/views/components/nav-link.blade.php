@@ -10,5 +10,5 @@
         <x-dynamic-component :component="$icon" class="flex-shrink-0 w-4 h-4" />
     @endisset
 
-    <span class="flex-grow text-sm leading-tight font-medium">{{ __($label) }}</span>
+    <span class="flex-grow text-sm leading-tight font-medium">{{ $label }}</span>
 </a>

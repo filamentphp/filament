@@ -39,7 +39,7 @@
             <label class="btn btn-sm" for="{{ $field->id }}">{{ __($field->buttonLabel) }}</label>
 
             <input type="file"
-                {{ $field->modelDirective }}="{{ $field->name }}"
+                {{ $field->nameAttribute }}="{{ $field->name }}"
                 class="sr-only"
                 id="{{ $field->id }}"
                 {{ Filament\format_attributes($field->attributes) }}

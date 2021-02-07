@@ -1,5 +1,5 @@
 @props([
-'label' => __('filament::datatable.edit'),
+    'label' => __('filament::datatable.edit'),
 ])
 
 <x-filament::table.cell class="text-right">

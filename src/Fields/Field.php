@@ -226,12 +226,17 @@ class Field
     {
         $this->name = $name;
 
-        $this->id((string) Str::of($this->name)->slug());
+        $this->id(
+            (string) Str::of($this->name)
+                ->replace('.', '-')
+                ->slug(),
+        );
+
         $this->label(
             (string) Str::of($this->name)
                 ->afterLast('.')
                 ->kebab()
-                ->replace('-', ' ')
+                ->replace(['-', '_'], ' ')
                 ->ucfirst(),
         );
 

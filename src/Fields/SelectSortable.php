@@ -8,7 +8,7 @@ class SelectSortable extends Select
 
     public $deleteMethod;
 
-    public $modelDirective = 'wire:model';
+    public $nameAttribute = 'wire:model';
 
     public $sortMethod;
 

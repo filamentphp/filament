@@ -28,7 +28,7 @@ class ResetPassword extends Action
             Text::make('email')
                 ->label('filament::fields.labels.email')
                 ->email()
-                ->modelDirective('wire:model.lazy')
+                ->nameAttribute('wire:model.lazy')
                 ->autocomplete()
                 ->required(),
             Text::make('password')

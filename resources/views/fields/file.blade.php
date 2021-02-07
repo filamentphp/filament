@@ -13,9 +13,9 @@
 <x-filament::field-group
     :errorKey="$field->errorKey"
     :for="$field->id"
-    :help="$field->help"
-    :hint="$field->hint"
-    :label="$field->label"
+    :help="__($field->help)"
+    :hint="__($field->hint)"
+    :label="__($field->label)"
     :required="$field->required"
 >
     <div class="p-4 rounded border @error($field->errorKey) border-red-600 motion-safe:animate-shake @else border-gray-200 @enderror space-y-6">
