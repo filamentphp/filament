@@ -49,51 +49,87 @@
 
             <trix-toolbar id="trix-toolbar-{{ $field->id }}">
                 <div class="trix-button-row">
-                    <span class="trix-button-group trix-button-group--text-tools" data-trix-button-group="text-tools">
-                        <button type="button" class="trix-button trix-button--icon trix-button--icon-bold"
-                                data-trix-attribute="bold" data-trix-key="b" title="Bold" tabindex="-1">Bold</button>
+                    @if ($field->hasToolbarButton(['bold', 'italic', 'strike', 'link']))
+                        <span class="trix-button-group trix-button-group--text-tools" data-trix-button-group="text-tools">
+                            @if ($field->hasToolbarButton('bold'))
+                                <button type="button" class="trix-button trix-button--icon trix-button--icon-bold"
+                                        data-trix-attribute="bold" data-trix-key="b" title="Bold" tabindex="-1">Bold</button>
+                            @endif
 
-                        <button type="button" class="trix-button trix-button--icon trix-button--icon-italic"
-                                data-trix-attribute="italic" data-trix-key="i" title="Italic"
-                                tabindex="-1">Italic</button>
+                            @if ($field->hasToolbarButton('italic'))
+                                <button type="button" class="trix-button trix-button--icon trix-button--icon-italic"
+                                        data-trix-attribute="italic" data-trix-key="i" title="Italic"
+                                        tabindex="-1">Italic</button>
+                            @endif
 
-                        <button type="button" class="trix-button trix-button--icon trix-button--icon-strike"
-                                data-trix-attribute="strike" title="Strikethrough" tabindex="-1">Strikethrough</button>
+                            @if ($field->hasToolbarButton('strike'))
+                                <button type="button" class="trix-button trix-button--icon trix-button--icon-strike"
+                                        data-trix-attribute="strike" title="Strikethrough" tabindex="-1">Strikethrough</button>
+                            @endif
 
-                        <button type="button" class="trix-button trix-button--icon trix-button--icon-link"
-                                data-trix-attribute="href" data-trix-action="link" data-trix-key="k" title="Link"
-                                tabindex="-1">Link</button>
-                    </span>
+                            @if ($field->hasToolbarButton('link'))
+                                <button type="button" class="trix-button trix-button--icon trix-button--icon-link"
+                                        data-trix-attribute="href" data-trix-action="link" data-trix-key="k" title="Link"
+                                        tabindex="-1">Link</button>
+                            @endif
+                        </span>
+                    @endif
 
-                    <span class="trix-button-group trix-button-group--heading-tools" data-trix-button-group="heading-tools">
-                        {{-- <button type="button" class="trix-button trix-button--icon trix-button--icon-heading-1" data-trix-attribute="heading1" title="Heading Level 1" tabindex="-1">Heading</button> --}}
+                    @if ($field->hasToolbarButton(['heading1', 'heading', 'subHeading']))
+                        <span class="trix-button-group trix-button-group--heading-tools" data-trix-button-group="heading-tools">
+                            @if ($field->hasToolbarButton('heading1'))
+                                <button type="button" class="trix-button trix-button--icon trix-button--icon-heading-1" data-trix-attribute="heading1" title="Heading Level 1" tabindex="-1">Heading</button>
+                            @endif
 
-                        <button type="button" class="trix-button" data-trix-attribute="heading" title="Heading Level 2" tabindex="-1">H2</button>
+                            @if ($field->hasToolbarButton('heading'))
+                                <button type="button" class="trix-button" data-trix-attribute="heading" title="Heading Level 2" tabindex="-1">H2</button>
+                            @endif
 
-                        <button type="button" class="trix-button" data-trix-attribute="subHeading" title="Heading Level 3" tabindex="-1">H3</button>
-                    </span>
+                            @if ($field->hasToolbarButton('subHeading'))
+                                <button type="button" class="trix-button" data-trix-attribute="subHeading" title="Heading Level 3" tabindex="-1">H3</button>
+                            @endif
+                        </span>
+                    @endif
 
-                    <span class="trix-button-group trix-button-group--block-tools" data-trix-button-group="block-tools">
-                        <button type="button" class="trix-button trix-button--icon trix-button--icon-quote" data-trix-attribute="quote" title="Quote" tabindex="-1">Quote</button>
+                    @if ($field->hasToolbarButton(['quote', 'code', 'bullet', 'number']))
+                        <span class="trix-button-group trix-button-group--block-tools" data-trix-button-group="block-tools">
+                            @if ($field->hasToolbarButton('quote'))
+                                <button type="button" class="trix-button trix-button--icon trix-button--icon-quote" data-trix-attribute="quote" title="Quote" tabindex="-1">Quote</button>
+                            @endif
 
-                        <button type="button" class="trix-button trix-button--icon trix-button--icon-code" data-trix-attribute="code" title="Code" tabindex="-1">Code</button>
+                            @if ($field->hasToolbarButton('code'))
+                                <button type="button" class="trix-button trix-button--icon trix-button--icon-code" data-trix-attribute="code" title="Code" tabindex="-1">Code</button>
+                            @endif
 
-                        <button type="button" class="trix-button trix-button--icon trix-button--icon-bullet-list" data-trix-attribute="bullet" title="Bullets" tabindex="-1">Bullets</button>
+                            @if ($field->hasToolbarButton('bullet'))
+                                <button type="button" class="trix-button trix-button--icon trix-button--icon-bullet-list" data-trix-attribute="bullet" title="Bullets" tabindex="-1">Bullets</button>
+                            @endif
 
-                        <button type="button" class="trix-button trix-button--icon trix-button--icon-number-list" data-trix-attribute="number" title="Numbers" tabindex="-1">Numbers</button>
-                    </span>
+                            @if ($field->hasToolbarButton('number'))
+                                <button type="button" class="trix-button trix-button--icon trix-button--icon-number-list" data-trix-attribute="number" title="Numbers" tabindex="-1">Numbers</button>
+                            @endif
+                        </span>
+                    @endif
 
-                    {{--<span class="trix-button-group trix-button-group--file-tools" data-trix-button-group="file-tools">--}}
-                    {{--    <button type="button" class="trix-button trix-button--icon trix-button--icon-attach" data-trix-action="attachFiles" title="Attach Files" tabindex="-1">Attach Files</button>--}}
-                    {{--</span>--}}
+                    @if ($field->hasToolbarButton('attachFiles'))
+                        <span class="trix-button-group trix-button-group--file-tools" data-trix-button-group="file-tools">
+                            <button type="button" class="trix-button trix-button--icon trix-button--icon-attach" data-trix-action="attachFiles" title="Attach Files" tabindex="-1">Attach Files</button>
+                        </span>
+                    @endif
 
-                    <span class="trix-button-group-spacer"></span>
+                    @if ($field->hasToolbarButton(['undo', 'redo']))
+                        <span class="trix-button-group-spacer"></span>
 
-                    <span class="trix-button-group trix-button-group--history-tools" data-trix-button-group="history-tools">
-                        <button type="button" class="trix-button trix-button--icon trix-button--icon-undo" data-trix-action="undo" data-trix-key="z" title="Undo" tabindex="-1" disabled>Undo</button>
+                        <span class="trix-button-group trix-button-group--history-tools" data-trix-button-group="history-tools">
+                            @if ($field->hasToolbarButton('undo'))
+                                <button type="button" class="trix-button trix-button--icon trix-button--icon-undo" data-trix-action="undo" data-trix-key="z" title="Undo" tabindex="-1" disabled>Undo</button>
+                            @endif
 
-                        <button type="button" class="trix-button trix-button--icon trix-button--icon-redo" data-trix-action="redo" data-trix-key="shift+z" title="Redo" tabindex="-1" disabled>Redo</button>
-                    </span>
+                            @if ($field->hasToolbarButton('redo'))
+                                <button type="button" class="trix-button trix-button--icon trix-button--icon-redo" data-trix-action="redo" data-trix-key="shift+z" title="Redo" tabindex="-1" disabled>Redo</button>
+                            @endif
+                        </span>
+                    @endif
                 </div>
 
                 <div class="trix-dialogs" data-trix-dialogs>
