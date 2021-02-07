@@ -1,5 +1,3 @@
-@extends('filament::layouts.field-group')
-
 @pushonce('head:trix-css')
     <link rel="stylesheet" href="https://www.unpkg.com/trix@1.3.1/dist/trix.css">
 @endpushonce
@@ -23,7 +21,14 @@
     </script>
 @endpushonce
 
-@section('field')
+<x-filament::field-group
+    :errorKey="$field->errorKey"
+    :for="$field->id"
+    :help="$field->help"
+    :hint="$field->hint"
+    :label="$field->label"
+    :required="$field->required"
+>
     <div
         x-data="{
             value: @entangle($field->name).defer,
@@ -120,4 +125,4 @@
             <div x-html="value" class="p-3 rounded shadow-sm border border-gray-400"></div>
         @endunless
     </div>
-@overwrite
+</x-filament::field-group>

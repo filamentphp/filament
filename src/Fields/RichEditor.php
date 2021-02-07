@@ -4,7 +4,7 @@ namespace Filament\Fields;
 
 use Filament\Traits\FieldConcerns;
 
-class Trix extends InputField
+class RichEditor extends InputField
 {
     use FieldConcerns\CanBeAutofocused;
     use FieldConcerns\CanBeCompared;

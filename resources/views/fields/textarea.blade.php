@@ -1,6 +1,11 @@
-@extends('filament::layouts.field-group')
-
-@section('field')
+<x-filament::field-group
+    :errorKey="$field->errorKey"
+    :for="$field->id"
+    :help="$field->help"
+    :hint="$field->hint"
+    :label="$field->label"
+    :required="$field->required"
+>
     <x-filament::textarea
         :autocomplete="$field->autocomplete"
         :autofocus="$field->autofocus"
@@ -12,4 +17,4 @@
         :name="$field->name"
         :placeholder="__($field->placeholder)"
     />
-@overwrite
+</x-filament::field-group>

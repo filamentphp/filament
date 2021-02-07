@@ -1,5 +1,3 @@
-@extends('filament::layouts.field-group')
-
 @pushonce('head:filepond-css')
     <link rel="stylesheet" href="https://unpkg.com/filepond/dist/filepond.css">
 @endpushonce
@@ -12,7 +10,14 @@
     <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 @endpushonce
 
-@section('field')
+<x-filament::field-group
+    :errorKey="$field->errorKey"
+    :for="$field->id"
+    :help="$field->help"
+    :hint="$field->hint"
+    :label="$field->label"
+    :required="$field->required"
+>
     <div class="p-4 rounded border @error($field->errorKey) border-red-600 motion-safe:animate-shake @else border-gray-200 @enderror space-y-6">
         <div
             x-data
@@ -108,4 +113,4 @@
             </ol>
         @endif
     </div>
-@overwrite
+</x-filament::field-group>

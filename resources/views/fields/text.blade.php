@@ -1,6 +1,11 @@
-@extends('filament::layouts.field-group')
-
-@section('field')
+<x-filament::field-group
+    :errorKey="$field->errorKey"
+    :for="$field->id"
+    :help="$field->help"
+    :hint="$field->hint"
+    :label="$field->label"
+    :required="$field->required"
+>
     <x-filament::input
         :autocomplete="$field->autocomplete"
         :autofocus="$field->autofocus"
@@ -16,4 +21,4 @@
         :required="$field->required"
         :type="$field->type"
     />
-@overwrite
+</x-filament::field-group>

@@ -1,6 +1,11 @@
-@extends('filament::layouts.field-group')
-
-@section('field')
+<x-filament::field-group
+    :errorKey="$field->errorKey"
+    :for="$field->id"
+    :help="$field->help"
+    :hint="$field->hint"
+    :label="$field->label"
+    :required="$field->required"
+>
     <x-filament::select
         :id="$field->id"
         :model-directive="$field->modelDirective"
@@ -11,4 +16,4 @@
         :placeholder="__($field->placeholder)"
         :options="$field->options"
     />
-@overwrite
+</x-filament::field-group>

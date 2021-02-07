@@ -1,5 +1,3 @@
-@extends('filament::layouts.field-group')
-
 @pushonce('head:flatpickr-css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endpushonce
@@ -8,7 +6,14 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 @endpushonce
 
-@section('field')
+<x-filament::field-group
+    :errorKey="$field->errorKey"
+    :for="$field->id"
+    :help="$field->help"
+    :hint="$field->hint"
+    :label="$field->label"
+    :required="$field->required"
+>
     <div
         wire:ignore
         x-data
@@ -25,4 +30,4 @@
             x-ref="input"
         />
     </div>
-@overwrite
+</x-filament::field-group>

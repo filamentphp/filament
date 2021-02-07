@@ -1,10 +1,15 @@
-@extends('filament::layouts.field-group')
-
 @pushonce('js:livewire-sortable')
     <script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
 @endpushonce
 
-@section('field')
+<x-filament::field-group
+    :errorKey="$field->errorKey"
+    :for="$field->id"
+    :help="$field->help"
+    :hint="$field->hint"
+    :label="$field->label"
+    :required="$field->required"
+>
     <div class="space-y-4">
         <x-filament::select
             :id="$field->id"
@@ -70,4 +75,4 @@
             </ol>
         @endif
     </div>
-@overwrite
+</x-filament::field-group>
