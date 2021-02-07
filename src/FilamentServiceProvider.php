@@ -4,9 +4,13 @@ namespace Filament;
 
 use Filament\Commands\MakeUserCommand;
 use Filament\Http\Middleware\AuthorizeResourceRoute;
+use Filament\Models\FilamentUser;
 use Filament\Providers\RouteServiceProvider;
 use Filament\Providers\ServiceProvider;
 use Filament\Traits\CanRegisterLivewireComponentDirectories;
+use Filament\View\Components\Avatar;
+use Filament\View\Components\Image;
+use Filament\View\Components\Nav;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 
@@ -46,7 +50,7 @@ class FilamentServiceProvider extends ServiceProvider
 
         $this->app['config']->set('auth.providers.filament_users', [
             'driver' => 'eloquent',
-            'model' => \Filament\Models\FilamentUser::class,
+            'model' => FilamentUser::class,
         ]);
     }
 
@@ -72,9 +76,9 @@ class FilamentServiceProvider extends ServiceProvider
     protected function bootLoaders()
     {
         $this->loadViewComponentsAs('filament', [
-            'avatar' => \Filament\View\Components\Avatar::class,
-            'image' => \Filament\View\Components\Image::class,
-            'nav' => \Filament\View\Components\Nav::class,
+            'avatar' => Avatar::class,
+            'image' => Image::class,
+            'nav' => Nav::class,
         ]);
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'filament');

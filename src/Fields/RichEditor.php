@@ -34,7 +34,7 @@ class RichEditor extends InputField
         $this->toolbarButtons = array_merge($this->toolbarButtons, $buttonsToDisable);
 
         $this->toolbarButtons = collect($this->toolbarButtons)
-            ->filter(fn($button) => ! in_array($button, $buttonsToDisable))
+            ->filter(fn ($button) => ! in_array($button, $buttonsToDisable))
             ->toArray();
 
         return $this;

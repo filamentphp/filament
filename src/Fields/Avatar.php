@@ -14,6 +14,11 @@ class Avatar extends InputField
 
     public $user;
 
+    public static function make($name)
+    {
+        return static::make($name)->image();
+    }
+
     public function avatar($avatar)
     {
         $this->avatar = $avatar;
@@ -26,11 +31,6 @@ class Avatar extends InputField
         $this->buttonLabel = $label;
 
         return $this;
-    }
-
-    public static function make($name)
-    {
-        return static::make($name)->image();
     }
 
     public function size($size)

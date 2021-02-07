@@ -2,25 +2,26 @@
 
 namespace Filament\Fields;
 
+use Filament\Traits\FieldConcerns;
+use Illuminate\Support\Str;
+
 class Tabs extends Field
 {
-    public $label;
+    use FieldConcerns\CanHaveId;
+    use FieldConcerns\CanHaveLabel;
 
-    public $tabs = [];
-
-    public function __construct($label)
+    public static function make($label = null)
     {
-        $this->label = $label;
+        $tabs = (new static())->label($label);
+
+        if ($label) $tabs = $tabs->id((string) Str::of($label)->slug());
+
+        return $tabs;
     }
 
-    public static function make(string $label)
+    public function tabs($tabs)
     {
-        return new static($label);
-    }
-
-    public function tab(string $label, array $fields)
-    {
-        $this->tabs[$label] = $fields;
+        $this->fields($tabs);
 
         return $this;
     }

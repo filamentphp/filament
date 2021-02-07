@@ -43,14 +43,14 @@ class ResourceAuthorizationManager
         if (! $this->resource::router()->hasRoute($route)) return $this->type === 'deny';
 
         return collect($this->authorizations)
-            ->contains(function ($authorization) use ($route, $user) {
-                if (! $user->hasRole($authorization->role)) return false;
+                ->contains(function ($authorization) use ($route, $user) {
+                    if (! $user->hasRole($authorization->role)) return false;
 
-                if (in_array($route, $authorization->onlyRoutes)) return $this->type === 'allow';
+                    if (in_array($route, $authorization->onlyRoutes)) return $this->type === 'allow';
 
-                if (in_array($route, $authorization->exceptRoutes)) return $this->type === 'deny';
+                    if (in_array($route, $authorization->exceptRoutes)) return $this->type === 'deny';
 
-                return $this->type === 'deny';
-            }) || $this->type === 'deny';
+                    return $this->type === 'deny';
+                }) || $this->type === 'deny';
     }
 }

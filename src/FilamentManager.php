@@ -13,34 +13,6 @@ class FilamentManager
 
     public $styles;
 
-    protected function getAsset($key)
-    {
-        $manifest = json_decode(file_get_contents($this->distPath('mix-manifest.json')), true);
-
-        if (! isset($manifest[$key])) {
-            return;
-        }
-
-        return $manifest[$key];
-    }
-
-    protected function getPublicAsset($key)
-    {
-        $manifestFile = public_path('vendor/filament/mix-manifest.json');
-
-        if (! file_exists($manifestFile)) {
-            return;
-        }
-
-        $manifest = json_decode(file_get_contents($manifestFile), true);
-
-        if (! isset($manifest[$key])) {
-            return;
-        }
-
-        return $manifest[$key];
-    }
-
     public function scripts()
     {
         if ($this->scripts) return $this->scripts;
@@ -66,6 +38,44 @@ class FilamentManager
             <!-- Filament Scripts -->
             <script src="' . route('filament.assets.js', $jsInfo) . '" data-turbolinks-eval="false"></script>
         ');
+    }
+
+    protected function getAsset($key)
+    {
+        $manifest = json_decode(file_get_contents($this->distPath('mix-manifest.json')), true);
+
+        if (! isset($manifest[$key])) {
+            return;
+        }
+
+        return $manifest[$key];
+    }
+
+    public function distPath($path = '')
+    {
+        return $this->basePath('dist/' . ltrim($path, '/'));
+    }
+
+    public function basePath($path = '')
+    {
+        return __DIR__ . '/../' . ltrim($path, '/');
+    }
+
+    protected function getPublicAsset($key)
+    {
+        $manifestFile = public_path('vendor/filament/mix-manifest.json');
+
+        if (! file_exists($manifestFile)) {
+            return;
+        }
+
+        $manifest = json_decode(file_get_contents($manifestFile), true);
+
+        if (! isset($manifest[$key])) {
+            return;
+        }
+
+        return $manifest[$key];
     }
 
     public function storage()
@@ -107,15 +117,5 @@ class FilamentManager
             {$externalAssets}
             <link rel=\"stylesheet\" href=\"" . route('filament.assets.css', $cssInfo) . "\">
         ");
-    }
-
-    public function basePath($path = '')
-    {
-        return __DIR__ . '/../' . ltrim($path, '/');
-    }
-
-    public function distPath($path = '')
-    {
-        return $this->basePath('dist/' . ltrim($path, '/'));
     }
 }

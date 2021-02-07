@@ -2,36 +2,23 @@
 
 namespace Filament\Traits;
 
+use DateTime;
 use Illuminate\Database\Connectors\ConnectionFactory;
 use Illuminate\Support\Str;
+use ReflectionClass;
 
 trait Sushi
 {
     protected static $sushiConnection;
 
-    public function getRows()
-    {
-        return $this->rows;
-    }
-
-    public function getSchema()
-    {
-        return $this->schema ?? [];
-    }
-
-    public static function resolveConnection($connection = null)
-    {
-        return static::$sushiConnection;
-    }
-
     public static function bootSushi()
     {
         $instance = (new static);
 
-        $cacheFileName = config('sushi.cache-prefix', 'sushi').'-'.Str::kebab(str_replace('\\', '', static::class)).'.sqlite';
+        $cacheFileName = config('sushi.cache-prefix', 'sushi') . '-' . Str::kebab(str_replace('\\', '', static::class)) . '.sqlite';
         $cacheDirectory = realpath(config('sushi.cache-path', storage_path('framework/cache')));
-        $cachePath = $cacheDirectory.'/'.$cacheFileName;
-        $modelPath = (new \ReflectionClass(static::class))->getFileName();
+        $cachePath = $cacheDirectory . '/' . $cacheFileName;
+        $modelPath = (new ReflectionClass(static::class))->getFileName();
 
         $states = [
             'cache-file-found-and-up-to-date' => function () use ($cachePath) {
@@ -94,6 +81,11 @@ trait Sushi
         static::insert($rows);
     }
 
+    public function getRows()
+    {
+        return $this->rows;
+    }
+
     public function createTable(string $tableName, $firstRow)
     {
         static::resolveConnection()->getSchemaBuilder()->create($tableName, function ($table) use ($firstRow) {
@@ -113,7 +105,7 @@ trait Sushi
                     case is_string($value):
                         $type = 'string';
                         break;
-                    case is_object($value) && $value instanceof \DateTime:
+                    case is_object($value) && $value instanceof DateTime:
                         $type = 'dateTime';
                         break;
                     default:
@@ -138,6 +130,24 @@ trait Sushi
         });
     }
 
+    public static function resolveConnection($connection = null)
+    {
+        return static::$sushiConnection;
+    }
+
+    public function getSchema()
+    {
+        return $this->schema ?? [];
+    }
+
+    public function usesTimestamps()
+    {
+        // Override the Laravel default value of $timestamps = true; Unless otherwise set.
+        return (new ReflectionClass($this))->getProperty('timestamps')->class === static::class
+            ? parent::usesTimestamps()
+            : false;
+    }
+
     public function createTableWithNoData(string $tableName)
     {
         static::resolveConnection()->getSchemaBuilder()->create($tableName, function ($table) {
@@ -160,13 +170,5 @@ trait Sushi
                 $table->timestamps();
             }
         });
-    }
-
-    public function usesTimestamps()
-    {
-        // Override the Laravel default value of $timestamps = true; Unless otherwise set.
-        return (new \ReflectionClass($this))->getProperty('timestamps')->class === static::class
-            ? parent::usesTimestamps()
-            : false;
     }
 }

@@ -7,7 +7,6 @@ use Filament\Action;
 use Filament\Fields;
 use Filament\Traits\WithNotifications;
 use Illuminate\Support\Facades\Password;
-use Livewire\Component;
 
 class RequestPassword extends Action
 {

@@ -16,28 +16,54 @@ abstract class Action extends Component
 
     protected static $title;
 
+    public static function getModel()
+    {
+        $resource = static::getResource();
+
+        return $resource::$model;
+    }
+
+    public static function getResource()
+    {
+        return static::$resource;
+    }
+
+    public static function route($uri, $name)
+    {
+        return new ResourceRoute(static::class, $uri, $name);
+    }
+
+    protected static function getTitle()
+    {
+        if (static::$title) return static::$title;
+
+        return (string) Str::of(class_basename(static::class))
+            ->kebab()
+            ->replace('-', ' ')
+            ->title();
+    }
+
+    public function reset(...$properties)
+    {
+        parent::reset(...$properties);
+
+        $defaults = $this->getPropertyDefaults();
+
+        if (count($properties) && is_array($properties[0])) $properties = $properties[0];
+
+        if (empty($properties)) $properties = array_keys($defaults);
+
+        $propertiesToFill = collect($properties)
+            ->filter(fn ($property) => in_array($property, $defaults))
+            ->mapWithKeys(fn ($property) => [$property => $defaults[$property]])
+            ->toArray();
+
+        $this->fill($propertiesToFill);
+    }
+
     protected function callFormHooks($event)
     {
         return $this->getForm()->callHook($this, $event);
-    }
-
-    protected function fillWithFormDefaults()
-    {
-        $this->fill($this->getPropertyDefaults());
-    }
-
-    protected function getPropertyDefaults()
-    {
-        return $this->getForm()->getDefaults();
-    }
-
-    protected function getFields()
-    {
-        $fields = static::$resource ? static::$resource::fields() : [];
-
-        if (method_exists($this, 'fields')) return array_merge($fields, $this->fields());
-
-        return $fields;
     }
 
     public function getForm()
@@ -52,16 +78,23 @@ abstract class Action extends Component
         );
     }
 
-    public static function getModel()
+    protected function getFields()
     {
-        $resource = static::getResource();
+        $fields = static::$resource ? static::$resource::fields() : [];
 
-        return $resource::$model;
+        if (method_exists($this, 'fields')) return array_merge($fields, $this->fields());
+
+        return $fields;
     }
 
-    public static function getResource()
+    protected function fillWithFormDefaults()
     {
-        return static::$resource;
+        $this->fill($this->getPropertyDefaults());
+    }
+
+    protected function getPropertyDefaults()
+    {
+        return $this->getForm()->getDefaults();
     }
 
     protected function getRules()
@@ -77,16 +110,6 @@ abstract class Action extends Component
         return $rules;
     }
 
-    protected static function getTitle()
-    {
-        if (static::$title) return static::$title;
-
-        return (string) Str::of(class_basename(static::class))
-            ->kebab()
-            ->replace('-', ' ')
-            ->title();
-    }
-
     protected function getValidationAttributes()
     {
         $attributes = $this->getForm()->getValidationAttributes();
@@ -96,28 +119,5 @@ abstract class Action extends Component
         }
 
         return $attributes;
-    }
-
-    public function reset(...$properties)
-    {
-        parent::reset(...$properties);
-
-        $defaults = $this->getPropertyDefaults();
-
-        if (count($properties) && is_array($properties[0])) $properties = $properties[0];
-
-        if (empty($properties)) $properties = array_keys($defaults);
-
-        $propertiesToFill = collect($properties)
-            ->filter(fn($property) => in_array($property, $defaults))
-            ->mapWithKeys(fn($property) => [$property => $defaults[$property]])
-            ->toArray();
-
-        $this->fill($propertiesToFill);
-    }
-
-    public static function route($uri, $name)
-    {
-        return new ResourceRoute(static::class, $uri, $name);
     }
 }

@@ -2,13 +2,25 @@
 
 namespace Filament\Fields;
 
+use Filament\Traits\FieldConcerns;
 use Illuminate\Support\Str;
 
 class InputField extends Field
 {
+    use FieldConcerns\CanHaveId;
+    use FieldConcerns\CanHaveLabel;
+
     public $default = '';
 
     public $errorKey;
+
+    public $extraAttributes = [];
+
+    public $helpMessage;
+
+    public $hint;
+
+    public $name;
 
     public $nameAttribute = 'wire:model.defer';
 
@@ -16,39 +28,32 @@ class InputField extends Field
 
     public $rules = [];
 
-    public function addRules($rules)
+    public function __construct($name)
     {
-        foreach ($rules as $field => $conditionsToAdd) {
-            if (! is_array($conditionsToAdd)) $conditionsToAdd = explode('|', $conditionsToAdd);
-
-            $this->rules[$field] = collect($this->rules[$field] ?? [])
-                ->filter(function ($originalCondition) use ($conditionsToAdd) {
-                    if (! is_string($originalCondition)) return true;
-
-                    $conditionsToAdd = collect($conditionsToAdd);
-
-                    if ($conditionsToAdd->contains($originalCondition)) return false;
-
-                    if (! Str::of($originalCondition)->contains(':')) return true;
-
-                    $originalConditionType = (string) Str::of($originalCondition)->before(':');
-
-                    return ! $conditionsToAdd->contains(function ($conditionToAdd) use ($originalConditionType) {
-                        return $originalConditionType === (string) Str::of($conditionToAdd)->before(':');
-                    });
-                })
-                ->push(...$conditionsToAdd)
-                ->toArray();
-        }
-
-        return $this;
+        $this->name($name);
     }
 
-    public function default($default)
+    public function name($name)
     {
-        $this->default = $default;
+        $this->name = $name;
 
-        return $this;
+        $this->errorKey($this->name);
+
+        $this->id(
+            (string) Str::of($this->name)
+                ->replace('.', '-')
+                ->slug(),
+        );
+
+        $this->label(
+            (string) Str::of($this->name)
+                ->afterLast('.')
+                ->kebab()
+                ->replace(['-', '_'], ' ')
+                ->ucfirst(),
+        );
+
+        $this->rules(['nullable']);
     }
 
     public function errorKey($errorKey)
@@ -58,17 +63,44 @@ class InputField extends Field
         return $this;
     }
 
+    public function rules($conditions)
+    {
+        $this->rules = [$this->name => $conditions];
+
+        return $this;
+    }
+
     public static function make($name)
     {
         return new static($name);
     }
 
-    public function name($name)
+    public function default($default)
     {
-        parent::name($name);
+        $this->default = $default;
 
-        $this->errorKey($this->name);
-        $this->rules(['nullable']);
+        return $this;
+    }
+
+    public function extraAttributes($attributes)
+    {
+        $this->extraAttributes = $attributes;
+
+        return $this;
+    }
+
+    public function helpMessage($message)
+    {
+        $this->helpMessage = $message;
+
+        return $this;
+    }
+
+    public function hint($hint)
+    {
+        $this->hint = $hint;
+
+        return $this;
     }
 
     public function nameAttribute($nameAttribute)
@@ -121,19 +153,40 @@ class InputField extends Field
         return $this;
     }
 
+    public function addRules($rules)
+    {
+        foreach ($rules as $field => $conditionsToAdd) {
+            if (! is_array($conditionsToAdd)) $conditionsToAdd = explode('|', $conditionsToAdd);
+
+            $this->rules[$field] = collect($this->rules[$field] ?? [])
+                ->filter(function ($originalCondition) use ($conditionsToAdd) {
+                    if (! is_string($originalCondition)) return true;
+
+                    $conditionsToAdd = collect($conditionsToAdd);
+
+                    if ($conditionsToAdd->contains($originalCondition)) return false;
+
+                    if (! Str::of($originalCondition)->contains(':')) return true;
+
+                    $originalConditionType = (string) Str::of($originalCondition)->before(':');
+
+                    return ! $conditionsToAdd->contains(function ($conditionToAdd) use ($originalConditionType) {
+                        return $originalConditionType === (string) Str::of($conditionToAdd)->before(':');
+                    });
+                })
+                ->push(...$conditionsToAdd)
+                ->toArray();
+        }
+
+        return $this;
+    }
+
     public function required()
     {
         $this->required = true;
 
         $this->removeRules([$this->name => ['nullable']]);
         $this->addRules([$this->name => ['required']]);
-
-        return $this;
-    }
-
-    public function rules($conditions)
-    {
-        $this->rules = [$this->name => $conditions];
 
         return $this;
     }

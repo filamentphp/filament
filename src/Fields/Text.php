@@ -25,16 +25,16 @@ class Text extends InputField
         return $this;
     }
 
-    public function password()
+    public function type($type)
     {
-        $this->type('password');
+        $this->type = $type;
 
         return $this;
     }
 
-    public function type($type)
+    public function password()
     {
-        $this->type = $type;
+        $this->type('password');
 
         return $this;
     }

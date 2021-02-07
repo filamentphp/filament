@@ -1,7 +1,7 @@
 @props([
     'errorKey' => null,
     'for' => null,
-    'help' => null,
+    'helpMessage' => null,
     'hint' => null,
     'label' => null,
     'labelPrefix' => null,
@@ -39,9 +39,9 @@
         <x-filament::error :field="$errorKey" />
     @endif
 
-    @if ($help)
-        <x-filament::help>
-            @markdown($help)
-        </x-filament::help>
+    @if ($helpMessage)
+        <x-filament::help-message>
+            @markdown($helpMessage)
+        </x-filament::help-message>
     @endif
 </div>

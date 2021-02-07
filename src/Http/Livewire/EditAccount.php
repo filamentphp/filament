@@ -17,6 +17,11 @@ class EditAccount extends Action
 
     public $record;
 
+    public function getForm()
+    {
+        return new Form($this->fields(), static::class, $this->record);
+    }
+
     public function fields()
     {
         return [
@@ -48,11 +53,6 @@ class EditAccount extends Action
             ])
                 ->columns(2),
         ];
-    }
-
-    public function getForm()
-    {
-        return new Form($this->fields(), static::class, $this->record);
     }
 
     public function mount()

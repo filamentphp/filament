@@ -13,7 +13,7 @@
 <x-filament::field-group
     :errorKey="$field->errorKey"
     :for="$field->id"
-    :help="__($field->help)"
+    :help-message="__($field->helpMessage)"
     :hint="__($field->hint)"
     :label="__($field->label)"
     :required="$field->required"
@@ -23,10 +23,10 @@
             x-data
             x-init="
                 FilePond.setOptions({
-                    @isset($field->attributes['placeholder'])
-                labelIdle: '{{ $field->attributes['placeholder'] }}',
+                    @isset($field->extraAttributes['placeholder'])
+                labelIdle: '{{ $field->extraAttributes['placeholder'] }}',
                     @endisset
-                allowMultiple: {{ isset($field->attributes['multiple']) ? 'true' : 'false' }},
+                allowMultiple: {{ isset($field->extraAttributes['multiple']) ? 'true' : 'false' }},
                     server: {
                         process:(fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
                             @this.upload('{{ $field->model }}', file, load, error, progress)

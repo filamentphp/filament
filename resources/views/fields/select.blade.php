@@ -1,7 +1,7 @@
 <x-filament::field-group
     :errorKey="$field->errorKey"
     :for="$field->id"
-    :help="__($field->help)"
+    :help-message="__($field->helpMessage)"
     :hint="__($field->hint)"
     :label="__($field->label)"
     :required="$field->required"
@@ -11,7 +11,7 @@
         :name="$field->name"
         :name-attribute="$field->nameAttribute"
         :error-key="$field->errorKey"
-        :extra-attributes="$field->attributes"
+        :extra-attributes="$field->extraAttributes"
         :required="$field->required"
         :placeholder="__($field->placeholder)"
         :options="$field->options"

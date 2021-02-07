@@ -3,7 +3,6 @@
 namespace Filament\Actions;
 
 use Filament\Action;
-use Filament\Traits\WithNotifications;
 
 abstract class CreateAction extends Action
 {

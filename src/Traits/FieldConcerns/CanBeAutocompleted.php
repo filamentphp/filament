@@ -6,16 +6,16 @@ trait CanBeAutocompleted
 {
     public $autocomplete;
 
-    public function autocomplete($autocomplete = 'on')
+    public function disableAutocomplete()
     {
-        $this->autocomplete = $autocomplete;
+        $this->autocomplete('off');
 
         return $this;
     }
 
-    public function disableAutocomplete()
+    public function autocomplete($autocomplete = 'on')
     {
-        $this->autocomplete('off');
+        $this->autocomplete = $autocomplete;
 
         return $this;
     }

@@ -5,7 +5,7 @@
 <x-filament::field-group
     :errorKey="$field->errorKey"
     :for="$field->id"
-    :help="__($field->help)"
+    :help-message="__($field->helpMessage)"
     :hint="__($field->hint)"
     :label="__($field->label)"
     :required="$field->required"
@@ -14,7 +14,7 @@
         <x-filament::select
             :id="$field->id"
             :error-key="$field->errorKey"
-            :extra-attributes="$field->attributes"
+            :extra-attributes="$field->extraAttributes"
             wire:change="{{ $field->addMethod }}($event.target.value)"
         >
             <option value="">{{ __($field->placeholder) }}</option>

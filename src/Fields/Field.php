@@ -10,25 +10,13 @@ class Field
 {
     use Tappable;
 
-    public $attributes = [];
-
-    protected $context;
-
     public $fields = [];
-
-    public $help;
 
     public $hidden = false;
 
-    public $hint;
-
     public $hooks = [];
 
-    public $id;
-
-    public $label;
-
-    public $name;
+    protected $context;
 
     protected $pendingExcludedContextModifications = [];
 
@@ -37,18 +25,6 @@ class Field
     protected $record;
 
     protected $view;
-
-    public function __construct($name = null)
-    {
-        if ($name !== null) $this->name($name);
-    }
-
-    public function attributes($attributes)
-    {
-        $this->attributes = $attributes;
-
-        return $this;
-    }
 
     public function context($context)
     {
@@ -63,7 +39,7 @@ class Field
         $this->pendingIncludedContextModifications = [];
 
         collect($this->pendingExcludedContextModifications)
-            ->filter(fn($callbacks, $context) => $context !== $this->context)
+            ->filter(fn ($callbacks, $context) => $context !== $this->context)
             ->each(function ($callbacks) {
                 foreach ($callbacks as $callback) {
                     $callback($this);
@@ -89,7 +65,7 @@ class Field
         if (! $callback) {
             $this->hidden();
 
-            $callback = fn($field) => $field->visible();
+            $callback = fn ($field) => $field->visible();
         }
 
         if (! $this->context) {
@@ -111,6 +87,13 @@ class Field
         return $this;
     }
 
+    public function hidden()
+    {
+        $this->hidden = true;
+
+        return $this;
+    }
+
     public function fields($fields)
     {
         $this->fields = $fields;
@@ -124,7 +107,7 @@ class Field
 
         $defaults = [];
 
-        if ($this->name !== null && property_exists($this, 'default')) {
+        if (property_exists($this, 'name') && property_exists($this, 'default')) {
             $defaults[$this->name] = $this->default;
         }
 
@@ -176,7 +159,7 @@ class Field
 
         $attributes = [];
 
-        if ($this->name !== null && $this->label !== null) {
+        if (property_exists($this, 'name') && property_exists($this, 'label')) {
             $label = Str::of($this->label)->lower();
 
             $attributes[$this->name] = $label;
@@ -187,62 +170,6 @@ class Field
         return $attributes;
     }
 
-    public function help($help)
-    {
-        $this->help = $help;
-
-        return $this;
-    }
-
-    public function hidden()
-    {
-        $this->hidden = true;
-
-        return $this;
-    }
-
-    public function hint($hint)
-    {
-        $this->hint = $hint;
-
-        return $this;
-    }
-
-    public function id($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    public function label($label)
-    {
-        $this->label = $label;
-
-        return $this;
-    }
-
-    public function name($name)
-    {
-        $this->name = $name;
-
-        $this->id(
-            (string) Str::of($this->name)
-                ->replace('.', '-')
-                ->slug(),
-        );
-
-        $this->label(
-            (string) Str::of($this->name)
-                ->afterLast('.')
-                ->kebab()
-                ->replace(['-', '_'], ' ')
-                ->ucfirst(),
-        );
-
-        return $this;
-    }
-
     public function only($contexts, $callback = null)
     {
         if (! is_array($contexts)) $contexts = [$contexts];
@@ -250,7 +177,7 @@ class Field
         if (! $callback) {
             $this->hidden();
 
-            $callback = fn($field) => $field->visible();
+            $callback = fn ($field) => $field->visible();
         }
 
         if (! $this->context) {

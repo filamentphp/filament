@@ -2,8 +2,12 @@
 
 namespace Filament\Fields;
 
+use Filament\Traits\FieldConcerns;
+
 class Fieldset extends Field
 {
+    use FieldConcerns\CanHaveLabel;
+
     public $columns = 1;
 
     public static function make($label = null)

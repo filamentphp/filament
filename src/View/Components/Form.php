@@ -23,6 +23,32 @@ class Form extends Component
         if ($record) $this->passRecordToFields($record);
     }
 
+    public function passContextToFields($context = null)
+    {
+        if (! $context) return $this->fields;
+
+        return $this->fields = collect($this->fields)
+            ->map(function ($field) use ($context) {
+                return $field
+                    ->context($context)
+                    ->fields($field->getForm()->passContextToFields($context));
+            })
+            ->toArray();
+    }
+
+    public function passRecordToFields($record = null)
+    {
+        if (! $record) return $this->fields;
+
+        return $this->fields = collect($this->fields)
+            ->map(function ($field) use ($record) {
+                return $field
+                    ->record($record)
+                    ->fields($field->getForm()->passRecordToFields($record));
+            })
+            ->toArray();
+    }
+
     public function callHooks($action, $event)
     {
         $hooks = $this->getHooks();
@@ -36,6 +62,19 @@ class Form extends Component
             });
 
         return $action;
+    }
+
+    public function getHooks()
+    {
+        $hooks = $this->hooks;
+
+        foreach ($this->fields as $field) {
+            foreach ($field->getHooks as $event => $callbacks) {
+                $hooks[$event] = array_merge($hooks[$event] ?? [], $callbacks);
+            }
+        }
+
+        return $hooks;
     }
 
     public function columns($columns)
@@ -54,19 +93,6 @@ class Form extends Component
         }
 
         return $defaults;
-    }
-
-    public function getHooks()
-    {
-        $hooks = $this->hooks;
-
-        foreach ($this->fields as $field) {
-            foreach ($field->getHooks as $event => $callbacks) {
-                $hooks[$event] = array_merge($hooks[$event] ?? [], $callbacks);
-            }
-        }
-
-        return $hooks;
     }
 
     public function getRules()
@@ -96,32 +122,6 @@ class Form extends Component
     public function hooks($hooks)
     {
         $this->hooks = $hooks;
-    }
-
-    public function passContextToFields($context = null)
-    {
-        if (! $context) return $this->fields;
-
-        return $this->fields = collect($this->fields)
-            ->map(function ($field) use ($context) {
-                return $field
-                    ->context($context)
-                    ->fields($field->getForm()->passContextToFields($context));
-            })
-            ->toArray();
-    }
-
-    public function passRecordToFields($record = null)
-    {
-        if (! $record) return $this->fields;
-
-        return $this->fields = collect($this->fields)
-            ->map(function ($field) use ($record) {
-                return $field
-                    ->record($record)
-                    ->fields($field->getForm()->passRecordToFields($record));
-            })
-            ->toArray();
     }
 
     public function rules($rules)

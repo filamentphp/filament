@@ -24,7 +24,7 @@
 <x-filament::field-group
     :errorKey="$field->errorKey"
     :for="$field->id"
-    :help="__($field->help)"
+    :help-message="__($field->helpMessage)"
     :hint="__($field->hint)"
     :label="__($field->label)"
     :required="$field->required"
@@ -155,7 +155,7 @@
                 toolbar="trix-toolbar-{{ $field->id }}"
                 x-ref="trix"
                 class="block w-full rounded shadow-sm border-gray-400 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 bg-white border-gray-300 prose max-w-none"
-                {{ Filament\format_attributes($field->attributes) }}
+                {{ Filament\format_attributes($field->extraAttributes) }}
             />
         @else
             <div x-html="value" class="p-3 rounded shadow-sm border border-gray-400"></div>

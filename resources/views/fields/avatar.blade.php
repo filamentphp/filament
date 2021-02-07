@@ -42,7 +42,7 @@
                 {{ $field->nameAttribute }}="{{ $field->name }}"
                 class="sr-only"
                 id="{{ $field->id }}"
-                {{ Filament\format_attributes($field->attributes) }}
+                {{ Filament\format_attributes($field->extraAttributes) }}
             />
 
             <div x-show="isUploading" :aria-hidden="!isUploading" class="absolute bottom-0 -mb-3 w-48 max-w-full">

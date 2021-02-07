@@ -45,15 +45,6 @@ abstract class Resource
             ->replace('-', ' ');
     }
 
-    public static function getSlug()
-    {
-        if (static::$slug) return static::$slug;
-
-        return (string) Str::of(class_basename(static::$model))
-            ->plural()
-            ->kebab();
-    }
-
     public static function route($name = null, $parameters = [], $absolute = true)
     {
         if (! $name) $name = static::router()->getIndexRoute()->name;
@@ -64,6 +55,15 @@ abstract class Resource
     public static function router()
     {
         return new ResourceRouter(static::class);
+    }
+
+    public static function getSlug()
+    {
+        if (static::$slug) return static::$slug;
+
+        return (string) Str::of(class_basename(static::$model))
+            ->plural()
+            ->kebab();
     }
 
     public static function routes()
