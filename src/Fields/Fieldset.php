@@ -8,7 +8,7 @@ class Fieldset extends Field
 {
     use FieldConcerns\HasLabel;
 
-    public $columns = 1;
+    public $columns = 2;
 
     public static function make($label = null)
     {
