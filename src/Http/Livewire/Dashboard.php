@@ -9,6 +9,6 @@ class Dashboard extends Component
     public function render()
     {
         return view('filament::.dashboard', ['placeholder' => __('filament::dashboard.placeholder', ['name' => config('app.name')])])
-            ->layout('filament::components.layouts.app', ['title' => 'filament::dashboard.title']);
+            ->layout('filament::components.layouts.app');
     }
 }

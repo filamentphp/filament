@@ -37,7 +37,8 @@ class EditResourceRecord extends Component
 
     public function render()
     {
-        return view('filament::actions.edit-resource-record')
-            ->layout('filament::components.layouts.app', ['title' => static::getTitle()]);
+        return view('filament::actions.edit-resource-record', [
+            'title' => static::getTitle(),
+        ])->layout('filament::components.layouts.app');
     }
 }

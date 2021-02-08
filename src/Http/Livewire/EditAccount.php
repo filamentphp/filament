@@ -83,6 +83,6 @@ class EditAccount extends Component
     public function render()
     {
         return view('filament::edit-account')
-            ->layout('filament::components.layouts.app', ['title' => 'filament::edit-account.title']);
+            ->layout('filament::components.layouts.app');
     }
 }
