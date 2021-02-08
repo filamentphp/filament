@@ -2,15 +2,20 @@
 
 namespace Filament\Http\Livewire;
 
-use Filament\Action;
+use Filament\ComponentConcerns;
 use Filament\Fields;
 use Filament\Models\FilamentUser;
 use Filament\View\Components\Form;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Livewire\Component;
 
-class EditAccount extends Action
+class EditAccount extends Component
 {
+    use ComponentConcerns\HasForm;
+    use ComponentConcerns\HasTitle;
+    use ComponentConcerns\SendsToastNotifications;
+
     public $newPassword;
 
     public $newPasswordConfirmation;

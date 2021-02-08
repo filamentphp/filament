@@ -2,13 +2,13 @@
 
 namespace Filament\Fields;
 
-use Filament\Traits\FieldConcerns;
+use Filament\FieldConcerns;
 use Illuminate\Support\Str;
 
 class InputField extends Field
 {
-    use FieldConcerns\CanHaveId;
-    use FieldConcerns\CanHaveLabel;
+    use FieldConcerns\HasId;
+    use FieldConcerns\HasLabel;
 
     public $default = '';
 
@@ -31,6 +31,29 @@ class InputField extends Field
     public function __construct($name)
     {
         $this->name($name);
+    }
+
+    public function name($name)
+    {
+        $this->name = $name;
+
+        $this->errorKey($this->name);
+
+        $this->id(
+            (string) Str::of($this->name)
+                ->replace('.', '-')
+                ->slug(),
+        );
+
+        $this->label(
+            (string) Str::of($this->name)
+                ->afterLast('.')
+                ->kebab()
+                ->replace(['-', '_'], ' ')
+                ->ucfirst(),
+        );
+
+        $this->rules(['nullable']);
     }
 
     public function errorKey($errorKey)
@@ -78,29 +101,6 @@ class InputField extends Field
         $this->hint = $hint;
 
         return $this;
-    }
-
-    public function name($name)
-    {
-        $this->name = $name;
-
-        $this->errorKey($this->name);
-
-        $this->id(
-            (string) Str::of($this->name)
-                ->replace('.', '-')
-                ->slug(),
-        );
-
-        $this->label(
-            (string) Str::of($this->name)
-                ->afterLast('.')
-                ->kebab()
-                ->replace(['-', '_'], ' ')
-                ->ucfirst(),
-        );
-
-        $this->rules(['nullable']);
     }
 
     public function nameAttribute($nameAttribute)

@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-use Filament\Traits\FieldConcerns;
+use Filament\FieldConcerns;
 
 class Checkbox extends InputField
 {

@@ -16,9 +16,9 @@ class Field
 
     public $hooks = [];
 
-    protected $context;
-
     public $parentField;
+
+    protected $context;
 
     protected $pendingExcludedContextModifications = [];
 
@@ -99,7 +99,7 @@ class Field
     public function fields($fields)
     {
         $this->fields = collect($fields)
-            ->map(fn($field) => $field->parentField($this))
+            ->map(fn ($field) => $field->parentField($this))
             ->toArray();
 
         return $this;

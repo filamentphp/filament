@@ -2,11 +2,11 @@
 
 namespace Filament\Fields;
 
-use Filament\Traits\FieldConcerns;
+use Filament\FieldConcerns;
 
 class Fieldset extends Field
 {
-    use FieldConcerns\CanHaveLabel;
+    use FieldConcerns\HasLabel;
 
     public $columns = 1;
 

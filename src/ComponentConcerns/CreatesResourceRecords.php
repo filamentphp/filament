@@ -1,17 +1,21 @@
 <?php
 
-namespace Filament\Actions;
+namespace Filament\ComponentConcerns;
 
-use Filament\Action;
-
-abstract class CreateAction extends Action
+trait CreatesResourceRecords
 {
-    public $record = [];
+    use HasForm;
+    use SendsToastNotifications;
+    use UsesResource;
+
+    public $record;
 
     public $showRoute = 'edit';
 
     public function mount()
     {
+        $this->record = [];
+
         $this->fillWithFormDefaults();
     }
 

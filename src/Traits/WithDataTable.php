@@ -9,8 +9,11 @@ trait WithDataTable
     use WithPagination;
 
     public $search;
+
     public $perPage = 10;
+
     public $sortField;
+
     public $sortDirection;
 
     public function sortBy($field)

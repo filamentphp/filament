@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-use Filament\Traits\FieldConcerns;
+use Filament\FieldConcerns;
 
 class Textarea extends InputField
 {
@@ -11,6 +11,6 @@ class Textarea extends InputField
     use FieldConcerns\CanBeCompared;
     use FieldConcerns\CanBeDisabled;
     use FieldConcerns\CanBeUnique;
-    use FieldConcerns\CanHaveLengthConstraints;
-    use FieldConcerns\CanHavePlaceholder;
+    use FieldConcerns\CanBeLengthConstrained;
+    use FieldConcerns\HasPlaceholder;
 }

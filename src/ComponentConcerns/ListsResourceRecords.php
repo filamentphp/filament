@@ -1,11 +1,12 @@
 <?php
 
-namespace Filament\Actions;
+namespace Filament\ComponentConcerns;
 
-use Filament\Action;
-
-abstract class IndexAction extends Action
+trait ListsResourceRecords
 {
+    use HasTable;
+    use UsesResource;
+
     public $createRoute = 'create';
 
     public function render()

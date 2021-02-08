@@ -3,12 +3,15 @@
 namespace Filament\Http\Livewire\Auth;
 
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
-use Filament\Action;
+use Filament\ComponentConcerns;
 use Filament\Fields;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
-class Login extends Action
+class Login extends Component
 {
+    use ComponentConcerns\HasForm;
+    use ComponentConcerns\HasTitle;
     use WithRateLimiting;
 
     public $email;

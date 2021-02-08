@@ -2,15 +2,18 @@
 
 namespace Filament\Http\Livewire\Auth;
 
-use Filament\Action;
-use Filament\Fields\Text;
+use Filament\ComponentConcerns;
+use Filament\Fields;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Livewire\Component;
 
-class ResetPassword extends Action
+class ResetPassword extends Component
 {
+    use ComponentConcerns\HasForm;
+
     public $email;
 
     public $password;
@@ -24,13 +27,13 @@ class ResetPassword extends Action
     public function fields()
     {
         return [
-            Text::make('email')
+            Fields\Text::make('email')
                 ->label('filament::fields.labels.email')
                 ->email()
                 ->nameAttribute('wire:model.lazy')
                 ->autocomplete()
                 ->required(),
-            Text::make('password')
+            Fields\Text::make('password')
                 ->label('filament::fields.labels.password')
                 ->password()
                 ->autofocus()
@@ -38,7 +41,7 @@ class ResetPassword extends Action
                 ->required()
                 ->minLength(8)
                 ->confirmed(),
-            Text::make('passwordConfirmation')
+            Fields\Text::make('passwordConfirmation')
                 ->label('filament::fields.labels.newPassword')
                 ->password()
                 ->autocomplete('new-password')

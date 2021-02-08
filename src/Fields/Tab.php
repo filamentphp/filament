@@ -2,13 +2,13 @@
 
 namespace Filament\Fields;
 
-use Filament\Traits\FieldConcerns;
+use Filament\FieldConcerns;
 use Illuminate\Support\Str;
 
 class Tab extends Field
 {
-    use FieldConcerns\CanHaveId;
-    use FieldConcerns\CanHaveLabel;
+    use FieldConcerns\HasId;
+    use FieldConcerns\HasLabel;
 
     public static function make($label)
     {

@@ -2,20 +2,13 @@
 
 namespace Filament\Fields;
 
-use Filament\Traits\FieldConcerns;
+use Filament\FieldConcerns;
 use Illuminate\Support\Str;
 
 class Tabs extends Field
 {
-    use FieldConcerns\CanHaveId;
-    use FieldConcerns\CanHaveLabel;
-
-    public function getTabsConfig()
-    {
-        return collect($this->fields)
-            ->mapWithKeys(fn($tab) => [$this->id . '.' . $tab->id => __($tab->label)])
-            ->toArray();
-    }
+    use FieldConcerns\HasId;
+    use FieldConcerns\HasLabel;
 
     public static function make($label = null)
     {
@@ -24,6 +17,13 @@ class Tabs extends Field
         if ($label) $tabs = $tabs->id((string) Str::of($label)->slug());
 
         return $tabs;
+    }
+
+    public function getTabsConfig()
+    {
+        return collect($this->fields)
+            ->mapWithKeys(fn ($tab) => [$this->id . '.' . $tab->id => __($tab->label)])
+            ->toArray();
     }
 
     public function tabs($tabs)

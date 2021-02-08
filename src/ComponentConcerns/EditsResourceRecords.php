@@ -1,12 +1,12 @@
 <?php
 
-namespace Filament\Actions;
+namespace Filament\ComponentConcerns;
 
-use Filament\Action;
-
-abstract class EditAction extends Action
+trait EditsResourceRecords
 {
-    public $record;
+    use HasForm;
+    use SendsToastNotifications;
+    use UsesResource;
 
     public function mount($record)
     {

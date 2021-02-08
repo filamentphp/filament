@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Traits\FieldConcerns;
+namespace Filament\FieldConcerns;
 
-trait CanHaveLabel
+trait HasLabel
 {
     public $label;
 

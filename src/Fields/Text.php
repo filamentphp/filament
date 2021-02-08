@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-use Filament\Traits\FieldConcerns;
+use Filament\FieldConcerns;
 
 class Text extends InputField
 {
@@ -11,8 +11,8 @@ class Text extends InputField
     use FieldConcerns\CanBeCompared;
     use FieldConcerns\CanBeDisabled;
     use FieldConcerns\CanBeUnique;
-    use FieldConcerns\CanHaveLengthConstraints;
-    use FieldConcerns\CanHavePlaceholder;
+    use FieldConcerns\CanBeLengthConstrained;
+    use FieldConcerns\HasPlaceholder;
 
     public $type = 'text';
 

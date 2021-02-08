@@ -7,17 +7,20 @@ use Filament\Http\Middleware\AuthorizeResourceRoute;
 use Filament\Models\FilamentUser;
 use Filament\Providers\RouteServiceProvider;
 use Filament\Providers\ServiceProvider;
-use Filament\Traits\CanRegisterLivewireComponentDirectories;
 use Filament\View\Components\Avatar;
 use Filament\View\Components\Image;
 use Filament\View\Components\Nav;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Str;
+use Livewire\Component;
+use Livewire\Livewire;
+use ReflectionClass;
+use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentServiceProvider extends ServiceProvider
 {
-    use CanRegisterLivewireComponentDirectories;
-
     public $singletons = [
         FilamentManager::class => FilamentManager::class,
         Navigation::class => Navigation::class,
@@ -92,6 +95,34 @@ class FilamentServiceProvider extends ServiceProvider
     {
         $this->registerLivewireComponentDirectory(__DIR__ . '/Http/Livewire', 'Filament\\Http\\Livewire', 'filament.');
         $this->registerLivewireComponentDirectory(app_path('Filament/Resources'), 'App\\Filament\\Resources', 'filament.resources.');
+    }
+
+    protected function registerLivewireComponentDirectory($directory, $namespace, $aliasPrefix = '')
+    {
+        $filesystem = new Filesystem();
+
+        if (! $filesystem->isDirectory($directory)) return;
+
+        collect($filesystem->allFiles($directory))
+            ->map(function (SplFileInfo $file) use ($namespace) {
+                return (string) Str::of($namespace)
+                    ->append('\\', $file->getRelativePathname())
+                    ->replace(['/', '.php'], ['\\', '']);
+            })
+            ->filter(function ($class) {
+                return is_subclass_of($class, Component::class) && ! (new ReflectionClass($class))->isAbstract();
+            })
+            ->each(function ($class) use ($namespace, $aliasPrefix) {
+                $alias = Str::of($class)
+                    ->after($namespace . '\\')
+                    ->replace(['/', '\\'], '.')
+                    ->prepend($aliasPrefix)
+                    ->explode('.')
+                    ->map([Str::class, 'kebab'])
+                    ->implode('.');
+
+                Livewire::component($alias, $class);
+            });
     }
 
     protected function bootMiddleware()

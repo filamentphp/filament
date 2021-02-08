@@ -3,14 +3,12 @@
 namespace Filament\Commands;
 
 use Filament\Models\FilamentUser;
-use Filament\Traits\ConsoleValidation;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class MakeUserCommand extends Command
 {
-    use ConsoleValidation;
-
     protected $description = 'Creates a Filament user.';
 
     protected $signature = 'make:filament-user';
@@ -31,5 +29,23 @@ class MakeUserCommand extends Command
 
         $loginUrl = route('filament.auth.login');
         $this->info("Success! {$user->email} may now log in at {$loginUrl}.");
+    }
+
+    protected function validateInput($callback, $field, $rules)
+    {
+        $input = $callback();
+
+        $validator = Validator::make(
+            [$field => $input],
+            [$field => $rules],
+        );
+
+        if ($validator->fails()) {
+            $this->error($validator->errors()->first());
+
+            $input = $this->validateInput($callback, $field, $rules);
+        }
+
+        return $input;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-use Filament\Traits\FieldConcerns;
+use Filament\FieldConcerns;
 
 class RichEditor extends InputField
 {
@@ -10,7 +10,7 @@ class RichEditor extends InputField
     use FieldConcerns\CanBeCompared;
     use FieldConcerns\CanBeDisabled;
     use FieldConcerns\CanBeUnique;
-    use FieldConcerns\CanHavePlaceholder;
+    use FieldConcerns\HasPlaceholder;
 
     public $toolbarButtons = [
         'bold',

@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Traits\FieldConcerns;
+namespace Filament\FieldConcerns;
 
-trait CanHaveSizeConstraints
+trait CanBeSizeConstrained
 {
     public function maxSize($size)
     {
