@@ -7,13 +7,17 @@
     :required="$field->required"
 >
     <x-filament::select
+        :autofocus="$field->autofocus"
+        :disabled="$field->disabled"
+        :empty-option-label="__($field->emptyOptionLabel)"
+        :empty-options-message="__($field->emptyOptionsMessage)"
+        :error-key="$field->errorKey"
+        :extra-attributes="$field->extraAttributes"
         :id="$field->id"
         :name="$field->name"
         :name-attribute="$field->nameAttribute"
-        :error-key="$field->errorKey"
-        :extra-attributes="$field->extraAttributes"
-        :required="$field->required"
-        :placeholder="__($field->placeholder)"
         :options="$field->options"
+        :placeholder="__($field->placeholder)"
+        :required="$field->required"
     />
 </x-filament::field-group>

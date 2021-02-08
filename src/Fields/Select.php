@@ -2,22 +2,40 @@
 
 namespace Filament\Fields;
 
+use Filament\FieldConcerns;
+
 class Select extends InputField
 {
+    use FieldConcerns\CanBeAutofocused;
+    use FieldConcerns\CanBeCompared;
+    use FieldConcerns\CanBeDisabled;
+    use FieldConcerns\CanBeUnique;
+    use FieldConcerns\CanBeLengthConstrained;
+    use FieldConcerns\HasPlaceholder;
+
+    public $emptyOptionLabel = 'None';
+
+    public $emptyOptionsMessage = 'No options match your search.';
+
     public $options = [];
 
-    public $placeholder = 'Choose';
-
-    public function options($options)
+    public function emptyOptionLabel($label)
     {
-        $this->options = $options;
+        $this->emptyOptionLabel = $label;
 
         return $this;
     }
 
-    public function placeholder($placeholder)
+    public function emptyOptionsMessage($message)
     {
-        $this->placeholder = $placeholder;
+        $this->emptyOptionsMessage = $message;
+
+        return $this;
+    }
+
+    public function options($options)
+    {
+        $this->options = $options;
 
         return $this;
     }

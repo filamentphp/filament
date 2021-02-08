@@ -1,12 +1,16 @@
 <?php
 
-namespace Filament\ComponentConcerns;
+namespace Filament\Actions;
 
-trait CreatesResourceRecords
+use Filament\ComponentConcerns;
+use Livewire\Component;
+
+class CreateResourceRecord extends Component
 {
-    use HasForm;
-    use SendsToastNotifications;
-    use UsesResource;
+    use ComponentConcerns\HasForm;
+    use ComponentConcerns\HasTitle;
+    use ComponentConcerns\SendsToastNotifications;
+    use ComponentConcerns\UsesResource;
 
     public $record;
 
@@ -32,7 +36,7 @@ trait CreatesResourceRecords
 
     public function render()
     {
-        return view('filament::actions.create')
+        return view('filament::actions.create-resource-record')
             ->layout('filament::layouts.app', ['title' => static::getTitle()]);
     }
 }

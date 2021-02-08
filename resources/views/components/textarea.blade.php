@@ -3,8 +3,8 @@
     'extraAttributes' => [],
     'maxLength' => null,
     'minLength' => null,
-    'nameAttribute' => 'name',
     'name' => null,
+    'nameAttribute' => 'name',
 ])
 
 <textarea

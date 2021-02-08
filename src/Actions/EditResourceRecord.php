@@ -1,12 +1,16 @@
 <?php
 
-namespace Filament\ComponentConcerns;
+namespace Filament\Actions;
 
-trait EditsResourceRecords
+use Filament\ComponentConcerns;
+use Livewire\Component;
+
+class EditResourceRecord extends Component
 {
-    use HasForm;
-    use SendsToastNotifications;
-    use UsesResource;
+    use ComponentConcerns\HasForm;
+    use ComponentConcerns\HasTitle;
+    use ComponentConcerns\SendsToastNotifications;
+    use ComponentConcerns\UsesResource;
 
     public function mount($record)
     {
@@ -24,7 +28,7 @@ trait EditsResourceRecords
 
     public function render()
     {
-        return view('filament::actions.edit')
+        return view('filament::actions.edit-resource-record')
             ->layout('filament::layouts.app', ['title' => static::getTitle()]);
     }
 }
