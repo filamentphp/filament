@@ -10,6 +10,6 @@
     type="{{ $type }}"
     @if ($model) {{ $modelDirective }}="{{ $model }}" @endif
     {{ $attributes->merge(array_merge([
-        'class' => 'block w-full rounded shadow-sm border-gray-400 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 '.($errors->has($errorKey) ? 'border-red-600 motion-safe:animate-shake' : 'border-gray-300')
+        'class' => 'block w-full rounded shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 '.($errors->has($errorKey) ? 'border-red-600 motion-safe:animate-shake' : 'border-gray-300')
     ], $extraAttributes)) }}
 />

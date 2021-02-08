@@ -107,7 +107,7 @@
                 id="{{ $field->id }}"
                 toolbar="toolbar-{{ $field->id }}"
                 input="value-{{ $field->id }}"
-                class="block w-full rounded shadow-sm border-gray-400 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 bg-white border-gray-300 prose max-w-none"
+                class="block w-full rounded shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 bg-white border-gray-300 prose max-w-none"
                 @foreach ($field->extraAttributes as $attribute => $value)
                     {{ $attribute }}="{{ $value }}"
                 @endforeach

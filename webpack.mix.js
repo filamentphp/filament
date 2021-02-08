@@ -1,4 +1,3 @@
-require('dotenv').config()
 let mix = require('laravel-mix')
 
 /*
@@ -14,6 +13,7 @@ let mix = require('laravel-mix')
 const SRC = 'resources'
 const DIST = 'dist'
 
+mix.disableSuccessNotifications()
 mix.setPublicPath(DIST)
 mix.setResourceRoot(`/${SRC}/`)
 
@@ -56,16 +56,3 @@ if (mix.inProduction()) {
    */
   mix.version()
 }
-
-/**
- * BrowserSync
- *
- * Automatically monitor your files for changes,
- * and inject your changes into the browser without requiring a manual refresh
- *
- * @link https://laravel.com/docs/master/mix#browsersync-reloading
- */
-mix.browserSync({
-  proxy: process.env.BROWSERSYNC_PROXY || 'http://127.0.0.1:8000',
-  https: process.env.BROWSERSYNC_HTTPS || false,
-})
