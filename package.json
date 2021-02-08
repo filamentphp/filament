@@ -16,16 +16,14 @@
     "@tailwindcss/typography": "^0.4.0",
     "alpinejs": "^2.8.0",
     "autoprefixer": "^10.2.4",
-    "browser-sync": "^2.26.14",
-    "browser-sync-webpack-plugin": "^2.3.0",
     "dotenv": "^8.2.0",
     "focus-visible": "^5.2.0",
     "laravel-mix": "^6.0.11",
     "lodash": "^4.17.20",
-    "postcss": "^8.2.4",
+    "postcss": "^8.2.5",
     "postcss-import": "^14.0.0",
     "postcss-nested": "^5.0.3",
     "prettier": "^2.2.1",
-    "tailwindcss": "^2.0.2"
+    "tailwindcss": "^2.0.3"
   }
 }
