@@ -10,6 +10,13 @@ class Tabs extends Field
     use FieldConcerns\CanHaveId;
     use FieldConcerns\CanHaveLabel;
 
+    public function getTabsConfig()
+    {
+        return collect($this->fields)
+            ->mapWithKeys(fn($tab) => [$this->id . '.' . $tab->id => __($tab->label)])
+            ->toArray();
+    }
+
     public static function make($label = null)
     {
         $tabs = (new static())->label($label);

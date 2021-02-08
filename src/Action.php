@@ -2,10 +2,13 @@
 
 namespace Filament;
 
+use Filament\Fields\InputField;
+use Filament\Fields\Tab;
 use Filament\Traits\WithNotifications;
 use Filament\View\Components\Form;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 abstract class Action extends Component
@@ -119,5 +122,30 @@ abstract class Action extends Component
         }
 
         return $attributes;
+    }
+
+    public function validate($rules = null, $messages = [], $attributes = [])
+    {
+        try {
+            return parent::validate($rules, $messages, $attributes);
+        } catch (ValidationException $exception) {
+            $fieldToFocus = collect($this->getForm()->getFields())
+                ->first(function ($field) use ($exception) {
+                    return ($field instanceof InputField &&
+                        array_key_exists($field->name, $exception->validator->failed())
+                    );
+                });
+
+            if ($fieldToFocus && $fieldToFocus->parentField instanceof Tab) {
+                $tabToFocus = $fieldToFocus->parentField;
+
+                $this->dispatchBrowserEvent(
+                    'switch-tab',
+                    $tabToFocus->parentField->id . '.' . $tabToFocus->id,
+                );
+            }
+
+            throw $exception;
+        }
     }
 }

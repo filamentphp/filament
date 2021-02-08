@@ -33,29 +33,6 @@ class InputField extends Field
         $this->name($name);
     }
 
-    public function name($name)
-    {
-        $this->name = $name;
-
-        $this->errorKey($this->name);
-
-        $this->id(
-            (string) Str::of($this->name)
-                ->replace('.', '-')
-                ->slug(),
-        );
-
-        $this->label(
-            (string) Str::of($this->name)
-                ->afterLast('.')
-                ->kebab()
-                ->replace(['-', '_'], ' ')
-                ->ucfirst(),
-        );
-
-        $this->rules(['nullable']);
-    }
-
     public function errorKey($errorKey)
     {
         $this->errorKey = $errorKey;
@@ -101,6 +78,29 @@ class InputField extends Field
         $this->hint = $hint;
 
         return $this;
+    }
+
+    public function name($name)
+    {
+        $this->name = $name;
+
+        $this->errorKey($this->name);
+
+        $this->id(
+            (string) Str::of($this->name)
+                ->replace('.', '-')
+                ->slug(),
+        );
+
+        $this->label(
+            (string) Str::of($this->name)
+                ->afterLast('.')
+                ->kebab()
+                ->replace(['-', '_'], ' ')
+                ->ucfirst(),
+        );
+
+        $this->rules(['nullable']);
     }
 
     public function nameAttribute($nameAttribute)

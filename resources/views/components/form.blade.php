@@ -5,14 +5,27 @@
     'submit' => 'submit',
 ])
 
-<{{ $embedded ? 'div' : "form wire:submit.prevent={$submit}" }} {{ $attributes }}>
-    @if (count($fields))
-        <div class="grid grid-cols-1 lg:grid-cols-{{ $columns }} gap-6">
-            @foreach ($fields as $field)
+@if ($embedded)
+    <div {{ $attributes }}>
+@else
+    <form
+        wire:submit.prevent="{{ $submit }}"
+        {{ $attributes }}
+    >
+@endif
+
+@if (count($fields))
+    <div class="grid grid-cols-1 lg:grid-cols-{{ $columns }} gap-6">
+        @foreach ($fields as $field)
                 {{ $field->render() }}
             @endforeach
-        </div>
-    @endif
+    </div>
+@endif
 
-    {{ $slot }}
-</ {{ $embedded ? 'div' : 'form' }}>
+{{ $slot }}
+
+@unless ($embedded)
+    </form>
+@else
+    </div>
+@endif

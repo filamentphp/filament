@@ -34,7 +34,7 @@
             value: @entangle($field->name).defer,
             @unless ($field->disabled)
                 isFocused() { return document.activeElement !== this.$refs.trix },
-                setValue() { this.$refs.trix.editor.loadHTML(this.value) },
+                setValue() { this.$refs.trix.editor?.loadHTML(this.value) },
             @endunless
         }"
         @unless ($field->disabled)

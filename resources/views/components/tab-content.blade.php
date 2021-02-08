@@ -4,6 +4,7 @@
 
 <div
     aria-labelledby="{{ $id }}"
+    id="{{ $id }}-tab"
     role="tabpanel"
     tabindex="0"
     x-show="tab === '{{ $id }}'"

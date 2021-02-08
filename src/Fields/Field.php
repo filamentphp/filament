@@ -18,6 +18,8 @@ class Field
 
     protected $context;
 
+    public $parentField;
+
     protected $pendingExcludedContextModifications = [];
 
     protected $pendingIncludedContextModifications = [];
@@ -96,7 +98,9 @@ class Field
 
     public function fields($fields)
     {
-        $this->fields = $fields;
+        $this->fields = collect($fields)
+            ->map(fn($field) => $field->parentField($this))
+            ->toArray();
 
         return $this;
     }
@@ -195,6 +199,13 @@ class Field
         if (! in_array($this->context, $contexts)) return $this;
 
         $callback($this);
+
+        return $this;
+    }
+
+    public function parentField($field)
+    {
+        $this->parentField = $field;
 
         return $this;
     }

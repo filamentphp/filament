@@ -95,6 +95,17 @@ class Form extends Component
         return $defaults;
     }
 
+    public function getFields()
+    {
+        $fields = $this->fields;
+
+        foreach ($this->fields as $field) {
+            $fields = array_merge($fields, $field->getForm()->getFields());
+        }
+
+        return $fields;
+    }
+
     public function getRules()
     {
         $rules = $this->rules;
