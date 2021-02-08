@@ -37,6 +37,6 @@ class CreateResourceRecord extends Component
     public function render()
     {
         return view('filament::actions.create-resource-record')
-            ->layout('filament::layouts.app', ['title' => static::getTitle()]);
+            ->layout('filament::components.layouts.app', ['title' => static::getTitle()]);
     }
 }

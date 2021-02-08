@@ -4,8 +4,8 @@ namespace Filament\Http\Livewire;
 
 use Filament\ComponentConcerns;
 use Filament\Fields;
+use Filament\Form;
 use Filament\Models\FilamentUser;
-use Filament\View\Components\Form;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
@@ -83,6 +83,6 @@ class EditAccount extends Component
     public function render()
     {
         return view('filament::edit-account')
-            ->layout('filament::layouts.app', ['title' => 'filament::edit-account.title']);
+            ->layout('filament::components.layouts.app', ['title' => 'filament::edit-account.title']);
     }
 }

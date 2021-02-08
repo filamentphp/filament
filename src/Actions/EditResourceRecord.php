@@ -12,6 +12,15 @@ class EditResourceRecord extends Component
     use ComponentConcerns\SendsToastNotifications;
     use ComponentConcerns\UsesResource;
 
+    public $indexRoute = 'index';
+
+    public function delete()
+    {
+        $this->record->delete();
+
+        $this->redirect($this->getResource()::route($this->indexRoute));
+    }
+
     public function mount($record)
     {
         $this->record = static::getModel()::findOrFail($record);
@@ -29,6 +38,6 @@ class EditResourceRecord extends Component
     public function render()
     {
         return view('filament::actions.edit-resource-record')
-            ->layout('filament::layouts.app', ['title' => static::getTitle()]);
+            ->layout('filament::components.layouts.app', ['title' => static::getTitle()]);
     }
 }

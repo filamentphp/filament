@@ -1,10 +1,8 @@
 <?php
 
-namespace Filament\View\Components;
+namespace Filament;
 
-use Illuminate\View\Component;
-
-class Form extends Component
+class Form
 {
     public $columns = 1;
 

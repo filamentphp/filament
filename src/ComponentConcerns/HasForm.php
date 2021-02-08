@@ -4,7 +4,7 @@ namespace Filament\ComponentConcerns;
 
 use Filament\Fields\InputField;
 use Filament\Fields\Tab;
-use Filament\View\Components\Form;
+use Filament\Form;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 

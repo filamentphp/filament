@@ -62,7 +62,7 @@
                     >
                         <div class="col-span-1 p-2 bg-white shadow-sm rounded border border-gray-300 flex items-center space-x-2 @if ($field->sortMethod) cursor-move @endif">
                             @if (\Filament\is_image($file))
-                                <x-filament::modal class="flex-shrink-0 flex">
+                                <x-filament::modal close-button class="flex-shrink-0 flex">
                                     <x-filament-image :src="$file" alt="{{ $file }}"
                                         :manipulations="[ 'w' => 48, 'h' => 48, 'fit' => 'crop' ]"
                                         width="48px" height="48px" loading="lazy"

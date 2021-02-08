@@ -7,9 +7,7 @@ use Filament\Http\Middleware\AuthorizeResourceRoute;
 use Filament\Models\FilamentUser;
 use Filament\Providers\RouteServiceProvider;
 use Filament\Providers\ServiceProvider;
-use Filament\View\Components\Avatar;
-use Filament\View\Components\Image;
-use Filament\View\Components\Nav;
+use Filament\View\Components;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
@@ -79,9 +77,12 @@ class FilamentServiceProvider extends ServiceProvider
     protected function bootLoaders()
     {
         $this->loadViewComponentsAs('filament', [
-            'avatar' => Avatar::class,
-            'image' => Image::class,
-            'nav' => Nav::class,
+            'avatar' => Components\Avatar::class,
+            'image' => Components\Image::class,
+            'layouts.app' => Components\Layouts\App::class,
+            'layouts.auth' => Components\Layouts\Auth::class,
+            'layouts.base' => Components\Layouts\Base::class,
+            'nav' => Components\Nav::class,
         ]);
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'filament');

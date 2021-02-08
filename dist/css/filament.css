@@ -2261,6 +2261,22 @@ html {
     color: rgba(255, 255, 255, var(--tw-text-opacity));
   }
 
+.btn-danger {
+    --tw-bg-opacity: 1;
+    background-color: rgba(190, 18, 60, var(--tw-bg-opacity));
+  }
+
+.btn-danger:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgba(159, 18, 57, var(--tw-bg-opacity));
+  }
+
+.btn-danger {
+    border-color: transparent;
+    --tw-text-opacity: 1;
+    color: rgba(255, 255, 255, var(--tw-text-opacity));
+  }
+
 .btn[disabled] {
     cursor: not-allowed;
     opacity: 0.5;

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title') | {{ config('app.name') }}</title>
+    <title>{{ $title }} | {{ config('app.name') }}</title>
 
     @livewireStyles
     @filamentStyles
@@ -13,7 +13,7 @@
 </head>
 
 <body class="text-gray-700 font-sans">
-    @yield('content')
+    {{ $slot }}
 
     <x-filament::notification />
 

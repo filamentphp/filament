@@ -1,4 +1,4 @@
-@extends('filament::layouts.field-group')
+@extends('filament::components.layouts.field-group')
 
 @section('field')
     <div x-cloak
@@ -15,7 +15,7 @@
                          class="h-full object-cover" width="{{ $field->size }}" height="{{ $field->size }}"
                          loading="lazy">
                 @else
-                    <x-filament::modal class="flex">
+                    <x-filament::modal close-button class="flex">
                         <x-filament-avatar :size="$field->size" :user="$field->user" />
 
                         <x-slot name="content">

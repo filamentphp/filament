@@ -2,7 +2,7 @@
 
 namespace Filament\Fields;
 
-use Filament\View\Components\Form;
+use Filament\Form;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Tappable;
 

@@ -10,6 +10,10 @@
       @apply border-transparent bg-blue-700 text-white hover:bg-blue-800;
     }
 
+    &-danger {
+      @apply border-transparent bg-red-700 text-white hover:bg-red-800;
+    }
+
     &[disabled] {
       @apply opacity-50 cursor-not-allowed;
     }

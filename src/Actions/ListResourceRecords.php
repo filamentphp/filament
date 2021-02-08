@@ -17,6 +17,6 @@ class ListResourceRecords extends Component
     {
         return view('filament::actions.list-resource-records', [
             'records' => static::getModel()::paginate(10),
-        ])->layout('filament::layouts.app', ['title' => static::getTitle()]);
+        ])->layout('filament::components.layouts.app', ['title' => static::getTitle()]);
     }
 }

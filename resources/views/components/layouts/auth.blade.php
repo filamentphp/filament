@@ -1,8 +1,4 @@
-@extends('filament::layouts.base')
-
-@section('title', __($title))
-
-@section('content')
+<x-filament::layouts.base :title="__($title)">
     <main class="flex h-screen items-center justify-center p-4">
         <div class="w-full max-w-sm space-y-8">
             <header class="text-center">
@@ -16,4 +12,4 @@
             </footer>
         </div>
     </main>
-@overwrite
+</x-filament::layouts.base>
