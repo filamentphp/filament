@@ -83,6 +83,8 @@
 
                     if (! (this.value in this.options)) this.value = Object.keys(this.options)[0]
 
+                    if (config.autofocus) this.toggleListboxVisibility()
+
                     this.$watch('search', ((value) => {
                         if (! this.open || ! value) return this.options = this.getOptions()
 
@@ -133,6 +135,7 @@
 
 <div
     x-data="select({
+        autofocus: {{ $autofocus ? 'true' : 'false' }},
         data: {{ json_encode($options) }},
         emptyOptionLabel: '{{ $emptyOptionLabel }}',
         emptyOptionsMessage: '{{ $emptyOptionsMessage }}',
@@ -157,12 +160,14 @@
     @endif
 
     <button
-        x-ref="button"
-        x-on:click="toggleListboxVisibility()"
-        x-bind:aria-expanded="open"
-        aria-haspopup="listbox"
+        @unless($disabled)
+            x-ref="button"
+            x-on:click="toggleListboxVisibility()"
+            x-bind:aria-expanded="open"
+            aria-haspopup="listbox"
+        @endunless
         type="button"
-        class="bg-white relative w-full border border-gray-300 rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+        class="bg-white relative w-full border border-gray-300 rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 {{ $disabled ? 'text-gray-500' : '' }}"
     >
         <span
             x-show="! open"
@@ -171,74 +176,78 @@
             class="block truncate"
         ></span>
 
-        <input
-            x-ref="search"
-            x-show="open"
-            x-model="search"
-            x-on:keydown.enter.stop.prevent="selectOption()"
-            x-on:keydown.arrow-up.stop.prevent="focusPreviousOption()"
-            x-on:keydown.arrow-down.stop.prevent="focusNextOption()"
-            type="search"
-            class="w-full h-full focus:ring-0 focus:outline-none border-0 p-0"
-        />
+        @unless($disabled)
+            <input
+                x-ref="search"
+                x-show="open"
+                x-model="search"
+                x-on:keydown.enter.stop.prevent="selectOption()"
+                x-on:keydown.arrow-up.stop.prevent="focusPreviousOption()"
+                x-on:keydown.arrow-down.stop.prevent="focusNextOption()"
+                type="search"
+                class="w-full h-full focus:ring-0 focus:outline-none border-0 p-0"
+            />
 
-        <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            <x-heroicon-s-selector class="w-5 h-5 text-gray-400" />
-        </span>
+            <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                <x-heroicon-s-selector class="w-5 h-5 text-gray-400" />
+            </span>
+        @endunless
     </button>
 
-    <div
-        x-show="open"
-        x-transition:leave="transition ease-in duration-100"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        x-cloak
-        class="absolute z-10 w-full mt-1 bg-white rounded shadow-sm border border-gray-300"
-    >
-        <ul
-            x-ref="listbox"
-            x-on:keydown.enter.stop.prevent="selectOption()"
-            x-on:keydown.arrow-up.stop.prevent="focusPreviousOption()"
-            x-on:keydown.arrow-down.stop.prevent="focusNextOption()"
-            role="listbox"
-            x-bind:aria-activedescendant="focusedOptionIndex ? name + 'Option' + focusedOptionIndex : null"
-            tabindex="-1"
-            class="py-1 overflow-auto text-base leading-6 rounded shadow-sm max-h-60 focus:outline-none"
+    @unless($disabled)
+        <div
+            x-show="open"
+            x-transition:leave="transition ease-in duration-100"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            x-cloak
+            class="absolute z-10 w-full mt-1 bg-white rounded shadow-sm border border-gray-300"
         >
-            <template x-for="(key, index) in Object.keys(options)" :key="index">
-                <li
-                    x-bind:id="name + 'Option' + focusedOptionIndex"
-                    x-on:click="selectOption()"
-                    x-on:mouseenter="focusedOptionIndex = index"
-                    x-on:mouseleave="focusedOptionIndex = null"
-                    role="option"
-                    x-bind:aria-selected="focusedOptionIndex === index"
-                    x-bind:class="{ 'text-white bg-blue-600': index === focusedOptionIndex, 'text-gray-900': index !== focusedOptionIndex }"
-                    class="relative py-2 pl-3 text-gray-900 cursor-default select-none pr-9"
-                >
-                        <span x-text="Object.values(options)[index]"
-                              x-bind:class="{ 'font-semibold': index === focusedOptionIndex, 'font-normal': index !== focusedOptionIndex }"
-                              class="block font-normal truncate"
-                        ></span>
-
-                    <span
-                        x-show="key === value"
-                        x-bind:class="{ 'text-white': index === focusedOptionIndex, 'text-blue-600': index !== focusedOptionIndex }"
-                        class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600"
+            <ul
+                x-ref="listbox"
+                x-on:keydown.enter.stop.prevent="selectOption()"
+                x-on:keydown.arrow-up.stop.prevent="focusPreviousOption()"
+                x-on:keydown.arrow-down.stop.prevent="focusNextOption()"
+                role="listbox"
+                x-bind:aria-activedescendant="focusedOptionIndex ? name + 'Option' + focusedOptionIndex : null"
+                tabindex="-1"
+                class="py-1 overflow-auto text-base leading-6 rounded shadow-sm max-h-60 focus:outline-none"
+            >
+                <template x-for="(key, index) in Object.keys(options)" :key="index">
+                    <li
+                        x-bind:id="name + 'Option' + focusedOptionIndex"
+                        x-on:click="selectOption()"
+                        x-on:mouseenter="focusedOptionIndex = index"
+                        x-on:mouseleave="focusedOptionIndex = null"
+                        role="option"
+                        x-bind:aria-selected="focusedOptionIndex === index"
+                        x-bind:class="{ 'text-white bg-blue-600': index === focusedOptionIndex, 'text-gray-900': index !== focusedOptionIndex }"
+                        class="relative py-2 pl-3 text-gray-900 cursor-default select-none pr-9"
                     >
-                            <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd"
-                                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                      clip-rule="evenodd"/>
-                            </svg>
-                        </span>
-                </li>
-            </template>
+                            <span x-text="Object.values(options)[index]"
+                                  x-bind:class="{ 'font-semibold': index === focusedOptionIndex, 'font-normal': index !== focusedOptionIndex }"
+                                  class="block font-normal truncate"
+                            ></span>
 
-            <div
-                x-show="! Object.keys(options).length"
-                x-text="emptyOptionsMessage"
-                class="px-3 py-2 text-gray-900 cursor-default select-none"></div>
-        </ul>
-    </div>
+                        <span
+                            x-show="key === value"
+                            x-bind:class="{ 'text-white': index === focusedOptionIndex, 'text-blue-600': index !== focusedOptionIndex }"
+                            class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600"
+                        >
+                                <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd"/>
+                                </svg>
+                            </span>
+                    </li>
+                </template>
+
+                <div
+                    x-show="! Object.keys(options).length"
+                    x-text="emptyOptionsMessage"
+                    class="px-3 py-2 text-gray-900 cursor-default select-none"></div>
+            </ul>
+        </div>
+    @endunless
 </div>

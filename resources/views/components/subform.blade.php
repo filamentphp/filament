@@ -1,13 +1,9 @@
 @props([
     'fields' => [],
     'columns' => 1,
-    'submit' => 'submit',
 ])
 
-<form
-    wire:submit.prevent="{{ $submit }}"
-    {{ $attributes }}
->
+<div {{ $attributes }}>
     @if (count($fields))
         <x-filament::form-grid :columns="$columns">
             @foreach ($fields as $field)
@@ -17,4 +13,4 @@
     @endif
 
     {{ $slot }}
-</form>
+</div>

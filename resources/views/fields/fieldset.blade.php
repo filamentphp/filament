@@ -5,5 +5,5 @@
         </legend>
     @endif
 
-    <x-filament::form embedded :fields="$field->fields" :columns="$field->columns" />
+    <x-filament::subform :fields="$field->fields" :columns="$field->columns" />
 </fieldset>

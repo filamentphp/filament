@@ -27,9 +27,9 @@
                 </div>
 
                 @if ($hint)
-                    <x-filament::hint>
+                    <div class="hint">
                         @markdown($hint)
-                    </x-filament::hint>
+                    </div>
                 @endif
             </div>
         @endif
@@ -37,13 +37,17 @@
         {{ $slot }}
 
         @if ($errorKey)
-            <x-filament::error :field="$errorKey" />
+            @error($errorKey)
+                <span class="block text-red-700 text-sm leading-tight">
+                    {{ $message }}
+                </span>
+            @enderror
         @endif
 
         @if ($helpMessage)
-            <x-filament::help-message>
+            <div class="help">
                 @markdown($helpMessage)
-            </x-filament::help-message>
+            </div>
         @endif
     </div>
 </div>
