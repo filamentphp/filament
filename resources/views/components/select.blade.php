@@ -183,6 +183,7 @@
         @unless($disabled)
             x-ref="button"
             x-on:click="toggleListboxVisibility()"
+            x-on:keydown.enter.stop.prevent="open ? selectOption() : openListbox()"
             x-bind:aria-expanded="open"
             aria-haspopup="listbox"
         @endunless
