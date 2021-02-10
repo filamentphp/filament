@@ -30,21 +30,21 @@
 
         function dateTimePicker(config) {
             return {
-                activeMonth: null,
-
-                activeYear: null,
-
                 autofocus: config.autofocus,
 
-                days: [],
+                daysInFocusedMonth: [],
 
                 displayFormat: config.displayFormat,
 
                 displayValue: '',
 
-                emptyDays: [],
+                emptyDaysInFocusedMonth: [],
 
-                focusedDay: null,
+                focusedDate: null,
+
+                focusedMonth: null,
+
+                focusedYear: null,
 
                 format: config.format,
 
@@ -63,12 +63,12 @@
                 clearValue: function () {
                     this.displayValue = null
                     this.value = null
+
+                    this.init()
                 },
 
                 closePicker: function () {
                     this.open = false
-
-                    this.focusedDay = null
                 },
 
                 dayIsSelected: function (day) {
@@ -77,184 +77,119 @@
                     if (selectedDate === null) return false
 
                     return selectedDate.date() === day &&
-                        selectedDate.month() === this.activeMonth &&
-                        selectedDate.year() === this.activeYear
+                        selectedDate.month() === this.focusedDate.month() &&
+                        selectedDate.year() === this.focusedDate.year()
                 },
 
                 dayIsToday: function (day) {
                     let date = dayjs()
 
                     return date.date() === day &&
-                        date.month() === this.activeMonth &&
-                        date.year() === this.activeYear
-                },
-
-                decrementActiveMonth: function () {
-                    if (this.activeMonth === 0) {
-                        this.activeMonth = 12
-                        this.activeYear--
-                    }
-
-                    this.activeMonth--
-                },
-
-                focusNextDay: function () {
-                    if (this.focusedDay === null) {
-                        let selectedDate = this.getSelectedDate()
-
-                        if (selectedDate === null) {
-                            this.focusedDay = this.days.length
-
-                            return
-                        }
-
-                        this.focusedDay = selectedDate.date()
-                    }
-
-                    if (this.focusedDay >= this.days.length) {
-                        this.incrementActiveMonth()
-                        this.focusedDay = 1
-
-                        return
-                    }
-
-                    this.focusedDay++
+                        date.month() === this.focusedDate.month() &&
+                        date.year() === this.focusedDate.year()
                 },
 
                 focusPreviousDay: function () {
-                    if (this.focusedDay === null) {
-                        let selectedDate = this.getSelectedDate()
-
-                        if (selectedDate === null) {
-                            this.focusedDay = 1
-
-                            return
-                        }
-
-                        this.focusedDay = selectedDate.date()
-                    }
-
-                    if (this.focusedDay <= 1) {
-                        this.decrementActiveMonth()
-                        this.focusedDay = this.days.length
-
-                        return
-                    }
-
-                    this.focusedDay--
+                    this.focusedDate = this.focusedDate.subtract(1, 'day')
                 },
 
-                getDaysInMonth: function () {
-                    let date = dayjs(new Date(
-                        this.activeYear,
-                        this.activeMonth,
-                    ))
-
-                    return date.daysInMonth()
+                focusPreviousMonth: function () {
+                    this.focusedDate = this.focusedDate.subtract(1, 'month')
                 },
 
-                getFirstDayOfMonth: function () {
-                    let date = dayjs(new Date(
-                        this.activeYear,
-                        this.activeMonth,
-                        1,
-                    ))
+                focusNextDay: function () {
+                    this.focusedDate = this.focusedDate.add(1, 'day')
+                },
 
-                    return date.day()
+                focusNextMonth: function () {
+                    this.focusedDate = this.focusedDate.add(1, 'month')
                 },
 
                 getSelectedDate: function () {
                     let date = dayjs(this.value, this.format)
 
-                    if (! date.isValid()) return
+                    if (! date.isValid()) return null
 
                     return date
                 },
 
-                incrementActiveMonth: function () {
-                    if (this.activeMonth === 11) {
-                        this.activeMonth = -1
-                        this.activeYear++
+                init: function () {
+                    this.$watch('focusedMonth', ((value) => {
+                        this.focusedMonth = +value
+
+                        this.setupDaysGrid()
+
+                        if (this.focusedDate.month() === this.focusedMonth) return
+
+                        this.focusedDate = this.focusedDate.month(this.focusedMonth)
+                    }))
+
+                    this.$watch('focusedYear', ((value) => {
+                        if (! Number.isInteger(+value)) this.focusedYear = dayjs().year()
+
+                        this.focusedYear = +value
+
+                        this.setupDaysGrid()
+
+                        if (this.focusedDate.year() === this.focusedYear) return
+
+                        this.focusedDate = this.focusedDate.year(this.focusedYear)
+                    }))
+
+                    this.$watch('focusedDate', ((value) => {
+                        this.focusedMonth = value.month()
+                        this.focusedYear = value.year()
+                    }))
+
+                    let date = this.getSelectedDate()
+
+                    if (date === null && this.required) {
+                        this.setValue(dayjs())
                     }
 
-                    this.activeMonth++
-                },
-
-                init: function () {
-                    this.resetActiveMonth()
+                    this.setDisplayValue()
 
                     if (this.autofocus) this.openPicker()
-
-                    this.$watch('activeMonth', ((value) => {
-                        this.activeMonth = +value
-
-                        this.focusedDay = null
-
-                        this.renderDays()
-                    }))
-
-                    this.$watch('activeYear', ((value) => {
-                        if (! Number.isInteger(+value)) this.activeYear = dayjs().year()
-
-                        this.activeYear = +value
-
-                        this.focusedDay = null
-
-                        this.renderDays()
-                    }))
                 },
 
                 openPicker: function () {
+                    this.focusedDate = this.getSelectedDate() ?? dayjs()
+
+                    this.setupDaysGrid()
+
                     this.open = true
-
-                    this.resetActiveMonth()
-                },
-
-                renderDays: function () {
-                    let emptyDays = []
-                    for (let i = 1; i <= this.getFirstDayOfMonth(); i++) {
-                        emptyDays.push(i)
-                    }
-                    this.emptyDays = emptyDays
-
-                    let days = []
-                    for (let i = 1; i <= this.getDaysInMonth(); i++) {
-                        days.push(i)
-                    }
-                    this.days = days
-                },
-
-                resetActiveMonth: function () {
-                    let date = this.getSelectedDate()
-
-                    if (date) {
-                        this.setDisplayValue(date)
-                    } else {
-                        date = dayjs()
-                    }
-
-                    this.activeMonth = date.month()
-                    this.activeYear = date.year()
-
-                    this.renderDays()
                 },
 
                 selectDate: function (day = null) {
-                    if (day) this.focusedDay = day
+                    if (day) this.setFocusedDay(day)
 
-                    let date = dayjs(new Date(
-                        this.activeYear,
-                        this.activeMonth,
-                        this.focusedDay,
-                    ))
-
-                    this.value = date.format(this.format)
-
-                    this.setDisplayValue(date)
+                    this.setValue(this.focusedDate)
                 },
 
-                setDisplayValue: function (date) {
-                    this.displayValue = date.format(this.displayFormat)
+                setDisplayValue: function () {
+                    if (this.getSelectedDate() === null) return
+
+                    this.displayValue = this.getSelectedDate().format(this.displayFormat)
+                },
+
+                setupDaysGrid: function () {
+                    this.emptyDaysInFocusedMonth = Array.from({
+                        length: this.focusedDate.date(1).day(),
+                    }, (_, i) => i + 1)
+
+                    this.daysInFocusedMonth = Array.from({
+                        length: this.focusedDate.daysInMonth(),
+                    }, (_, i) => i + 1)
+                },
+
+                setFocusedDay: function (day) {
+                    this.focusedDate = this.focusedDate.date(day)
+                },
+
+                setValue: function (date) {
+                    this.value = date.format(this.format)
+
+                    this.setDisplayValue()
                 },
 
                 togglePickerVisibility: function () {
@@ -302,8 +237,11 @@
             x-on:keydown.enter.stop.prevent="open ? selectDate() : openPicker()"
             x-on:keydown.arrow-left.stop.prevent="focusPreviousDay()"
             x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
-            x-on:keydown.arrow-up.stop.prevent="decrementActiveMonth()"
-            x-on:keydown.arrow-down.stop.prevent="incrementActiveMonth()"
+            x-on:keydown.arrow-up.stop.prevent="focusPreviousMonth()"
+            x-on:keydown.arrow-down.stop.prevent="focusNextMonth()"
+            x-on:keydown.backspace.stop.prevent="clearValue()"
+            x-on:keydown.clear.stop.prevent="clearValue()"
+            x-on:keydown.delete.stop.prevent="clearValue()"
             x-on:keydown.escape.stop="closePicker()"
             x-bind:aria-expanded="open"
             aria-label="{{ $placeholder }}"
@@ -335,7 +273,7 @@
             <div class="space-y-3">
                 <div class="flex items-center justify-between">
                     <select
-                        x-model="activeMonth"
+                        x-model="focusedMonth"
                         class="flex-grow text-lg font-medium text-gray-800 cursor-pointer border-0 p-0 focus:ring-0 focus:outline-none"
                     >
                         <template x-for="(month, index) in ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']">
@@ -345,7 +283,7 @@
 
                     <input
                         type="number"
-                        x-model.debounce="activeYear"
+                        x-model.debounce="focusedYear"
                         class="ml-1 text-right w-20 text-lg text-gray-600 font-normal border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
                     />
                 </div>
@@ -360,54 +298,40 @@
                 </div>
 
                 <div role="grid" class="grid grid-cols-7 gap-1">
-                    <template x-for="day in emptyDays" x-bind:key="day">
+                    <template x-for="day in emptyDaysInFocusedMonth" x-bind:key="day">
                         <div class="text-center border border-transparent text-sm"></div>
                     </template>
 
-                    <template x-for="day in days" x-bind:key="day">
+                    <template x-for="day in daysInFocusedMonth" x-bind:key="day">
                         <div
                             x-text="day"
                             x-on:click="selectDate(day)"
-                            x-on:mouseenter="focusedDay = day"
-                            x-on:mouseleave="focusedDay = null"
+                            x-on:mouseenter="setFocusedDay(day)"
                             role="option"
-                            x-bind:aria-selected="focusedDay === day"
+                            x-bind:aria-selected="focusedDate.date() === day"
                             x-bind:class="{
                                 'bg-blue-600 text-white': dayIsSelected(day),
                                 'text-gray-700': ! dayIsSelected(day),
-                                'bg-blue-50': dayIsToday(day) && ! dayIsSelected(day) && day !== focusedDay,
-                                'bg-blue-200': day === focusedDay && ! dayIsSelected(day),
+                                'bg-blue-50': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day,
+                                'bg-blue-200': focusedDate.date() === day && ! dayIsSelected(day),
                             }"
                             class="cursor-pointer text-center text-sm leading-none rounded leading-loose transition ease-in-out duration-100"
                         ></div>
                     </template>
                 </div>
 
-                <div class="flex">
+                <div class="flex justify-between">
                     <button
-                        x-on:click="decrementActiveMonth()"
+                        x-on:click="focusPreviousMonth()"
                         type="button"
                         class="focus:outline-none focus:shadow-outline transition ease-in-out duration-100 inline-flex cursor-pointer hover:bg-gray-200 p-1 rounded"
                     >
                         <x-heroicon-o-chevron-left class="h-6 w-6 text-gray-500 inline-flex" />
                     </button>
 
-                    <div class="flex-grow text-center">
-                        @unless ($required)
-                            <button
-                                type="button"
-                                x-on:click="clearValue()"
-                                x-show="displayValue"
-                                class="focus:outline-none focus:shadow-outline transition ease-in-out duration-100 inline-flex cursor-pointer hover:bg-gray-200 p-1 rounded"
-                            >
-                                <x-heroicon-o-x class="h-6 w-6 text-gray-500 inline-flex" />
-                            </button>
-                        @endunless
-                    </div>
-
                     <button
                         type="button"
-                        x-on:click="incrementActiveMonth()"
+                        x-on:click="focusNextMonth()"
                         class="focus:outline-none focus:shadow-outline transition ease-in-out duration-100 inline-flex cursor-pointer hover:bg-gray-200 p-1 rounded"
                     >
                         <x-heroicon-o-chevron-right class="h-6 w-6 text-gray-500 inline-flex" />
