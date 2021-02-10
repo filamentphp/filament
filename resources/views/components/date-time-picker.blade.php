@@ -90,16 +90,16 @@
                     this.focusedDate = this.focusedDate.subtract(1, 'day')
                 },
 
-                focusPreviousMonth: function () {
-                    this.focusedDate = this.focusedDate.subtract(1, 'month')
+                focusPreviousWeek: function () {
+                    this.focusedDate = this.focusedDate.subtract(1, 'week')
                 },
 
                 focusNextDay: function () {
                     this.focusedDate = this.focusedDate.add(1, 'day')
                 },
 
-                focusNextMonth: function () {
-                    this.focusedDate = this.focusedDate.add(1, 'month')
+                focusNextWeek: function () {
+                    this.focusedDate = this.focusedDate.add(1, 'week')
                 },
 
                 getSelectedDate: function () {
@@ -234,8 +234,8 @@
             x-on:keydown.enter.stop.prevent="open ? selectDate() : openPicker()"
             x-on:keydown.arrow-left.stop.prevent="focusPreviousDay()"
             x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
-            x-on:keydown.arrow-up.stop.prevent="focusPreviousMonth()"
-            x-on:keydown.arrow-down.stop.prevent="focusNextMonth()"
+            x-on:keydown.arrow-up.stop.prevent="focusPreviousWeek()"
+            x-on:keydown.arrow-down.stop.prevent="focusNextWeek()"
             x-on:keydown.backspace.stop.prevent="clearValue()"
             x-on:keydown.clear.stop.prevent="clearValue()"
             x-on:keydown.delete.stop.prevent="clearValue()"
@@ -315,24 +315,6 @@
                             class="cursor-pointer text-center text-sm leading-none rounded leading-loose transition ease-in-out duration-100"
                         ></div>
                     </template>
-                </div>
-
-                <div class="flex justify-between">
-                    <button
-                        x-on:click="focusPreviousMonth()"
-                        type="button"
-                        class="focus:outline-none focus:shadow-outline transition ease-in-out duration-100 inline-flex cursor-pointer hover:bg-gray-200 p-1 rounded"
-                    >
-                        <x-heroicon-o-chevron-left class="h-6 w-6 text-gray-500 inline-flex" />
-                    </button>
-
-                    <button
-                        type="button"
-                        x-on:click="focusNextMonth()"
-                        class="focus:outline-none focus:shadow-outline transition ease-in-out duration-100 inline-flex cursor-pointer hover:bg-gray-200 p-1 rounded"
-                    >
-                        <x-heroicon-o-chevron-right class="h-6 w-6 text-gray-500 inline-flex" />
-                    </button>
                 </div>
             </div>
         </div>
