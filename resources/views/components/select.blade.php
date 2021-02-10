@@ -44,6 +44,26 @@
                     this.search = ''
                 },
 
+                evaluatePosition: function () {
+                    let availableHeight = window.innerHeight - this.$refs.button.offsetHeight
+
+                    let element = this.$refs.button
+
+                    while (element) {
+                        availableHeight -= element.offsetTop
+
+                        element = element.offsetParent
+                    }
+
+                    if (this.$refs.listbox.offsetHeight <= availableHeight) {
+                        this.$refs.listbox.style.bottom = 'auto'
+
+                        return
+                    }
+
+                    this.$refs.listbox.style.bottom = `${this.$refs.button.offsetHeight}px`
+                },
+
                 getOptions: function () {
                     let options = this.data
 
@@ -63,7 +83,7 @@
 
                     this.focusedOptionIndex++
 
-                    this.$refs.listbox.children[this.focusedOptionIndex].scrollIntoView({
+                    this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
                         block: 'center',
                     })
                 },
@@ -79,7 +99,7 @@
 
                     this.focusedOptionIndex--
 
-                    this.$refs.listbox.children[this.focusedOptionIndex].scrollIntoView({
+                    this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
                         block: 'center',
                     })
                 },
@@ -119,6 +139,10 @@
                     if (this.focusedOptionIndex < 0) this.focusedOptionIndex = 0
 
                     this.open = true
+
+                    this.$nextTick(() => {
+                        this.evaluatePosition()
+                    })
                 },
 
                 selectOption: function (index = null) {
@@ -145,7 +169,7 @@
                     this.$nextTick(() => {
                         this.$refs.search.focus()
 
-                        this.$refs.listbox.children[this.focusedOptionIndex].scrollIntoView({
+                        this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
                             block: 'center'
                         })
                     })
@@ -219,21 +243,19 @@
 
     @unless($disabled)
         <div
+            x-ref="listbox"
             x-show="open"
             x-transition:leave="transition ease-in duration-100"
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
+            role="listbox"
+            x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $name }}' + 'Option' + focusedOptionIndex : null"
+            tabindex="-1"
             x-cloak
-            class="absolute z-10 w-full mt-1 bg-white rounded shadow-sm border border-gray-300"
+            class="absolute z-10 w-full my-1 bg-white rounded shadow-sm border border-gray-300"
         >
             <ul
-                x-ref="listbox"
-                x-on:keydown.enter.stop.prevent="selectOption()"
-                x-on:keydown.arrow-up.stop.prevent="focusPreviousOption()"
-                x-on:keydown.arrow-down.stop.prevent="focusNextOption()"
-                role="listbox"
-                x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $name }}' + 'Option' + focusedOptionIndex : null"
-                tabindex="-1"
+                x-ref="listboxOptionsList"
                 class="py-1 overflow-auto text-base leading-6 rounded shadow-sm max-h-60 focus:outline-none"
             >
                 <template x-for="(key, index) in Object.keys(options)" :key="index">

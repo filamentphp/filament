@@ -84,6 +84,26 @@
                         date.year() === this.focusedDate.year()
                 },
 
+                evaluatePosition: function () {
+                    let availableHeight = window.innerHeight - this.$refs.button.offsetHeight
+
+                    let element = this.$refs.button
+
+                    while (element) {
+                        availableHeight -= element.offsetTop
+
+                        element = element.offsetParent
+                    }
+
+                    if (this.$refs.picker.offsetHeight <= availableHeight) {
+                        this.$refs.picker.style.bottom = 'auto'
+
+                        return
+                    }
+
+                    this.$refs.picker.style.bottom = `${this.$refs.button.offsetHeight}px`
+                },
+
                 focusPreviousDay: function () {
                     this.focusedDate = this.focusedDate.subtract(1, 'day')
                 },
@@ -132,6 +152,10 @@
                     this.$watch('focusedDate', ((value) => {
                         this.focusedMonth = value.month()
                         this.focusedYear = value.year()
+
+                        this.$nextTick(() => {
+                            this.evaluatePosition()
+                        })
                     }))
 
                     let date = this.getSelectedDate()
@@ -151,6 +175,10 @@
                     this.setupDaysGrid()
 
                     this.open = true
+
+                    this.$nextTick(() => {
+                        this.evaluatePosition()
+                    })
                 },
 
                 selectDate: function (day = null) {
@@ -256,12 +284,13 @@
 
     @unless ($disabled)
         <div
+            x-ref="picker"
             x-on:click.away="closePicker()"
             x-show.transition="open"
             aria-modal="true"
             role="dialog"
             x-cloak
-            class="bg-white border border-gray-300 mt-1 rounded shadow-sm p-4 absolute w-64 z-10"
+            class="bg-white border border-gray-300 my-1 rounded shadow-sm p-4 absolute w-64 z-10"
         >
             <div class="space-y-3">
                 <div class="flex items-center justify-between">
