@@ -25,6 +25,13 @@ class Text extends InputField
         return $this;
     }
 
+    public function tel()
+    {
+        $this->type('tel');
+
+        return $this;
+    }
+
     public function type($type)
     {
         $this->type = $type;

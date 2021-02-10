@@ -218,7 +218,7 @@
             x-show="! open"
             x-text="value in options ? options[value] : '{{ $placeholder }}'"
             x-bind:class="{
-                'text-gray-500': ! (value in options),
+                'text-gray-400': ! (value in options),
             }"
             class="block truncate"
         ></span>

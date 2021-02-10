@@ -274,7 +274,7 @@
             readonly
             placeholder="{{ $placeholder }}"
             x-model="displayValue"
-            class="w-full h-full border-0 p-0 focus:ring-0 focus:outline-none"
+            class="w-full h-full border-0 p-0 placeholder-gray-400 focus:placeholder-gray-500 focus:ring-0 focus:outline-none"
         />
 
         <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
