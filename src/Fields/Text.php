@@ -25,6 +25,20 @@ class Text extends InputField
         return $this;
     }
 
+    public function max($value)
+    {
+        $this->addRules([$this->name => "max:$value"]);
+
+        return $this;
+    }
+
+    public function min($value)
+    {
+        $this->addRules([$this->name => "min:$value"]);
+
+        return $this;
+    }
+
     public function tel()
     {
         $this->type('tel');
