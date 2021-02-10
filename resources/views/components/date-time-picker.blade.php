@@ -61,10 +61,7 @@
                 value: config.value,
 
                 clearValue: function () {
-                    this.displayValue = null
-                    this.value = null
-
-                    this.init()
+                    this.setValue(null)
                 },
 
                 closePicker: function () {
@@ -167,9 +164,7 @@
                 },
 
                 setDisplayValue: function () {
-                    if (this.getSelectedDate() === null) return
-
-                    this.displayValue = this.getSelectedDate().format(this.displayFormat)
+                    this.displayValue = this.getSelectedDate() ? this.getSelectedDate().format(this.displayFormat) : ''
                 },
 
                 setupDaysGrid: function () {
@@ -187,7 +182,9 @@
                 },
 
                 setValue: function (date) {
-                    this.value = date.format(this.format)
+                    if (date === null && this.required) date = dayjs()
+
+                    this.value = date ? date.format(this.format) : null
 
                     this.setDisplayValue()
                 },
