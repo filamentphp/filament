@@ -5,7 +5,7 @@
          role="group"
          tabindex="-1"
          x-data="{ headerIsOpen: false }"
-         @keydown.window.escape="headerIsOpen = false"
+         @keydown.escape.window="headerIsOpen = false"
          x-on:resize.window="if (window.outerWidth > 768) headerIsOpen = false"
     >
         <div class="w-56 fixed z-20 h-screen transform transition-transform duration-200 md:translate-x-0 flex"

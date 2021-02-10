@@ -1,4 +1,4 @@
-@pushonce('head:filepond-css')
+@pushonce('head:filepond')
     <link rel="stylesheet" href="https://unpkg.com/filepond/dist/filepond.css">
 @endpushonce
 

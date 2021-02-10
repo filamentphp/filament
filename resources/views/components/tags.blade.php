@@ -10,12 +10,10 @@
     'separator' => ',',
 ])
 
-@pushonce('js:tags')
+@pushonce('js:tags-component')
     <script>
         function tags(config) {
             return {
-                name: config.name,
-
                 newTag: '',
 
                 separator: config.separator,
@@ -41,7 +39,7 @@
                 },
 
                 init: function () {
-                    if (this.value !== '') this.tags = this.value.split(this.separator)
+                    if (this.value !== '') this.tags = this.value.trim().split(this.separator).filter(tag => tag !== '')
 
                     this.$watch('tags', ((tags) => {
                         this.value = tags.join(this.separator)
@@ -54,15 +52,11 @@
 
 <div
     x-data="tags({
-        autofocus: {{ $autofocus ? 'true' : 'false' }},
-        name: '{{ $name }}',
         separator: '{{ $separator }}',
         @if (Str::of($nameAttribute)->startsWith('wire:model')) value: @entangle($name){{ Str::of($nameAttribute)->after('wire:model') }}, @endif
     })"
     x-init="init()"
-    {{ $attributes->merge(array_merge([
-        'class' => 'relative',
-    ], $extraAttributes)) }}
+    {{ $attributes->merge($extraAttributes) }}
 >
     @unless (Str::of($nameAttribute)->startsWith(['wire:model', 'x-model']))
         <input
@@ -72,37 +66,37 @@
         />
     @endif
 
-    <div
-        class="bg-white relative w-full border border-gray-300 rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 {{ $disabled ? 'text-gray-500' : '' }}"
-    >
-        <template x-for="(tag, index) in tags" x-bind:key="tag">
-            <button
-                x-on:click="deleteTag(index)"
-                type="button"
-                class="cursor-pointer my-1 truncate max-w-full inline-flex space-x-2 items-center font-semibold text-xs py-1 px-3 border border-gray-300 bg-gray-100 text-gray-800 rounded transition duration-200 shadow-sm inline-block relative focus:ring focus:ring-indigo-200 focus:ring-opacity-50 hover:bg-gray-200"
-            >
-                <span x-text="tag"></span>
-
-                <x-heroicon-s-x class="h-4 w-4 text-gray-500" />
-            </button>
-        </template>
-
-        @unless($disabled)
-            <button
-                type="button"
-                class="cursor-pointer my-1 inline-flex space-x-2 items-center py-1 px-3 border border-gray-300 bg-gray-100 text-gray-800 rounded shadow-sm inline-block relative"
-            >
-                <input
-                    autocomplete="off"
-                    @if ($autofocus) autofocus @endif
-                    placeholder="{{ $placeholder }}"
-                    type="text"
-                    x-on:keydown.enter.prevent="createTag()"
-                    x-model="newTag"
-                    x-ref="newTag"
-                    class="text-xs font-semibold bg-gray-100 border-0 p-0 focus:ring-0 focus:outline-none"
-                />
-            </button>
+    <div x-show="tags.length || {{ $disabled ? 'false' : 'true' }}" class="rounded shadow-sm border overflow-hidden {{ $errors->has($errorKey) ? 'border-red-600 motion-safe:animate-shake' : 'border-gray-300' }}">
+        @unless ($disabled)
+            <input
+                autocomplete="off"
+                @if ($autofocus) autofocus @endif
+                placeholder="{{ $placeholder }}"
+                type="text"
+                x-on:keydown.enter.prevent="createTag()"
+                x-model="newTag"
+                x-ref="newTag"
+                class="block w-full placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border-0"
+            />
         @endunless
+
+        <div
+            x-show="tags.length"
+            class="bg-white relative w-full pl-3 pr-10 py-2 text-left {{ $disabled ? 'text-gray-500' : 'border-t' }} {{ $errors->has($errorKey) ? 'border-red-600' : 'border-gray-300' }}"
+        >
+            <template x-for="(tag, index) in tags" x-bind:key="tag">
+                <button
+                    @unless($disabled) x-on:click="deleteTag(index)" @endunless
+                    type="button"
+                    class="my-1 truncate max-w-full inline-flex space-x-2 items-center font-semibold text-xs py-1 px-3 border border-gray-300 bg-gray-100 text-gray-800 rounded shadow-sm inline-block relative @unless($disabled) cursor-pointer transition duration-200 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 hover:bg-gray-200 @else cursor-default @endunless"
+                >
+                    <span x-text="tag"></span>
+
+                    @unless($disabled)
+                        <x-heroicon-s-x class="h-4 w-4 text-gray-500" />
+                    @endunless
+                </button>
+            </template>
+        </div>
     </div>
 </div>

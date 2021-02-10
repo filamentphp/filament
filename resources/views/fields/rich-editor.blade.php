@@ -1,9 +1,9 @@
-@pushonce('head:rich-editor-css')
-    <link rel="stylesheet" href="https://www.unpkg.com/trix@1.3.1/dist/trix.css">
+@pushonce('head:rich-editor-component')
+    <link rel="stylesheet" href="https://unpkg.com/trix@1.3.1/dist/trix.css">
 @endpushonce
 
-@pushonce('js:rich-editor')
-    <script src="https://www.unpkg.com/trix@1.3.1/dist/trix.js"></script>
+@pushonce('js:rich-editor-component')
+    <script src="https://unpkg.com/trix@1.3.1/dist/trix.js"></script>
 
     <script>
         Trix.config.blockAttributes.heading = {

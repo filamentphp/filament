@@ -12,10 +12,12 @@
     'required' => false,
 ])
 
-@pushonce('js:select')
+@pushonce('js:select-component')
     <script>
         function select(config) {
             return {
+                autofocus: config.autofocus,
+
                 data: config.data,
 
                 emptyOptionLabel: config.emptyOptionLabel,
@@ -24,13 +26,9 @@
 
                 focusedOptionIndex: null,
 
-                name: config.name,
-
                 open: false,
 
                 options: {},
-
-                placeholder: config.placeholder,
 
                 required: config.required,
 
@@ -55,7 +53,11 @@
                 },
 
                 focusNextOption: function () {
-                    if (this.focusedOptionIndex === null) return this.focusedOptionIndex = Object.keys(this.options).length - 1
+                    if (this.focusedOptionIndex === null) {
+                        this.focusedOptionIndex = Object.keys(this.options).length - 1
+
+                        return
+                    }
 
                     if (this.focusedOptionIndex + 1 >= Object.keys(this.options).length) return
 
@@ -67,7 +69,11 @@
                 },
 
                 focusPreviousOption: function () {
-                    if (this.focusedOptionIndex === null) return this.focusedOptionIndex = 0
+                    if (this.focusedOptionIndex === null) {
+                        this.focusedOptionIndex = 0
+
+                        return
+                    }
 
                     if (this.focusedOptionIndex <= 0) return
 
@@ -83,10 +89,14 @@
 
                     if (! (this.value in this.options)) this.value = Object.keys(this.options)[0]
 
-                    if (config.autofocus) this.toggleListboxVisibility()
+                    if (this.autofocus) this.openListbox()
 
                     this.$watch('search', ((value) => {
-                        if (! this.open || ! value) return this.options = this.getOptions()
+                        if (! this.open || ! value) {
+                            this.options = this.getOptions()
+
+                            return
+                        }
 
                         this.options = Object.keys(this.getOptions())
                             .filter((key) => this.getOptions()[key].toLowerCase().includes(value.toLowerCase()))
@@ -103,22 +113,34 @@
                     }))
                 },
 
-                selectOption: function () {
-                    if (!this.open) return this.toggleListboxVisibility()
-
-                    this.value = Object.keys(this.options)[this.focusedOptionIndex]
-
-                    this.closeListbox()
-                },
-
-                toggleListboxVisibility: function () {
-                    if (this.open) return this.closeListbox()
-
+                openListbox: function () {
                     this.focusedOptionIndex = Object.keys(this.options).indexOf(this.value)
 
                     if (this.focusedOptionIndex < 0) this.focusedOptionIndex = 0
 
                     this.open = true
+                },
+
+                selectOption: function (index = null) {
+                    if (! this.open) {
+                        this.closeListbox()
+
+                        return
+                    }
+
+                    this.value = Object.keys(this.options)[index ?? this.focusedOptionIndex]
+
+                    this.closeListbox()
+                },
+
+                toggleListboxVisibility: function () {
+                    if (this.open) {
+                        this.closeListbox()
+
+                        return
+                    }
+
+                    this.openListbox()
 
                     this.$nextTick(() => {
                         this.$refs.search.focus()
@@ -139,14 +161,12 @@
         data: {{ json_encode($options) }},
         emptyOptionLabel: '{{ $emptyOptionLabel }}',
         emptyOptionsMessage: '{{ $emptyOptionsMessage }}',
-        name: '{{ $name }}',
-        placeholder: '{{ $placeholder }}',
         required: {{ $required ? 'true' : 'false' }},
         @if (Str::of($nameAttribute)->startsWith('wire:model')) value: @entangle($name){{ Str::of($nameAttribute)->after('wire:model') }}, @endif
     })"
     x-init="init()"
     x-on:click.away="closeListbox()"
-    x-on:keydown.stop.escape="closeListbox()"
+    x-on:keydown.escape.stop="closeListbox()"
     {{ $attributes->merge(array_merge([
         'class' => 'relative',
     ], $extraAttributes)) }}
@@ -167,16 +187,18 @@
             aria-haspopup="listbox"
         @endunless
         type="button"
-        class="bg-white relative w-full border border-gray-300 rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 {{ $disabled ? 'text-gray-500' : '' }}"
+        class="bg-white relative w-full border border-gray-300 rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $disabled ? 'text-gray-500' : '' }}"
     >
         <span
             x-show="! open"
-            x-text="value in options ? options[value] : placeholder"
-            x-bind:class="{ 'text-gray-500': ! (value in options) }"
+            x-text="value in options ? options[value] : '{{ $placeholder }}'"
+            x-bind:class="{
+                'text-gray-500': ! (value in options),
+            }"
             class="block truncate"
         ></span>
 
-        @unless($disabled)
+        @unless ($disabled)
             <input
                 x-ref="search"
                 x-show="open"
@@ -185,7 +207,7 @@
                 x-on:keydown.arrow-up.stop.prevent="focusPreviousOption()"
                 x-on:keydown.arrow-down.stop.prevent="focusNextOption()"
                 type="search"
-                class="w-full h-full focus:ring-0 focus:outline-none border-0 p-0"
+                class="w-full h-full border-0 p-0 focus:ring-0 focus:outline-none"
             />
 
             <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -209,29 +231,39 @@
                 x-on:keydown.arrow-up.stop.prevent="focusPreviousOption()"
                 x-on:keydown.arrow-down.stop.prevent="focusNextOption()"
                 role="listbox"
-                x-bind:aria-activedescendant="focusedOptionIndex ? name + 'Option' + focusedOptionIndex : null"
+                x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $name }}' + 'Option' + focusedOptionIndex : null"
                 tabindex="-1"
                 class="py-1 overflow-auto text-base leading-6 rounded shadow-sm max-h-60 focus:outline-none"
             >
                 <template x-for="(key, index) in Object.keys(options)" :key="index">
                     <li
-                        x-bind:id="name + 'Option' + focusedOptionIndex"
-                        x-on:click="selectOption()"
+                        x-bind:id="'{{ $name }}' + 'Option' + focusedOptionIndex"
+                        x-on:click="selectOption(index)"
                         x-on:mouseenter="focusedOptionIndex = index"
                         x-on:mouseleave="focusedOptionIndex = null"
                         role="option"
                         x-bind:aria-selected="focusedOptionIndex === index"
-                        x-bind:class="{ 'text-white bg-blue-600': index === focusedOptionIndex, 'text-gray-900': index !== focusedOptionIndex }"
+                        x-bind:class="{
+                            'text-white bg-blue-600': index === focusedOptionIndex,
+                            'text-gray-900': index !== focusedOptionIndex,
+                        }"
                         class="relative py-2 pl-3 text-gray-900 cursor-default select-none pr-9"
                     >
-                            <span x-text="Object.values(options)[index]"
-                                  x-bind:class="{ 'font-semibold': index === focusedOptionIndex, 'font-normal': index !== focusedOptionIndex }"
-                                  class="block font-normal truncate"
+                            <span
+                                x-text="Object.values(options)[index]"
+                                x-bind:class="{
+                                    'font-semibold': index === focusedOptionIndex,
+                                    'font-normal': index !== focusedOptionIndex,
+                                }"
+                                class="block font-normal truncate"
                             ></span>
 
                         <span
                             x-show="key === value"
-                            x-bind:class="{ 'text-white': index === focusedOptionIndex, 'text-blue-600': index !== focusedOptionIndex }"
+                            x-bind:class="{
+                                'text-white': index === focusedOptionIndex,
+                                'text-blue-600': index !== focusedOptionIndex,
+                            }"
                             class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600"
                         >
                                 <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
@@ -246,7 +278,8 @@
                 <div
                     x-show="! Object.keys(options).length"
                     x-text="emptyOptionsMessage"
-                    class="px-3 py-2 text-gray-900 cursor-default select-none"></div>
+                    class="px-3 py-2 text-gray-900 cursor-default select-none"
+                ></div>
             </ul>
         </div>
     @endunless

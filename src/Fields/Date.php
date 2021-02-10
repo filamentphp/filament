@@ -2,16 +2,23 @@
 
 namespace Filament\Fields;
 
+use Filament\FieldConcerns;
+
 class Date extends InputField
 {
-    public $config = [
-        'altInput' => true,
-    ];
+    use FieldConcerns\CanBeAutofocused;
+    use FieldConcerns\CanBeCompared;
+    use FieldConcerns\CanBeDisabled;
+    use FieldConcerns\CanBeUnique;
+    use FieldConcerns\HasPlaceholder;
 
-    public function config(array $config)
-    {
-        $this->config = array_merge($this->config, $config);
+    public $displayFormat = 'MMM D, YYYY';
 
-        return $this;
-    }
+    public $format = 'YYYY-MM-DD';
+
+    public $max;
+
+    public $min;
+
+    public $time = false;
 }
