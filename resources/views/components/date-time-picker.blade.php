@@ -56,8 +56,6 @@
 
                 required: config.required,
 
-                selectedDay: null,
-
                 time: config.time,
 
                 value: config.value,
@@ -74,11 +72,13 @@
                 },
 
                 dayIsSelected: function (day) {
-                    let date = this.getSelectedDate()
+                    let selectedDate = this.getSelectedDate()
 
-                    return date.date() === day &&
-                        date.month() === this.activeMonth &&
-                        date.year() === this.activeYear
+                    if (selectedDate === null) return false
+
+                    return selectedDate.date() === day &&
+                        selectedDate.month() === this.activeMonth &&
+                        selectedDate.year() === this.activeYear
                 },
 
                 dayIsToday: function (day) {
@@ -100,15 +100,15 @@
 
                 focusNextDay: function () {
                     if (this.focusedDay === null) {
-                        let date = this.getSelectedDate()
+                        let selectedDate = this.getSelectedDate()
 
-                        if (this.activeMonth !== date.month() || this.activeYear !== date.year()) {
+                        if (selectedDate === null) {
                             this.focusedDay = this.days.length
 
                             return
                         }
 
-                        this.focusedDay = date.date()
+                        this.focusedDay = selectedDate.date()
                     }
 
                     if (this.focusedDay >= this.days.length) {
@@ -123,15 +123,15 @@
 
                 focusPreviousDay: function () {
                     if (this.focusedDay === null) {
-                        let date = this.getSelectedDate()
+                        let selectedDate = this.getSelectedDate()
 
-                        if (this.activeMonth !== date.month() || this.activeYear !== date.year()) {
+                        if (selectedDate === null) {
                             this.focusedDay = 1
 
                             return
                         }
 
-                        this.focusedDay = date.date()
+                        this.focusedDay = selectedDate.date()
                     }
 
                     if (this.focusedDay <= 1) {
@@ -145,10 +145,10 @@
                 },
 
                 getDaysInMonth: function () {
-                    let date = dayjs()
-
-                    date = date.month(this.activeMonth)
-                    date = date.year(this.activeYear)
+                    let date = dayjs(new Date(
+                        this.activeYear,
+                        this.activeMonth,
+                    ))
 
                     return date.daysInMonth()
                 },
@@ -186,19 +186,21 @@
                     if (this.autofocus) this.openPicker()
 
                     this.$watch('activeMonth', ((value) => {
+                        this.activeMonth = +value
+
                         this.focusedDay = null
 
                         this.renderDays()
-                        this.setSelectedDate()
                     }))
 
                     this.$watch('activeYear', ((value) => {
                         if (! Number.isInteger(+value)) this.activeYear = dayjs().year()
 
+                        this.activeYear = +value
+
                         this.focusedDay = null
 
                         this.renderDays()
-                        this.setSelectedDate()
                     }))
                 },
 
@@ -206,7 +208,6 @@
                     this.open = true
 
                     this.resetActiveMonth()
-                    this.setSelectedDate()
                 },
 
                 renderDays: function () {
@@ -227,13 +228,9 @@
                     let date = this.getSelectedDate()
 
                     if (date) {
-                        this.selectedDay = date.date()
-
                         this.setDisplayValue(date)
                     } else {
                         date = dayjs()
-
-                        if (this.required) this.selectedDay = date.date()
                     }
 
                     this.activeMonth = date.month()
@@ -243,10 +240,12 @@
                 },
 
                 selectDate: function (day = null) {
+                    if (day) this.focusedDay = day
+
                     let date = dayjs(new Date(
                         this.activeYear,
                         this.activeMonth,
-                        day ?? this.focusedDay,
+                        this.focusedDay,
                     ))
 
                     this.value = date.format(this.format)
@@ -256,18 +255,6 @@
 
                 setDisplayValue: function (date) {
                     this.displayValue = date.format(this.displayFormat)
-                },
-
-                setSelectedDate: function () {
-                    let date = this.getSelectedDate()
-
-                    if (! date || date.month() !== this.activeMonth || date.year() !== this.activeYear) {
-                        this.selectedDay = null
-
-                        return
-                    }
-
-                    this.selectedDay = date.date()
                 },
 
                 togglePickerVisibility: function () {
@@ -312,7 +299,7 @@
         @unless($disabled)
             x-ref="button"
             x-on:click="togglePickerVisibility()"
-            x-on:keydown.enter.stop.prevent="selectDate()"
+            x-on:keydown.enter.stop.prevent="open ? selectDate() : openPicker()"
             x-on:keydown.arrow-left.stop.prevent="focusPreviousDay()"
             x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
             x-on:keydown.arrow-up.stop.prevent="decrementActiveMonth()"
