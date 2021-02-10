@@ -122,9 +122,7 @@
                     }))
 
                     this.$watch('focusedYear', ((value) => {
-                        if (! Number.isInteger(+value)) this.focusedYear = dayjs().year()
-
-                        this.focusedYear = +value
+                        this.focusedYear = Number.isInteger(value) ? +value : dayjs().year()
 
                         this.setupDaysGrid()
 
