@@ -14,8 +14,6 @@
         :extra-attributes="$field->extraAttributes"
         :format="$field->format"
         :id="$field->id"
-        :max="$field->max"
-        :min="$field->min"
         :name="$field->name"
         :name-attribute="$field->nameAttribute"
         :placeholder="__($field->placeholder)"

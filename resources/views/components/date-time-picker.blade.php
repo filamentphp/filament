@@ -5,8 +5,6 @@
     'errorKey' => null,
     'extraAttributes' => [],
     'format' => 'YYYY-MM-DD',
-    'max' => null,
-    'min' => null,
     'name',
     'nameAttribute' => 'name',
     'placeholder' => null,
