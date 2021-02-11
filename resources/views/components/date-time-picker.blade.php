@@ -161,13 +161,7 @@
                     this.minDate = dayjs(this.minDate)
                     if (! this.minDate.isValid()) this.minDate = null
 
-                    let date = this.getSelectedDate()
-
-                    if (date === null) {
-                        date = dayjs()
-
-                        if (this.required) this.setValue(date)
-                    }
+                    let date = this.getSelectedDate() ?? dayjs()
 
                     if (this.maxDate !== null && date.isAfter(this.maxDate)) date = this.required ? this.maxDate : null
                     if (this.minDate !== null && date.isBefore(this.minDate)) date = this.required ? this.minDate : null
@@ -175,6 +169,8 @@
                     this.hour = date.hour()
                     this.minute = date.minute()
                     this.second = date.second()
+
+                    if (this.required && ! this.getSelectedDate()) this.setValue(date)
 
                     this.setDisplayValue()
 
