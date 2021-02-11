@@ -271,14 +271,22 @@
                 },
 
                 setValue: function (date) {
-                    if (date === null && this.required) {
-                        date = dayjs()
+                    if (date === null) {
+                        if (this.required) {
+                            date = dayjs()
 
-                        if (this.maxDate !== null && date.isAfter(this.maxDate)) date = this.maxDate
-                        if (this.minDate !== null && date.isBefore(this.minDate)) date = this.minDate
+                            if (this.maxDate !== null && date.isAfter(this.maxDate)) date = this.maxDate
+                            if (this.minDate !== null && date.isBefore(this.minDate)) date = this.minDate
+                        } else {
+                            this.value = null
+
+                            this.setDisplayValue()
+
+                            return
+                        }
+                    } else {
+                        if (this.dateIsDisabled(date)) return
                     }
-
-                    if (date && this.dateIsDisabled(date)) return
 
                     this.value = date
                         .set('hour', this.hour)
