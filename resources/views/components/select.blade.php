@@ -212,7 +212,7 @@
             aria-haspopup="listbox"
         @endunless
         type="button"
-        class="bg-white relative w-full border border-gray-300 rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $disabled ? 'text-gray-500' : '' }}"
+        class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $disabled ? 'text-gray-500' : '' }} {{ $errors->has($errorKey) ? 'border-red-600 motion-safe:animate-shake' : 'border-gray-300' }}"
     >
         <span
             x-show="! open"

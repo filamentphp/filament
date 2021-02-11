@@ -331,7 +331,7 @@
             aria-label="{{ $placeholder }}"
         @endunless
         type="button"
-        class="bg-white relative w-full border border-gray-300 rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $disabled ? 'text-gray-500' : '' }}"
+        class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $disabled ? 'text-gray-500' : '' }} {{ $errors->has($errorKey) ? 'border-red-600 motion-safe:animate-shake' : 'border-gray-300' }}"
     >
         <input
             readonly
@@ -356,7 +356,7 @@
             class="bg-white border border-gray-300 my-1 rounded shadow-sm p-4 absolute w-64 z-10"
         >
             <div class="space-y-3">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between space-x-1">
                     <select
                         x-model="focusedMonth"
                         class="flex-grow text-lg font-medium text-gray-800 cursor-pointer border-0 p-0 focus:ring-0 focus:outline-none"
@@ -369,7 +369,7 @@
                     <input
                         type="number"
                         x-model.debounce="focusedYear"
-                        class="ml-1 text-right w-20 text-lg text-gray-600 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
+                        class="text-right w-20 text-lg text-gray-600 border-0 p-0 focus:ring-0 focus:outline-none"
                     />
                 </div>
 
