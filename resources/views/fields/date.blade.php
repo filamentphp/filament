@@ -7,15 +7,15 @@
     :required="$field->required"
 >
     <x-filament::date-time-picker
-        :after-date="$field->afterDate"
         :autofocus="$field->autofocus"
-        :before-date="$field->beforeDate"
         :disabled="$field->disabled"
         :display-format="convert_date_format($field->displayFormat)->to('day.js')"
         :error-key="$field->errorKey"
         :extra-attributes="$field->extraAttributes"
         :format="convert_date_format($field->format)->to('day.js')"
         :id="$field->id"
+        :max-date="$field->maxDate"
+        :min-date="$field->minDate"
         :name="$field->name"
         :name-attribute="$field->nameAttribute"
         :placeholder="__($field->placeholder)"

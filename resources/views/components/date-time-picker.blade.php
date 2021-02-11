@@ -1,12 +1,12 @@
 @props([
-    'afterDate' => null,
     'autofocus' => false,
-    'beforeDate' => null,
     'disabled' => false,
     'displayFormat' => 'MMM D, YYYY HH:mm:ss',
     'errorKey' => null,
     'extraAttributes' => [],
     'format' => 'YYYY-MM-DD HH:mm:ss',
+    'maxDate' => null,
+    'minDate' => null,
     'name',
     'nameAttribute' => 'name',
     'placeholder' => null,
@@ -35,11 +35,7 @@
 
         function dateTimePicker(config) {
             return {
-                afterDate: config.afterDate,
-
                 autofocus: config.autofocus,
-
-                beforeDate: config.beforeDate,
 
                 daysInFocusedMonth: [],
 
@@ -58,6 +54,10 @@
                 format: config.format,
 
                 hours: null,
+
+                maxDate: config.maxDate,
+
+                minDate: config.minDate,
 
                 minutes: null,
 
@@ -79,6 +79,17 @@
 
                 closePicker: function () {
                     this.open = false
+                },
+
+                dateIsDisabled: function (date) {
+                    if (this.maxDate && date.isAfter(this.maxDate)) return true
+                    if (this.minDate && date.isBefore(this.minDate)) return true
+
+                    return false
+                },
+
+                dayIsDisabled: function (day) {
+                    return this.dateIsDisabled(this.focusedDate.date(day))
                 },
 
                 dayIsSelected: function (day) {
@@ -144,6 +155,12 @@
                 },
 
                 init: function () {
+                    this.maxDate = dayjs(this.maxDate)
+                    if (! this.maxDate.isValid()) this.maxDate = null
+
+                    this.minDate = dayjs(this.minDate)
+                    if (! this.minDate.isValid()) this.minDate = null
+
                     let date = this.getSelectedDate()
 
                     if (date === null) {
@@ -151,6 +168,9 @@
 
                         if (this.required) this.setValue(date)
                     }
+
+                    if (this.maxDate !== null && date.isAfter(this.maxDate)) date = this.required ? this.maxDate : null
+                    if (this.minDate !== null && date.isBefore(this.minDate)) date = this.required ? this.minDate : null
 
                     this.hour = date.hour()
                     this.minute = date.minute()
@@ -163,8 +183,6 @@
                     this.$watch('focusedMonth', ((value) => {
                         this.focusedMonth = +value
 
-                        this.setupDaysGrid()
-
                         if (this.focusedDate.month() === this.focusedMonth) return
 
                         this.focusedDate = this.focusedDate.set('month', this.focusedMonth)
@@ -172,8 +190,6 @@
 
                     this.$watch('focusedYear', ((value) => {
                         this.focusedYear = Number.isInteger(+value) ? +value : dayjs().year()
-
-                        this.setupDaysGrid()
 
                         if (this.focusedDate.year() === this.focusedYear) return
 
@@ -183,6 +199,8 @@
                     this.$watch('focusedDate', ((value) => {
                         this.focusedMonth = value.month()
                         this.focusedYear = value.year()
+
+                        this.setupDaysGrid()
 
                         this.$nextTick(() => {
                             this.evaluatePosition()
@@ -257,17 +275,20 @@
                 },
 
                 setValue: function (date) {
-                    if (date === null) {
-                        if (this.required) date = dayjs()
+                    if (date === null && this.required) {
+                        date = dayjs()
 
-                        this.value = null
-                    } else {
-                        date = date.set('hour', this.hour)
-                        date = date.set('minute', this.minute)
-                        date = date.set('second', this.second)
-
-                        this.value = date.format(this.format)
+                        if (this.maxDate !== null && date.isAfter(this.maxDate)) date = this.maxDate
+                        if (this.minDate !== null && date.isBefore(this.minDate)) date = this.minDate
                     }
+
+                    if (date && this.dateIsDisabled(date)) return
+
+                    this.value = date
+                        .set('hour', this.hour)
+                        .set('minute', this.minute)
+                        .set('second', this.second)
+                        .format(this.format)
 
                     this.setDisplayValue()
                 },
@@ -288,11 +309,11 @@
 
 <div
     x-data="dateTimePicker({
-        afterDate: '{{ $afterDate }}',
         autofocus: {{ $autofocus ? 'true' : 'false' }},
-        beforeDate: '{{ $beforeDate }}',
         displayFormat: '{{ $displayFormat }}',
         format: '{{ $format }}',
+        maxDate: '{{ $maxDate }}',
+        minDate: '{{ $minDate }}',
         name: '{{ $name }}',
         placeholder: '{{ $placeholder }}',
         required: {{ $required ? 'true' : 'false' }},
@@ -390,44 +411,47 @@
                     <template x-for="day in daysInFocusedMonth" x-bind:key="day">
                         <div
                             x-text="day"
-                            x-on:click="selectDate(day)"
-                            x-on:mouseenter="setFocusedDay(day)"
+                            x-on:click="dayIsDisabled(day) || selectDate(day)"
+                            x-on:mouseenter="dayIsDisabled(day) || setFocusedDay(day)"
                             role="option"
                             x-bind:aria-selected="focusedDate.date() === day"
                             x-bind:class="{
                                 'bg-blue-600 text-white': dayIsSelected(day),
                                 'text-gray-700': ! dayIsSelected(day),
-                                'bg-blue-50': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day,
+                                'bg-blue-50': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
                                 'bg-blue-200': focusedDate.date() === day && ! dayIsSelected(day),
+                                'bg-gray-100': dayIsDisabled(day) && focusedDate.date() !== day,
+                                'cursor-pointer': ! dayIsDisabled(day),
+                                'cursor-not-allowed': dayIsDisabled(day),
                             }"
-                            class="cursor-pointer text-center text-sm leading-none rounded leading-loose transition ease-in-out duration-100"
+                            class="text-center text-sm leading-none rounded leading-loose transition ease-in-out duration-100"
                         ></div>
                     </template>
                 </div>
 
                 @if ($time)
-                    <div class="flex items-center justify-center">
+                    <div class="flex items-center justify-center bg-gray-100 rounded py-2">
                         <input
                             type="number"
                             x-model.debounce="hour"
-                            class="text-center w-16 text-xl text-gray-600 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
+                            class="text-center bg-gray-100 w-16 text-xl text-gray-700 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
                         />
 
-                        <span class="text-xl font-medium text-gray-600">:</span>
+                        <span class="text-xl bg-gray-100 font-medium text-gray-700">:</span>
 
                         <input
                             type="number"
                             x-model.debounce="minute"
-                            class="text-center w-16 text-xl text-gray-600 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
+                            class="text-center bg-gray-100 w-16 text-xl text-gray-700 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
                         />
 
                         @unless ($withoutSeconds)
-                            <span class="text-xl font-medium text-gray-600">:</span>
+                            <span class="text-xl bg-gray-100 font-medium text-gray-700">:</span>
 
                             <input
                                 type="number"
                                 x-model.debounce="second"
-                                class="text-center w-16 text-xl text-gray-600 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
+                                class="text-center bg-gray-100 w-16 text-xl text-gray-700 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
                             />
                         @endunless
                     </div>

@@ -4,24 +4,24 @@ namespace Filament\FieldConcerns;
 
 trait CanBeDateConstrained
 {
-    public $afterDate;
+    public $maxDate;
 
-    public $beforeDate;
+    public $minDate;
 
-    public function afterDate($date)
+    public function maxDate($date)
     {
-        $this->afterDate = $date;
+        $this->maxDate = $date;
 
-        $this->addRules([$this->name => ["after:$date"]]);
+        $this->addRules([$this->name => ["before_or_equal:$date"]]);
 
         return $this;
     }
 
-    public function beforeDate($date)
+    public function minDate($date)
     {
-        $this->beforeDate = $date;
+        $this->minDate = $date;
 
-        $this->addRules([$this->name => ["before:$date"]]);
+        $this->addRules([$this->name => ["after_or_equal:$date"]]);
 
         return $this;
     }
