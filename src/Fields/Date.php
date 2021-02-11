@@ -8,17 +8,17 @@ class Date extends InputField
 {
     use FieldConcerns\CanBeAutofocused;
     use FieldConcerns\CanBeCompared;
+    use FieldConcerns\CanBeDateConstrained;
     use FieldConcerns\CanBeDisabled;
     use FieldConcerns\CanBeUnique;
+    use FieldConcerns\HasDateFormats;
     use FieldConcerns\HasPlaceholder;
 
-    public $displayFormat = 'MMM D, YYYY';
+    public function __construct($name)
+    {
+        parent::__construct($name);
 
-    public $format = 'YYYY-MM-DD';
-
-    public $max;
-
-    public $min;
-
-    public $time = false;
+        $this->displayFormat('F j, Y');
+        $this->format('Y-m-d');
+    }
 }

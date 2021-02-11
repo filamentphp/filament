@@ -68,13 +68,21 @@ trait HasForm
                     );
                 });
 
-            if ($fieldToFocus && $fieldToFocus->parentField instanceof Tab) {
-                $tabToFocus = $fieldToFocus->parentField;
+            if ($fieldToFocus) {
+                $possibleTab = $fieldToFocus->parentField;
 
-                $this->dispatchBrowserEvent(
-                    'switch-tab',
-                    $tabToFocus->parentField->id . '.' . $tabToFocus->id,
-                );
+                while ($possibleTab) {
+                    if ($possibleTab instanceof Tab) {
+                        $this->dispatchBrowserEvent(
+                            'switch-tab',
+                            $possibleTab->parentField->id . '.' . $possibleTab->id,
+                        );
+
+                        break;
+                    }
+
+                    $possibleTab = $possibleTab->parentField;
+                }
             }
 
             throw $exception;

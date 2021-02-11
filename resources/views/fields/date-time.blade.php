@@ -20,6 +20,7 @@
         :name-attribute="$field->nameAttribute"
         :placeholder="__($field->placeholder)"
         :required="$field->required"
-        :time="false"
+        :time="true"
+        :without-seconds="$field->withoutSeconds"
     />
 </x-filament::field-group>

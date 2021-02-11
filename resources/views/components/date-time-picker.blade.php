@@ -1,21 +1,28 @@
 @props([
+    'afterDate' => null,
     'autofocus' => false,
+    'beforeDate' => null,
     'disabled' => false,
-    'displayFormat' => 'MMM D, YYYY',
+    'displayFormat' => 'MMM D, YYYY HH:mm:ss',
     'errorKey' => null,
     'extraAttributes' => [],
-    'format' => 'YYYY-MM-DD',
+    'format' => 'YYYY-MM-DD HH:mm:ss',
     'name',
     'nameAttribute' => 'name',
     'placeholder' => null,
     'required' => false,
-    'time' => false,
+    'time' => true,
+    'withoutSeconds' => false,
 ])
 
 @php
-    if ($time) {
-        if ($displayFormat === 'MMM D, YYYY') $format = 'M j, Y H:mm';
-        if ($format === 'YYYY-MM-DD') $format = 'YYYY-MM-DD HH:mm';
+    if (! $time) {
+        if ($displayFormat === 'MMM D, YYYY HH:mm:ss') $displayFormat = 'MMM D, YYYY';
+        if ($format === 'YYYY-MM-DD HH:mm:ss') $format = 'YYYY-MM-DD';
+    }
+
+    if ($time && $withoutSeconds) {
+        if ($displayFormat === 'MMM D, YYYY HH:mm:ss') $displayFormat = 'MMM D, YYYY HH:mm';
     }
 @endphp
 
@@ -28,7 +35,11 @@
 
         function dateTimePicker(config) {
             return {
+                afterDate: config.afterDate,
+
                 autofocus: config.autofocus,
+
+                beforeDate: config.beforeDate,
 
                 daysInFocusedMonth: [],
 
@@ -46,17 +57,21 @@
 
                 format: config.format,
 
-                max: config.max,
+                hours: null,
 
-                min: config.min,
+                minutes: null,
 
                 open: false,
 
                 required: config.required,
 
+                seconds: null,
+
                 time: config.time,
 
                 value: config.value,
+
+                withoutSeconds: config.withoutSeconds,
 
                 clearValue: function () {
                     this.setValue(null)
@@ -129,6 +144,22 @@
                 },
 
                 init: function () {
+                    let date = this.getSelectedDate()
+
+                    if (date === null) {
+                        date = dayjs()
+
+                        if (this.required) this.setValue(date)
+                    }
+
+                    this.hour = date.hour()
+                    this.minute = date.minute()
+                    this.second = date.second()
+
+                    this.setDisplayValue()
+
+                    if (this.autofocus) this.openPicker()
+
                     this.$watch('focusedMonth', ((value) => {
                         this.focusedMonth = +value
 
@@ -136,7 +167,7 @@
 
                         if (this.focusedDate.month() === this.focusedMonth) return
 
-                        this.focusedDate = this.focusedDate.month(this.focusedMonth)
+                        this.focusedDate = this.focusedDate.set('month', this.focusedMonth)
                     }))
 
                     this.$watch('focusedYear', ((value) => {
@@ -146,7 +177,7 @@
 
                         if (this.focusedDate.year() === this.focusedYear) return
 
-                        this.focusedDate = this.focusedDate.year(this.focusedYear)
+                        this.focusedDate = this.focusedDate.set('year', this.focusedYear)
                     }))
 
                     this.$watch('focusedDate', ((value) => {
@@ -158,15 +189,35 @@
                         })
                     }))
 
-                    let date = this.getSelectedDate()
+                    this.$watch('hour', ((value) => {
+                        this.hour = Number.isInteger(+value) && value >= 0 && value < 24 ? +value : dayjs().hour()
 
-                    if (date === null && this.required) {
-                        this.setValue(dayjs())
-                    }
+                        let date = this.getSelectedDate()
 
-                    this.setDisplayValue()
+                        if (date === null) return
 
-                    if (this.autofocus) this.openPicker()
+                        this.setValue(date.set('hour', value))
+                    }))
+
+                    this.$watch('minute', ((value) => {
+                        this.minute = Number.isInteger(+value) && value >= 0 && value < 60 ? +value : dayjs().minute()
+
+                        let date = this.getSelectedDate()
+
+                        if (date === null) return
+
+                        this.setValue(date.set('minute', value))
+                    }))
+
+                    this.$watch('second', ((value) => {
+                        this.second = Number.isInteger(+value) && value >= 0 && value < 60 ? +value : dayjs().second()
+
+                        let date = this.getSelectedDate()
+
+                        if (date === null) return
+
+                        this.setValue(date.set('second', value))
+                    }))
                 },
 
                 openPicker: function () {
@@ -206,9 +257,17 @@
                 },
 
                 setValue: function (date) {
-                    if (date === null && this.required) date = dayjs()
+                    if (date === null) {
+                        if (this.required) date = dayjs()
 
-                    this.value = date ? date.format(this.format) : null
+                        this.value = null
+                    } else {
+                        date = date.set('hour', this.hour)
+                        date = date.set('minute', this.minute)
+                        date = date.set('second', this.second)
+
+                        this.value = date.format(this.format)
+                    }
 
                     this.setDisplayValue()
                 },
@@ -229,13 +288,17 @@
 
 <div
     x-data="dateTimePicker({
+        afterDate: '{{ $afterDate }}',
         autofocus: {{ $autofocus ? 'true' : 'false' }},
+        beforeDate: '{{ $beforeDate }}',
         displayFormat: '{{ $displayFormat }}',
         format: '{{ $format }}',
         name: '{{ $name }}',
         placeholder: '{{ $placeholder }}',
         required: {{ $required ? 'true' : 'false' }},
+        time: {{ $time ? 'true' : 'false' }},
         @if (Str::of($nameAttribute)->startsWith('wire:model')) value: @entangle($name){{ Str::of($nameAttribute)->after('wire:model') }}, @endif
+        withoutSeconds: {{ $withoutSeconds ? 'true' : 'false' }},
     })"
     x-init="init()"
     x-on:click.away="closePicker()"
@@ -306,7 +369,7 @@
                     <input
                         type="number"
                         x-model.debounce="focusedYear"
-                        class="ml-1 text-right w-20 text-lg text-gray-600 font-normal border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
+                        class="ml-1 text-right w-20 text-lg text-gray-600 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
                     />
                 </div>
 
@@ -341,6 +404,34 @@
                         ></div>
                     </template>
                 </div>
+
+                @if ($time)
+                    <div class="flex items-center justify-center">
+                        <input
+                            type="number"
+                            x-model.debounce="hour"
+                            class="text-center w-16 text-xl text-gray-600 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
+                        />
+
+                        <span class="text-xl font-medium text-gray-600">:</span>
+
+                        <input
+                            type="number"
+                            x-model.debounce="minute"
+                            class="text-center w-16 text-xl text-gray-600 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
+                        />
+
+                        @unless ($withoutSeconds)
+                            <span class="text-xl font-medium text-gray-600">:</span>
+
+                            <input
+                                type="number"
+                                x-model.debounce="second"
+                                class="text-center w-16 text-xl text-gray-600 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
+                            />
+                        @endunless
+                    </div>
+                @endif
             </div>
         </div>
     @endunless
