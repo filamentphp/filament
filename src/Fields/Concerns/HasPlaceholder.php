@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\FieldConcerns;
+namespace Filament\Fields\Concerns;
 
 trait HasPlaceholder
 {

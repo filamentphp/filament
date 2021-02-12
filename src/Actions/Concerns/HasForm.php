@@ -1,16 +1,21 @@
 <?php
 
-namespace Filament\ComponentConcerns;
+namespace Filament\Actions\Concerns;
 
 use Filament\Fields\InputField;
 use Filament\Fields\Tab;
 use Filament\Form;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
+use Livewire\WithFileUploads;
 
 trait HasForm
 {
+    use WithFileUploads;
+
     public $record;
+
+    public $temporaryUploadedFiles = [];
 
     public function reset(...$properties)
     {
@@ -28,6 +33,19 @@ trait HasForm
             ->toArray();
 
         $this->fill($propertiesToFill);
+    }
+
+    public function getFilePreviewUrl($name)
+    {
+        $temporaryUploadedFile = $this->getPropertyValue(
+            Str::of($name)
+                ->ucfirst()
+                ->prepend('temporaryUploadedFiles.')
+        );
+
+        if ($temporaryUploadedFile) {
+
+        }
     }
 
     protected function getPropertyDefaults()

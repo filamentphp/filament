@@ -2,7 +2,7 @@
 
 namespace Filament\Http\Livewire\Auth;
 
-use Filament\ComponentConcerns;
+use Filament\Actions\Concerns;
 use Filament\Fields;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +12,7 @@ use Livewire\Component;
 
 class ResetPassword extends Component
 {
-    use ComponentConcerns\HasForm;
+    use Concerns\HasForm;
 
     public $email;
 

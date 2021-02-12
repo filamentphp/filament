@@ -2,14 +2,14 @@
 
 namespace Filament\Actions;
 
-use Filament\ComponentConcerns;
+use Filament\Actions\Concerns;
 use Livewire\Component;
 
-class ListResourceRecords extends Component
+class ListRecords extends Component
 {
-    use ComponentConcerns\HasTable;
-    use ComponentConcerns\HasTitle;
-    use ComponentConcerns\UsesResource;
+    use Concerns\HasTable;
+    use Concerns\HasTitle;
+    use Concerns\UsesResource;
 
     public $createRoute = 'create';
 

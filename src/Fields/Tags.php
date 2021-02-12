@@ -2,16 +2,16 @@
 
 namespace Filament\Fields;
 
-use Filament\FieldConcerns;
+use Filament\Fields\Concerns;
 
 class Tags extends InputField
 {
-    use FieldConcerns\CanBeAutofocused;
-    use FieldConcerns\CanBeCompared;
-    use FieldConcerns\CanBeDisabled;
-    use FieldConcerns\CanBeUnique;
-    use FieldConcerns\CanBeLengthConstrained;
-    use FieldConcerns\HasPlaceholder;
+    use Concerns\CanBeAutofocused;
+    use Concerns\CanBeCompared;
+    use Concerns\CanBeDisabled;
+    use Concerns\CanBeUnique;
+    use Concerns\CanBeLengthConstrained;
+    use Concerns\HasPlaceholder;
 
     public $separator = ',';
 

@@ -2,7 +2,7 @@
 
 namespace Filament\Http\Livewire;
 
-use Filament\ComponentConcerns;
+use Filament\Actions\Concerns;
 use Filament\Fields;
 use Filament\Form;
 use Filament\Models\FilamentUser;
@@ -12,9 +12,9 @@ use Livewire\Component;
 
 class EditAccount extends Component
 {
-    use ComponentConcerns\HasForm;
-    use ComponentConcerns\HasTitle;
-    use ComponentConcerns\SendsToastNotifications;
+    use Concerns\HasForm;
+    use Concerns\HasTitle;
+    use Concerns\SendsToastNotifications;
 
     public $newPassword;
 

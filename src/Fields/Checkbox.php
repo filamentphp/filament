@@ -2,10 +2,10 @@
 
 namespace Filament\Fields;
 
-use Filament\FieldConcerns;
+use Filament\Fields\Concerns;
 
 class Checkbox extends InputField
 {
-    use FieldConcerns\CanBeAutofocused;
-    use FieldConcerns\CanBeDisabled;
+    use Concerns\CanBeAutofocused;
+    use Concerns\CanBeDisabled;
 }

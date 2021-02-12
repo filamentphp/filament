@@ -2,15 +2,15 @@
 
 namespace Filament\Fields;
 
-use Filament\FieldConcerns;
+use Filament\Fields\Concerns;
 
 class RichEditor extends InputField
 {
-    use FieldConcerns\CanBeAutofocused;
-    use FieldConcerns\CanBeCompared;
-    use FieldConcerns\CanBeDisabled;
-    use FieldConcerns\CanBeUnique;
-    use FieldConcerns\HasPlaceholder;
+    use Concerns\CanBeAutofocused;
+    use Concerns\CanBeCompared;
+    use Concerns\CanBeDisabled;
+    use Concerns\CanBeUnique;
+    use Concerns\HasPlaceholder;
 
     public $toolbarButtons = [
         'bold',

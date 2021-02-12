@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\ComponentConcerns;
+namespace Filament\Actions\Concerns;
 
 trait SendsToastNotifications
 {

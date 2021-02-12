@@ -2,15 +2,15 @@
 
 namespace Filament\Actions;
 
-use Filament\ComponentConcerns;
+use Filament\Actions\Concerns;
 use Livewire\Component;
 
-class CreateResourceRecord extends Component
+class CreateRecord extends Component
 {
-    use ComponentConcerns\HasForm;
-    use ComponentConcerns\HasTitle;
-    use ComponentConcerns\SendsToastNotifications;
-    use ComponentConcerns\UsesResource;
+    use Concerns\HasForm;
+    use Concerns\HasTitle;
+    use Concerns\SendsToastNotifications;
+    use Concerns\UsesResource;
 
     public $record;
 
