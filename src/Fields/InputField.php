@@ -2,17 +2,11 @@
 
 namespace Filament\Fields;
 
-use Filament\Fields\Concerns;
 use Illuminate\Support\Str;
 
 class InputField extends Field
 {
-    use Concerns\HasId;
-    use Concerns\HasLabel;
-
     public $default = null;
-
-    public $errorKey;
 
     public $extraAttributes = [];
 
@@ -42,8 +36,6 @@ class InputField extends Field
     {
         $this->name = $name;
 
-        $this->errorKey($this->name);
-
         $this->id(
             (string) Str::of($this->name)
                 ->replace('.', '-')
@@ -58,14 +50,7 @@ class InputField extends Field
                 ->ucfirst(),
         );
 
-        $this->rules(['nullable']);
-    }
-
-    public function errorKey($errorKey)
-    {
-        $this->errorKey = $errorKey;
-
-        return $this;
+        $this->addRules([$this->name => ['nullable']]);
     }
 
     public function rules($conditions)

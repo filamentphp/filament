@@ -1,5 +1,5 @@
 <x-filament::field-group
-    :errorKey="$field->errorKey"
+    :error-key="$field->name"
     :for="$field->id"
     :help-message="__($field->helpMessage)"
     :hint="__($field->hint)"
@@ -10,7 +10,7 @@
         :autofocus="$field->autofocus"
         :disabled="$field->disabled"
         :display-format="convert_date_format($field->displayFormat)->to('day.js')"
-        :error-key="$field->errorKey"
+        :error-key="$field->name"
         :extra-attributes="$field->extraAttributes"
         :format="convert_date_format($field->format)->to('day.js')"
         :id="$field->id"

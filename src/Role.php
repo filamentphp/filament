@@ -22,7 +22,7 @@ abstract class Role
     {
         if (static::$label) return static::$label;
 
-        return Str::of(class_basename(static::class))
+        return (string) Str::of(class_basename(static::class))
             ->beforeLast('Role')
             ->kebab()
             ->replace('-', ' ');

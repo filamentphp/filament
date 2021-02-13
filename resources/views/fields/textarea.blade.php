@@ -1,5 +1,5 @@
 <x-filament::field-group
-    :errorKey="$field->errorKey"
+    :error-key="$field->name"
     :for="$field->id"
     :help-message="__($field->helpMessage)"
     :hint="__($field->hint)"
@@ -10,7 +10,7 @@
         :autocomplete="$field->autocomplete"
         :autofocus="$field->autofocus"
         :disabled="$field->disabled"
-        :error-key="$field->errorKey"
+        :error-key="$field->name"
         :extra-attributes="$field->extraAttributes"
         :id="$field->id"
         :name="$field->name"

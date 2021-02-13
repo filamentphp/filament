@@ -5,14 +5,15 @@ namespace Filament\Http\Livewire\Auth;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Concerns;
 use Filament\Fields;
+use Filament\HasForm;
 use Illuminate\Support\Facades\Password;
 use Livewire\Component;
 
 class RequestPassword extends Component
 {
-    use Concerns\HasForm;
     use Concerns\HasTitle;
     use Concerns\SendsToastNotifications;
+    use HasForm;
     use WithRateLimiting;
 
     public $email;

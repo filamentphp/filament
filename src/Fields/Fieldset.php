@@ -2,17 +2,19 @@
 
 namespace Filament\Fields;
 
-use Filament\Fields\Concerns;
+use Illuminate\Support\Str;
 
 class Fieldset extends Field
 {
-    use Concerns\HasLabel;
-
     public $columns = 2;
 
     public static function make($label = null)
     {
-        return (new static())->label($label);
+        $fieldset = (new static())->label($label);
+
+        if ($label) $fieldset = $fieldset->id(Str::slug($label));
+
+        return $fieldset;
     }
 
     public function columns($columns)

@@ -1,14 +1,14 @@
 <?php
 
-namespace Filament\Actions\Concerns;
+namespace Filament;
 
-use Exception;
 use Filament\Fields\File;
 use Filament\Fields\InputField;
 use Filament\Fields\Tab;
-use Filament\Form;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\WithFileUploads;
@@ -23,9 +23,7 @@ trait HasForm
 
     public static function getTemporaryUploadedFilePropertyName($fieldName)
     {
-        return Str::of($fieldName)
-            ->ucfirst()
-            ->prepend('temporaryUploadedFiles.');
+        return "temporaryUploadedFiles.{$fieldName}";
     }
 
     public function reset(...$properties)
@@ -58,26 +56,20 @@ trait HasForm
         );
     }
 
-    public function getUploadedFilePath($name)
-    {
-        $temporaryUploadedFile = $this->getTemporaryUploadedFile($name);
-
-        if ($temporaryUploadedFile) {
-            try {
-                return $temporaryUploadedFile->temporaryUrl();
-            } catch (Exception $exception) {
-                return null;
-            }
-        }
-
-        return $this->getPropertyValue($name);
-    }
-
     public function getTemporaryUploadedFile($name)
     {
         return $this->getPropertyValue(
             static::getTemporaryUploadedFilePropertyName($name)
         );
+    }
+
+    public function getUploadedFileUrl($name, $disk)
+    {
+        $path = $this->getPropertyValue($name);
+
+        if (! $path) return null;
+
+        return Storage::disk($disk)->url($path);
     }
 
     public function storeTemporaryUploadedFiles()
@@ -90,16 +82,10 @@ trait HasForm
 
             $storeMethod = $field->visibility === 'public' ? 'storePublicly' : 'store';
             $path = $temporaryUploadedFile->{$storeMethod}($field->directory, $field->disk);
-            $url = Storage::disk($field->disk)->url($path);
-            $this->syncInput($field->name, $url, false);
+            $this->syncInput($field->name, $path, false);
 
             $this->clearTemporaryUploadedFile($field->name);
         }
-    }
-
-    public function canRemoveUploadedFile($name)
-    {
-        return (bool) $this->getPropertyValue($name) || $this->getTemporaryUploadedFile($name);
     }
 
     public function clearTemporaryUploadedFile($name)
@@ -129,24 +115,85 @@ trait HasForm
                     );
                 });
 
-            if ($fieldToFocus) {
-                $possibleTab = $fieldToFocus->parentField;
+            if ($fieldToFocus) $this->focusTabbedField($fieldToFocus);
 
-                while ($possibleTab) {
-                    if ($possibleTab instanceof Tab) {
-                        $this->dispatchBrowserEvent(
-                            'switch-tab',
-                            $possibleTab->parentField->id . '.' . $possibleTab->id,
-                        );
+            throw $exception;
+        }
+    }
 
-                        break;
-                    }
+    public function validateOnly($field, $rules = null, $messages = [], $attributes = [])
+    {
+        try {
+            return parent::validateOnly($field, $rules, $messages, $attributes);
+        } catch (ValidationException $exception) {
+            $fieldToFocus = collect($this->getForm()->getFields())
+                ->first(function ($field) use ($exception) {
+                    return ($field instanceof InputField &&
+                        array_key_exists($field->name, $exception->validator->failed())
+                    );
+                });
 
-                    $possibleTab = $possibleTab->parentField;
+            if ($fieldToFocus) $this->focusTabbedField($fieldToFocus);
+
+            throw $exception;
+        }
+    }
+
+    protected function validateTemporaryUploadedFiles()
+    {
+        try {
+            $rules = collect($this->getRules())
+                ->filter(function ($conditions, $field) {
+                    return Str::of($field)->startsWith('temporaryUploadedFiles.');
+                })
+                ->toArray();
+
+            parent::validate($rules);
+        } catch (ValidationException $exception) {
+            $fieldToFocus = collect($this->getForm()->getFields())
+                ->first(function ($field) use ($exception) {
+                    return (
+                        $field instanceof InputField &&
+                        array_key_exists(
+                            static::getTemporaryUploadedFilePropertyName($field->name),
+                            $exception->validator->failed()
+                        )
+                    );
+                });
+
+            if ($fieldToFocus) $this->focusTabbedField($fieldToFocus);
+
+            $this->setErrorBag($exception->validator->errors());
+
+            foreach ($this->getErrorBag()->messages() as $field => $messages) {
+                $field = (string) Str::of($field)->after('temporaryUploadedFiles.');
+
+                foreach ($messages as $message) {
+                    $this->addError($field, $message);
                 }
             }
 
             throw $exception;
+        }
+    }
+
+    protected function focusTabbedField($field)
+    {
+        if ($field) {
+            $possibleTab = $field->parentField;
+
+            while ($possibleTab) {
+                if ($possibleTab instanceof Tab) {
+                    $this->dispatchBrowserEvent(
+                        'switch-tab',
+                        $possibleTab->parentField->id . '.' . $possibleTab->id,
+                    );
+
+                    break;
+                }
+
+                $possibleTab = $possibleTab->parentField;
+            }
         }
     }
 
@@ -157,11 +204,9 @@ trait HasForm
 
     protected function getFields()
     {
-        $fields = property_exists($this, 'resource') ? static::$resource::fields() : [];
+        if (method_exists($this, 'fields')) return $this->fields();
 
-        if (method_exists($this, 'fields')) return array_merge($fields, $this->fields());
-
-        return $fields;
+        return [];
     }
 
     protected function fillWithFormDefaults()

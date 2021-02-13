@@ -3,14 +3,15 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns;
+use Filament\HasForm;
 use Livewire\Component;
 
 class EditRecord extends Component
 {
-    use Concerns\HasForm;
     use Concerns\HasTitle;
     use Concerns\SendsToastNotifications;
     use Concerns\UsesResource;
+    use HasForm;
 
     public $indexRoute = 'index';
 
@@ -28,9 +29,11 @@ class EditRecord extends Component
 
     public function submit()
     {
-        $this->validate();
+        $this->validateTemporaryUploadedFiles();
 
         $this->storeTemporaryUploadedFiles();
+
+        $this->validate();
 
         $this->record->save();
 

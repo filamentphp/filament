@@ -14,6 +14,10 @@ class Field
 
     public $hidden = false;
 
+    public $id;
+
+    public $label;
+
     public $parentField;
 
     protected $context;
@@ -151,7 +155,7 @@ class Field
         $attributes = [];
 
         if (property_exists($this, 'name') && property_exists($this, 'label')) {
-            $label = Str::of($this->label)->lower();
+            $label = Str::lower($this->label);
 
             $attributes[$this->name] = $label;
         }
@@ -159,6 +163,20 @@ class Field
         $attributes = array_merge($attributes, $this->getForm()->getValidationAttributes());
 
         return $attributes;
+    }
+
+    public function id($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public function label($label)
+    {
+        $this->label = $label;
+
+        return $this;
     }
 
     public function only($contexts, $callback = null)
