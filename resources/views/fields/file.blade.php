@@ -75,7 +75,12 @@
             })
         "
         wire:ignore
+        {{ Filament\format_attributes($field->extraAttributes) }}
     >
-        <input x-ref="input" type="file" />
+        <input
+            x-ref="input"
+            {{ $field->disabled ? 'disabled' : '' }}
+            type="file"
+        />
     </div>
 </x-filament::field-group>
