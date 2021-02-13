@@ -8,8 +8,6 @@ class Form
 
     public $fields = [];
 
-    public $hooks = [];
-
     public $rules = [];
 
     public function __construct($fields = [], $context = null, $record = null)
@@ -45,34 +43,6 @@ class Form
                     ->fields($field->getForm()->passRecordToFields($record));
             })
             ->toArray();
-    }
-
-    public function callHooks($action, $event)
-    {
-        $hooks = $this->getHooks();
-
-        if (! array_key_exists($event, $hooks)) return $action;
-
-        collect($hooks[$event])
-            ->filter(fn ($hook) => is_callable($hook))
-            ->each(function ($hook) use (&$action) {
-                $action = $hook($action);
-            });
-
-        return $action;
-    }
-
-    public function getHooks()
-    {
-        $hooks = $this->hooks;
-
-        foreach ($this->fields as $field) {
-            foreach ($field->getHooks as $event => $callbacks) {
-                $hooks[$event] = array_merge($hooks[$event] ?? [], $callbacks);
-            }
-        }
-
-        return $hooks;
     }
 
     public function columns($columns)
@@ -126,11 +96,6 @@ class Form
         }
 
         return $attributes;
-    }
-
-    public function hooks($hooks)
-    {
-        $this->hooks = $hooks;
     }
 
     public function rules($rules)

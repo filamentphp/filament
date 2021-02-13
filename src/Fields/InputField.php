@@ -10,7 +10,7 @@ class InputField extends Field
     use Concerns\HasId;
     use Concerns\HasLabel;
 
-    public $default = '';
+    public $default = null;
 
     public $errorKey;
 

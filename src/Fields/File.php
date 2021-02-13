@@ -2,20 +2,42 @@
 
 namespace Filament\Fields;
 
+use Filament\Fields\Concerns;
+
 class File extends InputField
 {
-    public $multiple;
+    use Concerns\CanBeDisabled;
 
-    public function multiple()
+    public $directory;
+
+    public $disk;
+
+    public $visibility = 'public';
+
+    public function __construct($name)
     {
-        $this->multiple = true;
+        parent::__construct($name);
+
+        $this->disk(config('filesystems.default'));
+    }
+
+    public function directory($directory)
+    {
+        $this->directory = $directory;
 
         return $this;
     }
 
-    public function single()
+    public function disk($disk)
     {
-        $this->multiple = false;
+        $this->disk = $disk;
+
+        return $this;
+    }
+
+    public function visibility($visibility)
+    {
+        $this->visibility = $visibility;
 
         return $this;
     }

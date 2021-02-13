@@ -14,8 +14,6 @@ class Field
 
     public $hidden = false;
 
-    public $hooks = [];
-
     public $parentField;
 
     protected $context;
@@ -125,17 +123,6 @@ class Field
         return new Form($this->fields, $this->context, $this->record);
     }
 
-    public function getHooks()
-    {
-        $hooks = $this->hooks;
-
-        foreach ($this->getForm()->getHooks() as $event => $callbacks) {
-            $hooks[$event] = array_merge($hooks[$event] ?? [], $callbacks);
-        }
-
-        return $hooks;
-    }
-
     public function getRules()
     {
         if ($this->hidden) return [];
@@ -213,15 +200,6 @@ class Field
     public function record($record)
     {
         $this->record = $record;
-
-        return $this;
-    }
-
-    public function registerHook($event, $callback)
-    {
-        if (! array_key_exists($event, $this->hooks)) $this->hooks[$event] = [];
-
-        $this->hooks[$event][] = $callback;
 
         return $this;
     }

@@ -30,6 +30,8 @@ class EditRecord extends Component
     {
         $this->validate();
 
+        $this->storeTemporaryUploadedFiles();
+
         $this->record->save();
 
         $this->notify('Saved!');
@@ -37,7 +39,7 @@ class EditRecord extends Component
 
     public function render()
     {
-        return view('filament::actions.edit-resource-record', [
+        return view('filament::actions.edit-record', [
             'title' => static::getTitle(),
         ])->layout('filament::components.layouts.app');
     }

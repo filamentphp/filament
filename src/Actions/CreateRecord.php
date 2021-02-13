@@ -27,6 +27,8 @@ class CreateRecord extends Component
     {
         $this->validate();
 
+        $this->storeTemporaryUploadedFiles();
+
         $record = static::getModel()::create($this->record);
 
         $this->redirect($this->getResource()::route($this->showRoute, [
@@ -36,7 +38,7 @@ class CreateRecord extends Component
 
     public function render()
     {
-        return view('filament::actions.create-resource-record', [
+        return view('filament::actions.create-record', [
             'title' => static::getTitle(),
         ])->layout('filament::components.layouts.app');
     }
