@@ -12,7 +12,7 @@ trait CanBeLengthConstrained
     {
         $this->maxLength = $length;
 
-        $this->addRules([$this->name => ["max:$length"]]);
+        $this->addRules([$this->name => ["max:{$this->maxLength}"]]);
 
         return $this;
     }
@@ -21,7 +21,7 @@ trait CanBeLengthConstrained
     {
         $this->minLength = $length;
 
-        $this->addRules([$this->name => ["min:$length"]]);
+        $this->addRules([$this->name => ["min:{$this->minLength}"]]);
 
         return $this;
     }

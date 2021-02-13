@@ -5,13 +5,14 @@ namespace Filament\Http\Livewire\Auth;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Concerns;
 use Filament\Fields;
+use Filament\HasForm;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Login extends Component
 {
-    use Concerns\HasForm;
     use Concerns\HasTitle;
+    use HasForm;
     use WithRateLimiting;
 
     public $email;

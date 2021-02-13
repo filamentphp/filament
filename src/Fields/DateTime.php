@@ -2,18 +2,8 @@
 
 namespace Filament\Fields;
 
-use Filament\Fields\Concerns;
-
-class DateTime extends InputField
+class DateTime extends Date
 {
-    use Concerns\CanBeAutofocused;
-    use Concerns\CanBeCompared;
-    use Concerns\CanBeDateConstrained;
-    use Concerns\CanBeDisabled;
-    use Concerns\CanBeUnique;
-    use Concerns\HasDateFormats;
-    use Concerns\HasPlaceholder;
-
     public $withoutSeconds = false;
 
     protected $defaultDisplayFormat = 'F j, Y H:i:s';

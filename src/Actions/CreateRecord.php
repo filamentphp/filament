@@ -3,14 +3,15 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns;
+use Filament\HasForm;
 use Livewire\Component;
 
 class CreateRecord extends Component
 {
-    use Concerns\HasForm;
     use Concerns\HasTitle;
     use Concerns\SendsToastNotifications;
     use Concerns\UsesResource;
+    use HasForm;
 
     public $record;
 
@@ -25,9 +26,11 @@ class CreateRecord extends Component
 
     public function submit()
     {
-        $this->validate();
+        $this->validateTemporaryUploadedFiles();
 
         $this->storeTemporaryUploadedFiles();
+
+        $this->validate();
 
         $record = static::getModel()::create($this->record);
 

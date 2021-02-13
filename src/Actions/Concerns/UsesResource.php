@@ -24,4 +24,9 @@ trait UsesResource
     {
         return new ResourceRoute(static::class, $uri, $name);
     }
+
+    public function fields()
+    {
+        return static::getResource()::fields();
+    }
 }

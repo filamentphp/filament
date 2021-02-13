@@ -20,7 +20,7 @@ class Text extends InputField
     {
         $this->type('email');
 
-        $this->addRules([$this->name => 'email']);
+        $this->addRules([$this->name => ['email']]);
 
         return $this;
     }
@@ -34,14 +34,14 @@ class Text extends InputField
 
     public function max($value)
     {
-        $this->addRules([$this->name => "max:$value"]);
+        $this->addRules([$this->name => ["max:$value"]]);
 
         return $this;
     }
 
     public function min($value)
     {
-        $this->addRules([$this->name => "min:$value"]);
+        $this->addRules([$this->name => ["min:$value"]]);
 
         return $this;
     }

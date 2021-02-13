@@ -2,19 +2,15 @@
 
 namespace Filament\Fields;
 
-use Filament\Fields\Concerns;
 use Illuminate\Support\Str;
 
 class Tabs extends Field
 {
-    use Concerns\HasId;
-    use Concerns\HasLabel;
-
     public static function make($label = null)
     {
         $tabs = (new static())->label($label);
 
-        if ($label) $tabs = $tabs->id((string) Str::of($label)->slug());
+        if ($label) $tabs = $tabs->id(Str::slug($label));
 
         return $tabs;
     }
