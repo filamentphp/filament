@@ -21,6 +21,13 @@ trait HasForm
 
     public $temporaryUploadedFiles = [];
 
+    public static function getTemporaryUploadedFilePropertyName($fieldName)
+    {
+        return Str::of($fieldName)
+            ->ucfirst()
+            ->prepend('temporaryUploadedFiles.');
+    }
+
     public function reset(...$properties)
     {
         parent::reset(...$properties);
@@ -39,11 +46,6 @@ trait HasForm
         $this->fill($propertiesToFill);
     }
 
-    protected function getPropertyDefaults()
-    {
-        return $this->getForm()->getDefaults();
-    }
-
     public function getForm()
     {
         $record = null;
@@ -54,15 +56,6 @@ trait HasForm
             static::class,
             $record,
         );
-    }
-
-    protected function getFields()
-    {
-        $fields = property_exists($this, 'resource') ? static::$resource::fields() : [];
-
-        if (method_exists($this, 'fields')) return array_merge($fields, $this->fields());
-
-        return $fields;
     }
 
     public function getUploadedFilePath($name)
@@ -85,13 +78,6 @@ trait HasForm
         return $this->getPropertyValue(
             static::getTemporaryUploadedFilePropertyName($name)
         );
-    }
-
-    public static function getTemporaryUploadedFilePropertyName($fieldName)
-    {
-        return Str::of($fieldName)
-            ->ucfirst()
-            ->prepend('temporaryUploadedFiles.');
     }
 
     public function storeTemporaryUploadedFiles()
@@ -162,6 +148,20 @@ trait HasForm
 
             throw $exception;
         }
+    }
+
+    protected function getPropertyDefaults()
+    {
+        return $this->getForm()->getDefaults();
+    }
+
+    protected function getFields()
+    {
+        $fields = property_exists($this, 'resource') ? static::$resource::fields() : [];
+
+        if (method_exists($this, 'fields')) return array_merge($fields, $this->fields());
+
+        return $fields;
     }
 
     protected function fillWithFormDefaults()

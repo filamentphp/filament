@@ -33,6 +33,11 @@ class InputField extends Field
         $this->name($name);
     }
 
+    public static function make($name)
+    {
+        return new static($name);
+    }
+
     public function name($name)
     {
         $this->name = $name;
@@ -68,11 +73,6 @@ class InputField extends Field
         $this->rules = [$this->name => $conditions];
 
         return $this;
-    }
-
-    public static function make($name)
-    {
-        return new static($name);
     }
 
     public function default($default)

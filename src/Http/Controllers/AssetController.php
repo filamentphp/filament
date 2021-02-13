@@ -11,6 +11,21 @@ class AssetController
         return $this->pretendResponseIsFile('css/filament.css', 'text/css; charset=utf-8');
     }
 
+    public function cssMap()
+    {
+        return $this->pretendResponseIsFile('css/filament.css.map', 'application/javascript; charset=utf-8');
+    }
+
+    public function js()
+    {
+        return $this->pretendResponseIsFile('js/filament.js', 'application/javascript; charset=utf-8');
+    }
+
+    public function jsMap()
+    {
+        return $this->pretendResponseIsFile('js/filament.js.map', 'application/javascript; charset=utf-8');
+    }
+
     protected function pretendResponseIsFile($file, $contentType)
     {
         $path = Filament::distPath($file);
@@ -48,20 +63,5 @@ class AssetController
     protected function httpDate($timestamp)
     {
         return sprintf('%s GMT', gmdate('D, d M Y H:i:s', $timestamp));
-    }
-
-    public function cssMap()
-    {
-        return $this->pretendResponseIsFile('css/filament.css.map', 'application/javascript; charset=utf-8');
-    }
-
-    public function js()
-    {
-        return $this->pretendResponseIsFile('js/filament.js', 'application/javascript; charset=utf-8');
-    }
-
-    public function jsMap()
-    {
-        return $this->pretendResponseIsFile('js/filament.js.map', 'application/javascript; charset=utf-8');
     }
 }

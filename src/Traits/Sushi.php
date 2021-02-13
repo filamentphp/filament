@@ -59,6 +59,11 @@ trait Sushi
         }
     }
 
+    public static function resolveConnection($connection = null)
+    {
+        return static::$sushiConnection;
+    }
+
     protected static function setSqliteConnection($database)
     {
         static::$sushiConnection = app(ConnectionFactory::class)->make([
@@ -128,11 +133,6 @@ trait Sushi
                 $table->timestamps();
             }
         });
-    }
-
-    public static function resolveConnection($connection = null)
-    {
-        return static::$sushiConnection;
     }
 
     public function getSchema()
