@@ -97,6 +97,11 @@ trait HasForm
         }
     }
 
+    public function canRemoveUploadedFile($name)
+    {
+        return (bool) $this->getPropertyValue($name) || $this->getTemporaryUploadedFile($name);
+    }
+
     public function clearTemporaryUploadedFile($name)
     {
         $this->syncInput(
@@ -104,11 +109,6 @@ trait HasForm
             null,
             false,
         );
-    }
-
-    public function canRemoveUploadedFile($name)
-    {
-        return (bool) $this->getPropertyValue($name) || $this->getTemporaryUploadedFile($name);
     }
 
     public function removeUploadedFile($name)

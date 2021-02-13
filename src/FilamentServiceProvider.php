@@ -35,6 +35,13 @@ class FilamentServiceProvider extends ServiceProvider
         $this->bootPublishing();
     }
 
+    public function register()
+    {
+        $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
+
+        $this->registerProviders();
+    }
+
     protected function bootAuthConfiguration()
     {
         $this->app['config']->set('auth.guards.filament', [
@@ -153,13 +160,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/filament'),
         ], 'filament-views');
-    }
-
-    public function register()
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
-
-        $this->registerProviders();
     }
 
     protected function registerProviders()
