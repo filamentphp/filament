@@ -25,6 +25,13 @@ class Text extends InputField
         return $this;
     }
 
+    public function type($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
     public function max($value)
     {
         $this->addRules([$this->name => "max:$value"]);
@@ -42,13 +49,6 @@ class Text extends InputField
     public function tel()
     {
         $this->type('tel');
-
-        return $this;
-    }
-
-    public function type($type)
-    {
-        $this->type = $type;
 
         return $this;
     }

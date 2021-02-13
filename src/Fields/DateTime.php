@@ -14,6 +14,8 @@ class DateTime extends InputField
     use Concerns\HasDateFormats;
     use Concerns\HasPlaceholder;
 
+    public $withoutSeconds = false;
+
     protected $defaultDisplayFormat = 'F j, Y H:i:s';
 
     protected $defaultDisplayFormatWithoutSeconds = 'F j, Y H:i';
@@ -21,8 +23,6 @@ class DateTime extends InputField
     protected $defaultFormat = 'Y-m-d H:i:s';
 
     protected $defaultFormatWithoutSeconds = 'Y-m-d H:i';
-
-    public $withoutSeconds = false;
 
     public function __construct($name)
     {

@@ -39,72 +39,6 @@ trait HasForm
         $this->fill($propertiesToFill);
     }
 
-    public static function getTemporaryUploadedFilePropertyName($fieldName)
-    {
-        return Str::of($fieldName)
-            ->ucfirst()
-            ->prepend('temporaryUploadedFiles.');
-    }
-
-    public function getTemporaryUploadedFile($name)
-    {
-        return $this->getPropertyValue(
-            static::getTemporaryUploadedFilePropertyName($name)
-        );
-    }
-
-    public function clearTemporaryUploadedFile($name)
-    {
-        $this->syncInput(
-            static::getTemporaryUploadedFilePropertyName($name),
-            null,
-            false,
-        );
-    }
-
-    public function getUploadedFilePath($name)
-    {
-        $temporaryUploadedFile = $this->getTemporaryUploadedFile($name);
-
-        if ($temporaryUploadedFile) {
-            try {
-                return $temporaryUploadedFile->temporaryUrl();
-            } catch (Exception $exception) {
-                return null;
-            }
-        }
-
-        return $this->getPropertyValue($name);
-    }
-
-    public function storeTemporaryUploadedFiles()
-    {
-        foreach ($this->getForm()->getFields() as $field) {
-            if (! $field instanceof File) continue;
-
-            $temporaryUploadedFile = $this->getTemporaryUploadedFile($field->name);
-            if (! $temporaryUploadedFile) continue;
-
-            $storeMethod = $field->visibility === 'public' ? 'storePublicly' : 'store';
-            $path = $temporaryUploadedFile->{$storeMethod}($field->directory, $field->disk);
-            $url = Storage::disk($field->disk)->url($path);
-            $this->syncInput($field->name, $url, false);
-
-            $this->clearTemporaryUploadedFile($field->name);
-        }
-    }
-
-    public function canRemoveUploadedFile($name)
-    {
-        return (bool) $this->getPropertyValue($name) || $this->getTemporaryUploadedFile($name);
-    }
-
-    public function removeUploadedFile($name)
-    {
-        $this->syncInput($name, null, false);
-        $this->clearTemporaryUploadedFile($name);
-    }
-
     protected function getPropertyDefaults()
     {
         return $this->getForm()->getDefaults();
@@ -129,6 +63,72 @@ trait HasForm
         if (method_exists($this, 'fields')) return array_merge($fields, $this->fields());
 
         return $fields;
+    }
+
+    public function getUploadedFilePath($name)
+    {
+        $temporaryUploadedFile = $this->getTemporaryUploadedFile($name);
+
+        if ($temporaryUploadedFile) {
+            try {
+                return $temporaryUploadedFile->temporaryUrl();
+            } catch (Exception $exception) {
+                return null;
+            }
+        }
+
+        return $this->getPropertyValue($name);
+    }
+
+    public function getTemporaryUploadedFile($name)
+    {
+        return $this->getPropertyValue(
+            static::getTemporaryUploadedFilePropertyName($name)
+        );
+    }
+
+    public static function getTemporaryUploadedFilePropertyName($fieldName)
+    {
+        return Str::of($fieldName)
+            ->ucfirst()
+            ->prepend('temporaryUploadedFiles.');
+    }
+
+    public function storeTemporaryUploadedFiles()
+    {
+        foreach ($this->getForm()->getFields() as $field) {
+            if (! $field instanceof File) continue;
+
+            $temporaryUploadedFile = $this->getTemporaryUploadedFile($field->name);
+            if (! $temporaryUploadedFile) continue;
+
+            $storeMethod = $field->visibility === 'public' ? 'storePublicly' : 'store';
+            $path = $temporaryUploadedFile->{$storeMethod}($field->directory, $field->disk);
+            $url = Storage::disk($field->disk)->url($path);
+            $this->syncInput($field->name, $url, false);
+
+            $this->clearTemporaryUploadedFile($field->name);
+        }
+    }
+
+    public function clearTemporaryUploadedFile($name)
+    {
+        $this->syncInput(
+            static::getTemporaryUploadedFilePropertyName($name),
+            null,
+            false,
+        );
+    }
+
+    public function canRemoveUploadedFile($name)
+    {
+        return (bool) $this->getPropertyValue($name) || $this->getTemporaryUploadedFile($name);
+    }
+
+    public function removeUploadedFile($name)
+    {
+        $this->syncInput($name, null, false);
+        $this->clearTemporaryUploadedFile($name);
     }
 
     public function validate($rules = null, $messages = [], $attributes = [])

@@ -21,16 +21,16 @@ class File extends InputField
         $this->disk(config('filesystems.default'));
     }
 
-    public function directory($directory)
+    public function disk($disk)
     {
-        $this->directory = $directory;
+        $this->disk = $disk;
 
         return $this;
     }
 
-    public function disk($disk)
+    public function directory($directory)
     {
-        $this->disk = $disk;
+        $this->directory = $directory;
 
         return $this;
     }
