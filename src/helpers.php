@@ -35,14 +35,3 @@ if (! function_exists('Filament\get_image_url')) {
         return route('filament.image', ['path' => ltrim($urlBuilder->getUrl($path, $manipulations), '/')]);
     }
 }
-
-if (! function_exists('Filament\is_image')) {
-    function is_image($file)
-    {
-        return in_array(Filament::storage()->getMimeType($file), [
-            'image/jpeg',
-            'image/gif',
-            'image/png',
-        ], true);
-    }
-}

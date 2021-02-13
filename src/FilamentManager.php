@@ -2,7 +2,6 @@
 
 namespace Filament;
 
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 
 class FilamentManager
@@ -48,13 +47,6 @@ class FilamentManager
     public function basePath($path = '')
     {
         return __DIR__ . '/../' . ltrim($path, '/');
-    }
-
-    public function storage()
-    {
-        if ($this->storage) return $this->storage;
-
-        return $this->storage = Storage::disk(config('filament.storage_disk'));
     }
 
     public function styles()

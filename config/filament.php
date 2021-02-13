@@ -68,18 +68,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Storage
-    |--------------------------------------------------------------------------
-    |
-    | This is the storage disk Filament will use to put media, you may
-    | use any of the disks defined in the `config/filesystems.php`.
-    |
-    */
-
-    'storage_disk' => env('FILAMENT_STORAGE_DISK', 'public'),
-
-    /*
-    |--------------------------------------------------------------------------
     | Cache
     |--------------------------------------------------------------------------
     |
