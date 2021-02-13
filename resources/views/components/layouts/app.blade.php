@@ -13,7 +13,7 @@
             <header role="banner"
                     tabindex="-1"
                     id="banner"
-                    class="flex-grow overflow-y-auto bg-gray-900 text-gray-500 flex flex-col space-y-4 shadow-lg md:shadow-none">
+                    class="flex-grow overflow-y-auto bg-gray-900 text-gray-500 flex flex-col space-y-10 shadow-lg md:shadow-none">
                 <a
                     href="{{ url('/') }}"
                     rel="home"
@@ -21,16 +21,16 @@
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    <div class="flex-shrink-0 rounded w-8 h-8 bg-red-800 text-white flex items-center justify-center transition-colors duration-200 group-hover:bg-red-700">
+                    <div class="flex-shrink-0 rounded w-8 h-8 bg-orange-800 text-white flex items-center justify-center transition-colors duration-200 group-hover:bg-orange-700">
                         <span class="font-bold italic">{{ substr(config('app.name'), 0, 1) }}</span>
                     </div>
 
-                    <span class="text-sm leading-tight font-bold transition-colors duration-200 group-hover:text-white">{{ config('app.name') }}</span>
+                    <span class="leading-tight font-medium transition-colors duration-200 group-hover:text-white">{{ config('app.name') }}</span>
                 </a>
 
                 <x-filament-nav class="flex-grow px-4 overflow-y-auto" />
                 <x-filament::dropdown
-                    class="w-full text-left flex-grow flex items-center px-4 py-3 space-x-3 transition-colors duration-200 hover:text-white hover:bg-gray-800">
+                    class="w-full text-left flex-grow flex items-center p-4 space-x-3 transition-colors duration-200 hover:text-white hover:bg-gray-800">
                     <x-slot name="button">
                         <x-filament-avatar :user="Auth::user()" :size="32" class="flex-shrink-0 w-8 h-8 rounded-full" />
                         <span class="flex-grow text-sm leading-tight font-medium">{{ Auth::user()->name }}</span>

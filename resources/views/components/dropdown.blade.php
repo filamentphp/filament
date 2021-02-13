@@ -4,30 +4,35 @@
 
 <div
     class="relative"
-    x-data="{ menuIsOpen: false, popper: null }"
+    x-data="{ open: false, popper: null }"
     x-cloak
-    x-init="popper = createPopper($refs.btn, $refs.menu, { modifiers: [flip, preventOverflow] })"
-    @click.away="menuIsOpen = false"
+    x-init="popper = createPopper($refs.btn, $refs.menu, { 
+        modifiers: [
+            flip, 
+            preventOverflow,
+        ]
+    })"
+    @click.away="open = false"
     wire:ignore
 >
     <button
         type="button"
         x-ref="btn"
-        @click="menuIsOpen = !menuIsOpen; $nextTick(() => popper.update())"
+        @click="open = !open; $nextTick(() => popper.update())"
         aria-haspopup="true"
         aria-controls="{{ $id }}"
-        :aria-expanded="menuIsOpen"
+        :aria-expanded="open"
         {{ $attributes }}
     >
         {{ $button }}
     </button>
     <div
-        x-show="menuIsOpen"
+        x-show="open"
         x-ref="menu"
         role="menu"
         id="{{ $id }}"
         tabindex="-1"
-        class="bg-white shadow-sm rounded text-sm leading-tight text-left overflow-hidden divide-y divide-gray-200"
+        class="bg-gray-700 text-white shadow-md rounded overflow-hidden p-1.5"
     >
         {{ $slot }}
     </div>

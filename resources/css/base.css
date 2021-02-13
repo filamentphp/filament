@@ -10,7 +10,7 @@
    * ::selection selector: color, background, cursor, and outline.
    */
   ::selection {
-    @apply bg-blue-600 text-white;
+    @apply bg-orange-700 text-white;
   }
 
   /**
