@@ -1,6 +1,3 @@
-<button type="button"
-    wire:click="submit"
-    @if ($class) class="{{ $class }}" @endif
->
+<x-filament::dropdown-link button wire:click="submit">
     {{ $label }}
-</button>
+</x-filament::dropdown-link>

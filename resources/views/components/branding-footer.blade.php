@@ -1,5 +1,5 @@
 <a
-    href="{{ config('filament.url') }}"
+    href="https://github.com/laravel-filament/filament"
     target="_blank"
     rel="noopener noreferrer"
     {{ $attributes->merge(['class' => 'inline-flex items-center opacity-20 hover:opacity-100 transition-opacity duration-500']) }}

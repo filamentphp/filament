@@ -19,11 +19,12 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['DM Sans', ...defaultTheme.fontFamily.sans],
+        sans: ['Commissioner', ...defaultTheme.fontFamily.sans],
         mono: ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
       },
       colors: {
         red: colors.rose,
+        orange: colors.orange,
       },
       keyframes: {
         shake: {
