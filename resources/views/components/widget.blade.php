@@ -5,6 +5,8 @@
     'settings' => null,
 ])
 
+@php
+
 $columnsClasses = [
     '',
     'col-span-1 lg:col-span-1',
@@ -20,6 +22,8 @@ $columnsClasses = [
     'col-span-1 lg:col-span-11',
     'col-span-1 lg:col-span-12',
 ][$columns];
+
+@endphp
 
 <article
     class="{{ $columnsClasses }}"
