@@ -5,6 +5,6 @@
 @import './base.css';
 
 @import './components/buttons.css';
-@import './components/filepond.css';
+@import './components/rich-editor-field.css';
 
 @import './utilities/typography.css';

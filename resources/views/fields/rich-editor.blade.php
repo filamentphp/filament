@@ -209,7 +209,7 @@
                 placeholder="{{ __($field->placeholder) }}"
                 toolbar="trix-toolbar-{{ $field->id }}"
                 x-ref="trix"
-                class="block w-full rounded shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 bg-white border-gray-300 prose max-w-none"
+                class="block w-full rounded shadow-sm placeholder-gray-400 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 bg-white border-gray-300 prose max-w-none"
                 {{ Filament\format_attributes($field->extraAttributes) }}
             />
         @else
