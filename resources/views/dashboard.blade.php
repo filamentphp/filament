@@ -25,7 +25,7 @@
                 widget content...
             </x-filament::widget>
 
-            <x-filament::widget title="Sample Chart" :columns="2">
+            <x-filament::widget title="Sample Chart" :columns="2" class="h-56">
                 <x-slot name="settings">
                     <x-filament::dropdown-link>
                         Chart Setting...
