@@ -27,7 +27,7 @@
                 </div>
 
                 @if ($hint)
-                    <div class="text-xs font-normal leading-tight text-gray-500 font-mono">
+                    <div class="text-xs leading-tight text-gray-500 font-mono">
                         @markdown($hint)
                     </div>
                 @endif

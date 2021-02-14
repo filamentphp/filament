@@ -1,4 +1,8 @@
 @layer base {
+  :root {
+    --f-gray-300: theme('colors.gray.300');
+  }
+
   /**
  * Smoothly animate the scroll position, instead of a straight jump.
  */
@@ -13,24 +17,24 @@
     @apply bg-orange-700 text-white;
   }
 
-    /**
+  /**
    * `x-cloak` attributes are removed from elements when Alpine initializes.
    * This is useful for hiding pre-initialized DOM.
    *
    * @link https://github.com/alpinejs/alpine#x-cloak
    *
    */
-    [x-cloak] {
-        @apply hidden;
-    }
+  [x-cloak] {
+    @apply hidden;
+  }
 
-    /**
+  /**
      * Selectively disable the default focus style by selecting for the case when the polyfill
      * is loaded and [data-focus-visible-added] attribute is not applied to the element:
      *
      * @link https://github.com/WICG/focus-visible#2-update-your-css
      */
-    .js-focus-visible :focus:not([data-focus-visible-added]) {
-        @apply outline-none;
-    }
+  .js-focus-visible :focus:not([data-focus-visible-added]) {
+    @apply outline-none;
+  }
 }

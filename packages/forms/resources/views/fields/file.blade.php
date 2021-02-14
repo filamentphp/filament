@@ -4,21 +4,23 @@
     <style>
         .filepond--root {
             font-family: inherit;
-            font-size: .8125rem;
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            border: 1px solid rgb(209, 213, 219);
-        }
-
-        .filepond--label-action {
-            font-weight: 500;
+            border: 1px solid var(--f-gray-300);
         }
 
         .filepond--panel-root {
             background-color: #fff;
         }
 
-        .filepond--drop-label {
+        .filepond--drop-label label {
             color: inherit;
+            font-size: .8125rem;
+            line-height: 1.25;
+            cursor: pointer;
+        }
+
+        .filepond--label-action {
+            font-weight: 500;
         }
     </style>
 @endpushonce
