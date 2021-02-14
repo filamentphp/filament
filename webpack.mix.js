@@ -56,9 +56,3 @@ if (mix.inProduction()) {
    */
   mix.version()
 }
-
-/**
- *
- * Disable mix-manifest.json
- */
-Mix.manifest.refresh = (_) => void 0
