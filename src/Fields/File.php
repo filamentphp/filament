@@ -16,9 +16,29 @@ class File extends InputField
 
     public $disk;
 
+    public $imageCropAspectRatio;
+
+    public $imagePreviewHeight;
+
+    public $imageResizeTargetHeight;
+
+    public $imageResizeTargetWidth;
+
+    public $loadingIndicatorPosition = 'right';
+
     public $maxSize;
 
     public $minSize;
+
+    public $panelAspectRatio = null;
+
+    public $panelLayout = null;
+
+    public $removeUploadButtonPosition = 'left';
+
+    public $uploadButtonPosition = 'right';
+
+    public $uploadProgressIndicatorPosition = 'right';
 
     public $visibility = 'public';
 
@@ -39,6 +59,23 @@ class File extends InputField
         $types = implode(',', $types);
 
         $this->addRules([$this->getTemporaryUploadedFilePropertyName() => ["mimetypes:{$types}"]]);
+
+        return $this;
+    }
+
+    public function avatar()
+    {
+        $this->extraAttributes(['class' => 'w-36']);
+        $this->image();
+        $this->imageCropAspectRatio('1:1');
+        $this->imagePreviewHeight(170);
+        $this->imageResizeTargetHeight(500);
+        $this->imageResizeTargetWidth(500);
+        $this->loadingIndicatorPosition('center bottom');
+        $this->panelLayout('compact circle');
+        $this->removeUploadButtonPosition('center bottom');
+        $this->uploadButtonPosition('center bottom');
+        $this->uploadProgressIndicatorPosition('center bottom');
 
         return $this;
     }
@@ -83,6 +120,41 @@ class File extends InputField
         return $this;
     }
 
+    public function imageCropAspectRatio($ratio)
+    {
+        $this->imageCropAspectRatio = $ratio;
+
+        return $this;
+    }
+
+    public function imagePreviewHeight($height)
+    {
+        $this->imagePreviewHeight = $height;
+
+        return $this;
+    }
+
+    public function imageResizeTargetHeight($height)
+    {
+        $this->imageResizeTargetHeight = $height;
+
+        return $this;
+    }
+
+    public function imageResizeTargetWidth($width)
+    {
+        $this->imageResizeTargetWidth = $width;
+
+        return $this;
+    }
+
+    public function loadingIndicatorPosition($position)
+    {
+        $this->loadingIndicatorPosition = $position;
+
+        return $this;
+    }
+
     public function maxSize($size)
     {
         $this->maxSize = $size;
@@ -97,6 +169,41 @@ class File extends InputField
         $this->minSize = $size;
 
         $this->addRules([$this->getTemporaryUploadedFilePropertyName() => ["min:{$this->minSize}"]]);
+
+        return $this;
+    }
+
+    public function panelAspectRatio($ratio)
+    {
+        $this->panelAspectRatio = $ratio;
+
+        return $this;
+    }
+
+    public function panelLayout($layout)
+    {
+        $this->panelLayout = $layout;
+
+        return $this;
+    }
+
+    public function removeUploadButtonPosition($position)
+    {
+        $this->removeUploadButtonPosition = $position;
+
+        return $this;
+    }
+
+    public function uploadButtonPosition($position)
+    {
+        $this->uploadButtonPosition = $position;
+
+        return $this;
+    }
+
+    public function uploadProgressIndicatorPosition($position)
+    {
+        $this->uploadProgressIndicatorPosition = $position;
 
         return $this;
     }

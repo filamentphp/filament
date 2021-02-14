@@ -7,7 +7,11 @@
     <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
     <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
     <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-crop/dist/filepond-plugin-image-crop.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.js"></script>
     <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-resize/dist/filepond-plugin-image-resize.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.js"></script>
 @endpushonce
 
 <x-filament::field-group
@@ -23,19 +27,27 @@
         x-init="
             FilePond.registerPlugin(FilePondPluginFileValidateSize)
             FilePond.registerPlugin(FilePondPluginFileValidateType)
+            FilePond.registerPlugin(FilePondPluginImageCrop)
+            FilePond.registerPlugin(FilePondPluginImageExifOrientation)
             FilePond.registerPlugin(FilePondPluginImagePreview)
+            FilePond.registerPlugin(FilePondPluginImageResize)
+            FilePond.registerPlugin(FilePondPluginImageTransform)
 
             let config = {
                 acceptedFileTypes: {{ json_encode($field->acceptedFileTypes) }},
                 files: [],
-                labelIdle: '{{ __($field->placeholder) }}',
-                {{ $field->maxSize ? "maxFileSize: '$field->maxSize KB'," : null }}
-                {{ $field->minSize ? "minFileSize: '$field->minSize KB'," : null }}
+                {{ $field->imageCropAspectRatio !== null ? "imageCropAspectRatio: '{$field->imageCropAspectRatio}'," : null }}
+                {{ $field->imagePreviewHeight !== null ? "imagePreviewHeight: {$field->imagePreviewHeight}," : null }}
+                {{ $field->imageResizeTargetHeight !== null ? "imageResizeTargetHeight: {$field->imageResizeTargetHeight}," : null }}
+                {{ $field->imageResizeTargetWidth !== null ? "imageResizeTargetWidth: {$field->imageResizeTargetWidth}," : null }}
+                {{ $field->placeholder !== null ? 'labelIdle: \''.__($field->placeholder).'\',' : null }}
+                {{ $field->maxSize !== null ? "maxFileSize: '{$field->maxSize} KB'," : null }}
+                {{ $field->minSize !== null ? "minFileSize: '{$field->minSize} KB'," : null }}
                 server: {
                     load: (source, load, error, progress, abort, headers) => {
                         fetch(source).then((response) => {
-                            response.blob().then((myBlob) => {
-                                load(myBlob)
+                            response.blob().then((blob) => {
+                                load(blob)
                             })
                         })
                     },
@@ -59,6 +71,12 @@
                         })
                     },
                 },
+                styleButtonProcessItemPosition: '{{ $field->uploadButtonPosition }}',
+                styleButtonRemoveItemPosition: '{{ $field->removeUploadButtonPosition }}',
+                styleLoadIndicatorPosition: '{{ $field->loadingIndicatorPosition }}',
+                {{ $field->panelAspectRatio !== null ? "stylePanelAspectRatio: '{$field->panelAspectRatio}'," : null }}
+                {{ $field->panelLayout !== null ? "stylePanelLayout: '{$field->panelLayout}'," : null }}
+                styleProgressIndicatorPosition: '{{ $field->uploadProgressIndicatorPosition }}',
             }
 
             $wire.getUploadedFileUrl('{{ $field->name }}', '{{ $field->disk }}').then((uploadedFileUrl) => {

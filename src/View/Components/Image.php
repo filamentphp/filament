@@ -16,18 +16,23 @@ class Image extends Component
     public function __construct($src, $manipulations, $dprs = [1, 1.5, 2, 3])
     {
         $this->dprs = $dprs;
-        $this->src = $src;
         $this->manipulations = $manipulations;
-    }
-
-    public function srcSet()
-    {
-        return collect($this->dprs)->map(fn ($dpr) => $this->src($dpr) . ' ' . $dpr . 'x')->implode(', ');
+        $this->src = $src;
     }
 
     public function src($dpr = 1)
     {
-        return get_image_url($this->src, array_merge(['dpr' => $dpr], $this->manipulations));
+        return get_image_url(
+            $this->src,
+            array_merge(['dpr' => $dpr], $this->manipulations),
+        );
+    }
+
+    public function srcSet()
+    {
+        return collect($this->dprs)
+            ->map(fn ($dpr) => $this->src($dpr) . ' ' . $dpr . 'x')
+            ->implode(', ');
     }
 
     public function render()

@@ -33,11 +33,9 @@ class EditAccount extends Component
         return [
             Fields\Fieldset::make()->fields([
                 Fields\Text::make('record.name')
-                    ->label('Name')
                     ->disableAutocomplete()
                     ->required(),
                 Fields\Text::make('record.email')
-                    ->label('Email')
                     ->email()
                     ->disableAutocomplete()
                     ->required()
@@ -58,6 +56,9 @@ class EditAccount extends Component
                     ->requiredWith('newPassword'),
             ])
                 ->columns(2),
+            Fields\File::make('record.avatar')
+                ->avatar()
+                ->directory('filament-avatars'),
         ];
     }
 
@@ -68,6 +69,10 @@ class EditAccount extends Component
 
     public function submit()
     {
+        $this->validateTemporaryUploadedFiles();
+
+        $this->storeTemporaryUploadedFiles();
+
         $this->validate();
 
         if ($this->newPassword) {

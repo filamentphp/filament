@@ -2,48 +2,12 @@
 
 namespace Filament\Fields;
 
-class Avatar extends InputField
+class Avatar extends File
 {
-    public $avatar;
-
-    public $buttonLabel = 'filament::avatar.change';
-
-    public $nameAttribute = 'wire:model';
-
-    public $size = 64;
-
-    public $user;
-
-    public static function make($name)
+    public function __construct($name)
     {
-        return static::make($name)->image();
-    }
+        parent::__construct($name);
 
-    public function avatar($avatar)
-    {
-        $this->avatar = $avatar;
-
-        return $this;
-    }
-
-    public function buttonLabel(string $label)
-    {
-        $this->buttonLabel = $label;
-
-        return $this;
-    }
-
-    public function size($size)
-    {
-        $this->size = $size;
-
-        return $this;
-    }
-
-    public function user($user)
-    {
-        $this->user = $user;
-
-        return $this;
+        $this->image();
     }
 }

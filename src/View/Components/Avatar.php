@@ -16,33 +16,33 @@ class Avatar extends Component
 
     public function __construct($user, $size = 48, $dprs = [1, 2, 3])
     {
-        $this->user = $user;
-        $this->size = $size;
         $this->dprs = $dprs;
+        $this->size = $size;
+        $this->user = $user;
     }
 
-    public function srcSet()
-    {
-        $srcSet = [];
-        foreach ($this->dprs as $dpr) {
-            $srcSet[] = $this->src($dpr) . ' ' . $dpr . 'x';
-        }
-
-        return implode(', ', $srcSet);
-    }
-
-    public function src(int $dpr = 1)
+    public function src($dpr = 1)
     {
         if (! $this->user->avatar) {
             return Gravatar::src($this->user->email, $this->size * $dpr);
         }
 
-        return get_image_url($this->user->avatar, [
-            'w' => $this->size,
-            'h' => $this->size,
-            'fit' => 'crop',
-            'dpr' => $dpr,
-        ]);
+        return get_image_url(
+            $this->user->avatar,
+            [
+                'dpr' => $dpr,
+                'fit' => 'crop',
+                'h' => $this->size,
+                'w' => $this->size,
+            ]
+        );
+    }
+
+    public function srcSet()
+    {
+        return collect($this->dprs)
+            ->map(fn ($dpr) => $this->src($dpr) . ' ' . $dpr . 'x')
+            ->implode(', ');
     }
 
     public function render()

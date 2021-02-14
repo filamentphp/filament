@@ -20,7 +20,7 @@ class ImageController extends Controller
                 'cache' => Storage::disk(config('filament.cache_disk'))->getDriver(),
                 'cache_path_prefix' => config('filament.cache_path_prefix'),
                 'response' => new LaravelResponseFactory(app('request')),
-                'source' => Storage::disk(config('filament.storage_disk'))->getDriver(),
+                'source' => Storage::disk(config('filament.default_filesystem_disk'))->getDriver(),
             ]);
 
             return $server->getImageResponse($path, request()->all());
