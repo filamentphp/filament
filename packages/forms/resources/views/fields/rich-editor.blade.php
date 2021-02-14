@@ -56,7 +56,7 @@
             formData.append('disk', '{{ $field->attachmentDisk }}')
             formData.append('file', attachment.file)
 
-            fetch('{{ route('filament.rich-editor-attachments.upload') }}', {
+            fetch('{{ $field->attachmentUploadUrl }}', {
                 body: formData,
                 credentials: 'same-origin',
                 headers: {

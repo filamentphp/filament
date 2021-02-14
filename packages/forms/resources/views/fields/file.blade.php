@@ -40,7 +40,7 @@
                 {{ $field->imagePreviewHeight !== null ? "imagePreviewHeight: {$field->imagePreviewHeight}," : null }}
                 {{ $field->imageResizeTargetHeight !== null ? "imageResizeTargetHeight: {$field->imageResizeTargetHeight}," : null }}
                 {{ $field->imageResizeTargetWidth !== null ? "imageResizeTargetWidth: {$field->imageResizeTargetWidth}," : null }}
-                {{ $field->placeholder !== null ? 'labelIdle: \''.__($field->placeholder).'\',' : null }}
+                labelIdle: {{ $field->placeholder !== null ? __($field->placeholder) : 'HERE' }},
                 {{ $field->maxSize !== null ? "maxFileSize: '{$field->maxSize} KB'," : null }}
                 {{ $field->minSize !== null ? "minFileSize: '{$field->minSize} KB'," : null }}
                 server: {

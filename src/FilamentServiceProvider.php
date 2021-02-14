@@ -10,7 +10,6 @@ use Filament\Support\Providers\ServiceProvider;
 use Filament\Support\RegistersLivewireComponentDirectories;
 use Filament\View\Components;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\Blade;
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -56,6 +55,11 @@ class FilamentServiceProvider extends ServiceProvider
             'driver' => 'eloquent',
             'model' => FilamentUser::class,
         ]);
+
+        $this->app['config']->set(
+            'forms.rich_editor.default_attachment_upload_url',
+            route('filament.rich-editor-attachments.upload'),
+        );
     }
 
     protected function bootCommands()
