@@ -7,9 +7,10 @@
 @php
 
 $colorClasses = [
-    'danger' => 'border-transparent from-red-700 to-red-800 text-white hover:to-red-700 focus:ring-red-200',
-    'primary' => 'border-transparent from-orange-700 to-orange-800 text-white hover:to-orange-700 focus:ring-orange-200',
-    'white' => 'border-gray-300 from-gray-100 to-gray-200 text-gray-800 hover:to-gray-100 focus:ring-blue-200',
+    'danger' => 'border-transparent from-danger-700 to-danger-800 text-white hover:to-danger-700 focus:ring-danger-200',
+    'primary' => 'border-transparent from-primary-700 to-primary-800 text-white hover:to-primary-700 focus:ring-primary-200',
+    'secondary' => 'border-transparent from-secondary-700 to-secondary-800 text-white hover:to-secondary-700 focus:ring-secondary-200',
+    'white' => 'border-gray-300 from-gray-100 to-gray-200 text-gray-800 hover:to-gray-100 focus:ring-primary-200',
 ][$color];
 
 $sizeClasses = [

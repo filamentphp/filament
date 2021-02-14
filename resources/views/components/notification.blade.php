@@ -18,7 +18,7 @@
         <div class="p-4">
             <div class="flex items-start space-x-4">
                 <div class="flex-grow flex items-center space-x-2">
-                    <x-heroicon-o-information-circle class="flex-shrink-0 w-5 h-5 text-blue-500 stroke-current" />
+                    <x-heroicon-o-information-circle class="flex-shrink-0 w-5 h-5 text-secondary-500 stroke-current" />
 
                     <div class="flex-grow">
                         <p x-text="message" class="text-sm text-white"></p>

@@ -66,7 +66,7 @@
         />
     @endif
 
-    <div x-show="tags.length || {{ $disabled ? 'false' : 'true' }}" class="rounded shadow-sm border overflow-hidden {{ $errors->has($errorKey) ? 'border-red-600 motion-safe:animate-shake' : 'border-gray-300' }}">
+    <div x-show="tags.length || {{ $disabled ? 'false' : 'true' }}" class="rounded shadow-sm border overflow-hidden {{ $errors->has($errorKey) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}">
         @unless ($disabled)
             <input
                 autocomplete="off"
@@ -76,13 +76,13 @@
                 x-on:keydown.enter.stop.prevent="createTag()"
                 x-model="newTag"
                 x-ref="newTag"
-                class="block w-full placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border-0"
+                class="block w-full placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-0"
             />
         @endunless
 
         <div
             x-show="tags.length"
-            class="bg-white relative w-full pl-3 pr-10 py-2 text-left {{ $disabled ? 'text-gray-500' : 'border-t' }} {{ $errors->has($errorKey) ? 'border-red-600' : 'border-gray-300' }}"
+            class="bg-white relative w-full pl-3 pr-10 py-2 text-left {{ $disabled ? 'text-gray-500' : 'border-t' }} {{ $errors->has($errorKey) ? 'border-danger-600' : 'border-gray-300' }}"
         >
             <template x-for="(tag, index) in tags" x-bind:key="tag">
                 <button

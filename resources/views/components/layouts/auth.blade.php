@@ -2,7 +2,7 @@
     <main class="flex h-screen items-center justify-center p-4">
         <div class="w-full max-w-sm space-y-8">
             <header class="text-center">
-                <h2 class="text-2xl md:text-3xl leading-tight text-orange-700">{{ __($title) ?? config('app.name') }}</h2>
+                <h2 class="text-2xl md:text-3xl leading-tight text-primary-700">{{ __($title) ?? config('app.name') }}</h2>
             </header>
 
             {{ $slot }}

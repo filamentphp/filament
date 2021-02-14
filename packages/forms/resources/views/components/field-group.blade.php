@@ -20,7 +20,7 @@
                             {{ $label }}
 
                             @if ($required)
-                                <sup class="font-medium text-red-700">*</sup>
+                                <sup class="font-medium text-danger-700">*</sup>
                             @endif
                         </label>
                     @endif
@@ -38,7 +38,7 @@
 
         @if ($errorKey)
             @error($errorKey)
-                <span class="block text-red-700 text-sm leading-tight">
+                <span class="block text-danger-700 text-sm leading-tight">
                     {{ $message }}
                 </span>
             @enderror
