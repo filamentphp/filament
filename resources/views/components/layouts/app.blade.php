@@ -59,7 +59,9 @@
               @click="headerIsOpen = false"></span>
 
         <div class="min-h-screen w-full md:pl-56 flex flex-col">
-            {{ $slot }}
+            <div class="flex-grow">
+                {{ $slot }}
+            </div>
 
             <footer rel="contentinfo" class="p-4 md:px-6 text-center">
                 <x-filament::branding-footer />

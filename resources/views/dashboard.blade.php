@@ -1,4 +1,4 @@
-<div class="flex-grow">
+<div>
     <x-filament::app-header :title="__('filament::dashboard.title')">
         <x-slot name="actions">
             <x-filament::dropdown class="btn flex items-center space-x-1">
