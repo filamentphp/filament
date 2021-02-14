@@ -1,4 +1,4 @@
-<div>
+<div class="flex-grow">
     <x-filament::app-header :title="__('filament::edit-account.title')" />
 
     <x-filament::app-content>
