@@ -31,6 +31,19 @@ Route::middleware([Authenticate::class])->group(function () {
     Route::get('/', Livewire\Dashboard::class)->name('dashboard');
     Route::get('/account', Livewire\EditAccount::class)->name('account');
 
+    Route::post('/rich-editor-attachments', function (\Illuminate\Http\Request $request) {
+        $request->validate([
+            'file' => ['required', 'file'],
+        ]);
+
+        $directory = $request->input('directory', 'attachments');
+        $disk = $request->input('disk', config('filament.default_filesystem_disk'));
+
+        $path = $request->file('file')->store($directory, $disk);
+
+        return \Illuminate\Support\Facades\Storage::disk($disk)->url($path);
+    })->name('rich-editor-attachments.upload');
+
     // Resources
     Resource::all()->each(function ($resource) {
         foreach ($resource->router()->routes as $route) {

@@ -12,7 +12,12 @@ class RichEditor extends InputField
     use Concerns\CanBeUnique;
     use Concerns\HasPlaceholder;
 
+    public $attachmentDirectory = 'attachments';
+
+    public $attachmentDisk;
+
     public $toolbarButtons = [
+        'attachFiles',
         'bold',
         'bullet',
         'code',
@@ -26,6 +31,27 @@ class RichEditor extends InputField
         'subHeading',
         'undo',
     ];
+
+    public function __construct($name)
+    {
+        parent::__construct($name);
+
+        $this->attachmentDisk(config('filament.default_filesystem_disk'));
+    }
+
+    public function attachmentDirectory($directory)
+    {
+        $this->attachmentDirectory = $directory;
+
+        return $this;
+    }
+
+    public function attachmentDisk($disk)
+    {
+        $this->attachmentDisk = $disk;
+
+        return $this;
+    }
 
     public function disableToolbarButtons($buttonsToDisable)
     {

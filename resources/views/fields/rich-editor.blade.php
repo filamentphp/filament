@@ -37,9 +37,35 @@
                 isFocused() { return document.activeElement !== this.$refs.trix },
                 setValue() { this.$refs.trix.editor?.loadHTML(this.value) },
             @endunless
-            }"
+        }"
         @unless ($field->disabled)
         x-init="setValue(); $watch('value', () => isFocused() && setValue())"
+        x-on:trix-attachment-add="
+            if (! $event.attachment.file) return
+
+            let attachment = $event.attachment
+
+            let formData = new FormData()
+            formData.append('directory', '{{ $field->attachmentDirectory }}')
+            formData.append('disk', '{{ $field->attachmentDisk }}')
+            formData.append('file', attachment.file)
+
+            fetch('{{ route('filament.rich-editor-attachments.upload') }}', {
+                body: formData,
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                method: 'POST',
+            })
+            .then((response) => response.text())
+            .then((url) => {
+                attachment.setAttributes({
+                    url: url,
+                    href: url,
+                })
+            })
+        "
         x-on:trix-change="value = $event.target.value"
         @endunless
         x-cloak
@@ -178,7 +204,7 @@
 
             <trix-editor
                 @if ($field->autofocus) autofocus @endif
-            id="{{ $field->id }}"
+                id="{{ $field->id }}"
                 input="trix-value-{{ $field->id }}"
                 placeholder="{{ __($field->placeholder) }}"
                 toolbar="trix-toolbar-{{ $field->id }}"
