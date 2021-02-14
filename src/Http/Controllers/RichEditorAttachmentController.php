@@ -14,7 +14,7 @@ class RichEditorAttachmentController extends Controller
         ]);
 
         $directory = $request->input('directory', 'attachments');
-        $disk = $request->input('disk', config('filament.default_filesystem_disk'));
+        $disk = $request->input('disk', config('forms.default_filesystem_disk'));
 
         $path = $request->file('file')->store($directory, $disk);
 

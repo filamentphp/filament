@@ -1,0 +1,32 @@
+{
+    "name": "filament/support",
+    "license": "MIT",
+    "homepage": "https://github.com/laravel-filament/filament",
+    "support": {
+        "issues": "https://github.com/laravel-filament/filament/issues",
+        "source": "https://github.com/laravel-filament/filament"
+    },
+    "require": {
+        "php": "^7.4|^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Filament\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Filament\\SupportServiceProvider"
+            ],
+            "aliases": {
+                "SupportManager": "Filament\\Support"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

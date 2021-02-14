@@ -16,13 +16,13 @@
                     {{ $labelPrefix }}
 
                     @if ($label)
-                        <x-filament::label :for="$for">
+                        <label :for="$for" class="text-sm leading-tight font-medium cursor-pointer">
                             {{ $label }}
 
                             @if ($required)
                                 <sup class="font-medium text-red-700">*</sup>
                             @endif
-                        </x-filament::label>
+                        </label>
                     @endif
                 </div>
 

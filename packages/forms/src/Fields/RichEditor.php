@@ -36,7 +36,7 @@ class RichEditor extends InputField
     {
         parent::__construct($name);
 
-        $this->attachmentDisk(config('filament.default_filesystem_disk'));
+        $this->attachmentDisk(config('forms.default_filesystem_disk'));
     }
 
     public function attachmentDirectory($directory)

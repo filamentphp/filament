@@ -58,7 +58,8 @@ class EditAccount extends Component
                 ->columns(2),
             Fields\File::make('record.avatar')
                 ->avatar()
-                ->directory('filament-avatars'),
+                ->directory('filament-avatars')
+                ->disk(config('filament.default_filesystem_disk')),
         ];
     }
 

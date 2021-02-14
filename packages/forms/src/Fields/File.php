@@ -47,7 +47,7 @@ class File extends InputField
         parent::__construct($name);
 
         $this->addRules([$this->getTemporaryUploadedFilePropertyName() => ['nullable', 'file']]);
-        $this->disk(config('filament.default_filesystem_disk'));
+        $this->disk(config('forms.default_filesystem_disk'));
     }
 
     public function acceptedFileTypes($types)

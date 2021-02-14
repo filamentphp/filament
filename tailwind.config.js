@@ -17,10 +17,6 @@ module.exports = {
   },
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['Commissioner', ...defaultTheme.fontFamily.sans],
-        mono: ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
-      },
       colors: {
         red: colors.rose,
         orange: colors.orange,
@@ -40,9 +36,6 @@ module.exports = {
             transform: 'translate3d(4px, 0, 0)',
           },
         },
-      },
-      animation: {
-        shake: 'shake 0.82s cubic-bezier(.36, .07, .19, .97) both',
       },
     },
     container: {

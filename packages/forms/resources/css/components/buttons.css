@@ -1,0 +1,21 @@
+@layer components {
+  .btn {
+    @apply cursor-pointer text-sm font-medium py-2 px-4 border border-gray-300 bg-gradient-to-b from-gray-100 to-gray-200 text-gray-800 rounded transition duration-200 shadow-sm inline-block relative focus:ring focus:ring-indigo-200 focus:ring-opacity-50 hover:to-gray-100;
+
+    &-sm {
+      @apply text-xs py-1 px-3;
+    }
+
+    &-primary {
+      @apply border-transparent from-orange-700 to-orange-800 text-white hover:to-orange-700;
+    }
+
+    &-danger {
+      @apply border-transparent from-red-700 to-red-800 text-white hover:to-red-700;
+    }
+
+    &[disabled] {
+      @apply opacity-50 cursor-not-allowed;
+    }
+  }
+}

@@ -1,0 +1,5 @@
+@layer base {
+  trix-editor:empty:not(:focus)::before {
+    @apply text-gray-400 opacity-100;
+  }
+}

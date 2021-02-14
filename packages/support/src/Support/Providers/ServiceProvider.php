@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Providers;
+namespace Filament\Support\Providers;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
