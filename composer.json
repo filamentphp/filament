@@ -58,9 +58,7 @@
                 "Filament\\SupportServiceProvider"
             ],
             "aliases": {
-                "FilamentManager": "Filament\\Filament",
-                "FormsManager": "Filament\\Forms",
-                "SupportManager": "Filament\\Support"
+                "FilamentManager": "Filament\\Filament"
             }
         }
     },

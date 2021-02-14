@@ -8,6 +8,8 @@ use Filament\Models\Resource;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Support\Facades\Route;
 
+Route::get('assets/{path}', Controllers\AssetController::class)->where('path', '.*')->name('asset');
+
 // Authentication
 Route::middleware([RedirectIfAuthenticated::class])->name('auth.')->group(function () {
     Route::get('login', Livewire\Auth\Login::class)->name('login');

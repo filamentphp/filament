@@ -26,7 +26,7 @@ class RouteServiceProvider extends ServiceProvider
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
             ])
-            ->prefix(config('filament.path'))
+            ->prefix(config('filament.admin_path'))
             ->group(__DIR__ . '/../../routes/web.php');
     }
 }

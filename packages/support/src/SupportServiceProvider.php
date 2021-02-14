@@ -9,13 +9,8 @@ use Illuminate\Support\HtmlString;
 
 class SupportServiceProvider extends ServiceProvider
 {
-    public $singletons = [
-        SupportManager::class => SupportManager::class,
-    ];
-
     public function boot()
     {
-        $this->bootAssets();
         $this->bootDirectives();
         $this->bootLoaders();
         $this->bootPublishing();
@@ -23,40 +18,11 @@ class SupportServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->registerProviders();
-    }
-
-    protected function bootAssets()
-    {
-        //
+        $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
     }
 
     protected function bootDirectives()
     {
-        Blade::directive('filamentScripts', function () {
-            $scripts = '';
-
-            foreach (Support::getScripts() as $filename => $path) {
-                $scripts .= '<script src="'.route('filament.asset', [
-                    'filename' => $filename,
-                ]).'"></script>';
-            }
-
-            return Blade::compileString("{$scripts} @stack('filament-scripts')");
-        });
-
-        Blade::directive('filamentStyles', function () {
-            $styles = '';
-
-            foreach (Support::getStyles() as $filename => $path) {
-                $styles .= '<link rel="stylesheet" href="'.route('filament.asset', [
-                    'filename' => $filename,
-                ]).'" />';
-            }
-
-            return Blade::compileString("{$styles} @stack('filament-styles')");
-        });
-
         Blade::directive('pushonce', function ($expression) {
             [$pushName, $pushSub] = explode(':', trim(substr($expression, 1, -1)));
 
@@ -84,10 +50,5 @@ class SupportServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/filament'),
         ], 'filament-views');
-    }
-
-    protected function registerProviders()
-    {
-        $this->app->register(RouteServiceProvider::class);
     }
 }

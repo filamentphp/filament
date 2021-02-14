@@ -8,6 +8,10 @@ module.exports = {
       './src/**/*.php',
       './resources/views/**/*.php',
       './resources/js/**/*.js',
+      './packages/forms/src/**/*.php',
+      './packages/forms/resources/views/**/*.php',
+      './packages/support/src/**/*.php',
+      './packages/support/resources/views/**/*.php',
     ],
     options: {
       safelist: {
@@ -17,6 +21,10 @@ module.exports = {
   },
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Commissioner', ...defaultTheme.fontFamily.sans],
+        mono: ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
+      },
       colors: {
         red: colors.rose,
         orange: colors.orange,

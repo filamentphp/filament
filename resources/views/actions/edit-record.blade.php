@@ -5,7 +5,7 @@
                 <x-slot name="trigger">
                     <x-filament::button
                         x-on:click="open = true"
-                        class="btn-danger"
+                        color="danger"
                         wire:loading.attr="disabled"
                     >
                         Delete
@@ -26,7 +26,6 @@
                     <div class="space-y-3 sm:space-y-0 sm:flex sm:space-x-3 sm:justify-end">
                         <x-filament::button
                             x-on:click="open = false"
-                            class="btn"
                             wire:loading.attr="disabled"
                         >
                             Cancel
@@ -34,7 +33,7 @@
 
                         <x-filament::button
                             wire:click="delete"
-                            class="btn-danger"
+                            color="danger"
                             wire:loading.attr="disabled"
                         >
                             Delete
@@ -50,7 +49,7 @@
             <x-filament::form :fields="$this->getForm()->fields" class="space-y-6">
                 <x-filament::button
                     type="submit"
-                    class="btn-primary"
+                    color="primary"
                     wire:loading.attr="disabled"
                 >
                     Update

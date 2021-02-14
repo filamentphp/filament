@@ -27,7 +27,7 @@
                 </div>
 
                 @if ($hint)
-                    <div class="hint">
+                    <div class="text-xs font-normal leading-tight text-gray-500 font-mono">
                         @markdown($hint)
                     </div>
                 @endif
@@ -45,7 +45,7 @@
         @endif
 
         @if ($helpMessage)
-            <div class="help">
+            <div class="text-xs font-normal leading-tight text-gray-500">
                 @markdown($helpMessage)
             </div>
         @endif

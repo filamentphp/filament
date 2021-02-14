@@ -1,5 +1,11 @@
 @pushonce('filament-styles:rich-editor-field')
     <link rel="stylesheet" href="https://unpkg.com/trix@1.3.1/dist/trix.css">
+
+    <style>
+        trix-editor:empty:not(:focus)::before {
+            @apply text-gray-400 opacity-100;
+        }
+    </style>
 @endpushonce
 
 @pushonce('filament-scripts:rich-editor-field')

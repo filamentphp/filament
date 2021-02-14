@@ -10,6 +10,7 @@ use Filament\Support\Providers\ServiceProvider;
 use Filament\Support\RegistersLivewireComponentDirectories;
 use Filament\View\Components;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Blade;
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -22,7 +23,6 @@ class FilamentServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->bootAssets();
         $this->bootAuthConfiguration();
         $this->bootCommands();
         $this->bootLoaders();
@@ -36,15 +36,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
 
         $this->registerProviders();
-    }
-
-    protected function bootAssets()
-    {
-        Support::registerScript('filament.js', __DIR__.'/../dist/js/filament.js');
-        Support::registerScript('filament.js.map', __DIR__.'/../dist/js/filament.js.map');
-
-        Support::registerStyles('filament.css', __DIR__.'/../dist/css/filament.css');
-        Support::registerStyles('filament.css.map', __DIR__.'/../dist/css/filament.css.map');
     }
 
     protected function bootAuthConfiguration()

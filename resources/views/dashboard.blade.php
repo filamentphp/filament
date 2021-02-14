@@ -1,7 +1,7 @@
 <div>
     <x-filament::app-header :title="__('filament::dashboard.title')">
         <x-slot name="actions">
-            <x-filament::dropdown class="btn flex items-center space-x-1">
+            <x-filament::dropdown class="cursor-pointer font-medium border rounded transition duration-200 shadow-sm inline-block relative focus:ring focus:ring-opacity-50 border-gray-300 from-gray-100 to-gray-200 text-gray-800 hover:to-gray-100 bg-gradient-to-b focus:ring-blue-200 text-sm py-2 px-4 flex items-center space-x-1">
                 <x-slot name="button">
                     <span>Add Widget</span>
                     <x-heroicon-o-chevron-down class="w-4 h-4" aria-hidden="true" />
