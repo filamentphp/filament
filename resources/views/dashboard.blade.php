@@ -34,7 +34,7 @@
                                 <a href="#" class="link">Quick Link #{{ $i }}</a>
                             </div>
 
-                            <button class="flex-shrink-0 text-gray-300 hover:text-red-600 transition-colors duration-200">
+                            <button class="flex-shrink-0 text-gray-300 hover:text-danger-600 transition-colors duration-200">
                                 <x-heroicon-o-x class="w-4 h-4" />
                             </button>
                         </li>
@@ -47,7 +47,7 @@
                     <x-filament::dropdown-link button>
                         Chart Setting...
                     </x-filament::dropdown-link>
-                    
+
                     <x-filament::dropdown-link>
                         Another Chart Setting...
                     </x-filament::dropdown-link>
