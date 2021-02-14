@@ -25,10 +25,13 @@
                 widget content...
             </x-filament::widget>
 
-            <x-filament::widget title="Sample Chart" :columns="2" class="h-56">
+            <x-filament::widget title="Sample Chart" :columns="2">
                 <x-slot name="settings">
-                    <x-filament::dropdown-link>
+                    <x-filament::dropdown-link button>
                         Chart Setting...
+                    </x-filament::dropdown-link>
+                    <x-filament::dropdown-link>
+                        Another Chart Setting...
                     </x-filament::dropdown-link>
                 </x-slot>
 
