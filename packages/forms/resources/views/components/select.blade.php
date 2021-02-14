@@ -12,7 +12,7 @@
     'required' => false,
 ])
 
-@pushonce('js:select-component')
+@pushonce('filament-scripts:select-component')
     <script>
         function select(config) {
             return {

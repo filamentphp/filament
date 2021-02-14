@@ -17,15 +17,7 @@ class RouteServiceProvider extends ServiceProvider
     public function map()
     {
         Route::name('filament.')
-            ->middleware([
-                EncryptCookies::class,
-                AddQueuedCookiesToResponse::class,
-                StartSession::class,
-                AuthenticateSession::class,
-                ShareErrorsFromSession::class,
-                VerifyCsrfToken::class,
-                SubstituteBindings::class,
-            ])
+            ->middleware(['web'])
             ->prefix(config('filament.path'))
             ->group(__DIR__ . '/../../../routes/web.php');
     }

@@ -26,7 +26,7 @@
     }
 @endphp
 
-@pushonce('js:date-time-picker-component')
+@pushonce('filament-scripts:date-time-picker-component')
     <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
     <script src="https://unpkg.com/dayjs@1.8.21/plugin/customParseFormat.js"></script>
 

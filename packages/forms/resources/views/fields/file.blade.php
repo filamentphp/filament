@@ -1,9 +1,9 @@
-@pushonce('head:file-field')
+@pushonce('filament-styles:file-field')
     <link rel="stylesheet" href="https://unpkg.com/filepond/dist/filepond.css">
     <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
 @endpushonce
 
-@pushonce('js:file-field')
+@pushonce('filament-scripts:file-field')
     <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
     <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
     <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>

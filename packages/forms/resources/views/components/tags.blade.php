@@ -10,7 +10,7 @@
     'separator' => ',',
 ])
 
-@pushonce('js:tags-component')
+@pushonce('filament-scripts:tags-component')
     <script>
         function tags(config) {
             return {

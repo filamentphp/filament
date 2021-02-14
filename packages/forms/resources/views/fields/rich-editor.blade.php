@@ -1,8 +1,8 @@
-@pushonce('head:rich-editor-field')
+@pushonce('filament-styles:rich-editor-field')
     <link rel="stylesheet" href="https://unpkg.com/trix@1.3.1/dist/trix.css">
 @endpushonce
 
-@pushonce('js:rich-editor-field')
+@pushonce('filament-scripts:rich-editor-field')
     <script src="https://unpkg.com/trix@1.3.1/dist/trix.js"></script>
 
     <script>

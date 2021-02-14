@@ -8,14 +8,6 @@ use Filament\Models\Resource;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Support\Facades\Route;
 
-// Assets
-Route::name('assets.')->group(function () {
-    Route::get('filament.css', [Controllers\AssetController::class, 'css'])->name('css');
-    Route::get('filament.css.map', [Controllers\AssetController::class, 'cssMap']);
-    Route::get('filament.js', [Controllers\AssetController::class, 'js'])->name('js');
-    Route::get('filament.js.map', [Controllers\AssetController::class, 'jsMap']);
-});
-
 // Authentication
 Route::middleware([RedirectIfAuthenticated::class])->name('auth.')->group(function () {
     Route::get('login', Livewire\Auth\Login::class)->name('login');

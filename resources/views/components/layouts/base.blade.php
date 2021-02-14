@@ -7,9 +7,11 @@
 
     <title>{{ $title ?? null }} {{ $title ?? false ? '|' : null }} {{ config('app.name') }}</title>
 
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Commissioner:wght@200;300;400;500;600;700&amp;family=JetBrains+Mono:ital@0;1&amp;display=swap">
+
     @livewireStyles
     @filamentStyles
-    @stack('head')
 </head>
 
 <body class="text-gray-700 font-sans">
@@ -19,6 +21,5 @@
 
     @livewireScripts
     @filamentScripts
-    @stack('js')
 </body>
 </html>

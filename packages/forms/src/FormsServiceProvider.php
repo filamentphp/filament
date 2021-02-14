@@ -5,7 +5,6 @@ namespace Filament;
 use Filament\Forms\Providers\RouteServiceProvider;
 use Filament\Support\Providers\ServiceProvider;
 use Filament\Support\RegistersLivewireComponentDirectories;
-use Illuminate\Support\Facades\Blade;
 
 class FormsServiceProvider extends ServiceProvider
 {
@@ -17,7 +16,7 @@ class FormsServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->bootDirectives();
+        $this->bootAssets();
         $this->bootLoaders();
         $this->bootLivewireComponents();
         $this->bootPublishing();
@@ -30,15 +29,9 @@ class FormsServiceProvider extends ServiceProvider
         $this->registerProviders();
     }
 
-    protected function bootDirectives()
+    protected function bootAssets()
     {
-        Blade::directive('formsStyles', function () {
-            return '{!! \Filament\Forms::styles() !!}';
-        });
-
-        Blade::directive('formsScripts', function () {
-            return '{!! \Filament\Forms::scripts() !!}';
-        });
+        //
     }
 
     protected function bootLoaders()

@@ -8,7 +8,8 @@
         "source": "https://github.com/laravel-filament/filament"
     },
     "require": {
-        "php": "^7.4|^8.0"
+        "php": "^7.4|^8.0",
+        "filament/support": "dev-develop"
     },
     "autoload": {
         "psr-4": {
