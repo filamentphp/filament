@@ -1,7 +1,3 @@
-@pushonce('filament-styles:widgets')
-    <script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
-@endpushonce
-
 <div>
     <x-filament::app-header :title="__('filament::dashboard.title')">
         <x-slot name="actions">
@@ -29,7 +25,11 @@
 
                 <ol class="divide-y divide-gray-200">
                     @for ($i = 1; $i <= 5; $i++)
-                        <li class="py-3 flex items-center justify-between space-x-2">
+                        <li class="py-2.5 flex items-center justify-between space-x-3">
+                            <button class="flex-shrink-0 flex text-gray-300 hover:text-gray-600 transition-colors duration-200">
+                                <x-heroicon-o-menu-alt-4 class="w-4 h-4" />
+                            </button>
+
                             <div class="flex-grow text-sm leading-tight">
                                 <a href="#" class="link">Quick Link #{{ $i }}</a>
                             </div>
