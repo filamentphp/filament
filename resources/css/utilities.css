@@ -1,0 +1,5 @@
+@layer utilities {
+  .link {
+    @apply text-blue-500 underline hover:text-blue-700 transition-colors duration-200;
+  }
+}

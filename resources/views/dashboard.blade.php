@@ -1,3 +1,7 @@
+@pushonce('filament-styles:widgets')
+    <script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
+@endpushonce
+
 <div>
     <x-filament::app-header :title="__('filament::dashboard.title')">
         <x-slot name="actions">
@@ -16,20 +20,34 @@
 
     <x-filament::app-content>
         <x-filament::widgets>
-            <x-filament::widget title="Bookmarks">
+            <x-filament::widget title="Quick Links">
                 <x-slot name="settings">
                     <x-filament::dropdown-link button>
                         Bookmark Setting...
                     </x-filament::dropdown-link>
                 </x-slot>
-                widget content...
+
+                <ol class="divide-y divide-gray-200">
+                    @for ($i = 1; $i <= 5; $i++)
+                        <li class="py-3 flex items-center justify-between space-x-2">
+                            <div class="flex-grow text-sm leading-tight">
+                                <a href="#" class="link">Quick Link #{{ $i }}</a>
+                            </div>
+
+                            <button class="flex-shrink-0 text-gray-300 hover:text-red-600 transition-colors duration-200">
+                                <x-heroicon-o-x class="w-4 h-4" />
+                            </button>
+                        </li>
+                    @endfor
+                </ol>
             </x-filament::widget>
 
-            <x-filament::widget title="Sample Chart" :columns="2">
+            <x-filament::widget title="Bar Chart" :columns="2">
                 <x-slot name="settings">
                     <x-filament::dropdown-link button>
                         Chart Setting...
                     </x-filament::dropdown-link>
+                    
                     <x-filament::dropdown-link>
                         Another Chart Setting...
                     </x-filament::dropdown-link>
@@ -38,7 +56,7 @@
                 widget content...
             </x-filament::widget>
 
-            <x-filament::widget title="Recent Updates">
+            <x-filament::widget title="Activity">
                 widget content...
             </x-filament::widget>
         </x-filament::widgets>
