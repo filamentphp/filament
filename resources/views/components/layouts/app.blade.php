@@ -14,19 +14,7 @@
                     tabindex="-1"
                     id="banner"
                     class="flex-grow overflow-y-auto bg-gray-900 text-gray-500 flex flex-col space-y-10 shadow-lg md:shadow-none">
-                <a
-                    href="{{ url('/') }}"
-                    rel="home"
-                    class="p-4 flex items-center space-x-3 group"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <div class="flex-shrink-0 rounded w-8 h-8 bg-primary-800 text-white flex items-center justify-center transition-colors duration-200 group-hover:bg-primary-700">
-                        <span class="font-bold italic">{{ substr(config('app.name'), 0, 1) }}</span>
-                    </div>
-
-                    <span class="leading-tight font-medium transition-colors duration-200 group-hover:text-white">{{ config('app.name') }}</span>
-                </a>
+                <x-filament::branding.app />
 
                 <x-filament-nav class="flex-grow px-4 overflow-y-auto" />
                 <x-filament::dropdown
@@ -64,7 +52,7 @@
             </div>
 
             <footer rel="contentinfo" class="p-4 md:px-6 text-center">
-                <x-filament::branding-footer />
+                <x-filament::branding.footer />
             </footer>
         </div>
     </div>
