@@ -1,7 +1,7 @@
 <div>
     <x-filament::app-header :title="__('filament::dashboard.title')">
         <x-slot name="actions">
-            <x-filament::dropdown class="cursor-pointer font-medium border rounded transition duration-200 shadow-sm inline-block relative focus:ring focus:ring-opacity-50 border-gray-300 from-gray-100 to-gray-200 text-gray-800 hover:to-gray-100 bg-gradient-to-b focus:ring-blue-200 text-sm py-2 px-4 flex items-center space-x-1">
+            <x-filament::dropdown class="cursor-pointer font-medium border rounded transition duration-200 shadow-sm inline-block relative focus:ring focus:ring-opacity-50 border-gray-300 from-gray-100 to-gray-200 text-gray-800 hover:to-gray-100 bg-gradient-to-b focus:ring-secondary-200 text-sm py-2 px-4 flex items-center space-x-1">
                 <x-slot name="button">
                     <span>Add Widget</span>
                     <x-heroicon-o-chevron-down class="w-4 h-4" aria-hidden="true" />
@@ -34,7 +34,7 @@
                                 <a href="#" class="link">Quick Link #{{ $i }}</a>
                             </div>
 
-                            <button class="flex-shrink-0 flex text-gray-300 hover:text-danger transition-colors duration-200">
+                            <button class="flex-shrink-0 text-gray-300 hover:text-danger-600 transition-colors duration-200">
                                 <x-heroicon-o-x class="w-4 h-4" />
                             </button>
                         </li>
@@ -47,7 +47,7 @@
                     <x-filament::dropdown-link button>
                         Chart Setting...
                     </x-filament::dropdown-link>
-                    
+
                     <x-filament::dropdown-link>
                         Another Chart Setting...
                     </x-filament::dropdown-link>

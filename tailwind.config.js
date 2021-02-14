@@ -21,8 +21,10 @@ module.exports = {
         mono: ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
       },
       colors: {
-        red: colors.rose,
-        orange: colors.orange,
+        primary: colors.orange,
+        secondary: colors.blue,
+        success: colors.green,
+        danger: colors.rose,
       },
       keyframes: {
         shake: {
