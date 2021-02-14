@@ -16,11 +16,6 @@ class SupportServiceProvider extends ServiceProvider
         $this->bootPublishing();
     }
 
-    public function register()
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
-    }
-
     protected function bootDirectives()
     {
         Blade::directive('pushonce', function ($expression) {

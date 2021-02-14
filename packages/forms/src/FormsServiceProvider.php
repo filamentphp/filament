@@ -16,6 +16,11 @@ class FormsServiceProvider extends ServiceProvider
         $this->bootPublishing();
     }
 
+    public function register()
+    {
+        $this->mergeConfigFrom(__DIR__ . '/../config/forms.php', 'forms');
+    }
+
     protected function bootLoaders()
     {
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'filament');

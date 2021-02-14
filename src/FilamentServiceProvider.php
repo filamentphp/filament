@@ -22,12 +22,15 @@ class FilamentServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->bootAuthConfiguration();
         $this->bootCommands();
         $this->bootLoaders();
         $this->bootLivewireComponents();
         $this->bootMiddleware();
         $this->bootPublishing();
+
+        $this->app->booted(function () {
+            $this->configure();
+        });
     }
 
     public function register()
@@ -35,31 +38,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
 
         $this->registerProviders();
-    }
-
-    protected function bootAuthConfiguration()
-    {
-        $this->app['config']->set('auth.guards.filament', [
-            'driver' => 'session',
-            'provider' => 'filament_users',
-        ]);
-
-        $this->app['config']->set('auth.passwords.filament_users', [
-            'provider' => 'filament_users',
-            'table' => 'filament_password_resets',
-            'expire' => 60,
-            'throttle' => 60,
-        ]);
-
-        $this->app['config']->set('auth.providers.filament_users', [
-            'driver' => 'eloquent',
-            'model' => FilamentUser::class,
-        ]);
-
-        $this->app['config']->set(
-            'forms.rich_editor.default_attachment_upload_url',
-            route('filament.rich-editor-attachments.upload'),
-        );
     }
 
     protected function bootCommands()
@@ -124,6 +102,31 @@ class FilamentServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/filament'),
         ], 'filament-views');
+    }
+
+    protected function configure()
+    {
+        $this->app['config']->set('auth.guards.filament', [
+            'driver' => 'session',
+            'provider' => 'filament_users',
+        ]);
+
+        $this->app['config']->set('auth.passwords.filament_users', [
+            'provider' => 'filament_users',
+            'table' => 'filament_password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ]);
+
+        $this->app['config']->set('auth.providers.filament_users', [
+            'driver' => 'eloquent',
+            'model' => FilamentUser::class,
+        ]);
+
+        $this->app['config']->set(
+            'forms.rich_editor.default_attachment_upload_url',
+            route('filament.rich-editor-attachments.upload'),
+        );
     }
 
     protected function registerProviders()
