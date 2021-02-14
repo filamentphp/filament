@@ -88,12 +88,12 @@
                 <button
                     @unless($disabled) x-on:click="deleteTag(index)" @endunless
                     type="button"
-                    class="my-1 truncate max-w-full inline-flex space-x-2 items-center font-semibold text-xs py-1 px-3 border border-gray-300 bg-gray-100 text-gray-800 rounded shadow-sm inline-block relative @unless($disabled) cursor-pointer transition duration-200 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 hover:bg-gray-200 @else cursor-default @endunless"
+                    class="my-1 truncate max-w-full inline-flex space-x-2 items-center font-mono text-xs py-1 px-2 border border-gray-300 bg-gray-100 text-gray-800 rounded shadow-sm inline-block relative @unless($disabled) cursor-pointer transition duration-200 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 hover:bg-gray-200 transition-colors duration-200 @else cursor-default @endunless"
                 >
                     <span x-text="tag"></span>
 
                     @unless($disabled)
-                        <x-heroicon-s-x class="h-4 w-4 text-gray-500" />
+                        <x-heroicon-s-x class="h-3 w-3 text-gray-500" />
                     @endunless
                 </button>
             </template>
