@@ -16,7 +16,7 @@
                     {{ $labelPrefix }}
 
                     @if ($label)
-                        <label :for="$for" class="text-sm leading-tight font-medium cursor-pointer">
+                        <label for="{{ $for }}" class="text-sm leading-tight font-medium">
                             {{ $label }}
 
                             @if ($required)
