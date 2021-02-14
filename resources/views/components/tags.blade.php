@@ -39,7 +39,7 @@
                 },
 
                 init: function () {
-                    if (this.value !== '') this.tags = this.value.trim().split(this.separator).filter(tag => tag !== '')
+                    if (this.value !== '' && this.value !== null) this.tags = this.value.trim().split(this.separator).filter(tag => tag !== '')
 
                     this.$watch('tags', ((tags) => {
                         this.value = tags.join(this.separator)
@@ -73,7 +73,7 @@
                 @if ($autofocus) autofocus @endif
                 placeholder="{{ $placeholder }}"
                 type="text"
-                x-on:keydown.enter.prevent="createTag()"
+                x-on:keydown.enter.stop.prevent="createTag()"
                 x-model="newTag"
                 x-ref="newTag"
                 class="block w-full placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border-0"
