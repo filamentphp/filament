@@ -1,11 +1,11 @@
 <?php
 
-namespace Filament\Http\Controllers;
+namespace Filament\Forms\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class RichEditorAttachmentController extends Controller
+class RichEditorAttachmentController
 {
     public function __invoke(Request $request)
     {

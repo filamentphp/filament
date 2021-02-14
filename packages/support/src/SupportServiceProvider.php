@@ -5,7 +5,6 @@ namespace Filament;
 use Filament\Support\Providers\RouteServiceProvider;
 use Filament\Support\Providers\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\HtmlString;
 
 class SupportServiceProvider extends ServiceProvider
 {

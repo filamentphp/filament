@@ -9,7 +9,14 @@
     },
     "require": {
         "php": "^7.4|^8.0",
-        "filament/support": "dev-develop"
+        "blade-ui-kit/blade-heroicons": "^0.3",
+        "danharrin/date-format-converter": "^0.2.0",
+        "filament/support": "^1.0",
+        "illuminate/database": "^8.0",
+        "illuminate/http": "^8.0",
+        "illuminate/support": "^8.0",
+        "illuminate/validation": "^8.0",
+        "livewire/livewire": "^2.2"
     },
     "autoload": {
         "psr-4": {
