@@ -1,6 +1,26 @@
 @pushonce('filament-styles:file-field')
     <link rel="stylesheet" href="https://unpkg.com/filepond/dist/filepond.css">
     <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
+    <style>
+        .filepond--root {
+            font-family: inherit;
+            font-size: .8125rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid rgb(209, 213, 219);
+        }
+
+        .filepond--label-action {
+            font-weight: 500;
+        }
+
+        .filepond--panel-root {
+            background-color: #fff;
+        }
+
+        .filepond--drop-label {
+            color: inherit;
+        }
+    </style>
 @endpushonce
 
 @pushonce('filament-scripts:file-field')

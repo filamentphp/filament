@@ -65,10 +65,10 @@ class File extends InputField
 
     public function avatar()
     {
-        $this->extraAttributes(['class' => 'w-36']);
+        $this->extraAttributes(['class' => 'w-28']);
         $this->image();
         $this->imageCropAspectRatio('1:1');
-        $this->imagePreviewHeight(170);
+        $this->imagePreviewHeight(110);
         $this->imageResizeTargetHeight(500);
         $this->imageResizeTargetWidth(500);
         $this->loadingIndicatorPosition('center bottom');
