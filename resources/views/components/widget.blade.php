@@ -1,20 +1,39 @@
-<x-filament::card tag="article">
-    <div class="space-y-2">
-        <div class="flex items-start justify-between space-x-4">
-            <h2 class="font-medium leading-tight">{{ $title }}</h2>
-            <x-filament::dropdown class="text-gray-400 hover:text-current transition-colors duration-200">
-                <x-slot name="button">
-                    <span class="sr-only">{{ __('filament::widgets.settings') }}</span>
-                    <x-heroicon-o-cog class="w-5 h-5" aria-hidden="true" />
-                </x-slot>
+@props([
+    'title',
+    'columns' => 1,
+    'uuid' => Str::uuid(),
+    'settings' => null,
+])
 
-                <x-filament::dropdown-link button>
-                    test
-                </x-filament::dropdown-link>
-            </x-filament::dropdown>
+<article 
+    class="col-span-1 lg:col-span-{{ $columns }}"
+    {{ $attributes->merge([
+        'aria-labelledby' => 'widget-heading-'.$uuid,
+    ])->except('class') }}
+>
+    <x-filament::card 
+        {{ $attributes->merge([
+            'class' => 'space-y-2',
+        ])->only('class') }}
+    >
+        <div class="flex items-start justify-between space-x-4">
+            @if ($title)
+                <h2 id="widget-heading-{{ $uuid }}" class="font-medium leading-tight">{{ $title }}</h2>
+            @endif 
+
+            @if ($settings)
+                <x-filament::dropdown class="flex text-gray-400 hover:text-current transition-colors duration-200">
+                    <x-slot name="button">
+                        <span class="sr-only">{{ __('filament::widgets.settings') }}</span>
+                        <x-heroicon-o-cog class="w-4 h-4" aria-hidden="true" />
+                    </x-slot>
+
+                    {{ $settings }}
+                </x-filament::dropdown>
+            @endif
         </div>
         <div>
             {{ $slot }}
         </div>
-    </div>
-</x-filament::card>
+    </x-filament::card>
+</article>

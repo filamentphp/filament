@@ -17,14 +17,25 @@
     <x-filament::app-content>
         <x-filament::widgets>
             <x-filament::widget title="Bookmarks">
+                <x-slot name="settings">
+                    <x-filament::dropdown-link button>
+                        Bookmark Setting...
+                    </x-filament::dropdown-link>
+                </x-slot>
                 widget content...
             </x-filament::widget>
 
             <x-filament::widget title="Sample Chart" :columns="2">
+                <x-slot name="settings">
+                    <x-filament::dropdown-link>
+                        Chart Setting...
+                    </x-filament::dropdown-link>
+                </x-slot>
+
                 widget content...
             </x-filament::widget>
 
-            <x-filament::widget title="Recent Updates" :columns="3">
+            <x-filament::widget title="Recent Updates">
                 widget content...
             </x-filament::widget>
         </x-filament::widgets>
