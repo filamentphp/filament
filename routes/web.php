@@ -25,7 +25,7 @@ Route::middleware([Authenticate::class])->group(function () {
     Route::get('/', Livewire\Dashboard::class)->name('dashboard');
     Route::get('/account', Livewire\EditAccount::class)->name('account');
 
-    Route::post('/rich-editor-attachments', Controllers\RichEditorAttachmentController::class)->name('rich-editor-attachments.upload');
+    Route::post('/rich-editor-attachments', \Filament\Forms\Http\Controllers\RichEditorAttachmentController::class)->name('rich-editor-attachments.upload');
 
     // Resources
     Resource::all()->each(function ($resource) {

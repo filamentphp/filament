@@ -28,7 +28,7 @@
 
                 @if ($hint)
                     <div class="text-xs leading-tight text-gray-500 font-mono">
-                        @markdown($hint)
+                        {!! Str::of($hint)->markdown() !!}
                     </div>
                 @endif
             </div>
@@ -46,7 +46,7 @@
 
         @if ($helpMessage)
             <div class="text-xs font-normal leading-tight text-gray-500">
-                @markdown($helpMessage)
+                {!! Str::of($helpMessage)->markdown() !!}
             </div>
         @endif
     </div>
