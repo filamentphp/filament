@@ -50,7 +50,7 @@ class Resource extends Model
             ->map(function ($class) {
                 return [
                     'className' => $class,
-                    'icon' => $class::$icon,
+                    'icon' => $class::getIcon(),
                     'label' => $class::getLabel(),
                     'model' => $class::$model,
                     'slug' => $class::getSlug(),

@@ -36,6 +36,11 @@ abstract class Resource
         return [];
     }
 
+    public static function getIcon()
+    {
+        return static::$icon;
+    }
+
     public static function getLabel()
     {
         if (static::$label) return static::$label;
