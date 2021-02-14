@@ -16,8 +16,9 @@ class RichEditor extends InputField
 
     public $attachmentDisk;
 
+    public $attachmentUploadUrl;
+
     public $toolbarButtons = [
-        'attachFiles',
         'bold',
         'bullet',
         'code',
@@ -37,6 +38,9 @@ class RichEditor extends InputField
         parent::__construct($name);
 
         $this->attachmentDisk(config('forms.default_filesystem_disk'));
+
+        $attachmentUploadUrl = config('forms.rich_editor.default_attachment_upload_url');
+        if ($attachmentUploadUrl) $this->enableAttachments($attachmentUploadUrl);
     }
 
     public function attachmentDirectory($directory)
@@ -62,6 +66,15 @@ class RichEditor extends InputField
         $this->toolbarButtons = collect($this->toolbarButtons)
             ->filter(fn ($button) => ! in_array($button, $buttonsToDisable))
             ->toArray();
+
+        return $this;
+    }
+
+    public function enableAttachments($url)
+    {
+        $this->attachmentUploadUrl = $url;
+
+        $this->enableToolbarButtons(['attachFiles']);
 
         return $this;
     }
