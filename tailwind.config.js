@@ -13,11 +13,6 @@ module.exports = {
       './packages/support/src/**/*.php',
       './packages/support/resources/views/**/*.php',
     ],
-    options: {
-      safelist: {
-        deep: [/grid/, /col/, /link/],
-      },
-    },
   },
   theme: {
     extend: {
@@ -45,9 +40,6 @@ module.exports = {
           },
         },
       },
-    },
-    container: {
-      center: true,
     },
   },
   variants: {
