@@ -123,10 +123,13 @@ class FilamentServiceProvider extends ServiceProvider
             'model' => FilamentUser::class,
         ]);
 
-        $this->app['config']->set(
-            'forms.rich_editor.default_attachment_upload_url',
-            route('filament.rich-editor-attachments.upload'),
-        );
+        $this->app['config']->set('forms', [
+            'default_filesystem_disk' => $this->app['config']->get('filament.default_filesystem_disk'),
+        ]);
+
+        $this->app['config']->set('forms.rich_editor', [
+            'default_attachment_upload_url' => route('filament.rich-editor-attachments.upload'),
+        ]);
     }
 
     protected function registerProviders()
