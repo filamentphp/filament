@@ -11,7 +11,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Commissioner:wght@200;300;400;500;600;700&amp;family=JetBrains+Mono:ital@0;1&amp;display=swap">
     <link rel="stylesheet" href="{{ route('filament.asset', ['path' => 'css/filament.css']) }}" />
-    <link rel="stylesheet" href="{{ route('filament.asset', ['path' => 'css/filament.css.map']) }}" />
     @stack('filament-styles')
 </head>
 
@@ -22,7 +21,6 @@
 
     @livewireScripts
     <script src="{{ route('filament.asset', ['path' => 'js/filament.js']) }}"></script>
-    <script src="{{ route('filament.asset', ['path' => 'js/filament.js.map']) }}"></script>
     @stack('filament-scripts')
 </body>
 </html>

@@ -1,6 +1,7 @@
 {
   "private": true,
   "scripts": {
+    "clean": "rimraf dist",
     "dev": "npm run development",
     "development": "mix",
     "hot": "mix watch --hot",
@@ -24,6 +25,7 @@
     "postcss-import": "^14.0.0",
     "postcss-nested": "^5.0.3",
     "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
     "tailwindcss": "^2.0.3"
   }
 }
