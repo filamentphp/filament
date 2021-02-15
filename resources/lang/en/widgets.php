@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Widgets',
+    'add' => 'Add Widget',
 
     'settings' => 'Widget Settings',
 
