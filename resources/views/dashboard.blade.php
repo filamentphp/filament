@@ -1,7 +1,3 @@
-@pushonce('filament-scripts:livewire-charts')
-    @livewireChartsScripts
-@endpushonce
-
 <div>
     <x-filament::app-header :title="__('filament::dashboard.title')">
         <x-slot name="actions">
@@ -54,55 +50,16 @@
                     </ol>
 
                     <div class="flex justify-end">
-                        <x-filament::modal>
-                            <x-slot name="trigger">
-                                <x-filament::button
-                                    size="small"
-                                    class="flex items-center space-x-1"
-                                    @click="open = !open"
-                                >
-                                    <x-heroicon-o-plus class="w-4 h-4" aria-hidden="true" />
-                                    <span>Add Link</span>
-                                </x-filament::button>
-                            </x-slot>
-
-                            <x-filament::card class="space-y-5 max-w-2xl">
-                                <x-filament::card-header title="Add Quick Link?">
-                                    <form>
-                                        Form...
-                                    </form>
-                                </x-filament::card-header>
-
-                                <div class="space-y-3 sm:space-y-0 sm:flex sm:space-x-3 sm:justify-end">
-                                    <x-filament::button
-                                        x-on:click="open = false"
-                                    >
-                                        Cancel
-                                    </x-filament::button>
-                                </div>
-                            </x-filament::card>
-                        </x-filament::modal>
+                        <x-filament::button
+                            size="small"
+                            class="flex items-center space-x-1"
+                        >
+                            <x-heroicon-o-plus class="w-4 h-4" aria-hidden="true" />
+                            <span>Add Link</span>
+                        </x-filament::button>
                     </div>
                 </div>
             </x-filament::widget>
-
-            <x-filament::widget title="Chart" :columns="2">
-                <x-slot name="settings">
-                    <x-filament::dropdown-link button>
-                        Chart Setting...
-                    </x-filament::dropdown-link>
-
-                    <x-filament::dropdown-link>
-                        Another Chart Setting...
-                    </x-filament::dropdown-link>
-                </x-slot>
-                <div class="h-96">
-                    <livewire:livewire-column-chart
-                        :column-chart-model="$chart"
-                    />
-                </div>
-            </x-filament::widget>
-
             <x-filament::widget title="Activity">
                 widget content...
             </x-filament::widget>
