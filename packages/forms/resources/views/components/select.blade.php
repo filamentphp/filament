@@ -200,7 +200,7 @@
     @unless (Str::of($nameAttribute)->startsWith(['wire:model', 'x-model']))
         <input
             x-model="value"
-            {{ $name ? "{$nameAttribute}=\"{$name}\"" : null }}
+            {!! $name ? "{$nameAttribute}=\"{$name}\"" : null !!}
             type="hidden"
         />
     @endif
