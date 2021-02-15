@@ -73,20 +73,6 @@
                     @foreach ($columns as $column)
                         <x-filament::table.cell>
                             {{ $column->renderCell($record) }}
-{{--                            @empty ($heading['link'])--}}
-{{--                                {{ $column->getValue($record) }}--}}
-{{--                            @else--}}
-{{--                                <a--}}
-{{--                                    href="{{ route('filament.resource', [--}}
-{{--                                        'resource' => $resource,--}}
-{{--                                        'action' => 'edit',--}}
-{{--                                        'id' => $item->{$heading['link']},--}}
-{{--                                    ]) }}"--}}
-{{--                                    class="link"--}}
-{{--                                >--}}
-{{--                                    {{ $column->getValue($record) }}--}}
-{{--                                </a>--}}
-{{--                            @endif--}}
                         </x-filament::table.cell>
                     @endforeach
                 </x-filament::table.row>
