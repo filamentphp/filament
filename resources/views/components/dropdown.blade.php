@@ -32,7 +32,7 @@
         role="menu"
         id="{{ $id }}"
         tabindex="-1"
-        class="bg-gray-700 text-white shadow-md rounded overflow-hidden p-1.5"
+        class="absolute z-50 bg-gray-700 text-white shadow-md rounded overflow-hidden p-1.5"
     >
         {{ $slot }}
     </div>

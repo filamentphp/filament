@@ -97,8 +97,11 @@
                         Another Chart Setting...
                     </x-filament::dropdown-link>
                 </x-slot>
-
-                widget content...
+                <div class="h-96">
+                    <livewire:livewire-column-chart 
+                        :column-chart-model="$chart" 
+                    />
+                </div>
             </x-filament::widget>
 
             <x-filament::widget title="Activity">
