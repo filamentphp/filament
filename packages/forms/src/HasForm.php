@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament;
+namespace Filament\Forms;
 
 use Filament\Fields\File;
 use Filament\Fields\InputField;

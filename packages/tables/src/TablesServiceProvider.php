@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament;
+namespace Filament\Tables;
 
 use Illuminate\Support\ServiceProvider;
 

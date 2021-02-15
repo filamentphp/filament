@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Fields;
+namespace Filament\Forms\Fields;
 
-use Filament\Fields\Concerns;
+use Filament\Forms\Fields\Concerns;
 
 class Textarea extends InputField
 {

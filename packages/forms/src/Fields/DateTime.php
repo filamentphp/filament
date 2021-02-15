@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Fields;
+namespace Filament\Forms\Fields;
 
 class DateTime extends Date
 {

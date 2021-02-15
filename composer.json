@@ -35,12 +35,10 @@
             "src/helpers.php"
         ],
         "psr-4": {
-            "Filament\\": [
-                "packages/forms/src",
-                "packages/tables/src",
-                "src"
-            ],
-            "Filament\\Database\\Factories\\": "database/factories"
+            "Filament\\": "src",
+            "Filament\\Forms\\": "packages/forms/src",
+            "Filament\\Database\\Factories\\": "database/factories",
+            "Filament\\Tables\\": "packages/tables/src"
         }
     },
     "autoload-dev": {
@@ -52,8 +50,8 @@
         "laravel": {
             "providers": [
                 "Filament\\FilamentServiceProvider",
-                "Filament\\FormsServiceProvider",
-                "Filament\\TablesServiceProvider"
+                "Filament\\Forms\\FormsServiceProvider",
+                "Filament\\Tables\\TablesServiceProvider"
             ],
             "aliases": {
                 "FilamentManager": "Filament\\Filament"

@@ -3,7 +3,7 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns;
-use Filament\HasTable;
+use Filament\Tables\HasTable;
 use Livewire\Component;
 
 class ListRecords extends Component

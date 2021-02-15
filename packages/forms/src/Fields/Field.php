@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Fields;
+namespace Filament\Forms\Fields;
 
-use Filament\Form;
+use Filament\Forms\Form;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Tappable;
 

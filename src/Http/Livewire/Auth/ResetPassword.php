@@ -2,8 +2,8 @@
 
 namespace Filament\Http\Livewire\Auth;
 
-use Filament\Fields;
-use Filament\HasForm;
+use Filament\Forms\Fields;
+use Filament\Forms\HasForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;

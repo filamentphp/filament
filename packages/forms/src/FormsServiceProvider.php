@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament;
+namespace Filament\Forms;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;

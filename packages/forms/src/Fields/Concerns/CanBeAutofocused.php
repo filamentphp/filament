@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Fields\Concerns;
+namespace Filament\Forms\Fields\Concerns;
 
 trait CanBeAutofocused
 {

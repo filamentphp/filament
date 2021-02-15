@@ -3,7 +3,7 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns;
-use Filament\HasForm;
+use Filament\Forms\HasForm;
 use Livewire\Component;
 
 class EditRecord extends Component

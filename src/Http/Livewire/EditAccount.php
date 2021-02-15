@@ -3,9 +3,9 @@
 namespace Filament\Http\Livewire;
 
 use Filament\Actions\Concerns;
-use Filament\Fields;
-use Filament\Form;
-use Filament\HasForm;
+use Filament\Forms\Fields;
+use Filament\Forms\Form;
+use Filament\Forms\HasForm;
 use Filament\Models\FilamentUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;

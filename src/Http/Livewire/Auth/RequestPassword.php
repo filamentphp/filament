@@ -4,8 +4,8 @@ namespace Filament\Http\Livewire\Auth;
 
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Concerns;
-use Filament\Fields;
-use Filament\HasForm;
+use Filament\Forms\Fields;
+use Filament\Forms\HasForm;
 use Illuminate\Support\Facades\Password;
 use Livewire\Component;
 

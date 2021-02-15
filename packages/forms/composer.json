@@ -19,13 +19,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Filament\\": "src"
+            "Filament\\Forms\\": "src"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "TablesServiceProvider"
+                "Filament\\Forms\\FormsServiceProvider"
             ]
         }
     },
