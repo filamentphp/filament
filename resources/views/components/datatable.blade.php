@@ -9,7 +9,7 @@
 <div class="space-y-4">
     <div class="flex items-center justify-between space-x-4">
         <div class="relative flex-grow max-w-screen-md">
-            <x-filament::input
+            <x-forms::text-input
                 type="search"
                 model="search"
                 :placeholder="__('filament::datatable.search', ['resource' => Str::plural($resource)])"

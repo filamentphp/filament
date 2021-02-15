@@ -42,7 +42,7 @@
 
     <x-filament::app-content>
         <x-filament::card>
-            <x-filament::form :fields="$this->getForm()->fields" class="space-y-6">
+            <x-forms::container :fields="$this->getForm()->fields" class="space-y-6">
                 <x-filament::button
                     type="submit"
                     color="primary"
@@ -50,7 +50,7 @@
                 >
                     Update
                 </x-filament::button>
-            </x-filament::form>
+            </x-forms::container>
         </x-filament::card>
     </x-filament::app-content>
 </div>

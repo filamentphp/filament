@@ -102,9 +102,4 @@ class Form
     {
         $this->rules = $rules;
     }
-
-    public function render()
-    {
-        return view('filament::components.fields');
-    }
 }

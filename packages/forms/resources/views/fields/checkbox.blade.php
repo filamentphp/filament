@@ -1,4 +1,4 @@
-<x-filament::field-group
+<x-forms::field-group
     :error-key="$field->name"
     :for="$field->id"
     :help-message="__($field->helpMessage)"
@@ -7,7 +7,7 @@
     :required="$field->required"
 >
     <x-slot name="labelPrefix">
-        <x-filament::checkbox
+        <x-forms::checkbox
             :autofocus="$field->autofocus"
             :disabled="$field->disabled"
             :error-key="$field->name"
@@ -18,4 +18,4 @@
             :required="$field->required"
         />
     </x-slot>
-</x-filament::field-group>
+</x-forms::field-group>

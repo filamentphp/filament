@@ -6,16 +6,20 @@ use Filament\Commands\MakeUserCommand;
 use Filament\Http\Middleware\AuthorizeResourceRoute;
 use Filament\Models\FilamentUser;
 use Filament\Providers\RouteServiceProvider;
-use Filament\Support\Providers\ServiceProvider;
-use Filament\Support\RegistersLivewireComponentDirectories;
 use Filament\View\Components;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use BladeUI\Icons\Factory as BladeUIFactory;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
+use Livewire\Component;
+use Livewire\Livewire;
+use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentServiceProvider extends ServiceProvider
 {
-    use RegistersLivewireComponentDirectories;
-
     public $singletons = [
         FilamentManager::class => FilamentManager::class,
         Navigation::class => Navigation::class,
@@ -24,6 +28,7 @@ class FilamentServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->bootCommands();
+        $this->bootDirectives();
         $this->bootLoaders();
         $this->bootLivewireComponents();
         $this->bootMiddleware();
@@ -51,6 +56,19 @@ class FilamentServiceProvider extends ServiceProvider
         $this->commands([
             MakeUserCommand::class,
         ]);
+    }
+
+    protected function bootDirectives()
+    {
+        Blade::directive('pushonce', function ($expression) {
+            [$pushName, $pushSub] = explode(':', trim(substr($expression, 1, -1)));
+            $key = '__pushonce_' . str_replace('-', '_', $pushName) . '_' . str_replace('-', '_', $pushSub);
+            return "<?php if(! isset(\$__env->{$key})): \$__env->{$key} = 1; \$__env->startPush('{$pushName}'); ?>";
+        });
+
+        Blade::directive('endpushonce', function () {
+            return '<?php $__env->stopPush(); endif; ?>';
+        });
     }
 
     protected function bootLoaders()
@@ -141,11 +159,69 @@ class FilamentServiceProvider extends ServiceProvider
                 'path' => __DIR__ . '/../resources/svg',
                 'prefix' => 'filamenticon',
             ]);
-        }); 
+        });
     }
 
     protected function registerProviders()
     {
         $this->app->register(RouteServiceProvider::class);
+    }
+
+    protected function mergeConfigFrom($path, $key)
+    {
+        $config = $this->app['config']->get($key, []);
+
+        $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
+    }
+
+    protected function mergeConfig(array $original, array $merging)
+    {
+        $array = array_merge($original, $merging);
+
+        foreach ($original as $key => $value) {
+            if (! is_array($value)) {
+                continue;
+            }
+
+            if (! Arr::exists($merging, $key)) {
+                continue;
+            }
+
+            if (is_numeric($key)) {
+                continue;
+            }
+
+            $array[$key] = $this->mergeConfig($value, $merging[$key]);
+        }
+
+        return $array;
+    }
+
+    protected function registerLivewireComponentDirectory($directory, $namespace, $aliasPrefix = '')
+    {
+        $filesystem = new Filesystem();
+
+        if (! $filesystem->isDirectory($directory)) return;
+
+        collect($filesystem->allFiles($directory))
+            ->map(function (SplFileInfo $file) use ($namespace) {
+                return (string) Str::of($namespace)
+                    ->append('\\', $file->getRelativePathname())
+                    ->replace(['/', '.php'], ['\\', '']);
+            })
+            ->filter(function ($class) {
+                return is_subclass_of($class, Component::class) && ! (new \ReflectionClass($class))->isAbstract();
+            })
+            ->each(function ($class) use ($namespace, $aliasPrefix) {
+                $alias = Str::of($class)
+                    ->after($namespace . '\\')
+                    ->replace(['/', '\\'], '.')
+                    ->prepend($aliasPrefix)
+                    ->explode('.')
+                    ->map([Str::class, 'kebab'])
+                    ->implode('.');
+
+                Livewire::component($alias, $class);
+            });
     }
 }

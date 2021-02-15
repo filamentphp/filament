@@ -36,7 +36,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             \BladeUI\Icons\BladeIconsServiceProvider::class,
             \Filament\FilamentServiceProvider::class,
             \Filament\FormsServiceProvider::class,
-            \Filament\SupportServiceProvider::class,
+            \Filament\TablesServiceProvider::class,
             \Livewire\LivewireServiceProvider::class,
             \Thomaswelton\LaravelGravatar\LaravelGravatarServiceProvider::class,
             \Watson\Active\ActiveServiceProvider::class,

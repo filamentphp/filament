@@ -5,5 +5,5 @@
         </legend>
     @endif
 
-    <x-filament::subform :fields="$field->fields" :columns="$field->columns" />
+    <x-forms::section :fields="$field->fields" :columns="$field->columns" />
 </fieldset>

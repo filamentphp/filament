@@ -1,4 +1,4 @@
-<x-filament::field-group
+<x-forms::field-group
     :error-key="$field->name"
     :for="$field->id"
     :help-message="__($field->helpMessage)"
@@ -6,7 +6,7 @@
     :label="__($field->label)"
     :required="$field->required"
 >
-    <x-filament::date-time-picker
+    <x-forms::date-time-picker
         :autofocus="$field->autofocus"
         :disabled="$field->disabled"
         :display-format="convert_date_format($field->displayFormat)->to('day.js')"
@@ -23,4 +23,4 @@
         :time="true"
         :without-seconds="$field->withoutSeconds"
     />
-</x-filament::field-group>
+</x-forms::field-group>

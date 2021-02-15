@@ -37,7 +37,7 @@
         "psr-4": {
             "Filament\\": [
                 "packages/forms/src",
-                "packages/support/src",
+                "packages/tables/src",
                 "src"
             ],
             "Filament\\Database\\Factories\\": "database/factories"
@@ -53,7 +53,7 @@
             "providers": [
                 "Filament\\FilamentServiceProvider",
                 "Filament\\FormsServiceProvider",
-                "Filament\\SupportServiceProvider"
+                "Filament\\TablesServiceProvider"
             ],
             "aliases": {
                 "FilamentManager": "Filament\\Filament"
@@ -62,7 +62,7 @@
     },
     "replace": {
         "filament/forms": "self.version",
-        "filament/support": "self.version"
+        "filament/tables": "self.version"
     },
     "config": {
         "sort-packages": true

@@ -1,5 +1,6 @@
 {
-    "name": "filament/support",
+    "name": "filament/tables",
+    "description": "Effortlessly build TALL-powered tables.",
     "license": "MIT",
     "homepage": "https://github.com/laravel-filament/filament",
     "support": {
@@ -8,7 +9,7 @@
     },
     "require": {
         "php": "^7.4|^8.0",
-        "illuminate/filesystem": "^8.0",
+        "blade-ui-kit/blade-heroicons": "^0.3",
         "illuminate/support": "^8.0",
         "livewire/livewire": "^2.2"
     },
@@ -20,7 +21,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Filament\\SupportServiceProvider"
+                "Filament\\TablesServiceProvider"
             ]
         }
     },

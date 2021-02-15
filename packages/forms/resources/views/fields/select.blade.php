@@ -1,4 +1,4 @@
-<x-filament::field-group
+<x-forms::field-group
     :error-key="$field->name"
     :for="$field->id"
     :help-message="__($field->helpMessage)"
@@ -6,7 +6,7 @@
     :label="__($field->label)"
     :required="$field->required"
 >
-    <x-filament::select
+    <x-forms::select
         :autofocus="$field->autofocus"
         :disabled="$field->disabled"
         :empty-option-label="__($field->emptyOptionLabel)"
@@ -20,4 +20,4 @@
         :placeholder="__($field->placeholder)"
         :required="$field->required"
     />
-</x-filament::field-group>
+</x-forms::field-group>

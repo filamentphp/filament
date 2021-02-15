@@ -28,7 +28,7 @@
     </script>
 @endpushonce
 
-<x-filament::field-group
+<x-forms::field-group
     :error-key="$field->name"
     :for="$field->id"
     :help-message="__($field->helpMessage)"
@@ -222,4 +222,4 @@
             <div x-html="value" class="p-3 rounded shadow-sm border border-gray-300 prose"></div>
         @endunless
     </div>
-</x-filament::field-group>
+</x-forms::field-group>

@@ -40,7 +40,7 @@
     $field->placeholder = __($field->placeholder);
 @endphp
 
-<x-filament::field-group
+<x-forms::field-group
     :error-key="$field->name"
     :for="$field->id"
     :help-message="__($field->helpMessage)"
@@ -127,4 +127,4 @@
             type="file"
         />
     </div>
-</x-filament::field-group>
+</x-forms::field-group>

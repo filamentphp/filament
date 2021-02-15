@@ -240,7 +240,7 @@ class Field
     {
         if ($this->hidden) return;
 
-        $view = $this->view ?? 'filament::fields.' . Str::of(class_basename(static::class))->kebab();
+        $view = $this->view ?? 'forms::fields.' . Str::of(class_basename(static::class))->kebab();
 
         return view($view, ['field' => $this]);
     }

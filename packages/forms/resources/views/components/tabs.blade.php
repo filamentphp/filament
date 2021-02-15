@@ -4,11 +4,11 @@
     'tabs' => [],
 ])
 
-<x-filament::card
+<div
     x-data="{ tab: '{{ count($tabs) ? array_key_first($tabs) : null }}', tabs: {{ json_encode($tabs) }} }"
     x-on:switch-tab.window="if ($event.detail in tabs) tab = $event.detail"
     x-cloak
-    class="overflow-hidden"
+    class="overflow-hidden bg-white shadow-xl rounded p-4 md:p-6"
 >
     <div class="-m-4 md:-m-6">
         <div {!! $label ? "aria-label=\"{$label}\"" : null !!} role="tablist" class="bg-gray-100 border-b border-gray-200 flex">
@@ -29,4 +29,4 @@
 
         {{ $slot }}
     </div>
-</x-filament::card>
+</div>
