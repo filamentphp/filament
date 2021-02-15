@@ -1,7 +1,3 @@
-@pushonce('filament-scripts:livewire-charts')
-    @livewireChartsScripts
-@endpushonce
-
 <div>
     <x-filament::app-header :title="__('filament::dashboard.title')">
         <x-slot name="actions">
@@ -84,23 +80,6 @@
                             </x-filament::card>
                         </x-filament::modal>
                     </div>
-                </div>
-            </x-filament::widget>
-
-            <x-filament::widget title="Chart" :columns="2">
-                <x-slot name="settings">
-                    <x-filament::dropdown-link button>
-                        Chart Setting...
-                    </x-filament::dropdown-link>
-
-                    <x-filament::dropdown-link>
-                        Another Chart Setting...
-                    </x-filament::dropdown-link>
-                </x-slot>
-                <div class="h-96">
-                    <livewire:livewire-column-chart 
-                        :column-chart-model="$chart" 
-                    />
                 </div>
             </x-filament::widget>
 
