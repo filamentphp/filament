@@ -13,15 +13,11 @@
                 </x-slot>
 
                 <x-filament::card class="space-y-5 max-w-2xl">
-                    <div class="space-y-2">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-                            Delete this record?
-                        </h3>
-
+                    <x-filament::card-header title="Delete this record?">
                         <p class="text-sm text-gray-500">
                             Are you sure you would like to delete this record? This action cannot be undone.
                         </p>
-                    </div>
+                    </x-filament::card-header>
 
                     <div class="space-y-3 sm:space-y-0 sm:flex sm:space-x-3 sm:justify-end">
                         <x-filament::button

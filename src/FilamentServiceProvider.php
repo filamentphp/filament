@@ -10,6 +10,7 @@ use Filament\Support\Providers\ServiceProvider;
 use Filament\Support\RegistersLivewireComponentDirectories;
 use Filament\View\Components;
 use Illuminate\Routing\Router;
+use BladeUI\Icons\Factory as BladeUIFactory;
 
 class FilamentServiceProvider extends ServiceProvider
 {
@@ -37,6 +38,7 @@ class FilamentServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
 
+        $this->registerIcons();
         $this->registerProviders();
     }
 
@@ -130,6 +132,16 @@ class FilamentServiceProvider extends ServiceProvider
         $this->app['config']->set('forms.rich_editor', [
             'default_attachment_upload_url' => route('filament.rich-editor-attachments.upload'),
         ]);
+    }
+
+    protected function registerIcons()
+    {
+        $this->callAfterResolving(BladeUIFactory::class, function (BladeUIFactory $factory) {
+            $factory->add('filamenticons', [
+                'path' => __DIR__ . '/../resources/svg',
+                'prefix' => 'filamenticon',
+            ]);
+        }); 
     }
 
     protected function registerProviders()
