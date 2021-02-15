@@ -11,7 +11,7 @@
     class="overflow-hidden"
 >
     <div class="-m-4 md:-m-6">
-        <div {{ $label ? "aria-label=\"{$label}\"" : null }} role="tablist" class="bg-gray-100 border-b border-gray-200 flex">
+        <div {!! $label ? "aria-label=\"{$label}\"" : null !!} role="tablist" class="bg-gray-100 border-b border-gray-200 flex">
             @foreach ($tabs as $tabId => $tabLabel)
                 <button type="button"
                     aria-controls="{{ $tabId }}-tab"
