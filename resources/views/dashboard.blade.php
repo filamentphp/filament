@@ -27,7 +27,7 @@
                     @for ($i = 1; $i <= 5; $i++)
                         <li class="py-2.5 flex items-center justify-between space-x-3">
                             <button class="flex-shrink-0 flex text-gray-300 hover:text-gray-600 transition-colors duration-200">
-                                <x-heroicon-o-menu-alt-4 class="w-4 h-4" />
+                                <x-filamenticon-o-sort class="w-3 h-3" />
                             </button>
 
                             <div class="flex-grow text-sm leading-tight">
