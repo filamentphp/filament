@@ -386,7 +386,20 @@
                         x-model="focusedMonth"
                         class="flex-grow text-lg font-medium text-gray-800 cursor-pointer border-0 p-0 focus:ring-0 focus:outline-none"
                     >
-                        <template x-for="(month, index) in ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']">
+                        <template x-for="(month, index) in [
+                            '{{ __('forms::fields.dateTimePicker.months.january') }}',
+                            '{{ __('forms::fields.dateTimePicker.months.february') }}',
+                            '{{ __('forms::fields.dateTimePicker.months.march') }}',
+                            '{{ __('forms::fields.dateTimePicker.months.april') }}',
+                            '{{ __('forms::fields.dateTimePicker.months.may') }}',
+                            '{{ __('forms::fields.dateTimePicker.months.june') }}',
+                            '{{ __('forms::fields.dateTimePicker.months.july') }}',
+                            '{{ __('forms::fields.dateTimePicker.months.august') }}',
+                            '{{ __('forms::fields.dateTimePicker.months.september') }}',
+                            '{{ __('forms::fields.dateTimePicker.months.october') }}',
+                            '{{ __('forms::fields.dateTimePicker.months.november') }}',
+                            '{{ __('forms::fields.dateTimePicker.months.december') }}',
+                        ]">
                             <option x-bind:value="index" x-text="month"></option>
                         </template>
                     </select>
@@ -399,7 +412,15 @@
                 </div>
 
                 <div class="grid grid-cols-7 gap-1">
-                    <template x-for="(day, index) in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']" :key="index">
+                    <template x-for="(day, index) in [
+                        '{{ __('forms::fields.dateTimePicker.abbreviatedDays.sunday') }}',
+                        '{{ __('forms::fields.dateTimePicker.abbreviatedDays.monday') }}',
+                        '{{ __('forms::fields.dateTimePicker.abbreviatedDays.tuesday') }}',
+                        '{{ __('forms::fields.dateTimePicker.abbreviatedDays.wednesday') }}',
+                        '{{ __('forms::fields.dateTimePicker.abbreviatedDays.thursday') }}',
+                        '{{ __('forms::fields.dateTimePicker.abbreviatedDays.friday') }}',
+                        '{{ __('forms::fields.dateTimePicker.abbreviatedDays.saturday') }}',
+                    ]" :key="index">
                         <div
                             x-text="day"
                             class="text-gray-800 font-medium text-center text-xs"

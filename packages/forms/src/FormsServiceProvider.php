@@ -25,12 +25,12 @@ class FormsServiceProvider extends ServiceProvider
     {
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'filament');
 
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'filament');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'forms');
     }
 
     protected function bootLivewireComponents()
     {
-        $this->registerLivewireComponentDirectory(__DIR__ . '/Http/Livewire', 'Filament\\Http\\Livewire', 'filament.');
+        $this->registerLivewireComponentDirectory(__DIR__ . '/Http/Livewire', 'Filament\\Forms\\Http\\Livewire', 'filament.forms.');
     }
 
     protected function bootPublishing()

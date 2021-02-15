@@ -13,9 +13,9 @@ class Select extends InputField
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasPlaceholder;
 
-    public $emptyOptionLabel = 'None';
+    public $emptyOptionLabel = 'forms::fields.select.emptyOptionLabel';
 
-    public $emptyOptionsMessage = 'No options match your search.';
+    public $emptyOptionsMessage = 'forms::fields.select.emptyOptionsMessage';
 
     public $options = [];
 

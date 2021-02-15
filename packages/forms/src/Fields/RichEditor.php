@@ -29,7 +29,7 @@ class RichEditor extends InputField
         'quote',
         'redo',
         'strike',
-        'subHeading',
+        'subheading',
         'undo',
     ];
 

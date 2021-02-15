@@ -22,7 +22,7 @@
                     class="text-sm leading-tight font-medium p-3 md:px-6 -mb-px border-r border-gray-200"
                     x-bind:class="{ 'bg-white': tab === '{{ $tabId }}' }"
                 >
-                    {{ $tabLabel }}
+                    {{ __($tabLabel) }}
                 </button>
             @endforeach
         </div>

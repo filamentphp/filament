@@ -19,7 +19,7 @@ class Tags extends InputField
     {
         parent::__construct($name);
 
-        $this->placeholder('New tag');
+        $this->placeholder('forms::fields.tags.placeholder');
     }
 
     public function separator($separator)
