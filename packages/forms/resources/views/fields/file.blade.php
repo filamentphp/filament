@@ -36,6 +36,10 @@
     <script src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.js"></script>
 @endpushonce
 
+@php
+    $field->placeholder = __($field->placeholder);
+@endphp
+
 <x-filament::field-group
     :error-key="$field->name"
     :for="$field->id"
