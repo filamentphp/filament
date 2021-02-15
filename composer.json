@@ -1,6 +1,6 @@
 {
     "name": "filament/filament",
-    "description": "A lightweight admin panel for the TALL stack.",
+    "description": "The elegant TALL stack admin panel for Laravel artisans.",
     "license": "MIT",
     "require": {
         "php": "^7.4|^8.0",
