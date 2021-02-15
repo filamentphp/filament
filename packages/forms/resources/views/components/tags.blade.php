@@ -53,7 +53,9 @@
 <div
     x-data="tags({
         separator: '{{ $separator }}',
-        @if (Str::of($nameAttribute)->startsWith('wire:model')) value: @entangle($name){{ Str::of($nameAttribute)->after('wire:model') }}, @endif
+        @if (Str::of($nameAttribute)->startsWith('wire:model'))
+            value: @entangle($name){{ Str::of($nameAttribute)->after('wire:model') }},
+        @endif
     })"
     x-init="init()"
     {{ $attributes->merge($extraAttributes) }}
@@ -61,7 +63,7 @@
     @unless (Str::of($nameAttribute)->startsWith(['wire:model', 'x-model']))
         <input
             x-model="value"
-            @if ($name) {{ $nameAttribute }}="{{ $name }}" @endif
+            {{ $name ? "{$nameAttribute}=\"{$name}\"" : null }}
             type="hidden"
         />
     @endif
@@ -70,7 +72,7 @@
         @unless ($disabled)
             <input
                 autocomplete="off"
-                @if ($autofocus) autofocus @endif
+                {{ $autofocus ? 'autofocus' : null }}
                 placeholder="{{ $placeholder }}"
                 type="text"
                 x-on:keydown.enter.stop.prevent="createTag()"

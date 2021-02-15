@@ -209,7 +209,7 @@
             </trix-toolbar>
 
             <trix-editor
-                @if ($field->autofocus) autofocus @endif
+                {{ $field->autofocus ? 'autofocus' : null }}
                 id="{{ $field->id }}"
                 input="trix-value-{{ $field->id }}"
                 placeholder="{{ __($field->placeholder) }}"

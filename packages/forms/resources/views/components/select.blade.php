@@ -186,7 +186,9 @@
         emptyOptionLabel: '{{ $emptyOptionLabel }}',
         emptyOptionsMessage: '{{ $emptyOptionsMessage }}',
         required: {{ $required ? 'true' : 'false' }},
-        @if (Str::of($nameAttribute)->startsWith('wire:model')) value: @entangle($name){{ Str::of($nameAttribute)->after('wire:model') }}, @endif
+        @if (Str::of($nameAttribute)->startsWith('wire:model'))
+            value: @entangle($name){{ Str::of($nameAttribute)->after('wire:model') }},
+        @endif
     })"
     x-init="init()"
     x-on:click.away="closeListbox()"
@@ -198,7 +200,7 @@
     @unless (Str::of($nameAttribute)->startsWith(['wire:model', 'x-model']))
         <input
             x-model="value"
-            @if ($name) {{ $nameAttribute }}="{{ $name }}" @endif
+            {{ $name ? "{$nameAttribute}=\"{$name}\"" : null }}
             type="hidden"
         />
     @endif
