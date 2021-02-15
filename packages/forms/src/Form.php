@@ -21,28 +21,32 @@ class Form
 
     public function passContextToFields($context = null)
     {
-        if (! $context) return $this->fields;
+        if ($context) {
+            $this->fields = collect($this->fields)
+                ->map(function ($field) use ($context) {
+                    return $field
+                        ->context($context)
+                        ->fields($field->getForm()->passContextToFields($context));
+                })
+                ->toArray();
+        }
 
-        return $this->fields = collect($this->fields)
-            ->map(function ($field) use ($context) {
-                return $field
-                    ->context($context)
-                    ->fields($field->getForm()->passContextToFields($context));
-            })
-            ->toArray();
+        return $this->fields;
     }
 
     public function passRecordToFields($record = null)
     {
-        if (! $record) return $this->fields;
+        if ($record) {
+            $this->fields = collect($this->fields)
+                ->map(function ($field) use ($record) {
+                    return $field
+                        ->record($record)
+                        ->fields($field->getForm()->passRecordToFields($record));
+                })
+                ->toArray();
+        }
 
-        return $this->fields = collect($this->fields)
-            ->map(function ($field) use ($record) {
-                return $field
-                    ->record($record)
-                    ->fields($field->getForm()->passRecordToFields($record));
-            })
-            ->toArray();
+        return $this->fields;
     }
 
     public function columns($columns)

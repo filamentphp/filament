@@ -1,11 +1,21 @@
 <div>
-    <x-filament::app-header :title="__($title)" />
+    <x-filament::app-header :title="__($title)">
+        <x-slot name="actions">
+            <x-filament::button
+                color="primary"
+                :href="$this->getResource()::route($createRoute)"
+            >
+                Create
+            </x-filament::button>
+        </x-slot>
+    </x-filament::app-header>
 
     <x-filament::app-content>
-        <div class="p-4 md:p-6 bg-white shadow-sm rounded overflow-hidden">
-            <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg h-64 flex items-center justify-center">
-                <a href="{{ $this->getResource()::route($createRoute) }}" class="text-sm font-mono">Create</a>
-            </div>
-        </div>
+        <x-tables::container
+            :columns="$this->getTable()->getVisibleColumns()"
+            :records="$records"
+            :sort-column="$sortColumn"
+            :sort-direction="$sortDirection"
+        />
     </x-filament::app-content>
 </div>

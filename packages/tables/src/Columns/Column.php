@@ -1,16 +1,16 @@
 <?php
 
-namespace Filament\Forms\Fields;
+namespace Filament\Tables\Columns;
 
-use Filament\Forms\Form;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Tappable;
 
-class Field
+class Column
 {
     use Tappable;
 
-    public $fields = [];
+    public $getValueUsing;
 
     public $hidden = false;
 
@@ -18,7 +18,11 @@ class Field
 
     public $label;
 
-    public $parentField;
+    public $name;
+
+    public $searchable = false;
+
+    public $sortable = false;
 
     protected $context;
 
@@ -29,6 +33,16 @@ class Field
     protected $record;
 
     protected $view;
+
+    public function __construct($name)
+    {
+        $this->name($name);
+    }
+
+    public static function make($name)
+    {
+        return new static($name);
+    }
 
     public function context($context)
     {
@@ -84,78 +98,44 @@ class Field
         return $this;
     }
 
+    public function getValue($record, $attribute = null)
+    {
+        if ($this->getValueUsing) {
+            $callback = $this->getValueUsing;
+
+           return $callback($record);
+        }
+
+        if ($attribute === null) {
+            $attribute = $this->name;
+        }
+
+        $value = $record->getAttribute(
+            (string) Str::of($attribute)->before('.'),
+        );
+
+        if ($value instanceof Model) {
+            $value = $this->getValue(
+                $value,
+                (string) Str::of($attribute)->after('.')
+            );
+        }
+
+        return $value;
+    }
+
+    public function getValueUsing($callback)
+    {
+        $this->getValueUsing = $callback;
+
+        return $this;
+    }
+
     public function hidden()
     {
         $this->hidden = true;
 
         return $this;
-    }
-
-    public function fields($fields)
-    {
-        $this->fields = collect($fields)
-            ->map(fn ($field) => $field->parentField($this))
-            ->toArray();
-
-        return $this;
-    }
-
-    public function getDefaults()
-    {
-        if ($this->hidden) return [];
-
-        $defaults = [];
-
-        if (property_exists($this, 'name') && property_exists($this, 'default')) {
-            $defaults[$this->name] = $this->default;
-        }
-
-        $defaults = array_merge($defaults, $this->getForm()->getDefaults());
-
-        return $defaults;
-    }
-
-    public function getForm()
-    {
-        return new Form($this->fields, $this->context, $this->record);
-    }
-
-    public function getRules()
-    {
-        if ($this->hidden) return [];
-
-        $rules = property_exists($this, 'rules') ? $this->rules : [];
-
-        foreach ($this->getForm()->getRules() as $field => $conditions) {
-            $conditions = collect($conditions)
-                ->map(function ($condition) {
-                    if (! is_string($condition)) return $condition;
-
-                    return (string) Str::of($condition)->replace('{{record}}', $this->record ? $this->record->getKey() : '');
-                })
-                ->toArray();
-
-            $rules[$field] = array_merge($rules[$field] ?? [], $conditions);
-        }
-
-        return $rules;
-    }
-
-    public function getValidationAttributes()
-    {
-        if ($this->hidden) return [];
-
-        $attributes = [];
-
-        if (property_exists($this, 'name') && property_exists($this, 'label')) {
-            $label = Str::lower($this->label);
-
-            $attributes[$this->name] = $label;
-        }
-
-        $attributes = array_merge($attributes, $this->getForm()->getValidationAttributes());
-
-        return $attributes;
     }
 
     public function id($id)
@@ -165,11 +145,39 @@ class Field
         return $this;
     }
 
+    public function isSearchable()
+    {
+        return $this->searchable && $this->getValueUsing === null;
+    }
+
+    public function isSortable()
+    {
+        return $this->sortable && $this->getValueUsing === null;
+    }
+
     public function label($label)
     {
         $this->label = $label;
 
         return $this;
+    }
+
+    public function name($name)
+    {
+        $this->name = $name;
+
+        $this->id(
+            (string) Str::of($this->name)
+                ->replace('.', '-')
+                ->slug(),
+        );
+
+        $this->label(
+            (string) Str::of($this->name)
+                ->kebab()
+                ->replace(['-', '_', '.'], ' ')
+                ->ucfirst(),
+        );
     }
 
     public function only($contexts, $callback = null)
@@ -201,16 +209,16 @@ class Field
         return $this;
     }
 
-    public function parentField($field)
+    public function searchable()
     {
-        $this->parentField = $field;
+        $this->searchable = true;
 
         return $this;
     }
 
-    public function record($record)
+    public function sortable()
     {
-        $this->record = $record;
+        $this->sortable = true;
 
         return $this;
     }
@@ -229,12 +237,15 @@ class Field
         return $this;
     }
 
-    public function render()
+    public function renderCell($record)
     {
         if ($this->hidden) return;
 
-        $view = $this->view ?? 'forms::fields.' . Str::of(class_basename(static::class))->kebab();
+        $view = $this->view ?? 'tables::cells.' . Str::of(class_basename(static::class))->kebab();
 
-        return view($view, ['field' => $this]);
+        return view($view, [
+            'column' => $this,
+            'record' => $record,
+        ]);
     }
 }

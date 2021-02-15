@@ -1,5 +1,6 @@
 @props([
     'color' => 'white',
+    'href' => null,
     'size' => 'base',
     'type' => 'button',
 ])
@@ -18,8 +19,16 @@ $sizeClasses = [
     'small' => 'text-xs py-1 px-3',
 ][$size];
 
+$classes = "cursor-pointer font-medium border rounded transition duration-200 shadow-sm inline-block relative focus:ring focus:ring-opacity-50 bg-gradient-to-b {$colorClasses} {$sizeClasses}"
+
 @endphp
 
-<button type="{{ $type }}" {{ $attributes->merge(['class' => "cursor-pointer font-medium border rounded transition duration-200 shadow-sm inline-block relative focus:ring focus:ring-opacity-50 bg-gradient-to-b {$colorClasses} {$sizeClasses}"]) }}>
-    {{ $slot }}
-</button>
+@unless ($href)
+    <button type="{{ $type }}" {{ $attributes->merge(['class' => $classes]) }}>
+        {{ $slot }}
+    </button>
+@else
+    <a href="{{ $href }}" {{ $attributes->merge(['class' => $classes]) }}>
+        {{ $slot }}
+    </a>
+@endunless

@@ -7,7 +7,6 @@
                 <x-filament::button
                     type="submit"
                     color="primary"
-                    wire:loading.attr="disabled"
                 >
                     {{ __('filament::edit-account.update') }}
                 </x-filament::button>

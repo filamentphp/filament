@@ -1,0 +1,1 @@
+{{ $column->getValue($record) }}

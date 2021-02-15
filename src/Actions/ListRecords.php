@@ -17,7 +17,7 @@ class ListRecords extends Component
     public function render()
     {
         return view('filament::actions.list-records', [
-            'records' => static::getModel()::paginate(10),
+            'records' => $this->getRecords(),
             'title' => static::getTitle(),
         ])->layout('filament::components.layouts.app');
     }

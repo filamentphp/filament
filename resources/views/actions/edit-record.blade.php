@@ -6,7 +6,6 @@
                     <x-filament::button
                         x-on:click="open = true"
                         color="danger"
-                        wire:loading.attr="disabled"
                     >
                         Delete
                     </x-filament::button>
@@ -22,7 +21,6 @@
                     <div class="space-y-3 sm:space-y-0 sm:flex sm:space-x-3 sm:justify-end">
                         <x-filament::button
                             x-on:click="open = false"
-                            wire:loading.attr="disabled"
                         >
                             Cancel
                         </x-filament::button>
@@ -30,7 +28,6 @@
                         <x-filament::button
                             wire:click="delete"
                             color="danger"
-                            wire:loading.attr="disabled"
                         >
                             Delete
                         </x-filament::button>
@@ -46,7 +43,6 @@
                 <x-filament::button
                     type="submit"
                     color="primary"
-                    wire:loading.attr="disabled"
                 >
                     Update
                 </x-filament::button>

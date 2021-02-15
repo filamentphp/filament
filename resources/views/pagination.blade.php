@@ -7,7 +7,7 @@
                         {!! __('pagination.previous') !!}
                     </span>
                 @else
-                    <button wire:click="previousPage" wire:loading.attr="disabled" dusk="previousPage.before" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 rounded hover:text-gray-500 focus:outline-none focus:shadow-outline-secondary focus:border-secondary-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
+                    <button wire:click="previousPage" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 rounded hover:text-gray-500 focus:outline-none focus:shadow-outline-secondary focus:border-secondary-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
                         {!! __('pagination.previous') !!}
                     </button>
                 @endif
@@ -15,7 +15,7 @@
 
             <span>
                 @if ($paginator->hasMorePages())
-                    <button wire:click="nextPage" wire:loading.attr="disabled" dusk="nextPage.before" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 rounded hover:text-gray-500 focus:outline-none focus:shadow-outline-secondary focus:border-secondary-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
+                    <button wire:click="nextPage" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 rounded hover:text-gray-500 focus:outline-none focus:shadow-outline-secondary focus:border-secondary-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
                         {!! __('pagination.next') !!}
                     </button>
                 @else
@@ -48,7 +48,7 @@
                                 </span>
                             </span>
                         @else
-                            <button wire:click="previousPage" dusk="previousPage.after" rel="prev" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-secondary-300 focus:shadow-outline-secondary active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150" aria-label="{{ __('pagination.previous') }}">
+                            <button wire:click="previousPage" rel="prev" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-secondary-300 focus:shadow-outline-secondary active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150" aria-label="{{ __('pagination.previous') }}">
                                 <x-heroicon-o-chevron-left class="w-5 h-5" />
                             </button>
                         @endif
@@ -84,7 +84,7 @@
                     <span>
                         {{-- Next Page Link --}}
                         @if ($paginator->hasMorePages())
-                            <button wire:click="nextPage" dusk="nextPage.after" rel="next" class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-secondary-300 focus:shadow-outline-secondary active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150" aria-label="{{ __('pagination.next') }}">
+                            <button wire:click="nextPage" rel="next" class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-secondary-300 focus:shadow-outline-secondary active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150" aria-label="{{ __('pagination.next') }}">
                                 <x-heroicon-o-chevron-right class="w-5 h-5" />
                             </button>
                         @else
