@@ -6,7 +6,7 @@ class Text extends Column
 {
     public $formatUsing;
 
-    public $link;
+    public $url;
 
     public function formatUsing($callback)
     {
@@ -15,15 +15,15 @@ class Text extends Column
         return $this;
     }
 
-    public function getLink($record)
+    public function getUrl($record)
     {
-        if (is_callable($this->link)) {
-            $callback = $this->link;
-            
+        if (is_callable($this->url)) {
+            $callback = $this->url;
+
             return $callback($record);
         }
 
-        return $this->link;
+        return $this->url;
     }
 
     public function getValue($record, $attribute = null)
@@ -39,9 +39,9 @@ class Text extends Column
         return $value;
     }
 
-    public function link($link)
+    public function url($url)
     {
-        $this->link = $link;
+        $this->url = $url;
 
         return $this;
     }
