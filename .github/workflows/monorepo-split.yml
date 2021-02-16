@@ -38,6 +38,7 @@ jobs:
                   package-directory: 'packages/${{ matrix.package }}'
                   split-repository-organization: 'laravel-filament'
                   split-repository-name: '${{ matrix.package }}'
+                  branch: main
                   tag: ${{ steps.previous-tag.outputs.tag }}
                   user-name: "Dan Harrin"
                   user-email: "dan@danharrin.com"
