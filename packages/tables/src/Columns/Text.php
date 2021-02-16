@@ -33,10 +33,23 @@ class Text extends Column
         if ($this->formatUsing) {
             $callback = $this->formatUsing;
 
-            $value = $callback($record);
+            $value = $callback($value);
         }
 
         return $value;
+    }
+
+    public function options($options)
+    {
+        $this->formatUsing = function ($value) use ($options) {
+            if (array_key_exists($value, $options)) {
+                return $options[$value];
+            }
+
+            return $value;
+        };
+
+        return $this;
     }
 
     public function url($url)
