@@ -77,7 +77,7 @@
 
         <x-slot name="body">
             @forelse ($records as $record)
-                <x-filament::table.row wire:loading.class.delay="opacity-50">
+                <x-filament::table.row :class="$loop->index % 2 ? 'bg-gray-50' : null" wire:loading.class.delay="opacity-50">
                     @foreach ($table->getVisibleColumns() as $column)
                         <x-filament::table.cell>
                             {{ $column->renderCell($record) }}
@@ -86,7 +86,7 @@
 
                     @if ($table->recordUrl)
                         <x-filament::table.cell class="text-right">
-                            <a href="{{ $table->getRecordUrl($record) }}" class="text-secondary-500 underline hover:text-secondary-700 transition-colors duration-200">Edit</a>
+                            <a href="{{ $table->getRecordUrl($record) }}" class="text-primary-500 hover:text-primary-700 transition-colors duration-200 font-medium">Edit</a>
                         </x-filament::table.cell>
                     @endif
                 </x-filament::table.row>
