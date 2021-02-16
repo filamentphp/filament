@@ -6,7 +6,7 @@
 ])
 
 <div {{ $attributes->merge(['class' => 'space-y-4']) }}>
-    <div class="flex items-center space-x-4 {{ $table->searchable && $table->sortable ? 'justify-between' : ($table->sortable ? 'justify-end' : null) }}">
+    <div class="flex items-center space-x-4 {{ $table->searchable && $table->pagination ? 'justify-between' : ($table->pagination ? 'justify-end' : null) }}">
         @if ($table->searchable)
             <div class="relative flex-grow max-w-screen-md">
                 <input
@@ -24,7 +24,7 @@
             </div>
         @endif
 
-        @if ($table->sortable)
+        @if ($table->pagination)
             <div class="flex items-center space-x-2">
                 <label for="records-per-page" class="text-sm leading-tight font-medium cursor-pointer">
                     {{ __('filament::datatable.perPage') }}
@@ -44,7 +44,7 @@
         <x-slot name="head">
             @foreach ($table->getVisibleColumns() as $column)
                 <th class="px-6 py-3 text-left text-gray-500" scope="col">
-                    @if ($column->isSortable())
+                    @if ($table->sortable && $column->isSortable())
                         <button wire:click="sortBy('{{ $column->name }}')" type="button" class="flex items-center space-x-1 text-left text-xs font-medium uppercase tracking-wider group focus:outline-none focus:underline">
                             <span>{{ __($column->label) }}</span>
 
@@ -92,7 +92,7 @@
                 </x-filament::table.row>
             @empty
                 <x-filament::table.row>
-                    <x-filament::table.cell :colspan="count($columns)">
+                    <x-filament::table.cell :colspan="count($table->getVisibleColumns()) + ($table->recordUrl ? 1 : 0)">
                         <div class="flex items-center justify-center h-16">
                             <p class="text-gray-500 font-mono text-xs">No records found</p>
                         </div>
@@ -102,5 +102,7 @@
         </x-slot>
     </x-filament::table>
 
-    {{ $records->links() }}
+    @if ($table->pagination)
+        {{ $records->links() }}
+    @endif
 </div>
