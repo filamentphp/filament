@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Actions\Concerns;
+namespace Filament\Components\Concerns;
 
 use Illuminate\Support\Str;
 

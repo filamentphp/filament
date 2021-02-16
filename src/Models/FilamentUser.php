@@ -2,15 +2,16 @@
 
 namespace Filament\Models;
 
-use Filament\Traits\HasPackageFactory;
+use Filament\Database\Factories\FilamentUserFactory;
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\URL;
 
 class FilamentUser extends Authenticatable
 {
-    use HasPackageFactory;
+    use HasFactory;
     use Notifiable;
 
     protected $guarded = [];
@@ -48,5 +49,10 @@ class FilamentUser extends Authenticatable
         });
 
         $this->notify($notification);
+    }
+
+    protected static function newFactory()
+    {
+        return FilamentUserFactory::new();
     }
 }

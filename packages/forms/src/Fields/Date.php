@@ -2,8 +2,6 @@
 
 namespace Filament\Forms\Fields;
 
-use Filament\Forms\Fields\Concerns;
-
 class Date extends InputField
 {
     use Concerns\CanBeAutofocused;

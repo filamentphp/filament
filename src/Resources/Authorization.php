@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament;
+namespace Filament\Resources;
 
-class ResourceAuthorization
+class Authorization
 {
     public $exceptRoutes = [];
 

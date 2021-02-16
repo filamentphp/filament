@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Traits;
+namespace Filament;
 
 use DateTime;
 use Illuminate\Database\Connectors\ConnectionFactory;

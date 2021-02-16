@@ -3,7 +3,7 @@
 namespace Filament\Models;
 
 use Filament\Http\Livewire\Dashboard;
-use Filament\Traits\Sushi;
+use Filament\Sushi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 

@@ -2,6 +2,8 @@
 
 namespace Filament;
 
+use Filament\Resources\AuthorizationManager;
+use Filament\Resources\Router;
 use Illuminate\Support\Str;
 
 abstract class Resource
@@ -23,7 +25,7 @@ abstract class Resource
 
     public static function authorizationManager()
     {
-        return new ResourceAuthorizationManager(static::class);
+        return new AuthorizationManager(static::class);
     }
 
     public static function columns()
@@ -59,7 +61,7 @@ abstract class Resource
 
     public static function router()
     {
-        return new ResourceRouter(static::class);
+        return new Router(static::class);
     }
 
     public static function getSlug()

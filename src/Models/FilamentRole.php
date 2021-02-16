@@ -3,7 +3,7 @@
 namespace Filament\Models;
 
 use Filament\Role;
-use Filament\Traits\Sushi;
+use Filament\Sushi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;

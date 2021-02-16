@@ -1,10 +1,10 @@
 <?php
 
-namespace Filament;
+namespace Filament\Resources;
 
 use Illuminate\Support\Facades\Auth;
 
-class ResourceAuthorizationManager
+class AuthorizationManager
 {
     public $authorizations = [];
 

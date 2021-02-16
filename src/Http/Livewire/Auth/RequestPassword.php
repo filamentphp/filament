@@ -3,7 +3,7 @@
 namespace Filament\Http\Livewire\Auth;
 
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
-use Filament\Actions\Concerns;
+use Filament\Components\Concerns;
 use Filament\Forms\Fields;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;

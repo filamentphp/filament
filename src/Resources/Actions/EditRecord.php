@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Actions;
+namespace Filament\Resources\Actions;
 
-use Filament\Actions\Concerns;
+use Filament\Components\Concerns;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
 use Livewire\Component;
@@ -52,7 +52,7 @@ class EditRecord extends Component
 
     public function render()
     {
-        return view('filament::actions.edit-record', [
+        return view('filament::resources.actions.edit-record', [
             'title' => static::getTitle(),
         ])->layout('filament::components.layouts.app');
     }

@@ -2,8 +2,6 @@
 
 namespace Filament\Forms\Fields;
 
-use Filament\Forms\Fields\Concerns;
-
 class Textarea extends InputField
 {
     use Concerns\CanBeAutocompleted;

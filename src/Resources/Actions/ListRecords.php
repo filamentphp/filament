@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Actions;
+namespace Filament\Resources\Actions;
 
-use Filament\Actions\Concerns;
+use Filament\Components\Concerns;
 use Filament\Tables\HasTable;
 use Filament\Tables\Table;
 use Livewire\Component;
@@ -35,7 +35,7 @@ class ListRecords extends Component
 
     public function render()
     {
-        return view('filament::actions.list-records', [
+        return view('filament::resources.actions.list-records', [
             'records' => $this->getRecords(),
             'title' => static::getTitle(),
         ])->layout('filament::components.layouts.app');

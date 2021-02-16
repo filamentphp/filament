@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Actions\Concerns;
+namespace Filament\Components\Concerns;
 
-use Filament\ResourceRoute;
+use Filament\Resources\Route;
 
 trait UsesResource
 {
@@ -37,6 +37,6 @@ trait UsesResource
 
     public static function route($uri, $name)
     {
-        return new ResourceRoute(static::class, $uri, $name);
+        return new Route(static::class, $uri, $name);
     }
 }

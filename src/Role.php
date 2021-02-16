@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use Filament\Resources\Authorization;
 use Illuminate\Support\Str;
 
 abstract class Role
@@ -10,12 +11,12 @@ abstract class Role
 
     public static function allow()
     {
-        return new ResourceAuthorization(static::class, 'allow');
+        return new Authorization(static::class, 'allow');
     }
 
     public static function deny()
     {
-        return new ResourceAuthorization(static::class, 'deny');
+        return new Authorization(static::class, 'deny');
     }
 
     public static function getLabel()

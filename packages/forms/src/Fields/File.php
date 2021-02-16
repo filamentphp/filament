@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Fields;
 
-use Filament\Forms\Fields\Concerns;
 use Illuminate\Support\Str;
 
 class File extends InputField

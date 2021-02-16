@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament;
+namespace Filament\Resources;
 
-class ResourceRoute
+class Route
 {
     public $action;
 
