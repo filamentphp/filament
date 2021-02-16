@@ -10,8 +10,8 @@ module.exports = {
       './resources/js/**/*.js',
       './packages/forms/src/**/*.php',
       './packages/forms/resources/views/**/*.php',
-      './packages/support/src/**/*.php',
-      './packages/support/resources/views/**/*.php',
+      './packages/tables/src/**/*.php',
+      './packages/tables/resources/views/**/*.php',
     ],
   },
   theme: {
