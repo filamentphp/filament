@@ -34,13 +34,6 @@ class Filter
         return new static($name, $callback);
     }
 
-    public function apply($query)
-    {
-        $callback = $this->callback;
-
-        return $callback($query);
-    }
-
     public function callback($callback)
     {
         $this->callback = $callback;
