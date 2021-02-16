@@ -43,7 +43,7 @@ class Login extends Component
 
     public function getForm()
     {
-        return Form::make($this->getFields())
+        return Form::make($this->fields())
             ->context(static::class);
     }
 
