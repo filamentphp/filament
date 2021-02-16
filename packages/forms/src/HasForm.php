@@ -5,7 +5,6 @@ namespace Filament\Forms;
 use Filament\Fields\File;
 use Filament\Fields\InputField;
 use Filament\Fields\Tab;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;

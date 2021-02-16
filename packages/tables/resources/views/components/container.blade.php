@@ -19,7 +19,10 @@
                 <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">
                     <x-heroicon-o-search class="w-5 h-5" wire:loading.remove />
 
-                    <x-filament::loader class="w-5 h-5" wire:loading />
+                    <svg wire:loading xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" fill="currentColor" class="w-5 h-5 transition-all duration-300">
+                        <path d="M6.306 28.014c1.72 10.174 11.362 17.027 21.536 15.307C38.016 41.6 44.87 31.958 43.15 21.784l-4.011.678c1.345 7.958-4.015 15.502-11.974 16.847-7.959 1.346-15.501-4.014-16.847-11.973l-4.011.678z">
+                        <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur=".7s" repeatCount="indefinite"/></path>
+                    </svg>
                 </div>
             </div>
         @endif
@@ -40,67 +43,83 @@
         @endif
     </div>
 
-    <x-filament::table>
-        <x-slot name="head">
-            @foreach ($table->getVisibleColumns() as $column)
-                <th class="px-6 py-3 text-left text-gray-500" scope="col">
-                    @if ($table->sortable && $column->isSortable())
-                        <button wire:click="sortBy('{{ $column->name }}')" type="button" class="flex items-center space-x-1 text-left text-xs font-medium uppercase tracking-wider group focus:outline-none focus:underline">
-                            <span>{{ __($column->label) }}</span>
-
-                            <span class="relative flex items-center">
-                                <span>
-                                @if ($sortColumn === $column->name)
-                                    <span>
-                                    @if ($sortDirection === 'asc')
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    @elseif ($sortDirection === 'desc')
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                                    @endif
-                                        </span>
-                                @else
-                                    <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                @endif
-                            </span>
-                            </span>
-                        </button>
-                                 @else
-                        <span class="text-xs font-medium uppercase tracking-wider">{{ __($column->label) }}</span>
-                       @endif
-                </th>
-            @endforeach
-
-            @if ($table->recordUrl)
-                <th scope="col"></th>
-            @endif
-        </x-slot>
-
-        <x-slot name="body">
-            @forelse ($records as $record)
-                <x-filament::table.row :class="$loop->index % 2 ? 'bg-gray-50' : null" wire:loading.class.delay="opacity-50">
+    <div class="shadow-xl rounded bg-white overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-100">
+                <tr>
                     @foreach ($table->getVisibleColumns() as $column)
-                        <x-filament::table.cell>
-                            {{ $column->renderCell($record) }}
-                        </x-filament::table.cell>
+                        <th class="px-6 py-3 text-left text-gray-500" scope="col">
+                            @if ($table->sortable && $column->isSortable())
+                                <button
+                                    wire:click="sortBy('{{ $column->name }}')"
+                                    type="button"
+                                    class="flex items-center space-x-1 text-left text-xs font-medium uppercase tracking-wider group focus:outline-none focus:underline"
+                                >
+                                    <span>{{ __($column->label) }}</span>
+
+                                    <span class="relative flex items-center">
+                                        @if ($sortColumn === $column->name)
+                                            <span>
+                                                @if ($sortDirection === 'asc')
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                                @elseif ($sortDirection === 'desc')
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                                @endif
+                                            </span>
+                                        @else
+                                            <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        @endif
+                                    </span>
+                                </button>
+                            @else
+                                <span class="text-xs font-medium uppercase tracking-wider">{{ __($column->label) }}</span>
+                            @endif
+                        </th>
                     @endforeach
 
                     @if ($table->recordUrl)
-                        <x-filament::table.cell class="text-right">
-                            <a href="{{ $table->getRecordUrl($record) }}" class="hover:underline text-primary-500 hover:text-primary-700 transition-colors duration-200 font-medium">Edit</a>
-                        </x-filament::table.cell>
+                        <th scope="col">
+                            <span class="sr-only">Edit</span>
+                        </th>
                     @endif
-                </x-filament::table.row>
-            @empty
-                <x-filament::table.row>
-                    <x-filament::table.cell :colspan="count($table->getVisibleColumns()) + ($table->recordUrl ? 1 : 0)">
-                        <div class="flex items-center justify-center h-16">
-                            <p class="text-gray-500 font-mono text-xs">No records found</p>
-                        </div>
-                    </x-filament::table.cell>
-                </x-filament::table.row>
-            @endforelse
-        </x-slot>
-    </x-filament::table>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-200 text-sm leading-tight">
+                @forelse ($records as $record)
+                    <tr
+                        class="{{ $loop->index % 2 ? 'bg-gray-50' : null }}"
+                        wire:loading.class.delay="opacity-50"
+                    >
+                        @foreach ($table->getVisibleColumns() as $column)
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {{ $column->renderCell($record) }}
+                            </td>
+                        @endforeach
+
+                        @if ($table->recordUrl)
+                            <td class="px-6 py-4 whitespace-nowrap text-right">
+                                <a
+                                    href="{{ $table->getRecordUrl($record) }}"
+                                    class="hover:underline text-primary-500 hover:text-primary-700 transition-colors duration-200 font-medium"
+                                >
+                                    Edit
+                                </a>
+                            </td>
+                        @endif
+                    </tr>
+                @empty
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap" colspan="{{ count($table->getVisibleColumns()) + ($table->recordUrl ? 1 : 0) }}">
+                            <div class="flex items-center justify-center h-16">
+                                <p class="text-gray-500 font-mono text-xs">No records found</p>
+                            </div>
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
     @if ($table->pagination)
         {{ $records->links() }}
