@@ -1,5 +1,6 @@
 @props([
-'id' => Str::uuid(),
+    'id' => Str::uuid(),
+    'asButton' => false,
 ])
 
 <div
@@ -15,17 +16,31 @@
     @click.away="open = false"
     wire:ignore
 >
-    <button
-        type="button"
-        x-ref="btn"
-        @click="open = !open; $nextTick(() => popper.update())"
-        aria-haspopup="true"
-        aria-controls="{{ $id }}"
-        :aria-expanded="open"
-        {{ $attributes }}
-    >
-        {{ $button }}
-    </button>
+    @if ($asButton)
+        <x-filament::button 
+            x-ref="btn"
+            x-on:click="open = !open; $nextTick(() => popper.update())"
+            aria-haspopup="true"
+            :aria-controls="$id"
+            x-bind:aria-expanded="open"
+            :attributes="$attributes"
+        >
+            {{ $button }}
+        </x-filament::button>
+    @else 
+        <button
+            type="button"
+            aria-haspopup="true"
+            aria-controls="{{ $id }}"
+            x-ref="btn"
+            @click="open = !open; $nextTick(() => popper.update())"
+            :aria-expanded="open"
+            {{ $attributes }}
+        >
+            {{ $button }}
+        </button>
+    @endif
+
     <div
         x-show="open"
         x-ref="menu"

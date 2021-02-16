@@ -8,10 +8,10 @@
 @php
 
 $colorClasses = [
-    'danger' => 'border-transparent from-danger-700 to-danger-800 text-white hover:to-danger-700 focus:ring-danger-200',
-    'primary' => 'border-transparent from-primary-700 to-primary-800 text-white hover:to-primary-700 focus:ring-primary-200',
-    'secondary' => 'border-transparent from-secondary-700 to-secondary-800 text-white hover:to-secondary-700 focus:ring-secondary-200',
-    'white' => 'border-gray-300 from-gray-100 to-gray-200 text-gray-800 hover:to-gray-100 focus:ring-primary-200',
+    'danger' => 'border-transparent bg-danger-700 text-white hover:bg-danger-600 focus:ring-danger-200',
+    'primary' => 'border-transparent bg-primary-800 text-white hover:bg-primary-700 focus:ring-primary-200',
+    'secondary' => 'border-transparent bg-secondary-700 text-white hover:bg-secondary-600 focus:ring-secondary-200',
+    'white' => 'border-gray-300 bg-gray-100 text-gray-800 hover:bg-gray-50 focus:ring-primary-200',
 ][$color];
 
 $sizeClasses = [
@@ -19,7 +19,7 @@ $sizeClasses = [
     'small' => 'text-xs py-1 px-3',
 ][$size];
 
-$classes = "cursor-pointer font-medium border rounded transition duration-200 shadow-sm inline-block relative focus:ring focus:ring-opacity-50 bg-gradient-to-b {$colorClasses} {$sizeClasses}"
+$classes = "cursor-pointer font-medium border rounded transition duration-200 shadow-sm focus:ring focus:ring-opacity-50 {$colorClasses} {$sizeClasses}"
 
 @endphp
 

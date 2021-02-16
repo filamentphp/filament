@@ -12,7 +12,7 @@
     "start": "npm run watch"
   },
   "devDependencies": {
-    "@popperjs/core": "^2.6.0",
+    "@popperjs/core": "^2.7.0",
     "@tailwindcss/forms": "^0.2.1",
     "@tailwindcss/typography": "^0.4.0",
     "alpinejs": "^2.8.0",
