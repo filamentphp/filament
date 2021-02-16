@@ -43,31 +43,31 @@
     <x-filament::table>
         <x-slot name="head">
             @foreach ($table->getVisibleColumns() as $column)
-                    <th class="px-6 py-3 text-left text-gray-500" scope="col">
-                        @if ($column->isSortable())
-                            <button wire:click="sortBy('{{ $column->name }}')" type="button" class="flex items-center space-x-1 text-left text-xs font-medium uppercase tracking-wider group focus:outline-none focus:underline">
-                                <span>{{ __($column->label) }}</span>
+                <th class="px-6 py-3 text-left text-gray-500" scope="col">
+                    @if ($column->isSortable())
+                        <button wire:click="sortBy('{{ $column->name }}')" type="button" class="flex items-center space-x-1 text-left text-xs font-medium uppercase tracking-wider group focus:outline-none focus:underline">
+                            <span>{{ __($column->label) }}</span>
 
-                                <span class="relative flex items-center">
+                            <span class="relative flex items-center">
+                                <span>
+                                @if ($sortColumn === $column->name)
                                     <span>
-                                    @if ($sortColumn === $column->name)
-                                        <span>
-                                        @if ($sortDirection === 'asc')
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                        @elseif ($sortDirection === 'desc')
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-                                        @endif
-                                            </span>
-                                    @else
-                                        <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @if ($sortDirection === 'asc')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    @elseif ($sortDirection === 'desc')
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
                                     @endif
-                                </span>
-                                </span>
-                            </button>
-                                     @else
-                            <span class="text-xs font-medium uppercase tracking-wider">{{ __($column->label) }}</span>
-                           @endif
-                    </th>
+                                        </span>
+                                @else
+                                    <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                @endif
+                            </span>
+                            </span>
+                        </button>
+                                 @else
+                        <span class="text-xs font-medium uppercase tracking-wider">{{ __($column->label) }}</span>
+                       @endif
+                </th>
             @endforeach
 
             @if ($table->recordUrl)
@@ -85,7 +85,7 @@
                     @endforeach
 
                     @if ($table->recordUrl)
-                        <x-filament::table.cell>
+                        <x-filament::table.cell class="text-right">
                             <a href="{{ $table->getRecordUrl($record) }}" class="text-secondary-500 underline hover:text-secondary-700 transition-colors duration-200">Edit</a>
                         </x-filament::table.cell>
                     @endif
