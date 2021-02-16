@@ -9,6 +9,8 @@ trait HasTable
 {
     use WithPagination;
 
+    public $hasPagination = true;
+
     public $recordsPerPage = 10;
 
     public $search = '';
@@ -86,6 +88,10 @@ trait HasTable
             }
         }
 
+        if (! $this->hasPagination) {
+            return $query->get();
+        }
+
         return $query->paginate($this->recordsPerPage);
     }
 
@@ -113,8 +119,17 @@ trait HasTable
         $this->reset('sortDirection');
     }
 
+    public function updatedRecordsPerPage()
+    {
+        if (! $this->hasPagination) return;
+
+        $this->resetPage();
+    }
+
     public function updatedSearch()
     {
+        if (! $this->hasPagination) return;
+
         $this->resetPage();
     }
 }

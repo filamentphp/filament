@@ -1,5 +1,7 @@
 @props([
     'columns' => [],
+    'link' => null,
+    'linkText' => 'Edit',
     'records' => [],
     'sortColumn' => null,
     'sortDirection' => 'asc',
@@ -11,7 +13,7 @@
             <input
                 type="search"
                 wire:model="search"
-                placeholder="{{ __('filament::datatable.search') }}"
+                placeholder="Search"
                 class="pl-10 block w-full rounded shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300"
             />
 
@@ -65,6 +67,10 @@
                            @endif
                     </th>
             @endforeach
+
+            @if ($link)
+                <th scope="col"></th>
+            @endif
         </x-slot>
 
         <x-slot name="body">
@@ -75,12 +81,22 @@
                             {{ $column->renderCell($record) }}
                         </x-filament::table.cell>
                     @endforeach
+
+                    @if ($link)
+                        <x-filament::table.cell>
+                            @php
+                                $recordLink = $link($record);
+                            @endphp
+
+                            <a href="{{ $recordLink }}" class="text-secondary-500 underline hover:text-secondary-700 transition-colors duration-200">{{ $linkText }}</a>
+                        </x-filament::table.cell>
+                    @endif
                 </x-filament::table.row>
             @empty
                 <x-filament::table.row>
                     <x-filament::table.cell :colspan="count($columns)">
                         <div class="flex items-center justify-center h-16">
-                            <p class="text-gray-500 font-mono text-xs">{{ __('filament::datatable.noresults') }}</p>
+                            <p class="text-gray-500 font-mono text-xs">No records found</p>
                         </div>
                     </x-filament::table.cell>
                 </x-filament::table.row>
