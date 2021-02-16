@@ -10,7 +10,20 @@ class Text extends Column
 
     public $formatUsing;
 
+    public $primary = false;
+
     public $url;
+
+    public function currency($symbol = '$', $decimalSeparator = '.', $thousandsSeparator = ',')
+    {
+        $this->formatUsing = function ($value) use ($decimalSeparator, $symbol, $thousandsSeparator) {
+            if (! is_numeric($value)) return $this->default;
+
+            return $symbol.number_format($value, 2, $decimalSeparator, $thousandsSeparator);
+        };
+
+        return $this;
+    }
 
     public function date($format = 'F j, Y')
     {
@@ -85,13 +98,9 @@ class Text extends Column
         return $this;
     }
 
-    public function currency($symbol = '$', $decimalSeparator = '.', $thousandsSeparator = ',')
+    public function primary()
     {
-        $this->formatUsing = function ($value) use ($decimalSeparator, $symbol, $thousandsSeparator) {
-            if (! is_numeric($value)) return $this->default;
-
-            return $symbol.number_format($value, 2, $decimalSeparator, $thousandsSeparator);
-        };
+        $this->primary = true;
 
         return $this;
     }
