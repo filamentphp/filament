@@ -86,7 +86,7 @@
 
                     @if ($table->recordUrl)
                         <x-filament::table.cell class="text-right">
-                            <a href="{{ $table->getRecordUrl($record) }}" class="text-primary-500 hover:text-primary-700 transition-colors duration-200 font-medium">Edit</a>
+                            <a href="{{ $table->getRecordUrl($record) }}" class="hover:underline text-primary-500 hover:text-primary-700 transition-colors duration-200 font-medium">Edit</a>
                         </x-filament::table.cell>
                     @endif
                 </x-filament::table.row>
