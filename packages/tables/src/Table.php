@@ -8,6 +8,8 @@ class Table
 
     public $pagination = true;
 
+    public $recordButtonLabel = 'tables::table.record.button.label';
+
     public $recordUrl;
 
     public $searchable = true;
@@ -79,6 +81,13 @@ class Table
     public function pagination($enabled)
     {
         $this->pagination = $enabled;
+
+        return $this;
+    }
+
+    public function recordButtonLabel($label)
+    {
+        $this->recordButtonLabel = $label;
 
         return $this;
     }

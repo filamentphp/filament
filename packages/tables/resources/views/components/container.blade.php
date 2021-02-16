@@ -5,21 +5,21 @@
     'table',
 ])
 
-<div {{ $attributes->merge(['class' => 'space-y-4']) }}>
+<div {{ $attributes->merge(['class' => 'space-y-8']) }}>
     <div class="flex items-center space-x-4 {{ $table->searchable && $table->pagination ? 'justify-between' : ($table->pagination ? 'justify-end' : null) }}">
         @if ($table->searchable)
             <div class="relative flex-grow max-w-screen-md">
                 <input
                     type="search"
                     wire:model="search"
-                    placeholder="Search"
-                    class="pl-10 block w-full rounded shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300"
+                    placeholder="{{ __('tables::table.search.placeholder') }}"
+                    class="text-sm pl-10 block w-full rounded shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300"
                 />
 
                 <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">
-                    <x-heroicon-o-search class="w-5 h-5" wire:loading.remove />
+                    <x-heroicon-o-search class="w-5 h-5" wire:loading.remove.delay />
 
-                    <svg wire:loading xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" fill="currentColor" class="w-5 h-5 transition-all duration-300">
+                    <svg wire:loading.delay xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" fill="currentColor" class="w-5 h-5 transition-all duration-300">
                         <path d="M6.306 28.014c1.72 10.174 11.362 17.027 21.536 15.307C38.016 41.6 44.87 31.958 43.15 21.784l-4.011.678c1.345 7.958-4.015 15.502-11.974 16.847-7.959 1.346-15.501-4.014-16.847-11.973l-4.011.678z">
                         <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur=".7s" repeatCount="indefinite"/></path>
                     </svg>
@@ -28,9 +28,9 @@
         @endif
 
         @if ($table->pagination)
-            <div class="flex items-center space-x-2">
+            <div class="flex-shrink-0 flex items-center space-x-2">
                 <label for="records-per-page" class="text-sm leading-tight font-medium cursor-pointer">
-                    {{ __('filament::datatable.perPage') }}
+                    {{ __('tables::table.pagination.fields.recordsPerPage.label') }}
                 </label>
 
                 <select wire:model="recordsPerPage" id="records-per-page" class="rounded shadow-sm focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300">
@@ -43,7 +43,7 @@
         @endif
     </div>
 
-    <div class="shadow-xl rounded bg-white overflow-hidden">
+    <div class="shadow-xl rounded bg-white overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-100">
                 <tr>
@@ -79,7 +79,7 @@
 
                     @if ($table->recordUrl)
                         <th scope="col">
-                            <span class="sr-only">Edit</span>
+                            <span class="sr-only">{{ __($table->recordButtonLabel) }}</span>
                         </th>
                     @endif
                 </tr>
@@ -103,16 +103,21 @@
                                     href="{{ $table->getRecordUrl($record) }}"
                                     class="hover:underline text-primary-500 hover:text-primary-700 transition-colors duration-200 font-medium"
                                 >
-                                    Edit
+                                    {{ __($table->recordButtonLabel) }}
                                 </a>
                             </td>
                         @endif
                     </tr>
                 @empty
                     <tr>
-                        <td class="px-6 py-4 whitespace-nowrap" colspan="{{ count($table->getVisibleColumns()) + ($table->recordUrl ? 1 : 0) }}">
+                        <td
+                            class="px-6 py-4 whitespace-nowrap"
+                            colspan="{{ count($table->getVisibleColumns()) + ($table->recordUrl ? 1 : 0) }}"
+                        >
                             <div class="flex items-center justify-center h-16">
-                                <p class="text-gray-500 font-mono text-xs">No records found</p>
+                                <p class="text-gray-500 font-mono text-xs">
+                                    {{ __('tables::table.messages.noRecords') }}
+                                </p>
                             </div>
                         </td>
                     </tr>

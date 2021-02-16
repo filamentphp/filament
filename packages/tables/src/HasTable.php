@@ -9,7 +9,7 @@ trait HasTable
 {
     use WithPagination;
 
-    public $recordsPerPage = 10;
+    public $recordsPerPage = 25;
 
     public $search = '';
 
