@@ -85,17 +85,12 @@ class Text extends Column
         return $this;
     }
 
-    public function price($locale = null)
+    public function currency($symbol = '$', $decimalSeparator = '.', $thousandsSeparator = '.')
     {
-        $this->formatUsing = function ($value) use ($locale) {
-            if (! is_numeric($value)) return null;
+        $this->formatUsing = function ($value) use ($decimalSeparator, $symbol, $thousandsSeparator) {
+            if (! is_numeric($value)) return $this->default;
 
-            setlocale(LC_MONETARY, $locale ?: locale_get_default());
-
-            $formatter = numfmt_create('en_US', \NumberFormatter::CURRENCY);
-            $formatter->setAttribute(\NumberFormatter::FRACTION_DIGITS, 2);
-
-            return numfmt_format_currency($formatter, $value, trim(localeconv()['int_curr_symbol']));
+            return $symbol.number_format($value, 2, $decimalSeparator, $thousandsSeparator);
         };
 
         return $this;
