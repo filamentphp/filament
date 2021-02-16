@@ -125,14 +125,16 @@ trait HasForm
 
     protected function validateTemporaryUploadedFiles()
     {
-        try {
-            $rules = collect($this->getRules())
-                ->filter(function ($conditions, $field) {
-                    return Str::of($field)->startsWith('temporaryUploadedFiles.');
-                })
-                ->toArray();
+        $rules = collect($this->getRules())
+            ->filter(function ($conditions, $field) {
+                return Str::of($field)->startsWith('temporaryUploadedFiles.');
+            })
+            ->toArray();
 
-            parent::validate($rules);
+        if (! count($rules)) return;
+
+        try {
+            return parent::validate($rules);
         } catch (ValidationException $exception) {
             $fieldToFocus = collect($this->getForm()->getFields())
                 ->first(function ($field) use ($exception) {
