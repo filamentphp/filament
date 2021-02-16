@@ -9,8 +9,6 @@ trait HasTable
 {
     use WithPagination;
 
-    public $hasPagination = true;
-
     public $recordsPerPage = 10;
 
     public $search = '';
@@ -32,7 +30,7 @@ trait HasTable
 
         $columns = $this->getTable()->columns;
 
-        if ($this->search !== '' && $this->search !== null) {
+        if ($this->getTable()->searchable && $this->search !== '' && $this->search !== null) {
             collect($columns)
                 ->filter(fn($column) => $column->isSearchable())
                 ->each(function ($column, $index) use (&$query) {
@@ -63,7 +61,7 @@ trait HasTable
                 });
         }
 
-        if ($this->sortColumn !== '' && $this->sortColumn !== null) {
+        if ($this->getTable()->sortable && $this->sortColumn !== '' && $this->sortColumn !== null) {
             if (Str::of($this->sortColumn)->contains('.')) {
                 $relationship = (string) Str::of($this->sortColumn)->beforeLast('.');
 
@@ -80,7 +78,7 @@ trait HasTable
             }
         }
 
-        if (! $this->hasPagination) {
+        if (! $this->getTable()->pagination) {
             return $query->get();
         }
 
@@ -113,14 +111,14 @@ trait HasTable
 
     public function updatedRecordsPerPage()
     {
-        if (! $this->hasPagination) return;
+        if (! $this->getTable()->pagination) return;
 
         $this->resetPage();
     }
 
     public function updatedSearch()
     {
-        if (! $this->hasPagination) return;
+        if (! $this->getTable()->pagination) return;
 
         $this->resetPage();
     }

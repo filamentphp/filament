@@ -15,15 +15,22 @@ class ListRecords extends Component
 
     public $createRoute = 'create';
 
+    public $pagination = true;
+
     public $recordRoute = 'edit';
+
+    public $searchable = true;
+
+    public $sortable = true;
 
     public function getTable()
     {
         return Table::make($this->getColumns())
             ->context(static::class)
+            ->pagination($this->pagination)
             ->recordUrl(fn($record) => $this->getResource()::route($this->recordRoute, ['record' => $record]))
-            ->sortColumn($this->sortColumn)
-            ->sortDirection($this->sortDirection);
+            ->searchable($this->searchable)
+            ->sortable($this->sortable);
     }
 
     public function render()

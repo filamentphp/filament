@@ -6,11 +6,13 @@ class Table
 {
     public $columns = [];
 
+    public $pagination = true;
+
     public $recordUrl;
 
-    public $sortColumn;
+    public $searchable = true;
 
-    public $sortDirection = 'asc';
+    public $sortable = true;
 
     public function __construct($columns = [])
     {
@@ -29,6 +31,27 @@ class Table
                 return $column->context($context);
             })
             ->toArray();
+
+        return $this;
+    }
+
+    public function disablePagination()
+    {
+        $this->pagination = false;
+
+        return $this;
+    }
+
+    public function disableSearching()
+    {
+        $this->searchable = false;
+
+        return $this;
+    }
+
+    public function disableSorting()
+    {
+        $this->sortable = false;
 
         return $this;
     }
@@ -53,6 +76,13 @@ class Table
         return $columns;
     }
 
+    public function pagination($enabled)
+    {
+        $this->pagination = $enabled;
+
+        return $this;
+    }
+
     public function recordUrl($url)
     {
         $this->recordUrl = $url;
@@ -60,16 +90,16 @@ class Table
         return $this;
     }
 
-    public function sortColumn($column)
+    public function searchable($searchable)
     {
-        $this->sortColumn = $column;
+        $this->searchable = $searchable;
 
         return $this;
     }
 
-    public function sortDirection($direction)
+    public function sortable($sortable)
     {
-        $this->sortDirection = $direction;
+        $this->sortable = $sortable;
 
         return $this;
     }

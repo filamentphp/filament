@@ -1,37 +1,43 @@
 @props([
     'records' => [],
+    'sortColumn' => null,
+    'sortDirection' => 'asc',
     'table',
 ])
 
 <div {{ $attributes->merge(['class' => 'space-y-4']) }}>
-    <div class="flex items-center justify-between space-x-4">
-        <div class="relative flex-grow max-w-screen-md">
-            <input
-                type="search"
-                wire:model="search"
-                placeholder="Search"
-                class="pl-10 block w-full rounded shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300"
-            />
+    <div class="flex items-center space-x-4 {{ $table->searchable && $table->sortable ? 'justify-between' : ($table->sortable ? 'justify-end' : null) }}">
+        @if ($table->searchable)
+            <div class="relative flex-grow max-w-screen-md">
+                <input
+                    type="search"
+                    wire:model="search"
+                    placeholder="Search"
+                    class="pl-10 block w-full rounded shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300"
+                />
 
-            <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">
-                <x-heroicon-o-search class="w-5 h-5" wire:loading.remove />
+                <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">
+                    <x-heroicon-o-search class="w-5 h-5" wire:loading.remove />
 
-                <x-filament::loader class="w-5 h-5" wire:loading />
+                    <x-filament::loader class="w-5 h-5" wire:loading />
+                </div>
             </div>
-        </div>
+        @endif
 
-        <div class="flex items-center space-x-2">
-            <label for="records-per-page" class="text-sm leading-tight font-medium cursor-pointer">
-                {{ __('filament::datatable.perPage') }}
-            </label>
+        @if ($table->sortable)
+            <div class="flex items-center space-x-2">
+                <label for="records-per-page" class="text-sm leading-tight font-medium cursor-pointer">
+                    {{ __('filament::datatable.perPage') }}
+                </label>
 
-            <select class="rounded shadow-sm focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300" wire:model="recordsPerPage" id="records-per-page">
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-            </select>
-        </div>
+                <select wire:model="recordsPerPage" id="records-per-page" class="rounded shadow-sm focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+        @endif
     </div>
 
     <x-filament::table>
@@ -44,11 +50,11 @@
 
                                 <span class="relative flex items-center">
                                     <span>
-                                    @if ($table->sortColumn === $column->name)
+                                    @if ($sortColumn === $column->name)
                                         <span>
-                                        @if ($table->sortDirection === 'asc')
+                                        @if ($sortDirection === 'asc')
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                        @elseif ($table->sortDirection === 'desc')
+                                        @elseif ($sortDirection === 'desc')
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
                                         @endif
                                             </span>
