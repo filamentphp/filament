@@ -15,8 +15,6 @@ trait HasForm
 {
     use WithFileUploads;
 
-    public $record;
-
     public $temporaryUploadedFiles = [];
 
     public static function getTemporaryUploadedFilePropertyName($fieldName)
@@ -40,18 +38,6 @@ trait HasForm
             ->toArray();
 
         $this->fill($propertiesToFill);
-    }
-
-    public function getForm()
-    {
-        $record = null;
-        if (property_exists($this, 'record') && $this->record instanceof Model) $record = $this->record;
-
-        return new Form(
-            $this->getFields(),
-            static::class,
-            $record,
-        );
     }
 
     public function getTemporaryUploadedFile($name)

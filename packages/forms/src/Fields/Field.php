@@ -52,6 +52,8 @@ class Field
 
         $this->pendingExcludedContextModifications = [];
 
+        $this->fields($this->getForm()->context($this->context)->fields);
+
         return $this;
     }
 
@@ -117,7 +119,17 @@ class Field
 
     public function getForm()
     {
-        return new Form($this->fields, $this->context, $this->record);
+        $form = Form::make($this->fields);
+
+        if ($this->context) {
+            $form->context($this->context);
+        }
+
+        if ($this->record) {
+            $form->record($this->record);
+        }
+
+        return $form;
     }
 
     public function getRules()
@@ -211,6 +223,8 @@ class Field
     public function record($record)
     {
         $this->record = $record;
+
+        $this->fields($this->getForm()->record($this->record)->fields);
 
         return $this;
     }

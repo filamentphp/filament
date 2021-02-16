@@ -25,7 +25,9 @@ class EditAccount extends Component
 
     public function getForm()
     {
-        return new Form($this->fields(), static::class, $this->record);
+        return Form::make($this->getFields())
+            ->context(static::class)
+            ->record($this->record);
     }
 
     public function fields()

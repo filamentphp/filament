@@ -5,6 +5,7 @@ namespace Filament\Http\Livewire\Auth;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Concerns;
 use Filament\Forms\Fields;
+use Filament\Forms\Form;
 use Filament\Forms\HasForm;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -38,6 +39,12 @@ class Login extends Component
                 ->required(),
             Fields\Checkbox::make('remember')->label('Remember me'),
         ];
+    }
+
+    public function getForm()
+    {
+        return Form::make($this->getFields())
+            ->context(static::class);
     }
 
     public function submit()

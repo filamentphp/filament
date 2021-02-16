@@ -3,7 +3,9 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns;
+use Filament\Forms\Form;
 use Filament\Forms\HasForm;
+use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
 
 class CreateRecord extends Component
@@ -16,6 +18,12 @@ class CreateRecord extends Component
     public $record;
 
     public $showRoute = 'edit';
+
+    public function getForm()
+    {
+        return Form::make($this->getFields())
+            ->context(static::class);
+    }
 
     public function mount()
     {

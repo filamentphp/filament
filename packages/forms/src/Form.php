@@ -10,43 +10,27 @@ class Form
 
     public $rules = [];
 
-    public function __construct($fields = [], $context = null, $record = null)
+    public $submitMethod = 'submit';
+
+    public function __construct($fields = [])
     {
         $this->fields = $fields;
-
-        if ($context) $this->passContextToFields($context);
-
-        if ($record) $this->passRecordToFields($record);
     }
 
-    public function passContextToFields($context = null)
+    public static function make($fields = [])
     {
-        if ($context) {
-            $this->fields = collect($this->fields)
-                ->map(function ($field) use ($context) {
-                    return $field
-                        ->context($context)
-                        ->fields($field->getForm()->passContextToFields($context));
-                })
-                ->toArray();
-        }
-
-        return $this->fields;
+        return new static($fields);
     }
 
-    public function passRecordToFields($record = null)
+    public function context($context)
     {
-        if ($record) {
-            $this->fields = collect($this->fields)
-                ->map(function ($field) use ($record) {
-                    return $field
-                        ->record($record)
-                        ->fields($field->getForm()->passRecordToFields($record));
-                })
-                ->toArray();
-        }
+        $this->fields = collect($this->fields)
+            ->map(function ($field) use ($context) {
+                return $field->context($context);
+            })
+            ->toArray();
 
-        return $this->fields;
+        return $this;
     }
 
     public function columns($columns)
@@ -102,8 +86,28 @@ class Form
         return $attributes;
     }
 
+    public function record($record)
+    {
+        $this->fields = collect($this->fields)
+            ->map(function ($field) use ($record) {
+                return $field->record($record);
+            })
+            ->toArray();
+
+        return $this;
+    }
+
     public function rules($rules)
     {
         $this->rules = $rules;
+
+        return $this;
+    }
+
+    public function submitMethod($method)
+    {
+        $this->submitMethod = $method;
+
+        return $this;
     }
 }

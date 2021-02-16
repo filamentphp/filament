@@ -3,6 +3,7 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns;
+use Filament\Forms\Form;
 use Filament\Forms\HasForm;
 use Livewire\Component;
 
@@ -13,6 +14,8 @@ class EditRecord extends Component
     use Concerns\UsesResource;
     use HasForm;
 
+    public $record;
+
     public $indexRoute = 'index';
 
     public function delete()
@@ -20,6 +23,13 @@ class EditRecord extends Component
         $this->record->delete();
 
         $this->redirect($this->getResource()::route($this->indexRoute));
+    }
+
+    public function getForm()
+    {
+        return Form::make($this->getFields())
+            ->context(static::class)
+            ->record($this->record);
     }
 
     public function mount($record)

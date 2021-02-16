@@ -1,10 +1,6 @@
 @props([
-    'columns' => [],
-    'link' => null,
-    'linkText' => 'Edit',
     'records' => [],
-    'sortColumn' => null,
-    'sortDirection' => 'asc',
+    'table',
 ])
 
 <div {{ $attributes->merge(['class' => 'space-y-4']) }}>
@@ -40,7 +36,7 @@
 
     <x-filament::table>
         <x-slot name="head">
-            @foreach ($columns as $column)
+            @foreach ($table->getVisibleColumns() as $column)
                     <th class="px-6 py-3 text-left text-gray-500" scope="col">
                         @if ($column->isSortable())
                             <button wire:click="sortBy('{{ $column->name }}')" type="button" class="flex items-center space-x-1 text-left text-xs font-medium uppercase tracking-wider group focus:outline-none focus:underline">
@@ -48,11 +44,11 @@
 
                                 <span class="relative flex items-center">
                                     <span>
-                                    @if ($sortColumn === $column->name)
+                                    @if ($table->sortColumn === $column->name)
                                         <span>
-                                        @if ($sortDirection === 'asc')
+                                        @if ($table->sortDirection === 'asc')
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                        @elseif ($sortDirection === 'desc')
+                                        @elseif ($table->sortDirection === 'desc')
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
                                         @endif
                                             </span>
@@ -68,7 +64,7 @@
                     </th>
             @endforeach
 
-            @if ($link)
+            @if ($table->recordUrl)
                 <th scope="col"></th>
             @endif
         </x-slot>
@@ -76,19 +72,15 @@
         <x-slot name="body">
             @forelse ($records as $record)
                 <x-filament::table.row wire:loading.class.delay="opacity-50">
-                    @foreach ($columns as $column)
+                    @foreach ($table->getVisibleColumns() as $column)
                         <x-filament::table.cell>
                             {{ $column->renderCell($record) }}
                         </x-filament::table.cell>
                     @endforeach
 
-                    @if ($link)
+                    @if ($table->recordUrl)
                         <x-filament::table.cell>
-                            @php
-                                $recordLink = $link($record);
-                            @endphp
-
-                            <a href="{{ $recordLink }}" class="text-secondary-500 underline hover:text-secondary-700 transition-colors duration-200">{{ $linkText }}</a>
+                            <a href="{{ $table->getRecordUrl($record) }}" class="text-secondary-500 underline hover:text-secondary-700 transition-colors duration-200">Edit</a>
                         </x-filament::table.cell>
                     @endif
                 </x-filament::table.row>

@@ -3,6 +3,7 @@
 namespace Filament\Http\Livewire\Auth;
 
 use Filament\Forms\Fields;
+use Filament\Forms\Form;
 use Filament\Forms\HasForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,6 +49,12 @@ class ResetPassword extends Component
                 ->required()
                 ->password(),
         ];
+    }
+
+    public function getForm()
+    {
+        return Form::make($this->getFields())
+            ->context(static::class);
     }
 
     public function mount(Request $request, $token)

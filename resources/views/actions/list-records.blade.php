@@ -12,11 +12,8 @@
 
     <x-filament::app-content>
         <x-tables::container
-            :columns="$this->getTable()->getVisibleColumns()"
-            :link="fn($record) => $this->getResource()::route('edit', ['record' => $record->id])"
             :records="$records"
-            :sort-column="$sortColumn"
-            :sort-direction="$sortDirection"
+            :table="$this->getTable()"
         />
     </x-filament::app-content>
 </div>

@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Filament\Actions\Concerns;
 use Filament\Tables\HasTable;
+use Filament\Tables\Table;
 use Livewire\Component;
 
 class ListRecords extends Component
@@ -13,6 +14,17 @@ class ListRecords extends Component
     use HasTable;
 
     public $createRoute = 'create';
+
+    public $recordRoute = 'edit';
+
+    public function getTable()
+    {
+        return Table::make($this->getColumns())
+            ->context(static::class)
+            ->recordUrl(fn($record) => $this->getResource()::route($this->recordRoute, ['record' => $record]))
+            ->sortColumn($this->sortColumn)
+            ->sortDirection($this->sortDirection);
+    }
 
     public function render()
     {

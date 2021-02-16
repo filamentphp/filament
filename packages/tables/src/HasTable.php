@@ -26,19 +26,11 @@ trait HasTable
         return [];
     }
 
-    public function getTable()
-    {
-        return new Table(
-            $this->getColumns(),
-            static::class,
-        );
-    }
-
     protected function getRecords()
     {
         $query = static::getQuery();
 
-        $columns = $this->getTable()->getColumns();
+        $columns = $this->getTable()->columns;
 
         if ($this->search !== '' && $this->search !== null) {
             collect($columns)

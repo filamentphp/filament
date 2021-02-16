@@ -1,20 +1,16 @@
 @props([
-    'fields' => [],
-    'columns' => 1,
-    'submit' => 'submit',
+    'form',
 ])
 
 <form
-    wire:submit.prevent="{{ $submit }}"
+    wire:submit.prevent="{{ $form->submitMethod }}"
     {{ $attributes }}
 >
-    @if (count($fields))
-        <x-forms::grid :columns="$columns">
-            @foreach ($fields as $field)
-                {{ $field->render() }}
-            @endforeach
-        </x-forms::grid>
-    @endif
+    <x-forms::grid :columns="$form->columns">
+        @foreach ($form->fields as $field)
+            {{ $field->render() }}
+        @endforeach
+    </x-forms::grid>
 
     {{ $slot }}
 </form>

@@ -3,7 +3,7 @@
 
     <x-filament::app-content>
         <x-filament::card>
-            <x-forms::container :fields="$this->getForm()->fields" class="space-y-6">
+            <x-forms::container :form="$this->getForm()" class="space-y-6">
                 <x-filament::button
                     type="submit"
                     color="primary"
