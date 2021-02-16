@@ -13,7 +13,7 @@
                     type="search"
                     wire:model="search"
                     placeholder="{{ __('tables::table.search.placeholder') }}"
-                    class="text-sm pl-10 block w-full rounded shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300"
+                    class="text-sm sm:text-base pl-10 block w-full rounded shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300"
                 />
 
                 <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">
@@ -33,7 +33,7 @@
                     {{ __('tables::table.pagination.fields.recordsPerPage.label') }}
                 </label>
 
-                <select wire:model="recordsPerPage" id="records-per-page" class="rounded shadow-sm focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300">
+                <select wire:model="recordsPerPage" id="records-per-page" class="text-sm sm:text-base rounded shadow-sm focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300">
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="25">25</option>
