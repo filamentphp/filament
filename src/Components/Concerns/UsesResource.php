@@ -18,6 +18,11 @@ trait UsesResource
         return static::getResource()::fields();
     }
 
+    protected function filters()
+    {
+        return static::getResource()::filters();
+    }
+
     protected static function getModel()
     {
         $resource = static::getResource();

@@ -14,6 +14,8 @@ class ListRecords extends Component
     use Concerns\UsesResource;
     use HasTable;
 
+    public $filterable = true;
+
     public $createRoute = 'create';
 
     public $pagination = true;
@@ -26,8 +28,9 @@ class ListRecords extends Component
 
     public function getTable()
     {
-        return Table::make($this->getColumns())
+        return Table::make($this->columns(), $this->filters())
             ->context(static::class)
+            ->filterable($this->filterable)
             ->pagination($this->pagination)
             ->recordUrl(fn($record) => $this->getResource()::route($this->recordRoute, ['record' => $record]))
             ->searchable($this->searchable)

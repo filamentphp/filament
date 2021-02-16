@@ -2,6 +2,10 @@
 
 return [
 
+    'filter' => [
+        'placeholder' => 'Filter',
+    ],
+
     'messages' => [
         'noRecords' => 'No records found',
     ],

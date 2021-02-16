@@ -9,6 +9,8 @@ trait HasTable
 {
     use WithPagination;
 
+    public $filter = null;
+
     public $recordsPerPage = 25;
 
     public $search = '';
@@ -17,21 +19,22 @@ trait HasTable
 
     public $sortDirection = 'asc';
 
-    protected function getColumns()
-    {
-        if (method_exists($this, 'columns')) return $this->columns();
-
-        return [];
-    }
-
     protected function getRecords()
     {
         $query = static::getQuery();
 
-        $columns = $this->getTable()->columns;
+        if ($this->getTable()->filterable && $this->filter !== '' && $this->filter !== null) {
+            collect($this->getTable()->filters)
+                ->filter(fn($filter) => $filter->name === $this->filter)
+                ->each(function ($filter) use (&$query) {
+                    $callback = $filter->callback;
+
+                    $query = $callback($query);
+                });
+        }
 
         if ($this->getTable()->searchable && $this->search !== '' && $this->search !== null) {
-            collect($columns)
+            collect($this->getTable()->columns)
                 ->filter(fn($column) => $column->isSearchable())
                 ->each(function ($column, $index) use (&$query) {
                     $first = $index === 0;

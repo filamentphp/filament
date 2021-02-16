@@ -187,13 +187,6 @@ trait HasForm
         return $this->getForm()->getDefaults();
     }
 
-    protected function getFields()
-    {
-        if (method_exists($this, 'fields')) return $this->fields();
-
-        return [];
-    }
-
     protected function fillWithFormDefaults()
     {
         $this->fill($this->getPropertyDefaults());

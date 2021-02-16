@@ -38,6 +38,11 @@ abstract class Resource
         return [];
     }
 
+    public static function filters()
+    {
+        return [];
+    }
+
     public static function getIcon()
     {
         return static::$icon;

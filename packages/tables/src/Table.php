@@ -6,6 +6,8 @@ class Table
 {
     public $columns = [];
 
+    public $filterable = true;
+
     public $pagination = true;
 
     public $recordButtonLabel = 'tables::table.record.button.label';
@@ -16,14 +18,15 @@ class Table
 
     public $sortable = true;
 
-    public function __construct($columns = [])
+    public function __construct($columns = [], $filters = [])
     {
         $this->columns = $columns;
+        $this->filters = $filters;
     }
 
-    public static function make($columns = [])
+    public static function make($columns = [], $filters = [])
     {
-        return new static($columns);
+        return new static($columns, $filters);
     }
 
     public function context($context)
@@ -33,6 +36,19 @@ class Table
                 return $column->context($context);
             })
             ->toArray();
+
+        $this->filters = collect($this->filters)
+            ->map(function ($filter) use ($context) {
+                return $filter->context($context);
+            })
+            ->toArray();
+
+        return $this;
+    }
+
+    public function disableFiltering()
+    {
+        $this->filterable = false;
 
         return $this;
     }
@@ -58,6 +74,13 @@ class Table
         return $this;
     }
 
+    public function filterable($filterable)
+    {
+        $this->filterable = $filterable;
+
+        return $this;
+    }
+
     public function getRecordUrl($record = null)
     {
         if (is_callable($this->recordUrl)) {
@@ -76,6 +99,15 @@ class Table
             ->toArray();
 
         return $columns;
+    }
+
+    public function getVisibleFilters()
+    {
+        $filters = collect($this->filters)
+            ->filter(fn($filter) => ! $filter->hidden)
+            ->toArray();
+
+        return $filters;
     }
 
     public function pagination($enabled)
