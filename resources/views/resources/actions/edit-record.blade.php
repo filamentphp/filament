@@ -44,7 +44,7 @@
                     type="submit"
                     color="primary"
                 >
-                    Update
+                    Save
                 </x-filament::button>
             </x-forms::container>
         </x-filament::card>

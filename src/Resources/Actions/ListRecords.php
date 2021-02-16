@@ -5,6 +5,7 @@ namespace Filament\Resources\Actions;
 use Filament\Components\Concerns;
 use Filament\Tables\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class ListRecords extends Component
@@ -31,6 +32,17 @@ class ListRecords extends Component
             ->recordUrl(fn($record) => $this->getResource()::route($this->recordRoute, ['record' => $record]))
             ->searchable($this->searchable)
             ->sortable($this->sortable);
+    }
+
+    public static function getTitle()
+    {
+        if (static::$title) return static::$title;
+
+        return (string) Str::of(class_basename(static::getModel()))
+            ->kebab()
+            ->replace('-', ' ')
+            ->plural()
+            ->title();
     }
 
     public function render()
