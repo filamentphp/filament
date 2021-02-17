@@ -31,9 +31,9 @@ if (! function_exists('Filament\format_bytes')) {
 if (! function_exists('Filament\get_asset_id')) {
     function get_asset_id($path)
     {
-        $manifestPath = __DIR__.'/../dist/mix-manifest.json';
+        $manifestPath = __DIR__ . '/../dist/mix-manifest.json';
 
-        if(! file_exists($manifestPath)) return null;
+        if (! file_exists($manifestPath)) return null;
 
         $manifest = json_decode(file_get_contents($manifestPath), true);
 

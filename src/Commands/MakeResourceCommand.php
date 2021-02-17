@@ -2,10 +2,7 @@
 
 namespace Filament\Commands;
 
-use Filament\Models\FilamentUser;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class MakeResourceCommand extends Command
@@ -103,7 +100,7 @@ class MakeResourceCommand extends Command
 
     protected function copyStubToApp($stub, $targetPath, $replacements = [])
     {
-        $stub = Str::of(file_get_contents(__DIR__."/../../stubs/{$stub}.stub"));
+        $stub = Str::of(file_get_contents(__DIR__ . "/../../stubs/{$stub}.stub"));
 
         foreach ($replacements as $key => $replacement) {
             $stub = $stub->replace("{{{$key}}}", $replacement);

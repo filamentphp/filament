@@ -19,13 +19,51 @@ trait HasTable
 
     public $sortDirection = 'asc';
 
+    public function sortBy($column)
+    {
+        if ($this->sortColumn === $column) {
+            switch ($this->sortDirection) {
+                case 'asc':
+                    $this->sortDirection = 'desc';
+
+                    break;
+                case 'desc':
+                    $this->reset([
+                        'sortColumn',
+                        'sortDirection',
+                    ]);
+
+                    break;
+            }
+
+            return;
+        }
+
+        $this->sortColumn = $column;
+        $this->reset('sortDirection');
+    }
+
+    public function updatedRecordsPerPage()
+    {
+        if (! $this->getTable()->pagination) return;
+
+        $this->resetPage();
+    }
+
+    public function updatedSearch()
+    {
+        if (! $this->getTable()->pagination) return;
+
+        $this->resetPage();
+    }
+
     protected function getRecords()
     {
         $query = static::getQuery();
 
         if ($this->getTable()->filterable && $this->filter !== '' && $this->filter !== null) {
             collect($this->getTable()->filters)
-                ->filter(fn($filter) => $filter->name === $this->filter)
+                ->filter(fn ($filter) => $filter->name === $this->filter)
                 ->each(function ($filter) use (&$query) {
                     $callback = $filter->callback;
 
@@ -35,7 +73,7 @@ trait HasTable
 
         if ($this->getTable()->searchable && $this->search !== '' && $this->search !== null) {
             collect($this->getTable()->columns)
-                ->filter(fn($column) => $column->isSearchable())
+                ->filter(fn ($column) => $column->isSearchable())
                 ->each(function ($column, $index) use (&$query) {
                     $first = $index === 0;
 
@@ -86,43 +124,5 @@ trait HasTable
         }
 
         return $query->paginate($this->recordsPerPage);
-    }
-
-    public function sortBy($column)
-    {
-        if ($this->sortColumn === $column) {
-            switch ($this->sortDirection) {
-                case 'asc':
-                    $this->sortDirection = 'desc';
-
-                    break;
-                case 'desc':
-                    $this->reset([
-                        'sortColumn',
-                        'sortDirection',
-                    ]);
-
-                    break;
-            }
-
-            return;
-        }
-
-        $this->sortColumn = $column;
-        $this->reset('sortDirection');
-    }
-
-    public function updatedRecordsPerPage()
-    {
-        if (! $this->getTable()->pagination) return;
-
-        $this->resetPage();
-    }
-
-    public function updatedSearch()
-    {
-        if (! $this->getTable()->pagination) return;
-
-        $this->resetPage();
     }
 }

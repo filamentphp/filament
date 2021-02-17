@@ -21,6 +21,11 @@ class FilamentUser extends Authenticatable
         'remember_token',
     ];
 
+    protected static function newFactory()
+    {
+        return FilamentUserFactory::new();
+    }
+
     public function can($resource, $route = 'index')
     {
         return $resource::authorizationManager()->can($route, $this);
@@ -49,10 +54,5 @@ class FilamentUser extends Authenticatable
         });
 
         $this->notify($notification);
-    }
-
-    protected static function newFactory()
-    {
-        return FilamentUserFactory::new();
     }
 }

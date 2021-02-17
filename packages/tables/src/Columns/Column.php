@@ -103,7 +103,7 @@ class Column
         if ($this->getValueUsing) {
             $callback = $this->getValueUsing;
 
-           return $callback($record);
+            return $callback($record);
         }
 
         if ($attribute === null) {

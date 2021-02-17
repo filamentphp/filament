@@ -6,6 +6,6 @@ trait PreparesFieldForResourceUse
 {
     public static function make($name)
     {
-        return new static('record.'.$name);
+        return new static('record.' . $name);
     }
 }

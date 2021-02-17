@@ -95,7 +95,7 @@ class Table
     public function getVisibleColumns()
     {
         $columns = collect($this->columns)
-            ->filter(fn($column) => ! $column->hidden)
+            ->filter(fn ($column) => ! $column->hidden)
             ->toArray();
 
         return $columns;
@@ -104,7 +104,7 @@ class Table
     public function getVisibleFilters()
     {
         $filters = collect($this->filters)
-            ->filter(fn($filter) => ! $filter->hidden)
+            ->filter(fn ($filter) => ! $filter->hidden)
             ->toArray();
 
         return $filters;

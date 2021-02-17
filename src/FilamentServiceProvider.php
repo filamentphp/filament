@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use BladeUI\Icons\Factory as BladeUIFactory;
 use Filament\Commands;
 use Filament\Http\Middleware\AuthorizeResourceRoute;
 use Filament\Models\FilamentUser;
@@ -9,13 +10,13 @@ use Filament\Providers\RouteServiceProvider;
 use Filament\View\Components;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
-use BladeUI\Icons\Factory as BladeUIFactory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
+use ReflectionClass;
 use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentServiceProvider extends ServiceProvider
@@ -64,6 +65,7 @@ class FilamentServiceProvider extends ServiceProvider
         Blade::directive('pushonce', function ($expression) {
             [$pushName, $pushSub] = explode(':', trim(substr($expression, 1, -1)));
             $key = '__pushonce_' . str_replace('-', '_', $pushName) . '_' . str_replace('-', '_', $pushSub);
+
             return "<?php if(! isset(\$__env->{$key})): \$__env->{$key} = 1; \$__env->startPush('{$pushName}'); ?>";
         });
 
@@ -211,7 +213,7 @@ class FilamentServiceProvider extends ServiceProvider
                     ->replace(['/', '.php'], ['\\', '']);
             })
             ->filter(function ($class) {
-                return is_subclass_of($class, Component::class) && ! (new \ReflectionClass($class))->isAbstract();
+                return is_subclass_of($class, Component::class) && ! (new ReflectionClass($class))->isAbstract();
             })
             ->each(function ($class) use ($namespace, $aliasPrefix) {
                 $alias = Str::of($class)

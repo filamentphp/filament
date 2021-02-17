@@ -19,7 +19,7 @@ class Text extends Column
         $this->formatUsing = function ($value) use ($decimalSeparator, $symbol, $thousandsSeparator) {
             if (! is_numeric($value)) return $this->default;
 
-            return $symbol.number_format($value, 2, $decimalSeparator, $thousandsSeparator);
+            return $symbol . number_format($value, 2, $decimalSeparator, $thousandsSeparator);
         };
 
         return $this;

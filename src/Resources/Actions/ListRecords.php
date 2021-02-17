@@ -26,17 +26,6 @@ class ListRecords extends Component
 
     public $sortable = true;
 
-    public function getTable()
-    {
-        return Table::make($this->columns(), $this->filters())
-            ->context(static::class)
-            ->filterable($this->filterable)
-            ->pagination($this->pagination)
-            ->recordUrl(fn($record) => $this->getResource()::route($this->recordRoute, ['record' => $record]))
-            ->searchable($this->searchable)
-            ->sortable($this->sortable);
-    }
-
     public static function getTitle()
     {
         if (static::$title) return static::$title;
@@ -46,6 +35,17 @@ class ListRecords extends Component
             ->replace('-', ' ')
             ->plural()
             ->title();
+    }
+
+    public function getTable()
+    {
+        return Table::make($this->columns(), $this->filters())
+            ->context(static::class)
+            ->filterable($this->filterable)
+            ->pagination($this->pagination)
+            ->recordUrl(fn ($record) => $this->getResource()::route($this->recordRoute, ['record' => $record]))
+            ->searchable($this->searchable)
+            ->sortable($this->sortable);
     }
 
     public function render()
