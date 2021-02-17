@@ -10,8 +10,6 @@ class Text extends Column
 
     public $formatUsing;
 
-    public $primary = false;
-
     public $url;
 
     public function currency($symbol = '$', $decimalSeparator = '.', $thousandsSeparator = ',')
@@ -94,13 +92,6 @@ class Text extends Column
 
             return $value;
         };
-
-        return $this;
-    }
-
-    public function primary()
-    {
-        $this->primary = true;
 
         return $this;
     }

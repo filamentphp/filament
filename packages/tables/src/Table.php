@@ -128,6 +128,16 @@ class Table
     {
         $this->recordUrl = $url;
 
+        $this->columns = collect($this->columns)
+            ->map(function ($column) {
+                if ($column->primary && ! $column->url) {
+                    $column->url($this->recordUrl);
+                }
+
+                return $column;
+            })
+            ->toArray();
+
         return $this;
     }
 

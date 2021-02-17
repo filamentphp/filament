@@ -20,6 +20,8 @@ class Column
 
     public $name;
 
+    public $primary = false;
+
     public $searchable = false;
 
     public $sortable = false;
@@ -205,6 +207,13 @@ class Column
         if (! in_array($this->context, $contexts)) return $this;
 
         $callback($this);
+
+        return $this;
+    }
+
+    public function primary()
+    {
+        $this->primary = true;
 
         return $this;
     }
