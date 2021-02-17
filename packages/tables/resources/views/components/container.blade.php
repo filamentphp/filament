@@ -141,6 +141,6 @@
     </div>
 
     @if ($table->pagination)
-        {{ $records->links() }}
+        {{ $records->links('tables::paginator') }}
     @endif
 </div>
