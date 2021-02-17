@@ -2,7 +2,7 @@
 
 namespace Filament;
 
-use Filament\Commands\MakeUserCommand;
+use Filament\Commands;
 use Filament\Http\Middleware\AuthorizeResourceRoute;
 use Filament\Models\FilamentUser;
 use Filament\Providers\RouteServiceProvider;
@@ -54,7 +54,8 @@ class FilamentServiceProvider extends ServiceProvider
         }
 
         $this->commands([
-            MakeUserCommand::class,
+            Commands\MakeResourceCommand::class,
+            Commands\MakeUserCommand::class,
         ]);
     }
 
