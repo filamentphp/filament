@@ -2,14 +2,17 @@
 
 namespace Filament\Commands\Concerns;
 
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 
 trait CanManipulateFiles
 {
     protected function checkForCollision($paths)
     {
+        $filesystem = new Filesystem();
+
         foreach ($paths as $path) {
-            if (file_exists($path)) {
+            if ($filesystem->exists($path)) {
                 $this->error("$path already exists, aborting.");
 
                 return true;
@@ -21,7 +24,9 @@ trait CanManipulateFiles
 
     protected function copyStubToApp($stub, $targetPath, $replacements = [])
     {
-        $stub = Str::of(file_get_contents(__DIR__ . "/../../../stubs/{$stub}.stub"));
+        $filesystem = new Filesystem();
+
+        $stub = Str::of($filesystem->get(__DIR__ . "/../../../stubs/{$stub}.stub"));
 
         foreach ($replacements as $key => $replacement) {
             $stub = $stub->replace("{{{$key}}}", $replacement);
@@ -34,19 +39,13 @@ trait CanManipulateFiles
 
     protected function writeFile($path, $contents)
     {
-        $currentDirectory = '';
+        $filesystem = new Filesystem();
 
-        Str::of($path)
-            ->explode('/')
-            ->slice(0, -1)
-            ->each(function ($directory) use (&$currentDirectory) {
-                $currentDirectory .= "/{$directory}";
+        $filesystem->ensureDirectoryExists(
+            (string) Str::of($path)
+                ->beforeLast('/'),
+        );
 
-                if (is_dir($currentDirectory)) return;
-
-                mkdir($currentDirectory);
-            });
-
-        file_put_contents($path, $contents);
+        $filesystem->put($path, $contents);
     }
 }
