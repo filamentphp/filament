@@ -110,6 +110,25 @@ class Table
         return $filters;
     }
 
+    public function isFilterable()
+    {
+        return $this->filterable && count($this->filters);
+    }
+
+    public function isSearchable()
+    {
+        return $this->searchable && collect($this->columns)
+            ->filter(fn ($column) => $column->searchable)
+            ->count();
+    }
+
+    public function isSortable()
+    {
+        return $this->sortable && collect($this->columns)
+            ->filter(fn ($column) => $column->sortable)
+            ->count();
+    }
+
     public function pagination($enabled)
     {
         $this->pagination = $enabled;

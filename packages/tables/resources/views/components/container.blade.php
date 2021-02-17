@@ -6,16 +6,16 @@
 ])
 
 <div {{ $attributes->merge(['class' => 'space-y-8']) }}>
-    <div class="sm:flex items-center space-y-4 sm:space-y-0 sm:space-x-4 {{ ($table->filterable || $table->searchable) && $table->pagination ? 'justify-between' : ($table->pagination ? 'justify-end' : null) }}">
-        @if ($table->filterable || $table->searchable)
+    <div class="sm:flex items-center space-y-4 sm:space-y-0 sm:space-x-4 {{ ($table->isFilterable() || $table->isSearchable()) && $table->pagination ? 'justify-between' : ($table->pagination ? 'justify-end' : null) }}">
+        @if ($table->isFilterable() || $table->isSearchable())
             <div class="flex rounded shadow-sm border border-gray-300">
-                @if ($table->searchable)
+                @if ($table->isSearchable())
                     <div class="relative flex-grow">
                         <input
                             type="search"
                             wire:model="search"
                             placeholder="{{ __('tables::table.search.placeholder') }}"
-                            class="text-sm sm:text-base {{ $table->filterable ? 'rounded-l' : 'rounded' }} pl-10 block w-full placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-0"
+                            class="text-sm sm:text-base {{ $table->isFilterable() ? 'rounded-l' : 'rounded' }} pl-10 block w-full placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-0"
                         />
 
                         <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">
@@ -29,8 +29,8 @@
                     </div>
                 @endif
 
-                @if ($table->filterable)
-                    <select wire:model="filter" class="text-sm {{ $table->searchable ? 'rounded-r' : 'rounded' }} flex-shrink-0 sm:text-base focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-0 {{ $table->searchable ? 'border-l' : null }} border-gray-300">
+                @if ($table->isFilterable())
+                    <select wire:model="filter" class="text-sm {{ $table->isSearchable() ? 'rounded-r' : 'rounded' }} flex-shrink-0 sm:text-base focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-0 {{ $table->isSearchable() ? 'border-l' : null }} border-gray-300">
                         <option>{{ __('tables::table.filter.placeholder') }}</option>
 
                         @foreach ($table->getVisibleFilters() as $filter)
@@ -63,7 +63,7 @@
                 <tr>
                     @foreach ($table->getVisibleColumns() as $column)
                         <th class="px-6 py-3 text-left text-gray-500" scope="col">
-                            @if ($table->sortable && $column->isSortable())
+                            @if ($table->isSortable() && $column->isSortable())
                                 <button
                                     wire:click="sortBy('{{ $column->name }}')"
                                     type="button"
