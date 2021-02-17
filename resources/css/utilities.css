@@ -1,5 +1,5 @@
 @layer utilities {
   .link {
-    @apply text-secondary-500 underline hover:text-secondary-700 transition-colors duration-200;
+    @apply text-secondary-300 underline hover:text-secondary transition-colors duration-200;
   }
 }

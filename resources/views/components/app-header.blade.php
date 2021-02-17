@@ -10,7 +10,7 @@
             <x-heroicon-o-menu-alt-2 class="w-6 h-6" />
         </button>
 
-        <h1 class="text-2xl md:text-3xl leading-tight text-primary-700">{{ $title }}</h1>
+        <h1 class="text-2xl md:text-3xl leading-tight text-primary">{{ $title }}</h1>
     </div>
 
     {{ $actions ?? null }}

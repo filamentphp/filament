@@ -7,7 +7,7 @@
 @else
     <a
         href="{{ $column->getUrl($record) }}"
-        class="{{ $primaryClasses }} hover:underline hover:text-secondary-700 transition-colors duration-200"
+        class="{{ $primaryClasses }} hover:underline hover:text-secondary transition-colors duration-200"
     >
         {{ $column->getValue($record) }}
     </a>

@@ -115,7 +115,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-right">
                                 <a
                                     href="{{ $table->getRecordUrl($record) }}"
-                                    class="hover:underline text-secondary-500 hover:text-secondary-700 transition-colors duration-200 font-medium"
+                                    class="hover:underline text-secondary-500 hover:text-secondary transition-colors duration-200 font-medium"
                                 >
                                     {{ __($table->recordButtonLabel) }}
                                 </a>

@@ -14,7 +14,7 @@
    * ::selection selector: color, background, cursor, and outline.
    */
   ::selection {
-    @apply bg-primary-700 text-white;
+    @apply bg-primary text-white;
   }
 
   /**
