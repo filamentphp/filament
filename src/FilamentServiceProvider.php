@@ -56,6 +56,7 @@ class FilamentServiceProvider extends ServiceProvider
 
         $this->commands([
             Commands\MakeResourceCommand::class,
+            Commands\MakeRoleCommand::class,
             Commands\MakeUserCommand::class,
         ]);
     }
@@ -95,7 +96,7 @@ class FilamentServiceProvider extends ServiceProvider
     protected function bootLivewireComponents()
     {
         $this->registerLivewireComponentDirectory(__DIR__ . '/Http/Livewire', 'Filament\\Http\\Livewire', 'filament.');
-        $this->registerLivewireComponentDirectory(app_path('Filament/Resources'), 'App\\Filament\\Resources', 'filament.resources.');
+        $this->registerLivewireComponentDirectory(app_path('Filament'), 'App\\Filament', 'filament.');
     }
 
     protected function bootMiddleware()

@@ -6,9 +6,9 @@ use Filament\Resources\AuthorizationManager;
 use Filament\Resources\Router;
 use Illuminate\Support\Str;
 
-abstract class Resource
+class Resource
 {
-    public static $icon = 'heroicon-o-database';
+    public static $icon = 'heroicon-o-collection';
 
     public static $label;
 

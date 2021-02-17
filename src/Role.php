@@ -5,7 +5,7 @@ namespace Filament;
 use Filament\Resources\Authorization;
 use Illuminate\Support\Str;
 
-abstract class Role
+class Role
 {
     public static $label;
 

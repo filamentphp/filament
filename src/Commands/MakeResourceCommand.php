@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 
 class MakeResourceCommand extends Command
 {
+    use Concerns\CanManipulateFiles;
+
     protected $description = 'Creates a Filament resource.';
 
     protected $signature = 'make:filament-resource {model}';
@@ -40,18 +42,12 @@ class MakeResourceCommand extends Command
         $createResourceActionPath = "{$resourceActionsDirectory}/{$createResourceActionClass}.php";
         $editResourceActionPath = "{$resourceActionsDirectory}/{$editResourceActionClass}.php";
 
-        $collision = $this->checkForCollision([
+        if ($this->checkForCollision([
             $resourcePath,
             $indexResourceActionPath,
             $createResourceActionPath,
             $editResourceActionPath,
-        ]);
-
-        if ($collision !== false) {
-            $this->error("$collision already exists, aborting.");
-
-            return;
-        }
+        ])) return;
 
         $this->copyStubToApp('Resource', $resourcePath, [
             'createResourceActionClass' => $createResourceActionClass,
@@ -85,47 +81,5 @@ class MakeResourceCommand extends Command
         ]);
 
         $this->info("Successfully created {$resourceClass}!");
-    }
-
-    protected function checkForCollision($paths)
-    {
-        foreach ($paths as $path) {
-            if (file_exists($path)) {
-                return $path;
-            }
-        }
-
-        return false;
-    }
-
-    protected function copyStubToApp($stub, $targetPath, $replacements = [])
-    {
-        $stub = Str::of(file_get_contents(__DIR__ . "/../../stubs/{$stub}.stub"));
-
-        foreach ($replacements as $key => $replacement) {
-            $stub = $stub->replace("{{{$key}}}", $replacement);
-        }
-
-        $stub = (string) $stub;
-
-        $this->writeFile($targetPath, $stub);
-    }
-
-    protected function writeFile($path, $contents)
-    {
-        $currentDirectory = '';
-
-        Str::of($path)
-            ->explode('/')
-            ->slice(0, -1)
-            ->each(function ($directory) use (&$currentDirectory) {
-                $currentDirectory .= "/{$directory}";
-
-                if (is_dir($currentDirectory)) return;
-
-                mkdir($currentDirectory);
-            });
-
-        file_put_contents($path, $contents);
     }
 }
