@@ -1,10 +1,8 @@
 <?php
 
-namespace Filament\Components\Concerns;
+namespace Filament\Resources;
 
-use Filament\Resources\Route;
-
-trait UsesResource
+class Page extends \Filament\Page
 {
     protected static $resource;
 

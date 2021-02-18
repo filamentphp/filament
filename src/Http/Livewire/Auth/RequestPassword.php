@@ -3,7 +3,6 @@
 namespace Filament\Http\Livewire\Auth;
 
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
-use Filament\Components\Concerns;
 use Filament\Forms\Fields;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
@@ -12,8 +11,6 @@ use Livewire\Component;
 
 class RequestPassword extends Component
 {
-    use Concerns\HasTitle;
-    use Concerns\SendsToastNotifications;
     use HasForm;
     use WithRateLimiting;
 
@@ -60,12 +57,14 @@ class RequestPassword extends Component
             return;
         }
 
-        $this->notify(__('filament::auth.' . $requestStatus));
+        $this->dispatchBrowserEvent('notify', __('filament::auth.' . $requestStatus));
     }
 
     public function render()
     {
-        return view('filament::.auth.request-password')
+        return view('filament::.auth.request-password', [
+            'title' => 'Request Password',
+        ])
             ->layout('filament::components.layouts.auth', ['title' => 'filament::auth.resetPassword']);
     }
 }

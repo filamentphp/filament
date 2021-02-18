@@ -2,14 +2,12 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Components\Concerns;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
-use Filament\Page;
+use Filament\Resources\Page;
 
 class EditRecord extends Page
 {
-    use Concerns\UsesResource;
     use HasForm;
 
     protected static $view = 'filament::resources.pages.edit-record';

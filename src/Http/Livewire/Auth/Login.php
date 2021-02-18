@@ -3,7 +3,6 @@
 namespace Filament\Http\Livewire\Auth;
 
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
-use Filament\Components\Concerns;
 use Filament\Forms\Fields;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
@@ -12,7 +11,6 @@ use Livewire\Component;
 
 class Login extends Component
 {
-    use Concerns\HasTitle;
     use HasForm;
     use WithRateLimiting;
 
@@ -73,7 +71,9 @@ class Login extends Component
 
     public function render()
     {
-        return view('filament::.auth.login')
+        return view('filament::.auth.login', [
+            'title' => 'Login',
+        ])
             ->layout('filament::components.layouts.auth', ['title' => 'filament::auth.signin']);
     }
 }

@@ -2,8 +2,6 @@
 
 namespace Filament;
 
-use Filament\Components\Concerns\HasTitle;
-use Filament\Components\Concerns\SendsToastNotifications;
 use Filament\Pages\AuthorizationManager;
 use Filament\Pages\Route;
 use Illuminate\Support\Str;
@@ -11,9 +9,6 @@ use Livewire\Component;
 
 class Page extends Component
 {
-    use HasTitle;
-    use SendsToastNotifications;
-
     public static $icon = 'heroicon-o-document-text';
 
     public static $label;
@@ -65,6 +60,16 @@ class Page extends Component
         return static::$sort;
     }
 
+    public static function getTitle()
+    {
+        if (property_exists(static::class, 'title')) return static::$title;
+
+        return (string) Str::of(class_basename(static::class))
+            ->kebab()
+            ->replace('-', ' ')
+            ->title();
+    }
+
     public static function navigationItems()
     {
         return [
@@ -76,6 +81,11 @@ class Page extends Component
                 ->icon(static::getIcon())
                 ->sort(static::getSort()),
         ];
+    }
+
+    public function notify($message)
+    {
+        $this->dispatchBrowserEvent('notify', $message);
     }
 
     public static function route()

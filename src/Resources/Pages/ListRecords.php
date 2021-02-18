@@ -3,14 +3,13 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Components\Concerns;
-use Filament\Page;
+use Filament\Resources\Page;
 use Filament\Tables\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
 class ListRecords extends Page
 {
-    use Concerns\UsesResource;
     use HasTable;
 
     protected static $view = 'filament::resources.pages.list-records';
