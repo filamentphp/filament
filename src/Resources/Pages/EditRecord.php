@@ -6,18 +6,17 @@ use Filament\Components\Concerns;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
 use Filament\Page;
-use Livewire\Component;
 
 class EditRecord extends Page
 {
     use Concerns\UsesResource;
     use HasForm;
 
+    protected static $view = 'filament::resources.pages.edit-record';
+
     public $record;
 
     public $indexRoute = 'index';
-
-    protected static $view = 'filament::resources.pages.edit-record';
 
     public function delete()
     {

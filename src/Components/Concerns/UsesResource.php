@@ -8,24 +8,14 @@ trait UsesResource
 {
     protected static $resource;
 
-    protected function columns()
-    {
-        return static::getResource()::columns();
-    }
-
-    protected function fields()
-    {
-        return static::getResource()::fields();
-    }
-
-    protected function filters()
-    {
-        return static::getResource()::filters();
-    }
-
     public static function getResource()
     {
         return static::$resource;
+    }
+
+    public static function routeTo($uri, $name)
+    {
+        return new Route(static::class, $uri, $name);
     }
 
     protected static function getModel()
@@ -40,8 +30,18 @@ trait UsesResource
         return static::getModel()::query();
     }
 
-    public static function routeTo($uri, $name)
+    protected function columns()
     {
-        return new Route(static::class, $uri, $name);
+        return static::getResource()::columns();
+    }
+
+    protected function fields()
+    {
+        return static::getResource()::fields();
+    }
+
+    protected function filters()
+    {
+        return static::getResource()::filters();
     }
 }

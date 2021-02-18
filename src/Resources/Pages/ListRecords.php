@@ -7,12 +7,13 @@ use Filament\Page;
 use Filament\Tables\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Livewire\Component;
 
 class ListRecords extends Page
 {
     use Concerns\UsesResource;
     use HasTable;
+
+    protected static $view = 'filament::resources.pages.list-records';
 
     public $filterable = true;
 
@@ -25,8 +26,6 @@ class ListRecords extends Page
     public $searchable = true;
 
     public $sortable = true;
-
-    protected static $view = 'filament::resources.pages.list-records';
 
     public static function getTitle()
     {

@@ -2,7 +2,6 @@
 
 namespace Filament\Http\Livewire;
 
-use Filament\Components\Concerns;
 use Filament\Forms\Fields;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
@@ -10,21 +9,20 @@ use Filament\Models\FilamentUser;
 use Filament\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Livewire\Component;
 
 class EditAccount extends Page
 {
     use HasForm;
+
+    public static $title = 'filament::edit-account.title';
+
+    public static $view = 'filament::edit-account';
 
     public $newPassword;
 
     public $newPasswordConfirmation;
 
     public $record;
-
-    public static $title = 'filament::edit-account.title';
-
-    public static $view = 'filament::edit-account';
 
     public function getForm()
     {

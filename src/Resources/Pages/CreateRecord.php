@@ -6,18 +6,17 @@ use Filament\Components\Concerns;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
 use Filament\Page;
-use Livewire\Component;
 
 class CreateRecord extends Page
 {
     use Concerns\UsesResource;
     use HasForm;
 
+    protected static $view = 'filament::resources.pages.create-record';
+
     public $record;
 
     public $showRoute = 'edit';
-
-    protected static $view = 'filament::resources.pages.create-record';
 
     public function getForm()
     {
