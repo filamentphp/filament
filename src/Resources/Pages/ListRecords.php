@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Resources\Actions;
+namespace Filament\Resources\Pages;
 
 use Filament\Components\Concerns;
 use Filament\Page;
@@ -26,7 +26,7 @@ class ListRecords extends Page
 
     public $sortable = true;
 
-    protected static $view = 'filament::resources.actions.list-records';
+    protected static $view = 'filament::resources.pages.list-records';
 
     public static function getTitle()
     {

@@ -34,12 +34,12 @@ class AuthorizationManager
         return $this;
     }
 
-    public function can($route, $user = null)
+    public function can($page, $user = null)
     {
+        if (! $user) $user = Auth::guard('filament')->user();
+
         return true;
 
-//        if (! $user) $user = Auth::guard('filament')->user();
-//
 //        if (! count($this->authorizations)) return true;
 //
 //        if (! $this->resource::router()->hasRoute($route)) return $this->mode === 'deny';

@@ -9,7 +9,7 @@ class MakeResourceCommand extends Command
 {
     use Concerns\CanManipulateFiles;
 
-    protected $description = 'Creates a Filament resource class and default action classes.';
+    protected $description = 'Creates a Filament resource class and default page classes.';
 
     protected $signature = 'make:filament-resource {name}';
 
@@ -30,9 +30,9 @@ class MakeResourceCommand extends Command
         $resource = "{$model}Resource";
         $resourceClass = "{$modelClass}Resource";
         $resourceNamespace = $modelNamespace;
-        $indexResourceActionClass = "List{$pluralModelClass}";
-        $createResourceActionClass = "Create{$modelClass}";
-        $editResourceActionClass = "Edit{$modelClass}";
+        $indexResourcePageClass = "List{$pluralModelClass}";
+        $createResourcePageClass = "Create{$modelClass}";
+        $editResourcePageClass = "Edit{$modelClass}";
 
         $baseResourcePath = app_path(
             (string) Str::of($resource)
@@ -40,47 +40,47 @@ class MakeResourceCommand extends Command
                 ->replace('\\', '/'),
         );
         $resourcePath = "{$baseResourcePath}.php";
-        $resourceActionsDirectory = "{$baseResourcePath}/Actions";
-        $indexResourceActionPath = "{$resourceActionsDirectory}/{$indexResourceActionClass}.php";
-        $createResourceActionPath = "{$resourceActionsDirectory}/{$createResourceActionClass}.php";
-        $editResourceActionPath = "{$resourceActionsDirectory}/{$editResourceActionClass}.php";
+        $resourcePagesDirectory = "{$baseResourcePath}/Pages";
+        $indexResourcePagePath = "{$resourcePagesDirectory}/{$indexResourcePageClass}.php";
+        $createResourcePagePath = "{$resourcePagesDirectory}/{$createResourcePageClass}.php";
+        $editResourcePagePath = "{$resourcePagesDirectory}/{$editResourcePageClass}.php";
 
         if ($this->checkForCollision([
             $resourcePath,
-            $indexResourceActionPath,
-            $createResourceActionPath,
-            $editResourceActionPath,
+            $indexResourcePagePath,
+            $createResourcePagePath,
+            $editResourcePagePath,
         ])) return;
 
         $this->copyStubToApp('Resource', $resourcePath, [
-            'createResourceActionClass' => $createResourceActionClass,
-            'editResourceActionClass' => $editResourceActionClass,
-            'indexResourceActionClass' => $indexResourceActionClass,
+            'createResourcePageClass' => $createResourcePageClass,
+            'editResourcePageClass' => $editResourcePageClass,
+            'indexResourcePageClass' => $indexResourcePageClass,
             'model' => $model,
             'namespace' => 'App\Filament\Resources' . ($resourceNamespace !== '' ? "\\{$resourceNamespace}" : ''),
             'resource' => $resource,
             'resourceClass' => $resourceClass,
         ]);
 
-        $this->copyStubToApp('ResourceAction', $indexResourceActionPath, [
-            'baseResourceActionClass' => 'ListRecords',
+        $this->copyStubToApp('ResourcePage', $indexResourcePagePath, [
+            'baseResourcePageClass' => 'ListRecords',
             'resource' => $resource,
             'resourceClass' => $resourceClass,
-            'resourceActionClass' => $indexResourceActionClass,
+            'resourcePageClass' => $indexResourcePageClass,
         ]);
 
-        $this->copyStubToApp('ResourceAction', $createResourceActionPath, [
-            'baseResourceActionClass' => 'CreateRecord',
+        $this->copyStubToApp('ResourcePage', $createResourcePagePath, [
+            'baseResourcePageClass' => 'CreateRecord',
             'resource' => $resource,
             'resourceClass' => $resourceClass,
-            'resourceActionClass' => $createResourceActionClass,
+            'resourcePageClass' => $createResourcePageClass,
         ]);
 
-        $this->copyStubToApp('ResourceAction', $editResourceActionPath, [
-            'baseResourceActionClass' => 'EditRecord',
+        $this->copyStubToApp('ResourcePage', $editResourcePagePath, [
+            'baseResourcePageClass' => 'EditRecord',
             'resource' => $resource,
             'resourceClass' => $resourceClass,
-            'resourceActionClass' => $editResourceActionClass,
+            'resourcePageClass' => $editResourcePageClass,
         ]);
 
         $this->info("Successfully created {$resource}!");

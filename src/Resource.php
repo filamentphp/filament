@@ -80,8 +80,10 @@ class Resource
 
     public static function navigationItems()
     {
+        $label = (string) Str::of(static::getLabel())->plural()->title();
+
         return [
-            NavigationItem::make(Str::title(static::getLabel()), static::generateUrl())
+            NavigationItem::make($label, static::generateUrl())
                 ->activeRule((string) Str::of(parse_url(static::generateUrl(), PHP_URL_PATH))
                     ->after('/')
                     ->append('*'),

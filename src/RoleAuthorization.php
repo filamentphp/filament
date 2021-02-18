@@ -4,11 +4,11 @@ namespace Filament;
 
 class RoleAuthorization
 {
-    public $exceptRoutes = [];
+    public $exceptPages = [];
 
     public $mode;
 
-    public $onlyRoutes = [];
+    public $onlyPages = [];
 
     public $role;
 
@@ -18,20 +18,20 @@ class RoleAuthorization
         $this->role = $role;
     }
 
-    public function except($routes)
+    public function except($pages)
     {
-        if (! is_array($routes)) $routes = [$routes];
+        if (! is_array($pages)) $pages = [$pages];
 
-        $this->exceptRoutes = array_merge($this->exceptRoutes, $routes);
+        $this->exceptPages = array_merge($this->exceptPages, $pages);
 
         return $this;
     }
 
-    public function only($routes)
+    public function only($pages)
     {
-        if (! is_array($routes)) $routes = [$routes];
+        if (! is_array($pages)) $pages = [$pages];
 
-        $this->onlyRoutes = array_merge($this->onlyRoutes, $routes);
+        $this->onlyPages = array_merge($this->onlyPages, $pages);
 
         return $this;
     }

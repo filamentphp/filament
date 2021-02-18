@@ -37,8 +37,8 @@ Route::middleware([Authenticate::class])->group(function () {
 
     foreach (Filament::getResources() as $resource) {
         foreach ($resource::router()->routes as $route) {
-            Route::get('resources/' . $resource::getSlug() . '/' . $route->uri, $route->action)
-                ->middleware('filament.authorize.resource-route:' . $resource . ',' . $route->name)
+            Route::get('resources/' . $resource::getSlug() . '/' . $route->uri, $route->page)
+                ->middleware('filament.authorize.resource-page-route:' . $resource . ',' . $route->page)
                 ->name('resources.' . $resource::getSlug() . '.' . $route->name);
         }
     }

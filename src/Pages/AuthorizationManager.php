@@ -36,10 +36,10 @@ class AuthorizationManager
 
     public function can($user = null)
     {
+        if (! $user) $user = Auth::guard('filament')->user();
+
         return true;
 
-//        if (! $user) $user = Auth::guard('filament')->user();
-//
 //        if (! count($this->authorizations)) return true;
 //
 //        $roleAuthorized = collect($this->authorizations)

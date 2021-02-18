@@ -6,15 +6,15 @@ use Illuminate\Support\Str;
 
 class Route
 {
-    public $action;
-
     public $name;
+
+    public $page;
 
     public $uri;
 
-    public function __construct($action, $uri, $name)
+    public function __construct($page, $uri, $name)
     {
-        $this->action = $action;
+        $this->page = $page;
 
         $this->name($name);
         $this->uri($uri);

@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Filament\Resources\{{resource}}\Pages;
+
+use App\Filament\Resources\{{resource}};
+use Filament\Resources\Pages\{{baseResourcePageClass}};
+
+class {{resourcePageClass}} extends {{baseResourcePageClass}}
+{
+    protected static $resource = {{resourceClass}}::class;
+}

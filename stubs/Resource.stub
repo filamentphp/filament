@@ -2,7 +2,7 @@
 
 namespace {{namespace}};
 
-use App\Filament\Resources\{{resource}}\Actions;
+use App\Filament\Resources\{{resource}}\Pages;
 use App\Models;
 use Filament\Resource;
 use Filament\Resources\Columns;
@@ -31,9 +31,9 @@ class {{resourceClass}} extends Resource
     public static function routes()
     {
         return [
-            Actions\{{indexResourceActionClass}}::route('/', 'index'),
-            Actions\{{createResourceActionClass}}::route('/create', 'create'),
-            Actions\{{editResourceActionClass}}::route('/{record}/edit', 'edit'),
+            Pages\{{indexResourcePageClass}}::route('/', 'index'),
+            Pages\{{createResourcePageClass}}::route('/create', 'create'),
+            Pages\{{editResourcePageClass}}::route('/{record}/edit', 'edit'),
         ];
     }
 }

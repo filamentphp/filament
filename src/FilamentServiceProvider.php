@@ -108,7 +108,7 @@ class FilamentServiceProvider extends ServiceProvider
     {
         $router = $this->app->make(Router::class);
         $router->aliasMiddleware('filament.authorize.page-route', Middleware\AuthorizePageRoute::class);
-        $router->aliasMiddleware('filament.authorize.resource-route', Middleware\AuthorizeResourceRoute::class);
+        $router->aliasMiddleware('filament.authorize.resource-page-route', Middleware\AuthorizeResourcePageRoute::class);
     }
 
     protected function bootPublishing()

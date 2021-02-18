@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Resources\Actions;
+namespace Filament\Resources\Pages;
 
 use Filament\Components\Concerns;
 use Filament\Forms\Form;
@@ -17,7 +17,7 @@ class EditRecord extends Page
 
     public $indexRoute = 'index';
 
-    protected static $view = 'filament::resources.actions.edit-record';
+    protected static $view = 'filament::resources.pages.edit-record';
 
     public function delete()
     {

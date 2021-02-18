@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Resources\Actions;
+namespace Filament\Resources\Pages;
 
 use Filament\Components\Concerns;
 use Filament\Forms\Form;
@@ -17,7 +17,7 @@ class CreateRecord extends Page
 
     public $showRoute = 'edit';
 
-    protected static $view = 'filament::resources.actions.create-record';
+    protected static $view = 'filament::resources.pages.create-record';
 
     public function getForm()
     {
