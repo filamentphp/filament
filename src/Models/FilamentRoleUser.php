@@ -10,11 +10,6 @@ class FilamentRoleUser extends Model
 
     public $timestamps = false;
 
-    public function role()
-    {
-        return $this->belongsTo(FilamentRole::class, 'role_id');
-    }
-
     public function user()
     {
         return $this->belongsTo(FilamentUser::class, 'user_id');

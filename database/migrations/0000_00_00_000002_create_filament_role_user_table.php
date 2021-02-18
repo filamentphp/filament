@@ -10,7 +10,7 @@ class CreateFilamentRoleUserTable extends Migration
     {
         Schema::create('filament_role_user', function (Blueprint $table) {
             $table->id();
-            $table->string('role_id');
+            $table->string('role');
             $table->foreignId('user_id')->constrained('filament_users')->cascadeOnDelete();
         });
     }

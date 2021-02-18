@@ -10,7 +10,7 @@ class AuthorizeResourceRoute
 {
     public function handle(Request $request, Closure $next, $resource, $route)
     {
-        abort_unless(Resource::find($resource)->authorizationManager()->can($route), 403);
+        abort_unless($resource::authorizationManager()->can($route), 403);
 
         return $next($request);
     }

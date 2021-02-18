@@ -46,6 +46,10 @@ class FilamentServiceProvider extends ServiceProvider
 
         $this->registerIcons();
         $this->registerProviders();
+
+        $this->discoverFilamentPages();
+        $this->discoverFilamentResources();
+        $this->discoverFilamentRoles();
     }
 
     protected function bootCommands()
@@ -199,6 +203,63 @@ class FilamentServiceProvider extends ServiceProvider
         }
 
         return $array;
+    }
+
+    protected function discoverFilamentPages()
+    {
+        $filesystem = new Filesystem();
+
+        $filesystem->ensureDirectoryExists(config('filament.pages.path'));
+
+        collect($filesystem->allFiles(config('filament.pages.path')))
+            ->map(function ($file) {
+                return (string) Str::of(config('filament.pages.namespace'))
+                    ->append('\\', $file->getRelativePathname())
+                    ->replace(['/', '.php'], ['\\', '']);
+            })
+            ->filter(function ($class) {
+                return is_subclass_of($class, Page::class) &&
+                    ! (new ReflectionClass($class))->isAbstract();
+            })
+            ->each(fn ($page) => Filament::registerPage($page));
+    }
+
+    protected function discoverFilamentResources()
+    {
+        $filesystem = new Filesystem();
+
+        $filesystem->ensureDirectoryExists(config('filament.resources.path'));
+
+        collect($filesystem->allFiles(config('filament.resources.path')))
+            ->map(function ($file) {
+                return (string) Str::of(config('filament.resources.namespace'))
+                    ->append('\\', $file->getRelativePathname())
+                    ->replace(['/', '.php'], ['\\', '']);
+            })
+            ->filter(function ($class) {
+                return is_subclass_of($class, Resource::class) &&
+                    ! (new ReflectionClass($class))->isAbstract();
+            })
+            ->each(fn ($resource) => Filament::registerResource($resource));
+    }
+
+    protected function discoverFilamentRoles()
+    {
+        $filesystem = new Filesystem();
+
+        $filesystem->ensureDirectoryExists(config('filament.roles.path'));
+
+        collect($filesystem->allFiles(config('filament.roles.path')))
+            ->map(function ($file) {
+                return (string) Str::of(config('filament.roles.namespace'))
+                    ->append('\\', $file->getRelativePathname())
+                    ->replace(['/', '.php'], ['\\', '']);
+            })
+            ->filter(function ($class) {
+                return is_subclass_of($class, Role::class) &&
+                    ! (new ReflectionClass($class))->isAbstract();
+            })
+            ->each(fn ($role) => Filament::registerRole($role));
     }
 
     protected function registerLivewireComponentDirectory($directory, $namespace, $aliasPrefix = '')

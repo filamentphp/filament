@@ -2,9 +2,10 @@
 
 namespace Filament\Http\Livewire;
 
+use Filament\Page;
 use Livewire\Component;
 
-class Dashboard extends Component
+class Dashboard extends Page
 {
     public function render()
     {

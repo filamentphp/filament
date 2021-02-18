@@ -34,7 +34,7 @@ class FilamentUser extends Authenticatable
     public function hasRole($role)
     {
         return FilamentRoleUser::where([
-            ['role_id', $role],
+            ['role', $role],
             ['user_id', $this->attributes['id']],
         ])->exists();
     }

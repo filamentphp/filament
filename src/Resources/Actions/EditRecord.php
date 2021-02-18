@@ -5,9 +5,10 @@ namespace Filament\Resources\Actions;
 use Filament\Components\Concerns;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
+use Filament\Page;
 use Livewire\Component;
 
-class EditRecord extends Component
+class EditRecord extends Page
 {
     use Concerns\HasTitle;
     use Concerns\SendsToastNotifications;

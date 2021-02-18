@@ -1,5 +1,7 @@
 <?php
 
+use Filament\Filament;
+use Filament\Forms\Http\Controllers\RichEditorAttachmentController;
 use Filament\Http\Controllers;
 use Filament\Http\Livewire;
 use Filament\Http\Middleware\Authenticate;
@@ -25,14 +27,13 @@ Route::middleware([Authenticate::class])->group(function () {
     Route::get('/', Livewire\Dashboard::class)->name('dashboard');
     Route::get('/account', Livewire\EditAccount::class)->name('account');
 
-    Route::post('/rich-editor-attachments', \Filament\Forms\Http\Controllers\RichEditorAttachmentController::class)->name('rich-editor-attachments.upload');
+    Route::post('/rich-editor-attachments', RichEditorAttachmentController::class)->name('rich-editor-attachments.upload');
 
-    // Resources
-    Resource::all()->each(function ($resource) {
-        foreach ($resource->router()->routes as $route) {
-            Route::get('/resources/' . $resource->slug . '/' . $route->uri, $route->action)
-                ->middleware('filament.authorize.resource-route:' . $resource->id . ',' . $route->name)
-                ->name('resources.' . $resource->slug . '.' . $route->name);
+    foreach (Filament::getResources() as $resource) {
+        foreach ($resource::router()->routes as $route) {
+            Route::get('/resources/' . $resource::getSlug() . '/' . $route->uri, $route->action)
+                ->middleware('filament.authorize.resource-route:' . $resource . ',' . $route->name)
+                ->name('resources.' . $resource::getSlug() . '.' . $route->name);
         }
-    });
+    }
 });

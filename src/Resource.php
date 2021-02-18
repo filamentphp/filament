@@ -57,6 +57,33 @@ class Resource
             ->replace('-', ' ');
     }
 
+    public static function getSlug()
+    {
+        if (static::$slug) return static::$slug;
+
+        return (string) Str::of(class_basename(static::$model))
+            ->plural()
+            ->kebab();
+    }
+
+    public static function getSort()
+    {
+        return static::$sort;
+    }
+
+    public static function navigationItems()
+    {
+        return [
+            NavigationItem::make(Str::title(static::getLabel()), static::route())
+                ->activeRule((string) Str::of(parse_url(static::route(), PHP_URL_PATH))
+                    ->after('/')
+                    ->append('*'),
+                )
+                ->icon(static::getIcon())
+                ->sort(static::getSort()),
+        ];
+    }
+
     public static function route($name = null, $parameters = [], $absolute = true)
     {
         if (! $name) $name = static::router()->getIndexRoute()->name;
@@ -67,15 +94,6 @@ class Resource
     public static function router()
     {
         return new Router(static::class);
-    }
-
-    public static function getSlug()
-    {
-        if (static::$slug) return static::$slug;
-
-        return (string) Str::of(class_basename(static::$model))
-            ->plural()
-            ->kebab();
     }
 
     public static function routes()

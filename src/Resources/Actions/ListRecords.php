@@ -3,12 +3,13 @@
 namespace Filament\Resources\Actions;
 
 use Filament\Components\Concerns;
+use Filament\Page;
 use Filament\Tables\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class ListRecords extends Component
+class ListRecords extends Page
 {
     use Concerns\HasTitle;
     use Concerns\UsesResource;

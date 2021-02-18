@@ -7,11 +7,12 @@ use Filament\Forms\Fields;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
 use Filament\Models\FilamentUser;
+use Filament\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
-class EditAccount extends Component
+class EditAccount extends Page
 {
     use Concerns\HasTitle;
     use Concerns\SendsToastNotifications;
