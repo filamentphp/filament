@@ -38,7 +38,7 @@ class MakeRoleCommand extends Command
 
         $this->copyStubToApp('Role', $path, [
             'class' => $roleClass,
-            'namespace' => 'App\Filament\Roles' . ($roleNamespace !== '' ? "\\{$roleNamespace}" : ''),
+            'namespace' => 'App\\Filament\\Roles' . ($roleNamespace !== '' ? "\\{$roleNamespace}" : ''),
         ]);
 
         $this->info("Successfully created {$role}!");

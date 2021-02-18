@@ -11,7 +11,7 @@ class MakePageCommand extends Command
 
     protected $description = 'Creates a Filament page class and view.';
 
-    protected $signature = 'make:filament-page {name}';
+    protected $signature = 'make:filament-page {name} {--R|resource=}';
 
     public function handle()
     {
@@ -25,15 +25,29 @@ class MakePageCommand extends Command
             (string) Str::of($page)->beforeLast('\\') :
             '';
 
+        $resource = null;
+        $resourceClass = null;
+
+        if ($this->option('resource') !== null) {
+            $resource = (string) Str::of($this->option('resource'))
+                ->trim('/')
+                ->trim('\\')
+                ->trim(' ')
+                ->replace('/', '\\');
+
+            $resourceClass = (string) Str::of($resource)
+                ->afterLast('\\');
+        }
+
         $view = Str::of($page)
-            ->prepend('filament\\pages.')
+            ->prepend($resource === null ? 'filament\\pages\\' : "filament\\resources\\{$resource}\\pages\\")
             ->explode('\\')
             ->map(fn ($segment) => Str::kebab($segment))
             ->implode('.');
 
         $path = app_path(
             (string) Str::of($page)
-                ->prepend('Filament\\Pages\\')
+                ->prepend($resource === null ? 'Filament\\Pages\\' : "Filament\\Resources\\{$resource}\\Pages\\")
                 ->replace('\\', '/')
                 ->append('.php'),
         );
@@ -49,11 +63,23 @@ class MakePageCommand extends Command
             $viewPath,
         ])) return;
 
-        $this->copyStubToApp('Page', $path, [
-            'class' => $pageClass,
-            'namespace' => 'App\Filament\Pages' . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
-            'view' => $view,
-        ]);
+        if ($resource === null) {
+            $this->copyStubToApp('Page', $path, [
+                'class' => $pageClass,
+                'namespace' => 'App\\Filament\\Pages' . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'view' => $view,
+            ]);
+        } else {
+            $this->copyStubToApp('ResourcePage', $path, [
+                'baseResourcePage' => 'Filament\\Resources\\Page',
+                'baseResourcePageClass' => 'Page',
+                'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'resource' => $resource,
+                'resourceClass' => $resourceClass,
+                'resourcePageClass' => $pageClass,
+                'view' => $view,
+            ]);
+        }
 
         $this->copyStubToApp('PageView', $viewPath);
 

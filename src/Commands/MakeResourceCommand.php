@@ -57,27 +57,33 @@ class MakeResourceCommand extends Command
             'editResourcePageClass' => $editResourcePageClass,
             'indexResourcePageClass' => $indexResourcePageClass,
             'model' => $model,
-            'namespace' => 'App\Filament\Resources' . ($resourceNamespace !== '' ? "\\{$resourceNamespace}" : ''),
+            'namespace' => 'App\\Filament\\Resources' . ($resourceNamespace !== '' ? "\\{$resourceNamespace}" : ''),
             'resource' => $resource,
             'resourceClass' => $resourceClass,
         ]);
 
         $this->copyStubToApp('ResourcePage', $indexResourcePagePath, [
+            'baseResourcePage' => 'Filament\\Resources\\Pages\\ListRecords',
             'baseResourcePageClass' => 'ListRecords',
+            'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
             'resource' => $resource,
             'resourceClass' => $resourceClass,
             'resourcePageClass' => $indexResourcePageClass,
         ]);
 
         $this->copyStubToApp('ResourcePage', $createResourcePagePath, [
+            'baseResourcePage' => 'Filament\\Resources\\Pages\\CreateRecord',
             'baseResourcePageClass' => 'CreateRecord',
+            'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
             'resource' => $resource,
             'resourceClass' => $resourceClass,
             'resourcePageClass' => $createResourcePageClass,
         ]);
 
         $this->copyStubToApp('ResourcePage', $editResourcePagePath, [
+            'baseResourcePage' => 'Filament\\Resources\\Pages\\EditRecord',
             'baseResourcePageClass' => 'EditRecord',
+            'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
             'resource' => $resource,
             'resourceClass' => $resourceClass,
             'resourcePageClass' => $editResourcePageClass,

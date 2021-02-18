@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\{{resource}}\Pages;
+namespace {{namespace}};
 
 use App\Filament\Resources\{{resource}};
-use Filament\Resources\Pages\{{baseResourcePageClass}};
+use {{baseResourcePage}};
 
 class {{resourcePageClass}} extends {{baseResourcePageClass}}
 {
