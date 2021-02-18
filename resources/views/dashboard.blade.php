@@ -1,7 +1,7 @@
 <div>
-    <x-filament::app-header :title="__('filament::dashboard.title')">
+    <x-filament::app-header :title="__($title)">
         <x-slot name="actions">
-            <x-filament::dropdown 
+            <x-filament::dropdown
                 :asButton="true"
                 class="flex items-center space-x-1"
             >
@@ -55,11 +55,11 @@
 
                     <form class="flex justify-between space-x-4">
                         <div class="flex-grow grid grid-cols-2 gap-4">
-                            <input 
+                            <input
                                 placeholder="Label"
                                 class="py-1 border-b text-xs font-mono border-gray-200 placeholder-opacity-100 placeholder-gray-500 focus:placeholder-gray-300 outline-none focus:border-gray-400"
                             >
-                            <input 
+                            <input
                                 placeholder="URL"
                                 class="py-1 border-b text-xs font-mono border-gray-200 placeholder-opacity-100 placeholder-gray-500 focus:placeholder-gray-300 outline-none focus:border-gray-400"
                             >
@@ -71,7 +71,7 @@
                     </form>
                 </div>
             </x-filament::widget>
-            <x-filament::widget 
+            <x-filament::widget
                 title="Activity"
                 :columns="2"
             >

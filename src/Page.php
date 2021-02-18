@@ -22,7 +22,7 @@ class Page extends Component
 
     public static $sort = 0;
 
-    public static $view;
+    protected static $view;
 
     public static function authorization()
     {
@@ -65,6 +65,13 @@ class Page extends Component
         return static::$sort;
     }
 
+    protected function getViewParameters()
+    {
+        return array_merge($this->viewParameters(), [
+            'title' => static::getTitle(),
+        ]);
+    }
+
     public static function navigationItems()
     {
         return [
@@ -83,10 +90,14 @@ class Page extends Component
         return Route::make(static::getSlug(), static::getSlug());
     }
 
+    protected function viewParameters()
+    {
+        return [];
+    }
+
     public function render()
     {
-        return view(static::$view, [
-            'title' => static::getTitle(),
-        ])->layout('filament::components.layouts.app');
+        return view(static::$view, $this->getViewParameters())
+            ->layout('filament::components.layouts.app');
     }
 }

@@ -8,16 +8,16 @@ use Filament\Forms\HasForm;
 use Filament\Page;
 use Livewire\Component;
 
-class EditRecord extends Component
+class EditRecord extends Page
 {
-    use Concerns\HasTitle;
-    use Concerns\SendsToastNotifications;
     use Concerns\UsesResource;
     use HasForm;
 
     public $record;
 
     public $indexRoute = 'index';
+
+    protected static $view = 'filament::resources.actions.edit-record';
 
     public function delete()
     {
@@ -49,12 +49,5 @@ class EditRecord extends Component
         $this->record->save();
 
         $this->notify('Saved!');
-    }
-
-    public function render()
-    {
-        return view('filament::resources.actions.edit-record', [
-            'title' => static::getTitle(),
-        ])->layout('filament::components.layouts.app');
     }
 }

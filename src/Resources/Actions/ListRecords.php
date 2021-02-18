@@ -9,9 +9,8 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class ListRecords extends Component
+class ListRecords extends Page
 {
-    use Concerns\HasTitle;
     use Concerns\UsesResource;
     use HasTable;
 
@@ -27,9 +26,11 @@ class ListRecords extends Component
 
     public $sortable = true;
 
+    protected static $view = 'filament::resources.actions.list-records';
+
     public static function getTitle()
     {
-        if (static::$title) return static::$title;
+        if (property_exists(static::class, 'title')) return static::$title;
 
         return (string) Str::of(class_basename(static::getModel()))
             ->kebab()
@@ -49,11 +50,10 @@ class ListRecords extends Component
             ->sortable($this->sortable);
     }
 
-    public function render()
+    protected function viewParameters()
     {
-        return view('filament::resources.actions.list-records', [
+        return [
             'records' => $this->getRecords(),
-            'title' => static::getTitle(),
-        ])->layout('filament::components.layouts.app');
+        ];
     }
 }

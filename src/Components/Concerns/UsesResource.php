@@ -40,7 +40,7 @@ trait UsesResource
         return static::getModel()::query();
     }
 
-    public static function registerRoute($uri, $name)
+    public static function routeTo($uri, $name)
     {
         return new Route(static::class, $uri, $name);
     }

@@ -3,14 +3,10 @@
 namespace Filament\Http\Livewire;
 
 use Filament\Page;
-use Livewire\Component;
 
 class Dashboard extends Page
 {
-    public function render()
-    {
-        return view('filament::.dashboard', [
-            //...
-        ])->layout('filament::components.layouts.app');
-    }
+    public static $title = 'filament::dashboard.title';
+
+    protected static $view = 'filament::dashboard';
 }

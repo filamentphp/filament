@@ -1,5 +1,5 @@
 <div>
-    <x-filament::app-header :title="__('filament::edit-account.title')" />
+    <x-filament::app-header :title="__($title)" />
 
     <x-filament::app-content>
         <x-filament::card>

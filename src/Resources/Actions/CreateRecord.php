@@ -8,16 +8,16 @@ use Filament\Forms\HasForm;
 use Filament\Page;
 use Livewire\Component;
 
-class CreateRecord extends Component
+class CreateRecord extends Page
 {
-    use Concerns\HasTitle;
-    use Concerns\SendsToastNotifications;
     use Concerns\UsesResource;
     use HasForm;
 
     public $record;
 
     public $showRoute = 'edit';
+
+    protected static $view = 'filament::resources.actions.create-record';
 
     public function getForm()
     {
@@ -45,12 +45,5 @@ class CreateRecord extends Component
         $this->redirect($this->getResource()::generateUrl($this->showRoute, [
             'record' => $record,
         ]));
-    }
-
-    public function render()
-    {
-        return view('filament::resources.actions.create-record', [
-            'title' => static::getTitle(),
-        ])->layout('filament::components.layouts.app');
     }
 }

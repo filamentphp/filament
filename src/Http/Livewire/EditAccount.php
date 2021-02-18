@@ -14,8 +14,6 @@ use Livewire\Component;
 
 class EditAccount extends Page
 {
-    use Concerns\HasTitle;
-    use Concerns\SendsToastNotifications;
     use HasForm;
 
     public $newPassword;
@@ -23,6 +21,10 @@ class EditAccount extends Page
     public $newPasswordConfirmation;
 
     public $record;
+
+    public static $title = 'filament::edit-account.title';
+
+    public static $view = 'filament::edit-account';
 
     public function getForm()
     {
@@ -88,11 +90,5 @@ class EditAccount extends Page
         $this->record->save();
 
         $this->notify(__('filament::edit-account.updated'));
-    }
-
-    public function render()
-    {
-        return view('filament::edit-account')
-            ->layout('filament::components.layouts.app');
     }
 }
