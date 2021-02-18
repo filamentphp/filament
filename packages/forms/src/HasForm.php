@@ -5,6 +5,7 @@ namespace Filament\Forms;
 use Filament\Fields\File;
 use Filament\Fields\InputField;
 use Filament\Fields\Tab;
+use Filament\Forms\Fields\Select;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -44,6 +45,16 @@ trait HasForm
         return $this->getPropertyValue(
             static::getTemporaryUploadedFilePropertyName($name)
         );
+    }
+
+    public function getSelectFieldDisplayValue($fieldName, $value)
+    {
+        $field = collect($this->getForm()->getFields())
+            ->first(fn ($field) => $field instanceof Select && $field->name === $fieldName);
+
+        if (! $field) return [];
+
+        return $field->getDisplayValue($value);
     }
 
     public function getUploadedFileUrl($name, $disk)
@@ -185,6 +196,16 @@ trait HasForm
     protected function getPropertyDefaults()
     {
         return $this->getForm()->getDefaults();
+    }
+
+    public function getSelectFieldOptionSearchResults($fieldName, $search = '')
+    {
+        $field = collect($this->getForm()->getFields())
+            ->first(fn ($field) => $field instanceof Select && $field->name === $fieldName);
+
+        if (! $field) return [];
+
+        return $field->getOptionSearchResults($search);
     }
 
     protected function fillWithFormDefaults()

@@ -2,7 +2,7 @@
 
 namespace Filament\Resources\Fields\Concerns;
 
-trait PreparesFieldForResourceUse
+trait InteractsWithResource
 {
     public static function make($name)
     {

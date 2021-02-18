@@ -19,7 +19,8 @@ class CreateRecord extends Page
     public function getForm()
     {
         return Form::make($this->fields())
-            ->context(static::class);
+            ->context(static::class)
+            ->model(static::getModel());
     }
 
     public function mount()

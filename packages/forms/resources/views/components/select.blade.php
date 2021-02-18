@@ -1,12 +1,12 @@
 @props([
     'autofocus' => false,
     'disabled' => false,
-    'emptyOptionLabel' => null,
     'emptyOptionsMessage' => null,
     'errorKey' => null,
     'extraAttributes' => [],
     'name',
     'nameAttribute' => 'name',
+    'noSearchResultsMessage' => null,
     'options' => [],
     'placeholder' => null,
     'required' => false,
@@ -18,13 +18,19 @@
             return {
                 autofocus: config.autofocus,
 
-                data: config.data,
-
-                emptyOptionLabel: config.emptyOptionLabel,
+                displayValue: null,
 
                 emptyOptionsMessage: config.emptyOptionsMessage,
 
                 focusedOptionIndex: null,
+
+                initialOptions: config.initialOptions,
+
+                loading: false,
+
+                name: config.name,
+
+                noSearchResultsMessage: config.noSearchResultsMessage,
 
                 open: false,
 
@@ -64,14 +70,6 @@
                     this.$refs.listbox.style.bottom = `${this.$refs.button.offsetHeight}px`
                 },
 
-                getOptions: function () {
-                    let options = this.data
-
-                    if (! this.required) options = Object.assign({ null: this.emptyOptionLabel }, options)
-
-                    return options
-                },
-
                 focusNextOption: function () {
                     if (this.focusedOptionIndex === null) {
                         this.focusedOptionIndex = Object.keys(this.options).length - 1
@@ -105,31 +103,52 @@
                 },
 
                 init: function () {
-                    this.options = this.getOptions()
+                    this.options = this.initialOptions
 
-                    if (! (this.value in this.options)) this.value = Object.keys(this.options)[0]
+                    if (this.value in this.options) {
+                        this.displayValue = this.options[this.value]
+                    } else {
+                        this.loading = true;
+
+                        this.$wire.getSelectFieldDisplayValue(this.name, this.value).then((displayValue) => {
+                            this.displayValue = displayValue
+
+                            if (this.displayValue === null) {
+                                this.value = null
+                            }
+
+                            this.loading = false
+                        })
+                    }
 
                     if (this.autofocus) this.openListbox()
 
-                    this.$watch('search', ((value) => {
-                        if (! this.open || ! value) {
-                            this.options = this.getOptions()
+                    this.$watch('search', (async (value) => {
+                        if (! this.open || value === '' || value === null) {
+                            this.options = this.initialOptions
+                            this.focusedOptionIndex = 0
 
                             return
                         }
 
-                        this.options = Object.keys(this.getOptions())
-                            .filter((key) => this.getOptions()[key].toLowerCase().includes(value.toLowerCase()))
-                            .reduce((options, key) => {
-                                options[key] = this.getOptions()[key]
-                                return options
-                            }, {})
+                        this.loading = true
+
+                        this.$wire.getSelectFieldOptionSearchResults(this.name, value).then((options) => {
+                            this.options = options
+                            this.focusedOptionIndex = 0
+                            this.loading = false
+                        })
                     }))
 
                     this.$watch('value', ((value) => {
-                        if (value in this.options) return
+                        if (value in this.options) {
+                            this.displayValue = this.options[value]
 
-                        this.value = Object.keys(this.options)[0]
+                            return
+                        }
+
+                        this.value = null
+                        this.displayValue = null
                     }))
                 },
 
@@ -141,7 +160,13 @@
                     this.open = true
 
                     this.$nextTick(() => {
+                        this.$refs.search.focus()
+
                         this.evaluatePosition()
+
+                        this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
+                            block: 'center'
+                        })
                     })
                 },
 
@@ -165,14 +190,6 @@
                     }
 
                     this.openListbox()
-
-                    this.$nextTick(() => {
-                        this.$refs.search.focus()
-
-                        this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
-                            block: 'center'
-                        })
-                    })
                 },
             }
         }
@@ -182,9 +199,10 @@
 <div
     x-data="select({
         autofocus: {{ $autofocus ? 'true' : 'false' }},
-        data: {{ json_encode($options) }},
-        emptyOptionLabel: '{{ $emptyOptionLabel }}',
         emptyOptionsMessage: '{{ $emptyOptionsMessage }}',
+        initialOptions: {{ json_encode($options) }},
+        name: '{{ $name }}',
+        noSearchResultsMessage: '{{ $noSearchResultsMessage }}',
         required: {{ $required ? 'true' : 'false' }},
         @if (Str::of($nameAttribute)->startsWith('wire:model'))
             value: @entangle($name){{ Str::of($nameAttribute)->after('wire:model') }},
@@ -205,22 +223,23 @@
         />
     @endif
 
-    <button
+    <div
         @unless($disabled)
             x-ref="button"
             x-on:click="toggleListboxVisibility()"
             x-on:keydown.enter.stop.prevent="open ? selectOption() : openListbox()"
+            x-on:keydown.space="if (! open) openListbox()"
             x-bind:aria-expanded="open"
             aria-haspopup="listbox"
+            tabindex="1"
         @endunless
-        type="button"
         class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 {{ $disabled ? 'text-gray-500' : '' }} {{ $errors->has($errorKey) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
     >
         <span
             x-show="! open"
-            x-text="value in options ? options[value] : '{{ $placeholder }}'"
+            x-text="displayValue ?? '{{ $placeholder }}'"
             x-bind:class="{
-                'text-gray-400': ! (value in options),
+                'text-gray-400': displayValue === null,
             }"
             class="block truncate"
         ></span>
@@ -229,7 +248,7 @@
             <input
                 x-ref="search"
                 x-show="open"
-                x-model="search"
+                x-model.debounce.500="search"
                 x-on:keydown.enter.stop.prevent="selectOption()"
                 x-on:keydown.arrow-up.stop.prevent="focusPreviousOption()"
                 x-on:keydown.arrow-down.stop.prevent="focusNextOption()"
@@ -238,10 +257,15 @@
             />
 
             <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                <x-heroicon-s-selector class="w-5 h-5 text-gray-400" />
+                <x-heroicon-s-selector x-show="! loading" x-cloak class="w-5 h-5 text-gray-400" />
+
+                <svg x-show="loading" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" fill="currentColor" class="w-5 h-5 text-gray-400">
+                    <path d="M6.306 28.014c1.72 10.174 11.362 17.027 21.536 15.307C38.016 41.6 44.87 31.958 43.15 21.784l-4.011.678c1.345 7.958-4.015 15.502-11.974 16.847-7.959 1.346-15.501-4.014-16.847-11.973l-4.011.678z">
+                    <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur=".7s" repeatCount="indefinite"/></path>
+                </svg>
             </span>
         @endunless
-    </button>
+    </div>
 
     @unless($disabled)
         <div
@@ -302,7 +326,7 @@
 
                 <div
                     x-show="! Object.keys(options).length"
-                    x-text="emptyOptionsMessage"
+                    x-text="search && ! this.loading ? noSearchResultsMessage : emptyOptionsMessage"
                     class="px-3 py-2 text-gray-900 cursor-default select-none"
                 ></div>
             </ul>

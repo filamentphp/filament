@@ -22,6 +22,8 @@ class InputField extends Field
 
     public $rules = [];
 
+    public $validationAttribute;
+
     public function __construct($name)
     {
         $this->name($name);
@@ -182,6 +184,13 @@ class InputField extends Field
 
         $this->removeRules([$this->name => ['nullable', 'required']]);
         $this->addRules([$this->name => ["required_with:$field"]]);
+
+        return $this;
+    }
+
+    public function validationAttribute($attribute)
+    {
+        $this->validationAttribute = $attribute;
 
         return $this;
     }

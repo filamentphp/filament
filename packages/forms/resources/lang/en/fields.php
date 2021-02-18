@@ -70,8 +70,9 @@ return [
     ],
 
     'select' => [
-        'emptyOptionLabel' => 'None',
-        'emptyOptionsMessage' => 'No options match your search.',
+        'emptyOptionsMessage' => 'Start typing to search...',
+        'noSearchResultsMessage' => 'No options match your search.',
+        'placeholder' => 'Select an option',
     ],
 
     'tags' => [

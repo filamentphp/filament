@@ -27,6 +27,7 @@ class EditRecord extends Page
     {
         return Form::make($this->fields())
             ->context(static::class)
+            ->model(static::getModel())
             ->record($this->record);
     }
 

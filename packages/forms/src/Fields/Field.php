@@ -22,6 +22,8 @@ class Field
 
     protected $context;
 
+    protected $model;
+
     protected $pendingExcludedContextModifications = [];
 
     protected $pendingIncludedContextModifications = [];
@@ -159,10 +161,16 @@ class Field
 
         $attributes = [];
 
-        if (property_exists($this, 'name') && property_exists($this, 'label')) {
-            $label = Str::lower($this->label);
+        if (property_exists($this, 'name')) {
+            if (property_exists($this, 'label')) {
+                $label = Str::lower($this->label);
 
-            $attributes[$this->name] = $label;
+                $attributes[$this->name] = $label;
+            }
+
+            if (property_exists($this, 'validationAttribute') && $this->validationAttribute !== null) {
+                $attributes[$this->name] = $this->validationAttribute;
+            }
         }
 
         $attributes = array_merge($attributes, $this->getForm()->getValidationAttributes());
@@ -180,6 +188,15 @@ class Field
     public function label($label)
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function model($model)
+    {
+        $this->model = $model;
+
+        $this->fields($this->getForm()->model($this->model)->fields);
 
         return $this;
     }

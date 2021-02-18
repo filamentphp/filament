@@ -6,5 +6,5 @@ use Filament\Resources\Fields\Concerns;
 
 class Date extends \Filament\Forms\Fields\Date
 {
-    use Concerns\PreparesFieldForResourceUse;
+    use Concerns\InteractsWithResource;
 }

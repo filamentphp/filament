@@ -86,6 +86,17 @@ class Form
         return $attributes;
     }
 
+    public function model($model)
+    {
+        $this->fields = collect($this->fields)
+            ->map(function ($field) use ($model) {
+                return $field->model($model);
+            })
+            ->toArray();
+
+        return $this;
+    }
+
     public function record($record)
     {
         $this->fields = collect($this->fields)
