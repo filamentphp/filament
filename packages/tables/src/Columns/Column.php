@@ -119,7 +119,7 @@ class Column
         if ($value instanceof Model) {
             $value = $this->getValue(
                 $value,
-                (string) Str::of($attribute)->after('.')
+                (string) Str::of($attribute)->after('.'),
             );
         }
 

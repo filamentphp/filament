@@ -68,7 +68,7 @@ class Text extends Column
 
     public function getValue($record, $attribute = null)
     {
-        $value = parent::getValue($record);
+        $value = parent::getValue($record, $attribute);
 
         if ($value === null) {
             $this->default;
