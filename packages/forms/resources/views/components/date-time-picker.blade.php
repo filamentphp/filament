@@ -75,6 +75,8 @@
 
                 clearValue: function () {
                     this.setValue(null)
+
+                    this.closePicker()
                 },
 
                 closePicker: function () {

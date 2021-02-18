@@ -42,6 +42,13 @@
 
                 value: config.value,
 
+                clearValue: function () {
+                    this.value = null
+                    this.displayValue = null
+
+                    this.closeListbox()
+                },
+
                 closeListbox: function () {
                     this.open = false
 
@@ -139,17 +146,6 @@
                             this.loading = false
                         })
                     }))
-
-                    this.$watch('value', ((value) => {
-                        if (value in this.options) {
-                            this.displayValue = this.options[value]
-
-                            return
-                        }
-
-                        this.value = null
-                        this.displayValue = null
-                    }))
                 },
 
                 openListbox: function () {
@@ -178,6 +174,7 @@
                     }
 
                     this.value = Object.keys(this.options)[index ?? this.focusedOptionIndex]
+                    this.displayValue = this.options[this.value]
 
                     this.closeListbox()
                 },
@@ -229,6 +226,9 @@
             x-on:click="toggleListboxVisibility()"
             x-on:keydown.enter.stop.prevent="open ? selectOption() : openListbox()"
             x-on:keydown.space="if (! open) openListbox()"
+            x-on:keydown.backspace="if (! search) clearValue()"
+            x-on:keydown.clear="if (! search) clearValue()"
+            x-on:keydown.delete="if (! search) clearValue()"
             x-bind:aria-expanded="open"
             aria-haspopup="listbox"
             tabindex="1"
