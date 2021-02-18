@@ -24,6 +24,12 @@ Route::get('image/{path}', Controllers\ImageController::class)->where('path', '.
 
 // Authenticated routes
 Route::middleware([Authenticate::class])->group(function () {
+    foreach (Filament::getPages() as $page) {
+        Route::get($page::route()->uri, $page)
+            ->middleware('filament.authorize.page-route:' . $page)
+            ->name('pages.' . $page::route()->name);
+    }
+
     Route::get('/', Livewire\Dashboard::class)->name('dashboard');
     Route::get('account', Livewire\EditAccount::class)->name('account');
 
@@ -35,11 +41,5 @@ Route::middleware([Authenticate::class])->group(function () {
                 ->middleware('filament.authorize.resource-route:' . $resource . ',' . $route->name)
                 ->name('resources.' . $resource::getSlug() . '.' . $route->name);
         }
-    }
-
-    foreach (Filament::getPages() as $page) {
-        Route::get($page::route()->uri, $page)
-            ->middleware('filament.authorize.page-route:' . $page)
-            ->name('pages.' . $page::route()->name);
     }
 });
