@@ -3,7 +3,7 @@
         <x-slot name="actions">
             <x-filament::button
                 color="primary"
-                :href="$this->getResource()::route($createRoute)"
+                :href="$this->getResource()::generateUrl($createRoute)"
             >
                 Create
             </x-filament::button>

@@ -8,7 +8,7 @@ use Filament\Forms\HasForm;
 use Filament\Page;
 use Livewire\Component;
 
-class CreateRecord extends Page
+class CreateRecord extends Component
 {
     use Concerns\HasTitle;
     use Concerns\SendsToastNotifications;
@@ -42,7 +42,7 @@ class CreateRecord extends Page
 
         $record = static::getModel()::create($this->record);
 
-        $this->redirect($this->getResource()::route($this->showRoute, [
+        $this->redirect($this->getResource()::generateUrl($this->showRoute, [
             'record' => $record,
         ]));
     }

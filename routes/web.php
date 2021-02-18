@@ -20,20 +20,26 @@ Route::middleware([RedirectIfAuthenticated::class])->name('auth.')->group(functi
 });
 
 // Images
-Route::get('/image/{path}', Controllers\ImageController::class)->where('path', '.*')->name('image');
+Route::get('image/{path}', Controllers\ImageController::class)->where('path', '.*')->name('image');
 
 // Authenticated routes
 Route::middleware([Authenticate::class])->group(function () {
     Route::get('/', Livewire\Dashboard::class)->name('dashboard');
-    Route::get('/account', Livewire\EditAccount::class)->name('account');
+    Route::get('account', Livewire\EditAccount::class)->name('account');
 
-    Route::post('/rich-editor-attachments', RichEditorAttachmentController::class)->name('rich-editor-attachments.upload');
+    Route::post('rich-editor-attachments', RichEditorAttachmentController::class)->name('rich-editor-attachments.upload');
 
     foreach (Filament::getResources() as $resource) {
         foreach ($resource::router()->routes as $route) {
-            Route::get('/resources/' . $resource::getSlug() . '/' . $route->uri, $route->action)
+            Route::get('resources/' . $resource::getSlug() . '/' . $route->uri, $route->action)
                 ->middleware('filament.authorize.resource-route:' . $resource . ',' . $route->name)
                 ->name('resources.' . $resource::getSlug() . '.' . $route->name);
         }
+    }
+
+    foreach (Filament::getPages() as $page) {
+        Route::get($page::route()->uri, $page)
+            ->middleware('filament.authorize.page-route:' . $page)
+            ->name('pages.' . $page::route()->name);
     }
 });

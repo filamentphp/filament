@@ -1,21 +1,21 @@
 <?php
 
-namespace Filament\Resources;
+namespace Filament;
 
-class Authorization
+class RoleAuthorization
 {
     public $exceptRoutes = [];
+
+    public $mode;
 
     public $onlyRoutes = [];
 
     public $role;
 
-    public $type;
-
-    public function __construct($role, $type = 'deny')
+    public function __construct($role, $mode = 'deny')
     {
+        $this->mode = in_array($mode, ['allow', 'deny']) ? $mode : 'deny';
         $this->role = $role;
-        $this->type = in_array($type, ['allow', 'deny']) ? $type : 'deny';
     }
 
     public function except($routes)

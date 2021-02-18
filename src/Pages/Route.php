@@ -1,23 +1,24 @@
 <?php
 
-namespace Filament\Resources;
+namespace Filament\Pages;
 
 use Illuminate\Support\Str;
 
 class Route
 {
-    public $action;
-
     public $name;
 
     public $uri;
 
-    public function __construct($action, $uri, $name)
+    public function __construct($uri, $name)
     {
-        $this->action = $action;
-
         $this->name($name);
         $this->uri($uri);
+    }
+
+    public static function make($uri, $name)
+    {
+        return new static($uri, $name);
     }
 
     public function name($name)

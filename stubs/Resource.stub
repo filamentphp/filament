@@ -1,27 +1,18 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace {{namespace}};
 
 use App\Filament\Resources\{{resource}}\Actions;
-use App\Filament\Roles;
 use App\Models;
 use Filament\Resource;
 use Filament\Resources\Columns;
 use Filament\Resources\Fields;
-use Filament\Resources\Filter;
 
 class {{resourceClass}} extends Resource
 {
     public static $icon = 'heroicon-o-collection';
 
     public static $model = Models\{{model}}::class;
-
-    public static function authorization()
-    {
-        return [
-            //
-        ];
-    }
 
     public static function columns()
     {
@@ -31,13 +22,6 @@ class {{resourceClass}} extends Resource
     }
 
     public static function fields()
-    {
-        return [
-            //
-        ];
-    }
-
-    public static function filters()
     {
         return [
             //

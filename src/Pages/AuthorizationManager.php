@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Resources;
+namespace Filament\Pages;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -10,13 +10,13 @@ class AuthorizationManager
 
     public $mode = 'deny';
 
-    public $resource;
+    public $page;
 
-    public function __construct($resource)
+    public function __construct($page)
     {
-        $this->resource = $resource;
+        $this->page = $page;
 
-        $this->authorize($resource::authorization());
+        $this->authorize($page::authorization());
     }
 
     public function authorize($authorizations)
@@ -34,7 +34,7 @@ class AuthorizationManager
         return $this;
     }
 
-    public function can($route, $user = null)
+    public function can($user = null)
     {
         return true;
 
@@ -42,17 +42,19 @@ class AuthorizationManager
 //
 //        if (! count($this->authorizations)) return true;
 //
-//        if (! $this->resource::router()->hasRoute($route)) return $this->mode === 'deny';
-//
-//        return collect($this->authorizations)
-//            ->contains(function ($authorization) use ($route, $user) {
+//        $roleAuthorized = collect($this->authorizations)
+//            ->contains(function ($authorization) use ($user) {
 //                if (! $user->hasRole($authorization->role)) return false;
 //
-//                if (in_array($route, $authorization->onlyRoutes)) return $this->mode === 'allow';
+//                $this->mode === 'deny';
 //
-//                if (in_array($route, $authorization->exceptRoutes)) return $this->mode === 'deny';
+//                return true;
+//            });
 //
-//                return $this->mode === 'deny';
-//            }) || $this->mode === 'deny';
+//        if (! $roleAuthorized) {
+//            $this->mode === 'deny';
+//
+//            return true;
+//        }
     }
 }

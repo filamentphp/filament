@@ -8,7 +8,7 @@ use Filament\Forms\HasForm;
 use Filament\Page;
 use Livewire\Component;
 
-class EditRecord extends Page
+class EditRecord extends Component
 {
     use Concerns\HasTitle;
     use Concerns\SendsToastNotifications;
@@ -23,7 +23,7 @@ class EditRecord extends Page
     {
         $this->record->delete();
 
-        $this->redirect($this->getResource()::route($this->indexRoute));
+        $this->redirect($this->getResource()::generateUrl($this->indexRoute));
     }
 
     public function getForm()

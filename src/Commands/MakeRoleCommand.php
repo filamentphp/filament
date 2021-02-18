@@ -9,27 +9,38 @@ class MakeRoleCommand extends Command
 {
     use Concerns\CanManipulateFiles;
 
-    protected $description = 'Creates a Filament role.';
+    protected $description = 'Creates a Filament role class.';
 
     protected $signature = 'make:filament-role {name}';
 
     public function handle()
     {
-        $class = (string) Str::of($this->argument('name'))
-            ->trim()
-            ->studly()
-            ->append('Role');
+        $role = (string) Str::of($this->argument('name'))
+            ->trim('/')
+            ->trim('\\')
+            ->trim(' ')
+            ->replace('/', '\\');
+        $roleClass = (string) Str::of($role)->afterLast('\\');
+        $roleNamespace = Str::of($role)->contains('\\') ?
+            (string) Str::of($role)->beforeLast('\\') :
+            '';
 
-        $path = app_path("Filament/Roles/{$class}.php");
+        $path = app_path(
+            (string) Str::of($role)
+                ->prepend('Filament\\Roles\\')
+                ->replace('\\', '/')
+                ->append('.php'),
+        );
 
         if ($this->checkForCollision([
             $path,
         ])) return;
 
         $this->copyStubToApp('Role', $path, [
-            'class' => $class,
+            'class' => $roleClass,
+            'namespace' => 'App\Filament\Roles' . ($roleNamespace !== '' ? "\\{$roleNamespace}" : ''),
         ]);
 
-        $this->info("Successfully created {$class}!");
+        $this->info("Successfully created {$role}!");
     }
 }

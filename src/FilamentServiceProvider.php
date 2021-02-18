@@ -4,7 +4,7 @@ namespace Filament;
 
 use BladeUI\Icons\Factory as BladeUIFactory;
 use Filament\Commands;
-use Filament\Http\Middleware\AuthorizeResourceRoute;
+use Filament\Http\Middleware;
 use Filament\Models\FilamentUser;
 use Filament\Providers\RouteServiceProvider;
 use Filament\View\Components;
@@ -61,6 +61,7 @@ class FilamentServiceProvider extends ServiceProvider
         $this->commands([
             Commands\MakeResourceCommand::class,
             Commands\MakeRoleCommand::class,
+            Commands\MakePageCommand::class,
             Commands\MakeUserCommand::class,
         ]);
     }
@@ -106,7 +107,8 @@ class FilamentServiceProvider extends ServiceProvider
     protected function bootMiddleware()
     {
         $router = $this->app->make(Router::class);
-        $router->aliasMiddleware('filament.authorize.resource-route', AuthorizeResourceRoute::class);
+        $router->aliasMiddleware('filament.authorize.page-route', Middleware\AuthorizePageRoute::class);
+        $router->aliasMiddleware('filament.authorize.resource-route', Middleware\AuthorizeResourceRoute::class);
     }
 
     protected function bootPublishing()

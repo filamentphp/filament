@@ -43,6 +43,13 @@ class Resource
         return [];
     }
 
+    public static function generateUrl($name = null, $parameters = [], $absolute = true)
+    {
+        if (! $name) $name = static::router()->getIndexRoute()->name;
+
+        return route('filament.resources.' . static::getSlug() . '.' . $name, $parameters, $absolute);
+    }
+
     public static function getIcon()
     {
         return static::$icon;
@@ -74,21 +81,14 @@ class Resource
     public static function navigationItems()
     {
         return [
-            NavigationItem::make(Str::title(static::getLabel()), static::route())
-                ->activeRule((string) Str::of(parse_url(static::route(), PHP_URL_PATH))
+            NavigationItem::make(Str::title(static::getLabel()), static::generateUrl())
+                ->activeRule((string) Str::of(parse_url(static::generateUrl(), PHP_URL_PATH))
                     ->after('/')
                     ->append('*'),
                 )
                 ->icon(static::getIcon())
                 ->sort(static::getSort()),
         ];
-    }
-
-    public static function route($name = null, $parameters = [], $absolute = true)
-    {
-        if (! $name) $name = static::router()->getIndexRoute()->name;
-
-        return route('filament.resources.' . static::getSlug() . '.' . $name, $parameters, $absolute);
     }
 
     public static function router()

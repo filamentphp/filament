@@ -9,7 +9,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class ListRecords extends Page
+class ListRecords extends Component
 {
     use Concerns\HasTitle;
     use Concerns\UsesResource;
@@ -44,7 +44,7 @@ class ListRecords extends Page
             ->context(static::class)
             ->filterable($this->filterable)
             ->pagination($this->pagination)
-            ->recordUrl(fn ($record) => $this->getResource()::route($this->recordRoute, ['record' => $record]))
+            ->recordUrl(fn ($record) => $this->getResource()::generateUrl($this->recordRoute, ['record' => $record]))
             ->searchable($this->searchable)
             ->sortable($this->sortable);
     }

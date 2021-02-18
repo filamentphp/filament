@@ -9,19 +9,22 @@ class MakeResourceCommand extends Command
 {
     use Concerns\CanManipulateFiles;
 
-    protected $description = 'Creates a Filament resource.';
+    protected $description = 'Creates a Filament resource class and default action classes.';
 
-    protected $signature = 'make:filament-resource {model}';
+    protected $signature = 'make:filament-resource {name}';
 
     public function handle()
     {
-        $model = (string) Str::of($this->argument('model'))
+        $model = (string) Str::of($this->argument('name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
+            ->studly()
             ->replace('/', '\\');
         $modelClass = (string) Str::of($model)->afterLast('\\');
-        $modelNamespace = (string) Str::of($model)->beforeLast('\\');
+        $modelNamespace = Str::of($model)->contains('\\') ?
+            (string) Str::of($model)->beforeLast('\\') :
+            '';
         $pluralModelClass = (string) Str::of($modelClass)->pluralStudly();
 
         $resource = "{$model}Resource";
@@ -54,9 +57,9 @@ class MakeResourceCommand extends Command
             'editResourceActionClass' => $editResourceActionClass,
             'indexResourceActionClass' => $indexResourceActionClass,
             'model' => $model,
+            'namespace' => 'App\Filament\Resources' . ($resourceNamespace !== '' ? "\\{$resourceNamespace}" : ''),
             'resource' => $resource,
             'resourceClass' => $resourceClass,
-            'resourceNamespace' => $resourceNamespace,
         ]);
 
         $this->copyStubToApp('ResourceAction', $indexResourceActionPath, [
@@ -80,6 +83,6 @@ class MakeResourceCommand extends Command
             'resourceActionClass' => $editResourceActionClass,
         ]);
 
-        $this->info("Successfully created {$resourceClass}!");
+        $this->info("Successfully created {$resource}!");
     }
 }
