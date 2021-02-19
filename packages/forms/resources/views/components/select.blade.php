@@ -326,7 +326,7 @@
 
                 <div
                     x-show="! Object.keys(options).length"
-                    x-text="search && ! this.loading ? noSearchResultsMessage : emptyOptionsMessage"
+                    x-text="! search || loading ? emptyOptionsMessage : noSearchResultsMessage"
                     class="px-3 py-2 text-gray-900 cursor-default select-none"
                 ></div>
             </ul>
