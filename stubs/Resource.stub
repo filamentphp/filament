@@ -12,8 +12,6 @@ class {{resourceClass}} extends Resource
 {
     public static $icon = 'heroicon-o-collection';
 
-    public static $model = Models\{{model}}::class;
-
     public static function columns()
     {
         return [

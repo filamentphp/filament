@@ -18,9 +18,7 @@ class Page extends \Filament\Page
 
     protected static function getModel()
     {
-        $resource = static::getResource();
-
-        return $resource::$model;
+        return static::getResource()::getModel();
     }
 
     protected static function getQuery()

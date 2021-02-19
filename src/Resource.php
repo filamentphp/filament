@@ -59,16 +59,25 @@ class Resource
     {
         if (static::$label) return static::$label;
 
-        return (string) Str::of(class_basename(static::$model))
+        return (string) Str::of(class_basename(static::getModel()))
             ->kebab()
             ->replace('-', ' ');
+    }
+
+    public static function getModel()
+    {
+        if (static::$model) return static::$model;
+
+        return (string) Str::of(class_basename(static::class))
+            ->beforeLast('Resource')
+            ->prepend('App\\Models\\');
     }
 
     public static function getSlug()
     {
         if (static::$slug) return static::$slug;
 
-        return (string) Str::of(class_basename(static::$model))
+        return (string) Str::of(class_basename(static::getModel()))
             ->plural()
             ->kebab();
     }

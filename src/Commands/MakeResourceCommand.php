@@ -56,7 +56,6 @@ class MakeResourceCommand extends Command
             'createResourcePageClass' => $createResourcePageClass,
             'editResourcePageClass' => $editResourcePageClass,
             'indexResourcePageClass' => $indexResourcePageClass,
-            'model' => $model,
             'namespace' => 'App\\Filament\\Resources' . ($resourceNamespace !== '' ? "\\{$resourceNamespace}" : ''),
             'resource' => $resource,
             'resourceClass' => $resourceClass,
