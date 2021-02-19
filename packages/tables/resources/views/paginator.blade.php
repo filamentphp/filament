@@ -86,7 +86,7 @@
                                 <span wire:key="paginator-page{{ $page }}">
                                     @if ($page == $paginator->currentPage())
                                         <span aria-current="page">
-                                            <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-600 border-t border-b border-gray-300 cursor-default leading-5">
+                                            <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium bg-gray-400 border-t border-b border-gray-300 cursor-default leading-5">
                                                 {{ $page }}
                                             </span>
                                         </span>
