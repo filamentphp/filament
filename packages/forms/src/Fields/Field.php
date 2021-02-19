@@ -10,6 +10,8 @@ class Field
 {
     use Tappable;
 
+    public $columnSpan = 1;
+
     public $fields = [];
 
     public $hidden = false;
@@ -55,6 +57,13 @@ class Field
         $this->pendingExcludedContextModifications = [];
 
         $this->fields($this->getForm()->context($this->context)->fields);
+
+        return $this;
+    }
+
+    public function columnSpan($span)
+    {
+        $this->columnSpan = $span;
 
         return $this;
     }

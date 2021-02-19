@@ -301,7 +301,7 @@
                             <span
                                 x-text="Object.values(options)[index]"
                                 x-bind:class="{
-                                    'font-semibold': index === focusedOptionIndex,
+                                    'font-medium': index === focusedOptionIndex,
                                     'font-normal': index !== focusedOptionIndex,
                                 }"
                                 class="block font-normal truncate"
@@ -327,7 +327,7 @@
                 <div
                     x-show="! Object.keys(options).length"
                     x-text="! search || loading ? emptyOptionsMessage : noSearchResultsMessage"
-                    class="px-3 py-2 text-gray-900 cursor-default select-none"
+                    class="px-3 py-2 text-gray-900 cursor-default select-none text-sm"
                 ></div>
             </ul>
         </div>

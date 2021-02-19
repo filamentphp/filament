@@ -29,6 +29,7 @@
 @endpushonce
 
 <x-forms::field-group
+    :column-span="$field->columnSpan"
     :error-key="$field->name"
     :for="$field->id"
     :help-message="__($field->helpMessage)"

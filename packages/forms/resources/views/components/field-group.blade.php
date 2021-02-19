@@ -6,9 +6,28 @@
     'label' => null,
     'labelPrefix' => null,
     'required' => false,
+    'columnSpan' => 1,
 ])
 
-<div class="h-full flex items-center">
+@php
+    $columnSpanClass = [
+        '',
+        'lg:col-span-1',
+        'lg:col-span-2',
+        'lg:col-span-3',
+        'lg:col-span-4',
+        'lg:col-span-5',
+        'lg:col-span-6',
+        'lg:col-span-7',
+        'lg:col-span-8',
+        'lg:col-span-9',
+        'lg:col-span-10',
+        'lg:col-span-11',
+        'lg:col-span-12',
+    ][$columnSpan];
+@endphp
+
+<div class="h-full flex items-center {{ $columnSpanClass }}">
     <div class="space-y-2 w-full">
         @if ($label || $hint)
             <div class="flex items-center justify-between space-x-2">
