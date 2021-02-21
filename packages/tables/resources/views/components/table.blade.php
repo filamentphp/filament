@@ -58,7 +58,7 @@
             @forelse ($records as $record)
                 <tr
                     class="{{ $loop->index % 2 ? 'bg-gray-50' : null }}"
-                    wire:loading.class.delay="opacity-50"
+                    wire:loading.class="opacity-50"
                 >
                     <td class="p-4 whitespace-nowrap">
                         <input

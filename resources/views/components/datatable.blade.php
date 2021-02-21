@@ -54,7 +54,7 @@
         </x-slot>
         <x-slot name="body">
             @forelse ($model as $item)
-                <x-filament::table.row wire:loading.class.delay="opacity-50">
+                <x-filament::table.row wire:loading.class="opacity-50">
                     @foreach($headings as $key => $heading)
                         <x-filament::table.cell>
                             @empty ($heading['link'])
