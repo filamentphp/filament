@@ -8,7 +8,7 @@
                     type="submit"
                     color="primary"
                 >
-                    Create
+                    {{ __(static::$createButtonLabel) }}
                 </x-filament::button>
             </x-forms::container>
         </x-filament::card>

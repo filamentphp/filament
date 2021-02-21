@@ -1,10 +1,14 @@
+@props([
+    'paginator',
+])
+
 @if ($paginator->hasPages())
     <nav
         role="navigation"
         aria-label="{{ __('tables::pagination.label') }}"
         class="flex items-center justify-between"
     >
-        <div class="flex justify-between flex-1 lg:hidden">
+        <div class="flex justify-between items-center flex-1 lg:hidden">
             <span>
                 @if ($paginator->onFirstPage())
                     <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5 rounded-md">
@@ -16,6 +20,10 @@
                     </button>
                 @endif
             </span>
+
+            <div class="hidden sm:block">
+                <x-tables::pagination.records-per-page-selector />
+            </div>
 
             <span>
                 @if ($paginator->hasMorePages())
@@ -36,15 +44,7 @@
 
         <div class="hidden lg:flex-1 lg:flex lg:items-center lg:justify-between">
             <div>
-                <p class="text-sm text-gray-700 leading-5">
-                    <span>{{ __('tables::pagination.overview.0') }}</span>
-                    <span class="font-medium">{{ $paginator->firstItem() }}</span>
-                    <span>{{ __('tables::pagination.overview.1') }}</span>
-                    <span class="font-medium">{{ $paginator->lastItem() }}</span>
-                    <span>{{ __('tables::pagination.overview.2') }}</span>
-                    <span class="font-medium">{{ $paginator->total() }}</span>
-                    <span>{{ __('tables::pagination.overview.3') }}</span>
-                </p>
+                <x-tables::pagination.records-per-page-selector />
             </div>
 
             <div>
@@ -72,7 +72,7 @@
                         @endif
                     </span>
 
-                    @foreach ($elements as $element)
+                    @foreach ($paginator->render()->offsetGet('elements') as $element)
                         @if (is_string($element))
                             <span aria-disabled="true">
                                 <span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 cursor-default leading-5">

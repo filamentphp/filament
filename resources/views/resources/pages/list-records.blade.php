@@ -5,7 +5,7 @@
                 color="primary"
                 :href="$this->getResource()::generateUrl($createRoute)"
             >
-                Create
+                {{ __(static::$createButtonLabel) }}
             </x-filament::button>
         </x-slot>
     </x-filament::app-header>

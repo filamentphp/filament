@@ -13,7 +13,7 @@ return [
     'pagination' => [
         'fields' => [
             'recordsPerPage' => [
-                'label' => 'Per page',
+                'label' => 'per page',
             ],
         ],
     ],

@@ -10,17 +10,20 @@ class CreateRecord extends Page
 {
     use HasForm;
 
+    public static $createButtonLabel = 'Create';
+
+    public static $showRoute = 'edit';
+
     protected static $view = 'filament::resources.pages.create-record';
 
     public $record;
-
-    public $showRoute = 'edit';
 
     public function getForm()
     {
         return Form::make($this->fields())
             ->context(static::class)
-            ->model(static::getModel());
+            ->model(static::getModel())
+            ->submitMethod('create');
     }
 
     public function mount()
@@ -30,7 +33,7 @@ class CreateRecord extends Page
         $this->fillWithFormDefaults();
     }
 
-    public function submit()
+    public function create()
     {
         $this->validateTemporaryUploadedFiles();
 
@@ -40,7 +43,7 @@ class CreateRecord extends Page
 
         $record = static::getModel()::create($this->record);
 
-        $this->redirect($this->getResource()::generateUrl($this->showRoute, [
+        $this->redirect($this->getResource()::generateUrl(static::$showRoute, [
             'record' => $record,
         ]));
     }

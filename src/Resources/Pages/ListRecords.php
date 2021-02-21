@@ -12,6 +12,8 @@ class ListRecords extends Page
 {
     use HasTable;
 
+    public static $createButtonLabel = 'Create';
+
     protected static $view = 'filament::resources.pages.list-records';
 
     public $filterable = true;

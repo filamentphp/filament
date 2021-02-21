@@ -110,6 +110,11 @@ class Table
         return $filters;
     }
 
+    public function hasPagination()
+    {
+        return $this->pagination;
+    }
+
     public function isFilterable()
     {
         return $this->filterable && count($this->filters);

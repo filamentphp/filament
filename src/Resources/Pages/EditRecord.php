@@ -10,6 +10,17 @@ class EditRecord extends Page
 {
     use HasForm;
 
+    public static $deleteButtonLabel = 'Delete';
+
+    public static $deleteModalCancelButtonLabel = 'Cancel';
+    public static $deleteModalConfirmButtonLabel = 'Delete';
+    public static $deleteModalHeading = 'Delete this record?';
+    public static $deleteModalDescription = 'Are you sure you would like to delete this record? This action cannot be undone.';
+
+    public static $saveButtonLabel = 'Save';
+
+    public static $savedMessage = 'Saved!';
+
     protected static $view = 'filament::resources.pages.edit-record';
 
     public $record;
@@ -28,7 +39,8 @@ class EditRecord extends Page
         return Form::make($this->fields())
             ->context(static::class)
             ->model(static::getModel())
-            ->record($this->record);
+            ->record($this->record)
+            ->submitMethod('save');
     }
 
     public function mount($record)
@@ -36,7 +48,7 @@ class EditRecord extends Page
         $this->record = static::getModel()::findOrFail($record);
     }
 
-    public function submit()
+    public function save()
     {
         $this->validateTemporaryUploadedFiles();
 
@@ -46,6 +58,6 @@ class EditRecord extends Page
 
         $this->record->save();
 
-        $this->notify('Saved!');
+        $this->notify(__(static::$savedMessage));
     }
 }

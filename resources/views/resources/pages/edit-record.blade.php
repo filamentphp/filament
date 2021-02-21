@@ -7,14 +7,14 @@
                         x-on:click="open = true"
                         color="danger"
                     >
-                        Delete
+                        {{ __(static::$deleteButtonLabel) }}
                     </x-filament::button>
                 </x-slot>
 
                 <x-filament::card class="space-y-5 max-w-2xl">
-                    <x-filament::card-header title="Delete this record?">
+                    <x-filament::card-header :title="__(static::$deleteModalHeading)">
                         <p class="text-sm text-gray-500">
-                            Are you sure you would like to delete this record? This action cannot be undone.
+                            {{ __(static::$deleteModalDescription) }}
                         </p>
                     </x-filament::card-header>
 
@@ -22,14 +22,14 @@
                         <x-filament::button
                             x-on:click="open = false"
                         >
-                            Cancel
+                            {{ __(static::$deleteModalCancelButtonLabel) }}
                         </x-filament::button>
 
                         <x-filament::button
                             wire:click="delete"
                             color="danger"
                         >
-                            Delete
+                            {{ __(static::$deleteModalConfirmButtonLabel) }}
                         </x-filament::button>
                     </div>
                 </x-filament::card>
@@ -44,7 +44,7 @@
                     type="submit"
                     color="primary"
                 >
-                    Save
+                    {{ __(static::$saveButtonLabel) }}
                 </x-filament::button>
             </x-forms::container>
         </x-filament::card>

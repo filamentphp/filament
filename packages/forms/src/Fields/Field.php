@@ -30,7 +30,7 @@ class Field
 
     protected $pendingIncludedContextModifications = [];
 
-    protected $record;
+    public $record;
 
     protected $view;
 
