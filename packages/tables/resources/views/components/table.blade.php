@@ -46,7 +46,7 @@
                     </th>
                 @endforeach
 
-                @if ($table->recordUrl)
+                @if ($table->recordButtonLabel)
                     <th scope="col">
                         <span class="sr-only">{{ __($table->recordButtonLabel) }}</span>
                     </th>
@@ -57,8 +57,8 @@
         <tbody class="divide-y divide-gray-200 text-sm leading-tight">
             @forelse ($records as $record)
                 <tr
-                    class="{{ $loop->index % 2 ? 'bg-gray-50' : null }}"
                     wire:loading.class="opacity-50"
+                    class="{{ $loop->index % 2 ? 'bg-gray-50' : null }}"
                 >
                     <td class="p-4 whitespace-nowrap">
                         <input
@@ -73,14 +73,24 @@
                         </td>
                     @endforeach
 
-                    @if ($table->recordUrl)
+                    @if ($table->recordButtonLabel)
                         <td class="px-6 py-4 whitespace-nowrap text-right">
-                            <a
-                                href="{{ $table->getRecordUrl($record) }}"
-                                class="hover:underline text-secondary-500 hover:text-secondary-700 transition-colors duration-200 font-medium"
-                            >
-                                {{ __($table->recordButtonLabel) }}
-                            </a>
+                            @if ($table->recordAction)
+                                <button
+                                    wire:click="{{ $table->recordAction }}('{{ $record->getKey() }}')"
+                                    type="button"
+                                    class="hover:underline text-secondary-500 hover:text-secondary-700 transition-colors duration-200 font-medium"
+                                >
+                                    {{ __($table->recordButtonLabel) }}
+                                </button>
+                            @elseif ($table->recordUrl)
+                                <a
+                                    href="{{ $table->getRecordUrl($record) }}"
+                                    class="hover:underline text-secondary-500 hover:text-secondary-700 transition-colors duration-200 font-medium"
+                                >
+                                    {{ __($table->recordButtonLabel) }}
+                                </a>
+                            @endif
                         </td>
                     @endif
                 </tr>

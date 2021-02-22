@@ -91,6 +91,11 @@ trait HasForm
         );
     }
 
+    public function resetTemporaryUploadedFiles()
+    {
+        $this->reset('temporaryUploadedFiles');
+    }
+
     public function removeUploadedFile($name)
     {
         $this->syncInput($name, null, false);

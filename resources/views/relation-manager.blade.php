@@ -19,4 +19,22 @@
         :sort-direction="$sortDirection"
         :table="$table"
     />
+
+    <x-filament::modal
+        :name="static::$relationship.'CreateModal'"
+    >
+        <x-forms::container :form="$this->getForm()">
+            Create
+        </x-forms::container>
+    </x-filament::modal>
+
+    <x-filament::modal
+        :name="static::$relationship.'EditModal'"
+    >
+        <x-filament::card class="space-y-5 max-w-4xl">
+            <x-forms::container :form="$this->getForm()">
+                Save
+            </x-forms::container>
+        </x-filament::card>
+    </x-filament::modal>
 </div>

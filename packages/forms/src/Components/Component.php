@@ -258,7 +258,9 @@ class Component
     {
         $this->record = $record;
 
-        $this->model(get_class($record));
+        if ($this->record) {
+            $this->model(get_class($this->record));
+        }
 
         $this->schema($this->getForm()->record($this->record)->schema);
 

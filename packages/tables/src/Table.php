@@ -12,6 +12,8 @@ class Table
 
     public $pagination = true;
 
+    public $recordAction;
+
     public $recordButtonLabel = 'tables::table.record.button.label';
 
     public $recordUrl;
@@ -147,6 +149,23 @@ class Table
     public function pagination($enabled)
     {
         $this->pagination = $enabled;
+
+        return $this;
+    }
+
+    public function recordAction($action)
+    {
+        $this->recordAction = $action;
+
+        $this->columns = collect($this->columns)
+            ->map(function ($column) {
+                if ($column->primary && ! $column->action) {
+                    $column->action($this->recordAction);
+                }
+
+                return $column;
+            })
+            ->toArray();
 
         return $this;
     }

@@ -42,7 +42,7 @@
             value: @entangle($formComponent->name).defer,
             @unless ($formComponent->disabled)
                 isFocused() { return document.activeElement !== this.$refs.trix },
-                setValue() { this.$refs.trix.editor?.loadHTML(this.value) },
+                setValue() { this.$refs.trix?.editor?.loadHTML(this.value) },
             @endunless
         }"
         @unless ($formComponent->disabled)
