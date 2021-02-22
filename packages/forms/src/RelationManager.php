@@ -12,6 +12,8 @@ class RelationManager extends Component
 //    use HasForm;
     use HasTable;
 
+    protected static $relationship;
+
     public $filterable = true;
 
     public $owner;
@@ -19,38 +21,6 @@ class RelationManager extends Component
     public $searchable = true;
 
     public $sortable = true;
-
-    protected static $relationship;
-
-    public function columns()
-    {
-        return [];
-    }
-
-    public function fields()
-    {
-        return [];
-    }
-
-    public function filters()
-    {
-        return [];
-    }
-
-    protected function getQuery()
-    {
-        return $this->owner->{static::$relationship}();
-    }
-
-    public function getTable()
-    {
-        return Table::make($this->columns(), $this->filters())
-            ->context(static::class)
-            ->filterable($this->filterable)
-            ->pagination(false)
-            ->searchable($this->searchable)
-            ->sortable($this->sortable);
-    }
 
     public static function getTitle()
     {
@@ -62,10 +32,25 @@ class RelationManager extends Component
             ->title();
     }
 
+    public function getTable()
+    {
+        return static::table(Table::make())
+            ->context(static::class)
+            ->filterable($this->filterable)
+            ->pagination(false)
+            ->searchable($this->searchable)
+            ->sortable($this->sortable);
+    }
+
     public function render()
     {
         return view('forms::relation-manager', [
             'records' => $this->getRecords(),
         ]);
+    }
+
+    protected function getQuery()
+    {
+        return $this->owner->{static::$relationship}();
     }
 }

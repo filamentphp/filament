@@ -3,7 +3,6 @@
 namespace Filament\Http\Middleware;
 
 use Closure;
-use Filament\Models\Resource;
 use Illuminate\Http\Request;
 
 class AuthorizeResourcePageRoute

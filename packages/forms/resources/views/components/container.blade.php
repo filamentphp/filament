@@ -7,8 +7,8 @@
     {{ $attributes }}
 >
     <x-forms::grid :columns="$form->columns">
-        @foreach ($form->fields as $field)
-            {{ $field->render() }}
+        @foreach ($form->schema as $component)
+            {{ $component->render() }}
         @endforeach
     </x-forms::grid>
 

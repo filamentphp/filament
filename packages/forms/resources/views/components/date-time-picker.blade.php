@@ -1,28 +1,11 @@
-@props([
-    'autofocus' => false,
-    'disabled' => false,
-    'displayFormat' => 'MMM D, YYYY HH:mm:ss',
-    'errorKey' => null,
-    'extraAttributes' => [],
-    'format' => 'YYYY-MM-DD HH:mm:ss',
-    'maxDate' => null,
-    'minDate' => null,
-    'name',
-    'nameAttribute' => 'name',
-    'placeholder' => null,
-    'required' => false,
-    'time' => true,
-    'withoutSeconds' => false,
-])
-
 @php
-    if (! $time) {
-        if ($displayFormat === 'MMM D, YYYY HH:mm:ss') $displayFormat = 'MMM D, YYYY';
-        if ($format === 'YYYY-MM-DD HH:mm:ss') $format = 'YYYY-MM-DD';
+    if (! $formComponent->time) {
+        if ($formComponent->displayFormat === 'F j, Y H:i:s') $formComponent->displayFormat = 'F j, Y';
+        if ($formComponent->format === 'F j, Y H:i:s') $formComponent->format = 'Y-m-d';
     }
 
-    if ($time && $withoutSeconds) {
-        if ($displayFormat === 'MMM D, YYYY HH:mm:ss') $displayFormat = 'MMM D, YYYY HH:mm';
+    if ($formComponent->time && $formComponent->withoutSeconds) {
+        if ($formComponent->displayFormat === 'F j, Y H:i:s') $formComponent->displayFormat = 'F j, Y H:i';
     }
 @endphp
 
@@ -313,179 +296,189 @@
     </script>
 @endpushonce
 
-<div
-    x-data="dateTimePicker({
-        autofocus: {{ $autofocus ? 'true' : 'false' }},
-        displayFormat: '{{ $displayFormat }}',
-        format: '{{ $format }}',
-        maxDate: '{{ $maxDate }}',
-        minDate: '{{ $minDate }}',
-        name: '{{ $name }}',
-        placeholder: '{{ $placeholder }}',
-        required: {{ $required ? 'true' : 'false' }},
-        time: {{ $time ? 'true' : 'false' }},
-        @if (Str::of($nameAttribute)->startsWith('wire:model'))
-            value: @entangle($name){{ Str::of($nameAttribute)->after('wire:model') }},
-        @endif
-        withoutSeconds: {{ $withoutSeconds ? 'true' : 'false' }},
-    })"
-    x-init="init()"
-    x-on:click.away="closePicker()"
-    {{ $attributes->merge(array_merge([
-        'class' => 'relative',
-    ], $extraAttributes)) }}
+<x-forms::field-group
+    :column-span="$formComponent->columnSpan"
+    :error-key="$formComponent->name"
+    :for="$formComponent->id"
+    :help-message="__($formComponent->helpMessage)"
+    :hint="__($formComponent->hint)"
+    :label="__($formComponent->label)"
+    :required="$formComponent->required"
 >
-    @unless (Str::of($nameAttribute)->startsWith(['wire:model', 'x-model']))
-        <input
-            x-model="value"
-            {!! $name ? "{$nameAttribute}=\"{$name}\"" : null !!}
-            type="hidden"
-        />
-    @endif
-
-    <button
-        @unless($disabled)
-            x-ref="button"
-            x-on:click="togglePickerVisibility()"
-            x-on:keydown.enter.stop.prevent="open ? selectDate() : openPicker()"
-            x-on:keydown.arrow-left.stop.prevent="focusPreviousDay()"
-            x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
-            x-on:keydown.arrow-up.stop.prevent="focusPreviousWeek()"
-            x-on:keydown.arrow-down.stop.prevent="focusNextWeek()"
-            x-on:keydown.backspace.stop.prevent="clearValue()"
-            x-on:keydown.clear.stop.prevent="clearValue()"
-            x-on:keydown.delete.stop.prevent="clearValue()"
-            x-on:keydown.escape.stop="closePicker()"
-            x-bind:aria-expanded="open"
-            aria-label="{{ $placeholder }}"
-        @endunless
-        type="button"
-        class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 {{ $disabled ? 'text-gray-500' : '' }} {{ $errors->has($errorKey) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+    <div
+        x-data="dateTimePicker({
+            autofocus: {{ $formComponent->autofocus ? 'true' : 'false' }},
+            displayFormat: '{{ convert_date_format($formComponent->displayFormat)->to('day.js') }}',
+            format: '{{ convert_date_format($formComponent->format)->to('day.js') }}',
+            maxDate: '{{ $formComponent->maxDate }}',
+            minDate: '{{ $formComponent->minDate }}',
+            name: '{{ $formComponent->name }}',
+            placeholder: '{{ __($formComponent->placeholder) }}',
+            required: {{ $formComponent->required ? 'true' : 'false' }},
+            time: {{ $formComponent->time ? 'true' : 'false' }},
+            @if (Str::of($formComponent->nameAttribute)->startsWith('wire:model'))
+                value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
+            @endif
+            withoutSeconds: {{ $formComponent->withoutSeconds ? 'true' : 'false' }},
+        })"
+        x-init="init()"
+        x-on:click.away="closePicker()"
+        {!! $formComponent->id ? "id=\"{$formComponent->id}\"" : null !!}
+        class="relative"
+        {!! Filament\format_attributes($formComponent->extraAttributes) !!}
     >
-        <input
-            readonly
-            placeholder="{{ $placeholder }}"
-            x-model="displayValue"
-            class="w-full h-full border-0 p-0 placeholder-gray-400 focus:placeholder-gray-500 focus:ring-0 focus:outline-none"
-        />
+        @unless (Str::of($formComponent->nameAttribute)->startsWith(['wire:model', 'x-model']))
+            <input
+                x-model="value"
+                {!! $formComponent->name ? "{$formComponent->nameAttribute}=\"{$formComponent->name}\"" : null !!}
+                type="hidden"
+            />
+        @endif
 
-        <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            <x-heroicon-s-calendar class="w-5 h-5 text-gray-400" />
-        </span>
-    </button>
-
-    @unless ($disabled)
-        <div
-            x-ref="picker"
-            x-on:click.away="closePicker()"
-            x-show.transition="open"
-            aria-modal="true"
-            role="dialog"
-            x-cloak
-            class="bg-white border border-gray-300 my-1 rounded shadow-sm p-4 absolute w-64 z-10"
+        <button
+            @unless($formComponent->disabled)
+                x-ref="button"
+                x-on:click="togglePickerVisibility()"
+                x-on:keydown.enter.stop.prevent="open ? selectDate() : openPicker()"
+                x-on:keydown.arrow-left.stop.prevent="focusPreviousDay()"
+                x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
+                x-on:keydown.arrow-up.stop.prevent="focusPreviousWeek()"
+                x-on:keydown.arrow-down.stop.prevent="focusNextWeek()"
+                x-on:keydown.backspace.stop.prevent="clearValue()"
+                x-on:keydown.clear.stop.prevent="clearValue()"
+                x-on:keydown.delete.stop.prevent="clearValue()"
+                x-on:keydown.escape.stop="closePicker()"
+                x-bind:aria-expanded="open"
+                aria-label="{{ __($formComponent->placeholder) }}"
+            @endunless
+            type="button"
+            class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 {{ $formComponent->disabled ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
         >
-            <div class="space-y-3">
-                <div class="flex items-center justify-between space-x-1">
-                    <select
-                        x-model="focusedMonth"
-                        class="flex-grow text-lg font-medium text-gray-800 cursor-pointer border-0 p-0 focus:ring-0 focus:outline-none"
-                    >
-                        <template x-for="(month, index) in [
-                            '{{ __('forms::fields.dateTimePicker.months.january') }}',
-                            '{{ __('forms::fields.dateTimePicker.months.february') }}',
-                            '{{ __('forms::fields.dateTimePicker.months.march') }}',
-                            '{{ __('forms::fields.dateTimePicker.months.april') }}',
-                            '{{ __('forms::fields.dateTimePicker.months.may') }}',
-                            '{{ __('forms::fields.dateTimePicker.months.june') }}',
-                            '{{ __('forms::fields.dateTimePicker.months.july') }}',
-                            '{{ __('forms::fields.dateTimePicker.months.august') }}',
-                            '{{ __('forms::fields.dateTimePicker.months.september') }}',
-                            '{{ __('forms::fields.dateTimePicker.months.october') }}',
-                            '{{ __('forms::fields.dateTimePicker.months.november') }}',
-                            '{{ __('forms::fields.dateTimePicker.months.december') }}',
-                        ]">
-                            <option x-bind:value="index" x-text="month"></option>
+            <input
+                readonly
+                placeholder="{{ __($formComponent->placeholder) }}"
+                x-model="displayValue"
+                class="w-full h-full border-0 p-0 placeholder-gray-400 focus:placeholder-gray-500 focus:ring-0 focus:outline-none"
+            />
+
+            <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                <x-heroicon-s-calendar class="w-5 h-5 text-gray-400" />
+            </span>
+        </button>
+
+        @unless ($formComponent->disabled)
+            <div
+                x-ref="picker"
+                x-on:click.away="closePicker()"
+                x-show.transition="open"
+                aria-modal="true"
+                role="dialog"
+                x-cloak
+                class="bg-white border border-gray-300 my-1 rounded shadow-sm p-4 absolute w-64 z-10"
+            >
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between space-x-1">
+                        <select
+                            x-model="focusedMonth"
+                            class="flex-grow text-lg font-medium text-gray-800 cursor-pointer border-0 p-0 focus:ring-0 focus:outline-none"
+                        >
+                            <template x-for="(month, index) in [
+                                '{{ __('forms::fields.dateTimePicker.months.january') }}',
+                                '{{ __('forms::fields.dateTimePicker.months.february') }}',
+                                '{{ __('forms::fields.dateTimePicker.months.march') }}',
+                                '{{ __('forms::fields.dateTimePicker.months.april') }}',
+                                '{{ __('forms::fields.dateTimePicker.months.may') }}',
+                                '{{ __('forms::fields.dateTimePicker.months.june') }}',
+                                '{{ __('forms::fields.dateTimePicker.months.july') }}',
+                                '{{ __('forms::fields.dateTimePicker.months.august') }}',
+                                '{{ __('forms::fields.dateTimePicker.months.september') }}',
+                                '{{ __('forms::fields.dateTimePicker.months.october') }}',
+                                '{{ __('forms::fields.dateTimePicker.months.november') }}',
+                                '{{ __('forms::fields.dateTimePicker.months.december') }}',
+                            ]">
+                                <option x-bind:value="index" x-text="month"></option>
+                            </template>
+                        </select>
+
+                        <input
+                            type="number"
+                            x-model.debounce="focusedYear"
+                            class="text-right w-20 text-lg text-gray-600 border-0 p-0 focus:ring-0 focus:outline-none"
+                        />
+                    </div>
+
+                    <div class="grid grid-cols-7 gap-1">
+                        <template x-for="(day, index) in [
+                            '{{ __('forms::fields.dateTimePicker.abbreviatedDays.sunday') }}',
+                            '{{ __('forms::fields.dateTimePicker.abbreviatedDays.monday') }}',
+                            '{{ __('forms::fields.dateTimePicker.abbreviatedDays.tuesday') }}',
+                            '{{ __('forms::fields.dateTimePicker.abbreviatedDays.wednesday') }}',
+                            '{{ __('forms::fields.dateTimePicker.abbreviatedDays.thursday') }}',
+                            '{{ __('forms::fields.dateTimePicker.abbreviatedDays.friday') }}',
+                            '{{ __('forms::fields.dateTimePicker.abbreviatedDays.saturday') }}',
+                        ]" :key="index">
+                            <div
+                                x-text="day"
+                                class="text-gray-800 font-medium text-center text-xs"
+                            ></div>
                         </template>
-                    </select>
+                    </div>
 
-                    <input
-                        type="number"
-                        x-model.debounce="focusedYear"
-                        class="text-right w-20 text-lg text-gray-600 border-0 p-0 focus:ring-0 focus:outline-none"
-                    />
-                </div>
+                    <div role="grid" class="grid grid-cols-7 gap-1">
+                        <template x-for="day in emptyDaysInFocusedMonth" x-bind:key="day">
+                            <div class="text-center border border-transparent text-sm"></div>
+                        </template>
 
-                <div class="grid grid-cols-7 gap-1">
-                    <template x-for="(day, index) in [
-                        '{{ __('forms::fields.dateTimePicker.abbreviatedDays.sunday') }}',
-                        '{{ __('forms::fields.dateTimePicker.abbreviatedDays.monday') }}',
-                        '{{ __('forms::fields.dateTimePicker.abbreviatedDays.tuesday') }}',
-                        '{{ __('forms::fields.dateTimePicker.abbreviatedDays.wednesday') }}',
-                        '{{ __('forms::fields.dateTimePicker.abbreviatedDays.thursday') }}',
-                        '{{ __('forms::fields.dateTimePicker.abbreviatedDays.friday') }}',
-                        '{{ __('forms::fields.dateTimePicker.abbreviatedDays.saturday') }}',
-                    ]" :key="index">
-                        <div
-                            x-text="day"
-                            class="text-gray-800 font-medium text-center text-xs"
-                        ></div>
-                    </template>
-                </div>
+                        <template x-for="day in daysInFocusedMonth" x-bind:key="day">
+                            <div
+                                x-text="day"
+                                x-on:click="dayIsDisabled(day) || selectDate(day)"
+                                x-on:mouseenter="setFocusedDay(day)"
+                                role="option"
+                                x-bind:aria-selected="focusedDate.date() === day"
+                                x-bind:class="{
+                                    'bg-secondary-600 text-white': dayIsSelected(day),
+                                    'text-gray-700': ! dayIsSelected(day),
+                                    'bg-secondary-50': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
+                                    'bg-secondary-200': focusedDate.date() === day && ! dayIsSelected(day),
+                                    'bg-gray-100': dayIsDisabled(day) && focusedDate.date() !== day,
+                                    'cursor-pointer': ! dayIsDisabled(day),
+                                    'cursor-not-allowed': dayIsDisabled(day),
+                                }"
+                                class="text-center text-sm leading-none rounded leading-loose transition ease-in-out duration-100"
+                            ></div>
+                        </template>
+                    </div>
 
-                <div role="grid" class="grid grid-cols-7 gap-1">
-                    <template x-for="day in emptyDaysInFocusedMonth" x-bind:key="day">
-                        <div class="text-center border border-transparent text-sm"></div>
-                    </template>
+                    @if ($formComponent->time)
+                        <div class="flex items-center justify-center bg-gray-100 rounded py-2">
+                            <input
+                                type="number"
+                                x-model.debounce="hour"
+                                class="text-center bg-gray-100 w-16 text-xl text-gray-700 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
+                            />
 
-                    <template x-for="day in daysInFocusedMonth" x-bind:key="day">
-                        <div
-                            x-text="day"
-                            x-on:click="dayIsDisabled(day) || selectDate(day)"
-                            x-on:mouseenter="setFocusedDay(day)"
-                            role="option"
-                            x-bind:aria-selected="focusedDate.date() === day"
-                            x-bind:class="{
-                                'bg-secondary-600 text-white': dayIsSelected(day),
-                                'text-gray-700': ! dayIsSelected(day),
-                                'bg-secondary-50': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
-                                'bg-secondary-200': focusedDate.date() === day && ! dayIsSelected(day),
-                                'bg-gray-100': dayIsDisabled(day) && focusedDate.date() !== day,
-                                'cursor-pointer': ! dayIsDisabled(day),
-                                'cursor-not-allowed': dayIsDisabled(day),
-                            }"
-                            class="text-center text-sm leading-none rounded leading-loose transition ease-in-out duration-100"
-                        ></div>
-                    </template>
-                </div>
-
-                @if ($time)
-                    <div class="flex items-center justify-center bg-gray-100 rounded py-2">
-                        <input
-                            type="number"
-                            x-model.debounce="hour"
-                            class="text-center bg-gray-100 w-16 text-xl text-gray-700 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
-                        />
-
-                        <span class="text-xl bg-gray-100 font-medium text-gray-700">:</span>
-
-                        <input
-                            type="number"
-                            x-model.debounce="minute"
-                            class="text-center bg-gray-100 w-16 text-xl text-gray-700 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
-                        />
-
-                        @unless ($withoutSeconds)
                             <span class="text-xl bg-gray-100 font-medium text-gray-700">:</span>
 
                             <input
                                 type="number"
-                                x-model.debounce="second"
+                                x-model.debounce="minute"
                                 class="text-center bg-gray-100 w-16 text-xl text-gray-700 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
                             />
-                        @endunless
-                    </div>
-                @endif
+
+                            @unless ($formComponent->withoutSeconds)
+                                <span class="text-xl bg-gray-100 font-medium text-gray-700">:</span>
+
+                                <input
+                                    type="number"
+                                    x-model.debounce="second"
+                                    class="text-center bg-gray-100 w-16 text-xl text-gray-700 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
+                                />
+                            @endunless
+                        </div>
+                    @endif
+                </div>
             </div>
-        </div>
-    @endunless
-</div>
+        @endunless
+    </div>
+</x-forms::field-group>

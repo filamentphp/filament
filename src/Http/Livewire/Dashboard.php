@@ -2,7 +2,7 @@
 
 namespace Filament\Http\Livewire;
 
-use Filament\Page;
+use Filament\Pages\Page;
 
 class Dashboard extends Page
 {

@@ -2,10 +2,8 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Components\Concerns;
-use Filament\Resources\Page;
+use Filament\Resources\Tables\Table;
 use Filament\Tables\HasTable;
-use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
 class ListRecords extends Page
@@ -41,7 +39,7 @@ class ListRecords extends Page
 
     public function getTable()
     {
-        return Table::make($this->columns(), $this->filters())
+        return static::getResource()::table(Table::make())
             ->context(static::class)
             ->filterable($this->filterable)
             ->pagination($this->pagination)

@@ -2,8 +2,9 @@
 
 namespace Filament\Http\Livewire\Auth;
 
+use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
-use Filament\Forms\Fields;
+use Filament\Forms\Components;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
 use Illuminate\Support\Facades\Auth;
@@ -20,28 +21,24 @@ class Login extends Component
 
     public $remember = false;
 
-    public function fields()
-    {
-        return [
-            Fields\Text::make('email')
-                ->label('filament::fields.labels.email')
-                ->email()
-                ->autofocus()
-                ->autocomplete('email')
-                ->required(),
-            Fields\Text::make('password')
-                ->label('filament::fields.labels.password')
-                ->hint('[' . __('filament::auth.requestPassword') . '](' . route('filament.auth.password.request') . ')')
-                ->password()
-                ->autocomplete('current-password')
-                ->required(),
-            Fields\Checkbox::make('remember')->label('Remember me'),
-        ];
-    }
-
     public function getForm()
     {
-        return Form::make($this->fields())
+        return Form::make()
+            ->schema([
+                Components\TextInput::make('email')
+                    ->label('filament::fields.labels.email')
+                    ->email()
+                    ->autofocus()
+                    ->autocomplete('email')
+                    ->required(),
+                Components\TextInput::make('password')
+                    ->label('filament::fields.labels.password')
+                    ->hint('[' . __('filament::auth.requestPassword') . '](' . route('filament.auth.password.request') . ')')
+                    ->password()
+                    ->autocomplete('current-password')
+                    ->required(),
+                Components\Checkbox::make('remember')->label('Remember me'),
+            ])
             ->context(static::class);
     }
 

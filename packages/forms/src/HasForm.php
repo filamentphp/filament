@@ -2,10 +2,10 @@
 
 namespace Filament\Forms;
 
-use Filament\Fields\File;
-use Filament\Fields\InputField;
-use Filament\Fields\Tab;
-use Filament\Forms\Fields\Select;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tab;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -49,7 +49,7 @@ trait HasForm
 
     public function getSelectFieldDisplayValue($fieldName, $value)
     {
-        $field = collect($this->getForm()->getFields())
+        $field = collect($this->getForm()->getSchema())
             ->first(fn ($field) => $field instanceof Select && $field->name === $fieldName);
 
         if (! $field) return [];
@@ -68,8 +68,8 @@ trait HasForm
 
     public function storeTemporaryUploadedFiles()
     {
-        foreach ($this->getForm()->getFields() as $field) {
-            if (! $field instanceof File) continue;
+        foreach ($this->getForm()->getSchema() as $field) {
+            if (! $field instanceof FileUpload) continue;
 
             $temporaryUploadedFile = $this->getTemporaryUploadedFile($field->name);
             if (! $temporaryUploadedFile) continue;
@@ -102,9 +102,9 @@ trait HasForm
         try {
             return parent::validate($rules, $messages, $attributes);
         } catch (ValidationException $exception) {
-            $fieldToFocus = collect($this->getForm()->getFields())
+            $fieldToFocus = collect($this->getForm()->getSchema())
                 ->first(function ($field) use ($exception) {
-                    return ($field instanceof InputField &&
+                    return ($field instanceof Field &&
                         array_key_exists($field->name, $exception->validator->failed())
                     );
                 });
@@ -120,9 +120,9 @@ trait HasForm
         try {
             return parent::validateOnly($field, $rules, $messages, $attributes);
         } catch (ValidationException $exception) {
-            $fieldToFocus = collect($this->getForm()->getFields())
+            $fieldToFocus = collect($this->getForm()->getSchema())
                 ->first(function ($field) use ($exception) {
-                    return ($field instanceof InputField &&
+                    return ($field instanceof Field &&
                         array_key_exists($field->name, $exception->validator->failed())
                     );
                 });
@@ -131,6 +131,16 @@ trait HasForm
 
             throw $exception;
         }
+    }
+
+    public function getSelectFieldOptionSearchResults($fieldName, $search = '')
+    {
+        $field = collect($this->getForm()->getSchema())
+            ->first(fn ($field) => $field instanceof Select && $field->name === $fieldName);
+
+        if (! $field) return [];
+
+        return $field->getOptionSearchResults($search);
     }
 
     protected function validateTemporaryUploadedFiles()
@@ -146,10 +156,10 @@ trait HasForm
         try {
             return parent::validate($rules);
         } catch (ValidationException $exception) {
-            $fieldToFocus = collect($this->getForm()->getFields())
+            $fieldToFocus = collect($this->getForm()->getSchema())
                 ->first(function ($field) use ($exception) {
                     return (
-                        $field instanceof InputField &&
+                        $field instanceof Field &&
                         array_key_exists(
                             static::getTemporaryUploadedFilePropertyName($field->name),
                             $exception->validator->failed()
@@ -176,19 +186,19 @@ trait HasForm
     protected function focusTabbedField($field)
     {
         if ($field) {
-            $possibleTab = $field->parentField;
+            $possibleTab = $field->parent;
 
             while ($possibleTab) {
                 if ($possibleTab instanceof Tab) {
                     $this->dispatchBrowserEvent(
                         'switch-tab',
-                        $possibleTab->parentField->id . '.' . $possibleTab->id,
+                        $possibleTab->parent->id . '.' . $possibleTab->id,
                     );
 
                     break;
                 }
 
-                $possibleTab = $possibleTab->parentField;
+                $possibleTab = $possibleTab->parent;
             }
         }
     }
@@ -196,16 +206,6 @@ trait HasForm
     protected function getPropertyDefaults()
     {
         return $this->getForm()->getDefaults();
-    }
-
-    public function getSelectFieldOptionSearchResults($fieldName, $search = '')
-    {
-        $field = collect($this->getForm()->getFields())
-            ->first(fn ($field) => $field instanceof Select && $field->name === $fieldName);
-
-        if (! $field) return [];
-
-        return $field->getOptionSearchResults($search);
     }
 
     protected function fillWithFormDefaults()

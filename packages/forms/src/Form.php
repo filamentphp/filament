@@ -6,25 +6,20 @@ class Form
 {
     public $columns = 1;
 
-    public $fields = [];
-
     public $rules = [];
+
+    public $schema = [];
 
     public $submitMethod = 'submit';
 
-    public function __construct($fields = [])
+    public static function make()
     {
-        $this->fields = $fields;
-    }
-
-    public static function make($fields = [])
-    {
-        return new static($fields);
+        return new static();
     }
 
     public function context($context)
     {
-        $this->fields = collect($this->fields)
+        $this->schema = collect($this->schema)
             ->map(function ($field) use ($context) {
                 return $field->context($context);
             })
@@ -44,29 +39,29 @@ class Form
     {
         $defaults = [];
 
-        foreach ($this->fields as $field) {
+        foreach ($this->schema as $field) {
             $defaults = array_merge($defaults, $field->getDefaults());
         }
 
         return $defaults;
     }
 
-    public function getFields()
+    public function getSchema()
     {
-        $fields = $this->fields;
+        $schema = $this->schema;
 
-        foreach ($this->fields as $field) {
-            $fields = array_merge($fields, $field->getForm()->getFields());
+        foreach ($this->schema as $component) {
+            $schema = array_merge($schema, $component->getForm()->getSchema());
         }
 
-        return $fields;
+        return $schema;
     }
 
     public function getRules()
     {
         $rules = $this->rules;
 
-        foreach ($this->fields as $field) {
+        foreach ($this->schema as $field) {
             foreach ($field->getRules() as $name => $conditions) {
                 $rules[$name] = array_merge($rules[$name] ?? [], $conditions);
             }
@@ -79,7 +74,7 @@ class Form
     {
         $attributes = [];
 
-        foreach ($this->fields as $field) {
+        foreach ($this->schema as $field) {
             $attributes = array_merge($attributes, $field->getValidationAttributes());
         }
 
@@ -88,7 +83,7 @@ class Form
 
     public function model($model)
     {
-        $this->fields = collect($this->fields)
+        $this->schema = collect($this->schema)
             ->map(function ($field) use ($model) {
                 return $field->model($model);
             })
@@ -99,7 +94,7 @@ class Form
 
     public function record($record)
     {
-        $this->fields = collect($this->fields)
+        $this->schema = collect($this->schema)
             ->map(function ($field) use ($record) {
                 return $field->record($record);
             })
@@ -111,6 +106,13 @@ class Form
     public function rules($rules)
     {
         $this->rules = $rules;
+
+        return $this;
+    }
+
+    public function schema($schema)
+    {
+        $this->schema = $schema;
 
         return $this;
     }

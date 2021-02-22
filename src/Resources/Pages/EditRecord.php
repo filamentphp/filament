@@ -2,9 +2,8 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Forms\Form;
 use Filament\Forms\HasForm;
-use Filament\Resources\Page;
+use Filament\Resources\Forms\Form;
 
 class EditRecord extends Page
 {
@@ -13,8 +12,11 @@ class EditRecord extends Page
     public static $deleteButtonLabel = 'Delete';
 
     public static $deleteModalCancelButtonLabel = 'Cancel';
+
     public static $deleteModalConfirmButtonLabel = 'Delete';
+
     public static $deleteModalHeading = 'Delete this record?';
+
     public static $deleteModalDescription = 'Are you sure you would like to delete this record? This action cannot be undone.';
 
     public static $saveButtonLabel = 'Save';
@@ -36,7 +38,7 @@ class EditRecord extends Page
 
     public function getForm()
     {
-        return Form::make($this->fields())
+        return static::getResource()::form(Form::make())
             ->context(static::class)
             ->model(static::getModel())
             ->record($this->record)

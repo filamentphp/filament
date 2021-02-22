@@ -6,7 +6,9 @@ use BladeUI\Icons\Factory as BladeUIFactory;
 use Filament\Commands;
 use Filament\Http\Middleware;
 use Filament\Models\FilamentUser;
+use Filament\Pages\Page;
 use Filament\Providers\RouteServiceProvider;
+use Filament\Resources\Resource;
 use Filament\View\Components;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
@@ -23,7 +25,6 @@ class FilamentServiceProvider extends ServiceProvider
 {
     public $singletons = [
         FilamentManager::class => FilamentManager::class,
-        Navigation::class => Navigation::class,
     ];
 
     public function boot()
@@ -85,9 +86,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->loadViewComponentsAs('filament', [
             'avatar' => Components\Avatar::class,
             'image' => Components\Image::class,
-            'layouts.app' => Components\Layouts\App::class,
-            'layouts.auth' => Components\Layouts\Auth::class,
-            'layouts.base' => Components\Layouts\Base::class,
             'nav' => Components\Nav::class,
         ]);
 

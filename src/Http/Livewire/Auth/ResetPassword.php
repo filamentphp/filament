@@ -2,7 +2,7 @@
 
 namespace Filament\Http\Livewire\Auth;
 
-use Filament\Forms\Fields;
+use Filament\Forms\Components;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
 use Illuminate\Http\Request;
@@ -25,35 +25,31 @@ class ResetPassword extends Component
 
     public $user;
 
-    public function fields()
-    {
-        return [
-            Fields\Text::make('email')
-                ->label('filament::fields.labels.email')
-                ->email()
-                ->nameAttribute('wire:model.lazy')
-                ->autocomplete()
-                ->required(),
-            Fields\Text::make('password')
-                ->label('filament::fields.labels.password')
-                ->password()
-                ->autofocus()
-                ->autocomplete('new-password')
-                ->required()
-                ->minLength(8)
-                ->confirmed(),
-            Fields\Text::make('passwordConfirmation')
-                ->label('filament::fields.labels.newPassword')
-                ->password()
-                ->autocomplete('new-password')
-                ->required()
-                ->password(),
-        ];
-    }
-
     public function getForm()
     {
-        return Form::make($this->fields())
+        return Form::make()
+            ->schema([
+                Components\TextInput::make('email')
+                    ->label('filament::fields.labels.email')
+                    ->email()
+                    ->nameAttribute('wire:model.lazy')
+                    ->autocomplete()
+                    ->required(),
+                Components\TextInput::make('password')
+                    ->label('filament::fields.labels.password')
+                    ->password()
+                    ->autofocus()
+                    ->autocomplete('new-password')
+                    ->required()
+                    ->minLength(8)
+                    ->confirmed(),
+                Components\TextInput::make('passwordConfirmation')
+                    ->label('filament::fields.labels.newPassword')
+                    ->password()
+                    ->autocomplete('new-password')
+                    ->required()
+                    ->password(),
+            ])
             ->context(static::class);
     }
 

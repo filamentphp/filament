@@ -1,5 +1,5 @@
 @props([
-    'columns' => 1,
+'columns' => 1,
 ])
 
 @php
@@ -17,7 +17,7 @@
         'grid-cols-1 lg:grid-cols-10',
         'grid-cols-1 lg:grid-cols-11',
         'grid-cols-1 lg:grid-cols-12',
-    ][$columns];
+    ][$columns]
 @endphp
 
 <div class="grid {{ $columnsClasses }} gap-6">

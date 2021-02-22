@@ -2,11 +2,11 @@
 
 namespace Filament\Http\Livewire;
 
-use Filament\Forms\Fields;
+use Filament\Forms\Components;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
 use Filament\Models\FilamentUser;
-use Filament\Page;
+use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -26,44 +26,40 @@ class EditAccount extends Page
 
     public function getForm()
     {
-        return Form::make($this->fields())
+        return Form::make()
+            ->schema([
+                Components\Fieldset::make()->schema([
+                    Components\TextInput::make('record.name')
+                        ->disableAutocomplete()
+                        ->required(),
+                    Components\TextInput::make('record.email')
+                        ->email()
+                        ->disableAutocomplete()
+                        ->required()
+                        ->unique(FilamentUser::class, 'email', true),
+                ])
+                    ->columns(2),
+                Components\Fieldset::make('Set a new password')->schema([
+                    Components\TextInput::make('newPassword')
+                        ->label('Password')
+                        ->password()
+                        ->autocomplete('new-password')
+                        ->confirmed()
+                        ->minLength(8),
+                    Components\TextInput::make('newPasswordConfirmation')
+                        ->label('Confirm password')
+                        ->password()
+                        ->autocomplete('new-password')
+                        ->requiredWith('newPassword'),
+                ])
+                    ->columns(2),
+                Components\FileUpload::make('record.avatar')
+                    ->avatar()
+                    ->directory('filament-avatars')
+                    ->disk(config('filament.default_filesystem_disk')),
+            ])
             ->context(static::class)
             ->record($this->record);
-    }
-
-    public function fields()
-    {
-        return [
-            Fields\Fieldset::make()->fields([
-                Fields\Text::make('record.name')
-                    ->disableAutocomplete()
-                    ->required(),
-                Fields\Text::make('record.email')
-                    ->email()
-                    ->disableAutocomplete()
-                    ->required()
-                    ->unique(FilamentUser::class, 'email', true),
-            ])
-                ->columns(2),
-            Fields\Fieldset::make('Set a new password')->fields([
-                Fields\Text::make('newPassword')
-                    ->label('Password')
-                    ->password()
-                    ->autocomplete('new-password')
-                    ->confirmed()
-                    ->minLength(8),
-                Fields\Text::make('newPasswordConfirmation')
-                    ->label('Confirm password')
-                    ->password()
-                    ->autocomplete('new-password')
-                    ->requiredWith('newPassword'),
-            ])
-                ->columns(2),
-            Fields\File::make('record.avatar')
-                ->avatar()
-                ->directory('filament-avatars')
-                ->disk(config('filament.default_filesystem_disk')),
-        ];
     }
 
     public function mount()

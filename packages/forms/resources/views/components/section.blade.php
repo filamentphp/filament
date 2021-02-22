@@ -1,13 +1,13 @@
 @props([
-    'fields' => [],
     'columns' => 1,
+    'schema' => [],
 ])
 
 <div {{ $attributes }}>
-    @if (count($fields))
+    @if (count($schema))
         <x-forms::grid :columns="$columns">
-            @foreach ($fields as $field)
-                {{ $field->render() }}
+            @foreach ($schema as $component)
+                {{ $component->render() }}
             @endforeach
         </x-forms::grid>
     @endif

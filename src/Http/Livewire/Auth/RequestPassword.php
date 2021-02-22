@@ -2,8 +2,9 @@
 
 namespace Filament\Http\Livewire\Auth;
 
+use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
-use Filament\Forms\Fields;
+use Filament\Forms\Components;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
 use Illuminate\Support\Facades\Password;
@@ -16,23 +17,19 @@ class RequestPassword extends Component
 
     public $email;
 
-    public function fields()
-    {
-        return [
-            Fields\Text::make('email')
-                ->label('filament::fields.labels.email')
-                ->hint('[' . __('filament::auth.backToLogin') . '](' . route('filament.auth.login') . ')')
-                ->email()
-                ->autofocus()
-                ->autocomplete('email')
-                ->required()
-                ->email(),
-        ];
-    }
-
     public function getForm()
     {
-        return Form::make($this->fields())
+        return Form::make()
+            ->schema([
+                Components\TextInput::make('email')
+                    ->label('filament::fields.labels.email')
+                    ->hint('[' . __('filament::auth.backToLogin') . '](' . route('filament.auth.login') . ')')
+                    ->email()
+                    ->autofocus()
+                    ->autocomplete('email')
+                    ->required()
+                    ->email(),
+            ])
             ->context(static::class);
     }
 

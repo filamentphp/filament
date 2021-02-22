@@ -3,27 +3,35 @@
 namespace {{namespace}};
 
 use App\Filament\Resources\{{resource}}\Pages;
-use App\Models;
-use Filament\Resource;
-use Filament\Resources\Columns;
-use Filament\Resources\Fields;
+use App\Filament\Roles;
+use Filament\Resources\Forms\Components;
+use Filament\Resources\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Resources\Tables\Columns;
+use Filament\Resources\Tables\Filter;
+use Filament\Resources\Tables\Table;
 
 class {{resourceClass}} extends Resource
 {
     public static $icon = 'heroicon-o-collection';
 
-    public static function columns()
+    public static function form(Form $form)
     {
-        return [
-            //
-        ];
+            return $form
+                ->schema([
+                    //
+                ]);
     }
 
-    public static function fields()
+    public static function table(Table $table)
     {
-        return [
-            //
-        ];
+            return $table
+                ->columns([
+                    //
+                ])
+                ->filters([
+                    //
+                ]);
     }
 
     public static function routes()

@@ -2,7 +2,7 @@
 
 namespace {{namespace}};
 
-use Filament\Page;
+use Filament\Pages\Page;
 
 class {{class}} extends Page
 {

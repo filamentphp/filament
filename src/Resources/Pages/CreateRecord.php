@@ -2,9 +2,8 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Forms\Form;
 use Filament\Forms\HasForm;
-use Filament\Resources\Page;
+use Filament\Resources\Forms\Form;
 
 class CreateRecord extends Page
 {
@@ -20,7 +19,7 @@ class CreateRecord extends Page
 
     public function getForm()
     {
-        return Form::make($this->fields())
+        return static::getResource()::form(Form::make())
             ->context(static::class)
             ->model(static::getModel())
             ->submitMethod('create');

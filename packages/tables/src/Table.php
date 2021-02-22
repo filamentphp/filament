@@ -8,6 +8,8 @@ class Table
 
     public $filterable = true;
 
+    public $filters = [];
+
     public $pagination = true;
 
     public $recordButtonLabel = 'tables::table.record.button.label';
@@ -18,15 +20,23 @@ class Table
 
     public $sortable = true;
 
-    public function __construct($columns = [], $filters = [])
+    public static function make()
     {
-        $this->columns = $columns;
-        $this->filters = $filters;
+        return new static();
     }
 
-    public static function make($columns = [], $filters = [])
+    public function columns($columns)
     {
-        return new static($columns, $filters);
+        $this->columns = $columns;
+
+        return $this;
+    }
+
+    public function filters($filters)
+    {
+        $this->filters = $filters;
+
+        return $this;
     }
 
     public function context($context)
