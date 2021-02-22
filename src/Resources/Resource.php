@@ -27,16 +27,6 @@ class Resource
         return new AuthorizationManager(static::class);
     }
 
-    public static function form(Forms\Form $form)
-    {
-        return $form;
-    }
-
-    public static function table(Tables\Table $table)
-    {
-        return $table;
-    }
-
     public static function generateUrl($name = null, $parameters = [], $absolute = true)
     {
         if (! $name) $name = static::router()->getIndexRoute()->name;
