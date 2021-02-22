@@ -71,7 +71,7 @@
                 <input
                     autocomplete="off"
                     {!! $formComponent->autofocus ? 'autofocus' : null !!}
-                    {!! $formComponent->placeholder ? 'placeholder="'.__($fieldComponent->placeholder).'"' : null !!}
+                    {!! $formComponent->placeholder ? 'placeholder="'.__($formComponent->placeholder).'"' : null !!}
                     type="text"
                     x-on:keydown.enter.stop.prevent="createTag()"
                     x-model="newTag"

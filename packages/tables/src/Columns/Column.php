@@ -10,6 +10,8 @@ class Column
 {
     use Tappable;
 
+    public $context;
+
     public $getValueUsing;
 
     public $hidden = false;
@@ -22,17 +24,15 @@ class Column
 
     public $primary = false;
 
+    public $record;
+
     public $searchable = false;
 
     public $sortable = false;
 
-    protected $context;
-
     protected $pendingExcludedContextModifications = [];
 
     protected $pendingIncludedContextModifications = [];
-
-    protected $record;
 
     protected $view;
 

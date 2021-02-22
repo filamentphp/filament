@@ -10,6 +10,8 @@ class Component
 {
     use Tappable;
 
+    public $context;
+
     public $columnSpan = 1;
 
     public $hidden = false;
@@ -18,19 +20,19 @@ class Component
 
     public $label;
 
+    public $model;
+
     public $parent;
 
     public $schema = [];
 
     public $record;
 
-    protected $context;
-
-    protected $model;
-
     protected $pendingExcludedContextModifications = [];
 
     protected $pendingIncludedContextModifications = [];
+
+    protected $pendingModelModifications = [];
 
     protected $view;
 
@@ -205,6 +207,12 @@ class Component
     {
         $this->model = $model;
 
+        foreach ($this->pendingModelModifications as $callback) {
+            $callback($this);
+        }
+
+        $this->pendingModelModifications = [];
+
         $this->schema($this->getForm()->model($this->model)->schema);
 
         return $this;
@@ -249,6 +257,8 @@ class Component
     public function record($record)
     {
         $this->record = $record;
+
+        $this->model(get_class($record));
 
         $this->schema($this->getForm()->record($this->record)->schema);
 

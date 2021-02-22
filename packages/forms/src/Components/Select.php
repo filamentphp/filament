@@ -93,10 +93,11 @@ class Select extends Field
 
     public function relation($name, $callback = null)
     {
-        $this->getDisplayValueUsing(function ($value) use ($callback, $name) {
-            $relationName = (string) Str::of($name)->before('.');
+        $relationName = (string) Str::of($name)->before('.');
+        $displayColumnName = (string) Str::of($name)->after('.');
+
+        $this->getDisplayValueUsing(function ($value) use ($callback, $displayColumnName, $relationName) {
             $relation = (new $this->model())->{$relationName}();
-            $displayColumnName = (string) Str::of($name)->after('.');
 
             $query = $relation->getRelated();
 
@@ -109,10 +110,8 @@ class Select extends Field
             return $record ? $record->getAttributeValue($displayColumnName) : null;
         });
 
-        $this->getOptionSearchResultsUsing(function ($search) use ($callback, $name) {
-            $relationName = (string) Str::of($name)->before('.');
+        $this->getOptionSearchResultsUsing(function ($search) use ($callback, $displayColumnName, $relationName) {
             $relation = (new $this->model())->{$relationName}();
-            $displayColumnName = (string) Str::of($name)->after('.');
 
             $query = $relation->getRelated();
 
@@ -133,6 +132,21 @@ class Select extends Field
                 ->replace(['-', '_'], ' ')
                 ->ucfirst(),
         );
+
+        $setUpRules = function ($component) use ($relationName) {
+            $relation = (new $component->model())->{$relationName}();
+
+            $model = get_class($relation->getModel());
+            $column = $relation->getOwnerKeyName();
+
+            $component->addRules([$component->name => "exists:{$model},{$column}"]);
+        };
+
+        if ($this->model) {
+            $setUpRules($this);
+        } else {
+            $this->pendingModelModifications[] = $setUpRules;
+        }
 
         return $this;
     }

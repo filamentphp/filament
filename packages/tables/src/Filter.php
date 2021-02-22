@@ -11,13 +11,13 @@ class Filter
 
     public $callback;
 
+    public $context;
+
     public $hidden = false;
 
     public $label;
 
     public $name;
-
-    protected $context;
 
     protected $pendingExcludedContextModifications = [];
 
