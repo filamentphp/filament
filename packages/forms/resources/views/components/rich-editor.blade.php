@@ -40,40 +40,44 @@
     <div
         x-data="{
             value: @entangle($formComponent->name).defer,
-            @unless ($formComponent->disabled)
-                isFocused() { return document.activeElement !== this.$refs.trix },
-                setValue() { this.$refs.trix?.editor?.loadHTML(this.value) },
-            @endunless
         }"
         @unless ($formComponent->disabled)
-        x-init="setValue(); $watch('value', () => isFocused() && setValue())"
-        x-on:trix-attachment-add="
-            if (! $event.attachment.file) return
+            x-init="
+                $refs.trix?.editor?.loadHTML(value)
 
-            let attachment = $event.attachment
+                $watch('value', () => {
+                    if (document.activeElement === $refs.trix) return
 
-            let formData = new FormData()
-            formData.append('directory', '{{ $formComponent->attachmentDirectory }}')
-            formData.append('disk', '{{ $formComponent->attachmentDisk }}')
-            formData.append('file', attachment.file)
-
-            fetch('{{ $formComponent->attachmentUploadUrl }}', {
-                body: formData,
-                credentials: 'same-origin',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                method: 'POST',
-            })
-            .then((response) => response.text())
-            .then((url) => {
-                attachment.setAttributes({
-                    url: url,
-                    href: url,
+                    $refs.trix?.editor?.loadHTML(value)
                 })
-            })
-        "
-        x-on:trix-change="value = $event.target.value"
+            "
+            x-on:trix-attachment-add="
+                if (! $event.attachment.file) return
+
+                let attachment = $event.attachment
+
+                let formData = new FormData()
+                formData.append('directory', '{{ $formComponent->attachmentDirectory }}')
+                formData.append('disk', '{{ $formComponent->attachmentDisk }}')
+                formData.append('file', attachment.file)
+
+                fetch('{{ $formComponent->attachmentUploadUrl }}', {
+                    body: formData,
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    method: 'POST',
+                })
+                .then((response) => response.text())
+                .then((url) => {
+                    attachment.setAttributes({
+                        url: url,
+                        href: url,
+                    })
+                })
+            "
+            x-on:trix-change="value = $event.target.value"
         @endunless
         x-cloak
         wire:ignore

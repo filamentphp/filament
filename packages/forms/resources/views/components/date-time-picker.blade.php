@@ -161,25 +161,25 @@
 
                     if (this.autofocus) this.openPicker()
 
-                    this.$watch('focusedMonth', ((value) => {
-                        this.focusedMonth = +value
+                    this.$watch('focusedMonth', (() => {
+                        this.focusedMonth = +this.focusedMonth
 
                         if (this.focusedDate.month() === this.focusedMonth) return
 
                         this.focusedDate = this.focusedDate.set('month', this.focusedMonth)
                     }))
 
-                    this.$watch('focusedYear', ((value) => {
-                        this.focusedYear = Number.isInteger(+value) ? +value : dayjs().year()
+                    this.$watch('focusedYear', (() => {
+                        this.focusedYear = Number.isInteger(+this.focusedYear) ? +this.focusedYear : dayjs().year()
 
                         if (this.focusedDate.year() === this.focusedYear) return
 
                         this.focusedDate = this.focusedDate.set('year', this.focusedYear)
                     }))
 
-                    this.$watch('focusedDate', ((value) => {
-                        this.focusedMonth = value.month()
-                        this.focusedYear = value.year()
+                    this.$watch('focusedDate', (() => {
+                        this.focusedMonth = this.focusedDate.month()
+                        this.focusedYear = this.focusedDate.year()
 
                         this.setupDaysGrid()
 
@@ -188,34 +188,49 @@
                         })
                     }))
 
-                    this.$watch('hour', ((value) => {
-                        this.hour = Number.isInteger(+value) && value >= 0 && value < 24 ? +value : dayjs().hour()
+                    this.$watch('hour', (() => {
+                        this.hour = Number.isInteger(+this.hour) && this.hour >= 0 && this.hour < 24 ? +this.hour : dayjs().hour()
 
                         let date = this.getSelectedDate()
 
                         if (date === null) return
 
-                        this.setValue(date.set('hour', value))
+                        this.setValue(date.set('hour', this.hour))
                     }))
 
-                    this.$watch('minute', ((value) => {
-                        this.minute = Number.isInteger(+value) && value >= 0 && value < 60 ? +value : dayjs().minute()
+                    this.$watch('minute', (() => {
+                        this.minute = Number.isInteger(+this.minute) && this.minute >= 0 && this.minute < 60 ? +this.minute : dayjs().minute()
 
                         let date = this.getSelectedDate()
 
                         if (date === null) return
 
-                        this.setValue(date.set('minute', value))
+                        this.setValue(date.set('minute', this.minute))
                     }))
 
-                    this.$watch('second', ((value) => {
-                        this.second = Number.isInteger(+value) && value >= 0 && value < 60 ? +value : dayjs().second()
+                    this.$watch('second', (() => {
+                        this.second = Number.isInteger(+this.second) && this.second >= 0 && this.second < 60 ? +this.second : dayjs().second()
 
                         let date = this.getSelectedDate()
 
                         if (date === null) return
 
-                        this.setValue(date.set('second', value))
+                        this.setValue(date.set('second', this.second))
+                    }))
+
+                    this.$watch('value', (() => {
+                        let date = this.getSelectedDate() ?? dayjs()
+
+                        if (this.maxDate !== null && date.isAfter(this.maxDate)) date = this.required ? this.maxDate : null
+                        if (this.minDate !== null && date.isBefore(this.minDate)) date = this.required ? this.minDate : null
+
+                        this.hour = date.hour()
+                        this.minute = date.minute()
+                        this.second = date.second()
+
+                        if (this.required && ! this.getSelectedDate()) this.setValue(date)
+
+                        this.setDisplayValue()
                     }))
                 },
 

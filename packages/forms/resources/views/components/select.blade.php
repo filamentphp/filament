@@ -116,8 +116,8 @@
 
                     if (this.autofocus) this.openListbox()
 
-                    this.$watch('search', (async (value) => {
-                        if (!this.open || value === '' || value === null) {
+                    this.$watch('search', (() => {
+                        if (! this.open || this.search === '' || this.search === null) {
                             this.options = this.initialOptions
                             this.focusedOptionIndex = 0
 
@@ -126,11 +126,29 @@
 
                         this.loading = true
 
-                        this.$wire.getSelectFieldOptionSearchResults(this.name, value).then((options) => {
+                        this.$wire.getSelectFieldOptionSearchResults(this.name, this.search).then((options) => {
                             this.options = options
                             this.focusedOptionIndex = 0
                             this.loading = false
                         })
+                    }))
+
+                    this.$watch('value', (() => {
+                        if (this.value in this.options) {
+                            this.displayValue = this.options[this.value]
+                        } else {
+                            this.loading = true;
+
+                            this.$wire.getSelectFieldDisplayValue(this.name, this.value).then((displayValue) => {
+                                this.displayValue = displayValue
+
+                                if (this.displayValue === null) {
+                                    this.value = null
+                                }
+
+                                this.loading = false
+                            })
+                        }
                     }))
                 },
 

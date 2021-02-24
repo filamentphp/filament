@@ -51,7 +51,10 @@
     :required="$formComponent->required"
 >
     <div
-        x-data="{}"
+        x-data="{
+            pond: null,
+            value: @entangle($formComponent->name).defer,
+        }"
         x-init="
             FilePond.registerPlugin(FilePondPluginFileValidateSize)
             FilePond.registerPlugin(FilePondPluginFileValidateType)
@@ -109,16 +112,31 @@
 
             $wire.getUploadedFileUrl('{{ $formComponent->name }}', '{{ $formComponent->disk }}').then((uploadedFileUrl) => {
                 if (uploadedFileUrl) {
-                    config.files.push({
+                    config.files = [{
                         source: uploadedFileUrl,
                         options: {
                             type: 'local',
                         },
-                    })
+                    }]
                 }
 
-                FilePond.create($refs.input, config)
+                pond = FilePond.create($refs.input, config)
             })
+
+            $watch('value', (() => {
+                $wire.getUploadedFileUrl('{{ $formComponent->name }}', '{{ $formComponent->disk }}').then((uploadedFileUrl) => {
+                    if (uploadedFileUrl) {
+                        pond.files = [{
+                            source: uploadedFileUrl,
+                            options: {
+                                type: 'local',
+                            },
+                        }]
+                    } else {
+                        pond.files = []
+                    }
+                })
+            }))
         "
         wire:ignore
         {!! Filament\format_attributes($formComponent->extraAttributes) !!}

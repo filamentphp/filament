@@ -29,14 +29,14 @@
                 init: function () {
                     if (this.value !== '' && this.value !== null) this.tags = this.value.trim().split(this.separator).filter(tag => tag !== '')
 
-                    this.$watch('tags', ((tags) => {
-                        this.value = tags.join(this.separator)
+                    this.$watch('tags', (() => {
+                        this.value = this.tags.join(this.separator)
                     }))
 
-                    this.$watch('value', ((value) => {
-                        if (typeof value !== 'string') value = ''
+                    this.$watch('value', (() => {
+                        if (typeof this.value !== 'string') this.value = ''
 
-                        this.tags = value.trim().split(this.separator).filter(tag => tag !== '')
+                        this.tags = this.value.trim().split(this.separator).filter(tag => tag !== '')
                     }))
                 },
             }
@@ -88,7 +88,7 @@
 
             <div
                 x-show="tags.length"
-                class="bg-white relative w-full pl-3 pr-10 py-2 text-left {{ $formComponent->disabled ? 'text-gray-500' : 'border-t' }} {{ $errors->has($formComponent->name) ? 'border-danger-600' : 'border-gray-300' }}"
+                class="bg-white space-x-1 relative w-full pl-3 pr-10 py-2 text-left {{ $formComponent->disabled ? 'text-gray-500' : 'border-t' }} {{ $errors->has($formComponent->name) ? 'border-danger-600' : 'border-gray-300' }}"
             >
                 <template x-for="(tag, index) in tags" x-bind:key="tag">
                     <button
