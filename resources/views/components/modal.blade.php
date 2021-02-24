@@ -3,7 +3,7 @@
     'name' => null,
 ])
 
-<div
+<span
     {{ $attributes }}
     x-data="{ open: false }"
     x-init="
@@ -16,8 +16,8 @@
         });
     "
     x-on:keydown.escape.window="open = false"
-    x-on:open.window="if ('{{ $name }}' && $event.detail === '{{ $name }}') open = true"
-    x-on:close.window="if ('{{ $name }}' && $event.detail === '{{ $name }}') open = false"
+    x-on:open.window="if ('{{ $name }}' && $event.detail === '{{ (string) Str::of($name)->replace('\\', '\\\\') }}') open = true"
+    x-on:close.window="if ('{{ $name }}' && $event.detail === '{{ (string) Str::of($name)->replace('\\', '\\\\') }}') open = false"
     x-cloak
 >
     {{ $trigger ?? null }}
@@ -44,40 +44,37 @@
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
 
-            <template
-                x-if="open"
+            <div
+                x-show="open"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                role="dialog"
+                aria-modal="true"
+                x-on:click.away="open = false"
+                class="inline-block align-bottom text-left overflow-hidden transform transition-all sm:my-8 sm:align-middle"
             >
                 <div
-                    x-transition:enter="ease-out duration-300"
-                    x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                    x-transition:leave="ease-in duration-200"
-                    x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                    x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    role="dialog"
-                    aria-modal="true"
-                    x-on:click.away="open = false"
-                    class="inline-block align-bottom text-left overflow-hidden transform transition-all sm:my-8 sm:align-middle"
+                    class="flex flex-col space-y-4"
                 >
-                    <div
-                        class="flex flex-col space-y-4"
-                    >
-                        @if ($closeButton)
-                            <button
-                                type="button"
-                                x-on:click="open = false"
-                                class="flex-shrink-0 self-center text-gray-200 hover:text-white transition-colors duration-200 flex"
-                            >
-                                <x-heroicon-o-x class="w-6 h-6" />
-                            </button>
-                        @endif
+                    @if ($closeButton)
+                        <button
+                            type="button"
+                            x-on:click="open = false"
+                            class="flex-shrink-0 self-center text-gray-200 hover:text-white transition-colors duration-200 flex"
+                        >
+                            <x-heroicon-o-x class="w-6 h-6" />
+                        </button>
+                    @endif
 
-                        <div class="flex-grow">
-                            {{ $slot }}
-                        </div>
+                    <div class="flex-grow">
+                        {{ $slot }}
                     </div>
                 </div>
-            </template>
+            </div>
         </div>
     </div>
-</div>
+</span>

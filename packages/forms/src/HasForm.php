@@ -77,18 +77,9 @@ trait HasForm
             $storeMethod = $field->visibility === 'public' ? 'storePublicly' : 'store';
             $path = $temporaryUploadedFile->{$storeMethod}($field->directory, $field->disk);
             $this->syncInput($field->name, $path, false);
-
-            $this->clearTemporaryUploadedFile($field->name);
         }
-    }
 
-    public function clearTemporaryUploadedFile($name)
-    {
-        $this->syncInput(
-            static::getTemporaryUploadedFilePropertyName($name),
-            null,
-            false,
-        );
+        $this->resetTemporaryUploadedFiles();
     }
 
     public function resetTemporaryUploadedFiles()
@@ -99,7 +90,11 @@ trait HasForm
     public function removeUploadedFile($name)
     {
         $this->syncInput($name, null, false);
-        $this->clearTemporaryUploadedFile($name);
+        $this->syncInput(
+            static::getTemporaryUploadedFilePropertyName($name),
+            null,
+            false,
+        );
     }
 
     public function validate($rules = null, $messages = [], $attributes = [])

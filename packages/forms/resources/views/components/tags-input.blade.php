@@ -32,6 +32,12 @@
                     this.$watch('tags', ((tags) => {
                         this.value = tags.join(this.separator)
                     }))
+
+                    this.$watch('value', ((value) => {
+                        if (typeof value !== 'string') value = ''
+
+                        this.tags = value.trim().split(this.separator).filter(tag => tag !== '')
+                    }))
                 },
             }
         }

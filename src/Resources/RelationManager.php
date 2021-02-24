@@ -2,6 +2,7 @@
 
 namespace Filament\Resources;
 
+use App\Filament\Resources\ProductResource;
 use Filament\Resources\Forms\Form;
 use Filament\Forms\HasForm;
 use Filament\Tables\HasTable;
@@ -12,75 +13,42 @@ use Livewire\Component;
 
 class RelationManager extends Component
 {
-    use HasForm;
     use HasTable;
 
     public static $actions = [
         'create',
-        'delete',
         'edit',
     ];
 
+    public static $createModalCancelButtonLabel = 'Cancel';
+
+    public static $createModalCreateButtonLabel = 'Create';
+
+    public static $createdMessage = 'Created!';
+
+    public static $createModalHeading = 'Create';
+
+    public static $editModalCancelButtonLabel = 'Cancel';
+
+    public static $editModalHeading = 'Edit';
+
+    public static $editModalSaveButtonLabel = 'Save';
+
     public static $relationship;
 
-    public static $formSubmitMethods = [
-        'create' => 'create',
-        'edit' => 'save',
-    ];
-
-    public $context;
+    public static $savedMessage = 'Saved!';
 
     public $filterable = true;
 
     public $owner;
 
-    public $record;
-
     public $searchable = true;
 
     public $sortable = true;
 
-    public function create()
-    {
-        $this->validateTemporaryUploadedFiles();
-
-        $this->storeTemporaryUploadedFiles();
-
-        $this->validate();
-
-        $record = static::getModel()::create($this->record);
-
-        $this->redirect($this->getResource()::generateUrl(static::$showRoute, [
-            'record' => $record,
-        ]));
-    }
-
-    public static function getTitle()
-    {
-        if (property_exists(static::class, 'title')) return static::$title;
-
-        return (string) Str::of(static::$relationship)
-            ->kebab()
-            ->replace('-', ' ')
-            ->title();
-    }
-
-    public function getForm()
-    {
-        $form = static::form(Form::make())
-            ->context($this->context)
-            ->model(get_class($this->owner->{static::$relationship}()->getModel()));
-
-        if ($this->record instanceof Model) {
-            $form->record($this->record);
-        }
-
-        if (array_key_exists($this->context, static::$formSubmitMethods)) {
-            $form->submitMethod(static::$formSubmitMethods[$this->context]);
-        }
-
-        return $form;
-    }
+    protected $listeners = [
+        'refreshRelationManagerList' => 'refreshList',
+    ];
 
     public function getTable()
     {
@@ -99,36 +67,22 @@ class RelationManager extends Component
 
     public function openCreate()
     {
-        $this->context = 'create';
-
-        $this->record = [];
-        $this->fillWithFormDefaults();
-        $this->resetTemporaryUploadedFiles();
-
-        $this->dispatchBrowserEvent('open', static::$relationship.'CreateModal');
+        $this->dispatchBrowserEvent('open', static::class.'RelationManagerCreateModal');
+        $this->dispatchBrowserEvent('refresh-relation-manager-create-form', static::class);
     }
 
     public function openEdit($record)
     {
-        $this->context = 'edit';
+        $this->emit('switchRelationManagerEditRecord', static::class, $record);
 
-        $this->record = $this->getQuery()->find($record);
-        $this->resetTemporaryUploadedFiles();
-
-        $this->dispatchBrowserEvent('open', static::$relationship.'EditModal');
+        $this->dispatchBrowserEvent('open', static::class.'RelationManagerEditModal');
     }
 
-    public function save()
+    public function refreshList($manager = null)
     {
-        $this->validateTemporaryUploadedFiles();
+        if ($manager !== null && $manager !== static::class) return;
 
-        $this->storeTemporaryUploadedFiles();
-
-        $this->validate();
-
-        $this->record->save();
-
-        $this->notify(__(static::$savedMessage));
+        $this->callMethod('$refresh');
     }
 
     public function render()

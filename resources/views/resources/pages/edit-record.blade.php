@@ -37,7 +37,7 @@
         </x-slot>
     </x-filament::app-header>
 
-    <x-filament::app-content>
+    <x-filament::app-content class="space-y-6">
         <x-filament::card>
             <x-forms::container :form="$this->getForm()" class="space-y-6">
                 <x-filament::button
@@ -48,5 +48,10 @@
                 </x-filament::button>
             </x-forms::container>
         </x-filament::card>
+
+        <x-filament::resources.relations
+            :owner="$record"
+            :relations="static::getResource()::relations()"
+        />
     </x-filament::app-content>
 </div>

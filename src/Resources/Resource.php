@@ -3,6 +3,8 @@
 namespace Filament\Resources;
 
 use Filament\NavigationItem;
+use Filament\Resources\Forms\Form;
+use Filament\Resources\Tables\Table;
 use Illuminate\Support\Str;
 
 class Resource
@@ -25,6 +27,11 @@ class Resource
     public static function authorizationManager()
     {
         return new AuthorizationManager(static::class);
+    }
+
+    public static function form(Form $form)
+    {
+        return $form;
     }
 
     public static function generateUrl($name = null, $parameters = [], $absolute = true)
@@ -86,6 +93,11 @@ class Resource
         ];
     }
 
+    public static function relations()
+    {
+        return [];
+    }
+
     public static function router()
     {
         return new Router(static::class);
@@ -94,5 +106,10 @@ class Resource
     public static function routes()
     {
         return [];
+    }
+
+    public static function table(Table $table)
+    {
+        return $table;
     }
 }
