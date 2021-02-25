@@ -22,7 +22,7 @@ class DatePicker extends Field
 
     public $withoutSeconds = false;
 
-    protected $view = 'forms::components.date-time-picker';
+    public $view = 'forms::components.date-time-picker';
 
     public function __construct($name)
     {

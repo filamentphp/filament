@@ -58,12 +58,12 @@ class RelationManager extends Component
         return static::$relationship;
     }
 
-    protected function getModel()
+    public function getModel()
     {
         return $this->getQuery()->getModel();
     }
 
-    protected function getQuery()
+    public function getQuery()
     {
         return $this->owner->{static::$relationship}();
     }

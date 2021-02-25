@@ -6,15 +6,15 @@ class DateTimePicker extends DatePicker
 {
     public $time = true;
 
-    protected $defaultDisplayFormat = 'F j, Y H:i:s';
+    public $defaultDisplayFormat = 'F j, Y H:i:s';
 
-    protected $defaultDisplayFormatWithoutSeconds = 'F j, Y H:i';
+    public $defaultDisplayFormatWithoutSeconds = 'F j, Y H:i';
 
-    protected $defaultFormat = 'Y-m-d H:i:s';
+    public $defaultFormat = 'Y-m-d H:i:s';
 
-    protected $defaultFormatWithoutSeconds = 'Y-m-d H:i';
+    public $defaultFormatWithoutSeconds = 'Y-m-d H:i';
 
-    protected $view = 'forms::components.date-time-picker';
+    public $view = 'forms::components.date-time-picker';
 
     public function __construct($name)
     {

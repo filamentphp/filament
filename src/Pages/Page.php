@@ -16,7 +16,7 @@ class Page extends Component
 
     public static $sort = 0;
 
-    protected static $view;
+    public static $view;
 
     public static function authorization()
     {
@@ -98,14 +98,14 @@ class Page extends Component
             ->layout('filament::components.layouts.app');
     }
 
-    protected function getViewParameters()
+    public function getViewParameters()
     {
         return array_merge($this->viewParameters(), [
             'title' => static::getTitle(),
         ]);
     }
 
-    protected function viewParameters()
+    public function viewParameters()
     {
         return [];
     }

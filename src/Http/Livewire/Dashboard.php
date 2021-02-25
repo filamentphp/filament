@@ -8,5 +8,5 @@ class Dashboard extends Page
 {
     public static $title = 'filament::dashboard.title';
 
-    protected static $view = 'filament::dashboard';
+    public static $view = 'filament::dashboard';
 }

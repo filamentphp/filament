@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 
 class BelongsToSelect extends Select
 {
-    protected $view = 'forms::components.select';
+    public $view = 'forms::components.select';
 
     public function relationship($relationshipName, $displayColumnName, $callback = null)
     {

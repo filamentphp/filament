@@ -6,7 +6,7 @@ use Filament\Resources\Route;
 
 class Page extends \Filament\Pages\Page
 {
-    protected static $resource;
+    public static $resource;
 
     public static function getResource()
     {
@@ -18,12 +18,12 @@ class Page extends \Filament\Pages\Page
         return new Route(static::class, $uri, $name);
     }
 
-    protected static function getModel()
+    public static function getModel()
     {
         return static::getResource()::getModel();
     }
 
-    protected static function getQuery()
+    public static function getQuery()
     {
         return static::getModel()::query();
     }

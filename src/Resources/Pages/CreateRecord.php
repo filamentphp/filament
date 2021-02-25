@@ -13,7 +13,7 @@ class CreateRecord extends Page
 
     public static $showRoute = 'edit';
 
-    protected static $view = 'filament::resources.pages.create-record';
+    public static $view = 'filament::resources.pages.create-record';
 
     public $record;
 

@@ -34,7 +34,7 @@ class Column
 
     protected $pendingIncludedContextModifications = [];
 
-    protected $view;
+    public $view;
 
     public function __construct($name)
     {

@@ -23,7 +23,7 @@ class EditRecord extends Page
 
     public static $savedMessage = 'Saved!';
 
-    protected static $view = 'filament::resources.pages.edit-record';
+    public static $view = 'filament::resources.pages.edit-record';
 
     public $record;
 

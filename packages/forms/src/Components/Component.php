@@ -34,7 +34,7 @@ class Component
 
     protected $pendingModelModifications = [];
 
-    protected $view;
+    public $view;
 
     public function context($context)
     {

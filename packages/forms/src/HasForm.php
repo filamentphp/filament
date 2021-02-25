@@ -143,7 +143,7 @@ trait HasForm
         return $field->getOptionSearchResults($search);
     }
 
-    protected function validateTemporaryUploadedFiles()
+    public function validateTemporaryUploadedFiles()
     {
         $rules = collect($this->getRules())
             ->filter(function ($conditions, $field) {
@@ -183,7 +183,7 @@ trait HasForm
         }
     }
 
-    protected function focusTabbedField($field)
+    public function focusTabbedField($field)
     {
         if ($field) {
             $possibleTab = $field->parent;
@@ -203,17 +203,17 @@ trait HasForm
         }
     }
 
-    protected function getPropertyDefaults()
+    public function getPropertyDefaults()
     {
         return $this->getForm()->getDefaults();
     }
 
-    protected function fillWithFormDefaults()
+    public function fillWithFormDefaults()
     {
         $this->fill($this->getPropertyDefaults());
     }
 
-    protected function getRules()
+    public function getRules()
     {
         $rules = $this->getForm()->getRules();
 
@@ -226,7 +226,7 @@ trait HasForm
         return $rules;
     }
 
-    protected function getValidationAttributes()
+    public function getValidationAttributes()
     {
         $attributes = $this->getForm()->getValidationAttributes();
 

@@ -41,7 +41,7 @@ class EditRecord extends Component
         return $form;
     }
 
-    protected function getQuery()
+    public function getQuery()
     {
         return $this->owner->{$this->getRelationship()}();
     }

@@ -110,7 +110,7 @@ trait HasTable
         $this->resetPage();
     }
 
-    protected function getRecords()
+    public function getRecords()
     {
         $query = static::getQuery();
 

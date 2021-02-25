@@ -7,5 +7,5 @@ use {{baseResourcePage}};
 
 class {{resourcePageClass}} extends {{baseResourcePageClass}}
 {
-    protected static $resource = {{resourceClass}}::class;
+    public static $resource = {{resourceClass}}::class;
 }

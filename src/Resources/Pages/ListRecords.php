@@ -12,7 +12,7 @@ class ListRecords extends Page
 
     public static $createButtonLabel = 'Create';
 
-    protected static $view = 'filament::resources.pages.list-records';
+    public static $view = 'filament::resources.pages.list-records';
 
     public $filterable = true;
 
@@ -48,7 +48,7 @@ class ListRecords extends Page
             ->sortable($this->sortable);
     }
 
-    protected function viewParameters()
+    public function viewParameters()
     {
         return [
             'records' => $this->getRecords(),
