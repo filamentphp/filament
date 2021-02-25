@@ -5,11 +5,11 @@
                 type="submit"
                 color="primary"
             >
-                {{ __($saveButtonLabel) }}
+                {{ $saveButtonLabel }}
             </x-filament::button>
 
             <x-filament::button x-on:click="$dispatch('close', '{{ (string) Str::of($manager)->replace('\\', '\\\\') }}RelationManagerEditModal')">
-                {{ __($cancelButtonLabel) }}
+                {{ $cancelButtonLabel }}
             </x-filament::button>
         </div>
     </x-forms::container>

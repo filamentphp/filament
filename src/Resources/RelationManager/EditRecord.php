@@ -82,8 +82,6 @@ class EditRecord extends Component
 
         $this->record = $this->getQuery()->find($record);
         $this->resetTemporaryUploadedFiles();
-
-        $this->dispatchBrowserEvent('refresh-relation-manager-edit-form', $this->manager);
     }
 
     public function render()

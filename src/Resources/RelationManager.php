@@ -2,12 +2,8 @@
 
 namespace Filament\Resources;
 
-use App\Filament\Resources\ProductResource;
-use Filament\Resources\Forms\Form;
-use Filament\Forms\HasForm;
 use Filament\Tables\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -18,7 +14,10 @@ class RelationManager extends Component
     public static $actions = [
         'create',
         'edit',
+        'delete',
     ];
+
+    public static $createButtonLabel = 'New';
 
     public static $createModalCancelButtonLabel = 'Cancel';
 
@@ -52,12 +51,22 @@ class RelationManager extends Component
 
     public function getTable()
     {
-        return static::table(Table::make())
+        $table = static::table(Table::make())
             ->filterable($this->filterable)
             ->pagination(false)
-            ->recordAction('openEdit')
             ->searchable($this->searchable)
             ->sortable($this->sortable);
+
+        if (in_array('edit', static::$actions)) {
+            $table->recordAction('openEdit');
+        }
+
+        return $table;
+    }
+
+    public static function getRelationship()
+    {
+        return static::$relationship;
     }
 
     protected function getQuery()
@@ -65,10 +74,19 @@ class RelationManager extends Component
         return $this->owner->{static::$relationship}();
     }
 
+    public static function getTitle()
+    {
+        if (property_exists(static::class, 'title')) return static::$title;
+
+        return (string) Str::of(static::$relationship)
+            ->kebab()
+            ->replace('-', ' ')
+            ->title();
+    }
+
     public function openCreate()
     {
         $this->dispatchBrowserEvent('open', static::class.'RelationManagerCreateModal');
-        $this->dispatchBrowserEvent('refresh-relation-manager-create-form', static::class);
     }
 
     public function openEdit($record)
