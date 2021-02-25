@@ -373,11 +373,11 @@
                 readonly
                 placeholder="{{ __($formComponent->placeholder) }}"
                 x-model="displayValue"
-                class="w-full h-full border-0 p-0 placeholder-gray-400 focus:placeholder-gray-500 focus:ring-0 focus:outline-none"
+                class="w-full h-full p-0 placeholder-gray-400 border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none"
             />
 
             <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                <x-heroicon-s-calendar class="w-5 h-5 text-gray-400" />
+                <x-heroicon-o-calendar class="w-5 h-5 text-gray-400" />
             </span>
         </button>
 
@@ -389,13 +389,13 @@
                 aria-modal="true"
                 role="dialog"
                 x-cloak
-                class="bg-white border border-gray-300 my-1 rounded shadow-sm p-4 absolute w-64 z-10"
+                class="absolute z-10 w-64 p-4 my-1 bg-white border border-gray-300 rounded shadow-sm"
             >
                 <div class="space-y-3">
                     <div class="flex items-center justify-between space-x-1">
                         <select
                             x-model="focusedMonth"
-                            class="flex-grow text-lg font-medium text-gray-800 cursor-pointer border-0 p-0 focus:ring-0 focus:outline-none"
+                            class="flex-grow p-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none"
                         >
                             <template x-for="(month, index) in [
                                 '{{ __('forms::fields.dateTimePicker.months.january') }}',
@@ -418,7 +418,7 @@
                         <input
                             type="number"
                             x-model.debounce="focusedYear"
-                            class="text-right w-20 text-lg text-gray-600 border-0 p-0 focus:ring-0 focus:outline-none"
+                            class="w-20 p-0 text-lg text-right text-gray-600 border-0 focus:ring-0 focus:outline-none"
                         />
                     </div>
 
@@ -434,14 +434,14 @@
                         ]" :key="index">
                             <div
                                 x-text="day"
-                                class="text-gray-800 font-medium text-center text-xs"
+                                class="text-xs font-medium text-center text-gray-800"
                             ></div>
                         </template>
                     </div>
 
                     <div role="grid" class="grid grid-cols-7 gap-1">
                         <template x-for="day in emptyDaysInFocusedMonth" x-bind:key="day">
-                            <div class="text-center border border-transparent text-sm"></div>
+                            <div class="text-sm text-center border border-transparent"></div>
                         </template>
 
                         <template x-for="day in daysInFocusedMonth" x-bind:key="day">
@@ -460,34 +460,34 @@
                                     'cursor-pointer': ! dayIsDisabled(day),
                                     'cursor-not-allowed': dayIsDisabled(day),
                                 }"
-                                class="text-center text-sm leading-none rounded leading-loose transition ease-in-out duration-100"
+                                class="text-sm leading-none leading-loose text-center transition duration-100 ease-in-out rounded"
                             ></div>
                         </template>
                     </div>
 
                     @if ($formComponent->time)
-                        <div class="flex items-center justify-center bg-gray-100 rounded py-2">
+                        <div class="flex items-center justify-center py-2 bg-gray-100 rounded">
                             <input
                                 type="number"
                                 x-model.debounce="hour"
-                                class="text-center bg-gray-100 w-16 text-xl text-gray-700 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
+                                class="w-16 p-0 pr-1 text-xl text-center text-gray-700 bg-gray-100 border-0 focus:ring-0 focus:outline-none"
                             />
 
-                            <span class="text-xl bg-gray-100 font-medium text-gray-700">:</span>
+                            <span class="text-xl font-medium text-gray-700 bg-gray-100">:</span>
 
                             <input
                                 type="number"
                                 x-model.debounce="minute"
-                                class="text-center bg-gray-100 w-16 text-xl text-gray-700 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
+                                class="w-16 p-0 pr-1 text-xl text-center text-gray-700 bg-gray-100 border-0 focus:ring-0 focus:outline-none"
                             />
 
                             @unless ($formComponent->withoutSeconds)
-                                <span class="text-xl bg-gray-100 font-medium text-gray-700">:</span>
+                                <span class="text-xl font-medium text-gray-700 bg-gray-100">:</span>
 
                                 <input
                                     type="number"
                                     x-model.debounce="second"
-                                    class="text-center bg-gray-100 w-16 text-xl text-gray-700 border-0 p-0 pr-1 focus:ring-0 focus:outline-none"
+                                    class="w-16 p-0 pr-1 text-xl text-center text-gray-700 bg-gray-100 border-0 focus:ring-0 focus:outline-none"
                                 />
                             @endunless
                         </div>
