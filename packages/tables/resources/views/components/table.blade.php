@@ -1,5 +1,6 @@
 @props([
     'records' => [],
+    'selected' => [],
     'sortColumn' => null,
     'sortDirection' => 'asc',
     'table',
@@ -11,6 +12,8 @@
             <tr>
                 <th class="p-4 w-4 whitespace-nowrap">
                     <input
+                        {{ $records->count() && $records->count() === count($selected) ? 'checked' : null }}
+                        wire:click="toggleSelectAll"
                         type="checkbox"
                         class="rounded text-secondary-700 shadow-sm focus:border-secondary-700 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300"
                     />
@@ -62,6 +65,8 @@
                 >
                     <td class="p-4 whitespace-nowrap">
                         <input
+                            {{ in_array($record->getKey(), $selected) ? 'checked' : null }}
+                            wire:click="toggleSelected('{{ $record->getKey() }}')"
                             type="checkbox"
                             class="rounded text-secondary-700 shadow-sm focus:border-secondary-700 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300"
                         />

@@ -15,9 +15,9 @@ class EditRecord extends Page
 
     public static $deleteModalConfirmButtonLabel = 'Delete';
 
-    public static $deleteModalHeading = 'Delete this record?';
-
     public static $deleteModalDescription = 'Are you sure you would like to delete this record? This action cannot be undone.';
+
+    public static $deleteModalHeading = 'Delete this record?';
 
     public static $saveButtonLabel = 'Save';
 

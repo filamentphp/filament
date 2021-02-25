@@ -15,9 +15,25 @@ trait HasTable
 
     public $search = '';
 
+    public $selected = [];
+
     public $sortColumn = null;
 
     public $sortDirection = 'asc';
+
+    public function deleteSelected()
+    {
+        static::getModel()::destroy($this->selected);
+
+        $this->selected = [];
+    }
+
+    public function setPage($page)
+    {
+        $this->page = $page;
+
+        $this->selected = [];
+    }
 
     public function sortBy($column)
     {
@@ -28,10 +44,8 @@ trait HasTable
 
                     break;
                 case 'desc':
-                    $this->reset([
-                        'sortColumn',
-                        'sortDirection',
-                    ]);
+                    $this->sortColumn = null;
+                    $this->sortDirection = 'asc';
 
                     break;
             }
@@ -40,11 +54,48 @@ trait HasTable
         }
 
         $this->sortColumn = $column;
-        $this->reset('sortDirection');
+        $this->sortDirection = 'asc';
+    }
+
+    public function toggleSelectAll()
+    {
+        $records = $this->getRecords();
+
+        if (! $records->count()) return;
+
+        $keyName = $records->first()->getKeyName();
+
+        if ($records->count() !== count($this->selected)) {
+            $this->selected = $records->pluck($keyName)->all();
+        } else {
+            $this->selected = [];
+        }
+    }
+
+    public function toggleSelected($record)
+    {
+        if (! in_array($record, $this->selected)) {
+            $this->selected[] = $record;
+        } else {
+            $key = array_search($record, $this->selected);
+
+            unset($this->selected[$key]);
+        }
+    }
+
+    public function updatedFilter()
+    {
+        $this->selected = [];
+
+        if (! $this->getTable()->pagination) return;
+
+        $this->resetPage();
     }
 
     public function updatedRecordsPerPage()
     {
+        $this->selected = [];
+
         if (! $this->getTable()->pagination) return;
 
         $this->resetPage();
@@ -52,6 +103,8 @@ trait HasTable
 
     public function updatedSearch()
     {
+        $this->selected = [];
+
         if (! $this->getTable()->pagination) return;
 
         $this->resetPage();

@@ -37,7 +37,7 @@ class CreateRecord extends Component
         $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerCreateModal");
         $this->dispatchBrowserEvent('notify', $this->createdMessage);
 
-        $this->reset('record');
+        $this->record = [];
         $this->fillWithFormDefaults();
     }
 

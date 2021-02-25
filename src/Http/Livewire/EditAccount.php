@@ -78,7 +78,8 @@ class EditAccount extends Page
         if ($this->newPassword) {
             $this->record->password = Hash::make($this->newPassword);
 
-            $this->reset(['newPassword', 'newPasswordConfirmation']);
+            $this->newPassword = null;
+            $this->newPasswordConfirmation = null;
         }
 
         $this->record->save();

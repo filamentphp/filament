@@ -11,12 +11,6 @@ class RelationManager extends Component
 {
     use HasTable;
 
-    public static $actions = [
-        'create',
-        'edit',
-        'delete',
-    ];
-
     public static $createButtonLabel = 'New';
 
     public static $createModalCancelButtonLabel = 'Cancel';
@@ -51,22 +45,22 @@ class RelationManager extends Component
 
     public function getTable()
     {
-        $table = static::table(Table::make())
+        return static::table(Table::make())
             ->filterable($this->filterable)
             ->pagination(false)
+            ->recordAction('openEdit')
             ->searchable($this->searchable)
             ->sortable($this->sortable);
-
-        if (in_array('edit', static::$actions)) {
-            $table->recordAction('openEdit');
-        }
-
-        return $table;
     }
 
     public static function getRelationship()
     {
         return static::$relationship;
+    }
+
+    protected function getModel()
+    {
+        return $this->getQuery()->getModel();
     }
 
     protected function getQuery()

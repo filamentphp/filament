@@ -84,7 +84,7 @@ trait HasForm
 
     public function resetTemporaryUploadedFiles()
     {
-        $this->reset('temporaryUploadedFiles');
+        $this->temporaryUploadedFiles = [];
     }
 
     public function removeUploadedFile($name)

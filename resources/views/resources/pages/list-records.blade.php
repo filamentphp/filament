@@ -13,6 +13,7 @@
     <x-filament::app-content>
         <x-tables::container
             :records="$records"
+            :selected="$selected"
             :sort-column="$sortColumn"
             :sort-direction="$sortDirection"
             :table="$this->getTable()"

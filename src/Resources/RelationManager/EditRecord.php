@@ -73,7 +73,7 @@ class EditRecord extends Component
         $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerEditModal");
         $this->dispatchBrowserEvent('notify', $this->savedMessage);
 
-        $this->reset('record');
+        $this->record = [];
     }
 
     public function switchRecord($manager, $record)
