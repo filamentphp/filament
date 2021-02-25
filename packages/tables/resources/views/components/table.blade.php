@@ -103,7 +103,7 @@
                 <tr>
                     <td
                         class="px-6 py-4 whitespace-nowrap"
-                        colspan="{{ count($table->getVisibleColumns()) + 1 + ($table->recordUrl ? 1 : 0) }}"
+                        colspan="{{ count($table->getVisibleColumns()) + 1 + ($table->recordButtonLabel ? 1 : 0) }}"
                     >
                         <div class="flex items-center justify-center h-16">
                             <p class="text-gray-500 font-mono text-xs">
