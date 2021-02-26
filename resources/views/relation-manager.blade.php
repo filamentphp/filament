@@ -26,7 +26,7 @@
     <x-filament::modal
         :name="static::class.'RelationManagerCreateModal'"
     >
-        <x-filament::card class="space-y-5 max-w-4xl">
+        <x-filament::card class="space-y-5 max-w-4xl w-full">
             <x-filament::card-header :title="__(static::$createModalHeading)" />
 
             @livewire(Filament\Resources\RelationManager\CreateRecord::class, [
@@ -42,7 +42,7 @@
     <x-filament::modal
         :name="static::class.'RelationManagerEditModal'"
     >
-        <x-filament::card class="space-y-5 max-w-4xl">
+        <x-filament::card class="space-y-5 max-w-4xl w-full">
             <x-filament::card-header :title="__(static::$editModalHeading)" />
 
             @livewire(Filament\Resources\RelationManager\EditRecord::class, [
