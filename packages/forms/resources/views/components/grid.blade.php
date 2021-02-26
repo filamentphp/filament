@@ -1,25 +1,21 @@
-@props([
-'columns' => 1,
-])
-
 @php
-    $columnsClasses = [
+    $columnSpanClass = [
         '',
-        'grid-cols-1 lg:grid-cols-1',
-        'grid-cols-1 lg:grid-cols-2',
-        'grid-cols-1 lg:grid-cols-3',
-        'grid-cols-1 lg:grid-cols-4',
-        'grid-cols-1 lg:grid-cols-5',
-        'grid-cols-1 lg:grid-cols-6',
-        'grid-cols-1 lg:grid-cols-7',
-        'grid-cols-1 lg:grid-cols-8',
-        'grid-cols-1 lg:grid-cols-9',
-        'grid-cols-1 lg:grid-cols-10',
-        'grid-cols-1 lg:grid-cols-11',
-        'grid-cols-1 lg:grid-cols-12',
-    ][$columns]
+        'lg:col-span-1',
+        'lg:col-span-2',
+        'lg:col-span-3',
+        'lg:col-span-4',
+        'lg:col-span-5',
+        'lg:col-span-6',
+        'lg:col-span-7',
+        'lg:col-span-8',
+        'lg:col-span-9',
+        'lg:col-span-10',
+        'lg:col-span-11',
+        'lg:col-span-12',
+    ][$formComponent->columnSpan];
 @endphp
 
-<div class="grid {{ $columnsClasses }} gap-6">
-    {{ $slot }}
+<div class="{{ $columnSpanClass }}">
+    <x-forms::layout :schema="$formComponent->schema" :columns="$formComponent->columns" />
 </div>

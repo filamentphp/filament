@@ -135,15 +135,15 @@ class Table
     public function isSearchable()
     {
         return $this->searchable && collect($this->columns)
-            ->filter(fn ($column) => $column->searchable)
-            ->count();
+                ->filter(fn ($column) => $column->searchable)
+                ->count();
     }
 
     public function isSortable()
     {
         return $this->sortable && collect($this->columns)
-            ->filter(fn ($column) => $column->sortable)
-            ->count();
+                ->filter(fn ($column) => $column->sortable)
+                ->count();
     }
 
     public function pagination($enabled)

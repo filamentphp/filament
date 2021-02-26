@@ -51,7 +51,7 @@ class Form
         $schema = $this->schema;
 
         foreach ($this->schema as $component) {
-            $schema = array_merge($schema, $component->getForm()->getSchema());
+            $schema = array_merge($schema, $component->getSubform()->getSchema());
         }
 
         return $schema;

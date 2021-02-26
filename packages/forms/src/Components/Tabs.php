@@ -17,14 +17,14 @@ class Tabs extends Component
 
     public function getTabsConfig()
     {
-        return collect($this->fields)
+        return collect($this->schema)
             ->mapWithKeys(fn ($tab) => [$this->id . '.' . $tab->id => __($tab->label)])
             ->toArray();
     }
 
     public function tabs($tabs)
     {
-        $this->fields($tabs);
+        $this->schema($tabs);
 
         return $this;
     }

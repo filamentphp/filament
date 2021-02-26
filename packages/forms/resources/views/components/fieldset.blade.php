@@ -23,5 +23,5 @@
         </legend>
     @endif
 
-    <x-forms::section :schema="$formComponent->schema" :columns="$formComponent->columns" />
+    <x-forms::layout :schema="$formComponent->schema" :columns="$formComponent->columns" />
 </fieldset>

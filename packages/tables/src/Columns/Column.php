@@ -30,11 +30,11 @@ class Column
 
     public $sortable = false;
 
+    public $view;
+
     protected $pendingExcludedContextModifications = [];
 
     protected $pendingIncludedContextModifications = [];
-
-    public $view;
 
     public function __construct($name)
     {

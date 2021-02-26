@@ -2,18 +2,13 @@
 
 namespace Filament\Forms\Components;
 
-use Illuminate\Support\Str;
-
-class Tab extends Component
+class Grid extends Component
 {
-    public $columns = 1;
+    public $columns = 2;
 
-    public static function make($label, $schema = [])
+    public static function make($schema = [])
     {
-        return (new static())
-            ->label($label)
-            ->id(Str::slug($label))
-            ->schema($schema);
+        return (new static())->schema($schema);
     }
 
     public function columns($columns)

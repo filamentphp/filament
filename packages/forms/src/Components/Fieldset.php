@@ -2,19 +2,15 @@
 
 namespace Filament\Forms\Components;
 
-use Illuminate\Support\Str;
-
 class Fieldset extends Component
 {
     public $columns = 2;
 
-    public static function make($label = null)
+    public static function make($label, $schema = [])
     {
-        $fieldset = (new static())->label($label);
-
-        if ($label) $fieldset = $fieldset->id(Str::slug($label));
-
-        return $fieldset;
+        return (new static())
+            ->label($label)
+            ->schema($schema);
     }
 
     public function columns($columns)
@@ -24,8 +20,8 @@ class Fieldset extends Component
         return $this;
     }
 
-    public function getForm()
+    public function getSubform()
     {
-        return parent::getForm()->columns($this->columns);
+        return parent::getSubform()->columns($this->columns);
     }
 }

@@ -43,29 +43,9 @@ class RelationManager extends Component
         'refreshRelationManagerList' => 'refreshList',
     ];
 
-    public function getTable()
-    {
-        return static::table(Table::make())
-            ->filterable($this->filterable)
-            ->pagination(false)
-            ->recordAction('openEdit')
-            ->searchable($this->searchable)
-            ->sortable($this->sortable);
-    }
-
     public static function getRelationship()
     {
         return static::$relationship;
-    }
-
-    public function getModel()
-    {
-        return $this->getQuery()->getModel();
-    }
-
-    public function getQuery()
-    {
-        return $this->owner->{static::$relationship}();
     }
 
     public static function getTitle()
@@ -78,16 +58,36 @@ class RelationManager extends Component
             ->title();
     }
 
+    public function getTable()
+    {
+        return static::table(Table::make())
+            ->filterable($this->filterable)
+            ->pagination(false)
+            ->recordAction('openEdit')
+            ->searchable($this->searchable)
+            ->sortable($this->sortable);
+    }
+
+    public function getModel()
+    {
+        return $this->getQuery()->getModel();
+    }
+
+    public function getQuery()
+    {
+        return $this->owner->{static::$relationship}();
+    }
+
     public function openCreate()
     {
-        $this->dispatchBrowserEvent('open', static::class.'RelationManagerCreateModal');
+        $this->dispatchBrowserEvent('open', static::class . 'RelationManagerCreateModal');
     }
 
     public function openEdit($record)
     {
         $this->emit('switchRelationManagerEditRecord', static::class, $record);
 
-        $this->dispatchBrowserEvent('open', static::class.'RelationManagerEditModal');
+        $this->dispatchBrowserEvent('open', static::class . 'RelationManagerEditModal');
     }
 
     public function refreshList($manager = null)

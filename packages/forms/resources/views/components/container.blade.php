@@ -6,11 +6,7 @@
     wire:submit.prevent="{{ $form->submitMethod }}"
     {{ $attributes }}
 >
-    <x-forms::grid :columns="$form->columns">
-        @foreach ($form->schema as $component)
-            {{ $component->render() }}
-        @endforeach
-    </x-forms::grid>
+    <x-forms::layout :schema="$form->schema" :columns="$form->columns" />
 
     {{ $slot }}
 </form>

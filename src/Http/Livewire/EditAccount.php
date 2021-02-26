@@ -28,7 +28,7 @@ class EditAccount extends Page
     {
         return Form::make()
             ->schema([
-                Components\Fieldset::make()->schema([
+                Components\Grid::make([
                     Components\TextInput::make('record.name')
                         ->disableAutocomplete()
                         ->required(),
@@ -37,9 +37,8 @@ class EditAccount extends Page
                         ->disableAutocomplete()
                         ->required()
                         ->unique(FilamentUser::class, 'email', true),
-                ])
-                    ->columns(2),
-                Components\Fieldset::make('Set a new password')->schema([
+                ]),
+                Components\Fieldset::make('Set a new password', [
                     Components\TextInput::make('newPassword')
                         ->label('Password')
                         ->password()
@@ -51,8 +50,7 @@ class EditAccount extends Page
                         ->password()
                         ->autocomplete('new-password')
                         ->requiredWith('newPassword'),
-                ])
-                    ->columns(2),
+                ]),
                 Components\FileUpload::make('record.avatar')
                     ->avatar()
                     ->directory('filament-avatars')

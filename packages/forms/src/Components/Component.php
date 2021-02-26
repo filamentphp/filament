@@ -28,13 +28,13 @@ class Component
 
     public $record;
 
+    public $view;
+
     protected $pendingExcludedContextModifications = [];
 
     protected $pendingIncludedContextModifications = [];
 
     protected $pendingModelModifications = [];
-
-    public $view;
 
     public function context($context)
     {
@@ -58,7 +58,7 @@ class Component
 
         $this->pendingExcludedContextModifications = [];
 
-        $this->schema($this->getForm()->context($this->context)->schema);
+        $this->schema($this->getSubform()->context($this->context)->schema);
 
         return $this;
     }
@@ -125,12 +125,12 @@ class Component
             $defaults[$this->name] = $this->default;
         }
 
-        $defaults = array_merge($defaults, $this->getForm()->getDefaults());
+        $defaults = array_merge($defaults, $this->getSubform()->getDefaults());
 
         return $defaults;
     }
 
-    public function getForm()
+    public function getSubform()
     {
         $form = Form::make()->schema($this->schema);
 
@@ -151,7 +151,7 @@ class Component
 
         $rules = property_exists($this, 'rules') ? $this->rules : [];
 
-        foreach ($this->getForm()->getRules() as $field => $conditions) {
+        foreach ($this->getSubform()->getRules() as $field => $conditions) {
             $conditions = collect($conditions)
                 ->map(function ($condition) {
                     if (! is_string($condition)) return $condition;
@@ -184,7 +184,7 @@ class Component
             }
         }
 
-        $attributes = array_merge($attributes, $this->getForm()->getValidationAttributes());
+        $attributes = array_merge($attributes, $this->getSubform()->getValidationAttributes());
 
         return $attributes;
     }
@@ -213,7 +213,7 @@ class Component
 
         $this->pendingModelModifications = [];
 
-        $this->schema($this->getForm()->model($this->model)->schema);
+        $this->schema($this->getSubform()->model($this->model)->schema);
 
         return $this;
     }
@@ -262,7 +262,7 @@ class Component
             $this->model(get_class($this->record));
         }
 
-        $this->schema($this->getForm()->record($this->record)->schema);
+        $this->schema($this->getSubform()->record($this->record)->schema);
 
         return $this;
     }
