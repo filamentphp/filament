@@ -18,10 +18,10 @@
     x-cloak
 >
     <button
-        x-on:click="open = true"
-        type="button"
-        class="px-4 py-2 text-sm font-medium text-white transition duration-200 border border-transparent rounded shadow-sm cursor-pointer focus:ring focus:ring-opacity-50 bg-danger-600 hover:bg-danger-700 focus:ring-danger-200"
-        {!! count($selected) === 0 ? 'hidden' : null !!}
+        type="button"		         
+        x-on:click="open = true"		         
+        {!! count($selected) === 0 ? 'disabled' : null !!}		
+        class="{{ count($selected) === 0 ? 'opacity-25 cursor-not-allowed' : 'cursor-pointer' }} font-medium border rounded transition duration-200 shadow-sm focus:ring focus:ring-opacity-50 text-sm py-2 px-4 border-transparent bg-danger-600 text-white hover:bg-danger-700 focus:ring-danger-200"
     >
         {{ __('tables::table.delete.button.label') }}
     </button>
