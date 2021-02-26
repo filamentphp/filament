@@ -151,16 +151,12 @@ class Component
 
         $rules = property_exists($this, 'rules') ? $this->rules : [];
 
+        foreach ($rules as $field => $conditions) {
+            $rules[$field] = $this->transformConditions($conditions);
+        }
+
         foreach ($this->getSubform()->getRules() as $field => $conditions) {
-            $conditions = collect($conditions)
-                ->map(function ($condition) {
-                    if (! is_string($condition)) return $condition;
-
-                    return (string) Str::of($condition)->replace('{{record}}', $this->record ? $this->record->getKey() : '');
-                })
-                ->toArray();
-
-            $rules[$field] = array_merge($rules[$field] ?? [], $conditions);
+            $rules[$field] = array_merge($rules[$field] ?? [], $this->transformConditions($conditions));
         }
 
         return $rules;
@@ -288,5 +284,16 @@ class Component
         $view = $this->view ?? 'forms::components.' . Str::of(class_basename(static::class))->kebab();
 
         return view($view, ['formComponent' => $this]);
+    }
+
+    protected function transformConditions($conditions)
+    {
+        return collect($conditions)
+            ->map(function ($condition) {
+                if (! is_string($condition)) return $condition;
+
+                return (string) Str::of($condition)->replace('{{record}}', $this->record ? $this->record->getKey() : '');
+            })
+            ->toArray();
     }
 }

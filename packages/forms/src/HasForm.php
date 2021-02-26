@@ -49,7 +49,7 @@ trait HasForm
 
     public function getSelectFieldDisplayValue($fieldName, $value)
     {
-        $field = collect($this->getForm()->getSchema())
+        $field = collect($this->getForm()->getFlatSchema())
             ->first(fn ($field) => $field instanceof Select && $field->name === $fieldName);
 
         if (! $field) return [];
@@ -68,7 +68,7 @@ trait HasForm
 
     public function storeTemporaryUploadedFiles()
     {
-        foreach ($this->getForm()->getSchema() as $field) {
+        foreach ($this->getForm()->getFlatSchema() as $field) {
             if (! $field instanceof FileUpload) continue;
 
             $temporaryUploadedFile = $this->getTemporaryUploadedFile($field->name);
@@ -102,7 +102,7 @@ trait HasForm
         try {
             return parent::validate($rules, $messages, $attributes);
         } catch (ValidationException $exception) {
-            $fieldToFocus = collect($this->getForm()->getSchema())
+            $fieldToFocus = collect($this->getForm()->getFlatSchema())
                 ->first(function ($field) use ($exception) {
                     return ($field instanceof Field &&
                         array_key_exists($field->name, $exception->validator->failed())
@@ -120,7 +120,7 @@ trait HasForm
         try {
             return parent::validateOnly($field, $rules, $messages, $attributes);
         } catch (ValidationException $exception) {
-            $fieldToFocus = collect($this->getForm()->getSchema())
+            $fieldToFocus = collect($this->getForm()->getFlatSchema())
                 ->first(function ($field) use ($exception) {
                     return ($field instanceof Field &&
                         array_key_exists($field->name, $exception->validator->failed())
@@ -135,7 +135,7 @@ trait HasForm
 
     public function getSelectFieldOptionSearchResults($fieldName, $search = '')
     {
-        $field = collect($this->getForm()->getSchema())
+        $field = collect($this->getForm()->getFlatSchema())
             ->first(fn ($field) => $field instanceof Select && $field->name === $fieldName);
 
         if (! $field) return [];
@@ -156,7 +156,7 @@ trait HasForm
         try {
             return parent::validate($rules);
         } catch (ValidationException $exception) {
-            $fieldToFocus = collect($this->getForm()->getSchema())
+            $fieldToFocus = collect($this->getForm()->getFlatSchema())
                 ->first(function ($field) use ($exception) {
                     return (
                         $field instanceof Field &&

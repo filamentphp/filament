@@ -46,12 +46,12 @@ class Form
         return $defaults;
     }
 
-    public function getSchema()
+    public function getFlatSchema()
     {
         $schema = $this->schema;
 
         foreach ($this->schema as $component) {
-            $schema = array_merge($schema, $component->getSubform()->getSchema());
+            $schema = array_merge($schema, $component->getSubform()->getFlatSchema());
         }
 
         return $schema;
