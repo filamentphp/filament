@@ -6,8 +6,8 @@
     'table',
 ])
 
-<div {{ $attributes->merge(['class' => 'space-y-8']) }}>
-    <div class="sm:flex items-center justify-between">
+<div {{ $attributes->merge(['class' => 'space-y-4']) }}>
+    <div class="items-center justify-between sm:flex">
         <x-tables::delete-selected :selected="$selected" />
 
         <x-tables::filter :table="$table" />
