@@ -19,9 +19,9 @@
 >
     <button
         x-on:click="open = true"
-        {!! count($selected) === 0 ? 'disabled' : null !!}
         type="button"
-        class="{{ count($selected) === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer' }} font-medium border rounded transition duration-200 shadow-sm focus:ring focus:ring-opacity-50 text-sm py-2 px-4 border-transparent bg-danger-600 text-white hover:bg-danger-700 focus:ring-danger-200"
+        class="px-4 py-2 text-sm font-medium text-white transition duration-200 border border-transparent rounded shadow-sm cursor-pointer focus:ring focus:ring-opacity-50 bg-danger-600 hover:bg-danger-700 focus:ring-danger-200"
+        {!! count($selected) === 0 ? 'hidden' : null !!}
     >
         {{ __('tables::table.delete.button.label') }}
     </button>
@@ -29,9 +29,9 @@
     <div
         x-show="open"
         x-bind:aria-hidden="! open"
-        class="fixed z-40 inset-0 overflow-y-auto"
+        class="fixed inset-0 z-40 overflow-y-auto"
     >
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center cursor-default sm:block sm:p-0">
+        <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center cursor-default sm:block sm:p-0">
             <div
                 x-show="open"
                 x-transition:enter="ease-out duration-300"
@@ -59,15 +59,15 @@
                 role="dialog"
                 aria-modal="true"
                 x-on:click.away="open = false"
-                class="inline-block align-bottom text-left overflow-hidden transform transition-all sm:my-8 sm:align-middle"
+                class="inline-block overflow-hidden text-left align-bottom transition-all transform sm:my-8 sm:align-middle"
             >
                 <div
                     class="flex flex-col space-y-4"
                 >
                     <div class="flex-grow">
-                        <div class="bg-white shadow-xl rounded p-4 md:p-6 space-y-5 max-w-2xl">
+                        <div class="max-w-2xl p-4 space-y-5 bg-white rounded shadow-xl md:p-6">
                             <div class="space-y-2">
-                                <h3 class="text-lg leading-tight font-medium">
+                                <h3 class="text-lg font-medium leading-tight">
                                     {{ __('tables::table.delete.modal.heading') }}
                                 </h3>
 
@@ -80,7 +80,7 @@
                                 <button
                                     x-on:click="open = false"
                                     type="button"
-                                    class="cursor-pointer font-medium border rounded transition duration-200 shadow-sm focus:ring focus:ring-opacity-50 text-sm py-2 px-4 border-gray-300 bg-white text-gray-800 hover:bg-gray-100 focus:ring-primary-200"
+                                    class="px-4 py-2 text-sm font-medium text-gray-800 transition duration-200 bg-white border border-gray-300 rounded shadow-sm cursor-pointer focus:ring focus:ring-opacity-50 hover:bg-gray-100 focus:ring-primary-200"
                                 >
                                     {{ __('tables::table.delete.modal.buttons.cancel.label') }}
                                 </button>
@@ -89,7 +89,7 @@
                                     wire:click="deleteSelected"
                                     x-on:click="open = false"
                                     type="button"
-                                    class="cursor-pointer font-medium border rounded transition duration-200 shadow-sm focus:ring focus:ring-opacity-50 text-sm py-2 px-4 border-transparent bg-danger-600 text-white hover:bg-danger-700 focus:ring-danger-200"
+                                    class="px-4 py-2 text-sm font-medium text-white transition duration-200 border border-transparent rounded shadow-sm cursor-pointer focus:ring focus:ring-opacity-50 bg-danger-600 hover:bg-danger-700 focus:ring-danger-200"
                                 >
                                     {{ __('tables::table.delete.modal.buttons.delete.label') }}
                                 </button>

@@ -185,7 +185,7 @@
                             @endif
 
                             @if ($formComponent->hasToolbarButton('redo'))
-                                <button type="button" class="trix-button trix-button--icon trix-button--icon-dangero"
+                                <button type="button" class="trix-button trix-button--icon trix-button--icon-redo"
                                         data-trix-action="redo" data-trix-key="shift+z" title="{{ __('forms::fields.richEditor.toolbarButtons.redo') }}" tabindex="-1"
                                         disabled>{{ __('forms::fields.richEditor.toolbarButtons.redo') }}</button>
                             @endif
@@ -220,11 +220,11 @@
                 placeholder="{{ __($formComponent->placeholder) }}"
                 toolbar="trix-toolbar-{{ $formComponent->id }}"
                 x-ref="trix"
-                class="block w-full rounded shadow-sm placeholder-gray-400 placeholder-opacity-100 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 bg-white border-gray-300 prose max-w-none"
+                class="block w-full prose placeholder-gray-400 placeholder-opacity-100 bg-white border-gray-300 rounded shadow-sm focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 max-w-none"
                 {!! Filament\format_attributes($formComponent->extraAttributes) !!}
             />
         @else
-            <div x-html="value" class="p-3 rounded shadow-sm border border-gray-300 prose"></div>
+            <div x-html="value" class="p-3 prose border border-gray-300 rounded shadow-sm"></div>
         @endunless
     </div>
 </x-forms::field-group>
