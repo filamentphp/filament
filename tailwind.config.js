@@ -64,6 +64,18 @@ module.exports = {
           },
         },
       },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            a: {
+              color: theme('colors.secondary.700'),
+              '&:hover': {
+                color: theme('colors.secondary.700'),
+              },
+            },
+          },
+        },
+      }),
     },
   },
   variants: {
