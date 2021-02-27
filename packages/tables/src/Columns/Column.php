@@ -16,8 +16,6 @@ class Column
 
     public $hidden = false;
 
-    public $id;
-
     public $label;
 
     public $name;
@@ -140,13 +138,6 @@ class Column
         return $this;
     }
 
-    public function id($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
     public function isSearchable()
     {
         return $this->searchable && $this->getValueUsing === null;
@@ -167,12 +158,6 @@ class Column
     public function name($name)
     {
         $this->name = $name;
-
-        $this->id(
-            (string) Str::of($this->name)
-                ->replace('.', '-')
-                ->slug(),
-        );
 
         $this->label(
             (string) Str::of($this->name)
