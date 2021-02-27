@@ -8,6 +8,8 @@ class Field extends Component
 {
     public $default = null;
 
+    public $disabled = false;
+
     public $extraAttributes = [];
 
     public $helpMessage;
@@ -34,6 +36,20 @@ class Field extends Component
         return new static($name);
     }
 
+    public function disabled()
+    {
+        $this->disabled = true;
+
+        return $this;
+    }
+
+    public function enabled()
+    {
+        $this->disabled = false;
+
+        return $this;
+    }
+
     public function name($name)
     {
         $this->name = $name;
@@ -57,7 +73,7 @@ class Field extends Component
 
     public function rules($conditions)
     {
-        $this->rules = [$this->name => $conditions];
+        $this->addRules([$this->name => $conditions]);
 
         return $this;
     }
@@ -109,7 +125,15 @@ class Field extends Component
 
     public function removeRules($rules)
     {
+        if (! is_array($rules)) {
+            $rules = [$this->name => $rules];
+        }
+
         foreach ($rules as $field => $conditionsToRemove) {
+            if (is_numeric($field)) {
+                $field = $this->name;
+            }
+
             if (! is_array($conditionsToRemove)) $conditionsToRemove = explode('|', $conditionsToRemove);
 
             if (empty($conditionsToRemove)) {
@@ -120,13 +144,19 @@ class Field extends Component
 
             $this->rules[$field] = collect($this->rules[$field] ?? [])
                 ->filter(function ($originalCondition) use ($conditionsToRemove) {
-                    if (! is_string($originalCondition)) return true;
+                    if (! is_string($originalCondition)) {
+                        return true;
+                    }
 
                     $conditionsToRemove = collect($conditionsToRemove);
 
-                    if ($conditionsToRemove->contains($originalCondition)) return false;
+                    if ($conditionsToRemove->contains($originalCondition)) {
+                        return false;
+                    }
 
-                    if (! Str::of($originalCondition)->contains(':')) return true;
+                    if (! Str::of($originalCondition)->contains(':')) {
+                        return true;
+                    }
 
                     $originalConditionType = (string) Str::of($originalCondition)->before(':');
 
@@ -142,18 +172,34 @@ class Field extends Component
 
     public function addRules($rules)
     {
+        if (! is_array($rules)) {
+            $rules = [$this->name => $rules];
+        }
+
         foreach ($rules as $field => $conditionsToAdd) {
-            if (! is_array($conditionsToAdd)) $conditionsToAdd = explode('|', $conditionsToAdd);
+            if (is_numeric($field)) {
+                $field = $this->name;
+            }
+
+            if (! is_array($conditionsToAdd)) {
+                $conditionsToAdd = explode('|', $conditionsToAdd);
+            }
 
             $this->rules[$field] = collect($this->rules[$field] ?? [])
                 ->filter(function ($originalCondition) use ($conditionsToAdd) {
-                    if (! is_string($originalCondition)) return true;
+                    if (! is_string($originalCondition)) {
+                        return true;
+                    }
 
                     $conditionsToAdd = collect($conditionsToAdd);
 
-                    if ($conditionsToAdd->contains($originalCondition)) return false;
+                    if ($conditionsToAdd->contains($originalCondition)) {
+                        return false;
+                    }
 
-                    if (! Str::of($originalCondition)->contains(':')) return true;
+                    if (! Str::of($originalCondition)->contains(':')) {
+                        return true;
+                    }
 
                     $originalConditionType = (string) Str::of($originalCondition)->before(':');
 

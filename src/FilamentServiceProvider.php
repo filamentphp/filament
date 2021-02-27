@@ -60,6 +60,7 @@ class FilamentServiceProvider extends ServiceProvider
         }
 
         $this->commands([
+            Commands\MakeRelationManagerCommand::class,
             Commands\MakeResourceCommand::class,
             Commands\MakeRoleCommand::class,
             Commands\MakePageCommand::class,

@@ -7,7 +7,6 @@ class TextInput extends Field
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeCompared;
-    use Concerns\CanBeDisabled;
     use Concerns\CanBeUnique;
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasPlaceholder;
@@ -44,6 +43,15 @@ class TextInput extends Field
         return $this;
     }
 
+    public function numeric()
+    {
+        $this->type('number');
+
+        $this->addRules([$this->name => ['numeric']]);
+
+        return $this;
+    }
+
     public function tel()
     {
         $this->type('tel');
@@ -54,6 +62,15 @@ class TextInput extends Field
     public function password()
     {
         $this->type('password');
+
+        return $this;
+    }
+
+    public function url()
+    {
+        $this->type('url');
+
+        $this->addRules([$this->name => ['url']]);
 
         return $this;
     }

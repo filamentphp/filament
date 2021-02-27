@@ -3,7 +3,7 @@
 namespace Filament\Resources;
 
 use Filament\Tables\HasTable;
-use Filament\Tables\Table;
+use Filament\Resources\Tables\Table;
 use Illuminate\Support\Str;
 use Livewire\Component;
 

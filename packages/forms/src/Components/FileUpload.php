@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 
 class FileUpload extends Field
 {
-    use Concerns\CanBeDisabled;
     use Concerns\HasPlaceholder;
 
     public $acceptedFileTypes = [];

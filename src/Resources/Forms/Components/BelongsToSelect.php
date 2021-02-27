@@ -10,16 +10,10 @@ class BelongsToSelect extends Select
 
     public function relationship($relationshipName, $displayColumnName, $callback = null)
     {
-        $this->getDisplayValueUsing(function ($value) use ($callback, $displayColumnName, $relationshipName) {
+        $this->getDisplayValueUsing(function ($value) use ($displayColumnName, $relationshipName) {
             $relationship = (new $this->model())->{$relationshipName}();
 
-            $query = $relationship->getRelated();
-
-            if ($callback) {
-                $query = $callback($query);
-            }
-
-            $record = $query->where($relationship->getOwnerKeyName(), $value)->first();
+            $record = $relationship->getRelated()->where($relationship->getOwnerKeyName(), $value)->first();
 
             return $record ? $record->getAttributeValue($displayColumnName) : null;
         });
