@@ -4,7 +4,7 @@ namespace Filament\Forms\Components;
 
 class Section extends Component
 {
-    public $columns = 2;
+    public $columns = 1;
 
     public $heading;
 
