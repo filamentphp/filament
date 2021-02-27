@@ -12,6 +12,7 @@ class CreateFilamentUsersTable extends Migration
             $table->id();
             $table->string('avatar')->nullable();
             $table->string('email')->unique();
+            $table->boolean('is_admin')->default(0);
             $table->string('name');
             $table->string('password');
             $table->rememberToken();
