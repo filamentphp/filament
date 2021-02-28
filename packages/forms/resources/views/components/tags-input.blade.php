@@ -1,6 +1,6 @@
-@pushonce('filament-scripts:tags-component')
+@pushonce('filament-scripts:tags-input-component')
     <script>
-        function tags(config) {
+        function tagsInput(config) {
             return {
                 newTag: '',
 
@@ -61,7 +61,7 @@
     :required="$formComponent->required"
 >
     <div
-        x-data="tags({
+        x-data="tagsInput({
             separator: '{{ $formComponent->separator }}',
             @if (Str::of($formComponent->nameAttribute)->startsWith('wire:model'))
             value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},

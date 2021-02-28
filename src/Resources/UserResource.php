@@ -2,25 +2,23 @@
 
 namespace Filament\Resources;
 
-use Filament\Models\FilamentUser;
+use Filament\Filament;
+use Filament\Models\User;
 use Filament\Resources\Forms\Components;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Tables\Columns;
 use Filament\Resources\Tables\Filter;
 use Filament\Resources\Tables\Table;
 use Filament\Resources\UserResource\Pages;
+use Illuminate\Support\Str;
 
 class UserResource extends Resource
 {
     public static $icon = 'heroicon-o-user-group';
 
-    public static $label = 'user';
-
-    public static $model = FilamentUser::class;
+    public static $model = User::class;
 
     public static $routeNamePrefix = 'filament';
-
-    public static $slug = 'users';
 
     public static function form(Form $form)
     {
@@ -34,7 +32,7 @@ class UserResource extends Resource
                         ->email()
                         ->disableAutocomplete()
                         ->required()
-                        ->unique(FilamentUser::class, 'email', true),
+                        ->unique(User::class, 'email', true),
                 ]),
                 Components\Fieldset::make('Password', [
                     Components\TextInput::make('password')
@@ -69,6 +67,13 @@ class UserResource extends Resource
                         ->directory('filament-avatars')
                         ->disk(config('filament.default_filesystem_disk')),
                     Components\Checkbox::make('is_admin')->label('Administrator?'),
+                    Components\MultiSelect::make('roles')
+                        ->placeholder('Select a role')
+                        ->options(
+                            collect(Filament::getRoles())
+                                ->mapWithKeys(fn ($role) => [$role => Str::ucfirst($role::getLabel())])
+                                ->toArray(),
+                        ),
                 ]),
             ]);
     }

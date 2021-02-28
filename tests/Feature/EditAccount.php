@@ -3,7 +3,7 @@
 namespace Filament\Tests\Feature;
 
 use Filament\Http\Livewire\EditAccount;
-use Filament\Models\FilamentUser;
+use Filament\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +16,7 @@ class EditAccountTest extends TestCase
     /** @test */
     public function can_view_account_page()
     {
-        $user = FilamentUser::factory()->create();
+        $user = User::factory()->create();
 
         $this->be($user);
 
@@ -30,9 +30,9 @@ class EditAccountTest extends TestCase
     {
         Storage::fake(config('filament.storage_disk'));
 
-        $user = FilamentUser::factory()->create();
+        $user = User::factory()->create();
 //        $newAvatar = UploadedFile::fake()->image('avatar.jpg');
-        $newUserDetails = FilamentUser::factory()->make();
+        $newUserDetails = User::factory()->make();
         $newPassword = Str::random();
 
         $this->be($user);
@@ -65,7 +65,7 @@ class EditAccountTest extends TestCase
 //    /** @test */
 //    public function can_delete_avatar()
 //    {
-//        $user = FilamentUser::factory()->create();
+//        $user = User::factory()->create();
 //        $newAvatar = UploadedFile::fake()->image('avatar.jpg');
 //
 //        $this->be($user);
@@ -92,7 +92,7 @@ class EditAccountTest extends TestCase
 //    /** @test */
 //    public function new_avatar_is_image()
 //    {
-//        $user = FilamentUser::factory()->create();
+//        $user = User::factory()->create();
 //        $newAvatar = UploadedFile::fake()->create('document.txt');
 //
 //        $this->be($user);
@@ -105,7 +105,7 @@ class EditAccountTest extends TestCase
     /** @test */
     public function new_password_contains_minimum_8_characters()
     {
-        $user = FilamentUser::factory()->create();
+        $user = User::factory()->create();
 
         $this->be($user);
 
@@ -118,7 +118,7 @@ class EditAccountTest extends TestCase
     /** @test */
     public function new_password_is_confirmed()
     {
-        $user = FilamentUser::factory()->create();
+        $user = User::factory()->create();
 
         $this->be($user);
 
@@ -132,7 +132,7 @@ class EditAccountTest extends TestCase
     /** @test */
     public function record_email_is_required()
     {
-        $user = FilamentUser::factory()->create();
+        $user = User::factory()->create();
 
         $this->be($user);
 
@@ -145,7 +145,7 @@ class EditAccountTest extends TestCase
     /** @test */
     public function record_email_is_valid_email()
     {
-        $user = FilamentUser::factory()->create();
+        $user = User::factory()->create();
 
         $this->be($user);
 
@@ -158,7 +158,7 @@ class EditAccountTest extends TestCase
     /** @test */
     public function record_name_is_required()
     {
-        $user = FilamentUser::factory()->create();
+        $user = User::factory()->create();
 
         $this->be($user);
 

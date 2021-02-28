@@ -9,7 +9,6 @@ class Select extends Field
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeCompared;
     use Concerns\CanBeUnique;
-    use Concerns\CanBeLengthConstrained;
     use Concerns\HasPlaceholder;
 
     public $emptyOptionsMessage = 'forms::fields.select.emptyOptionsMessage';

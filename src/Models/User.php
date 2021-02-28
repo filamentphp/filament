@@ -2,17 +2,21 @@
 
 namespace Filament\Models;
 
-use Filament\Database\Factories\FilamentUserFactory;
+use Filament\Database\Factories\UserFactory;
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\URL;
 
-class FilamentUser extends Authenticatable
+class User extends Authenticatable
 {
     use HasFactory;
     use Notifiable;
+
+    protected $casts = [
+        'roles' => 'array',
+    ];
 
     protected $guarded = [];
 
@@ -21,9 +25,11 @@ class FilamentUser extends Authenticatable
         'remember_token',
     ];
 
+    protected $table = 'filament_users';
+
     protected static function newFactory()
     {
-        return FilamentUserFactory::new();
+        return UserFactory::new();
     }
 
     public function can($resource, $route = 'index')
@@ -33,10 +39,7 @@ class FilamentUser extends Authenticatable
 
     public function hasRole($role)
     {
-        return FilamentRoleUser::where([
-            ['role', $role],
-            ['user_id', $this->attributes['id']],
-        ])->exists();
+        return in_array($role, $this->roles);
     }
 
     public function sendPasswordResetNotification($token)

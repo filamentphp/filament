@@ -2,7 +2,7 @@
 
 namespace Filament\Commands;
 
-use Filament\Models\FilamentUser;
+use Filament\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 
@@ -24,7 +24,7 @@ class MakeUserCommand extends Command
 
         $isAdmin = $this->confirm('Would you like this user to be an administrator?', true);
 
-        $user = FilamentUser::create([
+        $user = User::create([
             'is_admin' => $isAdmin,
             'name' => $name,
             'email' => $email,
@@ -34,7 +34,7 @@ class MakeUserCommand extends Command
         $loginUrl = route('filament.auth.login');
         $this->info("Success! {$user->email} may now log in at {$loginUrl}.");
 
-        if (FilamentUser::count() === 1 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
+        if (User::count() === 1 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
             if (PHP_OS_FAMILY === 'Darwin') exec('open https://github.com/laravel-filament/filament');
             if (PHP_OS_FAMILY === 'Linux') exec('xdg-open https://github.com/laravel-filament/filament');
             if (PHP_OS_FAMILY === 'Windows') exec('start https://github.com/laravel-filament/filament');

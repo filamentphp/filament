@@ -3,7 +3,7 @@
 namespace Filament\Tests\Feature\Auth;
 
 use Filament\Http\Livewire\Auth\ResetPassword;
-use Filament\Models\FilamentUser;
+use Filament\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
@@ -26,7 +26,7 @@ class ResetPasswordTest extends TestCase
     protected function generateToken($user = null)
     {
         if (! $user) {
-            $user = FilamentUser::factory()->create();
+            $user = User::factory()->create();
         }
 
         return Password::broker('filament_users')->createToken($user);
@@ -35,7 +35,7 @@ class ResetPasswordTest extends TestCase
     /** @test */
     public function can_reset_password()
     {
-        $user = FilamentUser::factory()->create();
+        $user = User::factory()->create();
         $newPassword = Str::random();
 
         Livewire::test(ResetPassword::class, [
@@ -68,7 +68,7 @@ class ResetPasswordTest extends TestCase
     /** @test */
     public function shows_an_error_when_invalid_token_supplied()
     {
-        $user = FilamentUser::factory()->create();
+        $user = User::factory()->create();
         $newPassword = Str::random();
 
         Livewire::test(ResetPassword::class, [

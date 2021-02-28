@@ -5,7 +5,7 @@ namespace Filament\Http\Livewire;
 use Filament\Forms\Components;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
-use Filament\Models\FilamentUser;
+use Filament\Models\User;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -36,7 +36,7 @@ class EditAccount extends Page
                         ->email()
                         ->disableAutocomplete()
                         ->required()
-                        ->unique(FilamentUser::class, 'email', true),
+                        ->unique(User::class, 'email', true),
                 ]),
                 Components\Fieldset::make('Set a new password', [
                     Components\TextInput::make('newPassword')

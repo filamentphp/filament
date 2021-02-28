@@ -15,6 +15,7 @@ class CreateFilamentUsersTable extends Migration
             $table->boolean('is_admin')->default(0);
             $table->string('name');
             $table->string('password');
+            $table->json('roles')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

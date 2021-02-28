@@ -3,7 +3,7 @@
 namespace Filament\Tests\Feature\Auth;
 
 use Filament\Http\Livewire\Auth\RequestPassword;
-use Filament\Models\FilamentUser;
+use Filament\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Support\Facades\Notification;
@@ -24,7 +24,7 @@ class RequestPasswordTest extends TestCase
     {
         Notification::fake();
 
-        $user = FilamentUser::factory()->create();
+        $user = User::factory()->create();
 
         Livewire::test(RequestPassword::class)
             ->set('email', $user->email)

@@ -23,7 +23,6 @@ class Role
         if (static::$label) return static::$label;
 
         return (string) Str::of(class_basename(static::class))
-            ->beforeLast('Role')
             ->kebab()
             ->replace('-', ' ');
     }

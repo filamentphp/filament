@@ -5,7 +5,7 @@ namespace Filament;
 use BladeUI\Icons\Factory as BladeUIFactory;
 use Filament\Commands;
 use Filament\Http\Middleware;
-use Filament\Models\FilamentUser;
+use Filament\Models\User;
 use Filament\Pages\Page;
 use Filament\Providers\RouteServiceProvider;
 use Filament\Resources\Resource;
@@ -151,7 +151,7 @@ class FilamentServiceProvider extends ServiceProvider
 
         $this->app['config']->set('auth.providers.filament_users', [
             'driver' => 'eloquent',
-            'model' => FilamentUser::class,
+            'model' => User::class,
         ]);
 
         $this->app['config']->set('forms', [

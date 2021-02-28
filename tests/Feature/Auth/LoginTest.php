@@ -3,7 +3,7 @@
 namespace Filament\Tests\Feature\Auth;
 
 use Filament\Http\Livewire\Auth\Login;
-use Filament\Models\FilamentUser;
+use Filament\Models\User;
 use Filament\Tests\TestCase;
 use Livewire\Livewire;
 
@@ -20,7 +20,7 @@ class LoginTest extends TestCase
     /** @test */
     public function can_login()
     {
-        $user = FilamentUser::factory()->create();
+        $user = User::factory()->create();
 
         Livewire::test(Login::class)
             ->set('email', $user->email)
@@ -34,7 +34,7 @@ class LoginTest extends TestCase
     /** @test */
     public function shows_an_error_when_bad_login_attempt()
     {
-        $user = FilamentUser::factory()->create();
+        $user = User::factory()->create();
 
         Livewire::test(Login::class)
             ->set('email', $user->email)
