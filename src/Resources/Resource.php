@@ -15,6 +15,8 @@ class Resource
 
     public static $model;
 
+    public static $routeNamePrefix = 'filament.resources';
+
     public static $slug;
 
     public static $sort = 0;
@@ -38,7 +40,7 @@ class Resource
     {
         if (! $name) $name = static::router()->getIndexRoute()->name;
 
-        return route('filament.resources.' . static::getSlug() . '.' . $name, $parameters, $absolute);
+        return route(static::$routeNamePrefix . '.' . static::getSlug() . '.' . $name, $parameters, $absolute);
     }
 
     public static function getIcon()

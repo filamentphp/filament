@@ -117,7 +117,7 @@
                     if (this.autofocus) this.openListbox()
 
                     this.$watch('search', (() => {
-                        if (! this.open || this.search === '' || this.search === null) {
+                        if (!this.open || this.search === '' || this.search === null) {
                             this.options = this.initialOptions
                             this.focusedOptionIndex = 0
 
@@ -235,16 +235,16 @@
 
         <div
             @unless($formComponent->disabled)
-                x-ref="button"
-                x-on:click="toggleListboxVisibility()"
-                x-on:keydown.enter.stop.prevent="open ? selectOption() : openListbox()"
-                x-on:keydown.space="if (! open) openListbox()"
-                x-on:keydown.backspace="if (! search) clearValue()"
-                x-on:keydown.clear="if (! search) clearValue()"
-                x-on:keydown.delete="if (! search) clearValue()"
-                x-bind:aria-expanded="open"
-                aria-haspopup="listbox"
-                tabindex="1"
+            x-ref="button"
+            x-on:click="toggleListboxVisibility()"
+            x-on:keydown.enter.stop.prevent="open ? selectOption() : openListbox()"
+            x-on:keydown.space="if (! open) openListbox()"
+            x-on:keydown.backspace="if (! search) clearValue()"
+            x-on:keydown.clear="if (! search) clearValue()"
+            x-on:keydown.delete="if (! search) clearValue()"
+            x-bind:aria-expanded="open"
+            aria-haspopup="listbox"
+            tabindex="1"
             @endunless
             class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 {{ $formComponent->disabled ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
         >

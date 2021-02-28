@@ -27,7 +27,7 @@
     ][$columnSpan];
 @endphp
 
-<div class="h-full flex items-center {{ $columnSpanClass }}">
+<div class="flex {{ $columnSpanClass }}">
     <div class="space-y-2 w-full">
         @if ($label || $hint)
             <div class="flex items-center justify-between space-x-2">

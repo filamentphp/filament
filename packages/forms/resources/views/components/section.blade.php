@@ -13,7 +13,7 @@
         'lg:col-span-10',
         'lg:col-span-11',
         'lg:col-span-12',
-    ][$formComponent->columnSpan];
+    ][$formComponent->columnSpan]
 @endphp
 
 <div class="{{ $columnSpanClass }} space-y-3">

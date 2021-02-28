@@ -14,9 +14,9 @@ class TablesServiceProvider extends ServiceProvider
 
     protected function bootLoaders()
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'tables');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'tables');
 
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'tables');
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'tables');
     }
 
     protected function bootPublishing()
@@ -26,11 +26,11 @@ class TablesServiceProvider extends ServiceProvider
         }
 
         $this->publishes([
-            __DIR__ . '/../resources/lang' => resource_path('lang/vendor/tables'),
+            __DIR__.'/../resources/lang' => resource_path('lang/vendor/tables'),
         ], 'tables-lang');
 
         $this->publishes([
-            __DIR__ . '/../resources/views' => resource_path('views/vendor/tables'),
+            __DIR__.'/../resources/views' => resource_path('views/vendor/tables'),
         ], 'tables-views');
     }
 }

@@ -20,14 +20,21 @@
                 <x-filament::dropdown
                     class="w-full text-left flex-grow flex items-center p-4 space-x-3 transition-colors duration-200 hover:text-white hover:bg-gray-800">
                     <x-slot name="button">
-                        <x-filament-avatar :user="Auth::user()" :size="32" class="flex-shrink-0 w-8 h-8 rounded-full" />
-                        <span class="flex-grow text-sm leading-tight font-medium">{{ Auth::user()->name }}</span>
+                        <x-filament-avatar :user="Auth::guard('filament')->user()" :size="32" class="flex-shrink-0 w-8 h-8 rounded-full" />
+                        <span class="flex-grow text-sm leading-tight font-medium">{{ Auth::guard('filament')->user()->name }}</span>
                     </x-slot>
 
-                    <x-filament::dropdown-link
-                        href="{{ route('filament.account') }}">{{ __('filament::edit-account.edit') }}</x-filament::dropdown-link>
-                    <livewire:filament.auth.logout
-                        class="w-full py-2 px-4 transition-colors duration-200 text-gray-600 hover:bg-gray-200" />
+                    @if (Auth::guard('filament')->user()->is_admin)
+                        <x-filament::dropdown-link href="{{ route('filament.users.index') }}">
+                            Users
+                        </x-filament::dropdown-link>
+                    @endif
+
+                    <x-filament::dropdown-link href="{{ route('filament.account') }}">
+                        {{ __('filament::edit-account.edit') }}
+                    </x-filament::dropdown-link>
+
+                    <livewire:filament.auth.logout class="w-full py-2 px-4 transition-colors duration-200 text-gray-600 hover:bg-gray-200" />
                 </x-filament::dropdown>
             </header>
 

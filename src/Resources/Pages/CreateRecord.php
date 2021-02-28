@@ -17,21 +17,6 @@ class CreateRecord extends Page
 
     public $record;
 
-    public function getForm()
-    {
-        return static::getResource()::form(Form::make())
-            ->context(static::class)
-            ->model(static::getModel())
-            ->submitMethod('create');
-    }
-
-    public function mount()
-    {
-        $this->record = [];
-
-        $this->fillWithFormDefaults();
-    }
-
     public function create()
     {
         $this->validateTemporaryUploadedFiles();
@@ -45,5 +30,20 @@ class CreateRecord extends Page
         $this->redirect($this->getResource()::generateUrl(static::$showRoute, [
             'record' => $record,
         ]));
+    }
+
+    public function getForm()
+    {
+        return static::getResource()::form(Form::make())
+            ->context(static::class)
+            ->model(static::getModel())
+            ->submitMethod('create');
+    }
+
+    public function mount()
+    {
+        $this->record = [];
+
+        $this->fillWithFormDefaults();
     }
 }

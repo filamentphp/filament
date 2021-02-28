@@ -2,8 +2,8 @@
 
 namespace Filament\Resources;
 
-use Filament\Tables\HasTable;
 use Filament\Resources\Tables\Table;
+use Filament\Tables\HasTable;
 use Illuminate\Support\Str;
 use Livewire\Component;
 

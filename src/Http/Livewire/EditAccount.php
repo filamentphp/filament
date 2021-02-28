@@ -73,7 +73,7 @@ class EditAccount extends Page
 
         $this->validate();
 
-        if ($this->newPassword) {
+        if ($this->record->newPassword) {
             $this->record->password = Hash::make($this->newPassword);
 
             $this->newPassword = null;

@@ -6,7 +6,7 @@ use Filament\Http\Controllers;
 use Filament\Http\Livewire;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\RedirectIfAuthenticated;
-use Filament\Models\Resource;
+use Filament\Resources\UserResource;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Support\Facades\Route;
 
@@ -41,5 +41,11 @@ Route::middleware([Authenticate::class])->group(function () {
                 ->middleware('filament.authorize.resource-page-route:' . $resource . ',' . $route->page)
                 ->name('resources.' . $resource::getSlug() . '.' . $route->name);
         }
+    }
+
+    foreach (UserResource::router()->routes as $route) {
+        Route::get(UserResource::getSlug() . '/' . $route->uri, $route->page)
+            ->middleware('filament.authorize.admins')
+            ->name(UserResource::getSlug() . '.' . $route->name);
     }
 });

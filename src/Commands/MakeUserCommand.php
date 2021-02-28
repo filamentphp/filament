@@ -22,7 +22,10 @@ class MakeUserCommand extends Command
 
         $password = $this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8']);
 
+        $isAdmin = $this->confirm('Would you like this user to be an administrator?', true);
+
         $user = FilamentUser::create([
+            'is_admin' => $isAdmin,
             'name' => $name,
             'email' => $email,
             'password' => Hash::make($password),
