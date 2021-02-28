@@ -25,7 +25,7 @@
 
     <x-filament::app-content>
         <x-filament::widgets>
-            <x-filament::widget :title="config('filament.name').' v1.0'">
+            <x-filament::widget :title="'Filament v1.0'">
                 {{--
                 <x-slot name="settings">
                     <x-filament::dropdown-link button>
@@ -41,7 +41,7 @@
             <x-filament::widget
                 title="Access Log"
                 :columns="1"
-            >   
+            >
                 <span class="font-mono text-xs">Access log...</span>
             </x-filament::widget>
         </x-filament::widgets>
