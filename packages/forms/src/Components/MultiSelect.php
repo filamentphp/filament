@@ -7,9 +7,9 @@ class MultiSelect extends Field
     use Concerns\CanBeAutofocused;
     use Concerns\HasPlaceholder;
 
-    public $emptyOptionsMessage = 'forms::fields.select.emptyOptionsMessage';
+    public $emptyOptionsMessage = 'forms::fields.multiSelect.emptyOptionsMessage';
 
-    public $noSearchResultsMessage = 'forms::fields.select.noSearchResultsMessage';
+    public $noSearchResultsMessage = 'forms::fields.multiSelect.noSearchResultsMessage';
 
     public $options = [];
 
@@ -17,7 +17,7 @@ class MultiSelect extends Field
     {
         parent::__construct($name);
 
-        $this->placeholder('forms::fields.select.placeholder');
+        $this->placeholder('forms::fields.multiSelect.placeholder');
     }
 
     public function emptyOptionsMessage($message)

@@ -38,14 +38,12 @@ Route::middleware([Authenticate::class])->group(function () {
     foreach (Filament::getResources() as $resource) {
         foreach ($resource::router()->routes as $route) {
             Route::get('resources/' . $resource::getSlug() . '/' . $route->uri, $route->page)
-                ->middleware('filament.authorize.resource-page-route:' . $resource . ',' . $route->page)
                 ->name('resources.' . $resource::getSlug() . '.' . $route->name);
         }
     }
 
     foreach (UserResource::router()->routes as $route) {
         Route::get(UserResource::getSlug() . '/' . $route->uri, $route->page)
-            ->middleware('filament.authorize.admins')
             ->name(UserResource::getSlug() . '.' . $route->name);
     }
 });

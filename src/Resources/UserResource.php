@@ -62,11 +62,6 @@ class UserResource extends Resource
                         ->requiredWith('newPassword'),
                 ])->only(Pages\EditUser::class),
                 Components\Grid::make([
-                    Components\FileUpload::make('avatar')
-                        ->avatar()
-                        ->directory('filament-avatars')
-                        ->disk(config('filament.default_filesystem_disk')),
-                    Components\Checkbox::make('is_admin')->label('Administrator?'),
                     Components\MultiSelect::make('roles')
                         ->placeholder('Select a role')
                         ->options(
@@ -74,7 +69,12 @@ class UserResource extends Resource
                                 ->mapWithKeys(fn ($role) => [$role => Str::ucfirst($role::getLabel())])
                                 ->toArray(),
                         ),
+                    Components\Checkbox::make('is_admin')->label('Administrator?'),
                 ]),
+                Components\FileUpload::make('avatar')
+                    ->avatar()
+                    ->directory('filament-avatars')
+                    ->disk(config('filament.default_filesystem_disk')),
             ]);
     }
 

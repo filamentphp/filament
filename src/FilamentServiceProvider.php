@@ -9,6 +9,7 @@ use Filament\Models\User;
 use Filament\Pages\Page;
 use Filament\Providers\RouteServiceProvider;
 use Filament\Resources\Resource;
+use Filament\Roles\Role;
 use Filament\View\Components;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
@@ -108,8 +109,6 @@ class FilamentServiceProvider extends ServiceProvider
     {
         $router = $this->app->make(Router::class);
         $router->aliasMiddleware('filament.authorize.admins', Middleware\AuthorizeAdmins::class);
-        $router->aliasMiddleware('filament.authorize.page-route', Middleware\AuthorizePageRoute::class);
-        $router->aliasMiddleware('filament.authorize.resource-page-route', Middleware\AuthorizeResourcePageRoute::class);
     }
 
     protected function bootPublishing()

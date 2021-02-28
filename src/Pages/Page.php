@@ -2,7 +2,10 @@
 
 namespace Filament\Pages;
 
+use Filament\AuthorizationManager;
 use Filament\NavigationItem;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -18,6 +21,13 @@ class Page extends Component
 
     public static $view;
 
+    public function __invoke(Container $container, Route $route)
+    {
+        abort_unless(static::can(), 403);
+
+        return parent::__invoke($container, $route);
+    }
+
     public static function authorization()
     {
         return [];
@@ -26,6 +36,11 @@ class Page extends Component
     public static function authorizationManager()
     {
         return new AuthorizationManager(static::class);
+    }
+
+    public static function can($action = null)
+    {
+        return static::authorizationManager()->can($action);
     }
 
     public static function generateUrl($parameters = [], $absolute = true)

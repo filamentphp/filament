@@ -2,6 +2,7 @@
 
 namespace Filament\Resources;
 
+use Filament\AuthorizationManager;
 use Filament\NavigationItem;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Tables\Table;

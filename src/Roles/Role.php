@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament;
+namespace Filament\Roles;
 
 use Illuminate\Support\Str;
 
@@ -10,12 +10,12 @@ class Role
 
     public static function allow()
     {
-        return new RoleAuthorization(static::class, 'allow');
+        return new Authorization(static::class, 'allow');
     }
 
     public static function deny()
     {
-        return new RoleAuthorization(static::class, 'deny');
+        return new Authorization(static::class, 'deny');
     }
 
     public static function getLabel()

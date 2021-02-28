@@ -2,7 +2,7 @@
 
 namespace {{namespace}};
 
-use Filament\Role;
+use Filament\Roles\Role;
 
 class {{class}} extends Role
 {

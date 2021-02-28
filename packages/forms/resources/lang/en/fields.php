@@ -31,6 +31,12 @@ return [
 
     ],
 
+    'multiSelect' => [
+        'emptyOptionsMessage' => 'No options to choose from.',
+        'noSearchResultsMessage' => 'No options match your search.',
+        'placeholder' => 'Select an option',
+    ],
+
     'richEditor' => [
 
         'dialogs' => [

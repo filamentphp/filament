@@ -22,11 +22,15 @@ class Nav extends Component
         );
 
         foreach (Filament::getResources() as $resource) {
-            $this->items->push(...$resource::navigationItems());
+            if ($resource::authorizationManager()->can()) {
+                $this->items->push(...$resource::navigationItems());
+            }
         }
 
         foreach (Filament::getPages() as $page) {
-            $this->items->push(...$page::navigationItems());
+            if ($resource::authorizationManager()->can()) {
+                $this->items->push(...$page::navigationItems());
+            }
         }
 
         return $this->items->sortBy(fn ($item) => $item->sort);

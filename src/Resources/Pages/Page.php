@@ -8,6 +8,11 @@ class Page extends \Filament\Pages\Page
 {
     public static $resource;
 
+    public static function authorizationManager()
+    {
+        return static::getResource()::authorizationManager();
+    }
+
     public static function getResource()
     {
         return static::$resource;
