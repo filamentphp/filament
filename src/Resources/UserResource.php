@@ -14,6 +14,8 @@ class UserResource extends Resource
 {
     public static $icon = 'heroicon-o-user-group';
 
+    public static $label = 'user';
+
     public static $model = FilamentUser::class;
 
     public static $routeNamePrefix = 'filament';
@@ -61,10 +63,13 @@ class UserResource extends Resource
                         ->autocomplete('new-password')
                         ->requiredWith('newPassword'),
                 ])->only(Pages\EditUser::class),
-                Components\FileUpload::make('avatar')
-                    ->avatar()
-                    ->directory('filament-avatars')
-                    ->disk(config('filament.default_filesystem_disk')),
+                Components\Grid::make([
+                    Components\FileUpload::make('avatar')
+                        ->avatar()
+                        ->directory('filament-avatars')
+                        ->disk(config('filament.default_filesystem_disk')),
+                    Components\Checkbox::make('is_admin')->label('Administrator?'),
+                ]),
             ]);
     }
 

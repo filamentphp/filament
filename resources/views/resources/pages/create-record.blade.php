@@ -1,5 +1,8 @@
 <div>
-    <x-filament::app-header :title="__($title)" />
+    <x-filament::app-header
+        :breadcrumbs="static::getBreadcrumbs()"
+        :title="__($title)"
+    />
 
     <x-filament::app-content>
         <x-filament::card>

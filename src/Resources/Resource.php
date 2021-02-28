@@ -15,11 +15,13 @@ class Resource
 
     public static $model;
 
+    public static $navigationLabel;
+
+    public static $navigationSort = 0;
+
     public static $routeNamePrefix = 'filament.resources';
 
     public static $slug;
-
-    public static $sort = 0;
 
     public static function authorization()
     {
@@ -66,6 +68,23 @@ class Resource
             ->prepend('App\\Models\\');
     }
 
+    public static function getNavigationLabel()
+    {
+        if (static::$navigationLabel) return static::$navigationLabel;
+
+        return (string) Str::title(static::getPluralLabel());
+    }
+
+    public static function getNavigationSort()
+    {
+        return static::$navigationSort;
+    }
+
+    public static function getPluralLabel()
+    {
+        return (string) Str::plural(static::getLabel());
+    }
+
     public static function getSlug()
     {
         if (static::$slug) return static::$slug;
@@ -75,23 +94,17 @@ class Resource
             ->kebab();
     }
 
-    public static function getSort()
-    {
-        return static::$sort;
-    }
-
     public static function navigationItems()
     {
-        $label = (string) Str::of(static::getLabel())->plural()->title();
-
         return [
-            NavigationItem::make($label, static::generateUrl())
-                ->activeRule((string) Str::of(parse_url(static::generateUrl(), PHP_URL_PATH))
-                    ->after('/')
-                    ->append('*'),
+            NavigationItem::make(static::getNavigationLabel(), static::generateUrl())
+                ->activeRule(
+                    (string) Str::of(parse_url(static::generateUrl(), PHP_URL_PATH))
+                        ->after('/')
+                        ->append('*'),
                 )
                 ->icon(static::getIcon())
-                ->sort(static::getSort()),
+                ->sort(static::getNavigationSort()),
         ];
     }
 

@@ -4,6 +4,7 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\HasForm;
 use Filament\Resources\Forms\Form;
+use Illuminate\Support\Str;
 
 class EditRecord extends Page
 {
@@ -28,6 +29,13 @@ class EditRecord extends Page
     public $record;
 
     public $indexRoute = 'index';
+
+    public static function getBreadcrumbs()
+    {
+        return [
+            static::getResource()::generateUrl() => (string) Str::title(static::getResource()::getPluralLabel()),
+        ];
+    }
 
     public function delete()
     {

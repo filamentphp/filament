@@ -10,11 +10,11 @@ class Page extends Component
 {
     public static $icon = 'heroicon-o-document-text';
 
-    public static $label;
+    public static $navigationLabel;
+
+    public static $navigationSort = 0;
 
     public static $slug;
-
-    public static $sort = 0;
 
     public static $view;
 
@@ -38,13 +38,18 @@ class Page extends Component
         return static::$icon;
     }
 
-    public static function getLabel()
+    public static function getNavigationLabel()
     {
-        if (static::$label) return static::$label;
+        if (static::$navigationLabel) return static::$navigationLabel;
 
         return (string) Str::of(class_basename(static::class))
             ->kebab()
             ->replace('-', ' ');
+    }
+
+    public static function getNavigationSort()
+    {
+        return static::$navigationSort;
     }
 
     public static function getSlug()
@@ -52,11 +57,6 @@ class Page extends Component
         if (static::$slug) return static::$slug;
 
         return (string) Str::of(class_basename(static::class))->kebab();
-    }
-
-    public static function getSort()
-    {
-        return static::$sort;
     }
 
     public static function getTitle()
@@ -72,13 +72,14 @@ class Page extends Component
     public static function navigationItems()
     {
         return [
-            NavigationItem::make(Str::title(static::getLabel()), static::generateUrl())
-                ->activeRule((string) Str::of(parse_url(static::generateUrl(), PHP_URL_PATH))
-                    ->after('/')
-                    ->append('*'),
+            NavigationItem::make(Str::title(static::getNavigationLabel()), static::generateUrl())
+                ->activeRule(
+                    (string) Str::of(parse_url(static::generateUrl(), PHP_URL_PATH))
+                        ->after('/')
+                        ->append('*'),
                 )
                 ->icon(static::getIcon())
-                ->sort(static::getSort()),
+                ->sort(static::getNavigationSort()),
         ];
     }
 
