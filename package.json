@@ -1,0 +1,31 @@
+{
+  "private": true,
+  "scripts": {
+    "clean": "rimraf dist",
+    "dev": "npm run development",
+    "development": "mix",
+    "hot": "mix watch --hot",
+    "prod": "npm run production",
+    "production": "mix --production",
+    "watch": "mix watch",
+    "watch-poll": "mix watch -- --watch-options-poll=1000",
+    "start": "npm run watch"
+  },
+  "devDependencies": {
+    "@popperjs/core": "^2.7.0",
+    "@tailwindcss/forms": "^0.2.1",
+    "@tailwindcss/typography": "^0.4.0",
+    "alpinejs": "^2.8.0",
+    "autoprefixer": "^10.2.4",
+    "dotenv": "^8.2.0",
+    "focus-visible": "^5.2.0",
+    "laravel-mix": "^6.0.11",
+    "lodash": "^4.17.20",
+    "postcss": "^8.2.6",
+    "postcss-import": "^14.0.0",
+    "postcss-nested": "^5.0.3",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "tailwindcss": "^2.0.3"
+  }
+}

@@ -1,0 +1,10 @@
+<?php
+
+namespace {{namespace}};
+
+use Filament\Roles\Role;
+
+class {{class}} extends Role
+{
+    //
+}

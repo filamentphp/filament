@@ -1,0 +1,38 @@
+name: tests
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    run-tests:
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                php: [ 8.0, 7.4 ]
+                laravel: [ 8.* ]
+                dependency-version: [ prefer-stable ]
+                include:
+                    - laravel: 8.*
+                      testbench: 6.*
+        name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
+        steps:
+            - uses: actions/checkout@v2
+            - name: Cache dependencies
+              uses: actions/cache@v2
+              with:
+                  path: ~/.composer/cache/files
+                  key: dependencies-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  extensions: mbstring, pdo, pdo_sqlite
+                  coverage: none
+            - name: Install dependencies
+              run: |
+                  composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+                  composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
+            - name: Execute tests
+              run: vendor/bin/phpunit --verbose

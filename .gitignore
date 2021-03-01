@@ -1,0 +1,13 @@
+/.idea
+/build
+/coverage
+/node_modules
+/vendor
+/.vscode
+.DS_Store
+.php_cs
+.php_cs.cache
+.phpunit.result.cache
+composer.phar
+composer.lock
+Thumbs.db

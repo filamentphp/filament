@@ -1,0 +1,12 @@
+<?php
+
+namespace {{namespace}};
+
+use Filament\Pages\Page;
+
+class {{class}} extends Page
+{
+    public static $icon = 'heroicon-o-document-text';
+
+    public static $view = '{{view}}';
+}

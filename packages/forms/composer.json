@@ -1,0 +1,37 @@
+{
+    "name": "filament/forms",
+    "description": "Effortlessly build TALL-powered forms.",
+    "license": "MIT",
+    "homepage": "https://github.com/laravel-filament/filament",
+    "support": {
+        "issues": "https://github.com/laravel-filament/filament/issues",
+        "source": "https://github.com/laravel-filament/filament"
+    },
+    "require": {
+        "php": "^7.4|^8.0",
+        "blade-ui-kit/blade-heroicons": "^0.3",
+        "danharrin/date-format-converter": "^0.2.0",
+        "illuminate/filesystem": "^8.0",
+        "illuminate/http": "^8.0",
+        "illuminate/support": "^8.0",
+        "illuminate/validation": "^8.0",
+        "livewire/livewire": "^2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Filament\\Forms\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Filament\\Forms\\FormsServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
