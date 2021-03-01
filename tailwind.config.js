@@ -70,7 +70,7 @@ module.exports = {
             a: {
               color: theme('colors.secondary.700'),
               '&:hover': {
-                color: theme('colors.secondary.700'),
+                color: theme('colors.secondary.500'),
               },
             },
           },
