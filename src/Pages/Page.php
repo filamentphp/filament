@@ -5,7 +5,6 @@ namespace Filament\Pages;
 use Filament\AuthorizationManager;
 use Filament\NavigationItem;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Routing\Route;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
