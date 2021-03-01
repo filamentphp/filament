@@ -45,9 +45,9 @@ class {{resourceClass}} extends Resource
     public static function routes()
     {
         return [
-            Pages\{{indexResourcePageClass}}::route('/', 'index'),
-            Pages\{{createResourcePageClass}}::route('/create', 'create'),
-            Pages\{{editResourcePageClass}}::route('/{record}/edit', 'edit'),
+            Pages\{{indexResourcePageClass}}::routeTo('/', 'index'),
+            Pages\{{createResourcePageClass}}::routeTo('/create', 'create'),
+            Pages\{{editResourcePageClass}}::routeTo('/{record}/edit', 'edit'),
         ];
     }
 }
