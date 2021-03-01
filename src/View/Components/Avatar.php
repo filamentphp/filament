@@ -34,7 +34,7 @@ class Avatar extends Component
                 'fit' => 'crop',
                 'h' => $this->size,
                 'w' => $this->size,
-            ]
+            ],
         );
     }
 

@@ -21,6 +21,7 @@
                     class="w-full text-left flex-grow flex items-center p-4 space-x-3 transition-colors duration-200 hover:text-white hover:bg-gray-800">
                     <x-slot name="button">
                         <x-filament-avatar :user="Auth::guard('filament')->user()" :size="32" class="flex-shrink-0 w-8 h-8 rounded-full" />
+
                         <span class="flex-grow text-sm leading-tight font-medium">{{ Auth::guard('filament')->user()->name }}</span>
                     </x-slot>
 
