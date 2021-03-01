@@ -61,6 +61,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Widgets
+    |--------------------------------------------------------------------------
+    |
+    | This is the namespace and directory that Filament will automatically
+    | register widgets from.
+    |
+    */
+
+    'widgets' => [
+        'namespace' => 'App\\Filament\\Widgets',
+        'path' => app_path('Filament/Widgets'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Default Filesystem Disk
     |--------------------------------------------------------------------------
     |

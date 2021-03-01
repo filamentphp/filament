@@ -41,6 +41,10 @@
                     </div>
                 </div>
             </x-filament::card>
+
+            @foreach (\Filament\Filament::getWidgets() as $widget)
+                @livewire(\Livewire\Livewire::getAlias($widget))
+            @endforeach
         </section>
     </x-filament::app-content>
 </div>

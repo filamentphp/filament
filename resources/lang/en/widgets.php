@@ -2,8 +2,8 @@
 
 return [
 
-    'add' => 'Add Widget',
+    'add' => 'Add Widget.php',
 
-    'settings' => 'Widget Settings',
+    'settings' => 'Widget.php Settings',
 
 ];

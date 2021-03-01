@@ -11,6 +11,7 @@ use Filament\Providers\RouteServiceProvider;
 use Filament\Resources\Resource;
 use Filament\Roles\Role;
 use Filament\View\Components;
+use Filament\Widgets\Widget;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
@@ -52,6 +53,7 @@ class FilamentServiceProvider extends ServiceProvider
         $this->discoverFilamentPages();
         $this->discoverFilamentResources();
         $this->discoverFilamentRoles();
+        $this->discoverFilamentWidgets();
     }
 
     protected function bootCommands()
@@ -66,6 +68,7 @@ class FilamentServiceProvider extends ServiceProvider
             Commands\MakeRoleCommand::class,
             Commands\MakePageCommand::class,
             Commands\MakeUserCommand::class,
+            Commands\MakeWidgetCommand::class,
         ]);
     }
 
@@ -262,6 +265,25 @@ class FilamentServiceProvider extends ServiceProvider
                     ! (new ReflectionClass($class))->isAbstract();
             })
             ->each(fn ($role) => Filament::registerRole($role));
+    }
+
+    protected function discoverFilamentWidgets()
+    {
+        $filesystem = new Filesystem();
+
+        $filesystem->ensureDirectoryExists(config('filament.widgets.path'));
+
+        collect($filesystem->allFiles(config('filament.widgets.path')))
+            ->map(function ($file) {
+                return (string) Str::of(config('filament.widgets.namespace'))
+                    ->append('\\', $file->getRelativePathname())
+                    ->replace(['/', '.php'], ['\\', '']);
+            })
+            ->filter(function ($class) {
+                return is_subclass_of($class, Widget::class) &&
+                    ! (new ReflectionClass($class))->isAbstract();
+            })
+            ->each(fn ($widget) => Filament::registerWidget($widget));
     }
 
     protected function registerLivewireComponentDirectory($directory, $namespace, $aliasPrefix = '')
