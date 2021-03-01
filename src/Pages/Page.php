@@ -20,7 +20,7 @@ class Page extends Component
 
     public static $view;
 
-    public function __invoke(Container $container, Route $route)
+    public function __invoke(Container $container, \Illuminate\Routing\Route $route)
     {
         abort_unless(static::can(), 403);
 
