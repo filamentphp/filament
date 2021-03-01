@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Feature request
+    url: https://github.com/laravel-filament/filament/discussions/new
+    about: For ideas or feature requests
+  - name: Support questions & other
+    url: https://github.com/laravel-filament/filament/discussions/new
+    about: If you have a question or need help installing using the package

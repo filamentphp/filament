@@ -40,6 +40,15 @@ trait HasForm
         $this->fill($propertiesToFill);
     }
 
+    public function clearTemporaryUploadedFile($name)
+    {
+        $this->syncInput(
+            static::getTemporaryUploadedFilePropertyName($name),
+            null,
+            false
+        );
+    }
+
     public function getTemporaryUploadedFile($name)
     {
         return $this->getPropertyValue(
@@ -90,11 +99,7 @@ trait HasForm
     public function removeUploadedFile($name)
     {
         $this->syncInput($name, null, false);
-        $this->syncInput(
-            static::getTemporaryUploadedFilePropertyName($name),
-            null,
-            false,
-        );
+        $this->clearTemporaryUploadedFile($name);
     }
 
     public function validate($rules = null, $messages = [], $attributes = [])
