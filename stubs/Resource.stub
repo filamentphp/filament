@@ -18,21 +18,21 @@ class {{resourceClass}} extends Resource
 
     public static function form(Form $form)
     {
-            return $form
-                ->schema([
-                    //
-                ]);
+        return $form
+            ->schema([
+                //
+            ]);
     }
 
     public static function table(Table $table)
     {
-            return $table
-                ->columns([
-                    //
-                ])
-                ->filters([
-                    //
-                ]);
+        return $table
+            ->columns([
+                //
+            ])
+            ->filters([
+                //
+            ]);
     }
 
     public static function relations()
