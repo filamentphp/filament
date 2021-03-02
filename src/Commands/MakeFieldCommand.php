@@ -52,7 +52,7 @@ class MakeFieldCommand extends Command
 
         $this->copyStubToApp('Field', $path, [
             'class' => $fieldClass,
-            'namespace' => 'App\\Filament\\Fields' . ($fieldNamespace !== '' ? "\\{$fieldNamespace}" : ''),
+            'namespace' => 'App\\Filament\\Forms\\Components' . ($fieldNamespace !== '' ? "\\{$fieldNamespace}" : ''),
             'view' => $view,
         ]);
 
