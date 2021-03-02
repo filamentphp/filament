@@ -1,3 +1,11 @@
-<div>
-    {{-- Field content --}}
-</div>
+<x-forms::field-group
+    :help-message="__($formComponent->helpMessage)"
+    :error-key="$formComponent->name"
+    :hint="__($formComponent->hint)"
+    :label="__($formComponent->label)"
+    :required="$formComponent->required"
+>
+    <div x-data="{
+        value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }}
+    }"></div>
+</x-forms::field-group>
