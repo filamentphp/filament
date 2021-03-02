@@ -2,13 +2,13 @@
     'paginator',
 ])
 
-@if ($paginator->hasPages())
-    <nav
-        role="navigation"
-        aria-label="{{ __('tables::pagination.label') }}"
-        class="flex items-center justify-between"
-    >
-        <div class="flex justify-between items-center flex-1 lg:hidden">
+<nav
+    role="navigation"
+    aria-label="{{ __('tables::pagination.label') }}"
+    class="flex items-center justify-between"
+>
+    <div class="flex justify-between items-center flex-1 lg:hidden">
+        @if ($paginator->hasPages())
             <span>
                 @if ($paginator->onFirstPage())
                     <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default leading-5 rounded-md">
@@ -20,11 +20,13 @@
                     </button>
                 @endif
             </span>
+        @endif
 
-            <div class="hidden sm:block">
-                <x-tables::pagination.records-per-page-selector />
-            </div>
+        <div class="hidden sm:block">
+            <x-tables::pagination.records-per-page-selector />
+        </div>
 
+        @if ($paginator->hasPages())
             <span>
                 @if ($paginator->hasMorePages())
                     <button
@@ -40,13 +42,15 @@
                     </span>
                 @endif
             </span>
+        @endif
+    </div>
+
+    <div class="hidden lg:flex-1 lg:flex lg:items-center lg:justify-between">
+        <div>
+            <x-tables::pagination.records-per-page-selector />
         </div>
 
-        <div class="hidden lg:flex-1 lg:flex lg:items-center lg:justify-between">
-            <div>
-                <x-tables::pagination.records-per-page-selector />
-            </div>
-
+        @if ($paginator->hasPages())
             <div>
                 <span class="relative z-0 inline-flex shadow-sm">
                     <span>
@@ -131,6 +135,6 @@
                     </span>
                 </span>
             </div>
-        </div>
-    </nav>
-@endif
+        @endif
+    </div>
+</nav>
