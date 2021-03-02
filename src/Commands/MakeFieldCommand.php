@@ -11,7 +11,7 @@ class MakeFieldCommand extends Command
 
     protected $description = 'Creates a Filament field class and view.';
 
-    protected $signature = 'make:filament-field {name}';
+    protected $signature = 'make:filament-field {name} {--R|resource}';
 
     public function handle()
     {
@@ -33,7 +33,7 @@ class MakeFieldCommand extends Command
 
         $path = app_path(
             (string) Str::of($field)
-                ->prepend('Filament\\Forms\\Components\\')
+                ->prepend($this->option('resource') ? 'Filament\\Resources\\Forms\\Components\\' : "Filament\\Forms\\Components\\")
                 ->replace('\\', '/')
                 ->append('.php'),
         );
@@ -50,11 +50,19 @@ class MakeFieldCommand extends Command
             $viewPath,
         ])) return;
 
-        $this->copyStubToApp('Field', $path, [
-            'class' => $fieldClass,
-            'namespace' => 'App\\Filament\\Forms\\Components' . ($fieldNamespace !== '' ? "\\{$fieldNamespace}" : ''),
-            'view' => $view,
-        ]);
+        if ($this->option('resource')) {
+            $this->copyStubToApp('ResourceField', $path, [
+                'class' => $fieldClass,
+                'namespace' => 'App\\Filament\\Forms\\Components' . ($fieldNamespace !== '' ? "\\{$fieldNamespace}" : ''),
+                'view' => $view,
+            ]);
+        } else {
+            $this->copyStubToApp('Field', $path, [
+                'class' => $fieldClass,
+                'namespace' => 'App\\Filament\\Forms\\Components' . ($fieldNamespace !== '' ? "\\{$fieldNamespace}" : ''),
+                'view' => $view,
+            ]);
+        }
 
         $this->copyStubToApp('FieldView', $viewPath);
 
