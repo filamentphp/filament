@@ -26,9 +26,11 @@ class UserResource extends Resource
             ->schema([
                 Components\Grid::make([
                     Components\TextInput::make('name')
+                        ->label('filament::resources/user-resource.form.name.label')
                         ->disableAutocomplete()
                         ->required(),
                     Components\TextInput::make('email')
+                        ->label('filament::resources/user-resource.form.email.label')
                         ->email()
                         ->disableAutocomplete()
                         ->required()
@@ -36,42 +38,45 @@ class UserResource extends Resource
                 ]),
                 Components\Fieldset::make('Password', [
                     Components\TextInput::make('password')
-                        ->label('Password')
+                        ->label('filament::resources/user-resource.form.password.label')
                         ->password()
                         ->autocomplete('new-password')
                         ->confirmed()
                         ->minLength(8)
                         ->required(),
                     Components\TextInput::make('passwordConfirmation')
-                        ->label('Confirm password')
+                        ->label('filament::resources/user-resource.form.passwordConfirmation.label')
                         ->password()
                         ->autocomplete('new-password')
                         ->required(),
                 ])->only(Pages\CreateUser::class),
-                Components\Fieldset::make('Set a new password', [
+                Components\Fieldset::make('filament::resources/user-resource.form.newPassword.fieldset.label', [
                     Components\TextInput::make('newPassword')
-                        ->label('Password')
+                        ->label('filament::resources/user-resource.form.newPassword.fields.newPassword.label')
                         ->password()
                         ->autocomplete('new-password')
                         ->confirmed()
                         ->minLength(8),
                     Components\TextInput::make('newPasswordConfirmation')
-                        ->label('Confirm password')
+                        ->label('filament::resources/user-resource.form.newPassword.fields.newPasswordConfirmation.label')
                         ->password()
                         ->autocomplete('new-password')
                         ->requiredWith('newPassword'),
                 ])->only(Pages\EditUser::class),
                 Components\Grid::make([
                     Components\MultiSelect::make('roles')
+                        ->label('filament::resources/user-resource.form.roles.label')
                         ->placeholder('Select a role')
                         ->options(
                             collect(Filament::getRoles())
                                 ->mapWithKeys(fn ($role) => [$role => Str::ucfirst($role::getLabel())])
                                 ->toArray(),
                         ),
-                    Components\Checkbox::make('is_admin')->label('Administrator?'),
+                    Components\Checkbox::make('is_admin')
+                        ->label('filament::resources/user-resource.form.isAdmin.label'),
                 ]),
                 Components\FileUpload::make('avatar')
+                    ->label('filament::resources/user-resource.form.avatar.label')
                     ->avatar()
                     ->directory('filament-avatars')
                     ->disk(config('filament.default_filesystem_disk')),
@@ -88,16 +93,19 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Columns\Text::make('name')
+                    ->label('filament::resources/user-resource.table.columns.name.label')
                     ->primary()
                     ->searchable()
                     ->sortable(),
                 Columns\Text::make('email')
+                    ->label('filament::resources/user-resource.table.columns.email.label')
                     ->searchable()
                     ->sortable()
                     ->url(fn ($user) => "mailto:{$user->email}"),
             ])
             ->filters([
-                Filter::make('administrators', fn ($query) => $query->where('is_admin', true)),
+                Filter::make('administrators', fn ($query) => $query->where('is_admin', true))
+                    ->label('filament::resources/user-resource.table.filters.administrators.label'),
             ]);
     }
 

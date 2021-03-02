@@ -10,19 +10,19 @@ class EditRecord extends Page
 {
     use HasForm;
 
-    public static $deleteButtonLabel = 'Delete';
+    public static $deleteButtonLabel = 'filament::resources/pages/edit-record.buttons.delete.label';
 
-    public static $deleteModalCancelButtonLabel = 'Cancel';
+    public static $deleteModalCancelButtonLabel = 'filament::resources/pages/edit-record.modals.delete.buttons.cancel.label';
 
-    public static $deleteModalConfirmButtonLabel = 'Delete';
+    public static $deleteModalConfirmButtonLabel = 'filament::resources/pages/edit-record.modals.delete.buttons.confirm.label';
 
-    public static $deleteModalDescription = 'Are you sure you would like to delete this record? This action cannot be undone.';
+    public static $deleteModalDescription = 'filament::resources/pages/edit-record.modals.delete.description';
 
-    public static $deleteModalHeading = 'Delete this record?';
+    public static $deleteModalHeading = 'filament::resources/pages/edit-record.modals.delete.heading';
 
-    public static $saveButtonLabel = 'Save';
+    public static $saveButtonLabel = 'filament::resources/pages/edit-record.buttons.save.label';
 
-    public static $savedMessage = 'Saved!';
+    public static $savedMessage = 'filament::resources/pages/edit-record.messages.saved';
 
     public static $view = 'filament::resources.pages.edit-record';
 

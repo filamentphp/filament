@@ -11,8 +11,6 @@ class CreateUser extends CreateRecord
 {
     public static $resource = UserResource::class;
 
-    public static $title = 'Create User';
-
     public static function getQuery()
     {
         return parent::getQuery()->where('id', '!=', Auth::guard('filament')->user()->id);

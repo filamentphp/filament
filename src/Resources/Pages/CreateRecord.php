@@ -10,7 +10,7 @@ class CreateRecord extends Page
 {
     use HasForm;
 
-    public static $createButtonLabel = 'Create';
+    public static $createButtonLabel = 'filament::resources/pages/create-record.buttons.create.label';
 
     public static $showRoute = 'edit';
 

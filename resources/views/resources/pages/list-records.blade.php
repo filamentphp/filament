@@ -1,5 +1,5 @@
 <div>
-    <x-filament::app-header :title="__($title)">
+    <x-filament::app-header :title="$title">
         <x-slot name="actions">
             <x-filament::button
                 color="primary"

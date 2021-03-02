@@ -1,5 +1,5 @@
 <div>
-    <x-filament::app-header :title="__($title)" />
+    <x-filament::app-header :title="$title" />
 
     <x-filament::app-content>
         <section
@@ -11,8 +11,8 @@
                     <x-filament-avatar :user="Auth::guard('filament')->user()" :size="160" class="flex-shrink-0 w-20 h-20 rounded-full" />
 
                     <div class="space-y-1">
-                        <h2 class="text-2xl">Welcome, {{ Auth::guard('filament')->user()->name }}</h2>
-                        <p class="text-sm"><a href="{{ route('filament.account') }}" class="link">Manage your account</a></p>
+                        <h2 class="text-2xl">{{ __('filament::dashboard.widgets.account.heading', ['name' => Auth::guard('filament')->user()->name]) }}</h2>
+                        <p class="text-sm"><a href="{{ route('filament.account') }}" class="link">{{ __('filament::dashboard.widgets.account.links.account.label') }}</a></p>
                     </div>
                 </div>
             </x-filament::card>
@@ -34,8 +34,8 @@
 
                         <div class="prose-sm prose">
                             <ul>
-                                <li><a href="https://filamentadmin.com/docs" target="_blank">Browse the documentation</a></li>
-                                <li><a href="https://github.com/laravel-filament/filament" target="_blank">Visit the repository</a></li>
+                                <li><a href="https://filamentadmin.com/docs" target="_blank">{{ __('filament::dashboard.widgets.filament.links.documentation.label') }}</a></li>
+                                <li><a href="https://github.com/laravel-filament/filament" target="_blank">{{ __('filament::dashboard.widgets.filament.links.repository.label') }}</a></li>
                             </ul>
                         </div>
                     </div>

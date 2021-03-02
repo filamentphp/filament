@@ -116,7 +116,7 @@ class Page extends Component
     public function getViewParameters()
     {
         return array_merge($this->viewParameters(), [
-            'title' => static::getTitle(),
+            'title' => __(static::getTitle()),
         ]);
     }
 

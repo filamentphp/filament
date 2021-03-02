@@ -1,7 +1,7 @@
 <div>
     <x-filament::app-header
         :breadcrumbs="static::getBreadcrumbs()"
-        :title="__($title)"
+        :title="$title"
     >
         <x-slot name="actions">
             <x-filament::modal>

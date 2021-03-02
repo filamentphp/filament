@@ -32,7 +32,7 @@
             @livewire(Filament\Resources\RelationManager\CreateRecord::class, [
                 'cancelButtonLabel' => __(static::$createModalCancelButtonLabel),
                 'createButtonLabel' => __(static::$createModalCreateButtonLabel),
-                'createdMessage' => __(static::$createdMessage),
+                'createdMessage' => __(static::$createModalCreatedMessage),
                 'manager' => static::class,
                 'owner' => $this->owner,
             ])
@@ -50,7 +50,7 @@
                 'manager' => static::class,
                 'owner' => $this->owner,
                 'saveButtonLabel' => __(static::$editModalSaveButtonLabel),
-                'savedMessage' => __(static::$savedMessage),
+                'savedMessage' => __(static::$editModalSavedMessage),
             ])
         </x-filament::card>
     </x-filament::modal>

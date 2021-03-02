@@ -10,8 +10,6 @@ class ListUsers extends ListRecords
 {
     public static $resource = UserResource::class;
 
-    public static $title = 'Users';
-
     public static function getQuery()
     {
         return parent::getQuery()->where('id', '!=', Auth::guard('filament')->user()->id);

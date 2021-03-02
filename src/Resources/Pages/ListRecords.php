@@ -10,7 +10,7 @@ class ListRecords extends Page
 {
     use HasTable;
 
-    public static $createButtonLabel = 'Create';
+    public static $createButtonLabel = 'filament::resources/pages/list-records.buttons.create.label';
 
     public static $view = 'filament::resources.pages.list-records';
 

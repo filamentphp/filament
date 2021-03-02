@@ -11,25 +11,25 @@ class RelationManager extends Component
 {
     use HasTable;
 
-    public static $createButtonLabel = 'New';
+    public static $createButtonLabel = 'filament::resources/relation-manager.buttons.create.label';
 
-    public static $createModalCancelButtonLabel = 'Cancel';
+    public static $createModalCancelButtonLabel = 'filament::resources/relation-manager.modals.create.buttons.cancel.label';
 
-    public static $createModalCreateButtonLabel = 'Create';
+    public static $createModalCreateButtonLabel = 'filament::resources/relation-manager.modals.create.buttons.create.label';
 
-    public static $createdMessage = 'Created!';
+    public static $createModalCreatedMessage = 'filament::resources/relation-manager.modals.create.messages.created';
 
-    public static $createModalHeading = 'Create';
+    public static $createModalHeading = 'filament::resources/relation-manager.modals.create.heading';
 
-    public static $editModalCancelButtonLabel = 'Cancel';
+    public static $editModalCancelButtonLabel = 'filament::resources/relation-manager.modals.edit.buttons.cancel.label';
 
-    public static $editModalHeading = 'Edit';
+    public static $editModalHeading = 'filament::resources/relation-manager.modals.edit.heading';
 
-    public static $editModalSaveButtonLabel = 'Save';
+    public static $editModalSaveButtonLabel = 'filament::resources/relation-manager.modals.edit.buttons.save.label';
+
+    public static $editModalSavedMessage = 'filament::resources/relation-manager.modals.edit.messages.saved';
 
     public static $relationship;
-
-    public static $savedMessage = 'Saved!';
 
     public $filterable = true;
 

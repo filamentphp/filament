@@ -11,8 +11,6 @@ class EditUser extends EditRecord
 {
     public static $resource = UserResource::class;
 
-    public static $title = 'Edit User';
-
     public static function getQuery()
     {
         return parent::getQuery()->where('id', '!=', Auth::guard('filament')->user()->id);
