@@ -45,7 +45,7 @@ class EditAccountTest extends TestCase
             ->set('newPasswordConfirmation', $newPassword)
             ->set('record.email', $newUserDetails->email)
             ->set('record.name', $newUserDetails->name)
-            ->call('submit')
+            ->call('save')
 //            ->assertSet('newAvatar', null)
             ->assertSet('newPassword', null)
             ->assertSet('newPasswordConfirmation', null)
@@ -72,7 +72,7 @@ class EditAccountTest extends TestCase
 //
 //        $component = Livewire::test(EditAccount::class)
 //            ->set('newAvatar', $newAvatar)
-//            ->call('submit');
+//            ->call('save');
 //
 //        $user->refresh();
 //
@@ -111,7 +111,7 @@ class EditAccountTest extends TestCase
 
         Livewire::test(EditAccount::class)
             ->set('newPassword', 'pass')
-            ->call('submit')
+            ->call('save')
             ->assertHasErrors(['newPassword' => 'min']);
     }
 
@@ -125,7 +125,7 @@ class EditAccountTest extends TestCase
         Livewire::test(EditAccount::class)
             ->set('newPassword', 'password')
             ->set('newPasswordConfirmation', 'different-password')
-            ->call('submit')
+            ->call('save')
             ->assertHasErrors(['newPasswordConfirmation' => 'same']);
     }
 
@@ -138,7 +138,7 @@ class EditAccountTest extends TestCase
 
         Livewire::test(EditAccount::class)
             ->set('record.email', null)
-            ->call('submit')
+            ->call('save')
             ->assertHasErrors(['record.email' => 'required']);
     }
 
@@ -151,7 +151,7 @@ class EditAccountTest extends TestCase
 
         Livewire::test(EditAccount::class)
             ->set('record.email', 'invalid-email')
-            ->call('submit')
+            ->call('save')
             ->assertHasErrors(['record.email' => 'email']);
     }
 
@@ -164,7 +164,7 @@ class EditAccountTest extends TestCase
 
         Livewire::test(EditAccount::class)
             ->set('record.name', null)
-            ->call('submit')
+            ->call('save')
             ->assertHasErrors(['record.name' => 'required']);
     }
 }
