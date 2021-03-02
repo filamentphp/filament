@@ -28,7 +28,7 @@ class BelongsToSelect extends Select
             }
 
             return $query
-                ->where($displayColumnName, 'like', "{$search}%")
+                ->where($displayColumnName, 'like', "%{$search}%")
                 ->pluck($displayColumnName, $relationship->getOwnerKeyName())
                 ->toArray();
         });
