@@ -37,7 +37,6 @@ class MakeFieldCommand extends Command
                 ->replace('\\', '/')
                 ->append('.php'),
         );
-
         $viewPath = resource_path(
             (string) Str::of($view)
                 ->replace('.', '/')
@@ -47,24 +46,25 @@ class MakeFieldCommand extends Command
 
         if ($this->checkForCollision([
             $path,
-            $viewPath,
         ])) return;
 
-        if ($this->option('resource')) {
-            $this->copyStubToApp('ResourceField', $path, [
-                'class' => $fieldClass,
-                'namespace' => 'App\\Filament\\Forms\\Components' . ($fieldNamespace !== '' ? "\\{$fieldNamespace}" : ''),
-                'view' => $view,
-            ]);
-        } else {
+        if (! $this->option('resource')) {
             $this->copyStubToApp('Field', $path, [
                 'class' => $fieldClass,
                 'namespace' => 'App\\Filament\\Forms\\Components' . ($fieldNamespace !== '' ? "\\{$fieldNamespace}" : ''),
                 'view' => $view,
             ]);
+        } else {
+            $this->copyStubToApp('ResourceField', $path, [
+                'class' => $fieldClass,
+                'namespace' => 'App\\Filament\\Resources\\Forms\\Components' . ($fieldNamespace !== '' ? "\\{$fieldNamespace}" : ''),
+                'view' => $view,
+            ]);
         }
 
-        $this->copyStubToApp('FieldView', $viewPath);
+        if (! $this->fileExists($viewPath)) {
+            $this->copyStubToApp('FieldView', $viewPath);
+        }
 
         $this->info("Successfully created {$field}!");
     }
