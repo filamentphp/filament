@@ -24,7 +24,7 @@ trait CanManipulateFiles
     {
         $filesystem = new Filesystem();
 
-        if (!$this->fileExists($stubPath = base_path("stubs/filament/{$stub}.stub"))) {
+        if (! $this->fileExists($stubPath = base_path("stubs/filament/{$stub}.stub"))) {
             $stubPath = __DIR__ . "/../../../stubs/{$stub}.stub";
         }
 
