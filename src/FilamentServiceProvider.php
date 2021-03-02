@@ -75,7 +75,7 @@ class FilamentServiceProvider extends ServiceProvider
         $aliases = [];
 
         foreach ($commands as $command) {
-            $class = 'Filament\\Commands\\Aliases\\'.class_basename($command);
+            $class = 'Filament\\Commands\\Aliases\\' . class_basename($command);
 
             if (! class_exists($class)) {
                 continue;
