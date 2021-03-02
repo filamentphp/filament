@@ -70,7 +70,6 @@ class FilamentServiceProvider extends ServiceProvider
             Commands\MakeUserCommand::class,
             Commands\MakeWidgetCommand::class,
             Commands\MakeFieldCommand::class,
-            Commands\PublishStubsCommand::class,
         ]);
 
         $aliases = [];
@@ -147,6 +146,10 @@ class FilamentServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/lang' => resource_path('lang/vendor/filament'),
         ], 'filament-lang');
+
+        $this->publishes([
+            __DIR__ . '/../stubs' => base_path('stubs/filament'),
+        ], 'filament-stubs');
 
         $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/filament'),
