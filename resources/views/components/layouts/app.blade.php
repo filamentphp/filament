@@ -8,15 +8,15 @@
          @keydown.escape.window="headerIsOpen = false"
          x-on:resize.window="if (window.outerWidth > 768) headerIsOpen = false"
     >
-        <div class="w-56 fixed z-20 h-screen transform transition-transform duration-200 md:translate-x-0 flex"
+        <div class="w-64 fixed z-20 h-screen transform transition-transform duration-200 md:translate-x-0 flex"
              :class="headerIsOpen ? 'translate-x-0' : '-translate-x-full'">
             <header role="banner"
                     tabindex="-1"
                     id="banner"
-                    class="flex-grow overflow-y-auto bg-gray-900 text-gray-500 flex flex-col space-y-10 shadow-lg md:shadow-none">
+                    class="flex-grow overflow-y-auto bg-gray-800 text-gray-500 flex flex-col space-y-4 shadow-lg md:shadow-none">
                 <x-filament::branding.app />
 
-                <x-filament-nav class="flex-grow px-4 overflow-y-auto" />
+                <x-filament-nav class="flex-grow px-2 overflow-y-auto" />
 
                 <x-filament::dropdown
                     class="w-full text-left flex-grow flex items-center p-4 space-x-3 transition-colors duration-200 hover:text-white hover:bg-gray-800">
@@ -55,7 +55,7 @@
         <span class="absolute z-10 inset-0 bg-gray-800 bg-opacity-50 md:hidden" x-cloak x-show="headerIsOpen"
               @click="headerIsOpen = false"></span>
 
-        <div class="min-h-screen w-full md:pl-56 flex flex-col">
+        <div class="min-h-screen w-full md:pl-64 flex flex-col">
             <div class="flex-grow">
                 {{ $slot }}
             </div>

@@ -8,7 +8,7 @@
 
 <div class="shadow-xl rounded bg-white overflow-x-auto">
     <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-100">
+        <thead class="bg-gray-200">
             <tr>
                 <th class="p-4 w-4 whitespace-nowrap">
                     <input
@@ -20,7 +20,7 @@
                 </th>
 
                 @foreach ($table->getVisibleColumns() as $column)
-                    <th class="px-6 py-3 text-left text-gray-500" scope="col">
+                    <th class="px-6 py-3 text-left text-gray-600" scope="col">
                         @if ($table->isSortable() && $column->isSortable())
                             <button
                                 wire:click="sortBy('{{ $column->name }}')"
