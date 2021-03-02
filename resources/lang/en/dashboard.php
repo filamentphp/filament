@@ -4,6 +4,4 @@ return [
 
     'title' => 'Dashboard',
 
-    'placeholder' => ':name Dashboard'
-
 ];

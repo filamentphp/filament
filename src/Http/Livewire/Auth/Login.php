@@ -26,18 +26,19 @@ class Login extends Component
         return Form::make()
             ->schema([
                 Components\TextInput::make('email')
-                    ->label('filament::fields.labels.email')
+                    ->label('filament::auth/login.form.email.label')
                     ->email()
                     ->autofocus()
                     ->autocomplete('email')
                     ->required(),
                 Components\TextInput::make('password')
-                    ->label('filament::fields.labels.password')
-                    ->hint('[' . __('filament::auth.requestPassword') . '](' . route('filament.auth.password.request') . ')')
+                    ->label('filament::auth/login.form.password.label')
+                    ->hint('[' . __('filament::auth/login.form.password.hint') . '](' . route('filament.auth.password.request') . ')')
                     ->password()
                     ->autocomplete('current-password')
                     ->required(),
-                Components\Checkbox::make('remember')->label('Remember me'),
+                Components\Checkbox::make('remember')
+                    ->label('filament::auth/login.form.remember.label'),
             ])
             ->context(static::class);
     }
@@ -47,7 +48,7 @@ class Login extends Component
         try {
             $this->rateLimit(5);
         } catch (TooManyRequestsException $exception) {
-            $this->addError('email', __('auth.throttle', [
+            $this->addError('email', __('filament::auth/login.messages.throttled', [
                 'seconds' => $exception->secondsUntilAvailable,
                 'minutes' => ceil($exception->secondsUntilAvailable / 60),
             ]));
@@ -58,7 +59,7 @@ class Login extends Component
         $this->validate();
 
         if (! Auth::guard('filament')->attempt($this->only(['email', 'password']), $this->remember)) {
-            $this->addError('email', __('auth.failed'));
+            $this->addError('email', __('filament::auth/login.messages.failed'));
 
             return;
         }
@@ -68,9 +69,9 @@ class Login extends Component
 
     public function render()
     {
-        return view('filament::.auth.login', [
-            'title' => 'Login',
-        ])
-            ->layout('filament::components.layouts.auth', ['title' => 'filament::auth.signin']);
+        return view('filament::auth.login')
+            ->layout('filament::components.layouts.auth', [
+                'title' => 'filament::auth/login.title',
+            ]);
     }
 }

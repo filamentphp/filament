@@ -30,34 +30,38 @@ class EditAccount extends Page
             ->schema([
                 Components\Grid::make([
                     Components\TextInput::make('record.name')
+                        ->label('filament::edit-account.form.name.label')
                         ->disableAutocomplete()
                         ->required(),
                     Components\TextInput::make('record.email')
+                        ->label('filament::edit-account.form.email.label')
                         ->email()
                         ->disableAutocomplete()
                         ->required()
                         ->unique(User::class, 'email', true),
                 ]),
-                Components\Fieldset::make('Set a new password', [
+                Components\Fieldset::make('filament::edit-account.form.newPassword.fieldset.label', [
                     Components\TextInput::make('newPassword')
-                        ->label('Password')
+                        ->label('filament::edit-account.form.newPassword.fields.newPassword.label')
                         ->password()
                         ->autocomplete('new-password')
                         ->confirmed()
                         ->minLength(8),
                     Components\TextInput::make('newPasswordConfirmation')
-                        ->label('Confirm password')
+                        ->label('filament::edit-account.form.newPassword.fields.newPasswordConfirmation.label')
                         ->password()
                         ->autocomplete('new-password')
                         ->requiredWith('newPassword'),
                 ]),
                 Components\FileUpload::make('record.avatar')
+                    ->label('filament::edit-account.form.avatar.label')
                     ->avatar()
                     ->directory('filament-avatars')
                     ->disk(config('filament.default_filesystem_disk')),
             ])
             ->context(static::class)
-            ->record($this->record);
+            ->record($this->record)
+            ->submitMethod('save');
     }
 
     public function mount()
@@ -65,7 +69,7 @@ class EditAccount extends Page
         $this->record = Auth::guard('filament')->user();
     }
 
-    public function submit()
+    public function save()
     {
         $this->validateTemporaryUploadedFiles();
 
@@ -82,6 +86,6 @@ class EditAccount extends Page
 
         $this->record->save();
 
-        $this->notify(__('filament::edit-account.updated'));
+        $this->notify(__('filament::edit-account.messages.saved'));
     }
 }

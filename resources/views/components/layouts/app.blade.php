@@ -17,6 +17,7 @@
                 <x-filament::branding.app />
 
                 <x-filament-nav class="flex-grow px-4 overflow-y-auto" />
+
                 <x-filament::dropdown
                     class="w-full text-left flex-grow flex items-center p-4 space-x-3 transition-colors duration-200 hover:text-white hover:bg-gray-800">
                     <x-slot name="button">
@@ -27,12 +28,12 @@
 
                     @if (Auth::guard('filament')->user()->is_admin)
                         <x-filament::dropdown-link href="{{ route('filament.users.index') }}">
-                            Users
+                            {{ __('filament::nav.dropdown.users.label') }}
                         </x-filament::dropdown-link>
                     @endif
 
                     <x-filament::dropdown-link href="{{ route('filament.account') }}">
-                        {{ __('filament::edit-account.edit') }}
+                        {{ __('filament::nav.dropdown.account.label') }}
                     </x-filament::dropdown-link>
 
                     <livewire:filament.auth.logout class="w-full py-2 px-4 transition-colors duration-200 text-gray-600 hover:bg-gray-200" />

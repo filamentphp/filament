@@ -8,7 +8,7 @@
                     type="submit"
                     color="primary"
                 >
-                    {{ __('filament::edit-account.update') }}
+                    {{ __('filament::edit-account.buttons.save.label') }}
                 </x-filament::button>
             </x-forms::container>
         </x-filament::card>
