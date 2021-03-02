@@ -51,4 +51,9 @@ class FilamentManager
     {
         $this->widgets = array_merge($this->widgets, [$widget]);
     }
+
+    public function showUserResourceInNavigation()
+    {
+        return (bool) config('filament.show_user_resource_in_navigation');
+    }
 }

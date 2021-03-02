@@ -80,7 +80,11 @@ class UserResource extends Resource
 
     public static function navigationItems()
     {
-        return [];
+        if (! Filament::showUserResourceInNavigation()) {
+            return [];
+        }
+
+        return parent::navigationItems();
     }
 
     public static function table(Table $table)

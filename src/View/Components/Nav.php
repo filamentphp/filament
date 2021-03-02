@@ -4,6 +4,8 @@ namespace Filament\View\Components;
 
 use Filament\Filament;
 use Filament\NavigationItem;
+use Filament\Resources\UserResource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Component;
 
 class Nav extends Component
@@ -25,6 +27,10 @@ class Nav extends Component
             if ($resource::authorizationManager()->can()) {
                 $this->items->push(...$resource::navigationItems());
             }
+        }
+
+        if (Auth::guard('filament')->user()->is_admin) {
+            $this->items->push(...UserResource::navigationItems());
         }
 
         foreach (Filament::getPages() as $page) {

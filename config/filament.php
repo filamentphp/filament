@@ -76,6 +76,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Show User Resource In Navigation
+    |--------------------------------------------------------------------------
+    |
+    | Determines whether the default `User` resource should appear in
+    | the sidebar navigation or not.
+    |
+    */
+
+    'show_user_resource_in_navigation' => false,
+
+    /*
+    |--------------------------------------------------------------------------
     | Default Filesystem Disk
     |--------------------------------------------------------------------------
     |
@@ -83,6 +95,7 @@ return [
     | of the disks defined in the `config/filesystems.php`.
     |
     */
+
     'default_filesystem_disk' => env('FILAMENT_FILESYSTEM_DRIVER', 'public'),
 
     /*
