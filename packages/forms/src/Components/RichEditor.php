@@ -65,8 +65,6 @@ class RichEditor extends Field
     {
         if (! is_array($buttonsToDisable)) $buttonsToDisable = [$buttonsToDisable];
 
-        $this->toolbarButtons = array_merge($this->toolbarButtons, $buttonsToDisable);
-
         $this->toolbarButtons = collect($this->toolbarButtons)
             ->filter(fn ($button) => ! in_array($button, $buttonsToDisable))
             ->toArray();
