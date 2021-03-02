@@ -10,14 +10,21 @@ return [
     | The default is `admin` but you can change it to whatever works best and
     | doesn't conflict with the routing in your application.
     |
-    | You may also change the domain where Filament should be active. If the
-    | domain is empty, all domains will be valid.
-    |
     */
 
     'path' => 'admin',
     
-    'domain' => '',
+    /*
+    |--------------------------------------------------------------------------
+    | Filament Domaın
+    |--------------------------------------------------------------------------
+    |
+    | You may change the domain where Filament should be active. If the domain 
+    | is empty, all domains will be valid.
+    |
+    */
+    
+    'domain' => env('FILAMENT_DOMAIN', ''),
 
     /*
     |--------------------------------------------------------------------------
