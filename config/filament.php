@@ -24,7 +24,7 @@ return [
     |
     */
     
-    'domain' => env('FILAMENT_DOMAIN', ''),
+    'domain' => env('FILAMENT_DOMAIN', null),
 
     /*
     |--------------------------------------------------------------------------
