@@ -80,7 +80,7 @@ class Text extends Column
         $value = parent::getValue($record, $attribute);
 
         if ($value === null) {
-            $this->default;
+            return $this->default;
         }
 
         if ($this->formatUsing) {
