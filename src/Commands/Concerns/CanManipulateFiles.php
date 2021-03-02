@@ -27,7 +27,7 @@ trait CanManipulateFiles
         $stub = Str::of($filesystem->get(__DIR__ . "/../../../stubs/{$stub}.stub"));
 
         foreach ($replacements as $key => $replacement) {
-            $stub = $stub->replace("{{{$key}}}", $replacement);
+            $stub = $stub->replace("{{ {$key} }}", $replacement);
         }
 
         $stub = (string) $stub;

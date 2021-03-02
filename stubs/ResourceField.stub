@@ -1,13 +1,13 @@
 <?php
 
-namespace {{namespace}};
+namespace {{ namespace }};
 
 use Filament\Forms\Components\Field;
 use Filament\Resources\Forms\Components\Concerns;
 
-class {{class}} extends Field
+class {{ class }} extends Field
 {
     use Concerns\InteractsWithResource;
 
-    public $view = '{{view}}';
+    public $view = '{{ view }}';
 }

@@ -1,9 +1,9 @@
 <?php
 
-namespace {{namespace}};
+namespace {{ namespace }};
 
-use App\Filament\Resources\{{resource}}\Pages;
-use App\Filament\Resources\{{resource}}\RelationManagers;
+use App\Filament\Resources\{{ resource }}\Pages;
+use App\Filament\Resources\{{ resource }}\RelationManagers;
 use App\Filament\Roles;
 use Filament\Resources\Forms\Components;
 use Filament\Resources\Forms\Form;
@@ -12,7 +12,7 @@ use Filament\Resources\Tables\Columns;
 use Filament\Resources\Tables\Filter;
 use Filament\Resources\Tables\Table;
 
-class {{resourceClass}} extends Resource
+class {{ resourceClass }} extends Resource
 {
     public static $icon = 'heroicon-o-collection';
 
@@ -45,9 +45,9 @@ class {{resourceClass}} extends Resource
     public static function routes()
     {
         return [
-            Pages\{{indexResourcePageClass}}::routeTo('/', 'index'),
-            Pages\{{createResourcePageClass}}::routeTo('/create', 'create'),
-            Pages\{{editResourcePageClass}}::routeTo('/{record}/edit', 'edit'),
+            Pages\{{ indexResourcePageClass }}::routeTo('/', 'index'),
+            Pages\{{ createResourcePageClass }}::routeTo('/create', 'create'),
+            Pages\{{ editResourcePageClass }}::routeTo('/{record}/edit', 'edit'),
         ];
     }
 }

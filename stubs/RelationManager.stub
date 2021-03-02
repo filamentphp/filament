@@ -1,6 +1,6 @@
 <?php
 
-namespace {{namespace}};
+namespace {{ namespace }};
 
 use Filament\Resources\Forms\Components;
 use Filament\Resources\Forms\Form;
@@ -9,9 +9,9 @@ use Filament\Resources\Tables\Columns;
 use Filament\Resources\Tables\Filter;
 use Filament\Resources\Tables\Table;
 
-class {{managerClass}} extends RelationManager
+class {{ managerClass }} extends RelationManager
 {
-    public static $relationship = '{{relationship}}';
+    public static $relationship = '{{ relationship }}';
 
     public static function form(Form $form)
     {

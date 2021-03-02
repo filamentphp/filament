@@ -1,10 +1,10 @@
 <?php
 
-namespace {{namespace}};
+namespace {{ namespace }};
 
 use Filament\Forms\Components\Field;
 
-class {{class}} extends Field
+class {{ class }} extends Field
 {
-    public $view = '{{view}}';
+    public $view = '{{ view }}';
 }

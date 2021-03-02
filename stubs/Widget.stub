@@ -1,10 +1,10 @@
 <?php
 
-namespace {{namespace}};
+namespace {{ namespace }};
 
 use Filament\Widgets\Widget;
 
-class {{class}} extends Widget
+class {{ class }} extends Widget
 {
-    public static $view = '{{view}}';
+    public static $view = '{{ view }}';
 }
