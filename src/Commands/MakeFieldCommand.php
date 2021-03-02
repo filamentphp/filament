@@ -26,7 +26,7 @@ class MakeFieldCommand extends Command
             '';
 
         $view = Str::of($field)
-            ->prepend('filament\\fields\\')
+            ->prepend('filament\\forms\\components\\')
             ->explode('\\')
             ->map(fn ($segment) => Str::kebab($segment))
             ->implode('.');
