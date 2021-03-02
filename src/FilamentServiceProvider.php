@@ -62,7 +62,7 @@ class FilamentServiceProvider extends ServiceProvider
             return;
         }
 
-        $this->commands([
+        $this->commands($commands = [
             Commands\MakeRelationManagerCommand::class,
             Commands\MakeResourceCommand::class,
             Commands\MakeRoleCommand::class,
@@ -70,14 +70,21 @@ class FilamentServiceProvider extends ServiceProvider
             Commands\MakeUserCommand::class,
             Commands\MakeWidgetCommand::class,
             Commands\MakeFieldCommand::class,
-            Commands\Aliases\MakePageCommand::class,
-            Commands\Aliases\MakeRelationManagerCommand::class,
-            Commands\Aliases\MakeResourceCommand::class,
-            Commands\Aliases\MakeRoleCommand::class,
-            Commands\Aliases\MakeUserCommand::class,
-            Commands\Aliases\MakeWidgetCommand::class,
-            Commands\Aliases\MakeFieldCommand::class,
         ]);
+
+        $aliases = [];
+
+        foreach ($commands as $command) {
+            $class = 'Filament\\Commands\\Aliases\\'.class_basename($command);
+
+            if (! class_exists($class)) {
+                continue;
+            }
+
+            $aliases[] = $class;
+        }
+
+        $this->commands($aliases);
     }
 
     protected function bootDirectives()
