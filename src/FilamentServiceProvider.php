@@ -69,6 +69,7 @@ class FilamentServiceProvider extends ServiceProvider
             Commands\MakePageCommand::class,
             Commands\MakeUserCommand::class,
             Commands\MakeWidgetCommand::class,
+            Commands\MakeFieldCommand::class,
         ]);
     }
 

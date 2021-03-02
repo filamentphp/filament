@@ -9,10 +9,8 @@ trait CanManipulateFiles
 {
     protected function checkForCollision($paths)
     {
-        $filesystem = new Filesystem();
-
         foreach ($paths as $path) {
-            if ($filesystem->exists($path)) {
+            if ($this->fileExists($path)) {
                 $this->error("$path already exists, aborting.");
 
                 return true;
@@ -35,6 +33,13 @@ trait CanManipulateFiles
         $stub = (string) $stub;
 
         $this->writeFile($targetPath, $stub);
+    }
+
+    protected function fileExists($path)
+    {
+        $filesystem = new Filesystem();
+
+        return $filesystem->exists($path);
     }
 
     protected function writeFile($path, $contents)
