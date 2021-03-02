@@ -54,11 +54,16 @@ class RichEditor extends Field
         return $this;
     }
 
+    public function disableAllToolbarButtons()
+    {
+        $this->toolbarButtons = [];
+
+        return $this;
+    }
+
     public function disableToolbarButtons($buttonsToDisable)
     {
         if (! is_array($buttonsToDisable)) $buttonsToDisable = [$buttonsToDisable];
-
-        $this->toolbarButtons = array_merge($this->toolbarButtons, $buttonsToDisable);
 
         $this->toolbarButtons = collect($this->toolbarButtons)
             ->filter(fn ($button) => ! in_array($button, $buttonsToDisable))
