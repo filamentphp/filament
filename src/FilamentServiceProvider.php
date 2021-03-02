@@ -148,6 +148,10 @@ class FilamentServiceProvider extends ServiceProvider
         ], 'filament-lang');
 
         $this->publishes([
+            __DIR__ . '/../stubs' => base_path('stubs/filament'),
+        ], 'filament-stubs');
+
+        $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/filament'),
         ], 'filament-views');
     }
