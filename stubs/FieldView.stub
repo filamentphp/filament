@@ -7,7 +7,12 @@
     :label="__($formComponent->label)"
     :required="$formComponent->required"
 >
-    <div id="{{ $formComponent->id }} x-data="{
-        value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }}
-    }"></div>
+    <div
+        x-data="{
+            value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
+        }"
+        id="{{ $formComponent->id }}"
+    >
+        {{-- Field content --}}
+    </div>
 </x-forms::field-group>
