@@ -16,7 +16,7 @@ return [
     
     /*
     |--------------------------------------------------------------------------
-    | Filament Domaın
+    | Filament Domain
     |--------------------------------------------------------------------------
     |
     | You may change the domain where Filament should be active. If the domain 
