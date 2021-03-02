@@ -26,7 +26,7 @@ Route::get('image/{path}', Controllers\ImageController::class)->where('path', '.
 Route::middleware([Authenticate::class])->group(function () {
     foreach (Filament::getPages() as $page) {
         Route::get($page::route()->uri, $page)
-            ->middleware('filament.authorize.page-route:' . $page)
+            ->middleware('filament.authorize.admins:' . $page)
             ->name('pages.' . $page::route()->name);
     }
 
