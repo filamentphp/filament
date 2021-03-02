@@ -139,7 +139,7 @@ trait HasTable
                                 return $query->where(
                                     (string) Str::of($column->name)->afterLast('.'),
                                     'like',
-                                    "%{$this->search}%",
+                                    "{$this->search}%",
                                 );
                             },
                         );
@@ -150,7 +150,7 @@ trait HasTable
                     $query = $query->{$first ? 'where' : 'orWhere'}(
                         $column->name,
                         'like',
-                        "%{$this->search}%"
+                        "{$this->search}%"
                     );
                 });
         }
