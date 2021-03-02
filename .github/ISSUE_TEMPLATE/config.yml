@@ -6,3 +6,6 @@ contact_links:
   - name: Support questions & other
     url: https://github.com/laravel-filament/filament/discussions/new
     about: If you have a question or need help installing using the package
+  - name: Discord
+    url: https://discord.gg/livewire
+    about: We are partnered with the Laravel Livewire Discord server. For quick help, ask questions in the Filament channel.
