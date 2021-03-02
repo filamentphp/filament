@@ -24,7 +24,11 @@ trait CanManipulateFiles
     {
         $filesystem = new Filesystem();
 
-        $stub = Str::of($filesystem->get(__DIR__ . "/../../../stubs/{$stub}.stub"));
+        if (!$this->fileExists($stubPath = base_path("stubs/filament/{$stub}.stub"))) {
+            $stubPath = __DIR__ . "/../../../stubs/{$stub}.stub";
+        }
+
+        $stub = Str::of($filesystem->get($stubPath));
 
         foreach ($replacements as $key => $replacement) {
             $stub = $stub->replace("{{ {$key} }}", $replacement);
