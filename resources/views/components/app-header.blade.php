@@ -26,7 +26,7 @@
                 </p>
             @endif
 
-            <h1 class="text-2xl font-medium leading-tight text-gray-800 md:text-3xl">{{ $title }}</h1>
+            <h1 class="text-2xl font-medium leading-tight md:text-3xl">{{ $title }}</h1>
         </div>
     </div>
 

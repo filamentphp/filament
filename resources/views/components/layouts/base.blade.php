@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="bg-gray-100 antialiased js-focus-visible">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="antialiased bg-gray-100 js-focus-visible">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,7 +17,7 @@
     @stack('filament-styles')
 </head>
 
-<body class="text-gray-700">
+<body class="text-gray-600">
     {{ $slot }}
 
     <x-filament::notification />

@@ -32,12 +32,10 @@
                             @endif
                         </div>
 
-                        <div class="prose-sm prose">
-                            <ul>
-                                <li><a href="https://filamentadmin.com/docs" target="_blank">{{ __('filament::dashboard.widgets.filament.links.documentation.label') }}</a></li>
-                                <li><a href="https://github.com/laravel-filament/filament" target="_blank">{{ __('filament::dashboard.widgets.filament.links.repository.label') }}</a></li>
-                            </ul>
-                        </div>
+                        <ul class="space-y-1 text-sm">
+                            <li><a href="https://filamentadmin.com/docs" target="_blank" class="link">{{ __('filament::dashboard.widgets.filament.links.documentation.label') }}</a></li>
+                            <li><a href="https://github.com/laravel-filament/filament" target="_blank" class="link">{{ __('filament::dashboard.widgets.filament.links.repository.label') }}</a></li>
+                        </ul>
                     </div>
                 </div>
             </x-filament::card>

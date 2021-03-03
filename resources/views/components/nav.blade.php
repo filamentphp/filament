@@ -1,5 +1,5 @@
 <nav aria-label="primary" {{ $attributes }}>
-    <ol class="space-y-1">
+    <ol>
         @foreach ($items as $item)
             <li>
                 <x-filament::nav-link
