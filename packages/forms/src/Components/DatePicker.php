@@ -23,10 +23,8 @@ class DatePicker extends Field
 
     public $view = 'forms::components.date-time-picker';
 
-    public function __construct($name)
+    protected function setup()
     {
-        parent::__construct($name);
-
         $this->displayFormat('F j, Y');
         $this->format('Y-m-d');
     }

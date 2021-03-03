@@ -29,7 +29,6 @@ class Field extends Component
     public function __construct($name)
     {
         $this->name($name);
-        
         $this->setup();
     }
 

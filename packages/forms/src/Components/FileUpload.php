@@ -40,10 +40,8 @@ class FileUpload extends Field
 
     public $visibility = 'public';
 
-    public function __construct($name)
+    protected function setup()
     {
-        parent::__construct($name);
-
         $this->addRules([$this->getTemporaryUploadedFilePropertyName() => ['nullable', 'file']]);
         $this->disk(config('forms.default_filesystem_disk'));
     }

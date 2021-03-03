@@ -21,10 +21,8 @@ class Select extends Field
 
     public $options = [];
 
-    public function __construct($name)
+    protected function setup()
     {
-        parent::__construct($name);
-
         $this->placeholder('forms::fields.select.placeholder');
 
         $this->getDisplayValueUsing(function ($value) {
