@@ -36,7 +36,7 @@
                         {{ __('filament::nav.dropdown.account.label') }}
                     </x-filament::dropdown-link>
 
-                    <livewire:filament.auth.logout class="w-full py-2 px-4 transition-colors duration-200 text-gray-600 hover:bg-gray-200" />
+                    <livewire:filament.core.auth.logout class="w-full py-2 px-4 transition-colors duration-200 text-gray-600 hover:bg-gray-200" />
                 </x-filament::dropdown>
             </header>
 

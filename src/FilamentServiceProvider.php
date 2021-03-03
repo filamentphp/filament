@@ -118,8 +118,8 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootLivewireComponents()
     {
-        $this->registerLivewireComponentDirectory(__DIR__ . '/Http/Livewire', 'Filament\\Http\\Livewire', 'filament.');
-        $this->registerLivewireComponentDirectory(__DIR__ . '/Resources', 'Filament\\Resources', 'filament.resources.');
+        $this->registerLivewireComponentDirectory(__DIR__ . '/Http/Livewire', 'Filament\\Http\\Livewire', 'filament.core.');
+        $this->registerLivewireComponentDirectory(__DIR__ . '/Resources', 'Filament\\Resources', 'filament.core.resources.');
         $this->registerLivewireComponentDirectory(app_path('Filament'), 'App\\Filament', 'filament.');
     }
 
