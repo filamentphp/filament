@@ -3,21 +3,21 @@
     'title',
 ])
 
-<header class="p-4 md:py-6 md:px-8 flex justify-between items-center space-x-4">
+<header class="flex items-center justify-between p-4 space-x-4 md:py-6 md:px-8">
     <div class="flex items-center">
         <button
             type="button"
             aria-controls="banner"
             @click.prevent="headerIsOpen = true"
             :aria-expanded="headerIsOpen"
-            class="md:hidden text-gray-500 hover:text-gray-700 transition-colors duration-200 mr-4"
+            class="mr-4 text-gray-500 transition-colors duration-200 md:hidden hover:text-gray-700"
         >
             <x-heroicon-o-menu-alt-2 class="w-6 h-6" />
         </button>
 
         <div class="space-y-1">
             @if (count($breadcrumbs))
-                <p class="font-mono text-sm text-gray-700">
+                <p class="-mt-2 font-mono text-sm text-gray-500">
                     @foreach ($breadcrumbs as $url => $label)
                         <a href="{{ $url }}" class="hover:underline">{{ $label }}</a>
 
@@ -26,7 +26,7 @@
                 </p>
             @endif
 
-            <h1 class="text-2xl md:text-3xl leading-tight font-medium text-gray-800">{{ $title }}</h1>
+            <h1 class="text-2xl font-medium leading-tight text-gray-800 md:text-3xl">{{ $title }}</h1>
         </div>
     </div>
 
