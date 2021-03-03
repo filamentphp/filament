@@ -29,11 +29,17 @@ class Field extends Component
     public function __construct($name)
     {
         $this->name($name);
+        $this->setup();
     }
 
     public static function make($name)
     {
         return new static($name);
+    }
+
+    protected function setup()
+    {
+        //
     }
 
     public function disabled()
