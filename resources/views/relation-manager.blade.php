@@ -29,7 +29,7 @@
         <x-filament::card class="space-y-5 max-w-4xl w-full">
             <x-filament::card-header :title="__(static::$createModalHeading)" />
 
-            @livewire(Filament\Resources\RelationManager\CreateRecord::class, [
+            @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\CreateRecord::class), [
                 'cancelButtonLabel' => __(static::$createModalCancelButtonLabel),
                 'createButtonLabel' => __(static::$createModalCreateButtonLabel),
                 'createdMessage' => __(static::$createModalCreatedMessage),
@@ -45,7 +45,7 @@
         <x-filament::card class="space-y-5 max-w-4xl w-full">
             <x-filament::card-header :title="__(static::$editModalHeading)" />
 
-            @livewire(Filament\Resources\RelationManager\EditRecord::class, [
+            @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\EditRecord::class), [
                 'cancelButtonLabel' => __(static::$editModalCancelButtonLabel),
                 'manager' => static::class,
                 'owner' => $this->owner,
