@@ -170,13 +170,13 @@ class Component
 
         if (property_exists($this, 'name')) {
             if (property_exists($this, 'label')) {
-                $label = Str::lower($this->label);
+                $label = Str::lower(__($this->label));
 
                 $attributes[$this->name] = $label;
             }
 
             if (property_exists($this, 'validationAttribute') && $this->validationAttribute !== null) {
-                $attributes[$this->name] = $this->validationAttribute;
+                $attributes[$this->name] = __($this->validationAttribute);
             }
         }
 
