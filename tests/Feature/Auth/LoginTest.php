@@ -14,7 +14,7 @@ class LoginTest extends TestCase
     {
         $this->get(route('filament.auth.login'))
             ->assertSuccessful()
-            ->assertSeeLivewire('filament.auth.login');
+            ->assertSeeLivewire('filament.core.auth.login');
     }
 
     /** @test */

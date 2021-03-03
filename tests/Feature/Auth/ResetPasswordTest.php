@@ -20,7 +20,7 @@ class ResetPasswordTest extends TestCase
             'token' => $this->generateToken(),
         ]))
             ->assertSuccessful()
-            ->assertSeeLivewire('filament.auth.reset-password');
+            ->assertSeeLivewire('filament.core.auth.reset-password');
     }
 
     protected function generateToken($user = null)

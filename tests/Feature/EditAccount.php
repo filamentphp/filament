@@ -22,7 +22,7 @@ class EditAccountTest extends TestCase
 
         $this->get(route('filament.account'))
             ->assertSuccessful()
-            ->assertSeeLivewire('filament.edit-account');
+            ->assertSeeLivewire('filament.core.edit-account');
     }
 
     /** @test */

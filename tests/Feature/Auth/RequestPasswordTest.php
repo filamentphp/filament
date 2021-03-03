@@ -16,7 +16,7 @@ class RequestPasswordTest extends TestCase
     {
         $this->get(route('filament.auth.password.request'))
             ->assertSuccessful()
-            ->assertSeeLivewire('filament.auth.request-password');
+            ->assertSeeLivewire('filament.core.auth.request-password');
     }
 
     /** @test */
