@@ -28,7 +28,7 @@ class Nav extends Component
         }
 
         foreach (Filament::getPages() as $page) {
-            if ($resource::authorizationManager()->can()) {
+            if ($page::authorizationManager()->can()) {
                 $this->items->push(...$page::navigationItems());
             }
         }
