@@ -2,9 +2,17 @@
 
 namespace Filament\Tests;
 
+use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
+use BladeUI\Icons\BladeIconsServiceProvider;
 use Filament\Filament;
+use Filament\FilamentServiceProvider;
+use Filament\Forms\FormsServiceProvider;
+use Filament\Tables\TablesServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Livewire\LivewireServiceProvider;
+use Thomaswelton\LaravelGravatar\LaravelGravatarServiceProvider;
+use Watson\Active\ActiveServiceProvider;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -32,14 +40,14 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     protected function getPackageProviders($app)
     {
         return [
-            \BladeUI\Heroicons\BladeHeroiconsServiceProvider::class,
-            \BladeUI\Icons\BladeIconsServiceProvider::class,
-            \Filament\FilamentServiceProvider::class,
-            \Filament\Forms\FormsServiceProvider::class,
-            \Filament\Tables\TablesServiceProvider::class,
-            \Livewire\LivewireServiceProvider::class,
-            \Thomaswelton\LaravelGravatar\LaravelGravatarServiceProvider::class,
-            \Watson\Active\ActiveServiceProvider::class,
+            BladeHeroiconsServiceProvider::class,
+            BladeIconsServiceProvider::class,
+            FilamentServiceProvider::class,
+            FormsServiceProvider::class,
+            TablesServiceProvider::class,
+            LivewireServiceProvider::class,
+            LaravelGravatarServiceProvider::class,
+            ActiveServiceProvider::class,
         ];
     }
 }

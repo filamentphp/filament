@@ -20,32 +20,29 @@ return [
             'label' => 'Name',
         ],
 
-        'newPassword' => [
+        'password' => [
 
             'fieldset' => [
-                'label' => 'Set a new password',
+
+                'label' => [
+                    'create' => 'Password',
+                    'edit' => 'Set a new password',
+                ],
+
             ],
 
             'fields' => [
 
-                'newPassword' => [
+                'password' => [
                     'label' => 'Password',
                 ],
 
-                'newPasswordConfirmation' => [
+                'passwordConfirmation' => [
                     'label' => 'Confirm password',
                 ],
 
             ],
 
-        ],
-
-        'password' => [
-            'label' => 'Password',
-        ],
-
-        'passwordConfirmation' => [
-            'label' => 'Confirm password',
         ],
 
         'roles' => [

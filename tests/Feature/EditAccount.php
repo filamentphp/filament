@@ -5,7 +5,6 @@ namespace Filament\Tests\Feature;
 use Filament\Http\Livewire\EditAccount;
 use Filament\Models\User;
 use Filament\Tests\TestCase;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;

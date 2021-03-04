@@ -4,17 +4,11 @@ namespace Filament\Resources\UserResource\Pages;
 
 use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\UserResource;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class EditUser extends EditRecord
 {
     public static $resource = UserResource::class;
-
-    public static function getQuery()
-    {
-        return parent::getQuery()->where('id', '!=', Auth::guard('filament')->user()->id);
-    }
 
     public function save()
     {
@@ -24,12 +18,12 @@ class EditUser extends EditRecord
 
         $this->validate();
 
-        if ($this->record->newPassword) {
-            $this->record->password = Hash::make($this->record->newPassword);
+        if ($this->record->password) {
+            $this->record->password = Hash::make($this->record->password);
         }
 
-        unset($this->record->newPassword);
-        unset($this->record->newPasswordConfirmation);
+        unset($this->record->password);
+        unset($this->record->passwordConfirmation);
 
         $this->record->save();
 

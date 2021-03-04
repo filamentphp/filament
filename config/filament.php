@@ -12,19 +12,33 @@ return [
     |
     */
 
-    'path' => 'admin',
-    
+    'path' => env('FILAMENT_PATH', 'admin'),
+
     /*
     |--------------------------------------------------------------------------
     | Filament Domain
     |--------------------------------------------------------------------------
     |
-    | You may change the domain where Filament should be active. If the domain 
+    | You may change the domain where Filament should be active. If the domain
     | is empty, all domains will be valid.
     |
     */
-    
+
     'domain' => env('FILAMENT_DOMAIN', null),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Auth
+    |--------------------------------------------------------------------------
+    |
+    | This is the configuration that Filament will use to handle authentication
+    | into the admin panel.
+    |
+    */
+
+    'auth' => [
+        'guard' => env('FILAMENT_AUTH_GUARD', 'filament'),
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -96,6 +110,17 @@ return [
     |
     */
     'default_filesystem_disk' => env('FILAMENT_FILESYSTEM_DRIVER', 'public'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Resource
+    |--------------------------------------------------------------------------
+    |
+    | This is the user resource class that Filament will use to generate tables
+    | and forms to manage users.
+    |
+    */
+    'user_resource' => \Filament\Resources\UserResource::class,
 
     /*
     |--------------------------------------------------------------------------

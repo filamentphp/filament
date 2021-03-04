@@ -21,12 +21,12 @@
                 <x-filament::dropdown
                     class="flex items-center flex-grow w-full p-4 space-x-3 text-left transition-colors duration-200 hover:text-white hover:bg-gray-900">
                     <x-slot name="button">
-                        <x-filament-avatar :user="Auth::guard('filament')->user()" :size="32" class="flex-shrink-0 w-8 h-8 rounded-full" />
+                        <x-filament-avatar :user="\Filament\Filament::auth()->user()" :size="32" class="flex-shrink-0 w-8 h-8 rounded-full" />
 
-                        <span class="flex-grow text-sm font-medium leading-tight">{{ Auth::guard('filament')->user()->name }}</span>
+                        <span class="flex-grow text-sm font-medium leading-tight">{{ \Filament\Filament::auth()->user()->name }}</span>
                     </x-slot>
 
-                    @if (Auth::guard('filament')->user()->is_admin)
+                    @if (\Filament\Filament::auth()->user()->isFilamentAdmin())
                         <x-filament::dropdown-link href="{{ route('filament.users.index') }}">
                             {{ __('filament::nav.dropdown.users.label') }}
                         </x-filament::dropdown-link>

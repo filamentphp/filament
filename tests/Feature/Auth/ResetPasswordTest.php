@@ -23,15 +23,6 @@ class ResetPasswordTest extends TestCase
             ->assertSeeLivewire('filament.core.auth.reset-password');
     }
 
-    protected function generateToken($user = null)
-    {
-        if (! $user) {
-            $user = User::factory()->create();
-        }
-
-        return Password::broker('filament_users')->createToken($user);
-    }
-
     /** @test */
     public function can_reset_password()
     {
@@ -138,5 +129,14 @@ class ResetPasswordTest extends TestCase
             ->set('passwordConfirmation', 'different-password')
             ->call('submit')
             ->assertHasErrors(['passwordConfirmation' => 'same']);
+    }
+
+    protected function generateToken($user = null)
+    {
+        if (! $user) {
+            $user = User::factory()->create();
+        }
+
+        return Password::broker('filament_users')->createToken($user);
     }
 }

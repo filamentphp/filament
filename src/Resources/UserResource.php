@@ -3,7 +3,7 @@
 namespace Filament\Resources;
 
 use Filament\Filament;
-use Filament\Models\User;
+use Filament\Http\Livewire\EditAccount;
 use Filament\Resources\Forms\Components;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Tables\Columns;
@@ -16,9 +16,9 @@ class UserResource extends Resource
 {
     public static $icon = 'heroicon-o-user-group';
 
-    public static $model = User::class;
-
     public static $routeNamePrefix = 'filament';
+
+    public static $slug = 'users';
 
     public static function form(Form $form)
     {
@@ -34,53 +34,64 @@ class UserResource extends Resource
                         ->email()
                         ->disableAutocomplete()
                         ->required()
-                        ->unique(User::class, 'email', true),
+                        ->unique(static::getModel(), 'email', true),
                 ]),
-                Components\Fieldset::make('Password', [
+                Components\Fieldset::make('filament::resources/user-resource.form.password.fieldset.label.edit', [
                     Components\TextInput::make('password')
-                        ->label('filament::resources/user-resource.form.password.label')
+                        ->label('filament::resources/user-resource.form.password.fields.password.label')
                         ->password()
                         ->autocomplete('new-password')
                         ->confirmed()
                         ->minLength(8)
-                        ->required(),
+                        ->only(Pages\CreateUser::class, fn ($field) => $field->required()),
                     Components\TextInput::make('passwordConfirmation')
-                        ->label('filament::resources/user-resource.form.passwordConfirmation.label')
+                        ->label('filament::resources/user-resource.form.password.fields.passwordConfirmation.label')
                         ->password()
                         ->autocomplete('new-password')
-                        ->required(),
-                ])->only(Pages\CreateUser::class),
-                Components\Fieldset::make('filament::resources/user-resource.form.newPassword.fieldset.label', [
-                    Components\TextInput::make('newPassword')
-                        ->label('filament::resources/user-resource.form.newPassword.fields.newPassword.label')
-                        ->password()
-                        ->autocomplete('new-password')
-                        ->confirmed()
-                        ->minLength(8),
-                    Components\TextInput::make('newPasswordConfirmation')
-                        ->label('filament::resources/user-resource.form.newPassword.fields.newPasswordConfirmation.label')
-                        ->password()
-                        ->autocomplete('new-password')
-                        ->requiredWith('newPassword'),
-                ])->only(Pages\EditUser::class),
-                Components\Grid::make([
-                    Components\MultiSelect::make('roles')
-                        ->label('filament::resources/user-resource.form.roles.label')
-                        ->placeholder('Select a role')
-                        ->options(
-                            collect(Filament::getRoles())
-                                ->mapWithKeys(fn ($role) => [$role => Str::ucfirst($role::getLabel())])
-                                ->toArray(),
-                        ),
-                    Components\Checkbox::make('is_admin')
-                        ->label('filament::resources/user-resource.form.isAdmin.label'),
-                ]),
-                Components\FileUpload::make('avatar')
-                    ->label('filament::resources/user-resource.form.avatar.label')
-                    ->avatar()
-                    ->directory('filament-avatars')
-                    ->disk(config('filament.default_filesystem_disk')),
+                        ->only(Pages\CreateUser::class, fn ($field) => $field->required())
+                        ->only([
+                            EditAccount::class,
+                            Pages\EditUser::class,
+                        ], fn ($field) => $field->requiredWith('password')),
+                ])->only(
+                    Pages\CreateUser::class,
+                    fn ($fieldset) => $fieldset->label('filament::resources/user-resource.form.password.fieldset.label.create'),
+                ),
+                Components\Grid::make(function () {
+                    $schema = [];
+
+                    $rolesColumn = Filament::auth()->getProvider()->getModel()::getFilamentRolesColumn();
+                    if ($rolesColumn !== null) {
+                        $schema[] = Components\MultiSelect::make($rolesColumn)
+                            ->label('filament::resources/user-resource.form.roles.label')
+                            ->placeholder('Select a role')
+                            ->options(
+                                collect(Filament::getRoles())
+                                    ->mapWithKeys(fn ($role) => [$role => Str::ucfirst($role::getLabel())])
+                                    ->toArray(),
+                            );
+                    }
+
+                    $adminColumn = Filament::auth()->getProvider()->getModel()::getFilamentAdminColumn();
+                    if ($adminColumn !== null) {
+                        $schema[] = Components\Checkbox::make($adminColumn)
+                            ->label('filament::resources/user-resource.form.isAdmin.label');
+                    }
+
+                    $schema[] = Components\FileUpload::make('avatar')
+                        ->label('filament::resources/user-resource.form.avatar.label')
+                        ->avatar()
+                        ->directory('filament-avatars')
+                        ->disk(config('filament.default_filesystem_disk'));
+
+                    return $schema;
+                }),
             ]);
+    }
+
+    public static function getModel()
+    {
+        return Filament::auth()->getProvider()->getModel();
     }
 
     public static function navigationItems()
@@ -90,23 +101,30 @@ class UserResource extends Resource
 
     public static function table(Table $table)
     {
-        return $table
-            ->columns([
-                Columns\Text::make('name')
-                    ->label('filament::resources/user-resource.table.columns.name.label')
-                    ->primary()
-                    ->searchable()
-                    ->sortable(),
-                Columns\Text::make('email')
-                    ->label('filament::resources/user-resource.table.columns.email.label')
-                    ->searchable()
-                    ->sortable()
-                    ->url(fn ($user) => "mailto:{$user->email}"),
-            ])
-            ->filters([
-                Filter::make('administrators', fn ($query) => $query->where('is_admin', true))
-                    ->label('filament::resources/user-resource.table.filters.administrators.label'),
-            ]);
+        $table->columns([
+            Columns\Text::make('name')
+                ->label('filament::resources/user-resource.table.columns.name.label')
+                ->primary()
+                ->searchable()
+                ->sortable(),
+            Columns\Text::make('email')
+                ->label('filament::resources/user-resource.table.columns.email.label')
+                ->searchable()
+                ->sortable()
+                ->url(fn ($user) => "mailto:{$user->email}"),
+        ])->filters(function () {
+            $filters = [];
+
+            $adminColumn = Filament::auth()->getProvider()->getModel()::getFilamentAdminColumn();
+            if ($adminColumn !== null) {
+                $filters[] = Filter::make('administrators', fn ($query) => $query->where($adminColumn, true))
+                    ->label('filament::resources/user-resource.table.filters.administrators.label');
+            }
+
+            return $filters;
+        });
+
+        return $table;
     }
 
     public static function routes()

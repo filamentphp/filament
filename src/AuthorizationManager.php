@@ -2,8 +2,6 @@
 
 namespace Filament;
 
-use Illuminate\Support\Facades\Auth;
-
 class AuthorizationManager
 {
     public $authorizations = [];
@@ -43,11 +41,11 @@ class AuthorizationManager
 
     public function can($action = null)
     {
-        $user = Auth::guard('filament')->user();
+        $user = Filament::auth()->user();
 
         if (
             ! count($this->authorizations) ||
-            $user->is_admin
+            $user->isFilamentAdmin()
         ) {
             return true;
         }

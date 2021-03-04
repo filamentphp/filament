@@ -2,7 +2,7 @@
 
 namespace Filament\Http\Livewire\Auth;
 
-use Illuminate\Support\Facades\Auth;
+use Filament\Filament;
 use Livewire\Component;
 
 class Logout extends Component
@@ -11,7 +11,7 @@ class Logout extends Component
 
     public function submit()
     {
-        Auth::guard('filament')->logout();
+        Filament::auth()->logout();
 
         return redirect()->route('filament.auth.login');
     }
