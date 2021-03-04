@@ -17,10 +17,6 @@ class EditAccount extends Page
 
     public static $view = 'filament::edit-account';
 
-    public $newPassword;
-
-    public $newPasswordConfirmation;
-
     public $record;
 
     public static function getResource()
@@ -61,6 +57,7 @@ class EditAccount extends Page
         $this->record->save();
 
         $this->record->password = null;
+        $this->record->passwordConfirmation = null;
 
         $this->notify(__('filament::edit-account.messages.saved'));
     }

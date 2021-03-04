@@ -2,10 +2,10 @@
 
 namespace Filament\Tests\Feature\Auth;
 
+use Filament\Filament;
 use Filament\Http\Livewire\Auth\ResetPassword;
 use Filament\Models\User;
 use Filament\Tests\TestCase;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -41,7 +41,7 @@ class ResetPasswordTest extends TestCase
 
         $this->assertAuthenticatedAs($user);
 
-        $this->assertTrue(Auth::attempt([
+        $this->assertTrue(Filament::auth()->attempt([
             'email' => $user->email,
             'password' => $newPassword,
         ]));

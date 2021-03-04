@@ -29,6 +29,7 @@ class EditUser extends EditRecord
         $this->record->save();
 
         $this->record->password = null;
+        $this->record->passwordConfirmation = null;
 
         $this->notify(__(static::$savedMessage));
     }
