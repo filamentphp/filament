@@ -2,6 +2,9 @@
 
 namespace Filament;
 
+use Filament\Resources\UserResource;
+use Illuminate\Support\Facades\Auth;
+
 class FilamentManager
 {
     public $pages = [];
@@ -11,6 +14,11 @@ class FilamentManager
     public $roles = [];
 
     public $widgets = [];
+
+    public function auth()
+    {
+        return Auth::guard(config('filament.auth.guard', 'filament'));
+    }
 
     public function getPages()
     {
@@ -50,5 +58,10 @@ class FilamentManager
     public function registerWidget($widget)
     {
         $this->widgets = array_merge($this->widgets, [$widget]);
+    }
+
+    public function userResource()
+    {
+        return config('filament.user_resource', UserResource::class);
     }
 }

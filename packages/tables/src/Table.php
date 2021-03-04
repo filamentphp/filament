@@ -29,14 +29,14 @@ class Table
 
     public function columns($columns)
     {
-        $this->columns = $columns;
+        $this->columns = value($columns);
 
         return $this;
     }
 
     public function filters($filters)
     {
-        $this->filters = $filters;
+        $this->filters = value($filters);
 
         return $this;
     }

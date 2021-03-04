@@ -2,18 +2,15 @@
 
 namespace Filament\Resources\UserResource\Pages;
 
+use Filament\Filament;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Resources\UserResource;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class CreateUser extends CreateRecord
 {
-    public static $resource = UserResource::class;
-
-    public static function getQuery()
+    public static function getResource()
     {
-        return parent::getQuery()->where('id', '!=', Auth::guard('filament')->user()->id);
+        return Filament::userResource();
     }
 
     public function create()

@@ -2,11 +2,10 @@
 
 namespace Filament\Http\Livewire;
 
-use Filament\Forms\Components;
-use Filament\Forms\Form;
+use Filament\Filament;
 use Filament\Forms\HasForm;
-use Filament\Models\User;
-use Filament\Pages\Page;
+use Filament\Resources\Forms\Form;
+use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -18,48 +17,18 @@ class EditAccount extends Page
 
     public static $view = 'filament::edit-account';
 
-    public $newPassword;
-
-    public $newPasswordConfirmation;
-
     public $record;
+
+    public static function getResource()
+    {
+        return Filament::userResource();
+    }
 
     public function getForm()
     {
-        return Form::make()
-            ->schema([
-                Components\Grid::make([
-                    Components\TextInput::make('record.name')
-                        ->label('filament::edit-account.form.name.label')
-                        ->disableAutocomplete()
-                        ->required(),
-                    Components\TextInput::make('record.email')
-                        ->label('filament::edit-account.form.email.label')
-                        ->email()
-                        ->disableAutocomplete()
-                        ->required()
-                        ->unique(User::class, 'email', true),
-                ]),
-                Components\Fieldset::make('filament::edit-account.form.newPassword.fieldset.label', [
-                    Components\TextInput::make('newPassword')
-                        ->label('filament::edit-account.form.newPassword.fields.newPassword.label')
-                        ->password()
-                        ->autocomplete('new-password')
-                        ->confirmed()
-                        ->minLength(8),
-                    Components\TextInput::make('newPasswordConfirmation')
-                        ->label('filament::edit-account.form.newPassword.fields.newPasswordConfirmation.label')
-                        ->password()
-                        ->autocomplete('new-password')
-                        ->requiredWith('newPassword'),
-                ]),
-                Components\FileUpload::make('record.avatar')
-                    ->label('filament::edit-account.form.avatar.label')
-                    ->avatar()
-                    ->directory('filament-avatars')
-                    ->disk(config('filament.default_filesystem_disk')),
-            ])
+        return static::getResource()::form(Form::make())
             ->context(static::class)
+            ->model(static::getModel())
             ->record($this->record)
             ->submitMethod('save');
     }
@@ -77,14 +46,18 @@ class EditAccount extends Page
 
         $this->validate();
 
-        if ($this->newPassword) {
-            $this->record->password = Hash::make($this->newPassword);
+        unset($this->record->passwordConfirmation);
 
-            $this->newPassword = null;
-            $this->newPasswordConfirmation = null;
+        if ($this->record->password) {
+            $this->record->password = Hash::make($this->record->password);
+        } else {
+            unset($this->record->password);
         }
 
         $this->record->save();
+
+        $this->record->password = null;
+        $this->record->passwordConfirmation = null;
 
         $this->notify(__('filament::edit-account.messages.saved'));
     }

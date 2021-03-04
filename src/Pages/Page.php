@@ -20,13 +20,6 @@ class Page extends Component
 
     public static $view;
 
-    public function __invoke(Container $container, \Illuminate\Routing\Route $route)
-    {
-        abort_unless(static::can(), 403);
-
-        return parent::__invoke($container, $route);
-    }
-
     public static function authorization()
     {
         return [];
@@ -100,6 +93,13 @@ class Page extends Component
     public static function route()
     {
         return Route::make(static::getSlug(), static::getSlug());
+    }
+
+    public function __invoke(Container $container, \Illuminate\Routing\Route $route)
+    {
+        abort_unless(static::can(), 403);
+
+        return parent::__invoke($container, $route);
     }
 
     public function notify($message)

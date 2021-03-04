@@ -4,10 +4,10 @@ namespace Filament\Http\Livewire\Auth;
 
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
+use Filament\Filament;
 use Filament\Forms\Components;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Login extends Component
@@ -58,7 +58,7 @@ class Login extends Component
 
         $this->validate();
 
-        if (! Auth::guard('filament')->attempt($this->only(['email', 'password']), $this->remember)) {
+        if (! Filament::auth()->attempt($this->only(['email', 'password']), $this->remember)) {
             $this->addError('email', __('filament::auth/login.messages.failed'));
 
             return;

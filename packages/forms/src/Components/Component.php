@@ -113,7 +113,7 @@ class Component
 
     public function schema($schema)
     {
-        $this->schema = collect($schema)
+        $this->schema = collect(value($schema))
             ->map(fn ($component) => $component->parent($this))
             ->toArray();
 

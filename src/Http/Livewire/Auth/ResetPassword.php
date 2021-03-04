@@ -2,11 +2,11 @@
 
 namespace Filament\Http\Livewire\Auth;
 
+use Filament\Filament;
 use Filament\Forms\Components;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Livewire\Component;
@@ -79,7 +79,7 @@ class ResetPassword extends Component
             return;
         }
 
-        Auth::guard('filament')->login($this->user, true);
+        Filament::auth()->login($this->user, true);
 
         return redirect()->to(route('filament.dashboard'));
     }
