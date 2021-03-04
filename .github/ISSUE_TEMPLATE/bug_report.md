@@ -25,6 +25,7 @@ If applicable, add screenshots to help explain your problem.
 - Browser: [e.g. Chrome, Safari]
 - Server OS: [e.g. Ubuntu 18.04.4]
 - PHP version: [e.g. 7.4]
+- Database: [e.g. MySQL 8.0]
 
 **Additional details**
 Add any other details about the problem here.
