@@ -13,17 +13,17 @@ return [
     */
 
     'path' => 'admin',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Filament Domain
     |--------------------------------------------------------------------------
     |
-    | You may change the domain where Filament should be active. If the domain 
+    | You may change the domain where Filament should be active. If the domain
     | is empty, all domains will be valid.
     |
     */
-    
+
     'domain' => env('FILAMENT_DOMAIN', null),
 
     /*
@@ -84,6 +84,10 @@ return [
     'widgets' => [
         'namespace' => 'App\\Filament\\Widgets',
         'path' => app_path('Filament/Widgets'),
+        'default' => [
+            'account' => true,
+            'info' => true,
+        ],
     ],
 
     /*
