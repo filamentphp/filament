@@ -13,7 +13,12 @@ return [
         ],
 
         'isAdmin' => [
-            'label' => 'Administrator?',
+            'label' => 'Filament admin?',
+            'helpMessage' => 'Filament admins are able to access all areas of Filament and manage other users.',
+        ],
+
+        'isUser' => [
+            'label' => 'Filament user?',
         ],
 
         'name' => [

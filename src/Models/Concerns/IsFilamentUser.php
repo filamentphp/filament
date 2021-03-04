@@ -13,6 +13,15 @@ trait IsFilamentUser
         return null;
     }
 
+    public static function getFilamentAvatarColumn()
+    {
+        if (property_exists(static::class, 'filamentAvatarColumn')) {
+            return static::$filamentAvatarColumn;
+        }
+
+        return null;
+    }
+
     public static function getFilamentRolesColumn()
     {
         if (property_exists(static::class, 'filamentRolesColumn')) {
@@ -35,25 +44,34 @@ trait IsFilamentUser
     {
         $column = static::getFilamentUserColumn();
 
-        return $column ?
+        return $column !== null ?
             $this->{$column} :
             true;
     }
 
-    public function hasRole($role)
+    public function hasFilamentRole($role)
     {
         $column = static::getFilamentRolesColumn();
 
-        return $column ?
+        return $column !== null ?
             in_array($role, $this->{$column}) :
             true;
+    }
+
+    public function getFilamentAvatar()
+    {
+        $column = static::getFilamentAvatarColumn();
+
+        return $column !== null ?
+            $this->{$column} :
+            null;
     }
 
     public function isFilamentAdmin()
     {
         $column = static::getFilamentAdminColumn();
 
-        return $column ?
+        return $column !== null ?
             $this->{$column} :
             true;
     }

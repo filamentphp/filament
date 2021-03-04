@@ -50,14 +50,17 @@ class EditAccount extends Page
 
         $this->validate();
 
-        if ($this->record->password) {
-            $this->record->password = Hash::make($this->record->password);
-        }
-
-        unset($this->record->password);
         unset($this->record->passwordConfirmation);
 
+        if ($this->record->password) {
+            $this->record->password = Hash::make($this->record->password);
+        } else {
+            unset($this->record->password);
+        }
+
         $this->record->save();
+
+        $this->record->password = null;
 
         $this->notify(__('filament::edit-account.messages.saved'));
     }

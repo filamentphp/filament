@@ -26,10 +26,14 @@ class MakeUserCommand extends Command
 
         $details['password'] = Hash::make($this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8']));
 
-        if ($userModel::getFilamentAdminColumn() !== null) {
-            $column = $userModel::getFilamentAdminColumn();
+        $adminColumn = $userModel::getFilamentAdminColumn();
+        if ($adminColumn !== null) {
+            $details[$adminColumn] = $this->confirm('Would you like this user to be an administrator?', true);
+        }
 
-            $details[$column] = $this->confirm('Would you like this user to be an administrator?', true);
+        $userColumn = $userModel::getFilamentUserColumn();
+        if ($userColumn !== null) {
+            $details[$userColumn] = true;
         }
 
         $user = $userModel::create($details);

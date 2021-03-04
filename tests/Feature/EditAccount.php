@@ -40,14 +40,14 @@ class EditAccountTest extends TestCase
             ->assertSet('record.email', $user->email)
             ->assertSet('record.name', $user->name)
 //            ->set('newAvatar', $newAvatar)
-            ->set('newPassword', $newPassword)
-            ->set('newPasswordConfirmation', $newPassword)
             ->set('record.email', $newUserDetails->email)
             ->set('record.name', $newUserDetails->name)
+            ->set('record.password', $newPassword)
+            ->set('record.passwordConfirmation', $newPassword)
             ->call('save')
 //            ->assertSet('newAvatar', null)
-            ->assertSet('newPassword', null)
-            ->assertSet('newPasswordConfirmation', null)
+            ->assertNotSet('record.password', $newPassword)
+            ->assertNotSet('record.passwordConfirmation', $newPassword)
             ->assertDispatchedBrowserEvent('notify');
 
         $user->refresh();
@@ -57,7 +57,7 @@ class EditAccountTest extends TestCase
         $this->assertEquals($newUserDetails->name, $user->name);
         $this->assertTrue(Auth::attempt([
             'email' => $newUserDetails->email,
-            'password' => $newPassword,
+            'record.password' => $newPassword,
         ]));
     }
 
@@ -102,33 +102,6 @@ class EditAccountTest extends TestCase
 //    }
 
     /** @test */
-    public function new_password_contains_minimum_8_characters()
-    {
-        $user = User::factory()->create();
-
-        $this->be($user);
-
-        Livewire::test(EditAccount::class)
-            ->set('newPassword', 'pass')
-            ->call('save')
-            ->assertHasErrors(['newPassword' => 'min']);
-    }
-
-    /** @test */
-    public function new_password_is_confirmed()
-    {
-        $user = User::factory()->create();
-
-        $this->be($user);
-
-        Livewire::test(EditAccount::class)
-            ->set('newPassword', 'password')
-            ->set('newPasswordConfirmation', 'different-password')
-            ->call('save')
-            ->assertHasErrors(['newPasswordConfirmation' => 'same']);
-    }
-
-    /** @test */
     public function record_email_is_required()
     {
         $user = User::factory()->create();
@@ -165,5 +138,32 @@ class EditAccountTest extends TestCase
             ->set('record.name', null)
             ->call('save')
             ->assertHasErrors(['record.name' => 'required']);
+    }
+
+    /** @test */
+    public function record_password_contains_minimum_8_characters()
+    {
+        $user = User::factory()->create();
+
+        $this->be($user);
+
+        Livewire::test(EditAccount::class)
+            ->set('record.password', 'pass')
+            ->call('save')
+            ->assertHasErrors(['record.password' => 'min']);
+    }
+
+    /** @test */
+    public function record_password_is_confirmed()
+    {
+        $user = User::factory()->create();
+
+        $this->be($user);
+
+        Livewire::test(EditAccount::class)
+            ->set('record.password', 'record.password')
+            ->set('record.passwordConfirmation', 'different-password')
+            ->call('save')
+            ->assertHasErrors(['record.passwordConfirmation' => 'same']);
     }
 }

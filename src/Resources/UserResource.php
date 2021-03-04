@@ -60,6 +60,21 @@ class UserResource extends Resource
                 Components\Grid::make(function () {
                     $schema = [];
 
+                    $userColumn = Filament::auth()->getProvider()->getModel()::getFilamentUserColumn();
+                    if ($userColumn !== null) {
+                        $schema[] = Components\Checkbox::make($userColumn)
+                            ->label('filament::resources/user-resource.form.isUser.label')
+                            ->except(EditAccount::class);
+                    }
+
+                    $adminColumn = Filament::auth()->getProvider()->getModel()::getFilamentAdminColumn();
+                    if ($adminColumn !== null) {
+                        $schema[] = Components\Checkbox::make($adminColumn)
+                            ->label('filament::resources/user-resource.form.isAdmin.label')
+                            ->helpMessage('filament::resources/user-resource.form.isAdmin.helpMessage')
+                            ->except(EditAccount::class);
+                    }
+
                     $rolesColumn = Filament::auth()->getProvider()->getModel()::getFilamentRolesColumn();
                     if ($rolesColumn !== null) {
                         $schema[] = Components\MultiSelect::make($rolesColumn)
@@ -69,20 +84,18 @@ class UserResource extends Resource
                                 collect(Filament::getRoles())
                                     ->mapWithKeys(fn ($role) => [$role => Str::ucfirst($role::getLabel())])
                                     ->toArray(),
-                            );
+                            )
+                            ->except(EditAccount::class);
                     }
 
-                    $adminColumn = Filament::auth()->getProvider()->getModel()::getFilamentAdminColumn();
-                    if ($adminColumn !== null) {
-                        $schema[] = Components\Checkbox::make($adminColumn)
-                            ->label('filament::resources/user-resource.form.isAdmin.label');
+                    $avatarColumn = Filament::auth()->getProvider()->getModel()::getFilamentAvatarColumn();
+                    if ($avatarColumn !== null) {
+                        $schema[] = Components\FileUpload::make('avatar')
+                            ->label('filament::resources/user-resource.form.avatar.label')
+                            ->avatar()
+                            ->directory('filament-avatars')
+                            ->disk(config('filament.default_filesystem_disk'));
                     }
-
-                    $schema[] = Components\FileUpload::make('avatar')
-                        ->label('filament::resources/user-resource.form.avatar.label')
-                        ->avatar()
-                        ->directory('filament-avatars')
-                        ->disk(config('filament.default_filesystem_disk'));
 
                     return $schema;
                 }),
@@ -96,7 +109,11 @@ class UserResource extends Resource
 
     public static function navigationItems()
     {
-        return [];
+        if (static::getModel()::getFilamentUserColumn() === null) {
+            return [];
+        }
+
+        return parent::navigationItems();
     }
 
     public static function table(Table $table)

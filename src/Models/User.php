@@ -19,6 +19,8 @@ class User extends Authenticatable implements FilamentUser
 
     public static $filamentAdminColumn = 'is_admin';
 
+    public static $filamentAvatarColumn = 'avatar';
+
     public static $filamentRolesColumn = 'roles';
 
     protected $casts = [

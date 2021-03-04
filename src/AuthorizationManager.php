@@ -52,7 +52,7 @@ class AuthorizationManager
 
         if ($this->mode === 'allow') {
             foreach ($this->authorizations as $authorization) {
-                if ($user->hasRole($authorization->role)) {
+                if ($user->hasFilamentRole($authorization->role)) {
                     return true;
                 }
             }
@@ -62,7 +62,7 @@ class AuthorizationManager
 
         if ($this->mode === 'deny') {
             foreach ($this->authorizations as $authorization) {
-                if ($user->hasRole($authorization->role)) {
+                if ($user->hasFilamentRole($authorization->role)) {
                     return false;
                 }
             }
