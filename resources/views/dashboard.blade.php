@@ -6,7 +6,7 @@
             aria-label="{{ __('filament::widgets.title') }}"
             class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8"
         >
-            @if (config('filament.widgets.show_default'))
+            @if (config('filament.widgets.default.account', true))
                 <x-filament::card class="flex">
                     <div class="flex items-center space-x-4">
                         <x-filament-avatar :user="Auth::guard('filament')->user()" :size="160" class="flex-shrink-0 w-20 h-20 rounded-full" />
@@ -17,7 +17,9 @@
                         </div>
                     </div>
                 </x-filament::card>
+            @endif
 
+            @if (config('filament.widgets.default.info', true))
                 <x-filament::card>
                     <div class="flex items-center justify-between h-full">
                         <div class="w-full space-y-6">
@@ -41,7 +43,7 @@
                     </div>
                 </x-filament::card>
             @endif
-            
+
             @foreach (\Filament\Filament::getWidgets() as $widget)
                 @livewire(\Livewire\Livewire::getAlias($widget))
             @endforeach
