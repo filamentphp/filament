@@ -13,39 +13,41 @@ return [
         ],
 
         'isAdmin' => [
-            'label' => 'Administrator?',
+            'label' => 'Filament admin?',
+            'helpMessage' => 'Filament admins are able to access all areas of Filament and manage other users.',
+        ],
+
+        'isUser' => [
+            'label' => 'Filament user?',
         ],
 
         'name' => [
             'label' => 'Name',
         ],
 
-        'newPassword' => [
+        'password' => [
 
             'fieldset' => [
-                'label' => 'Set a new password',
+
+                'label' => [
+                    'create' => 'Password',
+                    'edit' => 'Set a new password',
+                ],
+
             ],
 
             'fields' => [
 
-                'newPassword' => [
+                'password' => [
                     'label' => 'Password',
                 ],
 
-                'newPasswordConfirmation' => [
+                'passwordConfirmation' => [
                     'label' => 'Confirm password',
                 ],
 
             ],
 
-        ],
-
-        'password' => [
-            'label' => 'Password',
-        ],
-
-        'passwordConfirmation' => [
-            'label' => 'Confirm password',
         ],
 
         'roles' => [

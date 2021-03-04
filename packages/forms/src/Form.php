@@ -112,7 +112,7 @@ class Form
 
     public function schema($schema)
     {
-        $this->schema = $schema;
+        $this->schema = value($schema);
 
         return $this;
     }

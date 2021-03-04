@@ -23,12 +23,14 @@ class Avatar extends Component
 
     public function src($dpr = 1)
     {
-        if (! $this->user->avatar) {
+        $avatar = $this->user->getFilamentAvatar();
+
+        if ($avatar === null) {
             return Gravatar::src($this->user->email, $this->size * $dpr);
         }
 
         return get_image_url(
-            $this->user->avatar,
+            $avatar,
             [
                 'dpr' => $dpr,
                 'fit' => 'crop',

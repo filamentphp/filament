@@ -29,6 +29,8 @@ class Field extends Component
     public function __construct($name)
     {
         $this->name($name);
+
+        parent::setUp();
     }
 
     public static function make($name)

@@ -4,7 +4,6 @@ namespace Filament;
 
 use BladeUI\Icons\Factory as BladeUIFactory;
 use Filament\Commands;
-use Filament\Http\Middleware;
 use Filament\Models\User;
 use Filament\Pages\Page;
 use Filament\Providers\RouteServiceProvider;
@@ -13,7 +12,6 @@ use Filament\Roles\Role;
 use Filament\View\Components;
 use Filament\Widgets\Widget;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -35,7 +33,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->bootDirectives();
         $this->bootLoaders();
         $this->bootLivewireComponents();
-        $this->bootMiddleware();
         $this->bootPublishing();
 
         $this->app->booted(function () {
@@ -123,12 +120,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->registerLivewireComponentDirectory(app_path('Filament'), 'App\\Filament', 'filament.');
     }
 
-    protected function bootMiddleware()
-    {
-        $router = $this->app->make(Router::class);
-        $router->aliasMiddleware('filament.authorize.admins', Middleware\AuthorizeAdmins::class);
-    }
-
     protected function bootPublishing()
     {
         if (! $this->app->runningInConsole()) {
@@ -150,6 +141,10 @@ class FilamentServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../stubs' => base_path('stubs/filament'),
         ], 'filament-stubs');
+
+        $this->publishes([
+            __DIR__ . '/../stubs/UserResource.stub' => app_path('Filament/Resources/UserResource.php'),
+        ], 'filament-user-resource');
 
         $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/filament'),

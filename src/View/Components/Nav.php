@@ -33,7 +33,7 @@ class Nav extends Component
             }
         }
 
-        return $this->items->sortBy(fn ($item) => $item->sort);
+        $this->items = $this->items->sortBy(fn ($item) => $item->sort)->values();
     }
 
     public function render()

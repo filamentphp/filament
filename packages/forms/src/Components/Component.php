@@ -36,6 +36,11 @@ class Component
 
     protected $pendingModelModifications = [];
 
+    protected function setUp()
+    {
+        //
+    }
+
     public function context($context)
     {
         $this->context = $context;
@@ -108,7 +113,7 @@ class Component
 
     public function schema($schema)
     {
-        $this->schema = collect($schema)
+        $this->schema = collect(value($schema))
             ->map(fn ($component) => $component->parent($this))
             ->toArray();
 

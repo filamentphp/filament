@@ -30,10 +30,8 @@ class RichEditor extends Field
         'undo',
     ];
 
-    public function __construct($name)
+    protected function setUp()
     {
-        parent::__construct($name);
-
         $this->attachmentDisk(config('forms.default_filesystem_disk'));
 
         $attachmentUploadUrl = config('forms.rich_editor.default_attachment_upload_url');

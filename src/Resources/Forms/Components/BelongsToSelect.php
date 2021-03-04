@@ -27,8 +27,10 @@ class BelongsToSelect extends Select
                 $query = $callback($query);
             }
 
+            $search = Str::lower($search);
+
             return $query
-                ->where($displayColumnName, 'like', "%{$search}%")
+                ->whereRaw("LOWER({$displayColumnName}) LIKE ?", ["%{$search}%"])
                 ->pluck($displayColumnName, $relationship->getOwnerKeyName())
                 ->toArray();
         });
