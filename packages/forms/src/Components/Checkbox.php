@@ -6,10 +6,8 @@ class Checkbox extends Field
 {
     use Concerns\CanBeAutofocused;
 
-    public function __construct($name)
+    protected function setUp()
     {
-        parent::__construct($name);
-
         $this->default(false);
     }
 }

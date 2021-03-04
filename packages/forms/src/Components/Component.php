@@ -36,6 +36,11 @@ class Component
 
     protected $pendingModelModifications = [];
 
+    protected function setUp()
+    {
+        //
+    }
+
     public function context($context)
     {
         $this->context = $context;
