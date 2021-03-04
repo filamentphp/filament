@@ -129,18 +129,18 @@ trait HasTable
                 ->filter(fn ($column) => $column->isSearchable())
                 ->each(function ($column, $index) use (&$query) {
                     $first = $index === 0;
+                    $search = Str::lower($this->search);
 
                     if (Str::of($column->name)->contains('.')) {
                         $relationship = (string) Str::of($column->name)->beforeLast('.');
 
                         $query = $query->{$first ? 'whereHas' : 'orWhereHas'}(
                             $relationship,
-                            function ($query) use ($column) {
-                                return $query->where(
-                                    (string) Str::of($column->name)->afterLast('.'),
-                                    'like',
-                                    "%{$this->search}%",
-                                );
+                            function ($query) use ($column, $search) {
+                                $columnName = (string) Str::of($column->name)->afterLast('.');
+                                $sql = "LOWER({$columnName}) LIKE ?";
+                                
+                                return $query->whereRaw($sql, ["%{$search}%"]);
                             },
                         );
 
@@ -148,9 +148,11 @@ trait HasTable
                     }
 
                     $query = $query->{$first ? 'where' : 'orWhere'}(
-                        $column->name,
-                        'like',
-                        "%{$this->search}%"
+                        function ($query) use ($column, $search) {
+                            $sql = "LOWER({$column->name}) LIKE ?";
+
+                            return $query->whereRaw($sql, ["%{$search}%"]);
+                        },
                     );
                 });
         }
