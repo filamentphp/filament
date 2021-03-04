@@ -21,7 +21,7 @@ class Select extends Field
 
     public $options = [];
 
-    protected function setup()
+    protected function setUp()
     {
         $this->placeholder('forms::fields.select.placeholder');
 

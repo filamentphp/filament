@@ -13,7 +13,7 @@ class MultiSelect extends Field
 
     public $options = [];
 
-    protected function setup()
+    protected function setUp()
     {
         $this->placeholder('forms::fields.multiSelect.placeholder');
     }

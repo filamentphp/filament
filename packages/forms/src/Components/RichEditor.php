@@ -30,7 +30,7 @@ class RichEditor extends Field
         'undo',
     ];
 
-    protected function setup()
+    protected function setUp()
     {
         $this->attachmentDisk(config('forms.default_filesystem_disk'));
 

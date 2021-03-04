@@ -6,7 +6,7 @@ class Checkbox extends Field
 {
     use Concerns\CanBeAutofocused;
 
-    protected function setup()
+    protected function setUp()
     {
         $this->default(false);
     }

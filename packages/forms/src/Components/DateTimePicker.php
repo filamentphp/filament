@@ -16,7 +16,7 @@ class DateTimePicker extends DatePicker
 
     public $view = 'forms::components.date-time-picker';
 
-    protected function setup()
+    protected function setUp()
     {
         $this->displayFormat($this->defaultDisplayFormat);
         $this->format($this->defaultFormat);
