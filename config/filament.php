@@ -98,6 +98,10 @@ return [
     'widgets' => [
         'namespace' => 'App\\Filament\\Widgets',
         'path' => app_path('Filament/Widgets'),
+        'default' => [
+            'account' => true,
+            'info' => true,
+        ],
     ],
 
     /*
