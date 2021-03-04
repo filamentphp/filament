@@ -41,9 +41,9 @@ Route::middleware([Authenticate::class])->group(function () {
     }
 
     Route::middleware(AuthorizeAdmins::class)->group(function () {
-        foreach (Filament::userResource()->router()->routes as $route) {
-            Route::get(Filament::userResource()->getSlug() . '/' . $route->uri, $route->page)
-                ->name(Filament::userResource()->getSlug() . '.' . $route->name);
+        foreach (Filament::userResource()::router()->routes as $route) {
+            Route::get(Filament::userResource()::getSlug() . '/' . $route->uri, $route->page)
+                ->name(Filament::userResource()::getSlug() . '.' . $route->name);
         }
     });
 });
