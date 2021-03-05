@@ -47,12 +47,12 @@ class Image extends Column
         return tap($this, fn () => $this->cover = true);
     }
 
-    public function getWidth(): string|int|null
+    public function getWidth()
     {
         return $this->width && is_numeric($this->width) ? "{$this->width}px" : $this->width;
     }
 
-    public function getHeight(): string|int|null
+    public function getHeight()
     {
         return $this->height && is_numeric($this->height) ? "{$this->height}px" : $this->height;
     }
