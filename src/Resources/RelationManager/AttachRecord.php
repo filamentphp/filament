@@ -79,7 +79,7 @@ class AttachRecord extends Component
         return Form::make()
             ->schema([
                 Select::make('related')
-                    ->label((string) Str::of($this->getRelationship())->singular()->title())
+                    ->label((string) Str::of($this->getRelationship())->singular()->ucfirst())
                     ->placeholder(__('forms::fields.select.emptyOptionsMessage'))
                     ->getDisplayValueUsing(fn ($value) => $value)
                     ->getOptionSearchResultsUsing(function ($search) {
@@ -100,7 +100,7 @@ class AttachRecord extends Component
                     ->required(),
             ])
             ->context(static::class)
-            ->submitMethod('create');
+            ->submitMethod('attach');
     }
 
     public function render()
