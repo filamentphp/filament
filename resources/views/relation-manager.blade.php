@@ -53,6 +53,7 @@
             @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\AttachRecord::class), [
                 'cancelButtonLabel' => __(static::$attachModalCancelButtonLabel),
                 'attachButtonLabel' => __(static::$attachModalAttachButtonLabel),
+                'attachAnotherButtonLabel' => __(static::$attachModalAttachAnotherButtonLabel),
                 'attachedMessage' => __(static::$attachModalAttachedMessage),
                 'manager' => static::class,
                 'owner' => $this->owner,

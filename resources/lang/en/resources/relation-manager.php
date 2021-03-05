@@ -50,6 +50,10 @@ return [
                     'label' => 'Attach',
                 ],
 
+                'attach_another' => [
+                    'label' => 'Attach & Attach Another',
+                ],
+
             ],
 
             'heading' => 'Attach Existing',
