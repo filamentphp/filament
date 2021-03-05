@@ -9,9 +9,11 @@
                 {{ __(static::$createButtonLabel) }}
             </x-filament::button>
 
-            <x-filament::button wire:click="openAttach">
-                {{ __(static::$attachButtonLabel) }}
-            </x-filament::button>
+            @if(! $this->isHasMany())
+                <x-filament::button wire:click="openAttach">
+                    {{ __(static::$attachButtonLabel) }}
+                </x-filament::button>
+            @endif
 
             <x-tables::delete-selected :selected="$selected" />
         </div>
