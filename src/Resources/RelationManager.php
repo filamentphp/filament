@@ -25,7 +25,7 @@ class RelationManager extends Component
 
     public static $attachModalCancelButtonLabel = 'filament::resources/relation-manager.modals.attach.buttons.cancel.label';
 
-    public static $attachModalattachButtonLabel = 'filament::resources/relation-manager.modals.attach.buttons.attach.label';
+    public static $attachModalAttachButtonLabel = 'filament::resources/relation-manager.modals.attach.buttons.attach.label';
 
     public static $attachModalAttachedMessage = 'filament::resources/relation-manager.modals.attach.messages.attached';
 
