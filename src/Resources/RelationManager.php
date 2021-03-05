@@ -21,6 +21,16 @@ class RelationManager extends Component
 
     public static $createModalHeading = 'filament::resources/relation-manager.modals.create.heading';
 
+    public static $addButtonLabel = 'filament::resources/relation-manager.buttons.add.label';
+
+    public static $addModalCancelButtonLabel = 'filament::resources/relation-manager.modals.add.buttons.cancel.label';
+
+    public static $addModalAddButtonLabel = 'filament::resources/relation-manager.modals.add.buttons.add.label';
+
+    public static $addModalAddedMessage = 'filament::resources/relation-manager.modals.add.messages.added';
+
+    public static $addModalHeading = 'filament::resources/relation-manager.modals.add.heading';
+
     public static $editModalCancelButtonLabel = 'filament::resources/relation-manager.modals.edit.buttons.cancel.label';
 
     public static $editModalHeading = 'filament::resources/relation-manager.modals.edit.heading';

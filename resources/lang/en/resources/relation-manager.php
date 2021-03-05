@@ -8,6 +8,10 @@ return [
             'label' => 'New',
         ],
 
+        'add' => [
+            'label' => 'Add Existing',
+        ],
+
     ],
 
     'modals' => [
@@ -30,6 +34,28 @@ return [
 
             'messages' => [
                 'created' => 'Created!',
+            ],
+
+        ],
+
+        'add' => [
+
+            'buttons' => [
+
+                'cancel' => [
+                    'label' => 'Cancel',
+                ],
+
+                'create' => [
+                    'label' => 'Add',
+                ],
+
+            ],
+
+            'heading' => 'Add Existing',
+
+            'messages' => [
+                'added' => 'Added!',
             ],
 
         ],
