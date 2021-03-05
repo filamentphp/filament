@@ -100,7 +100,7 @@ class AttachRecord extends Component
                     ->required(),
             ])
             ->context(static::class)
-            ->submitMethod('create');
+            ->submitMethod('attach');
     }
 
     public function render()
