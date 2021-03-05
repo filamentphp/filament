@@ -10,7 +10,6 @@
 $colorClasses = [
     'danger' => 'border-transparent bg-danger-600 text-white hover:bg-danger-700 focus:ring-danger-200',
     'primary' => 'border-transparent bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-200',
-    'secondary' => 'border-transparent bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-200',
     'white' => 'border-gray-300 bg-white text-gray-800 hover:bg-gray-100 focus:ring-primary-200',
 ][$color];
 

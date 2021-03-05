@@ -227,7 +227,7 @@
                 x-bind:aria-expanded="open"
                 aria-haspopup="listbox"
                 tabindex="1"
-                class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 {{ $formComponent->disabled ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+                class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $formComponent->disabled ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
             >
                 <span
                     x-show="! open"
@@ -277,7 +277,7 @@
                             role="option"
                             x-bind:aria-selected="focusedOptionIndex === index"
                             x-bind:class="{
-                                'text-white bg-secondary-600': index === focusedOptionIndex,
+                                'text-white bg-blue-600': index === focusedOptionIndex,
                                 'text-gray-900': index !== focusedOptionIndex,
                             }"
                             class="relative py-2 pl-3 text-gray-900 cursor-default select-none pr-9"

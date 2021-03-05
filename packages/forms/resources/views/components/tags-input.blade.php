@@ -96,7 +96,7 @@
                     type="text"
                     x-on:keydown.enter.stop.prevent="createTag()"
                     x-model="newTag"
-                    class="block w-full placeholder-gray-400 placeholder-opacity-100 border-0 focus:placeholder-gray-500 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50"
+                    class="block w-full placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border-0"
                     x-bind:class="{ 'text-danger-700': hasError }"
                 />
             @endunless
