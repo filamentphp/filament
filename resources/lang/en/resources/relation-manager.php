@@ -4,17 +4,47 @@ return [
 
     'buttons' => [
 
-        'create' => [
-            'label' => 'New',
-        ],
-
         'attach' => [
             'label' => 'Attach Existing',
+        ],
+
+        'create' => [
+            'label' => 'New',
         ],
 
     ],
 
     'modals' => [
+
+        'attach' => [
+
+            'buttons' => [
+
+                'cancel' => [
+                    'label' => 'Cancel',
+                ],
+
+                'attach' => [
+                    'label' => 'Attach',
+                ],
+
+            ],
+
+            'form' => [
+
+                'related' => [
+                    'placeholder' => 'Start typing to search...',
+                ],
+
+            ],
+
+            'heading' => 'Attach Existing',
+
+            'messages' => [
+                'attached' => 'Attached!',
+            ],
+
+        ],
 
         'create' => [
 
@@ -34,28 +64,6 @@ return [
 
             'messages' => [
                 'created' => 'Created!',
-            ],
-
-        ],
-
-        'attach' => [
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Cancel',
-                ],
-
-                'attach' => [
-                    'label' => 'Attach',
-                ],
-
-            ],
-
-            'heading' => 'Attach Existing',
-
-            'messages' => [
-                'attached' => 'Attached!',
             ],
 
         ],
