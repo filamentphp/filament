@@ -113,6 +113,7 @@ return [
     | of the disks defined in the `config/filesystems.php`.
     |
     */
+
     'default_filesystem_disk' => env('FILAMENT_FILESYSTEM_DRIVER', 'public'),
 
     /*
@@ -124,6 +125,7 @@ return [
     | and forms to manage users.
     |
     */
+
     'user_resource' => \Filament\Resources\UserResource::class,
 
     /*
