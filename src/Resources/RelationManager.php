@@ -11,6 +11,18 @@ class RelationManager extends Component
 {
     use HasTable;
 
+    public static $attachButtonLabel = 'filament::resources/relation-manager.buttons.attach.label';
+
+    public static $attachModalCancelButtonLabel = 'filament::resources/relation-manager.modals.attach.buttons.cancel.label';
+
+    public static $attachModalAttachAnotherButtonLabel = 'filament::resources/relation-manager.modals.attach.buttons.attachAnother.label';
+
+    public static $attachModalAttachButtonLabel = 'filament::resources/relation-manager.modals.attach.buttons.attach.label';
+
+    public static $attachModalAttachedMessage = 'filament::resources/relation-manager.modals.attach.messages.attached';
+
+    public static $attachModalHeading = 'filament::resources/relation-manager.modals.attach.heading';
+
     public static $createButtonLabel = 'filament::resources/relation-manager.buttons.create.label';
 
     public static $createModalCancelButtonLabel = 'filament::resources/relation-manager.modals.create.buttons.cancel.label';
@@ -42,6 +54,13 @@ class RelationManager extends Component
     protected $listeners = [
         'refreshRelationManagerList' => 'refreshList',
     ];
+
+    public static function getPrimaryColumn()
+    {
+        return property_exists(static::class, 'primaryColumn') ?
+            static::$primaryColumn :
+            null;
+    }
 
     public static function getRelationship()
     {
@@ -76,6 +95,11 @@ class RelationManager extends Component
     public function getQuery()
     {
         return $this->owner->{static::$relationship}();
+    }
+
+    public function openAttach()
+    {
+        $this->dispatchBrowserEvent('open', static::class . 'RelationManagerAttachModal');
     }
 
     public function openCreate()
