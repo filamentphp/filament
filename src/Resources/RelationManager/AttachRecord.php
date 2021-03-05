@@ -24,7 +24,7 @@ class AttachRecord extends Component
 
     public $related;
 
-    public function submit()
+    public function attach()
     {
         $this->validate();
 
@@ -59,15 +59,9 @@ class AttachRecord extends Component
             ->camel();
     }
 
-    public function getPrimaryColumnName()
+    public function getPrimaryColumn()
     {
-        $manager = $this->manager;
-
-        if (property_exists($manager, 'primaryColumnName')) {
-            return $manager::$primaryColumnName;
-        }
-
-        return $this->owner->getKeyName();
+        return $this->manager::getPrimaryColumn() ?? $this->owner->getKeyName();
     }
 
     public function mount()
@@ -77,15 +71,13 @@ class AttachRecord extends Component
 
     public function getForm()
     {
-        $form = Form::make()
+        return Form::make()
             ->schema([
                 Select::make('related')
                     ->label((string) Str::of($this->getRelationship())->singular()->title())
                     ->placeholder(__('forms::fields.select.emptyOptionsMessage'))
-                    ->required()
                     ->getDisplayValueUsing(fn ($value) => $value)
                     ->getOptionSearchResultsUsing(function ($search) {
-                        /** @var \Illuminate\Database\Eloquent\Relations\BelongsToMany $relationship */
                         $relationship = $this->owner->{$this->getRelationship()}();
 
                         $query = $relationship->getRelated();
@@ -93,16 +85,17 @@ class AttachRecord extends Component
                         $search = Str::lower($search);
 
                         return $query
-                            ->whereRaw("LOWER({$this->getPrimaryColumnName()}) LIKE ?", ["%{$search}%"])
+                            ->whereRaw("LOWER({$this->getPrimaryColumn()}) LIKE ?", ["%{$search}%"])
                             ->whereDoesntHave($this->getInverseRelationship(), function ($query) {
                                 $query->where($this->owner->getQualifiedKeyName(), $this->owner->getKey());
                             })
-                            ->pluck($this->getPrimaryColumnName(), $query->getKeyName())
+                            ->pluck($this->getPrimaryColumn(), $query->getKeyName())
                             ->toArray();
-                    }),
-            ]);
-
-        return $form;
+                    })
+                    ->required(),
+            ])
+            ->context(static::class)
+            ->submitMethod('create');
     }
 
     public function render()
