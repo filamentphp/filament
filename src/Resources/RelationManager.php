@@ -4,6 +4,7 @@ namespace Filament\Resources;
 
 use Filament\Resources\Tables\Table;
 use Filament\Tables\HasTable;
+use Illuminate\Database\Eloquent\Relations;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -95,6 +96,11 @@ class RelationManager extends Component
     public function getQuery()
     {
         return $this->owner->{static::$relationship}();
+    }
+
+    public function isHasMany()
+    {
+        return $this->owner->{$this->getRelationship()}() instanceof Relations\HasMany;
     }
 
     public function openAttach()
