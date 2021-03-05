@@ -85,7 +85,6 @@ class AttachRecord extends Component
                     ->required()
                     ->getDisplayValueUsing(fn ($value) => $value)
                     ->getOptionSearchResultsUsing(function ($search) {
-                        /** @var \Illuminate\Database\Eloquent\Relations\BelongsToMany $relationship */
                         $relationship = $this->owner->{$this->getRelationship()}();
 
                         $query = $relationship->getRelated();
