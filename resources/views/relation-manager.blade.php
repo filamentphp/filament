@@ -31,10 +31,10 @@
 
     @unless ($this->isHasMany())
         <x-filament::modal
-            class="w-full max-w-2xl"
+            class="w-full max-w-lg"
             :name="static::class.'RelationManagerAttachModal'"
         >
-            <x-filament::card class="w-full space-y-5">
+            <x-filament::card class="space-y-5">
                 <x-filament::card-header :title="__(static::$attachModalHeading)" />
 
                 @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\AttachRecord::class), [
@@ -50,9 +50,10 @@
     @endunless
 
     <x-filament::modal
+        class="w-full max-w-4xl"
         :name="static::class.'RelationManagerCreateModal'"
     >
-        <x-filament::card class="w-full max-w-4xl space-y-5">
+        <x-filament::card class="space-y-5">
             <x-filament::card-header :title="__(static::$createModalHeading)" />
 
             @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\CreateRecord::class), [
@@ -66,9 +67,10 @@
     </x-filament::modal>
 
     <x-filament::modal
+        class="w-full max-w-4xl"
         :name="static::class.'RelationManagerEditModal'"
     >
-        <x-filament::card class="w-full max-w-4xl space-y-5">
+        <x-filament::card class="space-y-5">
             <x-filament::card-header :title="__(static::$editModalHeading)" />
 
             @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\EditRecord::class), [
