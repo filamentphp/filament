@@ -12,6 +12,10 @@ return [
             'label' => 'New',
         ],
 
+        'detach' => [
+            'label' => 'Detach selected'
+        ],
+
     ],
 
     'modals' => [
@@ -68,6 +72,30 @@ return [
 
             'messages' => [
                 'created' => 'Created!',
+            ],
+
+        ],
+
+        'detach' => [
+
+            'buttons' => [
+
+                'cancel' => [
+                    'label' => 'Cancel',
+                ],
+
+                'detach' => [
+                    'label' => 'Detach selected',
+                ],
+
+            ],
+
+            'description' => 'Are you sure you would like to detach the selected records? This action cannot be undone.',
+
+            'heading' => 'Detach the selected records? ',
+
+            'messages' => [
+                'detached' => 'Detached!',
             ],
 
         ],
