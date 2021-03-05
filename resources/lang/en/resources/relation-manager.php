@@ -12,6 +12,10 @@ return [
             'label' => 'New',
         ],
 
+        'detach' => [
+            'label' => 'Detach selected'
+        ],
+
     ],
 
     'modals' => [

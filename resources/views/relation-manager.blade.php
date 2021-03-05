@@ -15,7 +15,11 @@
                 </x-filament::button>
             @endunless
 
-            <x-filament::button wire:click="openDetach">
+            <x-filament::button
+                wire:click="openDetach"
+                color="danger"
+                :disabled="count($selected) === 0"
+            >
                 {{ __(static::$detachButtonLabel) }}
             </x-filament::button>
 

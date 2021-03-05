@@ -3,6 +3,7 @@
     'href' => null,
     'size' => 'base',
     'type' => 'button',
+    'disabled' => false,
 ])
 
 @php
@@ -18,16 +19,19 @@ $sizeClasses = [
     'small' => 'text-xs py-1 px-3',
 ][$size];
 
-$classes = "cursor-pointer font-medium border rounded transition duration-200 shadow-sm focus:ring focus:ring-opacity-50 {$colorClasses} {$sizeClasses}"
+$classes = "cursor-pointer font-medium border rounded transition duration-200 shadow-sm focus:ring focus:ring-opacity-50 {$colorClasses} {$sizeClasses}";
 
+if ($disabled) {
+    $classes .= ' opacity-25 cursor-not-allowed';
+}
 @endphp
 
 @unless ($href)
-    <button type="{{ $type }}" {{ $attributes->merge(['class' => $classes]) }}>
+    <button type="{{ $type }}" {{ $attributes->merge(['class' => $classes, 'disabled' => $disabled]) }}>
         {{ $slot }}
     </button>
 @else
-    <a href="{{ $href }}" {{ $attributes->merge(['class' => $classes]) }}>
+    <a href="{{ $href }}" {{ $attributes->merge(['class' => $classes, 'disabled' => $disabled]) }}>
         {{ $slot }}
     </a>
 @endunless
