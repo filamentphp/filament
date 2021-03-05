@@ -24,7 +24,7 @@
                     <div class="flex items-center justify-between h-full">
                         <div class="w-full space-y-6">
                             <div class="flex items-center justify-between w-full space-x-4">
-                                <a href="https://filamentadmin.com" target="_blank" class="transition-colors duration-200 text-primary-700 hover:text-primary-900">
+                                <a href="https://filamentadmin.com" target="_blank" class="transition-colors duration-200 hover:text-primary-700">
                                     <x-filament::logo class="h-auto w-28" />
                                 </a>
 

@@ -367,7 +367,7 @@
                 aria-label="{{ __($formComponent->placeholder) }}"
             @endunless
             type="button"
-            class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 {{ $formComponent->disabled ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+            class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $formComponent->disabled ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
         >
             <input
                 readonly
@@ -452,10 +452,10 @@
                                 role="option"
                                 x-bind:aria-selected="focusedDate.date() === day"
                                 x-bind:class="{
-                                    'bg-secondary-600 text-white': dayIsSelected(day),
+                                    'bg-blue-600 text-white': dayIsSelected(day),
                                     'text-gray-700': ! dayIsSelected(day),
-                                    'bg-secondary-50': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
-                                    'bg-secondary-200': focusedDate.date() === day && ! dayIsSelected(day),
+                                    'bg-blue-50': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
+                                    'bg-blue-200': focusedDate.date() === day && ! dayIsSelected(day),
                                     'bg-gray-100': dayIsDisabled(day) && focusedDate.date() !== day,
                                     'cursor-pointer': ! dayIsDisabled(day),
                                     'cursor-not-allowed': dayIsDisabled(day),
