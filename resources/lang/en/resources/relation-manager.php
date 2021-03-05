@@ -46,7 +46,7 @@ return [
                     'label' => 'Cancel',
                 ],
 
-                'create' => [
+                'add' => [
                     'label' => 'Add',
                 ],
 
