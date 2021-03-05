@@ -26,6 +26,8 @@ class AttachRecord extends Component
 
     public function submit()
     {
+        $this->validate();
+
         $this->owner->{$this->getRelationship()}()->attach($this->related);
 
         $this->reset('related');
@@ -80,6 +82,7 @@ class AttachRecord extends Component
                 Select::make('related')
                     ->label((string) Str::of($this->getRelationship())->singular()->title())
                     ->placeholder(__('forms::fields.select.emptyOptionsMessage'))
+                    ->required()
                     ->getDisplayValueUsing(fn ($value) => $value)
                     ->getOptionSearchResultsUsing(function ($search) {
                         /** @var \Illuminate\Database\Eloquent\Relations\BelongsToMany $relationship */
