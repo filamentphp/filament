@@ -11,16 +11,6 @@ class RelationManager extends Component
 {
     use HasTable;
 
-    public static $createButtonLabel = 'filament::resources/relation-manager.buttons.create.label';
-
-    public static $createModalCancelButtonLabel = 'filament::resources/relation-manager.modals.create.buttons.cancel.label';
-
-    public static $createModalCreateButtonLabel = 'filament::resources/relation-manager.modals.create.buttons.create.label';
-
-    public static $createModalCreatedMessage = 'filament::resources/relation-manager.modals.create.messages.created';
-
-    public static $createModalHeading = 'filament::resources/relation-manager.modals.create.heading';
-
     public static $attachButtonLabel = 'filament::resources/relation-manager.buttons.attach.label';
 
     public static $attachModalCancelButtonLabel = 'filament::resources/relation-manager.modals.attach.buttons.cancel.label';
@@ -30,6 +20,16 @@ class RelationManager extends Component
     public static $attachModalAttachedMessage = 'filament::resources/relation-manager.modals.attach.messages.attached';
 
     public static $attachModalHeading = 'filament::resources/relation-manager.modals.attach.heading';
+
+    public static $createButtonLabel = 'filament::resources/relation-manager.buttons.create.label';
+
+    public static $createModalCancelButtonLabel = 'filament::resources/relation-manager.modals.create.buttons.cancel.label';
+
+    public static $createModalCreateButtonLabel = 'filament::resources/relation-manager.modals.create.buttons.create.label';
+
+    public static $createModalCreatedMessage = 'filament::resources/relation-manager.modals.create.messages.created';
+
+    public static $createModalHeading = 'filament::resources/relation-manager.modals.create.heading';
 
     public static $editModalCancelButtonLabel = 'filament::resources/relation-manager.modals.edit.buttons.cancel.label';
 
@@ -52,6 +52,13 @@ class RelationManager extends Component
     protected $listeners = [
         'refreshRelationManagerList' => 'refreshList',
     ];
+
+    public static function getPrimaryColumn()
+    {
+        return property_exists(static::class, 'primaryColumn') ?
+            static::$primaryColumn :
+            null;
+    }
 
     public static function getRelationship()
     {
@@ -88,14 +95,14 @@ class RelationManager extends Component
         return $this->owner->{static::$relationship}();
     }
 
-    public function openCreate()
-    {
-        $this->dispatchBrowserEvent('open', static::class . 'RelationManagerCreateModal');
-    }
-
     public function openAttach()
     {
         $this->dispatchBrowserEvent('open', static::class . 'RelationManagerAttachModal');
+    }
+
+    public function openCreate()
+    {
+        $this->dispatchBrowserEvent('open', static::class . 'RelationManagerCreateModal');
     }
 
     public function openEdit($record)
