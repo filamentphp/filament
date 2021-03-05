@@ -9,7 +9,7 @@
             background-image: url({{ $column->getValue($record) }});"
     @endif
 >
-    @if (!$column->cover)
+    @unless ($column->cover)
         <img
             src="{{ $column->getValue($record) }}"
             class="{{ $column->getClass() }}"
@@ -17,5 +17,5 @@
                 {{ $column->getWidth() ? "width: {$column->getWidth()};" : '' }}
                 {{ $column->getHeight() ? "height: {$column->getHeight()};" : '' }}"
         >
-    @endif
+    @endunless
 </a>
