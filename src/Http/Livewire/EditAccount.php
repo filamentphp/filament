@@ -6,7 +6,6 @@ use Filament\Filament;
 use Filament\Forms\HasForm;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Pages\Page;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class EditAccount extends Page
@@ -35,7 +34,7 @@ class EditAccount extends Page
 
     public function mount()
     {
-        $this->record = Auth::guard('filament')->user();
+        $this->record = Filament::auth()->user();
     }
 
     public function save()
