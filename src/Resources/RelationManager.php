@@ -32,9 +32,19 @@ class RelationManager extends Component
 
     public static $createModalCreatedMessage = 'filament::resources/relation-manager.modals.create.messages.created';
 
+    public static $createModalHeading = 'filament::resources/relation-manager.modals.create.heading';
+
     public static $detachButtonLabel = 'filament::resources/relation-manager.buttons.detach.label';
 
-    public static $createModalHeading = 'filament::resources/relation-manager.modals.create.heading';
+    public static $detachModalHeading = 'filament::resources/relation-manager.modals.detach.heading';
+
+    public static $detachModalCancelButtonLabel = 'filament::resources/relation-manager.modals.detach.buttons.cancel.label';
+
+    public static $detachModalDescription = 'filament::resources/relation-manager.modals.detach.description';
+
+    public static $detachModalDetachButtonLabel = 'filament::resources/relation-manager.modals.detach.buttons.detach.label';
+
+    public static $detachModalDetachedMessage = 'filament::resources/relation-manager.modals.detach.messages.detached';
 
     public static $editModalCancelButtonLabel = 'filament::resources/relation-manager.modals.edit.buttons.cancel.label';
 
@@ -125,6 +135,18 @@ class RelationManager extends Component
         $this->emit('switchRelationManagerEditRecord', static::class, $record);
 
         $this->dispatchBrowserEvent('open', static::class . 'RelationManagerEditModal');
+    }
+
+    public function detachSelected()
+    {
+        $relationship = $this->owner->{$this->getRelationship()}();
+
+        $relationship->detach($this->selected);
+
+        $this->dispatchBrowserEvent('close', static::class."RelationManagerDetachModal");
+        $this->dispatchBrowserEvent('notify', __(static::$detachModalDetachedMessage));
+
+        $this->reset('selected');
     }
 
     public function refreshList($manager = null)

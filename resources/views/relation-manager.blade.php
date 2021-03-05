@@ -55,6 +55,32 @@
                 ])
             </x-filament::card>
         </x-filament::modal>
+
+        <x-filament::modal
+            :name="static::class.'RelationManagerDetachModal'"
+        >
+            <x-filament::card class="space-y-5">
+                <x-filament::card-header :title="__(static::$detachModalHeading)">
+                    <p class="text-sm text-gray-500">
+                        {{ __(static::$detachModalDescription) }}
+                    </p>
+                </x-filament::card-header>
+
+                <div class="space-y-3 sm:space-y-0 sm:space-x-3 sm:flex sm:justify-end">
+                    <x-filament::button x-on:click="$dispatch('close', '{{ (string) Str::of(get_class($this))->replace('\\', '\\\\') }}RelationManagerDetachModal')">
+                        {{ __(static::$detachModalCancelButtonLabel) }}
+                    </x-filament::button>
+
+                    <x-filament::button
+                        type="button"
+                        color="danger"
+                        wire:click="detachSelected"
+                    >
+                        {{ __(static::$detachModalDetachButtonLabel) }}
+                    </x-filament::button>
+                </div>
+            </x-filament::card>
+        </x-filament::modal>
     @endunless
 
     <x-filament::modal
