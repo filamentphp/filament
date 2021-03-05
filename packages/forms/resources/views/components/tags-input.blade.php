@@ -10,10 +10,16 @@
 
                 value: config.value,
 
+                error: false,
+
                 createTag: function () {
                     this.newTag = this.newTag.trim()
 
-                    if (this.newTag === '' || this.tags.includes(this.newTag)) return
+                    if (this.newTag === '' || this.tags.includes(this.newTag)) {
+                        this.error = true
+
+                        return
+                    }
 
                     this.tags.push(this.newTag)
 
@@ -26,6 +32,8 @@
 
                 init: function () {
                     if (this.value !== '' && this.value !== null) this.tags = this.value.trim().split(this.separator).filter(tag => tag !== '')
+
+                    this.$watch('newTag', () => this.error = false)
 
                     this.$watch('tags', (() => {
                         this.value = this.tags.join(this.separator)
@@ -88,7 +96,8 @@
                     type="text"
                     x-on:keydown.enter.stop.prevent="createTag()"
                     x-model="newTag"
-                    class="block w-full placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-0"
+                    class="block w-full placeholder-gray-400 placeholder-opacity-100 border-0 focus:placeholder-gray-500 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50"
+                    :class="{ 'text-danger-700': error }"
                 />
             @endunless
 
@@ -107,7 +116,7 @@
                         <span x-text="tag"></span>
 
                         @unless($formComponent->disabled)
-                            <x-heroicon-s-x class="h-3 w-3 text-gray-500" />
+                            <x-heroicon-s-x class="w-3 h-3 text-gray-500" />
                         @endunless
                     </button>
                 </template>
