@@ -266,7 +266,7 @@
                     x-on:keydown.arrow-up.stop.prevent="focusPreviousOption()"
                     x-on:keydown.arrow-down.stop.prevent="focusNextOption()"
                     type="search"
-                    class="w-full h-full border-0 p-0 focus:ring-0 focus:outline-none"
+                    class="w-full h-full p-0 border-0 focus:ring-0 focus:outline-none"
                 />
 
                 <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -294,7 +294,7 @@
                 x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $formComponent->name }}' + 'Option' + focusedOptionIndex : null"
                 tabindex="-1"
                 x-cloak
-                class="absolute z-10 w-full my-1 bg-white rounded shadow-sm border border-gray-300"
+                class="absolute z-50 w-full my-1 bg-white border border-gray-300 rounded shadow-sm"
             >
                 <ul
                     x-ref="listboxOptionsList"
@@ -343,7 +343,7 @@
                     <div
                         x-show="! Object.keys(options).length"
                         x-text="! search || loading ? emptyOptionsMessage : noSearchResultsMessage"
-                        class="px-3 py-2 text-gray-900 cursor-default select-none text-sm"
+                        class="px-3 py-2 text-sm text-gray-900 cursor-default select-none"
                     ></div>
                 </ul>
             </div>
