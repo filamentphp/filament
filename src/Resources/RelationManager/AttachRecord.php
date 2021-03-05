@@ -16,7 +16,7 @@ class AttachRecord extends Component
 
     public $attachButtonLabel;
 
-    public $addedMessage;
+    public $attachedMessage;
 
     public $manager;
 
@@ -33,7 +33,7 @@ class AttachRecord extends Component
         $this->emit('refreshRelationManagerList', $this->manager);
 
         $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerAttachModal");
-        $this->dispatchBrowserEvent('notify', $this->addedMessage);
+        $this->dispatchBrowserEvent('notify', $this->attachedMessage);
     }
 
     public function getRelationship()
@@ -41,6 +41,13 @@ class AttachRecord extends Component
         $manager = $this->manager;
 
         return $manager::$relationship;
+    }
+
+    public function getRelatedRelationship()
+    {
+        $manager = $this->manager;
+
+        return $manager::$relatedRelationship;
     }
 
     public function getDisplayColumnName()
@@ -60,9 +67,11 @@ class AttachRecord extends Component
         $form = Form::make()
             ->schema([
                 Select::make('related')
+                    ->label((string) Str::of($this->getRelationship())->singular()->title())
                     ->placeholder('Start typing to search...')
                     ->getDisplayValueUsing(fn ($value) => $value)
                     ->getOptionSearchResultsUsing(function ($search) {
+                        /** @var \Illuminate\Database\Eloquent\Relations\BelongsToMany $relationship */
                         $relationship = $this->owner->{$this->getRelationship()}();
 
                         $query = $relationship->getRelated();
@@ -71,6 +80,9 @@ class AttachRecord extends Component
 
                         return $query
                             ->whereRaw("LOWER({$this->getDisplayColumnName()}) LIKE ?", ["%{$search}%"])
+                            ->whereDoesntHave($this->getRelatedRelationship(), function ($query) {
+                                $query->where($this->owner->getQualifiedKeyName(), $this->owner->getKey());
+                            })
                             ->pluck($this->getDisplayColumnName(), $query->getKeyName())
                             ->toArray();
                     }),
