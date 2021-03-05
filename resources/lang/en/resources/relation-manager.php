@@ -28,6 +28,10 @@ return [
                     'label' => 'Attach',
                 ],
 
+                'attachAnother' => [
+                    'label' => 'Attach & Attach Another',
+                ],
+
             ],
 
             'form' => [
@@ -56,10 +60,6 @@ return [
 
                 'create' => [
                     'label' => 'Create',
-                ],
-
-                'attach_another' => [
-                    'label' => 'Attach & Attach Another',
                 ],
 
             ],
