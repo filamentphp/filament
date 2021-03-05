@@ -46,7 +46,7 @@
     <x-filament::modal
         :name="static::class.'RelationManagerAddModal'"
     >
-        <x-filament::card class="w-full max-w-4xl space-y-5">
+        <x-filament::card class="w-full max-w-2xl">
             <x-filament::card-header :title="__(static::$addModalHeading)" />
 
             @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\AddRecord::class), [
