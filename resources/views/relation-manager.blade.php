@@ -13,15 +13,15 @@
                 <x-filament::button wire:click="openAttach">
                     {{ __(static::$attachButtonLabel) }}
                 </x-filament::button>
-            @endunless
 
-            <x-filament::button
-                wire:click="openDetach"
-                color="danger"
-                :disabled="count($selected) === 0"
-            >
-                {{ __(static::$detachButtonLabel) }}
-            </x-filament::button>
+                <x-filament::button
+                    wire:click="openDetach"
+                    color="danger"
+                    :disabled="count($selected) === 0"
+                >
+                    {{ __(static::$detachButtonLabel) }}
+                </x-filament::button>
+            @endunless
 
             <x-tables::delete-selected :selected="$selected" />
         </div>
