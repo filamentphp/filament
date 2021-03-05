@@ -57,11 +57,15 @@ class AttachRecord extends Component
             ->camel();
     }
 
-    public function getDisplayColumnName()
+    public function getPrimaryColumnName()
     {
         $manager = $this->manager;
 
-        return $manager::$displayColumnName;
+        if (property_exists($manager, 'primaryColumnName')) {
+            return $manager::$primaryColumnName;
+        }
+
+        return $this->owner->getKeyName();
     }
 
     public function mount()
@@ -86,11 +90,11 @@ class AttachRecord extends Component
                         $search = Str::lower($search);
 
                         return $query
-                            ->whereRaw("LOWER({$this->getDisplayColumnName()}) LIKE ?", ["%{$search}%"])
+                            ->whereRaw("LOWER({$this->getPrimaryColumnName()}) LIKE ?", ["%{$search}%"])
                             ->whereDoesntHave($this->getInverseRelationship(), function ($query) {
                                 $query->where($this->owner->getQualifiedKeyName(), $this->owner->getKey());
                             })
-                            ->pluck($this->getDisplayColumnName(), $query->getKeyName())
+                            ->pluck($this->getPrimaryColumnName(), $query->getKeyName())
                             ->toArray();
                     }),
             ]);
