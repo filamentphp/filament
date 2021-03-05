@@ -43,11 +43,18 @@ class AttachRecord extends Component
         return $manager::$relationship;
     }
 
-    public function getRelatedRelationship()
+    public function getInverseRelationship()
     {
         $manager = $this->manager;
 
-        return $manager::$relatedRelationship;
+        if (property_exists($manager, 'inverseRelationship')) {
+            return $manager::$inverseRelationship;
+        }
+
+        return (string) Str::of(class_basename($this->owner))
+            ->lower()
+            ->plural()
+            ->camel();
     }
 
     public function getDisplayColumnName()
@@ -80,7 +87,7 @@ class AttachRecord extends Component
 
                         return $query
                             ->whereRaw("LOWER({$this->getDisplayColumnName()}) LIKE ?", ["%{$search}%"])
-                            ->whereDoesntHave($this->getRelatedRelationship(), function ($query) {
+                            ->whereDoesntHave($this->getInverseRelationship(), function ($query) {
                                 $query->where($this->owner->getQualifiedKeyName(), $this->owner->getKey());
                             })
                             ->pluck($this->getDisplayColumnName(), $query->getKeyName())
