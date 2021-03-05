@@ -24,9 +24,16 @@ class AddRecord extends Component
 
     public $related;
 
-    public function add()
+    public function submit()
     {
-        dd($this->related);
+        $this->owner->{$this->getRelationship()}()->attach($this->related);
+
+        $this->reset('related');
+
+        $this->emit('refreshRelationManagerList', $this->manager);
+
+        $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerAddModal");
+        $this->dispatchBrowserEvent('notify', $this->addedMessage);
     }
 
     public function getRelationship()
@@ -34,6 +41,13 @@ class AddRecord extends Component
         $manager = $this->manager;
 
         return $manager::$relationship;
+    }
+
+    public function getDisplayColumnName()
+    {
+        $manager = $this->manager;
+
+        return $manager::$displayColumnName;
     }
 
     public function mount()
@@ -47,19 +61,17 @@ class AddRecord extends Component
             ->schema([
                 Select::make('related')
                     ->placeholder('Start typing to search...')
-                    ->getDisplayValueUsing(function ($value) {
-                        if (! $value) return $value;
-                    })
+                    ->getDisplayValueUsing(fn ($value) => $value)
                     ->getOptionSearchResultsUsing(function ($search) {
                         $relationship = $this->owner->{$this->getRelationship()}();
 
                         $query = $relationship->getRelated();
 
-                        $search = Str::lower('Est velit libero');
+                        $search = Str::lower($search);
 
                         return $query
-                            ->whereRaw("LOWER({$displayColumnName}) LIKE ?", ["%{$search}%"])
-                            ->pluck($displayColumnName, $relationship->getOwnerKeyName())
+                            ->whereRaw("LOWER({$this->getDisplayColumnName()}) LIKE ?", ["%{$search}%"])
+                            ->pluck($this->getDisplayColumnName(), $query->getKeyName())
                             ->toArray();
                     }),
             ]);

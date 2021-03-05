@@ -4,7 +4,6 @@
             <x-filament::button
                 type="submit"
                 color="primary"
-                wire:click="add"
             >
                 {{ $addButtonLabel }}
             </x-filament::button>
