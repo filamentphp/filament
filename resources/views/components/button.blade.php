@@ -1,9 +1,9 @@
 @props([
     'color' => 'white',
+'disabled' => false,
     'href' => null,
     'size' => 'base',
     'type' => 'button',
-    'disabled' => false,
 ])
 
 @php
@@ -14,16 +14,15 @@ $colorClasses = [
     'white' => 'border-gray-300 bg-white text-gray-800 hover:bg-gray-100 focus:ring-primary-200',
 ][$color];
 
+$disabledClasses = $disabled ? 'opacity-25 cursor-not-allowed' : '';
+
 $sizeClasses = [
     'base' => 'text-sm py-2 px-4',
     'small' => 'text-xs py-1 px-3',
 ][$size];
 
-$classes = "cursor-pointer font-medium border rounded transition duration-200 shadow-sm focus:ring focus:ring-opacity-50 {$colorClasses} {$sizeClasses}";
+$classes = "cursor-pointer font-medium border rounded transition duration-200 shadow-sm focus:ring focus:ring-opacity-50 {$colorClasses} {$disabledClasses} {$sizeClasses}";
 
-if ($disabled) {
-    $classes .= ' opacity-25 cursor-not-allowed';
-}
 @endphp
 
 @unless ($href)

@@ -37,10 +37,42 @@
         :table="$this->getTable()"
     />
 
+    <x-filament::modal
+        :name="static::class . 'RelationManagerCreateModal'"
+    >
+        <x-filament::card class="w-full max-w-4xl space-y-5">
+            <x-filament::card-header :title="__(static::$createModalHeading)" />
+
+            @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\CreateRecord::class), [
+                'cancelButtonLabel' => __(static::$createModalCancelButtonLabel),
+                'createButtonLabel' => __(static::$createModalCreateButtonLabel),
+                'createdMessage' => __(static::$createModalCreatedMessage),
+                'manager' => static::class,
+                'owner' => $this->owner,
+            ])
+        </x-filament::card>
+    </x-filament::modal>
+
+    <x-filament::modal
+        :name="static::class . 'RelationManagerEditModal'"
+    >
+        <x-filament::card class="w-full max-w-4xl space-y-5">
+            <x-filament::card-header :title="__(static::$editModalHeading)" />
+
+            @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\EditRecord::class), [
+                'cancelButtonLabel' => __(static::$editModalCancelButtonLabel),
+                'manager' => static::class,
+                'owner' => $this->owner,
+                'saveButtonLabel' => __(static::$editModalSaveButtonLabel),
+                'savedMessage' => __(static::$editModalSavedMessage),
+            ])
+        </x-filament::card>
+    </x-filament::modal>
+
     @unless ($this->isHasMany())
         <x-filament::modal
             class="w-full max-w-2xl"
-            :name="static::class.'RelationManagerAttachModal'"
+            :name="static::class . 'RelationManagerAttachModal'"
         >
             <x-filament::card class="w-full space-y-5">
                 <x-filament::card-header :title="__(static::$attachModalHeading)" />
@@ -57,7 +89,7 @@
         </x-filament::modal>
 
         <x-filament::modal
-            :name="static::class.'RelationManagerDetachModal'"
+            :name="static::class . 'RelationManagerDetachModal'"
         >
             <x-filament::card class="space-y-5">
                 <x-filament::card-header :title="__(static::$detachModalHeading)">
@@ -82,36 +114,4 @@
             </x-filament::card>
         </x-filament::modal>
     @endunless
-
-    <x-filament::modal
-        :name="static::class.'RelationManagerCreateModal'"
-    >
-        <x-filament::card class="w-full max-w-4xl space-y-5">
-            <x-filament::card-header :title="__(static::$createModalHeading)" />
-
-            @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\CreateRecord::class), [
-                'cancelButtonLabel' => __(static::$createModalCancelButtonLabel),
-                'createButtonLabel' => __(static::$createModalCreateButtonLabel),
-                'createdMessage' => __(static::$createModalCreatedMessage),
-                'manager' => static::class,
-                'owner' => $this->owner,
-            ])
-        </x-filament::card>
-    </x-filament::modal>
-
-    <x-filament::modal
-        :name="static::class.'RelationManagerEditModal'"
-    >
-        <x-filament::card class="w-full max-w-4xl space-y-5">
-            <x-filament::card-header :title="__(static::$editModalHeading)" />
-
-            @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\EditRecord::class), [
-                'cancelButtonLabel' => __(static::$editModalCancelButtonLabel),
-                'manager' => static::class,
-                'owner' => $this->owner,
-                'saveButtonLabel' => __(static::$editModalSaveButtonLabel),
-                'savedMessage' => __(static::$editModalSavedMessage),
-            ])
-        </x-filament::card>
-    </x-filament::modal>
 </div>
