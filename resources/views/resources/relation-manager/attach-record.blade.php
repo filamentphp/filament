@@ -11,7 +11,7 @@
             <x-filament::button
                 type="button"
                 color="primary"
-                wire:click="submit(true)"
+                wire:click="attach(true)"
             >
                 {{ $attachAnotherButtonLabel }}
             </x-filament::button>
