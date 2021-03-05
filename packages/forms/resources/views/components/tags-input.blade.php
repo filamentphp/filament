@@ -2,6 +2,8 @@
     <script>
         function tagsInput(config) {
             return {
+                hasError: false,
+
                 newTag: '',
 
                 separator: config.separator,
@@ -10,13 +12,11 @@
 
                 value: config.value,
 
-                error: false,
-
                 createTag: function () {
                     this.newTag = this.newTag.trim()
 
                     if (this.newTag === '' || this.tags.includes(this.newTag)) {
-                        this.error = true
+                        this.hasError = true
 
                         return
                     }
@@ -33,7 +33,7 @@
                 init: function () {
                     if (this.value !== '' && this.value !== null) this.tags = this.value.trim().split(this.separator).filter(tag => tag !== '')
 
-                    this.$watch('newTag', () => this.error = false)
+                    this.$watch('newTag', () => this.hasError = false)
 
                     this.$watch('tags', (() => {
                         this.value = this.tags.join(this.separator)
@@ -72,9 +72,9 @@
         x-data="tagsInput({
             separator: '{{ $formComponent->separator }}',
             @if (Str::of($formComponent->nameAttribute)->startsWith('wire:model'))
-            value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
+                value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
             @endif
-            })"
+        })"
         x-init="init()"
         {!! $formComponent->id ? "id=\"{$formComponent->id}\"" : null !!}
         {!! Filament\format_attributes($formComponent->extraAttributes) !!}
@@ -97,7 +97,7 @@
                     x-on:keydown.enter.stop.prevent="createTag()"
                     x-model="newTag"
                     class="block w-full placeholder-gray-400 placeholder-opacity-100 border-0 focus:placeholder-gray-500 focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50"
-                    :class="{ 'text-danger-700': error }"
+                    x-bind:class="{ 'text-danger-700': hasError }"
                 />
             @endunless
 
@@ -108,7 +108,7 @@
                 <template class="inline" x-for="tag in tags" x-bind:key="tag">
                     <button
                         @unless($formComponent->disabled)
-                        x-on:click="deleteTag(tag)"
+                            x-on:click="deleteTag(tag)"
                         @endunless
                         type="button"
                         class="my-1 truncate max-w-full inline-flex space-x-2 items-center font-mono text-xs py-1 px-2 border border-gray-300 bg-gray-100 text-gray-800 rounded shadow-sm inline-block relative @unless($formComponent->disabled) cursor-pointer transition duration-200 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 hover:bg-gray-200 transition-colors duration-200 @else cursor-default @endunless"
