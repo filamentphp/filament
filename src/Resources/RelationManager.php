@@ -93,6 +93,11 @@ class RelationManager extends Component
         $this->dispatchBrowserEvent('open', static::class . 'RelationManagerCreateModal');
     }
 
+    public function openAdd()
+    {
+        $this->dispatchBrowserEvent('open', static::class . 'RelationManagerAddModal');
+    }
+
     public function openEdit($record)
     {
         $this->emit('switchRelationManagerEditRecord', static::class, $record);
