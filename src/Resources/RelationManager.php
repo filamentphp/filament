@@ -34,6 +34,18 @@ class RelationManager extends Component
 
     public static $createModalHeading = 'filament::resources/relation-manager.modals.create.heading';
 
+    public static $detachButtonLabel = 'filament::resources/relation-manager.buttons.detach.label';
+
+    public static $detachModalCancelButtonLabel = 'filament::resources/relation-manager.modals.detach.buttons.cancel.label';
+
+    public static $detachModalDescription = 'filament::resources/relation-manager.modals.detach.description';
+
+    public static $detachModalDetachButtonLabel = 'filament::resources/relation-manager.modals.detach.buttons.detach.label';
+
+    public static $detachModalDetachedMessage = 'filament::resources/relation-manager.modals.detach.messages.detached';
+
+    public static $detachModalHeading = 'filament::resources/relation-manager.modals.detach.heading';
+
     public static $editModalCancelButtonLabel = 'filament::resources/relation-manager.modals.edit.buttons.cancel.label';
 
     public static $editModalHeading = 'filament::resources/relation-manager.modals.edit.heading';
@@ -78,6 +90,18 @@ class RelationManager extends Component
             ->title();
     }
 
+    public function detachSelected()
+    {
+        $relationship = $this->owner->{$this->getRelationship()}();
+
+        $relationship->detach($this->selected);
+
+        $this->dispatchBrowserEvent('close', static::class . 'RelationManagerDetachModal');
+        $this->dispatchBrowserEvent('notify', __(static::$detachModalDetachedMessage));
+
+        $this->selected = [];
+    }
+
     public function getTable()
     {
         return static::table(Table::make())
@@ -111,6 +135,11 @@ class RelationManager extends Component
     public function openCreate()
     {
         $this->dispatchBrowserEvent('open', static::class . 'RelationManagerCreateModal');
+    }
+
+    public function openDetach()
+    {
+        $this->dispatchBrowserEvent('open', static::class . 'RelationManagerDetachModal');
     }
 
     public function openEdit($record)
