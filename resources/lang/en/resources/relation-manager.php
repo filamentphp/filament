@@ -58,6 +58,10 @@ return [
                     'label' => 'Create',
                 ],
 
+                'attach_another' => [
+                    'label' => 'Attach & Attach Another',
+                ],
+
             ],
 
             'heading' => 'Create',

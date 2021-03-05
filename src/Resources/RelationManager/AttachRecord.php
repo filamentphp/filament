@@ -16,6 +16,8 @@ class AttachRecord extends Component
 
     public $attachButtonLabel;
 
+    public $attachAnotherButtonLabel;
+
     public $attachedMessage;
 
     public $manager;
@@ -24,18 +26,21 @@ class AttachRecord extends Component
 
     public $related;
 
-    public function attach()
+    public function attach($another = false)
     {
         $this->validate();
 
         $this->owner->{$this->getRelationship()}()->attach($this->related);
 
-        $this->reset('related');
-
         $this->emit('refreshRelationManagerList', $this->manager);
 
-        $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerAttachModal");
+        if (! $another) {
+            $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerAttachModal");
+        }
+
         $this->dispatchBrowserEvent('notify', $this->attachedMessage);
+
+        $this->related = null;
     }
 
     public function getRelationship()
