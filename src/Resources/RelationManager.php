@@ -21,15 +21,15 @@ class RelationManager extends Component
 
     public static $createModalHeading = 'filament::resources/relation-manager.modals.create.heading';
 
-    public static $addButtonLabel = 'filament::resources/relation-manager.buttons.add.label';
+    public static $attachButtonLabel = 'filament::resources/relation-manager.buttons.attach.label';
 
-    public static $addModalCancelButtonLabel = 'filament::resources/relation-manager.modals.add.buttons.cancel.label';
+    public static $attachModalCancelButtonLabel = 'filament::resources/relation-manager.modals.attach.buttons.cancel.label';
 
-    public static $addModalAddButtonLabel = 'filament::resources/relation-manager.modals.add.buttons.add.label';
+    public static $attachModalattachButtonLabel = 'filament::resources/relation-manager.modals.attach.buttons.attach.label';
 
-    public static $addModalAddedMessage = 'filament::resources/relation-manager.modals.add.messages.added';
+    public static $attachModalAttachedMessage = 'filament::resources/relation-manager.modals.attach.messages.attached';
 
-    public static $addModalHeading = 'filament::resources/relation-manager.modals.add.heading';
+    public static $attachModalHeading = 'filament::resources/relation-manager.modals.attach.heading';
 
     public static $editModalCancelButtonLabel = 'filament::resources/relation-manager.modals.edit.buttons.cancel.label';
 
@@ -93,9 +93,9 @@ class RelationManager extends Component
         $this->dispatchBrowserEvent('open', static::class . 'RelationManagerCreateModal');
     }
 
-    public function openAdd()
+    public function openAttach()
     {
-        $this->dispatchBrowserEvent('open', static::class . 'RelationManagerAddModal');
+        $this->dispatchBrowserEvent('open', static::class . 'RelationManagerAttachModal');
     }
 
     public function openEdit($record)

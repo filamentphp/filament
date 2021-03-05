@@ -5,10 +5,10 @@
                 type="submit"
                 color="primary"
             >
-                {{ $addButtonLabel }}
+                {{ $attachButtonLabel }}
             </x-filament::button>
 
-            <x-filament::button x-on:click="$dispatch('close', '{{ (string) Str::of($manager)->replace('\\', '\\\\') }}RelationManagerAddModal')">
+            <x-filament::button x-on:click="$dispatch('close', '{{ (string) Str::of($manager)->replace('\\', '\\\\') }}RelationManagerAttachModal')">
                 {{ $cancelButtonLabel }}
             </x-filament::button>
         </div>

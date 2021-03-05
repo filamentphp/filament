@@ -9,8 +9,8 @@
                 {{ __(static::$createButtonLabel) }}
             </x-filament::button>
 
-            <x-filament::button wire:click="openAdd">
-                {{ __(static::$addButtonLabel) }}
+            <x-filament::button wire:click="openAttach">
+                {{ __(static::$attachButtonLabel) }}
             </x-filament::button>
 
             <x-tables::delete-selected :selected="$selected" />
@@ -44,15 +44,15 @@
     </x-filament::modal>
 
     <x-filament::modal
-        :name="static::class.'RelationManagerAddModal'"
+        :name="static::class.'RelationManagerAttachModal'"
     >
         <x-filament::card class="w-full max-w-2xl">
-            <x-filament::card-header :title="__(static::$addModalHeading)" />
+            <x-filament::card-header :title="__(static::$attachModalHeading)" />
 
-            @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\AddRecord::class), [
-                'cancelButtonLabel' => __(static::$addModalCancelButtonLabel),
-                'addButtonLabel' => __(static::$addModalAddButtonLabel),
-                'addedMessage' => __(static::$addModalAddedMessage),
+            @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\AttachRecord::class), [
+                'cancelButtonLabel' => __(static::$attachModalCancelButtonLabel),
+                'attachButtonLabel' => __(static::$attachModalattachButtonLabel),
+                'attachedMessage' => __(static::$attachModalAttachedMessage),
                 'manager' => static::class,
                 'owner' => $this->owner,
             ])
