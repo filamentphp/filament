@@ -8,13 +8,13 @@ use Filament\Forms\HasForm;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class AddRecord extends Component
+class AttachRecord extends Component
 {
     use HasForm;
 
     public $cancelButtonLabel;
 
-    public $addButtonLabel;
+    public $attachButtonLabel;
 
     public $addedMessage;
 
@@ -32,7 +32,7 @@ class AddRecord extends Component
 
         $this->emit('refreshRelationManagerList', $this->manager);
 
-        $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerAddModal");
+        $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerAttachModal");
         $this->dispatchBrowserEvent('notify', $this->addedMessage);
     }
 
@@ -81,6 +81,6 @@ class AddRecord extends Component
 
     public function render()
     {
-        return view('filament::resources.relation-manager.add-record');
+        return view('filament::resources.relation-manager.attach-record');
     }
 }

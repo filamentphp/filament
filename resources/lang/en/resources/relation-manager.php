@@ -8,8 +8,8 @@ return [
             'label' => 'New',
         ],
 
-        'add' => [
-            'label' => 'Add Existing',
+        'attach' => [
+            'label' => 'Attach Existing',
         ],
 
     ],
@@ -38,7 +38,7 @@ return [
 
         ],
 
-        'add' => [
+        'attach' => [
 
             'buttons' => [
 
@@ -46,16 +46,16 @@ return [
                     'label' => 'Cancel',
                 ],
 
-                'add' => [
-                    'label' => 'Add',
+                'attach' => [
+                    'label' => 'Attach',
                 ],
 
             ],
 
-            'heading' => 'Add Existing',
+            'heading' => 'Attach Existing',
 
             'messages' => [
-                'added' => 'Added!',
+                'attached' => 'Attached!',
             ],
 
         ],
