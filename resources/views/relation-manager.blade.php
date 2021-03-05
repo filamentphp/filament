@@ -15,6 +15,10 @@
                 </x-filament::button>
             @endunless
 
+            <x-filament::button wire:click="openDetach">
+                {{ __(static::$detachButtonLabel) }}
+            </x-filament::button>
+
             <x-tables::delete-selected :selected="$selected" />
         </div>
 

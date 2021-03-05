@@ -32,6 +32,8 @@ class RelationManager extends Component
 
     public static $createModalCreatedMessage = 'filament::resources/relation-manager.modals.create.messages.created';
 
+    public static $detachButtonLabel = 'filament::resources/relation-manager.buttons.detach.label';
+
     public static $createModalHeading = 'filament::resources/relation-manager.modals.create.heading';
 
     public static $editModalCancelButtonLabel = 'filament::resources/relation-manager.modals.edit.buttons.cancel.label';
