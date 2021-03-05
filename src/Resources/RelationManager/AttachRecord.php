@@ -75,7 +75,7 @@ class AttachRecord extends Component
             ->schema([
                 Select::make('related')
                     ->label((string) Str::of($this->getRelationship())->singular()->title())
-                    ->placeholder('Start typing to search...')
+                    ->placeholder(__('forms::fields.select.emptyOptionsMessage'))
                     ->getDisplayValueUsing(fn ($value) => $value)
                     ->getOptionSearchResultsUsing(function ($search) {
                         /** @var \Illuminate\Database\Eloquent\Relations\BelongsToMany $relationship */
