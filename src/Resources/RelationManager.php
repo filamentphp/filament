@@ -70,7 +70,7 @@ class RelationManager extends Component
 
     public static function getPrimaryColumn()
     {
-        return property_exists(static::class, 'primaryColumn') ?
+        return property_exists(static::class, 'primaryColumn') && static::$primaryColumn !== '' ?
             static::$primaryColumn :
             null;
     }
