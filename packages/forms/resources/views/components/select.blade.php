@@ -107,8 +107,10 @@
                         if (Object.keys(config.initialOptions).length) {
                             this.options = {}
 
+                            let search = this.search.trim().toLowerCase()
+
                             for (let key in config.initialOptions) {
-                                if (config.initialOptions[key].trim().toLowerCase().includes(this.search.trim().toLowerCase())) {
+                                if (config.initialOptions[key].trim().toLowerCase().includes(search)) {
                                     this.options[key] = config.initialOptions[key]
                                 }
                             }
