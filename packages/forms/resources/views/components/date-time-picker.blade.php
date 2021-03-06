@@ -161,23 +161,23 @@
 
                     if (this.autofocus) this.openPicker()
 
-                    this.$watch('focusedMonth', (() => {
+                    this.$watch('focusedMonth', () => {
                         this.focusedMonth = +this.focusedMonth
 
                         if (this.focusedDate.month() === this.focusedMonth) return
 
                         this.focusedDate = this.focusedDate.set('month', this.focusedMonth)
-                    }))
+                    })
 
-                    this.$watch('focusedYear', (() => {
+                    this.$watch('focusedYear', () => {
                         this.focusedYear = Number.isInteger(+this.focusedYear) ? +this.focusedYear : dayjs().year()
 
                         if (this.focusedDate.year() === this.focusedYear) return
 
                         this.focusedDate = this.focusedDate.set('year', this.focusedYear)
-                    }))
+                    })
 
-                    this.$watch('focusedDate', (() => {
+                    this.$watch('focusedDate', () => {
                         this.focusedMonth = this.focusedDate.month()
                         this.focusedYear = this.focusedDate.year()
 
@@ -186,9 +186,9 @@
                         this.$nextTick(() => {
                             this.evaluatePosition()
                         })
-                    }))
+                    })
 
-                    this.$watch('hour', (() => {
+                    this.$watch('hour', () => {
                         this.hour = Number.isInteger(+this.hour) && this.hour >= 0 && this.hour < 24 ? +this.hour : dayjs().hour()
 
                         let date = this.getSelectedDate()
@@ -196,9 +196,9 @@
                         if (date === null) return
 
                         this.setValue(date.set('hour', this.hour))
-                    }))
+                    })
 
-                    this.$watch('minute', (() => {
+                    this.$watch('minute', () => {
                         this.minute = Number.isInteger(+this.minute) && this.minute >= 0 && this.minute < 60 ? +this.minute : dayjs().minute()
 
                         let date = this.getSelectedDate()
@@ -206,9 +206,9 @@
                         if (date === null) return
 
                         this.setValue(date.set('minute', this.minute))
-                    }))
+                    })
 
-                    this.$watch('second', (() => {
+                    this.$watch('second', () => {
                         this.second = Number.isInteger(+this.second) && this.second >= 0 && this.second < 60 ? +this.second : dayjs().second()
 
                         let date = this.getSelectedDate()
@@ -216,9 +216,9 @@
                         if (date === null) return
 
                         this.setValue(date.set('second', this.second))
-                    }))
+                    })
 
-                    this.$watch('value', (() => {
+                    this.$watch('value', () => {
                         let date = this.getSelectedDate() ?? dayjs()
 
                         if (this.maxDate !== null && date.isAfter(this.maxDate)) date = this.required ? this.maxDate : null
@@ -231,7 +231,7 @@
                         if (this.required && ! this.getSelectedDate()) this.setValue(date)
 
                         this.setDisplayValue()
-                    }))
+                    })
                 },
 
                 openPicker: function () {

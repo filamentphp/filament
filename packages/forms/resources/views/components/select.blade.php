@@ -4,13 +4,11 @@
             return {
                 autofocus: config.autofocus,
 
-                displayValue: null,
+                displayValue: config.initialDisplayValue,
 
                 emptyOptionsMessage: config.emptyOptionsMessage,
 
                 focusedOptionIndex: null,
-
-                initialOptions: config.initialOptions,
 
                 loading: false,
 
@@ -20,7 +18,7 @@
 
                 open: false,
 
-                options: {},
+                options: config.initialOptions,
 
                 required: config.required,
 
@@ -96,60 +94,46 @@
                 },
 
                 init: function () {
-                    this.options = this.initialOptions
-
-                    if (this.value in this.options) {
-                        this.displayValue = this.options[this.value]
-                    } else {
-                        this.loading = true;
-
-                        this.$wire.getSelectFieldDisplayValue(this.name, this.value).then((displayValue) => {
-                            this.displayValue = displayValue
-
-                            if (this.displayValue === null) {
-                                this.value = null
-                            }
-
-                            this.loading = false
-                        })
-                    }
-
                     if (this.autofocus) this.openListbox()
 
-                    this.$watch('search', (() => {
+                    this.$watch('search', () => {
                         if (! this.open || this.search === '' || this.search === null) {
-                            this.options = this.initialOptions
+                            this.options = config.initialOptions
                             this.focusedOptionIndex = 0
 
                             return
                         }
 
-                        this.loading = true
+                        if (Object.keys(config.initialOptions).length) {
+                            this.options = {}
 
-                        this.$wire.getSelectFieldOptionSearchResults(this.name, this.search).then((options) => {
-                            this.options = options
-                            this.focusedOptionIndex = 0
-                            this.loading = false
-                        })
-                    }))
+                            let search = this.search.trim().toLowerCase()
 
-                    this.$watch('value', (() => {
-                        if (this.value in this.options) {
-                            this.displayValue = this.options[this.value]
-                        } else {
-                            this.loading = true;
-
-                            this.$wire.getSelectFieldDisplayValue(this.name, this.value).then((displayValue) => {
-                                this.displayValue = displayValue
-
-                                if (this.displayValue === null) {
-                                    this.value = null
+                            for (let key in config.initialOptions) {
+                                if (config.initialOptions[key].trim().toLowerCase().includes(search)) {
+                                    this.options[key] = config.initialOptions[key]
                                 }
+                            }
 
+                            this.focusedOptionIndex = 0
+                        } else {
+                            this.loading = true
+
+                            this.$wire.getSelectFieldOptionSearchResults(this.name, this.search).then((options) => {
+                                this.options = options
+                                this.focusedOptionIndex = 0
                                 this.loading = false
                             })
                         }
-                    }))
+                    })
+
+                    this.$watch('value', () => {
+                        if (this.value in this.options) {
+                            this.displayValue = this.options[this.value]
+                        } else {
+                            this.clearValue()
+                        }
+                    })
                 },
 
                 openListbox: function () {
@@ -210,12 +194,13 @@
         x-data="select({
             autofocus: {{ $formComponent->autofocus ? 'true' : 'false' }},
             emptyOptionsMessage: '{{ __($formComponent->emptyOptionsMessage) }}',
+            initialDisplayValue: {{ data_get($this, $formComponent->name) !== null ? '\'' . $formComponent->getDisplayValue(data_get($this, $formComponent->name)) . '\'' : 'null' }},
             initialOptions: {{ json_encode($formComponent->options) }},
             name: '{{ $formComponent->name }}',
             noSearchResultsMessage: '{{ __($formComponent->noSearchResultsMessage) }}',
             required: {{ $formComponent->required ? 'true' : 'false' }},
             @if (Str::of($formComponent->nameAttribute)->startsWith('wire:model'))
-            value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
+                value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
             @endif
             })"
         x-init="init()"

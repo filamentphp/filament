@@ -56,16 +56,6 @@ trait HasForm
         );
     }
 
-    public function getSelectFieldDisplayValue($fieldName, $value)
-    {
-        $field = collect($this->getForm()->getFlatSchema())
-            ->first(fn ($field) => $field instanceof Select && $field->name === $fieldName);
-
-        if (! $field) return [];
-
-        return $field->getDisplayValue($value);
-    }
-
     public function getUploadedFileUrl($name, $disk)
     {
         $path = $this->getPropertyValue($name);

@@ -80,8 +80,7 @@ class AttachRecord extends Component
             ->schema([
                 Select::make('related')
                     ->label((string) Str::of($this->getRelationship())->singular()->ucfirst())
-                    ->placeholder(__('forms::fields.select.emptyOptionsMessage'))
-                    ->getDisplayValueUsing(fn ($value) => $value)
+                    ->placeholder('filament::resources/relation-manager.modals.attach.form.related.placeholder')
                     ->getOptionSearchResultsUsing(function ($search) {
                         $relationship = $this->owner->{$this->getRelationship()}();
 
