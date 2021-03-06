@@ -76,6 +76,13 @@ class Page extends Component
             ->title();
     }
 
+    public static function getPageTitle()
+    {
+        if (property_exists(static::class, 'pageTitle')) return static::$pageTitle;
+
+        return static::getTitle();
+    }
+
     public static function navigationItems()
     {
         return [
@@ -110,7 +117,9 @@ class Page extends Component
     public function render()
     {
         return view(static::$view, $this->getViewParameters())
-            ->layout('filament::components.layouts.app');
+            ->layout('filament::components.layouts.app', [
+                'title' => static::getPageTitle(),
+            ]);
     }
 
     public function getViewParameters()
