@@ -66,7 +66,7 @@ return [
                     'label' => 'Create',
                 ],
 
-                'create_another' => [
+                'createAnother' => [
                     'label' => 'Create & Create Another',
                 ],
 
