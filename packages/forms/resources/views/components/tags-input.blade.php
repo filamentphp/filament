@@ -35,11 +35,11 @@
 
                     this.$watch('newTag', () => this.hasError = false)
 
-                    this.$watch('tags', (() => {
+                    this.$watch('tags', () => {
                         this.value = this.tags.join(this.separator)
-                    }))
+                    })
 
-                    this.$watch('value', (() => {
+                    this.$watch('value', () => {
                         try {
                             let expectedTags = this.value.trim().split(this.separator).filter(tag => tag !== '')
 
@@ -52,7 +52,7 @@
                         } catch (error) {
                             this.tags = []
                         }
-                    }))
+                    })
                 },
             }
         }

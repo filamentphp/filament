@@ -93,7 +93,7 @@
 
                     if (this.autofocus) this.openListbox()
 
-                    this.$watch('search', (() => {
+                    this.$watch('search', () => {
                         if (! this.open || this.search === '' || this.search === null) {
                             this.setOptions()
                             this.focusedOptionIndex = 0
@@ -113,13 +113,13 @@
                         }
 
                         this.focusedOptionIndex = 0
-                    }))
+                    })
 
-                    this.$watch('value', (() => {
+                    this.$watch('value', () => {
                         if (this.value) return
 
                         this.value = []
-                    }))
+                    })
                 },
 
                 openListbox: function () {
