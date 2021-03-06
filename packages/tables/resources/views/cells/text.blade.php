@@ -18,5 +18,5 @@
         {{ $column->getValue($record) }}
     </a>
 @else
-    <span class="{{ $primaryClasses }}">{{ $column->getValue($record) }}</span>
+    <span class="{{ $primaryClasses }}">{!! $column->getValue($record) !!}</span>
 @endunless

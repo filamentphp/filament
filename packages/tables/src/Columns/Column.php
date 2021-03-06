@@ -109,16 +109,22 @@ class Column
 
     public function getValue($record, $attribute = null)
     {
-        if ($this->getValueUsing) {
-            $callback = $this->getValueUsing;
-
-            return $callback($record);
-        }
-
         if ($attribute === null) {
             $attribute = $this->name;
         }
+    
+        
+        if ($this->getValueUsing) {
+            $callback = $this->getValueUsing;
 
+            $value = $callback($record);
+    
+            if($this->escaped) $value = htmlspecialchars($value, ENT_QUOTES,'UTF-8');
+    
+            return $value;
+        }
+
+        
         $value = $record->getAttribute(
             (string) Str::of($attribute)->before('.'),
         );
@@ -129,7 +135,9 @@ class Column
                 (string) Str::of($attribute)->after('.'),
             );
         }
-
+    
+        if($this->escaped) $value = htmlspecialchars($value, ENT_QUOTES,'UTF-8');
+    
         return $value;
     }
 
@@ -259,8 +267,6 @@ class Column
         if ($this->hidden) return;
 
         $view = $this->view ?? 'tables::cells.'.Str::of(class_basename(static::class))->kebab();
-        
-        if($this->escaped) $record = htmlspecialchars($record, ENT_QUOTES,'UTF-8');
         
         return view($view, [
             'column' => $this,
