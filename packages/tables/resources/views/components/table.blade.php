@@ -74,7 +74,7 @@
 
                     @foreach ($table->getVisibleColumns() as $column)
                         <td class="px-6 py-4 whitespace-nowrap">
-                            {{ $column->renderCell($record) }}
+                            {!! $column->renderCell($record) !!}
                         </td>
                     @endforeach
 

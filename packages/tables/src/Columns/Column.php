@@ -29,6 +29,8 @@ class Column
     public $sortable = false;
 
     public $view;
+    
+    public $escaped = true;
 
     protected $pendingExcludedContextModifications = [];
 
@@ -237,16 +239,34 @@ class Column
 
         return $this;
     }
-
+    
+    public function escaped()
+    {
+        $this->escaped = true;
+        
+        return $this;
+    }
+    
+    public function unescaped()
+    {
+        $this->escaped = false;
+        
+        return $this;
+    }
+    
     public function renderCell($record)
     {
         if ($this->hidden) return;
 
         $view = $this->view ?? 'tables::cells.'.Str::of(class_basename(static::class))->kebab();
-
+        
+        if($this->escaped) $record = htmlspecialchars($record, ENT_QUOTES,'UTF-8');
+        
         return view($view, [
             'column' => $this,
-            'record' => $record,
+            'record' =>  $record,
         ]);
     }
+    
+    
 }
