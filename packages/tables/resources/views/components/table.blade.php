@@ -15,7 +15,7 @@
                         {{ $records->count() && $records->count() === count($selected) ? 'checked' : null }}
                         wire:click="toggleSelectAll"
                         type="checkbox"
-                        class="rounded text-secondary-700 shadow-sm focus:border-secondary-700 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300"
+                        class="rounded text-blue-700 shadow-sm focus:border-blue-700 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border-gray-300"
                     />
                 </th>
 
@@ -68,7 +68,7 @@
                             {{ in_array($record->getKey(), $selected) ? 'checked' : null }}
                             wire:click="toggleSelected('{{ $record->getKey() }}')"
                             type="checkbox"
-                            class="rounded text-secondary-700 shadow-sm focus:border-secondary-700 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300"
+                            class="rounded text-blue-700 shadow-sm focus:border-blue-700 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border-gray-300"
                         />
                     </td>
 
@@ -84,14 +84,14 @@
                                 <button
                                     wire:click="{{ $table->recordAction }}('{{ $record->getKey() }}')"
                                     type="button"
-                                    class="hover:underline text-secondary-500 hover:text-secondary-700 transition-colors duration-200 font-medium"
+                                    class="hover:underline text-blue-500 hover:text-blue-700 transition-colors duration-200 font-medium"
                                 >
                                     {{ __($table->recordButtonLabel) }}
                                 </button>
                             @elseif ($table->recordUrl)
                                 <a
                                     href="{{ $table->getRecordUrl($record) }}"
-                                    class="hover:underline text-secondary-500 hover:text-secondary-700 transition-colors duration-200 font-medium"
+                                    class="hover:underline text-blue-500 hover:text-blue-700 transition-colors duration-200 font-medium"
                                 >
                                     {{ __($table->recordButtonLabel) }}
                                 </a>

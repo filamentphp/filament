@@ -4,7 +4,7 @@
 ])
 
 <span
-    {{ $attributes }}
+    {{ $attributes->except('class') }}
     x-data="{ open: false }"
     x-init="
         $watch('open', value => {
@@ -25,9 +25,9 @@
     <div
         x-show="open"
         x-bind:aria-hidden="! open"
-        class="fixed z-40 inset-0 overflow-y-auto"
+        class="fixed inset-0 z-40 overflow-y-auto"
     >
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center cursor-default sm:block sm:p-0">
+        <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center cursor-default sm:block sm:p-0">
             <div
                 x-show="open"
                 x-transition:enter="ease-out duration-300"
@@ -55,7 +55,7 @@
                 role="dialog"
                 aria-modal="true"
                 x-on:click.away="open = false"
-                class="inline-block align-bottom text-left overflow-hidden transform transition-all sm:my-8 sm:align-middle"
+                {{ $attributes->only('class')->merge(['class' => 'inline-block text-left align-bottom transition-all transform sm:my-8 sm:align-middle']) }}
             >
                 <div
                     class="flex flex-col space-y-4"
@@ -64,7 +64,7 @@
                         <button
                             type="button"
                             x-on:click="open = false"
-                            class="flex-shrink-0 self-center text-gray-200 hover:text-white transition-colors duration-200 flex"
+                            class="flex self-center flex-shrink-0 text-gray-200 transition-colors duration-200 hover:text-white"
                         >
                             <x-heroicon-o-x class="w-6 h-6" />
                         </button>

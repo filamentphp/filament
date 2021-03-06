@@ -4,13 +4,11 @@
             return {
                 autofocus: config.autofocus,
 
-                displayValue: null,
+                displayValue: config.initialDisplayValue,
 
                 emptyOptionsMessage: config.emptyOptionsMessage,
 
                 focusedOptionIndex: null,
-
-                initialOptions: config.initialOptions,
 
                 loading: false,
 
@@ -20,7 +18,7 @@
 
                 open: false,
 
-                options: {},
+                options: config.initialOptions,
 
                 required: config.required,
 
@@ -96,60 +94,46 @@
                 },
 
                 init: function () {
-                    this.options = this.initialOptions
-
-                    if (this.value in this.options) {
-                        this.displayValue = this.options[this.value]
-                    } else {
-                        this.loading = true;
-
-                        this.$wire.getSelectFieldDisplayValue(this.name, this.value).then((displayValue) => {
-                            this.displayValue = displayValue
-
-                            if (this.displayValue === null) {
-                                this.value = null
-                            }
-
-                            this.loading = false
-                        })
-                    }
-
                     if (this.autofocus) this.openListbox()
 
-                    this.$watch('search', (() => {
+                    this.$watch('search', () => {
                         if (! this.open || this.search === '' || this.search === null) {
-                            this.options = this.initialOptions
+                            this.options = config.initialOptions
                             this.focusedOptionIndex = 0
 
                             return
                         }
 
-                        this.loading = true
+                        if (Object.keys(config.initialOptions).length) {
+                            this.options = {}
 
-                        this.$wire.getSelectFieldOptionSearchResults(this.name, this.search).then((options) => {
-                            this.options = options
-                            this.focusedOptionIndex = 0
-                            this.loading = false
-                        })
-                    }))
+                            let search = this.search.trim().toLowerCase()
 
-                    this.$watch('value', (() => {
-                        if (this.value in this.options) {
-                            this.displayValue = this.options[this.value]
-                        } else {
-                            this.loading = true;
-
-                            this.$wire.getSelectFieldDisplayValue(this.name, this.value).then((displayValue) => {
-                                this.displayValue = displayValue
-
-                                if (this.displayValue === null) {
-                                    this.value = null
+                            for (let key in config.initialOptions) {
+                                if (config.initialOptions[key].trim().toLowerCase().includes(search)) {
+                                    this.options[key] = config.initialOptions[key]
                                 }
+                            }
 
+                            this.focusedOptionIndex = 0
+                        } else {
+                            this.loading = true
+
+                            this.$wire.getSelectFieldOptionSearchResults(this.name, this.search).then((options) => {
+                                this.options = options
+                                this.focusedOptionIndex = 0
                                 this.loading = false
                             })
                         }
-                    }))
+                    })
+
+                    this.$watch('value', () => {
+                        if (this.value in this.options) {
+                            this.displayValue = this.options[this.value]
+                        } else {
+                            this.clearValue()
+                        }
+                    })
                 },
 
                 openListbox: function () {
@@ -210,12 +194,13 @@
         x-data="select({
             autofocus: {{ $formComponent->autofocus ? 'true' : 'false' }},
             emptyOptionsMessage: '{{ __($formComponent->emptyOptionsMessage) }}',
+            initialDisplayValue: {{ data_get($this, $formComponent->name) !== null ? '\'' . $formComponent->getDisplayValue(data_get($this, $formComponent->name)) . '\'' : 'null' }},
             initialOptions: {{ json_encode($formComponent->options) }},
             name: '{{ $formComponent->name }}',
             noSearchResultsMessage: '{{ __($formComponent->noSearchResultsMessage) }}',
             required: {{ $formComponent->required ? 'true' : 'false' }},
             @if (Str::of($formComponent->nameAttribute)->startsWith('wire:model'))
-            value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
+                value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
             @endif
             })"
         x-init="init()"
@@ -246,7 +231,7 @@
             aria-haspopup="listbox"
             tabindex="1"
             @endunless
-            class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 {{ $formComponent->disabled ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+            class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $formComponent->disabled ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
         >
             <span
                 x-show="! open"
@@ -266,7 +251,7 @@
                     x-on:keydown.arrow-up.stop.prevent="focusPreviousOption()"
                     x-on:keydown.arrow-down.stop.prevent="focusNextOption()"
                     type="search"
-                    class="w-full h-full border-0 p-0 focus:ring-0 focus:outline-none"
+                    class="w-full h-full p-0 border-0 focus:ring-0 focus:outline-none"
                 />
 
                 <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -294,7 +279,7 @@
                 x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $formComponent->name }}' + 'Option' + focusedOptionIndex : null"
                 tabindex="-1"
                 x-cloak
-                class="absolute z-10 w-full my-1 bg-white rounded shadow-sm border border-gray-300"
+                class="absolute z-50 w-full my-1 bg-white border border-gray-300 rounded shadow-sm"
             >
                 <ul
                     x-ref="listboxOptionsList"
@@ -309,7 +294,7 @@
                             role="option"
                             x-bind:aria-selected="focusedOptionIndex === index"
                             x-bind:class="{
-                                'text-white bg-secondary-600': index === focusedOptionIndex,
+                                'text-white bg-blue-600': index === focusedOptionIndex,
                                 'text-gray-900': index !== focusedOptionIndex,
                             }"
                             class="relative py-2 pl-3 text-gray-900 cursor-default select-none pr-9"
@@ -327,9 +312,9 @@
                                 x-show="key === value"
                                 x-bind:class="{
                                     'text-white': index === focusedOptionIndex,
-                                    'text-secondary-600': index !== focusedOptionIndex,
+                                    'text-blue-600': index !== focusedOptionIndex,
                                 }"
-                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-secondary-600"
+                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600"
                             >
                                     <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd"
@@ -343,7 +328,7 @@
                     <div
                         x-show="! Object.keys(options).length"
                         x-text="! search || loading ? emptyOptionsMessage : noSearchResultsMessage"
-                        class="px-3 py-2 text-gray-900 cursor-default select-none text-sm"
+                        class="px-3 py-2 text-sm text-gray-900 cursor-default select-none"
                     ></div>
                 </ul>
             </div>

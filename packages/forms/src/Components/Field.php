@@ -30,7 +30,7 @@ class Field extends Component
     {
         $this->name($name);
 
-        parent::setUp();
+        $this->setUp();
     }
 
     public static function make($name)
