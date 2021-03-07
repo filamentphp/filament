@@ -55,6 +55,10 @@ class Image extends Column
     {
         $path = $this->getValue($record);
 
+        if (filter_var($path, FILTER_VALIDATE_EMAIL) !== false) {
+            return $path;
+        }
+
         if (! $path) return null;
 
         return Storage::disk($this->disk)->url($path);
