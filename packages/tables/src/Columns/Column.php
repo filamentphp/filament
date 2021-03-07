@@ -40,7 +40,7 @@ class Column
     {
         $this->name($name);
 
-        $this->setup();
+        $this->setUp();
     }
 
     public static function make($name)
@@ -48,7 +48,7 @@ class Column
         return new static($name);
     }
 
-    protected function setup()
+    protected function setUp()
     {
         //
     }
@@ -74,13 +74,6 @@ class Column
             });
 
         $this->pendingExcludedContextModifications = [];
-
-        return $this;
-    }
-
-    public function data($data = [])
-    {
-        $this->viewData = array_merge($this->viewData, $data);
 
         return $this;
     }
@@ -233,11 +226,18 @@ class Column
         return $this;
     }
 
-    public function view($view, $data = [])
+    public function view($view, $viewData = [])
     {
         $this->view = $view;
 
-        $this->data($data);
+        $this->viewData($viewData);
+
+        return $this;
+    }
+
+    public function viewData($data = [])
+    {
+        $this->viewData = array_merge($this->viewData, $data);
 
         return $this;
     }
@@ -249,18 +249,13 @@ class Column
         return $this;
     }
 
-    protected function getViewData()
-    {
-        return $this->viewData;
-    }
-
     public function renderCell($record)
     {
         if ($this->hidden) return;
 
         $view = $this->view ?? 'tables::cells.'.Str::of(class_basename(static::class))->kebab();
 
-        return view($view, array_merge($this->getViewData(), [
+        return view($view, array_merge($this->viewData, [
             'column' => $this,
             'record' => $record,
         ]));
