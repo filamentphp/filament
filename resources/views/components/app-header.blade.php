@@ -19,14 +19,14 @@
             @if (count($breadcrumbs))
                 <p class="-mt-2 font-mono text-sm text-gray-500">
                     @foreach ($breadcrumbs as $url => $label)
-                        <a href="{{ $url }}" class="hover:underline">{{ $label }}</a>
+                        <a href="{{ $url }}" class="hover:underline">{{ __($label) }}</a>
 
                         <span>/</span>
                     @endforeach
                 </p>
             @endif
 
-            <h1 class="text-2xl font-medium leading-tight md:text-3xl">{{ $title }}</h1>
+            <h1 class="text-2xl font-medium leading-tight md:text-3xl">{{ __($title) }}</h1>
         </div>
     </div>
 
