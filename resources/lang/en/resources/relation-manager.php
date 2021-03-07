@@ -66,6 +66,10 @@ return [
                     'label' => 'Create',
                 ],
 
+                'createAnother' => [
+                    'label' => 'Create & Create Another',
+                ],
+
             ],
 
             'heading' => 'Create',

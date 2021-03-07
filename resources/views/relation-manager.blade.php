@@ -46,6 +46,7 @@
 
             @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\CreateRecord::class), [
                 'cancelButtonLabel' => __(static::$createModalCancelButtonLabel),
+                'createAnotherButtonLabel' => __(static::$createModalCreateAnotherButtonLabel),
                 'createButtonLabel' => __(static::$createModalCreateButtonLabel),
                 'createdMessage' => __(static::$createModalCreatedMessage),
                 'manager' => static::class,

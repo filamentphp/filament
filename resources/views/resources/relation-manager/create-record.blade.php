@@ -8,6 +8,14 @@
                 {{ $createButtonLabel }}
             </x-filament::button>
 
+            <x-filament::button
+                type="button"
+                color="primary"
+                wire:click="create(true)"
+            >
+                {{ $createAnotherButtonLabel }}
+            </x-filament::button>
+
             <x-filament::button x-on:click="$dispatch('close', '{{ (string) Str::of($manager)->replace('\\', '\\\\') }}RelationManagerCreateModal')">
                 {{ $cancelButtonLabel }}
             </x-filament::button>

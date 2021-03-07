@@ -12,6 +12,8 @@ class CreateRecord extends Component
 
     public $cancelButtonLabel;
 
+    public $createAnotherButtonLabel;
+
     public $createButtonLabel;
 
     public $createdMessage;
@@ -22,7 +24,7 @@ class CreateRecord extends Component
 
     public $record = [];
 
-    public function create()
+    public function create($another = false)
     {
         $this->validateTemporaryUploadedFiles();
 
@@ -34,7 +36,10 @@ class CreateRecord extends Component
 
         $this->emit('refreshRelationManagerList', $this->manager);
 
-        $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerCreateModal");
+        if (! $another) {
+            $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerCreateModal");
+        }
+
         $this->dispatchBrowserEvent('notify', $this->createdMessage);
 
         $this->record = [];
