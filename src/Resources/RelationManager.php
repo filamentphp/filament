@@ -92,6 +92,26 @@ class RelationManager extends Component
             ->title();
     }
 
+    public function canAttach()
+    {
+        if (
+            $this->isType(Relations\HasMany::class) ||
+            $this->isType(Relations\MorphMany::class)
+        ) return false;
+
+        return true;
+    }
+
+    public function canDetach()
+    {
+        if (
+            $this->isType(Relations\HasMany::class) ||
+            $this->isType(Relations\MorphMany::class)
+        ) return false;
+
+        return true;
+    }
+
     public function detachSelected()
     {
         $relationship = $this->owner->{$this->getRelationship()}();
@@ -124,9 +144,9 @@ class RelationManager extends Component
         return $this->owner->{static::$relationship}();
     }
 
-    public function isHasMany()
+    public function isType($type)
     {
-        return $this->owner->{$this->getRelationship()}() instanceof Relations\HasMany;
+        return $this->owner->{$this->getRelationship()}() instanceof $type;
     }
 
     public function openAttach()
