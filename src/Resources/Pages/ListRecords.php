@@ -48,7 +48,7 @@ class ListRecords extends Page
             ->sortable($this->sortable);
     }
 
-    public function viewParameters()
+    protected function viewData()
     {
         return [
             'records' => $this->getRecords(),

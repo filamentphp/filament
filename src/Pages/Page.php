@@ -118,30 +118,30 @@ class Page extends Component
 
     public function render()
     {
-        return view(static::$view, $this->getViewParameters())
-            ->layout(static::$layout, $this->getLayoutParameters());
+        return view(static::$view, $this->getViewData())
+            ->layout(static::$layout, $this->getLayoutData());
     }
 
-    public function getViewParameters()
+    protected function getViewData()
     {
-        return array_merge($this->viewParameters(), [
+        return array_merge($this->viewData(), [
             'title' => static::getTitle(),
         ]);
     }
 
-    public function viewParameters()
+    protected function viewData()
     {
         return [];
     }
 
-    public function getLayoutParameters()
+    protected function getLayoutData()
     {
-        return array_merge($this->layoutParameters(), [
+        return array_merge($this->layoutData(), [
             'title' => static::getPageTitle(),
         ]);
     }
 
-    public function layoutParameters()
+    protected function layoutData()
     {
         return [];
     }
