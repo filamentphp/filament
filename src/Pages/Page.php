@@ -19,6 +19,8 @@ class Page extends Component
     public static $slug;
 
     public static $view;
+    
+    public static $renderLayout = 'filament::components.layouts.app';
 
     public static function authorization()
     {
@@ -38,6 +40,10 @@ class Page extends Component
     public static function generateUrl($parameters = [], $absolute = true)
     {
         return route('filament.pages.' . static::route()->name, $parameters, $absolute);
+    }
+    
+    public static function renderLayout() {
+        return static::$renderLayout;
     }
 
     public static function getIcon()
@@ -117,7 +123,7 @@ class Page extends Component
     public function render()
     {
         return view(static::$view, $this->getViewParameters())
-            ->layout('filament::components.layouts.app', [
+            ->layout(self::renderLayout(), [
                 'title' => static::getPageTitle(),
             ]);
     }
