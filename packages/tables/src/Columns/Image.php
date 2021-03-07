@@ -2,68 +2,83 @@
 
 namespace Filament\Tables\Columns;
 
+use Illuminate\Support\Facades\Storage;
+
 class Image extends Column
 {
-    public $width = null;
+    public $disk;
 
-    public $height = null;
+    public $height = 40;
 
-    public string $class = '';
+    public $width;
 
-    public bool $rounded = false;
+    public $rounded = false;
 
-    public bool $cover = false;
-
-    public function width($width): self
+    protected function setUp()
     {
-        return tap($this, fn () => $this->width = $width);
+        $this->disk(config('forms.default_filesystem_disk'));
     }
 
-    public function height($height): self
+    public function disk($disk)
     {
-        return tap($this, fn () => $this->height = $height);
+        $this->disk = $disk;
+
+        return $this;
     }
 
-    public function square(int $size): self
+    public function height($height)
     {
-        return tap($this, function () use ($size) {
-            $this->width = $size;
-            $this->height = $size;
-        });
-    }
+        $this->height = $height;
 
-    public function class(string $class): self
-    {
-        return tap($this, fn () => $this->class = $class);
-    }
-
-    public function rounded(): self
-    {
-        return tap($this, fn () => $this->rounded = true);
-    }
-
-    public function cover(): self
-    {
-        return tap($this, fn () => $this->cover = true);
-    }
-
-    public function getWidth()
-    {
-        return $this->width && is_numeric($this->width) ? "{$this->width}px" : $this->width;
+        return $this;
     }
 
     public function getHeight()
     {
-        return $this->height && is_numeric($this->height) ? "{$this->height}px" : $this->height;
+        if ($this->height === null) return null;
+
+        if (is_integer($this->height)) return "{$this->height}px";
+
+        return $this->height;
     }
 
-    public function getClass(): string
+    public function getWidth()
     {
-        $class = $this->class;
+        if ($this->width === null) return null;
 
-        if ($this->rounded) $class .= ' rounded-full';
-        if ($this->cover) $class .= ' bg-cover';
+        if (is_integer($this->width)) return "{$this->width}px";
 
-        return $class;
+        return $this->width;
+    }
+
+    public function getPath($record)
+    {
+        $path = $this->getValue($record);
+
+        if (! $path) return null;
+
+        return Storage::disk($this->disk)->url($path);
+    }
+
+    public function rounded()
+    {
+        $this->rounded = true;
+
+        return $this;
+    }
+
+    public function size($size)
+    {
+        $this->width = $size;
+        $this->height = $size;
+
+        return $this;
+    }
+
+    public function width($width)
+    {
+        $this->width = $width;
+
+        return $this;
     }
 }

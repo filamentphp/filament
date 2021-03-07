@@ -73,7 +73,7 @@
                     </td>
 
                     @foreach ($table->getVisibleColumns() as $column)
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 whitespace-nowrap">
                             {{ $column->renderCell($record) }}
                         </td>
                     @endforeach
