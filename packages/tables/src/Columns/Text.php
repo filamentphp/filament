@@ -14,7 +14,7 @@ class Text extends Column
 
     public $url;
 
-    public $externalUrl;
+    public $shouldOpenInNewTab = false;
 
     public function action($action)
     {
@@ -107,17 +107,17 @@ class Text extends Column
         return $this;
     }
 
-    public function url($url, $external = false)
+    public function url($url)
     {
         $this->url = $url;
-        $this->externalUrl = $external;
 
         return $this;
     }
-
-    public function externalUrl($url)
+    
+    public function shouldOpenInNewTab()
     {
-        $this->url($url, true);
+        $this->shouldOpenInNewTab = true;
+
         return $this;
     }
 }
