@@ -30,6 +30,8 @@ class Column
 
     public $view;
 
+    public $viewData = [];
+
     protected $pendingExcludedContextModifications = [];
 
     protected $pendingIncludedContextModifications = [];
@@ -72,6 +74,13 @@ class Column
             });
 
         $this->pendingExcludedContextModifications = [];
+
+        return $this;
+    }
+
+    public function data($data = [])
+    {
+        $this->viewData = array_merge($this->viewData, $data);
 
         return $this;
     }
@@ -224,9 +233,11 @@ class Column
         return $this;
     }
 
-    public function view($view)
+    public function view($view, $data = [])
     {
         $this->view = $view;
+
+        $this->data($data);
 
         return $this;
     }
@@ -240,7 +251,7 @@ class Column
 
     protected function getViewData()
     {
-        return [];
+        return $this->viewData;
     }
 
     public function renderCell($record)
