@@ -6,20 +6,13 @@ use Carbon\Carbon;
 
 class Text extends Column
 {
-    public $action;
+    use Concerns\HasAction;
 
     public $default;
 
     public $formatUsing;
 
     public $url;
-
-    public function action($action)
-    {
-        $this->action = $action;
-
-        return $this;
-    }
 
     public function currency($symbol = '$', $decimalSeparator = '.', $thousandsSeparator = ',')
     {
