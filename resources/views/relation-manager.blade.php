@@ -9,11 +9,13 @@
                 {{ __(static::$createButtonLabel) }}
             </x-filament::button>
 
-            @unless ($this->isHasMany() || $this->isMorphMany())
+            @if ($this->canAttach())
                 <x-filament::button wire:click="openAttach">
                     {{ __(static::$attachButtonLabel) }}
                 </x-filament::button>
+            @endif
 
+            @if ($this->canDetach())
                 <x-filament::button
                     wire:click="openDetach"
                     color="danger"
@@ -21,7 +23,7 @@
                 >
                     {{ __(static::$detachButtonLabel) }}
                 </x-filament::button>
-            @endunless
+            @endif
 
             <x-tables::delete-selected :selected="$selected" />
         </div>
@@ -72,7 +74,7 @@
         </x-filament::card>
     </x-filament::modal>
 
-    @unless ($this->isHasMany() || $this->isMorphMany())
+    @if ($this->canAttach())
         <x-filament::modal
             class="w-full max-w-lg"
             :name="static::class . 'RelationManagerAttachModal'"
@@ -90,7 +92,9 @@
                 ])
             </x-filament::card>
         </x-filament::modal>
+    @endif
 
+    @if ($this->canDetach())
         <x-filament::modal
             :name="static::class . 'RelationManagerDetachModal'"
         >
@@ -116,5 +120,5 @@
                 </div>
             </x-filament::card>
         </x-filament::modal>
-    @endunless
+    @endif
 </div>
