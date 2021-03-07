@@ -15,7 +15,7 @@
         <a
             href="{{ $column->getUrl($record) }}"
             class="{{ $primaryClasses }} hover:underline hover:text-primary-600 transition-colors duration-200"
-            @if ($column->shouldOpenInNewTab)
+            @if ($column->openInNewTab)
                 target="_blank"
                 rel="noopener noreferrer"
             @endif
