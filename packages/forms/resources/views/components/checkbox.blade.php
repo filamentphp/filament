@@ -15,7 +15,7 @@
             {!! $formComponent->name ? "{$formComponent->nameAttribute}=\"{$formComponent->name}\"" : null !!}
             type="checkbox"
             {!! $formComponent->required ? 'required' : null !!}
-            class="rounded text-blue-700 shadow-sm focus:border-blue-700 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->name) ? 'border-danger-600 ' : 'border-gray-300' }}"
+            class="rounded text-primary-600 shadow-sm focus:border-primary-700 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->name) ? 'border-danger-600 ' : 'border-gray-300' }}"
             {!! Filament\format_attributes($formComponent->extraAttributes) !!}
         />
     </x-slot>
