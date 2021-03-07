@@ -9,7 +9,7 @@
                 {{ __(static::$createButtonLabel) }}
             </x-filament::button>
 
-            @unless ($this->isHasMany())
+            @unless ($this->isHasMany() || $this->isMorphMany())
                 <x-filament::button wire:click="openAttach">
                     {{ __(static::$attachButtonLabel) }}
                 </x-filament::button>
@@ -72,7 +72,7 @@
         </x-filament::card>
     </x-filament::modal>
 
-    @unless ($this->isHasMany())
+    @unless ($this->isHasMany() || $this->isMorphMany())
         <x-filament::modal
             class="w-full max-w-lg"
             :name="static::class . 'RelationManagerAttachModal'"

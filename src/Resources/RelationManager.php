@@ -129,6 +129,11 @@ class RelationManager extends Component
         return $this->owner->{$this->getRelationship()}() instanceof Relations\HasMany;
     }
 
+    public function isMorphMany()
+    {
+        return $this->owner->{$this->getRelationship()}() instanceof Relations\MorphMany;
+    }
+
     public function openAttach()
     {
         $this->dispatchBrowserEvent('open', static::class . 'RelationManagerAttachModal');
