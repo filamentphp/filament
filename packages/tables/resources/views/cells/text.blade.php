@@ -15,6 +15,10 @@
         <a
             href="{{ $column->getUrl($record) }}"
             class="{{ $primaryClasses }} hover:underline hover:text-primary-600 transition-colors duration-200"
+            @if ($column->externalUrl)
+                target="_blank"
+                rel="noopener noreferrer"
+            @endif
         >
             {{ $column->getValue($record) }}
         </a>

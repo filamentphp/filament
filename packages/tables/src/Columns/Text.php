@@ -14,6 +14,8 @@ class Text extends Column
 
     public $url;
 
+    public $externalUrl;
+
     public function action($action)
     {
         $this->action = $action;
@@ -105,10 +107,17 @@ class Text extends Column
         return $this;
     }
 
-    public function url($url)
+    public function url($url, $external = false)
     {
         $this->url = $url;
+        $this->externalUrl = $external;
 
+        return $this;
+    }
+
+    public function externalUrl($url)
+    {
+        $this->url($url, true);
         return $this;
     }
 }
