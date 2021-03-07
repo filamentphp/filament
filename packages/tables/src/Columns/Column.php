@@ -226,11 +226,11 @@ class Column
         return $this;
     }
 
-    public function view($view, $viewData = [])
+    public function view($view, $data = [])
     {
         $this->view = $view;
 
-        $this->viewData($viewData);
+        $this->viewData($data);
 
         return $this;
     }
