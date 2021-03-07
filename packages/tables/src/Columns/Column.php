@@ -238,15 +238,20 @@ class Column
         return $this;
     }
 
+    protected function getViewData()
+    {
+        return [];
+    }
+
     public function renderCell($record)
     {
         if ($this->hidden) return;
 
         $view = $this->view ?? 'tables::cells.'.Str::of(class_basename(static::class))->kebab();
 
-        return view($view, [
+        return view($view, array_merge($this->getViewData(), [
             'column' => $this,
             'record' => $record,
-        ]);
+        ]));
     }
 }
