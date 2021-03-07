@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\Pages;
 
+use Filament\Filament;
 use Filament\Resources\Tables\Table;
 use Filament\Tables\HasTable;
 use Illuminate\Support\Str;
@@ -46,6 +47,16 @@ class ListRecords extends Page
             ->recordUrl(fn ($record) => $this->getResource()::generateUrl($this->recordRoute, ['record' => $record]))
             ->searchable($this->searchable)
             ->sortable($this->sortable);
+    }
+
+    public function canCreate()
+    {
+        return Filament::can('create', static::getModel());
+    }
+
+    public function isAuthorized()
+    {
+        return Filament::can('viewAny', static::getModel());
     }
 
     public function viewParameters()

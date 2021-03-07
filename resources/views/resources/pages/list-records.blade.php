@@ -1,12 +1,14 @@
 <div>
     <x-filament::app-header :title="$title">
         <x-slot name="actions">
-            <x-filament::button
-                color="primary"
-                :href="static::getResource()::generateUrl($createRoute)"
-            >
-                {{ __(static::$createButtonLabel) }}
-            </x-filament::button>
+            @if ($this->canCreate())
+                <x-filament::button
+                    color="primary"
+                    :href="static::getResource()::generateUrl($createRoute)"
+                >
+                    {{ __(static::$createButtonLabel) }}
+                </x-filament::button>
+            @endif
         </x-slot>
     </x-filament::app-header>
 
