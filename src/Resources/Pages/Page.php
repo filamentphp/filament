@@ -33,7 +33,7 @@ class Page extends \Filament\Pages\Page
         return static::getModel()::query();
     }
 
-    public function callHook($hook)
+    protected function callHook($hook)
     {
         if (! method_exists($this, $hook)) return;
 
