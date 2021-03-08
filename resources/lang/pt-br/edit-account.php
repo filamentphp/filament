@@ -5,15 +5,15 @@ return [
     'buttons' => [
 
         'save' => [
-            'label' => 'Save',
+            'label' => 'Salvar',
         ],
 
     ],
 
     'messages' => [
-        'saved' => 'Saved!',
+        'saved' => 'Salvo!',
     ],
 
-    'title' => 'Account',
+    'title' => 'Conta',
 
 ];
