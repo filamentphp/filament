@@ -57,6 +57,10 @@ class Image extends Column
 
         if (! $path) return null;
 
+        if (filter_var($path, FILTER_VALIDATE_URL) !== false) {
+            return $path;
+        }
+
         return Storage::disk($this->disk)->url($path);
     }
 
