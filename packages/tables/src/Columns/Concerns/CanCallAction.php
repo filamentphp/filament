@@ -2,7 +2,7 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
-trait HasAction
+trait CanCallAction
 {
     public $action;
 

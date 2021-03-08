@@ -4,30 +4,30 @@ namespace Filament\Tables\Columns;
 
 class Boolean extends Icon
 {
-    public $trueIcon = 'heroicon-s-check-circle';
-
     public $falseIcon = 'heroicon-o-x-circle';
+
+    public $trueIcon = 'heroicon-s-check-circle';
 
     protected function setUp()
     {
         $this->options([
+            $this->falseIcon => fn ($value) => ! $value,
             $this->trueIcon => fn ($value) => $value,
-            $this->falseIcon => fn ($value) => !$value,
         ]);
     }
 
-    public function trueIcon($icon)
+    public function falseIcon($icon)
     {
-        $this->trueIcon = $icon;
+        $this->falseIcon = $icon;
 
         $this->setUp();
 
         return $this;
     }
 
-    public function falseIcon($icon)
+    public function trueIcon($icon)
     {
-        $this->falseIcon = $icon;
+        $this->trueIcon = $icon;
 
         $this->setUp();
 

@@ -4,9 +4,10 @@ namespace Filament\Tables\Columns;
 
 class Icon extends Column
 {
-    use Concerns\HasAction;
+    use Concerns\CanCallAction;
+    use Concerns\CanOpenUrl;
 
-    public $options;
+    public $options = [];
 
     public function options($options)
     {

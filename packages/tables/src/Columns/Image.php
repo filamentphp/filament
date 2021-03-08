@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Storage;
 
 class Image extends Column
 {
+    use Concerns\CanCallAction;
+    use Concerns\CanOpenUrl;
+
     public $disk;
 
     public $height = 40;
