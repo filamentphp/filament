@@ -3,12 +3,15 @@
 return [
 
     'delete' => [
+
         'button' => [
             'label' => 'Excluir selecionado',
         ],
 
         'modal' => [
+
             'buttons' => [
+
                 'cancel' => [
                     'label' => 'Cancelar',
                 ],
@@ -16,12 +19,15 @@ return [
                 'delete' => [
                     'label' => 'Excluir selecionado',
                 ],
+
             ],
 
             'description' => 'Tem certeza de que deseja excluir os registros selecionados? Essa ação não pode ser desfeita.',
 
             'heading' => 'Excluir os registros selecionados?',
+
         ],
+
     ],
 
     'filter' => [
@@ -33,17 +39,23 @@ return [
     ],
 
     'pagination' => [
+
         'fields' => [
+
             'recordsPerPage' => [
                 'label' => 'por página',
             ],
+
         ],
+
     ],
 
     'record' => [
+
         'button' => [
             'label' => 'Editar',
         ],
+
     ],
 
     'search' => [
