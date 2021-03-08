@@ -21,11 +21,11 @@
     x-on:switch-tab.window="if ($event.detail in tabs) tab = $event.detail"
     x-cloak
     {!! $formComponent->id ? "id=\"{$formComponent->id}\"" : null !!}
-    class="{{ $columnSpanClass }} overflow-hidden bg-white border border-gray-200 rounded p-4 md:p-6"
+    class="{{ $columnSpanClass }} bg-white border border-gray-200 rounded p-4 md:p-6"
 >
     <div class="-m-4 md:-m-6">
         <div {!! __($formComponent->label) ? 'aria-label="'.__($formComponent->label).'"' : null !!} role="tablist"
-             class="flex bg-gray-100 border-b border-gray-200">
+             class="flex bg-gray-100 border-b border-gray-200 rounded-t">
             @foreach ($formComponent->getTabsConfig() as $tabId => $tabLabel)
                 <button type="button"
                         aria-controls="{{ $tabId }}-tab"
