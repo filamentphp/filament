@@ -45,6 +45,7 @@ class CreateRecord extends Page
         return static::getResource()::form(Form::make())
             ->context(static::class)
             ->model(static::getModel())
+            ->record($this->record)
             ->submitMethod('create');
     }
 
