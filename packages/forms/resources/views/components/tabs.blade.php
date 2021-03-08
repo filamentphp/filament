@@ -25,7 +25,7 @@
 >
     <div class="-m-4 md:-m-6">
         <div {!! __($formComponent->label) ? 'aria-label="'.__($formComponent->label).'"' : null !!} role="tablist"
-             class="flex bg-gray-100 border-b border-gray-200 rounded-t">
+             class="flex overflow-hidden bg-gray-100 border-b border-gray-200 rounded-t">
             @foreach ($formComponent->getTabsConfig() as $tabId => $tabLabel)
                 <button type="button"
                         aria-controls="{{ $tabId }}-tab"
