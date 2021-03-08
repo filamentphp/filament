@@ -6,22 +6,12 @@ use Carbon\Carbon;
 
 class Text extends Column
 {
-    public $action;
+    use Concerns\CanCallAction;
+    use Concerns\CanOpenUrl;
 
     public $default;
 
     public $formatUsing;
-
-    public $shouldOpenUrlInNewTab = false;
-
-    public $url;
-
-    public function action($action)
-    {
-        $this->action = $action;
-
-        return $this;
-    }
 
     public function currency($symbol = '$', $decimalSeparator = '.', $thousandsSeparator = ',')
     {
@@ -66,17 +56,6 @@ class Text extends Column
         return $this;
     }
 
-    public function getUrl($record)
-    {
-        if (is_callable($this->url)) {
-            $callback = $this->url;
-
-            return $callback($record);
-        }
-
-        return $this->url;
-    }
-
     public function getValue($record, $attribute = null)
     {
         $value = parent::getValue($record, $attribute);
@@ -94,13 +73,6 @@ class Text extends Column
         return $value;
     }
 
-    public function openUrlInNewTab()
-    {
-        $this->shouldOpenUrlInNewTab = true;
-
-        return $this;
-    }
-
     public function options($options)
     {
         $this->formatUsing = function ($value) use ($options) {
@@ -110,14 +82,6 @@ class Text extends Column
 
             return $value;
         };
-
-        return $this;
-    }
-
-    public function url($url, $shouldOpenInNewTab = false)
-    {
-        $this->url = $url;
-        if ($shouldOpenInNewTab) $this->openUrlInNewTab();
 
         return $this;
     }

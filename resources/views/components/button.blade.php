@@ -1,6 +1,6 @@
 @props([
     'color' => 'white',
-'disabled' => false,
+    'disabled' => false,
     'href' => null,
     'size' => 'base',
     'type' => 'button',
