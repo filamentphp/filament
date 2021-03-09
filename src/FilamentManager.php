@@ -3,8 +3,10 @@
 namespace Filament;
 
 use Composer\InstalledVersions;
+use Filament\Events\ServingFilament;
 use Filament\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 
 class FilamentManager
 {
@@ -19,6 +21,8 @@ class FilamentManager
     public $scripts = [];
 
     public $scriptData = [];
+
+    public $servingCallbacks = [];
 
     public $widgets = [];
 
@@ -98,6 +102,11 @@ class FilamentManager
     public function registerWidget($widget)
     {
         $this->widgets = array_merge($this->widgets, [$widget]);
+    }
+
+    public function serving($callback)
+    {
+        Event::listen(ServingFilament::class, $callback);
     }
 
     public function userResource()

@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerWidget(string $widget)
  * @method static void registerScript(string $name, string $script)
  * @method static void registerStyle(string $name, string $style)
+ * @method static void serving($callback)
  * @method static Resource userResource()
  * @method static string|null version()
  *
