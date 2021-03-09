@@ -27,8 +27,8 @@
       --f-danger-700: theme('colors.rose.700');
       --f-danger-800: theme('colors.rose.800');
       --f-danger-900: theme('colors.rose.900');
-      --f-gray-200: theme('colors.coolGray.200');
       --f-gray-100: theme('colors.coolGray.100');
+      --f-gray-200: theme('colors.coolGray.200');
       --f-gray-300: theme('colors.coolGray.300');
       --f-gray-400: theme('colors.coolGray.400');
       --f-gray-500: theme('colors.coolGray.500');
@@ -36,6 +36,15 @@
       --f-gray-700: theme('colors.coolGray.700');
       --f-gray-800: theme('colors.coolGray.800');
       --f-gray-900: theme('colors.coolGray.900');
+      --f-blue-100: theme('colors.defaultBlue.100');
+      --f-blue-200: theme('colors.defaultBlue.200');
+      --f-blue-300: theme('colors.defaultBlue.300');
+      --f-blue-400: theme('colors.defaultBlue.400');
+      --f-blue-500: theme('colors.defaultBlue.500');
+      --f-blue-600: theme('colors.defaultBlue.600');
+      --f-blue-700: theme('colors.defaultBlue.700');
+      --f-blue-800: theme('colors.defaultBlue.800');
+      --f-blue-900: theme('colors.defaultBlue.900');
       --f-white: theme('colors.defaultWhite');
   }
 

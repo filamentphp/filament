@@ -65,12 +65,24 @@ module.exports = {
             800: 'var(--f-gray-800)',
             900: 'var(--f-gray-900)',
         },
+        blue: {
+            100: 'var(--f-blue-100)',
+            200: 'var(--f-blue-200)',
+            300: 'var(--f-blue-300)',
+            400: 'var(--f-blue-400)',
+            500: 'var(--f-blue-500)',
+            600: 'var(--f-blue-600)',
+            700: 'var(--f-blue-700)',
+            800: 'var(--f-blue-800)',
+            900: 'var(--f-blue-900)',
+        },
         white: 'var(--f-white)',
         lightBlue: colors.lightBlue,
         emerald: colors.emerald,
         rose: colors.rose,
         coolGray: colors.coolGray,
         defaultWhite: colors.white,
+        defaultBlue: colors.blue
       },
       keyframes: {
         shake: {
