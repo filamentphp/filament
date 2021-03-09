@@ -36,6 +36,7 @@
       --f-gray-700: theme('colors.coolGray.700');
       --f-gray-800: theme('colors.coolGray.800');
       --f-gray-900: theme('colors.coolGray.900');
+      --f-white: theme('colors.defaultWhite');
   }
 
   /**

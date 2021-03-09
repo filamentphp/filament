@@ -65,10 +65,12 @@ module.exports = {
             800: 'var(--f-gray-800)',
             900: 'var(--f-gray-900)',
         },
+        white: 'var(--f-white)',
         lightBlue: colors.lightBlue,
         emerald: colors.emerald,
         rose: colors.rose,
         coolGray: colors.coolGray,
+        defaultWhite: colors.white,
       },
       keyframes: {
         shake: {
