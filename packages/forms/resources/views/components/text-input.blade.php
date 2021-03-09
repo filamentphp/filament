@@ -24,7 +24,7 @@
             {!! $formComponent->placeholder ? "placeholder=\"{$formComponent->placeholder}\"" : null !!}
             {!! $formComponent->required ? 'required' : null !!}
             {!! $formComponent->type ? "type=\"{$formComponent->type}\"" : null !!}
-            class="block w-full rounded-r-md placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+            class="block w-full rounded-r-md placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }} {{ !$formComponent->prefix ? 'rounded-l-md' : null }}"
             {!! Filament\format_attributes($formComponent->extraAttributes) !!}
         />
     </div>
