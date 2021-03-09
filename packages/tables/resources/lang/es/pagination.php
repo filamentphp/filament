@@ -3,18 +3,18 @@
 return [
 
     'buttons' => [
-        'goToPage' => 'Go to page :page',
-        'next' => 'Next',
-        'previous' => 'Previous',
+        'goToPage' => 'Ir a la página :page',
+        'next' => 'Siguiente',
+        'previous' => 'Anterior',
     ],
 
-    'label' => 'Pagination Navigation',
+    'label' => 'Navegación de paginación',
 
     'overview' => [
-        'Showing',
-        'to',
-        'of',
-        'results',
+        'Mostrando',
+        'a',
+        'de',
+        'resultados',
     ],
 
 ];

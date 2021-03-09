@@ -49,7 +49,7 @@ return [
             'heading' => 'Vincular Existente',
 
             'messages' => [
-                'attached' => 'Vinculado!',
+                'attached' => '¡Vinculado!',
             ],
 
         ],
@@ -75,7 +75,7 @@ return [
             'heading' => 'Crear',
 
             'messages' => [
-                'created' => 'Creado!',
+                'created' => '¡Creado!',
             ],
 
         ],
@@ -99,7 +99,7 @@ return [
             'heading' => '¿Desvincular registros seleccionados? ',
 
             'messages' => [
-                'detached' => 'Desvinculado!',
+                'detached' => '¡Desvinculado!',
             ],
 
         ],
@@ -121,7 +121,7 @@ return [
             'heading' => 'Editar',
 
             'messages' => [
-                'saved' => 'Guardado!',
+                'saved' => '¡Guardado!',
             ],
 
         ],
