@@ -14,6 +14,11 @@
         'id' => Filament\get_asset_id('/css/filament.css'),
         'path' => 'css/filament.css',
     ]) }}" />
+
+    @foreach(\Filament\Filament::getStyles() as $style)
+        <link rel="stylesheet" href="{{ $style }}">
+    @endforeach
+
     @stack('filament-styles')
 </head>
 
@@ -27,6 +32,11 @@
         'id' => Filament\get_asset_id('/js/filament.js'),
         'path' => 'js/filament.js',
     ]) }}"></script>
+
+    @foreach(\Filament\Filament::getScripts() as $script)
+        <script src="{{ $script }}"></script>
+    @endforeach
+
     @stack('filament-scripts')
 </body>
 </html>
