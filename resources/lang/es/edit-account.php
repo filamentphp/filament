@@ -11,7 +11,7 @@ return [
     ],
 
     'messages' => [
-        'saved' => 'Guardado!',
+        'saved' => '¡Guardado!',
     ],
 
     'title' => 'Cuenta',

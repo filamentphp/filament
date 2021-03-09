@@ -25,7 +25,7 @@ return [
             'links' => [
 
                 'documentation' => [
-                    'label' => 'Examina la documentación',
+                    'label' => 'Ver la documentación',
                 ],
 
                 'repository' => [
