@@ -34,7 +34,9 @@ module.exports = {
         },
         success: colors.emerald,
         danger: colors.rose,
-        ...colors,
+        lightBlue: colors.lightBlue,
+        emerald: colors.emerald,
+        rose: colors.rose,
       },
       keyframes: {
         shake: {
