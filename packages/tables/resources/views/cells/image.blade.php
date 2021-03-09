@@ -7,8 +7,8 @@
             src="{{ $column->getPath($record) }}"
             class="{{ $column->rounded ? 'rounded-full' : null }}"
             style="
-                {!! $column->getHeight() !== null ? "height: {$column->getHeight()};" : null !!};
-                {!! $column->getWidth() !== null ? "width: {$column->getWidth()};" : null !!};
+                {!! $column->getHeight() !== null ? "height: {$column->getHeight()};" : null !!}
+                {!! $column->getWidth() !== null ? "width: {$column->getWidth()};" : null !!}
             "
         />
     </button>
@@ -24,8 +24,8 @@
             src="{{ $column->getPath($record) }}"
             class="{{ $column->rounded ? 'rounded-full' : null }}"
             style="
-                {!! $column->getHeight() !== null ? "height: {$column->getHeight()};" : null !!};
-                {!! $column->getWidth() !== null ? "width: {$column->getWidth()};" : null !!};
+                {!! $column->getHeight() !== null ? "height: {$column->getHeight()};" : null !!}
+                {!! $column->getWidth() !== null ? "width: {$column->getWidth()};" : null !!}
             "
         />
     </a>
@@ -34,8 +34,8 @@
         src="{{ $column->getPath($record) }}"
         class="{{ $column->rounded ? 'rounded-full' : null }}"
         style="
-            {!! $column->getHeight() !== null ? "height: {$column->getHeight()};" : null !!};
-            {!! $column->getWidth() !== null ? "width: {$column->getWidth()};" : null !!};
+            {!! $column->getHeight() !== null ? "height: {$column->getHeight()};" : null !!}
+            {!! $column->getWidth() !== null ? "width: {$column->getWidth()};" : null !!}
         "
     />
 @endif
