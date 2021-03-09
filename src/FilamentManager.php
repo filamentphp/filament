@@ -2,12 +2,15 @@
 
 namespace Filament;
 
+use Composer\InstalledVersions;
 use Filament\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 
 class FilamentManager
 {
     public $pages = [];
+
+    public $provideToScript = [];
 
     public $resources = [];
 
@@ -54,6 +57,16 @@ class FilamentManager
         return $this->widgets;
     }
 
+    public function provideToScript($variables)
+    {
+        if (empty($this->provideToScript)) {
+            $this->provideToScript = [
+                'filamentVersion' => '',
+                'userId' => Filament::auth()->id(),
+            ];
+        }
+    }
+
     public function registerPage($page)
     {
         $this->pages = array_merge($this->pages, [$page]);
@@ -87,5 +100,14 @@ class FilamentManager
     public function userResource()
     {
         return config('filament.user_resource', UserResource::class);
+    }
+
+    public function version()
+    {
+        if (! class_exists('Composer\\InstalledVersions')) {
+            return null;
+        }
+
+        return InstalledVersions::getPrettyVersion('filament/filament');
     }
 }
