@@ -262,7 +262,7 @@ class Component
     {
         $this->record = $record;
 
-        if ($this->record) {
+        if ($this->record instanceof Model) {
             $this->model(get_class($this->record));
         }
 
