@@ -15,7 +15,7 @@
         'path' => 'css/filament.css',
     ]) }}" />
 
-    @foreach(\Filament\Filament::getStyles() as $style)
+    @foreach (\Filament\Filament::getStyles() as $style)
         <link rel="stylesheet" href="{{ $style }}">
     @endforeach
 
@@ -37,7 +37,7 @@
         'path' => 'js/filament.js',
     ]) }}"></script>
 
-    @foreach(\Filament\Filament::getScripts() as $script)
+    @foreach (\Filament\Filament::getScripts() as $script)
         <script src="{{ $script }}"></script>
     @endforeach
 
