@@ -10,8 +10,6 @@ class FilamentManager
 {
     public $pages = [];
 
-    public $provideToScript = [];
-
     public $resources = [];
 
     public $roles = [];
@@ -19,6 +17,8 @@ class FilamentManager
     public $styles = [];
 
     public $scripts = [];
+
+    public $scriptData = [];
 
     public $widgets = [];
 
@@ -47,6 +47,14 @@ class FilamentManager
         return $this->scripts;
     }
 
+    public function getScriptData()
+    {
+        return array_merge([
+            'filamentVersion' => $this->version(),
+            'userId' => Filament::auth()->id(),
+        ], $this->scriptData);
+    }
+
     public function getStyles()
     {
         return $this->styles;
@@ -59,12 +67,7 @@ class FilamentManager
 
     public function provideToScript($variables)
     {
-        if (empty($this->provideToScript)) {
-            $this->provideToScript = [
-                'filamentVersion' => '',
-                'userId' => Filament::auth()->id(),
-            ];
-        }
+        $this->scriptData = array_merge($this->scriptData, $variables);
     }
 
     public function registerPage($page)

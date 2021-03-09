@@ -28,6 +28,10 @@
     <x-filament::notification />
 
     @livewireScripts
+    <script>
+        window.filamentConfig = @json(\Filament\Filament::getScriptData());
+    </script>
+
     <script src="{{ route('filament.asset', [
         'id' => Filament\get_asset_id('/js/filament.js'),
         'path' => 'js/filament.js',
