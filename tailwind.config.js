@@ -21,9 +21,20 @@ module.exports = {
         mono: ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
       },
       colors: {
-        primary: colors.lightBlue,
+        primary: {
+            100: 'var(--f-primary-100)',
+            200: 'var(--f-primary-200)',
+            300: 'var(--f-primary-300)',
+            400: 'var(--f-primary-400)',
+            500: 'var(--f-primary-500)',
+            600: 'var(--f-primary-600)',
+            700: 'var(--f-primary-700)',
+            800: 'var(--f-primary-800)',
+            900: 'var(--f-primary-900)',
+        },
         success: colors.emerald,
         danger: colors.rose,
+        ...colors,
       },
       keyframes: {
         shake: {
