@@ -13,6 +13,10 @@ class FilamentManager
 
     public $roles = [];
 
+    public $styles = [];
+
+    public $scripts = [];
+
     public $widgets = [];
 
     public function auth()
@@ -35,6 +39,16 @@ class FilamentManager
         return $this->roles;
     }
 
+    public function getScripts()
+    {
+        return $this->scripts;
+    }
+
+    public function getStyles()
+    {
+        return $this->styles;
+    }
+
     public function getWidgets()
     {
         return $this->widgets;
@@ -53,6 +67,16 @@ class FilamentManager
     public function registerRole($role)
     {
         $this->roles = array_merge($this->roles, [$role]);
+    }
+
+    public function registerScript($name, $script)
+    {
+        $this->scripts[$name] = $script;
+    }
+
+    public function registerStyle($name, $style)
+    {
+        $this->styles[$name] = $style;
     }
 
     public function registerWidget($widget)
