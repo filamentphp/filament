@@ -10,6 +10,7 @@ class TextInput extends Field
     use Concerns\CanBeUnique;
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasPlaceholder;
+    use Concerns\HasPrefix;
 
     public $type = 'text';
 
