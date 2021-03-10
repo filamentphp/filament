@@ -1,7 +1,7 @@
 <div>
     <x-filament::app-header :title="$title">
         <x-slot name="actions">
-            @if ($this->can('create'))
+            @if ($this->canCreate())
                 <x-filament::button
                     color="primary"
                     :href="static::getResource()::generateUrl($createRoute)"
@@ -14,7 +14,11 @@
 
     <x-filament::app-content class="space-y-4">
         <div class="items-center justify-between space-y-4 sm:flex sm:space-y-0">
-            <x-tables::delete-selected :disabled="$this->cannot('deleteSelected')" />
+            <div>
+                @if ($this->canDelete())
+                    <x-tables::delete-selected :disabled="! $this->canDeleteSelected()" />
+                @endif
+            </div>
 
             <x-tables::filter :table="$this->getTable()" />
         </div>

@@ -29,23 +29,13 @@ class Page extends \Filament\Pages\Page
         return static::getModel()::query();
     }
 
-    public function can($action)
+    protected function authorize($action)
     {
         $method = (string) Str::of($action)->ucfirst()->prepend('can');
 
         if (! method_exists($this, $method)) return true;
 
-        return $this->{$method}() ?? true;
-    }
-
-    public function cannot($action)
-    {
-        return ! $this->can($action);
-    }
-
-    protected function authorize($action)
-    {
-        abort_unless($this->can($action), 403);
+        abort_unless($this->{$method}() ?? true, 403);
     }
 
     protected function callHook($hook)

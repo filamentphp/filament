@@ -46,9 +46,14 @@ class ListRecords extends Page
         return Filament::can('create', static::getModel());
     }
 
+    public function canDelete()
+    {
+        return true;
+    }
+
     public function canDeleteSelected()
     {
-        return collect(static::getModel()::find($this->selected))
+        return static::getModel()::find($this->selected)
             ->contains(function ($record) {
                 return Filament::can('delete', $record);
             });
@@ -56,8 +61,10 @@ class ListRecords extends Page
 
     public function deleteSelected()
     {
+        $this->authorize('delete');
+
         static::getModel()::destroy(
-            collect(static::getModel()::find($this->selected))
+            static::getModel()::find($this->selected)
                 ->filter(function ($record) {
                     return Filament::can('delete', $record);
                 })

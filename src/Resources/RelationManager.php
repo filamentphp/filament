@@ -111,9 +111,14 @@ class RelationManager extends Component
         return Filament::can('create', $this->getModel());
     }
 
+    public function canDelete()
+    {
+        return true;
+    }
+
     public function canDeleteSelected()
     {
-        return collect($this->getModel()::find($this->selected))
+        return $this->getModel()::find($this->selected)
             ->contains(function ($record) {
                 return Filament::can('delete', $record);
             });
@@ -131,8 +136,10 @@ class RelationManager extends Component
 
     public function deleteSelected()
     {
+        abort_unless($this->canDelete(), 403);
+
         $this->getModel()::destroy(
-            collect($this->getModel()::find($this->selected))
+            $this->getModel()::find($this->selected)
                 ->filter(function ($record) {
                     return Filament::can('delete', $record);
                 })

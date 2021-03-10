@@ -4,7 +4,7 @@
         :title="$title"
     >
         <x-slot name="actions">
-            @if ($this->can('delete'))
+            @if ($this->canDelete())
                 <x-filament::modal>
                     <x-slot name="trigger">
                         <x-filament::button

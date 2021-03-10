@@ -28,7 +28,9 @@
                     </x-filament::button>
                 @endif
 
-                <x-tables::delete-selected :disabled="! $this->canDeleteSelected()" />
+                @if ($this->canCreate())
+                    <x-tables::delete-selected :disabled="! $this->canDeleteSelected()" />
+                @endif
             </div>
 
             <x-tables::filter :table="$this->getTable()" />
