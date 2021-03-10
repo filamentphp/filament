@@ -77,12 +77,12 @@ module.exports = {
             900: 'var(--f-blue-900)',
         },
         white: 'var(--f-white)',
-        lightBlue: colors.lightBlue,
-        emerald: colors.emerald,
-        rose: colors.rose,
-        coolGray: colors.coolGray,
-        defaultWhite: colors.white,
-        defaultBlue: colors.blue
+        defaultPrimary: colors.lightBlue,
+        defaultSuccess: colors.emerald,
+        defaultDanger: colors.rose,
+        defaultGray: colors.coolGray,
+        defaultBlue: colors.blue,
+        defaultWhite: colors.white
       },
       keyframes: {
         shake: {
