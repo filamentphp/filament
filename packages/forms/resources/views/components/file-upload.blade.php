@@ -37,10 +37,6 @@
     <script src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.js"></script>
 @endpushonce
 
-@php
-    $formComponent->placeholder = __($formComponent->placeholder);
-@endphp
-
 <x-forms::field-group
     :column-span="$formComponent->columnSpan"
     :error-key="$formComponent->name"
@@ -65,13 +61,13 @@
             FilePond.registerPlugin(FilePondPluginImageTransform)
 
             let config = {
-                acceptedFileTypes: {{ json_encode($formComponent->acceptedFileTypes) }},
+                acceptedFileTypes: @json($formComponent->acceptedFileTypes),
                 files: [],
                 {{ $formComponent->imageCropAspectRatio !== null ? "imageCropAspectRatio: '{$formComponent->imageCropAspectRatio}'," : null }}
                 {{ $formComponent->imagePreviewHeight !== null ? "imagePreviewHeight: {$formComponent->imagePreviewHeight}," : null }}
                 {{ $formComponent->imageResizeTargetHeight !== null ? "imageResizeTargetHeight: {$formComponent->imageResizeTargetHeight}," : null }}
                 {{ $formComponent->imageResizeTargetWidth !== null ? "imageResizeTargetWidth: {$formComponent->imageResizeTargetWidth}," : null }}
-                {{ $formComponent->placeholder !== null ? "labelIdle: '{$formComponent->placeholder} KB'," : null }}
+                {{ __($formComponent->placeholder) !== null ? 'labelIdle: \'' . __($formComponent->placeholder) . '\',' : null }}
                 {{ $formComponent->maxSize !== null ? "maxFileSize: '{$formComponent->maxSize} KB'," : null }}
                 {{ $formComponent->minSize !== null ? "minFileSize: '{$formComponent->minSize} KB'," : null }}
                 server: {
