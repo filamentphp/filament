@@ -60,7 +60,11 @@ class RelationManager extends Component
 
     public static $editRecordActionLabel = 'filament::resources/pages/list-records.table.recordActions.edit.label';
 
+    public static $recordRoute = 'edit';
+
     public static $relationship;
+
+    public static $resource;
 
     public $filterable = true;
 
@@ -84,6 +88,11 @@ class RelationManager extends Component
     public static function getRelationship()
     {
         return static::$relationship;
+    }
+
+    public static function getResource()
+    {
+        return static::$resource;
     }
 
     public static function getTitle()
@@ -164,6 +173,7 @@ class RelationManager extends Component
     public function getTable()
     {
         return static::table(Table::make())
+            ->context(static::class)
             ->filterable($this->filterable)
             ->pagination(false)
             ->recordActions([

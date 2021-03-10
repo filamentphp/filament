@@ -10,7 +10,7 @@ trait InteractsWithResource
 
         if (! $this->url) {
             $this->url(function ($record) {
-                if (! $this->context) {
+                if (! $this->context || ! $this->context::getResource()) {
                     return null;
                 }
 
