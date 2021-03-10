@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Illuminate\Support\Facades\Storage;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
 
 class Image extends Column
 {
@@ -64,7 +65,19 @@ class Image extends Column
             return $path;
         }
 
-        return Storage::disk($this->disk)->url($path);
+        $storage = Storage::disk($this->disk);
+
+        if (
+            $storage->getDriver()->getAdapter() instanceof AwsS3Adapter &&
+            $storage->getVisibility($path) === 'private'
+        ) {
+            return $storage->temporaryUrl(
+                $path,
+                now()->addMinutes(5),
+            );
+        }
+
+        return $storage->url($path);
     }
 
     public function rounded()

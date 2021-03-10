@@ -1,7 +1,7 @@
 <x-forms::field-group
     :column-span="$formComponent->columnSpan"
     :error-key="$formComponent->name"
-    :for="$formComponent->id"
+    :for="$formComponent->getId()"
     :help-message="__($formComponent->helpMessage)"
     :hint="__($formComponent->hint)"
     :label="__($formComponent->label)"
@@ -11,7 +11,7 @@
         x-data="{
             value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
         }"
-        id="{{ $formComponent->id }}"
+        id="{{ $formComponent->getId() }}"
     >
         {{-- Field content --}}
     </div>

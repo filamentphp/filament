@@ -8,7 +8,7 @@
 
 <div {{ $attributes->merge(['class' => 'space-y-4']) }}>
     <div class="items-center justify-between space-y-4 sm:flex sm:space-y-0">
-        <x-tables::delete-selected :selected="$selected" />
+        <x-tables::delete-selected :disabled="count($selected) === 0" />
 
         <x-tables::filter :table="$table" />
     </div>

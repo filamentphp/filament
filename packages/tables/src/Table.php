@@ -12,11 +12,7 @@ class Table
 
     public $pagination = true;
 
-    public $recordAction;
-
-    public $recordButtonLabel = 'tables::table.record.button.label';
-
-    public $recordUrl;
+    public $recordActions = [];
 
     public $searchable = true;
 
@@ -93,17 +89,6 @@ class Table
         return $this;
     }
 
-    public function getRecordUrl($record = null)
-    {
-        if (is_callable($this->recordUrl)) {
-            $callback = $this->recordUrl;
-
-            return $callback($record);
-        }
-
-        return $this->recordUrl;
-    }
-
     public function getVisibleColumns()
     {
         $columns = collect($this->columns)
@@ -153,43 +138,9 @@ class Table
         return $this;
     }
 
-    public function recordAction($action)
+    public function recordActions($actions)
     {
-        $this->recordAction = $action;
-
-        $this->columns = collect($this->columns)
-            ->map(function ($column) {
-                if ($column->primary && ! $column->action) {
-                    $column->action($this->recordAction);
-                }
-
-                return $column;
-            })
-            ->toArray();
-
-        return $this;
-    }
-
-    public function recordButtonLabel($label)
-    {
-        $this->recordButtonLabel = $label;
-
-        return $this;
-    }
-
-    public function recordUrl($url)
-    {
-        $this->recordUrl = $url;
-
-        $this->columns = collect($this->columns)
-            ->map(function ($column) {
-                if ($column->primary && ! $column->url) {
-                    $column->url($this->recordUrl);
-                }
-
-                return $column;
-            })
-            ->toArray();
+        $this->recordActions = $actions;
 
         return $this;
     }

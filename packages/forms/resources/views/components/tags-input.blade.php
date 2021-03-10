@@ -62,7 +62,7 @@
 <x-forms::field-group
     :column-span="$formComponent->columnSpan"
     :error-key="$formComponent->name"
-    :for="$formComponent->id"
+    :for="$formComponent->getId()"
     :help-message="__($formComponent->helpMessage)"
     :hint="__($formComponent->hint)"
     :label="__($formComponent->label)"
@@ -76,7 +76,7 @@
             @endif
         })"
         x-init="init()"
-        {!! $formComponent->id ? "id=\"{$formComponent->id}\"" : null !!}
+        {!! $formComponent->getId() ? "id=\"{$formComponent->getId()}\"" : null !!}
         {!! Filament\format_attributes($formComponent->extraAttributes) !!}
     >
         @unless (Str::of($formComponent->nameAttribute)->startsWith(['wire:model', 'x-model']))

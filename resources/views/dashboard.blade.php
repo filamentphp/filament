@@ -28,9 +28,9 @@
                                     <x-filament::logo class="h-auto w-28" />
                                 </a>
 
-                                @if (class_exists('Composer\\InstalledVersions'))
+                                @if ($version = \Filament\Filament::version())
                                     <a href="https://github.com/laravel-filament/filament/releases" target="_blank" class="px-4 py-2 font-mono text-xs text-gray-800 transition duration-200 bg-white border border-gray-300 rounded shadow-sm cursor-pointer focus:ring focus:ring-opacity-50 hover:bg-gray-100 focus:ring-primary-200">
-                                        {{ Composer\InstalledVersions::getPrettyVersion('filament/filament') }}
+                                        {{ $version }}
                                     </a>
                                 @endif
                             </div>

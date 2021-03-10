@@ -31,7 +31,7 @@
 <x-forms::field-group
     :column-span="$formComponent->columnSpan"
     :error-key="$formComponent->name"
-    :for="$formComponent->id"
+    :for="$formComponent->getId()"
     :help-message="__($formComponent->helpMessage)"
     :hint="__($formComponent->hint)"
     :label="__($formComponent->label)"
@@ -83,9 +83,9 @@
         wire:ignore
     >
         @unless ($formComponent->disabled)
-            <input id="trix-value-{{ $formComponent->id }}" type="hidden" />
+            <input id="trix-value-{{ $formComponent->getId() }}" type="hidden" />
 
-            <trix-toolbar id="trix-toolbar-{{ $formComponent->id }}">
+            <trix-toolbar id="trix-toolbar-{{ $formComponent->getId() }}">
                 <div class="trix-button-row">
                     @if ($formComponent->hasToolbarButton(['bold', 'italic', 'strike', 'link']))
                         <span class="trix-button-group trix-button-group--text-tools"
@@ -215,10 +215,10 @@
 
             <trix-editor
                 {{ $formComponent->autofocus ? 'autofocus' : null }}
-                id="{{ $formComponent->id }}"
-                input="trix-value-{{ $formComponent->id }}"
+                id="{{ $formComponent->getId() }}"
+                input="trix-value-{{ $formComponent->getId() }}"
                 placeholder="{{ __($formComponent->placeholder) }}"
-                toolbar="trix-toolbar-{{ $formComponent->id }}"
+                toolbar="trix-toolbar-{{ $formComponent->getId() }}"
                 x-ref="trix"
                 class="block w-full prose placeholder-gray-400 placeholder-opacity-100 bg-white border-gray-300 rounded shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 max-w-none"
                 {!! Filament\format_attributes($formComponent->extraAttributes) !!}
