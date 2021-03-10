@@ -130,6 +130,11 @@ class FilamentManager
         return $this->widgets;
     }
 
+    public function ignoreMigrations()
+    {
+        $this->shouldRunMigrations = false;
+    }
+
     public function provideToScript($variables)
     {
         $this->scriptData = array_merge($this->scriptData, $variables);
@@ -182,6 +187,11 @@ class FilamentManager
         Event::listen(ServingFilament::class, $callback);
     }
 
+    public function shouldRunMigrations()
+    {
+        return $this->shouldRunMigrations;
+    }
+
     public function userResource()
     {
         return config('filament.user_resource', UserResource::class);
@@ -194,15 +204,5 @@ class FilamentManager
         }
 
         return InstalledVersions::getPrettyVersion('filament/filament');
-    }
-
-    public function ignoreMigrations()
-    {
-        $this->shouldRunMigrations = false;
-    }
-
-    public function shouldRunMigrations()
-    {
-        return $this->shouldRunMigrations;
     }
 }

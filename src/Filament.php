@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getScriptData()
  * @method static array getStyles()
  * @method static array getWidgets()
+ * @method static void ignoreMigrations()
  * @method static void provideToScript(array $variables)
  * @method static void registerAuthorizations(string $target, array $authorizations = [])
  * @method static void registerPage(string $page)
@@ -26,9 +27,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerScript(string $name, string $path)
  * @method static void registerStyle(string $name, string $path)
  * @method static void serving($callback)
- * @method static Resource userResource()
- * @method static void ignoreMigrations()
  * @method static bool shouldRunMigrations()
+ * @method static Resource userResource()
  * @method static string|null version()
  *
  * @see \Filament\FilamentManager
