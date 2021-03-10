@@ -37,7 +37,7 @@
         'path' => 'js/filament.js',
     ]) }}"></script>
 
-    @foreach (\Filament\Filament::getScripts() as $script)
+    @foreach (\Filament\Filament::getScripts() as $path)
         <script src="{{ $script }}"></script>
     @endforeach
 
