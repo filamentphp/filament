@@ -72,7 +72,11 @@ class EditRecord extends Page
 
     public function mount($record)
     {
-        $this->record = static::getModel()::findOrFail($record);
+        $model = static::getModel();
+
+        $routeKeyName = (new $model())->getRouteKeyName();
+
+        $this->record = $model::where($routeKeyName, $record)->firstOrFail();
     }
 
     public function save()
