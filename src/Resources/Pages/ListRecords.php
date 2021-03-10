@@ -59,7 +59,7 @@ class ListRecords extends Page
         return Filament::can('viewAny', static::getModel());
     }
 
-    public function viewParameters()
+    protected function viewData()
     {
         return [
             'records' => $this->getRecords(),

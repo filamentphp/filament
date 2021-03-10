@@ -40,7 +40,11 @@ class EditRecord extends Page
 
     public function delete()
     {
+        $this->callHook('beforeDelete');
+
         $this->record->delete();
+
+        $this->callHook('afterDelete');
 
         $this->redirect($this->getResource()::generateUrl($this->indexRoute));
     }
@@ -66,13 +70,21 @@ class EditRecord extends Page
 
     public function save()
     {
+        $this->callHook('beforeValidate');
+
         $this->validateTemporaryUploadedFiles();
 
         $this->storeTemporaryUploadedFiles();
 
         $this->validate();
 
+        $this->callHook('afterValidate');
+
+        $this->callHook('beforeSave');
+
         $this->record->save();
+
+        $this->callHook('afterSave');
 
         $this->notify(__(static::$savedMessage));
     }

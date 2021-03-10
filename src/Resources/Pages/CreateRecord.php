@@ -29,13 +29,21 @@ class CreateRecord extends Page
 
     public function create()
     {
+        $this->callHook('beforeValidate');
+
         $this->validateTemporaryUploadedFiles();
 
         $this->storeTemporaryUploadedFiles();
 
         $this->validate();
 
+        $this->callHook('afterValidate');
+
+        $this->callHook('beforeCreate');
+
         $record = static::getModel()::create($this->record);
+
+        $this->callHook('afterCreate');
 
         $this->redirect($this->getResource()::generateUrl(static::$showRoute, [
             'record' => $record,
@@ -47,6 +55,7 @@ class CreateRecord extends Page
         return static::getResource()::form(Form::make())
             ->context(static::class)
             ->model(static::getModel())
+            ->record($this->record)
             ->submitMethod('create');
     }
 
@@ -59,6 +68,10 @@ class CreateRecord extends Page
     {
         $this->record = [];
 
+        $this->callHook('beforeFill');
+
         $this->fillWithFormDefaults();
+
+        $this->callHook('afterFill');
     }
 }

@@ -11,6 +11,8 @@ class Page extends Component
 {
     public static $icon = 'heroicon-o-document-text';
 
+    public static $layout = 'filament::components.layouts.app';
+
     public static $navigationLabel;
 
     public static $navigationSort = 0;
@@ -110,20 +112,30 @@ class Page extends Component
 
     public function render()
     {
-        return view(static::$view, $this->getViewParameters())
-            ->layout('filament::components.layouts.app', [
-                'title' => static::getPageTitle(),
-            ]);
+        return view(static::$view, $this->getViewData())
+            ->layout(static::$layout, $this->getLayoutData());
     }
 
-    public function getViewParameters()
+    protected function getViewData()
     {
-        return array_merge($this->viewParameters(), [
-            'title' => __(static::getTitle()),
+        return array_merge($this->viewData(), [
+            'title' => static::getTitle(),
         ]);
     }
 
-    public function viewParameters()
+    protected function viewData()
+    {
+        return [];
+    }
+
+    protected function getLayoutData()
+    {
+        return array_merge($this->layoutData(), [
+            'title' => static::getPageTitle(),
+        ]);
+    }
+
+    protected function layoutData()
     {
         return [];
     }

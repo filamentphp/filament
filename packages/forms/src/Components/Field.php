@@ -38,6 +38,13 @@ class Field extends Component
         return new static($name);
     }
 
+    public function dependable()
+    {
+        $this->nameAttribute('wire:model');
+
+        return $this;
+    }
+
     public function disabled()
     {
         $this->disabled = true;

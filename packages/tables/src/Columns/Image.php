@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Storage;
 
 class Image extends Column
 {
+    use Concerns\CanCallAction;
+    use Concerns\CanOpenUrl;
+
     public $disk;
 
     public $height = 40;
@@ -56,6 +59,10 @@ class Image extends Column
         $path = $this->getValue($record);
 
         if (! $path) return null;
+
+        if (filter_var($path, FILTER_VALIDATE_URL) !== false) {
+            return $path;
+        }
 
         return Storage::disk($this->disk)->url($path);
     }

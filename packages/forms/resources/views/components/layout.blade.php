@@ -1,6 +1,6 @@
 @props([
-'columns' => 1,
-'schema' => [],
+    'columns' => 1,
+    'schema' => [],
 ])
 
 @php
