@@ -201,7 +201,7 @@ class FilamentManager
         $this->shouldRunMigrations = false;
     }
 
-    public function runsMigrations()
+    public function shouldRunMigrations()
     {
         return $this->shouldRunMigrations;
     }
