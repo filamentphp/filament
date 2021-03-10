@@ -138,6 +138,15 @@ class Component
         return $defaults;
     }
 
+    public function getId()
+    {
+        return (string) Str::of($this->context)
+            ->replace('\\', '-')
+            ->lower()
+            ->append('-')
+            ->append($this->id);
+    }
+
     public function getSubform()
     {
         $form = Form::make()->schema($this->schema);
