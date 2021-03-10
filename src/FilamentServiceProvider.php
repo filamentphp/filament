@@ -136,6 +136,8 @@ class FilamentServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__ . '/../resources/lang' => resource_path('lang/vendor/filament'),
+            __DIR__ . '/../packages/forms/resources/lang' => resource_path('lang/vendor/forms'),
+            __DIR__ . '/../packages/tables/resources/lang' => resource_path('lang/vendor/tables'),
         ], 'filament-lang');
 
         $this->publishes([
