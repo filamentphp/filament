@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class Text extends Column
 {
@@ -81,6 +82,15 @@ class Text extends Column
             }
 
             return $value;
+        };
+
+        return $this;
+    }
+
+    public function limit($length = -1)
+    {
+        $this->formatUsing = function ($value) use ($length) {
+            return Str::limit($value, $length);
         };
 
         return $this;

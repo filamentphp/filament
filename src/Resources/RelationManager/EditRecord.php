@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\RelationManager;
 
+use Filament\Filament;
 use Filament\Forms\HasForm;
 use Filament\Resources\Forms\Form;
 use Illuminate\Database\Eloquent\Model;
@@ -60,6 +61,8 @@ class EditRecord extends Component
 
     public function save()
     {
+        abort_unless(Filament::can('update', $this->record), 403);
+
         $this->validateTemporaryUploadedFiles();
 
         $this->storeTemporaryUploadedFiles();

@@ -41,12 +41,6 @@ return [
         ],
     ],
 
-    'record' => [
-        'button' => [
-            'label' => 'Bewerk',
-        ],
-    ],
-
     'search' => [
         'placeholder' => 'Zoeken',
     ],
