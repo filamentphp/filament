@@ -162,7 +162,7 @@ class FilamentManager
         $this->roles[] = $role;
     }
 
-    public function registerScript($name, $script)
+    public function registerScript($name, $path)
     {
         $this->scripts[$name] = $script;
     }
