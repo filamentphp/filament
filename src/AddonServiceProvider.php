@@ -26,7 +26,7 @@ abstract class AddonServiceProvider extends ServiceProvider
             }
 
             foreach ($this->resources() as $resource) {
-                Filament::registerResource();
+                Filament::registerResource($resource);
             }
 
             foreach ($this->roles() as $role) {
