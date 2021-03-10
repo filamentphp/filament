@@ -2,6 +2,7 @@
 
 namespace Filament\Providers;
 
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\EncryptCookies;
 use Filament\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -25,6 +26,7 @@ class RouteServiceProvider extends ServiceProvider
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
+                DispatchServingFilamentEvent::class,
             ])
             ->domain(config('filament.domain'))
             ->prefix(config('filament.path'))

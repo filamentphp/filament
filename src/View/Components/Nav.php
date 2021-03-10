@@ -4,6 +4,7 @@ namespace Filament\View\Components;
 
 use Filament\Filament;
 use Filament\NavigationItem;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\Component;
 
 class Nav extends Component
@@ -22,13 +23,13 @@ class Nav extends Component
         );
 
         foreach (Filament::getResources() as $resource) {
-            if ($resource::authorizationManager()->can()) {
+            if (Filament::can('viewAny', $resource::getModel())) {
                 $this->items->push(...$resource::navigationItems());
             }
         }
 
         foreach (Filament::getPages() as $page) {
-            if ($page::authorizationManager()->can()) {
+            if (Filament::can('view', $page)) {
                 $this->items->push(...$page::navigationItems());
             }
         }

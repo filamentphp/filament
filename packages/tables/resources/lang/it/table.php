@@ -50,14 +50,6 @@ return [
 
     ],
 
-    'record' => [
-
-        'button' => [
-            'label' => 'Modifica',
-        ],
-
-    ],
-
     'search' => [
         'placeholder' => 'Cerca',
     ],

@@ -2,9 +2,11 @@
 
 namespace Filament\Resources\Pages;
 
+use Filament\Filament;
 use Filament\Forms\HasForm;
 use Filament\Resources\Forms\Form;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Gate;
 
 class CreateRecord extends Page
 {
@@ -55,6 +57,11 @@ class CreateRecord extends Page
             ->model(static::getModel())
             ->record($this->record)
             ->submitMethod('create');
+    }
+
+    public function isAuthorized()
+    {
+        return Filament::can('create', static::getModel());
     }
 
     public function mount()

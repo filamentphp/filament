@@ -12,9 +12,9 @@ class Authorization
 
     public $role;
 
-    public function __construct($role, $mode = 'deny')
+    public function __construct($role, $mode)
     {
-        $this->mode = in_array($mode, ['allow', 'deny']) ? $mode : 'deny';
+        $this->mode = $mode;
         $this->role = $role;
     }
 
