@@ -1,7 +1,7 @@
-<x-filament::layouts.base :title="__($title)">
+<x-filament::layouts.base :title="$title">
     <main class="flex h-screen items-center justify-center p-4">
         <div class="w-full max-w-sm space-y-8">
-            <x-filament::branding.auth :title="__($title) ?? config('app.name')" />
+            <x-filament::branding.auth :title="$title ?? config('app.name')" />
 
             {{ $slot }}
 

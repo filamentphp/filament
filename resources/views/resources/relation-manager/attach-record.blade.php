@@ -6,7 +6,7 @@
                 color="primary"
                 class="w-full sm:w-auto"
             >
-                {{ $attachButtonLabel }}
+                {{ __($attachButtonLabel) }}
             </x-filament::button>
 
             <x-filament::button
@@ -15,14 +15,14 @@
                 wire:click="attach(true)"
                 class="w-full sm:w-auto"
             >
-                {{ $attachAnotherButtonLabel }}
+                {{ __($attachAnotherButtonLabel) }}
             </x-filament::button>
 
             <x-filament::button
                 x-on:click="$dispatch('close', '{{ (string) Str::of($manager)->replace('\\', '\\\\') }}RelationManagerAttachModal')"
                 class="w-full sm:w-auto"
             >
-                {{ $cancelButtonLabel }}
+                {{ __($cancelButtonLabel) }}
             </x-filament::button>
         </div>
     </x-forms::container>

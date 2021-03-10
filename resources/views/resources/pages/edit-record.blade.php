@@ -16,7 +16,7 @@
                     </x-slot>
 
                     <x-filament::card class="space-y-5 max-w-2xl">
-                        <x-filament::card-header :title="__(static::$deleteModalHeading)">
+                        <x-filament::card-header :title="static::$deleteModalHeading">
                             <p class="text-sm text-gray-500">
                                 {{ __(static::$deleteModalDescription) }}
                             </p>

@@ -38,7 +38,7 @@ class AttachRecord extends Component
             $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerAttachModal");
         }
 
-        $this->dispatchBrowserEvent('notify', $this->attachedMessage);
+        $this->dispatchBrowserEvent('notify', __($this->attachedMessage));
 
         $this->related = null;
     }

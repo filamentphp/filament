@@ -5,7 +5,7 @@
                 type="submit"
                 color="primary"
             >
-                {{ $createButtonLabel }}
+                {{ __($createButtonLabel) }}
             </x-filament::button>
 
             <x-filament::button
@@ -13,11 +13,11 @@
                 color="primary"
                 wire:click="create(true)"
             >
-                {{ $createAnotherButtonLabel }}
+                {{ __($createAnotherButtonLabel) }}
             </x-filament::button>
 
             <x-filament::button x-on:click="$dispatch('close', '{{ (string) Str::of($manager)->replace('\\', '\\\\') }}RelationManagerCreateModal')">
-                {{ $cancelButtonLabel }}
+                {{ __($cancelButtonLabel) }}
             </x-filament::button>
         </div>
     </x-forms::container>

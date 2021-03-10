@@ -1,4 +1,4 @@
-<x-filament::layouts.base :title="__($title)">
+<x-filament::layouts.base :title="$title">
     <a href="#content" class="sr-only">Skip to content</a>
 
     <div class="relative overflow-hidden"

@@ -50,13 +50,13 @@
                 :name="static::class . 'RelationManagerCreateModal'"
             >
                 <x-filament::card class="space-y-5">
-                    <x-filament::card-header :title="__(static::$createModalHeading)" />
+                    <x-filament::card-header :title="static::$createModalHeading" />
 
                     @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\CreateRecord::class), [
-                        'cancelButtonLabel' => __(static::$createModalCancelButtonLabel),
-                        'createAnotherButtonLabel' => __(static::$createModalCreateAnotherButtonLabel),
-                        'createButtonLabel' => __(static::$createModalCreateButtonLabel),
-                        'createdMessage' => __(static::$createModalCreatedMessage),
+                        'cancelButtonLabel' => static::$createModalCancelButtonLabel,
+                        'createAnotherButtonLabel' => static::$createModalCreateAnotherButtonLabel,
+                        'createButtonLabel' => static::$createModalCreateButtonLabel,
+                        'createdMessage' => static::$createModalCreatedMessage,
                         'manager' => static::class,
                         'owner' => $this->owner,
                     ])
@@ -69,14 +69,14 @@
             :name="static::class . 'RelationManagerEditModal'"
         >
             <x-filament::card class="space-y-5">
-                <x-filament::card-header :title="__(static::$editModalHeading)" />
+                <x-filament::card-header :title="static::$editModalHeading" />
 
                 @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\EditRecord::class), [
-                    'cancelButtonLabel' => __(static::$editModalCancelButtonLabel),
+                    'cancelButtonLabel' => static::$editModalCancelButtonLabel,
                     'manager' => static::class,
                     'owner' => $this->owner,
-                    'saveButtonLabel' => __(static::$editModalSaveButtonLabel),
-                    'savedMessage' => __(static::$editModalSavedMessage),
+                    'saveButtonLabel' => static::$editModalSaveButtonLabel,
+                    'savedMessage' => static::$editModalSavedMessage,
                 ])
             </x-filament::card>
         </x-filament::modal>
@@ -87,13 +87,13 @@
                 :name="static::class . 'RelationManagerAttachModal'"
             >
                 <x-filament::card class="w-full space-y-5">
-                    <x-filament::card-header :title="__(static::$attachModalHeading)" />
+                    <x-filament::card-header :title="static::$attachModalHeading" />
 
                     @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\AttachRecord::class), [
-                        'cancelButtonLabel' => __(static::$attachModalCancelButtonLabel),
-                        'attachAnotherButtonLabel' => __(static::$attachModalAttachAnotherButtonLabel),
-                        'attachButtonLabel' => __(static::$attachModalAttachButtonLabel),
-                        'attachedMessage' => __(static::$attachModalAttachedMessage),
+                        'cancelButtonLabel' => static::$attachModalCancelButtonLabel,
+                        'attachAnotherButtonLabel' => static::$attachModalAttachAnotherButtonLabel,
+                        'attachButtonLabel' => static::$attachModalAttachButtonLabel,
+                        'attachedMessage' => static::$attachModalAttachedMessage,
                         'manager' => static::class,
                         'owner' => $this->owner,
                     ])
@@ -106,7 +106,7 @@
                 :name="static::class . 'RelationManagerDetachModal'"
             >
                 <x-filament::card class="space-y-5">
-                    <x-filament::card-header :title="__(static::$detachModalHeading)">
+                    <x-filament::card-header :title="static::$detachModalHeading">
                         <p class="text-sm text-gray-500">
                             {{ __(static::$detachModalDescription) }}
                         </p>

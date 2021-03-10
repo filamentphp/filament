@@ -32,11 +32,11 @@
         @if ($label || $hint)
             <div class="flex items-center justify-between space-x-2">
                 <div class="flex space-x-2">
-                    {{ $labelPrefix }}
+                    {{ __($labelPrefix) }}
 
                     @if ($label)
                         <label for="{{ $for }}" class="text-sm leading-tight font-medium">
-                            {{ $label }}
+                            {{ __($label) }}
 
                             @if ($required)
                                 <sup class="font-medium text-danger-700">*</sup>
@@ -47,7 +47,7 @@
 
                 @if ($hint)
                     <div class="text-xs leading-tight text-gray-500 font-mono">
-                        {!! Str::of($hint)->markdown() !!}
+                        {!! Str::of(__($hint))->markdown() !!}
                     </div>
                 @endif
             </div>
@@ -65,7 +65,7 @@
 
         @if ($helpMessage)
             <div class="text-xs font-normal leading-tight text-gray-500">
-                {!! Str::of($helpMessage)->markdown() !!}
+                {!! Str::of(__($helpMessage))->markdown() !!}
             </div>
         @endif
     </div>

@@ -5,7 +5,7 @@
                 <x-filament::nav-link
                     :active-rule="$item->activeRule"
                     :icon="$item->icon"
-                    :label="__($item->label)"
+                    :label="$item->label"
                     :url="$item->url"
                 />
             </li>

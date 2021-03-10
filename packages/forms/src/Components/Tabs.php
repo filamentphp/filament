@@ -18,7 +18,7 @@ class Tabs extends Component
     public function getTabsConfig()
     {
         return collect($this->schema)
-            ->mapWithKeys(fn ($tab) => [$this->getId() . '.' . $tab->getId() => __($tab->label)])
+            ->mapWithKeys(fn ($tab) => [$this->getId() . '.' . $tab->getId() => $tab->label])
             ->toArray();
     }
 

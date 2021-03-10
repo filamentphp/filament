@@ -2,9 +2,9 @@
     :column-span="$formComponent->columnSpan"
     :error-key="$formComponent->name"
     :for="$formComponent->getId()"
-    :help-message="__($formComponent->helpMessage)"
-    :hint="__($formComponent->hint)"
-    :label="__($formComponent->label)"
+    :help-message="$formComponent->helpMessage"
+    :hint="$formComponent->hint"
+    :label="$formComponent->label"
     :required="$formComponent->required"
 >
     <textarea
