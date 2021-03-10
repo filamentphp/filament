@@ -155,7 +155,7 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function configure()
     {
-        $this->app->booting(function () {
+        $this->app->booted(function () {
             $this->app['config']->set('auth.guards.filament', [
                 'driver' => 'session',
                 'provider' => 'filament_users',
