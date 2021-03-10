@@ -12,6 +12,10 @@ class Table
 
     public $pagination = true;
 
+    public $primaryAction;
+
+    public $primaryUrl;
+
     public $recordActions = [];
 
     public $searchable = true;
@@ -89,6 +93,17 @@ class Table
         return $this;
     }
 
+    public function getPrimaryUrl($record)
+    {
+        if (is_callable($this->primaryUrl)) {
+            $callback = $this->primaryUrl;
+
+            return $callback($record);
+        }
+
+        return $this->primaryUrl;
+    }
+
     public function getVisibleColumns()
     {
         $columns = collect($this->columns)
@@ -134,6 +149,20 @@ class Table
     public function pagination($enabled)
     {
         $this->pagination = $enabled;
+
+        return $this;
+    }
+
+    public function primaryAction($action)
+    {
+        $this->primaryAction = $action;
+
+        return $this;
+    }
+
+    public function primaryUrl($url)
+    {
+        $this->primaryUrl = $url;
 
         return $this;
     }
