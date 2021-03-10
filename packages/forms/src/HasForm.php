@@ -66,7 +66,7 @@ trait HasForm
 
         $storageDisk = Storage::disk($disk);
 
-        if ($storageDisk->getDriver()->getAdapter() instanceof AwsS3Adapter && $storageDisk->getVisibility($path) == 'private') {
+        if ($storageDisk->getDriver()->getAdapter() instanceof AwsS3Adapter && $storageDisk->getVisibility($path) === 'private') {
             return $storageDisk->temporaryUrl(
                 $path,
                 Carbon::now()->addMinutes(5)
