@@ -49,11 +49,7 @@
                     </th>
                 @endforeach
 
-                @if ($table->recordButtonLabel)
-                    <th scope="col">
-                        <span class="sr-only">{{ __($table->recordButtonLabel) }}</span>
-                    </th>
-                @endif
+                <th scope="col"></th>
             </tr>
         </thead>
 
@@ -78,32 +74,17 @@
                         </td>
                     @endforeach
 
-                    @if ($table->recordButtonLabel)
-                        <td class="px-6 py-4 text-right whitespace-nowrap">
-                            @if ($table->recordAction)
-                                <button
-                                    wire:click="{{ $table->recordAction }}('{{ $record->getKey() }}')"
-                                    type="button"
-                                    class="font-medium transition-colors duration-200 text-primary-600 hover:underline hover:text-primary-700"
-                                >
-                                    {{ __($table->recordButtonLabel) }}
-                                </button>
-                            @elseif ($table->recordUrl)
-                                <a
-                                    href="{{ $table->getRecordUrl($record) }}"
-                                    class="font-medium transition-colors duration-200 text-primary-600 hover:underline hover:text-primary-700"
-                                >
-                                    {{ __($table->recordButtonLabel) }}
-                                </a>
-                            @endif
-                        </td>
-                    @endif
+                    <td class="px-6 py-4 text-right whitespace-nowrap">
+                        @foreach ($table->recordActions as $recordAction)
+                            {{ $recordAction->render($record) }}
+                        @endforeach
+                    </td>
                 </tr>
             @empty
                 <tr>
                     <td
                         class="px-6 py-4 whitespace-nowrap"
-                        colspan="{{ count($table->getVisibleColumns()) + 1 + ($table->recordButtonLabel ? 1 : 0) }}"
+                        colspan="{{ count($table->getVisibleColumns()) + 2 }}"
                     >
                         <div class="flex items-center justify-center h-16">
                             <p class="font-mono text-xs text-gray-500">

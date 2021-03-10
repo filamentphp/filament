@@ -2,7 +2,9 @@
 
 namespace Filament\Resources;
 
+use Filament\Filament;
 use Filament\Resources\Tables\Table;
+use Filament\Resources\Tables\RecordActions;
 use Filament\Tables\HasTable;
 use Illuminate\Database\Eloquent\Relations;
 use Illuminate\Support\Str;
@@ -56,6 +58,8 @@ class RelationManager extends Component
 
     public static $editModalSavedMessage = 'filament::resources/relation-manager.modals.edit.messages.saved';
 
+    public static $editRecordActionLabel = 'filament::resources/pages/list-records.table.recordActions.edit.label';
+
     public static $relationship;
 
     public $filterable = true;
@@ -102,7 +106,25 @@ class RelationManager extends Component
         return true;
     }
 
-    public function canDetach()
+    public function canCreate()
+    {
+        return Filament::can('create', $this->getModel());
+    }
+
+    public function canDelete()
+    {
+        return true;
+    }
+
+    public function canDeleteSelected()
+    {
+        return $this->getModel()::find($this->selected)
+            ->contains(function ($record) {
+                return Filament::can('delete', $record);
+            });
+    }
+
+    public function canDetachSelected()
     {
         if (
             $this->isType(Relations\HasMany::class) ||
@@ -110,6 +132,21 @@ class RelationManager extends Component
         ) return false;
 
         return true;
+    }
+
+    public function deleteSelected()
+    {
+        abort_unless($this->canDelete(), 403);
+
+        $this->getModel()::destroy(
+            $this->getModel()::find($this->selected)
+                ->filter(function ($record) {
+                    return Filament::can('delete', $record);
+                })
+                ->toArray(),
+        );
+
+        $this->selected = [];
     }
 
     public function detachSelected()
@@ -129,7 +166,12 @@ class RelationManager extends Component
         return static::table(Table::make())
             ->filterable($this->filterable)
             ->pagination(false)
-            ->recordAction('openEdit')
+            ->recordActions([
+                RecordActions\Link::make('edit')
+                    ->label(static::$editRecordActionLabel)
+                    ->action('openEdit')
+                    ->when(fn ($record) => Filament::can('update', $record)),
+            ])
             ->searchable($this->searchable)
             ->sortable($this->sortable);
     }
