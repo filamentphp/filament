@@ -14,10 +14,6 @@ class Text extends Column
 
     public $formatUsing;
 
-    public $trimLength = -1;
-
-    public $trimmable = false;
-
     public function currency($symbol = '$', $decimalSeparator = '.', $thousandsSeparator = ',')
     {
         $this->formatUsing = function ($value) use ($decimalSeparator, $symbol, $thousandsSeparator) {
@@ -75,10 +71,7 @@ class Text extends Column
             $value = $callback($value);
         }
 
-        if (! $this->trimmable) return $value;
-        if (! is_int($this->trimLength)) return $value;
-
-        return Str::of($value)->limit($this->trimLength);
+        return $value;
     }
 
     public function options($options)
@@ -94,10 +87,13 @@ class Text extends Column
         return $this;
     }
 
-    public function trim($trimLength = -1)
+    public function limit($length = -1)
     {
-        $this->trimLength = $trimLength;
-        $this->trimmable = true;
+        $this->formatUsing = function ($value) use ($length) {
+            $value = Str::of($value)->limit($length);
+
+            return $value;
+        };
 
         return $this;
     }
