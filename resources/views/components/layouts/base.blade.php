@@ -16,7 +16,7 @@
     ]) }}" />
 
     @foreach (\Filament\Filament::getStyles() as $style)
-        <link rel="stylesheet" href="{{ $style }}">
+        <link rel="stylesheet" href="{{ $path }}" />
     @endforeach
 
     @stack('filament-styles')
