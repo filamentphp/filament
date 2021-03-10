@@ -10,6 +10,8 @@ trait CanOpenUrl
 
     public function getUrl($record)
     {
+        if ($this->url === null) return null;
+
         if (is_callable($this->url)) {
             $callback = $this->url;
 

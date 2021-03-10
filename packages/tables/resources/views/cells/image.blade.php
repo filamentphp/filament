@@ -1,6 +1,6 @@
-@if ($column->action)
+@if ($column->getAction($record) !== null)
     <button
-        wire:click="{{ $column->action }}('{{ $record->getKey() }}')"
+        wire:click="{{ $column->getAction($record) }}('{{ $record->getKey() }}')"
         type="button"
     >
         <img
@@ -12,7 +12,7 @@
             "
         />
     </button>
-@elseif ($column->url)
+@elseif ($column->getUrl($record) !== null)
     <a
         href="{{ $column->getUrl($record) }}"
         @if ($column->shouldOpenUrlInNewTab)

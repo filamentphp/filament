@@ -12,6 +12,10 @@ class Table
 
     public $pagination = true;
 
+    public $primaryColumnAction;
+
+    public $primaryColumnUrl;
+
     public $recordActions = [];
 
     public $searchable = true;
@@ -134,6 +138,28 @@ class Table
     public function pagination($enabled)
     {
         $this->pagination = $enabled;
+
+        return $this;
+    }
+
+    public function primaryRecordAction($action)
+    {
+        $this->columns = collect($this->columns)
+            ->map(function ($column) use ($action) {
+                return $column->action($action);
+            })
+            ->toArray();
+
+        return $this;
+    }
+
+    public function primaryRecordUrl($url)
+    {
+        $this->columns = collect($this->columns)
+            ->map(function ($column) use ($url) {
+                return $column->url($url);
+            })
+            ->toArray();
 
         return $this;
     }
