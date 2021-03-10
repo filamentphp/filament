@@ -276,7 +276,7 @@ class Component
             }
 
             if ($shouldExecuteCallback) {
-                $callback($this);
+                $callback($this, $this->record);
             }
         }
 
@@ -320,7 +320,7 @@ class Component
         }
 
         if ($shouldExecuteCallback) {
-            $callback($this);
+            $callback($this, $this->record);
         }
 
         return $this;
