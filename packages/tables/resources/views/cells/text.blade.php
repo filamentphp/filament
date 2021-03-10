@@ -11,9 +11,9 @@
         >
             {{ $column->getValue($record) }}
         </button>
-    @elseif ($column->url)
+    @elseif ($url = $column->getUrl($record))
         <a
-            href="{{ $column->getUrl($record) }}"
+            href="{{ $url }}"
             class="{{ $primaryClasses }} hover:underline hover:text-primary-600 transition-colors duration-200"
             @if ($column->shouldOpenUrlInNewTab)
                 target="_blank"

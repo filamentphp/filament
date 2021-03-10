@@ -24,7 +24,7 @@ class ListRecords extends Page
 
     public $pagination = true;
 
-    public $recordRoute = 'edit';
+    public static $recordRoute = 'edit';
 
     public $searchable = true;
 
@@ -83,7 +83,7 @@ class ListRecords extends Page
             ->recordActions([
                 RecordActions\Link::make('edit')
                     ->label(static::$editRecordActionLabel)
-                    ->url(fn ($record) => $this->getResource()::generateUrl($this->recordRoute, ['record' => $record]))
+                    ->url(fn ($record) => $this->getResource()::generateUrl(static::$recordRoute, ['record' => $record]))
                     ->when(fn ($record) => Filament::can('update', $record)),
             ])
             ->searchable($this->searchable)
