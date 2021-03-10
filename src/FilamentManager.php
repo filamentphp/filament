@@ -22,8 +22,6 @@ class FilamentManager
 
     public $scriptData = [];
 
-    public $servingCallbacks = [];
-
     public $widgets = [];
 
     public function auth()
