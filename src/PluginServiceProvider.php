@@ -4,7 +4,7 @@ namespace Filament;
 
 use Illuminate\Support\ServiceProvider;
 
-abstract class AddonServiceProvider extends ServiceProvider
+abstract class PluginServiceProvider extends ServiceProvider
 {
     protected $pages = [];
 
