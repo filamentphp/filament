@@ -14,6 +14,11 @@
         'id' => Filament\get_asset_id('/css/filament.css'),
         'path' => 'css/filament.css',
     ]) }}" />
+
+    @foreach (\Filament\Filament::getStyles() as $path)
+        <link rel="stylesheet" href="{{ $path }}" />
+    @endforeach
+
     @stack('filament-styles')
 </head>
 
@@ -23,10 +28,19 @@
     <x-filament::notification />
 
     @livewireScripts
+    <script>
+        window.filamentConfig = @json(\Filament\Filament::getScriptData());
+    </script>
+
     <script src="{{ route('filament.asset', [
         'id' => Filament\get_asset_id('/js/filament.js'),
         'path' => 'js/filament.js',
     ]) }}"></script>
+
+    @foreach (\Filament\Filament::getScripts() as $path)
+        <script src="{{ $path }}"></script>
+    @endforeach
+
     @stack('filament-scripts')
 </body>
 </html>

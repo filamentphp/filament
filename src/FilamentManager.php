@@ -2,8 +2,11 @@
 
 namespace Filament;
 
+use Composer\InstalledVersions;
+use Filament\Events\ServingFilament;
 use Filament\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 
 class FilamentManager
@@ -15,6 +18,12 @@ class FilamentManager
     public $resources = [];
 
     public $roles = [];
+
+    public $styles = [];
+
+    public $scripts = [];
+
+    public $scriptData = [];
 
     public $widgets = [];
 
@@ -96,9 +105,32 @@ class FilamentManager
         return $this->roles;
     }
 
+    public function getScripts()
+    {
+        return $this->scripts;
+    }
+
+    public function getScriptData()
+    {
+        return array_merge([
+            'filamentVersion' => $this->version(),
+            'userId' => Filament::auth()->id(),
+        ], $this->scriptData);
+    }
+
+    public function getStyles()
+    {
+        return $this->styles;
+    }
+
     public function getWidgets()
     {
         return $this->widgets;
+    }
+
+    public function provideToScript($variables)
+    {
+        $this->scriptData = array_merge($this->scriptData, $variables);
     }
 
     public function registerAuthorizations($target, $authorizations = [])
@@ -128,13 +160,37 @@ class FilamentManager
         $this->roles[] = $role;
     }
 
+    public function registerScript($name, $path)
+    {
+        $this->scripts[$name] = $path;
+    }
+
+    public function registerStyle($name, $path)
+    {
+        $this->styles[$name] = $path;
+    }
+
     public function registerWidget($widget)
     {
         $this->widgets[] = $widget;
     }
 
+    public function serving($callback)
+    {
+        Event::listen(ServingFilament::class, $callback);
+    }
+
     public function userResource()
     {
         return config('filament.user_resource', UserResource::class);
+    }
+
+    public function version()
+    {
+        if (! class_exists('Composer\\InstalledVersions')) {
+            return null;
+        }
+
+        return InstalledVersions::getPrettyVersion('filament/filament');
     }
 }
