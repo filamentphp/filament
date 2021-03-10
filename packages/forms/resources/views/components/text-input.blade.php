@@ -1,7 +1,7 @@
 <x-forms::field-group
     :column-span="$formComponent->columnSpan"
     :error-key="$formComponent->name"
-    :for="$formComponent->id"
+    :for="$formComponent->getId()"
     :help-message="__($formComponent->helpMessage)"
     :hint="__($formComponent->hint)"
     :label="__($formComponent->label)"
@@ -18,7 +18,7 @@
             {!! $formComponent->autocomplete ? "autocomplete=\"{$formComponent->autocomplete}\"" : null !!}
             {!! $formComponent->autofocus ? 'autofocus' : null !!}
             {!! $formComponent->disabled ? 'disabled' : null !!}
-            {!! $formComponent->id ? "id=\"{$formComponent->id}\"" : null !!}
+            {!! $formComponent->getId() ? "id=\"{$formComponent->getId()}\"" : null !!}
             {!! $formComponent->name ? "{$formComponent->nameAttribute}=\"{$formComponent->name}\"" : null !!}
             {!! $formComponent->maxLength ? "maxlength=\"{$formComponent->maxLength}\"" : null !!}
             {!! $formComponent->minLength ? "minlength=\"{$formComponent->minLength}\"" : null !!}

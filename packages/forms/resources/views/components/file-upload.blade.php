@@ -44,7 +44,7 @@
 <x-forms::field-group
     :column-span="$formComponent->columnSpan"
     :error-key="$formComponent->name"
-    :for="$formComponent->id"
+    :for="$formComponent->getId()"
     :help-message="__($formComponent->helpMessage)"
     :hint="__($formComponent->hint)"
     :label="__($formComponent->label)"
