@@ -1,4 +1,4 @@
-@pushonce('filament-styles:file-field')
+@pushonce('filament-styles:file-upload-component')
     <link rel="stylesheet" href="https://unpkg.com/filepond/dist/filepond.css">
     <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
     <style>
@@ -26,7 +26,7 @@
     </style>
 @endpushonce
 
-@pushonce('filament-scripts:file-field')
+@pushonce('filament-scripts:file-upload-component')
     <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
     <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
     <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
