@@ -162,12 +162,12 @@ class FilamentManager
 
     public function registerScript($name, $path)
     {
-        $this->scripts[$name] = $script;
+        $this->scripts[$name] = $path;
     }
 
     public function registerStyle($name, $path)
     {
-        $this->styles[$name] = $style;
+        $this->styles[$name] = $path;
     }
 
     public function registerWidget($widget)
