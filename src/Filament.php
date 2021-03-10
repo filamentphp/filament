@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void serving($callback)
  * @method static Resource userResource()
  * @method static void ignoreMigrations()
- * @method static Boolean shouldRunMigrations()
+ * @method static bool shouldRunMigrations()
  * @method static string|null version()
  *
  * @see \Filament\FilamentManager
