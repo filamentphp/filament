@@ -27,7 +27,7 @@ class FilamentManager
 
     public $widgets = [];
 
-    public static $shouldRunMigrations = true;
+    public $shouldRunMigrations = true;
 
     public function auth()
     {
@@ -196,13 +196,13 @@ class FilamentManager
         return InstalledVersions::getPrettyVersion('filament/filament');
     }
 
-    public static function ignoreMigrations()
+    public function ignoreMigrations()
     {
-        static::$shouldRunMigrations = false;
+        $this->shouldRunMigrations = false;
     }
 
-    public static function runsMigrations()
+    public function runsMigrations()
     {
-        return static::$shouldRunMigrations;
+        return $this->shouldRunMigrations;
     }
 }
