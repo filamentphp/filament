@@ -1,0 +1,18 @@
+<?php
+
+namespace {{ namespace }};
+
+use Filament\Resources\Tables\Filter;
+
+class {{ class }} extends Filter
+{
+    protected function setUp()
+    {
+        $this->name('{{ name }}');
+    }
+
+    public function apply($query)
+    {
+        return $query;
+    }
+}

@@ -66,6 +66,7 @@ class FilamentServiceProvider extends ServiceProvider
             Commands\MakeWidgetCommand::class,
             Commands\MakeFieldCommand::class,
             Commands\MakeThemeCommand::class,
+            Commands\MakeFilterCommand::class,
         ]);
 
         $aliases = [];
