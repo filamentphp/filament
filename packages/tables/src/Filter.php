@@ -39,7 +39,7 @@ class Filter
         //
     }
 
-    public static function make($name, $callback = null)
+    public static function make($name = null, $callback = null)
     {
         return new static($name, $callback);
     }
