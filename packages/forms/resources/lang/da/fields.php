@@ -33,7 +33,7 @@ return [
 
     'multiSelect' => [
         'emptyOptionsMessage' => 'Ingen muligheder at vælge imellem.',
-        'noSearchResultsMessage' => 'Ingen indstillinger matcher din søgning.',
+        'noSearchResultsMessage' => 'Ingen resultater der matcher din søgning.',
         'placeholder' => 'Vælg en indstilling',
     ],
 

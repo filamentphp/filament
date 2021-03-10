@@ -4,17 +4,17 @@ return [
 
     'delete' => [
         'button' => [
-            'label' => 'Slet valgt',
+            'label' => 'Slet valgte',
         ],
 
         'modal' => [
             'buttons' => [
                 'cancel' => [
-                    'label' => 'Annullere',
+                    'label' => 'Annuller',
                 ],
 
                 'delete' => [
-                    'label' => 'Slet valgt',
+                    'label' => 'Slet valgte',
                 ],
             ],
 
@@ -25,7 +25,7 @@ return [
     ],
 
     'filter' => [
-        'placeholder' => 'Filter',
+        'placeholder' => 'Filtrer',
     ],
 
     'messages' => [
@@ -42,7 +42,7 @@ return [
 
     'record' => [
         'button' => [
-            'label' => 'Redigere',
+            'label' => 'Rediger',
         ],
     ],
 
