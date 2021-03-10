@@ -262,7 +262,7 @@ class Component
     {
         $this->record = $record;
 
-        if ($this->record) {
+        if ($this->record instanceof Model) {
             $this->model(get_class($this->record));
         }
 
@@ -276,7 +276,7 @@ class Component
             }
 
             if ($shouldExecuteCallback) {
-                $callback($this);
+                $callback($this, $this->record);
             }
         }
 
@@ -320,7 +320,7 @@ class Component
         }
 
         if ($shouldExecuteCallback) {
-            $callback($this);
+            $callback($this, $this->record);
         }
 
         return $this;

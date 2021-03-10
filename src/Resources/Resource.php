@@ -2,7 +2,6 @@
 
 namespace Filament\Resources;
 
-use Filament\AuthorizationManager;
 use Filament\NavigationItem;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Tables\Table;
@@ -27,11 +26,6 @@ class Resource
     public static function authorization()
     {
         return [];
-    }
-
-    public static function authorizationManager()
-    {
-        return new AuthorizationManager(static::class);
     }
 
     public static function form(Form $form)

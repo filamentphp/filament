@@ -1,5 +1,5 @@
 @props([
-    'selected' => [],
+    'disabled' => true,
 ])
 
 <span
@@ -18,10 +18,10 @@
     x-cloak
 >
     <button
-        type="button"		         
-        x-on:click="open = true"		         
-        {!! count($selected) === 0 ? 'disabled' : null !!}		
-        class="{{ count($selected) === 0 ? 'opacity-25 cursor-not-allowed' : 'cursor-pointer' }} font-medium border rounded transition duration-200 shadow-sm focus:ring focus:ring-opacity-50 text-sm py-2 px-4 border-transparent bg-danger-600 text-white hover:bg-danger-700 focus:ring-danger-200"
+        type="button"
+        x-on:click="open = true"
+        {!! $disabled ? 'disabled' : null !!}
+        class="{{ $disabled ? 'opacity-25 cursor-not-allowed' : 'cursor-pointer' }} font-medium border rounded transition duration-200 shadow-sm focus:ring focus:ring-opacity-50 text-sm py-2 px-4 border-transparent bg-danger-600 text-white hover:bg-danger-700 focus:ring-danger-200"
     >
         {{ __('tables::table.delete.button.label') }}
     </button>

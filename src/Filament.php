@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static StatefulGuard auth()
+ * @method static bool can(string $action, object|string $target)
+ * @method static array getAuthorizations()
  * @method static array getPages()
  * @method static array getResources()
  * @method static array getRoles()
@@ -16,6 +18,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getStyles()
  * @method static array getWidgets()
  * @method static void provideToScript(array $variables)
+ * @method static void registerAuthorizations(string $target, array $authorizations = [])
  * @method static void registerPage(string $page)
  * @method static void registerResource(string $resource)
  * @method static void registerRole(string $role)

@@ -3,6 +3,7 @@
 namespace Filament\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class MakeThemeCommand extends Command
 {
@@ -14,7 +15,10 @@ class MakeThemeCommand extends Command
 
     public function handle()
     {
-        $path = resource_path("css/filament/{$this->argument('name')}.css");
+        $theme = (string) Str::of($this->argument('name'))
+            ->trim(' ');
+
+        $path = resource_path("css/filament/{$theme}.css");
 
         if ($this->checkForCollision([
             $path,
@@ -22,6 +26,6 @@ class MakeThemeCommand extends Command
 
         $this->copyStubToApp('Theme', $path);
 
-        $this->info("Successfully created {$this->argument('name')} theme!");
+        $this->info("Successfully created {$theme} theme!");
     }
 }
