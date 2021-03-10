@@ -3,6 +3,7 @@
 namespace Filament;
 
 use Composer\InstalledVersions;
+use Filament\AvatarProviders\GravatarProvider;
 use Filament\Events\ServingFilament;
 use Filament\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
@@ -36,7 +37,7 @@ class FilamentManager
 
     public function avatarProvider()
     {
-        $provider = config('filament.auth.avatar_provider', GravatarProvider::class);
+        $provider = config('filament.avatar_provider', GravatarProvider::class);
 
         return new $provider;
     }

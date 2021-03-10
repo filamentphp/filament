@@ -1,7 +1,5 @@
 <?php
 
-use Filament\GravatarProvider;
-
 return [
 
     /*
@@ -40,7 +38,6 @@ return [
 
     'auth' => [
         'guard' => env('FILAMENT_AUTH_GUARD', 'filament'),
-        'avatar_provider' => GravatarProvider::class,
     ],
 
     /*
@@ -130,6 +127,18 @@ return [
     */
 
     'user_resource' => \Filament\Resources\UserResource::class,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Avatar Provider
+    |--------------------------------------------------------------------------
+    |
+    | This is the service that will be used to retrieve default avatars if one
+    | has not been uploaded.
+    |
+    */
+
+    'avatar_provider' => \Filament\AvatarProviders\GravatarProvider::class,
 
     /*
     |--------------------------------------------------------------------------

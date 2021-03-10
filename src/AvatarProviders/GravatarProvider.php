@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament;
+namespace Filament\AvatarProviders;
 
 use Filament\Models\Contracts\FilamentUser;
 use Thomaswelton\LaravelGravatar\Facades\Gravatar;
