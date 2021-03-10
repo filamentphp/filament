@@ -11,7 +11,7 @@ class MakeFilterCommand extends Command
 
     protected $description = 'Make a Filament filter class.';
 
-    protected $signature = 'make:filament-filter {name} {--R|resource=}';
+    protected $signature = 'make:filament-filter {name} {--R|resource}';
 
     public function handle()
     {
@@ -29,7 +29,7 @@ class MakeFilterCommand extends Command
 
         $path = app_path(
             (string) Str::of($filter)
-                ->prepend('Filament\\Filters\\')
+                ->prepend($resource === null ? 'Filament\\Filters\\' : "Filament\\Resources\\Filters\\")
                 ->replace('\\', '/')
                 ->append('.php'),
         );
@@ -38,15 +38,15 @@ class MakeFilterCommand extends Command
             $path,
         ])) return;
 
-        if ($resource === null) {
+        if ($resource === false) {
             $this->copyStubToApp('Filter', $path, [
                 'class' => $filterClass,
-                'namespace' => 'App\\Filament\\Filters',
+                'namespace' => 'App\\Filament\\Filters' . ($filterNamespace !== '' ? "\\{$filterNamespace}" : ''),
             ]);
         } else {
             $this->copyStubToApp('ResourceFilter', $path, [
                 'class' => $filterClass,
-                'namespace' => 'App\\Filament\\Filters',
+                'namespace' => 'App\\Filament\\Resources\\Filters' . ($filterNamespace !== '' ? "\\{$filterNamespace}" : ''),
             ]);
         }
 
