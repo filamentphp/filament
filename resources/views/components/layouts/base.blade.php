@@ -15,7 +15,7 @@
         'path' => 'css/filament.css',
     ]) }}" />
 
-    @foreach (\Filament\Filament::getStyles() as $style)
+    @foreach (\Filament\Filament::getStyles() as $path)
         <link rel="stylesheet" href="{{ $path }}" />
     @endforeach
 
