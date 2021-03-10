@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\Pages;
 
+use Filament\Filament;
 use Filament\Forms\HasForm;
 use Filament\Resources\Forms\Form;
 use Illuminate\Support\Str;
@@ -37,9 +38,20 @@ class EditRecord extends Page
         ];
     }
 
+    public function canDelete()
+    {
+        return Filament::can('delete', $this->record);
+    }
+
     public function delete()
     {
+        $this->authorize('delete');
+
+        $this->callHook('beforeDelete');
+
         $this->record->delete();
+
+        $this->callHook('afterDelete');
 
         $this->redirect($this->getResource()::generateUrl($this->indexRoute));
     }
@@ -53,6 +65,11 @@ class EditRecord extends Page
             ->submitMethod('save');
     }
 
+    public function isAuthorized()
+    {
+        return Filament::can('update', $this->record);
+    }
+
     public function mount($record)
     {
         $this->record = static::getModel()::findOrFail($record);
@@ -60,13 +77,21 @@ class EditRecord extends Page
 
     public function save()
     {
+        $this->callHook('beforeValidate');
+
         $this->validateTemporaryUploadedFiles();
 
         $this->storeTemporaryUploadedFiles();
 
         $this->validate();
 
+        $this->callHook('afterValidate');
+
+        $this->callHook('beforeSave');
+
         $this->record->save();
+
+        $this->callHook('afterSave');
 
         $this->notify(__(static::$savedMessage));
     }

@@ -11,6 +11,8 @@ use Filament\Resources\Tables\Table;
 
 class {{ managerClass }} extends RelationManager
 {
+    public static $primaryColumn = '';
+
     public static $relationship = '{{ relationship }}';
 
     public static function form(Form $form)

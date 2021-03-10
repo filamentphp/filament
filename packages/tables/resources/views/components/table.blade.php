@@ -6,16 +6,16 @@
     'table',
 ])
 
-<div class="shadow-xl rounded bg-white overflow-x-auto">
+<div class="overflow-x-auto bg-white rounded shadow-xl">
     <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-200">
             <tr>
-                <th class="p-4 w-4 whitespace-nowrap">
+                <th class="w-4 p-4 whitespace-nowrap">
                     <input
                         {{ $records->count() && $records->count() === count($selected) ? 'checked' : null }}
                         wire:click="toggleSelectAll"
                         type="checkbox"
-                        class="rounded text-secondary-700 shadow-sm focus:border-secondary-700 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300"
+                        class="border-gray-300 rounded shadow-sm text-primary-600 focus:border-primary-600 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
                     />
                 </th>
 
@@ -25,7 +25,7 @@
                             <button
                                 wire:click="sortBy('{{ $column->name }}')"
                                 type="button"
-                                class="flex items-center space-x-1 text-left text-xs font-medium uppercase tracking-wider group focus:outline-none focus:underline"
+                                class="flex items-center space-x-1 text-xs font-medium tracking-wider text-left uppercase group focus:outline-none focus:underline"
                             >
                                 <span>{{ __($column->label) }}</span>
 
@@ -39,25 +39,21 @@
                                             @endif
                                         </span>
                                     @else
-                                        <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        <svg class="w-3 h-3 transition-opacity duration-300 opacity-0 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                     @endif
                                 </span>
                             </button>
                         @else
-                            <span class="text-xs font-medium uppercase tracking-wider">{{ __($column->label) }}</span>
+                            <span class="text-xs font-medium tracking-wider uppercase">{{ __($column->label) }}</span>
                         @endif
                     </th>
                 @endforeach
 
-                @if ($table->recordButtonLabel)
-                    <th scope="col">
-                        <span class="sr-only">{{ __($table->recordButtonLabel) }}</span>
-                    </th>
-                @endif
+                <th scope="col"></th>
             </tr>
         </thead>
 
-        <tbody class="divide-y divide-gray-200 text-sm leading-tight">
+        <tbody class="text-sm leading-tight divide-y divide-gray-200">
             @forelse ($records as $record)
                 <tr
                     wire:loading.class="opacity-50"
@@ -68,45 +64,30 @@
                             {{ in_array($record->getKey(), $selected) ? 'checked' : null }}
                             wire:click="toggleSelected('{{ $record->getKey() }}')"
                             type="checkbox"
-                            class="rounded text-secondary-700 shadow-sm focus:border-secondary-700 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 border-gray-300"
+                            class="border-gray-300 rounded shadow-sm text-primary-600 focus:border-primary-600 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                         />
                     </td>
 
                     @foreach ($table->getVisibleColumns() as $column)
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 whitespace-nowrap">
                             {{ $column->renderCell($record) }}
                         </td>
                     @endforeach
 
-                    @if ($table->recordButtonLabel)
-                        <td class="px-6 py-4 whitespace-nowrap text-right">
-                            @if ($table->recordAction)
-                                <button
-                                    wire:click="{{ $table->recordAction }}('{{ $record->getKey() }}')"
-                                    type="button"
-                                    class="hover:underline text-secondary-500 hover:text-secondary-700 transition-colors duration-200 font-medium"
-                                >
-                                    {{ __($table->recordButtonLabel) }}
-                                </button>
-                            @elseif ($table->recordUrl)
-                                <a
-                                    href="{{ $table->getRecordUrl($record) }}"
-                                    class="hover:underline text-secondary-500 hover:text-secondary-700 transition-colors duration-200 font-medium"
-                                >
-                                    {{ __($table->recordButtonLabel) }}
-                                </a>
-                            @endif
-                        </td>
-                    @endif
+                    <td class="px-6 py-4 text-right whitespace-nowrap">
+                        @foreach ($table->recordActions as $recordAction)
+                            {{ $recordAction->render($record) }}
+                        @endforeach
+                    </td>
                 </tr>
             @empty
                 <tr>
                     <td
                         class="px-6 py-4 whitespace-nowrap"
-                        colspan="{{ count($table->getVisibleColumns()) + 1 + ($table->recordButtonLabel ? 1 : 0) }}"
+                        colspan="{{ count($table->getVisibleColumns()) + 2 }}"
                     >
                         <div class="flex items-center justify-center h-16">
-                            <p class="text-gray-500 font-mono text-xs">
+                            <p class="font-mono text-xs text-gray-500">
                                 {{ __('tables::table.messages.noRecords') }}
                             </p>
                         </div>

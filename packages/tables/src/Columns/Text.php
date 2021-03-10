@@ -3,23 +3,16 @@
 namespace Filament\Tables\Columns;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class Text extends Column
 {
-    public $action;
+    use Concerns\CanCallAction;
+    use Concerns\CanOpenUrl;
 
     public $default;
 
     public $formatUsing;
-
-    public $url;
-
-    public function action($action)
-    {
-        $this->action = $action;
-
-        return $this;
-    }
 
     public function currency($symbol = '$', $decimalSeparator = '.', $thousandsSeparator = ',')
     {
@@ -64,17 +57,6 @@ class Text extends Column
         return $this;
     }
 
-    public function getUrl($record)
-    {
-        if (is_callable($this->url)) {
-            $callback = $this->url;
-
-            return $callback($record);
-        }
-
-        return $this->url;
-    }
-
     public function getValue($record, $attribute = null)
     {
         $value = parent::getValue($record, $attribute);
@@ -105,9 +87,11 @@ class Text extends Column
         return $this;
     }
 
-    public function url($url)
+    public function limit($length = -1)
     {
-        $this->url = $url;
+        $this->formatUsing = function ($value) use ($length) {
+            return Str::limit($value, $length);
+        };
 
         return $this;
     }

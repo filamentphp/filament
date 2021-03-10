@@ -2,7 +2,7 @@
 
 namespace Filament\Pages;
 
-use Filament\AuthorizationManager;
+use Filament\Filament;
 use Filament\NavigationItem;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Str;
@@ -12,6 +12,8 @@ class Page extends Component
 {
     public static $icon = 'heroicon-o-document-text';
 
+    public static $layout = 'filament::components.layouts.app';
+
     public static $navigationLabel;
 
     public static $navigationSort = 0;
@@ -20,19 +22,16 @@ class Page extends Component
 
     public static $view;
 
+    public function __invoke(Container $container, \Illuminate\Routing\Route $route)
+    {
+        abort_unless($this->isAuthorized(), 403);
+
+        return parent::__invoke($container, $route);
+    }
+
     public static function authorization()
     {
         return [];
-    }
-
-    public static function authorizationManager()
-    {
-        return new AuthorizationManager(static::class);
-    }
-
-    public static function can($action = null)
-    {
-        return static::authorizationManager()->can($action);
     }
 
     public static function generateUrl($parameters = [], $absolute = true)
@@ -76,6 +75,13 @@ class Page extends Component
             ->title();
     }
 
+    public static function getPageTitle()
+    {
+        if (property_exists(static::class, 'pageTitle')) return static::$pageTitle;
+
+        return static::getTitle();
+    }
+
     public static function navigationItems()
     {
         return [
@@ -95,11 +101,9 @@ class Page extends Component
         return Route::make(static::getSlug(), static::getSlug());
     }
 
-    public function __invoke(Container $container, \Illuminate\Routing\Route $route)
+    public function isAuthorized()
     {
-        abort_unless(static::can(), 403);
-
-        return parent::__invoke($container, $route);
+        return Filament::can('view', static::class);
     }
 
     public function notify($message)
@@ -109,18 +113,30 @@ class Page extends Component
 
     public function render()
     {
-        return view(static::$view, $this->getViewParameters())
-            ->layout('filament::components.layouts.app');
+        return view(static::$view, $this->getViewData())
+            ->layout(static::$layout, $this->getLayoutData());
     }
 
-    public function getViewParameters()
+    protected function getViewData()
     {
-        return array_merge($this->viewParameters(), [
-            'title' => __(static::getTitle()),
+        return array_merge($this->viewData(), [
+            'title' => static::getTitle(),
         ]);
     }
 
-    public function viewParameters()
+    protected function viewData()
+    {
+        return [];
+    }
+
+    protected function getLayoutData()
+    {
+        return array_merge($this->layoutData(), [
+            'title' => static::getPageTitle(),
+        ]);
+    }
+
+    protected function layoutData()
     {
         return [];
     }

@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Filament\Forms\Form;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Tappable;
 
@@ -35,6 +36,8 @@ class Component
     protected $pendingIncludedContextModifications = [];
 
     protected $pendingModelModifications = [];
+
+    protected $pendingRecordModifications = [];
 
     protected function setUp()
     {
@@ -133,6 +136,15 @@ class Component
         $defaults = array_merge($defaults, $this->getSubform()->getDefaults());
 
         return $defaults;
+    }
+
+    public function getId()
+    {
+        return (string) Str::of($this->context)
+            ->replace('\\', '-')
+            ->lower()
+            ->append('-')
+            ->append($this->id);
     }
 
     public function getSubform()
@@ -259,11 +271,25 @@ class Component
     {
         $this->record = $record;
 
-        if ($this->record) {
+        if ($this->record instanceof Model) {
             $this->model(get_class($this->record));
         }
 
         $this->schema($this->getSubform()->record($this->record)->schema);
+
+        foreach ($this->pendingRecordModifications as [$condition, $callback]) {
+            try {
+                $shouldExecuteCallback = $condition($this->record);
+            } catch (\Exception $exception) {
+                $shouldExecuteCallback = false;
+            }
+
+            if ($shouldExecuteCallback) {
+                $callback($this, $this->record);
+            }
+        }
+
+        $this->pendingRecordModifications = [];
 
         return $this;
     }
@@ -278,6 +304,33 @@ class Component
     public function visible()
     {
         $this->hidden = false;
+
+        return $this;
+    }
+
+    public function when($condition, $callback = null)
+    {
+        if (! $callback) {
+            $this->hidden();
+
+            $callback = fn ($component) => $component->visible();
+        }
+
+        if ($this->record === null) {
+            $this->pendingRecordModifications[] = [$condition, $callback];
+
+            return $this;
+        }
+
+        try {
+            $shouldExecuteCallback = $condition($this->record);
+        } catch (\Exception $exception) {
+            $shouldExecuteCallback = false;
+        }
+
+        if ($shouldExecuteCallback) {
+            $callback($this, $this->record);
+        }
 
         return $this;
     }
@@ -297,7 +350,7 @@ class Component
             ->map(function ($condition) {
                 if (! is_string($condition)) return $condition;
 
-                return (string) Str::of($condition)->replace('{{record}}', $this->record ? $this->record->getKey() : '');
+                return (string) Str::of($condition)->replace('{{record}}', $this->record instanceof Model ? $this->record->getKey() : '');
             })
             ->toArray();
     }

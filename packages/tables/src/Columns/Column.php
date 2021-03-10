@@ -30,6 +30,8 @@ class Column
 
     public $view;
 
+    public $viewData = [];
+
     protected $pendingExcludedContextModifications = [];
 
     protected $pendingIncludedContextModifications = [];
@@ -38,7 +40,7 @@ class Column
     {
         $this->name($name);
 
-        $this->setup();
+        $this->setUp();
     }
 
     public static function make($name)
@@ -46,7 +48,7 @@ class Column
         return new static($name);
     }
 
-    protected function setup()
+    protected function setUp()
     {
         //
     }
@@ -172,6 +174,8 @@ class Column
                 ->replace(['-', '_', '.'], ' ')
                 ->ucfirst(),
         );
+
+        return $this;
     }
 
     public function only($contexts, $callback = null)
@@ -224,9 +228,18 @@ class Column
         return $this;
     }
 
-    public function view($view)
+    public function view($view, $data = [])
     {
         $this->view = $view;
+
+        $this->viewData($data);
+
+        return $this;
+    }
+
+    public function viewData($data = [])
+    {
+        $this->viewData = array_merge($this->viewData, $data);
 
         return $this;
     }
@@ -242,11 +255,11 @@ class Column
     {
         if ($this->hidden) return;
 
-        $view = $this->view ?? 'tables::cells.'.Str::of(class_basename(static::class))->kebab();
+        $view = $this->view ?? 'tables::cells.' . Str::of(class_basename(static::class))->kebab();
 
-        return view($view, [
+        return view($view, array_merge($this->viewData, [
             'column' => $this,
             'record' => $record,
-        ]);
+        ]));
     }
 }

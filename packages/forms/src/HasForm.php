@@ -9,6 +9,7 @@ use Filament\Forms\Components\Tab;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use Livewire\WithFileUploads;
 
 trait HasForm
@@ -56,23 +57,25 @@ trait HasForm
         );
     }
 
-    public function getSelectFieldDisplayValue($fieldName, $value)
-    {
-        $field = collect($this->getForm()->getFlatSchema())
-            ->first(fn ($field) => $field instanceof Select && $field->name === $fieldName);
-
-        if (! $field) return [];
-
-        return $field->getDisplayValue($value);
-    }
-
     public function getUploadedFileUrl($name, $disk)
     {
         $path = $this->getPropertyValue($name);
 
         if (! $path) return null;
 
-        return Storage::disk($disk)->url($path);
+        $storage = Storage::disk($disk);
+
+        if (
+            $storage->getDriver()->getAdapter() instanceof AwsS3Adapter &&
+            $storage->getVisibility($path) === 'private'
+        ) {
+            return $storage->temporaryUrl(
+                $path,
+                now()->addMinutes(5),
+            );
+        }
+
+        return $storage->url($path);
     }
 
     public function storeTemporaryUploadedFiles()
@@ -197,7 +200,7 @@ trait HasForm
                 if ($possibleTab instanceof Tab) {
                     $this->dispatchBrowserEvent(
                         'switch-tab',
-                        $possibleTab->parent->id . '.' . $possibleTab->id,
+                        $possibleTab->parent->getId() . '.' . $possibleTab->getId(),
                     );
 
                     break;

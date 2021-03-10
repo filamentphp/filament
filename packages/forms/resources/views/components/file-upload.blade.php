@@ -44,7 +44,7 @@
 <x-forms::field-group
     :column-span="$formComponent->columnSpan"
     :error-key="$formComponent->name"
-    :for="$formComponent->id"
+    :for="$formComponent->getId()"
     :help-message="__($formComponent->helpMessage)"
     :hint="__($formComponent->hint)"
     :label="__($formComponent->label)"
@@ -123,7 +123,7 @@
                 pond = FilePond.create($refs.input, config)
             })
 
-            $watch('value', (() => {
+            $watch('value', () => {
                 $wire.getUploadedFileUrl('{{ $formComponent->name }}', '{{ $formComponent->disk }}').then((uploadedFileUrl) => {
                     if (uploadedFileUrl) {
                         pond.files = [{
@@ -136,7 +136,7 @@
                         pond.files = []
                     }
                 })
-            }))
+            })
         "
         wire:ignore
         {!! Filament\format_attributes($formComponent->extraAttributes) !!}

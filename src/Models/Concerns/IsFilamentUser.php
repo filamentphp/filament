@@ -73,6 +73,6 @@ trait IsFilamentUser
 
         return $column !== null ?
             $this->{$column} :
-            true;
+            false;
     }
 }

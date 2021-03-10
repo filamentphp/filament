@@ -94,6 +94,8 @@ class Form
 
     public function record($record)
     {
+        $record = (object) $record;
+
         $this->schema = collect($this->schema)
             ->map(function ($field) use ($record) {
                 return $field->record($record);

@@ -1,6 +1,51 @@
 @layer base {
   :root {
-    --f-gray-300: theme('colors.gray.300');
+      --f-primary-100: theme('colors.defaultPrimary.100');
+      --f-primary-200: theme('colors.defaultPrimary.200');
+      --f-primary-300: theme('colors.defaultPrimary.300');
+      --f-primary-400: theme('colors.defaultPrimary.400');
+      --f-primary-500: theme('colors.defaultPrimary.500');
+      --f-primary-600: theme('colors.defaultPrimary.600');
+      --f-primary-700: theme('colors.defaultPrimary.700');
+      --f-primary-800: theme('colors.defaultPrimary.800');
+      --f-primary-900: theme('colors.defaultPrimary.900');
+      --f-success-100: theme('colors.defaultSuccess.100');
+      --f-success-200: theme('colors.defaultSuccess.200');
+      --f-success-300: theme('colors.defaultSuccess.300');
+      --f-success-400: theme('colors.defaultSuccess.400');
+      --f-success-500: theme('colors.defaultSuccess.500');
+      --f-success-600: theme('colors.defaultSuccess.600');
+      --f-success-700: theme('colors.defaultSuccess.700');
+      --f-success-800: theme('colors.defaultSuccess.800');
+      --f-success-900: theme('colors.defaultSuccess.900');
+      --f-danger-100: theme('colors.defaultDanger.100');
+      --f-danger-200: theme('colors.defaultDanger.200');
+      --f-danger-300: theme('colors.defaultDanger.300');
+      --f-danger-400: theme('colors.defaultDanger.400');
+      --f-danger-500: theme('colors.defaultDanger.500');
+      --f-danger-600: theme('colors.defaultDanger.600');
+      --f-danger-700: theme('colors.defaultDanger.700');
+      --f-danger-800: theme('colors.defaultDanger.800');
+      --f-danger-900: theme('colors.defaultDanger.900');
+      --f-gray-100: theme('colors.defaultGray.100');
+      --f-gray-200: theme('colors.defaultGray.200');
+      --f-gray-300: theme('colors.defaultGray.300');
+      --f-gray-400: theme('colors.defaultGray.400');
+      --f-gray-500: theme('colors.defaultGray.500');
+      --f-gray-600: theme('colors.defaultGray.600');
+      --f-gray-700: theme('colors.defaultGray.700');
+      --f-gray-800: theme('colors.defaultGray.800');
+      --f-gray-900: theme('colors.defaultGray.900');
+      --f-blue-100: theme('colors.defaultBlue.100');
+      --f-blue-200: theme('colors.defaultBlue.200');
+      --f-blue-300: theme('colors.defaultBlue.300');
+      --f-blue-400: theme('colors.defaultBlue.400');
+      --f-blue-500: theme('colors.defaultBlue.500');
+      --f-blue-600: theme('colors.defaultBlue.600');
+      --f-blue-700: theme('colors.defaultBlue.700');
+      --f-blue-800: theme('colors.defaultBlue.800');
+      --f-blue-900: theme('colors.defaultBlue.900');
+      --f-white: theme('colors.defaultWhite');
   }
 
   /**

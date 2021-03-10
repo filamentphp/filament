@@ -30,12 +30,19 @@ class Field extends Component
     {
         $this->name($name);
 
-        parent::setUp();
+        $this->setUp();
     }
 
     public static function make($name)
     {
         return new static($name);
+    }
+
+    public function dependable()
+    {
+        $this->nameAttribute('wire:model');
+
+        return $this;
     }
 
     public function disabled()

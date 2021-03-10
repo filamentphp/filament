@@ -161,23 +161,23 @@
 
                     if (this.autofocus) this.openPicker()
 
-                    this.$watch('focusedMonth', (() => {
+                    this.$watch('focusedMonth', () => {
                         this.focusedMonth = +this.focusedMonth
 
                         if (this.focusedDate.month() === this.focusedMonth) return
 
                         this.focusedDate = this.focusedDate.set('month', this.focusedMonth)
-                    }))
+                    })
 
-                    this.$watch('focusedYear', (() => {
+                    this.$watch('focusedYear', () => {
                         this.focusedYear = Number.isInteger(+this.focusedYear) ? +this.focusedYear : dayjs().year()
 
                         if (this.focusedDate.year() === this.focusedYear) return
 
                         this.focusedDate = this.focusedDate.set('year', this.focusedYear)
-                    }))
+                    })
 
-                    this.$watch('focusedDate', (() => {
+                    this.$watch('focusedDate', () => {
                         this.focusedMonth = this.focusedDate.month()
                         this.focusedYear = this.focusedDate.year()
 
@@ -186,9 +186,9 @@
                         this.$nextTick(() => {
                             this.evaluatePosition()
                         })
-                    }))
+                    })
 
-                    this.$watch('hour', (() => {
+                    this.$watch('hour', () => {
                         this.hour = Number.isInteger(+this.hour) && this.hour >= 0 && this.hour < 24 ? +this.hour : dayjs().hour()
 
                         let date = this.getSelectedDate()
@@ -196,9 +196,9 @@
                         if (date === null) return
 
                         this.setValue(date.set('hour', this.hour))
-                    }))
+                    })
 
-                    this.$watch('minute', (() => {
+                    this.$watch('minute', () => {
                         this.minute = Number.isInteger(+this.minute) && this.minute >= 0 && this.minute < 60 ? +this.minute : dayjs().minute()
 
                         let date = this.getSelectedDate()
@@ -206,9 +206,9 @@
                         if (date === null) return
 
                         this.setValue(date.set('minute', this.minute))
-                    }))
+                    })
 
-                    this.$watch('second', (() => {
+                    this.$watch('second', () => {
                         this.second = Number.isInteger(+this.second) && this.second >= 0 && this.second < 60 ? +this.second : dayjs().second()
 
                         let date = this.getSelectedDate()
@@ -216,9 +216,9 @@
                         if (date === null) return
 
                         this.setValue(date.set('second', this.second))
-                    }))
+                    })
 
-                    this.$watch('value', (() => {
+                    this.$watch('value', () => {
                         let date = this.getSelectedDate() ?? dayjs()
 
                         if (this.maxDate !== null && date.isAfter(this.maxDate)) date = this.required ? this.maxDate : null
@@ -231,7 +231,7 @@
                         if (this.required && ! this.getSelectedDate()) this.setValue(date)
 
                         this.setDisplayValue()
-                    }))
+                    })
                 },
 
                 openPicker: function () {
@@ -314,7 +314,7 @@
 <x-forms::field-group
     :column-span="$formComponent->columnSpan"
     :error-key="$formComponent->name"
-    :for="$formComponent->id"
+    :for="$formComponent->getId()"
     :help-message="__($formComponent->helpMessage)"
     :hint="__($formComponent->hint)"
     :label="__($formComponent->label)"
@@ -338,7 +338,7 @@
         })"
         x-init="init()"
         x-on:click.away="closePicker()"
-        {!! $formComponent->id ? "id=\"{$formComponent->id}\"" : null !!}
+        {!! $formComponent->getId() ? "id=\"{$formComponent->getId()}\"" : null !!}
         class="relative"
         {!! Filament\format_attributes($formComponent->extraAttributes) !!}
     >
@@ -367,7 +367,7 @@
                 aria-label="{{ __($formComponent->placeholder) }}"
             @endunless
             type="button"
-            class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 {{ $formComponent->disabled ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+            class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $formComponent->disabled ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
         >
             <input
                 readonly
@@ -452,10 +452,10 @@
                                 role="option"
                                 x-bind:aria-selected="focusedDate.date() === day"
                                 x-bind:class="{
-                                    'bg-secondary-600 text-white': dayIsSelected(day),
+                                    'bg-blue-600 text-white': dayIsSelected(day),
                                     'text-gray-700': ! dayIsSelected(day),
-                                    'bg-secondary-50': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
-                                    'bg-secondary-200': focusedDate.date() === day && ! dayIsSelected(day),
+                                    'bg-blue-50': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
+                                    'bg-blue-200': focusedDate.date() === day && ! dayIsSelected(day),
                                     'bg-gray-100': dayIsDisabled(day) && focusedDate.date() !== day,
                                     'cursor-pointer': ! dayIsDisabled(day),
                                     'cursor-not-allowed': dayIsDisabled(day),

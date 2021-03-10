@@ -20,12 +20,12 @@
     x-data="{ tab: '{{ count($formComponent->getTabsConfig()) ? array_key_first($formComponent->getTabsConfig()) : null }}', tabs: {{ json_encode($formComponent->getTabsConfig()) }} }"
     x-on:switch-tab.window="if ($event.detail in tabs) tab = $event.detail"
     x-cloak
-    {!! $formComponent->id ? "id=\"{$formComponent->id}\"" : null !!}
-    class="{{ $columnSpanClass }} overflow-hidden bg-white shadow-xl rounded p-4 md:p-6"
+    {!! $formComponent->getId() ? "id=\"{$formComponent->getId()}\"" : null !!}
+    class="{{ $columnSpanClass }} bg-white border border-gray-200 rounded p-4 md:p-6"
 >
     <div class="-m-4 md:-m-6">
         <div {!! __($formComponent->label) ? 'aria-label="'.__($formComponent->label).'"' : null !!} role="tablist"
-             class="bg-gray-100 border-b border-gray-200 flex">
+             class="flex overflow-hidden bg-gray-100 rounded-t">
             @foreach ($formComponent->getTabsConfig() as $tabId => $tabLabel)
                 <button type="button"
                         aria-controls="{{ $tabId }}-tab"
@@ -33,7 +33,7 @@
                         x-on:click="tab = '{{ $tabId }}'"
                         role="tab"
                         x-bind:tabindex="tab === '{{ $tabId }}' ? 0 : -1"
-                        class="text-sm leading-tight font-medium p-3 md:px-6 -mb-px border-r border-gray-200"
+                        class="p-3 text-sm font-medium leading-tight border-r border-gray-200 md:px-6"
                         x-bind:class="{ 'bg-white': tab === '{{ $tabId }}' }"
                 >
                     {{ __($tabLabel) }}

@@ -93,7 +93,7 @@
 
                     if (this.autofocus) this.openListbox()
 
-                    this.$watch('search', (() => {
+                    this.$watch('search', () => {
                         if (! this.open || this.search === '' || this.search === null) {
                             this.setOptions()
                             this.focusedOptionIndex = 0
@@ -113,13 +113,13 @@
                         }
 
                         this.focusedOptionIndex = 0
-                    }))
+                    })
 
-                    this.$watch('value', (() => {
+                    this.$watch('value', () => {
                         if (this.value) return
 
                         this.value = []
-                    }))
+                    })
                 },
 
                 openListbox: function () {
@@ -185,7 +185,7 @@
 <x-forms::field-group
     :column-span="$formComponent->columnSpan"
     :error-key="$formComponent->name"
-    :for="$formComponent->id"
+    :for="$formComponent->getId()"
     :help-message="__($formComponent->helpMessage)"
     :hint="__($formComponent->hint)"
     :label="__($formComponent->label)"
@@ -206,7 +206,7 @@
         x-init="init()"
         x-on:click.away="closeListbox()"
         x-on:keydown.escape.stop="closeListbox()"
-        {!! $formComponent->id ? "id=\"{$formComponent->id}\"" : null !!}
+        {!! $formComponent->getId() ? "id=\"{$formComponent->getId()}\"" : null !!}
         class="relative"
         {!! Filament\format_attributes($formComponent->extraAttributes) !!}
     >
@@ -227,7 +227,7 @@
                 x-bind:aria-expanded="open"
                 aria-haspopup="listbox"
                 tabindex="1"
-                class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-secondary-300 focus:ring focus:ring-secondary-200 focus:ring-opacity-50 {{ $formComponent->disabled ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+                class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $formComponent->disabled ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
             >
                 <span
                     x-show="! open"
@@ -277,7 +277,7 @@
                             role="option"
                             x-bind:aria-selected="focusedOptionIndex === index"
                             x-bind:class="{
-                                'text-white bg-secondary-600': index === focusedOptionIndex,
+                                'text-white bg-blue-600': index === focusedOptionIndex,
                                 'text-gray-900': index !== focusedOptionIndex,
                             }"
                             class="relative py-2 pl-3 text-gray-900 cursor-default select-none pr-9"
