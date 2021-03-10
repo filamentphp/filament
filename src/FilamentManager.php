@@ -195,10 +195,10 @@ class FilamentManager
 
         return InstalledVersions::getPrettyVersion('filament/filament');
     }
-  
+
     public static function ignoreMigrations()
     {
-        static::shouldRunMigrations = false;
+        static::$shouldRunMigrations = false;
     }
 
     public static function runsMigrations()
