@@ -87,9 +87,12 @@ class AttachRecord extends Component
                         $query = $relationship->getRelated();
 
                         $search = Str::lower($search);
+                        $searchOperator = [
+                            'pgsql' => 'ilike',
+                        ][$query->getConnection()->getDriverName()] ?? 'like';
 
                         return $query
-                            ->whereRaw("LOWER({$this->getPrimaryColumn()}) LIKE ?", ["%{$search}%"])
+                            ->where($this->getPrimaryColumn(), $searchOperator, "%{$search}%")
                             ->whereDoesntHave($this->getInverseRelationship(), function ($query) {
                                 $query->where($this->owner->getQualifiedKeyName(), $this->owner->getKey());
                             })

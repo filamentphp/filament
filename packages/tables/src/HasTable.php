@@ -129,6 +129,9 @@ trait HasTable
                 ->filter(fn ($column) => $column->isSearchable())
                 ->each(function ($column, $index) use (&$query) {
                     $search = Str::lower($this->search);
+                    $searchOperator = [
+                        'pgsql' => 'ilike',
+                    ][$query->getConnection()->getDriverName()] ?? 'like';
 
                     $first = $index === 0;
 
@@ -137,10 +140,10 @@ trait HasTable
 
                         $query = $query->{$first ? 'whereHas' : 'orWhereHas'}(
                             $relationship,
-                            function ($query) use ($column, $search) {
+                            function ($query) use ($column, $search, $searchOperator) {
                                 $columnName = (string) Str::of($column->name)->afterLast('.');
 
-                                return $query->whereRaw("LOWER({$columnName}) LIKE ?", ["%{$search}%"]);
+                                return $query->where($columnName, $searchOperator, "%{$search}%");
                             },
                         );
 
@@ -148,7 +151,7 @@ trait HasTable
                     }
 
                     $query = $query->{$first ? 'where' : 'orWhere'}(
-                        fn ($query) => $query->whereRaw("LOWER({$column->name}) LIKE ?", ["%{$search}%"]),
+                        fn ($query) => $query->where($column->name, $searchOperator, "%{$search}%"),
                     );
                 });
         }

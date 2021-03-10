@@ -28,9 +28,12 @@ class BelongsToSelect extends Select
             }
 
             $search = Str::lower($search);
+            $searchOperator = [
+                'pgsql' => 'ilike',
+            ][$query->getConnection()->getDriverName()] ?? 'like';
 
             return $query
-                ->whereRaw("LOWER({$displayColumnName}) LIKE ?", ["%{$search}%"])
+                ->where($displayColumnName, $searchOperator, "%{$search}%")
                 ->pluck($displayColumnName, $relationship->getOwnerKeyName())
                 ->toArray();
         });
