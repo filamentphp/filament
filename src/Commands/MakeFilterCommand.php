@@ -11,7 +11,7 @@ class MakeFilterCommand extends Command
 
     protected $description = 'Make a Filament filter class.';
 
-    protected $signature = 'make:filament-filter {name}';
+    protected $signature = 'make:filament-filter {name} {--R|resource=}';
 
     public function handle()
     {
@@ -20,11 +20,12 @@ class MakeFilterCommand extends Command
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
-
         $filterClass = (string) Str::of($filter)->afterLast('\\');
         $filterNamespace = Str::of($filter)->contains('\\') ?
             (string) Str::of($filter)->beforeLast('\\') :
             '';
+
+        $resource = $this->option('resource');
 
         $path = app_path(
             (string) Str::of($filter)
@@ -37,11 +38,17 @@ class MakeFilterCommand extends Command
             $path,
         ])) return;
 
-        $this->copyStubToApp('Filter', $path, [
-            'class' => $filterClass,
-            'name' => $filter,
-            'namespace' => 'App\\Filament\\Filters' . ($filterNamespace !== '' ? "\\{$filterNamespace}" : ''),
-        ]);
+        if ($resource === null) {
+            $this->copyStubToApp('Filter', $path, [
+                'class' => $filterClass,
+                'namespace' => 'App\\Filament\\Filters',
+            ]);
+        } else {
+            $this->copyStubToApp('ResourceFilter', $path, [
+                'class' => $filterClass,
+                'namespace' => 'App\\Filament\\Filters',
+            ]);
+        }
 
         $this->info("Successfully created {$filter}!");
     }

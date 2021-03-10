@@ -2,7 +2,7 @@
 
 namespace {{ namespace }};
 
-use Filament\Tables\Filter;
+use Filament\Resources\Tables\Filter;
 
 class {{ class }} extends Filter
 {
