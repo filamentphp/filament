@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class Text extends Column
 {
@@ -12,6 +13,10 @@ class Text extends Column
     public $default;
 
     public $formatUsing;
+
+    public $trimLength = -1;
+
+    public $trimmable = false;
 
     public function currency($symbol = '$', $decimalSeparator = '.', $thousandsSeparator = ',')
     {
@@ -70,7 +75,10 @@ class Text extends Column
             $value = $callback($value);
         }
 
-        return $value;
+        if (! $this->trimmable) return $value;
+        if (! is_int($this->trimLength)) return $value;
+
+        return Str::of($value)->limit($this->trimLength);
     }
 
     public function options($options)
@@ -82,6 +90,14 @@ class Text extends Column
 
             return $value;
         };
+
+        return $this;
+    }
+
+    public function trim($trimLength = -1)
+    {
+        $this->trimLength = $trimLength;
+        $this->trimmable = true;
 
         return $this;
     }
