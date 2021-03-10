@@ -2,6 +2,7 @@
 
 namespace Filament\Forms;
 
+use Carbon\Carbon;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -9,8 +10,8 @@ use Filament\Forms\Components\Tab;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Carbon;
 
 trait HasForm
 {
@@ -63,14 +64,16 @@ trait HasForm
 
         if (! $path) return null;
 
-        if ($disk == 's3' && Storage::disk($disk)->getVisibility($path) == 'private') {
-            return Storage::disk('s3')->temporaryUrl(
+        $storageDisk = Storage::disk($disk);
+
+        if ($storageDisk->getDriver()->getAdapter() instanceof AwsS3Adapter && $storageDisk->getVisibility($path) == 'private') {
+            return $storageDisk->temporaryUrl(
                 $path,
                 Carbon::now()->addMinutes(5)
             );
         }
 
-        return Storage::disk($disk)->url($path);
+        return $storageDisk->url($path);
     }
 
     public function storeTemporaryUploadedFiles()
