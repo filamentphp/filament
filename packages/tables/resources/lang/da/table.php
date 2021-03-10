@@ -40,12 +40,6 @@ return [
         ],
     ],
 
-    'record' => [
-        'button' => [
-            'label' => 'Rediger',
-        ],
-    ],
-
     'search' => [
         'placeholder' => 'Søg',
     ],
