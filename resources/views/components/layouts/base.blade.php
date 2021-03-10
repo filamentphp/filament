@@ -38,7 +38,7 @@
     ]) }}"></script>
 
     @foreach (\Filament\Filament::getScripts() as $path)
-        <script src="{{ $script }}"></script>
+        <script src="{{ $path }}"></script>
     @endforeach
 
     @stack('filament-scripts')
