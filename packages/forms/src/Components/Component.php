@@ -140,7 +140,11 @@ class Component
 
     public function getId()
     {
-        return (string) Str::of($this->context)->replace('\\', '_')->lower()->append('_'.$this->id);
+        return (string) Str::of($this->context)
+            ->replace('\\', '-')
+            ->lower()
+            ->append('-')
+            ->append($this->id);
     }
 
     public function getSubform()
