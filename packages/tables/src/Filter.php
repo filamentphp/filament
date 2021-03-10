@@ -23,10 +23,20 @@ class Filter
 
     protected $pendingIncludedContextModifications = [];
 
-    public function __construct($name, $callback = null)
+    public function __construct($name = null, $callback = null)
     {
-        $this->name($name);
+        if ($name) {
+            $this->name($name);
+        }
+
         $this->callback($callback);
+
+        $this->setUp();
+    }
+
+    protected function setUp()
+    {
+        //
     }
 
     public static function make($name, $callback = null)
