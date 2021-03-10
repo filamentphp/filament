@@ -41,6 +41,13 @@ class Filter
         return $this;
     }
 
+    public function apply($query)
+    {
+        $callback = $this->callback;
+
+        return $callback($query);
+    }
+
     public function context($context)
     {
         $this->context = $context;
