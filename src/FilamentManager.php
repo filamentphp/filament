@@ -34,6 +34,13 @@ class FilamentManager
         return Auth::guard(config('filament.auth.guard', 'filament'));
     }
 
+    public function avatarProvider()
+    {
+        $provider = config('filament.auth.avatar_provider', GravatarProvider::class);
+
+        return new $provider;
+    }
+
     public function can($action, $target)
     {
         $user = $this->auth()->user();

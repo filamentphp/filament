@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static StatefulGuard auth()
+ * @method static \Filament\AvatarProviders\Contracts\AvatarProvider avatarProvider()
  * @method static bool can(string $action, object|string $target)
  * @method static array getAuthorizations()
  * @method static array getPages()

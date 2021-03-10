@@ -1,5 +1,7 @@
 <?php
 
+use Filament\GravatarProvider;
+
 return [
 
     /*
@@ -38,6 +40,7 @@ return [
 
     'auth' => [
         'guard' => env('FILAMENT_AUTH_GUARD', 'filament'),
+        'avatar_provider' => GravatarProvider::class,
     ],
 
     /*
