@@ -200,7 +200,7 @@ trait HasForm
                 if ($possibleTab instanceof Tab) {
                     $this->dispatchBrowserEvent(
                         'switch-tab',
-                        $possibleTab->parent->id . '.' . $possibleTab->id,
+                        $possibleTab->parent->getId() . '.' . $possibleTab->getId(),
                     );
 
                     break;
