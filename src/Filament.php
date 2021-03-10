@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerRole(string $role)
  * @method static void registerWidget(string $widget)
  * @method static Resource userResource()
+ * @method static void ignoreMigrations()
+ * @method static Boolean runsMigrations()
  *
  * @see \Filament\FilamentManager
  */

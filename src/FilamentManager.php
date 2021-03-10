@@ -15,6 +15,13 @@ class FilamentManager
 
     public $widgets = [];
 
+    /**
+     * Indicates if Filament migrations will be run.
+     *
+     * @var bool
+     */
+    public static $runsMigrations = true;
+
     public function auth()
     {
         return Auth::guard(config('filament.auth.guard', 'filament'));
@@ -63,5 +70,27 @@ class FilamentManager
     public function userResource()
     {
         return config('filament.user_resource', UserResource::class);
+    }
+
+    /**
+     * Configure Filament to not register its migrations.
+     *
+     * @return static
+     */
+    public static function ignoreMigrations()
+    {
+        static::$runsMigrations = false;
+
+        return new static;
+    }
+
+    /**
+     * Determine if Filament should run its migrations.
+     *
+     * @return bool
+     */
+    public static function runsMigrations()
+    {
+        return static::$runsMigrations;
     }
 }

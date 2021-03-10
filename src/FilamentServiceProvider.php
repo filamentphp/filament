@@ -108,7 +108,9 @@ class FilamentServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'filament');
 
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        if (Filament::runsMigrations() && $this->app->runningInConsole()) {
+            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        }
 
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'filament');
     }
