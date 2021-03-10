@@ -2,6 +2,7 @@
 
 namespace Filament\Pages;
 
+use Filament\Filament;
 use Filament\NavigationItem;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Str;
@@ -102,7 +103,7 @@ class Page extends Component
 
     public function isAuthorized()
     {
-        return true;
+        return Filament::can('view', static::class);
     }
 
     public function notify($message)
