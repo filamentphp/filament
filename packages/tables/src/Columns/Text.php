@@ -90,9 +90,7 @@ class Text extends Column
     public function limit($length = -1)
     {
         $this->formatUsing = function ($value) use ($length) {
-            $value = Str::of($value)->limit($length);
-
-            return $value;
+            return Str::limit($value, $length);
         };
 
         return $this;
