@@ -167,7 +167,7 @@ class FilamentManager
         $this->scripts[$name] = $script;
     }
 
-    public function registerStyle($name, $style)
+    public function registerStyle($name, $path)
     {
         $this->styles[$name] = $style;
     }
