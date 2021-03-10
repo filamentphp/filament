@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Carbon;
 
 trait HasForm
 {
@@ -61,6 +62,13 @@ trait HasForm
         $path = $this->getPropertyValue($name);
 
         if (! $path) return null;
+
+        if ($disk == 's3' && Storage::disk($disk)->getVisibility($path) == 'private') {
+            return Storage::disk('s3')->temporaryUrl(
+                $path,
+                Carbon::now()->addMinutes(5)
+            );
+        }
 
         return Storage::disk($disk)->url($path);
     }

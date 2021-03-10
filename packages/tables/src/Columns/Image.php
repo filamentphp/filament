@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Columns;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 class Image extends Column
@@ -62,6 +63,13 @@ class Image extends Column
 
         if (filter_var($path, FILTER_VALIDATE_URL) !== false) {
             return $path;
+        }
+
+        if ($this->disk == 's3' && Storage::disk($this->disk)->getVisibility($path) == 'private') {
+            return Storage::disk('s3')->temporaryUrl(
+                $path,
+                Carbon::now()->addMinutes(5)
+            );
         }
 
         return Storage::disk($this->disk)->url($path);
