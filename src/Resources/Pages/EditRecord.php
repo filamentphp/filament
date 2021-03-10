@@ -38,8 +38,15 @@ class EditRecord extends Page
         ];
     }
 
+    public function canDelete()
+    {
+        return Filament::can('delete', $this->record);
+    }
+
     public function delete()
     {
+        $this->authorize('delete');
+
         $this->callHook('beforeDelete');
 
         $this->record->delete();

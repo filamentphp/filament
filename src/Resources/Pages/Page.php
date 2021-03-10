@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Resources\Route;
+use Illuminate\Support\Str;
 
 class Page extends \Filament\Pages\Page
 {
@@ -26,6 +27,25 @@ class Page extends \Filament\Pages\Page
     public static function getQuery()
     {
         return static::getModel()::query();
+    }
+
+    public function can($action)
+    {
+        $method = (string) Str::of($action)->ucfirst()->prepend('can');
+
+        if (! method_exists($this, $method)) return true;
+
+        return $this->{$method}() ?? true;
+    }
+
+    public function cannot($action)
+    {
+        return ! $this->can($action);
+    }
+
+    protected function authorize($action)
+    {
+        abort_unless($this->can($action), 403);
     }
 
     protected function callHook($hook)

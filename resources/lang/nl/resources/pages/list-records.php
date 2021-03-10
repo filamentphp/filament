@@ -10,4 +10,16 @@ return [
 
     ],
 
+    'table' => [
+
+        'recordActions' => [
+
+            'edit' => [
+                'label' => 'Bewerk',
+            ],
+
+        ],
+
+    ],
+
 ];

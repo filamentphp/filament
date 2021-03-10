@@ -174,6 +174,8 @@ class Column
                 ->replace(['-', '_', '.'], ' ')
                 ->ucfirst(),
         );
+
+        return $this;
     }
 
     public function only($contexts, $callback = null)
@@ -253,7 +255,7 @@ class Column
     {
         if ($this->hidden) return;
 
-        $view = $this->view ?? 'tables::cells.'.Str::of(class_basename(static::class))->kebab();
+        $view = $this->view ?? 'tables::cells.' . Str::of(class_basename(static::class))->kebab();
 
         return view($view, array_merge($this->viewData, [
             'column' => $this,
