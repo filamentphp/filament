@@ -32,7 +32,7 @@
         @if ($label || $hint)
             <div class="flex items-center justify-between space-x-2">
                 <div class="flex space-x-2">
-                    {{ __($labelPrefix) }}
+                    {{ $labelPrefix }}
 
                     @if ($label)
                         <label for="{{ $for }}" class="text-sm leading-tight font-medium">
