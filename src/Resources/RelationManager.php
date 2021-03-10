@@ -166,6 +166,11 @@ class RelationManager extends Component
         return static::table(Table::make())
             ->filterable($this->filterable)
             ->pagination(false)
+            ->primaryRecordAction(function ($record) {
+                if (! Filament::can('update', $record)) return;
+
+                return 'openEdit';
+            })
             ->recordActions([
                 RecordActions\Link::make('edit')
                     ->label(static::$editRecordActionLabel)
