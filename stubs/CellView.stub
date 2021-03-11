@@ -1,0 +1,3 @@
+<div>
+    {{ $column->getValue($record) }}
+</div>
