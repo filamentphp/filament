@@ -60,7 +60,7 @@ class Page extends Component
         return static::$navigationSort;
     }
 
-    public static function getDisplayInMenu()
+    public static function shouldDisplayInMenu()
     {
         return static::$displayInMenu;
     }
