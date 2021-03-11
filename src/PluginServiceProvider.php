@@ -20,6 +20,8 @@ abstract class PluginServiceProvider extends ServiceProvider
 
     public function register()
     {
+        $this->registeringPlugin();
+
         $this->app->booting(function () {
             foreach ($this->pages() as $page) {
                 Filament::registerPage($page);
@@ -49,11 +51,23 @@ abstract class PluginServiceProvider extends ServiceProvider
                 Filament::provideToScript($this->scriptData());
             });
         });
+
+        $this->pluginRegistered();
     }
 
     protected function pages()
     {
         return $this->pages;
+    }
+
+    protected function pluginRegistered()
+    {
+        //
+    }
+
+    protected function registeringPlugin()
+    {
+        //
     }
 
     protected function resources()
