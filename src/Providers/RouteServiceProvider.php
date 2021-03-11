@@ -27,6 +27,8 @@ class RouteServiceProvider extends ServiceProvider
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
                 DispatchServingFilamentEvent::class,
+                
+                ...config('filament.middleware'),
             ])
             ->domain(config('filament.domain'))
             ->prefix(config('filament.path'))
