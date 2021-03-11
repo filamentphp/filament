@@ -166,7 +166,7 @@ class Table
 
     public function recordActions($actions)
     {
-        $this->recordActions = $actions;
+        $this->recordActions = array_merge($this->recordActions, $actions);
 
         return $this;
     }
