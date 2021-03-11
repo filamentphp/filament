@@ -18,7 +18,7 @@
                     }
 
                     this.$watch('rows', () => {
-                        console.log(this.rows)
+
                     })
                 },
 
@@ -27,7 +27,17 @@
                 },
 
                 deleteRow(index) {
+                    this.rows.splice(index, 1)
 
+                    if (this.rows.length <= 0) {
+                        this.addRow()
+                    }
+                },
+
+                shouldShowDeleteButton() {
+                    if (this.rows.length > 1) return true
+
+                    return this.canDeleteRows && this.rows.length > 0 && !!this.rows[0].key
                 }
             }
         }
@@ -69,7 +79,7 @@
                         </th>
 
                         @if ($formComponent->deleteButtonLabel)
-                            <th scope="col" x-show="rows.length > 1">
+                            <th scope="col" x-show="shouldShowDeleteButton()">
                                 <span class="sr-only">{{ __($formComponent->deleteButtonLabel) }}</span>
                             </th>
                         @endif
@@ -86,9 +96,14 @@
                             <td class="whitespace-nowrap">
                                 <input type="text" placeholder="Enter value..." class="px-6 py-4 border-0 w-full bg-transparent placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" x-model="rows[index].value">
                             </td>
-                            <td x-show="collection.length > 1" class="whitespace-nowrap border-l border-gray-300">
+                            <td x-show="shouldShowDeleteButton()" class="whitespace-nowrap border-l border-gray-300">
                                 <div class="flex items-center justify-center">
-                                    <button title="{{ __($formComponent->deleteButtonLabel) }}" class="text-danger-600 hover:text-danger-700">
+                                    <button
+                                        type="button"
+                                        @click="deleteRow(index)"
+                                        title="{{ __($formComponent->deleteButtonLabel) }}"
+                                        class="text-danger-600 hover:text-danger-700"
+                                    >
                                         <x-heroicon-o-trash class="w-4 h-4" />
                                     </button>
                                 </div>
