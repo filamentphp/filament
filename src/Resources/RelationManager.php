@@ -161,22 +161,32 @@ class RelationManager extends Component
         $this->selected = [];
     }
 
+    public function getPrimaryRecordAction($record)
+    {
+        if (! Filament::can('update', $record)) return;
+
+        return 'openEdit';
+    }
+
+    public function getRecordActions()
+    {
+        return [
+            RecordActions\Link::make('edit')
+                ->label(static::$editRecordActionLabel)
+                ->action('openEdit')
+                ->when(fn ($record) => Filament::can('update', $record)),
+        ];
+    }
+
     public function getTable()
     {
         return static::table(Table::make())
             ->filterable($this->filterable)
             ->pagination(false)
             ->primaryRecordAction(function ($record) {
-                if (! Filament::can('update', $record)) return;
-
-                return 'openEdit';
+                return $this->getPrimaryRecordAction($record);
             })
-            ->recordActions([
-                RecordActions\Link::make('edit')
-                    ->label(static::$editRecordActionLabel)
-                    ->action('openEdit')
-                    ->when(fn ($record) => Filament::can('update', $record)),
-            ])
+            ->recordActions($this->getRecordActions())
             ->searchable($this->searchable)
             ->sortable($this->sortable);
     }
