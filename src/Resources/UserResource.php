@@ -4,6 +4,7 @@ namespace Filament\Resources;
 
 use Filament\Filament;
 use Filament\Http\Livewire\EditAccount;
+use Filament\Models\User;
 use Filament\Resources\Forms\Components;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Tables\Columns;
@@ -104,7 +105,11 @@ class UserResource extends Resource
 
     public static function getModel()
     {
-        return Filament::auth()->getProvider()->getModel();
+        try {
+            return Filament::auth()->getProvider()->getModel();
+        } catch (\Exception $exception) {
+            return User::class;
+        }
     }
 
     public static function navigationItems()
