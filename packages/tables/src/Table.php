@@ -2,8 +2,6 @@
 
 namespace Filament\Tables;
 
-use Illuminate\Support\Arr;
-
 class Table
 {
     public $columns = [];
@@ -168,7 +166,7 @@ class Table
 
     public function recordActions($actions)
     {
-        $this->recordActions = Arr::collapse($this->recordActions, $actions);
+        $this->recordActions = array_merge($this->recordActions, $actions);
 
         return $this;
     }
