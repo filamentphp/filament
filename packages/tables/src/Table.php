@@ -146,7 +146,7 @@ class Table
     {
         $this->columns = collect($this->columns)
             ->map(function ($column) use ($action) {
-                if (! method_exists($column, 'action')) {
+                if (! $column->primary || ! method_exists($column, 'action')) {
                     return $column;
                 }
 
@@ -161,7 +161,7 @@ class Table
     {
         $this->columns = collect($this->columns)
             ->map(function ($column) use ($url) {
-                if (! method_exists($column, 'url')) {
+                if (! $column->primary || ! method_exists($column, 'url')) {
                     return $column;
                 }
 
