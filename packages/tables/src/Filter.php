@@ -23,13 +23,23 @@ class Filter
 
     protected $pendingIncludedContextModifications = [];
 
-    public function __construct($name, $callback = null)
+    public function __construct($name = null, $callback = null)
     {
-        $this->name($name);
+        if ($name) {
+            $this->name($name);
+        }
+
         $this->callback($callback);
+
+        $this->setUp();
     }
 
-    public static function make($name, $callback = null)
+    protected function setUp()
+    {
+        //
+    }
+
+    public static function make($name = null, $callback = null)
     {
         return new static($name, $callback);
     }
@@ -39,6 +49,13 @@ class Filter
         $this->callback = $callback;
 
         return $this;
+    }
+
+    public function apply($query)
+    {
+        $callback = $this->callback;
+
+        return $callback($query);
     }
 
     public function context($context)

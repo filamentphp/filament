@@ -118,9 +118,7 @@ trait HasTable
             collect($this->getTable()->filters)
                 ->filter(fn ($filter) => $filter->name === $this->filter)
                 ->each(function ($filter) use (&$query) {
-                    $callback = $filter->callback;
-
-                    $query = $callback($query);
+                    $query = $filter->apply($query);
                 });
         }
 

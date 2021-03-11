@@ -33,7 +33,7 @@ class MakeFieldCommand extends Command
 
         $path = app_path(
             (string) Str::of($field)
-                ->prepend($this->option('resource') ? 'Filament\\Resources\\Forms\\Components\\' : "Filament\\Forms\\Components\\")
+                ->prepend($this->option('resource') ? 'Filament\\Resources\\Forms\\Components\\' : 'Filament\\Forms\\Components\\')
                 ->replace('\\', '/')
                 ->append('.php'),
         );
