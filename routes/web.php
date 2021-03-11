@@ -23,7 +23,7 @@ Route::middleware([RedirectIfAuthenticated::class])->name('auth.')->group(functi
 Route::get('image/{path}', Controllers\ImageController::class)->where('path', '.*')->name('image');
 
 // Authenticated routes
-Route::middleware([Authenticate::class])->group(function () {
+Route::middleware(config('filament.middleware.auth'))->group(function () {
     foreach (Filament::getPages() as $page) {
         Route::get($page::route()->uri, $page)->name('pages.' . $page::route()->name);
     }

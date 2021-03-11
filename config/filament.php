@@ -1,5 +1,15 @@
 <?php
 
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\EncryptCookies;
+use Filament\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+
 return [
 
     /*
@@ -25,7 +35,7 @@ return [
     */
 
     'domain' => env('FILAMENT_DOMAIN', null),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Middleware
@@ -36,7 +46,21 @@ return [
     |
     */
 
-    'middleware' => [],
+    'middleware' => [
+        'base' => [
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            AuthenticateSession::class,
+            ShareErrorsFromSession::class,
+            VerifyCsrfToken::class,
+            SubstituteBindings::class,
+            DispatchServingFilamentEvent::class,
+        ],
+        'auth' => [
+            Authenticate::class,
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------
