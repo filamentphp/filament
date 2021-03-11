@@ -1,4 +1,6 @@
-import 'alpinejs'
+// import 'alpinejs'
+
+import './alpine.js'
 import 'focus-visible'
 import {createPopper} from '@popperjs/core/lib/popper-lite.js'
 import flip from '@popperjs/core/lib/modifiers/flip.js'
