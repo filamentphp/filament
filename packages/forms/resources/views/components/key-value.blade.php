@@ -4,40 +4,60 @@
             return {
                 canDeleteRows: config.canDeleteRows,
 
-                value: config.value,
+                name: config.name,
 
                 rows: [{ key: null, value: null }],
 
                 init: function () {
-                    if (this.value && this.value.length > 0) {
+                    const originalValue = this.$wire.get(this.name) || {}
+
+                    if (originalValue && Object.keys(originalValue).length > 0) {
                         this.rows = []
 
-                        Object.entries(this.value).forEach(([key, value]) => {
+                        Object.entries(originalValue).forEach(([key, value]) => {
                             this.rows.push({ key, value })
                         })
                     }
-
-                    this.$watch('rows', () => {
-
-                    })
                 },
 
-                addRow() {
+                addRow: function () {
                     this.rows.push({ key: '', value: '' })
                 },
 
-                deleteRow(index) {
+                updateKey: function (index, key) {
+                    this.rows[index].key = key
+
+                    this.updateLivewire(index)
+                },
+
+                updateValue: function (index, value) {
+                    this.rows[index].value = value
+
+                    this.updateLivewire(index)
+                },
+
+                deleteRow: function (index) {
                     this.rows.splice(index, 1)
 
                     if (this.rows.length <= 0) {
                         this.addRow()
                     }
+
+                    this.updateLivewire()
                 },
 
-                shouldShowDeleteButton() {
+                shouldShowDeleteButton: function () {
                     if (this.rows.length > 1) return true
 
                     return this.canDeleteRows && this.rows.length > 0 && !!this.rows[0].key
+                },
+
+                updateLivewire: function (index = null) {
+                    const rows = index !== null ? [].concat(this.rows[index]) : this.rows
+
+                    rows.forEach(row => {
+                        this.$wire.set(`${this.name}.${row.key}`, row.value)
+                    })
                 }
             }
         }
@@ -55,6 +75,7 @@
 >
     <div x-data="keyValue({
         canDeleteRows: {{ json_encode($formComponent->canDeleteRows) }},
+        name: {{ json_encode($formComponent->name) }},
         @if (Str::of($formComponent->nameAttribute)->startsWith('wire:model'))
             value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
         @endif
@@ -91,10 +112,22 @@
                             x-bind:class="{ 'bg-gray-50': index % 2 }"
                         >
                             <td class="whitespace-nowrap border-r border-gray-300">
-                                <input type="text" placeholder="Enter key..." class="px-6 py-4 border-0 w-full bg-transparent placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-1 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" x-model="rows[index].key">
+                                <input
+                                    type="text"
+                                    placeholder="Enter key..."
+                                    class="px-6 py-4 border-0 w-full bg-transparent placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-1 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                    x-bind:value="rows[index].key"
+                                    @input.debounce.500ms="updateKey(index, $event.target.value)"
+                                >
                             </td>
                             <td class="whitespace-nowrap">
-                                <input type="text" placeholder="Enter value..." class="px-6 py-4 border-0 w-full bg-transparent placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" x-model="rows[index].value">
+                                <input
+                                    type="text"
+                                    placeholder="Enter value..."
+                                    class="px-6 py-4 border-0 w-full bg-transparent placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                    x-bind:value="rows[index].value"
+                                    @input.debounce.500ms="updateValue(index, $event.target.value)"
+                                >
                             </td>
                             <td x-show="shouldShowDeleteButton()" class="whitespace-nowrap border-l border-gray-300">
                                 <div class="flex items-center justify-center">

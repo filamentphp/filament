@@ -18,6 +18,11 @@ class KeyValue extends Field
 
     public $valueLabel = 'forms::fields.keyValue.valueLabel';
 
+    protected function setUp()
+    {
+        $this->default([]);
+    }
+
     public function addButtonLabel($label)
     {
         $this->addButtonLabel = $label;
