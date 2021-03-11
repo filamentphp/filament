@@ -101,8 +101,6 @@
                     if(this.preloadOptions && !Object.keys(config.initialOptions).length) this.$wire.getSelectFieldOptionSearchResults(this.name, '').then((options) => {
                         this.options = options
                         config.initialOptions = options;
-                        this.focusedOptionIndex = 0
-                        this.loading = false
                     })
 
                     this.$watch('search', () => {
