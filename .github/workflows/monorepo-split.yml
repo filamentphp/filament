@@ -29,7 +29,7 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - id: previous-tag
-              uses: "WyriHaximus/github-action-get-previous-tag@master"
+              uses: "WyriHaximus/github-action-get-previous-tag@main"
             - name: Monorepo Split of ${{ matrix.package }}
               uses: symplify/github-action-monorepo-split@master
               env:
