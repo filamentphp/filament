@@ -26,8 +26,6 @@
 
                 value: config.value,
 
-                preloadOptions: config.preloadOptions,
-
                 clearValue: function () {
                     this.value = null
                     this.displayValue = null
@@ -97,13 +95,6 @@
 
                 init: function () {
                     if (this.autofocus) this.openListbox()
-
-                    if (this.preloadOptions && Object.keys(config.initialOptions).length === 0) {
-                        this.$wire.getSelectFieldOptionSearchResults(this.name, '').then(options => {
-                            this.options = options
-                            config.initialOptions = options;
-                        })
-                    }
 
                     this.$watch('search', () => {
                         if (! this.open || this.search === '' || this.search === null) {
@@ -208,7 +199,6 @@
             name: '{{ $formComponent->name }}',
             noSearchResultsMessage: '{{ __($formComponent->noSearchResultsMessage) }}',
             required: {{ $formComponent->required ? 'true' : 'false' }},
-            preloadOptions: {{ json_encode($formComponent->preloadOptions) }},
             @if (Str::of($formComponent->nameAttribute)->startsWith('wire:model'))
                 value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
             @endif

@@ -21,8 +21,6 @@ class Select extends Field
 
     public $options = [];
 
-    public $preloadOptions = false;
-
     protected function setUp()
     {
         $this->placeholder('forms::fields.select.placeholder');
@@ -85,13 +83,6 @@ class Select extends Field
     public function options($options)
     {
         $this->options = $options;
-
-        return $this;
-    }
-
-    public function preloadOptions()
-    {
-        $this->preloadOptions = true;
 
         return $this;
     }
