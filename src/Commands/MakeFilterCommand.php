@@ -25,11 +25,9 @@ class MakeFilterCommand extends Command
             (string) Str::of($filter)->beforeLast('\\') :
             '';
 
-        $resource = $this->option('resource');
-
         $path = app_path(
             (string) Str::of($filter)
-                ->prepend($resource === null ? 'Filament\\Tables\\Filters\\' : "Filament\\Resources\\Tables\\Filters\\")
+                ->prepend($this->option('resource') ? 'Filament\\Resources\\Tables\\Filters\\' : 'Filament\\Tables\\Filters\\')
                 ->replace('\\', '/')
                 ->append('.php'),
         );
@@ -38,7 +36,7 @@ class MakeFilterCommand extends Command
             $path,
         ])) return;
 
-        if ($resource === false) {
+        if (! $this->option('resource')) {
             $this->copyStubToApp('Filter', $path, [
                 'class' => $filterClass,
                 'namespace' => 'App\\Filament\\Tables\\Filters' . ($filterNamespace !== '' ? "\\{$filterNamespace}" : ''),
