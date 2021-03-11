@@ -34,6 +34,7 @@ class FilamentServiceProvider extends ServiceProvider
         $this->bootLoaders();
         $this->bootLivewireComponents();
         $this->bootPublishing();
+
         $this->configure();
     }
 
@@ -65,6 +66,7 @@ class FilamentServiceProvider extends ServiceProvider
             Commands\MakeWidgetCommand::class,
             Commands\MakeFieldCommand::class,
             Commands\MakeThemeCommand::class,
+            Commands\MakeFilterCommand::class,
         ]);
 
         $aliases = [];
@@ -195,9 +197,7 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function registerProviders()
     {
-        $this->app->booted(function () {
-            $this->app->register(RouteServiceProvider::class);
-        });
+        $this->app->register(RouteServiceProvider::class);
     }
 
     protected function mergeConfigFrom($path, $key)

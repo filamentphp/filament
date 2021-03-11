@@ -12,4 +12,17 @@ trait CanCallAction
 
         return $this;
     }
+
+    public function getAction($record)
+    {
+        if ($this->action === null) return null;
+
+        if (is_callable($this->action)) {
+            $callback = $this->action;
+
+            return $callback($record);
+        }
+
+        return $this->action;
+    }
 }

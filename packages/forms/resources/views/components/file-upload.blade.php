@@ -61,7 +61,7 @@
             FilePond.registerPlugin(FilePondPluginImageTransform)
 
             let config = {
-                acceptedFileTypes: @json($formComponent->acceptedFileTypes),
+                acceptedFileTypes: {{ json_encode($formComponent->acceptedFileTypes) }},
                 files: [],
                 {{ $formComponent->imageCropAspectRatio !== null ? "imageCropAspectRatio: '{$formComponent->imageCropAspectRatio}'," : null }}
                 {{ $formComponent->imagePreviewHeight !== null ? "imagePreviewHeight: {$formComponent->imagePreviewHeight}," : null }}

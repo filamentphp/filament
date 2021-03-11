@@ -80,6 +80,14 @@ class ListRecords extends Page
             ->context(static::class)
             ->filterable($this->filterable)
             ->pagination($this->pagination)
+            ->primaryRecordUrl(function ($record) {
+                if (! Filament::can('update', $record)) return;
+
+                return $this->getResource()::generateUrl(
+                    $this->recordRoute,
+                    ['record' => $record],
+                );
+            })
             ->recordActions([
                 RecordActions\Link::make('edit')
                     ->label(static::$editRecordActionLabel)
