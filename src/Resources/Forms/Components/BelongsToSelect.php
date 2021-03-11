@@ -6,7 +6,35 @@ use Illuminate\Support\Str;
 
 class BelongsToSelect extends Select
 {
+    public $getOptions;
+
     public $view = 'forms::components.select';
+
+    public function getOptionsUsing($callback)
+    {
+        $this->getOptions = $callback;
+
+        return $this;
+    }
+
+    public function preload()
+    {
+        if (! $this->getOptions) return;
+
+        if ($this->model) {
+            $getOptions = $this->getOptions;
+
+            $this->options = $getOptions();
+        } else {
+            $this->pendingModelModifications[] = function () {
+                $getOptions = $this->getOptions;
+
+                $this->options = $getOptions();
+            };
+        }
+
+        return $this;
+    }
 
     public function relationship($relationshipName, $displayColumnName, $callback = null)
     {
@@ -34,6 +62,20 @@ class BelongsToSelect extends Select
 
             return $query
                 ->where($displayColumnName, $searchOperator, "%{$search}%")
+                ->pluck($displayColumnName, $relationship->getOwnerKeyName())
+                ->toArray();
+        });
+
+        $this->getOptionsUsing(function () use ($callback, $displayColumnName, $relationshipName) {
+            $relationship = (new $this->model())->{$relationshipName}();
+
+            $query = $relationship->getRelated();
+
+            if ($callback) {
+                $query = $callback($query);
+            }
+
+            return $query
                 ->pluck($displayColumnName, $relationship->getOwnerKeyName())
                 ->toArray();
         });
