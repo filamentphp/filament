@@ -29,7 +29,7 @@ class MakeFilterCommand extends Command
 
         $path = app_path(
             (string) Str::of($filter)
-                ->prepend($resource === null ? 'Filament\\Filters\\' : "Filament\\Resources\\Filters\\")
+                ->prepend($resource === null ? 'Filament\\Tables\\Filters\\' : "Filament\\Resources\\Tables\\Filters\\")
                 ->replace('\\', '/')
                 ->append('.php'),
         );
@@ -41,12 +41,12 @@ class MakeFilterCommand extends Command
         if ($resource === false) {
             $this->copyStubToApp('Filter', $path, [
                 'class' => $filterClass,
-                'namespace' => 'App\\Filament\\Filters' . ($filterNamespace !== '' ? "\\{$filterNamespace}" : ''),
+                'namespace' => 'App\\Filament\\Tables\\Filters' . ($filterNamespace !== '' ? "\\{$filterNamespace}" : ''),
             ]);
         } else {
             $this->copyStubToApp('ResourceFilter', $path, [
                 'class' => $filterClass,
-                'namespace' => 'App\\Filament\\Resources\\Filters' . ($filterNamespace !== '' ? "\\{$filterNamespace}" : ''),
+                'namespace' => 'App\\Filament\\Resources\\Tables\\Filters' . ($filterNamespace !== '' ? "\\{$filterNamespace}" : ''),
             ]);
         }
 
