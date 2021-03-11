@@ -146,6 +146,10 @@ class Table
     {
         $this->columns = collect($this->columns)
             ->map(function ($column) use ($action) {
+                if (! method_exists($column, 'action')) {
+                    return $column;
+                }
+
                 return $column->action($action);
             })
             ->toArray();
@@ -157,6 +161,10 @@ class Table
     {
         $this->columns = collect($this->columns)
             ->map(function ($column) use ($url) {
+                if (! method_exists($column, 'url')) {
+                    return $column;
+                }
+
                 return $column->url($url);
             })
             ->toArray();
