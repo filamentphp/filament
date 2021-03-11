@@ -8,6 +8,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Http\Middleware\RedirectIfAuthenticated;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 return [
@@ -47,6 +48,9 @@ return [
     */
 
     'middleware' => [
+        'auth' => [
+            Authenticate::class,
+        ],
         'base' => [
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
@@ -57,9 +61,9 @@ return [
             SubstituteBindings::class,
             DispatchServingFilamentEvent::class,
         ],
-        'auth' => [
-            Authenticate::class,
-        ],
+        'guest' => [
+            RedirectIfAuthenticated::class,
+        ]
     ],
 
     /*

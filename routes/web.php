@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('assets/{path}', Controllers\AssetController::class)->where('path', '.*')->name('asset');
 
 // Authentication
-Route::middleware([RedirectIfAuthenticated::class])->name('auth.')->group(function () {
+Route::middleware(config('filament.middleware.guest'))->name('auth.')->group(function () {
     Route::get('login', Livewire\Auth\Login::class)->name('login');
     Route::get('forgot-password', Livewire\Auth\RequestPassword::class)->name('password.request');
     Route::get('reset-password/{token}', Livewire\Auth\ResetPassword::class)->middleware([ValidateSignature::class])->name('password.reset');
