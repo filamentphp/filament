@@ -91,7 +91,7 @@ class Page extends Component
 
     public static function navigationItems()
     {
-            return static::getDisplayInMenu() === true ? [
+        return static::shouldDisplayInMenu() ? [
             NavigationItem::make(Str::title(static::getNavigationLabel()), static::generateUrl())
                 ->activeRule(
                     (string) Str::of(parse_url(static::generateUrl(), PHP_URL_PATH))
