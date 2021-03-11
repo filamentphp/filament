@@ -22,6 +22,8 @@ class Page extends Component
 
     public static $view;
 
+    public static $displayInMenu = true;
+
     public function __invoke(Container $container, \Illuminate\Routing\Route $route)
     {
         abort_unless($this->isAuthorized(), 403);
@@ -58,6 +60,11 @@ class Page extends Component
         return static::$navigationSort;
     }
 
+    public static function getDisplayInMenu()
+    {
+        return static::$displayInMenu;
+    }
+
     public static function getSlug()
     {
         if (static::$slug) return static::$slug;
@@ -84,7 +91,7 @@ class Page extends Component
 
     public static function navigationItems()
     {
-        return [
+            return static::getDisplayInMenu() === true ? [
             NavigationItem::make(Str::title(static::getNavigationLabel()), static::generateUrl())
                 ->activeRule(
                     (string) Str::of(parse_url(static::generateUrl(), PHP_URL_PATH))
@@ -93,7 +100,7 @@ class Page extends Component
                 )
                 ->icon(static::getIcon())
                 ->sort(static::getNavigationSort()),
-        ];
+        ] : [];
     }
 
     public static function route()
