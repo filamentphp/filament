@@ -1,5 +1,16 @@
 <?php
 
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\EncryptCookies;
+use Filament\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Http\Middleware\RedirectIfAuthenticated;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+
 return [
 
     /*
@@ -139,6 +150,35 @@ return [
     */
 
     'avatar_provider' => \Filament\AvatarProviders\GravatarProvider::class,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Middleware
+    |--------------------------------------------------------------------------
+    |
+    | You may customise the middleware stack that Filament uses to handle
+    | requests.
+    |
+    */
+
+    'middleware' => [
+        'auth' => [
+            Authenticate::class,
+        ],
+        'base' => [
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            AuthenticateSession::class,
+            ShareErrorsFromSession::class,
+            VerifyCsrfToken::class,
+            SubstituteBindings::class,
+            DispatchServingFilamentEvent::class,
+        ],
+        'guest' => [
+            RedirectIfAuthenticated::class,
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------
