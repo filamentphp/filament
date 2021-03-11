@@ -100,6 +100,7 @@
 
                     if(this.preloadOptions) this.$wire.getSelectFieldOptionSearchResults(this.name, '').then((options) => {
                         this.options = options
+                        config.initialOptions = options;
                         this.focusedOptionIndex = 0
                         this.loading = false
                     })

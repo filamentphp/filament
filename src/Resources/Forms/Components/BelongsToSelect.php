@@ -8,15 +8,6 @@ class BelongsToSelect extends Select
 {
     public $view = 'forms::components.select';
 
-    public $preloadOptions = false;
-
-    public function preloadOptions()
-    {
-        $this->preloadOptions = true;
-
-        return $this;
-    }
-
     public function relationship($relationshipName, $displayColumnName, $callback = null)
     {
         $this->getDisplayValueUsing(function ($value) use ($displayColumnName, $relationshipName) {
