@@ -2,8 +2,8 @@
 
 namespace {{ namespace }};
 
-use Filament\Forms\Components\Field;
 use Filament\Resources\Forms\Components\Concerns;
+use Filament\Resources\Forms\Components\Field;
 
 class {{ class }} extends Field
 {

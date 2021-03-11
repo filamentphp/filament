@@ -1,0 +1,10 @@
+<?php
+
+namespace {{ namespace }};
+
+use Filament\Resources\Forms\Components\Component;
+
+class {{ class }} extends Component
+{
+    public $view = '{{ view }}';
+}
