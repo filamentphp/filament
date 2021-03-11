@@ -39,35 +39,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Middleware
-    |--------------------------------------------------------------------------
-    |
-    | You may add your own middleware stack which Filament will execute on its
-    | requests.
-    |
-    */
-
-    'middleware' => [
-        'auth' => [
-            Authenticate::class,
-        ],
-        'base' => [
-            EncryptCookies::class,
-            AddQueuedCookiesToResponse::class,
-            StartSession::class,
-            AuthenticateSession::class,
-            ShareErrorsFromSession::class,
-            VerifyCsrfToken::class,
-            SubstituteBindings::class,
-            DispatchServingFilamentEvent::class,
-        ],
-        'guest' => [
-            RedirectIfAuthenticated::class,
-        ]
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Auth
     |--------------------------------------------------------------------------
     |
@@ -179,6 +150,35 @@ return [
     */
 
     'avatar_provider' => \Filament\AvatarProviders\GravatarProvider::class,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Middleware
+    |--------------------------------------------------------------------------
+    |
+    | You may customise the middleware stack that Filament uses to handle
+    | requests.
+    |
+    */
+
+    'middleware' => [
+        'auth' => [
+            Authenticate::class,
+        ],
+        'base' => [
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            AuthenticateSession::class,
+            ShareErrorsFromSession::class,
+            VerifyCsrfToken::class,
+            SubstituteBindings::class,
+            DispatchServingFilamentEvent::class,
+        ],
+        'guest' => [
+            RedirectIfAuthenticated::class,
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------
