@@ -1,15 +1,15 @@
 <x-forms::field-group
-    :column-span="$formComponent->columnSpan"
-    :error-key="$formComponent->name"
+    :column-span="$formComponent->getColumnSpan()"
+    :error-key="$formComponent->getName()"
     :for="$formComponent->getId()"
-    :help-message="$formComponent->helpMessage"
-    :hint="$formComponent->hint"
-    :label="$formComponent->label"
-    :required="$formComponent->required"
+    :help-message="$formComponent->getHelpMessage()"
+    :hint="$formComponent->getHint()"
+    :label="$formComponent->getLabel()"
+    :required="$formComponent->isRequired()"
 >
     <div
         x-data="{
-            value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
+            value: @entangle($formComponent->getName()){{ Str::of($formComponent->getBindingAttribute())->after('wire:model') }},
         }"
         id="{{ $formComponent->getId() }}"
     >

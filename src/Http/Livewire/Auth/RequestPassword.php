@@ -20,6 +20,7 @@ class RequestPassword extends Component
     public function getForm()
     {
         return Form::make()
+            ->context(static::class)
             ->schema([
                 Components\TextInput::make('email')
                     ->label('filament::auth/request-password.form.email.label')
@@ -29,8 +30,7 @@ class RequestPassword extends Component
                     ->autocomplete('email')
                     ->required()
                     ->email(),
-            ])
-            ->context(static::class);
+            ]);
     }
 
     public function submit()

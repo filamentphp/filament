@@ -7,11 +7,11 @@ class MultiSelect extends Field
     use Concerns\CanBeAutofocused;
     use Concerns\HasPlaceholder;
 
-    public $emptyOptionsMessage = 'forms::fields.multiSelect.emptyOptionsMessage';
+    protected $emptyOptionsMessage = 'forms::fields.multiSelect.emptyOptionsMessage';
 
-    public $noSearchResultsMessage = 'forms::fields.multiSelect.noSearchResultsMessage';
+    protected $noSearchResultsMessage = 'forms::fields.multiSelect.noSearchResultsMessage';
 
-    public $options = [];
+    protected $options = [];
 
     protected function setUp()
     {
@@ -20,21 +20,42 @@ class MultiSelect extends Field
 
     public function emptyOptionsMessage($message)
     {
-        $this->emptyOptionsMessage = $message;
+        $this->configure(function () use ($message) {
+            $this->emptyOptionsMessage = $message;
+        });
 
         return $this;
     }
 
+    public function getEmptyOptionsMessage()
+    {
+        return $this->emptyOptionsMessage;
+    }
+
+    public function getNoSearchResultsMessage()
+    {
+        return $this->noSearchResultsMessage;
+    }
+
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
     public function noSearchResultsMessage($message)
     {
-        $this->noSearchResultsMessage = $message;
+        $this->configure(function () use ($message) {
+            $this->noSearchResultsMessage = $message;
+        });
 
         return $this;
     }
 
     public function options($options)
     {
-        $this->options = $options;
+        $this->configure(function () use ($options) {
+            $this->options = $options;
+        });
 
         return $this;
     }

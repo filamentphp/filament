@@ -24,6 +24,7 @@ class Login extends Component
     public function getForm()
     {
         return Form::make()
+            ->context(static::class)
             ->schema([
                 Components\TextInput::make('email')
                     ->label('filament::auth/login.form.email.label')
@@ -39,8 +40,7 @@ class Login extends Component
                     ->required(),
                 Components\Checkbox::make('remember')
                     ->label('filament::auth/login.form.remember.label'),
-            ])
-            ->context(static::class);
+            ]);
     }
 
     public function submit()

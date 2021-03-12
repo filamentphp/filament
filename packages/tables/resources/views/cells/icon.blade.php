@@ -1,7 +1,7 @@
 @php
     $iconToShow = null;
 
-    foreach ($column->options as $icon => $callback) {
+    foreach ($column->getOptions() as $icon => $callback) {
         if (! $callback($column->getValue($record))) {
             continue;
         }
@@ -23,7 +23,7 @@
     @elseif ($column->getUrl($record) !== null)
         <a
             href="{{ $column->getUrl($record) }}"
-            @if ($column->shouldOpenUrlInNewTab)
+            @if ($column->shouldOpenUrlInNewTab())
                 target="_blank"
                 rel="noopener noreferrer"
             @endif

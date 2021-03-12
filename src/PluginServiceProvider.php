@@ -3,6 +3,7 @@
 namespace Filament;
 
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 
 abstract class PluginServiceProvider extends ServiceProvider
 {
@@ -50,6 +51,22 @@ abstract class PluginServiceProvider extends ServiceProvider
 
                 Filament::provideToScript($this->scriptData());
             });
+        });
+
+        $this->app->booted(function () {
+            foreach ($this->pages() as $page) {
+                Livewire::component($page::getName(), $page);
+            }
+
+            foreach ($this->resources() as $resource) {
+                foreach ($resource::relations() as $relation) {
+                    Livewire::component($relation::getName(), $relation);
+                }
+
+                foreach ($resource::routes() as $route) {
+                    Livewire::component($route->page::getName(), $route->page);
+                }
+            }
         });
 
         $this->pluginRegistered();

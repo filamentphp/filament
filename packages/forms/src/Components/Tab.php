@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 
 class Tab extends Component
 {
-    public $columns = 1;
+    protected $columns = 1;
 
     public static function make($label, $schema = [])
     {
@@ -18,9 +18,16 @@ class Tab extends Component
 
     public function columns($columns)
     {
-        $this->columns = $columns;
+        $this->configure(function () use ($columns) {
+            $this->columns = $columns;
+        });
 
         return $this;
+    }
+
+    public function getColumns()
+    {
+        return $this->columns;
     }
 
     public function getSubform()

@@ -23,14 +23,14 @@
                     <th class="px-6 py-3 text-left text-gray-600" scope="col">
                         @if ($table->isSortable() && $column->isSortable())
                             <button
-                                wire:click="sortBy('{{ $column->name }}')"
+                                wire:click="sortBy('{{ $column->getName() }}')"
                                 type="button"
                                 class="flex items-center space-x-1 text-xs font-medium tracking-wider text-left uppercase group focus:outline-none focus:underline"
                             >
-                                <span>{{ __($column->label) }}</span>
+                                <span>{{ __($column->getLabel()) }}</span>
 
                                 <span class="relative flex items-center">
-                                    @if ($sortColumn === $column->name)
+                                    @if ($sortColumn === $column->getName())
                                         <span>
                                             @if ($sortDirection === 'asc')
                                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -44,7 +44,7 @@
                                 </span>
                             </button>
                         @else
-                            <span class="text-xs font-medium tracking-wider uppercase">{{ __($column->label) }}</span>
+                            <span class="text-xs font-medium tracking-wider uppercase">{{ __($column->getLabel()) }}</span>
                         @endif
                     </th>
                 @endforeach
@@ -75,7 +75,7 @@
                     @endforeach
 
                     <td class="px-6 py-4 text-right whitespace-nowrap">
-                        @foreach ($table->recordActions as $recordAction)
+                        @foreach ($table->getRecordActions() as $recordAction)
                             {{ $recordAction->render($record) }}
                         @endforeach
                     </td>

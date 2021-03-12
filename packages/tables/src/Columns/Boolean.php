@@ -4,32 +4,46 @@ namespace Filament\Tables\Columns;
 
 class Boolean extends Icon
 {
-    public $falseIcon = 'heroicon-o-x-circle';
+    protected $falseIcon = 'heroicon-o-x-circle';
 
-    public $trueIcon = 'heroicon-s-check-circle';
+    protected $trueIcon = 'heroicon-s-check-circle';
 
     protected function setUp()
     {
         $this->options([
-            $this->falseIcon => fn ($value) => ! $value,
-            $this->trueIcon => fn ($value) => $value,
+            $this->getFalseIcon() => fn ($value) => ! $value,
+            $this->getTrueIcon() => fn ($value) => $value,
         ]);
     }
 
     public function falseIcon($icon)
     {
-        $this->falseIcon = $icon;
+        $this->configure(function () use ($icon) {
+            $this->falseIcon = $icon;
 
-        $this->setUp();
+            $this->setUp();
+        });
 
         return $this;
     }
 
+    public function getFalseIcon()
+    {
+        return $this->falseIcon;
+    }
+
+    public function getTrueIcon()
+    {
+        return $this->trueIcon;
+    }
+
     public function trueIcon($icon)
     {
-        $this->trueIcon = $icon;
+        $this->configure(function () use ($icon) {
+            $this->trueIcon = $icon;
 
-        $this->setUp();
+            $this->setUp();
+        });
 
         return $this;
     }

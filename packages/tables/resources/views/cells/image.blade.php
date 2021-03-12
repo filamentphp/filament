@@ -5,7 +5,7 @@
     >
         <img
             src="{{ $column->getPath($record) }}"
-            class="{{ $column->rounded ? 'rounded-full' : null }}"
+            class="{{ $column->isRounded() ? 'rounded-full' : null }}"
             style="
                 {!! $column->getHeight() !== null ? "height: {$column->getHeight()};" : null !!}
                 {!! $column->getWidth() !== null ? "width: {$column->getWidth()};" : null !!}
@@ -15,14 +15,14 @@
 @elseif ($column->getUrl($record) !== null)
     <a
         href="{{ $column->getUrl($record) }}"
-        @if ($column->shouldOpenUrlInNewTab)
+        @if ($column->shouldOpenUrlInNewTab())
             target="_blank"
             rel="noopener noreferrer"
         @endif
     >
         <img
             src="{{ $column->getPath($record) }}"
-            class="{{ $column->rounded ? 'rounded-full' : null }}"
+            class="{{ $column->isRounded() ? 'rounded-full' : null }}"
             style="
                 {!! $column->getHeight() !== null ? "height: {$column->getHeight()};" : null !!}
                 {!! $column->getWidth() !== null ? "width: {$column->getWidth()};" : null !!}
@@ -32,7 +32,7 @@
 @else
     <img
         src="{{ $column->getPath($record) }}"
-        class="{{ $column->rounded ? 'rounded-full' : null }}"
+        class="{{ $column->isRounded() ? 'rounded-full' : null }}"
         style="
             {!! $column->getHeight() !== null ? "height: {$column->getHeight()};" : null !!}
             {!! $column->getWidth() !== null ? "width: {$column->getWidth()};" : null !!}

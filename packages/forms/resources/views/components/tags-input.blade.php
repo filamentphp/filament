@@ -60,39 +60,39 @@
 @endpushonce
 
 <x-forms::field-group
-    :column-span="$formComponent->columnSpan"
-    :error-key="$formComponent->name"
+    :column-span="$formComponent->getColumnSpan()"
+    :error-key="$formComponent->getName()"
     :for="$formComponent->getId()"
-    :help-message="$formComponent->helpMessage"
-    :hint="$formComponent->hint"
-    :label="$formComponent->label"
-    :required="$formComponent->required"
+    :help-message="$formComponent->getHelpMessage()"
+    :hint="$formComponent->getHint()"
+    :label="$formComponent->getLabel()"
+    :required="$formComponent->isRequired()"
 >
     <div
         x-data="tagsInput({
-            separator: '{{ $formComponent->separator }}',
-            @if (Str::of($formComponent->nameAttribute)->startsWith('wire:model'))
-                value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
+            separator: '{{ $formComponent->getSeparator() }}',
+            @if (Str::of($formComponent->getBindingAttribute())->startsWith('wire:model'))
+                value: @entangle($formComponent->getName()){{ Str::of($formComponent->getBindingAttribute())->after('wire:model') }},
             @endif
         })"
         x-init="init()"
         {!! $formComponent->getId() ? "id=\"{$formComponent->getId()}\"" : null !!}
-        {!! Filament\format_attributes($formComponent->extraAttributes) !!}
+        {!! Filament\format_attributes($formComponent->getExtraAttributes()) !!}
     >
-        @unless (Str::of($formComponent->nameAttribute)->startsWith(['wire:model', 'x-model']))
+        @unless (Str::of($formComponent->getBindingAttribute())->startsWith(['wire:model', 'x-model']))
             <input
                 x-model="value"
-                {!! $formComponent->name ? "{$formComponent->nameAttribute}=\"{$formComponent->name}\"" : null !!}
+                {!! $formComponent->getName() ? "{$formComponent->getBindingAttribute()}=\"{$formComponent->getName()}\"" : null !!}
                 type="hidden"
             />
         @endif
 
-        <div x-show="tags.length || {{ $formComponent->disabled ? 'false' : 'true' }}" class="rounded shadow-sm border overflow-hidden {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}">
-            @unless ($formComponent->disabled)
+        <div x-show="tags.length || {{ $formComponent->isDisabled() ? 'false' : 'true' }}" class="rounded shadow-sm border overflow-hidden {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}">
+            @unless ($formComponent->isDisabled())
                 <input
                     autocomplete="off"
-                    {!! $formComponent->autofocus ? 'autofocus' : null !!}
-                    {!! $formComponent->placeholder ? 'placeholder="' . __($formComponent->placeholder) . '"' : null !!}
+                    {!! $formComponent->isAutofocused() ? 'autofocus' : null !!}
+                    {!! $formComponent->getPlaceholder() ? 'placeholder="' . __($formComponent->getPlaceholder()) . '"' : null !!}
                     type="text"
                     x-on:keydown.enter.stop.prevent="createTag()"
                     x-model="newTag"
@@ -103,19 +103,19 @@
 
             <div
                 x-show="tags.length"
-                class="bg-white space-x-1 relative w-full pl-3 pr-10 py-2 text-left {{ $formComponent->disabled ? 'text-gray-500' : 'border-t' }} {{ $errors->has($formComponent->name) ? 'border-danger-600' : 'border-gray-300' }}"
+                class="bg-white space-x-1 relative w-full pl-3 pr-10 py-2 text-left {{ $formComponent->isDisabled() ? 'text-gray-500' : 'border-t' }} {{ $errors->has($formComponent->getName()) ? 'border-danger-600' : 'border-gray-300' }}"
             >
                 <template class="inline" x-for="tag in tags" x-bind:key="tag">
                     <button
-                        @unless($formComponent->disabled)
+                        @unless($formComponent->isDisabled())
                             x-on:click="deleteTag(tag)"
                         @endunless
                         type="button"
-                        class="my-1 truncate max-w-full inline-flex space-x-2 items-center font-mono text-xs py-1 px-2 border border-gray-300 bg-gray-100 text-gray-800 rounded shadow-sm inline-block relative @unless($formComponent->disabled) cursor-pointer transition duration-200 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 hover:bg-gray-200 transition-colors duration-200 @else cursor-default @endunless"
+                        class="my-1 truncate max-w-full inline-flex space-x-2 items-center font-mono text-xs py-1 px-2 border border-gray-300 bg-gray-100 text-gray-800 rounded shadow-sm inline-block relative @unless($formComponent->isDisabled()) cursor-pointer transition duration-200 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 hover:bg-gray-200 transition-colors duration-200 @else cursor-default @endunless"
                     >
                         <span x-text="tag"></span>
 
-                        @unless($formComponent->disabled)
+                        @unless($formComponent->isDisabled())
                             <x-heroicon-s-x class="w-3 h-3 text-gray-500" />
                         @endunless
                     </button>

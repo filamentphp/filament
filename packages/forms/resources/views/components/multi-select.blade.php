@@ -183,24 +183,24 @@
 @endpushonce
 
 <x-forms::field-group
-    :column-span="$formComponent->columnSpan"
-    :error-key="$formComponent->name"
+    :column-span="$formComponent->getColumnSpan()"
+    :error-key="$formComponent->getName()"
     :for="$formComponent->getId()"
-    :help-message="$formComponent->helpMessage"
-    :hint="$formComponent->hint"
-    :label="$formComponent->label"
-    :required="$formComponent->required"
+    :help-message="$formComponent->getHelpMessage()"
+    :hint="$formComponent->getHint()"
+    :label="$formComponent->getLabel()"
+    :required="$formComponent->isRequired()"
 >
     <div
         x-data="multiSelect({
-            autofocus: {{ $formComponent->autofocus ? 'true' : 'false' }},
-            emptyOptionsMessage: '{{ __($formComponent->emptyOptionsMessage) }}',
-            initialOptions: {{ json_encode($formComponent->options) }},
-            name: '{{ $formComponent->name }}',
-            noSearchResultsMessage: '{{ __($formComponent->noSearchResultsMessage) }}',
-            required: {{ $formComponent->required ? 'true' : 'false' }},
-            @if (Str::of($formComponent->nameAttribute)->startsWith('wire:model'))
-                value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
+            autofocus: {{ $formComponent->isAutofocused() ? 'true' : 'false' }},
+            emptyOptionsMessage: '{{ __($formComponent->getEmptyOptionsMessage()) }}',
+            initialOptions: {{ json_encode($formComponent->getOptions()) }},
+            name: '{{ $formComponent->getName() }}',
+            noSearchResultsMessage: '{{ __($formComponent->getNoSearchResultsMessage()) }}',
+            required: {{ $formComponent->isRequired() ? 'true' : 'false' }},
+            @if (Str::of($formComponent->getBindingAttribute())->startsWith('wire:model'))
+                value: @entangle($formComponent->getName()){{ Str::of($formComponent->getBindingAttribute())->after('wire:model') }},
             @endif
         })"
         x-init="init()"
@@ -208,17 +208,17 @@
         x-on:keydown.escape.stop="closeListbox()"
         {!! $formComponent->getId() ? "id=\"{$formComponent->getId()}\"" : null !!}
         class="relative"
-        {!! Filament\format_attributes($formComponent->extraAttributes) !!}
+        {!! Filament\format_attributes($formComponent->getExtraAttributes()) !!}
     >
-        @unless (Str::of($formComponent->nameAttribute)->startsWith(['wire:model', 'x-model']))
+        @unless (Str::of($formComponent->getBindingAttribute())->startsWith(['wire:model', 'x-model']))
             <input
                 x-model="value"
-                {!! $formComponent->name ? "{$formComponent->nameAttribute}=\"{$formComponent->name}\"" : null !!}
+                {!! $formComponent->getName() ? "{$formComponent->getBindingAttribute()}=\"{$formComponent->getName()}\"" : null !!}
                 type="hidden"
             />
         @endif
 
-        @unless($formComponent->disabled)
+        @unless($formComponent->isDisabled())
             <div
                 x-ref="button"
                 x-on:click="toggleListboxVisibility()"
@@ -227,13 +227,13 @@
                 x-bind:aria-expanded="open"
                 aria-haspopup="listbox"
                 tabindex="1"
-                class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $formComponent->disabled ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+                class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $formComponent->isDisabled() ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
             >
                 <span
                     x-show="! open"
                     class="block truncate text-gray-400"
                 >
-                    {{ __($formComponent->placeholder) }}
+                    {{ __($formComponent->getPlaceholder()) }}
                 </span>
 
                 <input
@@ -259,7 +259,7 @@
                 x-transition:leave-start="opacity-100"
                 x-transition:leave-end="opacity-0"
                 role="listbox"
-                x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $formComponent->name }}' + 'Option' + focusedOptionIndex : null"
+                x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $formComponent->getName() }}' + 'Option' + focusedOptionIndex : null"
                 tabindex="-1"
                 x-cloak
                 class="absolute z-10 w-full my-1 bg-white rounded shadow-sm border border-gray-300"
@@ -270,7 +270,7 @@
                 >
                     <template x-for="(key, index) in Object.keys(options)" :key="index">
                         <li
-                            x-bind:id="'{{ $formComponent->name }}' + 'Option' + focusedOptionIndex"
+                            x-bind:id="'{{ $formComponent->getName() }}' + 'Option' + focusedOptionIndex"
                             x-on:click="selectOption(index)"
                             x-on:mouseenter="focusedOptionIndex = index"
                             x-on:mouseleave="focusedOptionIndex = null"
@@ -305,15 +305,15 @@
         <div>
             <template x-for="key in value">
                 <button
-                    @unless($formComponent->disabled)
+                    @unless($formComponent->isDisabled())
                         x-on:click="unselectOption(key)"
                     @endunless
                     type="button"
-                    class="my-1 w-full flex justify-between space-x-2 items-center font-mono text-xs py-2 px-3 border border-gray-300 bg-gray-100 text-gray-800 rounded shadow-sm inline-block relative @unless($formComponent->disabled) cursor-pointer transition duration-200 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 hover:bg-gray-200 transition-colors duration-200 @else cursor-default @endunless"
+                    class="my-1 w-full flex justify-between space-x-2 items-center font-mono text-xs py-2 px-3 border border-gray-300 bg-gray-100 text-gray-800 rounded shadow-sm inline-block relative @unless($formComponent->isDisabled()) cursor-pointer transition duration-200 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 hover:bg-gray-200 transition-colors duration-200 @else cursor-default @endunless"
                 >
                     <span x-text="initialOptions[key] ?? key"></span>
 
-                    @unless($formComponent->disabled)
+                    @unless($formComponent->isDisabled())
                         <x-heroicon-s-x class="h-3 w-3 text-gray-500" />
                     @endunless
                 </button>

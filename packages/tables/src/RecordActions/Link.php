@@ -9,7 +9,7 @@ class Link extends Action
     use Concerns\CanCallAction;
     use Concerns\CanOpenUrl;
 
-    public $label;
+    protected $label;
 
     public function label($label)
     {

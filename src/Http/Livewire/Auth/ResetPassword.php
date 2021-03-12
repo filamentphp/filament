@@ -28,6 +28,7 @@ class ResetPassword extends Component
     public function getForm()
     {
         return Form::make()
+            ->context(static::class)
             ->schema([
                 Components\TextInput::make('email')
                     ->label('filament::auth/reset-password.form.email.label')
@@ -48,8 +49,7 @@ class ResetPassword extends Component
                     ->autocomplete('new-password')
                     ->required()
                     ->password(),
-            ])
-            ->context(static::class);
+            ]);
     }
 
     public function mount(Request $request, $token)

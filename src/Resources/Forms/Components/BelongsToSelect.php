@@ -19,19 +19,11 @@ class BelongsToSelect extends Select
 
     public function preload()
     {
-        if (! $this->getOptions) return;
+        $options = $this->getOptions();
 
-        if ($this->model) {
-            $getOptions = $this->getOptions;
+        if (! $options || ! $this->getModel()) return;
 
-            $this->options = $getOptions();
-        } else {
-            $this->pendingModelModifications[] = function () {
-                $getOptions = $this->getOptions;
-
-                $this->options = $getOptions();
-            };
-        }
+        $this->options = $options;
 
         return $this;
     }
@@ -39,7 +31,9 @@ class BelongsToSelect extends Select
     public function relationship($relationshipName, $displayColumnName, $callback = null)
     {
         $this->getDisplayValueUsing(function ($value) use ($displayColumnName, $relationshipName) {
-            $relationship = (new $this->model())->{$relationshipName}();
+            $model = $this->getModel();
+
+            $relationship = (new $model())->{$relationshipName}();
 
             $record = $relationship->getRelated()->where($relationship->getOwnerKeyName(), $value)->first();
 
@@ -47,7 +41,9 @@ class BelongsToSelect extends Select
         });
 
         $this->getOptionSearchResultsUsing(function ($search) use ($callback, $displayColumnName, $relationshipName) {
-            $relationship = (new $this->model())->{$relationshipName}();
+            $model = $this->getModel();
+
+            $relationship = (new $model())->{$relationshipName}();
 
             $query = $relationship->getRelated();
 
@@ -67,7 +63,9 @@ class BelongsToSelect extends Select
         });
 
         $this->getOptionsUsing(function () use ($callback, $displayColumnName, $relationshipName) {
-            $relationship = (new $this->model())->{$relationshipName}();
+            $model = $this->getModel();
+
+            $relationship = (new $model())->{$relationshipName}();
 
             $query = $relationship->getRelated();
 
@@ -87,21 +85,6 @@ class BelongsToSelect extends Select
                 ->replace(['-', '_'], ' ')
                 ->ucfirst(),
         );
-
-        $setUpRules = function ($component) use ($relationshipName) {
-            $relationship = (new $component->model())->{$relationshipName}();
-
-            $model = get_class($relationship->getModel());
-            $column = $relationship->getOwnerKeyName();
-
-            $component->addRules([$component->name => "exists:{$model},{$column}"]);
-        };
-
-        if ($this->model) {
-            $setUpRules($this);
-        } else {
-            $this->pendingModelModifications[] = $setUpRules;
-        }
 
         return $this;
     }

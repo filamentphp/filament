@@ -11,26 +11,26 @@ class Select extends Field
     use Concerns\CanBeUnique;
     use Concerns\HasPlaceholder;
 
-    public $emptyOptionsMessage = 'forms::fields.select.emptyOptionsMessage';
+    protected $emptyOptionsMessage = 'forms::fields.select.emptyOptionsMessage';
 
-    public $getDisplayValue;
+    protected $getDisplayValue;
 
-    public $getOptionSearchResults;
+    protected $getOptionSearchResults;
 
-    public $noSearchResultsMessage = 'forms::fields.select.noSearchResultsMessage';
+    protected $noSearchResultsMessage = 'forms::fields.select.noSearchResultsMessage';
 
-    public $options = [];
+    protected $options = [];
 
     protected function setUp()
     {
         $this->placeholder('forms::fields.select.placeholder');
 
         $this->getDisplayValueUsing(function ($value) {
-            return $this->options[$value] ?? null;
+            return $this->getOptions()[$value] ?? null;
         });
 
         $this->getOptionSearchResultsUsing(function ($search) {
-            return collect($this->options)
+            return collect($this->getOptions())
                 ->filter(fn ($option) => Str::of($option)->lower()->contains($search))
                 ->toArray();
         });
@@ -38,7 +38,9 @@ class Select extends Field
 
     public function emptyOptionsMessage($message)
     {
-        $this->emptyOptionsMessage = $message;
+        $this->configure(function () use ($message) {
+            $this->emptyOptionsMessage = $message;
+        });
 
         return $this;
     }
@@ -50,6 +52,30 @@ class Select extends Field
         return $callback($value);
     }
 
+    public function getDisplayValueUsing($callback)
+    {
+        $this->configure(function () use ($callback) {
+            $this->getDisplayValue = $callback;
+        });
+
+        return $this;
+    }
+
+    public function getEmptyOptionsMessage()
+    {
+        return $this->emptyOptionsMessage;
+    }
+
+    public function getNoSearchResultsMessage()
+    {
+        return $this->noSearchResultsMessage;
+    }
+
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
     public function getOptionSearchResults($search)
     {
         $search = (string) Str::of($search)->trim()->lower();
@@ -59,30 +85,29 @@ class Select extends Field
         return $callback($search);
     }
 
-    public function getDisplayValueUsing($callback)
-    {
-        $this->getDisplayValue = $callback;
-
-        return $this;
-    }
-
     public function getOptionSearchResultsUsing($callback)
     {
-        $this->getOptionSearchResults = $callback;
+        $this->configure(function () use ($callback) {
+            $this->getOptionSearchResults = $callback;
+        });
 
         return $this;
     }
 
     public function noSearchResultsMessage($message)
     {
-        $this->noSearchResultsMessage = $message;
+        $this->configure(function () use ($message) {
+            $this->noSearchResultsMessage = $message;
+        });
 
         return $this;
     }
 
     public function options($options)
     {
-        $this->options = $options;
+        $this->configure(function () use ($options) {
+            $this->options = $options;
+        });
 
         return $this;
     }

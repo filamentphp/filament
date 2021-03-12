@@ -7,11 +7,18 @@ class Icon extends Column
     use Concerns\CanCallAction;
     use Concerns\CanOpenUrl;
 
-    public $options = [];
+    protected $options = [];
+
+    public function getOptions()
+    {
+        return $this->options;
+    }
 
     public function options($options)
     {
-        $this->options = $options;
+        $this->configure(function () use ($options) {
+            $this->options = $options;
+        });
 
         return $this;
     }

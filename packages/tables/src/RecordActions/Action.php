@@ -9,13 +9,17 @@ class Action
 {
     use Tappable;
 
-    public $name;
+    protected $configurationQueue = [];
 
-    public $view;
+    protected $name;
 
-    public $viewData = [];
+    protected $table;
 
-    public $when;
+    protected $view;
+
+    protected $viewData = [];
+
+    protected $when;
 
     public function __construct($name)
     {
@@ -26,42 +30,112 @@ class Action
         $this->setUp();
     }
 
-    public static function make($name)
-    {
-        return new static($name);
-    }
-
     protected function setUp()
     {
         //
     }
 
+    public function configure($callback = null)
+    {
+        if ($callback === null) {
+            foreach ($this->configurationQueue as $callback) {
+                $callback();
+            }
+
+            $this->configurationQueue = [];
+
+            return;
+        }
+
+        if ($this->getTable()) {
+            $callback();
+        } else {
+            $this->configurationQueue[] = $callback;
+        }
+
+        return $this;
+    }
+
+    public function getLabel()
+    {
+        if ($this->label === null) {
+            return (string) Str::of($this->getName())
+                ->kebab()
+                ->replace(['-', '_', '.'], ' ')
+                ->ucfirst();
+        }
+
+        return $this->label;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    public function getView()
+    {
+        return $this->view;
+    }
+
+    public function getViewData()
+    {
+        return $this->viewData;
+    }
+
+    public static function make($name)
+    {
+        return new static($name);
+    }
+
     public function name($name)
     {
-        $this->name = $name;
+        $this->configure(function () use ($name) {
+            $this->name = $name;
+        });
+
+        return $this;
+    }
+
+    public function table($table)
+    {
+        $this->table = $table;
+
+        $this->configure();
 
         return $this;
     }
 
     public function view($view, $data = [])
     {
-        $this->view = $view;
+        $this->configure(function () use ($data, $view) {
+            $this->view = $view;
 
-        $this->viewData($data);
+            $this->viewData($data);
+        });
 
         return $this;
     }
 
     public function viewData($data = [])
     {
-        $this->viewData = array_merge($this->viewData, $data);
+        $this->configure(function () use ($data) {
+            $this->viewData = array_merge($this->viewData, $data);
+        });
 
         return $this;
     }
 
     public function when($callback)
     {
-        $this->when = $callback;
+        $this->configure(function () use ($callback) {
+            $this->when = $callback;
+        });
 
         return $this;
     }
@@ -72,9 +146,9 @@ class Action
 
         if (! $when($record)) return;
 
-        $view = $this->view ?? 'tables::record-actions.' . Str::of(class_basename(static::class))->kebab();
+        $view = $this->getView() ?? 'tables::record-actions.' . Str::of(class_basename(static::class))->kebab();
 
-        return view($view, array_merge($this->viewData, [
+        return view($view, array_merge($this->getViewData(), [
             'record' => $record,
             'recordAction' => $this,
         ]));

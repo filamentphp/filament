@@ -12,66 +12,87 @@ class TextInput extends Field
     use Concerns\HasPlaceholder;
     use Concerns\HasPrefix;
 
-    public $type = 'text';
+    protected $type = 'text';
 
     public function email()
     {
-        $this->type('email');
+        $this->configure(function () {
+            $this->type('email');
 
-        $this->addRules([$this->name => ['email']]);
+            $this->addRules([$this->getName() => ['email']]);
+        });
 
         return $this;
     }
 
-    public function type($type)
+    public function getType()
     {
-        $this->type = $type;
-
-        return $this;
+        return $this->type;
     }
 
     public function max($value)
     {
-        $this->addRules([$this->name => ["max:$value"]]);
+        $this->configure(function () use ($value) {
+            $this->addRules([$this->getName() => ["max:{$value}"]]);
+        });
 
         return $this;
     }
 
     public function min($value)
     {
-        $this->addRules([$this->name => ["min:$value"]]);
+        $this->configure(function () use ($value) {
+            $this->addRules([$this->getName() => ["min:{$value}"]]);
+        });
 
         return $this;
     }
 
     public function numeric()
     {
-        $this->type('number');
+        $this->configure(function () {
+            $this->type('number');
 
-        $this->addRules([$this->name => ['numeric']]);
-
-        return $this;
-    }
-
-    public function tel()
-    {
-        $this->type('tel');
+            $this->addRules([$this->getName() => ['numeric']]);
+        });
 
         return $this;
     }
 
     public function password()
     {
-        $this->type('password');
+        $this->configure(function () {
+            $this->type('password');
+        });
+
+        return $this;
+    }
+
+    public function tel()
+    {
+        $this->configure(function () {
+            $this->type('tel');
+        });
+
+        return $this;
+    }
+
+    public function type($type)
+    {
+        $this->configure(function () use ($type) {
+            $this->type = $type;
+        });
 
         return $this;
     }
 
     public function url()
     {
-        $this->type('url');
+        $this->configure(function () {
+            $this->type('url');
 
-        $this->addRules([$this->name => ['url']]);
+            $this->addRules([$this->getName() => ['url']]);
+        });
 
         return $this;
     }

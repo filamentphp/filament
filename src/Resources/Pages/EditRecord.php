@@ -58,11 +58,13 @@ class EditRecord extends Page
 
     public function getForm()
     {
-        return static::getResource()::form(Form::make())
-            ->context(static::class)
-            ->model(static::getModel())
-            ->record($this->record)
-            ->submitMethod('save');
+        return static::getResource()::form(
+            Form::make()
+                ->context(static::class)
+                ->model(static::getModel())
+                ->record($this->record)
+                ->submitMethod('save'),
+        );
     }
 
     public function isAuthorized()
@@ -72,11 +74,15 @@ class EditRecord extends Page
 
     public function mount($record)
     {
+        $this->callHook('beforeFill');
+
         $model = static::getModel();
 
         $routeKeyName = (new $model())->getRouteKeyName();
 
         $this->record = $model::where($routeKeyName, $record)->firstOrFail();
+
+        $this->callHook('afterFill');
     }
 
     public function save()
