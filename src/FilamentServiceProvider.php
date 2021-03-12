@@ -58,15 +58,17 @@ class FilamentServiceProvider extends ServiceProvider
         }
 
         $this->commands($commands = [
+            Commands\MakeColumnCommand::class,
+            Commands\MakeFieldCommand::class,
+            Commands\MakeFilterCommand::class,
+            Commands\MakeFormComponentCommand::class,
+            Commands\MakePageCommand::class,
             Commands\MakeRelationManagerCommand::class,
             Commands\MakeResourceCommand::class,
             Commands\MakeRoleCommand::class,
-            Commands\MakePageCommand::class,
+            Commands\MakeThemeCommand::class,
             Commands\MakeUserCommand::class,
             Commands\MakeWidgetCommand::class,
-            Commands\MakeFieldCommand::class,
-            Commands\MakeThemeCommand::class,
-            Commands\MakeFilterCommand::class,
         ]);
 
         $aliases = [];
