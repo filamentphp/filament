@@ -38,8 +38,6 @@
     <script>
         function fileUpload(config) {
             return {
-                pond: null,
-                value: config.value,
                 init: function () {
                     FilePond.registerPlugin(FilePondPluginFileValidateSize)
                     FilePond.registerPlugin(FilePondPluginFileValidateType)
@@ -49,7 +47,7 @@
                     FilePond.registerPlugin(FilePondPluginImageResize)
                     FilePond.registerPlugin(FilePondPluginImageTransform)
 
-                    this.$wire.getUploadedFileUrl('{{ $formComponent->name }}', '{{ $formComponent->disk }}').then((uploadedFileUrl) => {
+                    this.$wire.getUploadedFileUrl(config.name, config.disk).then((uploadedFileUrl) => {
                         if (uploadedFileUrl) {
                             config.files = [{
                                 source: uploadedFileUrl,
@@ -63,7 +61,7 @@
                     })
 
                     this.$watch('value', () => {
-                        this.$wire.getUploadedFileUrl('{{ $formComponent->name }}', '{{ $formComponent->disk }}').then((uploadedFileUrl) => {
+                        this.$wire.getUploadedFileUrl(config.name, config.disk).then((uploadedFileUrl) => {
                             if (uploadedFileUrl) {
                                 this.pond.files = [{
                                     source: uploadedFileUrl,
@@ -76,7 +74,9 @@
                             }
                         })
                     })
-                }
+                },
+                pond: null,
+                value: config.value,
             }
         }
     </script>
@@ -93,8 +93,8 @@
 >
     <div
         x-data="fileUpload({
-            value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
             acceptedFileTypes: {{ json_encode($formComponent->acceptedFileTypes) }},
+            disk: '{{ $formComponent->disk }}',
             files: [],
             {{ $formComponent->imageCropAspectRatio !== null ? "imageCropAspectRatio: '{$formComponent->imageCropAspectRatio}'," : null }}
             {{ $formComponent->imagePreviewHeight !== null ? "imagePreviewHeight: {$formComponent->imagePreviewHeight}," : null }}
@@ -103,6 +103,7 @@
             {{ __($formComponent->placeholder) !== null ? 'labelIdle: \'' . __($formComponent->placeholder) . '\',' : null }}
             {{ $formComponent->maxSize !== null ? "maxFileSize: '{$formComponent->maxSize} KB'," : null }}
             {{ $formComponent->minSize !== null ? "minFileSize: '{$formComponent->minSize} KB'," : null }}
+            name: '{{ $formComponent->name }}',
             server: {
                 load: (source, load, error, progress, abort, headers) => {
                     fetch(source).then((response) => {
@@ -137,6 +138,7 @@
             {{ $formComponent->panelAspectRatio !== null ? "stylePanelAspectRatio: '{$formComponent->panelAspectRatio}'," : null }}
             {{ $formComponent->panelLayout !== null ? "stylePanelLayout: '{$formComponent->panelLayout}'," : null }}
             styleProgressIndicatorPosition: '{{ $formComponent->uploadProgressIndicatorPosition }}',
+            value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
         })"
         x-init="init()"
         wire:ignore
