@@ -6,6 +6,8 @@
 
                 canDeleteRows: config.canDeleteRows,
 
+                isSortable: config.isSortable,
+
                 rows: [{ key: null, value: null }],
 
                 value: config.value,
@@ -94,6 +96,7 @@
     <div x-data="keyValue({
         canAddRows: {{ json_encode($formComponent->canAddRows) }},
         canDeleteRows: {{ json_encode($formComponent->canDeleteRows) }},
+        isSortable: {{ json_encode($formComponent->isSortable) }},
         name: {{ json_encode($formComponent->name) }},
         @if (Str::of($formComponent->nameAttribute)->startsWith('wire:model'))
             value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
