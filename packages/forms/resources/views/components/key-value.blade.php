@@ -152,7 +152,7 @@
                                 >
                             </td>
                             @if ($formComponent->canDeleteRows)
-                                <td x-show="shouldShowDeleteButton()" class="border-l border-gray-300 whitespace-nowrap">
+                                <td x-show="shouldShowDeleteButton()" class="w-10 border-l border-gray-300 whitespace-nowrap">
                                     <div class="flex items-center justify-center">
                                         <button
                                             type="button"
