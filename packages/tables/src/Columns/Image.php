@@ -10,13 +10,13 @@ class Image extends Column
     use Concerns\CanCallAction;
     use Concerns\CanOpenUrl;
 
-    public $disk;
+    protected $disk;
 
-    public $height = 40;
+    protected $height = 40;
 
-    public $width;
+    protected $isRounded = false;
 
-    public $rounded = false;
+    protected $width;
 
     protected function setUp()
     {
@@ -25,16 +25,30 @@ class Image extends Column
 
     public function disk($disk)
     {
-        $this->disk = $disk;
+        $this->configure(function () use ($disk) {
+            $this->disk = $disk;
+        });
 
         return $this;
     }
 
     public function height($height)
     {
-        $this->height = $height;
+        $this->configure(function () use ($height) {
+            $this->height = $height;
+        });
 
         return $this;
+    }
+
+    public function getDisk()
+    {
+        return Storage::disk($this->getDiskName());
+    }
+
+    public function getDiskName()
+    {
+        return $this->disk ?? config('forms.default_filesystem_disk');
     }
 
     public function getHeight()
@@ -65,7 +79,7 @@ class Image extends Column
             return $path;
         }
 
-        $storage = Storage::disk($this->disk);
+        $storage = $this->getDisk();
 
         if (
             $storage->getDriver()->getAdapter() instanceof AwsS3Adapter &&
@@ -80,24 +94,35 @@ class Image extends Column
         return $storage->url($path);
     }
 
+    public function isRounded()
+    {
+        return $this->isRounded;
+    }
+
     public function rounded()
     {
-        $this->rounded = true;
+        $this->configure(function () {
+            $this->isRounded = true;
+        });
 
         return $this;
     }
 
     public function size($size)
     {
-        $this->width = $size;
-        $this->height = $size;
+        $this->configure(function () use ($size) {
+            $this->width = $size;
+            $this->height = $size;
+        });
 
         return $this;
     }
 
     public function width($width)
     {
-        $this->width = $width;
+        $this->configure(function () use ($width) {
+            $this->width = $width;
+        });
 
         return $this;
     }

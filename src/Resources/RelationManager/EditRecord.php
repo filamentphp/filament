@@ -30,7 +30,7 @@ class EditRecord extends Component
 
     public function getForm()
     {
-        $form = $this->manager::form(Form::make())
+        $form = Form::make()
             ->context(static::class)
             ->model(get_class($this->owner->{$this->getRelationship()}()->getModel()))
             ->submitMethod('save');
@@ -39,7 +39,7 @@ class EditRecord extends Component
             $form->record($this->record);
         }
 
-        return $form;
+        return $this->manager::form($form);
     }
 
     public function getQuery()

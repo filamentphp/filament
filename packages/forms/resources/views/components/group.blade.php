@@ -1,1 +1,1 @@
-<x-forms::layout :schema="$formComponent->schema" />
+<x-forms::layout :schema="$formComponent->getSchema()" />

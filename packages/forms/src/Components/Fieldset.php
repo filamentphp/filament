@@ -4,7 +4,7 @@ namespace Filament\Forms\Components;
 
 class Fieldset extends Component
 {
-    public $columns = 2;
+    protected $columns = 2;
 
     public static function make($label, $schema = [])
     {
@@ -15,9 +15,16 @@ class Fieldset extends Component
 
     public function columns($columns)
     {
-        $this->columns = $columns;
+        $this->configure(function () use ($columns) {
+            $this->columns = $columns;
+        });
 
         return $this;
+    }
+
+    public function getColumns()
+    {
+        return $this->columns;
     }
 
     public function getSubform()

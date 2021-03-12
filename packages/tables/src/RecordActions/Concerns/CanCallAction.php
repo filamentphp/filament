@@ -4,12 +4,19 @@ namespace Filament\Tables\RecordActions\Concerns;
 
 trait CanCallAction
 {
-    public $action;
+    protected $action;
 
     public function action($action)
     {
-        $this->action = $action;
+        $this->configure(function () use ($action) {
+            $this->action = $action;
+        });
 
         return $this;
+    }
+
+    public function getAction()
+    {
+        return $this->action;
     }
 }

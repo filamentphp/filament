@@ -2,15 +2,27 @@
 
 namespace Filament\Forms;
 
+use Illuminate\Support\Traits\Tappable;
+
 class Form
 {
-    public $columns = 1;
+    use Tappable;
 
-    public $rules = [];
+    protected $columns = 1;
 
-    public $schema = [];
+    protected $context;
 
-    public $submitMethod = 'submit';
+    protected $model;
+
+    protected $record;
+
+    protected $rules = [];
+
+    protected $schema = [];
+
+    protected $submitMethod = 'submit';
+
+    protected $validationAttributes = [];
 
     public static function make()
     {
@@ -19,11 +31,7 @@ class Form
 
     public function context($context)
     {
-        $this->schema = collect($this->schema)
-            ->map(function ($field) use ($context) {
-                return $field->context($context);
-            })
-            ->toArray();
+        $this->context = $context;
 
         return $this;
     }
@@ -35,12 +43,22 @@ class Form
         return $this;
     }
 
-    public function getDefaults()
+    public function getColumns()
+    {
+        return $this->columns;
+    }
+
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    public function getDefaultValues()
     {
         $defaults = [];
 
-        foreach ($this->schema as $field) {
-            $defaults = array_merge($defaults, $field->getDefaults());
+        foreach ($this->getSchema() as $component) {
+            $defaults = array_merge($defaults, $component->getDefaultValues());
         }
 
         return $defaults;
@@ -48,7 +66,7 @@ class Form
 
     public function getFlatSchema()
     {
-        $schema = $this->schema;
+        $schema = $this->getSchema();
 
         foreach ($this->schema as $component) {
             $schema = array_merge($schema, $component->getSubform()->getFlatSchema());
@@ -57,12 +75,22 @@ class Form
         return $schema;
     }
 
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    public function getRecord()
+    {
+        return $this->record;
+    }
+
     public function getRules()
     {
         $rules = $this->rules;
 
-        foreach ($this->schema as $field) {
-            foreach ($field->getRules() as $name => $conditions) {
+        foreach ($this->schema as $component) {
+            foreach ($component->getRules() as $name => $conditions) {
                 $rules[$name] = array_merge($rules[$name] ?? [], $conditions);
             }
         }
@@ -70,12 +98,22 @@ class Form
         return $rules;
     }
 
+    public function getSchema()
+    {
+        return $this->schema;
+    }
+
+    public function getSubmitMethod()
+    {
+        return $this->submitMethod;
+    }
+
     public function getValidationAttributes()
     {
-        $attributes = [];
+        $attributes = $this->validationAttributes;
 
-        foreach ($this->schema as $field) {
-            $attributes = array_merge($attributes, $field->getValidationAttributes());
+        foreach ($this->getSchema() as $component) {
+            $attributes = array_merge($attributes, $component->getValidationAttributes());
         }
 
         return $attributes;
@@ -83,38 +121,32 @@ class Form
 
     public function model($model)
     {
-        $this->schema = collect($this->schema)
-            ->map(function ($field) use ($model) {
-                return $field->model($model);
-            })
-            ->toArray();
+        $this->model = $model;
 
         return $this;
     }
 
     public function record($record)
     {
-        $record = (object) $record;
-
-        $this->schema = collect($this->schema)
-            ->map(function ($field) use ($record) {
-                return $field->record($record);
-            })
-            ->toArray();
+        $this->record = (object) $record;
 
         return $this;
     }
 
     public function rules($rules)
     {
-        $this->rules = $rules;
+        $this->rules = value($rules);
 
         return $this;
     }
 
     public function schema($schema)
     {
-        $this->schema = value($schema);
+        $this->schema = collect(value($schema))
+            ->map(function ($component) {
+                return $component->form($this);
+            })
+            ->toArray();
 
         return $this;
     }
@@ -122,6 +154,13 @@ class Form
     public function submitMethod($method)
     {
         $this->submitMethod = $method;
+
+        return $this;
+    }
+
+    public function validationAttributes($attributes)
+    {
+        $this->validationAttributes = $attributes;
 
         return $this;
     }

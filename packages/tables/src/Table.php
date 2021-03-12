@@ -2,25 +2,31 @@
 
 namespace Filament\Tables;
 
+use Illuminate\Support\Traits\Tappable;
+
 class Table
 {
-    public $columns = [];
+    use Tappable;
 
-    public $filterable = true;
+    protected $columns = [];
 
-    public $filters = [];
+    protected $context;
 
-    public $pagination = true;
+    protected $filters = [];
 
-    public $primaryColumnAction;
+    protected $hasPagination = true;
 
-    public $primaryColumnUrl;
+    protected $isFilterable = true;
 
-    public $recordActions = [];
+    protected $isSearchable = true;
 
-    public $searchable = true;
+    protected $isSortable = true;
 
-    public $sortable = true;
+    protected $primaryColumnAction;
+
+    protected $primaryColumnUrl;
+
+    protected $recordActions = [];
 
     public static function make()
     {
@@ -29,74 +35,114 @@ class Table
 
     public function columns($columns)
     {
-        $this->columns = value($columns);
-
-        return $this;
-    }
-
-    public function filters($filters)
-    {
-        $this->filters = value($filters);
+        $this->columns = collect(value($columns))
+            ->map(function ($column) {
+                return $column->table($this);
+            })
+            ->toArray();
 
         return $this;
     }
 
     public function context($context)
     {
-        $this->columns = collect($this->columns)
-            ->map(function ($column) use ($context) {
-                return $column->context($context);
-            })
-            ->toArray();
-
-        $this->filters = collect($this->filters)
-            ->map(function ($filter) use ($context) {
-                return $filter->context($context);
-            })
-            ->toArray();
+        $this->context = $context;
 
         return $this;
     }
 
     public function disableFiltering()
     {
-        $this->filterable = false;
+        $this->isFilterable = false;
 
         return $this;
     }
 
     public function disablePagination()
     {
-        $this->pagination = false;
+        $this->hasPagination = false;
 
         return $this;
     }
 
     public function disableSearching()
     {
-        $this->searchable = false;
+        $this->isSearchable = false;
 
         return $this;
     }
 
     public function disableSorting()
     {
-        $this->sortable = false;
+        $this->isSortable = false;
 
         return $this;
     }
 
     public function filterable($filterable)
     {
-        $this->filterable = $filterable;
+        $this->isFilterable = $filterable;
 
         return $this;
     }
 
+    public function filters($filters)
+    {
+        $this->filters = collect(value($filters))
+            ->map(function ($filter) {
+                return $filter->table($this);
+            })
+            ->toArray();
+
+        return $this;
+    }
+
+    public function getColumns()
+    {
+        return $this->columns;
+    }
+
+    public function getContext()
+    {
+        return $this->columns;
+    }
+
+    public function getFilters()
+    {
+        return $this->filters;
+    }
+
+    public function getPrimaryColumnAction($record = null)
+    {
+        $action = $this->primaryColumnAction;
+
+        if ($record && is_callable($action)) {
+            return $action($record);
+        }
+
+        return $action;
+    }
+
+    public function getPrimaryColumnUrl($record = null)
+    {
+        $url = $this->primaryColumnUrl;
+
+        if ($record && is_callable($url)) {
+            return $url($record);
+        }
+
+        return $url;
+    }
+
+    public function getRecordActions()
+    {
+        return $this->recordActions;
+    }
+
     public function getVisibleColumns()
     {
-        $columns = collect($this->columns)
-            ->filter(fn ($column) => ! $column->hidden)
+        $columns = collect($this->getColumns())
+            ->filter(fn ($column) => ! $column->isHidden())
             ->toArray();
 
         return $columns;
@@ -104,8 +150,8 @@ class Table
 
     public function getVisibleFilters()
     {
-        $filters = collect($this->filters)
-            ->filter(fn ($filter) => ! $filter->hidden)
+        $filters = collect($this->getFilters())
+            ->filter(fn ($filter) => ! $filter->isHidden())
             ->toArray();
 
         return $filters;
@@ -113,25 +159,25 @@ class Table
 
     public function hasPagination()
     {
-        return $this->pagination;
+        return $this->hasPagination;
     }
 
     public function isFilterable()
     {
-        return $this->filterable && count($this->filters);
+        return $this->isFilterable && count($this->getFilters());
     }
 
     public function isSearchable()
     {
-        return $this->searchable && collect($this->columns)
-                ->filter(fn ($column) => $column->searchable)
+        return $this->isSearchable && collect($this->getColumns())
+                ->filter(fn ($column) => $column->isSearchable())
                 ->count();
     }
 
     public function isSortable()
     {
-        return $this->sortable && collect($this->columns)
-                ->filter(fn ($column) => $column->sortable)
+        return $this->isSortable && collect($this->columns)
+                ->filter(fn ($column) => $column->isSortable())
                 ->count();
     }
 
@@ -142,39 +188,27 @@ class Table
         return $this;
     }
 
-    public function primaryRecordAction($action)
+    public function primaryColumnAction($action)
     {
-        $this->columns = collect($this->columns)
-            ->map(function ($column) use ($action) {
-                if (! $column->primary || ! method_exists($column, 'action')) {
-                    return $column;
-                }
-
-                return $column->action($action);
-            })
-            ->toArray();
+        $this->primaryColumnAction = $action;
 
         return $this;
     }
 
-    public function primaryRecordUrl($url)
+    public function primaryColumnUrl($url)
     {
-        $this->columns = collect($this->columns)
-            ->map(function ($column) use ($url) {
-                if (! $column->primary || ! method_exists($column, 'url')) {
-                    return $column;
-                }
-
-                return $column->url($url);
-            })
-            ->toArray();
+        $this->primaryColumnUrl = $url;
 
         return $this;
     }
 
     public function recordActions($actions)
     {
-        $this->recordActions = array_merge($this->recordActions, $actions);
+        $this->recordActions = collect(value($actions))
+            ->map(function ($action) {
+                return $action->table($this);
+            })
+            ->toArray();
 
         return $this;
     }

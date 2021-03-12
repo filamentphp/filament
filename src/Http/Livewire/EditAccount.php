@@ -25,11 +25,13 @@ class EditAccount extends Page
 
     public function getForm()
     {
-        return static::getResource()::form(Form::make())
-            ->context(static::class)
-            ->model(static::getModel())
-            ->record($this->record)
-            ->submitMethod('save');
+        return static::getResource()::form(
+            Form::make()
+                ->context(static::class)
+                ->model(static::getModel())
+                ->record($this->record)
+                ->submitMethod('save'),
+        );
     }
 
     public function mount()

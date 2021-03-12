@@ -87,7 +87,7 @@ trait HasTable
     {
         $this->selected = [];
 
-        if (! $this->getTable()->pagination) return;
+        if (! $this->getTable()->hasPagination()) return;
 
         $this->resetPage();
     }
@@ -96,7 +96,7 @@ trait HasTable
     {
         $this->selected = [];
 
-        if (! $this->getTable()->pagination) return;
+        if (! $this->getTable()->hasPagination()) return;
 
         $this->resetPage();
     }
@@ -105,7 +105,7 @@ trait HasTable
     {
         $this->selected = [];
 
-        if (! $this->getTable()->pagination) return;
+        if (! $this->getTable()->hasPagination()) return;
 
         $this->resetPage();
     }
@@ -114,16 +114,16 @@ trait HasTable
     {
         $query = static::getQuery();
 
-        if ($this->getTable()->filterable && $this->filter !== '' && $this->filter !== null) {
-            collect($this->getTable()->filters)
-                ->filter(fn ($filter) => $filter->name === $this->filter)
+        if ($this->getTable()->isFilterable() && $this->filter !== '' && $this->filter !== null) {
+            collect($this->getTable()->getFilters())
+                ->filter(fn ($filter) => $filter->getName() === $this->filter)
                 ->each(function ($filter) use (&$query) {
                     $query = $filter->apply($query);
                 });
         }
 
-        if ($this->getTable()->searchable && $this->search !== '' && $this->search !== null) {
-            collect($this->getTable()->columns)
+        if ($this->getTable()->isSearchable() && $this->search !== '' && $this->search !== null) {
+            collect($this->getTable()->getColumns())
                 ->filter(fn ($column) => $column->isSearchable())
                 ->each(function ($column, $index) use (&$query) {
                     $search = Str::lower($this->search);
@@ -133,13 +133,13 @@ trait HasTable
 
                     $first = $index === 0;
 
-                    if (Str::of($column->name)->contains('.')) {
-                        $relationship = (string) Str::of($column->name)->beforeLast('.');
+                    if (Str::of($column->getName())->contains('.')) {
+                        $relationship = (string) Str::of($column->getName())->beforeLast('.');
 
                         $query = $query->{$first ? 'whereHas' : 'orWhereHas'}(
                             $relationship,
                             function ($query) use ($column, $search, $searchOperator) {
-                                $columnName = (string) Str::of($column->name)->afterLast('.');
+                                $columnName = (string) Str::of($column->getName())->afterLast('.');
 
                                 return $query->where($columnName, $searchOperator, "%{$search}%");
                             },
@@ -149,12 +149,12 @@ trait HasTable
                     }
 
                     $query = $query->{$first ? 'where' : 'orWhere'}(
-                        fn ($query) => $query->where($column->name, $searchOperator, "%{$search}%"),
+                        fn ($query) => $query->where($column->getName(), $searchOperator, "%{$search}%"),
                     );
                 });
         }
 
-        if ($this->getTable()->sortable && $this->sortColumn !== '' && $this->sortColumn !== null) {
+        if ($this->getTable()->isSortable() && $this->sortColumn !== '' && $this->sortColumn !== null) {
             if (Str::of($this->sortColumn)->contains('.')) {
                 $relationship = (string) Str::of($this->sortColumn)->beforeLast('.');
 
@@ -171,7 +171,7 @@ trait HasTable
             }
         }
 
-        if (! $this->getTable()->pagination) {
+        if (! $this->getTable()->hasPagination()) {
             return $query->get();
         }
 
