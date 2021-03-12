@@ -74,11 +74,15 @@ class EditRecord extends Page
 
     public function mount($record)
     {
+        $this->callHook('beforeFill');
+
         $model = static::getModel();
 
         $routeKeyName = (new $model())->getRouteKeyName();
 
         $this->record = $model::where($routeKeyName, $record)->firstOrFail();
+
+        $this->callHook('afterFill');
     }
 
     public function save()

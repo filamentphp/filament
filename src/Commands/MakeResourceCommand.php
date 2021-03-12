@@ -61,7 +61,7 @@ class MakeResourceCommand extends Command
             'resourceClass' => $resourceClass,
         ]);
 
-        $this->copyStubToApp('ResourcePage', $indexResourcePagePath, [
+        $this->copyStubToApp('DefaultResourcePage', $indexResourcePagePath, [
             'baseResourcePage' => 'Filament\\Resources\\Pages\\ListRecords',
             'baseResourcePageClass' => 'ListRecords',
             'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
@@ -70,7 +70,7 @@ class MakeResourceCommand extends Command
             'resourcePageClass' => $indexResourcePageClass,
         ]);
 
-        $this->copyStubToApp('ResourcePage', $createResourcePagePath, [
+        $this->copyStubToApp('DefaultResourcePage', $createResourcePagePath, [
             'baseResourcePage' => 'Filament\\Resources\\Pages\\CreateRecord',
             'baseResourcePageClass' => 'CreateRecord',
             'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
@@ -79,7 +79,7 @@ class MakeResourceCommand extends Command
             'resourcePageClass' => $createResourcePageClass,
         ]);
 
-        $this->copyStubToApp('ResourcePage', $editResourcePagePath, [
+        $this->copyStubToApp('DefaultResourcePage', $editResourcePagePath, [
             'baseResourcePage' => 'Filament\\Resources\\Pages\\EditRecord',
             'baseResourcePageClass' => 'EditRecord',
             'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",

@@ -45,7 +45,7 @@
                 pond: null,
 
                 value: config.value,
-
+                
                 init: function () {
                     FilePond.registerPlugin(FilePondPluginFileValidateSize)
                     FilePond.registerPlugin(FilePondPluginFileValidateType)
@@ -82,7 +82,9 @@
                             }
                         })
                     })
-                }
+                },
+                pond: null,
+                value: config.value,
             }
         }
     </script>
