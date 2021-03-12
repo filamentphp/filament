@@ -53,6 +53,8 @@
                 },
 
                 moveRow: function (from, to) {
+                    if (! this.isSortable) return
+
                     this.rows.splice(to, 0, this.rows.splice(from, 1)[0])
 
                     this.updateLivewire()
