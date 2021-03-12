@@ -32,10 +32,6 @@ class Column
 
     public $viewData = [];
 
-    protected $pendingExcludedContextModifications = [];
-
-    protected $pendingIncludedContextModifications = [];
-
     public function __construct($name)
     {
         $this->name($name);
@@ -57,24 +53,6 @@ class Column
     {
         $this->context = $context;
 
-        if (array_key_exists($this->context, $this->pendingIncludedContextModifications)) {
-            foreach ($this->pendingIncludedContextModifications[$this->context] as $callback) {
-                $callback($this);
-            }
-        }
-
-        $this->pendingIncludedContextModifications = [];
-
-        collect($this->pendingExcludedContextModifications)
-            ->filter(fn ($callbacks, $context) => $context !== $this->context)
-            ->each(function ($callbacks) {
-                foreach ($callbacks as $callback) {
-                    $callback($this);
-                }
-            });
-
-        $this->pendingExcludedContextModifications = [];
-
         return $this;
     }
 
@@ -88,19 +66,7 @@ class Column
             $callback = fn ($field) => $field->visible();
         }
 
-        if (! $this->context) {
-            foreach ($contexts as $context) {
-                if (! array_key_exists($context, $this->pendingExcludedContextModifications)) {
-                    $this->pendingExcludedContextModifications[$context] = [];
-                }
-
-                $this->pendingExcludedContextModifications[$context][] = $callback;
-            }
-
-            return $this;
-        }
-
-        if (in_array($this->context, $contexts)) return $this;
+        if (! $this->context || in_array($this->context, $contexts)) return $this;
 
         $callback($this);
 
@@ -186,18 +152,6 @@ class Column
             $this->hidden();
 
             $callback = fn ($field) => $field->visible();
-        }
-
-        if (! $this->context) {
-            foreach ($contexts as $context) {
-                if (! array_key_exists($context, $this->pendingIncludedContextModifications)) {
-                    $this->pendingIncludedContextModifications[$context] = [];
-                }
-
-                $this->pendingIncludedContextModifications[$context][] = $callback;
-            }
-
-            return $this;
         }
 
         if (! in_array($this->context, $contexts)) return $this;

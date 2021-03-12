@@ -19,19 +19,11 @@ class BelongsToSelect extends Select
 
     public function preload()
     {
-        if (! $this->getOptions) return;
+        if (! $this->getOptions || ! $this->model) return;
 
-        if ($this->model) {
-            $getOptions = $this->getOptions;
+        $getOptions = $this->getOptions;
 
-            $this->options = $getOptions();
-        } else {
-            $this->pendingModelModifications[] = function () {
-                $getOptions = $this->getOptions;
-
-                $this->options = $getOptions();
-            };
-        }
+        $this->options = $getOptions();
 
         return $this;
     }
@@ -99,8 +91,6 @@ class BelongsToSelect extends Select
 
         if ($this->model) {
             $setUpRules($this);
-        } else {
-            $this->pendingModelModifications[] = $setUpRules;
         }
 
         return $this;

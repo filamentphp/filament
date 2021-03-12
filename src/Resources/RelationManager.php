@@ -180,15 +180,17 @@ class RelationManager extends Component
 
     public function getTable()
     {
-        return static::table(Table::make())
-            ->filterable($this->filterable)
-            ->pagination(false)
-            ->primaryRecordAction(function ($record) {
-                return $this->getPrimaryRecordAction($record);
-            })
-            ->recordActions($this->getRecordActions())
-            ->searchable($this->searchable)
-            ->sortable($this->sortable);
+        return static::table(
+            Table::make()
+                ->filterable($this->filterable)
+                ->pagination(false)
+                ->primaryRecordAction(function ($record) {
+                    return $this->getPrimaryRecordAction($record);
+                })
+                ->recordActions($this->getRecordActions())
+                ->searchable($this->searchable)
+                ->sortable($this->sortable),
+        );
     }
 
     public function getModel()

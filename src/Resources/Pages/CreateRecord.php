@@ -52,11 +52,13 @@ class CreateRecord extends Page
 
     public function getForm()
     {
-        return static::getResource()::form(Form::make())
-            ->context(static::class)
-            ->model(static::getModel())
-            ->record($this->record)
-            ->submitMethod('create');
+        return static::getResource()::form(
+            Form::make()
+                ->context(static::class)
+                ->model(static::getModel())
+                ->record($this->record)
+                ->submitMethod('create'),
+        );
     }
 
     public function isAuthorized()

@@ -76,26 +76,28 @@ class ListRecords extends Page
 
     public function getTable()
     {
-        return static::getResource()::table(Table::make())
-            ->context(static::class)
-            ->filterable($this->filterable)
-            ->pagination($this->pagination)
-            ->primaryRecordUrl(function ($record) {
-                if (! Filament::can('update', $record)) return;
+        return static::getResource()::table(
+            Table::make()
+                ->context(static::class)
+                ->filterable($this->filterable)
+                ->pagination($this->pagination)
+                ->primaryRecordUrl(function ($record) {
+                    if (! Filament::can('update', $record)) return;
 
-                return $this->getResource()::generateUrl(
-                    $this->recordRoute,
-                    ['record' => $record],
-                );
-            })
-            ->recordActions([
-                RecordActions\Link::make('edit')
-                    ->label(static::$editRecordActionLabel)
-                    ->url(fn ($record) => $this->getResource()::generateUrl($this->recordRoute, ['record' => $record]))
-                    ->when(fn ($record) => Filament::can('update', $record)),
-            ])
-            ->searchable($this->searchable)
-            ->sortable($this->sortable);
+                    return $this->getResource()::generateUrl(
+                        $this->recordRoute,
+                        ['record' => $record],
+                    );
+                })
+                ->recordActions([
+                    RecordActions\Link::make('edit')
+                        ->label(static::$editRecordActionLabel)
+                        ->url(fn ($record) => $this->getResource()::generateUrl($this->recordRoute, ['record' => $record]))
+                        ->when(fn ($record) => Filament::can('update', $record)),
+                ])
+                ->searchable($this->searchable)
+                ->sortable($this->sortable),
+        );
     }
 
     public function isAuthorized()

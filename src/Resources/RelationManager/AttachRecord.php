@@ -77,6 +77,8 @@ class AttachRecord extends Component
     public function getForm()
     {
         return Form::make()
+            ->context(static::class)
+            ->submitMethod('attach')
             ->schema([
                 Select::make('related')
                     ->label((string) Str::of($this->getRelationship())->singular()->ucfirst())
@@ -100,9 +102,7 @@ class AttachRecord extends Component
                             ->toArray();
                     })
                     ->required(),
-            ])
-            ->context(static::class)
-            ->submitMethod('attach');
+            ]);
     }
 
     public function render()

@@ -31,14 +31,6 @@ class Component
 
     public $view;
 
-    protected $pendingExcludedContextModifications = [];
-
-    protected $pendingIncludedContextModifications = [];
-
-    protected $pendingModelModifications = [];
-
-    protected $pendingRecordModifications = [];
-
     protected function setUp()
     {
         //
@@ -47,24 +39,6 @@ class Component
     public function context($context)
     {
         $this->context = $context;
-
-        if (array_key_exists($this->context, $this->pendingIncludedContextModifications)) {
-            foreach ($this->pendingIncludedContextModifications[$this->context] as $callback) {
-                $callback($this);
-            }
-        }
-
-        $this->pendingIncludedContextModifications = [];
-
-        collect($this->pendingExcludedContextModifications)
-            ->filter(fn ($callbacks, $context) => $context !== $this->context)
-            ->each(function ($callbacks) {
-                foreach ($callbacks as $callback) {
-                    $callback($this);
-                }
-            });
-
-        $this->pendingExcludedContextModifications = [];
 
         $this->schema($this->getSubform()->context($this->context)->schema);
 
@@ -88,19 +62,7 @@ class Component
             $callback = fn ($component) => $component->visible();
         }
 
-        if (! $this->context) {
-            foreach ($contexts as $context) {
-                if (! array_key_exists($context, $this->pendingExcludedContextModifications)) {
-                    $this->pendingExcludedContextModifications[$context] = [];
-                }
-
-                $this->pendingExcludedContextModifications[$context][] = $callback;
-            }
-
-            return $this;
-        }
-
-        if (in_array($this->context, $contexts)) return $this;
+        if (! $this->context || in_array($this->context, $contexts)) return $this;
 
         $callback($this);
 
@@ -220,12 +182,6 @@ class Component
     {
         $this->model = $model;
 
-        foreach ($this->pendingModelModifications as $callback) {
-            $callback($this);
-        }
-
-        $this->pendingModelModifications = [];
-
         $this->schema($this->getSubform()->model($this->model)->schema);
 
         return $this;
@@ -239,18 +195,6 @@ class Component
             $this->hidden();
 
             $callback = fn ($component) => $component->visible();
-        }
-
-        if (! $this->context) {
-            foreach ($contexts as $context) {
-                if (! array_key_exists($context, $this->pendingIncludedContextModifications)) {
-                    $this->pendingIncludedContextModifications[$context] = [];
-                }
-
-                $this->pendingIncludedContextModifications[$context][] = $callback;
-            }
-
-            return $this;
         }
 
         if (! in_array($this->context, $contexts)) return $this;
@@ -277,20 +221,6 @@ class Component
 
         $this->schema($this->getSubform()->record($this->record)->schema);
 
-        foreach ($this->pendingRecordModifications as [$condition, $callback]) {
-            try {
-                $shouldExecuteCallback = $condition($this->record);
-            } catch (\Exception $exception) {
-                $shouldExecuteCallback = false;
-            }
-
-            if ($shouldExecuteCallback) {
-                $callback($this, $this->record);
-            }
-        }
-
-        $this->pendingRecordModifications = [];
-
         return $this;
     }
 
@@ -316,11 +246,7 @@ class Component
             $callback = fn ($component) => $component->visible();
         }
 
-        if ($this->record === null) {
-            $this->pendingRecordModifications[] = [$condition, $callback];
-
-            return $this;
-        }
+        if ($this->record === null) return $this;
 
         try {
             $shouldExecuteCallback = $condition($this->record);
