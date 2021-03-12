@@ -23,6 +23,11 @@ class Tab extends Component
         return $this;
     }
 
+    public function getColumns()
+    {
+        return $this->columns;
+    }
+
     public function getSubform()
     {
         return parent::getSubform()->columns($this->columns);

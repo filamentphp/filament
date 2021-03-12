@@ -8,18 +8,23 @@ class Tabs extends Component
 {
     public static function make($label = null)
     {
-        $tabs = (new static())->label($label);
-
-        if ($label) $tabs = $tabs->id(Str::slug($label));
-
-        return $tabs;
+        return (new static())->label($label);
     }
 
     public function getTabsConfig()
     {
-        return collect($this->schema)
-            ->mapWithKeys(fn ($tab) => [$this->getId() . '.' . $tab->getId() => $tab->label])
+        return collect($this->getSchema())
+            ->mapWithKeys(fn ($tab) => [$this->getId() . '.' . $tab->getId() => $tab->getLabel()])
             ->toArray();
+    }
+
+    public function id($id)
+    {
+        if ($this->id === null && $this->getLabel()) {
+            return Str::slug($this->getLabel());
+        }
+
+        return parent::id($id);
     }
 
     public function tabs($tabs)

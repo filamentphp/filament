@@ -13,13 +13,13 @@ class DatePicker extends Field
 
     protected $format;
 
+    protected $hasTime = false;
+
+    protected $hasSeconds = true;
+
     protected $maxDate;
 
     protected $minDate;
-
-    protected $time = false;
-
-    protected $withoutSeconds = false;
 
     protected $view = 'forms::components.date-time-picker';
 
@@ -43,11 +43,41 @@ class DatePicker extends Field
         return $this;
     }
 
+    public function getDisplayFormat()
+    {
+        return $this->displayFormat;
+    }
+
+    public function getFormat()
+    {
+        return $this->format;
+    }
+
+    public function getMaxDate()
+    {
+        return $this->maxDate;
+    }
+
+    public function getMinDate()
+    {
+        return $this->minDate;
+    }
+
+    public function hasSeconds()
+    {
+        return $this->hasSeconds;
+    }
+
+    public function hasTime()
+    {
+        return $this->hasTime;
+    }
+
     public function maxDate($date)
     {
         $this->maxDate = $date;
 
-        $this->addRules([$this->name => ["before_or_equal:$date"]]);
+        $this->addRules([$this->getName() => ["before_or_equal:$date"]]);
 
         return $this;
     }
@@ -56,7 +86,7 @@ class DatePicker extends Field
     {
         $this->minDate = $date;
 
-        $this->addRules([$this->name => ["after_or_equal:$date"]]);
+        $this->addRules([$this->getName() => ["after_or_equal:$date"]]);
 
         return $this;
     }

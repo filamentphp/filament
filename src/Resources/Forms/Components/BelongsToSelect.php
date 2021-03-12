@@ -30,9 +30,9 @@ class BelongsToSelect extends Select
 
     public function relationship($relationshipName, $displayColumnName, $callback = null)
     {
-        $model = $this->getModel();
+        $this->getDisplayValueUsing(function ($value) use ($displayColumnName, $relationshipName) {
+            $model = $this->getModel();
 
-        $this->getDisplayValueUsing(function ($value) use ($displayColumnName, $model, $relationshipName) {
             $relationship = (new $model())->{$relationshipName}();
 
             $record = $relationship->getRelated()->where($relationship->getOwnerKeyName(), $value)->first();
@@ -40,7 +40,9 @@ class BelongsToSelect extends Select
             return $record ? $record->getAttributeValue($displayColumnName) : null;
         });
 
-        $this->getOptionSearchResultsUsing(function ($search) use ($callback, $displayColumnName, $model, $relationshipName) {
+        $this->getOptionSearchResultsUsing(function ($search) use ($callback, $displayColumnName, $relationshipName) {
+            $model = $this->getModel();
+
             $relationship = (new $model())->{$relationshipName}();
 
             $query = $relationship->getRelated();
@@ -60,7 +62,9 @@ class BelongsToSelect extends Select
                 ->toArray();
         });
 
-        $this->getOptionsUsing(function () use ($callback, $displayColumnName, $model, $relationshipName) {
+        $this->getOptionsUsing(function () use ($callback, $displayColumnName, $relationshipName) {
+            $model = $this->getModel();
+
             $relationship = (new $model())->{$relationshipName}();
 
             $query = $relationship->getRelated();
@@ -81,20 +85,6 @@ class BelongsToSelect extends Select
                 ->replace(['-', '_'], ' ')
                 ->ucfirst(),
         );
-
-        $setUpRules = function ($field) use ($relationshipName) {
-            $fieldModel = $field->getModel();
-            $relationship = (new $fieldModel())->{$relationshipName}();
-
-            $model = get_class($relationship->getModel());
-            $column = $relationship->getOwnerKeyName();
-
-            $field->addRules([$field->name => "exists:{$model},{$column}"]);
-        };
-
-        if ($model) {
-            $setUpRules($this);
-        }
 
         return $this;
     }

@@ -22,6 +22,16 @@ class Textarea extends Field
         return $this;
     }
 
+    public function getCols()
+    {
+        return $this->cols;
+    }
+
+    public function getRows()
+    {
+        return $this->rows;
+    }
+
     public function rows($rows)
     {
         $this->rows = $rows;

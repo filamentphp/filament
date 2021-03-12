@@ -12,9 +12,18 @@ class TagsInput extends Field
 
     protected $separator = ',';
 
-    protected function setUp()
+    public function getPlaceholder()
     {
-        $this->placeholder('forms::fields.tags.placeholder');
+        if ($this->placeholder === null) {
+            return 'forms::fields.tags.placeholder';
+        }
+
+        return $this->placeholder;
+    }
+
+    public function getSeparator()
+    {
+        return $this->separator;
     }
 
     public function separator($separator)

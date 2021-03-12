@@ -25,6 +25,21 @@ class Section extends Component
         return $this;
     }
 
+    public function getColumns()
+    {
+        return $this->columns;
+    }
+
+    public function getHeading()
+    {
+        return $this->heading;
+    }
+
+    public function getSubheading()
+    {
+        return $this->subheading;
+    }
+
     public function getSubform()
     {
         return parent::getSubform()->columns($this->columns);

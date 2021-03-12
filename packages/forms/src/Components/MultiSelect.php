@@ -25,6 +25,21 @@ class MultiSelect extends Field
         return $this;
     }
 
+    public function getEmptyOptionsMessage()
+    {
+        return $this->emptyOptionsMessage;
+    }
+
+    public function getNoSearchResultsMessage()
+    {
+        return $this->noSearchResultsMessage;
+    }
+
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
     public function noSearchResultsMessage($message)
     {
         $this->noSearchResultsMessage = $message;

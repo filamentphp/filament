@@ -13,7 +13,7 @@ trait CanBeAutofocused
         return $this;
     }
 
-    public function getAutofocus()
+    public function isAutofocused()
     {
         return $this->autofocus;
     }

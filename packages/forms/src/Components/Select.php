@@ -26,11 +26,11 @@ class Select extends Field
         $this->placeholder('forms::fields.select.placeholder');
 
         $this->getDisplayValueUsing(function ($value) {
-            return $this->options[$value] ?? null;
+            return $this->getOptions()[$value] ?? null;
         });
 
         $this->getOptionSearchResultsUsing(function ($search) {
-            return collect($this->options)
+            return collect($this->getOptions())
                 ->filter(fn ($option) => Str::of($option)->lower()->contains($search))
                 ->toArray();
         });
@@ -50,6 +50,28 @@ class Select extends Field
         return $callback($value);
     }
 
+    public function getDisplayValueUsing($callback)
+    {
+        $this->getDisplayValue = $callback;
+
+        return $this;
+    }
+
+    public function getEmptyOptionsMessage()
+    {
+        return $this->emptyOptionsMessage;
+    }
+
+    public function getNoSearchResultsMessage()
+    {
+        return $this->noSearchResultsMessage;
+    }
+
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
     public function getOptionSearchResults($search)
     {
         $search = (string) Str::of($search)->trim()->lower();
@@ -57,13 +79,6 @@ class Select extends Field
         $callback = $this->getOptionSearchResults;
 
         return $callback($search);
-    }
-
-    public function getDisplayValueUsing($callback)
-    {
-        $this->getDisplayValue = $callback;
-
-        return $this;
     }
 
     public function getOptionSearchResultsUsing($callback)

@@ -1,11 +1,11 @@
 @php
     if (! $formComponent->hasTime()) {
-        if ($formComponent->getDisplayFormat() === 'F j, Y H:i:s') $formComponent->getDisplayFormat() = 'F j, Y';
-        if ($formComponent->getFormat() === 'F j, Y H:i:s') $formComponent->getFormat() = 'Y-m-d';
+        if ($formComponent->getDisplayFormat() === 'F j, Y H:i:s') $formComponent->displayFormat('F j, Y');
+        if ($formComponent->getFormat() === 'F j, Y H:i:s') $formComponent->format('Y-m-d');
     }
 
     if ($formComponent->hasTime() && ! $formComponent->hasSeconds()) {
-        if ($formComponent->getDisplayFormat() === 'F j, Y H:i:s') $formComponent->getDisplayFormat() = 'F j, Y H:i';
+        if ($formComponent->getDisplayFormat() === 'F j, Y H:i:s') $formComponent->displayFormat('F j, Y H:i');
     }
 @endphp
 

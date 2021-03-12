@@ -24,13 +24,13 @@ class DateTimePicker extends DatePicker
 
     public function withoutSeconds()
     {
-        $this->withoutSeconds = true;
+        $this->hasSeconds = false;
 
-        if ($this->displayFormat === $this->defaultDisplayFormat) {
+        if ($this->getDisplayFormat() === $this->defaultDisplayFormat) {
             $this->displayFormat($this->defaultDisplayFormatWithoutSeconds);
         }
 
-        if ($this->format === $this->defaultFormat) {
+        if ($this->getFormat() === $this->defaultFormat) {
             $this->format($this->defaultFormatWithoutSeconds);
         }
 

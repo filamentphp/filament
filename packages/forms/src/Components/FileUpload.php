@@ -12,7 +12,7 @@ class FileUpload extends Field
 
     protected $directory;
 
-    protected $disk;
+    protected $diskName;
 
     protected $imageCropAspectRatio;
 
@@ -76,9 +76,9 @@ class FileUpload extends Field
         return $this;
     }
 
-    public function disk($disk)
+    public function disk($name)
     {
-        $this->disk = $disk;
+        $this->diskName = $name;
 
         return $this;
     }
@@ -90,9 +90,84 @@ class FileUpload extends Field
         return $this;
     }
 
+    public function getAcceptedFileTypes()
+    {
+        return $this->acceptedFileTypes;
+    }
+
+    public function getDirectory()
+    {
+        return $this->directory;
+    }
+
+    public function getDiskName()
+    {
+        return $this->diskName;
+    }
+
+    public function getImageCropAspectRatio()
+    {
+        return $this->imageCropAspectRatio;
+    }
+
+    public function getImagePreviewHeight()
+    {
+        return $this->imagePreviewHeight;
+    }
+
+    public function getImageResizeTargetHeight()
+    {
+        return $this->imageResizeTargetHeight;
+    }
+
+    public function getImageResizeTargetWidth()
+    {
+        return $this->imageResizeTargetWidth;
+    }
+
+    public function getLoadingIndicatorPosition()
+    {
+        return $this->loadingIndicatorPosition;
+    }
+
+    public function getMaxSize()
+    {
+        return $this->maxSize;
+    }
+
+    public function getMinSize()
+    {
+        return $this->minSize;
+    }
+
+    public function getPanelAspectRatio()
+    {
+        return $this->panelAspectRatio;
+    }
+
+    public function getPanelLayout()
+    {
+        return $this->panelLayout;
+    }
+
+    public function getRemoveUploadButtonPosition()
+    {
+        return $this->removeUploadButtonPosition;
+    }
+
     public function getTemporaryUploadedFilePropertyName()
     {
-        return "temporaryUploadedFiles.{$this->name}";
+        return "temporaryUploadedFiles.{$this->getName()}";
+    }
+
+    public function getUploadButtonPosition()
+    {
+        return $this->uploadButtonPosition;
+    }
+
+    public function getUploadProgressIndicatorPosition()
+    {
+        return $this->uploadProgressIndicatorPosition;
     }
 
     public function getValidationAttributes()
@@ -101,10 +176,15 @@ class FileUpload extends Field
 
         $attributes = array_merge(
             $attributes,
-            [$this->getTemporaryUploadedFilePropertyName() => Str::lower($this->label)],
+            [$this->getTemporaryUploadedFilePropertyName() => Str::lower($this->getLabel())],
         );
 
         return $attributes;
+    }
+
+    public function getVisibility()
+    {
+        return $this->visibility;
     }
 
     public function image()
@@ -155,7 +235,7 @@ class FileUpload extends Field
     {
         $this->maxSize = $size;
 
-        $this->addRules([$this->getTemporaryUploadedFilePropertyName() => ["max:{$this->maxSize}"]]);
+        $this->addRules([$this->getTemporaryUploadedFilePropertyName() => ["max:{$this->getMaxSize()}"]]);
 
         return $this;
     }
@@ -164,7 +244,7 @@ class FileUpload extends Field
     {
         $this->minSize = $size;
 
-        $this->addRules([$this->getTemporaryUploadedFilePropertyName() => ["min:{$this->minSize}"]]);
+        $this->addRules([$this->getTemporaryUploadedFilePropertyName() => ["min:{$this->getMinSize()}"]]);
 
         return $this;
     }

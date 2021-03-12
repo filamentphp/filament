@@ -11,7 +11,7 @@ class RichEditor extends Field
 
     protected $attachmentDirectory = 'attachments';
 
-    protected $attachmentDisk;
+    protected $attachmentDiskName;
 
     protected $attachmentUploadUrl;
 
@@ -47,7 +47,7 @@ class RichEditor extends Field
 
     public function attachmentDisk($disk)
     {
-        $this->attachmentDisk = $disk;
+        $this->attachmentDiskName = $disk;
 
         return $this;
     }
@@ -63,7 +63,7 @@ class RichEditor extends Field
     {
         if (! is_array($buttonsToDisable)) $buttonsToDisable = [$buttonsToDisable];
 
-        $this->toolbarButtons = collect($this->toolbarButtons)
+        $this->toolbarButtons = collect($this->getToolbarButtons())
             ->filter(fn ($button) => ! in_array($button, $buttonsToDisable))
             ->toArray();
 
@@ -83,7 +83,7 @@ class RichEditor extends Field
     {
         if (! is_array($buttonsToEnable)) $buttonsToEnable = [$buttonsToEnable];
 
-        $this->toolbarButtons = array_merge($this->toolbarButtons, $buttonsToEnable);
+        $this->toolbarButtons = array_merge($this->getToolbarButtons(), $buttonsToEnable);
 
         return $this;
     }
@@ -93,10 +93,30 @@ class RichEditor extends Field
         if (is_array($button)) {
             $buttons = $button;
 
-            return (bool) count(array_intersect($buttons, $this->toolbarButtons));
+            return (bool) count(array_intersect($buttons, $this->getToolbarButtons()));
         }
 
-        return in_array($button, $this->toolbarButtons);
+        return in_array($button, $this->getToolbarButtons());
+    }
+
+    public function getAttachmentDirectory()
+    {
+        return $this->attachmentDirectory;
+    }
+
+    public function getAttachmentDiskName()
+    {
+        return $this->attachmentDiskName;
+    }
+
+    public function getAttachmentUploadUrl()
+    {
+        return $this->attachmentUploadUrl;
+    }
+
+    public function getToolbarButtons()
+    {
+        return $this->toolbarButtons;
     }
 
     public function toolbarButtons($buttons)

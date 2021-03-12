@@ -139,8 +139,12 @@ class Component
         return $this->getForm()->getRecord();
     }
 
-    public function getRules()
+    public function getRules($field = null)
     {
+        if ($field !== null) {
+            return $this->rules[$field] ?? null;
+        }
+
         if ($this->isHidden()) return [];
 
         $rules = $this instanceof Field ? $this->rules : [];
@@ -177,9 +181,9 @@ class Component
         $attributes = [];
 
         if ($this instanceof Field) {
-            $attributes[$this->getName()] = Str::lower(__($this->getLabel()));
-
-            if (property_exists($this, 'validationAttribute') && $this->validationAttribute !== null) {
+            if ($this->validationAttribute !== null) {
+                $attributes[$this->getName()] = Str::lower(__($this->getLabel()));
+            } else {
                 $attributes[$this->getName()] = __($this->validationAttribute);
             }
         }

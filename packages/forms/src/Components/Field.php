@@ -8,9 +8,7 @@ class Field extends Component
 {
     protected $bindingAttribute = 'wire:model.defer';
 
-    protected $default = null;
-
-    protected $disabled = false;
+    protected $defaultValue = null;
 
     protected $extraAttributes = [];
 
@@ -18,9 +16,11 @@ class Field extends Component
 
     protected $hint;
 
-    protected $name;
+    protected $isDisabled = false;
 
-    protected $required = false;
+    protected $isRequired = false;
+
+    protected $name;
 
     protected $rules = [];
 
@@ -36,6 +36,50 @@ class Field extends Component
     public static function make($name)
     {
         return new static($name);
+    }
+
+    public function addRules($rules)
+    {
+        if (! is_array($rules)) {
+            $rules = [$this->getName() => $rules];
+        }
+
+        foreach ($rules as $field => $conditionsToAdd) {
+            if (is_numeric($field)) {
+                $field = $this->getName();
+            }
+
+            if (! is_array($conditionsToAdd)) {
+                $conditionsToAdd = explode('|', $conditionsToAdd);
+            }
+
+            $this->rules[$field] = collect($this->getRules($field) ?? [])
+                ->filter(function ($originalCondition) use ($conditionsToAdd) {
+                    if (! is_string($originalCondition)) {
+                        return true;
+                    }
+
+                    $conditionsToAdd = collect($conditionsToAdd);
+
+                    if ($conditionsToAdd->contains($originalCondition)) {
+                        return false;
+                    }
+
+                    if (! Str::of($originalCondition)->contains(':')) {
+                        return true;
+                    }
+
+                    $originalConditionType = (string) Str::of($originalCondition)->before(':');
+
+                    return ! $conditionsToAdd->contains(function ($conditionToAdd) use ($originalConditionType) {
+                        return $originalConditionType === (string) Str::of($conditionToAdd)->before(':');
+                    });
+                })
+                ->push(...$conditionsToAdd)
+                ->toArray();
+        }
+
+        return $this;
     }
 
     public function bindingAttribute($bindingAttribute)
@@ -62,34 +106,6 @@ class Field extends Component
     public function enabled()
     {
         $this->disabled = false;
-
-        return $this;
-    }
-
-    public function name($name)
-    {
-        $this->name = $name;
-
-        $this->id(
-            (string) Str::of($this->name)
-                ->replace('.', '-')
-                ->slug(),
-        );
-
-        $this->label(
-            (string) Str::of($this->name)
-                ->afterLast('.')
-                ->kebab()
-                ->replace(['-', '_'], ' ')
-                ->ucfirst(),
-        );
-
-        $this->addRules([$this->name => ['nullable']]);
-    }
-
-    public function rules($conditions)
-    {
-        $this->addRules([$this->name => $conditions]);
 
         return $this;
     }
@@ -122,9 +138,53 @@ class Field extends Component
         return $this;
     }
 
+    public function getBindingAttribute()
+    {
+        return $this->bindingAttribute;
+    }
+
     public function getDefaultValue()
     {
         return $this->defaultValue;
+    }
+
+    public function getExtraAttributes()
+    {
+        return $this->extraAttributes;
+    }
+
+    public function getHelpMessage()
+    {
+        return $this->helpMessage;
+    }
+
+    public function getHint()
+    {
+        return $this->hint;
+    }
+
+    public function getId()
+    {
+        if ($this->id === null) {
+            return (string) Str::of($this->getName())
+                ->replace('.', '-')
+                ->slug();
+        }
+
+        return parent::getId();
+    }
+
+    public function getLabel()
+    {
+        if ($this->label === null) {
+            return (string) Str::of($this->getName())
+                ->afterLast('.')
+                ->kebab()
+                ->replace(['-', '_'], ' ')
+                ->ucfirst();
+        }
+
+        return parent::getLabel();
     }
 
     public function getName()
@@ -132,12 +192,38 @@ class Field extends Component
         return $this->name;
     }
 
+    public function getRules($field = null)
+    {
+        if ($field !== null) {
+            return $this->rules[$field] ?? null;
+        }
+
+        return $this->rules;
+    }
+
+    public function isDisabled()
+    {
+        return $this->isDisabled;
+    }
+
+    public function isRequired()
+    {
+        return $this->isRequired;
+    }
+
+    public function name($name)
+    {
+        $this->name = $name;
+
+        $this->addRules([$this->getName() => ['nullable']]);
+    }
+
     public function nullable()
     {
         $this->required = false;
 
-        $this->removeRules([$this->name => ['required']]);
-        $this->addRules([$this->name => ['nullable']]);
+        $this->removeRules([$this->getName() => ['required']]);
+        $this->addRules([$this->getName() => ['nullable']]);
 
         return $this;
     }
@@ -145,12 +231,12 @@ class Field extends Component
     public function removeRules($rules)
     {
         if (! is_array($rules)) {
-            $rules = [$this->name => $rules];
+            $rules = [$this->getName() => $rules];
         }
 
         foreach ($rules as $field => $conditionsToRemove) {
             if (is_numeric($field)) {
-                $field = $this->name;
+                $field = $this->getName();
             }
 
             if (! is_array($conditionsToRemove)) $conditionsToRemove = explode('|', $conditionsToRemove);
@@ -161,7 +247,7 @@ class Field extends Component
                 return;
             }
 
-            $this->rules[$field] = collect($this->rules[$field] ?? [])
+            $this->rules[$field] = collect($this->getRules($field) ?? [])
                 ->filter(function ($originalCondition) use ($conditionsToRemove) {
                     if (! is_string($originalCondition)) {
                         return true;
@@ -189,66 +275,29 @@ class Field extends Component
         return $this;
     }
 
-    public function addRules($rules)
+    public function rules($conditions)
     {
-        if (! is_array($rules)) {
-            $rules = [$this->name => $rules];
-        }
-
-        foreach ($rules as $field => $conditionsToAdd) {
-            if (is_numeric($field)) {
-                $field = $this->name;
-            }
-
-            if (! is_array($conditionsToAdd)) {
-                $conditionsToAdd = explode('|', $conditionsToAdd);
-            }
-
-            $this->rules[$field] = collect($this->rules[$field] ?? [])
-                ->filter(function ($originalCondition) use ($conditionsToAdd) {
-                    if (! is_string($originalCondition)) {
-                        return true;
-                    }
-
-                    $conditionsToAdd = collect($conditionsToAdd);
-
-                    if ($conditionsToAdd->contains($originalCondition)) {
-                        return false;
-                    }
-
-                    if (! Str::of($originalCondition)->contains(':')) {
-                        return true;
-                    }
-
-                    $originalConditionType = (string) Str::of($originalCondition)->before(':');
-
-                    return ! $conditionsToAdd->contains(function ($conditionToAdd) use ($originalConditionType) {
-                        return $originalConditionType === (string) Str::of($conditionToAdd)->before(':');
-                    });
-                })
-                ->push(...$conditionsToAdd)
-                ->toArray();
-        }
+        $this->addRules([$this->getName() => $conditions]);
 
         return $this;
     }
 
     public function required()
     {
-        $this->required = true;
+        $this->isRequired = true;
 
-        $this->removeRules([$this->name => ['nullable']]);
-        $this->addRules([$this->name => ['required']]);
+        $this->removeRules([$this->getName() => ['nullable']]);
+        $this->addRules([$this->getName() => ['required']]);
 
         return $this;
     }
 
     public function requiredWith($field)
     {
-        $this->required = false;
+        $this->isRequired = false;
 
-        $this->removeRules([$this->name => ['nullable', 'required']]);
-        $this->addRules([$this->name => ["required_with:$field"]]);
+        $this->removeRules([$this->getName() => ['nullable', 'required']]);
+        $this->addRules([$this->getName() => ["required_with:$field"]]);
 
         return $this;
     }

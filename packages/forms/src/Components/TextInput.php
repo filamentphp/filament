@@ -18,28 +18,26 @@ class TextInput extends Field
     {
         $this->type('email');
 
-        $this->addRules([$this->name => ['email']]);
+        $this->addRules([$this->getName() => ['email']]);
 
         return $this;
     }
 
-    public function type($type)
+    public function getType()
     {
-        $this->type = $type;
-
-        return $this;
+        return $this->type;
     }
 
     public function max($value)
     {
-        $this->addRules([$this->name => ["max:$value"]]);
+        $this->addRules([$this->getName() => ["max:$value"]]);
 
         return $this;
     }
 
     public function min($value)
     {
-        $this->addRules([$this->name => ["min:$value"]]);
+        $this->addRules([$this->getName() => ["min:$value"]]);
 
         return $this;
     }
@@ -48,14 +46,7 @@ class TextInput extends Field
     {
         $this->type('number');
 
-        $this->addRules([$this->name => ['numeric']]);
-
-        return $this;
-    }
-
-    public function tel()
-    {
-        $this->type('tel');
+        $this->addRules([$this->getName() => ['numeric']]);
 
         return $this;
     }
@@ -67,11 +58,25 @@ class TextInput extends Field
         return $this;
     }
 
+    public function tel()
+    {
+        $this->type('tel');
+
+        return $this;
+    }
+
+    public function type($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
     public function url()
     {
         $this->type('url');
 
-        $this->addRules([$this->name => ['url']]);
+        $this->addRules([$this->getName() => ['url']]);
 
         return $this;
     }

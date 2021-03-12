@@ -96,11 +96,7 @@ class Form
 
     public function getSchema()
     {
-        return collect($this->schema)
-            ->map(function ($component) {
-                return $component->form($this);
-            })
-            ->toArray();
+        return $this->schema;
     }
 
     public function getSubmitMethod()
@@ -142,7 +138,11 @@ class Form
 
     public function schema($schema)
     {
-        $this->schema = value($schema);
+        $this->schema = collect(value($schema))
+            ->map(function ($component) {
+                return $component->form($this);
+            })
+            ->toArray();
 
         return $this;
     }

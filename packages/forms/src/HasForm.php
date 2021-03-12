@@ -83,12 +83,12 @@ trait HasForm
         foreach ($this->getForm()->getFlatSchema() as $field) {
             if (! $field instanceof FileUpload) continue;
 
-            $temporaryUploadedFile = $this->getTemporaryUploadedFile($field->name);
+            $temporaryUploadedFile = $this->getTemporaryUploadedFile($field->getName());
             if (! $temporaryUploadedFile) continue;
 
             $storeMethod = $field->visibility === 'public' ? 'storePublicly' : 'store';
-            $path = $temporaryUploadedFile->{$storeMethod}($field->directory, $field->disk);
-            $this->syncInput($field->name, $path, false);
+            $path = $temporaryUploadedFile->{$storeMethod}($field->getDirectory(), $field->getDiskName());
+            $this->syncInput($field->getName(), $path, false);
         }
 
         $this->resetTemporaryUploadedFiles();
@@ -113,7 +113,7 @@ trait HasForm
             $fieldToFocus = collect($this->getForm()->getFlatSchema())
                 ->first(function ($field) use ($exception) {
                     return ($field instanceof Field &&
-                        array_key_exists($field->name, $exception->validator->failed())
+                        array_key_exists($field->getName(), $exception->validator->failed())
                     );
                 });
 
@@ -131,7 +131,7 @@ trait HasForm
             $fieldToFocus = collect($this->getForm()->getFlatSchema())
                 ->first(function ($field) use ($exception) {
                     return ($field instanceof Field &&
-                        array_key_exists($field->name, $exception->validator->failed())
+                        array_key_exists($field->getName(), $exception->validator->failed())
                     );
                 });
 
@@ -144,7 +144,7 @@ trait HasForm
     public function getSelectFieldOptionSearchResults($fieldName, $search = '')
     {
         $field = collect($this->getForm()->getFlatSchema())
-            ->first(fn ($field) => $field instanceof Select && $field->name === $fieldName);
+            ->first(fn ($field) => $field instanceof Select && $field->getName() === $fieldName);
 
         if (! $field) return [];
 
@@ -165,11 +165,11 @@ trait HasForm
             return parent::validate($rules);
         } catch (ValidationException $exception) {
             $fieldToFocus = collect($this->getForm()->getFlatSchema())
-                ->first(function ($field) use ($exception) {
+                ->first(function ($component) use ($exception) {
                     return (
-                        $field instanceof Field &&
+                        $component instanceof Field &&
                         array_key_exists(
-                            static::getTemporaryUploadedFilePropertyName($field->name),
+                            static::getTemporaryUploadedFilePropertyName($component->getName()),
                             $exception->validator->failed()
                         )
                     );
@@ -194,19 +194,19 @@ trait HasForm
     public function focusTabbedField($field)
     {
         if ($field) {
-            $possibleTab = $field->parent;
+            $possibleTab = $field->getParent();
 
             while ($possibleTab) {
                 if ($possibleTab instanceof Tab) {
                     $this->dispatchBrowserEvent(
                         'switch-tab',
-                        $possibleTab->parent->getId() . '.' . $possibleTab->getId(),
+                        $possibleTab->getParent()->getId() . '.' . $possibleTab->getId(),
                     );
 
                     break;
                 }
 
-                $possibleTab = $possibleTab->parent;
+                $possibleTab = $possibleTab->getParent();
             }
         }
     }
