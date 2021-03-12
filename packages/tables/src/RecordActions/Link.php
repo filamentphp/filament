@@ -11,24 +11,45 @@ class Link extends Action
 
     protected $label;
 
+    protected $icon;
+
     public function label($label)
     {
-        $this->label = $label;
+        $this->configure(function () use ($label) {
+            $this->label = $label;
+        });
 
         return $this;
     }
 
-    public function name($name)
+    public function icon($icon)
     {
-        $this->name = $name;
-
-        $this->label(
-            (string) Str::of($this->name)
-                ->kebab()
-                ->replace(['-', '_', '.'], ' ')
-                ->ucfirst(),
-        );
+        $this->configure(function () use ($icon) {
+            $this->icon = $icon;
+        });
 
         return $this;
+    }
+
+    public function getLabel()
+    {
+        if ($this->label === null) {
+            return (string) Str::of($this->getName())
+                ->kebab()
+                ->replace(['-', '_', '.'], ' ')
+                ->ucfirst();
+        }
+
+        return $this->label;
+    }
+
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    public function hasIcon()
+    {
+        return $this->icon !== null;
     }
 }
