@@ -32,10 +32,12 @@ return [
     ],
 
     'keyValue' => [
-        'keyLabel' => 'Key',
-        'valueLabel' => 'Value',
         'addButtonLabel' => 'Add Row',
         'deleteButtonLabel' => 'Delete Row',
+        'keyLabel' => 'Key',
+        'keyPlaceholder' => 'Enter a key...',
+        'valueLabel' => 'Value',
+        'valuePlaceholder' => 'Enter a placeholder...',
     ],
 
     'multiSelect' => [

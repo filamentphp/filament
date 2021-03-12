@@ -133,7 +133,7 @@
                             <td class="whitespace-nowrap border-r border-gray-300">
                                 <input
                                     type="text"
-                                    placeholder="Enter key..."
+                                    placeholder="{{ __($formComponent->keyPlaceholder) }}"
                                     class="px-6 py-4 border-0 w-full bg-transparent placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-1 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                     x-bind:value="rows[index].key"
                                     @input.debounce.500ms="updateKey(index, $event.target.value)"
@@ -145,7 +145,7 @@
                             <td class="whitespace-nowrap">
                                 <input
                                     type="text"
-                                    placeholder="Enter value..."
+                                    placeholder="{{ __($formComponent->valuePlaceholder) }}"
                                     class="px-6 py-4 border-0 w-full bg-transparent placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                     x-bind:value="rows[index].value"
                                     @input.debounce.500ms="updateValue(index, $event.target.value)"

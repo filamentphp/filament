@@ -16,7 +16,11 @@ class KeyValue extends Field
 
     public $keyLabel = 'forms::fields.keyValue.keyLabel';
 
+    public $keyPlaceholder = 'forms::fields.keyValue.keyPlaceholder';
+
     public $valueLabel = 'forms::fields.keyValue.valueLabel';
+
+    public $valuePlaceholder = 'forms::fields.keyValue.valuePlaceholder';
 
     protected function setUp()
     {
