@@ -4,27 +4,27 @@ namespace Filament\Forms\Components;
 
 class KeyValue extends Field
 {
-    public $addButtonLabel = 'forms::fields.keyValue.addButtonLabel';
+    protected $addButtonLabel = 'forms::fields.keyValue.addButtonLabel';
 
-    public $canAddRows = true;
+    protected $canAddRows = true;
 
-    public $canDeleteRows = true;
+    protected $canDeleteRows = true;
 
-    public $canEditKeys = true;
+    protected $canEditKeys = true;
 
-    public $deleteButtonLabel = 'forms::fields.keyValue.deleteButtonLabel';
+    protected $deleteButtonLabel = 'forms::fields.keyValue.deleteButtonLabel';
 
-    public $isSortable = false;
+    protected $isSortable = false;
 
-    public $keyLabel = 'forms::fields.keyValue.keyLabel';
+    protected $keyLabel = 'forms::fields.keyValue.keyLabel';
 
-    public $keyPlaceholder = 'forms::fields.keyValue.keyPlaceholder';
+    protected $keyPlaceholder = 'forms::fields.keyValue.keyPlaceholder';
 
-    public $sortButtonLabel = 'forms::fields.keyValue.sortButtonLabel';
+    protected $sortButtonLabel = 'forms::fields.keyValue.sortButtonLabel';
 
-    public $valueLabel = 'forms::fields.keyValue.valueLabel';
+    protected $valueLabel = 'forms::fields.keyValue.valueLabel';
 
-    public $valuePlaceholder = 'forms::fields.keyValue.valuePlaceholder';
+    protected $valuePlaceholder = 'forms::fields.keyValue.valuePlaceholder';
 
     protected function setUp()
     {
@@ -33,77 +33,154 @@ class KeyValue extends Field
 
     public function addButtonLabel($label)
     {
-        $this->addButtonLabel = $label;
+        $this->configure(function () use ($label) {
+            $this->addButtonLabel = $label;
+        });
 
         return $this;
+    }
+
+    public function canAddRows()
+    {
+        return $this->canAddRows;
+    }
+
+    public function canDeleteRows()
+    {
+        return $this->canDeleteRows;
+    }
+
+    public function canEditKeys()
+    {
+        return $this->canEditKeys;
     }
 
     public function deleteButtonLabel($label)
     {
-        $this->deleteButtonLabel = $label;
-
-        return $this;
-    }
-
-    public function sortButtonLabel($label)
-    {
-        $this->sortButtonLabel = $label;
+        $this->configure(function () use ($label) {
+            $this->deleteButtonLabel = $label;
+        });
 
         return $this;
     }
 
     public function disableAddingRows($state = true)
     {
-        $this->canAddRows = !$state;
+        $this->configure(function () use ($state) {
+            $this->canAddRows = ! $state;
+        });
 
         return $this;
     }
 
     public function disableDeletingRows($state = true)
     {
-        $this->canDeleteRows = !$state;
+        $this->configure(function () use ($state) {
+            $this->canDeleteRows = ! $state;
+        });
 
         return $this;
     }
 
     public function disableEditingKeys($state = true)
     {
-        $this->canEditKeys = !$state;
+        $this->configure(function () use ($state) {
+            $this->canEditKeys = ! $state;
+        });
 
         return $this;
     }
 
+    public function getAddButtonLabel()
+    {
+        return $this->addButtonLabel;
+    }
+
+    public function getDeleteButtonLabel()
+    {
+        return $this->deleteButtonLabel;
+    }
+
+    public function getKeyLabel()
+    {
+        return $this->keyLabel;
+    }
+
+    public function getKeyPlaceholder()
+    {
+        return $this->keyPlaceholder;
+    }
+
+    public function getSortButtonLabel()
+    {
+        return $this->sortButtonLabel;
+    }
+
+    public function getValueLabel()
+    {
+        return $this->valueLabel;
+    }
+
+    public function getValuePlaceholder()
+    {
+        return $this->valuePlaceholder;
+    }
+
     public function keyLabel($label)
     {
-        $this->keyLabel = $label;
+        $this->configure(function () use ($label) {
+            $this->keyLabel = $label;
+        });
 
         return $this;
     }
 
     public function keyPlaceholder($placeholder)
     {
-        $this->keyPlaceholder = $placeholder;
+        $this->configure(function () use ($placeholder) {
+            $this->keyPlaceholder = $placeholder;
+        });
 
         return $this;
     }
 
+    public function isSortable()
+    {
+        return $this->isSortable;
+    }
+
     public function sortable($sortable = true)
     {
-        $this->isSortable = $sortable;
+        $this->configure(function () use ($sortable) {
+            $this->isSortable = $sortable;
+        });
+
+        return $this;
+    }
+
+    public function sortButtonLabel($label)
+    {
+        $this->configure(function () use ($label) {
+            $this->sortButtonLabel = $label;
+        });
 
         return $this;
     }
 
     public function valueLabel($label)
     {
-        $this->valueLabel = $label;
+        $this->configure(function () use ($label) {
+            $this->valueLabel = $label;
+        });
 
         return $this;
     }
 
     public function valuePlaceholder($placeholder)
     {
-        $this->valuePlaceholder = $placeholder;
+        $this->configure(function () use ($placeholder) {
+            $this->valuePlaceholder = $placeholder;
+        });
 
         return $this;
     }
