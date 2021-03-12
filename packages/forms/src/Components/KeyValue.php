@@ -69,9 +69,23 @@ class KeyValue extends Field
         return $this;
     }
 
+    public function keyPlaceholder($placeholder)
+    {
+        $this->keyPlaceholder = $placeholder;
+
+        return $this;
+    }
+
     public function valueLabel($label)
     {
         $this->valueLabel = $label;
+
+        return $this;
+    }
+
+    public function valuePlaceholder($placeholder)
+    {
+        $this->valuePlaceholder = $placeholder;
 
         return $this;
     }
