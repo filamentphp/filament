@@ -132,6 +132,12 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-200">
                     <tr class="divide-x divide-gray-300">
+                        @if($formComponent->isSortable && $formComponent->sortButtonLabel)
+                            <th scope="col" x-show="isSortable">
+                                <span class="sr-only">{{ __($formComponent->sortButtonLabel) }}</span>
+                            </th>
+                        @endif
+
                         <th class="px-6 py-3 text-left text-gray-600" scope="col">
                             <span class="text-xs font-medium tracking-wider uppercase">
                                 {{ __($formComponent->keyLabel) }}
@@ -159,25 +165,26 @@
                                 draggable="true"
                             @endif
                         >
-                            <td class="border-r border-gray-300 whitespace-nowrap">
-                                <div class="flex items-center">
-                                    @if($formComponent->isSortable)
-                                        <button class="text-gray-600" data-sort-handle>
+                            @if ($formComponent->isSortable)
+                                <td x-show="isSortable" class="w-10 border-r border-gray-300 whitespace-nowrap">
+                                    <div class="flex items-center justify-center">
+                                        <button class="text-gray-600 hover:text-gray-800" data-sort-handle>
                                             <x-heroicon-o-menu-alt-4 class="w-4 h-4" />
                                         </button>
-                                    @endif
-
-                                    <input
-                                        type="text"
-                                        placeholder="{{ __($formComponent->keyPlaceholder) }}"
-                                        class="flex-1 px-6 py-4 font-mono text-sm placeholder-gray-400 placeholder-opacity-100 bg-transparent border-0 focus:placeholder-gray-500 focus:border-1 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                        x-bind:value="rows[index].key"
-                                        @input.debounce.500ms="updateKey(index, $event.target.value)"
-                                        @unless ($formComponent->canEditKeys)
-                                            disabled
-                                        @endunless
-                                    >
-                                </div>
+                                    </div>
+                                </td>
+                            @endif
+                            <td class="border-r border-gray-300 whitespace-nowrap">
+                                <input
+                                    type="text"
+                                    placeholder="{{ __($formComponent->keyPlaceholder) }}"
+                                    class="flex-1 px-6 py-4 font-mono text-sm placeholder-gray-400 placeholder-opacity-100 bg-transparent border-0 focus:placeholder-gray-500 focus:border-1 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                    x-bind:value="rows[index].key"
+                                    @input.debounce.500ms="updateKey(index, $event.target.value)"
+                                    @unless ($formComponent->canEditKeys)
+                                        disabled
+                                    @endunless
+                                >
                             </td>
                             <td class="whitespace-nowrap">
                                 <input

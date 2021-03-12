@@ -34,7 +34,7 @@ return [
     'keyValue' => [
         'addButtonLabel' => 'Add Row',
         'deleteButtonLabel' => 'Delete Row',
-        'dragButtonLabel' => 'Drag to Sort',
+        'sortButtonLabel' => 'Hold to Sort',
         'keyLabel' => 'Key',
         'keyPlaceholder' => 'Enter a key...',
         'valueLabel' => 'Value',
