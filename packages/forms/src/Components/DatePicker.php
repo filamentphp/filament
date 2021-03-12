@@ -9,19 +9,19 @@ class DatePicker extends Field
     use Concerns\CanBeUnique;
     use Concerns\HasPlaceholder;
 
-    public $displayFormat;
+    protected $displayFormat;
 
-    public $format;
+    protected $format;
 
-    public $maxDate;
+    protected $maxDate;
 
-    public $minDate;
+    protected $minDate;
 
-    public $time = false;
+    protected $time = false;
 
-    public $withoutSeconds = false;
+    protected $withoutSeconds = false;
 
-    public $view = 'forms::components.date-time-picker';
+    protected $view = 'forms::components.date-time-picker';
 
     protected function setUp()
     {

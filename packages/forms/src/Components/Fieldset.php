@@ -4,7 +4,7 @@ namespace Filament\Forms\Components;
 
 class Fieldset extends Component
 {
-    public $columns = 2;
+    protected $columns = 2;
 
     public static function make($label, $schema = [])
     {

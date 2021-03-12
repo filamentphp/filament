@@ -9,13 +9,13 @@ class RichEditor extends Field
     use Concerns\CanBeUnique;
     use Concerns\HasPlaceholder;
 
-    public $attachmentDirectory = 'attachments';
+    protected $attachmentDirectory = 'attachments';
 
-    public $attachmentDisk;
+    protected $attachmentDisk;
 
-    public $attachmentUploadUrl;
+    protected $attachmentUploadUrl;
 
-    public $toolbarButtons = [
+    protected $toolbarButtons = [
         'bold',
         'bullet',
         'code',

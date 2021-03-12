@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 
 class Tab extends Component
 {
-    public $columns = 1;
+    protected $columns = 1;
 
     public static function make($label, $schema = [])
     {

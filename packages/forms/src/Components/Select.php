@@ -11,15 +11,15 @@ class Select extends Field
     use Concerns\CanBeUnique;
     use Concerns\HasPlaceholder;
 
-    public $emptyOptionsMessage = 'forms::fields.select.emptyOptionsMessage';
+    protected $emptyOptionsMessage = 'forms::fields.select.emptyOptionsMessage';
 
-    public $getDisplayValue;
+    protected $getDisplayValue;
 
-    public $getOptionSearchResults;
+    protected $getOptionSearchResults;
 
-    public $noSearchResultsMessage = 'forms::fields.select.noSearchResultsMessage';
+    protected $noSearchResultsMessage = 'forms::fields.select.noSearchResultsMessage';
 
-    public $options = [];
+    protected $options = [];
 
     protected function setUp()
     {

@@ -10,7 +10,7 @@ class TagsInput extends Field
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasPlaceholder;
 
-    public $separator = ',';
+    protected $separator = ',';
 
     protected function setUp()
     {

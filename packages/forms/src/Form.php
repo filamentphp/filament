@@ -49,12 +49,12 @@ class Form
         $this->context;
     }
 
-    public function getDefaults()
+    public function getDefaultValues()
     {
         $defaults = [];
 
         foreach ($this->getSchema() as $component) {
-            $defaults = array_merge($defaults, $component->getDefaults());
+            $defaults = array_merge($defaults, $component->getDefaultValues());
         }
 
         return $defaults;
@@ -78,7 +78,7 @@ class Form
 
     public function getRecord()
     {
-        return $this->getRecord;
+        return $this->record;
     }
 
     public function getRules()

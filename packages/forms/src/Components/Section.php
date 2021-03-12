@@ -4,11 +4,11 @@ namespace Filament\Forms\Components;
 
 class Section extends Component
 {
-    public $columns = 1;
+    protected $columns = 1;
 
-    public $heading;
+    protected $heading;
 
-    public $subheading;
+    protected $subheading;
 
     public static function make($heading, $subheading = null, $schema = [])
     {

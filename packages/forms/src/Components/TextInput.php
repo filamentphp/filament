@@ -12,7 +12,7 @@ class TextInput extends Field
     use Concerns\HasPlaceholder;
     use Concerns\HasPrefix;
 
-    public $type = 'text';
+    protected $type = 'text';
 
     public function email()
     {

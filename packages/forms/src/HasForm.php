@@ -213,7 +213,7 @@ trait HasForm
 
     public function getPropertyDefaults()
     {
-        return $this->getForm()->getDefaults();
+        return $this->getForm()->getDefaultValues();
     }
 
     public function fillWithFormDefaults()

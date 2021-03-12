@@ -7,11 +7,11 @@ class MultiSelect extends Field
     use Concerns\CanBeAutofocused;
     use Concerns\HasPlaceholder;
 
-    public $emptyOptionsMessage = 'forms::fields.multiSelect.emptyOptionsMessage';
+    protected $emptyOptionsMessage = 'forms::fields.multiSelect.emptyOptionsMessage';
 
-    public $noSearchResultsMessage = 'forms::fields.multiSelect.noSearchResultsMessage';
+    protected $noSearchResultsMessage = 'forms::fields.multiSelect.noSearchResultsMessage';
 
-    public $options = [];
+    protected $options = [];
 
     protected function setUp()
     {

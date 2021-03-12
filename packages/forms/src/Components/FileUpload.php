@@ -8,37 +8,37 @@ class FileUpload extends Field
 {
     use Concerns\HasPlaceholder;
 
-    public $acceptedFileTypes = [];
+    protected $acceptedFileTypes = [];
 
-    public $directory;
+    protected $directory;
 
-    public $disk;
+    protected $disk;
 
-    public $imageCropAspectRatio;
+    protected $imageCropAspectRatio;
 
-    public $imagePreviewHeight;
+    protected $imagePreviewHeight;
 
-    public $imageResizeTargetHeight;
+    protected $imageResizeTargetHeight;
 
-    public $imageResizeTargetWidth;
+    protected $imageResizeTargetWidth;
 
-    public $loadingIndicatorPosition = 'right';
+    protected $loadingIndicatorPosition = 'right';
 
-    public $maxSize;
+    protected $maxSize;
 
-    public $minSize;
+    protected $minSize;
 
-    public $panelAspectRatio = null;
+    protected $panelAspectRatio = null;
 
-    public $panelLayout = null;
+    protected $panelLayout = null;
 
-    public $removeUploadButtonPosition = 'left';
+    protected $removeUploadButtonPosition = 'left';
 
-    public $uploadButtonPosition = 'right';
+    protected $uploadButtonPosition = 'right';
 
-    public $uploadProgressIndicatorPosition = 'right';
+    protected $uploadProgressIndicatorPosition = 'right';
 
-    public $visibility = 'public';
+    protected $visibility = 'public';
 
     protected function setUp()
     {

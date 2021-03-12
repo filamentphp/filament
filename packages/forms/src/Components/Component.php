@@ -11,38 +11,25 @@ class Component
 {
     use Tappable;
 
-    public $context;
+    protected $columnSpan = 1;
 
-    public $columnSpan = 1;
+    protected $hidden = false;
 
-    public $hidden = false;
+    protected $form;
 
-    public $id;
+    protected $id;
 
-    public $label;
+    protected $label;
 
-    public $model;
+    protected $parent;
 
-    public $parent;
+    protected $schema = [];
 
-    public $schema = [];
-
-    public $record;
-
-    public $view;
+    protected $view;
 
     protected function setUp()
     {
         //
-    }
-
-    public function context($context)
-    {
-        $this->context = $context;
-
-        $this->schema($this->getSubform()->context($this->context)->schema);
-
-        return $this;
     }
 
     public function columnSpan($span)
@@ -62,9 +49,22 @@ class Component
             $callback = fn ($component) => $component->visible();
         }
 
-        if (! $this->context || in_array($this->context, $contexts)) return $this;
+        if (! $this->getContext() || in_array($this->getContext(), $contexts)) return $this;
 
         $callback($this);
+
+        return $this;
+    }
+
+    public function form($form)
+    {
+        $this->form = $form;
+
+        $this->schema(
+            collect($this->getSchema())
+                ->map(fn ($component) => $component->form($this->getForm()))
+                ->toArray(),
+        );
 
         return $this;
     }
@@ -76,59 +76,74 @@ class Component
         return $this;
     }
 
-    public function schema($schema)
+    public function getColumnSpan()
     {
-        $this->schema = collect(value($schema))
-            ->map(fn ($component) => $component->parent($this))
-            ->toArray();
-
-        return $this;
+        return $this->columnSpan;
     }
 
-    public function getDefaults()
+    public function getContext()
     {
-        if ($this->hidden) return [];
+        return $this->getForm()->getContext();
+    }
 
-        $defaults = [];
+    public function getDefaultValues()
+    {
+        if ($this->isHidden()) return [];
 
-        if (property_exists($this, 'name') && property_exists($this, 'default')) {
-            $defaults[$this->name] = $this->default;
+        $values = [];
+
+        if ($this instanceof Field) {
+            $values[$this->getName()] = $this->getDefaultValue();
         }
 
-        $defaults = array_merge($defaults, $this->getSubform()->getDefaults());
+        $values = array_merge($values, $this->getSubform()->getDefaultValues());
 
-        return $defaults;
+        return $values;
+    }
+
+    public function getForm()
+    {
+        return $this->form;
     }
 
     public function getId()
     {
-        return (string) Str::of($this->context)
-            ->replace('\\', '-')
-            ->lower()
-            ->append('-')
-            ->append($this->id);
+        return (string) Str::of($this->id)
+            ->prepend(
+                $this->getContext() ?
+                    (string) Str::of($this->getContext())
+                        ->replace('\\', '-')
+                        ->lower()
+                        ->append('-') :
+                    '',
+            );
     }
 
-    public function getSubform()
+    public function getLabel()
     {
-        $form = Form::make()->schema($this->schema);
+        return $this->label;
+    }
 
-        if ($this->context) {
-            $form->context($this->context);
-        }
+    public function getModel()
+    {
+        return $this->getForm()->getModel();
+    }
 
-        if ($this->record) {
-            $form->record($this->record);
-        }
+    public function getParent()
+    {
+        return $this->parent;
+    }
 
-        return $form;
+    public function getRecord()
+    {
+        return $this->getForm()->getRecord();
     }
 
     public function getRules()
     {
-        if ($this->hidden) return [];
+        if ($this->isHidden()) return [];
 
-        $rules = property_exists($this, 'rules') ? $this->rules : [];
+        $rules = $this instanceof Field ? $this->rules : [];
 
         foreach ($rules as $field => $conditions) {
             $rules[$field] = $this->transformConditions($conditions);
@@ -141,27 +156,42 @@ class Component
         return $rules;
     }
 
+    public function getSchema()
+    {
+        return $this->schema;
+    }
+
+    public function getSubform()
+    {
+        return Form::make()
+            ->context($this->getContext())
+            ->model($this->getModel())
+            ->record($this->getRecord())
+            ->schema($this->getSchema());
+    }
+
     public function getValidationAttributes()
     {
-        if ($this->hidden) return [];
+        if ($this->isHidden()) return [];
 
         $attributes = [];
 
-        if (property_exists($this, 'name')) {
-            if (property_exists($this, 'label')) {
-                $label = Str::lower(__($this->label));
-
-                $attributes[$this->name] = $label;
-            }
+        if ($this instanceof Field) {
+            $attributes[$this->getName()] = Str::lower(__($this->getLabel()));
 
             if (property_exists($this, 'validationAttribute') && $this->validationAttribute !== null) {
-                $attributes[$this->name] = __($this->validationAttribute);
+                $attributes[$this->getName()] = __($this->validationAttribute);
             }
         }
 
         $attributes = array_merge($attributes, $this->getSubform()->getValidationAttributes());
 
         return $attributes;
+    }
+
+    public function getView()
+    {
+        return $this->view;
     }
 
     public function id($id)
@@ -171,18 +201,14 @@ class Component
         return $this;
     }
 
+    public function isHidden()
+    {
+        return $this->hidden;
+    }
+
     public function label($label)
     {
         $this->label = $label;
-
-        return $this;
-    }
-
-    public function model($model)
-    {
-        $this->model = $model;
-
-        $this->schema($this->getSubform()->model($this->model)->schema);
 
         return $this;
     }
@@ -197,7 +223,7 @@ class Component
             $callback = fn ($component) => $component->visible();
         }
 
-        if (! in_array($this->context, $contexts)) return $this;
+        if (! in_array($this->getContext(), $contexts)) return $this;
 
         $callback($this);
 
@@ -211,15 +237,11 @@ class Component
         return $this;
     }
 
-    public function record($record)
+    public function schema($schema)
     {
-        $this->record = $record;
-
-        if ($this->record instanceof Model) {
-            $this->model(get_class($this->record));
-        }
-
-        $this->schema($this->getSubform()->record($this->record)->schema);
+        $this->schema = collect(value($schema))
+            ->map(fn ($component) => $component->parent($this))
+            ->toArray();
 
         return $this;
     }
@@ -246,16 +268,16 @@ class Component
             $callback = fn ($component) => $component->visible();
         }
 
-        if ($this->record === null) return $this;
+        if ($this->getRecord() === null) return $this;
 
         try {
-            $shouldExecuteCallback = $condition($this->record);
+            $shouldExecuteCallback = $condition($this->getRecord());
         } catch (\Exception $exception) {
             $shouldExecuteCallback = false;
         }
 
         if ($shouldExecuteCallback) {
-            $callback($this, $this->record);
+            $callback($this, $this->getRecord());
         }
 
         return $this;
@@ -263,9 +285,9 @@ class Component
 
     public function render()
     {
-        if ($this->hidden) return;
+        if ($this->isHidden()) return;
 
-        $view = $this->view ?? 'forms::components.' . Str::of(class_basename(static::class))->kebab();
+        $view = $this->getView() ?? 'forms::components.' . Str::of(class_basename(static::class))->kebab();
 
         return view($view, ['formComponent' => $this]);
     }
@@ -276,7 +298,7 @@ class Component
             ->map(function ($condition) {
                 if (! is_string($condition)) return $condition;
 
-                return (string) Str::of($condition)->replace('{{record}}', $this->record instanceof Model ? $this->record->getKey() : '');
+                return (string) Str::of($condition)->replace('{{record}}', $this->getRecord() instanceof Model ? $this->getRecord()->getKey() : '');
             })
             ->toArray();
     }

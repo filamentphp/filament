@@ -11,9 +11,9 @@ class Textarea extends Field
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasPlaceholder;
 
-    public $cols;
+    protected $cols;
 
-    public $rows;
+    protected $rows;
 
     public function cols($cols)
     {

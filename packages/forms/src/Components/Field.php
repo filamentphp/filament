@@ -6,25 +6,25 @@ use Illuminate\Support\Str;
 
 class Field extends Component
 {
-    public $default = null;
+    protected $bindingAttribute = 'wire:model.defer';
 
-    public $disabled = false;
+    protected $default = null;
 
-    public $extraAttributes = [];
+    protected $disabled = false;
 
-    public $helpMessage;
+    protected $extraAttributes = [];
 
-    public $hint;
+    protected $helpMessage;
 
-    public $name;
+    protected $hint;
 
-    public $bindingAttribute = 'wire:model.defer';
+    protected $name;
 
-    public $required = false;
+    protected $required = false;
 
-    public $rules = [];
+    protected $rules = [];
 
-    public $validationAttribute;
+    protected $validationAttribute;
 
     public function __construct($name)
     {
@@ -36,6 +36,13 @@ class Field extends Component
     public static function make($name)
     {
         return new static($name);
+    }
+
+    public function bindingAttribute($bindingAttribute)
+    {
+        $this->bindingAttribute = $bindingAttribute;
+
+        return $this;
     }
 
     public function dependable()
@@ -87,9 +94,9 @@ class Field extends Component
         return $this;
     }
 
-    public function default($default)
+    public function default($value)
     {
-        $this->default = $default;
+        $this->defaultValue = $value;
 
         return $this;
     }
@@ -115,11 +122,14 @@ class Field extends Component
         return $this;
     }
 
-    public function bindingAttribute($bindingAttribute)
+    public function getDefaultValue()
     {
-        $this->bindingAttribute = $bindingAttribute;
+        return $this->defaultValue;
+    }
 
-        return $this;
+    public function getName()
+    {
+        return $this->name;
     }
 
     public function nullable()
