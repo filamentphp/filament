@@ -2,6 +2,8 @@
     <script>
         function keyValue(config) {
             return {
+                canAddRows: config.canAddRows,
+
                 canDeleteRows: config.canDeleteRows,
 
                 rows: [{ key: null, value: null }],
@@ -29,6 +31,8 @@
                 },
 
                 addRow: function () {
+                    if (! this.canAddRows) return
+
                     this.rows.push({ key: '', value: '' })
                 },
 
@@ -45,6 +49,8 @@
                 },
 
                 deleteRow: function (index) {
+                    if (! this.canDeleteRows) return
+
                     this.rows.splice(index, 1)
 
                     if (this.rows.length <= 0) {
@@ -86,6 +92,7 @@
     :required="$formComponent->required"
 >
     <div x-data="keyValue({
+        canAddRows: {{ json_encode($formComponent->canAddRows) }},
         canDeleteRows: {{ json_encode($formComponent->canDeleteRows) }},
         name: {{ json_encode($formComponent->name) }},
         @if (Str::of($formComponent->nameAttribute)->startsWith('wire:model'))
@@ -159,13 +166,15 @@
             </table>
         </div>
 
-        <div>
-            <x-filament::button
-                type="button"
-                @click="addRow"
-            >
-                {{ __($formComponent->addButtonLabel) }}
-            </x-filament::button>
-        </div>
+        @if ($formComponent->canAddRows)
+            <div>
+                <x-filament::button
+                    type="button"
+                    @click="addRow"
+                >
+                    {{ __($formComponent->addButtonLabel) }}
+                </x-filament::button>
+            </div>
+        @endif
     </div>
 </x-forms::field-group>
