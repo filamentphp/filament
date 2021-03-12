@@ -180,7 +180,7 @@
                                     placeholder="{{ __($formComponent->keyPlaceholder) }}"
                                     class="w-full px-6 py-4 font-mono text-sm placeholder-gray-400 placeholder-opacity-100 bg-transparent border-0 focus:placeholder-gray-500 focus:border-1 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                     x-bind:value="rows[index].key"
-                                    @input.debounce.500ms="updateKey(index, $event.target.value)"
+                                    @change="updateKey(index, $event.target.value)"
                                     @unless ($formComponent->canEditKeys)
                                         disabled
                                     @endunless
@@ -192,7 +192,7 @@
                                     placeholder="{{ __($formComponent->valuePlaceholder) }}"
                                     class="w-full px-6 py-4 font-mono text-sm placeholder-gray-400 placeholder-opacity-100 bg-transparent border-0 focus:placeholder-gray-500 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                     x-bind:value="rows[index].value"
-                                    @input.debounce.500ms="updateValue(index, $event.target.value)"
+                                    @change="updateValue(index, $event.target.value)"
                                 >
                             </td>
                             @if ($formComponent->canDeleteRows)
