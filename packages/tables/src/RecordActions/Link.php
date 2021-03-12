@@ -11,9 +11,34 @@ class Link extends Action
 
     public $label;
 
+    public $icon;
+
+    public $display = 'text';
+
     public function label($label)
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function displayIconOnly()
+    {
+        $this->display = 'icon';
+
+        return $this;
+    }
+
+    public function displayIconAndText()
+    {
+        $this->display = 'both';
+
+        return $this;
+    }
+
+    public function icon($icon)
+    {
+        $this->icon = $icon;
 
         return $this;
     }
