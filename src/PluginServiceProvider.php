@@ -35,7 +35,16 @@ abstract class PluginServiceProvider extends ServiceProvider
 
             foreach ($this->resources() as $resource) {
                 Filament::registerResource($resource);
-                $this->registerWithLivewire($resource);
+            }
+
+            foreach ($this->resources() as $resource) {
+                foreach ($resource::relations() as $relation) {
+                    Livewire::component($relation::getName(), $relation);
+                }
+
+                foreach ($resource::routes() as $route) {
+                    Livewire::component($route->page::getName(), $route->page);
+                }
             }
 
             foreach ($this->roles() as $role) {
@@ -105,28 +114,5 @@ abstract class PluginServiceProvider extends ServiceProvider
     protected function widgets()
     {
         return $this->widgets;
-    }
-
-    private function registerWithLivewire($resource)
-    {
-        $filesystem = new Filesystem();
-        $reflector = new \ReflectionClass($resource);
-        $directory = Str::of($reflector->getFileName())->before('.php');
-        $namespace = Str::of($resource)->before('.php');
-
-        collect($filesystem->allfiles($directory))
-        ->map(function (SplFileInfo $file) use ($namespace) {
-            return (string) Str::of($namespace)
-                ->append('\\', $file->getRelativePathname())
-                ->replace(['/', '.php'], ['\\', '']);
-        })
-        ->each(function ($class) use ($namespace) {
-            $alias = Str::of($class)
-                ->replace(['/', '\\'], '.')
-                ->explode('.')
-                ->map([Str::class, 'kebab'])
-                ->implode('.');
-                Livewire::component($alias, $class);
-        });
     }
 }
