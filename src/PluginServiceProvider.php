@@ -31,7 +31,6 @@ abstract class PluginServiceProvider extends ServiceProvider
         $this->app->booting(function () {
             foreach ($this->pages() as $page) {
                 Filament::registerPage($page);
-                $this->registerWithLivewire($resource);
             }
 
             foreach ($this->resources() as $resource) {
