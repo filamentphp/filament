@@ -1,4 +1,6 @@
 @pushonce('filament-scripts:key-value-component')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.13.0/Sortable.min.js" integrity="sha512-5x7t0fTAVo9dpfbp3WtE2N6bfipUwk7siViWncdDoSz2KwOqVC1N9fDxEOzk0vTThOua/mglfF8NO7uVDLRC8Q==" crossorigin="anonymous"></script>
+
     <script>
         function keyValue(config) {
             return {
@@ -9,6 +11,8 @@
                 isSortable: config.isSortable,
 
                 rows: [{ key: null, value: null }],
+
+                sortable: null,
 
                 value: config.value,
 
@@ -30,12 +34,28 @@
 
                         this.value = {}
                     })
+
+                    if (this.isSortable) {
+                        this.sortable = new Sortable(this.$refs.tableBody, {
+                            handle: '[data-sort-handle]',
+                            animation: 250,
+                            onSort: ($event) => {
+                                this.moveRow($event.oldIndex, $event.newIndex)
+                            }
+                        })
+                    }
                 },
 
                 addRow: function () {
                     if (! this.canAddRows) return
 
                     this.rows.push({ key: '', value: '' })
+                },
+
+                moveRow: function (from, to) {
+                    this.rows.splice(to, 0, this.rows.splice(from, 1)[0])
+
+                    this.updateLivewire()
                 },
 
                 updateKey: function (index, key) {
@@ -128,22 +148,34 @@
                         @endif
                     </tr>
                 </thead>
-                <tbody class="text-sm leading-tight divide-y divide-gray-200">
+                <tbody class="text-sm leading-tight divide-y divide-gray-200" x-ref="tableBody">
                     <template x-for="(row, index, collection) in rows" :key="index">
                         <tr
                             x-bind:class="{ 'bg-gray-50': index % 2 }"
+                            @if ($formComponent->isSortable)
+                                x-bind:data-sort-index="index"
+                                draggable="true"
+                            @endif
                         >
                             <td class="border-r border-gray-300 whitespace-nowrap">
-                                <input
-                                    type="text"
-                                    placeholder="{{ __($formComponent->keyPlaceholder) }}"
-                                    class="w-full px-6 py-4 font-mono text-sm placeholder-gray-400 placeholder-opacity-100 bg-transparent border-0 focus:placeholder-gray-500 focus:border-1 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                    x-bind:value="rows[index].key"
-                                    @input.debounce.500ms="updateKey(index, $event.target.value)"
-                                    @unless ($formComponent->canEditKeys)
-                                        disabled
-                                    @endunless
-                                >
+                                <div class="flex items-center">
+                                    @if($formComponent->isSortable)
+                                        <button class="text-gray-600" data-sort-handle>
+                                            <x-heroicon-o-menu-alt-4 class="w-4 h-4" />
+                                        </button>
+                                    @endif
+
+                                    <input
+                                        type="text"
+                                        placeholder="{{ __($formComponent->keyPlaceholder) }}"
+                                        class="flex-1 px-6 py-4 font-mono text-sm placeholder-gray-400 placeholder-opacity-100 bg-transparent border-0 focus:placeholder-gray-500 focus:border-1 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                        x-bind:value="rows[index].key"
+                                        @input.debounce.500ms="updateKey(index, $event.target.value)"
+                                        @unless ($formComponent->canEditKeys)
+                                            disabled
+                                        @endunless
+                                    >
+                                </div>
                             </td>
                             <td class="whitespace-nowrap">
                                 <input
