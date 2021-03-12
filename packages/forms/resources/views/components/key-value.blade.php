@@ -27,13 +27,13 @@
                 updateKey: function (index, key) {
                     this.rows[index].key = key
 
-                    this.updateLivewire(index)
+                    this.updateLivewire()
                 },
 
                 updateValue: function (index, value) {
                     this.rows[index].value = value
 
-                    this.updateLivewire(index)
+                    this.updateLivewire()
                 },
 
                 deleteRow: function (index) {
@@ -53,11 +53,12 @@
                 },
 
                 updateLivewire: function (index = null) {
-                    const rows = index !== null ? [].concat(this.rows[index]) : this.rows
+                    const rows = this.rows.reduce((accum, { key, value }) => {
+                        accum[key] = value
+                        return accum
+                    }, {})
 
-                    rows.forEach(row => {
-                        this.$wire.set(`${this.name}.${row.key}`, row.value)
-                    })
+                    this.$wire.set(`${this.name}`, rows)
                 }
             }
         }
