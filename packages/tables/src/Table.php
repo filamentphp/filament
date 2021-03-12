@@ -146,6 +146,10 @@ class Table
     {
         $this->columns = collect($this->columns)
             ->map(function ($column) use ($action) {
+                if (! $column->primary || ! method_exists($column, 'action')) {
+                    return $column;
+                }
+
                 return $column->action($action);
             })
             ->toArray();
@@ -157,6 +161,10 @@ class Table
     {
         $this->columns = collect($this->columns)
             ->map(function ($column) use ($url) {
+                if (! $column->primary || ! method_exists($column, 'url')) {
+                    return $column;
+                }
+
                 return $column->url($url);
             })
             ->toArray();
@@ -166,7 +174,7 @@ class Table
 
     public function recordActions($actions)
     {
-        $this->recordActions = $actions;
+        $this->recordActions = array_merge($this->recordActions, $actions);
 
         return $this;
     }

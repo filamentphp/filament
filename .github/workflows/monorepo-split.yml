@@ -31,7 +31,7 @@ jobs:
             - id: previous-tag
               uses: "WyriHaximus/github-action-get-previous-tag@master"
             - name: Monorepo Split of ${{ matrix.package }}
-              uses: symplify/github-action-monorepo-split@master
+              uses: symplify/github-action-monorepo-split@main
               env:
                   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
               with:

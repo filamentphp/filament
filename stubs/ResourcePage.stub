@@ -8,4 +8,6 @@ use {{ baseResourcePage }};
 class {{ resourcePageClass }} extends {{ baseResourcePageClass }}
 {
     public static $resource = {{ resourceClass }}::class;
+
+    public static $view = '{{ view }}';
 }
