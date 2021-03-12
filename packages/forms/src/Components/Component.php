@@ -55,7 +55,7 @@ class Component
             return;
         }
 
-        if ($this->form) {
+        if ($this->getForm()) {
             $callback();
         } else {
             $this->configurationQueue[] = $callback;

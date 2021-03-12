@@ -9,15 +9,17 @@ class Filter
 {
     use Tappable;
 
-    public $callback;
+    protected $callback;
 
-    public $context;
+    protected $configurationQueue = [];
 
-    public $hidden = false;
+    protected $hidden = false;
 
-    public $label;
+    protected $label;
 
-    public $name;
+    protected $name;
+
+    protected $table;
 
     public function __construct($name = null, $callback = null)
     {
@@ -40,13 +42,6 @@ class Filter
         return new static($name, $callback);
     }
 
-    public function callback($callback)
-    {
-        $this->callback = $callback;
-
-        return $this;
-    }
-
     public function apply($query)
     {
         $callback = $this->callback;
@@ -54,69 +49,116 @@ class Filter
         return $callback($query);
     }
 
-    public function context($context)
+    public function callback($callback)
     {
-        $this->context = $context;
+        $this->configure(function () use ($callback) {
+            $this->callback = $callback;
+        });
+
+        return $this;
+    }
+
+    public function configure($callback = null)
+    {
+        if ($callback === null) {
+            foreach ($this->configurationQueue as $callback) {
+                $callback();
+            }
+
+            $this->configurationQueue = [];
+
+            return;
+        }
+
+        if ($this->getTable()) {
+            $callback();
+        } else {
+            $this->configurationQueue[] = $callback;
+        }
 
         return $this;
     }
 
     public function except($contexts, $callback = null)
     {
-        if (! is_array($contexts)) $contexts = [$contexts];
+        $this->configure(function () use ($callback, $contexts) {
+            if (! is_array($contexts)) $contexts = [$contexts];
 
-        if (! $callback) {
-            $this->hidden();
+            if (! $callback) {
+                $this->hidden();
 
-            $callback = fn ($field) => $field->visible();
-        }
+                $callback = fn ($filter) => $filter->visible();
+            }
 
-        if (! $this->context || in_array($this->context, $contexts)) return $this;
+            if (! $this->getContext() || in_array($this->getContext(), $contexts)) return $this;
 
-        $callback($this);
+            $callback($this);
+        });
 
         return $this;
     }
 
     public function hidden()
     {
-        $this->hidden = true;
+        $this->configure(function () {
+            $this->hidden = true;
+        });
 
         return $this;
     }
 
+    public function getLabel()
+    {
+        if ($this->label === null) {
+            return (string) Str::of($this->getName())
+                ->kebab()
+                ->replace(['-', '_', '.'], ' ')
+                ->ucfirst();
+        }
+
+        return $this->label;
+    }
+
     public function label($label)
     {
-        $this->label = $label;
+        $this->configure(function () use ($label) {
+            $this->label = $label;
+        });
 
         return $this;
     }
 
     public function name($name)
     {
-        $this->name = $name;
-
-        $this->label(
-            (string) Str::of($this->name)
-                ->kebab()
-                ->replace(['-', '_', '.'], ' ')
-                ->ucfirst(),
-        );
+        $this->configure(function () use ($name) {
+            $this->name = $name;
+        });
     }
 
     public function only($contexts, $callback = null)
     {
-        if (! is_array($contexts)) $contexts = [$contexts];
+        $this->configure(function () use ($callback, $contexts) {
+            if (! is_array($contexts)) $contexts = [$contexts];
 
-        if (! $callback) {
-            $this->hidden();
+            if (! $callback) {
+                $this->hidden();
 
-            $callback = fn ($field) => $field->visible();
-        }
+                $callback = fn ($filter) => $filter->visible();
+            }
 
-        if (! in_array($this->context, $contexts)) return $this;
+            if (! in_array($this->getContext(), $contexts)) return $this;
 
-        $callback($this);
+            $callback($this);
+        });
+
+        return $this;
+    }
+
+    public function table($table)
+    {
+        $this->table = $table;
+
+        $this->configure();
 
         return $this;
     }

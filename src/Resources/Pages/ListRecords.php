@@ -81,7 +81,7 @@ class ListRecords extends Page
                 ->context(static::class)
                 ->filterable($this->filterable)
                 ->pagination($this->pagination)
-                ->primaryRecordUrl(function ($record) {
+                ->primaryColumnUrl(function ($record) {
                     if (! Filament::can('update', $record)) return;
 
                     return $this->getResource()::generateUrl(

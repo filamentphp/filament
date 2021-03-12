@@ -161,7 +161,7 @@ class RelationManager extends Component
         $this->selected = [];
     }
 
-    public function getPrimaryRecordAction($record)
+    public function getPrimaryColumnAction($record)
     {
         if (! Filament::can('update', $record)) return;
 
@@ -184,8 +184,8 @@ class RelationManager extends Component
             Table::make()
                 ->filterable($this->filterable)
                 ->pagination(false)
-                ->primaryRecordAction(function ($record) {
-                    return $this->getPrimaryRecordAction($record);
+                ->primaryColumnAction(function ($record) {
+                    return $this->getPrimaryColumnAction($record);
                 })
                 ->recordActions($this->getRecordActions())
                 ->searchable($this->searchable)
