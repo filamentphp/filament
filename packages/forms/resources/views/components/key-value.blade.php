@@ -103,7 +103,7 @@
         class="space-y-4"
         {!! Filament\format_attributes($formComponent->extraAttributes) !!}
     >
-        <div class="overflow-x-auto bg-white rounded border border-gray-300">
+        <div class="overflow-x-auto bg-white border border-gray-300 rounded">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-200">
                     <tr class="divide-x divide-gray-300">
@@ -130,11 +130,11 @@
                         <tr
                             x-bind:class="{ 'bg-gray-50': index % 2 }"
                         >
-                            <td class="whitespace-nowrap border-r border-gray-300">
+                            <td class="border-r border-gray-300 whitespace-nowrap">
                                 <input
                                     type="text"
                                     placeholder="{{ __($formComponent->keyPlaceholder) }}"
-                                    class="px-6 py-4 border-0 w-full bg-transparent placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-1 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                    class="w-full px-6 py-4 font-mono placeholder-gray-400 placeholder-opacity-100 bg-transparent border-0 focus:placeholder-gray-500 focus:border-1 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                     x-bind:value="rows[index].key"
                                     @input.debounce.500ms="updateKey(index, $event.target.value)"
                                     @unless ($formComponent->canEditKeys)
@@ -146,13 +146,13 @@
                                 <input
                                     type="text"
                                     placeholder="{{ __($formComponent->valuePlaceholder) }}"
-                                    class="px-6 py-4 border-0 w-full bg-transparent placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                    class="w-full px-6 py-4 font-mono placeholder-gray-400 placeholder-opacity-100 bg-transparent border-0 focus:placeholder-gray-500 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                     x-bind:value="rows[index].value"
                                     @input.debounce.500ms="updateValue(index, $event.target.value)"
                                 >
                             </td>
                             @if ($formComponent->canDeleteRows)
-                                <td x-show="shouldShowDeleteButton()" class="whitespace-nowrap border-l border-gray-300">
+                                <td x-show="shouldShowDeleteButton()" class="border-l border-gray-300 whitespace-nowrap">
                                     <div class="flex items-center justify-center">
                                         <button
                                             type="button"
