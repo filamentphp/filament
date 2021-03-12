@@ -14,9 +14,13 @@ class KeyValue extends Field
 
     public $deleteButtonLabel = 'forms::fields.keyValue.deleteButtonLabel';
 
+    public $dragButtonLabel = 'forms::fields.keyValue.dragButtonLabel';
+
     public $keyLabel = 'forms::fields.keyValue.keyLabel';
 
     public $keyPlaceholder = 'forms::fields.keyValue.keyPlaceholder';
+
+    public $isSortable = false;
 
     public $valueLabel = 'forms::fields.keyValue.valueLabel';
 
@@ -37,6 +41,13 @@ class KeyValue extends Field
     public function deleteButtonLabel($label)
     {
         $this->deleteButtonLabel = $label;
+
+        return $this;
+    }
+
+    public function dragButtonLabel($label)
+    {
+        $this->dragButtonLabel = $label;
 
         return $this;
     }
@@ -72,6 +83,13 @@ class KeyValue extends Field
     public function keyPlaceholder($placeholder)
     {
         $this->keyPlaceholder = $placeholder;
+
+        return $this;
+    }
+
+    public function sortable($sortable = true)
+    {
+        $this->isSortable = $sortable;
 
         return $this;
     }
