@@ -4,20 +4,28 @@
             return {
                 canDeleteRows: config.canDeleteRows,
 
-                name: config.name,
-
                 rows: [{ key: null, value: null }],
 
-                init: function () {
-                    const originalValue = this.$wire.get(this.name) || {}
+                value: config.value,
 
-                    if (originalValue && Object.keys(originalValue).length > 0) {
+                init: function () {
+                    if (! this.value) {
+                        this.value = {}
+                    }
+
+                    if (this.value && Object.keys(this.value).length > 0) {
                         this.rows = []
 
-                        Object.entries(originalValue).forEach(([key, value]) => {
+                        Object.entries(this.value).forEach(([key, value]) => {
                             this.rows.push({ key, value })
                         })
                     }
+
+                    this.$watch('value', () => {
+                        if (this.value) return
+
+                        this.value = {}
+                    })
                 },
 
                 addRow: function () {
@@ -61,7 +69,7 @@
                         return accum
                     }, {})
 
-                    this.$wire.set(`${this.name}`, rows)
+                    this.value = rows
                 }
             }
         }
