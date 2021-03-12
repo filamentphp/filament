@@ -45,9 +45,9 @@ class Field extends Component
         return $this;
     }
 
-    public function disabled()
+    public function disabled($disabled = true)
     {
-        $this->disabled = true;
+        $this->disabled = $disabled;
 
         return $this;
     }
