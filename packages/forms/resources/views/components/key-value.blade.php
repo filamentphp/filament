@@ -54,7 +54,10 @@
 
                 updateLivewire: function (index = null) {
                     const rows = this.rows.reduce((accum, { key, value }) => {
+                        if (! key) return accum
+
                         accum[key] = value
+
                         return accum
                     }, {})
 
