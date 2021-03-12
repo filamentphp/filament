@@ -13,7 +13,9 @@ trait HasPrefix
 
     public function prefix($prefix)
     {
-        $this->prefix = $prefix;
+        $this->configure(function () use ($prefix) {
+            $this->prefix = $prefix;
+        });
 
         return $this;
     }

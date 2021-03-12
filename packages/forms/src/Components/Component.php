@@ -13,6 +13,8 @@ class Component
 
     protected $columnSpan = 1;
 
+    protected $configurationQueue = [];
+
     protected $hidden = false;
 
     protected $form;
@@ -34,24 +36,49 @@ class Component
 
     public function columnSpan($span)
     {
-        $this->columnSpan = $span;
+        $this->configure(function () use ($span) {
+            $this->columnSpan = $span;
+        });
+
+        return $this;
+    }
+
+    public function configure($callback = null)
+    {
+        if ($callback === null) {
+            foreach ($this->configurationQueue as $callback) {
+                $callback();
+            }
+
+            $this->configurationQueue = [];
+
+            return;
+        }
+
+        if ($this->form) {
+            $callback();
+        } else {
+            $this->configurationQueue[] = $callback;
+        }
 
         return $this;
     }
 
     public function except($contexts, $callback = null)
     {
-        if (! is_array($contexts)) $contexts = [$contexts];
+        $this->configure(function () use ($contexts, $callback) {
+            if (! is_array($contexts)) $contexts = [$contexts];
 
-        if (! $callback) {
-            $this->hidden();
+            if (! $callback) {
+                $this->hidden();
 
-            $callback = fn ($component) => $component->visible();
-        }
+                $callback = fn ($component) => $component->visible();
+            }
 
-        if (! $this->getContext() || in_array($this->getContext(), $contexts)) return $this;
+            if (! $this->getContext() || in_array($this->getContext(), $contexts)) return $this;
 
-        $callback($this);
+            $callback($this);
+        });
 
         return $this;
     }
@@ -66,12 +93,16 @@ class Component
                 ->toArray(),
         );
 
+        $this->configure();
+
         return $this;
     }
 
     public function hidden()
     {
-        $this->hidden = true;
+        $this->configure(function () {
+            $this->hidden = true;
+        });
 
         return $this;
     }
@@ -200,7 +231,9 @@ class Component
 
     public function id($id)
     {
-        $this->id = $id;
+        $this->configure(function () use ($id) {
+            $this->id = $id;
+        });
 
         return $this;
     }
@@ -212,24 +245,28 @@ class Component
 
     public function label($label)
     {
-        $this->label = $label;
+        $this->configure(function () use ($label) {
+            $this->label = $label;
+        });
 
         return $this;
     }
 
     public function only($contexts, $callback = null)
     {
-        if (! is_array($contexts)) $contexts = [$contexts];
+        $this->configure(function () use ($callback, $contexts) {
+            if (! is_array($contexts)) $contexts = [$contexts];
 
-        if (! $callback) {
-            $this->hidden();
+            if (! $callback) {
+                $this->hidden();
 
-            $callback = fn ($component) => $component->visible();
-        }
+                $callback = fn ($component) => $component->visible();
+            }
 
-        if (! in_array($this->getContext(), $contexts)) return $this;
+            if (! in_array($this->getContext(), $contexts)) return $this;
 
-        $callback($this);
+            $callback($this);
+        });
 
         return $this;
     }
@@ -252,37 +289,43 @@ class Component
 
     public function view($view)
     {
-        $this->view = $view;
+        $this->configure(function () use ($view) {
+            $this->view = $view;
+        });
 
         return $this;
     }
 
     public function visible()
     {
-        $this->hidden = false;
+        $this->configure(function () {
+            $this->hidden = false;
+        });
 
         return $this;
     }
 
     public function when($condition, $callback = null)
     {
-        if (! $callback) {
-            $this->hidden();
+        $this->configure(function () use ($callback, $condition) {
+            if (! $callback) {
+                $this->hidden();
 
-            $callback = fn ($component) => $component->visible();
-        }
+                $callback = fn ($component) => $component->visible();
+            }
 
-        if ($this->getRecord() === null) return $this;
+            if ($this->getRecord() === null) return $this;
 
-        try {
-            $shouldExecuteCallback = $condition($this->getRecord());
-        } catch (\Exception $exception) {
-            $shouldExecuteCallback = false;
-        }
+            try {
+                $shouldExecuteCallback = $condition($this->getRecord());
+            } catch (\Exception $exception) {
+                $shouldExecuteCallback = false;
+            }
 
-        if ($shouldExecuteCallback) {
-            $callback($this, $this->getRecord());
-        }
+            if ($shouldExecuteCallback) {
+                $callback($this, $this->getRecord());
+            }
+        });
 
         return $this;
     }

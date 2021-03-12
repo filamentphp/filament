@@ -13,7 +13,9 @@ class Grid extends Component
 
     public function columns($columns)
     {
-        $this->columns = $columns;
+        $this->configure(function () use ($columns) {
+            $this->columns = $columns;
+        });
 
         return $this;
     }

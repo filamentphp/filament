@@ -20,7 +20,9 @@ class Section extends Component
 
     public function columns($columns)
     {
-        $this->columns = $columns;
+        $this->configure(function () use ($columns) {
+            $this->columns = $columns;
+        });
 
         return $this;
     }
@@ -47,14 +49,18 @@ class Section extends Component
 
     public function heading($heading)
     {
-        $this->heading = $heading;
+        $this->configure(function () use ($heading) {
+            $this->heading = $heading;
+        });
 
         return $this;
     }
 
     public function subheading($subheading)
     {
-        $this->subheading = $subheading;
+        $this->configure(function () use ($subheading) {
+            $this->subheading = $subheading;
+        });
 
         return $this;
     }

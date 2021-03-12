@@ -38,7 +38,9 @@ class Select extends Field
 
     public function emptyOptionsMessage($message)
     {
-        $this->emptyOptionsMessage = $message;
+        $this->configure(function () use ($message) {
+            $this->emptyOptionsMessage = $message;
+        });
 
         return $this;
     }
@@ -52,7 +54,9 @@ class Select extends Field
 
     public function getDisplayValueUsing($callback)
     {
-        $this->getDisplayValue = $callback;
+        $this->configure(function () use ($callback) {
+            $this->getDisplayValue = $callback;
+        });
 
         return $this;
     }
@@ -83,21 +87,27 @@ class Select extends Field
 
     public function getOptionSearchResultsUsing($callback)
     {
-        $this->getOptionSearchResults = $callback;
+        $this->configure(function () use ($callback) {
+            $this->getOptionSearchResults = $callback;
+        });
 
         return $this;
     }
 
     public function noSearchResultsMessage($message)
     {
-        $this->noSearchResultsMessage = $message;
+        $this->configure(function () use ($message) {
+            $this->noSearchResultsMessage = $message;
+        });
 
         return $this;
     }
 
     public function options($options)
     {
-        $this->options = $options;
+        $this->configure(function () use ($options) {
+            $this->options = $options;
+        });
 
         return $this;
     }

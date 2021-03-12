@@ -86,7 +86,7 @@ trait HasForm
             $temporaryUploadedFile = $this->getTemporaryUploadedFile($field->getName());
             if (! $temporaryUploadedFile) continue;
 
-            $storeMethod = $field->visibility === 'public' ? 'storePublicly' : 'store';
+            $storeMethod = $field->getVisibility() === 'public' ? 'storePublicly' : 'store';
             $path = $temporaryUploadedFile->{$storeMethod}($field->getDirectory(), $field->getDiskName());
             $this->syncInput($field->getName(), $path, false);
         }

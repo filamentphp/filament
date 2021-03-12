@@ -6,10 +6,12 @@ trait CanBeUnique
 {
     public function unique($table, $column = null, $exceptCurrentRecord = false)
     {
-        $rule = "unique:$table,$column";
-        if ($exceptCurrentRecord) $rule .= ',{{record}}';
+        $this->configure(function () use ($column, $exceptCurrentRecord, $table) {
+            $rule = "unique:$table,$column";
+            if ($exceptCurrentRecord) $rule .= ',{{record}}';
 
-        $this->addRules([$this->getName() => [$rule]]);
+            $this->addRules([$this->getName() => [$rule]]);
+        });
 
         return $this;
     }

@@ -20,7 +20,9 @@ class MultiSelect extends Field
 
     public function emptyOptionsMessage($message)
     {
-        $this->emptyOptionsMessage = $message;
+        $this->configure(function () use ($message) {
+            $this->emptyOptionsMessage = $message;
+        });
 
         return $this;
     }
@@ -42,14 +44,18 @@ class MultiSelect extends Field
 
     public function noSearchResultsMessage($message)
     {
-        $this->noSearchResultsMessage = $message;
+        $this->configure(function () use ($message) {
+            $this->noSearchResultsMessage = $message;
+        });
 
         return $this;
     }
 
     public function options($options)
     {
-        $this->options = $options;
+        $this->configure(function () use ($options) {
+            $this->options = $options;
+        });
 
         return $this;
     }

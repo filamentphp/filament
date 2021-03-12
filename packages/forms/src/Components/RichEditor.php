@@ -40,50 +40,62 @@ class RichEditor extends Field
 
     public function attachmentDirectory($directory)
     {
-        $this->attachmentDirectory = $directory;
+        $this->configure(function () use ($directory) {
+            $this->attachmentDirectory = $directory;
+        });
 
         return $this;
     }
 
     public function attachmentDisk($disk)
     {
-        $this->attachmentDiskName = $disk;
+        $this->configure(function () use ($disk) {
+            $this->attachmentDiskName = $disk;
+        });
 
         return $this;
     }
 
     public function disableAllToolbarButtons()
     {
-        $this->toolbarButtons = [];
+        $this->configure(function () {
+            $this->toolbarButtons = [];
+        });
 
         return $this;
     }
 
     public function disableToolbarButtons($buttonsToDisable)
     {
-        if (! is_array($buttonsToDisable)) $buttonsToDisable = [$buttonsToDisable];
+        $this->configure(function () use ($buttonsToDisable) {
+            if (! is_array($buttonsToDisable)) $buttonsToDisable = [$buttonsToDisable];
 
-        $this->toolbarButtons = collect($this->getToolbarButtons())
-            ->filter(fn ($button) => ! in_array($button, $buttonsToDisable))
-            ->toArray();
+            $this->toolbarButtons = collect($this->getToolbarButtons())
+                ->filter(fn ($button) => ! in_array($button, $buttonsToDisable))
+                ->toArray();
+        });
 
         return $this;
     }
 
     public function enableAttachments($url)
     {
-        $this->attachmentUploadUrl = $url;
+        $this->configure(function () use ($url) {
+            $this->attachmentUploadUrl = $url;
 
-        $this->enableToolbarButtons(['attachFiles']);
+            $this->enableToolbarButtons(['attachFiles']);
+        });
 
         return $this;
     }
 
     public function enableToolbarButtons($buttonsToEnable)
     {
-        if (! is_array($buttonsToEnable)) $buttonsToEnable = [$buttonsToEnable];
+        $this->configure(function () use ($buttonsToEnable) {
+            if (! is_array($buttonsToEnable)) $buttonsToEnable = [$buttonsToEnable];
 
-        $this->toolbarButtons = array_merge($this->getToolbarButtons(), $buttonsToEnable);
+            $this->toolbarButtons = array_merge($this->getToolbarButtons(), $buttonsToEnable);
+        });
 
         return $this;
     }
@@ -121,7 +133,9 @@ class RichEditor extends Field
 
     public function toolbarButtons($buttons)
     {
-        $this->toolbarButtons = $buttons;
+        $this->configure(function () use ($buttons) {
+            $this->toolbarButtons = $buttons;
+        });
 
         return $this;
     }

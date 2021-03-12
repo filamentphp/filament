@@ -17,7 +17,9 @@ class Textarea extends Field
 
     public function cols($cols)
     {
-        $this->cols = $cols;
+        $this->configure(function () use ($cols) {
+            $this->cols = $cols;
+        });
 
         return $this;
     }
@@ -34,7 +36,9 @@ class Textarea extends Field
 
     public function rows($rows)
     {
-        $this->rows = $rows;
+        $this->configure(function () use ($rows) {
+            $this->rows = $rows;
+        });
 
         return $this;
     }

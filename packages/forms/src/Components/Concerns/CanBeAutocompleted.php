@@ -8,14 +8,18 @@ trait CanBeAutocompleted
 
     public function disableAutocomplete()
     {
-        $this->autocomplete('off');
+        $this->configure(function () {
+            $this->autocomplete('off');
+        });
 
         return $this;
     }
 
     public function autocomplete($autocomplete = 'on')
     {
-        $this->autocomplete = $autocomplete;
+        $this->configure(function () use ($autocomplete) {
+            $this->autocomplete = $autocomplete;
+        });
 
         return $this;
     }

@@ -8,7 +8,9 @@ trait CanBeAutofocused
 
     public function autofocus()
     {
-        $this->autofocus = true;
+        $this->configure(function () {
+            $this->autofocus = true;
+        });
 
         return $this;
     }

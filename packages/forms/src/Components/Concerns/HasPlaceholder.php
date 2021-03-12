@@ -13,7 +13,9 @@ trait HasPlaceholder
 
     public function placeholder($placeholder)
     {
-        $this->placeholder = $placeholder;
+        $this->configure(function () use ($placeholder) {
+            $this->placeholder = $placeholder;
+        });
 
         return $this;
     }

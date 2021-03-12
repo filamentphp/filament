@@ -25,20 +25,26 @@ class DatePicker extends Field
 
     protected function setUp()
     {
-        $this->displayFormat('F j, Y');
-        $this->format('Y-m-d');
+        $this->configure(function () {
+            $this->displayFormat('F j, Y');
+            $this->format('Y-m-d');
+        });
     }
 
     public function displayFormat($format)
     {
-        $this->displayFormat = $format;
+        $this->configure(function () use ($format) {
+            $this->displayFormat = $format;
+        });
 
         return $this;
     }
 
     public function format($format)
     {
-        $this->format = $format;
+        $this->configure(function () use ($format) {
+            $this->format = $format;
+        });
 
         return $this;
     }
@@ -75,18 +81,22 @@ class DatePicker extends Field
 
     public function maxDate($date)
     {
-        $this->maxDate = $date;
+        $this->configure(function () use ($date) {
+            $this->maxDate = $date;
 
-        $this->addRules([$this->getName() => ["before_or_equal:$date"]]);
+            $this->addRules([$this->getName() => ["before_or_equal:{$date}"]]);
+        });
 
         return $this;
     }
 
     public function minDate($date)
     {
-        $this->minDate = $date;
+        $this->configure(function () use ($date) {
+            $this->minDate = $date;
 
-        $this->addRules([$this->getName() => ["after_or_equal:$date"]]);
+            $this->addRules([$this->getName() => ["after_or_equal:{$date}"]]);
+        });
 
         return $this;
     }

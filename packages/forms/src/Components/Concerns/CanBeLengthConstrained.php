@@ -20,18 +20,22 @@ trait CanBeLengthConstrained
 
     public function maxLength($length)
     {
-        $this->maxLength = $length;
+        $this->configure(function () use ($length) {
+            $this->maxLength = $length;
 
-        $this->addRules([$this->getName() => ["max:{$this->maxLength}"]]);
+            $this->addRules([$this->getName() => ["max:{$this->maxLength}"]]);
+        });
 
         return $this;
     }
 
     public function minLength($length)
     {
-        $this->minLength = $length;
+        $this->configure(function () use ($length) {
+            $this->minLength = $length;
 
-        $this->addRules([$this->getName() => ["min:{$this->minLength}"]]);
+            $this->addRules([$this->getName() => ["min:{$this->minLength}"]]);
+        });
 
         return $this;
     }

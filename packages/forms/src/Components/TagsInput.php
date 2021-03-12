@@ -28,7 +28,9 @@ class TagsInput extends Field
 
     public function separator($separator)
     {
-        $this->separator = $separator;
+        $this->configure(function () use ($separator) {
+            $this->separator = $separator;
+        });
 
         return $this;
     }

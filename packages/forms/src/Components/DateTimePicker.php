@@ -18,21 +18,25 @@ class DateTimePicker extends DatePicker
 
     protected function setUp()
     {
-        $this->displayFormat($this->defaultDisplayFormat);
-        $this->format($this->defaultFormat);
+        $this->configure(function () {
+            $this->displayFormat($this->defaultDisplayFormat);
+            $this->format($this->defaultFormat);
+        });
     }
 
     public function withoutSeconds()
     {
-        $this->hasSeconds = false;
+        $this->configure(function () {
+            $this->hasSeconds = false;
 
-        if ($this->getDisplayFormat() === $this->defaultDisplayFormat) {
-            $this->displayFormat($this->defaultDisplayFormatWithoutSeconds);
-        }
+            if ($this->getDisplayFormat() === $this->defaultDisplayFormat) {
+                $this->displayFormat($this->defaultDisplayFormatWithoutSeconds);
+            }
 
-        if ($this->getFormat() === $this->defaultFormat) {
-            $this->format($this->defaultFormatWithoutSeconds);
-        }
+            if ($this->getFormat() === $this->defaultFormat) {
+                $this->format($this->defaultFormatWithoutSeconds);
+            }
+        });
 
         return $this;
     }
