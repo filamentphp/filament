@@ -118,7 +118,7 @@
                             </span>
                         </th>
 
-                        @if ($formComponent->deleteButtonLabel)
+                        @if ($formComponent->canDeleteRows && $formComponent->deleteButtonLabel)
                             <th scope="col" x-show="shouldShowDeleteButton()">
                                 <span class="sr-only">{{ __($formComponent->deleteButtonLabel) }}</span>
                             </th>
@@ -137,6 +137,9 @@
                                     class="px-6 py-4 border-0 w-full bg-transparent placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-1 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                     x-bind:value="rows[index].key"
                                     @input.debounce.500ms="updateKey(index, $event.target.value)"
+                                    @unless ($formComponent->canEditKeys)
+                                        disabled
+                                    @endunless
                                 >
                             </td>
                             <td class="whitespace-nowrap">
@@ -148,18 +151,20 @@
                                     @input.debounce.500ms="updateValue(index, $event.target.value)"
                                 >
                             </td>
-                            <td x-show="shouldShowDeleteButton()" class="whitespace-nowrap border-l border-gray-300">
-                                <div class="flex items-center justify-center">
-                                    <button
-                                        type="button"
-                                        @click="deleteRow(index)"
-                                        title="{{ __($formComponent->deleteButtonLabel) }}"
-                                        class="text-danger-600 hover:text-danger-700"
-                                    >
-                                        <x-heroicon-o-trash class="w-4 h-4" />
-                                    </button>
-                                </div>
-                            </td>
+                            @if ($formComponent->canDeleteRows)
+                                <td x-show="shouldShowDeleteButton()" class="whitespace-nowrap border-l border-gray-300">
+                                    <div class="flex items-center justify-center">
+                                        <button
+                                            type="button"
+                                            @click="deleteRow(index)"
+                                            title="{{ __($formComponent->deleteButtonLabel) }}"
+                                            class="text-danger-600 hover:text-danger-700"
+                                        >
+                                            <x-heroicon-o-trash class="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </td>
+                            @endif
                         </tr>
                     </template>
                 </tbody>
