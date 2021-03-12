@@ -3,15 +3,10 @@
 namespace Filament;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Filesystem\Filesystem;
-use Livewire\LiveWire;
-use ReflectionClass;
-use Str;
-use Symfony\Component\Finder\SplFileInfo;
+use Livewire\Livewire;
 
 abstract class PluginServiceProvider extends ServiceProvider
 {
-
     protected $pages = [];
 
     protected $resources = [];
@@ -37,16 +32,6 @@ abstract class PluginServiceProvider extends ServiceProvider
                 Filament::registerResource($resource);
             }
 
-            foreach ($this->resources() as $resource) {
-                foreach ($resource::relations() as $relation) {
-                    Livewire::component($relation::getName(), $relation);
-                }
-
-                foreach ($resource::routes() as $route) {
-                    Livewire::component($route->page::getName(), $route->page);
-                }
-            }
-
             foreach ($this->roles() as $role) {
                 Filament::registerRole($role);
             }
@@ -66,6 +51,22 @@ abstract class PluginServiceProvider extends ServiceProvider
 
                 Filament::provideToScript($this->scriptData());
             });
+        });
+
+        $this->app->booted(function () {
+            foreach ($this->pages() as $page) {
+                Livewire::component($page::getName(), $page);
+            }
+
+            foreach ($this->resources() as $resource) {
+                foreach ($resource::relations() as $relation) {
+                    Livewire::component($relation::getName(), $relation);
+                }
+
+                foreach ($resource::routes() as $route) {
+                    Livewire::component($route->page::getName(), $route->page);
+                }
+            }
         });
 
         $this->pluginRegistered();
