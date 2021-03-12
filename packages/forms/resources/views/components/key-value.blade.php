@@ -157,7 +157,7 @@
                     </tr>
                 </thead>
                 <tbody class="text-sm leading-tight divide-y divide-gray-200" x-ref="tableBody">
-                    <template x-for="(row, index, collection) in rows" :key="index">
+                    <template x-for="(row, index, collection) in rows" :key="row.key">
                         <tr
                             x-bind:class="{ 'bg-gray-50': index % 2 }"
                             @if ($formComponent->isSortable)
