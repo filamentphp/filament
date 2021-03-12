@@ -2,8 +2,12 @@
 
 namespace Filament\Tables;
 
+use Illuminate\Support\Traits\Tappable;
+
 class Table
 {
+    use Tappable;
+
     public $columns = [];
 
     public $filterable = true;

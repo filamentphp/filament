@@ -2,8 +2,12 @@
 
 namespace Filament\Forms;
 
+use Illuminate\Support\Traits\Tappable;
+
 class Form
 {
+    use Tappable;
+
     protected $columns = 1;
 
     protected $context;
@@ -46,7 +50,7 @@ class Form
 
     public function getContext()
     {
-        $this->context;
+        return $this->context;
     }
 
     public function getDefaultValues()
