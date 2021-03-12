@@ -1,0 +1,11 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Filament\Resources\{{ resource }};
+use {{ baseResourcePage }};
+
+class {{ resourcePageClass }} extends {{ baseResourcePageClass }}
+{
+    public static $resource = {{ resourceClass }}::class;
+}
