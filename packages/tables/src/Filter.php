@@ -13,7 +13,7 @@ class Filter
 
     protected $configurationQueue = [];
 
-    protected $hidden = false;
+    protected $isHidden = false;
 
     protected $label;
 
@@ -44,7 +44,7 @@ class Filter
 
     public function apply($query)
     {
-        $callback = $this->callback;
+        $callback = $this->getCallback();
 
         return $callback($query);
     }
@@ -101,10 +101,20 @@ class Filter
     public function hidden()
     {
         $this->configure(function () {
-            $this->hidden = true;
+            $this->isHidden = true;
         });
 
         return $this;
+    }
+
+    public function getCallback()
+    {
+        return $this->callback;
+    }
+
+    public function getContext()
+    {
+        return $this->getTable()->getContext();
     }
 
     public function getLabel()
@@ -117,6 +127,21 @@ class Filter
         }
 
         return $this->label;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    public function isHidden()
+    {
+        return $this->isHidden;
     }
 
     public function label($label)

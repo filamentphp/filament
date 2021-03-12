@@ -38,8 +38,14 @@
     <script>
         function fileUpload(config) {
             return {
+                disk: config.disk,
+
+                name: config.name,
+
                 pond: null,
+
                 value: config.value,
+
                 init: function () {
                     FilePond.registerPlugin(FilePondPluginFileValidateSize)
                     FilePond.registerPlugin(FilePondPluginFileValidateType)
@@ -49,7 +55,7 @@
                     FilePond.registerPlugin(FilePondPluginImageResize)
                     FilePond.registerPlugin(FilePondPluginImageTransform)
 
-                    this.$wire.getUploadedFileUrl('{{ $formComponent->getName() }}', '{{ $formComponent->getDiskName() }}').then((uploadedFileUrl) => {
+                    this.$wire.getUploadedFileUrl(this.name, this.disk).then((uploadedFileUrl) => {
                         if (uploadedFileUrl) {
                             config.files = [{
                                 source: uploadedFileUrl,
@@ -63,7 +69,7 @@
                     })
 
                     this.$watch('value', () => {
-                        this.$wire.getUploadedFileUrl('{{ $formComponent->getName() }}', '{{ $formComponent->getDiskName() }}').then((uploadedFileUrl) => {
+                        this.$wire.getUploadedFileUrl(this.name, this.disk).then((uploadedFileUrl) => {
                             if (uploadedFileUrl) {
                                 this.pond.files = [{
                                     source: uploadedFileUrl,
@@ -93,8 +99,8 @@
 >
     <div
         x-data="fileUpload({
-            value: @entangle($formComponent->getName()){{ Str::of($formComponent->getBindingAttribute())->after('wire:model') }},
             acceptedFileTypes: {{ json_encode($formComponent->getAcceptedFileTypes()) }},
+            disk: '{{ $formComponent->getDiskName() }}',
             files: [],
             {{ $formComponent->getImageCropAspectRatio() !== null ? "imageCropAspectRatio: '{$formComponent->getImageCropAspectRatio()}'," : null }}
             {{ $formComponent->getImagePreviewHeight() !== null ? "imagePreviewHeight: {$formComponent->getImagePreviewHeight()}," : null }}
@@ -103,6 +109,7 @@
             {{ __($formComponent->getPlaceholder()) !== null ? 'labelIdle: \'' . __($formComponent->getPlaceholder()) . '\',' : null }}
             {{ $formComponent->getMaxSize() !== null ? "maxFileSize: '{$formComponent->getMaxSize()} KB'," : null }}
             {{ $formComponent->getMinSize() !== null ? "minFileSize: '{$formComponent->getMinSize()} KB'," : null }}
+            name: '{{ $formComponent->getName() }}',
             server: {
                 load: (source, load, error, progress, abort, headers) => {
                     fetch(source).then((response) => {
@@ -137,6 +144,7 @@
             {{ $formComponent->getPanelAspectRatio() !== null ? "stylePanelAspectRatio: '{$formComponent->getPanelAspectRatio()}'," : null }}
             {{ $formComponent->getPanelLayout() !== null ? "stylePanelLayout: '{$formComponent->getPanelLayout()}'," : null }}
             styleProgressIndicatorPosition: '{{ $formComponent->getUploadProgressIndicatorPosition() }}',
+            value: @entangle($formComponent->getName()){{ Str::of($formComponent->getBindingAttribute())->after('wire:model') }},
         })"
         x-init="init()"
         wire:ignore

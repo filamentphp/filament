@@ -43,7 +43,6 @@ class FileUpload extends Field
     protected function setUp()
     {
         $this->addRules([$this->getTemporaryUploadedFilePropertyName() => ['nullable', 'file']]);
-        $this->disk(config('forms.default_filesystem_disk'));
     }
 
     public function acceptedFileTypes($types)
@@ -110,7 +109,7 @@ class FileUpload extends Field
 
     public function getDiskName()
     {
-        return $this->diskName;
+        return $this->diskName ?? config('forms.default_filesystem_disk');
     }
 
     public function getImageCropAspectRatio()

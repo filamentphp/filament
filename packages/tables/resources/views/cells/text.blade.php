@@ -1,5 +1,5 @@
 @php
-    $primaryClasses = $column->primary ? 'font-medium' : null;
+    $primaryClasses = $column->isPrimary() ? 'font-medium' : null;
 @endphp
 
 <div class="py-4">
@@ -15,7 +15,7 @@
         <a
             href="{{ $column->getUrl($record) }}"
             class="{{ $primaryClasses }} hover:underline hover:text-primary-600 transition-colors duration-200"
-            @if ($column->shouldOpenUrlInNewTab)
+            @if ($column->shouldOpenUrlInNewTab())
                 target="_blank"
                 rel="noopener noreferrer"
             @endif

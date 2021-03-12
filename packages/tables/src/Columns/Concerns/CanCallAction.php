@@ -4,25 +4,33 @@ namespace Filament\Tables\Columns\Concerns;
 
 trait CanCallAction
 {
-    public $action;
+    protected $action;
 
     public function action($action)
     {
-        $this->action = $action;
+        $this->configure(function () use ($action) {
+            $this->action = $action;
+        });
 
         return $this;
     }
 
     public function getAction($record)
     {
-        if ($this->action === null) return null;
+        $action = $this->action;
 
-        if (is_callable($this->action)) {
-            $callback = $this->action;
-
-            return $callback($record);
+        if (
+            $action === null &&
+            $this->isPrimary() &&
+            $this->getTable()->getPrimaryColumnAction()
+        ) {
+            $action = $this->getTable()->getPrimaryColumnAction();
         }
 
-        return $this->action;
+        if (is_callable($action)) {
+            return $action($record);
+        }
+
+        return $action;
     }
 }

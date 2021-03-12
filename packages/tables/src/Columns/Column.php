@@ -10,27 +10,27 @@ class Column
 {
     use Tappable;
 
-    public $context;
+    protected $configurationQueue = [];
 
-    public $getValueUsing;
+    protected $getValueUsing;
 
-    public $hidden = false;
+    protected $isHidden = false;
 
-    public $label;
+    protected $isPrimary = false;
 
-    public $name;
+    protected $isSearchable = false;
 
-    public $primary = false;
+    protected $isSortable = false;
 
-    public $record;
+    protected $label;
 
-    public $searchable = false;
+    protected $name;
 
-    public $sortable = false;
+    protected $table;
 
-    public $view;
+    protected $view;
 
-    public $viewData = [];
+    protected $viewData = [];
 
     public function __construct($name)
     {
@@ -49,40 +49,83 @@ class Column
         //
     }
 
-    public function context($context)
+    public function configure($callback = null)
     {
-        $this->context = $context;
+        if ($callback === null) {
+            foreach ($this->configurationQueue as $callback) {
+                $callback();
+            }
+
+            $this->configurationQueue = [];
+
+            return;
+        }
+
+        if ($this->getTable()) {
+            $callback();
+        } else {
+            $this->configurationQueue[] = $callback;
+        }
 
         return $this;
     }
 
     public function except($contexts, $callback = null)
     {
-        if (! is_array($contexts)) $contexts = [$contexts];
+        $this->configure(function () use ($callback, $contexts) {
+            if (! is_array($contexts)) $contexts = [$contexts];
 
-        if (! $callback) {
-            $this->hidden();
+            if (! $callback) {
+                $this->hidden();
 
-            $callback = fn ($field) => $field->visible();
-        }
+                $callback = fn ($column) => $column->visible();
+            }
 
-        if (! $this->context || in_array($this->context, $contexts)) return $this;
+            if (! $this->getContext() || in_array($this->getContext(), $contexts)) return $this;
 
-        $callback($this);
+            $callback($this);
+        });
 
         return $this;
     }
 
+    public function getContext()
+    {
+        return $this->getTable()->getContext();
+    }
+
+    public function getLabel()
+    {
+        if ($this->label === null) {
+            return (string) Str::of($this->getName())
+                ->kebab()
+                ->replace(['-', '_', '.'], ' ')
+                ->ucfirst();
+        }
+
+        return $this->label;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getTable()
+    {
+        return $this->table;
+    }
+
     public function getValue($record, $attribute = null)
     {
-        if ($this->getValueUsing) {
-            $callback = $this->getValueUsing;
+        $callback = $this->getValueUsing;
 
+        if ($callback) {
             return $callback($record);
         }
 
         if ($attribute === null) {
-            $attribute = $this->name;
+            $attribute = $this->getName();
         }
 
         $value = $record->getAttribute(
@@ -101,115 +144,154 @@ class Column
 
     public function getValueUsing($callback)
     {
-        $this->getValueUsing = $callback;
+        $this->configure(function () use ($callback) {
+            $this->getValueUsing = $callback;
+        });
 
         return $this;
+    }
+
+    public function getView()
+    {
+        return $this->view;
     }
 
     public function hidden()
     {
-        $this->hidden = true;
+        $this->configure(function () {
+            $this->hidden = true;
+        });
 
         return $this;
     }
 
+    public function isHidden()
+    {
+        return $this->isHidden;
+    }
+
     public function isSearchable()
     {
-        return $this->searchable && $this->getValueUsing === null;
+        return $this->isSearchable && $this->getValueUsing === null;
     }
 
     public function isSortable()
     {
-        return $this->sortable && $this->getValueUsing === null;
+        return $this->isSortable && $this->getValueUsing === null;
+    }
+
+    public function isPrimary()
+    {
+        return $this->isPrimary;
     }
 
     public function label($label)
     {
-        $this->label = $label;
+        $this->configure(function () use ($label) {
+            $this->label = $label;
+        });
 
         return $this;
     }
 
     public function name($name)
     {
-        $this->name = $name;
-
-        $this->label(
-            (string) Str::of($this->name)
-                ->kebab()
-                ->replace(['-', '_', '.'], ' ')
-                ->ucfirst(),
-        );
+        $this->configure(function () use ($name) {
+            $this->name = $name;
+        });
 
         return $this;
     }
 
     public function only($contexts, $callback = null)
     {
-        if (! is_array($contexts)) $contexts = [$contexts];
+        $this->configure(function () use ($callback, $contexts) {
+            if (! is_array($contexts)) $contexts = [$contexts];
 
-        if (! $callback) {
-            $this->hidden();
+            if (! $callback) {
+                $this->hidden();
 
-            $callback = fn ($field) => $field->visible();
-        }
+                $callback = fn ($column) => $column->visible();
+            }
 
-        if (! in_array($this->context, $contexts)) return $this;
+            if (! in_array($this->getContext(), $contexts)) return $this;
 
-        $callback($this);
+            $callback($this);
+        });
 
         return $this;
     }
 
     public function primary()
     {
-        $this->primary = true;
+        $this->configure(function () {
+            $this->isPrimary = true;
+        });
 
         return $this;
     }
 
     public function searchable()
     {
-        $this->searchable = true;
+        $this->configure(function () {
+            $this->isSearchable = true;
+        });
 
         return $this;
     }
 
     public function sortable()
     {
-        $this->sortable = true;
+        $this->configure(function () {
+            $this->isSortable = true;
+        });
+
+        return $this;
+    }
+
+    public function table($table)
+    {
+        $this->table = $table;
+
+        $this->configure();
 
         return $this;
     }
 
     public function view($view, $data = [])
     {
-        $this->view = $view;
+        $this->configure(function () use ($data, $view) {
+            $this->view = $view;
 
-        $this->viewData($data);
+            $this->viewData($data);
+        });
 
         return $this;
     }
 
     public function viewData($data = [])
     {
-        $this->viewData = array_merge($this->viewData, $data);
+        $this->configure(function () use ($data) {
+            $this->viewData = array_merge($this->viewData, $data);
+        });
 
         return $this;
     }
 
     public function visible()
     {
-        $this->hidden = false;
+        $this->configure(function () {
+            $this->hidden = false;
+        });
 
         return $this;
     }
 
     public function renderCell($record)
     {
-        if ($this->hidden) return;
+        if ($this->isHidden()) return;
 
-        $view = $this->view ?? 'tables::cells.' . Str::of(class_basename(static::class))->kebab();
+        $view = $this->getView() ?? 'tables::cells.' . Str::of(class_basename(static::class))->kebab();
 
         return view($view, array_merge($this->viewData, [
             'column' => $this,
