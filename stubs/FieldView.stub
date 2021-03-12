@@ -5,7 +5,7 @@
     :help-message="$formComponent->getHelpMessage()"
     :hint="$formComponent->getHint()"
     :label="$formComponent->getLabel()"
-    :required="$formComponent->getRequired()"
+    :required="$formComponent->isRequired()"
 >
     <div
         x-data="{
