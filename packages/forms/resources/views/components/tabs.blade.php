@@ -13,7 +13,7 @@
         'lg:col-span-10',
         'lg:col-span-11',
         'lg:col-span-12',
-    ][$formComponent->columnSpan]
+    ][$formComponent->getColumnSpan()]
 @endphp
 
 <div
@@ -24,7 +24,7 @@
     class="{{ $columnSpanClass }} bg-white border border-gray-200 rounded p-4 md:p-6"
 >
     <div class="-m-4 md:-m-6">
-        <div {!! __($formComponent->label) ? 'aria-label="' . __($formComponent->label) . '"' : null !!} role="tablist"
+        <div {!! __($formComponent->getLabel()) ? 'aria-label="' . __($formComponent->getLabel()) . '"' : null !!} role="tablist"
              class="flex overflow-hidden bg-gray-100 rounded-t">
             @foreach ($formComponent->getTabsConfig() as $tabId => $tabLabel)
                 <button type="button"
@@ -41,7 +41,7 @@
             @endforeach
         </div>
 
-        @foreach ($formComponent->schema as $tab)
+        @foreach ($formComponent->getSchema() as $tab)
             {{ $tab->render() }}
         @endforeach
     </div>

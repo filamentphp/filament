@@ -13,16 +13,16 @@
         'lg:col-span-10',
         'lg:col-span-11',
         'lg:col-span-12',
-    ][$formComponent->columnSpan]
+    ][$formComponent->getColumnSpan()]
 @endphp
 
 <fieldset
-    class="{{ $columnSpanClass }} {{ $formComponent->label ? 'rounded border border-gray-200 p-4 md:p-6' : null }}">
-    @if ($formComponent->label)
+    class="{{ $columnSpanClass }} {{ $formComponent->getLabel() ? 'rounded border border-gray-200 p-4 md:p-6' : null }}">
+    @if ($formComponent->getLabel())
         <legend class="text-sm leading-tight font-medium px-2">
-            {{ __($formComponent->label) }}
+            {{ __($formComponent->getLabel()) }}
         </legend>
     @endif
 
-    <x-forms::layout :schema="$formComponent->schema" :columns="$formComponent->columns" />
+    <x-forms::layout :schema="$formComponent->getSchema()" :columns="$formComponent->getColumns()" />
 </fieldset>

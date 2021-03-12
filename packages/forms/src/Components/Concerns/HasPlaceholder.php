@@ -4,7 +4,12 @@ namespace Filament\Forms\Components\Concerns;
 
 trait HasPlaceholder
 {
-    public $placeholder;
+    protected $placeholder;
+
+    public function getPlaceholder()
+    {
+        return $this->placeholder;
+    }
 
     public function placeholder($placeholder)
     {

@@ -6,16 +6,16 @@ trait CanBeCompared
 {
     public function confirmed($confirmationFieldName = null)
     {
-        if ($confirmationFieldName === null) $confirmationFieldName = "{$this->name}Confirmation";
+        if ($confirmationFieldName === null) $confirmationFieldName = "{$this->getName()}Confirmation";
 
-        $this->addRules([$confirmationFieldName => ["same:$this->name"]]);
+        $this->addRules([$confirmationFieldName => ["same:$this->getName()"]]);
 
         return $this;
     }
 
     public function same($field)
     {
-        $this->addRules([$this->name => ["same:$field"]]);
+        $this->addRules([$this->getName() => ["same:$field"]]);
 
         return $this;
     }

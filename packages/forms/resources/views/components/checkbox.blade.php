@@ -1,22 +1,22 @@
 <x-forms::field-group
-    :column-span="$formComponent->columnSpan"
-    :error-key="$formComponent->name"
+    :column-span="$formComponent->getColumnSpan()"
+    :error-key="$formComponent->getName()"
     :for="$formComponent->getId()"
-    :help-message="$formComponent->helpMessage"
-    :hint="$formComponent->hint"
-    :label="$formComponent->label"
-    :required="$formComponent->required"
+    :help-message="$formComponent->getHelpMessage()"
+    :hint="$formComponent->getHint()"
+    :label="$formComponent->getLabel()"
+    :required="$formComponent->isRequired()"
 >
     <x-slot name="labelPrefix">
         <input
-            {!! $formComponent->autofocus ? 'autofocus' : null !!}
-            {!! $formComponent->disabled ? 'disabled' : null !!}
+            {!! $formComponent->isAutofocused() ? 'autofocus' : null !!}
+            {!! $formComponent->isDisabled() ? 'disabled' : null !!}
             {!! $formComponent->getId() ? "id=\"{$formComponent->getId()}\"" : null !!}
-            {!! $formComponent->name ? "{$formComponent->nameAttribute}=\"{$formComponent->name}\"" : null !!}
+            {!! $formComponent->getName() ? "{$formComponent->getBindingAttribute()}=\"{$formComponent->getName()}\"" : null !!}
             type="checkbox"
-            {!! $formComponent->required ? 'required' : null !!}
-            class="rounded text-primary-600 shadow-sm focus:border-primary-700 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->name) ? 'border-danger-600 ' : 'border-gray-300' }}"
-            {!! Filament\format_attributes($formComponent->extraAttributes) !!}
+            {!! $formComponent->isRequired() ? 'required' : null !!}
+            class="rounded text-primary-600 shadow-sm focus:border-primary-700 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->getName()) ? 'border-danger-600 ' : 'border-gray-300' }}"
+            {!! Filament\format_attributes($formComponent->getExtraAttributes()) !!}
         />
     </x-slot>
 </x-forms::field-group>

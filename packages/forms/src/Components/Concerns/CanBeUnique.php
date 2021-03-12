@@ -9,7 +9,7 @@ trait CanBeUnique
         $rule = "unique:$table,$column";
         if ($exceptCurrentRecord) $rule .= ',{{record}}';
 
-        $this->addRules([$this->name => [$rule]]);
+        $this->addRules([$this->getName() => [$rule]]);
 
         return $this;
     }

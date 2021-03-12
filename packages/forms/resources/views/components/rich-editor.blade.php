@@ -29,19 +29,19 @@
 @endpushonce
 
 <x-forms::field-group
-    :column-span="$formComponent->columnSpan"
-    :error-key="$formComponent->name"
+    :column-span="$formComponent->getColumnSpan()"
+    :error-key="$formComponent->getName()"
     :for="$formComponent->getId()"
-    :help-message="$formComponent->helpMessage"
-    :hint="$formComponent->hint"
-    :label="$formComponent->label"
-    :required="$formComponent->required"
+    :help-message="$formComponent->getHelpMessage()"
+    :hint="$formComponent->getHint()"
+    :label="$formComponent->getLabel()"
+    :required="$formComponent->isRequired()"
 >
     <div
         x-data="{
-            value: @entangle($formComponent->name).defer,
+            value: @entangle($formComponent->getName()).defer,
         }"
-        @unless ($formComponent->disabled)
+        @unless ($formComponent->isDisabled())
             x-init="
                 $refs.trix?.editor?.loadHTML(value)
 
@@ -57,11 +57,11 @@
                 let attachment = $event.attachment
 
                 let formData = new FormData()
-                formData.append('directory', '{{ $formComponent->attachmentDirectory }}')
-                formData.append('disk', '{{ $formComponent->attachmentDisk }}')
+                formData.append('directory', '{{ $formComponent->getAttachmentDirectory() }}')
+                formData.append('disk', '{{ $formComponent->getAttachmentDiskName() }}')
                 formData.append('file', attachment.file)
 
-                fetch('{{ $formComponent->attachmentUploadUrl }}', {
+                fetch('{{ $formComponent->getAttachmentUploadUrl() }}', {
                     body: formData,
                     credentials: 'same-origin',
                     headers: {
@@ -82,7 +82,7 @@
         x-cloak
         wire:ignore
     >
-        @unless ($formComponent->disabled)
+        @unless ($formComponent->isDisabled())
             <input id="trix-value-{{ $formComponent->getId() }}" type="hidden" />
 
             <trix-toolbar id="trix-toolbar-{{ $formComponent->getId() }}">
@@ -214,14 +214,14 @@
             </trix-toolbar>
 
             <trix-editor
-                {{ $formComponent->autofocus ? 'autofocus' : null }}
+                {{ $formComponent->isAutofocused() ? 'autofocus' : null }}
                 id="{{ $formComponent->getId() }}"
                 input="trix-value-{{ $formComponent->getId() }}"
-                placeholder="{{ __($formComponent->placeholder) }}"
+                placeholder="{{ __($formComponent->getPlaceholder()) }}"
                 toolbar="trix-toolbar-{{ $formComponent->getId() }}"
                 x-ref="trix"
                 class="block w-full prose placeholder-gray-400 placeholder-opacity-100 bg-white border-gray-300 rounded shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 max-w-none"
-                {!! Filament\format_attributes($formComponent->extraAttributes) !!}
+                {!! Filament\format_attributes($formComponent->getExtraAttributes()) !!}
             />
         @else
             <div x-html="value" class="p-3 prose border border-gray-300 rounded shadow-sm"></div>

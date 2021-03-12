@@ -4,7 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 trait CanBeAutocompleted
 {
-    public $autocomplete;
+    protected $autocomplete;
 
     public function disableAutocomplete()
     {
@@ -18,5 +18,10 @@ trait CanBeAutocompleted
         $this->autocomplete = $autocomplete;
 
         return $this;
+    }
+
+    public function getAutocomplete()
+    {
+        return $this->autocomplete;
     }
 }

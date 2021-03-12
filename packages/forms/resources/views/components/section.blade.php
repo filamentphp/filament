@@ -13,23 +13,23 @@
         'lg:col-span-10',
         'lg:col-span-11',
         'lg:col-span-12',
-    ][$formComponent->columnSpan]
+    ][$formComponent->getColumnSpan()]
 @endphp
 
 <div class="{{ $columnSpanClass }} space-y-3">
-    @if ($formComponent->heading)
+    @if ($formComponent->getHeading())
         <div class="space-y-1">
             <h3 class="text-lg leading-tight font-medium">
-                {{ __($formComponent->heading) }}
+                {{ __($formComponent->getHeading()) }}
             </h3>
 
-            @if ($formComponent->subheading)
+            @if ($formComponent->getSubheading())
                 <p class="text-gray-700 text-sm">
-                    {{ __($formComponent->subheading) }}
+                    {{ __($formComponent->getSubheading()) }}
                 </p>
             @endif
         </div>
     @endif
 
-    <x-forms::layout :schema="$formComponent->schema" :columns="$formComponent->columns" />
+    <x-forms::layout :schema="$formComponent->getSchema()" :columns="$formComponent->getColumns()" />
 </div>

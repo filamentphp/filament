@@ -3,10 +3,10 @@
 ])
 
 <form
-    wire:submit.prevent="{{ $form->submitMethod }}"
+    wire:submit.prevent="{{ $form->getSubmitMethod() }}"
     {{ $attributes }}
 >
-    <x-forms::layout :schema="$form->schema" :columns="$form->columns" />
+    <x-forms::layout :schema="$form->getSchema()" :columns="$form->getColumns()" />
 
     {{ $slot }}
 </form>

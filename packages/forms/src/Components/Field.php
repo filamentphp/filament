@@ -18,7 +18,7 @@ class Field extends Component
 
     public $name;
 
-    public $nameAttribute = 'wire:model.defer';
+    public $bindingAttribute = 'wire:model.defer';
 
     public $required = false;
 
@@ -40,7 +40,7 @@ class Field extends Component
 
     public function dependable()
     {
-        $this->nameAttribute('wire:model');
+        $this->bindingAttribute('wire:model');
 
         return $this;
     }
@@ -115,9 +115,9 @@ class Field extends Component
         return $this;
     }
 
-    public function nameAttribute($nameAttribute)
+    public function bindingAttribute($bindingAttribute)
     {
-        $this->nameAttribute = $nameAttribute;
+        $this->bindingAttribute = $bindingAttribute;
 
         return $this;
     }

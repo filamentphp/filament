@@ -49,7 +49,7 @@
                     FilePond.registerPlugin(FilePondPluginImageResize)
                     FilePond.registerPlugin(FilePondPluginImageTransform)
 
-                    this.$wire.getUploadedFileUrl('{{ $formComponent->name }}', '{{ $formComponent->disk }}').then((uploadedFileUrl) => {
+                    this.$wire.getUploadedFileUrl('{{ $formComponent->getName() }}', '{{ $formComponent->getDiskName() }}').then((uploadedFileUrl) => {
                         if (uploadedFileUrl) {
                             config.files = [{
                                 source: uploadedFileUrl,
@@ -63,7 +63,7 @@
                     })
 
                     this.$watch('value', () => {
-                        this.$wire.getUploadedFileUrl('{{ $formComponent->name }}', '{{ $formComponent->disk }}').then((uploadedFileUrl) => {
+                        this.$wire.getUploadedFileUrl('{{ $formComponent->getName() }}', '{{ $formComponent->getDiskName() }}').then((uploadedFileUrl) => {
                             if (uploadedFileUrl) {
                                 this.pond.files = [{
                                     source: uploadedFileUrl,
@@ -83,26 +83,26 @@
 @endpushonce
 
 <x-forms::field-group
-    :column-span="$formComponent->columnSpan"
-    :error-key="$formComponent->name"
+    :column-span="$formComponent->getColumnSpan()"
+    :error-key="$formComponent->getName()"
     :for="$formComponent->getId()"
-    :help-message="$formComponent->helpMessage"
-    :hint="$formComponent->hint"
-    :label="$formComponent->label"
-    :required="$formComponent->required"
+    :help-message="$formComponent->getHelpMessage()"
+    :hint="$formComponent->getHint()"
+    :label="$formComponent->getLabel()"
+    :required="$formComponent->isRequired()"
 >
     <div
         x-data="fileUpload({
-            value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
-            acceptedFileTypes: {{ json_encode($formComponent->acceptedFileTypes) }},
+            value: @entangle($formComponent->getName()){{ Str::of($formComponent->getBindingAttribute())->after('wire:model') }},
+            acceptedFileTypes: {{ json_encode($formComponent->getAcceptedFileTypes()) }},
             files: [],
-            {{ $formComponent->imageCropAspectRatio !== null ? "imageCropAspectRatio: '{$formComponent->imageCropAspectRatio}'," : null }}
-            {{ $formComponent->imagePreviewHeight !== null ? "imagePreviewHeight: {$formComponent->imagePreviewHeight}," : null }}
-            {{ $formComponent->imageResizeTargetHeight !== null ? "imageResizeTargetHeight: {$formComponent->imageResizeTargetHeight}," : null }}
-            {{ $formComponent->imageResizeTargetWidth !== null ? "imageResizeTargetWidth: {$formComponent->imageResizeTargetWidth}," : null }}
-            {{ __($formComponent->placeholder) !== null ? 'labelIdle: \'' . __($formComponent->placeholder) . '\',' : null }}
-            {{ $formComponent->maxSize !== null ? "maxFileSize: '{$formComponent->maxSize} KB'," : null }}
-            {{ $formComponent->minSize !== null ? "minFileSize: '{$formComponent->minSize} KB'," : null }}
+            {{ $formComponent->getImageCropAspectRatio() !== null ? "imageCropAspectRatio: '{$formComponent->getImageCropAspectRatio()}'," : null }}
+            {{ $formComponent->getImagePreviewHeight() !== null ? "imagePreviewHeight: {$formComponent->getImagePreviewHeight()}," : null }}
+            {{ $formComponent->getImageResizeTargetHeight() !== null ? "imageResizeTargetHeight: {$formComponent->getImageResizeTargetHeight()}," : null }}
+            {{ $formComponent->getImageResizeTargetWidth() !== null ? "imageResizeTargetWidth: {$formComponent->getImageResizeTargetWidth()}," : null }}
+            {{ __($formComponent->getPlaceholder()) !== null ? 'labelIdle: \'' . __($formComponent->getPlaceholder()) . '\',' : null }}
+            {{ $formComponent->getMaxSize() !== null ? "maxFileSize: '{$formComponent->getMaxSize()} KB'," : null }}
+            {{ $formComponent->getMinSize() !== null ? "minFileSize: '{$formComponent->getMinSize()} KB'," : null }}
             server: {
                 load: (source, load, error, progress, abort, headers) => {
                     fetch(source).then((response) => {
@@ -121,30 +121,30 @@
                     )
                 },
                 remove: (source, load, error) => {
-                    @this.removeUploadedFile('{{ $formComponent->name }}').then(() => {
+                    @this.removeUploadedFile('{{ $formComponent->getName() }}').then(() => {
                         load()
                     })
                 },
                 revert: (uniqueFileId, load, error) => {
-                    @this.clearTemporaryUploadedFile('{{ $formComponent->name }}').then(() => {
+                    @this.clearTemporaryUploadedFile('{{ $formComponent->getName() }}').then(() => {
                         load()
                     })
                 },
             },
-            styleButtonProcessItemPosition: '{{ $formComponent->uploadButtonPosition }}',
-            styleButtonRemoveItemPosition: '{{ $formComponent->removeUploadButtonPosition }}',
-            styleLoadIndicatorPosition: '{{ $formComponent->loadingIndicatorPosition }}',
-            {{ $formComponent->panelAspectRatio !== null ? "stylePanelAspectRatio: '{$formComponent->panelAspectRatio}'," : null }}
-            {{ $formComponent->panelLayout !== null ? "stylePanelLayout: '{$formComponent->panelLayout}'," : null }}
-            styleProgressIndicatorPosition: '{{ $formComponent->uploadProgressIndicatorPosition }}',
+            styleButtonProcessItemPosition: '{{ $formComponent->getUploadButtonPosition() }}',
+            styleButtonRemoveItemPosition: '{{ $formComponent->getRemoveUploadButtonPosition() }}',
+            styleLoadIndicatorPosition: '{{ $formComponent->getLoadingIndicatorPosition() }}',
+            {{ $formComponent->getPanelAspectRatio() !== null ? "stylePanelAspectRatio: '{$formComponent->getPanelAspectRatio()}'," : null }}
+            {{ $formComponent->getPanelLayout() !== null ? "stylePanelLayout: '{$formComponent->getPanelLayout()}'," : null }}
+            styleProgressIndicatorPosition: '{{ $formComponent->getUploadProgressIndicatorPosition() }}',
         })"
         x-init="init()"
         wire:ignore
-        {!! Filament\format_attributes($formComponent->extraAttributes) !!}
+        {!! Filament\format_attributes($formComponent->getExtraAttributes()) !!}
     >
         <input
             x-ref="input"
-            {{ $formComponent->disabled ? 'disabled' : '' }}
+            {{ $formComponent->isDisabled() ? 'disabled' : '' }}
             type="file"
         />
     </div>

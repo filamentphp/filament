@@ -1,11 +1,11 @@
 @php
-    if (! $formComponent->time) {
-        if ($formComponent->displayFormat === 'F j, Y H:i:s') $formComponent->displayFormat = 'F j, Y';
-        if ($formComponent->format === 'F j, Y H:i:s') $formComponent->format = 'Y-m-d';
+    if (! $formComponent->hasTime()) {
+        if ($formComponent->getDisplayFormat() === 'F j, Y H:i:s') $formComponent->getDisplayFormat() = 'F j, Y';
+        if ($formComponent->getFormat() === 'F j, Y H:i:s') $formComponent->getFormat() = 'Y-m-d';
     }
 
-    if ($formComponent->time && $formComponent->withoutSeconds) {
-        if ($formComponent->displayFormat === 'F j, Y H:i:s') $formComponent->displayFormat = 'F j, Y H:i';
+    if ($formComponent->hasTime() && ! $formComponent->hasSeconds()) {
+        if ($formComponent->getDisplayFormat() === 'F j, Y H:i:s') $formComponent->getDisplayFormat() = 'F j, Y H:i';
     }
 @endphp
 
@@ -53,8 +53,6 @@
                 time: config.time,
 
                 value: config.value,
-
-                withoutSeconds: config.withoutSeconds,
 
                 clearValue: function () {
                     this.setValue(null)
@@ -312,46 +310,45 @@
 @endpushonce
 
 <x-forms::field-group
-    :column-span="$formComponent->columnSpan"
-    :error-key="$formComponent->name"
+    :column-span="$formComponent->getColumnSpan()"
+    :error-key="$formComponent->getName()"
     :for="$formComponent->getId()"
-    :help-message="$formComponent->helpMessage"
-    :hint="$formComponent->hint"
-    :label="$formComponent->label"
-    :required="$formComponent->required"
+    :help-message="$formComponent->getHelpMessage()"
+    :hint="$formComponent->getHint()"
+    :label="$formComponent->getLabel()"
+    :required="$formComponent->isRequired()"
 >
     <div
         x-data="dateTimePicker({
-            autofocus: {{ $formComponent->autofocus ? 'true' : 'false' }},
-            displayFormat: '{{ convert_date_format($formComponent->displayFormat)->to('day.js') }}',
-            format: '{{ convert_date_format($formComponent->format)->to('day.js') }}',
-            maxDate: '{{ $formComponent->maxDate }}',
-            minDate: '{{ $formComponent->minDate }}',
-            name: '{{ $formComponent->name }}',
-            placeholder: '{{ __($formComponent->placeholder) }}',
-            required: {{ $formComponent->required ? 'true' : 'false' }},
-            time: {{ $formComponent->time ? 'true' : 'false' }},
-            @if (Str::of($formComponent->nameAttribute)->startsWith('wire:model'))
-                value: @entangle($formComponent->name){{ Str::of($formComponent->nameAttribute)->after('wire:model') }},
+            autofocus: {{ $formComponent->isAutofocused() ? 'true' : 'false' }},
+            displayFormat: '{{ convert_date_format($formComponent->getDisplayFormat())->to('day.js') }}',
+            format: '{{ convert_date_format($formComponent->getFormat())->to('day.js') }}',
+            maxDate: '{{ $formComponent->getMaxDate() }}',
+            minDate: '{{ $formComponent->getMinDate() }}',
+            name: '{{ $formComponent->getName() }}',
+            placeholder: '{{ __($formComponent->getPlaceholder()) }}',
+            required: {{ $formComponent->isRequired() ? 'true' : 'false' }},
+            time: {{ $formComponent->hasTime() ? 'true' : 'false' }},
+            @if (Str::of($formComponent->getBindingAttribute())->startsWith('wire:model'))
+                value: @entangle($formComponent->getName()){{ Str::of($formComponent->getBindingAttribute())->after('wire:model') }},
             @endif
-            withoutSeconds: {{ $formComponent->withoutSeconds ? 'true' : 'false' }},
         })"
         x-init="init()"
         x-on:click.away="closePicker()"
         {!! $formComponent->getId() ? "id=\"{$formComponent->getId()}\"" : null !!}
         class="relative"
-        {!! Filament\format_attributes($formComponent->extraAttributes) !!}
+        {!! Filament\format_attributes($formComponent->getExtraAttributes()) !!}
     >
-        @unless (Str::of($formComponent->nameAttribute)->startsWith(['wire:model', 'x-model']))
+        @unless (Str::of($formComponent->getBindingAttribute())->startsWith(['wire:model', 'x-model']))
             <input
                 x-model="value"
-                {!! $formComponent->name ? "{$formComponent->nameAttribute}=\"{$formComponent->name}\"" : null !!}
+                {!! $formComponent->getName() ? "{$formComponent->getBindingAttribute()}=\"{$formComponent->getName()}\"" : null !!}
                 type="hidden"
             />
         @endif
 
         <button
-            @unless($formComponent->disabled)
+            @unless($formComponent->isDisabled())
                 x-ref="button"
                 x-on:click="togglePickerVisibility()"
                 x-on:keydown.enter.stop.prevent="open ? selectDate() : openPicker()"
@@ -364,14 +361,14 @@
                 x-on:keydown.delete.stop.prevent="clearValue()"
                 x-on:keydown.escape.stop="closePicker()"
                 x-bind:aria-expanded="open"
-                aria-label="{{ __($formComponent->placeholder) }}"
+                aria-label="{{ __($formComponent->getPlaceholder()) }}"
             @endunless
             type="button"
-            class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $formComponent->disabled ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->name) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+            class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $formComponent->isDisabled() ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
         >
             <input
                 readonly
-                placeholder="{{ __($formComponent->placeholder) }}"
+                placeholder="{{ __($formComponent->getPlaceholder()) }}"
                 x-model="displayValue"
                 class="w-full h-full p-0 placeholder-gray-400 border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none"
             />
@@ -381,7 +378,7 @@
             </span>
         </button>
 
-        @unless ($formComponent->disabled)
+        @unless ($formComponent->isDisabled())
             <div
                 x-ref="picker"
                 x-on:click.away="closePicker()"
@@ -465,7 +462,7 @@
                         </template>
                     </div>
 
-                    @if ($formComponent->time)
+                    @if ($formComponent->hasTime())
                         <div class="flex items-center justify-center py-2 bg-gray-100 rounded">
                             <input
                                 type="number"
@@ -481,7 +478,7 @@
                                 class="w-16 p-0 pr-1 text-xl text-center text-gray-700 bg-gray-100 border-0 focus:ring-0 focus:outline-none"
                             />
 
-                            @unless ($formComponent->withoutSeconds)
+                            @if ($formComponent->hasSeconds())
                                 <span class="text-xl font-medium text-gray-700 bg-gray-100">:</span>
 
                                 <input
@@ -489,7 +486,7 @@
                                     x-model.debounce="second"
                                     class="w-16 p-0 pr-1 text-xl text-center text-gray-700 bg-gray-100 border-0 focus:ring-0 focus:outline-none"
                                 />
-                            @endunless
+                            @endif
                         </div>
                     @endif
                 </div>
