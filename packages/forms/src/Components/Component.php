@@ -17,7 +17,7 @@ class Component
 
     protected $form;
 
-    protected $hidden = false;
+    protected $isHidden = false;
 
     protected $id;
 
@@ -233,7 +233,7 @@ class Component
     public function hidden()
     {
         $this->configure(function () {
-            $this->hidden = true;
+            $this->isHidden = true;
         });
 
         return $this;
@@ -250,7 +250,7 @@ class Component
 
     public function isHidden()
     {
-        return $this->hidden;
+        return $this->isHidden || ($this->getParent() !== null && $this->getParent()->isHidden());
     }
 
     public function label($label)
@@ -324,7 +324,7 @@ class Component
     public function visible()
     {
         $this->configure(function () {
-            $this->hidden = false;
+            $this->isHidden = false;
         });
 
         return $this;
