@@ -41,12 +41,12 @@ class CreateRecord extends Page
 
         $this->callHook('beforeCreate');
 
-        $record = static::getModel()::create($this->record);
+        $this->record = static::getModel()::create($this->record);
 
         $this->callHook('afterCreate');
 
         $this->redirect($this->getResource()::generateUrl(static::$showRoute, [
-            'record' => $record,
+            'record' => $this->record,
         ]));
     }
 

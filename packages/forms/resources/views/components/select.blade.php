@@ -200,7 +200,7 @@
             @if (Str::of($formComponent->getBindingAttribute())->startsWith('wire:model'))
                 value: @entangle($formComponent->getName()){{ Str::of($formComponent->getBindingAttribute())->after('wire:model') }},
             @endif
-            })"
+        })"
         x-init="init()"
         x-on:click.away="closeListbox()"
         x-on:keydown.escape.stop="closeListbox()"

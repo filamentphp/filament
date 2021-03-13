@@ -323,7 +323,7 @@ class Component
             }
 
             if ($shouldExecuteCallback) {
-                $callback($this, $this->getRecord());
+                $callback($this);
             }
         });
 
