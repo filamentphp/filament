@@ -9,6 +9,8 @@ class Icon extends Action
 
     protected $icon;
 
+    protected $title;
+
     public function icon($icon)
     {
         $this->configure(function () use ($icon) {
@@ -21,5 +23,19 @@ class Icon extends Action
     public function getIcon()
     {
         return $this->icon;
+    }
+
+    public function title($title)
+    {
+        $this->configure(function () use ($title) {
+            $this->title = $title;
+        });
+
+        return $this;
+    }
+
+    public function getTitle()
+    {
+        return $this->title;
     }
 }

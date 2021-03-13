@@ -52,4 +52,21 @@ class Link extends Action
     {
         return $this->icon !== null;
     }
+
+    public function title($title)
+    {
+        $this->configure(function () use ($title) {
+            $this->title = $title;
+        });
+
+        return $this;
+    }
+
+    public function getTitle()
+    {
+        if( $this->title == null ) {
+            return $this->getLabel();
+        }
+        return $this->title;
+    }
 }
