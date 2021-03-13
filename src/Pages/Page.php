@@ -46,7 +46,9 @@ class Page extends Component
 
     public static function getNavigationLabel()
     {
-        if (static::$navigationLabel) return static::$navigationLabel;
+        if (static::$navigationLabel) {
+            return static::$navigationLabel;
+        }
 
         return (string) Str::of(class_basename(static::class))
             ->kebab()
@@ -58,16 +60,29 @@ class Page extends Component
         return static::$navigationSort;
     }
 
+    public static function getPageTitle()
+    {
+        if (property_exists(static::class, 'pageTitle')) {
+            return static::$pageTitle;
+        }
+
+        return static::getTitle();
+    }
+
     public static function getSlug()
     {
-        if (static::$slug) return static::$slug;
+        if (static::$slug) {
+            return static::$slug;
+        }
 
         return (string) Str::of(class_basename(static::class))->kebab();
     }
 
     public static function getTitle()
     {
-        if (property_exists(static::class, 'title')) return static::$title;
+        if (property_exists(static::class, 'title')) {
+            return static::$title;
+        }
 
         return (string) Str::of(class_basename(static::class))
             ->kebab()
@@ -75,11 +90,9 @@ class Page extends Component
             ->title();
     }
 
-    public static function getPageTitle()
+    public function isAuthorized()
     {
-        if (property_exists(static::class, 'pageTitle')) return static::$pageTitle;
-
-        return static::getTitle();
+        return Filament::can('view', static::class);
     }
 
     public static function navigationItems()
@@ -96,16 +109,6 @@ class Page extends Component
         ];
     }
 
-    public static function route()
-    {
-        return Route::make(static::getSlug(), static::getSlug());
-    }
-
-    public function isAuthorized()
-    {
-        return Filament::can('view', static::class);
-    }
-
     public function notify($message)
     {
         $this->dispatchBrowserEvent('notify', $message);
@@ -117,16 +120,9 @@ class Page extends Component
             ->layout(static::$layout, $this->getLayoutData());
     }
 
-    protected function getViewData()
+    public static function route()
     {
-        return array_merge($this->viewData(), [
-            'title' => static::getTitle(),
-        ]);
-    }
-
-    protected function viewData()
-    {
-        return [];
+        return Route::make(static::getSlug(), static::getSlug());
     }
 
     protected function getLayoutData()
@@ -136,7 +132,19 @@ class Page extends Component
         ]);
     }
 
+    protected function getViewData()
+    {
+        return array_merge($this->viewData(), [
+            'title' => static::getTitle(),
+        ]);
+    }
+
     protected function layoutData()
+    {
+        return [];
+    }
+
+    protected function viewData()
     {
         return [];
     }

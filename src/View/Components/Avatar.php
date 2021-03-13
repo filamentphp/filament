@@ -3,9 +3,8 @@
 namespace Filament\View\Components;
 
 use Filament\Filament;
-use Illuminate\View\Component;
-use Thomaswelton\LaravelGravatar\Facades\Gravatar;
 use function Filament\get_image_url;
+use Illuminate\View\Component;
 
 class Avatar extends Component
 {
@@ -20,6 +19,11 @@ class Avatar extends Component
         $this->dprs = $dprs;
         $this->size = $size;
         $this->user = $user;
+    }
+
+    public function render()
+    {
+        return view('filament::components.avatar');
     }
 
     public function src($dpr = 1)
@@ -46,10 +50,5 @@ class Avatar extends Component
         return collect($this->dprs)
             ->map(fn ($dpr) => $this->src($dpr) . ' ' . $dpr . 'x')
             ->implode(', ');
-    }
-
-    public function render()
-    {
-        return view('filament::components.avatar');
     }
 }

@@ -6,13 +6,6 @@ class Fieldset extends Component
 {
     protected $columns = 2;
 
-    public static function make($label, $schema = [])
-    {
-        return (new static())
-            ->label($label)
-            ->schema($schema);
-    }
-
     public function columns($columns)
     {
         $this->configure(function () use ($columns) {
@@ -30,5 +23,12 @@ class Fieldset extends Component
     public function getSubform()
     {
         return parent::getSubform()->columns($this->columns);
+    }
+
+    public static function make($label, $schema = [])
+    {
+        return (new static())
+            ->label($label)
+            ->schema($schema);
     }
 }

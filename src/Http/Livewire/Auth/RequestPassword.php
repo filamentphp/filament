@@ -33,6 +33,12 @@ class RequestPassword extends Component
             ]);
     }
 
+    public function render()
+    {
+        return view('filament::.auth.request-password')
+            ->layout('filament::components.layouts.auth', ['title' => 'filament::auth/request-password.title']);
+    }
+
     public function submit()
     {
         try {
@@ -55,11 +61,5 @@ class RequestPassword extends Component
         }
 
         $this->dispatchBrowserEvent('notify', __("filament::auth/request-password.messages.{$requestStatus}"));
-    }
-
-    public function render()
-    {
-        return view('filament::.auth.request-password')
-            ->layout('filament::components.layouts.auth', ['title' => 'filament::auth/request-password.title']);
     }
 }

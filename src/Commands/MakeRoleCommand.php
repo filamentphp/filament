@@ -34,7 +34,9 @@ class MakeRoleCommand extends Command
 
         if ($this->checkForCollision([
             $path,
-        ])) return;
+        ])) {
+            return;
+        }
 
         $this->copyStubToApp('Role', $path, [
             'class' => $roleClass,

@@ -35,7 +35,9 @@ class Resource
 
     public static function generateUrl($name = null, $parameters = [], $absolute = true)
     {
-        if (! $name) $name = static::router()->getIndexRoute()->name;
+        if (! $name) {
+            $name = static::router()->getIndexRoute()->name;
+        }
 
         return route(static::$routeNamePrefix . '.' . static::getSlug() . '.' . $name, $parameters, $absolute);
     }
@@ -47,7 +49,9 @@ class Resource
 
     public static function getLabel()
     {
-        if (static::$label) return static::$label;
+        if (static::$label) {
+            return static::$label;
+        }
 
         return (string) Str::of(class_basename(static::getModel()))
             ->kebab()
@@ -56,7 +60,9 @@ class Resource
 
     public static function getModel()
     {
-        if (static::$model) return static::$model;
+        if (static::$model) {
+            return static::$model;
+        }
 
         return (string) Str::of(class_basename(static::class))
             ->beforeLast('Resource')
@@ -65,7 +71,9 @@ class Resource
 
     public static function getNavigationLabel()
     {
-        if (static::$navigationLabel) return static::$navigationLabel;
+        if (static::$navigationLabel) {
+            return static::$navigationLabel;
+        }
 
         return (string) Str::title(static::getPluralLabel());
     }
@@ -82,7 +90,9 @@ class Resource
 
     public static function getSlug()
     {
-        if (static::$slug) return static::$slug;
+        if (static::$slug) {
+            return static::$slug;
+        }
 
         return (string) Str::of(class_basename(static::getModel()))
             ->plural()

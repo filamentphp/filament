@@ -39,11 +39,6 @@ class Column
         $this->setUp();
     }
 
-    public static function make($name)
-    {
-        return new static($name);
-    }
-
     protected function setUp()
     {
         //
@@ -73,7 +68,9 @@ class Column
     public function except($contexts, $callback = null)
     {
         $this->configure(function () use ($callback, $contexts) {
-            if (! is_array($contexts)) $contexts = [$contexts];
+            if (! is_array($contexts)) {
+                $contexts = [$contexts];
+            }
 
             if (! $callback) {
                 $this->hidden();
@@ -81,7 +78,9 @@ class Column
                 $callback = fn ($column) => $column->visible();
             }
 
-            if (! $this->getContext() || in_array($this->getContext(), $contexts)) return $this;
+            if (! $this->getContext() || in_array($this->getContext(), $contexts)) {
+                return $this;
+            }
 
             $callback($this);
         });
@@ -170,6 +169,11 @@ class Column
         return $this->isHidden;
     }
 
+    public function isPrimary()
+    {
+        return $this->isPrimary;
+    }
+
     public function isSearchable()
     {
         return $this->isSearchable && $this->getValueUsing === null;
@@ -180,11 +184,6 @@ class Column
         return $this->isSortable && $this->getValueUsing === null;
     }
 
-    public function isPrimary()
-    {
-        return $this->isPrimary;
-    }
-
     public function label($label)
     {
         $this->configure(function () use ($label) {
@@ -192,6 +191,11 @@ class Column
         });
 
         return $this;
+    }
+
+    public static function make($name)
+    {
+        return new static($name);
     }
 
     public function name($name)
@@ -206,7 +210,9 @@ class Column
     public function only($contexts, $callback = null)
     {
         $this->configure(function () use ($callback, $contexts) {
-            if (! is_array($contexts)) $contexts = [$contexts];
+            if (! is_array($contexts)) {
+                $contexts = [$contexts];
+            }
 
             if (! $callback) {
                 $this->hidden();
@@ -214,7 +220,9 @@ class Column
                 $callback = fn ($column) => $column->visible();
             }
 
-            if (! in_array($this->getContext(), $contexts)) return $this;
+            if (! in_array($this->getContext(), $contexts)) {
+                return $this;
+            }
 
             $callback($this);
         });
@@ -229,6 +237,20 @@ class Column
         });
 
         return $this;
+    }
+
+    public function renderCell($record)
+    {
+        if ($this->isHidden()) {
+            return;
+        }
+
+        $view = $this->getView() ?? 'tables::cells.' . Str::of(class_basename(static::class))->kebab();
+
+        return view($view, array_merge($this->viewData, [
+            'column' => $this,
+            'record' => $record,
+        ]));
     }
 
     public function searchable()
@@ -285,17 +307,5 @@ class Column
         });
 
         return $this;
-    }
-
-    public function renderCell($record)
-    {
-        if ($this->isHidden()) return;
-
-        $view = $this->getView() ?? 'tables::cells.' . Str::of(class_basename(static::class))->kebab();
-
-        return view($view, array_merge($this->viewData, [
-            'column' => $this,
-            'record' => $record,
-        ]));
     }
 }

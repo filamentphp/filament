@@ -14,16 +14,6 @@ use Livewire\Livewire;
 class ResetPasswordTest extends TestCase
 {
     /** @test */
-    public function can_view_password_reset_page()
-    {
-        $this->get(URL::signedRoute('filament.auth.password.reset', [
-            'token' => $this->generateToken(),
-        ]))
-            ->assertSuccessful()
-            ->assertSeeLivewire('filament.core.auth.reset-password');
-    }
-
-    /** @test */
     public function can_reset_password()
     {
         $user = User::factory()->create();
@@ -48,28 +38,13 @@ class ResetPasswordTest extends TestCase
     }
 
     /** @test */
-    public function is_forbidden_if_request_is_unsigned()
+    public function can_view_password_reset_page()
     {
-        $this->get(route('filament.auth.password.reset', [
+        $this->get(URL::signedRoute('filament.auth.password.reset', [
             'token' => $this->generateToken(),
         ]))
-            ->assertForbidden();
-    }
-
-    /** @test */
-    public function shows_an_error_when_invalid_token_supplied()
-    {
-        $user = User::factory()->create();
-        $newPassword = Str::random();
-
-        Livewire::test(ResetPassword::class, [
-            'token' => 'invalid-token',
-        ])
-            ->set('email', $user->email)
-            ->set('password', $newPassword)
-            ->set('passwordConfirmation', $newPassword)
-            ->call('submit')
-            ->assertHasErrors('email');
+            ->assertSuccessful()
+            ->assertSeeLivewire('filament.core.auth.reset-password');
     }
 
     /** @test */
@@ -95,14 +70,12 @@ class ResetPasswordTest extends TestCase
     }
 
     /** @test */
-    public function password_is_required()
+    public function is_forbidden_if_request_is_unsigned()
     {
-        Livewire::test(ResetPassword::class, [
+        $this->get(route('filament.auth.password.reset', [
             'token' => $this->generateToken(),
-        ])
-            ->set('password', null)
-            ->call('submit')
-            ->assertHasErrors(['password' => 'required']);
+        ]))
+            ->assertForbidden();
     }
 
     /** @test */
@@ -129,6 +102,33 @@ class ResetPasswordTest extends TestCase
             ->set('passwordConfirmation', 'different-password')
             ->call('submit')
             ->assertHasErrors(['passwordConfirmation' => 'same']);
+    }
+
+    /** @test */
+    public function password_is_required()
+    {
+        Livewire::test(ResetPassword::class, [
+            'token' => $this->generateToken(),
+        ])
+            ->set('password', null)
+            ->call('submit')
+            ->assertHasErrors(['password' => 'required']);
+    }
+
+    /** @test */
+    public function shows_an_error_when_invalid_token_supplied()
+    {
+        $user = User::factory()->create();
+        $newPassword = Str::random();
+
+        Livewire::test(ResetPassword::class, [
+            'token' => 'invalid-token',
+        ])
+            ->set('email', $user->email)
+            ->set('password', $newPassword)
+            ->set('passwordConfirmation', $newPassword)
+            ->call('submit')
+            ->assertHasErrors('email');
     }
 
     protected function generateToken($user = null)

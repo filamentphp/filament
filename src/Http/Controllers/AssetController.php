@@ -17,8 +17,14 @@ class AssetController
                 return $this->pretendResponseIsFile(__DIR__ . '/../../../dist/js/filament.js.map', 'application/json; charset=utf-8');
             default:
                 abort(404);
+
                 break;
         }
+    }
+
+    protected function getHttpDate($timestamp)
+    {
+        return sprintf('%s GMT', gmdate('D, d M Y H:i:s', $timestamp));
     }
 
     protected function pretendResponseIsFile($path, $contentType)
@@ -43,10 +49,5 @@ class AssetController
             'Cache-Control' => $cacheControl,
             'Last-Modified' => $this->getHttpDate($lastModified),
         ]);
-    }
-
-    protected function getHttpDate($timestamp)
-    {
-        return sprintf('%s GMT', gmdate('D, d M Y H:i:s', $timestamp));
     }
 }

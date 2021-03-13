@@ -28,11 +28,6 @@ class Table
 
     protected $recordActions = [];
 
-    public static function make()
-    {
-        return new static();
-    }
-
     public function columns($columns)
     {
         $this->columns = collect(value($columns))
@@ -179,6 +174,11 @@ class Table
         return $this->isSortable && collect($this->columns)
                 ->filter(fn ($column) => $column->isSortable())
                 ->count();
+    }
+
+    public static function make()
+    {
+        return new static();
     }
 
     public function pagination($enabled)

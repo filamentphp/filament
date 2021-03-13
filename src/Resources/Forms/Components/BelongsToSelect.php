@@ -6,9 +6,8 @@ use Illuminate\Support\Str;
 
 class BelongsToSelect extends Select
 {
-    protected $getOptions;
-
     protected $displayColumnName;
+    protected $getOptions;
 
     protected $relationship;
 
@@ -67,7 +66,9 @@ class BelongsToSelect extends Select
         $this->configure(function () {
             $options = $this->getOptions();
 
-            if (! $options || ! $this->getModel()) return;
+            if (! $options || ! $this->getModel()) {
+                return;
+            }
 
             $this->options = $options;
         });

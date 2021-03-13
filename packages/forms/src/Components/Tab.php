@@ -8,14 +8,6 @@ class Tab extends Component
 {
     protected $columns = 1;
 
-    public static function make($label, $schema = [])
-    {
-        return (new static())
-            ->label($label)
-            ->id(Str::slug($label))
-            ->schema($schema);
-    }
-
     public function columns($columns)
     {
         $this->configure(function () use ($columns) {
@@ -33,5 +25,13 @@ class Tab extends Component
     public function getSubform()
     {
         return parent::getSubform()->columns($this->columns);
+    }
+
+    public static function make($label, $schema = [])
+    {
+        return (new static())
+            ->label($label)
+            ->id(Str::slug($label))
+            ->schema($schema);
     }
 }

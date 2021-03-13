@@ -2,8 +2,8 @@
 
 namespace Filament\View\Components;
 
-use Illuminate\View\Component;
 use function Filament\get_image_url;
+use Illuminate\View\Component;
 
 class Image extends Component
 {
@@ -20,6 +20,11 @@ class Image extends Component
         $this->src = $src;
     }
 
+    public function render()
+    {
+        return view('filament::components.image');
+    }
+
     public function src($dpr = 1)
     {
         return get_image_url(
@@ -33,10 +38,5 @@ class Image extends Component
         return collect($this->dprs)
             ->map(fn ($dpr) => $this->src($dpr) . ' ' . $dpr . 'x')
             ->implode(', ');
-    }
-
-    public function render()
-    {
-        return view('filament::components.image');
     }
 }

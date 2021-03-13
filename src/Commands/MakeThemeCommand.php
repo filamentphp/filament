@@ -22,7 +22,9 @@ class MakeThemeCommand extends Command
 
         if ($this->checkForCollision([
             $path,
-        ])) return;
+        ])) {
+            return;
+        }
 
         $this->copyStubToApp('Theme', $path);
 

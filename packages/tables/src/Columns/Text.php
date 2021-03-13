@@ -18,7 +18,9 @@ class Text extends Column
     {
         $this->configure(function () use ($decimalSeparator, $symbol, $thousandsSeparator) {
             $this->formatUsing = function ($value) use ($decimalSeparator, $symbol, $thousandsSeparator) {
-                if (! is_numeric($value)) return $this->getDefaultValue();
+                if (! is_numeric($value)) {
+                    return $this->getDefaultValue();
+                }
 
                 return $symbol . number_format($value, 2, $decimalSeparator, $thousandsSeparator);
             };
@@ -87,6 +89,17 @@ class Text extends Column
         return $value;
     }
 
+    public function limit($length = -1)
+    {
+        $this->configure(function () use ($length) {
+            $this->formatUsing = function ($value) use ($length) {
+                return Str::limit($value, $length);
+            };
+        });
+
+        return $this;
+    }
+
     public function options($options)
     {
         $this->configure(function () use ($options) {
@@ -96,17 +109,6 @@ class Text extends Column
                 }
 
                 return $value;
-            };
-        });
-
-        return $this;
-    }
-
-    public function limit($length = -1)
-    {
-        $this->configure(function () use ($length) {
-            $this->formatUsing = function ($value) use ($length) {
-                return Str::limit($value, $length);
             };
         });
 

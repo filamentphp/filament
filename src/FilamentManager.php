@@ -20,15 +20,15 @@ class FilamentManager
 
     public $roles = [];
 
-    public $styles = [];
+    public $scriptData = [];
 
     public $scripts = [];
 
-    public $scriptData = [];
+    public $shouldRunMigrations = true;
+
+    public $styles = [];
 
     public $widgets = [];
-
-    public $shouldRunMigrations = true;
 
     public function auth()
     {
@@ -46,7 +46,9 @@ class FilamentManager
     {
         $user = $this->auth()->user();
 
-        if ($user->isFilamentAdmin()) return true;
+        if ($user->isFilamentAdmin()) {
+            return true;
+        }
 
         $targetClass = is_object($target) ? get_class($target) : $target;
 
@@ -59,14 +61,22 @@ class FilamentManager
             ][$mode];
 
             foreach ($this->authorizations[$targetClass] as $authorization) {
-                if ($mode !== $authorization->mode) continue;
+                if ($mode !== $authorization->mode) {
+                    continue;
+                }
 
-                if (! $user->hasFilamentRole($authorization->role)) continue;
+                if (! $user->hasFilamentRole($authorization->role)) {
+                    continue;
+                }
 
-                if (in_array($action, $authorization->exceptActions)) continue;
+                if (in_array($action, $authorization->exceptActions)) {
+                    continue;
+                }
 
                 if (in_array($action, $authorization->onlyActions)) {
-                    if ($mode === 'allow') return true;
+                    if ($mode === 'allow') {
+                        return true;
+                    }
 
                     if ($mode === 'deny') {
                         $fallback = false;
@@ -75,7 +85,9 @@ class FilamentManager
                     }
                 }
 
-                if (count($authorization->onlyActions)) continue;
+                if (count($authorization->onlyActions)) {
+                    continue;
+                }
 
                 return [
                     'allow' => true,
@@ -115,17 +127,17 @@ class FilamentManager
         return $this->roles;
     }
 
-    public function getScripts()
-    {
-        return $this->scripts;
-    }
-
     public function getScriptData()
     {
         return array_merge([
             'filamentVersion' => $this->version(),
             'userId' => Filament::auth()->id(),
         ], $this->scriptData);
+    }
+
+    public function getScripts()
+    {
+        return $this->scripts;
     }
 
     public function getStyles()

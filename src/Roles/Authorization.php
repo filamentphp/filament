@@ -20,7 +20,9 @@ class Authorization
 
     public function except($actions)
     {
-        if (! is_array($actions)) $actions = [$actions];
+        if (! is_array($actions)) {
+            $actions = [$actions];
+        }
 
         $this->exceptActions = array_merge($this->exceptActions, $actions);
 
@@ -29,7 +31,9 @@ class Authorization
 
     public function only($actions)
     {
-        if (! is_array($actions)) $actions = [$actions];
+        if (! is_array($actions)) {
+            $actions = [$actions];
+        }
 
         $this->onlyActions = array_merge($this->onlyActions, $actions);
 

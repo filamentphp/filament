@@ -122,6 +122,15 @@ class UserResource extends Resource
         return parent::navigationItems();
     }
 
+    public static function routes()
+    {
+        return [
+            Pages\ListUsers::routeTo('/', 'index'),
+            Pages\CreateUser::routeTo('/create', 'create'),
+            Pages\EditUser::routeTo('/{record}/edit', 'edit'),
+        ];
+    }
+
     public static function table(Table $table)
     {
         $table->columns([
@@ -148,14 +157,5 @@ class UserResource extends Resource
         });
 
         return $table;
-    }
-
-    public static function routes()
-    {
-        return [
-            Pages\ListUsers::routeTo('/', 'index'),
-            Pages\CreateUser::routeTo('/create', 'create'),
-            Pages\EditUser::routeTo('/{record}/edit', 'edit'),
-        ];
     }
 }
