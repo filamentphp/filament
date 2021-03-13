@@ -7,7 +7,7 @@
             title="{{ $title }}"
         @endif
     >
-        <x-dynamic-component :component="$recordAction->getIcon()" class="w-4 h-4" />
+        <x-dynamic-component :component="$recordAction->getIcon()" class="w-4 h-4 inline" />
     </button>
 @elseif ($url = $recordAction->getUrl($record))
     <a
@@ -21,7 +21,7 @@
             rel="noopener noreferrer"
         @endif
     >
-        <x-dynamic-component :component="$recordAction->getIcon()" class="w-4 h-4" />
+        <x-dynamic-component :component="$recordAction->getIcon()" class="w-4 h-4 inline" />
     </a>
 @else
     <span
@@ -30,6 +30,6 @@
             title="{{ $title }}"
         @endif
     >
-        <x-dynamic-component :component="$recordAction->getIcon()" class="w-4 h-4" />
+        <x-dynamic-component :component="$recordAction->getIcon()" class="w-4 h-4 inline" />
     </span>
 @endif

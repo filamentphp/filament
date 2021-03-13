@@ -8,7 +8,7 @@
         @endif
     >
         @if ($recordAction->hasIcon())
-            <x-dynamic-component :component="$recordAction->getIcon()" class="w-4 h-4 mr-1" />
+            <x-dynamic-component :component="$recordAction->getIcon()" class="w-4 h-4 mr-1 inline" />
         @endif
 
         {{ __($recordAction->getLabel()) }}
@@ -26,7 +26,7 @@
         @endif
     >
         @if ($recordAction->hasIcon())
-            <x-dynamic-component :component="$recordAction->getIcon()" class="w-4 h-4 mr-1" />
+            <x-dynamic-component :component="$recordAction->getIcon()" class="w-4 h-4 mr-1 inline" />
         @endif
 
         {{ __($recordAction->getLabel()) }}
@@ -39,7 +39,7 @@
         @endif
     >
         @if ($recordAction->hasIcon())
-            <x-dynamic-component :component="$recordAction->getIcon()" class="w-4 h-4 mr-1" />
+            <x-dynamic-component :component="$recordAction->getIcon()" class="w-4 h-4 mr-1 inline" />
         @endif
 
         {{ __($recordAction->getLabel()) }}
