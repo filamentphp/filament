@@ -56,7 +56,7 @@
         <tbody class="text-sm leading-tight divide-y divide-gray-200">
             @forelse ($records as $record)
                 <tr
-                    wire:key="{{ $loop->index }}"
+                    wire:key="{{ $record->getKey() }}"
                     wire:loading.class="opacity-50"
                     class="{{ $loop->index % 2 ? 'bg-gray-50' : null }}"
                 >
