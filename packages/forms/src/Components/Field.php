@@ -196,6 +196,15 @@ class Field extends Component
         return $this->rules;
     }
 
+    public function getValidationAttribute()
+    {
+        if ($this->validationAttribute === null) {
+            return Str::lower($this->getLabel());
+        }
+
+        return $this->validationAttribute;
+    }
+
     public function helpMessage($message)
     {
         $this->configure(function () use ($message) {

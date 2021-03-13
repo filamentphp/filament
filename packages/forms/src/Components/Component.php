@@ -209,11 +209,7 @@ class Component
         $attributes = [];
 
         if ($this instanceof Field) {
-            if ($this->validationAttribute !== null) {
-                $attributes[$this->getName()] = Str::lower(__($this->getLabel()));
-            } else {
-                $attributes[$this->getName()] = __($this->validationAttribute);
-            }
+            $attributes[$this->getName()] = __($this->getValidationAttribute());
         }
 
         $attributes = array_merge($attributes, $this->getSubform()->getValidationAttributes());
