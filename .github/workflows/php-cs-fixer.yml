@@ -17,13 +17,13 @@ jobs:
                   ref: develop
 
         - name: Run PHP CS Fixer
-            uses: docker://oskarstark/php-cs-fixer-ga
-            with:
-                args: --config=.php_cs.dist --allow-risky=yes
+          uses: docker://oskarstark/php-cs-fixer-ga
+          with:
+              args: --config=.php_cs.dist --allow-risky=yes
 
         - name: Commit changes
-            uses: stefanzweifel/git-auto-commit-action@v4
-            with:
-                branch: develop
-                commit_message: >
-                    chore: styling
+          uses: stefanzweifel/git-auto-commit-action@v4
+          with:
+              branch: develop
+              commit_message: >
+                  chore: styling
