@@ -3,6 +3,7 @@
 namespace Filament;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use League\Glide\Urls\UrlBuilderFactory;
 
 if (! function_exists('Filament\format_attributes')) {
@@ -55,5 +56,16 @@ if (! function_exists('Filament\get_image_url')) {
         $urlBuilder = UrlBuilderFactory::create('', config('app.key'));
 
         return route('filament.image', ['path' => ltrim($urlBuilder->getUrl($path, $manipulations), '/')]);
+    }
+}
+
+if (! function_exists('Filament\get_media_contents')) {
+    function get_media_contents($path)
+    {
+        $disk = Storage::disk(config('filament.default_filesystem_disk'));
+        
+        if (! $disk->exists($path)) return;
+
+        return $disk->get($path);
     }
 }
