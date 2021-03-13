@@ -143,6 +143,7 @@ class RelationManager extends Component
                 ->filter(function ($record) {
                     return Filament::can('delete', $record);
                 })
+                ->map(fn ($record) => $record->getKey())
                 ->toArray(),
         );
 
