@@ -90,9 +90,8 @@ class ListRecords extends Page
                     );
                 })
                 ->recordActions([
-                    RecordActions\Icon::make('edit')
-                        ->icon('heroicon-o-pencil')
-//                        ->label(static::$editRecordActionLabel)
+                    RecordActions\Link::make('edit')
+                        ->label(static::$editRecordActionLabel)
                         ->url(fn ($record) => $this->getResource()::generateUrl($this->recordRoute, ['record' => $record]))
                         ->when(fn ($record) => Filament::can('update', $record)),
                 ])
