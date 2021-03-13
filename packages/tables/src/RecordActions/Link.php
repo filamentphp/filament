@@ -30,6 +30,15 @@ class Link extends Action
         return $this->label;
     }
 
+    public function getTitle()
+    {
+        if ($this->title === null) {
+            return $this->getLabel();
+        }
+
+        return parent::getTitle();
+    }
+
     public function hasIcon()
     {
         return $this->icon !== null;
