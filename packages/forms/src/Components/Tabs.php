@@ -29,9 +29,7 @@ class Tabs extends Component
 
     public function tabs($tabs)
     {
-        $this->configure(function () use ($tabs) {
-            $this->schema($tabs);
-        });
+        $this->schema($tabs);
 
         return $this;
     }
