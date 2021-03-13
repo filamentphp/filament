@@ -49,9 +49,9 @@ class Column
         if ($callback === null) {
             foreach ($this->configurationQueue as $callback) {
                 $callback();
-            }
 
-            $this->configurationQueue = [];
+                array_shift($this->configurationQueue);
+            }
 
             return;
         }

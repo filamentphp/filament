@@ -48,9 +48,9 @@ class Component
         if ($callback === null) {
             foreach ($this->configurationQueue as $callback) {
                 $callback();
-            }
 
-            $this->configurationQueue = [];
+                array_shift($this->configurationQueue);
+            }
 
             return;
         }
@@ -114,10 +114,6 @@ class Component
 
     public function getDefaultValues()
     {
-        if ($this->isHidden()) {
-            return [];
-        }
-
         $values = [];
 
         if ($this instanceof Field) {
@@ -365,7 +361,7 @@ class Component
                     return $condition;
                 }
 
-                return (string) Str::of($condition)->replace('{{record}}', $this->getRecord() instanceof Model ? $this->getRecord()->getKey() : '');
+                return (string) Str::of($condition)->replace('{{ record }}', $this->getRecord() instanceof Model ? $this->getRecord()->getKey() : '');
             })
             ->toArray();
     }
