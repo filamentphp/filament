@@ -1,4 +1,4 @@
-name: phpcs-fixer
+name: php-cs-fixer
 
 on:
   pull_request:
