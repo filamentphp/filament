@@ -12,13 +12,13 @@ class AttachRecord extends Component
 {
     use HasForm;
 
-    public $cancelButtonLabel;
+    public $attachAnotherButtonLabel;
 
     public $attachButtonLabel;
 
-    public $attachAnotherButtonLabel;
-
     public $attachedMessage;
+
+    public $cancelButtonLabel;
 
     public $manager;
 
@@ -41,37 +41,6 @@ class AttachRecord extends Component
         $this->dispatchBrowserEvent('notify', __($this->attachedMessage));
 
         $this->related = null;
-    }
-
-    public function getRelationship()
-    {
-        $manager = $this->manager;
-
-        return $manager::$relationship;
-    }
-
-    public function getInverseRelationship()
-    {
-        $manager = $this->manager;
-
-        if (property_exists($manager, 'inverseRelationship')) {
-            return $manager::$inverseRelationship;
-        }
-
-        return (string) Str::of(class_basename($this->owner))
-            ->lower()
-            ->plural()
-            ->camel();
-    }
-
-    public function getPrimaryColumn()
-    {
-        return $this->manager::getPrimaryColumn() ?? $this->owner->getKeyName();
-    }
-
-    public function mount()
-    {
-        $this->fillWithFormDefaults();
     }
 
     public function getForm()
@@ -103,6 +72,37 @@ class AttachRecord extends Component
                     })
                     ->required(),
             ]);
+    }
+
+    public function getInverseRelationship()
+    {
+        $manager = $this->manager;
+
+        if (property_exists($manager, 'inverseRelationship')) {
+            return $manager::$inverseRelationship;
+        }
+
+        return (string) Str::of(class_basename($this->owner))
+            ->lower()
+            ->plural()
+            ->camel();
+    }
+
+    public function getPrimaryColumn()
+    {
+        return $this->manager::getPrimaryColumn() ?? $this->owner->getKeyName();
+    }
+
+    public function getRelationship()
+    {
+        $manager = $this->manager;
+
+        return $manager::$relationship;
+    }
+
+    public function mount()
+    {
+        $this->fillWithFormDefaults();
     }
 
     public function render()

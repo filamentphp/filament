@@ -6,11 +6,6 @@ class Grid extends Component
 {
     protected $columns = 2;
 
-    public static function make($schema = [])
-    {
-        return (new static())->schema($schema);
-    }
-
     public function columns($columns)
     {
         $this->configure(function () use ($columns) {
@@ -28,5 +23,10 @@ class Grid extends Component
     public function getSubform()
     {
         return parent::getSubform()->columns($this->columns);
+    }
+
+    public static function make($schema = [])
+    {
+        return (new static())->schema($schema);
     }
 }

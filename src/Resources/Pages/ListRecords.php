@@ -3,8 +3,8 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Filament;
-use Filament\Resources\Tables\Table;
 use Filament\Resources\Tables\RecordActions;
+use Filament\Resources\Tables\Table;
 use Filament\Tables\HasTable;
 use Illuminate\Support\Str;
 
@@ -14,13 +14,11 @@ class ListRecords extends Page
 
     public static $createButtonLabel = 'filament::resources/pages/list-records.buttons.create.label';
 
+    public $createRoute = 'create';
+
     public static $editRecordActionLabel = 'filament::resources/pages/list-records.table.recordActions.edit.label';
 
-    public static $view = 'filament::resources.pages.list-records';
-
     public $filterable = true;
-
-    public $createRoute = 'create';
 
     public $pagination = true;
 
@@ -30,16 +28,7 @@ class ListRecords extends Page
 
     public $sortable = true;
 
-    public static function getTitle()
-    {
-        if (property_exists(static::class, 'title')) return static::$title;
-
-        return (string) Str::of(class_basename(static::getModel()))
-            ->kebab()
-            ->replace('-', ' ')
-            ->plural()
-            ->title();
-    }
+    public static $view = 'filament::resources.pages.list-records';
 
     public function canCreate()
     {
@@ -83,7 +72,9 @@ class ListRecords extends Page
                 ->filterable($this->filterable)
                 ->pagination($this->pagination)
                 ->primaryColumnUrl(function ($record) {
-                    if (! Filament::can('update', $record)) return;
+                    if (! Filament::can('update', $record)) {
+                        return;
+                    }
 
                     return $this->getResource()::generateUrl(
                         $this->recordRoute,
@@ -99,6 +90,19 @@ class ListRecords extends Page
                 ->searchable($this->searchable)
                 ->sortable($this->sortable),
         );
+    }
+
+    public static function getTitle()
+    {
+        if (property_exists(static::class, 'title')) {
+            return static::$title;
+        }
+
+        return (string) Str::of(class_basename(static::getModel()))
+            ->kebab()
+            ->replace('-', ' ')
+            ->plural()
+            ->title();
     }
 
     public function isAuthorized()

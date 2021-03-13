@@ -21,22 +21,15 @@ class EditRecord extends Page
 
     public static $deleteModalHeading = 'filament::resources/pages/edit-record.modals.delete.heading';
 
+    public $indexRoute = 'index';
+
+    public $record;
+
     public static $saveButtonLabel = 'filament::resources/pages/edit-record.buttons.save.label';
 
     public static $savedMessage = 'filament::resources/pages/edit-record.messages.saved';
 
     public static $view = 'filament::resources.pages.edit-record';
-
-    public $record;
-
-    public $indexRoute = 'index';
-
-    public static function getBreadcrumbs()
-    {
-        return [
-            static::getResource()::generateUrl() => (string) Str::title(static::getResource()::getPluralLabel()),
-        ];
-    }
 
     public function canDelete()
     {
@@ -54,6 +47,13 @@ class EditRecord extends Page
         $this->callHook('afterDelete');
 
         $this->redirect($this->getResource()::generateUrl($this->indexRoute));
+    }
+
+    public static function getBreadcrumbs()
+    {
+        return [
+            static::getResource()::generateUrl() => (string) Str::title(static::getResource()::getPluralLabel()),
+        ];
     }
 
     public function getForm()

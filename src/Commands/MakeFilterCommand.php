@@ -2,8 +2,8 @@
 
 namespace Filament\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class MakeFilterCommand extends Command
 {
@@ -34,7 +34,9 @@ class MakeFilterCommand extends Command
 
         if ($this->checkForCollision([
             $path,
-        ])) return;
+        ])) {
+            return;
+        }
 
         if (! $this->option('resource')) {
             $this->copyStubToApp('Filter', $path, [

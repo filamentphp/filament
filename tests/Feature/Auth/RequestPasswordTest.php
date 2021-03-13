@@ -12,14 +12,6 @@ use Livewire\Livewire;
 class RequestPasswordTest extends TestCase
 {
     /** @test */
-    public function can_view_password_reset_request_page()
-    {
-        $this->get(route('filament.auth.password.request'))
-            ->assertSuccessful()
-            ->assertSeeLivewire('filament.core.auth.request-password');
-    }
-
-    /** @test */
     public function can_request_password_reset()
     {
         Notification::fake();
@@ -36,18 +28,11 @@ class RequestPasswordTest extends TestCase
     }
 
     /** @test */
-    public function shows_an_error_when_bad_request_attempt()
+    public function can_view_password_reset_request_page()
     {
-        Notification::fake();
-
-        $email = $this->faker->safeEmail;
-
-        Livewire::test(RequestPassword::class)
-            ->set('email', $email)
-            ->call('submit')
-            ->assertHasErrors('email');
-
-        Notification::assertNothingSent();
+        $this->get(route('filament.auth.password.request'))
+            ->assertSuccessful()
+            ->assertSeeLivewire('filament.core.auth.request-password');
     }
 
     /** @test */
@@ -66,5 +51,20 @@ class RequestPasswordTest extends TestCase
             ->set('email', 'invalid-email')
             ->call('submit')
             ->assertHasErrors(['email' => 'email']);
+    }
+
+    /** @test */
+    public function shows_an_error_when_bad_request_attempt()
+    {
+        Notification::fake();
+
+        $email = $this->faker->safeEmail;
+
+        Livewire::test(RequestPassword::class)
+            ->set('email', $email)
+            ->call('submit')
+            ->assertHasErrors('email');
+
+        Notification::assertNothingSent();
     }
 }

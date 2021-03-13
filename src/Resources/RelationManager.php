@@ -3,8 +3,8 @@
 namespace Filament\Resources;
 
 use Filament\Filament;
-use Filament\Resources\Tables\Table;
 use Filament\Resources\Tables\RecordActions;
+use Filament\Resources\Tables\Table;
 use Filament\Tables\HasTable;
 use Illuminate\Database\Eloquent\Relations;
 use Illuminate\Support\Str;
@@ -16,13 +16,13 @@ class RelationManager extends Component
 
     public static $attachButtonLabel = 'filament::resources/relation-manager.buttons.attach.label';
 
-    public static $attachModalCancelButtonLabel = 'filament::resources/relation-manager.modals.attach.buttons.cancel.label';
-
     public static $attachModalAttachAnotherButtonLabel = 'filament::resources/relation-manager.modals.attach.buttons.attachAnother.label';
 
     public static $attachModalAttachButtonLabel = 'filament::resources/relation-manager.modals.attach.buttons.attach.label';
 
     public static $attachModalAttachedMessage = 'filament::resources/relation-manager.modals.attach.messages.attached';
+
+    public static $attachModalCancelButtonLabel = 'filament::resources/relation-manager.modals.attach.buttons.cancel.label';
 
     public static $attachModalHeading = 'filament::resources/relation-manager.modals.attach.heading';
 
@@ -60,11 +60,11 @@ class RelationManager extends Component
 
     public static $editRecordActionLabel = 'filament::resources/pages/list-records.table.recordActions.edit.label';
 
-    public static $relationship;
-
     public $filterable = true;
 
     public $owner;
+
+    public static $relationship;
 
     public $searchable = true;
 
@@ -74,34 +74,14 @@ class RelationManager extends Component
         'refreshRelationManagerList' => 'refreshList',
     ];
 
-    public static function getPrimaryColumn()
-    {
-        return property_exists(static::class, 'primaryColumn') && static::$primaryColumn !== '' ?
-            static::$primaryColumn :
-            null;
-    }
-
-    public static function getRelationship()
-    {
-        return static::$relationship;
-    }
-
-    public static function getTitle()
-    {
-        if (property_exists(static::class, 'title')) return static::$title;
-
-        return (string) Str::of(static::$relationship)
-            ->kebab()
-            ->replace('-', ' ')
-            ->title();
-    }
-
     public function canAttach()
     {
         if (
             $this->isType(Relations\HasMany::class) ||
             $this->isType(Relations\MorphMany::class)
-        ) return false;
+        ) {
+            return false;
+        }
 
         return true;
     }
@@ -129,7 +109,9 @@ class RelationManager extends Component
         if (
             $this->isType(Relations\HasMany::class) ||
             $this->isType(Relations\MorphMany::class)
-        ) return false;
+        ) {
+            return false;
+        }
 
         return true;
     }
@@ -162,11 +144,30 @@ class RelationManager extends Component
         $this->selected = [];
     }
 
+    public function getModel()
+    {
+        return $this->getQuery()->getModel();
+    }
+
+    public static function getPrimaryColumn()
+    {
+        return property_exists(static::class, 'primaryColumn') && static::$primaryColumn !== '' ?
+            static::$primaryColumn :
+            null;
+    }
+
     public function getPrimaryColumnAction($record)
     {
-        if (! Filament::can('update', $record)) return;
+        if (! Filament::can('update', $record)) {
+            return;
+        }
 
         return 'openEdit';
+    }
+
+    public function getQuery()
+    {
+        return $this->owner->{static::$relationship}();
     }
 
     public function getRecordActions()
@@ -177,6 +178,11 @@ class RelationManager extends Component
                 ->action('openEdit')
                 ->when(fn ($record) => Filament::can('update', $record)),
         ];
+    }
+
+    public static function getRelationship()
+    {
+        return static::$relationship;
     }
 
     public function getTable()
@@ -194,14 +200,16 @@ class RelationManager extends Component
         );
     }
 
-    public function getModel()
+    public static function getTitle()
     {
-        return $this->getQuery()->getModel();
-    }
+        if (property_exists(static::class, 'title')) {
+            return static::$title;
+        }
 
-    public function getQuery()
-    {
-        return $this->owner->{static::$relationship}();
+        return (string) Str::of(static::$relationship)
+            ->kebab()
+            ->replace('-', ' ')
+            ->title();
     }
 
     public function isType($type)
@@ -233,7 +241,9 @@ class RelationManager extends Component
 
     public function refreshList($manager = null)
     {
-        if ($manager !== null && $manager !== static::class) return;
+        if ($manager !== null && $manager !== static::class) {
+            return;
+        }
 
         $this->callMethod('$refresh');
     }

@@ -10,14 +10,6 @@ use Livewire\Livewire;
 class LoginTest extends TestCase
 {
     /** @test */
-    public function can_view_login_page()
-    {
-        $this->get(route('filament.auth.login'))
-            ->assertSuccessful()
-            ->assertSeeLivewire('filament.core.auth.login');
-    }
-
-    /** @test */
     public function can_login()
     {
         $user = User::factory()->create();
@@ -32,17 +24,11 @@ class LoginTest extends TestCase
     }
 
     /** @test */
-    public function shows_an_error_when_bad_login_attempt()
+    public function can_view_login_page()
     {
-        $user = User::factory()->create();
-
-        Livewire::test(Login::class)
-            ->set('email', $user->email)
-            ->set('password', 'bad-password')
-            ->call('submit')
-            ->assertHasErrors('email');
-
-        $this->assertGuest();
+        $this->get(route('filament.auth.login'))
+            ->assertSuccessful()
+            ->assertSeeLivewire('filament.core.auth.login');
     }
 
     /** @test */
@@ -70,5 +56,19 @@ class LoginTest extends TestCase
             ->set('password', null)
             ->call('submit')
             ->assertHasErrors(['password' => 'required']);
+    }
+
+    /** @test */
+    public function shows_an_error_when_bad_login_attempt()
+    {
+        $user = User::factory()->create();
+
+        Livewire::test(Login::class)
+            ->set('email', $user->email)
+            ->set('password', 'bad-password')
+            ->call('submit')
+            ->assertHasErrors('email');
+
+        $this->assertGuest();
     }
 }

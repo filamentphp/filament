@@ -2,8 +2,8 @@
 
 namespace Filament;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use League\Glide\Urls\UrlBuilderFactory;
 
 if (! function_exists('Filament\format_attributes')) {
@@ -34,15 +34,21 @@ if (! function_exists('Filament\get_asset_id')) {
     {
         $manifestPath = __DIR__ . '/../dist/mix-manifest.json';
 
-        if (! file_exists($manifestPath)) return null;
+        if (! file_exists($manifestPath)) {
+            return null;
+        }
 
         $manifest = json_decode(file_get_contents($manifestPath), true);
 
-        if (! array_key_exists($path, $manifest)) return null;
+        if (! array_key_exists($path, $manifest)) {
+            return null;
+        }
 
         $path = $manifest[$path];
 
-        if (! str_contains($path, 'id=')) return null;
+        if (! str_contains($path, 'id=')) {
+            return null;
+        }
 
         $id = (string) Str::of($path)->after('id=');
 
@@ -64,7 +70,9 @@ if (! function_exists('Filament\get_media_contents')) {
     {
         $disk = Storage::disk(config('filament.default_filesystem_disk'));
         
-        if (! $disk->exists($path)) return;
+        if (! $disk->exists($path)) {
+            return;
+        }
 
         return $disk->get($path);
     }

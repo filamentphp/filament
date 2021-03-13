@@ -9,26 +9,13 @@ class Link extends Action
     use Concerns\CanCallAction;
     use Concerns\CanOpenUrl;
 
-    protected $label;
-
     protected $icon;
 
-    public function label($label)
+    protected $label;
+
+    public function getIcon()
     {
-        $this->configure(function () use ($label) {
-            $this->label = $label;
-        });
-
-        return $this;
-    }
-
-    public function icon($icon)
-    {
-        $this->configure(function () use ($icon) {
-            $this->icon = $icon;
-        });
-
-        return $this;
+        return $this->icon;
     }
 
     public function getLabel()
@@ -43,11 +30,6 @@ class Link extends Action
         return $this->label;
     }
 
-    public function getIcon()
-    {
-        return $this->icon;
-    }
-
     public function getTitle()
     {
         if ($this->title === null) {
@@ -60,5 +42,23 @@ class Link extends Action
     public function hasIcon()
     {
         return $this->icon !== null;
+    }
+
+    public function icon($icon)
+    {
+        $this->configure(function () use ($icon) {
+            $this->icon = $icon;
+        });
+
+        return $this;
+    }
+
+    public function label($label)
+    {
+        $this->configure(function () use ($label) {
+            $this->label = $label;
+        });
+
+        return $this;
     }
 }

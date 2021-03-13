@@ -59,6 +59,11 @@ class EditRecord extends Component
         $this->fillWithFormDefaults();
     }
 
+    public function render()
+    {
+        return view('filament::resources.relation-manager.edit-record');
+    }
+
     public function save()
     {
         abort_unless(Filament::can('update', $this->record), 403);
@@ -81,14 +86,11 @@ class EditRecord extends Component
 
     public function switchRecord($manager, $record)
     {
-        if ($manager !== $this->manager) return;
+        if ($manager !== $this->manager) {
+            return;
+        }
 
         $this->record = $this->getQuery()->find($record);
         $this->resetTemporaryUploadedFiles();
-    }
-
-    public function render()
-    {
-        return view('filament::resources.relation-manager.edit-record');
     }
 }

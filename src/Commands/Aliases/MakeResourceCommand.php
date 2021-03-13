@@ -6,7 +6,6 @@ use Filament\Commands;
 
 class MakeResourceCommand extends Commands\MakeResourceCommand
 {
-    protected $signature = 'filament:resource {name}';
-
     protected $hidden = true;
+    protected $signature = 'filament:resource {name}';
 }

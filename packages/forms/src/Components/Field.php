@@ -33,11 +33,6 @@ class Field extends Component
         $this->setUp();
     }
 
-    public static function make($name)
-    {
-        return new static($name);
-    }
-
     public function addRules($rules)
     {
         $this->configure(function () use ($rules) {
@@ -93,6 +88,15 @@ class Field extends Component
         return $this;
     }
 
+    public function default($value)
+    {
+        $this->configure(function () use ($value) {
+            $this->defaultValue = $value;
+        });
+
+        return $this;
+    }
+
     public function dependable()
     {
         $this->configure(function () {
@@ -120,37 +124,10 @@ class Field extends Component
         return $this;
     }
 
-    public function default($value)
-    {
-        $this->configure(function () use ($value) {
-            $this->defaultValue = $value;
-        });
-
-        return $this;
-    }
-
     public function extraAttributes($attributes)
     {
         $this->configure(function () use ($attributes) {
             $this->extraAttributes = $attributes;
-        });
-
-        return $this;
-    }
-
-    public function helpMessage($message)
-    {
-        $this->configure(function () use ($message) {
-            $this->helpMessage = $message;
-        });
-
-        return $this;
-    }
-
-    public function hint($hint)
-    {
-        $this->configure(function () use ($hint) {
-            $this->hint = $hint;
         });
 
         return $this;
@@ -219,6 +196,33 @@ class Field extends Component
         return $this->rules;
     }
 
+    public function getValidationAttribute()
+    {
+        if ($this->validationAttribute === null) {
+            return Str::lower($this->getLabel());
+        }
+
+        return $this->validationAttribute;
+    }
+
+    public function helpMessage($message)
+    {
+        $this->configure(function () use ($message) {
+            $this->helpMessage = $message;
+        });
+
+        return $this;
+    }
+
+    public function hint($hint)
+    {
+        $this->configure(function () use ($hint) {
+            $this->hint = $hint;
+        });
+
+        return $this;
+    }
+
     public function isDisabled()
     {
         return $this->isDisabled;
@@ -227,6 +231,11 @@ class Field extends Component
     public function isRequired()
     {
         return $this->isRequired;
+    }
+
+    public static function make($name)
+    {
+        return new static($name);
     }
 
     public function name($name)
@@ -262,7 +271,9 @@ class Field extends Component
                     $field = $this->getName();
                 }
 
-                if (! is_array($conditionsToRemove)) $conditionsToRemove = explode('|', $conditionsToRemove);
+                if (! is_array($conditionsToRemove)) {
+                    $conditionsToRemove = explode('|', $conditionsToRemove);
+                }
 
                 if (empty($conditionsToRemove)) {
                     unset($this->rules[$field]);
@@ -299,15 +310,6 @@ class Field extends Component
         return $this;
     }
 
-    public function rules($conditions)
-    {
-        $this->configure(function () use ($conditions) {
-            $this->addRules([$this->getName() => $conditions]);
-        });
-
-        return $this;
-    }
-
     public function required()
     {
         $this->configure(function () {
@@ -327,6 +329,15 @@ class Field extends Component
 
             $this->removeRules([$this->getName() => ['nullable', 'required']]);
             $this->addRules([$this->getName() => ["required_with:$field"]]);
+        });
+
+        return $this;
+    }
+
+    public function rules($conditions)
+    {
+        $this->configure(function () use ($conditions) {
+            $this->addRules([$this->getName() => $conditions]);
         });
 
         return $this;

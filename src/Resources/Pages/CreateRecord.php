@@ -6,7 +6,6 @@ use Filament\Filament;
 use Filament\Forms\HasForm;
 use Filament\Resources\Forms\Form;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Gate;
 
 class CreateRecord extends Page
 {
@@ -14,18 +13,11 @@ class CreateRecord extends Page
 
     public static $createButtonLabel = 'filament::resources/pages/create-record.buttons.create.label';
 
+    public $record;
+
     public static $showRoute = 'edit';
 
     public static $view = 'filament::resources.pages.create-record';
-
-    public $record;
-
-    public static function getBreadcrumbs()
-    {
-        return [
-            static::getResource()::generateUrl() => (string) Str::title(static::getResource()::getPluralLabel()),
-        ];
-    }
 
     public function create()
     {
@@ -41,13 +33,20 @@ class CreateRecord extends Page
 
         $this->callHook('beforeCreate');
 
-        $record = static::getModel()::create($this->record);
+        $this->record = static::getModel()::create($this->record);
 
         $this->callHook('afterCreate');
 
         $this->redirect($this->getResource()::generateUrl(static::$showRoute, [
-            'record' => $record,
+            'record' => $this->record,
         ]));
+    }
+
+    public static function getBreadcrumbs()
+    {
+        return [
+            static::getResource()::generateUrl() => (string) Str::title(static::getResource()::getPluralLabel()),
+        ];
     }
 
     public function getForm()

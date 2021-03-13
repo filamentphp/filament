@@ -20,11 +20,6 @@ class NavigationItem
         $this->url($url);
     }
 
-    public static function make($label, $url)
-    {
-        return new static($label, $url);
-    }
-
     public function activeRule($rule)
     {
         $this->activeRule = $rule;
@@ -44,6 +39,11 @@ class NavigationItem
         $this->label = $label;
 
         return $this;
+    }
+
+    public static function make($label, $url)
+    {
+        return new static($label, $url);
     }
 
     public function sort($sort)

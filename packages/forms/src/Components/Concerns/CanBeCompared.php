@@ -7,7 +7,9 @@ trait CanBeCompared
     public function confirmed($confirmationFieldName = null)
     {
         $this->configure(function () use ($confirmationFieldName) {
-            if ($confirmationFieldName === null) $confirmationFieldName = "{$this->getName()}Confirmation";
+            if ($confirmationFieldName === null) {
+                $confirmationFieldName = "{$this->getName()}Confirmation";
+            }
 
             $this->addRules([$confirmationFieldName => ["same:{$this->getName()}"]]);
         });

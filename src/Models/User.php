@@ -37,11 +37,6 @@ class User extends Authenticatable implements FilamentUser
 
     protected $table = 'filament_users';
 
-    protected static function newFactory()
-    {
-        return UserFactory::new();
-    }
-
     public function sendPasswordResetNotification($token)
     {
         $notification = new ResetPasswordNotification($token);
@@ -57,5 +52,10 @@ class User extends Authenticatable implements FilamentUser
         });
 
         $this->notify($notification);
+    }
+
+    protected static function newFactory()
+    {
+        return UserFactory::new();
     }
 }

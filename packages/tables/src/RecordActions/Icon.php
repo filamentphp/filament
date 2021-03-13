@@ -9,6 +9,11 @@ class Icon extends Action
 
     protected $icon;
 
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
     public function icon($icon)
     {
         $this->configure(function () use ($icon) {
@@ -16,10 +21,5 @@ class Icon extends Action
         });
 
         return $this;
-    }
-
-    public function getIcon()
-    {
-        return $this->icon;
     }
 }

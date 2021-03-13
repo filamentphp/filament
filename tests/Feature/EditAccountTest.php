@@ -12,18 +12,6 @@ use Livewire\Livewire;
 class EditAccountTest extends TestCase
 {
     /** @test */
-    public function can_view_account_page()
-    {
-        $user = User::factory()->create();
-
-        $this->be($user);
-
-        $this->get(route('filament.account'))
-            ->assertSuccessful()
-            ->assertSeeLivewire('filament.core.edit-account');
-    }
-
-    /** @test */
     public function can_update_account_information()
     {
         $user = User::factory()->create();
@@ -53,6 +41,18 @@ class EditAccountTest extends TestCase
 //            'email' => $newUserDetails->email,
 //            'password' => $newPassword,
 //        ]));
+    }
+
+    /** @test */
+    public function can_view_account_page()
+    {
+        $user = User::factory()->create();
+
+        $this->be($user);
+
+        $this->get(route('filament.account'))
+            ->assertSuccessful()
+            ->assertSeeLivewire('filament.core.edit-account');
     }
 
     /** @test */

@@ -46,7 +46,9 @@ class MakeFormComponentCommand extends Command
 
         if ($this->checkForCollision([
             $path,
-        ])) return;
+        ])) {
+            return;
+        }
 
         if (! $this->option('resource')) {
             $this->copyStubToApp('FormComponent', $path, [

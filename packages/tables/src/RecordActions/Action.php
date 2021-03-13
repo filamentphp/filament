@@ -42,9 +42,9 @@ class Action
         if ($callback === null) {
             foreach ($this->configurationQueue as $callback) {
                 $callback();
-            }
 
-            $this->configurationQueue = [];
+                array_shift($this->configurationQueue);
+            }
 
             return;
         }
@@ -104,6 +104,22 @@ class Action
         return $this;
     }
 
+    public function render($record)
+    {
+        $when = $this->when;
+
+        if (! $when($record)) {
+            return;
+        }
+
+        $view = $this->getView() ?? 'tables::record-actions.' . Str::of(class_basename(static::class))->kebab();
+
+        return view($view, array_merge($this->getViewData(), [
+            'record' => $record,
+            'recordAction' => $this,
+        ]));
+    }
+
     public function table($table)
     {
         $this->table = $table;
@@ -149,19 +165,5 @@ class Action
         });
 
         return $this;
-    }
-
-    public function render($record)
-    {
-        $when = $this->when;
-
-        if (! $when($record)) return;
-
-        $view = $this->getView() ?? 'tables::record-actions.' . Str::of(class_basename(static::class))->kebab();
-
-        return view($view, array_merge($this->getViewData(), [
-            'record' => $record,
-            'recordAction' => $this,
-        ]));
     }
 }

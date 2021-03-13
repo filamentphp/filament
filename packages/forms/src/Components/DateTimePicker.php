@@ -4,8 +4,6 @@ namespace Filament\Forms\Components;
 
 class DateTimePicker extends DatePicker
 {
-    protected $time = true;
-
     protected $defaultDisplayFormat = 'F j, Y H:i:s';
 
     protected $defaultDisplayFormatWithoutSeconds = 'F j, Y H:i';
@@ -13,6 +11,7 @@ class DateTimePicker extends DatePicker
     protected $defaultFormat = 'Y-m-d H:i:s';
 
     protected $defaultFormatWithoutSeconds = 'Y-m-d H:i';
+    protected $time = true;
 
     protected $view = 'forms::components.date-time-picker';
 

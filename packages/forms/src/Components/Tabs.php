@@ -6,11 +6,6 @@ use Illuminate\Support\Str;
 
 class Tabs extends Component
 {
-    public static function make($label = null)
-    {
-        return (new static())->label($label);
-    }
-
     public function getTabsConfig()
     {
         return collect($this->getSchema())
@@ -25,6 +20,11 @@ class Tabs extends Component
         }
 
         return parent::id($id);
+    }
+
+    public static function make($label = null)
+    {
+        return (new static())->label($label);
     }
 
     public function tabs($tabs)

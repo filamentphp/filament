@@ -15,9 +15,9 @@ class Component
 
     protected $configurationQueue = [];
 
-    protected $hidden = false;
-
     protected $form;
+
+    protected $isHidden = false;
 
     protected $id;
 
@@ -48,9 +48,9 @@ class Component
         if ($callback === null) {
             foreach ($this->configurationQueue as $callback) {
                 $callback();
-            }
 
-            $this->configurationQueue = [];
+                array_shift($this->configurationQueue);
+            }
 
             return;
         }
@@ -67,7 +67,9 @@ class Component
     public function except($contexts, $callback = null)
     {
         $this->configure(function () use ($contexts, $callback) {
-            if (! is_array($contexts)) $contexts = [$contexts];
+            if (! is_array($contexts)) {
+                $contexts = [$contexts];
+            }
 
             if (! $callback) {
                 $this->hidden();
@@ -75,7 +77,9 @@ class Component
                 $callback = fn ($component) => $component->visible();
             }
 
-            if (! $this->getContext() || in_array($this->getContext(), $contexts)) return $this;
+            if (! $this->getContext() || in_array($this->getContext(), $contexts)) {
+                return $this;
+            }
 
             $callback($this);
         });
@@ -98,15 +102,6 @@ class Component
         return $this;
     }
 
-    public function hidden()
-    {
-        $this->configure(function () {
-            $this->hidden = true;
-        });
-
-        return $this;
-    }
-
     public function getColumnSpan()
     {
         return $this->columnSpan;
@@ -119,8 +114,6 @@ class Component
 
     public function getDefaultValues()
     {
-        if ($this->isHidden()) return [];
-
         $values = [];
 
         if ($this instanceof Field) {
@@ -176,7 +169,9 @@ class Component
             return $this->rules[$field] ?? null;
         }
 
-        if ($this->isHidden()) return [];
+        if ($this->isHidden()) {
+            return [];
+        }
 
         $rules = $this instanceof Field ? $this->rules : [];
 
@@ -207,16 +202,14 @@ class Component
 
     public function getValidationAttributes()
     {
-        if ($this->isHidden()) return [];
+        if ($this->isHidden()) {
+            return [];
+        }
 
         $attributes = [];
 
         if ($this instanceof Field) {
-            if ($this->validationAttribute !== null) {
-                $attributes[$this->getName()] = Str::lower(__($this->getLabel()));
-            } else {
-                $attributes[$this->getName()] = __($this->validationAttribute);
-            }
+            $attributes[$this->getName()] = __($this->getValidationAttribute());
         }
 
         $attributes = array_merge($attributes, $this->getSubform()->getValidationAttributes());
@@ -227,6 +220,15 @@ class Component
     public function getView()
     {
         return $this->view;
+    }
+
+    public function hidden()
+    {
+        $this->configure(function () {
+            $this->isHidden = true;
+        });
+
+        return $this;
     }
 
     public function id($id)
@@ -240,7 +242,7 @@ class Component
 
     public function isHidden()
     {
-        return $this->hidden;
+        return $this->isHidden || ($this->getParent() !== null && $this->getParent()->isHidden());
     }
 
     public function label($label)
@@ -255,7 +257,9 @@ class Component
     public function only($contexts, $callback = null)
     {
         $this->configure(function () use ($callback, $contexts) {
-            if (! is_array($contexts)) $contexts = [$contexts];
+            if (! is_array($contexts)) {
+                $contexts = [$contexts];
+            }
 
             if (! $callback) {
                 $this->hidden();
@@ -263,7 +267,9 @@ class Component
                 $callback = fn ($component) => $component->visible();
             }
 
-            if (! in_array($this->getContext(), $contexts)) return $this;
+            if (! in_array($this->getContext(), $contexts)) {
+                return $this;
+            }
 
             $callback($this);
         });
@@ -276,6 +282,17 @@ class Component
         $this->parent = $component;
 
         return $this;
+    }
+
+    public function render()
+    {
+        if ($this->isHidden()) {
+            return;
+        }
+
+        $view = $this->getView() ?? 'forms::components.' . Str::of(class_basename(static::class))->kebab();
+
+        return view($view, ['formComponent' => $this]);
     }
 
     public function schema($schema)
@@ -299,7 +316,7 @@ class Component
     public function visible()
     {
         $this->configure(function () {
-            $this->hidden = false;
+            $this->isHidden = false;
         });
 
         return $this;
@@ -314,7 +331,9 @@ class Component
                 $callback = fn ($component) => $component->visible();
             }
 
-            if ($this->getRecord() === null) return $this;
+            if ($this->getRecord() === null) {
+                return $this;
+            }
 
             try {
                 $shouldExecuteCallback = $condition($this->getRecord());
@@ -323,29 +342,22 @@ class Component
             }
 
             if ($shouldExecuteCallback) {
-                $callback($this, $this->getRecord());
+                $callback($this);
             }
         });
 
         return $this;
     }
 
-    public function render()
-    {
-        if ($this->isHidden()) return;
-
-        $view = $this->getView() ?? 'forms::components.' . Str::of(class_basename(static::class))->kebab();
-
-        return view($view, ['formComponent' => $this]);
-    }
-
     protected function transformConditions($conditions)
     {
         return collect($conditions)
             ->map(function ($condition) {
-                if (! is_string($condition)) return $condition;
+                if (! is_string($condition)) {
+                    return $condition;
+                }
 
-                return (string) Str::of($condition)->replace('{{record}}', $this->getRecord() instanceof Model ? $this->getRecord()->getKey() : '');
+                return (string) Str::of($condition)->replace('{{ record }}', $this->getRecord() instanceof Model ? $this->getRecord()->getKey() : '');
             })
             ->toArray();
     }

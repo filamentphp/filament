@@ -24,21 +24,16 @@ class Form
 
     protected $validationAttributes = [];
 
-    public static function make()
+    public function columns($columns)
     {
-        return new static();
+        $this->columns = $columns;
+
+        return $this;
     }
 
     public function context($context)
     {
         $this->context = $context;
-
-        return $this;
-    }
-
-    public function columns($columns)
-    {
-        $this->columns = $columns;
 
         return $this;
     }
@@ -117,6 +112,11 @@ class Form
         }
 
         return $attributes;
+    }
+
+    public static function make()
+    {
+        return new static();
     }
 
     public function model($model)

@@ -61,7 +61,9 @@ class MakePageCommand extends Command
         if ($this->checkForCollision([
             $path,
             $viewPath,
-        ])) return;
+        ])) {
+            return;
+        }
 
         if ($resource === null) {
             $this->copyStubToApp('Page', $path, [
