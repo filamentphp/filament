@@ -56,18 +56,6 @@ class Action
         return $this;
     }
 
-    public function getLabel()
-    {
-        if ($this->label === null) {
-            return (string) Str::of($this->getName())
-                ->kebab()
-                ->replace(['-', '_', '.'], ' ')
-                ->ucfirst();
-        }
-
-        return $this->label;
-    }
-
     public function getName()
     {
         return $this->name;

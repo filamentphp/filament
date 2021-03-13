@@ -102,10 +102,10 @@ class Field extends Component
         return $this;
     }
 
-    public function disabled()
+    public function disabled($disabled = true)
     {
-        $this->configure(function () {
-            $this->disabled = true;
+        $this->configure(function () use ($disabled) {
+            $this->isDisabled = $disabled;
         });
 
         return $this;
@@ -114,7 +114,7 @@ class Field extends Component
     public function enabled()
     {
         $this->configure(function () {
-            $this->disabled = false;
+            $this->isDisabled = false;
         });
 
         return $this;
