@@ -15,6 +15,8 @@ class Action
 
     protected $table;
 
+    protected $title;
+
     protected $view;
 
     protected $viewData = [];
@@ -61,6 +63,18 @@ class Action
         return $this->name;
     }
 
+    public function getTitle()
+    {
+        if ($this->title === null) {
+            return Str::of($this->name)
+                ->kebab()
+                ->replace(['-', '_'], ' ')
+                ->ucfirst();
+        }
+
+        return $this->title;
+    }
+
     public function getTable()
     {
         return $this->table;
@@ -95,6 +109,15 @@ class Action
         $this->table = $table;
 
         $this->configure();
+
+        return $this;
+    }
+
+    public function title($title)
+    {
+        $this->configure(function () use ($title) {
+            $this->title = $title;
+        });
 
         return $this;
     }

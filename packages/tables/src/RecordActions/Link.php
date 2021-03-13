@@ -48,6 +48,15 @@ class Link extends Action
         return $this->icon;
     }
 
+    public function getTitle()
+    {
+        if ($this->title === null) {
+            return $this->getLabel();
+        }
+
+        return parent::getTitle();
+    }
+
     public function hasIcon()
     {
         return $this->icon !== null;
