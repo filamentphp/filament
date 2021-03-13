@@ -68,7 +68,7 @@ class ListRecords extends Page
                 ->filter(function ($record) {
                     return Filament::can('delete', $record);
                 })
-                ->pluck('id')
+                ->map(fn ($record) => $record->getKey())
                 ->toArray(),
         );
 
