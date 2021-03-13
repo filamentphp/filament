@@ -97,14 +97,14 @@ abstract class PluginServiceProvider extends ServiceProvider
         return $this->roles;
     }
 
-    protected function scripts()
-    {
-        return $this->scripts;
-    }
-
     protected function scriptData()
     {
         return [];
+    }
+
+    protected function scripts()
+    {
+        return $this->scripts;
     }
 
     protected function styles()

@@ -58,6 +58,14 @@ class ResetPassword extends Component
         $this->token = $token;
     }
 
+    public function render()
+    {
+        return view('filament::.auth.reset-password')
+            ->layout('filament::components.layouts.auth', [
+                'title' => 'filament::auth/reset-password.title',
+            ]);
+    }
+
     public function submit()
     {
         $this->validate();
@@ -82,13 +90,5 @@ class ResetPassword extends Component
         Filament::auth()->login($this->user, true);
 
         return redirect()->to(route('filament.dashboard'));
-    }
-
-    public function render()
-    {
-        return view('filament::.auth.reset-password')
-            ->layout('filament::components.layouts.auth', [
-                'title' => 'filament::auth/reset-password.title',
-            ]);
     }
 }

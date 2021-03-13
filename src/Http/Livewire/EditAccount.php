@@ -12,16 +12,11 @@ class EditAccount extends Page
 {
     use HasForm;
 
+    public $record;
+
     public static $title = 'filament::edit-account.title';
 
     public static $view = 'filament::edit-account';
-
-    public $record;
-
-    public static function getResource()
-    {
-        return Filament::userResource();
-    }
 
     public function getForm()
     {
@@ -32,6 +27,11 @@ class EditAccount extends Page
                 ->record($this->record)
                 ->submitMethod('save'),
         );
+    }
+
+    public static function getResource()
+    {
+        return Filament::userResource();
     }
 
     public function mount()

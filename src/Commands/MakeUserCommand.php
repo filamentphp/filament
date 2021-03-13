@@ -42,9 +42,15 @@ class MakeUserCommand extends Command
         $this->info("Success! {$user->email} may now log in at {$loginUrl}.");
 
         if (Filament::auth()->getProvider()->getModel()::count() === 1 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
-            if (PHP_OS_FAMILY === 'Darwin') exec('open https://github.com/laravel-filament/filament');
-            if (PHP_OS_FAMILY === 'Linux') exec('xdg-open https://github.com/laravel-filament/filament');
-            if (PHP_OS_FAMILY === 'Windows') exec('start https://github.com/laravel-filament/filament');
+            if (PHP_OS_FAMILY === 'Darwin') {
+                exec('open https://github.com/laravel-filament/filament');
+            }
+            if (PHP_OS_FAMILY === 'Linux') {
+                exec('xdg-open https://github.com/laravel-filament/filament');
+            }
+            if (PHP_OS_FAMILY === 'Windows') {
+                exec('start https://github.com/laravel-filament/filament');
+            }
 
             $this->line('Thank you!');
         }

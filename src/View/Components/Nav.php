@@ -4,7 +4,6 @@ namespace Filament\View\Components;
 
 use Filament\Filament;
 use Filament\NavigationItem;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\View\Component;
 
 class Nav extends Component

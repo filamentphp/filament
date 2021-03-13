@@ -35,7 +35,9 @@ class MakeRelationManagerCommand extends Command
 
         if ($this->checkForCollision([
             $path,
-        ])) return;
+        ])) {
+            return;
+        }
 
         $this->copyStubToApp('RelationManager', $path, [
             'namespace' => "App\\Filament\\Resources\\{$resource}\\RelationManagers",

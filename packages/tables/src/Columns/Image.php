@@ -32,15 +32,6 @@ class Image extends Column
         return $this;
     }
 
-    public function height($height)
-    {
-        $this->configure(function () use ($height) {
-            $this->height = $height;
-        });
-
-        return $this;
-    }
-
     public function getDisk()
     {
         return Storage::disk($this->getDiskName());
@@ -53,27 +44,24 @@ class Image extends Column
 
     public function getHeight()
     {
-        if ($this->height === null) return null;
+        if ($this->height === null) {
+            return null;
+        }
 
-        if (is_integer($this->height)) return "{$this->height}px";
+        if (is_integer($this->height)) {
+            return "{$this->height}px";
+        }
 
         return $this->height;
-    }
-
-    public function getWidth()
-    {
-        if ($this->width === null) return null;
-
-        if (is_integer($this->width)) return "{$this->width}px";
-
-        return $this->width;
     }
 
     public function getPath($record)
     {
         $path = $this->getValue($record);
 
-        if (! $path) return null;
+        if (! $path) {
+            return null;
+        }
 
         if (filter_var($path, FILTER_VALIDATE_URL) !== false) {
             return $path;
@@ -92,6 +80,28 @@ class Image extends Column
         }
 
         return $storage->url($path);
+    }
+
+    public function getWidth()
+    {
+        if ($this->width === null) {
+            return null;
+        }
+
+        if (is_integer($this->width)) {
+            return "{$this->width}px";
+        }
+
+        return $this->width;
+    }
+
+    public function height($height)
+    {
+        $this->configure(function () use ($height) {
+            $this->height = $height;
+        });
+
+        return $this;
     }
 
     public function isRounded()

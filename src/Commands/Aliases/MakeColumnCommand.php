@@ -6,7 +6,6 @@ use Filament\Commands;
 
 class MakeColumnCommand extends Commands\MakeColumnCommand
 {
-    protected $signature = 'filament:column {name} {--R|resource}';
-
     protected $hidden = true;
+    protected $signature = 'filament:column {name} {--R|resource}';
 }

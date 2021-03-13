@@ -47,7 +47,9 @@ trait CanOpenUrl
     {
         $this->configure(function () use ($shouldOpenInNewTab, $url) {
             $this->url = $url;
-            if ($shouldOpenInNewTab) $this->openUrlInNewTab();
+            if ($shouldOpenInNewTab) {
+                $this->openUrlInNewTab();
+            }
         });
 
         return $this;

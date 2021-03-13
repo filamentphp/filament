@@ -28,88 +28,6 @@ trait HasTable
         $this->selected = [];
     }
 
-    public function setPage($page)
-    {
-        $this->page = $page;
-
-        $this->selected = [];
-    }
-
-    public function sortBy($column)
-    {
-        if ($this->sortColumn === $column) {
-            switch ($this->sortDirection) {
-                case 'asc':
-                    $this->sortDirection = 'desc';
-
-                    break;
-                case 'desc':
-                    $this->sortColumn = null;
-                    $this->sortDirection = 'asc';
-
-                    break;
-            }
-
-            return;
-        }
-
-        $this->sortColumn = $column;
-        $this->sortDirection = 'asc';
-    }
-
-    public function toggleSelectAll()
-    {
-        $records = $this->getRecords();
-
-        if (! $records->count()) return;
-
-        $keyName = $records->first()->getKeyName();
-
-        if ($records->count() !== count($this->selected)) {
-            $this->selected = $records->pluck($keyName)->all();
-        } else {
-            $this->selected = [];
-        }
-    }
-
-    public function toggleSelected($record)
-    {
-        if (! in_array($record, $this->selected)) {
-            $this->selected[] = $record;
-        } else {
-            $key = array_search($record, $this->selected);
-
-            unset($this->selected[$key]);
-        }
-    }
-
-    public function updatedFilter()
-    {
-        $this->selected = [];
-
-        if (! $this->getTable()->hasPagination()) return;
-
-        $this->resetPage();
-    }
-
-    public function updatedRecordsPerPage()
-    {
-        $this->selected = [];
-
-        if (! $this->getTable()->hasPagination()) return;
-
-        $this->resetPage();
-    }
-
-    public function updatedSearch()
-    {
-        $this->selected = [];
-
-        if (! $this->getTable()->hasPagination()) return;
-
-        $this->resetPage();
-    }
-
     public function getRecords()
     {
         $query = static::getQuery();
@@ -176,5 +94,95 @@ trait HasTable
         }
 
         return $query->paginate($this->recordsPerPage);
+    }
+
+    public function setPage($page)
+    {
+        $this->page = $page;
+
+        $this->selected = [];
+    }
+
+    public function sortBy($column)
+    {
+        if ($this->sortColumn === $column) {
+            switch ($this->sortDirection) {
+                case 'asc':
+                    $this->sortDirection = 'desc';
+
+                    break;
+                case 'desc':
+                    $this->sortColumn = null;
+                    $this->sortDirection = 'asc';
+
+                    break;
+            }
+
+            return;
+        }
+
+        $this->sortColumn = $column;
+        $this->sortDirection = 'asc';
+    }
+
+    public function toggleSelectAll()
+    {
+        $records = $this->getRecords();
+
+        if (! $records->count()) {
+            return;
+        }
+
+        $keyName = $records->first()->getKeyName();
+
+        if ($records->count() !== count($this->selected)) {
+            $this->selected = $records->pluck($keyName)->all();
+        } else {
+            $this->selected = [];
+        }
+    }
+
+    public function toggleSelected($record)
+    {
+        if (! in_array($record, $this->selected)) {
+            $this->selected[] = $record;
+        } else {
+            $key = array_search($record, $this->selected);
+
+            unset($this->selected[$key]);
+        }
+    }
+
+    public function updatedFilter()
+    {
+        $this->selected = [];
+
+        if (! $this->getTable()->hasPagination()) {
+            return;
+        }
+
+        $this->resetPage();
+    }
+
+    public function updatedRecordsPerPage()
+    {
+        $this->selected = [];
+
+        if (! $this->getTable()->hasPagination()) {
+            return;
+        }
+
+        $this->resetPage();
+    }
+
+    public function updatedSearch()
+    {
+        $this->selected = [];
+
+        if (! $this->getTable()->hasPagination()) {
+            return;
+        }
+
+        $this->resetPage();
     }
 }

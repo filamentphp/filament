@@ -13,9 +13,9 @@ class DatePicker extends Field
 
     protected $format;
 
-    protected $hasTime = false;
-
     protected $hasSeconds = true;
+
+    protected $hasTime = false;
 
     protected $maxDate;
 

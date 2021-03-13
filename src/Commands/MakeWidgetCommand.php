@@ -47,7 +47,9 @@ class MakeWidgetCommand extends Command
         if ($this->checkForCollision([
             $path,
             $viewPath,
-        ])) return;
+        ])) {
+            return;
+        }
 
         $this->copyStubToApp('Widget', $path, [
             'class' => $widgetClass,

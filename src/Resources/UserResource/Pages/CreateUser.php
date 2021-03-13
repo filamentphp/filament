@@ -8,11 +8,6 @@ use Illuminate\Support\Facades\Hash;
 
 class CreateUser extends CreateRecord
 {
-    public static function getResource()
-    {
-        return Filament::userResource();
-    }
-
     public function create()
     {
         $this->validateTemporaryUploadedFiles();
@@ -29,5 +24,10 @@ class CreateUser extends CreateRecord
         $this->redirect($this->getResource()::generateUrl(static::$showRoute, [
             'record' => $record,
         ]));
+    }
+
+    public static function getResource()
+    {
+        return Filament::userResource();
     }
 }

@@ -15,17 +15,6 @@ class Router
         $this->register($resource::routes());
     }
 
-    public function register($routes)
-    {
-        if (! $routes) return;
-
-        if (! is_array($routes)) $routes = [$routes];
-
-        $this->routes = array_merge($this->routes, $routes);
-
-        return $this;
-    }
-
     public function getIndexRoute()
     {
         return collect($this->routes)
@@ -36,5 +25,20 @@ class Router
     {
         return collect($this->routes)
             ->contains(fn ($route) => $route->name === $name);
+    }
+
+    public function register($routes)
+    {
+        if (! $routes) {
+            return;
+        }
+
+        if (! is_array($routes)) {
+            $routes = [$routes];
+        }
+
+        $this->routes = array_merge($this->routes, $routes);
+
+        return $this;
     }
 }

@@ -4,6 +4,15 @@ namespace Filament\Models\Concerns;
 
 trait IsFilamentUser
 {
+    public function canAccessFilament()
+    {
+        $column = static::getFilamentUserColumn();
+
+        return $column !== null ?
+            $this->{$column} :
+            true;
+    }
+
     public static function getFilamentAdminColumn()
     {
         if (property_exists(static::class, 'filamentAdminColumn')) {
@@ -11,6 +20,15 @@ trait IsFilamentUser
         }
 
         return null;
+    }
+
+    public function getFilamentAvatar()
+    {
+        $column = static::getFilamentAvatarColumn();
+
+        return $column !== null ?
+            $this->{$column} :
+            null;
     }
 
     public static function getFilamentAvatarColumn()
@@ -40,15 +58,6 @@ trait IsFilamentUser
         return null;
     }
 
-    public function canAccessFilament()
-    {
-        $column = static::getFilamentUserColumn();
-
-        return $column !== null ?
-            $this->{$column} :
-            true;
-    }
-
     public function hasFilamentRole($role)
     {
         $column = static::getFilamentRolesColumn();
@@ -56,15 +65,6 @@ trait IsFilamentUser
         return $column !== null ?
             in_array($role, $this->{$column}) :
             true;
-    }
-
-    public function getFilamentAvatar()
-    {
-        $column = static::getFilamentAvatarColumn();
-
-        return $column !== null ?
-            $this->{$column} :
-            null;
     }
 
     public function isFilamentAdmin()

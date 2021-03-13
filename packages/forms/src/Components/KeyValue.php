@@ -126,6 +126,11 @@ class KeyValue extends Field
         return $this->valuePlaceholder;
     }
 
+    public function isSortable()
+    {
+        return $this->isSortable;
+    }
+
     public function keyLabel($label)
     {
         $this->configure(function () use ($label) {
@@ -142,11 +147,6 @@ class KeyValue extends Field
         });
 
         return $this;
-    }
-
-    public function isSortable()
-    {
-        return $this->isSortable;
     }
 
     public function sortable($sortable = true)

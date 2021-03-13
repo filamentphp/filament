@@ -3,7 +3,6 @@
 namespace Filament;
 
 use BladeUI\Icons\Factory as BladeUIFactory;
-use Filament\Commands;
 use Filament\Models\User;
 use Filament\Pages\Page;
 use Filament\Providers\RouteServiceProvider;
@@ -100,6 +99,13 @@ class FilamentServiceProvider extends ServiceProvider
         });
     }
 
+    protected function bootLivewireComponents()
+    {
+        $this->registerLivewireComponentDirectory(__DIR__ . '/Http/Livewire', 'Filament\\Http\\Livewire', 'filament.core.');
+        $this->registerLivewireComponentDirectory(__DIR__ . '/Resources', 'Filament\\Resources', 'filament.core.resources.');
+        $this->registerLivewireComponentDirectory(app_path('Filament'), 'App\\Filament', 'filament.');
+    }
+
     protected function bootLoaders()
     {
         $this->loadViewComponentsAs('filament', [
@@ -115,13 +121,6 @@ class FilamentServiceProvider extends ServiceProvider
         }
 
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'filament');
-    }
-
-    protected function bootLivewireComponents()
-    {
-        $this->registerLivewireComponentDirectory(__DIR__ . '/Http/Livewire', 'Filament\\Http\\Livewire', 'filament.core.');
-        $this->registerLivewireComponentDirectory(__DIR__ . '/Resources', 'Filament\\Resources', 'filament.core.resources.');
-        $this->registerLivewireComponentDirectory(app_path('Filament'), 'App\\Filament', 'filament.');
     }
 
     protected function bootPublishing()
@@ -185,51 +184,6 @@ class FilamentServiceProvider extends ServiceProvider
                 'default_attachment_upload_url' => route('filament.rich-editor-attachments.upload'),
             ]);
         });
-    }
-
-    protected function registerIcons()
-    {
-        $this->callAfterResolving(BladeUIFactory::class, function (BladeUIFactory $factory) {
-            $factory->add('filamenticons', [
-                'path' => __DIR__ . '/../resources/svg',
-                'prefix' => 'filamenticon',
-            ]);
-        });
-    }
-
-    protected function registerProviders()
-    {
-        $this->app->register(RouteServiceProvider::class);
-    }
-
-    protected function mergeConfigFrom($path, $key)
-    {
-        $config = $this->app['config']->get($key, []);
-
-        $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
-    }
-
-    protected function mergeConfig(array $original, array $merging)
-    {
-        $array = array_merge($original, $merging);
-
-        foreach ($original as $key => $value) {
-            if (! is_array($value)) {
-                continue;
-            }
-
-            if (! Arr::exists($merging, $key)) {
-                continue;
-            }
-
-            if (is_numeric($key)) {
-                continue;
-            }
-
-            $array[$key] = $this->mergeConfig($value, $merging[$key]);
-        }
-
-        return $array;
     }
 
     protected function discoverFilamentPages()
@@ -308,11 +262,53 @@ class FilamentServiceProvider extends ServiceProvider
             ->each(fn ($widget) => Filament::registerWidget($widget));
     }
 
+    protected function mergeConfig(array $original, array $merging)
+    {
+        $array = array_merge($original, $merging);
+
+        foreach ($original as $key => $value) {
+            if (! is_array($value)) {
+                continue;
+            }
+
+            if (! Arr::exists($merging, $key)) {
+                continue;
+            }
+
+            if (is_numeric($key)) {
+                continue;
+            }
+
+            $array[$key] = $this->mergeConfig($value, $merging[$key]);
+        }
+
+        return $array;
+    }
+
+    protected function mergeConfigFrom($path, $key)
+    {
+        $config = $this->app['config']->get($key, []);
+
+        $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
+    }
+
+    protected function registerIcons()
+    {
+        $this->callAfterResolving(BladeUIFactory::class, function (BladeUIFactory $factory) {
+            $factory->add('filamenticons', [
+                'path' => __DIR__ . '/../resources/svg',
+                'prefix' => 'filamenticon',
+            ]);
+        });
+    }
+
     protected function registerLivewireComponentDirectory($directory, $namespace, $aliasPrefix = '')
     {
         $filesystem = new Filesystem();
 
-        if (! $filesystem->isDirectory($directory)) return;
+        if (! $filesystem->isDirectory($directory)) {
+            return;
+        }
 
         collect($filesystem->allFiles($directory))
             ->map(function (SplFileInfo $file) use ($namespace) {
@@ -334,5 +330,10 @@ class FilamentServiceProvider extends ServiceProvider
 
                 Livewire::component($alias, $class);
             });
+    }
+
+    protected function registerProviders()
+    {
+        $this->app->register(RouteServiceProvider::class);
     }
 }

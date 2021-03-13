@@ -37,11 +37,6 @@ class Filter
         //
     }
 
-    public static function make($name = null, $callback = null)
-    {
-        return new static($name, $callback);
-    }
-
     public function apply($query)
     {
         $callback = $this->getCallback();
@@ -82,7 +77,9 @@ class Filter
     public function except($contexts, $callback = null)
     {
         $this->configure(function () use ($callback, $contexts) {
-            if (! is_array($contexts)) $contexts = [$contexts];
+            if (! is_array($contexts)) {
+                $contexts = [$contexts];
+            }
 
             if (! $callback) {
                 $this->hidden();
@@ -90,18 +87,11 @@ class Filter
                 $callback = fn ($filter) => $filter->visible();
             }
 
-            if (! $this->getContext() || in_array($this->getContext(), $contexts)) return $this;
+            if (! $this->getContext() || in_array($this->getContext(), $contexts)) {
+                return $this;
+            }
 
             $callback($this);
-        });
-
-        return $this;
-    }
-
-    public function hidden()
-    {
-        $this->configure(function () {
-            $this->isHidden = true;
         });
 
         return $this;
@@ -139,6 +129,15 @@ class Filter
         return $this->table;
     }
 
+    public function hidden()
+    {
+        $this->configure(function () {
+            $this->isHidden = true;
+        });
+
+        return $this;
+    }
+
     public function isHidden()
     {
         return $this->isHidden;
@@ -153,6 +152,11 @@ class Filter
         return $this;
     }
 
+    public static function make($name = null, $callback = null)
+    {
+        return new static($name, $callback);
+    }
+
     public function name($name)
     {
         $this->configure(function () use ($name) {
@@ -163,7 +167,9 @@ class Filter
     public function only($contexts, $callback = null)
     {
         $this->configure(function () use ($callback, $contexts) {
-            if (! is_array($contexts)) $contexts = [$contexts];
+            if (! is_array($contexts)) {
+                $contexts = [$contexts];
+            }
 
             if (! $callback) {
                 $this->hidden();
@@ -171,7 +177,9 @@ class Filter
                 $callback = fn ($filter) => $filter->visible();
             }
 
-            if (! in_array($this->getContext(), $contexts)) return $this;
+            if (! in_array($this->getContext(), $contexts)) {
+                return $this;
+            }
 
             $callback($this);
         });

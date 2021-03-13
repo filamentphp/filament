@@ -41,16 +41,16 @@ class FormsServiceProvider extends ServiceProvider
         });
     }
 
+    protected function bootLivewireComponents()
+    {
+        $this->registerLivewireComponentDirectory(__DIR__ . '/Http/Livewire', 'Filament\\Forms\\Http\\Livewire', 'forms.');
+    }
+
     protected function bootLoaders()
     {
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'forms');
 
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'forms');
-    }
-
-    protected function bootLivewireComponents()
-    {
-        $this->registerLivewireComponentDirectory(__DIR__ . '/Http/Livewire', 'Filament\\Forms\\Http\\Livewire', 'forms.');
     }
 
     protected function bootPublishing()
@@ -70,13 +70,6 @@ class FormsServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/forms'),
         ], 'forms-views');
-    }
-
-    protected function mergeConfigFrom($path, $key)
-    {
-        $config = $this->app['config']->get($key, []);
-
-        $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
     }
 
     protected function mergeConfig(array $original, array $merging)
@@ -102,11 +95,20 @@ class FormsServiceProvider extends ServiceProvider
         return $array;
     }
 
+    protected function mergeConfigFrom($path, $key)
+    {
+        $config = $this->app['config']->get($key, []);
+
+        $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
+    }
+
     protected function registerLivewireComponentDirectory($directory, $namespace, $aliasPrefix = '')
     {
         $filesystem = new Filesystem();
 
-        if (! $filesystem->isDirectory($directory)) return;
+        if (! $filesystem->isDirectory($directory)) {
+            return;
+        }
 
         collect($filesystem->allFiles($directory))
             ->map(function (SplFileInfo $file) use ($namespace) {

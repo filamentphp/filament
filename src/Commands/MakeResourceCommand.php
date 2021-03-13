@@ -50,7 +50,9 @@ class MakeResourceCommand extends Command
             $indexResourcePagePath,
             $createResourcePagePath,
             $editResourcePagePath,
-        ])) return;
+        ])) {
+            return;
+        }
 
         $this->copyStubToApp('Resource', $resourcePath, [
             'createResourcePageClass' => $createResourcePageClass,

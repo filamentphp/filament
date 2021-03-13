@@ -20,7 +20,9 @@ class Role
 
     public static function getLabel()
     {
-        if (static::$label) return static::$label;
+        if (static::$label) {
+            return static::$label;
+        }
 
         return (string) Str::of(class_basename(static::class))
             ->kebab()

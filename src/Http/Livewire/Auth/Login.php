@@ -43,6 +43,14 @@ class Login extends Component
             ]);
     }
 
+    public function render()
+    {
+        return view('filament::auth.login')
+            ->layout('filament::components.layouts.auth', [
+                'title' => 'filament::auth/login.title',
+            ]);
+    }
+
     public function submit()
     {
         try {
@@ -65,13 +73,5 @@ class Login extends Component
         }
 
         return redirect()->intended(route('filament.dashboard'));
-    }
-
-    public function render()
-    {
-        return view('filament::auth.login')
-            ->layout('filament::components.layouts.auth', [
-                'title' => 'filament::auth/login.title',
-            ]);
     }
 }

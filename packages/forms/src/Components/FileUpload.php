@@ -48,7 +48,9 @@ class FileUpload extends Field
     public function acceptedFileTypes($types)
     {
         $this->configure(function () use ($types) {
-            if (! is_array($types)) $types = explode(',', $types);
+            if (! is_array($types)) {
+                $types = explode(',', $types);
+            }
 
             $this->acceptedFileTypes = $types;
 
@@ -79,19 +81,19 @@ class FileUpload extends Field
         return $this;
     }
 
-    public function disk($name)
+    public function directory($directory)
     {
-        $this->configure(function () use ($name) {
-            $this->diskName = $name;
+        $this->configure(function () use ($directory) {
+            $this->directory = $directory;
         });
 
         return $this;
     }
 
-    public function directory($directory)
+    public function disk($name)
     {
-        $this->configure(function () use ($directory) {
-            $this->directory = $directory;
+        $this->configure(function () use ($name) {
+            $this->diskName = $name;
         });
 
         return $this;
