@@ -15,7 +15,7 @@
     <a
         href="{{ $url }}"
         {!! $recordAction->getTitle() ? 'title="' . __($recordAction->getTitle()) . '"' : null !!}
-        @if ($recordAction->shouldOpenUrlInNewTab())
+        @if ($recordAction->shouldUrlOpenInNewTab())
             target="_blank"
             rel="noopener noreferrer"
         @endif

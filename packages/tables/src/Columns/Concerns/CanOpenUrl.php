@@ -4,7 +4,7 @@ namespace Filament\Tables\Columns\Concerns;
 
 trait CanOpenUrl
 {
-    protected $shouldOpenUrlInNewTab = false;
+    protected $shouldUrlOpenInNewTab = false;
 
     protected $url;
 
@@ -32,21 +32,30 @@ trait CanOpenUrl
     public function openUrlInNewTab()
     {
         $this->configure(function () {
-            $this->shouldOpenUrlInNewTab = true;
+            $this->shouldUrlOpenInNewTab = true;
         });
 
         return $this;
     }
 
-    public function shouldOpenUrlInNewTab()
+    public function shouldUrlOpenInNewTab()
     {
-        return $this->shouldOpenUrlInNewTab;
+        if (
+            $this->url === null &&
+            $this->isPrimary() &&
+            $this->getTable()->getPrimaryColumnUrl()
+        ) {
+            return $this->getTable()->shouldPrimaryColumnUrlOpenInNewTab();
+        }
+
+        return $this->shouldUrlOpenInNewTab;
     }
 
     public function url($url, $shouldOpenInNewTab = false)
     {
         $this->configure(function () use ($shouldOpenInNewTab, $url) {
             $this->url = $url;
+
             if ($shouldOpenInNewTab) {
                 $this->openUrlInNewTab();
             }

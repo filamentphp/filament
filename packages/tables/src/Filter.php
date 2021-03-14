@@ -195,4 +195,13 @@ class Filter
 
         return $this;
     }
+
+    public function visible()
+    {
+        $this->configure(function () {
+            $this->isHidden = false;
+        });
+
+        return $this;
+    }
 }

@@ -4,7 +4,7 @@ namespace Filament\Tables\RecordActions\Concerns;
 
 trait CanOpenUrl
 {
-    protected $shouldOpenUrlInNewTab = false;
+    protected $shouldUrlOpenInNewTab = false;
 
     protected $url;
 
@@ -22,15 +22,15 @@ trait CanOpenUrl
     public function openUrlInNewTab()
     {
         $this->configure(function () {
-            $this->shouldOpenUrlInNewTab = true;
+            $this->shouldUrlOpenInNewTab = true;
         });
 
         return $this;
     }
 
-    public function shouldOpenUrlInNewTab()
+    public function shouldUrlOpenInNewTab()
     {
-        return $this->shouldOpenUrlInNewTab;
+        return $this->shouldUrlOpenInNewTab;
     }
 
     public function url($url, $shouldOpenInNewTab = false)

@@ -28,6 +28,8 @@ class Table
 
     protected $recordActions = [];
 
+    protected $shouldPrimaryColumnUrlOpenInNewTab = false;
+
     public function columns($columns)
     {
         $this->columns = collect(value($columns))
@@ -181,6 +183,13 @@ class Table
         return new static();
     }
 
+    public function openPrimaryColumnUrlInNewTab()
+    {
+        $this->shouldPrimaryColumnUrlOpenInNewTab = true;
+
+        return $this;
+    }
+
     public function pagination($enabled)
     {
         $this->pagination = $enabled;
@@ -195,9 +204,13 @@ class Table
         return $this;
     }
 
-    public function primaryColumnUrl($url)
+    public function primaryColumnUrl($url, $shouldOpenInNewTab = false)
     {
         $this->primaryColumnUrl = $url;
+
+        if ($shouldOpenInNewTab) {
+            $this->openPrimaryColumnUrlInNewTab();
+        }
 
         return $this;
     }
@@ -218,6 +231,11 @@ class Table
         $this->searchable = $searchable;
 
         return $this;
+    }
+
+    public function shouldPrimaryColumnUrlOpenInNewTab()
+    {
+        return $this->shouldPrimaryColumnUrlOpenInNewTab;
     }
 
     public function sortable($sortable)
