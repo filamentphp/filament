@@ -240,11 +240,9 @@ class Field extends Component
 
     public function name($name)
     {
-        $this->configure(function () use ($name) {
-            $this->name = $name;
+        $this->name = $name;
 
-            $this->addRules([$this->getName() => ['nullable']]);
-        });
+        $this->addRules([$this->getName() => ['nullable']]);
     }
 
     public function nullable()
