@@ -63,6 +63,11 @@ class Action
         return $this->name;
     }
 
+    public function getTable()
+    {
+        return $this->table;
+    }
+
     public function getTitle()
     {
         if ($this->title === null) {
@@ -73,11 +78,6 @@ class Action
         }
 
         return $this->title;
-    }
-
-    public function getTable()
-    {
-        return $this->table;
     }
 
     public function getView()
