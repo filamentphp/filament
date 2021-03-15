@@ -16,7 +16,7 @@
     ]) }}" />
 
     @foreach (\Filament\Filament::getStyles() as $path)
-        @if(Str::startsWith($path, ['http://', 'https://']))
+        @if (Str::of($path)->startsWith(['http://', 'https://']))
             <link rel="stylesheet" href="{{ $path }}" />
         @else
             <link rel="stylesheet" href="{{ route('filament.asset', [
