@@ -279,6 +279,10 @@ class FilamentServiceProvider extends ServiceProvider
                 continue;
             }
 
+            if ($key === 'middleware') {
+                continue;
+            }
+
             $array[$key] = $this->mergeConfig($value, $merging[$key]);
         }
 
