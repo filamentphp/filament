@@ -67,6 +67,10 @@ abstract class PluginServiceProvider extends ServiceProvider
                     Livewire::component($route->page::getName(), $route->page);
                 }
             }
+
+            foreach ($this->widgets() as $widget) {
+                Livewire::component($widget::getName(), $widget);
+            }
         });
 
         $this->pluginRegistered();
