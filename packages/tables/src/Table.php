@@ -22,6 +22,10 @@ class Table
 
     protected $isSortable = true;
 
+    protected $defaultSortColumn;
+
+    protected $defaultSortDirection;
+
     protected $primaryColumnAction;
 
     protected $primaryColumnUrl;
@@ -243,5 +247,23 @@ class Table
         $this->sortable = $sortable;
 
         return $this;
+    }
+
+    public function sortBy($column, $direction = 'asc')
+    {
+        $this->defaultSortColumn = $column;
+        $this->defaultSortDirection = $direction;
+
+        return $this;
+    }
+
+    public function getDefaultSortColumn()
+    {
+        return $this->defaultSortColumn;
+    }
+
+    public function getDefaultSortDirection()
+    {
+        return $this->defaultSortDirection;
     }
 }

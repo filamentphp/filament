@@ -21,6 +21,12 @@ trait HasTable
 
     public $sortDirection = 'asc';
 
+    public function mountHasTable()
+    {
+        $this->sortColumn = $this->getTable()->getDefaultSortColumn() ?? $this->sortColumn;
+        $this->sortDirection = $this->getTable()->getDefaultSortDirection() ?? $this->sortDirection;
+    }
+
     public function deleteSelected()
     {
         static::getModel()::destroy($this->selected);
