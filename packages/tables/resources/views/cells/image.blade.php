@@ -29,7 +29,7 @@
             "
         />
     </a>
-@else
+@elseif ($column->getPath($record) !== null)
     <img
         src="{{ $column->getPath($record) }}"
         class="{{ $column->isRounded() ? 'rounded-full' : null }}"
