@@ -20,7 +20,11 @@ class Column
 
     protected $isSearchable = false;
 
+    protected $searchUsing = false;
+
     protected $isSortable = false;
+
+    protected $sortUsing = false;
 
     protected $label;
 
@@ -179,9 +183,19 @@ class Column
         return $this->isSearchable && $this->getValueUsing === null;
     }
 
+    public function getSearchUsing()
+    {
+        return $this->searchUsing;
+    }
+
     public function isSortable()
     {
         return $this->isSortable && $this->getValueUsing === null;
+    }
+
+    public function getSortUsing()
+    {
+        return $this->sortUsing;
     }
 
     public function label($label)
@@ -253,19 +267,21 @@ class Column
         ]));
     }
 
-    public function searchable()
+    public function searchable($searchUsing = false)
     {
-        $this->configure(function () {
+        $this->configure(function () use ($searchUsing) {
             $this->isSearchable = true;
+            $this->searchUsing = $searchUsing;
         });
 
         return $this;
     }
 
-    public function sortable()
+    public function sortable($sortUsing = false)
     {
-        $this->configure(function () {
+        $this->configure(function () use ($sortUsing) {
             $this->isSortable = true;
+            $this->sortUsing = $sortUsing;
         });
 
         return $this;

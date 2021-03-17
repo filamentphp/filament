@@ -50,25 +50,34 @@ trait HasTable
                     ][$query->getConnection()->getDriverName()] ?? 'like';
 
                     $first = $index === 0;
+                    if ($searchUsing = $column->getSearchUsing()) {
+                        collect($searchUsing)
+                            ->each(function ($fieldName, &$index) use (&$query, &$first, $search, $searchOperator) {
+                                $first = $index === 0;
+                                $query = $query->{$first ? 'where' : 'orWhere'}(
+                                    fn ($query) => $query->where($fieldName, $searchOperator, "%{$search}%"),
+                                );
+                            });
+                    } else {
+                        if (Str::of($column->getName())->contains('.')) {
+                            $relationship = (string) Str::of($column->getName())->beforeLast('.');
 
-                    if (Str::of($column->getName())->contains('.')) {
-                        $relationship = (string) Str::of($column->getName())->beforeLast('.');
+                            $query = $query->{$first ? 'whereHas' : 'orWhereHas'}(
+                                $relationship,
+                                function ($query) use ($column, $search, $searchOperator) {
+                                    $columnName = (string) Str::of($column->getName())->afterLast('.');
 
-                        $query = $query->{$first ? 'whereHas' : 'orWhereHas'}(
-                            $relationship,
-                            function ($query) use ($column, $search, $searchOperator) {
-                                $columnName = (string) Str::of($column->getName())->afterLast('.');
+                                    return $query->where($columnName, $searchOperator, "%{$search}%");
+                                },
+                            );
 
-                                return $query->where($columnName, $searchOperator, "%{$search}%");
-                            },
+                            return;
+                        }
+
+                        $query = $query->{$first ? 'where' : 'orWhere'}(
+                            fn ($query) => $query->where($column->getName(), $searchOperator, "%{$search}%"),
                         );
-
-                        return;
                     }
-
-                    $query = $query->{$first ? 'where' : 'orWhere'}(
-                        fn ($query) => $query->where($column->getName(), $searchOperator, "%{$search}%"),
-                    );
                 });
         }
 
@@ -85,7 +94,14 @@ trait HasTable
                     },
                 ]);
             } else {
-                $query = $query->orderBy($this->sortColumn, $this->sortDirection);
+                if ($sortUsingColumn = $this->sortByColumnSortUsing()) {
+                    collect($sortUsingColumn->getSortUsing())
+                        ->each(function ($fieldName) use (&$query) {
+                            return $query = $query->orderBy($fieldName, $this->sortDirection);
+                        });
+                } else {
+                    $query = $query->orderBy($this->sortColumn, $this->sortDirection);
+                }
             }
         }
 
@@ -101,6 +117,14 @@ trait HasTable
         $this->page = $page;
 
         $this->selected = [];
+    }
+
+    protected function sortByColumnSortUsing()
+    {
+        return collect($this->getTable()->getColumns())
+                ->first(function ($column) {
+                    return $this->sortColumn == $column->getName() && $column->getSortUsing();
+                });
     }
 
     public function sortBy($column)
