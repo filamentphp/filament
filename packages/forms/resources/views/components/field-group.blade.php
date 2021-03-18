@@ -27,15 +27,15 @@
     ][$columnSpan];
 @endphp
 
-<div class="flex {{ $columnSpanClass }}">
-    <div class="space-y-2 w-full">
+<div class="flex relative {{ $columnSpanClass }}">
+    <div class="w-full space-y-2">
         @if ($label || $hint)
             <div class="flex items-center justify-between space-x-2">
                 <div class="flex space-x-2">
                     {{ $labelPrefix }}
 
                     @if ($label)
-                        <label for="{{ $for }}" class="text-sm leading-tight font-medium">
+                        <label for="{{ $for }}" class="text-sm font-medium leading-tight">
                             {{ __($label) }}
 
                             @if ($required)
@@ -46,7 +46,7 @@
                 </div>
 
                 @if ($hint)
-                    <div class="text-xs leading-tight text-gray-500 font-mono">
+                    <div class="font-mono text-xs leading-tight text-gray-500">
                         {!! Str::of(__($hint))->markdown() !!}
                     </div>
                 @endif
@@ -57,7 +57,7 @@
 
         @if ($errorKey)
             @error($errorKey)
-                <span class="block text-danger-700 text-sm leading-tight">
+                <span class="block text-sm leading-tight text-danger-700">
                     {{ $message }}
                 </span>
             @enderror
