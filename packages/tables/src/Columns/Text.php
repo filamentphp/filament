@@ -16,7 +16,7 @@ class Text extends Column
 
     public function currency($symbol = '$', $decimalSeparator = '.', $thousandsSeparator = ',', $decimals = 2)
     {
-        $this->configure(function () use ($decimalSeparator, $symbol, $thousandsSeparator, $decimals) {
+        $this->configure(function () use ($decimals, $decimalSeparator, $symbol, $thousandsSeparator) {
             $this->formatUsing = function ($value) use ($decimals, $decimalSeparator, $symbol, $thousandsSeparator) {
                 if (! is_numeric($value)) {
                     return $this->getDefaultValue();
