@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 class BelongsToSelect extends Select
 {
     protected $displayColumnName;
+
     protected $getOptions;
 
     protected $relationship;
