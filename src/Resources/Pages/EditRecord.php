@@ -78,9 +78,8 @@ class EditRecord extends Page
 
         $model = static::getModel();
 
-        $routeKeyName = (new $model())->getRouteKeyName();
-
-        $this->record = $model::where($routeKeyName, $record)->firstOrFail();
+        $this->record = (new $model())->resolveRouteBinding($record) 
+            ?? throw (new ModelNotFoundException())->setModel($model, [$record]);
 
         $this->callHook('afterFill');
     }
