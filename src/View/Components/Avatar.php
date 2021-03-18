@@ -3,7 +3,6 @@
 namespace Filament\View\Components;
 
 use Filament\Filament;
-use Illuminate\Support\Str;
 use function Filament\get_image_url;
 use Illuminate\View\Component;
 
@@ -33,10 +32,6 @@ class Avatar extends Component
 
         if ($avatar === null) {
             return Filament::avatarProvider()->get($this->user, $this->size, $dpr);
-        }
-
-        if (Str::startsWith($avatar, ['http://', 'https://'])) {
-            return $avatar;
         }
 
         return get_image_url(
