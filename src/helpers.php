@@ -60,8 +60,8 @@ if (! function_exists('Filament\get_image_url')) {
     function get_image_url($path, $manipulations = [])
     {
         if (
+            filter_var($path, FILTER_VALIDATE_URL) &&
             Str::startsWith($path, ['http://', 'https://'])
-            && filter_var($path, FILTER_VALIDATE_URL)
         ) {
             return $path;
         }
