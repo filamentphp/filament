@@ -2,7 +2,9 @@
 
 namespace Filament\Forms\Components;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
 
 class FileUpload extends Field
 {
@@ -109,6 +111,11 @@ class FileUpload extends Field
         return $this->directory;
     }
 
+    public function getDisk()
+    {
+        return Storage::disk($this->getDiskName());
+    }
+
     public function getDiskName()
     {
         return $this->diskName ?? config('forms.default_filesystem_disk');
@@ -172,6 +179,39 @@ class FileUpload extends Field
     public function getUploadButtonPosition()
     {
         return $this->uploadButtonPosition;
+    }
+
+    public function getUploadedFileUrl()
+    {
+        $record = $this->getRecord();
+
+        if ($record === null) return;
+
+        $name = $this->getName();
+
+        if (Str::of($name)->contains('.')) {
+            $name = (string) Str::of($name)->after('.');
+        }
+
+        $path = $record->{$name};
+
+        if (! $path) {
+            return null;
+        }
+
+        $storage = $this->getDisk();
+
+        if (
+            $storage->getDriver()->getAdapter() instanceof AwsS3Adapter &&
+            $storage->getVisibility($path) === 'private'
+        ) {
+            return $storage->temporaryUrl(
+                $path,
+                now()->addMinutes(5),
+            );
+        }
+
+        return $storage->url($path);
     }
 
     public function getUploadProgressIndicatorPosition()

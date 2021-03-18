@@ -35,57 +35,6 @@
     <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.js"></script>
     <script src="https://unpkg.com/filepond-plugin-image-resize/dist/filepond-plugin-image-resize.js"></script>
     <script src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.js"></script>
-    <script>
-        function fileUpload(config) {
-            return {
-                disk: config.disk,
-
-                name: config.name,
-
-                pond: null,
-
-                value: config.value,
-
-                init: function () {
-                    FilePond.registerPlugin(FilePondPluginFileValidateSize)
-                    FilePond.registerPlugin(FilePondPluginFileValidateType)
-                    FilePond.registerPlugin(FilePondPluginImageCrop)
-                    FilePond.registerPlugin(FilePondPluginImageExifOrientation)
-                    FilePond.registerPlugin(FilePondPluginImagePreview)
-                    FilePond.registerPlugin(FilePondPluginImageResize)
-                    FilePond.registerPlugin(FilePondPluginImageTransform)
-
-                    this.$wire.getUploadedFileUrl(this.name, this.disk).then((uploadedFileUrl) => {
-                        if (uploadedFileUrl) {
-                            config.files = [{
-                                source: uploadedFileUrl,
-                                options: {
-                                    type: 'local',
-                                },
-                            }]
-                        }
-
-                        this.pond = FilePond.create(this.$refs.input, config)
-                    })
-
-                    this.$watch('value', () => {
-                        this.$wire.getUploadedFileUrl(this.name, this.disk).then((uploadedFileUrl) => {
-                            if (uploadedFileUrl) {
-                                this.pond.files = [{
-                                    source: uploadedFileUrl,
-                                    options: {
-                                        type: 'local',
-                                    },
-                                }]
-                            } else {
-                                this.pond.files = []
-                            }
-                        })
-                    })
-                },
-            }
-        }
-    </script>
 @endpushonce
 
 <x-forms::field-group
@@ -98,55 +47,93 @@
     :required="$formComponent->isRequired()"
 >
     <div
-        x-data="fileUpload({
-            acceptedFileTypes: {{ json_encode($formComponent->getAcceptedFileTypes()) }},
+        x-data="{
             disk: '{{ $formComponent->getDiskName() }}',
             files: [],
-            {{ $formComponent->getImageCropAspectRatio() !== null ? "imageCropAspectRatio: '{$formComponent->getImageCropAspectRatio()}'," : null }}
-            {{ $formComponent->getImagePreviewHeight() !== null ? "imagePreviewHeight: {$formComponent->getImagePreviewHeight()}," : null }}
-            {{ $formComponent->getImageResizeTargetHeight() !== null ? "imageResizeTargetHeight: {$formComponent->getImageResizeTargetHeight()}," : null }}
-            {{ $formComponent->getImageResizeTargetWidth() !== null ? "imageResizeTargetWidth: {$formComponent->getImageResizeTargetWidth()}," : null }}
-            {{ __($formComponent->getPlaceholder()) !== null ? 'labelIdle: \'' . __($formComponent->getPlaceholder()) . '\',' : null }}
-            {{ $formComponent->getMaxSize() !== null ? "maxFileSize: '{$formComponent->getMaxSize()} KB'," : null }}
-            {{ $formComponent->getMinSize() !== null ? "minFileSize: '{$formComponent->getMinSize()} KB'," : null }}
+            initialUrl: {{ $formComponent->getUploadedFileUrl() ? "'{$formComponent->getUploadedFileUrl()}'" : 'null' }},
             name: '{{ $formComponent->getName() }}',
-            server: {
-                load: (source, load, error, progress, abort, headers) => {
-                    fetch(source).then((response) => {
-                        response.blob().then((blob) => {
-                            load(blob)
-                        })
-                    })
-                },
-                process: (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
-                    @this.upload(
-                        '{{ $formComponent->getTemporaryUploadedFilePropertyName() }}',
-                        file,
-                        (uploadedFilename) => load(uploadedFilename),
-                        () => error(),
-                        (event) => progress(event.detail.progress)
-                    )
-                },
-                remove: (source, load, error) => {
-                    @this.removeUploadedFile('{{ $formComponent->getName() }}').then(() => {
-                        load()
-                    })
-                },
-                revert: (uniqueFileId, load, error) => {
-                    @this.clearTemporaryUploadedFile('{{ $formComponent->getName() }}').then(() => {
-                        load()
-                    })
-                },
-            },
-            styleButtonProcessItemPosition: '{{ $formComponent->getUploadButtonPosition() }}',
-            styleButtonRemoveItemPosition: '{{ $formComponent->getRemoveUploadButtonPosition() }}',
-            styleLoadIndicatorPosition: '{{ $formComponent->getLoadingIndicatorPosition() }}',
-            {{ $formComponent->getPanelAspectRatio() !== null ? "stylePanelAspectRatio: '{$formComponent->getPanelAspectRatio()}'," : null }}
-            {{ $formComponent->getPanelLayout() !== null ? "stylePanelLayout: '{$formComponent->getPanelLayout()}'," : null }}
-            styleProgressIndicatorPosition: '{{ $formComponent->getUploadProgressIndicatorPosition() }}',
+            pond: null,
             value: @entangle($formComponent->getName()){{ Str::of($formComponent->getBindingAttribute())->after('wire:model') }},
-        })"
-        x-init="init()"
+        }"
+        x-init="
+            FilePond.registerPlugin(FilePondPluginFileValidateSize)
+            FilePond.registerPlugin(FilePondPluginFileValidateType)
+            FilePond.registerPlugin(FilePondPluginImageCrop)
+            FilePond.registerPlugin(FilePondPluginImageExifOrientation)
+            FilePond.registerPlugin(FilePondPluginImagePreview)
+            FilePond.registerPlugin(FilePondPluginImageResize)
+            FilePond.registerPlugin(FilePondPluginImageTransform)
+
+            if (initialUrl) {
+                files = [{
+                    source: initialUrl,
+                    options: {
+                        type: 'local',
+                    },
+                }]
+            }
+
+            pond = FilePond.create($refs.input, {
+                acceptedFileTypes: {{ json_encode($formComponent->getAcceptedFileTypes()) }},
+                files: files,
+                {{ $formComponent->getImageCropAspectRatio() !== null ? "imageCropAspectRatio: '{$formComponent->getImageCropAspectRatio()}'," : null }}
+                {{ $formComponent->getImagePreviewHeight() !== null ? "imagePreviewHeight: {$formComponent->getImagePreviewHeight()}," : null }}
+                {{ $formComponent->getImageResizeTargetHeight() !== null ? "imageResizeTargetHeight: {$formComponent->getImageResizeTargetHeight()}," : null }}
+                {{ $formComponent->getImageResizeTargetWidth() !== null ? "imageResizeTargetWidth: {$formComponent->getImageResizeTargetWidth()}," : null }}
+                {{ __($formComponent->getPlaceholder()) !== null ? 'labelIdle: \'' . __($formComponent->getPlaceholder()) . '\',' : null }}
+                {{ $formComponent->getMaxSize() !== null ? "maxFileSize: '{$formComponent->getMaxSize()} KB'," : null }}
+                {{ $formComponent->getMinSize() !== null ? "minFileSize: '{$formComponent->getMinSize()} KB'," : null }}
+                server: {
+                    load: (source, load, error, progress, abort, headers) => {
+                        fetch(source).then((response) => {
+                            response.blob().then((blob) => {
+                                load(blob)
+                            })
+                        })
+                    },
+                    process: (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
+                        @this.upload(
+                            '{{ $formComponent->getTemporaryUploadedFilePropertyName() }}',
+                            file,
+                            (uploadedFilename) => load(uploadedFilename),
+                            () => error(),
+                            (event) => progress(event.detail.progress)
+                        )
+                    },
+                    remove: (source, load, error) => {
+                        @this.removeUploadedFile('{{ $formComponent->getName() }}').then(() => {
+                            load()
+                        })
+                    },
+                    revert: (uniqueFileId, load, error) => {
+                        @this.clearTemporaryUploadedFile('{{ $formComponent->getName() }}').then(() => {
+                            load()
+                        })
+                    },
+                },
+                styleButtonProcessItemPosition: '{{ $formComponent->getUploadButtonPosition() }}',
+                styleButtonRemoveItemPosition: '{{ $formComponent->getRemoveUploadButtonPosition() }}',
+                styleLoadIndicatorPosition: '{{ $formComponent->getLoadingIndicatorPosition() }}',
+                {{ $formComponent->getPanelAspectRatio() !== null ? "stylePanelAspectRatio: '{$formComponent->getPanelAspectRatio()}'," : null }}
+                {{ $formComponent->getPanelLayout() !== null ? "stylePanelLayout: '{$formComponent->getPanelLayout()}'," : null }}
+                styleProgressIndicatorPosition: '{{ $formComponent->getUploadProgressIndicatorPosition() }}',
+            })
+
+            $watch('value', () => {
+                @this.getUploadedFileUrl(name, disk).then((uploadedFileUrl) => {
+                    if (uploadedFileUrl) {
+                        pond.files = [{
+                            source: uploadedFileUrl,
+                            options: {
+                                type: 'local',
+                            },
+                        }]
+                    } else {
+                        pond.files = []
+                    }
+                })
+            })
+        "
         wire:ignore
         {!! Filament\format_attributes($formComponent->getExtraAttributes()) !!}
     >
