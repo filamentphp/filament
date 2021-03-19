@@ -41,6 +41,17 @@ return [
         'valuePlaceholder' => 'Enter a placeholder...',
     ],
 
+    'markdown' => [
+        'bold' => 'Bold',
+        'italic' => 'Italic',
+        'strikethrough' => 'Strikethrough',
+        'url' => 'URL',
+        'image' => 'Image',
+        'code' => 'Code',
+        'unorderedList' => 'Unordered List',
+        'orderedList' => 'Ordered List',
+    ],
+
     'multiSelect' => [
         'emptyOptionsMessage' => 'No options to choose from.',
         'noSearchResultsMessage' => 'No options match your search.',
