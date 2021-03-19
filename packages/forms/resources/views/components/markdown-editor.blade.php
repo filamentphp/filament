@@ -64,19 +64,22 @@
     >
         <div class="space-y-2">
             <div class="flex items-stretch justify-between">
-                <div class="flex items-center space-x-1">
-                    <x-filament::button
+                <div class="flex items-center pl-3 space-x-4">
+                    <button
+                        class="font-mono text-sm"
                         x-on:click.prevent="tab = 'write'"
-                        x-bind:class="{ 'text-gray-500 bg-gray-100': tab !== 'write' }"
+                        x-bind:class="{ 'text-gray-400': tab !== 'write' }"
                     >
                         Write
-                    </x-filament::button>
-                    <x-filament::button
+                    </button>
+
+                    <button
+                        class="font-mono text-sm"
                         x-on:click.prevent="tab = 'preview'"
-                        x-bind:class="{ 'text-gray-500 bg-gray-100': tab !== 'preview' }"
+                        x-bind:class="{ 'text-gray-400': tab !== 'preview' }"
                     >
                         Preview
-                    </x-filament::button>
+                    </button>
                 </div>
                 <markdown-toolbar for="{{ $formComponent->getId() }}" class="flex items-stretch space-x-4">
                     <div class="flex items-stretch space-x-1">
