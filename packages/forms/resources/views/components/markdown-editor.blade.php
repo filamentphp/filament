@@ -64,9 +64,9 @@
     >
         <div class="space-y-2">
             <div class="flex items-stretch justify-between">
-                <div class="flex items-center pl-3 space-x-4">
+                <div class="flex items-center space-x-4">
                     <button
-                        class="font-mono text-sm"
+                        class="font-mono text-sm hover:underline"
                         x-on:click.prevent="tab = 'write'"
                         x-bind:class="{ 'text-gray-400': tab !== 'write' }"
                     >
@@ -74,7 +74,7 @@
                     </button>
 
                     <button
-                        class="font-mono text-sm"
+                        class="font-mono text-sm hover:underline"
                         x-on:click.prevent="tab = 'preview'"
                         x-bind:class="{ 'text-gray-400': tab !== 'preview' }"
                     >
