@@ -52,6 +52,7 @@ class CreateRecord extends Component
             Form::make()
                 ->context(static::class)
                 ->model(get_class($this->owner->{$this->getRelationship()}()->getModel()))
+                ->record($this->record)
                 ->submitMethod('create'),
         );
     }
