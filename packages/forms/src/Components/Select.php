@@ -26,7 +26,7 @@ class Select extends Field
         $this->placeholder('forms::fields.select.placeholder');
 
         $this->getDisplayValueUsing(function ($value) {
-            return $this->getOptions()[strval($value)] ?? null;
+            return $this->getOptions()[(string) $value] ?? null;
         });
 
         $this->getOptionSearchResultsUsing(function ($search) {
