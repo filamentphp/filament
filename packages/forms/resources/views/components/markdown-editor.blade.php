@@ -17,23 +17,30 @@
     <script>
         function markdownEditor(config) {
             return {
-                value: '',
                 overlay: null,
+
+                preview: '',
+
+                value: '',
+
                 tab: 'write',
+
                 init: function () {
+                    this.value = this.$refs.textarea.value
+
                     this.$refs.overlay.style.padding = window.getComputedStyle(this.$refs.textarea).padding
 
                     this.overlay = mdhl.highlight(this.$refs.textarea.value)
+
+                    this.$watch('tab', () => {
+                        if (this.tab !== 'preview') return
+
+                        this.preview = marked(this.value)
+                    })
                 },
                 resize: function () {
                     this.$el.style.height = this.$refs.textarea.style.height
-
                     this.overlay = mdhl.highlight(this.value = this.$refs.textarea.value)
-                },
-                get preview() {
-                    if (this.tab !== 'preview') return ''
-
-                    return marked(this.value)
                 }
             }
         }
@@ -90,6 +97,11 @@
                             <md-link class="w-full h-full">
                                 <x-heroicon-o-link class="w-4" />
                             </md-link>
+                        </x-filament::button>
+                        <x-filament::button size="small" class="text-base">
+                            <md-image class="w-full h-full">
+                                <x-heroicon-o-photograph class="w-4" />
+                            </md-image>
                         </x-filament::button>
                         <x-filament::button size="small" class="text-base">
                             <md-code class="w-full h-full">
