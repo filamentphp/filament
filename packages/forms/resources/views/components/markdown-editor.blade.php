@@ -63,18 +63,22 @@
         wire:ignore
     >
         <div class="space-y-2">
-            <div class="flex items-stretch justify-between">
+            <div class="flex items-stretch justify-between h-8">
                 <markdown-toolbar for="{{ $formComponent->getId() }}" class="flex items-stretch space-x-4">
                     <div class="flex items-stretch space-x-1">
                         <x-filament::button size="small" class="text-base">
-                            <md-bold>𝐁</md-bold>
+                            <md-bold>
+                                <svg class="w-4" viewBox="0 0 16 16" version="1.1" aria-hidden="true"><path fill-rule="evenodd" d="M4 2a1 1 0 00-1 1v10a1 1 0 001 1h5.5a3.5 3.5 0 001.852-6.47A3.5 3.5 0 008.5 2H4zm4.5 5a1.5 1.5 0 100-3H5v3h3.5zM5 9v3h4.5a1.5 1.5 0 000-3H5z"></path></svg>
+                            </md-bold>
                         </x-filament::button>
                         <x-filament::button size="small" class="text-base">
-                            <md-italic>𝑰</md-italic>
+                            <md-italic>
+                                <svg class="w-4" height="16" viewBox="0 0 16 16" version="1.1" width="16" aria-hidden="true"><path fill-rule="evenodd" d="M6 2.75A.75.75 0 016.75 2h6.5a.75.75 0 010 1.5h-2.505l-3.858 9H9.25a.75.75 0 010 1.5h-6.5a.75.75 0 010-1.5h2.505l3.858-9H6.75A.75.75 0 016 2.75z"></path></svg>
+                            </md-italic>
                         </x-filament::button>
                         <x-filament::button size="small" class="text-base">
                             <md-strikethrough>
-                                <strike>𝐒</strike>
+                                <svg class="w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M7.581 3.25c-2.036 0-2.778 1.082-2.778 1.786 0 .055.002.107.006.157a.75.75 0 01-1.496.114 3.56 3.56 0 01-.01-.271c0-1.832 1.75-3.286 4.278-3.286 1.418 0 2.721.58 3.514 1.093a.75.75 0 11-.814 1.26c-.64-.414-1.662-.853-2.7-.853zm3.474 5.25h3.195a.75.75 0 000-1.5H1.75a.75.75 0 000 1.5h6.018c.835.187 1.503.464 1.951.81.439.34.647.725.647 1.197 0 .428-.159.895-.594 1.267-.444.38-1.254.726-2.676.726-1.373 0-2.38-.493-2.86-.956a.75.75 0 00-1.042 1.079C3.992 13.393 5.39 14 7.096 14c1.652 0 2.852-.403 3.65-1.085a3.134 3.134 0 001.12-2.408 2.85 2.85 0 00-.811-2.007z"></path></svg>
                             </md-strikethrough>
                         </x-filament::button>
                     </div>
