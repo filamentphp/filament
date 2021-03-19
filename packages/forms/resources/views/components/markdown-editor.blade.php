@@ -145,7 +145,7 @@
                 ></textarea>
                 <div class="w-full h-full text-black" x-ref="overlay" x-html="overlay"></div>
             </div>
-            <div class="block w-full h-full min-h-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:border-blue-300" x-show="tab === 'preview'" style="min-height: 150px;">
+            <div class="block w-full h-full min-h-full px-6 py-4 border border-gray-300 rounded shadow-sm focus:border-blue-300" x-show="tab === 'preview'" style="min-height: 150px;">
                 <div class="prose" x-html="preview"></div>
             </div>
         </div>
