@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages;
 use Filament\Filament;
 use Filament\Forms\HasForm;
 use Filament\Resources\Forms\Form;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
 
 class EditRecord extends Page
@@ -78,9 +79,11 @@ class EditRecord extends Page
 
         $model = static::getModel();
 
-        $routeKeyName = (new $model())->getRouteKeyName();
+        $this->record = (new $model())->resolveRouteBinding($record);
 
-        $this->record = $model::where($routeKeyName, $record)->firstOrFail();
+        if ($this->record === null) {
+            throw (new ModelNotFoundException())->setModel($model, [$record]);
+        }
 
         $this->callHook('afterFill');
     }
