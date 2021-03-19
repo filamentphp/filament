@@ -15,7 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <script>
-        function markdownEditor(config) {
+        function markdownEditor() {
             return {
                 overlay: null,
 
@@ -57,8 +57,7 @@
     :required="$formComponent->isRequired()"
 >
     <div
-        x-data="markdownEditor({
-        })"
+        x-data="markdownEditor()"
         x-init="init"
         wire:ignore
     >
