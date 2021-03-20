@@ -28,7 +28,6 @@ trait HasAttachments
         return $this;
     }
 
-
     public function enableAttachments($url)
     {
         $this->configure(function () use ($url) {
