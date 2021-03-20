@@ -53,12 +53,15 @@
             </tr>
         </thead>
 
-        <tbody class="text-sm leading-tight divide-y divide-gray-200">
+        <tbody class="text-sm leading-tight divide-y divide-gray-200"  @if($table->isReorderable()) wire:sortable="{{  $table->getReorderAction() }}" @endif>
             @forelse ($records as $record)
                 <tr
                     wire:key="{{ $record->getKey() }}"
                     wire:loading.class="opacity-50"
-                    class="{{ $loop->index % 2 ? 'bg-gray-50' : null }}"
+                    class="{{ $loop->index % 2 ? 'bg-gray-50' : 'bg-white' }}"
+                    @if($table->isReorderable())
+                      wire:sortable.item="{{ $record->getKey() }}"
+                    @endif
                 >
                     <td class="p-4 whitespace-nowrap">
                         <input
@@ -98,3 +101,8 @@
         </tbody>
     </table>
 </div>
+@if($table->isReorderable())
+    @push('filament-scripts')
+        <script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
+    @endpush
+@endif

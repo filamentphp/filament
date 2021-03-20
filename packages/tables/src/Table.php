@@ -14,6 +14,8 @@ class Table
 
     protected $filters = [];
 
+    protected $reorderAction;
+
     protected $hasPagination = true;
 
     protected $isFilterable = true;
@@ -21,6 +23,8 @@ class Table
     protected $isSearchable = true;
 
     protected $isSortable = true;
+
+    protected $isReorderable = true;
 
     protected $primaryColumnAction;
 
@@ -72,6 +76,14 @@ class Table
     public function disableSorting()
     {
         $this->isSortable = false;
+
+        return $this;
+    }
+
+
+    public function disableReordering()
+    {
+        $this->isReorderable = false;
 
         return $this;
     }
@@ -136,6 +148,11 @@ class Table
         return $this->recordActions;
     }
 
+    public function getReorderAction()
+    {
+        return $this->reorderAction;
+    }
+
     public function getVisibleColumns()
     {
         $columns = collect($this->getColumns())
@@ -176,6 +193,12 @@ class Table
         return $this->isSortable && collect($this->columns)
                 ->filter(fn ($column) => $column->isSortable())
                 ->count();
+    }
+
+
+    public function isReorderable()
+    {
+        return $this->isReorderable && !is_null($this->reorderAction);
     }
 
     public static function make()
@@ -237,7 +260,14 @@ class Table
     {
         return $this->shouldPrimaryColumnUrlOpenInNewTab;
     }
+ 
+    public function reorderable($action =  null)
+    {
+        $this->reorderAction = $action;
 
+        return $this;
+    }
+    
     public function sortable($sortable)
     {
         $this->sortable = $sortable;

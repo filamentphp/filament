@@ -28,6 +28,8 @@ class ListRecords extends Page
 
     public $sortable = true;
 
+    public $reorderAction;
+
     public static $view = 'filament::resources.pages.list-records';
 
     public function canCreate()
@@ -88,7 +90,8 @@ class ListRecords extends Page
                         ->when(fn ($record) => Filament::can('update', $record)),
                 ])
                 ->searchable($this->searchable)
-                ->sortable($this->sortable),
+                ->sortable($this->sortable)
+                ->reorderable($this->reorderAction),
         );
     }
 
