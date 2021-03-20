@@ -8,6 +8,7 @@ class MarkdownEditor extends Field
     use Concerns\CanBeCompared;
     use Concerns\CanBeUnique;
     use Concerns\HasPlaceholder;
+    use Concerns\HasAttachments;
 
     protected $toolbarButtons = [
         'attachFiles',
@@ -21,6 +22,17 @@ class MarkdownEditor extends Field
         'strike',
         'write',
     ];
+
+    protected function setUp()
+    {
+        $this->attachmentDisk(config('forms.default_filesystem_disk'));
+
+        $attachmentUploadUrl = config('forms.rich_editor.default_attachment_upload_url');
+
+        if ($attachmentUploadUrl) {
+            $this->enableAttachments($attachmentUploadUrl);
+        }
+    }
 
     public function disableAllToolbarButtons()
     {

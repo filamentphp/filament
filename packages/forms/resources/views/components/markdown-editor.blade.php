@@ -11,12 +11,21 @@
 
 @pushonce('filament-scripts:markdown-editor-component')
     <script type="module" src="https://cdn.jsdelivr.net/npm/@github/markdown-toolbar-element@1.4.0/dist/index.min.js"></script>
+    <script type="module" src="https://unpkg.com/@github/file-attachment-element@1.x/dist/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mdhl@0.0.6/dist/mdhl.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <script>
         function markdownEditor(config) {
             return {
+                attachmentDirectory: config.attachmentDirectory,
+
+                attachmentDisk: config.attachmentDisk,
+
+                attachmentUploadUrl: config.attachmentUploadUrl,
+
+                csrfToken: config.csrfToken,
+
                 overlay: null,
 
                 preview: '',
@@ -43,6 +52,47 @@
                     this.$el.style.height = this.$refs.textarea.style.height
 
                     this.overlay = mdhl.highlight(this.value = this.$refs.textarea.value)
+                },
+
+                uploadAttachments: function ($event) {
+                    const attachment = $event.detail?.attachments?.[0]
+
+                    if (! attachment || ! attachment.file) return
+
+                    let formData = new FormData()
+
+                    formData.append('directory', this.attachmentDirectory)
+                    formData.append('disk', this.attachmentDisk)
+                    formData.append('file', attachment.file)
+
+                    fetch(this.attachmentUploadUrl, {
+                        body: formData,
+                        credentials: 'same-origin',
+                        headers: {
+                            'X-CSRF-TOKEN': this.csrfToken,
+                        },
+                        method: 'POST',
+                    })
+                    .then(response => response.text())
+                    .then(url => {
+                        this.$refs.textarea.value += "\n\n"
+
+                        this.$refs.imageTrigger.click()
+
+                        const urlStart = this.$refs.textarea.selectionStart + 2
+                        const urlEnd = urlStart + 3
+
+                        this.$refs.textarea.value = [
+                            this.$refs.textarea.value.substring(0, urlStart),
+                            url,
+                            this.$refs.textarea.value.substring(urlEnd)
+                        ].join('')
+
+                        this.$refs.textarea.selectionStart = urlStart - 2
+                        this.$refs.textarea.selectionEnd = urlStart - 2
+
+                        this.resize()
+                    })
                 }
             }
         }
@@ -61,6 +111,10 @@
     <div
         x-data="markdownEditor({
             tab: '{{ $formComponent->isDisabled() ? 'preview' : 'write' }}',
+            attachmentDirectory: {{ json_encode($formComponent->getAttachmentDirectory()) }},
+            attachmentDisk: {{ json_encode($formComponent->getAttachmentDiskName()) }},
+            attachmentUploadUrl: {{ json_encode($formComponent->getAttachmentUploadUrl()) }},
+            csrfToken: {{ json_encode(csrf_token()) }},
         })"
         x-init="init"
         wire:ignore
@@ -109,7 +163,7 @@
 
                                 @if ($formComponent->hasToolbarButton('attachFiles'))
                                     <x-filament::button size="small" class="text-base" title="{{ __('forms::fields.markdownEditor.toolbarButtons.attachFiles') }}">
-                                        <md-image class="w-full h-full">
+                                        <md-image class="w-full h-full" x-ref="imageTrigger">
                                             <x-heroicon-o-photograph class="w-4" />
                                         </md-image>
                                     </x-filament::button>
@@ -173,18 +227,21 @@
             @endunless
 
             <div x-show="tab === 'write'" class="relative w-full h-full" style="min-height: 150px;">
-                <textarea
-                    {!! $formComponent->isAutofocused() ? 'autofocus' : null !!}
-                    {!! $formComponent->getId() ? "id=\"{$formComponent->getId()}\"" : null !!}
-                    {!! $formComponent->getName() ? "{$formComponent->getBindingAttribute()}=\"{$formComponent->getName()}\"" : null !!}
-                    {!! $formComponent->getPlaceholder() ? "placeholder=\"{$formComponent->getPlaceholder()}\"" : null !!}
-                    {!! $formComponent->isRequired() ? 'required' : null !!}
-                    @input="resize"
-                    class="absolute bg-transparent top-0 left-0 block z-1 w-full h-full min-h-full rounded resize-none shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
-                    x-ref="textarea"
-                ></textarea>
+                <file-attachment directory>
+                    <textarea
+                        {!! $formComponent->isAutofocused() ? 'autofocus' : null !!}
+                        {!! $formComponent->getId() ? "id=\"{$formComponent->getId()}\"" : null !!}
+                        {!! $formComponent->getName() ? "{$formComponent->getBindingAttribute()}=\"{$formComponent->getName()}\"" : null !!}
+                        {!! $formComponent->getPlaceholder() ? "placeholder=\"{$formComponent->getPlaceholder()}\"" : null !!}
+                        {!! $formComponent->isRequired() ? 'required' : null !!}
+                        @input="resize"
+                        @file-attachment-accepted.window="uploadAttachments"
+                        class="absolute bg-transparent top-0 left-0 block z-1 w-full h-full min-h-full rounded resize-none shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+                        x-ref="textarea"
+                    ></textarea>
+                </file-attachment>
 
-                <div class="w-full h-full text-black" x-ref="overlay" x-html="overlay"></div>
+                <div class="w-full h-full text-black break-words" x-ref="overlay" x-html="overlay"></div>
             </div>
 
             <div class="block w-full h-full min-h-full px-6 py-4 border border-gray-300 rounded shadow-sm focus:border-blue-300" x-show="tab === 'preview'" style="min-height: 150px;">
