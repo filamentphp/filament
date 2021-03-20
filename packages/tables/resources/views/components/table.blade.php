@@ -50,6 +50,10 @@
                 @endforeach
 
                 <th scope="col"></th>
+
+                @if($table->isReorderable())
+                    <th scope="col"></th>
+                @endif
             </tr>
         </thead>
 
@@ -60,7 +64,7 @@
                     wire:loading.class="opacity-50"
                     class="{{ $loop->index % 2 ? 'bg-gray-50' : 'bg-white' }}"
                     @if($table->isReorderable())
-                      wire:sortable.item="{{ $record->getKey() }}"
+                        wire:sortable.item="{{ $record->getKey() }}"
                     @endif
                 >
                     <td class="p-4 whitespace-nowrap">
@@ -83,12 +87,18 @@
                             {{ $recordAction->render($record) }}
                         @endforeach
                     </td>
+
+                    @if($table->isReorderable())
+                        <td class="px-6 border-l cursor-move whitespace-nowrap"  wire:sortable.handle>
+                            <x-heroicon-o-menu-alt-4 class="w-4 h-4 text-gray-500"/>
+                        </td>
+                    @endif
                 </tr>
             @empty
                 <tr>
                     <td
                         class="px-6 py-4 whitespace-nowrap"
-                        colspan="{{ count($table->getVisibleColumns()) + 2 }}"
+                        colspan="{{ count($table->getVisibleColumns()) + ($table->isReorderable()?3:2) }}"
                     >
                         <div class="flex items-center justify-center h-16">
                             <p class="font-mono text-xs text-gray-500">
