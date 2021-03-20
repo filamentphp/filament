@@ -180,8 +180,12 @@ class FilamentServiceProvider extends ServiceProvider
                 'default_filesystem_disk' => $this->app['config']->get('filament.default_filesystem_disk'),
             ]);
 
+            $this->app['config']->set('forms.markdown_editor', [
+                'default_attachment_upload_url' => route('filament.form-attachments.upload'),
+            ]);
+
             $this->app['config']->set('forms.rich_editor', [
-                'default_attachment_upload_url' => route('filament.rich-editor-attachments.upload'),
+                'default_attachment_upload_url' => route('filament.form-attachments.upload'),
             ]);
         });
     }

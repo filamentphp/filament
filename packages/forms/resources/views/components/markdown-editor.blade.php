@@ -24,8 +24,6 @@
 
                 attachmentUploadUrl: config.attachmentUploadUrl,
 
-                csrfToken: config.csrfToken,
-
                 overlay: null,
 
                 preview: '',
@@ -69,7 +67,7 @@
                         body: formData,
                         credentials: 'same-origin',
                         headers: {
-                            'X-CSRF-TOKEN': this.csrfToken,
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         },
                         method: 'POST',
                     })
@@ -108,11 +106,10 @@
 >
     <div
         x-data="markdownEditor({
-            tab: '{{ $formComponent->isDisabled() ? 'preview' : 'write' }}',
             attachmentDirectory: {{ json_encode($formComponent->getAttachmentDirectory()) }},
             attachmentDisk: {{ json_encode($formComponent->getAttachmentDiskName()) }},
             attachmentUploadUrl: {{ json_encode($formComponent->getAttachmentUploadUrl()) }},
-            csrfToken: {{ json_encode(csrf_token()) }},
+            tab: '{{ $formComponent->isDisabled() ? 'preview' : 'write' }}',
         })"
         x-init="init"
         wire:ignore
@@ -232,10 +229,10 @@
                         {!! $formComponent->getName() ? "{$formComponent->getBindingAttribute()}=\"{$formComponent->getName()}\"" : null !!}
                         {!! $formComponent->getPlaceholder() ? "placeholder=\"{$formComponent->getPlaceholder()}\"" : null !!}
                         {!! $formComponent->isRequired() ? 'required' : null !!}
-                        @input="resize"
-                        @file-attachment-accepted.window="uploadAttachments"
-                        class="absolute bg-transparent top-0 left-0 block z-1 w-full h-full min-h-full rounded resize-none shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+                        x-on:input="resize"
+                        x-on:file-attachment-accepted.window="uploadAttachments"
                         x-ref="textarea"
+                        class="absolute bg-transparent top-0 left-0 block z-1 w-full h-full min-h-full rounded resize-none shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
                     ></textarea>
                 </file-attachment>
 

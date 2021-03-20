@@ -7,8 +7,8 @@ class RichEditor extends Field
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeCompared;
     use Concerns\CanBeUnique;
-    use Concerns\HasPlaceholder;
     use Concerns\HasAttachments;
+    use Concerns\HasPlaceholder;
 
     protected $toolbarButtons = [
         'bold',

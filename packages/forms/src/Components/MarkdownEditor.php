@@ -7,11 +7,10 @@ class MarkdownEditor extends Field
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeCompared;
     use Concerns\CanBeUnique;
-    use Concerns\HasPlaceholder;
     use Concerns\HasAttachments;
+    use Concerns\HasPlaceholder;
 
     protected $toolbarButtons = [
-        'attachFiles',
         'bold',
         'bullet',
         'code',
@@ -27,7 +26,7 @@ class MarkdownEditor extends Field
     {
         $this->attachmentDisk(config('forms.default_filesystem_disk'));
 
-        $attachmentUploadUrl = config('forms.rich_editor.default_attachment_upload_url');
+        $attachmentUploadUrl = config('forms.markdown_editor.default_attachment_upload_url');
 
         if ($attachmentUploadUrl) {
             $this->enableAttachments($attachmentUploadUrl);

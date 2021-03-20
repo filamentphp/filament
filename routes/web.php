@@ -1,7 +1,7 @@
 <?php
 
 use Filament\Filament;
-use Filament\Forms\Http\Controllers\RichEditorAttachmentController;
+use Filament\Forms\Http\Controllers\FormAttachmentController;
 use Filament\Http\Controllers;
 use Filament\Http\Livewire;
 use Filament\Http\Middleware\AuthorizeAdmins;
@@ -29,7 +29,7 @@ Route::middleware(config('filament.middleware.auth'))->group(function () {
     Route::get('/', Livewire\Dashboard::class)->name('dashboard');
     Route::get('account', Livewire\EditAccount::class)->name('account');
 
-    Route::post('rich-editor-attachments', RichEditorAttachmentController::class)->name('rich-editor-attachments.upload');
+    Route::post('form-attachments', FormAttachmentController::class)->name('form-attachments.upload');
 
     foreach (Filament::getResources() as $resource) {
         foreach ($resource::router()->routes as $route) {
