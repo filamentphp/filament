@@ -75,8 +75,6 @@
                     })
                     .then(response => response.text())
                     .then(url => {
-                        this.$refs.textarea.value += "\n\n"
-
                         this.$refs.imageTrigger.click()
 
                         const urlStart = this.$refs.textarea.selectionStart + 2
