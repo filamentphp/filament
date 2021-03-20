@@ -41,15 +41,21 @@ return [
         'valuePlaceholder' => 'Enter a placeholder...',
     ],
 
-    'markdown' => [
-        'bold' => 'Bold',
-        'italic' => 'Italic',
-        'strikethrough' => 'Strikethrough',
-        'url' => 'URL',
-        'image' => 'Image',
-        'code' => 'Code',
-        'unorderedList' => 'Unordered List',
-        'orderedList' => 'Ordered List',
+    'markdownEditor' => [
+
+        'toolbarButtons' => [
+            'attachFiles' => 'Attach Files',
+            'bold' => 'Bold',
+            'bullet' => 'Bullets',
+            'code' => 'Code',
+            'italic' => 'Italic',
+            'link' => 'Link',
+            'number' => 'Numbers',
+            'preview' => 'Preview',
+            'strike' => 'Strikethrough',
+            'write' => 'Write',
+        ],
+
     ],
 
     'multiSelect' => [

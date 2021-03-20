@@ -4,62 +4,83 @@ namespace Filament\Forms\Components;
 
 class MarkdownEditor extends Field
 {
-    use Concerns\HasPlaceholder;
     use Concerns\CanBeAutofocused;
+    use Concerns\CanBeCompared;
+    use Concerns\CanBeUnique;
+    use Concerns\HasPlaceholder;
 
-    protected $boldLabel = 'forms::fields.markdown.bold';
+    protected $toolbarButtons = [
+        'attachFiles',
+        'bold',
+        'bullet',
+        'code',
+        'italic',
+        'link',
+        'number',
+        'preview',
+        'strike',
+        'write',
+    ];
 
-    protected $italicLabel = 'forms::fields.markdown.italic';
-
-    protected $strikethroughLabel = 'forms::fields.markdown.strikethrough';
-
-    protected $urlLabel = 'forms::fields.markdown.url';
-
-    protected $imageLabel = 'forms::fields.markdown.image';
-
-    protected $codeLabel = 'forms::fields.markdown.code';
-
-    protected $unorderedListLabel = 'forms::fields.markdown.unorderedList';
-
-    protected $orderedListLabel = 'forms::fields.markdown.orderedList';
-
-    public function getBoldLabel()
+    public function disableAllToolbarButtons()
     {
-        return $this->boldLabel;
+        $this->configure(function () {
+            $this->toolbarButtons = [];
+        });
+
+        return $this;
     }
 
-    public function getItalicLabel()
+    public function disableToolbarButtons($buttonsToDisable)
     {
-        return $this->italicLabel;
+        $this->configure(function () use ($buttonsToDisable) {
+            if (! is_array($buttonsToDisable)) {
+                $buttonsToDisable = [$buttonsToDisable];
+            }
+
+            $this->toolbarButtons = collect($this->getToolbarButtons())
+                ->filter(fn ($button) => ! in_array($button, $buttonsToDisable))
+                ->toArray();
+        });
+
+        return $this;
     }
 
-    public function getStrikethroughLabel()
+    public function enableToolbarButtons($buttonsToEnable)
     {
-        return $this->strikethroughLabel;
+        $this->configure(function () use ($buttonsToEnable) {
+            if (! is_array($buttonsToEnable)) {
+                $buttonsToEnable = [$buttonsToEnable];
+            }
+
+            $this->toolbarButtons = array_merge($this->getToolbarButtons(), $buttonsToEnable);
+        });
+
+        return $this;
     }
 
-    public function getUrlLabel()
+    public function getToolbarButtons()
     {
-        return $this->urlLabel;
+        return $this->toolbarButtons;
     }
 
-    public function getImageLabel()
+    public function hasToolbarButton($button)
     {
-        return $this->imageLabel;
+        if (is_array($button)) {
+            $buttons = $button;
+
+            return (bool) count(array_intersect($buttons, $this->getToolbarButtons()));
+        }
+
+        return in_array($button, $this->getToolbarButtons());
     }
 
-    public function getCodeLabel()
+    public function toolbarButtons($buttons)
     {
-        return $this->codeLabel;
-    }
+        $this->configure(function () use ($buttons) {
+            $this->toolbarButtons = $buttons;
+        });
 
-    public function getUnorderedListLabel()
-    {
-        return $this->unorderedListLabel;
-    }
-
-    public function getOrderedListLabel()
-    {
-        return $this->orderedListLabel;
+        return $this;
     }
 }
