@@ -41,6 +41,23 @@ return [
         'valuePlaceholder' => 'Enter a placeholder...',
     ],
 
+    'markdownEditor' => [
+
+        'toolbarButtons' => [
+            'attachFiles' => 'Attach Files',
+            'bold' => 'Bold',
+            'bullet' => 'Bullets',
+            'code' => 'Code',
+            'italic' => 'Italic',
+            'link' => 'Link',
+            'number' => 'Numbers',
+            'preview' => 'Preview',
+            'strike' => 'Strikethrough',
+            'write' => 'Write',
+        ],
+
+    ],
+
     'multiSelect' => [
         'emptyOptionsMessage' => 'No options to choose from.',
         'noSearchResultsMessage' => 'No options match your search.',
