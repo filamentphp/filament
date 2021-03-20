@@ -7,13 +7,8 @@ class RichEditor extends Field
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeCompared;
     use Concerns\CanBeUnique;
+    use Concerns\HasAttachments;
     use Concerns\HasPlaceholder;
-
-    protected $attachmentDirectory = 'attachments';
-
-    protected $attachmentDiskName;
-
-    protected $attachmentUploadUrl;
 
     protected $toolbarButtons = [
         'bold',
@@ -34,28 +29,11 @@ class RichEditor extends Field
     {
         $this->attachmentDisk(config('forms.default_filesystem_disk'));
 
-        $attachmentUploadUrl = config('forms.rich_editor.default_attachment_upload_url');
+        $attachmentUploadUrl = config('forms.default_attachment_upload_url');
+
         if ($attachmentUploadUrl) {
             $this->enableAttachments($attachmentUploadUrl);
         }
-    }
-
-    public function attachmentDirectory($directory)
-    {
-        $this->configure(function () use ($directory) {
-            $this->attachmentDirectory = $directory;
-        });
-
-        return $this;
-    }
-
-    public function attachmentDisk($disk)
-    {
-        $this->configure(function () use ($disk) {
-            $this->attachmentDiskName = $disk;
-        });
-
-        return $this;
     }
 
     public function disableAllToolbarButtons()
@@ -82,17 +60,6 @@ class RichEditor extends Field
         return $this;
     }
 
-    public function enableAttachments($url)
-    {
-        $this->configure(function () use ($url) {
-            $this->attachmentUploadUrl = $url;
-
-            $this->enableToolbarButtons(['attachFiles']);
-        });
-
-        return $this;
-    }
-
     public function enableToolbarButtons($buttonsToEnable)
     {
         $this->configure(function () use ($buttonsToEnable) {
@@ -104,21 +71,6 @@ class RichEditor extends Field
         });
 
         return $this;
-    }
-
-    public function getAttachmentDirectory()
-    {
-        return $this->attachmentDirectory;
-    }
-
-    public function getAttachmentDiskName()
-    {
-        return $this->attachmentDiskName;
-    }
-
-    public function getAttachmentUploadUrl()
-    {
-        return $this->attachmentUploadUrl;
     }
 
     public function getToolbarButtons()
