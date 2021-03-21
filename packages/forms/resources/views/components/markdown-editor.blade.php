@@ -2,28 +2,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdhl@0.0.6/mdhl.css">
 
     <style>
-        .mdhl-strong {
-            font-weight: 500 !important;
-        }
-
         [x-data^="markdownEditor"] textarea {
-            -webkit-font-smoothing: subpixel-antialiased !important;
-            text-rendering: optimizeLegibility !important;
             caret-color: black;
             color: transparent;
-            word-break: keep-all;
-            line-height: inherit;
         }
 
         [x-ref="overlay"] {
             padding: 8px 12px;
-            line-height: inherit;
-            word-break: keep-all;
-            -webkit-font-smoothing: subpixel-antialiased !important;
-            text-rendering: optimizeLegibility !important;
         }
-
-        []
     </style>
 @endpushonce
 
