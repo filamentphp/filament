@@ -4,15 +4,34 @@ namespace Filament\Forms\Components;
 
 class Section extends Component
 {
+    protected $collapsible = false;
+
+    protected $collapsed = false;
+
     protected $columns = 1;
 
     protected $heading;
 
     protected $subheading;
 
-    protected $collapsible;
+    public function collapsed()
+    {
+        $this->configure(function () {
+            $this->collapsed = true;
+            $this->collapsible = true;
+        });
 
-    protected $collapsed = false;
+        return $this;
+    }
+
+    public function collapsible($collapsible)
+    {
+        $this->configure(function () use ($collapsible) {
+            $this->collapsible = $collapsible;
+        });
+
+        return $this;
+    }
 
     public function columns($columns)
     {
@@ -38,16 +57,6 @@ class Section extends Component
         return $this->subheading;
     }
 
-    public function getCollapsible()
-    {
-        return $this->collapsible;
-    }
-
-    public function getCollapsed()
-    {
-        return $this->collapsed;
-    }
-
     public function getSubform()
     {
         return parent::getSubform()->columns($this->columns);
@@ -62,13 +71,22 @@ class Section extends Component
         return $this;
     }
 
-    public static function make($heading, $subheading = null, $schema = [], $collapsible = false)
+    public function isCollapsible()
+    {
+        return $this->collapsible;
+    }
+
+    public function isCollapsed()
+    {
+        return $this->collapsed;
+    }
+
+    public static function make($heading, $subheading = null, $schema = [])
     {
         return (new static())
             ->heading($heading)
             ->subheading($subheading)
-            ->schema($schema)
-            ->collapsible($collapsible);
+            ->schema($schema);
     }
 
     public function subheading($subheading)
@@ -76,21 +94,6 @@ class Section extends Component
         $this->configure(function () use ($subheading) {
             $this->subheading = $subheading;
         });
-
-        return $this;
-    }
-
-    public function collapsed()
-    {
-        $this->collapsed = true;
-        $this->collapsible = true;
-
-        return $this;
-    }
-
-    public function collapsible($collapsible)
-    {
-        $this->collapsible = $collapsible;
 
         return $this;
     }
