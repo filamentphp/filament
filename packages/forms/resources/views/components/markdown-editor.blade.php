@@ -7,6 +7,10 @@
             caret-color: black;
             /* -webkit-text-fill-color: transparent; */
         }
+
+        [x-ref="overlay"] {
+            padding: 8px 12px;
+        }
     </style>
 @endpushonce
 
@@ -279,7 +283,6 @@
 
                 <div
                     class="w-full h-full font-mono text-sm text-black break-words"
-                    style="padding: 8px 12px;"
                     x-ref="overlay"
                     x-html="overlay"
                 ></div>
