@@ -79,9 +79,7 @@
                 },
 
                 init: function () {
-                    this.value = this.$refs.textarea.value
-
-                    this.overlay = mdhl.highlight(this.$refs.textarea.value)
+                    this.resize()
 
                     this.$watch('tab', () => {
                         if (this.tab !== 'preview') return
