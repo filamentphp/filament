@@ -22,6 +22,8 @@
             -webkit-font-smoothing: subpixel-antialiased !important;
             text-rendering: optimizeLegibility !important;
         }
+
+        []
     </style>
 @endpushonce
 
