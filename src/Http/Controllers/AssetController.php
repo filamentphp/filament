@@ -2,6 +2,8 @@
 
 namespace Filament\Http\Controllers;
 
+use Illuminate\Support\Str;
+
 class AssetController
 {
     public function __invoke($path)
@@ -15,11 +17,17 @@ class AssetController
                 return $this->pretendResponseIsFile(__DIR__ . '/../../../dist/js/filament.js', 'application/javascript; charset=utf-8');
             case 'js/filament.js.map':
                 return $this->pretendResponseIsFile(__DIR__ . '/../../../dist/js/filament.js.map', 'application/json; charset=utf-8');
-            default:
-                abort(404);
-
-                break;
         }
+
+        if (Str::endsWith($path, '.js')) {
+            return $this->pretendResponseIsFile($path, 'application/javascript; charset=utf-8');
+        }
+
+        if (Str::endsWith($path, '.css')) {
+            return $this->pretendResponseIsFile($path, 'text/css; charset=utf-8');
+        }
+
+        abort(404);
     }
 
     protected function getHttpDate($timestamp)

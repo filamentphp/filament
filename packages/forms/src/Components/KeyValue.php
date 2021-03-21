@@ -4,7 +4,7 @@ namespace Filament\Forms\Components;
 
 class KeyValue extends Field
 {
-    protected $addButtonLabel = 'forms::fields.keyValue.addButtonLabel';
+    protected $addButtonLabel = 'forms::fields.keyValue.buttons.add.label';
 
     protected $canAddRows = true;
 
@@ -12,19 +12,19 @@ class KeyValue extends Field
 
     protected $canEditKeys = true;
 
-    protected $deleteButtonLabel = 'forms::fields.keyValue.deleteButtonLabel';
+    protected $deleteButtonLabel = 'forms::fields.keyValue.buttons.delete.label';
 
     protected $isSortable = false;
 
-    protected $keyLabel = 'forms::fields.keyValue.keyLabel';
+    protected $keyLabel = 'forms::fields.keyValue.fields.key.label';
 
-    protected $keyPlaceholder = 'forms::fields.keyValue.keyPlaceholder';
+    protected $keyPlaceholder = 'forms::fields.keyValue.fields.key.placeholder';
 
-    protected $sortButtonLabel = 'forms::fields.keyValue.sortButtonLabel';
+    protected $sortButtonLabel = 'forms::fields.keyValue.buttons.sort.label';
 
-    protected $valueLabel = 'forms::fields.keyValue.valueLabel';
+    protected $valueLabel = 'forms::fields.keyValue.fields.value.label';
 
-    protected $valuePlaceholder = 'forms::fields.keyValue.valuePlaceholder';
+    protected $valuePlaceholder = 'forms::fields.keyValue.fields.value.placeholder';
 
     protected function setUp()
     {

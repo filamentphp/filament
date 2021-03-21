@@ -187,15 +187,6 @@ class Field extends Component
         return $this->name;
     }
 
-    public function getRules($field = null)
-    {
-        if ($field !== null) {
-            return $this->rules[$field] ?? null;
-        }
-
-        return $this->rules;
-    }
-
     public function getValidationAttribute()
     {
         if ($this->validationAttribute === null) {

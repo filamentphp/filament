@@ -21,6 +21,11 @@ class MakeFilterCommand extends Command
             ->trim(' ')
             ->replace('/', '\\');
         $filterClass = (string) Str::of($filter)->afterLast('\\');
+        $filterName = (string) Str::of($filterClass)
+            ->kebab()
+            ->lower()
+            ->beforeLast('-filter')
+            ->camel();
         $filterNamespace = Str::of($filter)->contains('\\') ?
             (string) Str::of($filter)->beforeLast('\\') :
             '';
@@ -41,11 +46,13 @@ class MakeFilterCommand extends Command
         if (! $this->option('resource')) {
             $this->copyStubToApp('Filter', $path, [
                 'class' => $filterClass,
+                'name' => $filterName,
                 'namespace' => 'App\\Filament\\Tables\\Filters' . ($filterNamespace !== '' ? "\\{$filterNamespace}" : ''),
             ]);
         } else {
             $this->copyStubToApp('ResourceFilter', $path, [
                 'class' => $filterClass,
+                'name' => $filterName,
                 'namespace' => 'App\\Filament\\Resources\\Tables\\Filters' . ($filterNamespace !== '' ? "\\{$filterNamespace}" : ''),
             ]);
         }

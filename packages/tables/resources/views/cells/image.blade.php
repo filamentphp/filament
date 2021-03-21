@@ -15,7 +15,7 @@
 @elseif ($column->getUrl($record) !== null)
     <a
         href="{{ $column->getUrl($record) }}"
-        @if ($column->shouldOpenUrlInNewTab())
+        @if ($column->shouldUrlOpenInNewTab())
             target="_blank"
             rel="noopener noreferrer"
         @endif
@@ -29,7 +29,7 @@
             "
         />
     </a>
-@else
+@elseif ($column->getPath($record) !== null)
     <img
         src="{{ $column->getPath($record) }}"
         class="{{ $column->isRounded() ? 'rounded-full' : null }}"

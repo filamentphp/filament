@@ -17,9 +17,9 @@ class Component
 
     protected $form;
 
-    protected $isHidden = false;
-
     protected $id;
+
+    protected $isHidden = false;
 
     protected $label;
 

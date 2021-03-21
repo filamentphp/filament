@@ -16,7 +16,13 @@
     ]) }}" />
 
     @foreach (\Filament\Filament::getStyles() as $path)
-        <link rel="stylesheet" href="{{ $path }}" />
+        @if (Str::of($path)->startsWith(['http://', 'https://']))
+            <link rel="stylesheet" href="{{ $path }}" />
+        @else
+            <link rel="stylesheet" href="{{ route('filament.asset', [
+                'path' => $path
+            ]) }}">
+        @endif
     @endforeach
 
     @stack('filament-styles')
@@ -40,6 +46,9 @@
     @foreach (\Filament\Filament::getScripts() as $path)
         <script src="{{ $path }}"></script>
     @endforeach
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.5/mousetrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.5/plugins/global-bind/mousetrap-global-bind.min.js"></script>
 
     @stack('filament-scripts')
 </body>

@@ -158,7 +158,7 @@ class Column
     public function hidden()
     {
         $this->configure(function () {
-            $this->hidden = true;
+            $this->isHidden = true;
         });
 
         return $this;
@@ -303,7 +303,7 @@ class Column
     public function visible()
     {
         $this->configure(function () {
-            $this->hidden = false;
+            $this->isHidden = false;
         });
 
         return $this;

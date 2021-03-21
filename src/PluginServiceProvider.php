@@ -46,7 +46,7 @@ abstract class PluginServiceProvider extends ServiceProvider
                 }
 
                 foreach ($this->styles() as $name => $path) {
-                    Filament::registerScript($name, $path);
+                    Filament::registerStyle($name, $path);
                 }
 
                 Filament::provideToScript($this->scriptData());
@@ -66,6 +66,10 @@ abstract class PluginServiceProvider extends ServiceProvider
                 foreach ($resource::routes() as $route) {
                     Livewire::component($route->page::getName(), $route->page);
                 }
+            }
+
+            foreach ($this->widgets() as $widget) {
+                Livewire::component($widget::getName(), $widget);
             }
         });
 
