@@ -3,13 +3,18 @@
 
     <style>
         [x-data^="markdownEditor"] textarea {
-            color: transparent;
+            -webkit-font-smoothing: antialiased;
             caret-color: black;
-            /* -webkit-text-fill-color: transparent; */
+            color: transparent;
+            word-break: keep-all;
+            line-height: inherit;
         }
 
         [x-ref="overlay"] {
             padding: 8px 12px;
+            line-height: inherit;
+            word-break: keep-all;
+            -webkit-font-smoothing: antialiased;
         }
     </style>
 @endpushonce
@@ -89,6 +94,7 @@
                 },
 
                 resize: function () {
+                    this.$refs.overlay.style.height = '150px'
                     this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + 'px'
 
                     this.overlay = mdhl.highlight(this.value = this.$refs.textarea.value)
@@ -275,12 +281,12 @@
                         x-on:keyup.enter="checkForAutoInsertion"
                         x-on:file-attachment-accepted.window="uploadAttachments"
                         x-ref="textarea"
-                        class="font-mono text-sm absolute bg-transparent top-0 left-0 block z-1 w-full h-full min-h-full rounded resize-none shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+                        class="whitespace-pre-wrap font-mono text-sm absolute bg-transparent top-0 left-0 block z-1 w-full h-full min-h-full rounded resize-none shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
                     ></textarea>
                 </file-attachment>
 
                 <div
-                    class="w-full h-full font-mono text-sm text-black break-words"
+                    class="w-full h-full font-mono text-sm text-black break-words whitespace-pre-wrap"
                     x-ref="overlay"
                     x-html="overlay"
                 ></div>
