@@ -8,9 +8,9 @@ class Section extends Component
 {
     use Concerns\CanConcealFields;
 
-    protected $collapsible = false;
-
     protected $collapsed = false;
+
+    protected $collapsible = false;
 
     protected $columns = 1;
 
@@ -56,14 +56,14 @@ class Section extends Component
         return $this->heading;
     }
 
-    public function getSubheading()
-    {
-        return $this->subheading;
-    }
-
     public function getSubform()
     {
         return parent::getSubform()->columns($this->columns);
+    }
+
+    public function getSubheading()
+    {
+        return $this->subheading;
     }
 
     public function heading($heading)
@@ -75,14 +75,14 @@ class Section extends Component
         return $this;
     }
 
-    public function isCollapsible()
-    {
-        return $this->collapsible;
-    }
-
     public function isCollapsed()
     {
         return $this->collapsed;
+    }
+
+    public function isCollapsible()
+    {
+        return $this->collapsible;
     }
 
     public static function make($heading, $subheading = null, $schema = [])
