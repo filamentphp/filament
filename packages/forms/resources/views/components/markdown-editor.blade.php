@@ -46,13 +46,26 @@
                     }
 
                     if (previousLine.match(/^(\*\s)/)) {
-                        lines[currentLine - 1] = '* '
+                        if (previousLine.trim().length > 1) {
+                            lines[currentLine - 1] = '* '
+                        } else {
+                            delete lines[currentLine - 2]
+                        }
                     } else if (previousLine.match(/^(-\s)/)) {
-                        lines[currentLine - 1] = '- '
+                        if (previousLine.trim().length > 1) {
+                            lines[currentLine - 1] = '- '
+                        } else {
+                            delete lines[currentLine - 2]
+                        }
                     } else {
-                        const number = previousLine.match(/^(\d)+/)
+                        const matches = previousLine.match(/^(\d)+/)
+                        const number = matches[0]
 
-                        lines[currentLine - 1] = `${parseInt(number) + 1}. `
+                        if (previousLine.trim().length > (number.length + 2)) {
+                            lines[currentLine - 1] = `${parseInt(number) + 1}. `
+                        } else {
+                            delete lines[currentLine - 2]
+                        }
                     }
 
                     this.$refs.textarea.value = lines.join("\n")
