@@ -32,6 +32,47 @@
 
                 value: '',
 
+                checkForAutoInsertion($event) {
+                    const lines = this.$refs.textarea.value.split("\n")
+
+                    const currentLine = this.$refs.textarea.value.substring(
+                        0, this.$refs.textarea.value.selectionStart
+                    ).split("\n").length
+
+                    const previousLine = lines[currentLine - 2]
+
+                    if (! previousLine.match(/^(\*\s|-\s)|^(\d)+\./)) {
+                        return;
+                    }
+
+                    if (previousLine.match(/^(\*\s)/)) {
+                        if (previousLine.trim().length > 1) {
+                            lines[currentLine - 1] = '* '
+                        } else {
+                            delete lines[currentLine - 2]
+                        }
+                    } else if (previousLine.match(/^(-\s)/)) {
+                        if (previousLine.trim().length > 1) {
+                            lines[currentLine - 1] = '- '
+                        } else {
+                            delete lines[currentLine - 2]
+                        }
+                    } else {
+                        const matches = previousLine.match(/^(\d)+/)
+                        const number = matches[0]
+
+                        if (previousLine.trim().length > (number.length + 2)) {
+                            lines[currentLine - 1] = `${parseInt(number) + 1}. `
+                        } else {
+                            delete lines[currentLine - 2]
+                        }
+                    }
+
+                    this.$refs.textarea.value = lines.join("\n")
+
+                    this.resize()
+                },
+
                 init: function () {
                     this.value = this.$refs.textarea.value
 
@@ -89,7 +130,7 @@
 
                         this.resize()
                     })
-                }
+                },
             }
         }
     </script>
@@ -230,6 +271,7 @@
                         {!! $formComponent->getPlaceholder() ? "placeholder=\"{$formComponent->getPlaceholder()}\"" : null !!}
                         {!! $formComponent->isRequired() ? 'required' : null !!}
                         x-on:input="resize"
+                        x-on:keyup.enter="checkForAutoInsertion"
                         x-on:file-attachment-accepted.window="uploadAttachments"
                         x-ref="textarea"
                         class="absolute bg-transparent top-0 left-0 block z-1 w-full h-full min-h-full rounded resize-none shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
