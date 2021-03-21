@@ -158,8 +158,12 @@
     >
         <div class="space-y-2">
             @unless ($formComponent->isDisabled())
-                <div class="flex items-stretch justify-between h-8">
-                    <markdown-toolbar for="{{ $formComponent->getId() }}" class="flex items-stretch space-x-4">
+                <div class="flex items-stretch h-8" :class="{ 'justify-end': tab === 'preview', 'justify-between': tab !== 'preview' }">
+                    <markdown-toolbar
+                        for="{{ $formComponent->getId() }}"
+                        class="flex items-stretch space-x-4"
+                        x-show="tab !== 'preview'"
+                    >
                         @if ($formComponent->hasToolbarButton(['bold', 'italic', 'strike']))
                             <div class="flex items-stretch space-x-1">
                                 @if ($formComponent->hasToolbarButton('bold'))
