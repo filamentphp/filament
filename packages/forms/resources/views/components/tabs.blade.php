@@ -18,7 +18,7 @@
 
 <div
     x-data="{ tab: '{{ count($formComponent->getTabsConfig()) ? array_key_first($formComponent->getTabsConfig()) : null }}', tabs: {{ json_encode($formComponent->getTabsConfig()) }} }"
-    x-on:switch-tab.window="if ($event.detail in tabs) tab = $event.detail"
+    x-on:open.window="if ($event.detail in tabs) tab = $event.detail"
     x-cloak
     {!! $formComponent->getId() ? "id=\"{$formComponent->getId()}\"" : null !!}
     class="{{ $columnSpanClass }} bg-white border border-gray-200 rounded p-4 md:p-6"

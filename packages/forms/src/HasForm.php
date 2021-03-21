@@ -2,10 +2,10 @@
 
 namespace Filament\Forms;
 
+use Filament\Forms\Components\Concerns\CanConcealFields;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tab;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -32,22 +32,25 @@ trait HasForm
         $this->fill($this->getPropertyDefaults());
     }
 
-    public function focusTabbedField($field)
+    public function focusConcealedField($field)
     {
         if ($field) {
-            $possibleTab = $field->getParent();
+            $possiblyConcealingComponent = $field->getParent();
 
-            while ($possibleTab) {
-                if ($possibleTab instanceof Tab) {
+            while ($possiblyConcealingComponent) {
+                if (in_array(
+                    CanConcealFields::class,
+                    class_uses_recursive($possiblyConcealingComponent),
+                )) {
                     $this->dispatchBrowserEvent(
-                        'switch-tab',
-                        $possibleTab->getParent()->getId() . '.' . $possibleTab->getId(),
+                        'open',
+                        $possiblyConcealingComponent->getId(),
                     );
 
                     break;
                 }
 
-                $possibleTab = $possibleTab->getParent();
+                $possiblyConcealingComponent = $possiblyConcealingComponent->getParent();
             }
         }
     }
@@ -196,7 +199,7 @@ trait HasForm
                 });
 
             if ($fieldToFocus) {
-                $this->focusTabbedField($fieldToFocus);
+                $this->focusConcealedField($fieldToFocus);
             }
 
             throw $exception;
@@ -216,7 +219,7 @@ trait HasForm
                 });
 
             if ($fieldToFocus) {
-                $this->focusTabbedField($fieldToFocus);
+                $this->focusConcealedField($fieldToFocus);
             }
 
             throw $exception;
@@ -250,7 +253,7 @@ trait HasForm
                 });
 
             if ($fieldToFocus) {
-                $this->focusTabbedField($fieldToFocus);
+                $this->focusConcealedField($fieldToFocus);
             }
 
             $this->setErrorBag($exception->validator->errors());

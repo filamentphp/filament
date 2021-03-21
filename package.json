@@ -20,7 +20,6 @@
     "dotenv": "^8.2.0",
     "focus-visible": "^5.2.0",
     "laravel-mix": "^6.0.11",
-    "lodash": "^4.17.20",
     "postcss": "^8.2.6",
     "postcss-import": "^14.0.0",
     "postcss-nested": "^5.0.3",
