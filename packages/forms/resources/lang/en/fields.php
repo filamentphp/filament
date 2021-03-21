@@ -32,13 +32,37 @@ return [
     ],
 
     'keyValue' => [
-        'addButtonLabel' => 'Add Row',
-        'deleteButtonLabel' => 'Delete Row',
-        'keyLabel' => 'Key',
-        'keyPlaceholder' => 'Enter a key...',
-        'sortButtonLabel' => 'Hold to Sort',
-        'valueLabel' => 'Value',
-        'valuePlaceholder' => 'Enter a placeholder...',
+
+        'buttons' => [
+
+            'add' => [
+                'label' => 'Add Row',
+            ],
+
+            'delete' => [
+                'label' => 'Delete Row',
+            ],
+
+            'sort' => [
+                'label' => 'Hold to Sort',
+            ],
+
+        ],
+
+        'fields' => [
+
+            'key' => [
+                'label' => 'Key',
+                'placeholder' => 'Enter a key...',
+            ],
+
+            'value' => [
+                'label' => 'Value',
+                'placeholder' => 'Enter a value...',
+            ],
+
+        ],
+
     ],
 
     'markdownEditor' => [
