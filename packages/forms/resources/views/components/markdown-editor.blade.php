@@ -3,8 +3,12 @@
 
     <style>
         [x-data^="markdownEditor"] textarea {
-            color: transparent;
             caret-color: black;
+            color: transparent;
+        }
+
+        [x-ref="overlay"] {
+            padding: 8px 12px;
         }
     </style>
 @endpushonce
@@ -74,11 +78,7 @@
                 },
 
                 init: function () {
-                    this.value = this.$refs.textarea.value
-
-                    this.$refs.overlay.style.padding = window.getComputedStyle(this.$refs.textarea).padding
-
-                    this.overlay = mdhl.highlight(this.$refs.textarea.value)
+                    this.resize()
 
                     this.$watch('tab', () => {
                         if (this.tab !== 'preview') return
@@ -88,7 +88,8 @@
                 },
 
                 resize: function () {
-                    this.$el.style.height = this.$refs.textarea.style.height
+                    this.$refs.overlay.style.height = '150px'
+                    this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + 'px'
 
                     this.overlay = mdhl.highlight(this.value = this.$refs.textarea.value)
                 },
@@ -157,8 +158,12 @@
     >
         <div class="space-y-2">
             @unless ($formComponent->isDisabled())
-                <div class="flex items-stretch justify-between h-8">
-                    <markdown-toolbar for="{{ $formComponent->getId() }}" class="flex items-stretch space-x-4">
+                <div class="flex items-stretch h-8" x-bind:class="{ 'justify-end': tab === 'preview', 'justify-between': tab !== 'preview' }">
+                    <markdown-toolbar
+                        for="{{ $formComponent->getId() }}"
+                        class="flex items-stretch space-x-4"
+                        x-show="tab !== 'preview'"
+                    >
                         @if ($formComponent->hasToolbarButton(['bold', 'italic', 'strike']))
                             <div class="flex items-stretch space-x-1">
                                 @if ($formComponent->hasToolbarButton('bold'))
@@ -274,11 +279,15 @@
                         x-on:keyup.enter="checkForAutoInsertion"
                         x-on:file-attachment-accepted.window="uploadAttachments"
                         x-ref="textarea"
-                        class="absolute bg-transparent top-0 left-0 block z-1 w-full h-full min-h-full rounded resize-none shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+                        class="tracking-normal whitespace-pre-wrap font-mono text-sm absolute bg-transparent top-0 left-0 block z-1 w-full h-full min-h-full rounded resize-none shadow-sm placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
                     ></textarea>
                 </file-attachment>
 
-                <div class="w-full h-full text-black break-words" x-ref="overlay" x-html="overlay"></div>
+                <div
+                    class="w-full h-full font-mono text-sm tracking-normal text-black break-words whitespace-pre-wrap"
+                    x-ref="overlay"
+                    x-html="overlay"
+                ></div>
             </div>
 
             <div class="block w-full h-full min-h-full px-6 py-4 border border-gray-300 rounded shadow-sm focus:border-blue-300" x-show="tab === 'preview'" style="min-height: 150px;">
