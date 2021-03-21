@@ -158,7 +158,7 @@
     >
         <div class="space-y-2">
             @unless ($formComponent->isDisabled())
-                <div class="flex items-stretch h-8" :class="{ 'justify-end': tab === 'preview', 'justify-between': tab !== 'preview' }">
+                <div class="flex items-stretch h-8" x-bind:class="{ 'justify-end': tab === 'preview', 'justify-between': tab !== 'preview' }">
                     <markdown-toolbar
                         for="{{ $formComponent->getId() }}"
                         class="flex items-stretch space-x-4"
