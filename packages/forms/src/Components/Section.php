@@ -2,8 +2,12 @@
 
 namespace Filament\Forms\Components;
 
+use Illuminate\Support\Str;
+
 class Section extends Component
 {
+    use Concerns\CanConcealFields;
+
     protected $collapsible = false;
 
     protected $collapsed = false;
@@ -85,6 +89,7 @@ class Section extends Component
     {
         return (new static())
             ->heading($heading)
+            ->id(Str::slug($heading))
             ->subheading($subheading)
             ->schema($schema);
     }
