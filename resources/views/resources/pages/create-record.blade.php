@@ -16,4 +16,15 @@
             </x-forms::container>
         </x-filament::card>
     </x-filament::app-content>
+
+    <div
+        x-data
+        x-init="
+            Mousetrap.bindGlobal('mod+s', $event => {
+                $event.preventDefault()
+
+                document.querySelector(`button[type='submit']`).click()
+            })
+        "
+    ></div>
 </div>

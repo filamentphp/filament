@@ -15,7 +15,7 @@
                         </x-filament::button>
                     </x-slot>
 
-                    <x-filament::card class="space-y-5 max-w-2xl">
+                    <x-filament::card class="max-w-2xl space-y-5">
                         <x-filament::card-header :title="static::$deleteModalHeading">
                             <p class="text-sm text-gray-500">
                                 {{ __(static::$deleteModalDescription) }}
@@ -59,4 +59,15 @@
             :relations="static::getResource()::relations()"
         />
     </x-filament::app-content>
+
+    <div
+        x-data
+        x-init="
+            Mousetrap.bindGlobal(['ctrl+s', 'command+s'], $event => {
+                $event.preventDefault()
+
+                document.querySelector(`button[type='submit']`).click()
+            })
+        "
+    ></div>
 </div>
