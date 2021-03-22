@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Forms\Components\Concerns;
+namespace Filament\Resources\Forms\Components\Concerns;
 
 trait CanBeUnique
 {
@@ -10,7 +10,7 @@ trait CanBeUnique
             $rule = "unique:$table,$column";
 
             if ($except) {
-                $rule .= ",{$except}";
+                $rule .= ',{{ record }}';
             }
 
             $this->addRules([$this->getName() => [$rule]]);

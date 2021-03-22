@@ -175,12 +175,8 @@ class Component
 
         $rules = $this instanceof Field ? $this->rules : [];
 
-        foreach ($rules as $field => $conditions) {
-            $rules[$field] = $this->transformConditions($conditions);
-        }
-
         foreach ($this->getSubform()->getRules() as $field => $conditions) {
-            $rules[$field] = array_merge($rules[$field] ?? [], $this->transformConditions($conditions));
+            $rules[$field] = array_merge($rules[$field] ?? [], $conditions);
         }
 
         return $rules;
@@ -347,18 +343,5 @@ class Component
         });
 
         return $this;
-    }
-
-    protected function transformConditions($conditions)
-    {
-        return collect($conditions)
-            ->map(function ($condition) {
-                if (! is_string($condition)) {
-                    return $condition;
-                }
-
-                return (string) Str::of($condition)->replace('{{ record }}', $this->getRecord() instanceof Model ? $this->getRecord()->getKey() : '');
-            })
-            ->toArray();
     }
 }
