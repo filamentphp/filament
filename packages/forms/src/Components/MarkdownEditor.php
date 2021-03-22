@@ -26,7 +26,7 @@ class MarkdownEditor extends Field
     {
         $this->attachmentDisk(config('forms.default_filesystem_disk'));
 
-        $attachmentUploadUrl = config('forms.default_attachment_upload_url');
+        $attachmentUploadUrl = route(config('forms.default_attachment_upload_route'));
 
         if ($attachmentUploadUrl) {
             $this->enableAttachments($attachmentUploadUrl);

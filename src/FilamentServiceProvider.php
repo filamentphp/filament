@@ -5,7 +5,6 @@ namespace Filament;
 use BladeUI\Icons\Factory as BladeUIFactory;
 use Filament\Models\User;
 use Filament\Pages\Page;
-use Filament\Providers\RouteServiceProvider;
 use Filament\Resources\Resource;
 use Filament\Roles\Role;
 use Filament\View\Components;
@@ -30,8 +29,8 @@ class FilamentServiceProvider extends ServiceProvider
     {
         $this->bootCommands();
         $this->bootDirectives();
-        $this->bootLoaders();
         $this->bootLivewireComponents();
+        $this->bootLoaders();
         $this->bootPublishing();
 
         $this->configure();
@@ -42,7 +41,6 @@ class FilamentServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
 
         $this->registerIcons();
-        $this->registerProviders();
 
         $this->discoverFilamentPages();
         $this->discoverFilamentResources();
@@ -108,6 +106,8 @@ class FilamentServiceProvider extends ServiceProvider
 
     protected function bootLoaders()
     {
+        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+
         $this->loadViewComponentsAs('filament', [
             'avatar' => Components\Avatar::class,
             'image' => Components\Image::class,
@@ -177,7 +177,7 @@ class FilamentServiceProvider extends ServiceProvider
             ]);
 
             $this->app['config']->set('forms', [
-                'default_attachment_upload_url' => route('filament.form-attachments.upload'),
+                'default_attachment_upload_route' => 'filament.form-attachments.upload',
                 'default_filesystem_disk' => $this->app['config']->get('filament.default_filesystem_disk'),
             ]);
         });
@@ -331,10 +331,5 @@ class FilamentServiceProvider extends ServiceProvider
 
                 Livewire::component($alias, $class);
             });
-    }
-
-    protected function registerProviders()
-    {
-        $this->app->register(RouteServiceProvider::class);
     }
 }
