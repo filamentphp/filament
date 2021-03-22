@@ -10,6 +10,8 @@ class BelongsToSelect extends Select
 
     protected $getOptions;
 
+    protected $isPreloaded = false;
+
     protected $relationship;
 
     protected $view = 'forms::components.select';
@@ -34,7 +36,7 @@ class BelongsToSelect extends Select
 
     public function getOptions()
     {
-        if ($callback = $this->getOptions) {
+        if ($this->isPreloaded() && $callback = $this->getOptions) {
             return $callback();
         }
 
@@ -62,16 +64,15 @@ class BelongsToSelect extends Select
         return $this->relationship;
     }
 
+    public function isPreloaded()
+    {
+        return $this->isPreloaded;
+    }
+
     public function preload()
     {
         $this->configure(function () {
-            $options = $this->getOptions();
-
-            if (! $options || ! $this->getModel()) {
-                return;
-            }
-
-            $this->options = $options;
+            $this->isPreloaded = true;
         });
 
         return $this;
