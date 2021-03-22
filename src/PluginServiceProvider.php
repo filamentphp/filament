@@ -46,7 +46,7 @@ abstract class PluginServiceProvider extends ServiceProvider
                 }
 
                 foreach ($this->styles() as $name => $path) {
-                    Filament::registerScript($name, $path);
+                    Filament::registerStyle($name, $path);
                 }
 
                 Filament::provideToScript($this->scriptData());

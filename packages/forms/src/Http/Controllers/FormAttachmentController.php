@@ -5,7 +5,7 @@ namespace Filament\Forms\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class RichEditorAttachmentController
+class FormAttachmentController
 {
     public function __invoke(Request $request)
     {

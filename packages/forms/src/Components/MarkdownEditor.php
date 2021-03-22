@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components;
 
-class RichEditor extends Field
+class MarkdownEditor extends Field
 {
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeCompared;
@@ -14,15 +14,12 @@ class RichEditor extends Field
         'bold',
         'bullet',
         'code',
-        'heading',
         'italic',
         'link',
         'number',
-        'quote',
-        'redo',
+        'preview',
         'strike',
-        'subheading',
-        'undo',
+        'write',
     ];
 
     protected function setUp()

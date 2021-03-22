@@ -18,7 +18,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['Commissioner', ...defaultTheme.fontFamily.sans],
-        mono: ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
+        mono: ['Space Mono', ...defaultTheme.fontFamily.mono],
       },
       colors: {
         primary: {

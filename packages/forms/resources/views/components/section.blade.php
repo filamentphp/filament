@@ -16,20 +16,45 @@
     ][$formComponent->getColumnSpan()]
 @endphp
 
-<div class="{{ $columnSpanClass }} space-y-3">
-    @if ($formComponent->getHeading())
+<section
+    x-data="{ open: {{ $formComponent->isCollapsed() ? 'false' : 'true' }} }"
+    x-on:open.window="if ($event.detail === '{{ $formComponent->getId() }}') open = true"
+    aria-labelledby="{{ $formComponent->getId() }}-heading"
+    class="space-y-4 p-4 rounded border border-gray-200 bg-gray-50 {{ $columnSpanClass }}"
+>
+    <div class="flex items-start justify-between space-x-4">
         <div class="space-y-1">
-            <h3 class="text-lg leading-tight font-medium">
-                {{ __($formComponent->getHeading()) }}
-            </h3>
+            @if ($heading = $formComponent->getHeading())
+                <h2 id="{{ $formComponent->getId() }}-heading" class="text-lg font-medium leading-tight">
+                    {{ __($heading) }}
+                </h2>
+            @endif
 
-            @if ($formComponent->getSubheading())
-                <p class="text-gray-700 text-sm">
-                    {{ __($formComponent->getSubheading()) }}
+            @if ($subheading = $formComponent->getSubheading())
+                <p class="text-sm text-gray-500">
+                    {{ __($subheading) }}
                 </p>
             @endif
         </div>
-    @endif
 
-    <x-forms::layout :schema="$formComponent->getSchema()" :columns="$formComponent->getColumns()" />
-</div>
+        <div class="flex">
+            @if ($formComponent->isCollapsible())
+                <button
+                    aria-controls="{{ $formComponent->getId() }}-content"
+                    x-on:click.prevent="open = ! open"
+                    class="flex p-2 -m-2 text-gray-400 transition-colors duration-200 hover:text-gray-700"
+                >
+                    <x-heroicon-o-chevron-down class="w-4 h-4" x-show="!open" />
+
+                    <x-heroicon-o-chevron-up class="w-4 h-4" x-show="open" />
+
+                    <span class="sr-only">{{ __('Toggle section content') }}</span>
+                </button>
+            @endif
+        </div>
+    </div>
+
+    <div id="{{ $formComponent->getId() }}-content" x-show.transition="open" :aria-expanded="open.toString()">
+        <x-forms::layout :schema="$formComponent->getSchema()" :columns="$formComponent->getColumns()" />
+    </div>
+</section>
