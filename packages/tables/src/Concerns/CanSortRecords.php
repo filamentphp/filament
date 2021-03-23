@@ -2,6 +2,8 @@
 
 namespace Filament\Tables\Concerns;
 
+use Illuminate\Support\Str;
+
 trait CanSortRecords
 {
     public $isSortable = true;
@@ -37,5 +39,31 @@ trait CanSortRecords
 
         $this->sortColumn = $column;
         $this->sortDirection = 'asc';
+    }
+
+    protected function applySorting($query)
+    {
+        if (
+            ! $this->isSortable() ||
+            $this->sortColumn === '' ||
+            $this->sortColumn === null
+        ) {
+            return $query;
+        }
+
+        if (Str::of($this->sortColumn)->contains('.')) {
+            $relationship = (string) Str::of($this->sortColumn)->beforeLast('.');
+
+            return $query->with([
+                $relationship => function ($query) {
+                    return $query->orderBy(
+                        (string) Str::of($this->sortColumn)->afterLast('.'),
+                        $this->sortDirection,
+                    );
+                },
+            ]);
+        }
+
+        return $query->orderBy($this->sortColumn, $this->sortDirection);
     }
 }
