@@ -57,7 +57,7 @@ class EditRecord extends Page
         ];
     }
 
-    public function form(Form $form)
+    protected function form(Form $form)
     {
         return static::getResource()::form(
             $form->model(static::getModel()),

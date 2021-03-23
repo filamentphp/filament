@@ -21,7 +21,7 @@ class Login extends Component
 
     public $remember = false;
 
-    public function form(Form $form)
+    protected function form(Form $form)
     {
         return $form
             ->schema([

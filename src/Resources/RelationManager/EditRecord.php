@@ -28,7 +28,7 @@ class EditRecord extends Component
         'switchRelationManagerEditRecord' => 'switchRecord',
     ];
 
-    public function form(Form $form)
+    protected function form(Form $form)
     {
         return $this->manager::form($form->model(get_class($this->owner->{$this->getRelationship()}()->getModel())));
     }

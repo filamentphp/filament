@@ -25,7 +25,7 @@ class ResetPassword extends Component
 
     public $user;
 
-    public function form(Form $form)
+    protected function form(Form $form)
     {
         return $form
             ->schema([
