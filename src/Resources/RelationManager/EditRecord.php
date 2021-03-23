@@ -3,7 +3,7 @@
 namespace Filament\Resources\RelationManager;
 
 use Filament\Filament;
-use Filament\Forms\HasForm;
+use Filament\Resources\Forms\HasForm;
 use Filament\Resources\Forms\Form;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
@@ -30,8 +30,7 @@ class EditRecord extends Component
 
     public function getForm()
     {
-        $form = Form::make()
-            ->context(static::class)
+        $form = Form::for($this)
             ->model(get_class($this->owner->{$this->getRelationship()}()->getModel()))
             ->submitMethod('save');
 

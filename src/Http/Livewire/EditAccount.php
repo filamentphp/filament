@@ -3,7 +3,7 @@
 namespace Filament\Http\Livewire;
 
 use Filament\Filament;
-use Filament\Forms\HasForm;
+use Filament\Resources\Forms\HasForm;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\Hash;
@@ -21,10 +21,8 @@ class EditAccount extends Page
     public function getForm()
     {
         return static::getResource()::form(
-            Form::make()
-                ->context(static::class)
+            Form::for($this)
                 ->model(static::getModel())
-                ->record($this->record)
                 ->submitMethod('save'),
         );
     }

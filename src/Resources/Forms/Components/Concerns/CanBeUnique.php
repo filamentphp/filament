@@ -2,6 +2,8 @@
 
 namespace Filament\Resources\Forms\Components\Concerns;
 
+use Illuminate\Database\Eloquent\Model;
+
 trait CanBeUnique
 {
     use \Filament\Forms\Components\Concerns\CanBeUnique;
@@ -11,8 +13,10 @@ trait CanBeUnique
         $this->configure(function () use ($column, $except, $table) {
             $rule = "unique:$table,$column";
 
-            if ($except) {
-                $rule .= ',{{ record }}';
+            $record = $this->getLivewire()->record;
+
+            if ($except && $record instanceof Model) {
+                $rule .= ",{$record->getKey()}";
             }
 
             $this->addRules([$this->getName() => [$rule]]);

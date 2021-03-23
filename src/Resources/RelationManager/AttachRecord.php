@@ -45,8 +45,7 @@ class AttachRecord extends Component
 
     public function getForm()
     {
-        return Form::make()
-            ->context(static::class)
+        return Form::for($this)
             ->submitMethod('attach')
             ->schema([
                 Select::make('related')

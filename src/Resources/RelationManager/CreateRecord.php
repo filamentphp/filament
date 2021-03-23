@@ -2,7 +2,7 @@
 
 namespace Filament\Resources\RelationManager;
 
-use Filament\Forms\HasForm;
+use Filament\Resources\Forms\HasForm;
 use Filament\Resources\Forms\Form;
 use Livewire\Component;
 
@@ -49,10 +49,8 @@ class CreateRecord extends Component
     public function getForm()
     {
         return $this->manager::form(
-            Form::make()
-                ->context(static::class)
+            Form::for($this)
                 ->model(get_class($this->owner->{$this->getRelationship()}()->getModel()))
-                ->record($this->record)
                 ->submitMethod('create'),
         );
     }

@@ -196,6 +196,11 @@ class Field extends Component
         return $this->validationAttribute;
     }
 
+    public function getValue()
+    {
+        return $this->getLivewire()->getPropertyValue($this->getName());
+    }
+
     public function helpMessage($message)
     {
         $this->configure(function () use ($message) {

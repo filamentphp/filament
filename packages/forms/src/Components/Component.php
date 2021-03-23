@@ -148,6 +148,11 @@ class Component
         return $this->label;
     }
 
+    public function getLivewire()
+    {
+        return $this->getForm()->getLivewire();
+    }
+
     public function getModel()
     {
         return $this->getForm()->getModel();
@@ -156,11 +161,6 @@ class Component
     public function getParent()
     {
         return $this->parent;
-    }
-
-    public function getRecord()
-    {
-        return $this->getForm()->getRecord();
     }
 
     public function getRules($field = null)
@@ -189,10 +189,8 @@ class Component
 
     public function getSubform()
     {
-        return Form::make()
-            ->context($this->getContext())
+        return Form::for($this->getLivewire())
             ->model($this->getModel())
-            ->record($this->getRecord())
             ->schema($this->getSchema());
     }
 
@@ -327,12 +325,8 @@ class Component
                 $callback = fn ($component) => $component->visible();
             }
 
-            if ($this->getRecord() === null) {
-                return $this;
-            }
-
             try {
-                $shouldExecuteCallback = $condition($this->getRecord());
+                $shouldExecuteCallback = $condition($this->getLivewire());
             } catch (\Exception $exception) {
                 $shouldExecuteCallback = false;
             }

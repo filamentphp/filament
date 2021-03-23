@@ -19,8 +19,7 @@ class RequestPassword extends Component
 
     public function getForm()
     {
-        return Form::make()
-            ->context(static::class)
+        return Form::for($this)
             ->schema([
                 Components\TextInput::make('email')
                     ->label('filament::auth/request-password.form.email.label')

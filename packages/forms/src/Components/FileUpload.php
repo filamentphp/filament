@@ -183,19 +183,9 @@ class FileUpload extends Field
 
     public function getUploadedFileUrl()
     {
-        $record = $this->getRecord();
+        $path = $this->getValue();
 
-        if ($record === null) return;
-
-        $name = $this->getName();
-
-        if (Str::of($name)->contains('.')) {
-            $name = (string) Str::of($name)->after('.');
-        }
-
-        $path = $record->{$name};
-
-        if (! $path) {
+        if ($path === null) {
             return null;
         }
 

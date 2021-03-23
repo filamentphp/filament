@@ -55,6 +55,11 @@ trait HasForm
         }
     }
 
+    protected function form()
+    {
+        return Form::for($this);
+    }
+
     public function getPropertyDefaults()
     {
         return $this->getForm()->getDefaultValues();

@@ -3,9 +3,9 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Filament;
+use Filament\Resources\Tables\HasTable;
 use Filament\Resources\Tables\RecordActions;
 use Filament\Resources\Tables\Table;
-use Filament\Tables\HasTable;
 use Illuminate\Support\Str;
 
 class ListRecords extends Page

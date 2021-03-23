@@ -23,8 +23,7 @@ class Login extends Component
 
     public function getForm()
     {
-        return Form::make()
-            ->context(static::class)
+        return Form::for($this)
             ->schema([
                 Components\TextInput::make('email')
                     ->label('filament::auth/login.form.email.label')

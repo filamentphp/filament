@@ -10,11 +10,9 @@ class Form
 
     protected $columns = 1;
 
-    protected $context;
+    protected $livewire;
 
     protected $model;
-
-    protected $record;
 
     protected $rules = [];
 
@@ -24,6 +22,11 @@ class Form
 
     protected $validationAttributes = [];
 
+    public function __construct($livewire)
+    {
+        $this->livewire($livewire);
+    }
+
     public function columns($columns)
     {
         $this->columns = $columns;
@@ -31,11 +34,9 @@ class Form
         return $this;
     }
 
-    public function context($context)
+    public static function for($livewire)
     {
-        $this->context = $context;
-
-        return $this;
+        return new static($livewire);
     }
 
     public function getColumns()
@@ -45,7 +46,7 @@ class Form
 
     public function getContext()
     {
-        return $this->context;
+        return get_class($this->getLivewire());
     }
 
     public function getDefaultValues()
@@ -70,14 +71,14 @@ class Form
         return $schema;
     }
 
+    public function getLivewire()
+    {
+        return $this->livewire;
+    }
+
     public function getModel()
     {
         return $this->model;
-    }
-
-    public function getRecord()
-    {
-        return $this->record;
     }
 
     public function getRules()
@@ -114,21 +115,16 @@ class Form
         return $attributes;
     }
 
-    public static function make()
+    public function livewire($component)
     {
-        return new static();
+        $this->livewire = $component;
+
+        return $this;
     }
 
     public function model($model)
     {
         $this->model = $model;
-
-        return $this;
-    }
-
-    public function record($record)
-    {
-        $this->record = (object) $record;
 
         return $this;
     }
