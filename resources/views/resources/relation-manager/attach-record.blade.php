@@ -11,6 +11,8 @@
                 color="primary"
                 class="w-full sm:w-auto"
             >
+                <x-filament::loader wire:target="attach" class="w-6 h-6 absolute left-0 ml-2 pointer-events-none" wire:loading />
+
                 {{ __($attachButtonLabel) }}
             </x-filament::button>
 

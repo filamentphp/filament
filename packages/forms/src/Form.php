@@ -2,6 +2,8 @@
 
 namespace Filament\Forms;
 
+use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Grid;
 use Illuminate\Support\Traits\Tappable;
 
 class Form
@@ -12,16 +14,13 @@ class Form
 
     protected $livewire;
 
+    protected $parent;
+
     protected $rules = [];
 
     protected $schema = [];
 
     protected $validationAttributes = [];
-
-    public function __construct($livewire)
-    {
-        $this->livewire($livewire);
-    }
 
     public function columns($columns)
     {
@@ -30,9 +29,14 @@ class Form
         return $this;
     }
 
+    public static function extend($form)
+    {
+        return (new static())->parent($form);
+    }
+
     public static function for($livewire)
     {
-        return new static($livewire);
+        return (new static())->livewire($livewire);
     }
 
     public function getColumns()
@@ -69,7 +73,12 @@ class Form
 
     public function getLivewire()
     {
-        return $this->livewire;
+        return $this->livewire ?? $this->getParent()->getLivewire();
+    }
+
+    public function getParent()
+    {
+        return $this->parent;
     }
 
     public function getRules()
@@ -104,6 +113,13 @@ class Form
     public function livewire($component)
     {
         $this->livewire = $component;
+
+        return $this;
+    }
+
+    public function parent($form)
+    {
+        $this->parent = $form;
 
         return $this;
     }

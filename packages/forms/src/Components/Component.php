@@ -183,8 +183,7 @@ class Component
 
     public function getSubform()
     {
-        return Form::for($this->getLivewire())
-            ->schema($this->getSchema());
+        return Form::extend($this)->schema($this->getSchema());
     }
 
     public function getValidationAttributes()

@@ -8,8 +8,6 @@ trait CanServeResourceSubform
 {
     public function getSubform()
     {
-        return Form::for($this->getLivewire())
-            ->model($this->getForm()->getModel())
-            ->schema($this->getSchema());
+        return Form::extend($this)->schema($this->getSchema());
     }
 }

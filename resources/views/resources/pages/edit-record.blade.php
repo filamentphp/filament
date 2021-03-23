@@ -43,21 +43,37 @@
     </x-filament::app-header>
 
     <x-filament::app-content class="space-y-6">
-        <x-filament::card>
-            <form
-                wire:submit.prevent="save"
-                class="space-y-6"
-            >
+        @php
+            $schema = $this->getForm()->getSchema();
+        @endphp
+
+        <form wire:submit.prevent="save" class="space-y-6">
+            @if ($this->getForm()->hasWrapper())
+                <x-filament::card class="space-y-6">
+                    <x-forms::form :schema="$this->getForm()->getSchema()" :columns="$this->getForm()->getColumns()" />
+
+                    <x-filament::button
+                        type="submit"
+                        color="primary"
+                    >
+                        <x-filament::loader wire:target="save" class="w-6 h-6 absolute left-0 ml-2 pointer-events-none" wire:loading />
+
+                        {{ __(static::$saveButtonLabel) }}
+                    </x-filament::button>
+                </x-filament::card>
+            @else
                 <x-forms::form :schema="$this->getForm()->getSchema()" :columns="$this->getForm()->getColumns()" />
 
                 <x-filament::button
                     type="submit"
                     color="primary"
                 >
+                    <x-filament::loader wire:target="save" class="w-6 h-6 absolute left-0 ml-2 pointer-events-none" wire:loading />
+
                     {{ __(static::$saveButtonLabel) }}
                 </x-filament::button>
-            </form>
-        </x-filament::card>
+            @endif
+        </form>
 
         <x-filament::resources.relations
             :owner="$record"

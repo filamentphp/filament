@@ -17,7 +17,7 @@ class Grid extends Component
 
     public function getColumns()
     {
-        return $this->columns;
+        return value($this->columns);
     }
 
     public function getSubform()
