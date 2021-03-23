@@ -43,9 +43,9 @@ class AttachRecord extends Component
         $this->related = null;
     }
 
-    public function getForm()
+    public function form(Form $form)
     {
-        return Form::for($this)
+        return $form
             ->schema([
                 Select::make('related')
                     ->label((string) Str::of($this->getRelationship())->singular()->ucfirst())

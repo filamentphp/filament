@@ -21,9 +21,9 @@ class Login extends Component
 
     public $remember = false;
 
-    public function getForm()
+    public function form(Form $form)
     {
-        return Form::for($this)
+        return $form
             ->schema([
                 Components\TextInput::make('email')
                     ->label('filament::auth/login.form.email.label')

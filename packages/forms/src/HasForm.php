@@ -6,6 +6,7 @@ use Filament\Forms\Components\Concerns\CanConcealFields;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Form;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -15,6 +16,8 @@ use Livewire\WithFileUploads;
 trait HasForm
 {
     use WithFileUploads;
+
+    protected $form;
 
     public $temporaryUploadedFiles = [];
 
@@ -55,9 +58,20 @@ trait HasForm
         }
     }
 
-    protected function form()
+    public function form(Form $form)
     {
-        return Form::for($this);
+        return $form;
+    }
+
+    public function getForm()
+    {
+        if ($this->form !== null) {
+            return $this->form;
+        }
+
+        return $this->form = $this->form(
+            Form::for($this),
+        );
     }
 
     public function getPropertyDefaults()

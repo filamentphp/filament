@@ -46,10 +46,10 @@ class CreateRecord extends Component
         $this->fillWithFormDefaults();
     }
 
-    public function getForm()
+    public function form(Form $form)
     {
         return $this->manager::form(
-            Form::for($this)->model(get_class($this->owner->{$this->getRelationship()}()->getModel())),
+            $form->model(get_class($this->owner->{$this->getRelationship()}()->getModel())),
         );
     }
 

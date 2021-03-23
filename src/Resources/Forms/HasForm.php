@@ -2,12 +2,25 @@
 
 namespace Filament\Resources\Forms;
 
+use Filament\Resources\Forms\Form;
+
 trait HasForm
 {
     use \Filament\Forms\HasForm;
 
-    protected function form()
+    public function form(Form $form)
     {
-        return Form::for($this);
+        return $form;
+    }
+
+    public function getForm()
+    {
+        if ($this->form !== null) {
+            return $this->form;
+        }
+
+        return $this->form = $this->form(
+            Form::for($this),
+        );
     }
 }

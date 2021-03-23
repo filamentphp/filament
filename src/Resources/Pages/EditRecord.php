@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Filament;
+use Filament\Resources\Forms\Form;
 use Filament\Resources\Forms\HasForm;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
@@ -56,10 +57,10 @@ class EditRecord extends Page
         ];
     }
 
-    public function getForm()
+    public function form(Form $form)
     {
         return static::getResource()::form(
-            $this->form()->model(static::getModel()),
+            $form->model(static::getModel()),
         );
     }
 

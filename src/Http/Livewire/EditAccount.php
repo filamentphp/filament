@@ -18,10 +18,10 @@ class EditAccount extends Page
 
     public static $view = 'filament::edit-account';
 
-    public function getForm()
+    public function form(Form $form)
     {
         return static::getResource()::form(
-            Form::for($this)->model(static::getModel()),
+            $form->model(static::getModel()),
         );
     }
 
