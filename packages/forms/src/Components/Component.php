@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Filament\Forms\Form;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Tappable;
 
@@ -153,11 +152,6 @@ class Component
         return $this->getForm()->getLivewire();
     }
 
-    public function getModel()
-    {
-        return $this->getForm()->getModel();
-    }
-
     public function getParent()
     {
         return $this->parent;
@@ -190,7 +184,6 @@ class Component
     public function getSubform()
     {
         return Form::for($this->getLivewire())
-            ->model($this->getModel())
             ->schema($this->getSchema());
     }
 

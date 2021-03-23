@@ -12,13 +12,9 @@ class Form
 
     protected $livewire;
 
-    protected $model;
-
     protected $rules = [];
 
     protected $schema = [];
-
-    protected $submitMethod = 'submit';
 
     protected $validationAttributes = [];
 
@@ -76,11 +72,6 @@ class Form
         return $this->livewire;
     }
 
-    public function getModel()
-    {
-        return $this->model;
-    }
-
     public function getRules()
     {
         $rules = $this->rules;
@@ -97,11 +88,6 @@ class Form
     public function getSchema()
     {
         return $this->schema;
-    }
-
-    public function getSubmitMethod()
-    {
-        return $this->submitMethod;
     }
 
     public function getValidationAttributes()
@@ -122,13 +108,6 @@ class Form
         return $this;
     }
 
-    public function model($model)
-    {
-        $this->model = $model;
-
-        return $this;
-    }
-
     public function rules($rules)
     {
         $this->rules = value($rules);
@@ -143,13 +122,6 @@ class Form
                 return $component->form($this);
             })
             ->toArray();
-
-        return $this;
-    }
-
-    public function submitMethod($method)
-    {
-        $this->submitMethod = $method;
 
         return $this;
     }

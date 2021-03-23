@@ -59,9 +59,7 @@ class EditRecord extends Page
     public function getForm()
     {
         return static::getResource()::form(
-            $this->form()
-                ->model(static::getModel())
-                ->submitMethod('save'),
+            $this->form()->model(static::getModel()),
         );
     }
 

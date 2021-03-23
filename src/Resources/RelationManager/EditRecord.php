@@ -30,13 +30,7 @@ class EditRecord extends Component
 
     public function getForm()
     {
-        $form = Form::for($this)
-            ->model(get_class($this->owner->{$this->getRelationship()}()->getModel()))
-            ->submitMethod('save');
-
-        if ($this->record instanceof Model) {
-            $form->record($this->record);
-        }
+        $form = Form::for($this)->model(get_class($this->owner->{$this->getRelationship()}()->getModel()));
 
         return $this->manager::form($form);
     }

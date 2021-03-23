@@ -49,9 +49,7 @@ class CreateRecord extends Component
     public function getForm()
     {
         return $this->manager::form(
-            Form::for($this)
-                ->model(get_class($this->owner->{$this->getRelationship()}()->getModel()))
-                ->submitMethod('create'),
+            Form::for($this)->model(get_class($this->owner->{$this->getRelationship()}()->getModel())),
         );
     }
 

@@ -45,7 +45,7 @@
     <x-filament::app-content class="space-y-6">
         <x-filament::card>
             <form
-                wire:submit.prevent="{{ $this->getForm()->getSubmitMethod() }}"
+                wire:submit.prevent="save"
                 class="space-y-6"
             >
                 <x-forms::form :schema="$this->getForm()->getSchema()" :columns="$this->getForm()->getColumns()" />

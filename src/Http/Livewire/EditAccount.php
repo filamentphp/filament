@@ -21,9 +21,7 @@ class EditAccount extends Page
     public function getForm()
     {
         return static::getResource()::form(
-            Form::for($this)
-                ->model(static::getModel())
-                ->submitMethod('save'),
+            Form::for($this)->model(static::getModel()),
         );
     }
 
