@@ -12,9 +12,9 @@ class AttachRecord extends Component
 {
     use HasForm;
 
-    public $owner;
-
     public $manager;
+
+    public $owner;
 
     public $related;
 
@@ -35,35 +35,6 @@ class AttachRecord extends Component
         $this->dispatchBrowserEvent('notify', __($manager::$attachModalAttachedMessage));
 
         $this->related = null;
-    }
-
-    protected function form(Form $form)
-    {
-        return $form
-            ->schema([
-                Select::make('related')
-                    ->label((string) Str::of($this->getRelationshipName())->singular()->ucfirst())
-                    ->placeholder('filament::resources/relation-manager.modals.attach.form.related.placeholder')
-                    ->getOptionSearchResultsUsing(function ($search) {
-                        $relationship = $this->owner->{$this->getRelationshipName()}();
-
-                        $query = $relationship->getRelated();
-
-                        $search = Str::lower($search);
-                        $searchOperator = [
-                            'pgsql' => 'ilike',
-                        ][$query->getConnection()->getDriverName()] ?? 'like';
-
-                        return $query
-                            ->where($this->getPrimaryColumn(), $searchOperator, "%{$search}%")
-                            ->whereDoesntHave($this->getInverseRelationshipName(), function ($query) {
-                                $query->where($this->owner->getQualifiedKeyName(), $this->owner->getKey());
-                            })
-                            ->pluck($this->getPrimaryColumn(), $query->getKeyName())
-                            ->toArray();
-                    })
-                    ->required(),
-            ]);
     }
 
     public function getInverseRelationshipName()
@@ -105,5 +76,34 @@ class AttachRecord extends Component
     public function render()
     {
         return view('filament::resources.relation-manager.attach-record');
+    }
+
+    protected function form(Form $form)
+    {
+        return $form
+            ->schema([
+                Select::make('related')
+                    ->label((string) Str::of($this->getRelationshipName())->singular()->ucfirst())
+                    ->placeholder('filament::resources/relation-manager.modals.attach.form.related.placeholder')
+                    ->getOptionSearchResultsUsing(function ($search) {
+                        $relationship = $this->owner->{$this->getRelationshipName()}();
+
+                        $query = $relationship->getRelated();
+
+                        $search = Str::lower($search);
+                        $searchOperator = [
+                            'pgsql' => 'ilike',
+                        ][$query->getConnection()->getDriverName()] ?? 'like';
+
+                        return $query
+                            ->where($this->getPrimaryColumn(), $searchOperator, "%{$search}%")
+                            ->whereDoesntHave($this->getInverseRelationshipName(), function ($query) {
+                                $query->where($this->owner->getQualifiedKeyName(), $this->owner->getKey());
+                            })
+                            ->pluck($this->getPrimaryColumn(), $query->getKeyName())
+                            ->toArray();
+                    })
+                    ->required(),
+            ]);
     }
 }

@@ -57,13 +57,6 @@ class EditRecord extends Page
         ];
     }
 
-    protected function form(Form $form)
-    {
-        return static::getResource()::form(
-            $form->model(static::getModel()),
-        );
-    }
-
     public function isAuthorized()
     {
         return Filament::can('update', $this->record);
@@ -103,5 +96,12 @@ class EditRecord extends Page
         $this->callHook('afterSave');
 
         $this->notify(__(static::$savedMessage));
+    }
+
+    protected function form(Form $form)
+    {
+        return static::getResource()::form(
+            $form->model(static::getModel()),
+        );
     }
 }

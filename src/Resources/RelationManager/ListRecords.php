@@ -68,16 +68,6 @@ class ListRecords extends Component
         $this->selected = [];
     }
 
-    public function getRelationship()
-    {
-        return $this->owner->{$this->getRelationshipName()}();
-    }
-
-    public function getRelationshipName()
-    {
-        return $this->manager::getRelationshipName();
-    }
-
     public function getPrimaryColumnAction($record)
     {
         if (! Filament::can('update', $record)) {
@@ -104,20 +94,19 @@ class ListRecords extends Component
         ];
     }
 
+    public function getRelationship()
+    {
+        return $this->owner->{$this->getRelationshipName()}();
+    }
+
+    public function getRelationshipName()
+    {
+        return $this->manager::getRelationshipName();
+    }
+
     public function hasPagination()
     {
         return false;
-    }
-
-    protected function table(Table $table)
-    {
-        return $this->manager::table(
-            $table
-                ->primaryColumnAction(function ($record) {
-                    return $this->getPrimaryColumnAction($record);
-                })
-                ->recordActions($this->getRecordActions()),
-        );
     }
 
     public function openAttach()
@@ -156,5 +145,16 @@ class ListRecords extends Component
         return view('filament::resources.relation-manager.list-records', [
             'records' => $this->getRecords(),
         ]);
+    }
+
+    protected function table(Table $table)
+    {
+        return $this->manager::table(
+            $table
+                ->primaryColumnAction(function ($record) {
+                    return $this->getPrimaryColumnAction($record);
+                })
+                ->recordActions($this->getRecordActions()),
+        );
     }
 }

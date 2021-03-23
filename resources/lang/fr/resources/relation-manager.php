@@ -13,7 +13,7 @@ return [
         ],
 
         'detach' => [
-            'label' => 'Détacher la sélection'
+            'label' => 'Détacher la sélection',
         ],
 
     ],

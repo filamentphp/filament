@@ -6,11 +6,6 @@ trait HasTable
 {
     use \Filament\Tables\HasTable;
 
-    protected function table(Table $table)
-    {
-        return $table;
-    }
-
     public function getTable()
     {
         if ($this->table !== null) {
@@ -20,5 +15,10 @@ trait HasTable
         return $this->table = $this->table(
             Table::for($this),
         );
+    }
+
+    protected function table(Table $table)
+    {
+        return $table;
     }
 }

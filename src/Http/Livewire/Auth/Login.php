@@ -21,27 +21,6 @@ class Login extends Component
 
     public $remember = false;
 
-    protected function form(Form $form)
-    {
-        return $form
-            ->schema([
-                Components\TextInput::make('email')
-                    ->label('filament::auth/login.form.email.label')
-                    ->email()
-                    ->autofocus()
-                    ->autocomplete('email')
-                    ->required(),
-                Components\TextInput::make('password')
-                    ->label('filament::auth/login.form.password.label')
-                    ->hint('[' . __('filament::auth/login.form.password.hint') . '](' . route('filament.auth.password.request') . ')')
-                    ->password()
-                    ->autocomplete('current-password')
-                    ->required(),
-                Components\Checkbox::make('remember')
-                    ->label('filament::auth/login.form.remember.label'),
-            ]);
-    }
-
     public function render()
     {
         return view('filament::auth.login')
@@ -72,5 +51,26 @@ class Login extends Component
         }
 
         return redirect()->intended(route('filament.dashboard'));
+    }
+
+    protected function form(Form $form)
+    {
+        return $form
+            ->schema([
+                Components\TextInput::make('email')
+                    ->label('filament::auth/login.form.email.label')
+                    ->email()
+                    ->autofocus()
+                    ->autocomplete('email')
+                    ->required(),
+                Components\TextInput::make('password')
+                    ->label('filament::auth/login.form.password.label')
+                    ->hint('[' . __('filament::auth/login.form.password.hint') . '](' . route('filament.auth.password.request') . ')')
+                    ->password()
+                    ->autocomplete('current-password')
+                    ->required(),
+                Components\Checkbox::make('remember')
+                    ->label('filament::auth/login.form.remember.label'),
+            ]);
     }
 }

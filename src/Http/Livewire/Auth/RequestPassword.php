@@ -17,21 +17,6 @@ class RequestPassword extends Component
 
     public $email;
 
-    protected function form(Form $form)
-    {
-        return $form
-            ->schema([
-                Components\TextInput::make('email')
-                    ->label('filament::auth/request-password.form.email.label')
-                    ->hint('[' . __('filament::auth/request-password.form.email.hint') . '](' . route('filament.auth.login') . ')')
-                    ->email()
-                    ->autofocus()
-                    ->autocomplete('email')
-                    ->required()
-                    ->email(),
-            ]);
-    }
-
     public function render()
     {
         return view('filament::.auth.request-password')
@@ -60,5 +45,20 @@ class RequestPassword extends Component
         }
 
         $this->dispatchBrowserEvent('notify', __("filament::auth/request-password.messages.{$requestStatus}"));
+    }
+
+    protected function form(Form $form)
+    {
+        return $form
+            ->schema([
+                Components\TextInput::make('email')
+                    ->label('filament::auth/request-password.form.email.label')
+                    ->hint('[' . __('filament::auth/request-password.form.email.hint') . '](' . route('filament.auth.login') . ')')
+                    ->email()
+                    ->autofocus()
+                    ->autocomplete('email')
+                    ->required()
+                    ->email(),
+            ]);
     }
 }

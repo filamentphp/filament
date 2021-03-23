@@ -6,6 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateFilamentUsersTable extends Migration
 {
+    public function down()
+    {
+        Schema::dropIfExists('filament_users');
+    }
+
     public function up()
     {
         Schema::create('filament_users', function (Blueprint $table) {
@@ -19,10 +24,5 @@ class CreateFilamentUsersTable extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
-    }
-
-    public function down()
-    {
-        Schema::dropIfExists('filament_users');
     }
 }

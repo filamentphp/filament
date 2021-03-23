@@ -3,7 +3,6 @@
 namespace Filament\Resources;
 
 use Filament\Filament;
-use Filament\Resources\RelationManager;
 use Illuminate\Database\Eloquent\Relations;
 use Livewire\Component;
 use Livewire\Livewire;
@@ -56,32 +55,16 @@ class RelationManager extends Component
 
     public static $editRecordActionLabel = 'filament::resources/pages/list-records.table.recordActions.edit.label';
 
+    public $owner;
+
+    public static $relationship;
+
     protected static $components = [
         'attach' => RelationManager\AttachRecord::class,
         'create' => RelationManager\CreateRecord::class,
         'edit' => RelationManager\EditRecord::class,
         'list' => RelationManager\ListRecords::class,
     ];
-
-    public $owner;
-
-    public static $relationship;
-
-    public static function getTitle()
-    {
-        if (property_exists(static::class, 'title')) {
-            return static::$title;
-        }
-        return (string) Str::of(static::getRelationshipName())
-            ->kebab()
-            ->replace('-', ' ')
-            ->title();
-    }
-
-    public static function getComponent($component)
-    {
-        return Livewire::getAlias(static::$components[$component]);
-    }
 
     public function canAttach()
     {
@@ -117,9 +100,19 @@ class RelationManager extends Component
         return true;
     }
 
+    public static function getComponent($component)
+    {
+        return Livewire::getAlias(static::$components[$component]);
+    }
+
     public function getModel()
     {
         return $this->getQuery()->getModel();
+    }
+
+    public function getOwner()
+    {
+        return $this->owner;
     }
 
     public static function getPrimaryColumn()
@@ -127,11 +120,6 @@ class RelationManager extends Component
         return property_exists(static::class, 'primaryColumn') && static::$primaryColumn !== '' ?
             static::$primaryColumn :
             null;
-    }
-
-    public function getOwner()
-    {
-        return $this->owner;
     }
 
     public function getQuery()
@@ -147,6 +135,18 @@ class RelationManager extends Component
     public static function getRelationshipName()
     {
         return static::$relationship;
+    }
+
+    public static function getTitle()
+    {
+        if (property_exists(static::class, 'title')) {
+            return static::$title;
+        }
+
+        return (string) Str::of(static::getRelationshipName())
+            ->kebab()
+            ->replace('-', ' ')
+            ->title();
     }
 
     public function isType($type)

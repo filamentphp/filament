@@ -13,7 +13,7 @@ return [
         ],
 
         'detach' => [
-            'label' => 'Scollega selezionati'
+            'label' => 'Scollega selezionati',
         ],
 
     ],

@@ -6,11 +6,6 @@ trait HasForm
 {
     use \Filament\Forms\HasForm;
 
-    protected function form(Form $form)
-    {
-        return $form;
-    }
-
     public function getForm()
     {
         if ($this->form !== null) {
@@ -20,5 +15,10 @@ trait HasForm
         return $this->form = $this->form(
             Form::for($this),
         );
+    }
+
+    protected function form(Form $form)
+    {
+        return $form;
     }
 }

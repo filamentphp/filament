@@ -6,7 +6,6 @@ use Filament\Forms\Components\Concerns\CanConcealFields;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -17,9 +16,9 @@ trait HasForm
 {
     use WithFileUploads;
 
-    protected $form;
-
     public $temporaryUploadedFiles = [];
+
+    protected $form;
 
     public function clearTemporaryUploadedFile($name)
     {
@@ -56,11 +55,6 @@ trait HasForm
                 $possiblyConcealingComponent = $possiblyConcealingComponent->getParent();
             }
         }
-    }
-
-    protected function form(Form $form)
-    {
-        return $form;
     }
 
     public function getForm()
@@ -287,5 +281,10 @@ trait HasForm
 
             throw $exception;
         }
+    }
+
+    protected function form(Form $form)
+    {
+        return $form;
     }
 }

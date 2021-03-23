@@ -11,19 +11,19 @@ trait HasTable
 
     public $filter = null;
 
+    public $hasPagination = true;
+
     public $isFilterable = true;
 
-    public $hasPagination = true;
+    public $isSearchable = true;
+
+    public $isSortable = true;
 
     public $recordsPerPage = 25;
 
     public $search = '';
 
-    public $isSearchable = true;
-
     public $selected = [];
-
-    public $isSortable = true;
 
     public $sortColumn = null;
 
@@ -170,11 +170,6 @@ trait HasTable
         $this->sortDirection = 'asc';
     }
 
-    protected function table(Table $table)
-    {
-        return $table;
-    }
-
     public function toggleSelectAll()
     {
         $records = $this->getRecords();
@@ -234,5 +229,10 @@ trait HasTable
         }
 
         $this->resetPage();
+    }
+
+    protected function table(Table $table)
+    {
+        return $table;
     }
 }

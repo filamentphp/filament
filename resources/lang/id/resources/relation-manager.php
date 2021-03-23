@@ -13,7 +13,7 @@ return [
         ],
 
         'detach' => [
-            'label' => 'Putuskan yang terpilih'
+            'label' => 'Putuskan yang terpilih',
         ],
 
     ],

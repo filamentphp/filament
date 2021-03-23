@@ -6,6 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateFilamentPasswordResetsTable extends Migration
 {
+    public function down()
+    {
+        Schema::dropIfExists('filament_password_resets');
+    }
+
     public function up()
     {
         Schema::create('filament_password_resets', function (Blueprint $table) {
@@ -13,10 +18,5 @@ class CreateFilamentPasswordResetsTable extends Migration
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
-    }
-
-    public function down()
-    {
-        Schema::dropIfExists('filament_password_resets');
     }
 }

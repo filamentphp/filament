@@ -13,7 +13,7 @@ return [
         ],
 
         'detach' => [
-            'label' => 'Detach selected'
+            'label' => 'Detach selected',
         ],
 
     ],

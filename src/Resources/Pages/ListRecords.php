@@ -56,6 +56,24 @@ class ListRecords extends Page
         $this->selected = [];
     }
 
+    public static function getTitle()
+    {
+        if (property_exists(static::class, 'title')) {
+            return static::$title;
+        }
+
+        return (string) Str::of(class_basename(static::getModel()))
+            ->kebab()
+            ->replace('-', ' ')
+            ->plural()
+            ->title();
+    }
+
+    public function isAuthorized()
+    {
+        return Filament::can('viewAny', static::getModel());
+    }
+
     public function table(Table $table)
     {
         return static::getResource()::table(
@@ -77,24 +95,6 @@ class ListRecords extends Page
                         ->when(fn ($record) => Filament::can('update', $record)),
                 ]),
         );
-    }
-
-    public static function getTitle()
-    {
-        if (property_exists(static::class, 'title')) {
-            return static::$title;
-        }
-
-        return (string) Str::of(class_basename(static::getModel()))
-            ->kebab()
-            ->replace('-', ' ')
-            ->plural()
-            ->title();
-    }
-
-    public function isAuthorized()
-    {
-        return Filament::can('viewAny', static::getModel());
     }
 
     protected function viewData()

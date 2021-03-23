@@ -22,11 +22,6 @@ class Table
 
     protected $shouldPrimaryColumnUrlOpenInNewTab = false;
 
-    public static function for($livewire)
-    {
-        return (new static())->livewire($livewire);
-    }
-
     public function columns($columns)
     {
         $this->columns = collect(value($columns))
@@ -47,6 +42,11 @@ class Table
             ->toArray();
 
         return $this;
+    }
+
+    public static function for($livewire)
+    {
+        return (new static())->livewire($livewire);
     }
 
     public function getColumns()

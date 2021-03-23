@@ -3,9 +3,8 @@
 namespace Filament\Resources\RelationManager;
 
 use Filament\Filament;
-use Filament\Resources\Forms\HasForm;
 use Filament\Resources\Forms\Form;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Resources\Forms\HasForm;
 use Livewire\Component;
 
 class EditRecord extends Component
@@ -21,11 +20,6 @@ class EditRecord extends Component
     protected $listeners = [
         'switchRelationManagerEditRecord' => 'switchRecord',
     ];
-
-    protected function form(Form $form)
-    {
-        return $this->manager::form($form->model(get_class($this->owner->{$this->getRelationshipName()}()->getModel())));
-    }
 
     public function getQuery()
     {
@@ -84,5 +78,10 @@ class EditRecord extends Component
 
         $this->record = $this->getQuery()->find($record);
         $this->resetTemporaryUploadedFiles();
+    }
+
+    protected function form(Form $form)
+    {
+        return $this->manager::form($form->model(get_class($this->owner->{$this->getRelationshipName()}()->getModel())));
     }
 }

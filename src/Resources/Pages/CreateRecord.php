@@ -49,13 +49,6 @@ class CreateRecord extends Page
         ];
     }
 
-    protected function form(Form $form)
-    {
-        return static::getResource()::form(
-            $form->model(static::getModel()),
-        );
-    }
-
     public function isAuthorized()
     {
         return Filament::can('create', static::getModel());
@@ -70,5 +63,12 @@ class CreateRecord extends Page
         $this->fillWithFormDefaults();
 
         $this->callHook('afterFill');
+    }
+
+    protected function form(Form $form)
+    {
+        return static::getResource()::form(
+            $form->model(static::getModel()),
+        );
     }
 }
