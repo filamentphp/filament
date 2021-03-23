@@ -20,11 +20,11 @@ class AttachRecord extends Component
 
     public function attach($another = false)
     {
-        $manager = $this->getManager();
+        $manager = $this->manager;
 
         $this->validate();
 
-        $this->getOwner()->{$this->getRelationshipName()}()->attach($this->getRelated());
+        $this->owner->{$this->getRelationshipName()}()->attach($this->related);
 
         $this->emit('refreshRelationManagerList', $manager);
 
@@ -45,7 +45,7 @@ class AttachRecord extends Component
                     ->label((string) Str::of($this->getRelationshipName())->singular()->ucfirst())
                     ->placeholder('filament::resources/relation-manager.modals.attach.form.related.placeholder')
                     ->getOptionSearchResultsUsing(function ($search) {
-                        $relationship = $this->getOwner()->{$this->getRelationshipName()}();
+                        $relationship = $this->owner->{$this->getRelationshipName()}();
 
                         $query = $relationship->getRelated();
 
@@ -57,7 +57,7 @@ class AttachRecord extends Component
                         return $query
                             ->where($this->getPrimaryColumn(), $searchOperator, "%{$search}%")
                             ->whereDoesntHave($this->getInverseRelationshipName(), function ($query) {
-                                $query->where($this->getOwner()->getQualifiedKeyName(), $this->getOwner()->getKey());
+                                $query->where($this->owner->getQualifiedKeyName(), $this->owner->getKey());
                             })
                             ->pluck($this->getPrimaryColumn(), $query->getKeyName())
                             ->toArray();
@@ -68,13 +68,13 @@ class AttachRecord extends Component
 
     public function getInverseRelationshipName()
     {
-        $manager = $this->getManager();
+        $manager = $this->manager;
 
         if (property_exists($manager, 'inverseRelationship')) {
             return $manager::$inverseRelationship;
         }
 
-        return (string) Str::of(class_basename($this->getOwner()))
+        return (string) Str::of(class_basename($this->owner))
             ->lower()
             ->plural()
             ->camel();
@@ -82,34 +82,19 @@ class AttachRecord extends Component
 
     public function getPrimaryColumn()
     {
-        return $this->getManager()::getPrimaryColumn() ?? $this->getOwner()->getKeyName();
+        return $this->manager::getPrimaryColumn() ?? $this->owner->getKeyName();
     }
 
     public function getRelationship()
     {
-        return $this->getOwner()->{$this->getRelationshipName()}();
+        return $this->owner->{$this->getRelationshipName()}();
     }
 
     public function getRelationshipName()
     {
-        $manager = $this->getManager();
+        $manager = $this->manager;
 
         return $manager::$relationship;
-    }
-
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    public function getManager()
-    {
-        return $this->manager;
-    }
-
-    public function getRelated()
-    {
-        return $this->related;
     }
 
     public function mount()

@@ -8,6 +8,17 @@ class Form extends \Filament\Forms\Form
 
     protected $model;
 
+    public function getColumns()
+    {
+        if (! $this->hasWrapper) {
+            return collect(parent::getSchema())
+                ->first()
+                ->getColumns();
+        }
+
+        return $this->columns;
+    }
+
     public function getModel()
     {
         return $this->model ?? $this->getParent()->getModel();

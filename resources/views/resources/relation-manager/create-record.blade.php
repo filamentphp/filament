@@ -10,7 +10,7 @@
                 type="submit"
                 color="primary"
             >
-                {{ __($this->getManager()::$createModalCreateButtonLabel) }}
+                {{ __($this->manager::$createModalCreateButtonLabel) }}
             </x-filament::button>
 
             <x-filament::button
@@ -18,11 +18,11 @@
                 color="primary"
                 wire:click="create(true)"
             >
-                {{ __($this->getManager()::$createModalCreateAnotherButtonLabel) }}
+                {{ __($this->manager::$createModalCreateAnotherButtonLabel) }}
             </x-filament::button>
 
             <x-filament::button x-on:click="$dispatch('close', '{{ (string) Str::of($manager)->replace('\\', '\\\\') }}RelationManagerCreateModal')">
-                {{ __($this->getManager()::$createModalCancelButtonLabel) }}
+                {{ __($this->manager::$createModalCancelButtonLabel) }}
             </x-filament::button>
         </div>
     </form>

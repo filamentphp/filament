@@ -20,7 +20,7 @@ class CreateRecord extends Component
 
     public function create($another = false)
     {
-        $manager = $this->getManager();
+        $manager = $this->manager;
 
         $this->validateTemporaryUploadedFiles();
 
@@ -28,7 +28,7 @@ class CreateRecord extends Component
 
         $this->validate();
 
-        $this->getOwner()->{$this->getRelationshipName()}()->create($this->record);
+        $this->owner->{$this->getRelationshipName()}()->create($this->record);
 
         $this->emit('refreshRelationManagerList', $manager);
 
@@ -44,29 +44,14 @@ class CreateRecord extends Component
 
     protected function form(Form $form)
     {
-        return $this->getManager()::form(
-            $form->model(get_class($this->getOwner()->{$this->getRelationshipName()}()->getModel())),
+        return $this->manager::form(
+            $form->model(get_class($this->owner->{$this->getRelationshipName()}()->getModel())),
         );
-    }
-
-    public function getManager()
-    {
-        return $this->manager;
-    }
-
-    public function getModel()
-    {
-        return $this->model;
-    }
-
-    public function getOwner()
-    {
-        return $this->owner;
     }
 
     public function getRelationshipName()
     {
-        $manager = $this->getManager();
+        $manager = $this->manager;
 
         return $manager::$relationship;
     }

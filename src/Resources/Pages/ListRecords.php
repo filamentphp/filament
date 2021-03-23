@@ -22,6 +22,16 @@ class ListRecords extends Page
 
     public static $view = 'filament::resources.pages.list-records';
 
+    public function canCreate()
+    {
+        return Filament::can('create', static::getModel());
+    }
+
+    public function canDelete()
+    {
+        return true;
+    }
+
     public function canDeleteSelected()
     {
         return static::getModel()::find($this->selected)

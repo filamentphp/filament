@@ -30,29 +30,9 @@ class ListRecords extends Component
         'refreshRelationManagerList' => 'refreshList',
     ];
 
-    public function canAttach()
-    {
-        return $this->canAttach;
-    }
-
-    public function canCreate()
-    {
-        return $this->canCreate;
-    }
-
-    public function canDelete()
-    {
-        return $this->canDelete;
-    }
-
-    public function canDetach()
-    {
-        return $this->canDetach;
-    }
-
     public function canDeleteSelected()
     {
-        return $this->getModel()::find($this->selected)
+        return $this->model::find($this->selected)
             ->contains(function ($record) {
                 return Filament::can('delete', $record);
             });
@@ -60,10 +40,10 @@ class ListRecords extends Component
 
     public function deleteSelected()
     {
-        abort_unless($this->canDelete(), 403);
+        abort_unless($this->canDelete, 403);
 
-        $this->getModel()::destroy(
-            $this->getModel()::find($this->selected)
+        $this->model::destroy(
+            $this->model::find($this->selected)
                 ->filter(function ($record) {
                     return Filament::can('delete', $record);
                 })
@@ -76,39 +56,26 @@ class ListRecords extends Component
 
     public function detachSelected()
     {
+        $manager = $this->manager;
+
         $relationship = $this->getRelationship();
 
         $relationship->detach($this->selected);
 
-        $this->dispatchBrowserEvent('close', $this->getManager() . 'RelationManagerDetachModal');
-        $this->dispatchBrowserEvent('notify', __($this->getManager()::$detachModalDetachedMessage));
+        $this->dispatchBrowserEvent('close', $manager . 'RelationManagerDetachModal');
+        $this->dispatchBrowserEvent('notify', __($manager::$detachModalDetachedMessage));
 
         $this->selected = [];
     }
 
-    public function getManager()
-    {
-        return $this->manager;
-    }
-
-    public function getModel()
-    {
-        return $this->model;
-    }
-
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
     public function getRelationship()
     {
-        return $this->getOwner()->{$this->getRelationshipName()}();
+        return $this->owner->{$this->getRelationshipName()}();
     }
 
     public function getRelationshipName()
     {
-        return $this->getManager()::getRelationshipName();
+        return $this->manager::getRelationshipName();
     }
 
     public function getPrimaryColumnAction($record)
@@ -127,7 +94,7 @@ class ListRecords extends Component
 
     public function getRecordActions()
     {
-        $manager = $this->getManager();
+        $manager = $this->manager;
 
         return [
             RecordActions\Link::make('edit')
@@ -144,7 +111,7 @@ class ListRecords extends Component
 
     protected function table(Table $table)
     {
-        return $this->getManager()::table(
+        return $this->manager::table(
             $table
                 ->primaryColumnAction(function ($record) {
                     return $this->getPrimaryColumnAction($record);
@@ -155,29 +122,29 @@ class ListRecords extends Component
 
     public function openAttach()
     {
-        $this->dispatchBrowserEvent('open', $this->getManager() . 'RelationManagerAttachModal');
+        $this->dispatchBrowserEvent('open', $this->manager . 'RelationManagerAttachModal');
     }
 
     public function openCreate()
     {
-        $this->dispatchBrowserEvent('open', $this->getManager() . 'RelationManagerCreateModal');
+        $this->dispatchBrowserEvent('open', $this->manager . 'RelationManagerCreateModal');
     }
 
     public function openDetach()
     {
-        $this->dispatchBrowserEvent('open', $this->getManager() . 'RelationManagerDetachModal');
+        $this->dispatchBrowserEvent('open', $this->manager . 'RelationManagerDetachModal');
     }
 
     public function openEdit($record)
     {
-        $this->emit('switchRelationManagerEditRecord', $this->getManager(), $record);
+        $this->emit('switchRelationManagerEditRecord', $this->manager, $record);
 
-        $this->dispatchBrowserEvent('open', $this->getManager() . 'RelationManagerEditModal');
+        $this->dispatchBrowserEvent('open', $this->manager . 'RelationManagerEditModal');
     }
 
     public function refreshList($manager = null)
     {
-        if ($manager !== null && $manager !== $this->getManager()) {
+        if ($manager !== null && $manager !== $this->manager) {
             return;
         }
 

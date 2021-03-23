@@ -24,7 +24,7 @@ class EditRecord extends Component
 
     protected function form(Form $form)
     {
-        return $this->getManager()::form($form->model(get_class($this->getOwner()->{$this->getRelationshipName()}()->getModel())));
+        return $this->manager::form($form->model(get_class($this->owner->{$this->getRelationshipName()}()->getModel())));
     }
 
     public function getQuery()
@@ -34,22 +34,12 @@ class EditRecord extends Component
 
     public function getRelationship()
     {
-        return $this->getOwner()->{$this->getRelationshipName()}();
-    }
-
-    public function getManager()
-    {
-        return $this->manager;
-    }
-
-    public function getOwner()
-    {
-        return $this->owner;
+        return $this->owner->{$this->getRelationshipName()}();
     }
 
     public function getRelationshipName()
     {
-        $manager = $this->getManager();
+        $manager = $this->manager;
 
         return $manager::$relationship;
     }
@@ -66,7 +56,7 @@ class EditRecord extends Component
 
     public function save()
     {
-        $manager = $this->getManager();
+        $manager = $this->manager;
 
         abort_unless(Filament::can('update', $this->record), 403);
 
@@ -88,7 +78,7 @@ class EditRecord extends Component
 
     public function switchRecord($manager, $record)
     {
-        if ($manager !== $this->getManager()) {
+        if ($manager !== $this->manager) {
             return;
         }
 
