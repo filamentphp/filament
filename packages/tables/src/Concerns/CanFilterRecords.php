@@ -50,6 +50,8 @@ trait CanFilterRecords
 
     protected function applyFilters($query)
     {
+        $query = $this->applySearch($query);
+
         if (
             ! $this->isFilterable() ||
             $this->filter === '' ||
@@ -63,8 +65,6 @@ trait CanFilterRecords
             ->each(function ($filter) use (&$query) {
                 $query = $filter->apply($query);
             });
-
-        $query = $this->applySearch($query);
 
         return $query;
     }
