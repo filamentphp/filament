@@ -8,9 +8,19 @@ trait CanSortRecords
 {
     public $isSortable = true;
 
-    public $sortColumn = null;
+    public $sortColumn;
 
     public $sortDirection = 'asc';
+
+    public function getDefaultSortColumn()
+    {
+        return null;
+    }
+
+    public function getDefaultSortDirection()
+    {
+        return 'asc';
+    }
 
     public function isSortable()
     {
@@ -41,29 +51,58 @@ trait CanSortRecords
         $this->sortDirection = 'asc';
     }
 
+    protected function applyRelationshipSort($query, $sort)
+    {
+        [$sortColumn, $sortDirection] = $sort;
+
+        $parentModel = $query->getModel();
+        $relationshipName = (string) Str::of($sortColumn)->beforeLast('.');
+        $relationship = $parentModel->{$relationshipName}();
+        $relatedColumnName = (string) Str::of($sortColumn)->afterLast('.');
+        $relatedModel = $relationship->getModel();
+
+        return $query->orderBy(
+            $relatedModel
+                ->query()
+                ->select($relatedColumnName)
+                ->whereColumn(
+                    "{$relatedModel->getTable()}.{$relationship->getOwnerKeyName()}",
+                    "{$parentModel->getTable()}.{$relationship->getForeignKeyName()}",
+                ),
+            $sortDirection,
+        );
+    }
+
     protected function applySorting($query)
     {
+        $sortColumn = $this->sortColumn;
+        $sortDirection = $this->sortDirection;
+
         if (
             ! $this->isSortable() ||
-            $this->sortColumn === '' ||
-            $this->sortColumn === null
+            $sortColumn === '' ||
+            $sortColumn === null
         ) {
-            return $query;
+            if ($this->getDefaultSortColumn() === null) {
+                return $query;
+            }
+
+            $sortColumn = $this->getDefaultSortColumn();
+            $sortDirection = $this->getDefaultSortDirection();
         }
 
-        if (Str::of($this->sortColumn)->contains('.')) {
-            $relationship = (string) Str::of($this->sortColumn)->beforeLast('.');
-
-            return $query->with([
-                $relationship => function ($query) {
-                    return $query->orderBy(
-                        (string) Str::of($this->sortColumn)->afterLast('.'),
-                        $this->sortDirection,
-                    );
-                },
-            ]);
+        if ($this->isRelationshipSort($sortColumn)) {
+            return $this->applyRelationshipSort(
+                $query,
+                [$sortColumn, $sortDirection],
+            );
         }
 
-        return $query->orderBy($this->sortColumn, $this->sortDirection);
+        return $query->orderBy($sortColumn, $sortDirection);
+    }
+
+    protected function isRelationshipSort($column)
+    {
+        return Str::of($column)->contains('.');
     }
 }
