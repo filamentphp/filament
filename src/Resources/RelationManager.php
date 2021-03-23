@@ -3,17 +3,13 @@
 namespace Filament\Resources;
 
 use Filament\Filament;
-use Filament\Resources\Tables\RecordActions;
-use Filament\Resources\Tables\Table;
-use Filament\Tables\HasTable;
+use Filament\Resources\RelationManager;
 use Illuminate\Database\Eloquent\Relations;
-use Illuminate\Support\Str;
 use Livewire\Component;
+use Livewire\Livewire;
 
 class RelationManager extends Component
 {
-    use HasTable;
-
     public static $attachButtonLabel = 'filament::resources/relation-manager.buttons.attach.label';
 
     public static $attachModalAttachAnotherButtonLabel = 'filament::resources/relation-manager.modals.attach.buttons.attachAnother.label';
@@ -60,19 +56,32 @@ class RelationManager extends Component
 
     public static $editRecordActionLabel = 'filament::resources/pages/list-records.table.recordActions.edit.label';
 
-    public $filterable = true;
+    protected static $components = [
+        'attach' => RelationManager\AttachRecord::class,
+        'create' => RelationManager\CreateRecord::class,
+        'edit' => RelationManager\EditRecord::class,
+        'list' => RelationManager\ListRecords::class,
+    ];
 
     public $owner;
 
     public static $relationship;
 
-    public $searchable = true;
+    public static function getTitle()
+    {
+        if (property_exists(static::class, 'title')) {
+            return static::$title;
+        }
+        return (string) Str::of(static::getRelationshipName())
+            ->kebab()
+            ->replace('-', ' ')
+            ->title();
+    }
 
-    public $sortable = true;
-
-    protected $listeners = [
-        'refreshRelationManagerList' => 'refreshList',
-    ];
+    public static function getComponent($component)
+    {
+        return Livewire::getAlias(static::$components[$component]);
+    }
 
     public function canAttach()
     {
@@ -96,15 +105,7 @@ class RelationManager extends Component
         return true;
     }
 
-    public function canDeleteSelected()
-    {
-        return $this->getModel()::find($this->selected)
-            ->contains(function ($record) {
-                return Filament::can('delete', $record);
-            });
-    }
-
-    public function canDetachSelected()
+    public function canDetach()
     {
         if (
             $this->isType(Relations\HasMany::class) ||
@@ -114,34 +115,6 @@ class RelationManager extends Component
         }
 
         return true;
-    }
-
-    public function deleteSelected()
-    {
-        abort_unless($this->canDelete(), 403);
-
-        $this->getModel()::destroy(
-            $this->getModel()::find($this->selected)
-                ->filter(function ($record) {
-                    return Filament::can('delete', $record);
-                })
-                ->map(fn ($record) => $record->getKey())
-                ->toArray(),
-        );
-
-        $this->selected = [];
-    }
-
-    public function detachSelected()
-    {
-        $relationship = $this->owner->{$this->getRelationship()}();
-
-        $relationship->detach($this->selected);
-
-        $this->dispatchBrowserEvent('close', static::class . 'RelationManagerDetachModal');
-        $this->dispatchBrowserEvent('notify', __(static::$detachModalDetachedMessage));
-
-        $this->selected = [];
     }
 
     public function getModel()
@@ -156,102 +129,33 @@ class RelationManager extends Component
             null;
     }
 
-    public function getPrimaryColumnAction($record)
+    public function getOwner()
     {
-        if (! Filament::can('update', $record)) {
-            return;
-        }
-
-        return 'openEdit';
+        return $this->owner;
     }
 
     public function getQuery()
     {
-        return $this->owner->{static::$relationship}();
+        return $this->getRelationship();
     }
 
-    public function getRecordActions()
+    public function getRelationship()
     {
-        return [
-            RecordActions\Link::make('edit')
-                ->label(static::$editRecordActionLabel)
-                ->action('openEdit')
-                ->when(fn ($record) => Filament::can('update', $record)),
-        ];
+        return $this->owner->{static::getRelationshipName()}();
     }
 
-    public static function getRelationship()
+    public static function getRelationshipName()
     {
         return static::$relationship;
     }
 
-    public function getTable()
-    {
-        return static::table(
-            Table::make()
-                ->filterable($this->filterable)
-                ->pagination(false)
-                ->primaryColumnAction(function ($record) {
-                    return $this->getPrimaryColumnAction($record);
-                })
-                ->recordActions($this->getRecordActions())
-                ->searchable($this->searchable)
-                ->sortable($this->sortable),
-        );
-    }
-
-    public static function getTitle()
-    {
-        if (property_exists(static::class, 'title')) {
-            return static::$title;
-        }
-
-        return (string) Str::of(static::$relationship)
-            ->kebab()
-            ->replace('-', ' ')
-            ->title();
-    }
-
     public function isType($type)
     {
-        return $this->owner->{$this->getRelationship()}() instanceof $type;
-    }
-
-    public function openAttach()
-    {
-        $this->dispatchBrowserEvent('open', static::class . 'RelationManagerAttachModal');
-    }
-
-    public function openCreate()
-    {
-        $this->dispatchBrowserEvent('open', static::class . 'RelationManagerCreateModal');
-    }
-
-    public function openDetach()
-    {
-        $this->dispatchBrowserEvent('open', static::class . 'RelationManagerDetachModal');
-    }
-
-    public function openEdit($record)
-    {
-        $this->emit('switchRelationManagerEditRecord', static::class, $record);
-
-        $this->dispatchBrowserEvent('open', static::class . 'RelationManagerEditModal');
-    }
-
-    public function refreshList($manager = null)
-    {
-        if ($manager !== null && $manager !== static::class) {
-            return;
-        }
-
-        $this->callMethod('$refresh');
+        return $this->getRelationship() instanceof $type;
     }
 
     public function render()
     {
-        return view('filament::relation-manager', [
-            'records' => $this->getRecords(),
-        ]);
+        return view('filament::relation-manager');
     }
 }

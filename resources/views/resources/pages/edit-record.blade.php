@@ -56,8 +56,6 @@
                         type="submit"
                         color="primary"
                     >
-                        <x-filament::loader wire:target="save" class="w-6 h-6 absolute left-0 ml-2 pointer-events-none" wire:loading />
-
                         {{ __(static::$saveButtonLabel) }}
                     </x-filament::button>
                 </x-filament::card>
@@ -68,8 +66,6 @@
                     type="submit"
                     color="primary"
                 >
-                    <x-filament::loader wire:target="save" class="w-6 h-6 absolute left-0 ml-2 pointer-events-none" wire:loading />
-
                     {{ __(static::$saveButtonLabel) }}
                 </x-filament::button>
             @endif

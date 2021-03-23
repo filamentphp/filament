@@ -31,7 +31,7 @@
             :table="$this->getTable()"
         />
 
-        @if ($this->getTable()->hasPagination())
+        @if ($this->hasPagination())
             <x-tables::pagination.paginator :paginator="$records" />
         @endif
     </x-filament::app-content>

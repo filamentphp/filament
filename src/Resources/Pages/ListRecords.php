@@ -18,27 +18,9 @@ class ListRecords extends Page
 
     public static $editRecordActionLabel = 'filament::resources/pages/list-records.table.recordActions.edit.label';
 
-    public $filterable = true;
-
-    public $pagination = true;
-
     public $recordRoute = 'edit';
 
-    public $searchable = true;
-
-    public $sortable = true;
-
     public static $view = 'filament::resources.pages.list-records';
-
-    public function canCreate()
-    {
-        return Filament::can('create', static::getModel());
-    }
-
-    public function canDelete()
-    {
-        return true;
-    }
 
     public function canDeleteSelected()
     {
@@ -64,13 +46,10 @@ class ListRecords extends Page
         $this->selected = [];
     }
 
-    public function getTable()
+    public function table(Table $table)
     {
         return static::getResource()::table(
-            Table::make()
-                ->context(static::class)
-                ->filterable($this->filterable)
-                ->pagination($this->pagination)
+            $table
                 ->primaryColumnUrl(function ($record) {
                     if (! Filament::can('update', $record)) {
                         return;
@@ -86,9 +65,7 @@ class ListRecords extends Page
                         ->label(static::$editRecordActionLabel)
                         ->url(fn ($record) => $this->getResource()::generateUrl($this->recordRoute, ['record' => $record]))
                         ->when(fn ($record) => Filament::can('update', $record)),
-                ])
-                ->searchable($this->searchable)
-                ->sortable($this->sortable),
+                ]),
         );
     }
 

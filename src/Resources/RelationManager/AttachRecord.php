@@ -12,33 +12,27 @@ class AttachRecord extends Component
 {
     use HasForm;
 
-    public $attachAnotherButtonLabel;
-
-    public $attachButtonLabel;
-
-    public $attachedMessage;
-
-    public $cancelButtonLabel;
+    public $owner;
 
     public $manager;
-
-    public $owner;
 
     public $related;
 
     public function attach($another = false)
     {
+        $manager = $this->getManager();
+
         $this->validate();
 
-        $this->owner->{$this->getRelationship()}()->attach($this->related);
+        $this->getOwner()->{$this->getRelationshipName()}()->attach($this->getRelated());
 
-        $this->emit('refreshRelationManagerList', $this->manager);
+        $this->emit('refreshRelationManagerList', $manager);
 
         if (! $another) {
-            $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerAttachModal");
+            $this->dispatchBrowserEvent('close', "{$manager}RelationManagerAttachModal");
         }
 
-        $this->dispatchBrowserEvent('notify', __($this->attachedMessage));
+        $this->dispatchBrowserEvent('notify', __($manager::$attachModalAttachedMessage));
 
         $this->related = null;
     }
@@ -48,10 +42,10 @@ class AttachRecord extends Component
         return $form
             ->schema([
                 Select::make('related')
-                    ->label((string) Str::of($this->getRelationship())->singular()->ucfirst())
+                    ->label((string) Str::of($this->getRelationshipName())->singular()->ucfirst())
                     ->placeholder('filament::resources/relation-manager.modals.attach.form.related.placeholder')
                     ->getOptionSearchResultsUsing(function ($search) {
-                        $relationship = $this->owner->{$this->getRelationship()}();
+                        $relationship = $this->getOwner()->{$this->getRelationshipName()}();
 
                         $query = $relationship->getRelated();
 
@@ -62,8 +56,8 @@ class AttachRecord extends Component
 
                         return $query
                             ->where($this->getPrimaryColumn(), $searchOperator, "%{$search}%")
-                            ->whereDoesntHave($this->getInverseRelationship(), function ($query) {
-                                $query->where($this->owner->getQualifiedKeyName(), $this->owner->getKey());
+                            ->whereDoesntHave($this->getInverseRelationshipName(), function ($query) {
+                                $query->where($this->getOwner()->getQualifiedKeyName(), $this->getOwner()->getKey());
                             })
                             ->pluck($this->getPrimaryColumn(), $query->getKeyName())
                             ->toArray();
@@ -72,15 +66,15 @@ class AttachRecord extends Component
             ]);
     }
 
-    public function getInverseRelationship()
+    public function getInverseRelationshipName()
     {
-        $manager = $this->manager;
+        $manager = $this->getManager();
 
         if (property_exists($manager, 'inverseRelationship')) {
             return $manager::$inverseRelationship;
         }
 
-        return (string) Str::of(class_basename($this->owner))
+        return (string) Str::of(class_basename($this->getOwner()))
             ->lower()
             ->plural()
             ->camel();
@@ -88,14 +82,34 @@ class AttachRecord extends Component
 
     public function getPrimaryColumn()
     {
-        return $this->manager::getPrimaryColumn() ?? $this->owner->getKeyName();
+        return $this->getManager()::getPrimaryColumn() ?? $this->getOwner()->getKeyName();
     }
 
     public function getRelationship()
     {
-        $manager = $this->manager;
+        return $this->getOwner()->{$this->getRelationshipName()}();
+    }
+
+    public function getRelationshipName()
+    {
+        $manager = $this->getManager();
 
         return $manager::$relationship;
+    }
+
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    public function getManager()
+    {
+        return $this->manager;
+    }
+
+    public function getRelated()
+    {
+        return $this->related;
     }
 
     public function mount()

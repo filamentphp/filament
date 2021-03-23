@@ -10,13 +10,11 @@
                 type="submit"
                 color="primary"
             >
-                <x-filament::loader wire:target="save" class="w-6 h-6 absolute left-0 ml-2 pointer-events-none" wire:loading />
-
-                {{ __($saveButtonLabel) }}
+                {{ __($this->getManager()::$editModalSaveButtonLabel) }}
             </x-filament::button>
 
             <x-filament::button x-on:click="$dispatch('close', '{{ (string) Str::of($manager)->replace('\\', '\\\\') }}RelationManagerEditModal')">
-                {{ __($cancelButtonLabel) }}
+                {{ __($this->getManager()::$editModalCancelButtonLabel) }}
             </x-filament::button>
         </div>
     </form>

@@ -12,17 +12,11 @@ class EditRecord extends Component
 {
     use HasForm;
 
-    public $cancelButtonLabel;
-
     public $manager;
 
     public $owner;
 
     public $record = [];
-
-    public $saveButtonLabel;
-
-    public $savedMessage;
 
     protected $listeners = [
         'switchRelationManagerEditRecord' => 'switchRecord',
@@ -30,17 +24,32 @@ class EditRecord extends Component
 
     protected function form(Form $form)
     {
-        return $this->manager::form($form->model(get_class($this->owner->{$this->getRelationship()}()->getModel())));
+        return $this->getManager()::form($form->model(get_class($this->getOwner()->{$this->getRelationshipName()}()->getModel())));
     }
 
     public function getQuery()
     {
-        return $this->owner->{$this->getRelationship()}();
+        return $this->getRelationship();
     }
 
     public function getRelationship()
     {
-        $manager = $this->manager;
+        return $this->getOwner()->{$this->getRelationshipName()}();
+    }
+
+    public function getManager()
+    {
+        return $this->manager;
+    }
+
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    public function getRelationshipName()
+    {
+        $manager = $this->getManager();
 
         return $manager::$relationship;
     }
@@ -57,6 +66,8 @@ class EditRecord extends Component
 
     public function save()
     {
+        $manager = $this->getManager();
+
         abort_unless(Filament::can('update', $this->record), 403);
 
         $this->validateTemporaryUploadedFiles();
@@ -67,17 +78,17 @@ class EditRecord extends Component
 
         $this->record->save();
 
-        $this->emit('refreshRelationManagerList', $this->manager);
+        $this->emit('refreshRelationManagerList', $manager);
 
-        $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerEditModal");
-        $this->dispatchBrowserEvent('notify', __($this->savedMessage));
+        $this->dispatchBrowserEvent('close', "{$manager}RelationManagerEditModal");
+        $this->dispatchBrowserEvent('notify', __($manager::$editModalSavedMessage));
 
         $this->record = [];
     }
 
     public function switchRecord($manager, $record)
     {
-        if ($manager !== $this->manager) {
+        if ($manager !== $this->getManager()) {
             return;
         }
 

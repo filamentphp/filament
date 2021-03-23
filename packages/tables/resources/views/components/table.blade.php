@@ -21,7 +21,7 @@
 
                 @foreach ($table->getVisibleColumns() as $column)
                     <th class="px-6 py-3 text-left text-gray-600" scope="col">
-                        @if ($table->isSortable() && $column->isSortable())
+                        @if ($this->isSortable() && $column->isSortable())
                             <button
                                 wire:click="sortBy('{{ $column->getName() }}')"
                                 type="button"

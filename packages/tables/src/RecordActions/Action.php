@@ -58,6 +58,11 @@ class Action
         return $this;
     }
 
+    public function getLivewire()
+    {
+        return $this->getTable()->getLivewire();
+    }
+
     public function getName()
     {
         return $this->name;

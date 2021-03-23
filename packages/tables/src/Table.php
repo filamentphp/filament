@@ -10,17 +10,9 @@ class Table
 
     protected $columns = [];
 
-    protected $context;
-
     protected $filters = [];
 
-    protected $hasPagination = true;
-
-    protected $isFilterable = true;
-
-    protected $isSearchable = true;
-
-    protected $isSortable = true;
+    protected $livewire;
 
     protected $primaryColumnAction;
 
@@ -30,6 +22,11 @@ class Table
 
     protected $shouldPrimaryColumnUrlOpenInNewTab = false;
 
+    public static function for($livewire)
+    {
+        return (new static())->livewire($livewire);
+    }
+
     public function columns($columns)
     {
         $this->columns = collect(value($columns))
@@ -37,48 +34,6 @@ class Table
                 return $column->table($this);
             })
             ->toArray();
-
-        return $this;
-    }
-
-    public function context($context)
-    {
-        $this->context = $context;
-
-        return $this;
-    }
-
-    public function disableFiltering()
-    {
-        $this->isFilterable = false;
-
-        return $this;
-    }
-
-    public function disablePagination()
-    {
-        $this->hasPagination = false;
-
-        return $this;
-    }
-
-    public function disableSearching()
-    {
-        $this->isSearchable = false;
-
-        return $this;
-    }
-
-    public function disableSorting()
-    {
-        $this->isSortable = false;
-
-        return $this;
-    }
-
-    public function filterable($filterable)
-    {
-        $this->isFilterable = $filterable;
 
         return $this;
     }
@@ -101,12 +56,17 @@ class Table
 
     public function getContext()
     {
-        return $this->columns;
+        return get_class($this->getLivewire());
     }
 
     public function getFilters()
     {
         return $this->filters;
+    }
+
+    public function getLivewire()
+    {
+        return $this->livewire;
     }
 
     public function getPrimaryColumnAction($record = null)
@@ -154,33 +114,11 @@ class Table
         return $filters;
     }
 
-    public function hasPagination()
+    public function livewire($component)
     {
-        return $this->hasPagination;
-    }
+        $this->livewire = $component;
 
-    public function isFilterable()
-    {
-        return $this->isFilterable && count($this->getFilters());
-    }
-
-    public function isSearchable()
-    {
-        return $this->isSearchable && collect($this->getColumns())
-                ->filter(fn ($column) => $column->isSearchable())
-                ->count();
-    }
-
-    public function isSortable()
-    {
-        return $this->isSortable && collect($this->columns)
-                ->filter(fn ($column) => $column->isSortable())
-                ->count();
-    }
-
-    public static function make()
-    {
-        return new static();
+        return $this;
     }
 
     public function openPrimaryColumnUrlInNewTab()
@@ -226,22 +164,8 @@ class Table
         return $this;
     }
 
-    public function searchable($searchable)
-    {
-        $this->searchable = $searchable;
-
-        return $this;
-    }
-
     public function shouldPrimaryColumnUrlOpenInNewTab()
     {
         return $this->shouldPrimaryColumnUrlOpenInNewTab;
-    }
-
-    public function sortable($sortable)
-    {
-        $this->sortable = $sortable;
-
-        return $this;
     }
 }

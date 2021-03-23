@@ -2,8 +2,6 @@
 
 namespace Filament\Resources\Forms;
 
-use Filament\Resources\Forms\Form;
-
 trait HasForm
 {
     use \Filament\Forms\HasForm;

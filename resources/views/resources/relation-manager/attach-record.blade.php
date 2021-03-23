@@ -11,9 +11,7 @@
                 color="primary"
                 class="w-full sm:w-auto"
             >
-                <x-filament::loader wire:target="attach" class="w-6 h-6 absolute left-0 ml-2 pointer-events-none" wire:loading />
-
-                {{ __($attachButtonLabel) }}
+                {{ __($this->getManager()::$attachModalAttachButtonLabel) }}
             </x-filament::button>
 
             <x-filament::button
@@ -22,14 +20,14 @@
                 wire:click="attach(true)"
                 class="w-full sm:w-auto"
             >
-                {{ __($attachAnotherButtonLabel) }}
+                {{ __($this->getManager()::$attachModalAttachAnotherButtonLabel) }}
             </x-filament::button>
 
             <x-filament::button
                 x-on:click="$dispatch('close', '{{ (string) Str::of($manager)->replace('\\', '\\\\') }}RelationManagerAttachModal')"
                 class="w-full sm:w-auto"
             >
-                {{ __($cancelButtonLabel) }}
+                {{ __($this->getManager()::$attachModalCancelButtonLabel) }}
             </x-filament::button>
         </div>
     </form>

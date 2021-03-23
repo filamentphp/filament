@@ -11,15 +11,25 @@ trait HasTable
 
     public $filter = null;
 
+    public $isFilterable = true;
+
+    public $hasPagination = true;
+
     public $recordsPerPage = 25;
 
     public $search = '';
 
+    public $isSearchable = true;
+
     public $selected = [];
+
+    public $isSortable = true;
 
     public $sortColumn = null;
 
     public $sortDirection = 'asc';
+
+    protected $table;
 
     public function deleteSelected()
     {
@@ -32,7 +42,7 @@ trait HasTable
     {
         $query = static::getQuery();
 
-        if ($this->getTable()->isFilterable() && $this->filter !== '' && $this->filter !== null) {
+        if ($this->isFilterable() && $this->filter !== '' && $this->filter !== null) {
             collect($this->getTable()->getFilters())
                 ->filter(fn ($filter) => $filter->getName() === $this->filter)
                 ->each(function ($filter) use (&$query) {
@@ -40,7 +50,7 @@ trait HasTable
                 });
         }
 
-        if ($this->getTable()->isSearchable() && $this->search !== '' && $this->search !== null) {
+        if ($this->isSearchable() && $this->search !== '' && $this->search !== null) {
             collect($this->getTable()->getColumns())
                 ->filter(fn ($column) => $column->isSearchable())
                 ->each(function ($column, $index) use (&$query) {
@@ -72,7 +82,7 @@ trait HasTable
                 });
         }
 
-        if ($this->getTable()->isSortable() && $this->sortColumn !== '' && $this->sortColumn !== null) {
+        if ($this->isSortable() && $this->sortColumn !== '' && $this->sortColumn !== null) {
             if (Str::of($this->sortColumn)->contains('.')) {
                 $relationship = (string) Str::of($this->sortColumn)->beforeLast('.');
 
@@ -89,11 +99,46 @@ trait HasTable
             }
         }
 
-        if (! $this->getTable()->hasPagination()) {
+        if (! $this->hasPagination()) {
             return $query->get();
         }
 
         return $query->paginate($this->recordsPerPage);
+    }
+
+    public function getTable()
+    {
+        if ($this->table !== null) {
+            return $this->table;
+        }
+
+        return $this->table = $this->table(
+            Table::for($this),
+        );
+    }
+
+    public function hasPagination()
+    {
+        return $this->hasPagination;
+    }
+
+    public function isFilterable()
+    {
+        return $this->isFilterable && count($this->getTable()->getFilters());
+    }
+
+    public function isSearchable()
+    {
+        return $this->isSearchable && collect($this->getTable()->getColumns())
+                ->filter(fn ($column) => $column->isSearchable())
+                ->count();
+    }
+
+    public function isSortable()
+    {
+        return $this->isSortable && collect($this->getTable()->getColumns())
+                ->filter(fn ($column) => $column->isSortable())
+                ->count();
     }
 
     public function setPage($page)
@@ -123,6 +168,11 @@ trait HasTable
 
         $this->sortColumn = $column;
         $this->sortDirection = 'asc';
+    }
+
+    protected function table(Table $table)
+    {
+        return $table;
     }
 
     public function toggleSelectAll()
@@ -157,7 +207,7 @@ trait HasTable
     {
         $this->selected = [];
 
-        if (! $this->getTable()->hasPagination()) {
+        if (! $this->hasPagination()) {
             return;
         }
 
@@ -168,7 +218,7 @@ trait HasTable
     {
         $this->selected = [];
 
-        if (! $this->getTable()->hasPagination()) {
+        if (! $this->hasPagination()) {
             return;
         }
 
@@ -179,7 +229,7 @@ trait HasTable
     {
         $this->selected = [];
 
-        if (! $this->getTable()->hasPagination()) {
+        if (! $this->hasPagination()) {
             return;
         }
 
