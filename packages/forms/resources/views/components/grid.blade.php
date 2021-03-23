@@ -17,5 +17,5 @@
 @endphp
 
 <div class="{{ $columnSpanClass }}">
-    <x-forms::layout :schema="$formComponent->getSchema()" :columns="$formComponent->getColumns()" />
+    <x-forms::form :schema="$formComponent->getSchema()" :columns="$formComponent->getColumns()" />
 </div>

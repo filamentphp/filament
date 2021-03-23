@@ -6,5 +6,5 @@
     x-show="tab === '{{ "{$formComponent->getId()}" }}'"
     class="p-4 md:p-6"
 >
-    <x-forms::layout :schema="$formComponent->getSchema()" :columns="$formComponent->getColumns()" />
+    <x-forms::form :schema="$formComponent->getSchema()" :columns="$formComponent->getColumns()" />
 </div>

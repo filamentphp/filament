@@ -1,5 +1,10 @@
 <div>
-    <x-forms::container :form="$this->getForm()" class="space-y-6">
+    <form
+        wire:submit.prevent="{{ $this->getForm()->getSubmitMethod() }}"
+        class="space-y-6"
+    >
+        <x-forms::form :schema="$this->getForm()->getSchema()" :columns="$this->getForm()->getColumns()" />
+
         <div class="space-x-3">
             <x-filament::button
                 type="submit"
@@ -12,5 +17,5 @@
                 {{ __($cancelButtonLabel) }}
             </x-filament::button>
         </div>
-    </x-forms::container>
+    </form>
 </div>
