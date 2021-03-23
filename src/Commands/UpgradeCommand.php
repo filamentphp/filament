@@ -15,28 +15,17 @@ class UpgradeCommand extends Command
 
     public function handle()
     {
-        $commands = [
-            'composer update',
-            'php artisan migrate',
-            'php artisan livewire:discover',
-            'php artisan route:clear',
-            'php artisan view:clear',
-        ];
+        system('composer update');
 
-        $bar = $this->output->createProgressBar(count($commands));
-
-        $bar->start();
-
-        foreach ($commands as $command) {
-            $this->newLine(2);
-            system($command);
-
-            $bar->advance();
+        foreach ([
+            'migrate',
+            'livewire:discover',
+            'route:clear',
+            'view:clear',
+        ] as $command) {
+            $this->call($command);
         }
 
-        $bar->finish();
-
-        $this->newLine(2);
         $this->info('Successfully upgraded!');
     }
 }
