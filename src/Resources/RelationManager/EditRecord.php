@@ -56,7 +56,11 @@ class EditRecord extends Component
 
     public function mount()
     {
+        $this->callHook('beforeFill');
+
         $this->fillWithFormDefaults();
+
+        $this->callHook('afterFill');
     }
 
     public function render()
@@ -68,13 +72,21 @@ class EditRecord extends Component
     {
         abort_unless(Filament::can('update', $this->record), 403);
 
+        $this->callHook('beforeValidate');
+
         $this->validateTemporaryUploadedFiles();
 
         $this->storeTemporaryUploadedFiles();
 
         $this->validate();
 
+        $this->callHook('afterValidate');
+
+        $this->callHook('beforeSave');
+
         $this->record->save();
+
+        $this->callHook('afterSave');
 
         $this->emit('refreshRelationManagerList', $this->manager);
 
@@ -92,5 +104,14 @@ class EditRecord extends Component
 
         $this->record = $this->getQuery()->find($record);
         $this->resetTemporaryUploadedFiles();
+    }
+
+    protected function callHook($hook)
+    {
+        if (! method_exists($this, $hook)) {
+            return;
+        }
+
+        $this->{$hook}();
     }
 }

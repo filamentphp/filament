@@ -26,13 +26,21 @@ class CreateRecord extends Component
 
     public function create($another = false)
     {
+        $this->callHook('beforeValidate');
+
         $this->validateTemporaryUploadedFiles();
 
         $this->storeTemporaryUploadedFiles();
 
         $this->validate();
 
+        $this->callHook('afterValidate');
+
+        $this->callHook('beforeCreate');
+
         $this->owner->{$this->getRelationship()}()->create($this->record);
+
+        $this->callHook('afterCreate');
 
         $this->emit('refreshRelationManagerList', $this->manager);
 
@@ -66,11 +74,24 @@ class CreateRecord extends Component
 
     public function mount()
     {
+        $this->callHook('beforeFill');
+
         $this->fillWithFormDefaults();
+
+        $this->callHook('afterFill');
     }
 
     public function render()
     {
         return view('filament::resources.relation-manager.create-record');
+    }
+
+    protected function callHook($hook)
+    {
+        if (! method_exists($this, $hook)) {
+            return;
+        }
+
+        $this->{$hook}();
     }
 }

@@ -28,9 +28,17 @@ class AttachRecord extends Component
 
     public function attach($another = false)
     {
+        $this->callHook('beforeValidate');
+
         $this->validate();
 
+        $this->callHook('afterValidate');
+
+        $this->callHook('beforeAttach');
+
         $this->owner->{$this->getRelationship()}()->attach($this->related);
+
+        $this->callHook('afterAttach');
 
         $this->emit('refreshRelationManagerList', $this->manager);
 
@@ -102,11 +110,24 @@ class AttachRecord extends Component
 
     public function mount()
     {
+        $this->callHook('beforeFill');
+
         $this->fillWithFormDefaults();
+
+        $this->callHook('afterFill');
     }
 
     public function render()
     {
         return view('filament::resources.relation-manager.attach-record');
+    }
+
+    protected function callHook($hook)
+    {
+        if (! method_exists($this, $hook)) {
+            return;
+        }
+
+        $this->{$hook}();
     }
 }
