@@ -22,6 +22,41 @@ trait CanSortRecords
         return 'asc';
     }
 
+    public function getSorts()
+    {
+        $sortColumn = $this->sortColumn;
+        $sortDirection = $this->sortDirection;
+
+        if (
+            ! $this->isSortable() ||
+            $sortColumn === '' ||
+            $sortColumn === null
+        ) {
+            if ($this->getDefaultSortColumn() === null) {
+                return [];
+            }
+
+            $sortColumn = $this->getDefaultSortColumn();
+            $sortDirection = $this->getDefaultSortDirection();
+
+            return [
+                [$sortColumn, $sortDirection],
+            ];
+        }
+
+        $column = collect($this->getTable()->getColumns())
+            ->filter(fn ($column) => $column->getName() === $sortColumn)
+            ->first();
+
+        if ($column === null) {
+            return [];
+        }
+
+        return collect($column->getSortColumns())
+            ->mapWithKeys(fn ($sortColumn) => [$sortColumn => $sortDirection])
+            ->toArray();
+    }
+
     public function isSortable()
     {
         return $this->isSortable && collect($this->getTable()->getColumns())
@@ -75,30 +110,18 @@ trait CanSortRecords
 
     protected function applySorting($query)
     {
-        $sortColumn = $this->sortColumn;
-        $sortDirection = $this->sortDirection;
-
-        if (
-            ! $this->isSortable() ||
-            $sortColumn === '' ||
-            $sortColumn === null
-        ) {
-            if ($this->getDefaultSortColumn() === null) {
-                return $query;
+        foreach ($this->getSorts() as $column => $direction) {
+            if ($this->isRelationshipSort($column)) {
+                $query = $this->applyRelationshipSort(
+                    $query,
+                    [$column, $direction],
+                );
+            } else {
+                $query = $query->orderBy($column, $direction);
             }
-
-            $sortColumn = $this->getDefaultSortColumn();
-            $sortDirection = $this->getDefaultSortDirection();
         }
 
-        if ($this->isRelationshipSort($sortColumn)) {
-            return $this->applyRelationshipSort(
-                $query,
-                [$sortColumn, $sortDirection],
-            );
-        }
-
-        return $query->orderBy($sortColumn, $sortDirection);
+        return $query;
     }
 
     protected function isRelationshipSort($column)

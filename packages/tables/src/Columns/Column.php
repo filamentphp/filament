@@ -26,6 +26,8 @@ class Column
 
     protected $name;
 
+    protected $sortColumns;
+
     protected $table;
 
     protected $view;
@@ -115,6 +117,32 @@ class Column
         return $this->name;
     }
 
+    public function getRelationshipName()
+    {
+        return Str::of($this->getName())->beforeLast('.');
+    }
+
+    public function getSortColumns()
+    {
+        $columns = $this->sortColumns;
+
+        if ($columns !== null) {
+            if (! is_array($columns)) {
+                $columns = [$columns];
+            }
+
+            if ($this->isRelationship()) {
+                $columns = collect($columns)
+                    ->map(fn ($column) => "{$this->getRelationshipName()}.{$column}")
+                    ->toArray();
+            }
+
+            return $columns;
+        }
+
+        return [$this->getName()];
+    }
+
     public function getTable()
     {
         return $this->table;
@@ -177,6 +205,11 @@ class Column
     public function isPrimary()
     {
         return $this->isPrimary;
+    }
+
+    public function isRelationship()
+    {
+        return Str::of($this->getName())->contains('.');
     }
 
     public function isSearchable()
@@ -267,10 +300,23 @@ class Column
         return $this;
     }
 
-    public function sortable()
+    public function sortable($columns = null)
     {
-        $this->configure(function () {
+        $this->configure(function () use ($columns) {
             $this->isSortable = true;
+
+            if ($columns) {
+                $this->sortColumns($columns);
+            }
+        });
+
+        return $this;
+    }
+
+    public function sortColumns($columns)
+    {
+        $this->configure(function () use ($columns) {
+            $this->sortColumns = $columns;
         });
 
         return $this;
