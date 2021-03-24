@@ -56,11 +56,11 @@ class EditRecord extends Component
 
     public function mount()
     {
-        $this->callHook('beforeFill');
+        $this->callHook('beforeFillOnEdit');
 
         $this->fillWithFormDefaults();
 
-        $this->callHook('afterFill');
+        $this->callHook('afterFillOnEdit');
     }
 
     public function render()
@@ -72,7 +72,7 @@ class EditRecord extends Component
     {
         abort_unless(Filament::can('update', $this->record), 403);
 
-        $this->callHook('beforeValidate');
+        $this->callHook('beforeValidateOnEdit');
 
         $this->validateTemporaryUploadedFiles();
 
@@ -80,7 +80,7 @@ class EditRecord extends Component
 
         $this->validate();
 
-        $this->callHook('afterValidate');
+        $this->callHook('afterValidateOnEdit');
 
         $this->callHook('beforeSave');
 

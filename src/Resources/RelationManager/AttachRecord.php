@@ -28,11 +28,11 @@ class AttachRecord extends Component
 
     public function attach($another = false)
     {
-        $this->callHook('beforeValidate');
+        $this->callHook('beforeValidateOnAttach');
 
         $this->validate();
 
-        $this->callHook('afterValidate');
+        $this->callHook('afterValidateOnAttach');
 
         $this->callHook('beforeAttach');
 
@@ -110,11 +110,11 @@ class AttachRecord extends Component
 
     public function mount()
     {
-        $this->callHook('beforeFill');
+        $this->callHook('beforeFillOnAttach');
 
         $this->fillWithFormDefaults();
 
-        $this->callHook('afterFill');
+        $this->callHook('afterFillOnAttach');
     }
 
     public function render()

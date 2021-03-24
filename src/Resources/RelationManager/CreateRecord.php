@@ -26,7 +26,7 @@ class CreateRecord extends Component
 
     public function create($another = false)
     {
-        $this->callHook('beforeValidate');
+        $this->callHook('beforeValidateOnCreate');
 
         $this->validateTemporaryUploadedFiles();
 
@@ -34,7 +34,7 @@ class CreateRecord extends Component
 
         $this->validate();
 
-        $this->callHook('afterValidate');
+        $this->callHook('afterValidateOnCreate');
 
         $this->callHook('beforeCreate');
 
@@ -74,11 +74,11 @@ class CreateRecord extends Component
 
     public function mount()
     {
-        $this->callHook('beforeFill');
+        $this->callHook('beforeFillOnCreate');
 
         $this->fillWithFormDefaults();
 
-        $this->callHook('afterFill');
+        $this->callHook('afterFillOnCreate');
     }
 
     public function render()
