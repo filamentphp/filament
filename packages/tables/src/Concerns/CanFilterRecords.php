@@ -4,7 +4,7 @@ namespace Filament\Tables\Concerns;
 
 trait CanFilterRecords
 {
-    public $filter = null;
+    public $filter;
 
     public $isFilterable = true;
 

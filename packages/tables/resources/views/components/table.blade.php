@@ -6,6 +6,12 @@
     'table',
 ])
 
+@if ($this->isReorderable())
+    @pushonce('filament-scripts:table')
+        <script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
+    @endpushonce
+@endif
+
 <div class="overflow-x-auto bg-white rounded shadow-xl">
     <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-200">
@@ -50,15 +56,23 @@
                 @endforeach
 
                 <th scope="col"></th>
+
+                @if ($this->isReorderable())
+                    <th scope="col"></th>
+                @endif
             </tr>
         </thead>
 
-        <tbody class="text-sm leading-tight divide-y divide-gray-200">
+        <tbody
+            @if ($this->isReorderable()) wire:sortable="reorder" @endif
+            class="text-sm leading-tight divide-y divide-gray-200"
+        >
             @forelse ($records as $record)
                 <tr
                     wire:key="{{ $record->getKey() }}"
                     wire:loading.class="opacity-50"
-                    class="{{ $loop->index % 2 ? 'bg-gray-50' : null }}"
+                    @if ($this->isReorderable()) wire:sortable.item="{{ $record->getKey() }}" @endif
+                    class="{{ $loop->index % 2 ? 'bg-gray-50' : 'bg-white' }}"
                 >
                     <td class="p-4 whitespace-nowrap">
                         <input
@@ -80,12 +94,18 @@
                             {{ $recordAction->render($record) }}
                         @endforeach
                     </td>
+
+                    @if ($this->isReorderable())
+                        <td wire:sortable.handle class="px-6 border-l cursor-move whitespace-nowrap">
+                            <x-heroicon-o-menu-alt-4 class="w-4 h-4 text-gray-500 mx-auto"/>
+                        </td>
+                    @endif
                 </tr>
             @empty
                 <tr>
                     <td
                         class="px-6 py-4 whitespace-nowrap"
-                        colspan="{{ count($table->getVisibleColumns()) + 2 }}"
+                        colspan="{{ count($table->getVisibleColumns()) + ($this->isReorderable() ? 3 : 2) }}"
                     >
                         <div class="flex items-center justify-center h-16">
                             <p class="font-mono text-xs text-gray-500">

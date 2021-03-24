@@ -6,6 +6,10 @@ use Illuminate\Support\Str;
 
 trait CanSortRecords
 {
+    public $defaultSortColumn;
+
+    public $defaultSortDirection;
+
     public $isSortable = true;
 
     public $sortColumn;
@@ -14,12 +18,22 @@ trait CanSortRecords
 
     public function getDefaultSortColumn()
     {
-        return null;
+        return $this->defaultSortColumn ?? $this->getTable()->getDefaultSortColumn();
     }
 
     public function getDefaultSortDirection()
     {
-        return 'asc';
+        return $this->defaultSortDirection ?? $this->getTable()->getDefaultSortDirection();
+    }
+
+    public function getDefaultSort()
+    {
+        return [$this->getDefaultSortColumn(), $this->getDefaultSortDirection()];
+    }
+
+    public function hasDefaultSort()
+    {
+        return $this->getDefaultSortColumn() !== null;
     }
 
     public function getSorts()
@@ -32,15 +46,12 @@ trait CanSortRecords
             $sortColumn === '' ||
             $sortColumn === null
         ) {
-            if ($this->getDefaultSortColumn() === null) {
+            if (! $this->hasDefaultSort()) {
                 return [];
             }
 
-            $sortColumn = $this->getDefaultSortColumn();
-            $sortDirection = $this->getDefaultSortDirection();
-
             return [
-                [$sortColumn, $sortDirection],
+                $this->getDefaultSort(),
             ];
         }
 
@@ -110,7 +121,9 @@ trait CanSortRecords
 
     protected function applySorting($query)
     {
-        foreach ($this->getSorts() as $column => $direction) {
+        foreach ($this->getSorts() as $sort) {
+            [$column, $direction] = $sort;
+
             if ($this->isRelationshipSort($column)) {
                 $query = $this->applyRelationshipSort(
                     $query,

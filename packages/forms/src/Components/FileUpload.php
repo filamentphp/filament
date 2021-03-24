@@ -30,9 +30,9 @@ class FileUpload extends Field
 
     protected $minSize;
 
-    protected $panelAspectRatio = null;
+    protected $panelAspectRatio;
 
-    protected $panelLayout = null;
+    protected $panelLayout;
 
     protected $removeUploadButtonPosition = 'left';
 

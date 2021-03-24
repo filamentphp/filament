@@ -8,7 +8,7 @@ class Field extends Component
 {
     protected $bindingAttribute = 'wire:model.defer';
 
-    protected $defaultValue = null;
+    protected $defaultValue;
 
     protected $extraAttributes = [];
 

@@ -2,6 +2,7 @@
 
 namespace Filament\Tables;
 
+use App\Models\Customer;
 use Illuminate\Support\Traits\Tappable;
 
 class Table
@@ -9,6 +10,10 @@ class Table
     use Tappable;
 
     protected $columns = [];
+
+    protected $defaultSortColumn;
+
+    protected $defaultSortDirection = 'asc';
 
     protected $filters = [];
 
@@ -20,6 +25,8 @@ class Table
 
     protected $recordActions = [];
 
+    protected $reorderUsing;
+
     protected $shouldPrimaryColumnUrlOpenInNewTab = false;
 
     public function columns($columns)
@@ -29,6 +36,28 @@ class Table
                 return $column->table($this);
             })
             ->toArray();
+
+        return $this;
+    }
+
+    public function defaultSortColumn($column)
+    {
+        $this->defaultSortColumn = $column;
+
+        return $this;
+    }
+
+    public function defaultSortDirection($direction)
+    {
+        $this->defaultSortDirection = $direction;
+
+        return $this;
+    }
+
+    public function defaultSort($column, $direction = 'asc')
+    {
+        $this->defaultSortColumn($column);
+        $this->defaultSortDirection($direction);
 
         return $this;
     }
@@ -57,6 +86,21 @@ class Table
     public function getContext()
     {
         return get_class($this->getLivewire());
+    }
+
+    public function getDefaultSort()
+    {
+        return [$this->getDefaultSortColumn(), $this->getDefaultSortDirection()];
+    }
+
+    public function getDefaultSortColumn()
+    {
+        return $this->defaultSortColumn;
+    }
+
+    public function getDefaultSortDirection()
+    {
+        return $this->defaultSortDirection;
     }
 
     public function getFilters()
@@ -162,6 +206,41 @@ class Table
             ->toArray();
 
         return $this;
+    }
+
+    public function reorderUsing($callback)
+    {
+        $this->reorderUsing = $callback;
+
+        return $this;
+    }
+
+    public function reorderOn($column)
+    {
+        $this->reorderUsing(function ($order) use ($column) {
+            foreach ($order as $item) {
+                $record = $this->getLivewire()::getQuery()->find($item['value']);
+
+                if (! $record) return;
+
+                $record->{$column} = $item['order'];
+                $record->save();
+            }
+        });
+
+        return $this;
+    }
+
+    public function reorder($order)
+    {
+        $callback = $this->reorderUsing;
+
+        return $callback($order, $this->getLivewire());
+    }
+
+    public function isReorderable()
+    {
+        return $this->reorderUsing !== null;
     }
 
     public function shouldPrimaryColumnUrlOpenInNewTab()
