@@ -108,10 +108,10 @@ class EditRecord extends Component
 
     protected function callHook($hook)
     {
-        if (! method_exists($this, $hook)) {
+        if (! method_exists($this->manager, $hook)) {
             return;
         }
 
-        $this->{$hook}();
+        $this->manager::{$hook}($this->record);
     }
 }
