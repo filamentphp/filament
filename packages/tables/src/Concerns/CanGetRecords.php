@@ -14,6 +14,8 @@ trait CanGetRecords
 
         $query = $this->applyFilters($query);
 
+        $query = $this->applySearch($query);
+
         $query = $this->applySorting($query);
 
         if ($this->hasPagination()) {
