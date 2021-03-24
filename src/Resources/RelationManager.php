@@ -3,6 +3,9 @@
 namespace Filament\Resources;
 
 use Filament\Filament;
+use Filament\Resources\RelationManager\AttachRecord;
+use Filament\Resources\RelationManager\CreateRecord;
+use Filament\Resources\RelationManager\EditRecord;
 use Filament\Resources\Tables\RecordActions;
 use Filament\Resources\Tables\Table;
 use Filament\Tables\HasTable;
@@ -253,5 +256,20 @@ class RelationManager extends Component
         return view('filament::relation-manager', [
             'records' => $this->getRecords(),
         ]);
+    }
+
+    public static function getCreateRecordClass()
+    {
+        return CreateRecord::class;
+    }
+
+    public static function getEditRecordClass()
+    {
+        return EditRecord::class;
+    }
+
+    public static function getAttachRecordClass()
+    {
+        return AttachRecord::class;
     }
 }
