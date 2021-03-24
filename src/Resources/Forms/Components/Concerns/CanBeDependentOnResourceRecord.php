@@ -10,7 +10,7 @@ trait CanBeDependentOnResourceRecord
             if (! $callback) {
                 $this->hidden();
 
-                $callback = fn ($component) => $component->visible();
+                $callback = fn ($component, $record) => $component->visible();
             }
 
             try {
@@ -20,7 +20,7 @@ trait CanBeDependentOnResourceRecord
             }
 
             if ($shouldExecuteCallback) {
-                $callback($this);
+                $callback($this, (object) $this->getLivewire()->record);
             }
         });
 
