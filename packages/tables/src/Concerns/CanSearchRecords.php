@@ -10,7 +10,7 @@ trait CanSearchRecords
 
     public $search = '';
 
-    protected $hasSearchesApplied = false;
+    protected $hasSearchQueriesApplied = false;
 
     public function getSearch()
     {
@@ -40,7 +40,7 @@ trait CanSearchRecords
         $relationshipName = (string) Str::of($searchColumn)->beforeLast('.');
         $relatedColumnName = (string) Str::of($searchColumn)->afterLast('.');
 
-        return $query->{$this->hasNoSearchesApplied() ? 'whereHas' : 'orWhereHas'}(
+        return $query->{$this->hasNoSearchQueriesApplied() ? 'whereHas' : 'orWhereHas'}(
             $relationshipName,
             fn ($query) => $query->where($relatedColumnName, $this->getSearchOperator(), "%{$this->getSearch()}%"),
         );
@@ -63,12 +63,12 @@ trait CanSearchRecords
                     if ($this->isRelationshipSearch($searchColumn)) {
                         $query = $this->applyRelationshipSearch($query, $searchColumn);
                     } else {
-                        $query = $query->{$this->hasNoSearchesApplied() ? 'where' : 'orWhere'}(
+                        $query = $query->{$this->hasNoSearchQueriesApplied() ? 'where' : 'orWhere'}(
                             fn ($query) => $query->where($searchColumn, $this->getSearchOperator(), "%{$this->getSearch()}%"),
                         );
                     }
 
-                    $this->hasSearchesApplied = true;
+                    $this->hasSearchQueriesApplied = true;
                 }
             });
 
@@ -82,14 +82,14 @@ trait CanSearchRecords
         ][$this->getQuery()->getConnection()->getDriverName()] ?? 'like';
     }
 
-    protected function hasNoSearchesApplied()
+    protected function hasNoSearchQueriesApplied()
     {
-        return ! $this->hasSearchesApplied;
+        return ! $this->hasSearchQueriesApplied;
     }
 
-    protected function hasSearchesApplied()
+    protected function hasSearchQueriesApplied()
     {
-        return $this->hasSearchesApplied;
+        return $this->hasSearchQueriesApplied;
     }
 
     protected function isRelationshipSearch($column)
