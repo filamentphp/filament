@@ -10,24 +10,22 @@ trait CanValidateInput
 {
     public function focusConcealedField($field)
     {
-        if ($field) {
-            $possiblyConcealingComponent = $field->getParent();
+        $possiblyConcealingComponent = $field->getParent();
 
-            while ($possiblyConcealingComponent) {
-                if (in_array(
-                    CanConcealFields::class,
-                    class_uses_recursive($possiblyConcealingComponent),
-                )) {
-                    $this->dispatchBrowserEvent(
-                        'open',
-                        $possiblyConcealingComponent->getId(),
-                    );
+        while ($possiblyConcealingComponent) {
+            if (in_array(
+                CanConcealFields::class,
+                class_uses_recursive($possiblyConcealingComponent),
+            )) {
+                $this->dispatchBrowserEvent(
+                    'open',
+                    $possiblyConcealingComponent->getId(),
+                );
 
-                    break;
-                }
-
-                $possiblyConcealingComponent = $possiblyConcealingComponent->getParent();
+                break;
             }
+
+            $possiblyConcealingComponent = $possiblyConcealingComponent->getParent();
         }
     }
 
