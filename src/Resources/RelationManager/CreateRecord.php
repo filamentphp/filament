@@ -8,6 +8,7 @@ use Livewire\Component;
 
 class CreateRecord extends Component
 {
+    use Concerns\CanCallHooks;
     use HasForm;
 
     public $manager;
@@ -22,13 +23,21 @@ class CreateRecord extends Component
     {
         $manager = $this->manager;
 
+        $this->callHook('beforeValidate');
+
         $this->validateTemporaryUploadedFiles();
 
         $this->storeTemporaryUploadedFiles();
 
         $this->validate();
 
+        $this->callHook('afterValidate');
+
+        $this->callHook('beforeCreate');
+
         $this->owner->{$this->getRelationshipName()}()->create($this->record);
+
+        $this->callHook('afterCreate');
 
         $this->emit('refreshRelationManagerList', $manager);
 
@@ -64,7 +73,11 @@ class CreateRecord extends Component
     {
         $this->record = [];
 
+        $this->callHook('beforeFill');
+
         $this->fillWithFormDefaults();
+
+        $this->callHook('afterFill');
     }
 
     protected function form(Form $form)

@@ -10,6 +10,7 @@ use Livewire\Component;
 
 class AttachRecord extends Component
 {
+    use Concerns\CanCallHooks;
     use HasForm;
 
     public $manager;
@@ -24,7 +25,11 @@ class AttachRecord extends Component
 
         $this->validate();
 
+        $this->callHook('beforeAttach');
+
         $this->owner->{$this->getRelationshipName()}()->attach($this->related);
+
+        $this->callHook('afterAttach');
 
         $this->emit('refreshRelationManagerList', $manager);
 

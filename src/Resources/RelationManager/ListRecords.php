@@ -10,6 +10,7 @@ use Livewire\Component;
 
 class ListRecords extends Component
 {
+    use Concerns\CanCallHooks;
     use HasTable;
 
     public $canAttach;
@@ -42,6 +43,8 @@ class ListRecords extends Component
     {
         abort_unless($this->canDelete, 403);
 
+        $this->callHook('beforeDelete');
+
         $this->model::destroy(
             $this->model::find($this->selected)
                 ->filter(function ($record) {
@@ -50,6 +53,8 @@ class ListRecords extends Component
                 ->map(fn ($record) => $record->getKey())
                 ->toArray(),
         );
+
+        $this->callHook('afterDelete');
 
         $this->selected = [];
     }
@@ -60,7 +65,11 @@ class ListRecords extends Component
 
         $relationship = $this->getRelationship();
 
+        $this->callHook('beforeDetach');
+
         $relationship->detach($this->selected);
+
+        $this->callHook('afterDetach');
 
         $this->dispatchBrowserEvent('close', $manager . 'RelationManagerDetachModal');
         $this->dispatchBrowserEvent('notify', __($manager::$detachModalDetachedMessage));

@@ -44,6 +44,8 @@ class ListRecords extends Page
     {
         $this->authorize('delete');
 
+        $this->callHook('beforeDelete');
+
         static::getModel()::destroy(
             static::getModel()::find($this->selected)
                 ->filter(function ($record) {
@@ -52,6 +54,8 @@ class ListRecords extends Page
                 ->map(fn ($record) => $record->getKey())
                 ->toArray(),
         );
+
+        $this->callHook('afterDelete');
 
         $this->selected = [];
     }

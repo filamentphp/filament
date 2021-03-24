@@ -9,6 +9,7 @@ use Livewire\Component;
 
 class EditRecord extends Component
 {
+    use Concerns\CanCallHooks;
     use HasForm;
 
     public $manager;
@@ -54,13 +55,21 @@ class EditRecord extends Component
 
         abort_unless(Filament::can('update', $this->record), 403);
 
+        $this->callHook('beforeValidate');
+
         $this->validateTemporaryUploadedFiles();
 
         $this->storeTemporaryUploadedFiles();
 
         $this->validate();
 
+        $this->callHook('afterValidate');
+
+        $this->callHook('beforeSave');
+
         $this->record->save();
+
+        $this->callHook('afterSave');
 
         $this->emit('refreshRelationManagerList', $manager);
 
@@ -76,8 +85,12 @@ class EditRecord extends Component
             return;
         }
 
+        $this->callHook('beforeFill');
+
         $this->record = $this->getQuery()->find($record);
         $this->resetTemporaryUploadedFiles();
+
+        $this->callHook('afterFill');
     }
 
     protected function fillRecord()
