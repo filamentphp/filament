@@ -40,7 +40,7 @@ class EditRecord extends Component
 
     public function mount()
     {
-        $this->fillWithFormDefaults();
+        $this->fillRecord();
     }
 
     public function render()
@@ -78,6 +78,11 @@ class EditRecord extends Component
 
         $this->record = $this->getQuery()->find($record);
         $this->resetTemporaryUploadedFiles();
+    }
+
+    protected function fillRecord()
+    {
+        $this->fillWithFormDefaults();
     }
 
     protected function form(Form $form)

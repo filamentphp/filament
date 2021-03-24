@@ -11,7 +11,15 @@ class CreateRecord extends Page
 {
     use HasForm;
 
+    public static $cancelButtonLabel = 'filament::resources/pages/edit-record.buttons.cancel.label';
+
+    public static $createAnotherButtonLabel = 'filament::resources/pages/create-record.buttons.createAnother.label';
+
     public static $createButtonLabel = 'filament::resources/pages/create-record.buttons.create.label';
+
+    public static $createdMessage = 'filament::resources/pages/create-record.messages.created';
+
+    public static $indexRoute = 'index';
 
     public $record;
 
@@ -19,7 +27,7 @@ class CreateRecord extends Page
 
     public static $view = 'filament::resources.pages.create-record';
 
-    public function create()
+    public function create($another = false)
     {
         $this->callHook('beforeValidate');
 
@@ -36,6 +44,14 @@ class CreateRecord extends Page
         $this->record = static::getModel()::create($this->record);
 
         $this->callHook('afterCreate');
+
+        if ($another) {
+            $this->fillRecord();
+
+            $this->notify(__(static::$createdMessage));
+
+            return;
+        }
 
         $this->redirect($this->getResource()::generateUrl(static::$showRoute, [
             'record' => $this->record,
@@ -55,6 +71,11 @@ class CreateRecord extends Page
     }
 
     public function mount()
+    {
+        $this->fillRecord();
+    }
+
+    protected function fillRecord()
     {
         $this->record = [];
 

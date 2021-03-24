@@ -52,22 +52,34 @@
                 <x-filament::card class="space-y-6">
                     <x-forms::form :schema="$this->getForm()->getSchema()" :columns="$this->getForm()->getColumns()" />
 
+                    <div class="space-x-3">
+                        <x-filament::button
+                            type="submit"
+                            color="primary"
+                        >
+                            {{ __(static::$saveButtonLabel) }}
+                        </x-filament::button>
+
+                        <x-filament::button :href="$this->getResource()::generateUrl(static::$indexRoute)">
+                            {{ __(static::$cancelButtonLabel) }}
+                        </x-filament::button>
+                    </div>
+                </x-filament::card>
+            @else
+                <x-forms::form :schema="$this->getForm()->getSchema()" :columns="$this->getForm()->getColumns()" />
+
+                <div class="space-x-3">
                     <x-filament::button
                         type="submit"
                         color="primary"
                     >
                         {{ __(static::$saveButtonLabel) }}
                     </x-filament::button>
-                </x-filament::card>
-            @else
-                <x-forms::form :schema="$this->getForm()->getSchema()" :columns="$this->getForm()->getColumns()" />
 
-                <x-filament::button
-                    type="submit"
-                    color="primary"
-                >
-                    {{ __(static::$saveButtonLabel) }}
-                </x-filament::button>
+                    <x-filament::button :href="$this->getResource()::generateUrl(static::$indexRoute)">
+                        {{ __(static::$cancelButtonLabel) }}
+                    </x-filament::button>
+                </div>
             @endif
         </form>
 

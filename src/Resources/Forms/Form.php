@@ -21,7 +21,7 @@ class Form extends \Filament\Forms\Form
 
     public function getModel()
     {
-        return $this->model ?? $this->getParent()->getModel();
+        return $this->model ?? $this->getParent()->getForm()->getModel();
     }
 
     public function getSchema()

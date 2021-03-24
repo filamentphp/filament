@@ -12,6 +12,8 @@ class EditRecord extends Page
 {
     use HasForm;
 
+    public static $cancelButtonLabel = 'filament::resources/pages/edit-record.buttons.cancel.label';
+
     public static $deleteButtonLabel = 'filament::resources/pages/edit-record.buttons.delete.label';
 
     public static $deleteModalCancelButtonLabel = 'filament::resources/pages/edit-record.modals.delete.buttons.cancel.label';
@@ -22,7 +24,7 @@ class EditRecord extends Page
 
     public static $deleteModalHeading = 'filament::resources/pages/edit-record.modals.delete.heading';
 
-    public $indexRoute = 'index';
+    public static $indexRoute = 'index';
 
     public $record;
 
@@ -47,7 +49,7 @@ class EditRecord extends Page
 
         $this->callHook('afterDelete');
 
-        $this->redirect($this->getResource()::generateUrl($this->indexRoute));
+        $this->redirect($this->getResource()::generateUrl(static::$indexRoute));
     }
 
     public static function getBreadcrumbs()
@@ -64,17 +66,7 @@ class EditRecord extends Page
 
     public function mount($record)
     {
-        $this->callHook('beforeFill');
-
-        $model = static::getModel();
-
-        $this->record = (new $model())->resolveRouteBinding($record);
-
-        if ($this->record === null) {
-            throw (new ModelNotFoundException())->setModel($model, [$record]);
-        }
-
-        $this->callHook('afterFill');
+        $this->fillRecord($record);
     }
 
     public function save()
@@ -96,6 +88,21 @@ class EditRecord extends Page
         $this->callHook('afterSave');
 
         $this->notify(__(static::$savedMessage));
+    }
+
+    protected function fillRecord($record)
+    {
+        $this->callHook('beforeFill');
+
+        $model = static::getModel();
+
+        $this->record = (new $model())->resolveRouteBinding($record);
+
+        if ($this->record === null) {
+            throw (new ModelNotFoundException())->setModel($model, [$record]);
+        }
+
+        $this->callHook('afterFill');
     }
 
     protected function form(Form $form)

@@ -32,14 +32,15 @@ class CreateRecord extends Component
 
         $this->emit('refreshRelationManagerList', $manager);
 
-        if (! $another) {
-            $this->dispatchBrowserEvent('close', "{$manager}RelationManagerCreateModal");
+        if ($another) {
+            $this->fillRecord();
+
+            $this->dispatchBrowserEvent('notify', __($manager::$createModalCreatedMessage));
+
+            return;
         }
 
-        $this->dispatchBrowserEvent('notify', __($manager::$createModalCreatedMessage));
-
-        $this->record = [];
-        $this->fillWithFormDefaults();
+        $this->dispatchBrowserEvent('close', "{$manager}RelationManagerCreateModal");
     }
 
     public function getRelationshipName()
@@ -51,12 +52,19 @@ class CreateRecord extends Component
 
     public function mount()
     {
-        $this->fillWithFormDefaults();
+        $this->fillRecord();
     }
 
     public function render()
     {
         return view('filament::resources.relation-manager.create-record');
+    }
+
+    protected function fillRecord()
+    {
+        $this->record = [];
+
+        $this->fillWithFormDefaults();
     }
 
     protected function form(Form $form)
