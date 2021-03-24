@@ -16,6 +16,11 @@ trait CanSortRecords
 
     public $sortDirection = 'asc';
 
+    public function getDefaultSort()
+    {
+        return [$this->getDefaultSortColumn(), $this->getDefaultSortDirection()];
+    }
+
     public function getDefaultSortColumn()
     {
         return $this->defaultSortColumn ?? $this->getTable()->getDefaultSortColumn();
@@ -24,16 +29,6 @@ trait CanSortRecords
     public function getDefaultSortDirection()
     {
         return $this->defaultSortDirection ?? $this->getTable()->getDefaultSortDirection();
-    }
-
-    public function getDefaultSort()
-    {
-        return [$this->getDefaultSortColumn(), $this->getDefaultSortDirection()];
-    }
-
-    public function hasDefaultSort()
-    {
-        return $this->getDefaultSortColumn() !== null;
     }
 
     public function getSorts()
@@ -66,6 +61,11 @@ trait CanSortRecords
         return collect($column->getSortColumns())
             ->mapWithKeys(fn ($sortColumn) => [$sortColumn => $sortDirection])
             ->toArray();
+    }
+
+    public function hasDefaultSort()
+    {
+        return $this->getDefaultSortColumn() !== null;
     }
 
     public function isSortable()
