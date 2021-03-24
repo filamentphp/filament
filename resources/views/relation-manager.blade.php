@@ -52,7 +52,7 @@
                 <x-filament::card class="space-y-5">
                     <x-filament::card-header :title="static::$createModalHeading" />
 
-                    @livewire(\Livewire\Livewire::getAlias(static::getCreateRecordClass()), [
+                    @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\CreateRecord::class), [
                         'cancelButtonLabel' => static::$createModalCancelButtonLabel,
                         'createAnotherButtonLabel' => static::$createModalCreateAnotherButtonLabel,
                         'createButtonLabel' => static::$createModalCreateButtonLabel,
@@ -71,7 +71,7 @@
             <x-filament::card class="space-y-5">
                 <x-filament::card-header :title="static::$editModalHeading" />
 
-                @livewire(\Livewire\Livewire::getAlias(static::getEditRecordClass()), [
+                @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\EditRecord::class), [
                     'cancelButtonLabel' => static::$editModalCancelButtonLabel,
                     'manager' => static::class,
                     'owner' => $this->owner,
@@ -89,7 +89,7 @@
                 <x-filament::card class="w-full space-y-5">
                     <x-filament::card-header :title="static::$attachModalHeading" />
 
-                    @livewire(\Livewire\Livewire::getAlias(static::getAttachRecordClass()), [
+                    @livewire(\Livewire\Livewire::getAlias(Filament\Resources\RelationManager\AttachRecord::class), [
                         'cancelButtonLabel' => static::$attachModalCancelButtonLabel,
                         'attachAnotherButtonLabel' => static::$attachModalAttachAnotherButtonLabel,
                         'attachButtonLabel' => static::$attachModalAttachButtonLabel,
