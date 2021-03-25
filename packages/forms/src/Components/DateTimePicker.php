@@ -12,7 +12,7 @@ class DateTimePicker extends DatePicker
 
     protected $defaultFormatWithoutSeconds = 'Y-m-d H:i';
 
-    protected $time = true;
+    protected $hasTime = true;
 
     protected $view = 'forms::components.date-time-picker';
 
