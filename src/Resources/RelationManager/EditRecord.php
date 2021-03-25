@@ -3,6 +3,7 @@
 namespace Filament\Resources\RelationManager;
 
 use Filament\Filament;
+use Filament\Resources\Forms\Actions;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Forms\HasForm;
 use Livewire\Component;
@@ -21,6 +22,11 @@ class EditRecord extends Component
     protected $listeners = [
         'switchRelationManagerEditRecord' => 'switchRecord',
     ];
+
+    public function close()
+    {
+        $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerEditModal");
+    }
 
     public function getQuery()
     {
@@ -91,6 +97,19 @@ class EditRecord extends Component
         $this->resetTemporaryUploadedFiles();
 
         $this->callHook('afterFill');
+    }
+
+    protected function actions()
+    {
+        $manager = $this->manager;
+
+        return [
+            Actions\Button::make($manager::$editModalSaveButtonLabel)
+                ->primary()
+                ->submit(),
+            Actions\Button::make($manager::$editModalCancelButtonLabel)
+                ->action('close'),
+        ];
     }
 
     protected function fillRecord()

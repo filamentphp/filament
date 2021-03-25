@@ -5,6 +5,7 @@ namespace Filament\Resources\RelationManager;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
+use Filament\Resources\Forms\Actions;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -40,6 +41,16 @@ class AttachRecord extends Component
         $this->dispatchBrowserEvent('notify', __($manager::$attachModalAttachedMessage));
 
         $this->related = null;
+    }
+
+    public function close()
+    {
+        $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerAttachModal");
+    }
+
+    public function getActions()
+    {
+        return $this->actions();
     }
 
     public function getInverseRelationshipName()
@@ -81,6 +92,22 @@ class AttachRecord extends Component
     public function render()
     {
         return view('filament::resources.relation-manager.attach-record');
+    }
+
+    protected function actions()
+    {
+        $manager = $this->manager;
+
+        return [
+            Actions\Button::make($manager::$attachModalAttachButtonLabel)
+                ->primary()
+                ->submit(),
+            Actions\Button::make($manager::$attachModalAttachAnotherButtonLabel)
+                ->action('attach(true)')
+                ->primary(),
+            Actions\Button::make($manager::$attachModalCancelButtonLabel)
+                ->action('close'),
+        ];
     }
 
     protected function form(Form $form)

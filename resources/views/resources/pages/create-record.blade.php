@@ -14,50 +14,12 @@
                 <x-filament::card class="space-y-6">
                     <x-forms::form :schema="$this->getForm()->getSchema()" :columns="$this->getForm()->getColumns()" />
 
-                    <div class="space-x-3">
-                        <x-filament::button
-                            type="submit"
-                            color="primary"
-                        >
-                            {{ __(static::$createButtonLabel) }}
-                        </x-filament::button>
-
-                        <x-filament::button
-                            type="button"
-                            color="primary"
-                            wire:click="create(true)"
-                        >
-                            {{ __(static::$createAnotherButtonLabel) }}
-                        </x-filament::button>
-
-                        <x-filament::button :href="$this->getResource()::generateUrl(static::$indexRoute)">
-                            {{ __(static::$cancelButtonLabel) }}
-                        </x-filament::button>
-                    </div>
+                    <x-filament::resources.forms.actions :actions="$this->getActions()" />
                 </x-filament::card>
             @else
                 <x-forms::form :schema="$this->getForm()->getSchema()" :columns="$this->getForm()->getColumns()" />
 
-                <div class="space-x-3">
-                    <x-filament::button
-                        type="submit"
-                        color="primary"
-                    >
-                        {{ __(static::$createButtonLabel) }}
-                    </x-filament::button>
-
-                    <x-filament::button
-                        type="button"
-                        color="primary"
-                        wire:click="create(true)"
-                    >
-                        {{ __(static::$createAnotherButtonLabel) }}
-                    </x-filament::button>
-
-                    <x-filament::button :href="$this->getResource()::generateUrl(static::$indexRoute)">
-                        {{ __(static::$cancelButtonLabel) }}
-                    </x-filament::button>
-                </div>
+                <x-filament::resources.forms.actions :actions="$this->getActions()" />
             @endif
         </form>
     </x-filament::app-content>

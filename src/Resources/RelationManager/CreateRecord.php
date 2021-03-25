@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\RelationManager;
 
+use Filament\Resources\Forms\Actions;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Forms\HasForm;
 use Livewire\Component;
@@ -18,6 +19,11 @@ class CreateRecord extends Component
     public $owner;
 
     public $record = [];
+
+    public function close()
+    {
+        $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerCreateModal");
+    }
 
     public function create($another = false)
     {
@@ -67,6 +73,22 @@ class CreateRecord extends Component
     public function render()
     {
         return view('filament::resources.relation-manager.create-record');
+    }
+
+    protected function actions()
+    {
+        $manager = $this->manager;
+
+        return [
+            Actions\Button::make($manager::$createModalCreateButtonLabel)
+                ->primary()
+                ->submit(),
+            Actions\Button::make($manager::$createModalCreateAnotherButtonLabel)
+                ->action('create(true)')
+                ->primary(),
+            Actions\Button::make($manager::$createModalCancelButtonLabel)
+                ->action('close'),
+        ];
     }
 
     protected function fillRecord()

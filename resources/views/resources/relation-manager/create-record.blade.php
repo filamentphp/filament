@@ -5,25 +5,6 @@
     >
         <x-forms::form :schema="$this->getForm()->getSchema()" :columns="$this->getForm()->getColumns()" />
 
-        <div class="space-x-3">
-            <x-filament::button
-                type="submit"
-                color="primary"
-            >
-                {{ __($this->manager::$createModalCreateButtonLabel) }}
-            </x-filament::button>
-
-            <x-filament::button
-                type="button"
-                color="primary"
-                wire:click="create(true)"
-            >
-                {{ __($this->manager::$createModalCreateAnotherButtonLabel) }}
-            </x-filament::button>
-
-            <x-filament::button x-on:click="$dispatch('close', '{{ (string) Str::of($manager)->replace('\\', '\\\\') }}RelationManagerCreateModal')">
-                {{ __($this->manager::$createModalCancelButtonLabel) }}
-            </x-filament::button>
-        </div>
+        <x-filament::resources.forms.actions :actions="$this->getActions()" />
     </form>
 </div>

@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Filament;
+use Filament\Resources\Forms\Actions;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Forms\HasForm;
 use Illuminate\Support\Str;
@@ -73,6 +74,20 @@ class CreateRecord extends Page
     public function mount()
     {
         $this->fillRecord();
+    }
+
+    protected function actions()
+    {
+        return [
+            Actions\Button::make(static::$createButtonLabel)
+                ->primary()
+                ->submit(),
+            Actions\Button::make(static::$createAnotherButtonLabel)
+                ->action('create(true)')
+                ->primary(),
+            Actions\Button::make(static::$cancelButtonLabel)
+                ->url($this->getResource()::generateUrl(static::$indexRoute)),
+        ];
     }
 
     protected function fillRecord()
