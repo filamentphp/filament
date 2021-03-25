@@ -20,7 +20,10 @@
                 @endif
             </div>
 
-            <x-tables::filter :table="$this->getTable()" />
+            <div class="flex items-center space-x-4">
+                <x-tables::actions :table="$this->getTable()" />
+                <x-tables::filter :table="$this->getTable()" />
+            </div>
         </div>
 
         <x-tables::table

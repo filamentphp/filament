@@ -34,6 +34,10 @@ return [
         'placeholder' => 'Filter',
     ],
 
+    'actions' => [
+        'placeholder' => 'Actions',
+    ],
+
     'messages' => [
         'noRecords' => 'No records found',
     ],
