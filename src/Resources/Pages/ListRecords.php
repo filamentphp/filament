@@ -40,6 +40,11 @@ class ListRecords extends Page
             });
     }
 
+    public function canRunActions()
+    {
+        return count($this->selected) > 0;
+    }
+
     public function deleteSelected()
     {
         $this->authorize('delete');

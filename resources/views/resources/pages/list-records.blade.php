@@ -21,7 +21,7 @@
             </div>
 
             <div class="flex items-center space-x-4">
-                <x-tables::actions :table="$this->getTable()" />
+                <x-tables::actions :table="$this->getTable()" :disabled="! $this->canRunActions()" />
                 <x-tables::filter :table="$this->getTable()" />
             </div>
         </div>
