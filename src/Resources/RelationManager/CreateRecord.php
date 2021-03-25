@@ -41,7 +41,7 @@ class CreateRecord extends Component
 
         $this->callHook('beforeCreate');
 
-        $this->owner->{$this->getRelationshipName()}()->create($this->record);
+        $this->record = $this->owner->{$this->getRelationshipName()}()->create($this->record);
 
         $this->callHook('afterCreate');
 
