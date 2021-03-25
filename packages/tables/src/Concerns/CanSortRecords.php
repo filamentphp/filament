@@ -59,7 +59,7 @@ trait CanSortRecords
         }
 
         return collect($column->getSortColumns())
-            ->mapWithKeys(fn ($sortColumn) => [$sortColumn => $sortDirection])
+            ->map(fn ($sortColumn) => [$sortColumn, $sortDirection])
             ->toArray();
     }
 
