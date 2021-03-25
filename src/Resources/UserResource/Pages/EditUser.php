@@ -13,14 +13,14 @@ class EditUser extends EditRecord
         return Filament::userResource();
     }
 
-    public function save()
+    protected function afterSave()
     {
-        $this->validateTemporaryUploadedFiles();
+        $this->record->password = null;
+        $this->record->passwordConfirmation = null;
+    }
 
-        $this->storeTemporaryUploadedFiles();
-
-        $this->validate();
-
+    protected function beforeSave()
+    {
         unset($this->record->passwordConfirmation);
 
         if ($this->record->password) {
@@ -28,12 +28,5 @@ class EditUser extends EditRecord
         } else {
             unset($this->record->password);
         }
-
-        $this->record->save();
-
-        $this->record->password = null;
-        $this->record->passwordConfirmation = null;
-
-        $this->notify(__(static::$savedMessage));
     }
 }

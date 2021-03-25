@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Filament\Forms\Form;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Tappable;
 
@@ -148,19 +147,14 @@ class Component
         return $this->label;
     }
 
-    public function getModel()
+    public function getLivewire()
     {
-        return $this->getForm()->getModel();
+        return $this->getForm()->getLivewire();
     }
 
     public function getParent()
     {
         return $this->parent;
-    }
-
-    public function getRecord()
-    {
-        return $this->getForm()->getRecord();
     }
 
     public function getRules($field = null)
@@ -175,12 +169,8 @@ class Component
 
         $rules = $this instanceof Field ? $this->rules : [];
 
-        foreach ($rules as $field => $conditions) {
-            $rules[$field] = $this->transformConditions($conditions);
-        }
-
         foreach ($this->getSubform()->getRules() as $field => $conditions) {
-            $rules[$field] = array_merge($rules[$field] ?? [], $this->transformConditions($conditions));
+            $rules[$field] = array_merge($rules[$field] ?? [], $conditions);
         }
 
         return $rules;
@@ -193,11 +183,7 @@ class Component
 
     public function getSubform()
     {
-        return Form::make()
-            ->context($this->getContext())
-            ->model($this->getModel())
-            ->record($this->getRecord())
-            ->schema($this->getSchema());
+        return Form::extend($this)->schema($this->getSchema());
     }
 
     public function getValidationAttributes()
@@ -331,12 +317,8 @@ class Component
                 $callback = fn ($component) => $component->visible();
             }
 
-            if ($this->getRecord() === null) {
-                return $this;
-            }
-
             try {
-                $shouldExecuteCallback = $condition($this->getRecord());
+                $shouldExecuteCallback = $condition($this->getLivewire());
             } catch (\Exception $exception) {
                 $shouldExecuteCallback = false;
             }
@@ -347,18 +329,5 @@ class Component
         });
 
         return $this;
-    }
-
-    protected function transformConditions($conditions)
-    {
-        return collect($conditions)
-            ->map(function ($condition) {
-                if (! is_string($condition)) {
-                    return $condition;
-                }
-
-                return (string) Str::of($condition)->replace('{{ record }}', $this->getRecord() instanceof Model ? $this->getRecord()->getKey() : '');
-            })
-            ->toArray();
     }
 }

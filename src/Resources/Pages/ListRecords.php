@@ -3,9 +3,9 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Filament;
+use Filament\Resources\Tables\HasTable;
 use Filament\Resources\Tables\RecordActions;
 use Filament\Resources\Tables\Table;
-use Filament\Tables\HasTable;
 use Illuminate\Support\Str;
 
 class ListRecords extends Page
@@ -18,15 +18,7 @@ class ListRecords extends Page
 
     public static $editRecordActionLabel = 'filament::resources/pages/list-records.table.recordActions.edit.label';
 
-    public $filterable = true;
-
-    public $pagination = true;
-
     public $recordRoute = 'edit';
-
-    public $searchable = true;
-
-    public $sortable = true;
 
     public static $view = 'filament::resources.pages.list-records';
 
@@ -52,6 +44,8 @@ class ListRecords extends Page
     {
         $this->authorize('delete');
 
+        $this->callHook('beforeDelete');
+
         static::getModel()::destroy(
             static::getModel()::find($this->selected)
                 ->filter(function ($record) {
@@ -61,35 +55,9 @@ class ListRecords extends Page
                 ->toArray(),
         );
 
+        $this->callHook('afterDelete');
+
         $this->selected = [];
-    }
-
-    public function getTable()
-    {
-        return static::getResource()::table(
-            Table::make()
-                ->context(static::class)
-                ->filterable($this->filterable)
-                ->pagination($this->pagination)
-                ->primaryColumnUrl(function ($record) {
-                    if (! Filament::can('update', $record)) {
-                        return;
-                    }
-
-                    return $this->getResource()::generateUrl(
-                        $this->recordRoute,
-                        ['record' => $record],
-                    );
-                })
-                ->recordActions([
-                    RecordActions\Link::make('edit')
-                        ->label(static::$editRecordActionLabel)
-                        ->url(fn ($record) => $this->getResource()::generateUrl($this->recordRoute, ['record' => $record]))
-                        ->when(fn ($record) => Filament::can('update', $record)),
-                ])
-                ->searchable($this->searchable)
-                ->sortable($this->sortable),
-        );
     }
 
     public static function getTitle()
@@ -108,6 +76,29 @@ class ListRecords extends Page
     public function isAuthorized()
     {
         return Filament::can('viewAny', static::getModel());
+    }
+
+    public function table(Table $table)
+    {
+        return static::getResource()::table(
+            $table
+                ->primaryColumnUrl(function ($record) {
+                    if (! Filament::can('update', $record)) {
+                        return;
+                    }
+
+                    return $this->getResource()::generateUrl(
+                        $this->recordRoute,
+                        ['record' => $record],
+                    );
+                })
+                ->recordActions([
+                    RecordActions\Link::make('edit')
+                        ->label(static::$editRecordActionLabel)
+                        ->url(fn ($record) => $this->getResource()::generateUrl($this->recordRoute, ['record' => $record]))
+                        ->when(fn ($record) => Filament::can('update', $record)),
+                ]),
+        );
     }
 
     protected function viewData()

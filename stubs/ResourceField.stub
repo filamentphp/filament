@@ -2,12 +2,9 @@
 
 namespace {{ namespace }};
 
-use Filament\Resources\Forms\Components\Concerns;
 use Filament\Resources\Forms\Components\Field;
 
 class {{ class }} extends Field
 {
-    use Concerns\InteractsWithResource;
-
     public $view = '{{ view }}';
 }

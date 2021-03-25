@@ -4,12 +4,13 @@ namespace Filament\Forms\Components\Concerns;
 
 trait CanBeUnique
 {
-    public function unique($table, $column = null, $exceptCurrentRecord = false)
+    public function unique($table, $column = null, $except = false)
     {
-        $this->configure(function () use ($column, $exceptCurrentRecord, $table) {
+        $this->configure(function () use ($column, $except, $table) {
             $rule = "unique:$table,$column";
-            if ($exceptCurrentRecord) {
-                $rule .= ',{{ record }}';
+
+            if ($except) {
+                $rule .= ",{$except}";
             }
 
             $this->addRules([$this->getName() => [$rule]]);

@@ -4,13 +4,7 @@ namespace Filament\Resources\Forms\Components\Concerns;
 
 trait InteractsWithResource
 {
-    public static function make($name)
-    {
-        return new static("record.{$name}");
-    }
-
-    public function requiredWith($field)
-    {
-        return parent::requiredWith("record.{$field}");
-    }
+    use CanBeDependentOnResourceRecord;
+    use CanServeResourceSubform;
+    use ManipulatesResourceRecord;
 }

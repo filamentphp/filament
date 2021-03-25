@@ -3,14 +3,17 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Filament;
-use Filament\Forms\HasForm;
+use Filament\Resources\Forms\Actions;
 use Filament\Resources\Forms\Form;
+use Filament\Resources\Forms\HasForm;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
 
 class EditRecord extends Page
 {
     use HasForm;
+
+    public static $cancelButtonLabel = 'filament::resources/pages/edit-record.buttons.cancel.label';
 
     public static $deleteButtonLabel = 'filament::resources/pages/edit-record.buttons.delete.label';
 
@@ -22,7 +25,7 @@ class EditRecord extends Page
 
     public static $deleteModalHeading = 'filament::resources/pages/edit-record.modals.delete.heading';
 
-    public $indexRoute = 'index';
+    public static $indexRoute = 'index';
 
     public $record;
 
@@ -47,7 +50,7 @@ class EditRecord extends Page
 
         $this->callHook('afterDelete');
 
-        $this->redirect($this->getResource()::generateUrl($this->indexRoute));
+        $this->redirect($this->getResource()::generateUrl(static::$indexRoute));
     }
 
     public static function getBreadcrumbs()
@@ -57,17 +60,6 @@ class EditRecord extends Page
         ];
     }
 
-    public function getForm()
-    {
-        return static::getResource()::form(
-            Form::make()
-                ->context(static::class)
-                ->model(static::getModel())
-                ->record($this->record)
-                ->submitMethod('save'),
-        );
-    }
-
     public function isAuthorized()
     {
         return Filament::can('update', $this->record);
@@ -75,17 +67,7 @@ class EditRecord extends Page
 
     public function mount($record)
     {
-        $this->callHook('beforeFill');
-
-        $model = static::getModel();
-
-        $this->record = (new $model())->resolveRouteBinding($record);
-
-        if ($this->record === null) {
-            throw (new ModelNotFoundException())->setModel($model, [$record]);
-        }
-
-        $this->callHook('afterFill');
+        $this->fillRecord($record);
     }
 
     public function save()
@@ -107,5 +89,38 @@ class EditRecord extends Page
         $this->callHook('afterSave');
 
         $this->notify(__(static::$savedMessage));
+    }
+
+    protected function actions()
+    {
+        return [
+            Actions\Button::make(static::$saveButtonLabel)
+                ->primary()
+                ->submit(),
+            Actions\Button::make(static::$cancelButtonLabel)
+                ->url($this->getResource()::generateUrl(static::$indexRoute)),
+        ];
+    }
+
+    protected function fillRecord($record)
+    {
+        $this->callHook('beforeFill');
+
+        $model = static::getModel();
+
+        $this->record = (new $model())->resolveRouteBinding($record);
+
+        if ($this->record === null) {
+            throw (new ModelNotFoundException())->setModel($model, [$record]);
+        }
+
+        $this->callHook('afterFill');
+    }
+
+    protected function form(Form $form)
+    {
+        return static::getResource()::form(
+            $form->model(static::getModel()),
+        );
     }
 }

@@ -3,15 +3,24 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Filament;
-use Filament\Forms\HasForm;
+use Filament\Resources\Forms\Actions;
 use Filament\Resources\Forms\Form;
+use Filament\Resources\Forms\HasForm;
 use Illuminate\Support\Str;
 
 class CreateRecord extends Page
 {
     use HasForm;
 
+    public static $cancelButtonLabel = 'filament::resources/pages/edit-record.buttons.cancel.label';
+
+    public static $createAnotherButtonLabel = 'filament::resources/pages/create-record.buttons.createAnother.label';
+
     public static $createButtonLabel = 'filament::resources/pages/create-record.buttons.create.label';
+
+    public static $createdMessage = 'filament::resources/pages/create-record.messages.created';
+
+    public static $indexRoute = 'index';
 
     public $record;
 
@@ -19,7 +28,7 @@ class CreateRecord extends Page
 
     public static $view = 'filament::resources.pages.create-record';
 
-    public function create()
+    public function create($another = false)
     {
         $this->callHook('beforeValidate');
 
@@ -37,6 +46,14 @@ class CreateRecord extends Page
 
         $this->callHook('afterCreate');
 
+        if ($another) {
+            $this->fillRecord();
+
+            $this->notify(__(static::$createdMessage));
+
+            return;
+        }
+
         $this->redirect($this->getResource()::generateUrl(static::$showRoute, [
             'record' => $this->record,
         ]));
@@ -49,23 +66,31 @@ class CreateRecord extends Page
         ];
     }
 
-    public function getForm()
-    {
-        return static::getResource()::form(
-            Form::make()
-                ->context(static::class)
-                ->model(static::getModel())
-                ->record($this->record)
-                ->submitMethod('create'),
-        );
-    }
-
     public function isAuthorized()
     {
         return Filament::can('create', static::getModel());
     }
 
     public function mount()
+    {
+        $this->fillRecord();
+    }
+
+    protected function actions()
+    {
+        return [
+            Actions\Button::make(static::$createButtonLabel)
+                ->primary()
+                ->submit(),
+            Actions\Button::make(static::$createAnotherButtonLabel)
+                ->action('create(true)')
+                ->primary(),
+            Actions\Button::make(static::$cancelButtonLabel)
+                ->url($this->getResource()::generateUrl(static::$indexRoute)),
+        ];
+    }
+
+    protected function fillRecord()
     {
         $this->record = [];
 
@@ -74,5 +99,12 @@ class CreateRecord extends Page
         $this->fillWithFormDefaults();
 
         $this->callHook('afterFill');
+    }
+
+    protected function form(Form $form)
+    {
+        return static::getResource()::form(
+            $form->model(static::getModel()),
+        );
     }
 }

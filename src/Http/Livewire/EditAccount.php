@@ -3,8 +3,8 @@
 namespace Filament\Http\Livewire;
 
 use Filament\Filament;
-use Filament\Forms\HasForm;
 use Filament\Resources\Forms\Form;
+use Filament\Resources\Forms\HasForm;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,17 +17,6 @@ class EditAccount extends Page
     public static $title = 'filament::edit-account.title';
 
     public static $view = 'filament::edit-account';
-
-    public function getForm()
-    {
-        return static::getResource()::form(
-            Form::make()
-                ->context(static::class)
-                ->model(static::getModel())
-                ->record($this->record)
-                ->submitMethod('save'),
-        );
-    }
 
     public static function getResource()
     {
@@ -61,5 +50,12 @@ class EditAccount extends Page
         $this->record->passwordConfirmation = null;
 
         $this->notify(__('filament::edit-account.messages.saved'));
+    }
+
+    protected function form(Form $form)
+    {
+        return static::getResource()::form(
+            $form->model(static::getModel()),
+        );
     }
 }

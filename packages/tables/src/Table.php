@@ -10,23 +10,21 @@ class Table
 
     protected $columns = [];
 
-    protected $context;
+    protected $defaultSortColumn;
+
+    protected $defaultSortDirection = 'asc';
 
     protected $filters = [];
 
-    protected $hasPagination = true;
-
-    protected $isFilterable = true;
-
-    protected $isSearchable = true;
-
-    protected $isSortable = true;
+    protected $livewire;
 
     protected $primaryColumnAction;
 
     protected $primaryColumnUrl;
 
     protected $recordActions = [];
+
+    protected $reorderUsing;
 
     protected $shouldPrimaryColumnUrlOpenInNewTab = false;
 
@@ -41,44 +39,24 @@ class Table
         return $this;
     }
 
-    public function context($context)
+    public function defaultSort($column, $direction = 'asc')
     {
-        $this->context = $context;
+        $this->defaultSortColumn($column);
+        $this->defaultSortDirection($direction);
 
         return $this;
     }
 
-    public function disableFiltering()
+    public function defaultSortColumn($column)
     {
-        $this->isFilterable = false;
+        $this->defaultSortColumn = $column;
 
         return $this;
     }
 
-    public function disablePagination()
+    public function defaultSortDirection($direction)
     {
-        $this->hasPagination = false;
-
-        return $this;
-    }
-
-    public function disableSearching()
-    {
-        $this->isSearchable = false;
-
-        return $this;
-    }
-
-    public function disableSorting()
-    {
-        $this->isSortable = false;
-
-        return $this;
-    }
-
-    public function filterable($filterable)
-    {
-        $this->isFilterable = $filterable;
+        $this->defaultSortDirection = $direction;
 
         return $this;
     }
@@ -94,6 +72,11 @@ class Table
         return $this;
     }
 
+    public static function for($livewire)
+    {
+        return (new static())->livewire($livewire);
+    }
+
     public function getColumns()
     {
         return $this->columns;
@@ -101,12 +84,32 @@ class Table
 
     public function getContext()
     {
-        return $this->columns;
+        return get_class($this->getLivewire());
+    }
+
+    public function getDefaultSort()
+    {
+        return [$this->getDefaultSortColumn(), $this->getDefaultSortDirection()];
+    }
+
+    public function getDefaultSortColumn()
+    {
+        return $this->defaultSortColumn;
+    }
+
+    public function getDefaultSortDirection()
+    {
+        return $this->defaultSortDirection;
     }
 
     public function getFilters()
     {
         return $this->filters;
+    }
+
+    public function getLivewire()
+    {
+        return $this->livewire;
     }
 
     public function getPrimaryColumnAction($record = null)
@@ -154,33 +157,16 @@ class Table
         return $filters;
     }
 
-    public function hasPagination()
+    public function isReorderable()
     {
-        return $this->hasPagination;
+        return $this->reorderUsing !== null;
     }
 
-    public function isFilterable()
+    public function livewire($component)
     {
-        return $this->isFilterable && count($this->getFilters());
-    }
+        $this->livewire = $component;
 
-    public function isSearchable()
-    {
-        return $this->isSearchable && collect($this->getColumns())
-                ->filter(fn ($column) => $column->isSearchable())
-                ->count();
-    }
-
-    public function isSortable()
-    {
-        return $this->isSortable && collect($this->columns)
-                ->filter(fn ($column) => $column->isSortable())
-                ->count();
-    }
-
-    public static function make()
-    {
-        return new static();
+        return $this;
     }
 
     public function openPrimaryColumnUrlInNewTab()
@@ -226,9 +212,38 @@ class Table
         return $this;
     }
 
-    public function searchable($searchable)
+    public function reorder($order)
     {
-        $this->searchable = $searchable;
+        $callback = $this->reorderUsing;
+
+        return $callback($order, $this->getLivewire());
+    }
+
+    public function reorderOn($column)
+    {
+        $this->reorderUsing(function ($order) use ($column) {
+            foreach ($order as $item) {
+                $record = $this->getLivewire()::getQuery()->find($item['value']);
+
+                if (! $record) {
+                    return;
+                }
+
+                $record->{$column} = $item['order'];
+                $record->save();
+            }
+        });
+
+        if ($this->getDefaultSortColumn() === null) {
+            $this->defaultSortColumn($column);
+        }
+
+        return $this;
+    }
+
+    public function reorderUsing($callback)
+    {
+        $this->reorderUsing = $callback;
 
         return $this;
     }
@@ -236,12 +251,5 @@ class Table
     public function shouldPrimaryColumnUrlOpenInNewTab()
     {
         return $this->shouldPrimaryColumnUrlOpenInNewTab;
-    }
-
-    public function sortable($sortable)
-    {
-        $this->sortable = $sortable;
-
-        return $this;
     }
 }

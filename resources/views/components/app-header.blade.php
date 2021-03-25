@@ -3,7 +3,7 @@
     'title',
 ])
 
-<header class="flex items-center justify-between p-4 space-x-4 md:py-6 md:px-8">
+<header class="flex items-center justify-between max-w-screen-xl mx-auto p-4 space-x-4 md:py-6 md:px-8">
     <div class="flex items-center">
         <button
             type="button"

@@ -3,16 +3,15 @@
 namespace Filament\Resources\RelationManager;
 
 use Filament\Filament;
-use Filament\Forms\HasForm;
+use Filament\Resources\Forms\Actions;
 use Filament\Resources\Forms\Form;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Resources\Forms\HasForm;
 use Livewire\Component;
 
 class EditRecord extends Component
 {
+    use Concerns\CanCallHooks;
     use HasForm;
-
-    public $cancelButtonLabel;
 
     public $manager;
 
@@ -20,34 +19,26 @@ class EditRecord extends Component
 
     public $record = [];
 
-    public $saveButtonLabel;
-
-    public $savedMessage;
-
     protected $listeners = [
         'switchRelationManagerEditRecord' => 'switchRecord',
     ];
 
-    public function getForm()
+    public function close()
     {
-        $form = Form::make()
-            ->context(static::class)
-            ->model(get_class($this->owner->{$this->getRelationship()}()->getModel()))
-            ->submitMethod('save');
-
-        if ($this->record instanceof Model) {
-            $form->record($this->record);
-        }
-
-        return $this->manager::form($form);
+        $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerEditModal");
     }
 
     public function getQuery()
     {
-        return $this->owner->{$this->getRelationship()}();
+        return $this->getRelationship();
     }
 
     public function getRelationship()
+    {
+        return $this->owner->{$this->getRelationshipName()}();
+    }
+
+    public function getRelationshipName()
     {
         $manager = $this->manager;
 
@@ -56,7 +47,7 @@ class EditRecord extends Component
 
     public function mount()
     {
-        $this->fillWithFormDefaults();
+        $this->fillRecord();
     }
 
     public function render()
@@ -66,7 +57,11 @@ class EditRecord extends Component
 
     public function save()
     {
+        $manager = $this->manager;
+
         abort_unless(Filament::can('update', $this->record), 403);
+
+        $this->callHook('beforeValidate');
 
         $this->validateTemporaryUploadedFiles();
 
@@ -74,12 +69,18 @@ class EditRecord extends Component
 
         $this->validate();
 
+        $this->callHook('afterValidate');
+
+        $this->callHook('beforeSave');
+
         $this->record->save();
 
-        $this->emit('refreshRelationManagerList', $this->manager);
+        $this->callHook('afterSave');
 
-        $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerEditModal");
-        $this->dispatchBrowserEvent('notify', __($this->savedMessage));
+        $this->emit('refreshRelationManagerList', $manager);
+
+        $this->dispatchBrowserEvent('close', "{$manager}RelationManagerEditModal");
+        $this->dispatchBrowserEvent('notify', __($manager::$editModalSavedMessage));
 
         $this->record = [];
     }
@@ -90,7 +91,34 @@ class EditRecord extends Component
             return;
         }
 
+        $this->callHook('beforeFill');
+
         $this->record = $this->getQuery()->find($record);
         $this->resetTemporaryUploadedFiles();
+
+        $this->callHook('afterFill');
+    }
+
+    protected function actions()
+    {
+        $manager = $this->manager;
+
+        return [
+            Actions\Button::make($manager::$editModalSaveButtonLabel)
+                ->primary()
+                ->submit(),
+            Actions\Button::make($manager::$editModalCancelButtonLabel)
+                ->action('close'),
+        ];
+    }
+
+    protected function fillRecord()
+    {
+        $this->fillWithFormDefaults();
+    }
+
+    protected function form(Form $form)
+    {
+        return $this->manager::form($form->model(get_class($this->owner->{$this->getRelationshipName()}()->getModel())));
     }
 }

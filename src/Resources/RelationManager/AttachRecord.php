@@ -5,20 +5,14 @@ namespace Filament\Resources\RelationManager;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
+use Filament\Resources\Forms\Actions;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
 class AttachRecord extends Component
 {
+    use Concerns\CanCallHooks;
     use HasForm;
-
-    public $attachAnotherButtonLabel;
-
-    public $attachButtonLabel;
-
-    public $attachedMessage;
-
-    public $cancelButtonLabel;
 
     public $manager;
 
@@ -28,53 +22,38 @@ class AttachRecord extends Component
 
     public function attach($another = false)
     {
+        $manager = $this->manager;
+
         $this->validate();
 
-        $this->owner->{$this->getRelationship()}()->attach($this->related);
+        $this->callHook('beforeAttach');
 
-        $this->emit('refreshRelationManagerList', $this->manager);
+        $this->owner->{$this->getRelationshipName()}()->attach($this->related);
+
+        $this->callHook('afterAttach');
+
+        $this->emit('refreshRelationManagerList', $manager);
 
         if (! $another) {
-            $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerAttachModal");
+            $this->dispatchBrowserEvent('close', "{$manager}RelationManagerAttachModal");
         }
 
-        $this->dispatchBrowserEvent('notify', __($this->attachedMessage));
+        $this->dispatchBrowserEvent('notify', __($manager::$attachModalAttachedMessage));
 
         $this->related = null;
     }
 
-    public function getForm()
+    public function close()
     {
-        return Form::make()
-            ->context(static::class)
-            ->submitMethod('attach')
-            ->schema([
-                Select::make('related')
-                    ->label((string) Str::of($this->getRelationship())->singular()->ucfirst())
-                    ->placeholder('filament::resources/relation-manager.modals.attach.form.related.placeholder')
-                    ->getOptionSearchResultsUsing(function ($search) {
-                        $relationship = $this->owner->{$this->getRelationship()}();
-
-                        $query = $relationship->getRelated();
-
-                        $search = Str::lower($search);
-                        $searchOperator = [
-                            'pgsql' => 'ilike',
-                        ][$query->getConnection()->getDriverName()] ?? 'like';
-
-                        return $query
-                            ->where($this->getPrimaryColumn(), $searchOperator, "%{$search}%")
-                            ->whereDoesntHave($this->getInverseRelationship(), function ($query) {
-                                $query->where($this->owner->getQualifiedKeyName(), $this->owner->getKey());
-                            })
-                            ->pluck($this->getPrimaryColumn(), $query->getKeyName())
-                            ->toArray();
-                    })
-                    ->required(),
-            ]);
+        $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerAttachModal");
     }
 
-    public function getInverseRelationship()
+    public function getActions()
+    {
+        return $this->actions();
+    }
+
+    public function getInverseRelationshipName()
     {
         $manager = $this->manager;
 
@@ -95,6 +74,11 @@ class AttachRecord extends Component
 
     public function getRelationship()
     {
+        return $this->owner->{$this->getRelationshipName()}();
+    }
+
+    public function getRelationshipName()
+    {
         $manager = $this->manager;
 
         return $manager::$relationship;
@@ -108,5 +92,50 @@ class AttachRecord extends Component
     public function render()
     {
         return view('filament::resources.relation-manager.attach-record');
+    }
+
+    protected function actions()
+    {
+        $manager = $this->manager;
+
+        return [
+            Actions\Button::make($manager::$attachModalAttachButtonLabel)
+                ->primary()
+                ->submit(),
+            Actions\Button::make($manager::$attachModalAttachAnotherButtonLabel)
+                ->action('attach(true)')
+                ->primary(),
+            Actions\Button::make($manager::$attachModalCancelButtonLabel)
+                ->action('close'),
+        ];
+    }
+
+    protected function form(Form $form)
+    {
+        return $form
+            ->schema([
+                Select::make('related')
+                    ->label((string) Str::of($this->getRelationshipName())->singular()->ucfirst())
+                    ->placeholder('filament::resources/relation-manager.modals.attach.form.related.placeholder')
+                    ->getOptionSearchResultsUsing(function ($search) {
+                        $relationship = $this->owner->{$this->getRelationshipName()}();
+
+                        $query = $relationship->getRelated();
+
+                        $search = Str::lower($search);
+                        $searchOperator = [
+                            'pgsql' => 'ilike',
+                        ][$query->getConnection()->getDriverName()] ?? 'like';
+
+                        return $query
+                            ->where($this->getPrimaryColumn(), $searchOperator, "%{$search}%")
+                            ->whereDoesntHave($this->getInverseRelationshipName(), function ($query) {
+                                $query->where($this->owner->getQualifiedKeyName(), $this->owner->getKey());
+                            })
+                            ->pluck($this->getPrimaryColumn(), $query->getKeyName())
+                            ->toArray();
+                    })
+                    ->required(),
+            ]);
     }
 }

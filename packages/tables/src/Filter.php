@@ -119,6 +119,11 @@ class Filter
         return $this->label;
     }
 
+    public function getLivewire()
+    {
+        return $this->getTable()->getLivewire();
+    }
+
     public function getName()
     {
         return $this->name;

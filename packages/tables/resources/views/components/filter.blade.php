@@ -3,8 +3,8 @@
 ])
 
 <div class="flex shadow-sm">
-    @if ($table->isFilterable())
-        <select wire:model="filter" class="text-sm flex-shrink-0 sm:text-base focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border-gray-300 {{ $table->isSearchable() ? 'rounded-l' : 'rounded' }}">
+    @if ($this->isFilterable())
+        <select wire:model="filter" class="text-sm flex-shrink-0 sm:text-base focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border-gray-300 {{ $this->isSearchable() ? 'rounded-l' : 'rounded' }}">
             <option>{{ __('tables::table.filter.placeholder') }}</option>
 
             @foreach ($table->getVisibleFilters() as $filter)
@@ -13,13 +13,13 @@
         </select>
     @endif
 
-    @if ($table->isSearchable())
+    @if ($this->isSearchable())
         <div class="relative flex-grow">
             <input
                 type="search"
                 wire:model="search"
                 placeholder="{{ __('tables::table.search.placeholder') }}"
-                class="text-sm sm:text-base pl-10 block w-full placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border-gray-300 {{ $table->isFilterable() ? 'rounded-r border-l-0' : 'rounded' }}"
+                class="text-sm sm:text-base pl-10 block w-full placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border-gray-300 {{ $this->isFilterable() ? 'rounded-r border-l-0' : 'rounded' }}"
             />
 
             <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" aria-hidden="true">

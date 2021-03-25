@@ -5,16 +5,23 @@
     />
 
     <x-filament::app-content>
-        <x-filament::card>
-            <x-forms::container :form="$this->getForm()" class="space-y-6">
-                <x-filament::button
-                    type="submit"
-                    color="primary"
-                >
-                    {{ __(static::$createButtonLabel) }}
-                </x-filament::button>
-            </x-forms::container>
-        </x-filament::card>
+        @php
+            $schema = $this->getForm()->getSchema();
+        @endphp
+
+        <form wire:submit.prevent="create" class="space-y-6">
+            @if ($this->getForm()->hasWrapper())
+                <x-filament::card class="space-y-6">
+                    <x-forms::form :schema="$this->getForm()->getSchema()" :columns="$this->getForm()->getColumns()" />
+
+                    <x-filament::resources.forms.actions :actions="$this->getActions()" />
+                </x-filament::card>
+            @else
+                <x-forms::form :schema="$this->getForm()->getSchema()" :columns="$this->getForm()->getColumns()" />
+
+                <x-filament::resources.forms.actions :actions="$this->getActions()" />
+            @endif
+        </form>
     </x-filament::app-content>
 
     <div

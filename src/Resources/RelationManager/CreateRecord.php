@@ -2,62 +2,63 @@
 
 namespace Filament\Resources\RelationManager;
 
-use Filament\Forms\HasForm;
+use Filament\Resources\Forms\Actions;
 use Filament\Resources\Forms\Form;
+use Filament\Resources\Forms\HasForm;
 use Livewire\Component;
 
 class CreateRecord extends Component
 {
+    use Concerns\CanCallHooks;
     use HasForm;
 
-    public $cancelButtonLabel;
-
-    public $createAnotherButtonLabel;
-
-    public $createButtonLabel;
-
-    public $createdMessage;
-
     public $manager;
+
+    public $model;
 
     public $owner;
 
     public $record = [];
 
+    public function close()
+    {
+        $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerCreateModal");
+    }
+
     public function create($another = false)
     {
+        $manager = $this->manager;
+
+        $this->callHook('beforeValidate');
+
         $this->validateTemporaryUploadedFiles();
 
         $this->storeTemporaryUploadedFiles();
 
         $this->validate();
 
-        $this->owner->{$this->getRelationship()}()->create($this->record);
+        $this->callHook('afterValidate');
 
-        $this->emit('refreshRelationManagerList', $this->manager);
+        $this->callHook('beforeCreate');
 
-        if (! $another) {
-            $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerCreateModal");
+        $this->owner->{$this->getRelationshipName()}()->create($this->record);
+
+        $this->callHook('afterCreate');
+
+        $this->emit('refreshRelationManagerList', $manager);
+
+        if ($another) {
+            $this->fillRecord();
+
+            $this->dispatchBrowserEvent('notify', __($manager::$createModalCreatedMessage));
+
+            return;
         }
 
-        $this->dispatchBrowserEvent('notify', __($this->createdMessage));
-
-        $this->record = [];
-        $this->fillWithFormDefaults();
+        $this->dispatchBrowserEvent('close', "{$manager}RelationManagerCreateModal");
     }
 
-    public function getForm()
-    {
-        return $this->manager::form(
-            Form::make()
-                ->context(static::class)
-                ->model(get_class($this->owner->{$this->getRelationship()}()->getModel()))
-                ->record($this->record)
-                ->submitMethod('create'),
-        );
-    }
-
-    public function getRelationship()
+    public function getRelationshipName()
     {
         $manager = $this->manager;
 
@@ -66,11 +67,45 @@ class CreateRecord extends Component
 
     public function mount()
     {
-        $this->fillWithFormDefaults();
+        $this->fillRecord();
     }
 
     public function render()
     {
         return view('filament::resources.relation-manager.create-record');
+    }
+
+    protected function actions()
+    {
+        $manager = $this->manager;
+
+        return [
+            Actions\Button::make($manager::$createModalCreateButtonLabel)
+                ->primary()
+                ->submit(),
+            Actions\Button::make($manager::$createModalCreateAnotherButtonLabel)
+                ->action('create(true)')
+                ->primary(),
+            Actions\Button::make($manager::$createModalCancelButtonLabel)
+                ->action('close'),
+        ];
+    }
+
+    protected function fillRecord()
+    {
+        $this->record = [];
+
+        $this->callHook('beforeFill');
+
+        $this->fillWithFormDefaults();
+
+        $this->callHook('afterFill');
+    }
+
+    protected function form(Form $form)
+    {
+        return $this->manager::form(
+            $form->model(get_class($this->owner->{$this->getRelationshipName()}()->getModel())),
+        );
     }
 }

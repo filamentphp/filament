@@ -3,14 +3,19 @@
 
     <x-filament::app-content>
         <x-filament::card>
-            <x-forms::container :form="$this->getForm()" class="space-y-6">
+            <form
+                wire:submit.prevent="save"
+                class="space-y-6"
+            >
+                <x-forms::form :schema="$this->getForm()->getSchema()" :columns="$this->getForm()->getColumns()" />
+
                 <x-filament::button
                     type="submit"
                     color="primary"
                 >
                     {{ __('filament::edit-account.buttons.save.label') }}
                 </x-filament::button>
-            </x-forms::container>
+            </form>
         </x-filament::card>
     </x-filament::app-content>
 </div>

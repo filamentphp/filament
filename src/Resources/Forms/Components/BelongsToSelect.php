@@ -34,6 +34,11 @@ class BelongsToSelect extends Select
         return parent::getLabel();
     }
 
+    public function getModel()
+    {
+        return $this->getForm()->getModel();
+    }
+
     public function getOptions()
     {
         if ($this->isPreloaded() && $callback = $this->getOptions) {

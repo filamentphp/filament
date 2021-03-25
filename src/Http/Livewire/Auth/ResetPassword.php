@@ -25,33 +25,6 @@ class ResetPassword extends Component
 
     public $user;
 
-    public function getForm()
-    {
-        return Form::make()
-            ->context(static::class)
-            ->schema([
-                Components\TextInput::make('email')
-                    ->label('filament::auth/reset-password.form.email.label')
-                    ->email()
-                    ->autocomplete()
-                    ->required(),
-                Components\TextInput::make('password')
-                    ->label('filament::auth/reset-password.form.password.label')
-                    ->password()
-                    ->autofocus()
-                    ->autocomplete('new-password')
-                    ->required()
-                    ->minLength(8)
-                    ->confirmed(),
-                Components\TextInput::make('passwordConfirmation')
-                    ->label('filament::auth/reset-password.form.passwordConfirmation.label')
-                    ->password()
-                    ->autocomplete('new-password')
-                    ->required()
-                    ->password(),
-            ]);
-    }
-
     public function mount(Request $request, $token)
     {
         $this->email = $request->input('email');
@@ -90,5 +63,31 @@ class ResetPassword extends Component
         Filament::auth()->login($this->user, true);
 
         return redirect()->to(route('filament.dashboard'));
+    }
+
+    protected function form(Form $form)
+    {
+        return $form
+            ->schema([
+                Components\TextInput::make('email')
+                    ->label('filament::auth/reset-password.form.email.label')
+                    ->email()
+                    ->autocomplete()
+                    ->required(),
+                Components\TextInput::make('password')
+                    ->label('filament::auth/reset-password.form.password.label')
+                    ->password()
+                    ->autofocus()
+                    ->autocomplete('new-password')
+                    ->required()
+                    ->minLength(8)
+                    ->confirmed(),
+                Components\TextInput::make('passwordConfirmation')
+                    ->label('filament::auth/reset-password.form.passwordConfirmation.label')
+                    ->password()
+                    ->autocomplete('new-password')
+                    ->required()
+                    ->password(),
+            ]);
     }
 }

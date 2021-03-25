@@ -23,7 +23,7 @@
 
 @if (count($schema))
     <div {{ $attributes }}>
-        <div class="grid {{ $columnsClasses }} gap-6">
+        <div class="grid gap-6 {{ $columnsClasses }}">
             @foreach ($schema as $component)
                 {{ $component->render() }}
             @endforeach

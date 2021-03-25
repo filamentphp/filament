@@ -8,7 +8,7 @@ class Field extends Component
 {
     protected $bindingAttribute = 'wire:model.defer';
 
-    protected $defaultValue = null;
+    protected $defaultValue;
 
     protected $extraAttributes = [];
 
@@ -194,6 +194,11 @@ class Field extends Component
         }
 
         return $this->validationAttribute;
+    }
+
+    public function getValue()
+    {
+        return $this->getLivewire()->getPropertyValue($this->getName());
     }
 
     public function helpMessage($message)

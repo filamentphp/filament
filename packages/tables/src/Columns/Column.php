@@ -26,6 +26,10 @@ class Column
 
     protected $name;
 
+    protected $searchColumns;
+
+    protected $sortColumns;
+
     protected $table;
 
     protected $view;
@@ -105,9 +109,61 @@ class Column
         return $this->label;
     }
 
+    public function getLivewire()
+    {
+        return $this->getTable()->getLivewire();
+    }
+
     public function getName()
     {
         return $this->name;
+    }
+
+    public function getRelationshipName()
+    {
+        return Str::of($this->getName())->beforeLast('.');
+    }
+
+    public function getSearchColumns()
+    {
+        $columns = $this->searchColumns;
+
+        if ($columns !== null) {
+            if (! is_array($columns)) {
+                $columns = [$columns];
+            }
+
+            if ($this->isRelationship()) {
+                $columns = collect($columns)
+                    ->map(fn ($column) => "{$this->getRelationshipName()}.{$column}")
+                    ->toArray();
+            }
+
+            return $columns;
+        }
+
+        return [$this->getName()];
+    }
+
+    public function getSortColumns()
+    {
+        $columns = $this->sortColumns;
+
+        if ($columns !== null) {
+            if (! is_array($columns)) {
+                $columns = [$columns];
+            }
+
+            if ($this->isRelationship()) {
+                $columns = collect($columns)
+                    ->map(fn ($column) => "{$this->getRelationshipName()}.{$column}")
+                    ->toArray();
+            }
+
+            return $columns;
+        }
+
+        return [$this->getName()];
     }
 
     public function getTable()
@@ -172,6 +228,11 @@ class Column
     public function isPrimary()
     {
         return $this->isPrimary;
+    }
+
+    public function isRelationship()
+    {
+        return Str::of($this->getName())->contains('.');
     }
 
     public function isSearchable()
@@ -253,19 +314,45 @@ class Column
         ]));
     }
 
-    public function searchable()
+    public function searchable($columns = [])
     {
-        $this->configure(function () {
+        $this->configure(function () use ($columns) {
             $this->isSearchable = true;
+
+            if ($columns) {
+                $this->searchColumns($columns);
+            }
         });
 
         return $this;
     }
 
-    public function sortable()
+    public function searchColumns($columns)
     {
-        $this->configure(function () {
+        $this->configure(function () use ($columns) {
+            $this->searchColumns = $columns;
+        });
+
+        return $this;
+    }
+
+    public function sortable($columns = [])
+    {
+        $this->configure(function () use ($columns) {
             $this->isSortable = true;
+
+            if ($columns) {
+                $this->sortColumns($columns);
+            }
+        });
+
+        return $this;
+    }
+
+    public function sortColumns($columns)
+    {
+        $this->configure(function () use ($columns) {
+            $this->sortColumns = $columns;
         });
 
         return $this;

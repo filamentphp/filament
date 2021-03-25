@@ -10,17 +10,13 @@ class Form
 
     protected $columns = 1;
 
-    protected $context;
+    protected $livewire;
 
-    protected $model;
-
-    protected $record;
+    protected $parent;
 
     protected $rules = [];
 
     protected $schema = [];
-
-    protected $submitMethod = 'submit';
 
     protected $validationAttributes = [];
 
@@ -31,11 +27,14 @@ class Form
         return $this;
     }
 
-    public function context($context)
+    public static function extend($form)
     {
-        $this->context = $context;
+        return (new static())->parent($form);
+    }
 
-        return $this;
+    public static function for($livewire)
+    {
+        return (new static())->livewire($livewire);
     }
 
     public function getColumns()
@@ -45,7 +44,7 @@ class Form
 
     public function getContext()
     {
-        return $this->context;
+        return get_class($this->getLivewire());
     }
 
     public function getDefaultValues()
@@ -70,14 +69,14 @@ class Form
         return $schema;
     }
 
-    public function getModel()
+    public function getLivewire()
     {
-        return $this->model;
+        return $this->livewire ?? $this->getParent()->getLivewire();
     }
 
-    public function getRecord()
+    public function getParent()
     {
-        return $this->record;
+        return $this->parent;
     }
 
     public function getRules()
@@ -98,11 +97,6 @@ class Form
         return $this->schema;
     }
 
-    public function getSubmitMethod()
-    {
-        return $this->submitMethod;
-    }
-
     public function getValidationAttributes()
     {
         $attributes = $this->validationAttributes;
@@ -114,21 +108,16 @@ class Form
         return $attributes;
     }
 
-    public static function make()
+    public function livewire($component)
     {
-        return new static();
-    }
-
-    public function model($model)
-    {
-        $this->model = $model;
+        $this->livewire = $component;
 
         return $this;
     }
 
-    public function record($record)
+    public function parent($form)
     {
-        $this->record = (object) $record;
+        $this->parent = $form;
 
         return $this;
     }
@@ -147,13 +136,6 @@ class Form
                 return $component->form($this);
             })
             ->toArray();
-
-        return $this;
-    }
-
-    public function submitMethod($method)
-    {
-        $this->submitMethod = $method;
 
         return $this;
     }

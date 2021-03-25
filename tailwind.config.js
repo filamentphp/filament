@@ -114,8 +114,5 @@ module.exports = {
       }),
     },
   },
-  variants: {
-    animation: ['responsive', 'motion-safe', 'motion-reduce'],
-  },
   plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
 }

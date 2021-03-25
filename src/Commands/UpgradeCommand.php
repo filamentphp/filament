@@ -3,7 +3,6 @@
 namespace Filament\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 
 class UpgradeCommand extends Command
 {

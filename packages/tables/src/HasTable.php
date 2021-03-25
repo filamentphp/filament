@@ -2,187 +2,31 @@
 
 namespace Filament\Tables;
 
-use Illuminate\Support\Str;
-use Livewire\WithPagination;
-
 trait HasTable
 {
-    use WithPagination;
+    use Concerns\CanFilterRecords;
+    use Concerns\CanGetRecords;
+    use Concerns\CanPaginateRecords;
+    use Concerns\CanReorderRecords;
+    use Concerns\CanSearchRecords;
+    use Concerns\CanSelectRecords;
+    use Concerns\CanSortRecords;
 
-    public $filter = null;
+    protected $table;
 
-    public $recordsPerPage = 25;
-
-    public $search = '';
-
-    public $selected = [];
-
-    public $sortColumn = null;
-
-    public $sortDirection = 'asc';
-
-    public function deleteSelected()
+    public function getTable()
     {
-        static::getModel()::destroy($this->selected);
+        if ($this->table !== null) {
+            return $this->table;
+        }
 
-        $this->selected = [];
+        return $this->table = $this->table(
+            Table::for($this),
+        );
     }
 
-    public function getRecords()
+    protected function table(Table $table)
     {
-        $query = static::getQuery();
-
-        if ($this->getTable()->isFilterable() && $this->filter !== '' && $this->filter !== null) {
-            collect($this->getTable()->getFilters())
-                ->filter(fn ($filter) => $filter->getName() === $this->filter)
-                ->each(function ($filter) use (&$query) {
-                    $query = $filter->apply($query);
-                });
-        }
-
-        if ($this->getTable()->isSearchable() && $this->search !== '' && $this->search !== null) {
-            collect($this->getTable()->getColumns())
-                ->filter(fn ($column) => $column->isSearchable())
-                ->each(function ($column, $index) use (&$query) {
-                    $search = Str::lower($this->search);
-                    $searchOperator = [
-                        'pgsql' => 'ilike',
-                    ][$query->getConnection()->getDriverName()] ?? 'like';
-
-                    $first = $index === 0;
-
-                    if (Str::of($column->getName())->contains('.')) {
-                        $relationship = (string) Str::of($column->getName())->beforeLast('.');
-
-                        $query = $query->{$first ? 'whereHas' : 'orWhereHas'}(
-                            $relationship,
-                            function ($query) use ($column, $search, $searchOperator) {
-                                $columnName = (string) Str::of($column->getName())->afterLast('.');
-
-                                return $query->where($columnName, $searchOperator, "%{$search}%");
-                            },
-                        );
-
-                        return;
-                    }
-
-                    $query = $query->{$first ? 'where' : 'orWhere'}(
-                        fn ($query) => $query->where($column->getName(), $searchOperator, "%{$search}%"),
-                    );
-                });
-        }
-
-        if ($this->getTable()->isSortable() && $this->sortColumn !== '' && $this->sortColumn !== null) {
-            if (Str::of($this->sortColumn)->contains('.')) {
-                $relationship = (string) Str::of($this->sortColumn)->beforeLast('.');
-
-                $query = $query->with([
-                    $relationship => function ($query) {
-                        return $query->orderBy(
-                            (string) Str::of($this->sortColumn)->afterLast('.'),
-                            $this->sortDirection,
-                        );
-                    },
-                ]);
-            } else {
-                $query = $query->orderBy($this->sortColumn, $this->sortDirection);
-            }
-        }
-
-        if (! $this->getTable()->hasPagination()) {
-            return $query->get();
-        }
-
-        return $query->paginate($this->recordsPerPage);
-    }
-
-    public function setPage($page)
-    {
-        $this->page = $page;
-
-        $this->selected = [];
-    }
-
-    public function sortBy($column)
-    {
-        if ($this->sortColumn === $column) {
-            switch ($this->sortDirection) {
-                case 'asc':
-                    $this->sortDirection = 'desc';
-
-                    break;
-                case 'desc':
-                    $this->sortColumn = null;
-                    $this->sortDirection = 'asc';
-
-                    break;
-            }
-
-            return;
-        }
-
-        $this->sortColumn = $column;
-        $this->sortDirection = 'asc';
-    }
-
-    public function toggleSelectAll()
-    {
-        $records = $this->getRecords();
-
-        if (! $records->count()) {
-            return;
-        }
-
-        $keyName = $records->first()->getKeyName();
-
-        if ($records->count() !== count($this->selected)) {
-            $this->selected = $records->pluck($keyName)->all();
-        } else {
-            $this->selected = [];
-        }
-    }
-
-    public function toggleSelected($record)
-    {
-        if (! in_array($record, $this->selected)) {
-            $this->selected[] = $record;
-        } else {
-            $key = array_search($record, $this->selected);
-
-            unset($this->selected[$key]);
-        }
-    }
-
-    public function updatedFilter()
-    {
-        $this->selected = [];
-
-        if (! $this->getTable()->hasPagination()) {
-            return;
-        }
-
-        $this->resetPage();
-    }
-
-    public function updatedRecordsPerPage()
-    {
-        $this->selected = [];
-
-        if (! $this->getTable()->hasPagination()) {
-            return;
-        }
-
-        $this->resetPage();
-    }
-
-    public function updatedSearch()
-    {
-        $this->selected = [];
-
-        if (! $this->getTable()->hasPagination()) {
-            return;
-        }
-
-        $this->resetPage();
+        return $table;
     }
 }
