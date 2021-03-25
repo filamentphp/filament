@@ -4,6 +4,7 @@ namespace Filament\Resources;
 
 use Filament\Filament;
 use Illuminate\Database\Eloquent\Relations;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
 
