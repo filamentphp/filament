@@ -24,8 +24,6 @@ trait CanRunActions
         if ($action->getRequiresConfirmation() && $this->showingActionConfirmationModal === false) {
             $this->showingActionConfirmationModal = true;
 
-            $this->dispatchBrowserEvent('open', static::class . 'TableActionsModal');
-
             return;
         }
 
