@@ -1,11 +1,16 @@
 @props([
     'closeButton' => false,
     'name' => null,
+    'open' => false,
 ])
+
+@php
+$open = is_string($open) ? "\$wire.entangle('{$open}')" : json_encode($open);
+@endphp
 
 <span
     {{ $attributes->except('class') }}
-    x-data="{ open: false }"
+    x-data="{ open: {{ $open }} }"
     x-init="
         $watch('open', value => {
             if (value === true) {

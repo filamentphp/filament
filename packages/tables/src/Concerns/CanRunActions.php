@@ -32,6 +32,11 @@ trait CanRunActions
         $this->runAction();
     }
 
+    public function updatedShowingActionConfirmationModal($value)
+    {
+        if ($value === false) $this->reset('action');
+    }
+
     public function updatedHasConfirmedAction()
     {
         $this->runAction();
@@ -45,13 +50,17 @@ trait CanRunActions
             return;
         }
 
-        $action->run($this->selected);
+        $records = static::getModel() !== null
+            ? static::getModel()::find($this->selected)
+            : collect($this->selected);
+
+        $action->run($records);
 
         $this->resetPage();
 
+        $this->action = null;
         $this->showingActionConfirmationModal = false;
-
-        $this->dispatchBrowserEvent('close', static::class . 'TableActionsModal');
+        $this->hasConfirmedAction = false;
     }
 
     public function getAction()

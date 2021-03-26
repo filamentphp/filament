@@ -40,7 +40,7 @@ class Action
         //
     }
 
-    public function apply($records)
+    public function run($records)
     {
         if (! $records instanceof Collection) {
             $records = collect($records);

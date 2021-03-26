@@ -22,6 +22,7 @@
 <x:tables::modal
     class="w-full max-w-lg"
     :name="static::class . 'TableActionsModal'"
+    open="showingActionConfirmationModal"
 >
     @if($this->getAction())
         <x-filament::card class="space-y-5">
@@ -29,6 +30,21 @@
 
             <div class="my-6">
                 <p>Are you sure you want to run this action?</p>
+            </div>
+
+            <div class="flex items-center justify-end space-x-4">
+                <x-filament::button
+                    x-on:click.prevent="open = false"
+                    color="white"
+                >
+                    Cancel
+                </x-filament::button>
+                <x-filament::button
+                    x-on:click.prevent="$wire.hasConfirmedAction = true"
+                    color="primary"
+                >
+                    Run Action
+                </x-filament::button>
             </div>
         </x-filament::card>
     @endif
