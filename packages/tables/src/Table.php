@@ -212,12 +212,20 @@ class Table
 
     public function addRecordActions($actions)
     {
+        if(last($this->recordActions)->getName() == "edit") {
+            $edit = array_pop($this->recordActions);
+        }
+
         $this->recordActions = array_merge(
             $this->recordActions,
             collect(value($actions))
                 ->map(fn ($action) => $action->table($this))
                 ->toArray()
         );
+
+        if(isset($edit)) {
+            $this->recordActions[] = $edit;
+        }
 
         return $this;
     }
