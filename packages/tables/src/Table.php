@@ -204,10 +204,20 @@ class Table
     public function recordActions($actions)
     {
         $this->recordActions = collect(value($actions))
-            ->map(function ($action) {
-                return $action->table($this);
-            })
+            ->map(fn ($action) => $action->table($this))
             ->toArray();
+
+        return $this;
+    }
+
+    public function addRecordActions($actions)
+    {
+        $this->recordActions = array_merge(
+            $this->recordActions,
+            collect(value($actions))
+                ->map(fn ($action) => $action->table($this))
+                ->toArray()
+        );
 
         return $this;
     }
