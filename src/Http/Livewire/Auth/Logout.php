@@ -18,6 +18,6 @@ class Logout extends Component
     {
         Filament::auth()->logout();
 
-        return redirect()->route('filament.auth.login');
+        return redirect()->route(config('filament.logout_redirect_route', 'filament.auth.login'));
     }
 }
