@@ -12,6 +12,8 @@ class Image extends Column
 
     protected $disk;
 
+    protected $directory;
+
     protected $height = 40;
 
     protected $isRounded = false;
@@ -21,6 +23,15 @@ class Image extends Column
     protected function setUp()
     {
         $this->disk(config('forms.default_filesystem_disk'));
+    }
+
+    public function directory($directory)
+    {
+        $this->configure(function () use ($directory) {
+            $this->directory = $directory;
+        });
+
+        return $this;
     }
 
     public function disk($disk)
