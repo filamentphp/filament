@@ -192,7 +192,7 @@
         x-data="select({
             autofocus: {{ $formComponent->isAutofocused() ? 'true' : 'false' }},
             emptyOptionsMessage: '{{ __($formComponent->getEmptyOptionsMessage()) }}',
-            initialDisplayValue: {{ data_get($this, $formComponent->getName()) !== null ? '\'' . addslashes($formComponent->getDisplayValue(data_get($this, $formComponent->getName()))) . '\'' : 'null' }},
+            initialDisplayValue: {{ data_get($this, $formComponent->getName()) !== null ? json_encode($formComponent->getDisplayValue(data_get($this, $formComponent->getName()))): 'null' }},
             initialOptions: {{ json_encode($formComponent->getOptions()) }},
             name: '{{ $formComponent->getName() }}',
             noSearchResultsMessage: '{{ __($formComponent->getNoSearchResultsMessage()) }}',
