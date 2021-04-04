@@ -59,6 +59,10 @@ abstract class PluginServiceProvider extends ServiceProvider
             }
 
             foreach ($this->resources() as $resource) {
+                foreach ($resource::subResources() as $subResource) {
+                    Livewire::component($subResource::getName(), $subResource);
+                }
+
                 foreach ($resource::relations() as $relation) {
                     Livewire::component($relation::getName(), $relation);
                 }
