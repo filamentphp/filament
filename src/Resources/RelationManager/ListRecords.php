@@ -95,6 +95,10 @@ class ListRecords extends Component
     {
         $manager = $this->manager;
 
+        if (!app($manager)->canEdit()) {
+            return [];
+        }
+
         return [
             RecordActions\Link::make('edit')
                 ->label($manager::$editRecordActionLabel)
