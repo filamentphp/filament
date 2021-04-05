@@ -56,20 +56,6 @@ class EditRecord extends Component
         $this->dispatchBrowserEvent('notify', __($manager::$savedMessage));
     }
 
-    public function switchRecord($manager, $record)
-    {
-        if ($manager !== $this->manager) {
-            return;
-        }
-
-        $this->callHook('beforeFill');
-
-        $this->record = $this->getQuery()->find($record);
-        $this->resetTemporaryUploadedFiles();
-
-        $this->callHook('afterFill');
-    }
-
     protected function actions()
     {
         $manager = $this->manager;
@@ -91,7 +77,7 @@ class EditRecord extends Component
         $this->record = $record;
 
         if ($this->record === null) {
-            throw (new ModelNotFoundException())->setModel($record::class, [$record]);
+            throw (new ModelNotFoundException())->setModel(get_class($record), [$record]);
         }
 
         $this->callHook('afterFill');
