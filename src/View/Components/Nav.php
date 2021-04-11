@@ -4,6 +4,7 @@ namespace Filament\View\Components;
 
 use Filament\Filament;
 use Filament\NavigationItem;
+use Illuminate\Support\Str;
 use Illuminate\View\Component;
 
 class Nav extends Component
@@ -16,7 +17,9 @@ class Nav extends Component
 
         $this->items->push(
             NavigationItem::make('filament::dashboard.title', route('filament.dashboard'))
-                ->activeRule('filament.dashboard')
+                ->activeRule(
+                    (string) Str::of(route('filament.dashboard', [], false))->after('/')
+                )
                 ->icon('heroicon-o-home')
                 ->sort(-1),
         );

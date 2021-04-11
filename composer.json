@@ -21,8 +21,7 @@
         "illuminate/view": "^8.0",
         "league/glide-laravel": "^1.0",
         "livewire/livewire": "^2.2",
-        "thomaswelton/laravel-gravatar": "^1.0",
-        "watson/active": "^6.0"
+        "thomaswelton/laravel-gravatar": "^1.0"
     },
     "require-dev": {
         "orchestra/testbench": "^6.0",
