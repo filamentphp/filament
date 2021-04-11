@@ -4,7 +4,6 @@ namespace Filament\Pages;
 
 use Filament\Filament;
 use Filament\NavigationItem;
-use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -88,11 +87,6 @@ class Page extends Component
         return Filament::can('view', static::class);
     }
 
-    protected function abortIfForbidden()
-    {
-        abort_unless($this->isAuthorized(), 403);
-    }
-
     public static function navigationItems()
     {
         return [
@@ -121,6 +115,11 @@ class Page extends Component
     public static function route()
     {
         return Route::make(static::getSlug(), static::getSlug());
+    }
+
+    protected function abortIfForbidden()
+    {
+        abort_unless($this->isAuthorized(), 403);
     }
 
     protected function getLayoutData()

@@ -78,6 +78,11 @@ class ListRecords extends Page
         return Filament::can('viewAny', static::getModel());
     }
 
+    public function mount()
+    {
+        $this->abortIfForbidden();
+    }
+
     public function table(Table $table)
     {
         return static::getResource()::table(
@@ -106,10 +111,5 @@ class ListRecords extends Page
         return [
             'records' => $this->getRecords(),
         ];
-    }
-
-    public function mount()
-    {
-        $this->abortIfForbidden();
     }
 }

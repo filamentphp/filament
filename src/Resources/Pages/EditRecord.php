@@ -113,6 +113,13 @@ class EditRecord extends Page
         $this->callHook('afterFill');
     }
 
+    protected function form(Form $form)
+    {
+        return static::getResource()::form(
+            $form->model(static::getModel()),
+        );
+    }
+
     protected function resolveRecord($key)
     {
         $model = static::getModel();
@@ -124,12 +131,5 @@ class EditRecord extends Page
         }
 
         return $record;
-    }
-
-    protected function form(Form $form)
-    {
-        return static::getResource()::form(
-            $form->model(static::getModel()),
-        );
     }
 }
