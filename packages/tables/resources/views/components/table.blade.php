@@ -89,7 +89,7 @@
                         </td>
                     @endforeach
 
-                    <td class="px-6 py-4 text-right whitespace-nowrap">
+                    <td class="px-6 py-4 whitespace-nowrap flex justify-end items-center space-x-2">
                         @foreach ($table->getRecordActions() as $recordAction)
                             {{ $recordAction->render($record) }}
                         @endforeach
