@@ -9,15 +9,9 @@ trait HasForm
     use Concerns\CanUploadFiles;
     use Concerns\CanValidateInput;
 
-    protected $form;
-
     public function getForm()
     {
-        if ($this->form !== null) {
-            return $this->form;
-        }
-
-        return $this->form = $this->form(
+        return $this->form(
             Form::for($this),
         );
     }
