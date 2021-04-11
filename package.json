@@ -12,20 +12,20 @@
     "start": "npm run watch"
   },
   "devDependencies": {
-    "@popperjs/core": "^2.9.1",
+    "@popperjs/core": "^2.9.2",
     "@tailwindcss/forms": "^0.2.1",
-    "@tailwindcss/jit": "^0.1.7",
+    "@tailwindcss/jit": "^0.1.18",
     "@tailwindcss/typography": "^0.4.0",
     "alpinejs": "^2.8.2",
     "autoprefixer": "^10.2.5",
     "dotenv": "^8.2.0",
     "focus-visible": "^5.2.0",
-    "laravel-mix": "^6.0.13",
-    "postcss": "^8.2.8",
-    "postcss-import": "^14.0.0",
+    "laravel-mix": "^6.0.16",
+    "postcss": "^8.2.10",
+    "postcss-import": "^14.0.1",
     "postcss-nested": "^5.0.5",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
-    "tailwindcss": "^2.0.4"
+    "tailwindcss": "^2.1.1"
   }
 }
