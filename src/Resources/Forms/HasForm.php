@@ -13,11 +13,7 @@ trait HasForm
 
     public function getForm()
     {
-        if ($this->form !== null) {
-            return $this->form;
-        }
-
-        return $this->form = $this->form(
+        return $this->form(
             Form::for($this),
         );
     }

@@ -12,15 +12,9 @@ trait HasTable
     use Concerns\CanSelectRecords;
     use Concerns\CanSortRecords;
 
-    protected $table;
-
     public function getTable()
     {
-        if ($this->table !== null) {
-            return $this->table;
-        }
-
-        return $this->table = $this->table(
+        return $this->table(
             Table::for($this),
         );
     }
