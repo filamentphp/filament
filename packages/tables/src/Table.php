@@ -212,22 +212,20 @@ class Table
 
     public function pushRecordActions($actions)
     {
-        $this->recordActions = collect($this->recordActions)
-            ->push(
-                collect(value($actions))->map(fn ($action) => $action->table($this))
-            )
-            ->toArray();
+        $this->recordActions = array_merge(
+            $this->recordActions,
+            collect(value($actions))->map(fn ($action) => $action->table($this))->toArray(),
+        );
 
         return $this;
     }
 
     public function prependRecordActions($actions)
     {
-        $this->recordActions = collect($this->recordActions)
-            ->prepend(
-                collect(value($actions))->map(fn ($action) => $action->table($this))
-            )
-            ->toArray();
+        $this->recordActions = array_merge(
+            collect(value($actions))->map(fn ($action) => $action->table($this))->toArray(),
+            $this->recordActions,
+        );
 
         return $this;
     }
