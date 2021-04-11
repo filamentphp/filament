@@ -85,7 +85,7 @@ class EditRecord extends Component
         $this->record = [];
     }
 
-    public function switchRecord($manager, $record)
+    public function switchRecord($manager, $recordKey)
     {
         if ($manager !== $this->manager) {
             return;
@@ -93,7 +93,7 @@ class EditRecord extends Component
 
         $this->callHook('beforeFill');
 
-        $this->record = $this->getQuery()->find($record);
+        $this->record = $this->getQuery()->find($recordKey);
         $this->resetTemporaryUploadedFiles();
 
         $this->callHook('afterFill');

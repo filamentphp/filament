@@ -74,6 +74,8 @@ class CreateRecord extends Page
     public function mount()
     {
         $this->fillRecord();
+
+        $this->abortIfForbidden();
     }
 
     protected function actions()

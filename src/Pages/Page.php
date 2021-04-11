@@ -22,13 +22,6 @@ class Page extends Component
 
     public static $view;
 
-    public function __invoke(Container $container, \Illuminate\Routing\Route $route)
-    {
-        abort_unless($this->isAuthorized(), 403);
-
-        return parent::__invoke($container, $route);
-    }
-
     public static function authorization()
     {
         return [];
@@ -93,6 +86,11 @@ class Page extends Component
     public function isAuthorized()
     {
         return Filament::can('view', static::class);
+    }
+
+    protected function abortIfForbidden()
+    {
+        abort_unless($this->isAuthorized(), 403);
     }
 
     public static function navigationItems()

@@ -107,4 +107,9 @@ class ListRecords extends Page
             'records' => $this->getRecords(),
         ];
     }
+
+    public function mount()
+    {
+        $this->abortIfForbidden();
+    }
 }
