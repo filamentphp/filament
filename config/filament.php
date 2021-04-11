@@ -49,6 +49,7 @@ return [
 
     'auth' => [
         'guard' => env('FILAMENT_AUTH_GUARD', 'filament'),
+        'logout_redirect_route' => 'filament.auth.login',
     ],
 
     /*
