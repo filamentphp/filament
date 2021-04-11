@@ -68,6 +68,8 @@ class EditRecord extends Page
     public function mount($record)
     {
         $this->fillRecord($record);
+
+        $this->abortIfForbidden();
     }
 
     public function save()
@@ -102,19 +104,26 @@ class EditRecord extends Page
         ];
     }
 
-    protected function fillRecord($record)
+    protected function fillRecord($key)
     {
         $this->callHook('beforeFill');
 
-        $model = static::getModel();
-
-        $this->record = (new $model())->resolveRouteBinding($record);
-
-        if ($this->record === null) {
-            throw (new ModelNotFoundException())->setModel($model, [$record]);
-        }
+        $this->record = $this->resolveRecord($key);
 
         $this->callHook('afterFill');
+    }
+
+    protected function resolveRecord($key)
+    {
+        $model = static::getModel();
+
+        $record = (new $model())->resolveRouteBinding($key);
+
+        if ($record === null) {
+            throw (new ModelNotFoundException())->setModel($model, [$key]);
+        }
+
+        return $record;
     }
 
     protected function form(Form $form)
