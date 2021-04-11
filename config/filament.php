@@ -49,18 +49,8 @@ return [
 
     'auth' => [
         'guard' => env('FILAMENT_AUTH_GUARD', 'filament'),
+        'logout_redirect_route' => 'filament.auth.login',
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Logout redirect URL
-    |--------------------------------------------------------------------------
-    |
-    | Sometimes you may wish to lead to a different route after logging out.
-    |
-    */
-
-    'logout_redirect_route' => 'filament.auth.login',
 
     /*
     |--------------------------------------------------------------------------

@@ -25,16 +25,13 @@ class LogoutTest extends TestCase
     }
 
     /** @test */
-    public function can_log_out_with_user_defined_route()
+    public function can_redirect_to_custom_route_after_log_out()
     {
-        Route::get('/custom-post-logout', [
-            'as' => 'logout.custom',
-            'action' => function () {
-                return 'This is a custom logout route';
-            },
-        ]);
+        Route::get('custom-logout-redirect', function () {
+            return true;
+        })->name('filament.testing.auth.custom-logout-redirect');
 
-        config()->set('filament.logout_redirect_route', 'logout.custom');
+        $this->app['config']->set('filament.auth.logout_redirect_route', 'filament.testing.auth.custom-logout-redirect');
 
         $user = User::factory()->create();
 
@@ -42,7 +39,7 @@ class LogoutTest extends TestCase
 
         Livewire::test(Logout::class)
             ->call('submit')
-            ->assertRedirect(route('logout.custom'));
+            ->assertRedirect(route('filament.testing.auth.custom-logout-redirect'));
 
         $this->assertGuest();
     }
