@@ -210,22 +210,24 @@ class Table
         return $this;
     }
 
-    public function addRecordActions($actions)
+    public function pushRecordActions($actions)
     {
-        if(last($this->recordActions)->getName() == "edit") {
-            $edit = array_pop($this->recordActions);
-        }
+        $this->recordActions = collect($this->recordActions)
+            ->push(
+                collect(value($actions))->map(fn ($action) => $action->table($this))
+            )
+            ->toArray();
 
-        $this->recordActions = array_merge(
-            $this->recordActions,
-            collect(value($actions))
-                ->map(fn ($action) => $action->table($this))
-                ->toArray()
-        );
+        return $this;
+    }
 
-        if(isset($edit)) {
-            $this->recordActions[] = $edit;
-        }
+    public function prependRecordActions($actions)
+    {
+        $this->recordActions = collect($this->recordActions)
+            ->prepend(
+                collect(value($actions))->map(fn ($action) => $action->table($this))
+            )
+            ->toArray();
 
         return $this;
     }
