@@ -33,20 +33,22 @@
             </x-filament::modal>
         @endif
 
-        <x-filament::modal
-            class="w-full max-w-4xl"
-            :name="static::class . 'RelationManagerEditModal'"
-        >
-            <x-filament::card class="space-y-5">
-                <x-filament::card-header :title="static::$editModalHeading" />
+        @if ($this->canEdit())
+            <x-filament::modal
+                class="w-full max-w-4xl"
+                :name="static::class . 'RelationManagerEditModal'"
+            >
+                <x-filament::card class="space-y-5">
+                    <x-filament::card-header :title="static::$editModalHeading" />
 
-                @livewire(static::getComponent('edit'), [
-                    'manager' => static::class,
-                    'model' => $this->getModel(),
-                    'owner' => $this->getOwner(),
-                ])
-            </x-filament::card>
-        </x-filament::modal>
+                    @livewire(static::getComponent('edit'), [
+                        'manager' => static::class,
+                        'model' => $this->getModel(),
+                        'owner' => $this->getOwner(),
+                    ])
+                </x-filament::card>
+            </x-filament::modal>
+        @endif
 
         @if ($this->canAttach())
             <x-filament::modal

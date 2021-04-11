@@ -84,6 +84,11 @@ class RelationManager extends Component
         return Filament::can('create', $this->getModel());
     }
 
+    public function canEdit()
+    {
+        return true;
+    }
+
     public function canDelete()
     {
         return true;

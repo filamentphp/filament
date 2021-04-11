@@ -95,11 +95,13 @@ class ListRecords extends Component
     {
         $manager = $this->manager;
 
+        $canEdit = (new $manager)->canEdit();
+
         return [
             RecordActions\Link::make('edit')
                 ->label($manager::$editRecordActionLabel)
                 ->action('openEdit')
-                ->when(fn ($record) => Filament::can('update', $record)),
+                ->when(fn ($record) => $canEdit && Filament::can('update', $record)),
         ];
     }
 
