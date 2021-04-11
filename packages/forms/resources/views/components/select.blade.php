@@ -231,14 +231,16 @@
             @endunless
             class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $formComponent->isDisabled() ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
         >
-            <span
+            <input
                 x-show="! open"
-                x-text="displayValue ?? '{{ __($formComponent->getPlaceholder()) }}'"
+                x-bind:value="displayValue ?? '{{ __($formComponent->getPlaceholder()) }}'"
+                type="text"
+                readonly
+                class="w-full h-full p-0 border-0 focus:ring-0 focus:outline-none"
                 x-bind:class="{
                     'text-gray-400': displayValue === null,
                 }"
-                class="block truncate"
-            ></span>
+            />
 
             @unless ($formComponent->isDisabled())
                 <input
@@ -295,16 +297,16 @@
                                 'text-white bg-blue-600': index === focusedOptionIndex,
                                 'text-gray-900': index !== focusedOptionIndex,
                             }"
-                            class="relative py-2 pl-3 text-gray-900 cursor-default select-none pr-9"
+                            class="relative py-2 pl-3 h-10 flex items-center text-gray-900 cursor-default select-none pr-9"
                         >
-                                <span
-                                    x-text="Object.values(options)[index]"
-                                    x-bind:class="{
-                                        'font-medium': index === focusedOptionIndex,
-                                        'font-normal': index !== focusedOptionIndex,
-                                    }"
-                                    class="block font-normal truncate"
-                                ></span>
+                            <span
+                                x-text="Object.values(options)[index]"
+                                x-bind:class="{
+                                    'font-medium': index === focusedOptionIndex,
+                                    'font-normal': index !== focusedOptionIndex,
+                                }"
+                                class="block font-normal truncate"
+                            ></span>
 
                             <span
                                 x-show="key === value"
@@ -314,12 +316,12 @@
                                 }"
                                 class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600"
                             >
-                                    <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                              clip-rule="evenodd" />
-                                    </svg>
-                                </span>
+                                <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                          clip-rule="evenodd" />
+                                </svg>
+                            </span>
                         </li>
                     </template>
 
