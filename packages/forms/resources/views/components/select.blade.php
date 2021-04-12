@@ -203,6 +203,7 @@
         })"
         x-init="init()"
         x-on:click.away="closeListbox()"
+        x-on:blur="closeListbox()"
         x-on:keydown.escape.stop="closeListbox()"
         {!! $formComponent->getId() ? "id=\"{$formComponent->getId()}\"" : null !!}
         class="relative"

@@ -87,7 +87,7 @@
             />
         @endif
 
-        <div x-show="tags.length || {{ $formComponent->isDisabled() ? 'false' : 'true' }}" class="rounded shadow-sm border overflow-hidden {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}">
+        <div x-show="tags.length || {{ $formComponent->isDisabled() ? 'false' : 'true' }}" class="rounded shadow-sm border overflow-hidden focus-within:border-blue-300 focus-within:ring focus-within:ring-blue-200 focus-within:ring-opacity-50 {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}">
             @unless ($formComponent->isDisabled())
                 <input
                     autocomplete="off"
@@ -96,7 +96,7 @@
                     type="text"
                     x-on:keydown.enter.stop.prevent="createTag()"
                     x-model="newTag"
-                    class="block w-full placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border-0"
+                    class="block w-full placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 border-0"
                     x-bind:class="{ 'text-danger-700': hasError }"
                 />
             @endunless

@@ -335,6 +335,8 @@
         })"
         x-init="init()"
         x-on:click.away="closePicker()"
+        x-on:keydown.escape.stop="closePicker()"
+        x-on:blur="closePicker()"
         {!! $formComponent->getId() ? "id=\"{$formComponent->getId()}\"" : null !!}
         class="relative"
         {!! Filament\format_attributes($formComponent->getExtraAttributes()) !!}
@@ -359,12 +361,11 @@
                 x-on:keydown.backspace.stop.prevent="clearValue()"
                 x-on:keydown.clear.stop.prevent="clearValue()"
                 x-on:keydown.delete.stop.prevent="clearValue()"
-                x-on:keydown.escape.stop="closePicker()"
                 x-bind:aria-expanded="open"
                 aria-label="{{ __($formComponent->getPlaceholder()) }}"
             @endunless
             type="button"
-            class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $formComponent->isDisabled() ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+            class="bg-white relative w-full border rounded shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus-within:border-blue-300 focus-within:ring focus-within:ring-blue-200 focus-within:ring-opacity-50 {{ $formComponent->isDisabled() ? 'text-gray-500' : '' }} {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
         >
             <input
                 readonly
