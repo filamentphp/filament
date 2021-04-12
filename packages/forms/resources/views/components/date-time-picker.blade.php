@@ -187,6 +187,8 @@
                     })
 
                     this.$watch('hour', () => {
+                        if (this.hour > 23) this.hour = 0
+                        if (this.hour < 0) this.hour = 23
                         this.hour = Number.isInteger(+this.hour) && this.hour >= 0 && this.hour < 24 ? +this.hour : dayjs().hour()
 
                         let date = this.getSelectedDate()
@@ -197,6 +199,8 @@
                     })
 
                     this.$watch('minute', () => {
+                        if (this.minute > 59) this.minute = 0
+                        if (this.minute < 0) this.minute = 59
                         this.minute = Number.isInteger(+this.minute) && this.minute >= 0 && this.minute < 60 ? +this.minute : dayjs().minute()
 
                         let date = this.getSelectedDate()
@@ -207,6 +211,8 @@
                     })
 
                     this.$watch('second', () => {
+                        if (this.second > 59) this.second = 0
+                        if (this.second < 0) this.second = 59
                         this.second = Number.isInteger(+this.second) && this.second >= 0 && this.second < 60 ? +this.second : dayjs().second()
 
                         let date = this.getSelectedDate()
