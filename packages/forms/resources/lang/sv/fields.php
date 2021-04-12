@@ -36,15 +36,15 @@ return [
         'buttons' => [
 
             'add' => [
-                'label' => 'Add Row',
+                'label' => 'Ny Rad',
             ],
 
             'delete' => [
-                'label' => 'Delete Row',
+                'label' => 'Radera Rad',
             ],
 
             'sort' => [
-                'label' => 'Hold to Sort',
+                'label' => 'Tryck, ordna',
             ],
 
         ],
@@ -52,13 +52,13 @@ return [
         'fields' => [
 
             'key' => [
-                'label' => 'Key',
-                'placeholder' => 'Enter a key...',
+                'label' => 'Namn',
+                'placeholder' => 'Ange namn...',
             ],
 
             'value' => [
-                'label' => 'Value',
-                'placeholder' => 'Enter a value...',
+                'label' => 'Värde',
+                'placeholder' => 'Ange ett värde...',
             ],
 
         ],
@@ -68,24 +68,24 @@ return [
     'markdownEditor' => [
 
         'toolbarButtons' => [
-            'attachFiles' => 'Attach Files',
-            'bold' => 'Bold',
-            'bullet' => 'Bullets',
-            'code' => 'Code',
-            'italic' => 'Italic',
-            'link' => 'Link',
-            'number' => 'Numbers',
-            'preview' => 'Preview',
-            'strike' => 'Strikethrough',
-            'write' => 'Write',
+            'attachFiles' => 'Lägg till filer',
+            'bold' => 'Fet',
+            'bullet' => 'Lista',
+            'code' => 'Kod',
+            'italic' => 'Kursiv',
+            'link' => 'Länk',
+            'number' => 'Nummer',
+            'preview' => 'Förhandsvisa',
+            'strike' => 'Överstruken',
+            'write' => 'Skriv',
         ],
 
     ],
 
     'multiSelect' => [
-        'emptyOptionsMessage' => 'No options to choose from.',
-        'noSearchResultsMessage' => 'No options match your search.',
-        'placeholder' => 'Select an option',
+        'emptyOptionsMessage' => 'Finns inga alternativ.',
+        'noSearchResultsMessage' => 'Hittade inget som matchade din sökning.',
+        'placeholder' => 'Välj ett alternativ',
     ],
 
     'richEditor' => [
@@ -95,45 +95,45 @@ return [
             'link' => [
 
                 'buttons' => [
-                    'link' => 'Link',
-                    'unlink' => 'Unlink',
+                    'link' => 'Länka',
+                    'unlink' => 'Radera länk',
                 ],
 
                 'label' => 'URL',
 
-                'placeholder' => 'Enter a URL',
+                'placeholder' => 'Ange en URL',
 
             ],
 
         ],
 
         'toolbarButtons' => [
-            'attachFiles' => 'Attach Files',
-            'bold' => 'Bold',
-            'bullet' => 'Bullets',
-            'code' => 'Code',
-            'heading' => 'Heading',
-            'italic' => 'Italic',
-            'link' => 'Link',
-            'number' => 'Numbers',
-            'quote' => 'Quote',
-            'redo' => 'Redo',
-            'strike' => 'Strikethrough',
-            'subheading' => 'Subheading',
-            'title' => 'Title',
-            'undo' => 'Undo',
+            'attachFiles' => 'Lägg till filer',
+            'bold' => 'Fet',
+            'bullet' => 'Lista',
+            'code' => 'Kod',
+            'heading' => 'Rubrik',
+            'italic' => 'Kursiv',
+            'link' => 'Länk',
+            'number' => 'Nummer',
+            'quote' => 'Citat',
+            'redo' => 'Igen',
+            'strike' => 'Överstruken',
+            'subheading' => 'Underrubrik',
+            'title' => 'Titel',
+            'undo' => 'Ångra',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'Start typing to search...',
-        'noSearchResultsMessage' => 'No options match your search.',
-        'placeholder' => 'Select an option',
+        'emptyOptionsMessage' => 'Börja skriva för att söka...',
+        'noSearchResultsMessage' => 'Hittar inget som matchar din sökning.',
+        'placeholder' => 'Välj ett alternativ',
     ],
 
     'tags' => [
-        'placeholder' => 'New tag',
+        'placeholder' => 'Ny tagg',
     ],
 
 ];
