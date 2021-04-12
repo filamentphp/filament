@@ -51,8 +51,8 @@ return [
         ],
 
         'roles' => [
-            'label' => 'Roles',
-            'placeholder' => 'Select a role',
+            'label' => 'Roller',
+            'placeholder' => 'Välj en roll',
         ],
 
     ],
@@ -62,11 +62,11 @@ return [
         'columns' => [
 
             'email' => [
-                'label' => 'Email address',
+                'label' => 'Email',
             ],
 
             'name' => [
-                'label' => 'Name',
+                'label' => 'Namn',
             ],
 
         ],
@@ -74,7 +74,7 @@ return [
         'filters' => [
 
             'administrators' => [
-                'label' => 'Administrators',
+                'label' => 'Administratörer',
             ],
 
         ],
