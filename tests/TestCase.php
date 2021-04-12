@@ -12,7 +12,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Livewire\LivewireServiceProvider;
 use Thomaswelton\LaravelGravatar\LaravelGravatarServiceProvider;
-use Watson\Active\ActiveServiceProvider;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -48,7 +47,6 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
             TablesServiceProvider::class,
             LivewireServiceProvider::class,
             LaravelGravatarServiceProvider::class,
-            ActiveServiceProvider::class,
         ];
     }
 }
