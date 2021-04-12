@@ -187,9 +187,17 @@
                     })
 
                     this.$watch('hour', () => {
-                        if (this.hour > 23) this.hour = 0
-                        if (this.hour < 0) this.hour = 23
-                        this.hour = Number.isInteger(+this.hour) && this.hour >= 0 && this.hour < 24 ? +this.hour : dayjs().hour()
+                        let hour = +this.hour
+
+                        if (! Number.isInteger(hour) || hour > 23) {
+                            this.hour = 0
+                            this.focusNextDay()
+                        } else if (hour < 0) {
+                            this.hour = 23
+                            this.focusPreviousDay()
+                        } else {
+                            this.hour = hour
+                        }
 
                         let date = this.getSelectedDate()
 
@@ -199,9 +207,17 @@
                     })
 
                     this.$watch('minute', () => {
-                        if (this.minute > 59) this.minute = 0
-                        if (this.minute < 0) this.minute = 59
-                        this.minute = Number.isInteger(+this.minute) && this.minute >= 0 && this.minute < 60 ? +this.minute : dayjs().minute()
+                        let minute = +this.minute
+
+                        if (! Number.isInteger(minute) || minute > 59) {
+                            this.minute = 0
+                            this.hour++
+                        } else if (minute < 0) {
+                            this.minute = 59
+                            this.hour--
+                        } else {
+                            this.minute = minute
+                        }
 
                         let date = this.getSelectedDate()
 
@@ -211,9 +227,17 @@
                     })
 
                     this.$watch('second', () => {
-                        if (this.second > 59) this.second = 0
-                        if (this.second < 0) this.second = 59
-                        this.second = Number.isInteger(+this.second) && this.second >= 0 && this.second < 60 ? +this.second : dayjs().second()
+                        let second = +this.second
+
+                        if (! Number.isInteger(second) || second > 59) {
+                            this.second = 0
+                            this.minute++
+                        } else if (second < 0) {
+                            this.second = 59
+                            this.minute--
+                        } else {
+                            this.second = second
+                        }
 
                         let date = this.getSelectedDate()
 
@@ -472,6 +496,8 @@
                     @if ($formComponent->hasTime())
                         <div class="flex items-center justify-center py-2 bg-gray-100 rounded">
                             <input
+                                max="23"
+                                min="0"
                                 type="number"
                                 x-model.debounce="hour"
                                 class="w-16 p-0 pr-1 text-xl text-center text-gray-700 bg-gray-100 border-0 focus:ring-0 focus:outline-none"
@@ -480,6 +506,8 @@
                             <span class="text-xl font-medium text-gray-700 bg-gray-100">:</span>
 
                             <input
+                                max="59"
+                                min="0"
                                 type="number"
                                 x-model.debounce="minute"
                                 class="w-16 p-0 pr-1 text-xl text-center text-gray-700 bg-gray-100 border-0 focus:ring-0 focus:outline-none"
@@ -489,6 +517,8 @@
                                 <span class="text-xl font-medium text-gray-700 bg-gray-100">:</span>
 
                                 <input
+                                    max="59"
+                                    min="0"
                                     type="number"
                                     x-model.debounce="second"
                                     class="w-16 p-0 pr-1 text-xl text-center text-gray-700 bg-gray-100 border-0 focus:ring-0 focus:outline-none"
