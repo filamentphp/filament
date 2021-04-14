@@ -5,6 +5,18 @@
                 {{ __(static::getTitle()) }}
             </h3>
 
+            @if (
+                $this->isType(\Illuminate\Database\Eloquent\Relations\HasOne::class) ||
+                $this->isType(\Illuminate\Database\Eloquent\Relations\BelongsTo::class)
+            )
+                @livewire(static::getComponent('edit'), [
+                'canCreate' => $this->canCreate(),
+                'canDelete' => $this->canDelete(),
+                'manager' => static::class,
+                'model' => $this->getModel(),
+                'owner' => $this->getOwner(),
+                ])
+            @else
             @livewire(static::getComponent('list'), [
                 'canAttach' => $this->canAttach(),
                 'canCreate' => $this->canCreate(),
@@ -14,6 +26,7 @@
                 'model' => $this->getModel(),
                 'owner' => $this->getOwner(),
             ])
+            @endif
         </x-filament::card>
 
         @if ($this->canCreate())
