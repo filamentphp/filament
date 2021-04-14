@@ -52,6 +52,8 @@ class EditRecord extends Component
 
     public function render()
     {
+        // TODO: figure out how to conditionally fire this for HasOne and BelongsTo
+        $this->switchRecordInstance($this->getRelationship()->first());
         return view('filament::resources.relation-manager.edit-record');
     }
 
@@ -94,6 +96,16 @@ class EditRecord extends Component
         $this->callHook('beforeFill');
 
         $this->record = $this->getQuery()->find($recordKey);
+        $this->resetTemporaryUploadedFiles();
+
+        $this->callHook('afterFill');
+    }
+
+    public function switchRecordInstance($record)
+    {
+        $this->callHook('beforeFill');
+
+        $this->record = $record;
         $this->resetTemporaryUploadedFiles();
 
         $this->callHook('afterFill');
