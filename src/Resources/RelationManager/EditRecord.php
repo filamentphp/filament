@@ -3,7 +3,6 @@
 namespace Filament\Resources\RelationManager;
 
 use Filament\Filament;
-use Filament\Resources\Concerns\CanCallHooks;
 use Filament\Resources\Forms\Actions;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Forms\HasForm;
@@ -11,7 +10,7 @@ use Livewire\Component;
 
 class EditRecord extends Component
 {
-    use CanCallHooks;
+    use Concerns\CanCallHooks;
     use HasForm;
 
     public $manager;
