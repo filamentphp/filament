@@ -189,12 +189,12 @@
                     this.$watch('hour', () => {
                         let hour = +this.hour
 
-                        if (! Number.isInteger(hour) || hour > 23) {
+                        if (! Number.isInteger(hour)) {
+                            this.hour = dayjs().hour()
+                        } else if (hour > 23) {
                             this.hour = 0
-                            this.focusNextDay()
                         } else if (hour < 0) {
                             this.hour = 23
-                            this.focusPreviousDay()
                         } else {
                             this.hour = hour
                         }
@@ -209,12 +209,12 @@
                     this.$watch('minute', () => {
                         let minute = +this.minute
 
-                        if (! Number.isInteger(minute) || minute > 59) {
+                        if (! Number.isInteger(minute)) {
+                            this.minute = dayjs().minute()
+                        } else if (minute > 59) {
                             this.minute = 0
-                            this.hour++
                         } else if (minute < 0) {
                             this.minute = 59
-                            this.hour--
                         } else {
                             this.minute = minute
                         }
@@ -229,12 +229,12 @@
                     this.$watch('second', () => {
                         let second = +this.second
 
-                        if (! Number.isInteger(second) || second > 59) {
+                        if (! Number.isInteger(second)) {
+                            this.second = dayjs().second()
+                        } else if (second > 59) {
                             this.second = 0
-                            this.minute++
                         } else if (second < 0) {
                             this.second = 59
-                            this.minute--
                         } else {
                             this.second = second
                         }
