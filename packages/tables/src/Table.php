@@ -183,6 +183,16 @@ class Table
         return $this;
     }
 
+    public function prependRecordActions($actions)
+    {
+        $this->recordActions = array_merge(
+            collect(value($actions))->map(fn ($action) => $action->table($this))->toArray(),
+            $this->recordActions,
+        );
+
+        return $this;
+    }
+
     public function primaryColumnAction($action)
     {
         $this->primaryColumnAction = $action;
@@ -201,15 +211,6 @@ class Table
         return $this;
     }
 
-    public function recordActions($actions)
-    {
-        $this->recordActions = collect(value($actions))
-            ->map(fn ($action) => $action->table($this))
-            ->toArray();
-
-        return $this;
-    }
-
     public function pushRecordActions($actions)
     {
         $this->recordActions = array_merge(
@@ -220,12 +221,11 @@ class Table
         return $this;
     }
 
-    public function prependRecordActions($actions)
+    public function recordActions($actions)
     {
-        $this->recordActions = array_merge(
-            collect(value($actions))->map(fn ($action) => $action->table($this))->toArray(),
-            $this->recordActions,
-        );
+        $this->recordActions = collect(value($actions))
+            ->map(fn ($action) => $action->table($this))
+            ->toArray();
 
         return $this;
     }
