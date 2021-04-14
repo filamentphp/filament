@@ -61,11 +61,6 @@
             @endif
         </form>
 
-        <x-filament::resources.subForms
-            :owner="$record"
-            :subResources="static::getResource()::subResources()"
-        />
-
         <x-filament::resources.relations
             :owner="$record"
             :relations="static::getResource()::relations()"

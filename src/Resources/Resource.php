@@ -113,11 +113,6 @@ class Resource
         ];
     }
 
-    public static function subResources()
-    {
-        return [];
-    }
-
     public static function relations()
     {
         return [];
