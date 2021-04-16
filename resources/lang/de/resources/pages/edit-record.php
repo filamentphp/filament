@@ -11,6 +11,10 @@ return [
         'save' => [
             'label' => 'Speichern',
         ],
+        
+        'cancel' => [
+            'label' => 'Abbrechen',
+        ]
 
     ],
 
