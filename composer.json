@@ -36,7 +36,8 @@
             "Filament\\": "src",
             "Filament\\Forms\\": "packages/forms/src",
             "Filament\\Database\\Factories\\": "database/factories",
-            "Filament\\Tables\\": "packages/tables/src"
+            "Filament\\Tables\\": "packages/tables/src",
+            "Filament\\JetstreamExtension\\": "packages/jetstream-extension/src"
         }
     },
     "autoload-dev": {
@@ -49,7 +50,8 @@
             "providers": [
                 "Filament\\FilamentServiceProvider",
                 "Filament\\Forms\\FormsServiceProvider",
-                "Filament\\Tables\\TablesServiceProvider"
+                "Filament\\Tables\\TablesServiceProvider",
+                "Filament\\JetstreamExtension\\JetstreamExtensionServiceProvider"
             ],
             "aliases": {
                 "FilamentManager": "Filament\\Filament"
