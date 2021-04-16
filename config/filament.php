@@ -205,4 +205,16 @@ return [
 
     'cache_path_prefix' => 'filament/cache',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Page Layout
+    |--------------------------------------------------------------------------
+    |
+    | This is the default page layout used for all admin page views. Override to integrate with
+    | other administration panels such as Jetstream.
+    |
+    */
+
+    'page_layout' => env('FILAMENT_PAGE_LAYOUT', 'filament::components.layouts.app'),
+
 ];

@@ -2,43 +2,36 @@
 
 namespace Filament\View\Components;
 
-use Filament\Filament;
-use Filament\NavigationItem;
-use Illuminate\Support\Str;
+use Filament\Services\NavigationService;
+use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 
+/**
+ * Class Nav
+ * @package Filament\View\Components
+ */
 class Nav extends Component
 {
-    public $items;
+    /**
+     * @var \Illuminate\Support\Collection
+     */
+    public Collection $items;
 
-    public function __construct()
+    /**
+     * Nav constructor.
+     *
+     * @param  NavigationService  $navigationService
+     */
+    public function __construct(NavigationService $navigationService)
     {
-        $this->items = collect();
-
-        $this->items->push(
-            NavigationItem::make('filament::dashboard.title', route('filament.dashboard'))
-                ->activeRule(
-                    (string) Str::of(route('filament.dashboard', [], false))->after('/')
-                )
-                ->icon('heroicon-o-home')
-                ->sort(-1),
-        );
-
-        foreach (Filament::getResources() as $resource) {
-            if (Filament::can('viewAny', $resource::getModel())) {
-                $this->items->push(...$resource::navigationItems());
-            }
-        }
-
-        foreach (Filament::getPages() as $page) {
-            if (Filament::can('view', $page)) {
-                $this->items->push(...$page::navigationItems());
-            }
-        }
-
-        $this->items = $this->items->sortBy(fn ($item) => $item->sort)->values();
+        $this->items = $navigationService->getItems(true);
     }
 
+    /**
+     * Get the view / contents that represents the component.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function render()
     {
         return view('filament::components.nav');

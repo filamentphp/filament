@@ -108,8 +108,9 @@ class Page extends Component
 
     public function render()
     {
+        $pageLayout = config('filament.page_layout', static::$layout);
         return view(static::$view, $this->getViewData())
-            ->layout(static::$layout, $this->getLayoutData());
+            ->layout($pageLayout, $this->getLayoutData());
     }
 
     public static function route()
