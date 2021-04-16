@@ -7,7 +7,10 @@ return [
         'create' => [
             'label' => 'Erstellen',
         ],
-
+        
+        'createAnother' => [
+            'label' => 'Erstellen & weitere erstellen',
+        ],
     ],
 
 ];
