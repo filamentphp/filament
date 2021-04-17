@@ -2,11 +2,8 @@
 
 namespace Filament\JetstreamExtension;
 
-use App\View\Components\AppLayout;
 use Filament\JetstreamExtension\Http\Livewire\NavigationMenu;
-use Filament\JetstreamExtension\View\Components\AppLayout as AppLayoutExtended;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Livewire;
 
 /**
@@ -22,15 +19,9 @@ class JetstreamExtensionServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->afterResolving(BladeCompiler::class, function () {
-            if (config('jetstream.stack') === 'livewire' && class_exists(Livewire::class)) {
-                //Livewire::component('filament.core.dashboard', NavigationMenu::class);
-                //Livewire::component('navigation-menu::override', NavigationMenu::class);
-            }
-        });
-
-        $this->app->bind(AppLayout::class, AppLayoutExtended::class);
-        $this->overrideConfiguration();
+        if (config('jetstream.stack') === 'livewire') {
+            $this->overrideConfiguration();
+        }
     }
 
     /**
@@ -43,8 +34,9 @@ class JetstreamExtensionServiceProvider extends ServiceProvider
         $this->bootLoaders();
         $this->bootPublishing();
 
-        Livewire::component('navigation-menu', NavigationMenu::class);
-        //Livewire::component('filament.core.resources.pages.page::override', NavigationMenu::class);
+        if (config('jetstream.stack') === 'livewire') {
+            Livewire::component('navigation-menu', NavigationMenu::class);
+        }
     }
 
     /**
