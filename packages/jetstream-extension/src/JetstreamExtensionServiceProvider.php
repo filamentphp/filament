@@ -3,6 +3,8 @@
 namespace Filament\JetstreamExtension;
 
 use Filament\JetstreamExtension\Http\Livewire\NavigationMenu;
+use Filament\JetstreamExtension\View\Components\AppHeader;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -22,6 +24,9 @@ class JetstreamExtensionServiceProvider extends ServiceProvider
         if (config('jetstream.stack') === 'livewire') {
             $this->overrideConfiguration();
         }
+
+        // Overrides filament views
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'filament');
     }
 
     /**
