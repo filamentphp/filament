@@ -85,9 +85,10 @@ class EditRecord extends Component
 
         if(!$this->formIsEmbeddedOnPage()) {
             $this->emit('refreshRelationManagerList', $manager);
+
+            $this->dispatchBrowserEvent('close', "{$manager}RelationManagerEditModal");
         }
 
-        $this->dispatchBrowserEvent('close', "{$manager}RelationManagerEditModal");
         $this->dispatchBrowserEvent('notify', __($manager::$editModalSavedMessage));
 
         $this->record = [];
