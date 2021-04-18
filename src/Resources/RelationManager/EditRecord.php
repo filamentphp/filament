@@ -52,16 +52,16 @@ class EditRecord extends Component
     public function mount()
     {
         $this->fillRecord();
-        if(
-            HasOne::class === $this->relationshipType ||
-            BelongsTo::class === $this->relationshipType
-        ) {
-            $this->switchRecordInstance($this->getRelationship()->first());
-        }
     }
 
     public function render()
     {
+        if(
+            HasOne::class === $this->relationshipType ||
+            BelongsTo::class === $this->relationshipType
+        ) {
+            $this->switchRecordInstance($this->getRelationship()->firstOrCreate());
+        }
         return view('filament::resources.relation-manager.edit-record');
     }
 
