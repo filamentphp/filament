@@ -9,13 +9,14 @@
                 $this->isType(\Illuminate\Database\Eloquent\Relations\HasOne::class) ||
                 $this->isType(\Illuminate\Database\Eloquent\Relations\BelongsTo::class)
             )
-                @livewire(static::getComponent('edit'), [
+            @livewire(static::getComponent('edit'), [
                 'canCreate' => $this->canCreate(),
                 'canDelete' => $this->canDelete(),
                 'manager' => static::class,
+                'relationshipType' => $this->getRelationshipType(),
                 'model' => $this->getModel(),
                 'owner' => $this->getOwner(),
-                ])
+            ])
             @else
             @livewire(static::getComponent('list'), [
                 'canAttach' => $this->canAttach(),

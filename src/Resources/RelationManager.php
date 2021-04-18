@@ -148,6 +148,11 @@ class RelationManager extends Component
         return $this->owner->{static::getRelationshipName()}();
     }
 
+    public function getRelationshipType()
+    {
+        return get_class($this->owner->{static::getRelationshipName()}());
+    }
+
     public static function getRelationshipName()
     {
         return static::$relationship;

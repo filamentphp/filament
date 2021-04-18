@@ -6,6 +6,9 @@ use Filament\Filament;
 use Filament\Resources\Forms\Actions;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Forms\HasForm;
+use Filament\Resources\RelationManager;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Livewire\Component;
 
 class EditRecord extends Component
@@ -14,6 +17,7 @@ class EditRecord extends Component
     use HasForm;
 
     public $manager;
+    public $relationshipType;
 
     public $owner;
 
@@ -48,12 +52,16 @@ class EditRecord extends Component
     public function mount()
     {
         $this->fillRecord();
+        if(
+            HasOne::class === $this->relationshipType ||
+            BelongsTo::class === $this->relationshipType
+        ) {
+            $this->switchRecordInstance($this->getRelationship()->first());
+        }
     }
 
     public function render()
     {
-        // TODO: figure out how to conditionally fire this for HasOne and BelongsTo
-        $this->switchRecordInstance($this->getRelationship()->first());
         return view('filament::resources.relation-manager.edit-record');
     }
 
