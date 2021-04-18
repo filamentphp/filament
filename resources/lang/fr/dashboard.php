@@ -2,6 +2,8 @@
 
 return [
 
+    'dir' => 'ltr',
+
     'title' => 'Tableau de bord',
 
     'widgets' => [

@@ -2,6 +2,8 @@
 
 return [
 
+    'dir' => 'ltr',
+
     'title' => 'Kontrolpanel',
 
     'widgets' => [

@@ -8,8 +8,8 @@
          @keydown.escape.window="headerIsOpen = false"
          x-on:resize.window="if (window.outerWidth > 768) headerIsOpen = false"
     >
-        <div class="fixed z-20 flex w-64 h-screen transition-transform duration-200 transform md:translate-x-0"
-             :class="headerIsOpen ? 'translate-x-0' : '-translate-x-full'">
+        <div class="fixed z-20 flex w-64 h-screen transition-transform duration-200 transform ltr:md:translate-x-0 rtl:md:translate-x-0"
+             :class="headerIsOpen ? 'translate-x-0' : 'ltr:-translate-x-full rtl:translate-x-full'">
             <header role="banner"
                     tabindex="-1"
                     id="banner"
@@ -47,7 +47,7 @@
                 :aria-expanded="headerIsOpen"
                 x-cloak
                 x-show.opacity="headerIsOpen"
-                class="absolute right-0 p-3 text-gray-200 transition-colors duration-200 transform translate-x-full md:hidden top-2 hover:text-white">
+                class="absolute ltr:right-0 rtl:left-0 p-3 text-gray-200 transition-colors duration-200 transform ltr:translate-x-full rtl:-translate-x-full md:hidden top-2 hover:text-white">
                 <x-heroicon-o-x class="w-6 h-6" />
             </button>
         </div>
@@ -55,7 +55,7 @@
         <span class="absolute inset-0 z-10 bg-gray-800 bg-opacity-50 md:hidden" x-cloak x-show="headerIsOpen"
               @click="headerIsOpen = false"></span>
 
-        <div class="flex flex-col w-full min-h-screen md:pl-64">
+        <div class="flex flex-col w-full min-h-screen ltr:md:pl-64 rtl:md:pr-64">
             <div class="flex-grow">
                 {{ $slot }}
             </div>

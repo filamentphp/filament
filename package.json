@@ -26,6 +26,7 @@
     "postcss-nested": "^5.0.5",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
-    "tailwindcss": "^2.1.1"
+    "tailwindcss": "^2.1.1",
+    "tailwindcss-dir": "^4.0.0"
   }
 }
