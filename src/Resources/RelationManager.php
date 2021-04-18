@@ -70,8 +70,6 @@ class RelationManager extends Component
     public function canAttach()
     {
         if (
-            $this->isType(Relations\HasOne::class) ||
-            $this->isType(Relations\BelongsTo::class) ||
             $this->isType(Relations\HasMany::class) ||
             $this->isType(Relations\MorphMany::class)
         ) {
@@ -83,12 +81,6 @@ class RelationManager extends Component
 
     public function canCreate()
     {
-        if (
-            $this->isType(Relations\HasOne::class) ||
-            $this->isType(Relations\BelongsTo::class)
-        ) {
-            return false;
-        }
         return Filament::can('create', $this->getModel());
     }
 
@@ -100,8 +92,6 @@ class RelationManager extends Component
     public function canDetach()
     {
         if (
-            $this->isType(Relations\HasOne::class) ||
-            $this->isType(Relations\BelongsTo::class) ||
             $this->isType(Relations\HasMany::class) ||
             $this->isType(Relations\MorphMany::class)
         ) {
