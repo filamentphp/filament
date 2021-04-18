@@ -56,10 +56,7 @@ class EditRecord extends Component
 
     public function render()
     {
-        if(
-            HasOne::class === $this->relationshipType ||
-            BelongsTo::class === $this->relationshipType
-        ) {
+        if($this->formIsEmbeddedOnPage()) {
             $this->switchRecordInstance($this->getRelationship()->firstOrCreate());
         }
         return view('filament::resources.relation-manager.edit-record');
@@ -87,7 +84,9 @@ class EditRecord extends Component
 
         $this->callHook('afterSave');
 
-        $this->emit('refreshRelationManagerList', $manager);
+        if(!$this->formIsEmbeddedOnPage()) {
+            $this->emit('refreshRelationManagerList', $manager);
+        }
 
         $this->dispatchBrowserEvent('close', "{$manager}RelationManagerEditModal");
         $this->dispatchBrowserEvent('notify', __($manager::$editModalSavedMessage));
@@ -140,5 +139,16 @@ class EditRecord extends Component
     protected function form(Form $form)
     {
         return $this->manager::form($form->model(get_class($this->owner->{$this->getRelationshipName()}()->getModel())));
+    }
+
+    public function formIsEmbeddedOnPage(): bool
+    {
+        if(
+            HasOne::class === $this->relationshipType ||
+            BelongsTo::class === $this->relationshipType
+        ) {
+            return true;
+        }
+        return false;
     }
 }
