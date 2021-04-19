@@ -47,9 +47,9 @@ class CreateRecord extends Component
 
         $this->emit('refreshRelationManagerList', $manager);
 
-        if ($another) {
-            $this->fillRecord();
+        $this->fillRecord();
 
+        if ($another) {
             $this->dispatchBrowserEvent('notify', __($manager::$createModalCreatedMessage));
 
             return;
