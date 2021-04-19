@@ -161,11 +161,11 @@
                 <div class="flex items-stretch h-8" x-bind:class="{ 'justify-end': tab === 'preview', 'justify-between': tab !== 'preview' }">
                     <markdown-toolbar
                         for="{{ $formComponent->getId() }}"
-                        class="flex items-stretch space-x-4"
+                        class="flex items-stretch space-x-4 rtl:space-x-reverse"
                         x-show="tab !== 'preview'"
                     >
                         @if ($formComponent->hasToolbarButton(['bold', 'italic', 'strike']))
-                            <div class="flex items-stretch space-x-1">
+                            <div class="flex items-stretch space-x-1 rtl:space-x-reverse">
                                 @if ($formComponent->hasToolbarButton('bold'))
                                     <x-filament::button size="small" class="text-base" title="{{ __('forms::fields.markdownEditor.toolbarButtons.bold') }}">
                                         <md-bold>
@@ -193,7 +193,7 @@
                         @endif
 
                         @if ($formComponent->hasToolbarButton(['link', 'attachFiles', 'code']))
-                            <div class="flex items-stretch space-x-1">
+                            <div class="flex items-stretch space-x-1 rtl:space-x-reverse">
                                 @if ($formComponent->hasToolbarButton('link'))
                                     <x-filament::button size="small" class="text-base" title="{{ __('forms::fields.markdownEditor.toolbarButtons.link') }}">
                                         <md-link class="w-full h-full">
@@ -221,7 +221,7 @@
                         @endif
 
                         @if ($formComponent->hasToolbarButton(['bullet', 'number']))
-                            <div class="flex items-stretch space-x-1">
+                            <div class="flex items-stretch space-x-1 rtl:space-x-reverse">
                                 @if ($formComponent->hasToolbarButton('bullet'))
                                     <x-filament::button size="small" class="text-base" title="{{ __('forms::fields.markdownEditor.toolbarButtons.bullet') }}">
                                         <md-unordered-list class="w-full h-full">
@@ -242,7 +242,7 @@
                     </markdown-toolbar>
 
                     @if ($formComponent->hasToolbarButton(['write', 'preview']) && ! $formComponent->isDisabled())
-                        <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-4 rtl:space-x-reverse">
                             @if ($formComponent->hasToolbarButton('write'))
                                 <button
                                     class="font-mono text-sm hover:underline"

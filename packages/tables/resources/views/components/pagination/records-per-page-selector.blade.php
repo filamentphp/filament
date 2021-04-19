@@ -1,4 +1,4 @@
-<div class="space-x-1">
+<div class="space-x-1 rtl:space-x-reverse">
     <select wire:model="recordsPerPage" id="records-per-page" class="text-sm md:text-base rounded shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border-gray-300">
         <option value="5">5</option>
         <option value="10">10</option>

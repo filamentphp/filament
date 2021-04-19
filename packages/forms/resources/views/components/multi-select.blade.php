@@ -309,7 +309,7 @@
                         x-on:click="unselectOption(key)"
                     @endunless
                     type="button"
-                    class="my-1 w-full flex justify-between space-x-2 items-center font-mono text-xs py-2 px-3 border border-gray-300 bg-gray-100 text-gray-800 rounded shadow-sm relative @unless($formComponent->isDisabled()) cursor-pointer transition duration-200 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 hover:bg-gray-200 transition-colors duration-200 @else cursor-default @endunless"
+                    class="my-1 w-full flex justify-between space-x-2 rtl:space-x-reverse items-center font-mono text-xs py-2 px-3 border border-gray-300 bg-gray-100 text-gray-800 rounded shadow-sm relative @unless($formComponent->isDisabled()) cursor-pointer transition duration-200 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 hover:bg-gray-200 transition-colors duration-200 @else cursor-default @endunless"
                 >
                     <span x-text="initialOptions[key] ?? key"></span>
 

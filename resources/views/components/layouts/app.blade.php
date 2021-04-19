@@ -19,7 +19,7 @@
                 <x-filament-nav class="flex-grow px-4 overflow-y-auto" />
 
                 <x-filament::dropdown
-                    class="flex items-center flex-grow w-full p-4 space-x-3 text-left transition-colors duration-200 hover:text-white hover:bg-gray-900">
+                    class="flex items-center flex-grow w-full p-4 space-x-3 rtl:space-x-reverse text-left transition-colors duration-200 hover:text-white hover:bg-gray-900">
                     <x-slot name="button">
                         <x-filament-avatar :user="\Filament\Filament::auth()->user()" :size="32" class="flex-shrink-0 w-8 h-8 rounded-full" />
 

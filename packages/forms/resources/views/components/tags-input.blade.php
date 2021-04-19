@@ -103,7 +103,7 @@
 
             <div
                 x-show="tags.length"
-                class="bg-white space-x-1 relative w-full pl-3 pr-10 py-2 text-left {{ $formComponent->isDisabled() ? 'text-gray-500' : 'border-t' }} {{ $errors->has($formComponent->getName()) ? 'border-danger-600' : 'border-gray-300' }}"
+                class="bg-white space-x-1 rtl:space-x-reverse relative w-full pl-3 pr-10 py-2 text-left {{ $formComponent->isDisabled() ? 'text-gray-500' : 'border-t' }} {{ $errors->has($formComponent->getName()) ? 'border-danger-600' : 'border-gray-300' }}"
             >
                 <template class="inline" x-for="tag in tags" x-bind:key="tag">
                     <button
@@ -111,7 +111,7 @@
                             x-on:click="deleteTag(tag)"
                         @endunless
                         type="button"
-                        class="my-1 truncate max-w-full inline-flex space-x-2 items-center font-mono text-xs py-1 px-2 border border-gray-300 bg-gray-100 text-gray-800 rounded shadow-sm inline-block relative @unless($formComponent->isDisabled()) cursor-pointer transition duration-200 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 hover:bg-gray-200 transition-colors duration-200 @else cursor-default @endunless"
+                        class="my-1 truncate max-w-full inline-flex space-x-2 rtl:space-x-reverse items-center font-mono text-xs py-1 px-2 border border-gray-300 bg-gray-100 text-gray-800 rounded shadow-sm inline-block relative @unless($formComponent->isDisabled()) cursor-pointer transition duration-200 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 hover:bg-gray-200 transition-colors duration-200 @else cursor-default @endunless"
                     >
                         <span x-text="tag"></span>
 

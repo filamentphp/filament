@@ -76,7 +76,7 @@
                                 </p>
                             </div>
 
-                            <div class="space-y-3 sm:space-y-0 sm:flex sm:space-x-3 sm:justify-end">
+                            <div class="space-y-3 sm:space-y-0 sm:flex sm:space-x-3 rtl:space-x-reverse sm:justify-end">
                                 <button
                                     x-on:click="open = false"
                                     type="button"

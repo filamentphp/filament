@@ -8,7 +8,7 @@
         >
             @if (config('filament.widgets.default.account', true))
                 <x-filament::card class="flex">
-                    <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-4 rtl:space-x-reverse">
                         <x-filament-avatar :user="\Filament\Filament::auth()->user()" :size="160" class="flex-shrink-0 w-20 h-20 rounded-full" />
 
                         <div class="space-y-1">
@@ -23,7 +23,7 @@
                 <x-filament::card>
                     <div class="flex items-center justify-between h-full">
                         <div class="w-full space-y-6">
-                            <div class="flex items-center justify-between w-full space-x-4">
+                            <div class="flex items-center justify-between w-full space-x-4 rtl:space-x-reverse">
                                 <a href="https://filamentadmin.com" target="_blank" class="transition-colors duration-200 hover:text-primary-700">
                                     <x-filament::logo class="h-auto w-28" />
                                 </a>
