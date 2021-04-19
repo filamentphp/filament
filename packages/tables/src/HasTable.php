@@ -8,7 +8,7 @@ trait HasTable
     use Concerns\CanGetRecords;
     use Concerns\CanPaginateRecords;
     use Concerns\CanReorderRecords;
-    use Concerns\CanRunActions;
+use Concerns\CanRunBulkRecordActions;
     use Concerns\CanSearchRecords;
     use Concerns\CanSelectRecords;
     use Concerns\CanSortRecords;

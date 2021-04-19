@@ -40,9 +40,9 @@ class ListRecords extends Page
             });
     }
 
-    public function canRunActions()
+    public function canRunBulkRecordActions()
     {
-        return count($this->selected) > 0;
+        return count($this->selected) > 0 && $this->isBulkActionable();
     }
 
     public function deleteSelected()

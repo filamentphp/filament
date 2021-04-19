@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Tappable;
 
-class Action
+class BulkAction
 {
     use Tappable;
 

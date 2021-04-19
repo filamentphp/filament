@@ -8,7 +8,7 @@ class Table
 {
     use Tappable;
 
-    protected $actions = [];
+    protected $bulkRecordActions = [];
 
     protected $columns = [];
 
@@ -30,9 +30,9 @@ class Table
 
     protected $shouldPrimaryColumnUrlOpenInNewTab = false;
 
-    public function actions($actions)
+    public function bulkRecordActions($actions)
     {
-        $this->actions = collect(value($actions))
+        $this->bulkRecordActions = collect(value($actions))
             ->map(function ($action) {
                 return $action->table($this);
             })
@@ -90,9 +90,9 @@ class Table
         return (new static())->livewire($livewire);
     }
 
-    public function getActions()
+    public function getBulkRecordActions()
     {
-        return $this->actions;
+        return $this->bulkRecordActions;
     }
 
     public function getColumns()
@@ -177,7 +177,7 @@ class Table
 
     public function getVisibleActions()
     {
-        $actions = collect($this->getActions())
+        $actions = collect($this->getBulkRecordActions())
             ->filter(fn ($action) => ! $action->isHidden())
             ->toArray();
 

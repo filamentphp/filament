@@ -4,9 +4,9 @@
 ])
 
 <div class="flex shadow-sm">
-    @if ($this->isActionable())
+    @if ($this->isBulkActionable())
         <select
-            wire:model="action"
+            wire:model="bulkRecordAction"
             class="flex-shrink-0 text-sm border-gray-300 rounded sm:text-base focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $disabled ? 'opacity-50' : null }}"
             {{ $disabled ? 'disabled' : null }}
         >
@@ -22,11 +22,11 @@
 <x:tables::modal
     class="w-full max-w-lg"
     :name="static::class . 'TableActionsModal'"
-    open="showingActionConfirmationModal"
+    open="showingBulkActionConfirmationModal"
 >
-    @if($this->getAction())
+    @if($this->getBulkAction())
         <x-filament::card class="space-y-5">
-            <x-filament::card-header :title="__($this->getAction()->getName())" />
+            <x-filament::card-header :title="__($this->getBulkAction()->getName())" />
 
             <div class="my-6">
                 <p>Are you sure you want to run this action?</p>
@@ -40,7 +40,7 @@
                     Cancel
                 </x-filament::button>
                 <x-filament::button
-                    x-on:click.prevent="$wire.hasConfirmedAction = true"
+                    x-on:click.prevent="$wire.hasConfirmedBulkAction = true"
                     color="primary"
                 >
                     Run Action
