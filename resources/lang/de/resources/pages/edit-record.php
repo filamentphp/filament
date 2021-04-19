@@ -14,7 +14,7 @@ return [
         
         'cancel' => [
             'label' => 'Abbrechen',
-        ]
+        ],
 
     ],
 
