@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Resources\RelationManager\Concerns;
+namespace Filament\Resources\Concerns;
 
 trait CanCallHooks
 {

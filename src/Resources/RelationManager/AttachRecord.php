@@ -5,13 +5,14 @@ namespace Filament\Resources\RelationManager;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\HasForm;
+use Filament\Resources\Concerns\CanCallHooks;
 use Filament\Resources\Forms\Actions;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
 class AttachRecord extends Component
 {
-    use Concerns\CanCallHooks;
+    use CanCallHooks;
     use HasForm;
 
     public $manager;

@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\RelationManager;
 
+use Filament\Resources\Concerns\CanCallHooks;
 use Filament\Resources\Forms\Actions;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Forms\HasForm;
@@ -9,7 +10,7 @@ use Livewire\Component;
 
 class CreateRecord extends Component
 {
-    use Concerns\CanCallHooks;
+    use CanCallHooks;
     use HasForm;
 
     public $manager;

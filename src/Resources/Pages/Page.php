@@ -2,11 +2,14 @@
 
 namespace Filament\Resources\Pages;
 
+use Filament\Resources\Concerns\CanCallHooks;
 use Filament\Resources\Route;
 use Illuminate\Support\Str;
 
 class Page extends \Filament\Pages\Page
 {
+    use CanCallHooks;
+
     public static $resource;
 
     public static function getModel()
@@ -38,14 +41,5 @@ class Page extends \Filament\Pages\Page
         }
 
         abort_unless($this->{$method}() ?? true, 403);
-    }
-
-    protected function callHook($hook)
-    {
-        if (! method_exists($this, $hook)) {
-            return;
-        }
-
-        $this->{$hook}();
     }
 }
