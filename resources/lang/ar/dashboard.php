@@ -2,8 +2,6 @@
 
 return [
 
-    'dir' => 'rtl',
-
     'title' => 'لوحة التحكم',
 
     'widgets' => [

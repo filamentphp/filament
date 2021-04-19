@@ -2,8 +2,6 @@
 
 return [
 
-    'dir' => 'ltr',
-
     'title' => 'Tauler',
 
     'widgets' => [
