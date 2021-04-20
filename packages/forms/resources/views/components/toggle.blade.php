@@ -7,7 +7,7 @@
     :label="$formComponent->getLabel()"
     :required="$formComponent->isRequired()"
 >
-    @if(!$formComponent->isColumnLayout())
+    @if($formComponent->isInlineLayout())
     <x-slot name="labelPrefix">
     @endif
         <button
@@ -61,7 +61,7 @@
                 </span>
             </span>
         </button>
-    @if(!$formComponent->isColumnLayout())
+    @if($formComponent->isInlineLayout())
     </x-slot>
     @endif
 </x-forms::field-group>
