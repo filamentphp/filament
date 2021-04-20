@@ -3,6 +3,7 @@
 namespace Filament\Resources\RelationManager;
 
 use Filament\Filament;
+use Filament\Resources\Concerns\CanCallHooks;
 use Filament\Resources\Tables\HasTable;
 use Filament\Resources\Tables\RecordActions;
 use Filament\Resources\Tables\Table;
@@ -10,7 +11,7 @@ use Livewire\Component;
 
 class ListRecords extends Component
 {
-    use Concerns\CanCallHooks;
+    use CanCallHooks;
     use HasTable;
 
     public $canAttach;
