@@ -121,5 +121,9 @@ module.exports = {
       space: ['direction'],
     }
   },
-  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography'), require('tailwindcss-dir')()],
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('tailwindcss-dir'),
+  ],
 }
