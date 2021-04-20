@@ -8,6 +8,7 @@ use Filament\Forms\Components\Field;
 class Toggle extends Field
 {
     use Concerns\CanBeAutofocused;
+    use Concerns\CanAlternateToColumnLayout;
 
     protected $onIcon;
 

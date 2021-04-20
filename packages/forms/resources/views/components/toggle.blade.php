@@ -7,7 +7,9 @@
     :label="$formComponent->getLabel()"
     :required="$formComponent->isRequired()"
 >
+    @if(!$formComponent->isColumnLayout())
     <x-slot name="labelPrefix">
+    @endif
         <button
             x-data="{ value: @entangle($formComponent->getName()){{ Str::of($formComponent->getBindingAttribute())->after('wire:model') }} }"
             role="switch"
@@ -59,5 +61,7 @@
                 </span>
             </span>
         </button>
+    @if(!$formComponent->isColumnLayout())
     </x-slot>
+    @endif
 </x-forms::field-group>

@@ -7,7 +7,9 @@
     :label="$formComponent->getLabel()"
     :required="$formComponent->isRequired()"
 >
+    @if(!$formComponent->isColumnLayout())
     <x-slot name="labelPrefix">
+    @endif
         <input
             {!! $formComponent->isAutofocused() ? 'autofocus' : null !!}
             {!! $formComponent->isDisabled() ? 'disabled' : null !!}
@@ -18,5 +20,7 @@
             class="rounded text-primary-600 shadow-sm focus:border-primary-700 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ $errors->has($formComponent->getName()) ? 'border-danger-600 ' : 'border-gray-300' }}"
             {!! Filament\format_attributes($formComponent->getExtraAttributes()) !!}
         />
+    @if(!$formComponent->isColumnLayout())
     </x-slot>
+    @endif
 </x-forms::field-group>
