@@ -9,6 +9,6 @@ class Checkbox extends Field
 
     protected function setUp()
     {
-        $this->default(false);
+        $this->default(false)->inline();
     }
 }

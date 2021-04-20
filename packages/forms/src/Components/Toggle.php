@@ -16,7 +16,7 @@ class Toggle extends Field
 
     protected function setUp()
     {
-        $this->default(false);
+        $this->default(false)->inline();
     }
 
     public function onIcon($icon)

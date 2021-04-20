@@ -4,7 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 trait CanAlternateLayoutDirection
 {
-    protected $isInlineLayout = true;
+    protected $isInlineLayout = false;
 
     public function inline()
     {
