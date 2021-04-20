@@ -70,7 +70,7 @@ class UserResource extends Resource
 
                     $adminColumn = Filament::auth()->getProvider()->getModel()::getFilamentAdminColumn();
                     if ($adminColumn !== null) {
-                        $schema[] = Components\Checkbox::make($adminColumn)
+                        $schema[] = Components\Toggle::make($adminColumn)
                             ->label('filament::resources/user-resource.form.isAdmin.label')
                             ->helpMessage('filament::resources/user-resource.form.isAdmin.helpMessage')
                             ->except(EditAccount::class);
