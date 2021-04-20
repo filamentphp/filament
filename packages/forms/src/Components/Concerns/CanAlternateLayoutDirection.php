@@ -6,7 +6,7 @@ trait CanAlternateLayoutDirection
 {
     protected $isInlineLayout = true;
 
-    public function inlineLayout()
+    public function inline()
     {
         $this->configure(function () {
             $this->isInlineLayout = true;
@@ -15,7 +15,7 @@ trait CanAlternateLayoutDirection
         return $this;
     }
 
-    public function stackedLayout()
+    public function stacked()
     {
         $this->configure(function () {
             $this->isInlineLayout = false;
@@ -24,7 +24,7 @@ trait CanAlternateLayoutDirection
         return $this;
     }
 
-    public function isInlineLayout()
+    public function isInlineLayout(): bool
     {
         return $this->isInlineLayout;
     }
