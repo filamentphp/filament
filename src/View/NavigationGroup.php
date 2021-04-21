@@ -52,7 +52,7 @@ class NavigationGroup
 
     /**
      * @param string $groupKey
-     * @param array{groupName: string, icon?: string, ?sort: int}  $groupSettings
+     * @param array{groupName: string, icon?: string, sort?: int}  $groupSettings
      *
      * @return static
      */
