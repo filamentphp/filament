@@ -6,6 +6,7 @@ use Composer\InstalledVersions;
 use Filament\AvatarProviders\GravatarProvider;
 use Filament\Events\ServingFilament;
 use Filament\Resources\UserResource;
+use Filament\View\NavigationGroup;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
@@ -166,6 +167,16 @@ class FilamentManager
             $this->authorizations[$target] ?? [],
             $authorizations,
         );
+    }
+
+    /**
+     * @param array<string, array> $navigationGroupMap
+     */
+    public function navigationGroupMap(array $navigationGroupMap)
+    {
+        foreach ($navigationGroupMap as $groupKey => $groupSettings) {
+            NavigationGroup::registerGroup($groupKey, $groupSettings);
+        }
     }
 
     public function registerPage($page)

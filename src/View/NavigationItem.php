@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament;
+namespace Filament\View;
 
 class NavigationItem
 {

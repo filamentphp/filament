@@ -2,7 +2,7 @@
 
 namespace Filament\Resources;
 
-use Filament\NavigationItem;
+use Filament\View\NavigationItem;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Tables\Table;
 use Illuminate\Support\Str;
@@ -15,6 +15,8 @@ class Resource
 
     public static $model;
 
+    public static $navigationGroup = null;
+
     public static $navigationLabel;
 
     public static $navigationSort = 0;
@@ -22,6 +24,14 @@ class Resource
     public static $routeNamePrefix = 'filament.resources';
 
     public static $slug;
+
+    public static function hasNavigationGroup(): bool
+    {
+        if (static::$navigationGroup === null) {
+            return false;
+        }
+        return true;
+    }
 
     public static function authorization()
     {
@@ -99,6 +109,9 @@ class Resource
             ->kebab();
     }
 
+    /**
+     * @return array<NavigationItem>
+     */
     public static function navigationItems()
     {
         return [

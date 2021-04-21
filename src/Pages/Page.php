@@ -3,7 +3,7 @@
 namespace Filament\Pages;
 
 use Filament\Filament;
-use Filament\NavigationItem;
+use Filament\View\NavigationItem;
 use Illuminate\Support\Str;
 use Livewire\Component;
 

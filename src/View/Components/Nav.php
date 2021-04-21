@@ -3,7 +3,8 @@
 namespace Filament\View\Components;
 
 use Filament\Filament;
-use Filament\NavigationItem;
+use Filament\View\NavigationGroup;
+use Filament\View\NavigationItem;
 use Illuminate\Support\Str;
 use Illuminate\View\Component;
 
@@ -26,7 +27,11 @@ class Nav extends Component
 
         foreach (Filament::getResources() as $resource) {
             if (Filament::can('viewAny', $resource::getModel())) {
-                $this->items->push(...$resource::navigationItems());
+                if ($resource::hasNavigationGroup()) {
+                    NavigationGroup::group($resource::$navigationGroup)->push(...$resource::navigationItems());
+                } else {
+                    $this->items->push(...$resource::navigationItems());
+                }
             }
         }
 
@@ -35,6 +40,8 @@ class Nav extends Component
                 $this->items->push(...$page::navigationItems());
             }
         }
+
+        $this->items->push(...NavigationGroup::groups());
 
         $this->items = $this->items->sortBy(fn ($item) => $item->sort)->values();
     }
