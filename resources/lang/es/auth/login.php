@@ -5,7 +5,7 @@ return [
     'buttons' => [
 
         'submit' => [
-            'label' => 'Registrarse',
+            'label' => 'Iniciar sesión',
         ],
 
     ],
