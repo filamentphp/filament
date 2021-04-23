@@ -3,15 +3,20 @@
 namespace Filament\Pages;
 
 use Filament\Filament;
+use Filament\View\Concerns\ChecksNavigationGroup;
 use Filament\View\NavigationItem;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
 class Page extends Component
 {
+    use ChecksNavigationGroup;
+
     public static $icon = 'heroicon-o-document-text';
 
     public static $layout = 'filament::components.layouts.app';
+
+    public static $navigationGroup = null;
 
     public static $navigationLabel;
 

@@ -2,6 +2,7 @@
 
 namespace Filament\Resources;
 
+use Filament\View\Concerns\ChecksNavigationGroup;
 use Filament\View\NavigationItem;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Tables\Table;
@@ -9,6 +10,8 @@ use Illuminate\Support\Str;
 
 class Resource
 {
+    use ChecksNavigationGroup;
+
     public static $icon = 'heroicon-o-collection';
 
     public static $label;
@@ -24,14 +27,6 @@ class Resource
     public static $routeNamePrefix = 'filament.resources';
 
     public static $slug;
-
-    public static function hasNavigationGroup(): bool
-    {
-        if (static::$navigationGroup === null) {
-            return false;
-        }
-        return true;
-    }
 
     public static function authorization()
     {
