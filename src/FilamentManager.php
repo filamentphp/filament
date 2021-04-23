@@ -174,8 +174,12 @@ class FilamentManager
      */
     public function navigationGroupMap(array $navigationGroupMap)
     {
-        foreach ($navigationGroupMap as $groupKey => $groupSettings) {
-            NavigationGroup::registerGroup($groupKey, $groupSettings);
+        foreach ($navigationGroupMap as $groupSettings) {
+            if (!isset($groupSettings['menus'])) {
+                NavigationGroup::registerGroup($groupSettings);
+            } else {
+                NavigationGroup::registerGroupWithMenus($groupSettings);
+            }
         }
     }
 

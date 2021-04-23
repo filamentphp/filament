@@ -2,11 +2,13 @@
 
 namespace Filament\View;
 
+use Filament\Resources\Resource;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class NavigationGroup
 {
+    public static $menuMap = [];
     public static $groupsMap = [];
 
     public string $label;
@@ -16,13 +18,18 @@ class NavigationGroup
 
     public int $sort = 0;
 
+    public bool $isResourceGroup = false;
+    public ?string $url = null;
+    public ?string $parentActiveRule = null;
+
     public Collection $items;
 
     private function __construct(
         string $groupName,
         string $mapKey,
         ?string $icon = null,
-        ?int $sort = null
+        ?int $sort = null,
+        ?Resource $resource = null
     ) {
         $this->label = $groupName;
         $this->mapKey = $mapKey;
@@ -32,20 +39,30 @@ class NavigationGroup
         if (null !== $sort) {
             $this->sort = $sort;
         }
+        if (null !== $resource) {
+            $this->isResourceGroup = true;
+            $this->url = $resource::generateUrl();
+            $this->parentActiveRule = $resource::defaultActiveRule();
+        }
         $this->items = new Collection();
     }
 
-    private static function make(
+    public static function make(
         string $groupName,
-        ?string $mapKey = null,
         ?string $icon = null,
-        ?int $sort = null
+        ?int $sort = null,
+        ?string $menuName = 'default',
+        ?Resource $resource = null,
     ) {
-        if (null === $mapKey) {
-            $mapKey = Str::kebab($groupName);
-        }
+        $mapKey = Str::kebab($groupName);
         if (!isset(static::$groupsMap[$mapKey])) {
-            static::$groupsMap[$mapKey] = new self($groupName, $mapKey, $icon, $sort);
+            static::$groupsMap[$mapKey] = new self($groupName, $mapKey, $icon, $sort, $resource);
+        }
+        if (!isset(static::$menuMap[$menuName])) {
+            static::$menuMap[$menuName] = [];
+        }
+        if (!isset(static::$menuMap[$menuName][$mapKey])) {
+            static::$menuMap[$menuName][$mapKey] = &static::$groupsMap[$mapKey];
         }
         return static::$groupsMap[$mapKey];
     }
@@ -56,10 +73,45 @@ class NavigationGroup
      *
      * @return static
      */
-    public static function registerGroup(string $groupKey, array $groupSettings): self
+    public static function registerGroup(array $groupSettings): self
     {
         extract($groupSettings, EXTR_SKIP);
-        return static::make($groupName, $groupKey, $icon ?? null, $sort ?? null);
+        if (isset($resource, $menuName)) {
+            return static::make($name, $icon ?? null, $sort ?? null, $menuName, $resource);
+        }
+        if (isset($resource)) {
+            return static::make($name, $icon ?? null, $sort ?? null, null, $resource);
+        }
+        if (isset($menuName)) {
+            return static::make($name, $icon ?? null, $sort ?? null, $menuName);
+        }
+        return static::make($name, $icon ?? null, $sort ?? null);
+    }
+
+    /**
+     * @param array $groupSettings
+     *
+     * @return array
+     */
+    public static function registerGroupWithMenus(array $groupSettings)
+    {
+        $groupMenus = $groupSettings['menus'];
+        unset($groupSettings['menus']);
+        $firstMenuName = array_shift($groupMenus);
+        $groupSettings['menuName'] = $firstMenuName;
+
+        // Register it once with full settings.
+        self::registerGroup($groupSettings);
+
+        // Then iterate thru each additional menu to register the group by name only.
+        foreach ($groupMenus as $menuName) {
+            self::addGroupToMenu($groupSettings['name'], $menuName);
+        }
+    }
+
+    public static function addGroupToMenu(string $groupName, string $menuName): self
+    {
+        return static::make($groupName, null, null, $menuName);
     }
 
     public static function group(string $groupName): self
@@ -67,9 +119,19 @@ class NavigationGroup
         return static::make($groupName);
     }
 
-    public static function groups(): array
+    public static function menuGroups(?string $menuName = 'default'): array
+    {
+        return static::$menuMap[$menuName] ?? [];
+    }
+
+    public static function allGroups(): array
     {
         return static::$groupsMap;
+    }
+
+    public static function registeredMenuNames(): array
+    {
+        return array_keys(static::$menuMap);
     }
 
     // Instance methods
@@ -80,8 +142,13 @@ class NavigationGroup
         return $this;
     }
 
-    public function activeRule()
+    public function getActiveRule()
     {
         return $this->items->map(fn($item) => $item->activeRule)->toArray();
+    }
+
+    public function getUrl()
+    {
+        return $this->url;
     }
 }
