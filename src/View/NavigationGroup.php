@@ -2,6 +2,7 @@
 
 namespace Filament\View;
 
+use Filament\Resources\Concerns\IsGroupResource;
 use Filament\Resources\Resource;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -21,6 +22,7 @@ class NavigationGroup
     public bool $isResourceGroup = false;
     public ?string $url = null;
     public ?string $parentActiveRule = null;
+    public ?array $menus = null;
 
     public Collection $items;
 
@@ -29,7 +31,7 @@ class NavigationGroup
         string $mapKey,
         ?string $icon = null,
         ?int $sort = null,
-        ?Resource $resource = null
+        ?IsGroupResource $resource = null
     ) {
         $this->label = $groupName;
         $this->mapKey = $mapKey;
@@ -43,6 +45,7 @@ class NavigationGroup
             $this->isResourceGroup = true;
             $this->url = $resource::generateUrl();
             $this->parentActiveRule = $resource::defaultActiveRule();
+            $this->menus = $resource::getGroupMenusList();
         }
         $this->items = new Collection();
     }
@@ -52,11 +55,13 @@ class NavigationGroup
         ?string $icon = null,
         ?int $sort = null,
         ?string $menuName = 'default',
-        ?Resource $resource = null,
+        ?IsGroupResource $resource = null
     ) {
         $mapKey = Str::kebab($groupName);
         if (!isset(static::$groupsMap[$mapKey])) {
             static::$groupsMap[$mapKey] = new self($groupName, $mapKey, $icon, $sort, $resource);
+        } else {
+            $menuName = static::$groupsMap[$mapKey]->menus[0];
         }
         if (!isset(static::$menuMap[$menuName])) {
             static::$menuMap[$menuName] = [];
