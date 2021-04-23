@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Resources\Concerns;
+namespace Filament\View\Concerns;
 
-interface IsGroupResource
+interface IsGroupItem
 {
     public static function registerNavigationGroup(): void;
 

@@ -3,7 +3,6 @@
 namespace Filament\Resources\Concerns;
 
 use Filament\View\NavigationGroup;
-use Illuminate\Support\Str;
 
 trait ImplicitGroupFromResource
 {

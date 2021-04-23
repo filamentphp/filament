@@ -43,8 +43,7 @@ class Page extends Component
         }
 
         return (string) Str::of(class_basename(static::class))
-            ->kebab()
-            ->replace('-', ' ');
+            ->snake(' ')->title();
     }
 
     public static function getNavigationSort()
@@ -91,14 +90,17 @@ class Page extends Component
     {
         return [
             NavigationItem::make(Str::title(static::getNavigationLabel()), static::generateUrl())
-                ->activeRule(
-                    (string) Str::of(parse_url(static::generateUrl(), PHP_URL_PATH))
-                        ->after('/')
-                        ->append('*'),
-                )
+                ->activeRule(static::defaultActiveRule())
                 ->icon(static::getIcon())
                 ->sort(static::getNavigationSort()),
         ];
+    }
+
+    public static function defaultActiveRule()
+    {
+        return (string) Str::of(parse_url(static::generateUrl(), PHP_URL_PATH))
+            ->after('/')
+            ->append('*');
     }
 
     public function notify($message)

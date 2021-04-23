@@ -27,7 +27,7 @@ $subNavLabel = 'subNavOpen' . Str::studly($label);
 
         <span class="flex-grow text-sm font-medium leading-tight">{{ __($label) }}</span>
     </a>
-    @if($isResourceGroup)
+    @if($isResourceGroup && count($items) > 0)
         <button @click="{{ $subNavLabel }} = !{{ $subNavLabel }}"><x-heroicon-o-chevron-down class="w-4" /></button>
     @endif
     @if($isResourceGroup)

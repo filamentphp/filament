@@ -3,7 +3,9 @@
 namespace Filament\View\Components;
 
 use Filament\Filament;
-use Filament\Resources\Concerns\IsGroupResource;
+use Filament\Pages\Page;
+use Filament\Resources\Resource;
+use Filament\View\Concerns\IsGroupItem;
 use Filament\View\NavigationGroup;
 use Filament\View\NavigationItem;
 use Illuminate\Support\Str;
@@ -27,15 +29,32 @@ class Nav extends Component
                 ->sort(-1),
         );
 
+        // Collect both types
         $appResources = collect(Filament::getResources());
-        $resourcesAsGroups = $appResources->lazy()->filter(fn($resource) => (new $resource) instanceof IsGroupResource);
+        $appPages = collect(Filament::getPages());
+
+        // Register both pages/resources that implement IsGroupItem
+        $resourcesAsGroups = $appResources->lazy()->filter(fn($resource) => (new $resource) instanceof IsGroupItem);
         $resourcesAsGroups->each(static function ($resource) {
             if (Filament::can('viewAny', $resource::getModel())) {
+                /**
+                 * @var Resource|IsGroupItem $resource
+                 */
                 $resource::registerNavigationGroup();
             }
         });
+        $pagesAsGroups = $appPages->lazy()->filter(fn($resource) => (new $resource) instanceof IsGroupItem);
+        $pagesAsGroups->each(static function ($page) {
+            /**
+             * @var Page|IsGroupItem $page
+             */
+            if (Filament::can('view', $page)) {
+                $page::registerNavigationGroup();
+            }
+        });
 
-        $regularResources = $appResources->lazy()->filter(fn($resource) => !((new $resource) instanceof IsGroupResource));
+        // Register the regular pages/resources
+        $regularResources = $appResources->lazy()->filter(fn($resource) => !((new $resource) instanceof IsGroupItem));
         $regularResources->each(function ($resource) {
             if (Filament::can('viewAny', $resource::getModel())) {
                 if ($resource::hasNavigationGroup()) {
@@ -46,13 +65,17 @@ class Nav extends Component
                 }
             }
         });
-
-        foreach (Filament::getPages() as $page) {
-            // TODO: update the pages to allow for groupings too.
+        $regularPages = $appPages->lazy()->filter(fn($resource) => !((new $resource) instanceof IsGroupItem));
+        $regularPages->each(function ($page) {
             if (Filament::can('view', $page)) {
-                $this->items->push(...$page::navigationItems());
+                if ($page::hasNavigationGroup()) {
+                    // For navigation groups we push the item into the groups items list.
+                    NavigationGroup::group($page::$navigationGroup)->push(...$page::navigationItems());
+                } else {
+                    $this->items->push(...$page::navigationItems());
+                }
             }
-        }
+        });
 
         // Then we push those groups into the navigation based on the nav menus name.
         $this->items->push(...NavigationGroup::menuGroups($this->navName));

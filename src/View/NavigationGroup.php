@@ -2,8 +2,7 @@
 
 namespace Filament\View;
 
-use Filament\Resources\Concerns\IsGroupResource;
-use Filament\Resources\Resource;
+use Filament\View\Concerns\IsGroupItem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -29,18 +28,10 @@ class NavigationGroup
     private function __construct(
         string $groupName,
         string $mapKey,
-        ?string $icon = null,
-        ?int $sort = null,
-        ?IsGroupResource $resource = null
+        ?IsGroupItem $resource = null
     ) {
         $this->label = $groupName;
         $this->mapKey = $mapKey;
-        if (null !== $icon) {
-            $this->icon = $icon;
-        }
-        if (null !== $sort) {
-            $this->sort = $sort;
-        }
         if (null !== $resource) {
             $this->isResourceGroup = true;
             $this->url = $resource::generateUrl();
@@ -52,16 +43,12 @@ class NavigationGroup
 
     public static function make(
         string $groupName,
-        ?string $icon = null,
-        ?int $sort = null,
         ?string $menuName = 'default',
-        ?IsGroupResource $resource = null
+        ?IsGroupItem $resource = null
     ) {
         $mapKey = Str::kebab($groupName);
         if (!isset(static::$groupsMap[$mapKey])) {
-            static::$groupsMap[$mapKey] = new self($groupName, $mapKey, $icon, $sort, $resource);
-        } else {
-            $menuName = static::$groupsMap[$mapKey]->menus[0];
+            static::$groupsMap[$mapKey] = new self($groupName, $mapKey, $resource);
         }
         if (!isset(static::$menuMap[$menuName])) {
             static::$menuMap[$menuName] = [];
@@ -74,23 +61,30 @@ class NavigationGroup
 
     /**
      * @param string $groupKey
-     * @param array{groupName: string, icon?: string, sort?: int}  $groupSettings
+     * @param array{name: string, icon?: string, sort?: int}  $groupSettings
      *
      * @return static
      */
     public static function registerGroup(array $groupSettings): self
     {
         extract($groupSettings, EXTR_SKIP);
+        /**
+         * @var string $name
+         * @var ?string $menuName
+         * @var ?string $icon
+         * @var ?string $sort
+         * @var ?IsGroupItem $resource
+         */
         if (isset($resource, $menuName)) {
-            return static::make($name, $icon ?? null, $sort ?? null, $menuName, $resource);
+            return static::make($name, $menuName, $resource)->setIcon($icon)->setSort($sort);
         }
         if (isset($resource)) {
-            return static::make($name, $icon ?? null, $sort ?? null, null, $resource);
+            return static::make($name, 'default', $resource)->setIcon($icon)->setSort($sort);
         }
         if (isset($menuName)) {
-            return static::make($name, $icon ?? null, $sort ?? null, $menuName);
+            return static::make($name, $menuName)->setIcon($icon)->setSort($sort);
         }
-        return static::make($name, $icon ?? null, $sort ?? null);
+        return static::make($name)->setIcon($icon)->setSort($sort);
     }
 
     /**
@@ -150,6 +144,19 @@ class NavigationGroup
     public function getActiveRule()
     {
         return $this->items->map(fn($item) => $item->activeRule)->toArray();
+    }
+
+    public function setSort(int $sort)
+    {
+        $this->sort = $sort;
+        return $this;
+    }
+
+
+    public function setIcon(string $icon)
+    {
+        $this->icon = $icon;
+        return $this;
     }
 
     public function getUrl()
