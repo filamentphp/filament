@@ -56,7 +56,7 @@ trait CanSearchRecords
             return $query;
         }
 
-        $query->where( function ($query) {
+        $query->where(function ($query) {
             collect($this->getTable()->getColumns())
                 ->filter(fn ($column) => $column->isSearchable())
                 ->each(function ($column) use (&$query) {
