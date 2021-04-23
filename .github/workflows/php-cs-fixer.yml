@@ -15,6 +15,7 @@ jobs:
               uses: actions/checkout@v2
               with:
                   ref: develop
+                  token: ${{ secrets.ACCESS_TOKEN }}
 
             - name: Run PHP CS Fixer
               uses: docker://oskarstark/php-cs-fixer-ga
