@@ -7,7 +7,9 @@
     :label="$formComponent->getLabel()"
     :required="$formComponent->isRequired()"
 >
-    <x-slot name="labelPrefix">
+    @if ($formComponent->isInline())
+        <x-slot name="labelPrefix">
+    @endif
         <button
             x-data="{ value: @entangle($formComponent->getName()){{ Str::of($formComponent->getBindingAttribute())->after('wire:model') }} }"
             role="switch"
@@ -59,5 +61,7 @@
                 </span>
             </span>
         </button>
-    </x-slot>
+    @if ($formComponent->isInline())
+        </x-slot>
+    @endif
 </x-forms::field-group>

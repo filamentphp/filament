@@ -8,6 +8,7 @@ use Filament\Forms\Components\Field;
 class Toggle extends Field
 {
     use Concerns\CanBeAutofocused;
+    use Concerns\CanBeInline;
 
     protected $onIcon;
 
@@ -16,6 +17,8 @@ class Toggle extends Field
     protected function setUp()
     {
         $this->default(false);
+
+        $this->inline();
     }
 
     public function onIcon($icon)
