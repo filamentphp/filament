@@ -76,15 +76,15 @@ class NavigationGroup
          * @var ?IsGroupItem $resource
          */
         if (isset($resource, $menuName)) {
-            return static::make($name, $menuName, $resource)->setIcon($icon)->setSort($sort);
+            return static::make($name, $menuName, $resource)->setIcon($icon ?? null)->setSort($sort ?? null);
         }
         if (isset($resource)) {
-            return static::make($name, 'default', $resource)->setIcon($icon)->setSort($sort);
+            return static::make($name, 'default', $resource)->setIcon($icon ?? null)->setSort($sort ?? null);
         }
         if (isset($menuName)) {
-            return static::make($name, $menuName)->setIcon($icon)->setSort($sort);
+            return static::make($name, $menuName)->setIcon($icon ?? null)->setSort($sort ?? null);
         }
-        return static::make($name)->setIcon($icon)->setSort($sort);
+        return static::make($name)->setIcon($icon ?? null)->setSort($sort ?? null);
     }
 
     /**
@@ -146,16 +146,20 @@ class NavigationGroup
         return $this->items->map(fn($item) => $item->activeRule)->toArray();
     }
 
-    public function setSort(int $sort)
+    public function setSort(?int $sort)
     {
-        $this->sort = $sort;
+        if (null !== $sort) {
+            $this->sort = $sort;
+        }
         return $this;
     }
 
 
-    public function setIcon(string $icon)
+    public function setIcon(?string $icon)
     {
-        $this->icon = $icon;
+        if (null !== $icon) {
+            $this->icon = $icon;
+        }
         return $this;
     }
 
