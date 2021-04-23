@@ -31,6 +31,57 @@ return [
 
     ],
 
+    'keyValue' => [
+
+        'buttons' => [
+
+            'add' => [
+                'label' => 'Añadir Fila',
+            ],
+
+            'delete' => [
+                'label' => 'Eliminar Fila',
+            ],
+
+            'sort' => [
+                'label' => 'Mantener para Reordenar',
+            ],
+
+        ],
+
+        'fields' => [
+
+            'key' => [
+                'label' => 'Clave',
+                'placeholder' => 'Introduce una clave...',
+            ],
+
+            'value' => [
+                'label' => 'Valor',
+                'placeholder' => 'Introduce un valor...',
+            ],
+
+        ],
+
+    ],
+
+    'markdownEditor' => [
+
+        'toolbarButtons' => [
+            'attachFiles' => 'Adjuntar archivos',
+            'bold' => 'Negrita',
+            'bullet' => 'Viñetas',
+            'code' => 'Código',
+            'italic' => 'Cursiva',
+            'link' => 'Link',
+            'number' => 'Números',
+            'preview' => 'Vista previa',
+            'strike' => 'Tachado',
+            'write' => 'Escribir',
+        ],
+
+    ],
+
     'multiSelect' => [
         'emptyOptionsMessage' => 'No hay opciones para elegir.',
         'noSearchResultsMessage' => 'No se encontranron coincidencias con su búsqueda.',

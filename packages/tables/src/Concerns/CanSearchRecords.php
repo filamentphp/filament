@@ -56,21 +56,23 @@ trait CanSearchRecords
             return $query;
         }
 
-        collect($this->getTable()->getColumns())
-            ->filter(fn ($column) => $column->isSearchable())
-            ->each(function ($column) use (&$query) {
-                foreach ($column->getSearchColumns() as $searchColumn) {
-                    if ($this->isRelationshipSearch($searchColumn)) {
-                        $query = $this->applyRelationshipSearch($query, $searchColumn);
-                    } else {
-                        $query = $query->{$this->hasNoSearchQueriesApplied() ? 'where' : 'orWhere'}(
-                            fn ($query) => $query->where($searchColumn, $this->getSearchOperator(), "%{$this->getSearch()}%"),
-                        );
-                    }
+        $query->where(function ($query) {
+            collect($this->getTable()->getColumns())
+                ->filter(fn ($column) => $column->isSearchable())
+                ->each(function ($column) use (&$query) {
+                    foreach ($column->getSearchColumns() as $searchColumn) {
+                        if ($this->isRelationshipSearch($searchColumn)) {
+                            $query = $this->applyRelationshipSearch($query, $searchColumn);
+                        } else {
+                            $query->{$this->hasNoSearchQueriesApplied() ? 'where' : 'orWhere'}(
+                                $searchColumn, $this->getSearchOperator(), "%{$this->getSearch()}%"
+                            );
+                        }
 
-                    $this->hasSearchQueriesApplied = true;
-                }
-            });
+                        $this->hasSearchQueriesApplied = true;
+                    }
+                });
+        });
 
         return $query;
     }
