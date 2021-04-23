@@ -5,10 +5,12 @@ namespace Filament\Forms\Components;
 class Checkbox extends Field
 {
     use Concerns\CanBeAutofocused;
-    use Concerns\CanAlternateLayoutDirection;
+    use Concerns\CanBeInline;
 
     protected function setUp()
     {
-        $this->default(false)->inline();
+        $this->default(false);
+
+        $this->inline();
     }
 }

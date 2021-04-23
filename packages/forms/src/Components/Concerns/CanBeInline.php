@@ -2,14 +2,14 @@
 
 namespace Filament\Forms\Components\Concerns;
 
-trait CanAlternateLayoutDirection
+trait CanBeInline
 {
-    protected $isInlineLayout = false;
+    protected $isInline = false;
 
     public function inline()
     {
         $this->configure(function () {
-            $this->isInlineLayout = true;
+            $this->isInline = true;
         });
 
         return $this;
@@ -18,14 +18,14 @@ trait CanAlternateLayoutDirection
     public function stacked()
     {
         $this->configure(function () {
-            $this->isInlineLayout = false;
+            $this->isInline = false;
         });
 
         return $this;
     }
 
-    public function isInlineLayout(): bool
+    public function isInline()
     {
-        return $this->isInlineLayout;
+        return $this->isInline;
     }
 }
