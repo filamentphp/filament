@@ -1,7 +1,7 @@
 <a
     href="{{ url('/') }}"
     rel="home"
-    class="flex items-center p-4 space-x-3 group"
+    class="flex items-center p-4 space-x-3 rtl:space-x-reverse group"
     target="_blank"
     rel="noopener noreferrer"
 >

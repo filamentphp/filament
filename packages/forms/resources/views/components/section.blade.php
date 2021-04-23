@@ -22,7 +22,7 @@
     aria-labelledby="{{ $formComponent->getId() }}-heading"
     class="space-y-4 p-4 rounded border border-gray-200 bg-gray-50 {{ $columnSpanClass }}"
 >
-    <div class="flex items-start justify-between space-x-4">
+    <div class="flex items-start justify-between space-x-4 rtl:space-x-reverse">
         <div class="space-y-1">
             @if ($heading = $formComponent->getHeading())
                 <h2 id="{{ $formComponent->getId() }}-heading" class="text-lg font-medium leading-tight">

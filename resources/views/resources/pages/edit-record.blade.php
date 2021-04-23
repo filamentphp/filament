@@ -22,7 +22,7 @@
                             </p>
                         </x-filament::card-header>
 
-                        <div class="space-y-3 sm:space-y-0 sm:flex sm:space-x-3 sm:justify-end">
+                        <div class="space-y-3 sm:space-y-0 sm:flex sm:space-x-3 rtl:space-x-reverse sm:justify-end">
                             <x-filament::button
                                 x-on:click="open = false"
                             >

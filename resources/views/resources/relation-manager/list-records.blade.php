@@ -1,6 +1,6 @@
 <div class="space-y-4">
     <div class="items-center justify-between space-y-4 lg:flex lg:space-y-0 lg:space-x-4">
-        <div class="space-x-3 flex-shink-0">
+        <div class="space-x-3 rtl:space-x-reverse flex-shink-0">
             @if ($this->canCreate)
                 <x-filament::button wire:click="openCreate">
                     {{ __($this->manager::$createButtonLabel) }}
@@ -50,7 +50,7 @@
                     </p>
                 </x-filament::card-header>
 
-                <div class="space-y-3 sm:space-y-0 sm:space-x-3 sm:flex sm:justify-end">
+                <div class="space-y-3 sm:space-y-0 sm:space-x-3 rtl:space-x-reverse sm:flex sm:justify-end">
                     <x-filament::button x-on:click="$dispatch('close', '{{ (string) Str::of($this->manager)->replace('\\', '\\\\') }}RelationManagerDetachModal')">
                         {{ __($this->manager::$detachModalCancelButtonLabel) }}
                     </x-filament::button>

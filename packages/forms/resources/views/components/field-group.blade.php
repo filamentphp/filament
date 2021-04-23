@@ -30,8 +30,8 @@
 <div class="flex relative {{ $columnSpanClass }}">
     <div class="w-full space-y-2">
         @if ($label || $hint)
-            <div class="flex items-center justify-between space-x-2">
-                <div class="flex space-x-2">
+            <div class="flex items-center justify-between space-x-2 rtl:space-x-reverse">
+                <div class="flex items-center space-x-3">
                     {{ $labelPrefix }}
 
                     @if ($label)

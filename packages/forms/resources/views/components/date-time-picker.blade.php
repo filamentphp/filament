@@ -420,7 +420,7 @@
                 class="absolute z-10 w-64 p-4 my-1 bg-white border border-gray-300 rounded shadow-sm"
             >
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between space-x-1">
+                    <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
                         <select
                             x-model="focusedMonth"
                             class="flex-grow p-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none"

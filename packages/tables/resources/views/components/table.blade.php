@@ -31,7 +31,7 @@
                             <button
                                 wire:click="sortBy('{{ $column->getName() }}')"
                                 type="button"
-                                class="flex items-center space-x-1 text-xs font-medium tracking-wider text-left uppercase group focus:outline-none focus:underline"
+                                class="flex items-center space-x-1 rtl:space-x-reverse text-xs font-medium tracking-wider text-left uppercase group focus:outline-none focus:underline"
                             >
                                 <span>{{ __($column->getLabel()) }}</span>
 
@@ -89,7 +89,7 @@
                         </td>
                     @endforeach
 
-                    <td class="px-6 py-4 whitespace-nowrap flex justify-end items-center space-x-2">
+                    <td class="px-6 py-4 whitespace-nowrap flex justify-end items-center space-x-2 rtl:space-x-reverse">
                         @foreach ($table->getRecordActions() as $recordAction)
                             {{ $recordAction->render($record) }}
                         @endforeach

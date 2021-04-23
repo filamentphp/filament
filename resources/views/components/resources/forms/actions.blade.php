@@ -2,7 +2,7 @@
     'actions' => [],
 ])
 
-<div class="space-x-3">
+<div class="space-x-3 rtl:space-x-reverse">
     @foreach ($actions as $button)
         <x-filament::button
             :color="$button->getColor()"

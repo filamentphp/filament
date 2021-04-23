@@ -114,5 +114,16 @@ module.exports = {
       }),
     },
   },
-  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
+  variants: {
+    extend: {
+      padding: ['direction'],
+      translate: ['direction'],
+      space: ['direction'],
+    }
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('tailwindcss-dir'),
+  ],
 }

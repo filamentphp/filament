@@ -63,14 +63,14 @@ class UserResource extends Resource
 
                     $userColumn = Filament::auth()->getProvider()->getModel()::getFilamentUserColumn();
                     if ($userColumn !== null) {
-                        $schema[] = Components\Checkbox::make($userColumn)
+                        $schema[] = Components\Toggle::make($userColumn)
                             ->label('filament::resources/user-resource.form.isUser.label')
                             ->except(EditAccount::class);
                     }
 
                     $adminColumn = Filament::auth()->getProvider()->getModel()::getFilamentAdminColumn();
                     if ($adminColumn !== null) {
-                        $schema[] = Components\Checkbox::make($adminColumn)
+                        $schema[] = Components\Toggle::make($adminColumn)
                             ->label('filament::resources/user-resource.form.isAdmin.label')
                             ->helpMessage('filament::resources/user-resource.form.isAdmin.helpMessage')
                             ->except(EditAccount::class);
