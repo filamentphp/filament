@@ -4,6 +4,10 @@ return [
 
     'buttons' => [
 
+        'cancel' => [
+            'label' => 'Cancelar',
+        ],
+
         'delete' => [
             'label' => 'Eliminar',
         ],
