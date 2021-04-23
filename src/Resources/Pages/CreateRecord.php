@@ -12,7 +12,7 @@ class CreateRecord extends Page
 {
     use HasForm;
 
-    public static $cancelButtonLabel = 'filament::resources/pages/edit-record.buttons.cancel.label';
+    public static $cancelButtonLabel = 'filament::resources/pages/create-record.buttons.cancel.label';
 
     public static $createAnotherButtonLabel = 'filament::resources/pages/create-record.buttons.createAnother.label';
 
