@@ -6,26 +6,61 @@ use Illuminate\Support\Str;
 
 class Field extends Component
 {
-    protected $bindingAttribute = 'wire:model.defer';
+    /**
+     * @var string
+     */
+    protected string $bindingAttribute = 'wire:model.defer';
 
+    /**
+     * @var mixed
+     */
     protected $defaultValue;
 
-    protected $extraAttributes = [];
+    /**
+     * @var array
+     */
+    protected array $extraAttributes = [];
 
-    protected $helpMessage;
+    /**
+     * @var string
+     */
+    protected string $helpMessage = '';
 
-    protected $hint;
+    /**
+     * @var string
+     */
+    protected string $hint = '';
 
-    protected $isDisabled = false;
+    /**
+     * @var bool
+     */
+    protected bool $isDisabled = false;
 
-    protected $isRequired = false;
+    /**
+     * @var bool
+     */
+    protected bool $isRequired = false;
 
-    protected $name;
+    /**
+     * @var string
+     */
+    protected string $name;
 
-    protected $rules = [];
+    /**
+     * @var array
+     */
+    protected array $rules = [];
 
-    protected $validationAttribute;
+    /**
+     * @var string
+     */
+    protected string $validationAttribute;
 
+    /**
+     * Field constructor.
+     *
+     * @param string $name
+     */
     public function __construct($name)
     {
         $this->name($name);
@@ -33,7 +68,12 @@ class Field extends Component
         $this->setUp();
     }
 
-    public function addRules($rules)
+    /**
+     * @param array $rules
+     *
+     * @return $this
+     */
+    public function addRules($rules) : self
     {
         $this->configure(function () use ($rules) {
             if (! is_array($rules)) {
@@ -79,7 +119,12 @@ class Field extends Component
         return $this;
     }
 
-    public function bindingAttribute($bindingAttribute)
+    /**
+     * @param string $bindingAttribute
+     *
+     * @return $this
+     */
+    public function bindingAttribute(string $bindingAttribute) : self
     {
         $this->configure(function () use ($bindingAttribute) {
             $this->bindingAttribute = $bindingAttribute;
@@ -88,7 +133,12 @@ class Field extends Component
         return $this;
     }
 
-    public function default($value)
+    /**
+     * @param mixed $value
+     *
+     * @return $this
+     */
+    public function default($value) : self
     {
         $this->configure(function () use ($value) {
             $this->defaultValue = $value;
@@ -97,7 +147,10 @@ class Field extends Component
         return $this;
     }
 
-    public function dependable()
+    /**
+     * @return $this
+     */
+    public function dependable() : self
     {
         $this->configure(function () {
             $this->bindingAttribute('wire:model');
@@ -106,7 +159,12 @@ class Field extends Component
         return $this;
     }
 
-    public function disabled($disabled = true)
+    /**
+     * @param bool $disabled
+     *
+     * @return $this
+     */
+    public function disabled($disabled = true) : self
     {
         $this->configure(function () use ($disabled) {
             $this->isDisabled = $disabled;
@@ -115,7 +173,10 @@ class Field extends Component
         return $this;
     }
 
-    public function enabled()
+    /**
+     * @return $this
+     */
+    public function enabled() : self
     {
         $this->configure(function () {
             $this->isDisabled = false;
@@ -124,7 +185,12 @@ class Field extends Component
         return $this;
     }
 
-    public function extraAttributes($attributes)
+    /**
+     * @param array $attributes
+     *
+     * @return $this
+     */
+    public function extraAttributes(array $attributes) : self
     {
         $this->configure(function () use ($attributes) {
             $this->extraAttributes = $attributes;
@@ -133,31 +199,49 @@ class Field extends Component
         return $this;
     }
 
-    public function getBindingAttribute()
+    /**
+     * @return string
+     */
+    public function getBindingAttribute() : string
     {
         return $this->bindingAttribute;
     }
 
+    /**
+     * @return mixed
+     */
     public function getDefaultValue()
     {
         return $this->defaultValue;
     }
 
-    public function getExtraAttributes()
+    /**
+     * @return array
+     */
+    public function getExtraAttributes() : array
     {
         return $this->extraAttributes;
     }
 
-    public function getHelpMessage()
+    /**
+     * @return string
+     */
+    public function getHelpMessage() : ?string
     {
         return $this->helpMessage;
     }
 
-    public function getHint()
+    /**
+     * @return string
+     */
+    public function getHint() : string
     {
         return $this->hint;
     }
 
+    /**
+     * @return string
+     */
     public function getId()
     {
         if ($this->id === null) {
@@ -169,6 +253,9 @@ class Field extends Component
         return parent::getId();
     }
 
+    /**
+     * @return string
+     */
     public function getLabel()
     {
         if ($this->label === null) {
@@ -182,12 +269,18 @@ class Field extends Component
         return parent::getLabel();
     }
 
-    public function getName()
+    /**
+     * @return string
+     */
+    public function getName() : string
     {
         return $this->name;
     }
 
-    public function getValidationAttribute()
+    /**
+     * @return string
+     */
+    public function getValidationAttribute() : string
     {
         if ($this->validationAttribute === null) {
             return Str::lower($this->getLabel());
@@ -196,12 +289,20 @@ class Field extends Component
         return $this->validationAttribute;
     }
 
+    /**
+     * @return mixed
+     */
     public function getValue()
     {
         return $this->getLivewire()->getPropertyValue($this->getName());
     }
 
-    public function helpMessage($message)
+    /**
+     * @param string|null $message
+     *
+     * @return $this
+     */
+    public function helpMessage(?string $message) : self
     {
         $this->configure(function () use ($message) {
             $this->helpMessage = $message;
@@ -210,7 +311,12 @@ class Field extends Component
         return $this;
     }
 
-    public function hint($hint)
+    /**
+     * @param string|null $hint
+     *
+     * @return $this
+     */
+    public function hint(?string $hint)
     {
         $this->configure(function () use ($hint) {
             $this->hint = $hint;
@@ -219,29 +325,48 @@ class Field extends Component
         return $this;
     }
 
-    public function isDisabled()
+    /**
+     * @return bool
+     */
+    public function isDisabled() : bool
     {
         return $this->isDisabled;
     }
 
-    public function isRequired()
+    /**
+     * @return bool
+     */
+    public function isRequired() : bool
     {
         return $this->isRequired;
     }
 
+    /**
+     * @param string $name
+     *
+     * @return static
+     */
     public static function make($name)
     {
         return new static($name);
     }
 
-    public function name($name)
+    /**
+     * @param string $name
+     *
+     * @return $this
+     */
+    public function name(string $name) : self
     {
         $this->name = $name;
 
-        $this->addRules([$this->getName() => ['nullable']]);
+        return $this->addRules([$this->getName() => ['nullable']]);
     }
 
-    public function nullable()
+    /**
+     * @return $this
+     */
+    public function nullable() : self
     {
         $this->configure(function () {
             $this->required = false;
@@ -253,7 +378,12 @@ class Field extends Component
         return $this;
     }
 
-    public function removeRules($rules)
+    /**
+     * @param array $rules
+     *
+     * @return $this
+     */
+    public function removeRules(array $rules) : self
     {
         $this->configure(function () use ($rules) {
             if (! is_array($rules)) {
@@ -304,7 +434,10 @@ class Field extends Component
         return $this;
     }
 
-    public function required()
+    /**
+     * @return $this
+     */
+    public function required() : self
     {
         $this->configure(function () {
             $this->isRequired = true;
@@ -316,6 +449,11 @@ class Field extends Component
         return $this;
     }
 
+    /**
+     * @param string $field
+     *
+     * @return $this
+     */
     public function requiredWith($field)
     {
         $this->configure(function () use ($field) {
@@ -328,7 +466,12 @@ class Field extends Component
         return $this;
     }
 
-    public function rules($conditions)
+    /**
+     * @param $conditions
+     *
+     * @return $this
+     */
+    public function rules($conditions) : self
     {
         $this->configure(function () use ($conditions) {
             $this->addRules([$this->getName() => $conditions]);
@@ -337,7 +480,12 @@ class Field extends Component
         return $this;
     }
 
-    public function validationAttribute($attribute)
+    /**
+     * @param string $attribute
+     *
+     * @return $this
+     */
+    public function validationAttribute(string $attribute) : self
     {
         $this->configure(function () use ($attribute) {
             $this->validationAttribute = $attribute;
