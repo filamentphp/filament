@@ -12,14 +12,14 @@
 $subNavLabel = 'subNavOpen' . Str::studly($label);
 @endphp
 <li x-data="{ {{ $subNavLabel }} : {{ (request()->is($activeRule)) ? 'true' : 'false' }} }">
-    <div class="inline-flex w-full {{ (request()->is($activeRule)) ? 'bg-gray-700' : '' }}">
+    <div class="inline-flex w-full">
     <a
         @if($isResourceGroup)
         href="{{ $url }}"
         @else
         @click="{{ $subNavLabel }} = !{{ $subNavLabel }}"
         @endif
-        {{ $attributes->merge(['class' => 'px-4 py-3 flex flex-grow items-center space-x-3 rtl:space-x-reverse rounded transition-color duration-200 hover:text-white ' . (request()->is($activeRule) ? 'text-white bg-gray-700' : 'text-current')]) }}
+        {{ $attributes->merge(['class' => 'px-4 py-3 flex flex-grow items-center space-x-3 rtl:space-x-reverse rounded transition-color duration-200 hover:text-white ' . (request()->is($activeRule) ? 'text-white' : 'text-current')]) }}
     >
         <x-dynamic-component :component="$icon" class="flex-shrink-0 w-5 h-5" />
 
@@ -33,8 +33,9 @@ $subNavLabel = 'subNavOpen' . Str::studly($label);
     </div>
     <ol :class="{ 'block' : {{ $subNavLabel }} , 'hidden' : !{{ $subNavLabel }}}"  @click.away="{{ $subNavLabel }} = false">
         @foreach($items as $item)
-            <li class="border-l-2 {{ (request()->is($item->activeRule)) ? 'border-gray-700' : 'border-gray-300' }}">
+            <li>
                 <x-filament::nav-link
+                    class="pl-8"
                     :active-rule="$item->activeRule"
                     :icon="$item->icon"
                     :label="$item->label"
