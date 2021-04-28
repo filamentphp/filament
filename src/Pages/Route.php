@@ -21,7 +21,7 @@ class Route
         return new static($uri, $name);
     }
 
-    public function name($name)
+    protected function name($name)
     {
         $this->name = $name;
 

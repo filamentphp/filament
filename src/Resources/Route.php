@@ -20,7 +20,7 @@ class Route
         $this->uri($uri);
     }
 
-    public function name($name)
+    protected function name($name)
     {
         $this->name = $name;
 
