@@ -12,9 +12,16 @@
 @pushonce('filament-scripts:date-time-picker-component')
     <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
     <script src="https://unpkg.com/dayjs@1.8.21/plugin/customParseFormat.js"></script>
+    <script src="https://unpkg.com/dayjs@1.10.4/plugin/localeData.js"></script>
+    <script src="https://unpkg.com/dayjs@1.10.4/locale/{{ $formComponent->getLocale() ?? app()->getLocale() }}.js"></script>
 
     <script>
         dayjs.extend(window.dayjs_plugin_customParseFormat)
+        dayjs.extend(window.dayjs_plugin_localeData)
+        dayjs.locale('{{ $formComponent->getLocale() ?? app()->getLocale() }}')
+
+        const week = dayjs.weekdaysShort()
+        const weekDays = (n) => n == 0 ? week : [...week.slice(n), ...week.slice(0, n)]
 
         function dateTimePicker(config) {
             return {
@@ -53,6 +60,8 @@
                 time: config.time,
 
                 value: config.value,
+
+                firstDayOfWeek: config.firstDayOfWeek,
 
                 clearValue: function () {
                     this.setValue(null)
@@ -286,7 +295,7 @@
 
                 setupDaysGrid: function () {
                     this.emptyDaysInFocusedMonth = Array.from({
-                        length: this.focusedDate.date(1).day(),
+                        length: this.focusedDate.date( 8 - this.firstDayOfWeek).day(),
                     }, (_, i) => i + 1)
 
                     this.daysInFocusedMonth = Array.from({
@@ -359,6 +368,7 @@
             placeholder: '{{ __($formComponent->getPlaceholder()) }}',
             required: {{ $formComponent->isRequired() ? 'true' : 'false' }},
             time: {{ $formComponent->hasTime() ? 'true' : 'false' }},
+            firstDayOfWeek: {{ $formComponent->getFirstDayOfWeek() }},
             @if (Str::of($formComponent->getBindingAttribute())->startsWith('wire:model'))
                 value: @entangle($formComponent->getName()){{ Str::of($formComponent->getBindingAttribute())->after('wire:model') }},
             @endif
@@ -425,20 +435,7 @@
                             x-model="focusedMonth"
                             class="flex-grow p-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none"
                         >
-                            <template x-for="(month, index) in [
-                                '{{ __('forms::fields.dateTimePicker.months.january') }}',
-                                '{{ __('forms::fields.dateTimePicker.months.february') }}',
-                                '{{ __('forms::fields.dateTimePicker.months.march') }}',
-                                '{{ __('forms::fields.dateTimePicker.months.april') }}',
-                                '{{ __('forms::fields.dateTimePicker.months.may') }}',
-                                '{{ __('forms::fields.dateTimePicker.months.june') }}',
-                                '{{ __('forms::fields.dateTimePicker.months.july') }}',
-                                '{{ __('forms::fields.dateTimePicker.months.august') }}',
-                                '{{ __('forms::fields.dateTimePicker.months.september') }}',
-                                '{{ __('forms::fields.dateTimePicker.months.october') }}',
-                                '{{ __('forms::fields.dateTimePicker.months.november') }}',
-                                '{{ __('forms::fields.dateTimePicker.months.december') }}',
-                            ]">
+                            <template x-for="(month, index) in dayjs.months()">
                                 <option x-bind:value="index" x-text="month"></option>
                             </template>
                         </select>
@@ -451,15 +448,7 @@
                     </div>
 
                     <div class="grid grid-cols-7 gap-1">
-                        <template x-for="(day, index) in [
-                            '{{ __('forms::fields.dateTimePicker.abbreviatedDays.sunday') }}',
-                            '{{ __('forms::fields.dateTimePicker.abbreviatedDays.monday') }}',
-                            '{{ __('forms::fields.dateTimePicker.abbreviatedDays.tuesday') }}',
-                            '{{ __('forms::fields.dateTimePicker.abbreviatedDays.wednesday') }}',
-                            '{{ __('forms::fields.dateTimePicker.abbreviatedDays.thursday') }}',
-                            '{{ __('forms::fields.dateTimePicker.abbreviatedDays.friday') }}',
-                            '{{ __('forms::fields.dateTimePicker.abbreviatedDays.saturday') }}',
-                        ]" :key="index">
+                        <template x-for="(day, index) in weekDays(firstDayOfWeek)" :key="index">
                             <div
                                 x-text="day"
                                 class="text-xs font-medium text-center text-gray-800"
