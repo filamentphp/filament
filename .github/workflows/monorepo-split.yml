@@ -35,10 +35,10 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
               with:
-                  package-directory: 'packages/${{ matrix.package }}'
-                  split-repository-organization: 'laravel-filament'
-                  split-repository-name: '${{ matrix.package }}'
+                  package_directory: 'packages/${{ matrix.package }}'
+                  repository_organization: 'laravel-filament'
+                  repository_name: '${{ matrix.package }}'
                   branch: main
                   tag: ${{ steps.previous-tag.outputs.tag }}
-                  user-name: "Dan Harrin"
-                  user-email: "dan@danharrin.com"
+                  user_name: "Dan Harrin"
+                  user_email: "dan@danharrin.com"
