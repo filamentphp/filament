@@ -2,13 +2,17 @@
 
 namespace Filament\Forms\Components;
 
+use Illuminate\Support\Str;
+
 class Placeholder extends Component
 {
     protected $name;
+    protected $value;
 
-    public function __construct($placeholderValue)
+    public function __construct(string $name, string $value)
     {
-        $this->name($placeholderValue);
+        $this->name($name);
+        $this->value($value);
         $this->setUp();
     }
 
@@ -24,8 +28,33 @@ class Placeholder extends Component
         return $this->name;
     }
 
-    public static function make(string $placeholderValue)
+    protected function value($value)
     {
-        return new static($placeholderValue);
+        $this->value = $value;
+
+        return $this;
+    }
+
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    public function getLabel()
+    {
+        if ($this->label === null) {
+            return (string) Str::of($this->getName())
+                ->afterLast('.')
+                ->kebab()
+                ->replace(['-', '_'], ' ')
+                ->ucfirst();
+        }
+
+        return parent::getLabel();
+    }
+
+    public static function make(string $name, string $value)
+    {
+        return new static($name, $value);
     }
 }

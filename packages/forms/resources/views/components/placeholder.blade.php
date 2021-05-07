@@ -8,7 +8,7 @@
         <span
             class="block w-full placeholder-gray-400 placeholder-opacity-100 px-3 py-2 cursor-default"
         >
-            {{ $formComponent->getName() }}
+            {{ $formComponent->getValue() }}
         </span>
     </div>
 </x-forms::field-group>
