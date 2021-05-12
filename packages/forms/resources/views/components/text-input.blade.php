@@ -25,7 +25,7 @@
             {!! $formComponent->getPlaceholder() ? "placeholder=\"{$formComponent->getPlaceholder()}\"" : null !!}
             {!! $formComponent->isRequired() ? 'required' : null !!}
             {!! $formComponent->getType() ? "type=\"{$formComponent->getType()}\"" : null !!}
-            class="block w-full rounded-r placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ ! $formComponent->getPrefix() ? 'rounded-l-md' : null }} {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+            class="block w-full placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ ! $formComponent->getPrefix() ? 'rounded-l-md' : null }} {{ ! $formComponent->getPostfix() ? 'rounded-r-md' : null }} {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
             {!! Filament\format_attributes($formComponent->getExtraAttributes()) !!}
         />
 
