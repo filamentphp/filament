@@ -20,7 +20,7 @@
     x-data="{ open: {{ $formComponent->isCollapsed() ? 'false' : 'true' }} }"
     x-on:open.window="if ($event.detail === '{{ $formComponent->getId() }}') open = true"
     aria-labelledby="{{ $formComponent->getId() }}-heading"
-    class="space-y-4 p-4 rounded border border-gray-200 bg-gray-50 {{ $columnSpanClass }}"
+    class="{{ $formComponent->getChangedClasses('space-y-4 p-4 rounded border border-gray-200 bg-gray-50 ' . $columnSpanClass) }}"
 >
     <div class="flex items-start justify-between space-x-4 rtl:space-x-reverse">
         <div class="space-y-1">

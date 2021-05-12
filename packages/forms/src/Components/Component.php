@@ -2,13 +2,14 @@
 
 namespace Filament\Forms\Components;
 
+use Filament\Forms\Components\Concerns\CanChangeClass;
 use Filament\Forms\Form;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Tappable;
 
 class Component
 {
-    use Tappable;
+    use Tappable, CanChangeClass;
 
     protected $columnSpan = 1;
 
