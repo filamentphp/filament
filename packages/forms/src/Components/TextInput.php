@@ -11,6 +11,7 @@ class TextInput extends Field
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasPlaceholder;
     use Concerns\HasPrefix;
+    use Concerns\HasPostfix;
 
     protected $type = 'text';
 

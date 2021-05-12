@@ -28,5 +28,11 @@
             class="block w-full rounded-r placeholder-gray-400 focus:placeholder-gray-500 placeholder-opacity-100 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 {{ ! $formComponent->getPrefix() ? 'rounded-l-md' : null }} {{ $errors->has($formComponent->getName()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
             {!! Filament\format_attributes($formComponent->getExtraAttributes()) !!}
         />
+
+        @if ($formComponent->getPostfix())
+            <span class="inline-flex items-center px-3 text-gray-500 border border-l-0 border-gray-300 rounded-r bg-gray-50 whitespace-nowrap sm:text-sm">
+            {!!  $formComponent->getPostfix() !!}
+        </span>
+        @endif
     </div>
 </x-forms::field-group>
