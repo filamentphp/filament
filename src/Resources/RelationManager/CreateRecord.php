@@ -55,6 +55,8 @@ class CreateRecord extends Component
 
             return;
         }
+        
+        $this->dispatchBrowserEvent('pondReset');
 
         $this->dispatchBrowserEvent('close', "{$manager}RelationManagerCreateModal");
     }
