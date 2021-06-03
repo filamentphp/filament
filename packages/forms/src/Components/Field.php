@@ -234,11 +234,11 @@ class Field extends Component
         return new static($name);
     }
 
-    public function name($name)
+    protected function name($name)
     {
         $this->name = $name;
 
-        $this->addRules([$this->getName() => ['nullable']]);
+        return $this->addRules([$this->getName() => ['nullable']]);
     }
 
     public function nullable()

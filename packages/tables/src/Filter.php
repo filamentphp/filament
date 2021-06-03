@@ -162,7 +162,7 @@ class Filter
         return new static($name, $callback);
     }
 
-    public function name($name)
+    protected function name($name)
     {
         $this->configure(function () use ($name) {
             $this->name = $name;

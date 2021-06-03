@@ -120,6 +120,10 @@
             })
 
             $watch('value', () => {
+                if (! value) {
+                    pond.removeFiles()
+                }
+
                 @this.getUploadedFileUrl(name, disk).then((uploadedFileUrl) => {
                     if (uploadedFileUrl) {
                         pond.files = [{
