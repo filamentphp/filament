@@ -11,6 +11,8 @@ class DatePicker extends Field
 
     protected $displayFormat;
 
+    protected $firstDayOfWeek;
+
     protected $format;
 
     protected $hasSeconds = true;
@@ -23,16 +25,12 @@ class DatePicker extends Field
 
     protected $view = 'forms::components.date-time-picker';
 
-    protected string $locale;
-
-    protected int $firstDayOfWeek;
-
     protected function setUp()
     {
         $this->configure(function () {
             $this->displayFormat('F j, Y');
+            $this->resetFirstDayOfWeek();
             $this->format('Y-m-d');
-            $this->firstDayOfWeek = config('forms.first-day-of-week');
         });
     }
 
@@ -40,6 +38,19 @@ class DatePicker extends Field
     {
         $this->configure(function () use ($format) {
             $this->displayFormat = $format;
+        });
+
+        return $this;
+    }
+
+    public function firstDayOfWeek($day = 1)
+    {
+        $this->configure(function () use ($day) {
+            if ($day < 0 || $day > 7) {
+                $day = $this->getDefaultFirstDayOfWeek();
+            }
+
+            $this->firstDayOfWeek = $day;
         });
 
         return $this;
@@ -54,9 +65,19 @@ class DatePicker extends Field
         return $this;
     }
 
+    protected function getDefaultFirstDayOfWeek()
+    {
+        return config('forms.first_day_of_week', 1);
+    }
+
     public function getDisplayFormat()
     {
         return $this->displayFormat;
+    }
+
+    public function getFirstDayOfWeek()
+    {
+        return $this->firstDayOfWeek;
     }
 
     public function getFormat()
@@ -72,16 +93,6 @@ class DatePicker extends Field
     public function getMinDate()
     {
         return $this->minDate;
-    }
-
-    public function getFirstDayOfWeek()
-    {
-        return $this->firstDayOfWeek;
-    }
-
-    public function getLocale()
-    {
-        return $this->locale;
     }
 
     public function hasSeconds()
@@ -116,50 +127,24 @@ class DatePicker extends Field
         return $this;
     }
 
-    /**
-     * Default = app()->getLocale()
-     * DayJS i18 via browser: https://day.js.org/docs/en/i18n/loading-into-browser
-     * Available methods: https://day.js.org/docs/en/plugin/locale-data
-     * Supported locales: https://github.com/iamkun/dayjs/tree/dev/src/locale
-     * @param string $dayJSlocale
-     * @return $this
-     */
-    public function locale(string $dayJSlocale): self
+    public function resetFirstDayOfWeek()
     {
-        $this->locale = $dayJSlocale;
+        $this->firstDayOfWeek($this->getDefaultFirstDayOfWeek());
+
         return $this;
     }
 
-    /**
-     * 0 to 7 are allowed. Monday = 1, Sunday = 0 or 7
-     * @param int $day
-     * @return $this
-     */
-    public function firstDayOfWeek(int $day = 1): self
+    public function weekStartsOnSunday()
     {
-        if($day < 0 || $day > 7) $day = 1;
-        $this->firstDayOfWeek = $day;
+        $this->firstDayOfWeek(7);
+
         return $this;
     }
 
-    /**
-     * Set Sunday as first day of week
-     * @return $this
-     */
-    public function weekStartSunday(): self
+    public function weekStartsOnMonday()
     {
-        $this->firstDayOfWeek = 7;
-        return $this;
-    }
+        $this->firstDayOfWeek(1);
 
-    /**
-     * This method is otiose because Monday is default
-     * <br>But sometimes you want it for code readability
-     * @return $this
-     */
-    public function weekStartMonday(): self
-    {
-        $this->firstDayOfWeek = 1;
         return $this;
     }
 }

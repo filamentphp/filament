@@ -10,18 +10,15 @@
 @endphp
 
 @pushonce('filament-scripts:date-time-picker-component')
-    <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
-    <script src="https://unpkg.com/dayjs@1.8.21/plugin/customParseFormat.js"></script>
+    <script src="https://unpkg.com/dayjs@1.10.4/dayjs.min.js"></script>
+    <script src="https://unpkg.com/dayjs@1.10.4/locale/{{ (string) Str::of(app()->getLocale())->lower()->kebab() }}.js"></script>
+    <script src="https://unpkg.com/dayjs@1.10.4/plugin/customParseFormat.js"></script>
     <script src="https://unpkg.com/dayjs@1.10.4/plugin/localeData.js"></script>
-    <script src="https://unpkg.com/dayjs@1.10.4/locale/{{ $formComponent->getLocale() ?? app()->getLocale() }}.js"></script>
 
     <script>
         dayjs.extend(window.dayjs_plugin_customParseFormat)
         dayjs.extend(window.dayjs_plugin_localeData)
-        dayjs.locale('{{ $formComponent->getLocale() ?? app()->getLocale() }}')
-
-        const week = dayjs.weekdaysShort()
-        const weekDays = (n) => n == 0 ? week : [...week.slice(n), ...week.slice(0, n)]
+        dayjs.locale('{{ (string) Str::of(app()->getLocale())->lower()->kebab() }}')
 
         function dateTimePicker(config) {
             return {
@@ -34,6 +31,8 @@
                 displayValue: '',
 
                 emptyDaysInFocusedMonth: [],
+
+                firstDayOfWeek: config.firstDayOfWeek,
 
                 focusedDate: null,
 
@@ -60,8 +59,6 @@
                 time: config.time,
 
                 value: config.value,
-
-                firstDayOfWeek: config.firstDayOfWeek,
 
                 clearValue: function () {
                     this.setValue(null)
@@ -136,6 +133,19 @@
 
                 focusNextWeek: function () {
                     this.focusedDate = this.focusedDate.add(1, 'week')
+                },
+
+                getDayLabels: function () {
+                    const labels = dayjs.weekdaysShort()
+
+                    if (this.firstDayOfWeek === 0) {
+                        return labels
+                    }
+
+                    return [
+                        ...labels.slice(this.firstDayOfWeek),
+                        ...labels.slice(0, this.firstDayOfWeek),
+                    ]
                 },
 
                 getSelectedDate: function () {
@@ -295,7 +305,7 @@
 
                 setupDaysGrid: function () {
                     this.emptyDaysInFocusedMonth = Array.from({
-                        length: this.focusedDate.date( 8 - this.firstDayOfWeek).day(),
+                        length: this.focusedDate.date(8 - this.firstDayOfWeek).day(),
                     }, (_, i) => i + 1)
 
                     this.daysInFocusedMonth = Array.from({
@@ -361,6 +371,7 @@
         x-data="dateTimePicker({
             autofocus: {{ $formComponent->isAutofocused() ? 'true' : 'false' }},
             displayFormat: '{{ convert_date_format($formComponent->getDisplayFormat())->to('day.js') }}',
+            firstDayOfWeek: {{ $formComponent->getFirstDayOfWeek() }},
             format: '{{ convert_date_format($formComponent->getFormat())->to('day.js') }}',
             maxDate: '{{ $formComponent->getMaxDate() }}',
             minDate: '{{ $formComponent->getMinDate() }}',
@@ -368,7 +379,6 @@
             placeholder: '{{ __($formComponent->getPlaceholder()) }}',
             required: {{ $formComponent->isRequired() ? 'true' : 'false' }},
             time: {{ $formComponent->hasTime() ? 'true' : 'false' }},
-            firstDayOfWeek: {{ $formComponent->getFirstDayOfWeek() }},
             @if (Str::of($formComponent->getBindingAttribute())->startsWith('wire:model'))
                 value: @entangle($formComponent->getName()){{ Str::of($formComponent->getBindingAttribute())->after('wire:model') }},
             @endif
@@ -448,7 +458,7 @@
                     </div>
 
                     <div class="grid grid-cols-7 gap-1">
-                        <template x-for="(day, index) in weekDays(firstDayOfWeek)" :key="index">
+                        <template x-for="(day, index) in getDayLabels()" :key="index">
                             <div
                                 x-text="day"
                                 class="text-xs font-medium text-center text-gray-800"

@@ -18,6 +18,8 @@ class DateTimePicker extends DatePicker
 
     protected function setUp()
     {
+        parent::setUp();
+
         $this->configure(function () {
             $this->displayFormat($this->defaultDisplayFormat);
             $this->format($this->defaultFormat);
