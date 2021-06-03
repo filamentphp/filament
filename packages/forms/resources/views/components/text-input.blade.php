@@ -31,8 +31,8 @@
 
         @if ($formComponent->getPostfix())
             <span class="inline-flex items-center px-3 text-gray-500 border border-l-0 border-gray-300 rounded-r bg-gray-50 whitespace-nowrap sm:text-sm">
-            {!!  $formComponent->getPostfix() !!}
-        </span>
+                {!!  $formComponent->getPostfix() !!}
+            </span>
         @endif
     </div>
 </x-forms::field-group>
