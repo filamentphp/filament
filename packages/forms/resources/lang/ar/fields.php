@@ -2,35 +2,6 @@
 
 return [
 
-    'dateTimePicker' => [
-
-        'abbreviatedDays' => [
-            'friday' => 'الجمعة',
-            'monday' => 'الاثنين',
-            'saturday' => 'السبت',
-            'sunday' => 'الأحد',
-            'thursday' => 'الخميس',
-            'tuesday' => 'الثلاثاء',
-            'wednesday' => 'الأربعاء',
-        ],
-
-        'months' => [
-            'april' => 'أبريل',
-            'august' => 'أغسطس',
-            'december' => 'ديسمبر',
-            'february' => 'فبراير',
-            'january' => 'يناير',
-            'july' => 'يوليو',
-            'june' => 'يونيو',
-            'march' => 'مارس',
-            'may' => 'مايو',
-            'november' => 'نوفمبر',
-            'october' => 'أكتوبر',
-            'september' => 'سبتمبر',
-        ],
-
-    ],
-
     'multiSelect' => [
         'emptyOptionsMessage' => 'لا توجد خيارات للاختيار من بينها.',
         'noSearchResultsMessage' => 'لا توجد خيارات تطابق بحثك.',

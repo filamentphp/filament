@@ -2,35 +2,6 @@
 
 return [
 
-    'dateTimePicker' => [
-
-        'abbreviatedDays' => [
-            'friday' => 'Fre',
-            'monday' => 'Man',
-            'saturday' => 'Lør',
-            'sunday' => 'Søn',
-            'thursday' => 'Tor',
-            'tuesday' => 'Tir',
-            'wednesday' => 'Ons',
-        ],
-
-        'months' => [
-            'april' => 'April',
-            'august' => 'August',
-            'december' => 'December',
-            'february' => 'Februar',
-            'january' => 'Januar',
-            'july' => 'Juli',
-            'june' => 'Juni',
-            'march' => 'Marts',
-            'may' => 'Maj',
-            'november' => 'November',
-            'october' => 'Oktober',
-            'september' => 'September',
-        ],
-
-    ],
-
     'multiSelect' => [
         'emptyOptionsMessage' => 'Ingen muligheder at vælge imellem.',
         'noSearchResultsMessage' => 'Ingen resultater der matcher din søgning.',

@@ -2,35 +2,6 @@
 
 return [
 
-    'dateTimePicker' => [
-
-        'abbreviatedDays' => [
-            'friday' => '周五',
-            'monday' => '周一',
-            'saturday' => '周六',
-            'sunday' => '周日',
-            'thursday' => '周四',
-            'tuesday' => '周二',
-            'wednesday' => '周三',
-        ],
-
-        'months' => [
-            'april' => '四月',
-            'august' => '八月',
-            'december' => '十二月',
-            'february' => '二月',
-            'january' => '一月',
-            'july' => '七月',
-            'june' => '六月',
-            'march' => '三月',
-            'may' => '五月',
-            'november' => '十一月',
-            'october' => '十月',
-            'september' => '九月',
-        ],
-
-    ],
-
     'keyValue' => [
 
         'buttons' => [

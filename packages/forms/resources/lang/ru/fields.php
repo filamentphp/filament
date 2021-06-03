@@ -2,35 +2,6 @@
 
 return [
 
-    'dateTimePicker' => [
-
-        'abbreviatedDays' => [
-            'friday' => 'Пт',
-            'monday' => 'Пн',
-            'saturday' => 'Сб',
-            'sunday' => 'Вс',
-            'thursday' => 'Чт',
-            'tuesday' => 'Вт',
-            'wednesday' => 'Ср',
-        ],
-
-        'months' => [
-            'april' => 'Апрель',
-            'august' => 'Август',
-            'december' => 'Декабрь',
-            'february' => 'Февраль',
-            'january' => 'Январь',
-            'july' => 'Июль',
-            'june' => 'Июнь',
-            'march' => 'Март',
-            'may' => 'Май',
-            'november' => 'Ноябрь',
-            'october' => 'Октябрь',
-            'september' => 'Сентябрь',
-        ],
-
-    ],
-
     'multiSelect' => [
         'emptyOptionsMessage' => 'не найдено вариантов для выбора.',
         'noSearchResultsMessage' => 'не найдено результатов по вашему поиску.',

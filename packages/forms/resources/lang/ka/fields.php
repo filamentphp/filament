@@ -2,35 +2,6 @@
 
 return [
 
-    'dateTimePicker' => [
-
-        'abbreviatedDays' => [
-            'friday' => 'პარ',
-            'monday' => 'ორშ',
-            'saturday' => 'შაბ',
-            'sunday' => 'კვი',
-            'thursday' => 'ხუთ',
-            'tuesday' => 'სამ',
-            'wednesday' => 'ოთხ',
-        ],
-
-        'months' => [
-            'april' => 'აპრილი',
-            'august' => 'აგვისტო',
-            'december' => 'სექტემბერი',
-            'february' => 'თებერვარი',
-            'january' => 'იანვარი',
-            'july' => 'ივლისი',
-            'june' => 'ივნისი',
-            'march' => 'მარტი',
-            'may' => 'მაისი',
-            'november' => 'ნოემბერი',
-            'october' => 'ოტქომბერი',
-            'september' => 'სექტემბერი',
-        ],
-
-    ],
-
     'multiSelect' => [
         'emptyOptionsMessage' => 'ჩანაწერების სია ცარიელია.',
         'noSearchResultsMessage' => 'ამ პარამეტრებით არცერთი ჩანაწერი არ მოიძებნა.',

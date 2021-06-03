@@ -2,35 +2,6 @@
 
 return [
 
-    'dateTimePicker' => [
-
-        'abbreviatedDays' => [
-            'friday' => 'Fre',
-            'monday' => 'Mån',
-            'saturday' => 'Lör',
-            'sunday' => 'Sön',
-            'thursday' => 'Tor',
-            'tuesday' => 'Tis',
-            'wednesday' => 'Ons',
-        ],
-
-        'months' => [
-            'april' => 'April',
-            'august' => 'Augusti',
-            'december' => 'December',
-            'february' => 'Februari',
-            'january' => 'Januari',
-            'july' => 'Juli',
-            'june' => 'Juni',
-            'march' => 'Mars',
-            'may' => 'Maj',
-            'november' => 'November',
-            'october' => 'Oktober',
-            'september' => 'September',
-        ],
-
-    ],
-
     'keyValue' => [
 
         'buttons' => [

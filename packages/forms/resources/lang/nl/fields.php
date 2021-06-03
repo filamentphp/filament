@@ -2,35 +2,6 @@
 
 return [
 
-    'dateTimePicker' => [
-
-        'abbreviatedDays' => [
-            'friday' => 'Vrij',
-            'monday' => 'Maa',
-            'saturday' => 'Za',
-            'sunday' => 'Zo',
-            'thursday' => 'Don',
-            'tuesday' => 'Din',
-            'wednesday' => 'Woe',
-        ],
-
-        'months' => [
-            'april' => 'April',
-            'august' => 'Augustus',
-            'december' => 'December',
-            'february' => 'Februari',
-            'january' => 'Januari',
-            'july' => 'Juli',
-            'june' => 'Juni',
-            'march' => 'Maart',
-            'may' => 'Mei',
-            'november' => 'November',
-            'october' => 'October',
-            'september' => 'September',
-        ],
-
-    ],
-
     'multiSelect' => [
         'emptyOptionsMessage' => 'Geen opties om te selecteren.',
         'noSearchResultsMessage' => 'Er zijn geen resultaten voor je zoekopdracht.',
