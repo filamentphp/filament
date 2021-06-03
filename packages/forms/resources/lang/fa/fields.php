@@ -2,35 +2,6 @@
 
 return [
 
-    'dateTimePicker' => [
-
-        'abbreviatedDays' => [
-            'friday' => 'جمعه',
-            'monday' => 'دوشنبه',
-            'saturday' => 'شنبه',
-            'sunday' => 'یک شنبه',
-            'thursday' => 'پنج شنبه',
-            'tuesday' => 'سه شنبه',
-            'wednesday' => 'چهار شنبه',
-        ],
-
-        'months' => [
-            'april' => 'اپریل',
-            'august' => 'آگست',
-            'december' => 'دیسیمبر',
-            'february' => 'فبیروری',
-            'january' => 'جنوری',
-            'july' => 'جلای',
-            'june' => 'جون',
-            'march' => 'مارچ',
-            'may' => 'می',
-            'november' => 'نوامبر',
-            'october' => 'آکتوبر',
-            'september' => 'سیپتمبر',
-        ],
-
-    ],
-
     'keyValue' => [
 
         'buttons' => [

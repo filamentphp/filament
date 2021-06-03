@@ -2,35 +2,6 @@
 
 return [
 
-    'dateTimePicker' => [
-
-        'abbreviatedDays' => [
-            'friday' => 'Vie',
-            'monday' => 'Lun',
-            'saturday' => 'Sab',
-            'sunday' => 'Dom',
-            'thursday' => 'Jue',
-            'tuesday' => 'Mar',
-            'wednesday' => 'Mie',
-        ],
-
-        'months' => [
-            'april' => 'Abril',
-            'august' => 'Agosto',
-            'december' => 'Diciembre',
-            'february' => 'Febrero',
-            'january' => 'Enero',
-            'july' => 'Julio',
-            'june' => 'Junio',
-            'march' => 'Marzo',
-            'may' => 'Mayo',
-            'november' => 'Noviembre',
-            'october' => 'Octubre',
-            'september' => 'Septiembre',
-        ],
-
-    ],
-
     'keyValue' => [
 
         'buttons' => [

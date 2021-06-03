@@ -2,35 +2,6 @@
 
 return [
 
-    'dateTimePicker' => [
-
-        'abbreviatedDays' => [
-            'friday' => 'dv',
-            'monday' => 'dl',
-            'saturday' => 'ds',
-            'sunday' => 'dg',
-            'thursday' => 'dj',
-            'tuesday' => 'dt',
-            'wednesday' => 'dc',
-        ],
-
-        'months' => [
-            'april' => 'Abril',
-            'august' => 'Agost',
-            'december' => 'Desembre',
-            'february' => 'Febrer',
-            'january' => 'Gener',
-            'july' => 'Juliol',
-            'june' => 'Juny',
-            'march' => 'Març',
-            'may' => 'Maig',
-            'november' => 'Novembre',
-            'october' => 'Octubre',
-            'september' => 'Setembre',
-        ],
-
-    ],
-
     'multiSelect' => [
         'emptyOptionsMessage' => 'No hi ha opcions disponibles',
         'noSearchResultsMessage' => 'No s\'ha trobat cap opció que coincideixi amb la vostra cerca.',

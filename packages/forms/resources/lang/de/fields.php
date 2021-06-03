@@ -2,35 +2,6 @@
 
 return [
 
-    'dateTimePicker' => [
-
-        'abbreviatedDays' => [
-            'friday' => 'Fr',
-            'monday' => 'Mo',
-            'saturday' => 'Sa',
-            'sunday' => 'So',
-            'thursday' => 'Do',
-            'tuesday' => 'Di',
-            'wednesday' => 'Mi',
-        ],
-
-        'months' => [
-            'april' => 'April',
-            'august' => 'August',
-            'december' => 'Dezember',
-            'february' => 'Februar',
-            'january' => 'Januar',
-            'july' => 'Juli',
-            'june' => 'Juni',
-            'march' => 'März',
-            'may' => 'Mai',
-            'november' => 'November',
-            'october' => 'Oktober',
-            'september' => 'September',
-        ],
-
-    ],
-
     'multiSelect' => [
         'emptyOptionsMessage' => 'Es stehen keine Optionen zur Auswahl.',
         'noSearchResultsMessage' => 'Keine Optionen passen zu Ihrer Suche.',

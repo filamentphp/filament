@@ -11,6 +11,8 @@ class DatePicker extends Field
 
     protected $displayFormat;
 
+    protected $firstDayOfWeek;
+
     protected $format;
 
     protected $hasSeconds = true;
@@ -27,6 +29,7 @@ class DatePicker extends Field
     {
         $this->configure(function () {
             $this->displayFormat('F j, Y');
+            $this->resetFirstDayOfWeek();
             $this->format('Y-m-d');
         });
     }
@@ -35,6 +38,19 @@ class DatePicker extends Field
     {
         $this->configure(function () use ($format) {
             $this->displayFormat = $format;
+        });
+
+        return $this;
+    }
+
+    public function firstDayOfWeek($day = 1)
+    {
+        $this->configure(function () use ($day) {
+            if ($day < 0 || $day > 7) {
+                $day = $this->getDefaultFirstDayOfWeek();
+            }
+
+            $this->firstDayOfWeek = $day;
         });
 
         return $this;
@@ -49,9 +65,19 @@ class DatePicker extends Field
         return $this;
     }
 
+    protected function getDefaultFirstDayOfWeek()
+    {
+        return config('forms.first_day_of_week', 1);
+    }
+
     public function getDisplayFormat()
     {
         return $this->displayFormat;
+    }
+
+    public function getFirstDayOfWeek()
+    {
+        return $this->firstDayOfWeek;
     }
 
     public function getFormat()
@@ -97,6 +123,27 @@ class DatePicker extends Field
 
             $this->addRules([$this->getName() => ["after_or_equal:{$date}"]]);
         });
+
+        return $this;
+    }
+
+    public function resetFirstDayOfWeek()
+    {
+        $this->firstDayOfWeek($this->getDefaultFirstDayOfWeek());
+
+        return $this;
+    }
+
+    public function weekStartsOnSunday()
+    {
+        $this->firstDayOfWeek(7);
+
+        return $this;
+    }
+
+    public function weekStartsOnMonday()
+    {
+        $this->firstDayOfWeek(1);
 
         return $this;
     }
