@@ -119,11 +119,11 @@
                 styleProgressIndicatorPosition: '{{ $formComponent->getUploadProgressIndicatorPosition() }}',
             })
 
-            this.addEventListener('pondReset', e => {
-                pond.removeFiles();
-            })
-
             $watch('value', () => {
+                if (! value) {
+                    pond.removeFiles()
+                }
+
                 @this.getUploadedFileUrl(name, disk).then((uploadedFileUrl) => {
                     if (uploadedFileUrl) {
                         pond.files = [{

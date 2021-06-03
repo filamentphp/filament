@@ -54,8 +54,6 @@ class CreateRecord extends Page
             return;
         }
 
-        $this->dispatchBrowserEvent('pondReset');
-
         $this->redirect($this->getResource()::generateUrl(static::$showRoute, [
             'record' => $this->record,
         ]));
