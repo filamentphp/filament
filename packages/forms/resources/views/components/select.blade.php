@@ -130,6 +130,8 @@
                     this.$watch('value', () => {
                         if (this.value in this.options) {
                             this.displayValue = this.options[this.value]
+                        } else if (! this.value) {
+                            this.clearValue()
                         }
                     })
                 },
