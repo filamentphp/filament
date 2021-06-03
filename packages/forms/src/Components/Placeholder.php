@@ -7,37 +7,15 @@ use Illuminate\Support\Str;
 class Placeholder extends Component
 {
     protected $name;
+
     protected $value;
 
-    public function __construct(string $name, string $value)
+    public function __construct($name, $value)
     {
         $this->name($name);
         $this->value($value);
+
         $this->setUp();
-    }
-
-    protected function name($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    protected function value($value)
-    {
-        $this->value = $value;
-
-        return $this;
-    }
-
-    public function getValue()
-    {
-        return $this->value;
     }
 
     public function getLabel()
@@ -53,7 +31,31 @@ class Placeholder extends Component
         return parent::getLabel();
     }
 
-    public static function make(string $name, string $value)
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    protected function name($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    protected function value($value)
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
+    public static function make($name, $value)
     {
         return new static($name, $value);
     }
