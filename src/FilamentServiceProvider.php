@@ -34,11 +34,9 @@ class FilamentServiceProvider extends ServiceProvider
 
     public function register()
     {
-        if (method_exists($this->app, 'scoped')) {
-            $this->app->scoped(FilamentManager::class, function () {
-                return new FilamentManager;
-            });
-        }
+        $this->app->singleton(FilamentManager::class, function () {
+            return new FilamentManager;
+        });
 
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
 
