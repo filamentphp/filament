@@ -1,11 +1,13 @@
 name: php-cs-fixer
 
-on: [push]
+on:
+    push:
+        branches:
+            - develop
 
 jobs:
     php-cs-fixer:
         runs-on: ubuntu-latest
-        if: github.event.pull_request.merged == true
         steps:
             - name: Checkout code
               uses: actions/checkout@v2
