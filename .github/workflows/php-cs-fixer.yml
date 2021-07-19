@@ -1,10 +1,9 @@
 name: php-cs-fixer
 
 on:
-    pull_request:
+    push:
         branches:
             - develop
-        types: [closed]
 
 jobs:
     php-cs-fixer:
