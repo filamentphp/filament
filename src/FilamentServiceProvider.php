@@ -21,10 +21,6 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentServiceProvider extends ServiceProvider
 {
-    public $singletons = [
-        FilamentManager::class => FilamentManager::class,
-    ];
-
     public function boot()
     {
         $this->bootCommands();
@@ -38,6 +34,10 @@ class FilamentServiceProvider extends ServiceProvider
 
     public function register()
     {
+        $this->app->singleton(FilamentManager::class, function () {
+            return new FilamentManager;
+        });
+
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
 
         $this->registerIcons();
