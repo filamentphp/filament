@@ -1,9 +1,6 @@
 name: php-cs-fixer
 
-on:
-    push:
-        branches:
-            - develop
+on: [push]
 
 jobs:
     php-cs-fixer:
