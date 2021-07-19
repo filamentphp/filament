@@ -65,7 +65,9 @@ trait CanSearchRecords
                             $query = $this->applyRelationshipSearch($query, $searchColumn);
                         } else {
                             $query->{$this->hasNoSearchQueriesApplied() ? 'where' : 'orWhere'}(
-                                $searchColumn, $this->getSearchOperator(), "%{$this->getSearch()}%"
+                                $searchColumn,
+                                $this->getSearchOperator(),
+                                "%{$this->getSearch()}%"
                             );
                         }
 

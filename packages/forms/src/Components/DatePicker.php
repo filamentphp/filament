@@ -65,11 +65,6 @@ class DatePicker extends Field
         return $this;
     }
 
-    protected function getDefaultFirstDayOfWeek()
-    {
-        return config('forms.first_day_of_week', 1);
-    }
-
     public function getDisplayFormat()
     {
         return $this->displayFormat;
@@ -134,6 +129,13 @@ class DatePicker extends Field
         return $this;
     }
 
+    public function weekStartsOnMonday()
+    {
+        $this->firstDayOfWeek(1);
+
+        return $this;
+    }
+
     public function weekStartsOnSunday()
     {
         $this->firstDayOfWeek(7);
@@ -141,10 +143,8 @@ class DatePicker extends Field
         return $this;
     }
 
-    public function weekStartsOnMonday()
+    protected function getDefaultFirstDayOfWeek()
     {
-        $this->firstDayOfWeek(1);
-
-        return $this;
+        return config('forms.first_day_of_week', 1);
     }
 }

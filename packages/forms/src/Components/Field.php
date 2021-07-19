@@ -234,13 +234,6 @@ class Field extends Component
         return new static($name);
     }
 
-    protected function name($name)
-    {
-        $this->name = $name;
-
-        return $this->addRules([$this->getName() => ['nullable']]);
-    }
-
     public function nullable()
     {
         $this->configure(function () {
@@ -344,5 +337,12 @@ class Field extends Component
         });
 
         return $this;
+    }
+
+    protected function name($name)
+    {
+        $this->name = $name;
+
+        return $this->addRules([$this->getName() => ['nullable']]);
     }
 }

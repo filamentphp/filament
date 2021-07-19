@@ -41,6 +41,11 @@ class Placeholder extends Component
         return $this->value;
     }
 
+    public static function make($name, $value)
+    {
+        return new static($name, $value);
+    }
+
     protected function name($name)
     {
         $this->name = $name;
@@ -53,10 +58,5 @@ class Placeholder extends Component
         $this->value = $value;
 
         return $this;
-    }
-
-    public static function make($name, $value)
-    {
-        return new static($name, $value);
     }
 }

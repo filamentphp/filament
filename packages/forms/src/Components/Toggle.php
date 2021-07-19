@@ -2,17 +2,14 @@
 
 namespace Filament\Forms\Components;
 
-use Filament\Forms\Components\Concerns;
-use Filament\Forms\Components\Field;
-
 class Toggle extends Field
 {
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeInline;
 
-    protected $onIcon;
-
     protected $offIcon;
+
+    protected $onIcon;
 
     protected function setUp()
     {
@@ -21,13 +18,24 @@ class Toggle extends Field
         $this->inline();
     }
 
-    public function onIcon($icon)
+    public function getOffIcon()
     {
-        $this->configure(function () use ($icon) {
-            $this->onIcon = $icon;
-        });
+        return $this->offIcon;
+    }
 
-        return $this;
+    public function getOnIcon()
+    {
+        return $this->onIcon;
+    }
+
+    public function hasOffIcon()
+    {
+        return $this->offIcon !== null;
+    }
+
+    public function hasOnIcon()
+    {
+        return $this->onIcon !== null;
     }
 
     public function offIcon($icon)
@@ -39,23 +47,12 @@ class Toggle extends Field
         return $this;
     }
 
-    public function getOnIcon()
+    public function onIcon($icon)
     {
-        return $this->onIcon;
-    }
+        $this->configure(function () use ($icon) {
+            $this->onIcon = $icon;
+        });
 
-    public function getOffIcon()
-    {
-        return $this->offIcon;
-    }
-
-    public function hasOffIcon()
-    {
-        return $this->offIcon !== null;
-    }
-
-    public function hasOnIcon()
-    {
-        return $this->onIcon !== null;
+        return $this;
     }
 }

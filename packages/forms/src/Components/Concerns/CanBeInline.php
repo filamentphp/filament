@@ -15,6 +15,11 @@ trait CanBeInline
         return $this;
     }
 
+    public function isInline()
+    {
+        return $this->isInline;
+    }
+
     public function stacked()
     {
         $this->configure(function () {
@@ -22,10 +27,5 @@ trait CanBeInline
         });
 
         return $this;
-    }
-
-    public function isInline()
-    {
-        return $this->isInline;
     }
 }

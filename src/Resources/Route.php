@@ -20,16 +20,16 @@ class Route
         $this->uri($uri);
     }
 
-    protected function name($name)
+    public function uri($uri)
     {
-        $this->name = $name;
+        $this->uri = (string) Str::of($uri)->trim('/');
 
         return $this;
     }
 
-    public function uri($uri)
+    protected function name($name)
     {
-        $this->uri = (string) Str::of($uri)->trim('/');
+        $this->name = $name;
 
         return $this;
     }

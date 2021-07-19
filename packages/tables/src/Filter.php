@@ -162,13 +162,6 @@ class Filter
         return new static($name, $callback);
     }
 
-    protected function name($name)
-    {
-        $this->configure(function () use ($name) {
-            $this->name = $name;
-        });
-    }
-
     public function only($contexts, $callback = null)
     {
         $this->configure(function () use ($callback, $contexts) {
@@ -208,5 +201,12 @@ class Filter
         });
 
         return $this;
+    }
+
+    protected function name($name)
+    {
+        $this->configure(function () use ($name) {
+            $this->name = $name;
+        });
     }
 }

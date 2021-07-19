@@ -100,15 +100,6 @@ class Action
         return new static($name);
     }
 
-    protected function name($name)
-    {
-        $this->configure(function () use ($name) {
-            $this->name = $name;
-        });
-
-        return $this;
-    }
-
     public function render($record)
     {
         $when = $this->when;
@@ -167,6 +158,15 @@ class Action
     {
         $this->configure(function () use ($callback) {
             $this->when = $callback;
+        });
+
+        return $this;
+    }
+
+    protected function name($name)
+    {
+        $this->configure(function () use ($name) {
+            $this->name = $name;
         });
 
         return $this;
