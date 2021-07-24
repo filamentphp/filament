@@ -29,10 +29,21 @@
                         })
                     }
 
-                    this.$watch('value', () => {
-                        if (this.value) return
+                    this.$watch('value', (newValues) => {
+                        if (newValues && typeof newValues === 'object') {
+                            let index = 0
 
-                        this.value = {}
+                            for (const [key, value] of Object.entries(newValues)) {
+                                if (typeof this.rows['index'] === 'undefined') {
+                                    this.rows[index] = { key, value }
+                                } else {
+                                    this.rows[index].key = key
+                                    this.rows[index].value = value
+                                }
+
+                                index++
+                            }
+                        }
                     })
 
                     if (this.isSortable) {
