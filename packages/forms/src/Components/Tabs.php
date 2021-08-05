@@ -7,6 +7,7 @@ class Tabs extends Component
     public function getTabsConfig()
     {
         return collect($this->getSchema())
+            ->filter(fn (Tab $tab) => ! $tab->isHidden())
             ->mapWithKeys(fn ($tab) => [$tab->getId() => $tab->getLabel()])
             ->toArray();
     }
