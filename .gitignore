@@ -5,8 +5,7 @@
 /vendor
 /.vscode
 .DS_Store
-.php_cs
-.php_cs.cache
+.php-cs-fixer.cache
 .phpunit.result.cache
 composer.phar
 Thumbs.db
