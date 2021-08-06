@@ -170,6 +170,14 @@ class FilamentManager
 
     public function registerPage($page)
     {
+        if(!is_null($page)) {
+            if(method_exists($page,'showInNav')) {
+                if($page::showInNav() === false) {
+                    return;
+                }
+            }
+        }
+
         $this->pages[] = $page;
 
         $this->registerAuthorizations($page, $page::authorization());
