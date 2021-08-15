@@ -12,6 +12,11 @@ class Page extends \Filament\Pages\Page
 
     public static $resource;
 
+    public static function generateUrl($parameters = [], $absolute = true)
+    {
+        return route(static::getResource()::getRouteNamePrefix() . '.' . static::getResource()::getSlug() . '.' . static::route()->name, $parameters, $absolute);
+    }
+
     public static function getModel()
     {
         return static::getResource()::getModel();

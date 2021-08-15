@@ -39,7 +39,7 @@ class Resource
             $name = static::router()->getIndexRoute()->name;
         }
 
-        return route(static::$routeNamePrefix . '.' . static::getSlug() . '.' . $name, $parameters, $absolute);
+        return route(static::getRouteNamePrefix() . '.' . static::getSlug() . '.' . $name, $parameters, $absolute);
     }
 
     public static function getIcon()
@@ -86,6 +86,11 @@ class Resource
     public static function getPluralLabel()
     {
         return (string) Str::plural(static::getLabel());
+    }
+
+    public static function getRouteNamePrefix()
+    {
+        return static::$routeNamePrefix;
     }
 
     public static function getSlug()
