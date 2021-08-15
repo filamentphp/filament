@@ -14,7 +14,7 @@ class Page extends \Filament\Pages\Page
 
     public static function generateUrl($parameters = [], $absolute = true)
     {
-        return route('filament.resources.' . static::getResource()::getSlug() . '.' . static::route()->name, $parameters, $absolute);
+        return route(static::getResource()::getRouteNamePrefix() . '.' . static::getResource()::getSlug() . '.' . static::route()->name, $parameters, $absolute);
     }
 
     public static function getModel()
