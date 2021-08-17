@@ -33,7 +33,7 @@ class Text extends Column
     {
         $this->configure(function () use ($format) {
             $this->formatUsing = function ($value) use ($format) {
-                $value = Carbon::parse($value)->format($format);
+                $value = Carbon::parse($value)->translatedFormat($format);
 
                 return $value;
             };
