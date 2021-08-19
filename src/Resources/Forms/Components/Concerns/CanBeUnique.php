@@ -3,6 +3,7 @@
 namespace Filament\Resources\Forms\Components\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
 
 trait CanBeUnique
 {
@@ -11,12 +12,12 @@ trait CanBeUnique
     public function unique($table, $column = null, $except = false)
     {
         $this->configure(function () use ($column, $except, $table) {
-            $rule = "unique:$table,$column";
+            $rule = Rule::unique($table, $column);
 
             $record = $this->getLivewire()->record;
 
             if ($except && $record instanceof Model) {
-                $rule .= ",{$record->getKey()}";
+                $rule->ignore($record->getOriginal($record->getKeyName()), $record->getKeyName());
             }
 
             $this->addRules([$this->getName() => [$rule]]);
