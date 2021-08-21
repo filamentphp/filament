@@ -50,7 +50,9 @@
                                 </span>
                             </button>
                         @else
-                            <span class="text-xs font-medium tracking-wider uppercase">{{ __($column->getLabel()) }}</span>
+                            <div class="flex justify-start">
+                                <span class="text-xs font-medium tracking-wider uppercase">{{ __($column->getLabel()) }}</span>
+                            </div>
                         @endif
                     </th>
                 @endforeach
