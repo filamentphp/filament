@@ -40,7 +40,7 @@ trait HasForm
     {
         $storeMethod = $field->getVisibility() === 'public' ? 'storePublicly' : 'store';
 
-        if (! $field->getStoreAsCallback() || ! ($field->getLivewire()->record)) {
+        if (! $field->storeAsCallback || ! ($field->getLivewire()->record)) {
             return $file->{$storeMethod}($field->getDirectory(), $field->getDiskName());
         }
 
