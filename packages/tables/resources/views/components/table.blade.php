@@ -12,7 +12,7 @@
     @endpushonce
 @endif
 
-<div class="overflow-x-auto bg-white rounded shadow-xl">
+<div class="overflow-x-auto bg-white rounded">
     <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-200">
             <tr>
@@ -50,7 +50,9 @@
                                 </span>
                             </button>
                         @else
-                            <span class="text-xs font-medium tracking-wider uppercase">{{ __($column->getLabel()) }}</span>
+                            <div class="flex justify-start">
+                                <span class="text-xs font-medium tracking-wider uppercase">{{ __($column->getLabel()) }}</span>
+                            </div>
                         @endif
                     </th>
                 @endforeach
