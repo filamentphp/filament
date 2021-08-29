@@ -3,67 +3,28 @@
     "description": "The elegant TALL stack admin panel for Laravel artisans.",
     "license": "MIT",
     "require": {
-        "php": "^7.4|^8.0",
-        "blade-ui-kit/blade-heroicons": "^1.0",
-        "danharrin/date-format-converter": "^0.2",
-        "danharrin/livewire-rate-limiting": "^0.3",
-        "illuminate/auth": "^8.0",
-        "illuminate/console": "^8.0",
-        "illuminate/cookie": "^8.0",
-        "illuminate/database": "^8.0",
-        "illuminate/filesystem": "^8.0",
-        "illuminate/http": "^8.0",
-        "illuminate/notifications": "^8.0",
-        "illuminate/routing": "^8.0",
-        "illuminate/session": "^8.0",
-        "illuminate/support": "^8.0",
-        "illuminate/view": "^8.0",
-        "league/glide-laravel": "^1.0",
-        "livewire/livewire": "^2.2",
-        "thomaswelton/laravel-gravatar": "^1.0"
+        "php": "^8.0"
     },
     "require-dev": {
+        "livewire/livewire": "^2.5",
         "orchestra/testbench": "^6.0",
-        "phpunit/phpunit": "^9.5",
+        "pestphp/pest": "^1.17",
+        "pestphp/pest-plugin-parallel": "^0.3.0",
+        "phpstan/phpstan": "^0.12.96",
+        "spatie/laravel-package-tools": "^1.9",
         "symplify/monorepo-builder": "^9.0"
-    },
-    "autoload": {
-        "files": [
-            "src/helpers.php"
-        ],
-        "psr-4": {
-            "Filament\\": "src",
-            "Filament\\Forms\\": "packages/forms/src",
-            "Filament\\Database\\Factories\\": "database/factories",
-            "Filament\\Tables\\": "packages/tables/src"
-        }
     },
     "autoload-dev": {
         "psr-4": {
+            "Filament\\Forms\\": "packages/forms/src",
             "Filament\\Tests\\": "tests"
         }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Filament\\FilamentServiceProvider",
-                "Filament\\Forms\\FormsServiceProvider",
-                "Filament\\Tables\\TablesServiceProvider"
-            ],
-            "aliases": {
-                "FilamentManager": "Filament\\Filament"
-            }
-        }
-    },
-    "replace": {
-        "filament/forms": "self.version",
-        "filament/tables": "self.version"
     },
     "config": {
         "sort-packages": true
     },
     "scripts": {
-        "test": "./vendor/bin/phpunit"
+        "test": "./vendor/bin/pest && vendor/bin/phpstan"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

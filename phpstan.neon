@@ -1,0 +1,16 @@
+parameters:
+    paths:
+        - packages
+    level: 5
+    ignoreErrors:
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+::appendNewUploadField\(\)#'
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+::getDriver\(\)#'
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+::getStatePath\(\)#'
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+::removeUploadedFile\(\)#'
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+::temporaryUrl\(\)#'
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+::url\(\)#'
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+::where\(\)#'
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+::whereIn\(\)#'
+        - '#Call to an undefined static method [a-zA-Z0-9\\_]+::moveElementAfter\(\)#'
+        - '#Call to an undefined static method [a-zA-Z0-9\\_]+::moveElementBefore\(\)#'
+        - '#Class League\\Flysystem\\AwsS3v3\\AwsS3Adapter not found#'

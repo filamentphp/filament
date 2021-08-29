@@ -1,0 +1,23 @@
+{
+    "name": "forms",
+    "module": "dist/module.esm.js",
+    "devDependencies": {
+        "@babel/runtime": "^7.15.3",
+        "@github/file-attachment-element": "^2.0.1",
+        "@github/markdown-toolbar-element": "^1.5.1",
+        "dayjs": "^1.10.6",
+        "esbuild": "^0.12.16",
+        "filepond": "^4.28.2",
+        "filepond-plugin-file-validate-size": "^2.2.4",
+        "filepond-plugin-file-validate-type": "^1.2.6",
+        "filepond-plugin-image-crop": "^2.0.6",
+        "filepond-plugin-image-exif-orientation": "^1.0.11",
+        "filepond-plugin-image-preview": "^4.6.7",
+        "filepond-plugin-image-resize": "^2.0.10",
+        "filepond-plugin-image-transform": "^3.8.6",
+        "imask": "^6.1.0",
+        "marked": "^3.0.0",
+        "mdhl": "^0.0.6",
+        "trix": "^1.3.1"
+    }
+}
