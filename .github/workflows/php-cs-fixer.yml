@@ -9,16 +9,13 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v2
               with:
-                  ref: develop
-
+                  ref: ${{ github.head_ref }}
             - name: Run PHP CS Fixer
               uses: docker://oskarstark/php-cs-fixer-ga
               with:
                   args: --config=.php-cs-fixer.dist.php --allow-risky=yes
-
             - name: Commit changes
               uses: stefanzweifel/git-auto-commit-action@v4
               with:
-                  branch: develop
                   commit_message: >
                       chore: styling
