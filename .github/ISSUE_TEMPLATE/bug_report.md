@@ -21,12 +21,12 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Context**
-- Package version: [e.g. 0.1.0]
+- Package version: [e.g. 2.0.0]
 - Livewire version: [e.g. 2.0.0]
 - Laravel version: [e.g. 8.0.0]
 - Browser: [e.g. Chrome, Safari]
 - Server OS: [e.g. Ubuntu 18.04.4]
-- PHP version: [e.g. 7.4]
+- PHP version: [e.g. 8.0]
 - Database: [e.g. MySQL 8.0]
 
 **Additional details**
