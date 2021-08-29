@@ -13,22 +13,10 @@
     verbose="true"
 >
     <testsuites>
-        <testsuite name="Filament Test Suite">
+        <testsuite name="Tests">
             <directory suffix=".php">./tests/</directory>
         </testsuite>
     </testsuites>
-
-    <coverage>
-        <include>
-            <directory suffix=".php">./src</directory>
-        </include>
-
-        <report>
-            <clover outputFile="build/logs/clover.xml"/>
-            <html outputDirectory="build/coverage"/>
-            <text outputFile="build/coverage.txt"/>
-        </report>
-    </coverage>
 
     <logging>
         <junit outputFile="build/report.junit.xml"/>

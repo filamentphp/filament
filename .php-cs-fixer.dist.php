@@ -2,10 +2,7 @@
 
 $finder = Symfony\Component\Finder\Finder::create()
     ->in([
-        __DIR__ . '/config',
         __DIR__ . '/packages',
-        __DIR__ . '/routes',
-        __DIR__ . '/src',
         __DIR__ . '/tests',
     ])
     ->name('*.php')
@@ -15,12 +12,9 @@ $finder = Symfony\Component\Finder\Finder::create()
 
 return (new PhpCsFixer\Config())
     ->setRules([
-        '@PSR2' => true,
+        '@PSR12' => true,
         'array_syntax' => ['syntax' => 'short'],
         'ordered_imports' => ['sort_algorithm' => 'alpha'],
-        'ordered_class_elements' => [
-            'sort_algorithm' => 'alpha',
-        ],
         'no_unused_imports' => true,
         'not_operator_with_successor_space' => true,
         'trailing_comma_in_multiline' => true,
@@ -34,9 +28,7 @@ return (new PhpCsFixer\Config())
         'phpdoc_var_without_name' => true,
         'class_attributes_separation' => [
             'elements' => [
-                'const' => 'one',
                 'method' => 'one',
-                'property' => 'one',
             ],
         ],
         'method_argument_space' => [
