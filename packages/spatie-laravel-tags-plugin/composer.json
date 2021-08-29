@@ -1,0 +1,25 @@
+{
+    "name": "filament/spatie-laravel-tags-plugin",
+    "description": "Filament support for `spatie/laravel-tags`.",
+    "license": "MIT",
+    "homepage": "https://github.com/laravel-filament/filament",
+    "support": {
+        "issues": "https://github.com/laravel-filament/filament/issues",
+        "source": "https://github.com/laravel-filament/filament"
+    },
+    "require": {
+        "php": "^8.0",
+        "filament/forms": "self.version",
+        "spatie/laravel-tags": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Filament\\": "src"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

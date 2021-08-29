@@ -1,0 +1,25 @@
+{
+    "name": "filament/spatie-laravel-media-library-plugin",
+    "description": "Filament support for `spatie/laravel-medialibrary`.",
+    "license": "MIT",
+    "homepage": "https://github.com/laravel-filament/filament",
+    "support": {
+        "issues": "https://github.com/laravel-filament/filament/issues",
+        "source": "https://github.com/laravel-filament/filament"
+    },
+    "require": {
+        "php": "^8.0",
+        "filament/forms": "self.version",
+        "spatie/laravel-medialibrary": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Filament\\": "src"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
