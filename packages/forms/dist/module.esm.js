@@ -5914,7 +5914,7 @@ dayjs.Ls = Ls;
 dayjs.p = {};
 var esm_default = dayjs;
 
-// resources/js/components/date-time-picker.js
+// packages/forms/resources/js/components/date-time-picker.js
 var import_customParseFormat = __toModule(require_customParseFormat());
 var import_localeData = __toModule(require_localeData());
 esm_default.extend(import_customParseFormat.default);
@@ -15559,7 +15559,7 @@ if (isBrowser8) {
 }
 var filepond_plugin_image_transform_esm_default = plugin7;
 
-// resources/js/components/file-upload.js
+// packages/forms/resources/js/components/file-upload.js
 registerPlugin(filepond_plugin_file_validate_size_esm_default);
 registerPlugin(filepond_plugin_file_validate_type_esm_default);
 registerPlugin(filepond_plugin_image_crop_esm_default);
@@ -18547,7 +18547,7 @@ function a(e2, n2 = s) {
   return p(o(e2), n2);
 }
 
-// resources/js/components/markdown-editor.js
+// packages/forms/resources/js/components/markdown-editor.js
 var markdown_editor_default = (Alpine) => {
   Alpine.data("markdownEditorFormComponent", ({
     state: state2,
@@ -18609,7 +18609,7 @@ var markdown_editor_default = (Alpine) => {
   });
 };
 
-// resources/js/components/multi-select.js
+// packages/forms/resources/js/components/multi-select.js
 var multi_select_default = (Alpine) => {
   Alpine.data("multiSelectFormComponent", ({
     getOptionLabelsUsing,
@@ -18744,7 +18744,7 @@ var multi_select_default = (Alpine) => {
   });
 };
 
-// resources/js/components/rich-editor.js
+// packages/forms/resources/js/components/rich-editor.js
 var import_trix = __toModule(require_trix());
 import_trix.default.config.blockAttributes.heading = {
   tagName: "h2",
@@ -18776,7 +18776,7 @@ var rich_editor_default = (Alpine) => {
   });
 };
 
-// resources/js/components/select.js
+// packages/forms/resources/js/components/select.js
 var select_default = (Alpine) => {
   Alpine.data("selectFormComponent", ({
     getOptionLabelUsing,
@@ -18903,7 +18903,7 @@ var select_default = (Alpine) => {
   });
 };
 
-// resources/js/components/tags-input.js
+// packages/forms/resources/js/components/tags-input.js
 var tags_input_default = (Alpine) => {
   Alpine.data("tagsInputFormComponent", ({
     state: state2
@@ -21909,7 +21909,7 @@ try {
 } catch (e2) {
 }
 
-// resources/js/components/text-input.js
+// packages/forms/resources/js/components/text-input.js
 var text_input_default = (Alpine) => {
   Alpine.data("textInputFormComponent", ({
     getMaskOptionsUsing,
@@ -21932,7 +21932,7 @@ var text_input_default = (Alpine) => {
   });
 };
 
-// resources/js/index.js
+// packages/forms/resources/js/index.js
 var js_default = (Alpine) => {
   Alpine.plugin(date_time_picker_default);
   Alpine.plugin(file_upload_default);

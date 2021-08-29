@@ -1,6 +1,5 @@
 {
-    "name": "forms",
-    "module": "dist/module.esm.js",
+    "name": "filament",
     "devDependencies": {
         "@babel/runtime": "^7.15.3",
         "@github/file-attachment-element": "^2.0.1",
