@@ -1,5 +1,9 @@
 {
     "name": "filament",
+    "scripts": {
+        "build": "node bin/build",
+        "watch": "node bin/build --watch"
+    },
     "devDependencies": {
         "@babel/runtime": "^7.15.3",
         "@github/file-attachment-element": "^2.0.1",
