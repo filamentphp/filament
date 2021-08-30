@@ -110,7 +110,7 @@ from the `register()` method of your `AppServiceProvider`.
 
 ## Stubs {#stubs}
 
-Filament commands use stubs as templates when new files in your project. You may customize these stubs by publishing them to your app:
+Filament commands use stubs as templates when creating new files in your project. You may customize these stubs by publishing them to your app:
 
 ```bash
 php artisan vendor:publish --tag=filament-stubs
