@@ -14,7 +14,7 @@ This command will create two files - a page class in the `/Pages` directory of t
 
 Page classes are essentially [Laravel Livewire](https://laravel-livewire.com) components with custom integration utilities for use with Filament.
 
-## Authorization {#authorization}
+## Authorization
 
 You may create roles for users of Filament that allow them to access specific pages. You may create a `Manager` role using:
 
@@ -54,7 +54,7 @@ public static function authorization()
 }
 ```
 
-## Customization {#customization}
+## Customization
 
 Filament will automatically generate a title, navigation label and URL (slug) for your page based on its name. You may override it using static properties of your page class:
 

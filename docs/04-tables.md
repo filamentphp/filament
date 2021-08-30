@@ -35,7 +35,7 @@ public static function table(Table $table)
 }
 ```
 
-## Columns {#columns}
+## Columns
 
 Resource column classes are located in the `Filament\Resources\Tables\Columns` namespace.
 
@@ -52,7 +52,7 @@ Column::make($name)
     ->url($url, $shouldOpenInNewTab = false); // Set URL callback that should be used to generate a URL to send the user to when this column is clicked.
 ```
 
-### Displaying Relationship Data {#columns-displaying-relationship-data}
+### Displaying Relationship Data
 
 You set up columns that display results from a related model using dot syntax in its name:
 
@@ -62,7 +62,7 @@ Column::make('customer.name');
 
 This would check for a `customer` relationship on the parent model and output the related customer's name.
 
-### Calling Actions {#columns-calling-actions}
+### Calling Actions
 
 You may want something to happen when a cell is clicked. Usually, this is opening a URL, or running a custom Livewire action.
 
@@ -84,7 +84,7 @@ Column::make('username')
 
 Cells of the above column will call the `editUsername()` Livewire action when clicked.
 
-### Boolean {#columns-boolean}
+### Boolean
 
 The `trueIcon()` and `falseIcon()` methods support the name of any Blade icon component, and passes a set of formatting classes to it. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
@@ -94,7 +94,7 @@ Boolean::make($name)
     ->trueIcon($icon = 'heroicon-s-check-circle'); // Set the icon that should be displayed when the cell is true.
 ```
 
-### Icon {#columns-icon}
+### Icon
 
 The `options()` method supports the names of any Blade icon components, and passes a set of formatting classes to them. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
@@ -114,7 +114,7 @@ Icon::make('status')
     ]);
 ```
 
-### Image {#columns-image}
+### Image
 
 ```php
 Image::make($name)
@@ -125,7 +125,7 @@ Image::make($name)
     ->width($width); // Set the width of the image in pixels.
 ```
 
-### Text {#columns-text}
+### Text
 
 ```php
 Text::make($name)
@@ -140,7 +140,7 @@ Text::make($name)
 
 > Other column types are coming soon. For more information, please see our [Development Roadmap](/docs/roadmap).
 
-### Developing Custom Column Types {#columns-custom-development}
+### Developing Custom Column Types
 
 To create a new column type, which may be used in any table, you may generate a class and cell view using:
 
@@ -155,7 +155,7 @@ Columns\View::make($view)
     ->data($data = []); // Set the key-value array of available data that the view has access to.
 ```
 
-## Filters {#filters}
+## Filters
 
 Filters are used to scope results in the table. Here is an example of a filter at allows only customers with a `type` of `individual` to be shown in the table:
 
@@ -170,7 +170,7 @@ Filter::make($name, $callback = fn ($query) => $query)
     ->label($label); // Set custom label text for with the filter, which is otherwise automatically generated based on its name. It supports localization strings.
 ```
 
-### Reusable Filters {#filters-reusable}
+### Reusable Filters
 
 You may wish to create a filter that you may reuse across multiple tables.
 
@@ -214,7 +214,7 @@ public function apply($query)
 
 > Currently, filters are static and only one may be applied at a time. Parameter-based filters and support for applying multiple filters at once is coming soon. For more information, please see our [Development Roadmap](/docs/roadmap).
 
-## Context Customization {#context-customization}
+## Context Customization
 
 You may customize tables based on the page they are used. To do this, you can chain the `only()` or `except()` methods onto any column or filter.
 
