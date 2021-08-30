@@ -90,7 +90,7 @@ To customise a color, uncomment the appropriate line in the CSS file and replace
 }
 ```
 
-## Registering a Theme {#registering-a-theme}
+## Registering a Theme
 
 Once you've created your theme, you should register it using the `Filament::serving` and `Filament::registerStyle` methods inside the `boot` method of a service provider:
 

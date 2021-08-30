@@ -25,7 +25,7 @@ Once you have a user account, you can sign in to the admin panel by visiting `/a
 
 To start building your admin panel, [create a resource](/docs/resources).
 
-## Configuration {#configuration}
+## Configuration
 
 If you'd like to expose advanced configuration options for Filament, you may publish its configuration file:
 
@@ -35,7 +35,7 @@ php artisan vendor:publish --tag=filament-config
 
 > If you have published the configuration file for Filament, please ensure that you republish it when you upgrade.
 
-## Users {#users}
+## Users
 
 By default, Filament includes its own authentication guard and users table that is completely separate from your app's users table. This enables you to get up and running with Filament at record speed.
 
@@ -96,7 +96,7 @@ public function isFilamentAdmin()
 }
 ```
 
-### Disabling the Default Migrations {#users-disabling-default-migrations}
+### Disabling the Default Migrations
 
 You may wish to prevent the migration for the default users table from being registered. You may do this by calling:
 
@@ -108,7 +108,7 @@ Filament::ignoreMigrations();
 
 from the `register()` method of your `AppServiceProvider`.
 
-## Stubs {#stubs}
+## Stubs
 
 Filament commands use stubs as templates when new files in your project. You may customize these stubs by publishing them to your app:
 
@@ -118,7 +118,7 @@ php artisan vendor:publish --tag=filament-stubs
 
 > If you have published the stubs for Filament, please ensure that you republish them when you upgrade.
 
-## Upgrade Guide {#upgrade-guide}
+## Upgrade Guide
 
 To upgrade Filament to the latest version, you may run:
 

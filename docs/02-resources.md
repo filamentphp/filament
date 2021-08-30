@@ -38,7 +38,7 @@ A label for this resource is generated based on the name of the resource's model
 public static $label = 'customer';
 ```
 
-## Forms {#forms}
+## Forms
 
 Resource classes contain a static `form()` method that is used to customize the forms to create and update resource records.
 
@@ -58,9 +58,9 @@ The `schema()` method is used to define the structure of your form. It is an arr
 
 For more information, please see the page on [Building Forms](/docs/forms).
 
-## Relations {#relations}
+## Relations
 
-### Managing Single Related Records {#relations-single}
+### Managing Single Related Records
 
 The `Filament\Resources\Forms\Components\BelongsToSelect` field can be used in resource form schemas to create a select element with options to search and select a related record. It has the same methods available as [`Filament\Resources\Forms\Components\Select`](/docs/forms#fields-select), and others to define the relationship and column name that should be used:
 
@@ -94,7 +94,7 @@ Components\BelongsToSelect::make('category_id')
 
 This example will only include featured categories in search results.
 
-### Managing Multiple Related Records {#relations-multiple}
+### Managing Multiple Related Records
 
 Relation managers are components that allow administrators to list, create, attach, edit, detach and delete related records without leaving the parent record's edit page. Resource classes contain a static `relations()` method that is used to register relation managers for your resource.
 
@@ -144,7 +144,7 @@ Once a table and form have been defined for the relation manager, visit the edit
 public static $inverseRelationship = 'products';
 ```
 
-## Tables {#tables}
+## Tables
 
 Resource classes contain a static `table()` method that is used to customize the table to list resource records.
 
@@ -169,7 +169,7 @@ Filters are predefined scopes that administrators can use to filter records in y
 
 For more information, please see the page on [Building Tables](/docs/tables).
 
-## Pages {#pages}
+## Pages
 
 Pages are classes that are associated with a resource. They are essentially [Laravel Livewire](https://laravel-livewire.com) components with custom integration utilities for use with Filament.
 
@@ -181,7 +181,7 @@ By default, resources are generated with three pages:
 - Create has a [form](#forms) that is able to create a resource record. It is routed to `/create`.
 - Edit has a [form](#forms) that is able to update a resource record, along with the [relation managers](#relations-multiple) registered to your resource. It is routed to `/{record}/edit`.
 
-### Customizing Default Pages {#pages-customization}
+### Customizing Default Pages
 
 You are able to customize text used in the default pages by overriding properties on the page class. To see the options available, check the static properties defined in the parent class of each default page.
 
@@ -191,7 +191,7 @@ For further customization opportunities, you can override the static `$view` pro
 public static $view = 'customers.list-records';
 ```
 
-#### Hooks {#pages-customization-hooks}
+#### Hooks
 
 Hooks may be used to customize the behaviour of a default page. To set up a hook, create a protected method on the page class with the name of the hook:
 
@@ -294,7 +294,7 @@ class EditCustomer extends EditRecord
 }
 ```
 
-### Custom Pages {#pages-custom}
+### Custom Pages
 
 Filament allows you to create completely custom pages for resources. To create a new page, you can use:
 
@@ -324,7 +324,7 @@ To generate a URL for a resource route, you may call the static `generateUrl()` 
 SortCustomers::generateUrl($parameters = [], $absolute = true);
 ```
 
-## Authorization {#authorization}
+## Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The `viewAny` action may be used to completely disable resources and remove them from the navigation menu.
 

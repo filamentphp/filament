@@ -32,7 +32,7 @@ public static function form(Form $form)
 
 > Please note: when building forms for resources, please ensure that you are using components within the `Filament\Resources\Forms\Components` namespace and not `Filament\Forms\Components`.
 
-## Fields {#fields}
+## Fields
 
 Resource field classes are located in the `Filament\Resources\Forms\Components` namespace.
 
@@ -51,7 +51,7 @@ Field::make($name)
     ->label($label); // Set custom label text for with the field, which is otherwise automatically generated based on its name. It supports localization strings.
 ```
 
-### Checkbox {#fields-checkbox}
+### Checkbox
 
 ```php
 Checkbox::make($name)
@@ -60,7 +60,7 @@ Checkbox::make($name)
     ->stacked(); // Render the checkbox under its label.
 ```
 
-### Date Picker {#fields-date-picker}
+### Date Picker
 
 ```php
 DatePicker::make($name)
@@ -75,7 +75,7 @@ DatePicker::make($name)
     ->weekStartsOnSunday(); // Set the first day of the week to Sunday in the calendar view.
 ```
 
-### Date-time Picker {#fields-date-time-picker}
+### Date-time Picker
 
 ```php
 DateTimePicker::make($name)
@@ -91,7 +91,7 @@ DateTimePicker::make($name)
     ->withoutSeconds(); // Hide the seconds input.
 ```
 
-### File Upload {#fields-file-upload}
+### File Upload
 
 ```php
 FileUpload::make($name)
@@ -124,7 +124,7 @@ FileUpload::make($name)
 
 > Support for multiple file uploads is coming soon. For more information, please see our [Development Roadmap](/docs/roadmap).
 
-### Key-value {#fields-key-value}
+### Key-value
 
 ```php
 KeyValue::make($name)
@@ -141,7 +141,7 @@ KeyValue::make($name)
     ->valuePlaceholder($placeholder); // Set the value field placeholder. It supports localization strings.
 ```
 
-### Markdown Editor {#fields-markdown-editor}
+### Markdown Editor
 
 ```php
 MarkdownEditor::make($name)
@@ -154,7 +154,7 @@ MarkdownEditor::make($name)
     ->placeholder($placeholder); // Set the placeholder for when the field is empty. It supports localization strings.
 ```
 
-#### Toolbar Buttons {#fields-markdown-editor-toolbar-buttons}
+#### Toolbar Buttons
 
 ```
 attachFiles
@@ -169,7 +169,7 @@ strike
 write
 ```
 
-### Rich Editor {#fields-rich-editor}
+### Rich Editor
 
 ```php
 RichEditor::make($name)
@@ -182,7 +182,7 @@ RichEditor::make($name)
     ->placeholder($placeholder); // Set the placeholder for when the field is empty. It supports localization strings.
 ```
 
-#### Toolbar Buttons {#fields-rich-editor-toolbar-buttons}
+#### Toolbar Buttons
 
 ```
 attachFiles
@@ -201,7 +201,7 @@ title
 undo
 ```
 
-### Select {#fields-select}
+### Select
 
 ```php
 Select::make($name)
@@ -214,7 +214,7 @@ Select::make($name)
 
 > If you're looking to use a select for a `belongsTo()` relationship, please check out the [`BelongsToSelect` resource field](/docs/resources#relations-single).
 
-### Tags Input {#fields-tags-input}
+### Tags Input
 
 ```php
 TagsInput::make($name)
@@ -223,7 +223,7 @@ TagsInput::make($name)
     ->separator($separator = ','); // Set the separator that should be used between tags.
 ```
 
-### Textarea {#fields-textarea}
+### Textarea
 
 ```php
 Textarea::make($name)
@@ -235,7 +235,7 @@ Textarea::make($name)
     ->rows($rows) // The number of rows tall the textarea is.
 ```
 
-### Text Input {#fields-text-input}
+### Text Input
 
 ```php
 TextInput::make($name)
@@ -255,7 +255,7 @@ TextInput::make($name)
     ->url(); // Require a valid URL to be provided.
 ```
 
-### Toggle {#fields-toggle}
+### Toggle
 
 The `onIcon()` and `offIcon()` methods support the name of any Blade icon component, and passes a set of formatting classes to it. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
@@ -268,7 +268,7 @@ Toggle::make($name)
     ->stacked(); // Render the toggle under its label.
 ```
 
-## Validation {#validation}
+## Validation
 
 Filament provides a number of validation methods that can be applied to fields. Please refer to the [Laravel Validation docs](https://laravel.com/docs/validation#available-validation-rules) if you are unsure about any of these.
 
@@ -304,9 +304,9 @@ Field($name)
 
 > Please note: when specifying **resource** field names in custom validation rules, you must prefix them with `record.`.
 
-## Layout {#layout}
+## Layout
 
-### Grid {#layout-grid}
+### Grid
 
 By default, form fields are stacked on top of each other in one column. To change this across the entire form, you may chain the `columns()` method onto the form object:
 
@@ -341,7 +341,7 @@ public static function form(Form $form)
 }
 ```
 
-### Section {#layout-section}
+### Section
 
 You may want to separate your fields into sections, each with a heading and subheading. To do this, you can use a Section component:
 
@@ -450,7 +450,7 @@ public static function form(Form $form)
 }
 ```
 
-### Fieldset {#layout-fieldset}
+### Fieldset
 
 You may want to group fields into a Fieldset. Each fieldset has a label, a border, and a two-column grid:
 
@@ -494,7 +494,7 @@ public static function form(Form $form)
 }
 ```
 
-### Tabs {#layout-tabs}
+### Tabs
 
 Some forms can be long and complex. You may want to use tabs to reduce the number that are available at once:
 
@@ -550,7 +550,7 @@ public static function form(Form $form)
 }
 ```
 
-### Group {#layout-group}
+### Group
 
 Groups are used to wrap multiple associated form components. They have no effect on the form visually, but are useful for applying modifications to many fields at once:
 
@@ -570,7 +570,7 @@ public static function form(Form $form)
 }
 ```
 
-### Placeholder {#layout-placeholder}
+### Placeholder
 
 Placeholders can be used to render text-only "fields" within your forms. Each placeholder has a value, which is cannot be changed by the user.
 
@@ -588,7 +588,7 @@ public static function form(Form $form)
 }
 ```
 
-## Dependent Fields {#dependent-fields}
+## Dependent Fields
 
 Dependent fields are fields that are modified based on the value of another. For example, you could show a group of fields based on the value of a Select.
 
@@ -624,7 +624,7 @@ Components\TextInput::make('company_number')
     );
 ```
 
-## Context Customization {#context-customization}
+## Context Customization
 
 You may customize forms based on the page they are used. To do this, you can chain the `only()` or `except()` methods onto any form component.
 
@@ -665,7 +665,7 @@ In this example, the `name` field will be required, `except()` on the `EditCusto
 
 This is an incredibly powerful pattern, and allows you to completely customize a form contextually by chaining as many methods as you wish to the callback.
 
-## Developing Custom Components {#custom-development}
+## Developing Custom Components
 
 To create a custom field, you may use:
 

@@ -17,9 +17,9 @@ class ExampleServiceProvider extends PluginServiceProvider
 }
 ```
 
-## Registering Plugins {#registering-plugins}
+## Registering Plugins
 
-### Application Plugins {#application-plugins}
+### Application Plugins
 
 If you're developing a plugin for a specific application, you should register the new service provider in your `config/app.php` file:
 
@@ -37,7 +37,7 @@ return [
 
 Laravel will load your service provider when bootstrapping and your plugin will be initialised.
 
-### Distributed Plugins {#distributed-plugins}
+### Distributed Plugins
 
 Much like a normal Laravel package, you should add your service provider's fully qualified class name to the `extra.laravel.providers` array in your package's `composer.json` file:
 
@@ -55,7 +55,7 @@ Much like a normal Laravel package, you should add your service provider's fully
 
 This will ensure your service provider is automatically loaded by Laravel when the package is installed.
 
-## Resources {#registering-resources}
+## Resources
 
 To register a custom resource, add the fully qualified class name to the `protected $resources` array in your service provider.
 
@@ -72,7 +72,7 @@ class ExampleServiceProvider extends PluginServiceProvider
 
 Filament will automatically register your `Resource` and ensure that Livewire can discover it.
 
-## Pages {#registering-pages}
+## Pages
 
 To register a custom page, add the fully qualified class name to the `protected $pages` array in your service provider.
 
@@ -89,7 +89,7 @@ class ExampleServiceProvider extends PluginServiceProvider
 
 Filament will automatically register your `Page` and ensure that Livewire can discover it.
 
-## Widgets {#registering-widgets}
+## Widgets
 
 To register a custom widget, add the fully qualified class name to the `protected $widgets` array in your service provider.
 
@@ -106,7 +106,7 @@ class ExampleServiceProvider extends PluginServiceProvider
 
 Filament will automatically register your `Widget` and ensure that Livewire can discover it.
 
-## Roles {#registering-roles}
+## Roles
 
 To register a custom role, add the fully qualified class name to the `protected $roles` array in your service provider.
 
@@ -123,11 +123,11 @@ class ExampleServiceProvider extends PluginServiceProvider
 
 Filament will automatically register your `Role` and ensure it's available for use throughout your application.
 
-## Frontend Assets {#frontend-assets}
+## Frontend Assets
 
 Filament plugins can also register their own frontend assets. These assets will be included on all Filament related pages, allowing you to use your own CSS and JavaScript.
 
-### Stylesheets {#stylesheets}
+### Stylesheets
 
 To include a custom stylesheet, add it to the `protected $styles` property in your service provider. You should use a unique name as the key and the URL to the stylesheet as the value.
 
@@ -154,7 +154,7 @@ class ExampleServiceProvider extends PluginServiceProvider
 }
 ```
 
-### Scripts {#scripts}
+### Scripts
 
 To include a custom script, add it to the `protected $scripts` property in your service provider. You should use a unique name as the key and the URL to the script as the value.
 
@@ -181,7 +181,7 @@ class ExampleServiceProvider extends PluginServiceProvider
 }
 ```
 
-### Providing Data to the Frontend {#providing-data-to-the-frontend}
+### Providing Data to the Frontend
 
 Whilst building your plugin, you might find the need to generate some data on the server and access it on the client.
 
