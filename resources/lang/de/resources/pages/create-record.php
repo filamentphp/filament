@@ -11,6 +11,10 @@ return [
         'createAnother' => [
             'label' => 'Erstellen & weitere erstellen',
         ],
+        
+        'cancel' => [
+            'label' => 'Abbrechen'
+        ]
     ],
 
 ];
