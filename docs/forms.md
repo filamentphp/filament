@@ -1,35 +1,5 @@
 ---
 title: Building Forms
-description:
-extends: _layouts.documentation
-section: content
-toc: |
-  - [Fields](#fields)
-      - [Checkbox](#fields-checkbox)
-      - [Date Picker](#fields-date-picker)
-      - [Date-time Picker](#fields-date-time-picker)
-      - [File Upload](#fields-file-upload)
-      - [Key-value](#fields-key-value)
-      - [Markdown Editor](#fields-markdown-editor)
-        - [Toolbar Buttons](#fields-markdown-editor-toolbar-buttons)
-      - [Rich Editor](#fields-rich-editor)
-          - [Toolbar Buttons](#fields-rich-editor-toolbar-buttons)
-      - [Select](#fields-select)
-      - [Tags Input](#fields-tags-input)
-      - [Textarea](#fields-textarea)
-      - [Text Input](#fields-text-input)
-      - [Toggle](#fields-toggle)
-  - [Validation](#validation)
-  - [Layout](#layout)
-      - [Grid](#layout-grid)
-      - [Section](#layout-section)
-      - [Fieldset](#layout-fieldset)
-      - [Tabs](#layout-tabs)
-      - [Group](#layout-group)
-      - [Placeholder](#layout-placeholder)
-  - [Dependent Fields](#dependent-fields)
-  - [Context Customization](#context-customization)
-  - [Developing Custom Components](#custom-development)
 ---
 
 # Building Forms

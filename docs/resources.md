@@ -1,19 +1,5 @@
 ---
 title: Resources
-description:
-extends: _layouts.documentation
-section: content
-toc: |
-  - [Forms](#forms)
-  - [Relations](#relations)
-    - [Managing Single Related Records](#relations-single)
-    - [Managing Multiple Related Records](#relations-multiple)
-  - [Tables](#tables)
-  - [Pages](#pages)
-    - [Customizing Default Pages](#pages-customization)
-      - [Hooks](#pages-customization-hooks)
-    - [Custom Pages](#pages-custom)
-  - [Authorization](#authorization)
 ---
 
 # Resources

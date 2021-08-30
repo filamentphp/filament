@@ -1,10 +1,5 @@
 ---
 title: Dashboard
-description:
-extends: _layouts.documentation
-section: content
-toc: |
-  - [Disabling the Default Widgets](#disabling-default-widgets)
 ---
 
 # Dashboard

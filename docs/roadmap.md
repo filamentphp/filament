@@ -1,8 +1,5 @@
 ---
 title: Development Roadmap
-description:
-extends: _layouts.documentation
-section: content
 ---
 
 # Development Roadmap

@@ -1,20 +1,5 @@
 ---
 title: Plugin Development
-description:
-extends: _layouts.documentation
-section: content
-toc: |
-  - [Registering Plugins](#registering-plugins)
-    - [Application Plugins](#application-plugins)
-    - [Distributed Plugins](#distributed-plugins)
-  - [Registering Resources](#registering-resources)
-  - [Registering Pages](#registering-pages)
-  - [Registering Widgets](#registering-widgets)
-  - [Registering Roles](#registering-roles)
-  - [Frontend Assets](#frontend-assets)
-    - [Stylesheets](#stylesheets)
-    - [Scripts](#scripts)
-    - [Providing Data to the Frontend](#providing-data-to-the-frontend)
 ---
 
 # Plugin Development

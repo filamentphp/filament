@@ -1,11 +1,5 @@
 ---
 title: Custom Pages
-description:
-extends: _layouts.documentation
-section: content
-toc: |
-  - [Authorization](#authorization)
-  - [Customization](#customization)
 ---
 
 # Custom Pages

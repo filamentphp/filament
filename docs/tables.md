@@ -1,20 +1,5 @@
 ---
 title: Building Tables
-description:
-extends: _layouts.documentation
-section: content
-toc: |
-  - [Columns](#columns)
-    - [Displaying Relationship Data](#columns-displaying-relationship-data)
-    - [Calling Actions](#columns-calling-actions)
-    - [Boolean](#columns-boolean)
-    - [Icon](#columns-icon)
-    - [Image](#columns-image)
-    - [Text](#columns-text)
-    - [Developing Custom Column Types](#columns-custom-development)
-  - [Filters](#filters)
-    - [Reusable Filters](#filters-reusable)
-  - [Context Customization](#context-customization)
 ---
 
 # Building Tables

@@ -1,8 +1,5 @@
 ---
 title: Navigation
-description:
-extends: _layouts.documentation
-section: content
 ---
 
 # Navigation

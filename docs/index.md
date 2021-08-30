@@ -1,14 +1,5 @@
 ---
 title: Getting Started
-description:
-extends: _layouts.documentation
-section: content
-toc: |
-  - [Configuration](#configuration)
-  - [Users](#users)
-    - [Disabling the Default Migrations](#users-disabling-default-migrations)
-  - [Stubs](#stubs)
-  - [Upgrade Guide](#upgrade-guide)
 ---
 
 # Getting Started
