@@ -2,8 +2,6 @@
 title: Building Forms
 ---
 
-# Building Forms
-
 <p class="lg:text-2xl">Filament comes with a powerful form builder which can be used to create intuitive, dynamic, and contextual forms in the admin panel.</p>
 
 Forms have a schema, which is an array that contains many form components. The schema defines the form's [fields](#fields), their [validation rules](#validation), and their [layout](#layout) in the form.

@@ -2,8 +2,6 @@
 title: Plugin Development
 ---
 
-# Plugin Development
-
 <p class="lg:text-2xl">
     Plugins can be used to extend Filament's default behaviour and create reusable modules for use in multiple applications.
 </p>

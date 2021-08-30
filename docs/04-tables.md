@@ -2,8 +2,6 @@
 title: Building Tables
 ---
 
-# Building Tables
-
 <p class="lg:text-2xl">Filament includes a table builder which can be used to create interactive tables in the admin panel.</p>
 
 Tables have [columns](#columns) and [filters](#filters), which are defined in two methods on the table object.

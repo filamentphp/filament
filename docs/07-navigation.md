@@ -2,8 +2,6 @@
 title: Navigation
 ---
 
-# Navigation
-
 By default, Filament will register navigation items for each of your [resources](/docs/resources) and [custom pages](/docs/pages). These classes contain static properties that you can override, to configure that navigation item and its order:
 
 ```php

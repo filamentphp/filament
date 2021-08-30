@@ -2,8 +2,6 @@
 title: Custom Pages
 ---
 
-# Custom Pages
-
 <p class="lg:text-2xl">Filament allows you to create completely custom pages for the admin panel.</p>
 
 To create a new page, you can use:
