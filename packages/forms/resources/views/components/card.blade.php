@@ -16,6 +16,6 @@
     ][$formComponent->getColumnSpan()]
 @endphp
 
-<div class="bg-white space-y-6 shadow-xl rounded p-4 md:p-6 {{ $columnSpanClass }}">
+<div class="bg-white space-y-6 rounded p-4 md:p-6 {{ $columnSpanClass }}">
     <x-forms::form :schema="$formComponent->getSchema()" />
 </div>

@@ -18,7 +18,6 @@ jobs:
               run: echo "::set-output name=matrix::$(vendor/bin/monorepo-builder packages-json)"
         outputs:
             matrix: ${{ steps.packages-list.outputs.matrix }}
-
     split-monorepo:
         needs: provide-packages-list
         runs-on: ubuntu-latest
@@ -38,7 +37,7 @@ jobs:
                   package_directory: 'packages/${{ matrix.package }}'
                   repository_organization: 'laravel-filament'
                   repository_name: '${{ matrix.package }}'
-                  branch: main
+                  branch: 1.x
                   tag: ${{ steps.previous-tag.outputs.tag }}
                   user_name: "Dan Harrin"
                   user_email: "dan@danharrin.com"
