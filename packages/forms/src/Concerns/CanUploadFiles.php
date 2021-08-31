@@ -4,6 +4,7 @@ namespace Filament\Forms\Concerns;
 
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -83,8 +84,7 @@ trait CanUploadFiles
                 continue;
             }
 
-            $storeMethod = $field->getVisibility() === 'public' ? 'storePublicly' : 'store';
-            $path = $temporaryUploadedFile->{$storeMethod}($field->getDirectory(), $field->getDiskName());
+            $path = $this->storeFile($temporaryUploadedFile, $field);
             $this->syncInput($field->getName(), $path, false);
         }
 
@@ -133,5 +133,12 @@ trait CanUploadFiles
 
             throw $exception;
         }
+    }
+
+    protected function storeFile(UploadedFile $file, FileUpload $field)
+    {
+        $storeMethod = $field->getVisibility() === 'public' ? 'storePublicly' : 'store';
+
+        return $file->{$storeMethod}($field->getDirectory(), $field->getDiskName());
     }
 }
