@@ -2,7 +2,7 @@
 title: Resources
 ---
 
-<p class="lg:text-2xl">Resources are static classes that describe how administrators should be able to interact with data from your app. They are associated with Eloquent models from your app.</p>
+Resources are static classes that describe how administrators should be able to interact with data from your app. They are associated with Eloquent models from your app.
 
 To create a resource for the `App\Models\Customer` model:
 
@@ -62,7 +62,7 @@ For more information, please see the page on [Building Forms](/docs/forms).
 
 ### Managing Single Related Records
 
-The `Filament\Resources\Forms\Components\BelongsToSelect` field can be used in resource form schemas to create a select element with options to search and select a related record. It has the same methods available as [`Filament\Resources\Forms\Components\Select`](/docs/forms#fields-select), and others to define the relationship and column name that should be used:
+The `Filament\Resources\Forms\Components\BelongsToSelect` field can be used in resource form schemas to create a select element with options to search and select a related record. It has the same methods available as [`Filament\Resources\Forms\Components\Select`](/docs/forms#select), and others to define the relationship and column name that should be used:
 
 ```php
 Components\BelongsToSelect::make('category_id')

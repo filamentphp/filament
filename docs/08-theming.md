@@ -2,9 +2,7 @@
 title: Theming
 ---
 
-<p class="lg:text-2xl">
-    Filament makes it incredibly simple to customise the look and feel of the panel through "themes".
-</p>
+Filament makes it incredibly simple to customise the look and feel of the panel through "themes".
 
 To create your first theme, run the following command:
 

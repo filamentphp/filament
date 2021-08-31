@@ -2,9 +2,7 @@
 title: Plugin Development
 ---
 
-<p class="lg:text-2xl">
-    Plugins can be used to extend Filament's default behaviour and create reusable modules for use in multiple applications.
-</p>
+Plugins can be used to extend Filament's default behaviour and create reusable modules for use in multiple applications.
 
 To create a new plugin, extend the `Filament\PluginServiceProvider` class provided by Filament:
 

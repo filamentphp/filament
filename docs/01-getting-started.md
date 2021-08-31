@@ -2,7 +2,7 @@
 title: Getting Started
 ---
 
-<p class="lg:text-2xl">Filament is a content management framework for rapidly building a beautiful administration interface designed for humans.</p>
+Filament is a content management framework for rapidly building a beautiful administration interface designed for humans.
 
 > Filament requires Laravel 8.x or higher, and PHP 7.4 or higher.
 

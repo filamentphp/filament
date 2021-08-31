@@ -2,7 +2,7 @@
 title: Building Forms
 ---
 
-<p class="lg:text-2xl">Filament comes with a powerful form builder which can be used to create intuitive, dynamic, and contextual forms in the admin panel.</p>
+Filament comes with a powerful form builder which can be used to create intuitive, dynamic, and contextual forms in the admin panel.
 
 Forms have a schema, which is an array that contains many form components. The schema defines the form's [fields](#fields), their [validation rules](#validation), and their [layout](#layout) in the form.
 
@@ -384,7 +384,7 @@ public static function form(Form $form)
 }
 ```
 
-You may use the `columns()` method to easily create a [grid](#layout-grid) within the section:
+You may use the `columns()` method to easily create a [grid](#grid) within the section:
 
 ```php
 use Filament\Resources\Forms\Components;
@@ -526,7 +526,7 @@ public static function form(Form $form)
 }
 ```
 
-You may use the `columns()` method to easily create a [grid](#layout-grid) within the tab:
+You may use the `columns()` method to easily create a [grid](#grid) within the tab:
 
 ```php
 use Filament\Resources\Forms\Components;
@@ -606,7 +606,7 @@ Components\Select::make('type')
 
 To modify fields based on the value of another, you may use the `when()` method. The first argument to this method is a callback that evaluates the `$record` object, and returns true or false depending on if the modifications should be applied. The second argument makes modifications to the current field. If no second argument is supplied, the field will only be shown when the callback in the first argument is true:
 
-In this example, the fields in the [group](#layout-group) will only be shown when the `type` field is set to `individual`:
+In this example, the fields in the [group](#group) will only be shown when the `type` field is set to `individual`:
 
 ```php
 Components\Group::make([
