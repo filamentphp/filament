@@ -56,13 +56,13 @@ public static function form(Form $form)
 
 The `schema()` method is used to define the structure of your form. It is an array of components, in the order they should appear in your form.
 
-For more information, please see the page on [Building Forms](/docs/forms).
+For more information, please see the page on [Building Forms](forms).
 
 ## Relations
 
 ### Managing Single Related Records
 
-The `Filament\Resources\Forms\Components\BelongsToSelect` field can be used in resource form schemas to create a select element with options to search and select a related record. It has the same methods available as [`Filament\Resources\Forms\Components\Select`](/docs/forms#select), and others to define the relationship and column name that should be used:
+The `Filament\Resources\Forms\Components\BelongsToSelect` field can be used in resource form schemas to create a select element with options to search and select a related record. It has the same methods available as [`Filament\Resources\Forms\Components\Select`](forms#select), and others to define the relationship and column name that should be used:
 
 ```php
 Components\BelongsToSelect::make('category_id')
@@ -104,7 +104,7 @@ To create a relation manager, you can use:
 php artisan make:filament-relation-manager CustomerResource orders
 ```
 
-This will create a `CustomerResource/RelationManagers/OrdersRelationManager.php` file. This contains a class where you are able to define a [form](/docs/forms) and [table](/docs/tables) for your relation manager. The relation manager will interact with the `orders` relationship on your parent model.
+This will create a `CustomerResource/RelationManagers/OrdersRelationManager.php` file. This contains a class where you are able to define a [form](forms) and [table](tables) for your relation manager. The relation manager will interact with the `orders` relationship on your parent model.
 
 You must set the primary column of related records using the static `$primaryColumn` property on your new relation manager class. The primary column is used to identify related records quickly. This could be a user's `name`, or a blog post's `title`.
 
@@ -167,7 +167,7 @@ The `columns()` method is used to define the columns in your table. It is an arr
 
 Filters are predefined scopes that administrators can use to filter records in your table. The `filters()` method is used to register these.
 
-For more information, please see the page on [Building Tables](/docs/tables).
+For more information, please see the page on [Building Tables](tables).
 
 ## Pages
 
@@ -328,7 +328,7 @@ SortCustomers::generateUrl($parameters = [], $absolute = true);
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The `viewAny` action may be used to completely disable resources and remove them from the navigation menu.
 
-Filament also includes a powerful role-based authorization system, which is set up out of the box with the default users table. You may also implement roles functionality in a [custom users table](/docs#users).
+Filament also includes a powerful role-based authorization system, which is set up out of the box with the default users table. You may also implement roles functionality in a [custom users table](#users).
 
 You may create roles, such as `Manager`, using:
 

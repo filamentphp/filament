@@ -23,7 +23,7 @@ and answering the input prompts. Administrators have access to all areas of Fila
 
 Once you have a user account, you can sign in to the admin panel by visiting `/admin` in your browser.
 
-To start building your admin panel, [create a resource](/docs/resources).
+To start building your admin panel, [create a resource](resources).
 
 ## Configuration
 

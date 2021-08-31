@@ -122,7 +122,7 @@ FileUpload::make($name)
 
 > Available values for the position methods can be found on [Filepond's website](https://pqina.nl/filepond/docs/patterns/api/filepond-instance#styles).
 
-> Support for multiple file uploads is coming soon. For more information, please see our [Development Roadmap](/docs/roadmap).
+> Support for multiple file uploads is coming soon. For more information, please see our [Development Roadmap](roadmap).
 
 ### Key-value
 
@@ -212,7 +212,7 @@ Select::make($name)
     ->placeholder($placeholder); // Set the placeholder for when the field is empty. It supports localization strings.
 ```
 
-> If you're looking to use a select for a `belongsTo()` relationship, please check out the [`BelongsToSelect` resource field](/docs/resources#relations-single).
+> If you're looking to use a select for a `belongsTo()` relationship, please check out the [`BelongsToSelect` resource field](resources#managing-single-related-records).
 
 ### Tags Input
 

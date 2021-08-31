@@ -138,7 +138,7 @@ Text::make($name)
     ->options($options = []); // Set the key-value array of available values that this column could hold.
 ```
 
-> Other column types are coming soon. For more information, please see our [Development Roadmap](/docs/roadmap).
+> Other column types are coming soon. For more information, please see our [Development Roadmap](roadmap).
 
 ### Developing Custom Column Types
 
@@ -212,7 +212,7 @@ public function apply($query)
 }
 ```
 
-> Currently, filters are static and only one may be applied at a time. Parameter-based filters and support for applying multiple filters at once is coming soon. For more information, please see our [Development Roadmap](/docs/roadmap).
+> Currently, filters are static and only one may be applied at a time. Parameter-based filters and support for applying multiple filters at once is coming soon. For more information, please see our [Development Roadmap](roadmap).
 
 ## Context Customization
 

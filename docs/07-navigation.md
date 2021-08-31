@@ -2,7 +2,7 @@
 title: Navigation
 ---
 
-By default, Filament will register navigation items for each of your [resources](/docs/resources) and [custom pages](/docs/pages). These classes contain static properties that you can override, to configure that navigation item and its order:
+By default, Filament will register navigation items for each of your [resources](resources) and [custom pages](pages). These classes contain static properties that you can override, to configure that navigation item and its order:
 
 ```php
 public static $icon = 'heroicon-o-document-text';
