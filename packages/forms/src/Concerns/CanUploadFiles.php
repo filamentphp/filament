@@ -135,10 +135,7 @@ trait CanUploadFiles
         }
     }
 
-    /**
-     * Store the given $file for the given $field in storage.
-     */
-    protected function storeFile(UploadedFile $file, FileUpload $field): string
+    protected function storeFile(UploadedFile $file, FileUpload $field)
     {
         $storeMethod = $field->getVisibility() === 'public' ? 'storePublicly' : 'store';
 
