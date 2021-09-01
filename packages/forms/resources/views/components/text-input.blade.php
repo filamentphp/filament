@@ -25,11 +25,13 @@
             <input
                 @unless ($hasMask())
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
+                    type="{{ $getType() }}"
                 @else
                     x-data="textInputFormComponent({
                         {{ $hasMask() ? "getMaskOptionsUsing: (IMask) => ({$getJsonMaskConfiguration()})," : null }}
                         state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
                     })"
+                    type="text"
                 @endunless
                 {!! ($autocomplete = $getAutocomplete()) ? "autocomplete=\"{$autocomplete}\"" : null !!}
                 {!! $isAutofocused() ? 'autofocus' : null !!}
@@ -41,7 +43,6 @@
                 {!! ($value = $getMinValue()) ? "min=\"{$value}\"" : null !!}
                 {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
                 {!! $isRequired() ? 'required' : null !!}
-                type="{{ $getType() }}"
                 {{ $attributes->merge($getExtraAttributes())->class([
                     'block w-full h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600',
                     'border-gray-300' => ! $errors->has($getStatePath()),
