@@ -15,6 +15,6 @@ trait HasLabel
 
     public function getLabel(): ?string
     {
-        return $this->label;
+        return $this->evaluate($this->label);
     }
 }
