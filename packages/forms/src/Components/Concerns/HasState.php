@@ -44,10 +44,7 @@ trait HasState
     public function callAfterStateHydrated(): static
     {
         if ($callback = $this->afterStateHydrated) {
-            $this->evaluate($callback, [
-                'get' => $this->getGetCallback(),
-                'set' => $this->getSetCallback(),
-            ]);
+            $this->evaluate($callback);
         }
 
         return $this;
@@ -56,10 +53,7 @@ trait HasState
     public function callAfterStateUpdated(): static
     {
         if ($callback = $this->afterStateUpdated) {
-            $this->evaluate($callback, [
-                'get' => $this->getGetCallback(),
-                'set' => $this->getSetCallback(),
-            ]);
+            $this->evaluate($callback);
         }
 
         return $this;
@@ -68,10 +62,7 @@ trait HasState
     public function callBeforeStateDehydrated(): static
     {
         if ($callback = $this->beforeStateDehydrated) {
-            $this->evaluate($callback, [
-                'get' => $this->getGetCallback(),
-                'set' => $this->getSetCallback(),
-            ]);
+            $this->evaluate($callback);
         }
 
         return $this;

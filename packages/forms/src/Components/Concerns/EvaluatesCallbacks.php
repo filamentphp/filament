@@ -9,8 +9,10 @@ trait EvaluatesCallbacks
         if (is_callable($value)) {
             return $value = app()->call($value, array_merge([
                 'component' => $this,
+                'get' => $this->getGetCallback(),
                 'livewire' => $this->getLivewire(),
                 'model' => $this->getModel(),
+                'set' => $this->getSetCallback(),
                 'state' => $this->getState(),
             ], $parameters));
         }
