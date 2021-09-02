@@ -17,6 +17,6 @@ Filament is a content management framework for rapidly building a beautiful admi
 
 🐞 If you spot a bug with this package, please [submit a detailed issue](https://github.com/laravel-filament/filament/issues/new), and wait for assistance.
 
-🤔 If you have a question or feature request, please [start a new discussion](https://github.com/laravel-filament/filament/discussions/new). We are also partnered with the [Laravel Livewire Discord server](https://discord.gg/livewire). For quick help, ask questions in the Filament channel.
+🤔 If you have a question or feature request, please [start a new discussion](https://github.com/laravel-filament/filament/discussions/new). We also have a [Discord community](https://discord.gg/cpqnMTHZja). For quick help, ask questions in the appropriate package help channel.
 
 🔐 If you discover a vulnerability within the package, please review our [security policy](https://github.com/laravel-filament/filament/blob/1.x/SECURITY.md).
