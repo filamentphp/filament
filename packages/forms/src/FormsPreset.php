@@ -20,7 +20,7 @@ class FormsPreset extends Preset
         'lodash',
     ];
 
-    public static function install()
+    public static function install(): void
     {
         static::updatePackages();
 
@@ -29,7 +29,7 @@ class FormsPreset extends Preset
         $filesystem->copyDirectory(__DIR__ . '/../stubs', base_path());
     }
 
-    protected static function updatePackageArray(array $packages)
+    protected static function updatePackageArray(array $packages): array
     {
         return array_merge(
             static::NPM_PACKAGES_TO_ADD,
