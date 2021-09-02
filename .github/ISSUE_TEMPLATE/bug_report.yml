@@ -44,7 +44,7 @@ body:
       id: livewire-version
       attributes:
           label: Livewire Version
-          description: "Please provide the full Livewire version of your project."
+          description: "Please provide the full Livewire version of your project, if applicable."
           placeholder: "v2.0.0"
     - type: input
       id: php-version
