@@ -53,7 +53,7 @@ trait HasState
         }
     }
 
-    public function dehydrateState(array $state = []): array
+    public function dehydrateState(array &$state = []): array
     {
         $this->callBeforeStateDehydrated();
 
