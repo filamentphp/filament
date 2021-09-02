@@ -11,6 +11,7 @@
         "php": "^8.0",
         "blade-ui-kit/blade-heroicons": "^1.2",
         "laravel/framework": "^8.56",
+        "laravel/ui": "^3.3",
         "livewire/livewire": "^2.5",
         "spatie/laravel-package-tools": "^1.9"
     },

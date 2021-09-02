@@ -3,6 +3,7 @@
 namespace Filament\Forms;
 
 use Illuminate\Support\Arr;
+use Laravel\Ui\UiCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -19,6 +20,14 @@ class FormsServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        UiCommand::macro('forms', function (UiCommand $command) {
+            FormsPreset::install();
+
+            $command->info('Scaffolding installed successfully.');
+
+            $command->comment('Please run "npm install && npm run dev" to compile your new assets.');
+        });
+
         Arr::macro('moveElementAfter', function (array $array, $keyToMoveAfter): array {
             $keys = array_keys($array);
 
