@@ -8,14 +8,14 @@ use Laravel\Ui\Presets\Preset;
 
 class FormsPreset extends Preset
 {
-    const NPM_PACKAGES_TO_ADD = [
+    public const NPM_PACKAGES_TO_ADD = [
         '@tailwindcss/forms' => '^0.3',
         '@tailwindcss/typography' => '^0.4',
         'alpinejs' => '^3.3',
         'tailwindcss' => '^2.2',
     ];
 
-    const NPM_PACKAGES_TO_REMOVE = [
+    public const NPM_PACKAGES_TO_REMOVE = [
         'axios',
         'lodash',
     ];
