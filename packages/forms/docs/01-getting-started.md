@@ -29,7 +29,7 @@ module.exports = {
     mode: 'jit',
     purge: [
         './resources/**/*.blade.php', // [tl! add:start]
-        './vendor/filament/filament/packages/forms/resources/views/**/*.blade.php', // [tl! add:end]
+        './vendor/filament/forms/resources/views/**/*.blade.php', // [tl! add:end]
     ],
     theme: {
         extend: {
@@ -62,7 +62,7 @@ mix.js('resources/js/app.js', 'public/js')
 In `/resources/css/app.css`, import `filament/forms` vendor CSS, [TailwindCSS](https://tailwindcss.com), as well as [Alpine.js' `x-cloak`](https://alpinejs.dev/directives/cloak) directive:
 
 ```css
-@import '../../vendor/filament/filament/packages/forms/dist/module.esm.css';
+@import '../../vendor/filament/=forms/dist/module.esm.css';
 
 @tailwind base;
 @tailwind components;
@@ -77,7 +77,7 @@ In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filame
 
 ```js
 import Alpine from 'alpinejs'
-import FormsAlpinePlugin from '../../vendor/filament/filament/packages/forms/dist/module.esm'
+import FormsAlpinePlugin from '../../vendor/filament/forms/dist/module.esm'
 
 Alpine.plugin(FormsAlpinePlugin)
 
@@ -116,3 +116,7 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
     </body>
 </html>
 ```
+
+You're ready to [create your first form](#your-first-form)!
+
+## Your first form
