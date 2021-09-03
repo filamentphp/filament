@@ -208,9 +208,11 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
 
 When `getState()` is run:
  
-1) Validation rules are checked, and if errors are present, the form is not submitted.
+1) [Validation](#validation) rules are checked, and if errors are present, the form is not submitted.
 2) Any pending file uploads are stored permanently in the filesystem.
 3) [Field relationships](#working-with-field-relationships), if they are defined, are saved.
+
+### Validation
 
 ## Using Eloquent model binding
 
