@@ -63,21 +63,101 @@ class EditPost extends Component implements Forms\Contracts\HasForms
 }
 ```
 
-Visit your Livewire component in the browser, and you should see your form!
-
-## Lifecycle
-
-
+Visit your Livewire component in the browser, and you should see the form components from `getFormSchema()`!
 
 ## Prefilling forms with data
 
-$this->form->fill() with existing data
+Often, you will need to prefill your form fields with data. In normal Livewire components, this is often done in the `mount()` method, as this is only run once, immediately after the component is instantiated.
+
+For your fields to hold data, they should have a corresponding property on your Livewire component, just as in Livewire normally.
+
+To fill a form with data, call the `fill()` method on your form, and pass an array of data to fill it with:
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Forms;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
+
+class EditPost extends Component implements Forms\Contracts\HasForms
+{
+    use Forms\Concerns\InteractsWithForms;
+    
+    public Post $post;
+    
+    public $title;
+    public $content;
+    
+    public function mount(): void // [tl! add:start]
+    {
+        $this->fill([
+            'title' => $this->post->title,
+            'content' => $this->post->content,
+        ]);
+    } // [tl! add:end]
+    
+    protected function getFormSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('title'),
+            Forms\Components\MarkdownEditor::make('content'),
+        ];
+    }
+    
+    public function render(): View
+    {
+        return view('edit-post');
+    }
+}
+```
 
 ### Default data
 
-$this->form->fill() with default data
+Fields can use a `default()` configuration method, which allows you to specify a default values to fill your form with.
 
-### Custom hydration transformations
+To fill a form with default values, call the `fill()` method on your form without any parameters:
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Forms;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
+
+class CreatePost extends Component implements Forms\Contracts\HasForms
+{
+    use Forms\Concerns\InteractsWithForms;
+    
+    public $title;
+    public $content;
+    
+    public function mount(): void // [tl! add:start]
+    {
+        $this->fill();
+    } // [tl! add:end]
+    
+    protected function getFormSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('title')
+                ->default('Status Update'), // [tl! add:start]
+            Forms\Components\MarkdownEditor::make('content'),
+        ];
+    }
+    
+    public function render(): View
+    {
+        return view('create-post');
+    }
+}
+```
 
 ## Retrieving validated data
 
