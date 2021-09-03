@@ -285,12 +285,15 @@ class EditPost extends Component implements Forms\Contracts\HasForms
         ];
     }
     
-    public function save(): void
+    public function savePost(): void
     {
         $this->post->update(
             $this->postForm->getState(),
         );
-        
+    }
+    
+    public function saveAuthor(): void
+    {
         $this->author->update(
             $this->authorForm->getState(),
         );
