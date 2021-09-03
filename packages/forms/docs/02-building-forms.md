@@ -159,10 +159,10 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
 }
 ```
 
-## Retrieving validated data
+## Validation
 
 $this->form->getState()
 
-## Rendering multiple forms
+## Using multiple forms
 
 getForms()
