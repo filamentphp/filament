@@ -1,10 +1,8 @@
 ---
-title: Getting Started
+title: Installation
 ---
 
-## Installation
-
-### New Laravel projects
+## New Laravel projects
 
 To get started with the form builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [TailwindCSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with just one command:
 
@@ -14,9 +12,9 @@ composer require filament/forms && php artisan ui forms && npm install && npm ru
 
 > This command will ruthlessly overwrite existing files in your application, hence why we only recommend using it for new projects.
 
-You're now ready to create [your first form](#your-first-form)!
+You're now ready to start [building forms](building-forms)!
 
-### Existing Laravel projects
+## Existing Laravel projects
 
 > Please note that this package is incompatible with `filament/filament` v1, until v2 is released in late 2021. This is due to namespacing collisions.
 
@@ -131,6 +129,4 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 </html>
 ```
 
-You're now ready to create [your first form](#your-first-form)!
-
-## Your first form
+You're now ready to start [building forms](building-forms)!
