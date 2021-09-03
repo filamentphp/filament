@@ -10,6 +10,7 @@
         <title>{{ config('app.name') }}</title>
 
         <!-- Styles -->
+        <style>[x-cloak] { display: none !important; }</style>
         @livewireStyles
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 

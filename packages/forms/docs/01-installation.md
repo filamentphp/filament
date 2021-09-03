@@ -71,7 +71,7 @@ mix.js('resources/js/app.js', 'public/js')
     ])
 ```
 
-In `/resources/css/app.css`, import `filament/forms` vendor CSS, [TailwindCSS](https://tailwindcss.com), as well as [Alpine.js' `x-cloak`](https://alpinejs.dev/directives/cloak) directive:
+In `/resources/css/app.css`, import `filament/forms` vendor CSS and [TailwindCSS](https://tailwindcss.com):
 
 ```css
 @import '../../vendor/filament/=forms/dist/module.esm.css';
@@ -79,10 +79,6 @@ In `/resources/css/app.css`, import `filament/forms` vendor CSS, [TailwindCSS](h
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-[x-cloak] {
-    display: none !important;
-}
 ```
 
 In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/forms` plugin, and register it:
@@ -115,6 +111,7 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
         <title>{{ config('app.name') }}</title>
 
         <!-- Styles -->
+        <style>[x-cloak] { display: none !important; }</style>
         @livewireStyles
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 
