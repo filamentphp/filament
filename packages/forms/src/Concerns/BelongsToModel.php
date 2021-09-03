@@ -8,7 +8,7 @@ trait BelongsToModel
 {
     public Model | string | null $model = null;
 
-    public function model(Model | string $model): static
+    public function model(Model | string | null $model = null): static
     {
         $this->model = $model;
 
@@ -18,7 +18,7 @@ trait BelongsToModel
     public function saveRelationships(): void
     {
         foreach ($this->getComponents() as $component) {
-            if ($component->getModel() instanceof Model) {
+            if ($component->getModel()) {
                 $component->saveRelationships();
             }
 
