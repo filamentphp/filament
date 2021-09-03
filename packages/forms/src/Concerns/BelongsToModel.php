@@ -18,7 +18,7 @@ trait BelongsToModel
     public function saveRelationships(): void
     {
         foreach ($this->getComponents() as $component) {
-            if ($component->getModel()) {
+            if ($component->getModel() instanceof Model) {
                 $component->saveRelationships();
             }
 

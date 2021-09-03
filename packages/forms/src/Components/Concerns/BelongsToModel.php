@@ -8,7 +8,7 @@ trait BelongsToModel
 {
     protected $model = null;
 
-    public function model(Model | string | callable $model): static
+    public function model(Model | string | callable | null $model = null): static
     {
         $this->model = $model;
 

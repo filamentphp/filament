@@ -3,6 +3,7 @@
 namespace Filament\Forms\Concerns;
 
 use Filament\Forms\ComponentContainer;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\WithFileUploads;
 use SplFileInfo;
@@ -176,6 +177,11 @@ trait InteractsWithForms
         return $this->cachedForms;
     }
 
+    protected function getFormModel(): Model | string | null
+    {
+        return null;
+    }
+
     protected function getFormSchema(): array
     {
         return [];
@@ -184,7 +190,9 @@ trait InteractsWithForms
     protected function getForms(): array
     {
         return [
-            'form' => $this->makeForm()->schema($this->getFormSchema()),
+            'form' => $this->makeForm()
+                ->schema($this->getFormSchema())
+                ->model($this->getFormModel()),
         ];
     }
 
