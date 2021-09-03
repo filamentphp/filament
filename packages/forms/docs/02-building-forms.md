@@ -30,7 +30,7 @@ In your Livewire component's view, render the form:
 
 ```blade
 <div>
-    {{ $this->form }} // [tl! add]
+    {{ $this->form }}
 </div>
 ```
 
