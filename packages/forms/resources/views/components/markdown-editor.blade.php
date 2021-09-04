@@ -4,7 +4,7 @@
     <style>
         [x-data^="markdownEditor"] textarea {
             caret-color: black;
-            color: transparent;
+            color: black;
         }
 
         [x-ref="overlay"] {
