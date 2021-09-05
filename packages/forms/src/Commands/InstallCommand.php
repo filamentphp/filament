@@ -10,7 +10,9 @@ class InstallCommand extends Command
 
     public function __invoke(): int
     {
-        $this->call('ui forms');
+        $this->call('ui', [
+            'type' => 'forms',
+        ]);
 
         return static::SUCCESS;
     }
