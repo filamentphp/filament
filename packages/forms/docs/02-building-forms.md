@@ -344,15 +344,13 @@ You may add validation rules to any field using the `rules()` method:
 TextInput::make('slug')->rules(['alpha_dash'])
 ```
 
-A full list of validation rules may be found in the [Laravel documentation](https://laravel.com/docs/validation#available-validation-rules)
-
-#### Dedicated methods
+A full list of validation rules may be found in the [Laravel documentation](https://laravel.com/docs/validation#available-validation-rules).
 
 There are also dedicated methods for some validation rules, some of which are able to add frontend validation as well as backend validation.
 
 We recommend that you use dedicated validation methods wherever possible.
 
-##### Exists
+#### Exists
 
 The field value must exist in the database. [See the Laravel documentation](https://laravel.com/docs/validation#rule-exists).
 
@@ -374,7 +372,7 @@ By default, the field name will be used as the column to search. You may specify
 Field::make('invitation')->exists(column: 'id')
 ```
 
-##### Nullable
+#### Nullable
 
 The field value can be empty. This rule is applied by default if the `required` rule is not present. [See the Laravel documentation](https://laravel.com/docs/validation#rule-nullable)
 
@@ -382,7 +380,7 @@ The field value can be empty. This rule is applied by default if the `required` 
 Field::make('name')->nullable()
 ```
 
-##### Required
+#### Required
 
 The field value must not be empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-required)
 
@@ -390,7 +388,7 @@ The field value must not be empty. [See the Laravel documentation](https://larav
 Field::make('name')->required()
 ```
 
-##### Same
+#### Same
 
 The field value must be the same as another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-same)
 
@@ -398,7 +396,7 @@ The field value must be the same as another. [See the Laravel documentation](htt
 Field::make('password')->same('passwordConfirmation')
 ```
 
-##### Unique
+#### Unique
 
 The field value must not exist in the database. [See the Laravel documentation](https://laravel.com/docs/validation#rule-unique)
 
