@@ -8,8 +8,6 @@ title: Layout
 
 ## Grid
 
-## Group
-
 ## Placeholder
 
 ## Section
