@@ -336,7 +336,7 @@ When `getState()` is run:
 2) Any pending file uploads are stored permanently in the filesystem.
 3) [Field relationships](#field-relationships), if they are defined, are saved.
 
-### Validation
+## Validation
 
 You may add validation rules to any field using the `rules()` method:
 
@@ -345,6 +345,8 @@ TextInput::make('slug')->rules(['alpha_dash'])
 ```
 
 A full list of validation rules may be found in the [Laravel documentation](https://laravel.com/docs/validation#available-validation-rules).
+
+### Dedicated methods
 
 There are also dedicated methods for some validation rules, some of which are able to add frontend validation as well as backend validation.
 
