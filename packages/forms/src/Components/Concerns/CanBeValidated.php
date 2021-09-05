@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
 
@@ -13,23 +14,9 @@ trait CanBeValidated
 
     protected $validationAttribute = null;
 
-    public function addValidationRule(string | object | callable $rule, bool | callable $condition = true): static
-    {
-        $this->addValidationRules([[$rule, $condition]]);
-
-        return $this;
-    }
-
-    public function addValidationRules(array $rules): static
-    {
-        $this->rules = array_merge($this->rules, $rules);
-
-        return $this;
-    }
-
     public function exists(string | callable $table, string | callable | null $columnName = null): static
     {
-        $this->addValidationRule(function () use ($columnName, $table) {
+        $this->rule(function () use ($columnName, $table) {
             $table = $this->evaluate($table);
             $columnName = $this->evaluate($columnName) ?? $this->getName();
 
@@ -55,9 +42,29 @@ trait CanBeValidated
         return $this;
     }
 
+    public function rule(string | object | callable $rule, bool | callable $condition = true): static
+    {
+        $this->rules = array_merge(
+            $this->rules,
+            [[$rule, $condition]],
+        );
+
+        return $this;
+    }
+
+    public function rules(array $rules, bool | callable $condition = true): static
+    {
+        $this->rules = array_merge(
+            $this->rules,
+            array_map(fn (string | object | callable $rule) => [$rule, $condition], $rules),
+        );
+
+        return $this;
+    }
+
     public function same(string | callable $statePath): static
     {
-        $this->addValidationRule(function () use ($statePath): string {
+        $this->rule(function () use ($statePath): string {
             $statePath = $this->evaluate($statePath);
 
             if ($containerStatePath = $this->getContainer()->getStatePath()) {
@@ -70,9 +77,9 @@ trait CanBeValidated
         return $this;
     }
 
-    public function unique(string | callable $table, string | callable | null $columnName = null, $ignorable = null): static
+    public function unique(string | callable $table, string | callable | null $columnName = null, Model | callable $ignorable = null): static
     {
-        $this->addValidationRule(function () use ($columnName, $ignorable, $table) {
+        $this->rule(function () use ($columnName, $ignorable, $table) {
             $table = $this->evaluate($table);
             $columnName = $this->evaluate($columnName) ?? $this->getName();
             $ignorable = $this->evaluate($ignorable);

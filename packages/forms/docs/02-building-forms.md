@@ -15,9 +15,9 @@ use Filament\Forms;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class EditPost extends Component implements Forms\Contracts\HasForms // [tl! add]
+class EditPost extends Component implements Forms\Contracts\HasForms // [tl! focus]
 {
-    use Forms\Concerns\InteractsWithForms; // [tl! add]
+    use Forms\Concerns\InteractsWithForms; // [tl! focus]
     
     public function render(): View
     {
@@ -52,14 +52,14 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     public $title = '';
     public $content = '';
     
-    protected function getFormSchema(): array // [tl! add:start]
+    protected function getFormSchema(): array // [tl! focus:start]
     {
         return [
             Forms\Components\TextInput::make('title')->required(),
             Forms\Components\MarkdownEditor::make('content'),
             // ...
         ];
-    } // [tl! add:end]
+    } // [tl! focus:end]
     
     public function render(): View
     {
@@ -97,13 +97,13 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     public $title = '';
     public $content = '';
     
-    public function mount(): void // [tl! add:start]
+    public function mount(): void // [tl! focus:start]
     {
         $this->form->fill([
             'title' => $this->post->title,
             'content' => $this->post->content,
         ]);
-    } // [tl! add:end]
+    } // [tl! focus:end]
     
     protected function getFormSchema(): array
     {
@@ -143,16 +143,16 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
     public $title = '';
     public $content = '';
     
-    public function mount(): void // [tl! add:start]
+    public function mount(): void // [tl! focus:start]
     {
         $this->form->fill();
-    } // [tl! add:end]
+    } // [tl! focus:end]
     
     protected function getFormSchema(): array
     {
         return [
             Forms\Components\TextInput::make('title')
-                ->default('Status Update') // [tl! add]
+                ->default('Status Update') // [tl! focus]
                 ->required(),
             Forms\Components\MarkdownEditor::make('content'),
         ];
@@ -194,10 +194,10 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
         ];
     }
     
-    public function create(): void // [tl! add:start]
+    public function create(): void // [tl! focus:start]
     {
         Post::create($this->form->getState());
-    } // [tl! add:end]
+    } // [tl! focus:end]
     
     public function render(): View
     {
@@ -213,6 +213,42 @@ When `getState()` is run:
 3) [Field relationships](#working-with-field-relationships), if they are defined, are saved.
 
 ### Validation
+
+You may add validation rules to any field using the `rules()` method:
+
+```php
+TextInput::make('slug')->rules(['alpha_dash'])
+```
+
+#### Dedicated methods
+
+There are also dedicated methods for some validation rules, some of which are able to add frontend validation as well as backend validation.
+
+We recommend that you use dedicated validation methods wherever possible.
+
+##### Exists
+
+The field under validation can be empty. This rule is applied by default if the `required` rule is not present.
+
+```php
+Field::make('name')->nullable()
+```
+
+##### Nullable
+
+The field under validation can be empty. This rule is applied by default if the `required` rule is not present.
+
+```php
+Field::make('name')->nullable()
+```
+
+##### Required
+
+The field under validation must not be empty.
+
+```php
+Field::make('name')->required()
+```
 
 ## Using Eloquent model binding
 
@@ -237,8 +273,8 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     protected function getFormSchema(): array
     {
         return [
-            Forms\Components\TextInput::make('post.title')->required(), // [tl! add:start]
-            Forms\Components\MarkdownEditor::make('post.content'), // [tl! add:end]
+            Forms\Components\TextInput::make('post.title')->required(), // [tl! focus:start]
+            Forms\Components\MarkdownEditor::make('post.content'), // [tl! focus:end]
         ];
     }
     
@@ -301,13 +337,13 @@ class EditPost extends Component implements Forms\Contracts\HasForms
         );
     }
     
-    protected function getForms(): array // [tl! add:start]
+    protected function getForms(): array // [tl! focus:start]
     {
         return [
             'postForm' => $this->makeForm()->schema($this->getPostFormSchema()),
             'authorForm' => $this->makeForm()->schema($this->getAuthorFormSchema()),
         ];
-    } // [tl! add:end]
+    } // [tl! focus:end]
     
     public function render(): View
     {
@@ -347,10 +383,10 @@ class EditPost extends Component implements Forms\Contracts\HasForms
         ];
     }
     
-    protected function getFormModel(): Post // [tl! add:start]
+    protected function getFormModel(): Post // [tl! focus:start]
     {
         return $this->post;
-    } // [tl! add:end]
+    } // [tl! focus:end]
     
     public function render(): View
     {
@@ -382,7 +418,7 @@ class EditPost extends Component implements Forms\Contracts\HasForms
         return [
             Forms\Components\TextInput::make('post.title')->required(),
             Forms\Components\MarkdownEditor::make('post.content'),
-            Forms\Components\SpatieTagsInput::make('post.tags')->model($this->post), // [tl! add]
+            Forms\Components\SpatieTagsInput::make('post.tags')->model($this->post), // [tl! focus]
         ];
     }
     
@@ -432,7 +468,7 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
     {
         $post = Post::create($this->form->getState());
         
-        $this->form->model($post)->saveRelationships(); // [tl! add]
+        $this->form->model($post)->saveRelationships(); // [tl! focus]
     }
     
     public function render(): View

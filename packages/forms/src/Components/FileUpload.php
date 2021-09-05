@@ -80,7 +80,7 @@ class FileUpload extends Field
     {
         $this->acceptedFileTypes = $types;
 
-        $this->addValidationRule(function () {
+        $this->rule(function () {
             $types = implode(',', $this->getAcceptedFileTypes());
 
             return "mimetypes:{$types}";
@@ -218,7 +218,7 @@ class FileUpload extends Field
     {
         $this->maxSize = $size;
 
-        $this->addValidationRule(function (): string {
+        $this->rule(function (): string {
             $size = $this->getMaxSize();
 
             return "max:{$size}";
@@ -233,7 +233,7 @@ class FileUpload extends Field
     {
         $this->minSize = $size;
 
-        $this->addValidationRule(function (): string {
+        $this->rule(function (): string {
             $size = $this->getMaxSize();
 
             return "min:{$size}";

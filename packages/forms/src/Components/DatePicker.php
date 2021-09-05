@@ -62,7 +62,7 @@ class DatePicker extends Field
     {
         $this->maxDate = $date;
 
-        $this->addValidationRule(function () use ($date) {
+        $this->rule(function () use ($date) {
             $date = $this->evaluate($date);
 
             return "before_or_equal:{$date}";
@@ -75,7 +75,7 @@ class DatePicker extends Field
     {
         $this->minDate = $date;
 
-        $this->addValidationRule(function () use ($date) {
+        $this->rule(function () use ($date) {
             $date = $this->evaluate($date);
 
             return "after_or_equal:{$date}";

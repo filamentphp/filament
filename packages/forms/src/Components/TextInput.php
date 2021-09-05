@@ -36,7 +36,7 @@ class TextInput extends Field
 
     public function currentPassword(bool | callable $condition = true): static
     {
-        $this->addValidationRule('current_password', $condition);
+        $this->rule('current_password', $condition);
 
         return $this;
     }
@@ -45,7 +45,7 @@ class TextInput extends Field
     {
         $this->isEmail = $condition;
 
-        $this->addValidationRule('email', $condition);
+        $this->rule('email', $condition);
 
         return $this;
     }
@@ -61,7 +61,7 @@ class TextInput extends Field
     {
         $this->maxValue = $value;
 
-        $this->addValidationRule(function (): string {
+        $this->rule(function (): string {
             $value = $this->getMaxValue();
 
             return "max:{$value}";
@@ -74,7 +74,7 @@ class TextInput extends Field
     {
         $this->minValue = $value;
 
-        $this->addValidationRule(function (): string {
+        $this->rule(function (): string {
             $value = $this->getMinValue();
 
             return "min:{$value}";
@@ -87,7 +87,7 @@ class TextInput extends Field
     {
         $this->isNumeric = $condition;
 
-        $this->addValidationRule('numeric', $condition);
+        $this->rule('numeric', $condition);
 
         return $this;
     }
@@ -131,7 +131,7 @@ class TextInput extends Field
     {
         $this->isUrl = $condition;
 
-        $this->addValidationRule('url', $condition);
+        $this->rule('url', $condition);
 
         return $this;
     }

@@ -6,7 +6,7 @@ trait CanBeAccepted
 {
     public function accepted(bool | callable $condition = true): static
     {
-        $this->addValidationRule('accepted', $condition);
+        $this->rule('accepted', $condition);
 
         return $this;
     }

@@ -40,20 +40,20 @@ const colors = require('tailwindcss/colors')
 module.exports = {
     mode: 'jit',
     purge: [
-        './resources/**/*.blade.php', // [tl! add:start]
-        './vendor/filament/forms/resources/views/**/*.blade.php', // [tl! add:end]
+        './resources/**/*.blade.php', // [tl! focus:start]
+        './vendor/filament/forms/resources/views/**/*.blade.php', // [tl! focus:end]
     ],
     theme: {
         extend: {
-            colors: { // [tl! add:start]
+            colors: { // [tl! focus:start]
                 danger: colors.rose,
                 primary: colors.yellow,
-            }, // [tl! add:end]
+            }, // [tl! focus:end]
         },
     },
     plugins: [
-        require('@tailwindcss/forms'), // [tl! add:start]
-        require('@tailwindcss/typography'), // [tl! add:end]
+        require('@tailwindcss/forms'), // [tl! focus:start]
+        require('@tailwindcss/typography'), // [tl! focus:end]
     ],
 }
 ```
@@ -67,7 +67,7 @@ const mix = require('laravel-mix')
 
 mix.js('resources/js/app.js', 'public/js')
     .postCss('resources/css/app.css', 'public/css', [
-        require('tailwindcss'), // [tl! add]
+        require('tailwindcss'), // [tl! focus]
     ])
 ```
 

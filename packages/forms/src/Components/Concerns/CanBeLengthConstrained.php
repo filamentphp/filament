@@ -12,7 +12,7 @@ trait CanBeLengthConstrained
     {
         $this->maxLength = $length;
 
-        $this->addValidationRule(function (): string {
+        $this->rule(function (): string {
             $length = $this->getMaxLength();
 
             return "max:{$length}";
@@ -25,7 +25,7 @@ trait CanBeLengthConstrained
     {
         $this->minLength = $length;
 
-        $this->addValidationRule(function (): string {
+        $this->rule(function (): string {
             $length = $this->getMinLength();
 
             return "min:{$length}";
