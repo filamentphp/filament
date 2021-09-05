@@ -2,6 +2,7 @@
 
 namespace Filament\Forms;
 
+use Filament\Forms\Commands\InstallCommand;
 use Illuminate\Support\Arr;
 use Laravel\Ui\UiCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -13,6 +14,7 @@ class FormsServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('forms')
+            ->hasCommand(InstallCommand::class)
             ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
