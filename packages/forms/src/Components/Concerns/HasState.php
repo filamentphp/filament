@@ -131,11 +131,11 @@ trait HasState
         return data_get($this->getLivewire(), $this->getStatePath());
     }
 
-    public function getStatePath(bool $absolute = true): string
+    public function getStatePath(bool $isAbsolute = true): string
     {
         $pathComponents = [];
 
-        if ($absolute && ($containerStatePath = $this->getContainer()->getStatePath())) {
+        if ($isAbsolute && ($containerStatePath = $this->getContainer()->getStatePath())) {
             $pathComponents[] = $containerStatePath;
         }
 

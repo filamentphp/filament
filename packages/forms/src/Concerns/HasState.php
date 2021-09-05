@@ -129,11 +129,11 @@ trait HasState
         return $this->dehydrateState($state);
     }
 
-    public function getStatePath(bool $absolute = true): string
+    public function getStatePath(bool $isAbsolute = true): string
     {
         $pathComponents = [];
 
-        if ($absolute && $parentComponentStatePath = $this->getParentComponent()?->getStatePath()) {
+        if ($isAbsolute && $parentComponentStatePath = $this->getParentComponent()?->getStatePath()) {
             $pathComponents[] = $parentComponentStatePath;
         }
 

@@ -14,13 +14,13 @@ trait CanBeValidated
 
     protected $validationAttribute = null;
 
-    public function exists(string | callable | null $table = null, string | callable | null $columnName = null): static
+    public function exists(string | callable | null $table = null, string | callable | null $column = null): static
     {
-        $this->rule(function () use ($columnName, $table) {
+        $this->rule(function () use ($column, $table) {
             $table = $this->evaluate($table) ?? $this->getModelClass();
-            $columnName = $this->evaluate($columnName) ?? $this->getName();
+            $column = $this->evaluate($column) ?? $this->getName();
 
-            return Rule::exists($table, $columnName);
+            return Rule::exists($table, $column);
         }, fn (): bool => (bool) $this->evaluate($table));
 
         return $this;
@@ -62,12 +62,13 @@ trait CanBeValidated
         return $this;
     }
 
-    public function same(string | callable $statePath): static
+    public function same(string | callable $statePath, bool $isStatePathAbsolute = false): static
     {
-        $this->rule(function () use ($statePath): string {
+        $this->rule(function () use ($isStatePathAbsolute, $statePath): string {
             $statePath = $this->evaluate($statePath);
 
-            if ($containerStatePath = $this->getContainer()->getStatePath()) {
+            $containerStatePath = $this->getContainer()->getStatePath();
+            if ((! $isStatePathAbsolute) && $containerStatePath) {
                 $statePath = "{$containerStatePath}.{$statePath}";
             }
 
@@ -77,14 +78,14 @@ trait CanBeValidated
         return $this;
     }
 
-    public function unique(string | callable | null $table = null, string | callable | null $columnName = null, Model | callable $ignorable = null): static
+    public function unique(string | callable | null $table = null, string | callable | null $column = null, Model | callable $ignorable = null): static
     {
-        $this->rule(function () use ($columnName, $ignorable, $table) {
+        $this->rule(function () use ($column, $ignorable, $table) {
             $table = $this->evaluate($table) ?? $this->getModelClass();
-            $columnName = $this->evaluate($columnName) ?? $this->getName();
+            $column = $this->evaluate($column) ?? $this->getName();
             $ignorable = $this->evaluate($ignorable);
 
-            return Rule::unique($table, $columnName)
+            return Rule::unique($table, $column)
                 ->when(
                     $ignorable,
                     fn (Unique $rule) => $rule->ignore(

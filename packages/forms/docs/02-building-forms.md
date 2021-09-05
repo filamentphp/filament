@@ -344,6 +344,8 @@ You may add validation rules to any field using the `rules()` method:
 TextInput::make('slug')->rules(['alpha_dash'])
 ```
 
+A full list of validation rules may be found in the [Laravel documentation](https://laravel.com/docs/validation#available-validation-rules)
+
 #### Dedicated methods
 
 There are also dedicated methods for some validation rules, some of which are able to add frontend validation as well as backend validation.
@@ -352,17 +354,29 @@ We recommend that you use dedicated validation methods wherever possible.
 
 ##### Exists
 
-The field under validation must exist in the database.
+The field value must exist in the database. [See the Laravel documentation](https://laravel.com/docs/validation#rule-exists).
 
 ```php
-Field::make('name')->exists()
+Field::make('invitation')->exists()
 ```
 
-You may specify a custom table or model to search inside. If none is specified, the 
+By default, the form's model will be searched, [if it is registered](#registering-a-model). You may specify a custom table name or model to search:
+
+```php
+use App\Models\Invitation;
+
+Field::make('invitation')->exists(table: Invitation::class)
+```
+
+By default, the field name will be used as the column to search. You may specify a custom column to search:
+
+```php
+Field::make('invitation')->exists(column: 'id')
+```
 
 ##### Nullable
 
-The field under validation can be empty. This rule is applied by default if the `required` rule is not present.
+The field value can be empty. This rule is applied by default if the `required` rule is not present. [See the Laravel documentation](https://laravel.com/docs/validation#rule-nullable)
 
 ```php
 Field::make('name')->nullable()
@@ -370,10 +384,46 @@ Field::make('name')->nullable()
 
 ##### Required
 
-The field under validation must not be empty.
+The field value must not be empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-required)
 
 ```php
 Field::make('name')->required()
+```
+
+##### Same
+
+The field value must be the same as another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-same)
+
+```php
+Field::make('password')->same('passwordConfirmation')
+```
+
+##### Unique
+
+The field value must not exist in the database. [See the Laravel documentation](https://laravel.com/docs/validation#rule-unique)
+
+```php
+Field::make('email')->unique()
+```
+
+By default, the form's model will be searched, [if it is registered](#registering-a-model). You may specify a custom table name or model to search:
+
+```php
+use App\Models\User;
+
+Field::make('email')->unique(table: User::class)
+```
+
+By default, the field name will be used as the column to search. You may specify a custom column to search:
+
+```php
+Field::make('email')->unique(column: 'email_address')
+```
+
+Sometimes, you may wish to ignore a given model during unique validation. For example, consider an "update profile" form that includes the user's name, email address, and location. You will probably want to verify that the email address is unique. However, if the user only changes the name field and not the email field, you do not want a validation error to be thrown because the user is already the owner of the email address in question.
+
+```php
+Field::make('email')->unique(ignorable: $ignoredUser)
 ```
 
 ## Field relationships
