@@ -68,7 +68,131 @@ class EditPost extends Component implements Forms\Contracts\HasForms
 }
 ```
 
-Visit your Livewire component in the browser, and you should see the form components from `getFormSchema()`!
+Visit your Livewire component in the browser, and you should see the form components from `getFormSchema()`.
+
+## Registering a model
+
+You may register a model to a form. The form builder is able to use this model to unlock DX features, such as:
+- Automatically retrieving the database table name when using database validation rules like `exists` and `unique`.
+- Automatically attaching relationships to the model when the form is saved, when using fields such as the `BelongsToManyMultiSelect`, `SpatieMediaLibraryFileUpload`, or `SpatieTagsInput`.
+
+Pass a model instance to a form using the `getFormModel()` method:
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Forms;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
+
+class EditPost extends Component implements Forms\Contracts\HasForms
+{
+    use Forms\Concerns\InteractsWithForms;
+    
+    public Post $post;
+    
+    protected function getFormSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('post.title')->required(),
+            Forms\Components\MarkdownEditor::make('post.content'),
+            Forms\Components\SpatieTagsInput::make('post.tags'),
+        ];
+    }
+    
+    protected function getFormModel(): Post // [tl! focus:start]
+    {
+        return $this->post;
+    } // [tl! focus:end]
+    
+    public function render(): View
+    {
+        return view('edit-post');
+    }
+}
+```
+
+Alternatively, you may pass the model instance to the field that requires it directly, using the `model()` method:
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Forms;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
+
+class EditPost extends Component implements Forms\Contracts\HasForms
+{
+    use Forms\Concerns\InteractsWithForms;
+    
+    public Post $post;
+    
+    protected function getFormSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('post.title')->required(),
+            Forms\Components\MarkdownEditor::make('post.content'),
+            Forms\Components\SpatieTagsInput::make('post.tags')->model($this->post), // [tl! focus]
+        ];
+    }
+    
+    public function render(): View
+    {
+        return view('edit-post');
+    }
+}
+```
+
+### Registering a model class
+
+In some cases, the model instance is not available until the form has been submitted. For example, in a form that creates a post, the post model instance cannot be passed to the form before it has been submitted.
+
+You may receive some of the same benefits of registering a model by registering its class instead:
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Forms;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
+
+class CreatePost extends Component implements Forms\Contracts\HasForms
+{
+    use Forms\Concerns\InteractsWithForms;
+    
+    public $title = '';
+    public $content = '';
+    public $categories = [];
+    
+    protected function getFormSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('title')->required(),
+            Forms\Components\MarkdownEditor::make('content'),
+            Forms\Components\BelongsToManyMultiSelect::make('categories')->relationship('categories', 'name'),
+        ];
+    }
+    
+    protected function getFormModel(): string // [tl! focus:start]
+    {
+        return Post::class;
+    } // [tl! focus:end]
+    
+    public function render(): View
+    {
+        return view('create-post');
+    }
+}
+```
 
 ## Filling forms with data
 
@@ -210,7 +334,7 @@ When `getState()` is run:
  
 1) [Validation](#validation) rules are checked, and if errors are present, the form is not submitted.
 2) Any pending file uploads are stored permanently in the filesystem.
-3) [Field relationships](#working-with-field-relationships), if they are defined, are saved.
+3) [Field relationships](#field-relationships), if they are defined, are saved.
 
 ### Validation
 
@@ -228,11 +352,13 @@ We recommend that you use dedicated validation methods wherever possible.
 
 ##### Exists
 
-The field under validation can be empty. This rule is applied by default if the `required` rule is not present.
+The field under validation must exist in the database.
 
 ```php
-Field::make('name')->nullable()
+Field::make('name')->exists()
 ```
+
+You may specify a custom table or model to search inside. If none is specified, the 
 
 ##### Nullable
 
@@ -250,9 +376,11 @@ The field under validation must not be empty.
 Field::make('name')->required()
 ```
 
-## Using Eloquent model binding
+## Field relationships
 
-Using Eloquent model binding for fields works out of the box, using Livewire's dot-syntax:
+Some fields, such as the `BelongsToManyMultiSelect`, `SpatieMediaLibraryFileUpload`, or `SpatieTagsInput` are able to interact with model relationships.
+
+For example, `BelongsToManyMultiSelect` is a multi-select field that can be used to attach records to a `BelongstoMany` relationship. When [registering a model](#registering-a-model) to the form, these relationships will be automatically saved to the pivot table [when `getState()` is called](#getting-data-from-forms):
 
 ```php
 <?php
@@ -273,14 +401,79 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     protected function getFormSchema(): array
     {
         return [
-            Forms\Components\TextInput::make('post.title')->required(), // [tl! focus:start]
-            Forms\Components\MarkdownEditor::make('post.content'), // [tl! focus:end]
+            Forms\Components\TextInput::make('post.title')->required(),
+            Forms\Components\MarkdownEditor::make('post.content'),
+            Forms\Components\BelongsToManyMultiSelect::make('post.categories')->relationship('categories', 'name'),
         ];
     }
+    
+    protected function getFormModel(): Post // [tl! focus:start]
+    {
+        return $this->post;
+    }
+    
+    public function save(): void
+    {
+        $this->post->update(
+            $this->form->getState(),
+        );
+    } // [tl! focus:end]
     
     public function render(): View
     {
         return view('edit-post');
+    }
+}
+```
+
+### Saving field relationships manually
+
+In some cases, the model instance is not available until the form has been submitted. For example, in a form that creates a post, the post model instance cannot be passed to the form before it has been submitted. In this case, you will [pass the model class](#registering-a-model-class) instead, but any field relationships will need to be saved manually after.
+
+In this situation, you may call the `model()` and `saveRelationships()` methods on the form after the instance has been created:
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Forms;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;use Livewire\Component;
+
+class CreatePost extends Component implements Forms\Contracts\HasForms
+{
+    use Forms\Concerns\InteractsWithForms;
+    
+    public $title = '';
+    public $content = '';
+    public $tags = [];
+    
+    protected function getFormSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('title')->required(),
+            Forms\Components\MarkdownEditor::make('content'),
+            Forms\Components\SpatieTagsInput::make('tags'),
+        ];
+    }
+    
+    protected function getFormModel(): string
+    {
+        return Post::class;
+    }
+    
+    public function create(): void
+    {
+        $post = Post::create($this->form->getState());
+        
+        $this->form->model($post)->saveRelationships(); // [tl! focus]
+    }
+    
+    public function render(): View
+    {
+        return view('create-post');
     }
 }
 ```
@@ -348,132 +541,6 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     public function render(): View
     {
         return view('edit-post');
-    }
-}
-```
-
-## Working with field relationships
-
-Some fields, such as the `BelongsToSelect`, `SpatieMediaLibraryFileUpload` and `SpatieLaravelTagsInput` require you to pass an Eloquent model instance to the form directly. This allows them to attach Eloquent relationships automatically when the form is saved.
-
-Pass a model instance to a form using the `getFormModel()` method:
-
-```php
-<?php
-
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Forms;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class EditPost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public Post $post;
-    
-    protected function getFormSchema(): array
-    {
-        return [
-            Forms\Components\TextInput::make('post.title')->required(),
-            Forms\Components\MarkdownEditor::make('post.content'),
-            Forms\Components\SpatieTagsInput::make('post.tags'),
-        ];
-    }
-    
-    protected function getFormModel(): Post // [tl! focus:start]
-    {
-        return $this->post;
-    } // [tl! focus:end]
-    
-    public function render(): View
-    {
-        return view('edit-post');
-    }
-}
-```
-
-Alternatively, you may pass the model instance to the field that requires it directly, using the `model()` method:
-
-```php
-<?php
-
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Forms;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class EditPost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public Post $post;
-    
-    protected function getFormSchema(): array
-    {
-        return [
-            Forms\Components\TextInput::make('post.title')->required(),
-            Forms\Components\MarkdownEditor::make('post.content'),
-            Forms\Components\SpatieTagsInput::make('post.tags')->model($this->post), // [tl! focus]
-        ];
-    }
-    
-    public function render(): View
-    {
-        return view('edit-post');
-    }
-}
-```
-
-Now, [when `getState()` is called on this form](#getting-data-from-forms), any relationships are saved automatically to this model.
-
-### Saving field relationships manually
-
-In some cases, the model instance is not available until the form has been submitted. For example, in a form that creates a post, the post model instance cannot be passed to the form before it has been submitted.
-
-In this situation, you may call the `model()` and `saveRelationships()` methods on the form after the instance has been created:
-
-```php
-<?php
-
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Forms;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class CreatePost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public $title = '';
-    public $content = '';
-    public $tags = [];
-    
-    protected function getFormSchema(): array
-    {
-        return [
-            Forms\Components\TextInput::make('title')->required(),
-            Forms\Components\MarkdownEditor::make('content'),
-            Forms\Components\SpatieTagsInput::make('tags'),
-        ];
-    }
-    
-    public function create(): void
-    {
-        $post = Post::create($this->form->getState());
-        
-        $this->form->model($post)->saveRelationships(); // [tl! focus]
-    }
-    
-    public function render(): View
-    {
-        return view('create-post');
     }
 }
 ```

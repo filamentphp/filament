@@ -27,4 +27,19 @@ trait BelongsToModel
 
         return $this->getContainer()->getModel();
     }
+
+    public function getModelClass(): string | null
+    {
+        $model = $this->getModel();
+
+        if (! $model) {
+            return null;
+        }
+
+        if (is_string($model)) {
+            return $model;
+        }
+
+        return $model::class;
+    }
 }

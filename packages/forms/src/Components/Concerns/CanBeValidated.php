@@ -14,10 +14,10 @@ trait CanBeValidated
 
     protected $validationAttribute = null;
 
-    public function exists(string | callable $table, string | callable | null $columnName = null): static
+    public function exists(string | callable | null $table = null, string | callable | null $columnName = null): static
     {
         $this->rule(function () use ($columnName, $table) {
-            $table = $this->evaluate($table);
+            $table = $this->evaluate($table) ?? $this->getModelClass();
             $columnName = $this->evaluate($columnName) ?? $this->getName();
 
             return Rule::exists($table, $columnName);
@@ -77,10 +77,10 @@ trait CanBeValidated
         return $this;
     }
 
-    public function unique(string | callable $table, string | callable | null $columnName = null, Model | callable $ignorable = null): static
+    public function unique(string | callable | null $table = null, string | callable | null $columnName = null, Model | callable $ignorable = null): static
     {
         $this->rule(function () use ($columnName, $ignorable, $table) {
-            $table = $this->evaluate($table);
+            $table = $this->evaluate($table) ?? $this->getModelClass();
             $columnName = $this->evaluate($columnName) ?? $this->getName();
             $ignorable = $this->evaluate($ignorable);
 
