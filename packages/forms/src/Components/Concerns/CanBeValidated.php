@@ -67,9 +67,12 @@ trait CanBeValidated
         $this->rule(function () use ($isStatePathAbsolute, $statePath): string {
             $statePath = $this->evaluate($statePath);
 
-            $containerStatePath = $this->getContainer()->getStatePath();
-            if ((! $isStatePathAbsolute) && $containerStatePath) {
-                $statePath = "{$containerStatePath}.{$statePath}";
+            if (! $isStatePathAbsolute) {
+                $containerStatePath = $this->getContainer()->getStatePath();
+
+                if ($containerStatePath) {
+                    $statePath = "{$containerStatePath}.{$statePath}";
+                }
             }
 
             return "same:{$statePath}";
