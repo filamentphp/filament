@@ -74,7 +74,7 @@ mix.js('resources/js/app.js', 'public/js')
 In `/resources/css/app.css`, import `filament/forms` vendor CSS and [TailwindCSS](https://tailwindcss.com):
 
 ```css
-@import '../../vendor/filament/=forms/dist/module.esm.css';
+@import '../../vendor/filament/forms/dist/module.esm.css';
 
 @tailwind base;
 @tailwind components;
