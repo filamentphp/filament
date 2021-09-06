@@ -1,6 +1,8 @@
 parameters:
     paths:
-        - packages
+        - packages/forms/src
+        - packages/spatie-laravel-media-library-plugin/src
+        - packages/spatie-laravel-tags-plugin/src
     level: 5
     ignoreErrors:
         - '#Access to an undefined property [a-zA-Z0-9\\_]+::\$tags#'

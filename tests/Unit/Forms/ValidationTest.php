@@ -36,7 +36,7 @@ test('fields use custom validation rules', function () {
             ->statePath('data')
             ->components([
                 $field = (new Field(Str::random()))
-                    ->addValidationRule('email')
+                    ->rule('email')
                     ->default(Str::random()),
             ])
             ->fill()

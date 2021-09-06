@@ -280,7 +280,7 @@ class FileUpload extends Field
         if ($this->isMultiple()) {
             $container = $this->getContainer();
             $container->getParentComponent()->removeUploadedFile(
-                $container->getStatePath(absolute: false),
+                $container->getStatePath(isAbsolute: false),
             );
         }
 
