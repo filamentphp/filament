@@ -21,7 +21,7 @@ trait CanBeValidated
             $column = $this->evaluate($column) ?? $this->getName();
 
             return Rule::exists($table, $column);
-        }, fn (): bool => (bool) $this->evaluate($table));
+        }, fn (): bool => (bool) $this->evaluate($table) ?? $this->getModelClass());
 
         return $this;
     }
@@ -96,7 +96,7 @@ trait CanBeValidated
                         $ignorable->getKeyName(),
                     ),
                 );
-        }, fn (): bool => (bool) $this->evaluate($table));
+        }, fn (): bool => (bool) $this->evaluate($table) ?? $this->getModelClass());
 
         return $this;
     }
