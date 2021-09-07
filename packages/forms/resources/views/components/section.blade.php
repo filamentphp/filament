@@ -54,7 +54,7 @@
         </div>
     </div>
 
-    <div id="{{ $formComponent->getId() }}-content" x-show.transition="open" :aria-expanded="open.toString()">
+    <div id="{{ $formComponent->getId() }}-content" x-show="open" :aria-expanded="open.toString()">
         <x-forms::form :schema="$formComponent->getSchema()" :columns="$formComponent->getColumns()" />
     </div>
 </section>
