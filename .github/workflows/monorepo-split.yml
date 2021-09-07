@@ -16,7 +16,7 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
               with:
-                  package_directory: ''
+                  package_directory: '/'
                   repository_organization: 'laravel-filament'
                   repository_name: 'admin'
                   branch: 1.x
