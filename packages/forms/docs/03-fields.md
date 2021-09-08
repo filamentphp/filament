@@ -22,6 +22,12 @@ In the same way as labels, field IDs are also automatically determined based on 
 Field::make('name')->id('name-field')
 ```
 
+When fields fail validation, their label is used in the error message. To customise the label used in field error messages, use the `validationAttribute()` method:
+
+```php
+Field::make('name')->validationAttribute('full name')
+```
+
 Fields may have a default value. This will be filled if the [form's `fill()` method](building-forms#default-data) is called without any arguments. To define a default value, use the `default()` method:
 
 ```php
@@ -55,6 +61,64 @@ Field::make('name')->disabled()
 ```
 
 ## Builder
+
+Similar to a [repeater](#repeater), the builder component allows you to output a JSON array of repeated form components. Unlike the repeater, which only defines one form schema to repeat, the builder allows you to define different schema "blocks", which you can repeat in any order. This makes it useful for building more advanced array structures.
+
+The primary use of the builder component is to build web page content using predefined blocks. The example below defines multiple blocks for different elements in the page content. On the frontend of your website, you could loop through each block in the JSON and format it how you wish.
+
+```php
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+
+Builder::make('content')
+    ->blocks([
+        Builder\Block::make('heading')
+            ->schema([
+                TextInput::make('content')->required(),
+                Select::make('level')
+                    ->options([
+                        'h1' => 'Heading 1',
+                        'h2' => 'Heading 2',
+                        'h3' => 'Heading 3',
+                        'h4' => 'Heading 4',
+                        'h5' => 'Heading 5',
+                        'h6' => 'Heading 6',
+                    ])
+                    ->required(),
+            ]),
+        Builder\Block::make('paragraph')
+            ->schema([
+                MarkdownEditor::make('content')->required(),
+            ]),
+        Builder\Block::make('image')
+            ->schema([
+                FileUpload::make('url')
+                    ->image()
+                    ->required(),
+                TextInput::make('alt')
+                    ->label('Alt text')
+                    ->required(),
+            ]),
+    ])
+```
+
+As evident in the above example, blocks can be defined within the `blocks()` method of the component. Blocks are `Builder\Block` objects, and require a unique name, and a component schema:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        Builder\Block::make('heading')
+            ->schema([
+                // ...
+            ]),
+        // ...
+    ])
+```
 
 ## Checkbox
 
