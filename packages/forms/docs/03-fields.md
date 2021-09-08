@@ -244,6 +244,36 @@ DateTimePicker::make('published_at')->weekStartsOnSunday()
 
 ## File upload
 
+The file upload field is based on [Filepond](https://pqina.nl/filepond).
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment'),
+```
+
+By default, files will be uploaded publicly to your default storage disk.
+
+To change the disk and directory that files are saved in, and their visibility, use the `disk()`, `directory()` and `visibility` methods:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->disk('s3')
+    ->directory('form-attachments')
+    ->visibility('private')
+```
+
+You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types. You may also use the `image()` method as shorthand to allow all image MIME types.
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('document')->acceptedFileTypes(['application/pdf'])
+FileUpload::make('image')->image()
+```
+
 ## Hidden
 
 ## Markdown editor
