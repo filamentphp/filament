@@ -11,7 +11,7 @@
 
 Filament is a collection of tools for rapidly building beautiful TALL stack interfaces, designed for humans.
 
-The Filament project currently consists of several packages. Packages in the same version series are compatible in the same project.
+> Packages in the same version series are compatible in the same project.
 
 | Package | Description | Current version series | Next version series | |
 | --- | --- | --- | --- | --- |
