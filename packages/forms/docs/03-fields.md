@@ -310,6 +310,26 @@ FileUpload::make('attachment')
     ->uploadProgressIndicatorPosition('left')
 ```
 
+You may also upload multiple files, using the multiple file upload component. This stores URLs in JSON, but you may customize it to write to a relationship instead.
+
+```php
+use Filament\Forms\Components\MultipleFileUpload;
+
+MultipleFileUpload::make('attachments')
+```
+
+You can customize the underlying file upload component by passing an instance of it to `uploadComponent()`. It must have the name `file`, but you can customize its label, ID and validation attribute to hide this if you wish:
+
+```php
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MultipleFileUpload;
+
+MultipleFileUpload::make('attachments')
+    ->uploadComponent(
+        FileUpload::make('file')->image(),
+    )
+```
+
 ## Hidden
 
 ## Markdown editor
