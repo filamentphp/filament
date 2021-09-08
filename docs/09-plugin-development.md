@@ -11,7 +11,7 @@ use Filament\PluginServiceProvider;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
-    //
+    // ...
 }
 ```
 
@@ -25,7 +25,7 @@ If you're developing a plugin for a specific application, you should register th
 return [
 
     'providers' => [
-        //...
+        // ...
 
         \App\Providers\ExampleServiceProvider::class,
     ]
