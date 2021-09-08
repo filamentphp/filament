@@ -187,7 +187,6 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 
 DatePicker::make('date_of_birth')
-
 DateTimePicker::make('published_at')
 ```
 
@@ -272,6 +271,43 @@ use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('document')->acceptedFileTypes(['application/pdf'])
 FileUpload::make('image')->image()
+```
+
+You may also restrict the size of uploaded files, in kilobytes:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->minSize(512)
+    ->maxSize(1024)
+```
+
+Filepond allows you to crop and resize images before they are uploaded. You can customize this behaviour using the `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods.
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->image()
+    ->imageCropAspectRatio('16:9'),
+    ->imageResizeTargetWidth('1920'),
+    ->imageResizeTargetHeight('1080')
+```
+
+You may also alter the general appearance of the Filepond component. Available options for these methods are available on the [Filepond website](https://pqina.nl/filepond/docs/api/instance/properties/#styles).
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->imagePreviewHeight('250')
+    ->loadingIndicatorPosition('left')
+    ->panelAspectRatio('2:1')
+    ->panelLayout('integrated')
+    ->removeUploadedFileButtonPosition('right')
+    ->uploadButtonPosition('left')
+    ->uploadProgressIndicatorPosition('left')
 ```
 
 ## Hidden
