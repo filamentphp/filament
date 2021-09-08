@@ -22,7 +22,7 @@ In the same way as labels, field IDs are also automatically determined based on 
 Field::make('name')->id('name-field')
 ```
 
-When fields fail validation, their label is used in the error message. To customise the label used in field error messages, use the `validationAttribute()` method:
+When fields fail validation, their label is used in the error message. To customize the label used in field error messages, use the `validationAttribute()` method:
 
 ```php
 Field::make('name')->validationAttribute('full name')
@@ -31,7 +31,7 @@ Field::make('name')->validationAttribute('full name')
 Fields may have a default value. This will be filled if the [form's `fill()` method](building-forms#default-data) is called without any arguments. To define a default value, use the `default()` method:
 
 ```php
-Field::make('name')->default('Dan')
+Field::make('name')->default('John')
 ```
 
 Sometimes, you may wish to provide extra information for the user of the form. For this purpose, you may use helper messages and hints.
@@ -48,7 +48,7 @@ Hints can be used to display text adjacent to its label:
 Field::make('password')->hint('[Forgotten your password?](forgotten-password)')
 ```
 
-The HTML of fields can be customised even further, by passing an array of `extraAttributes()`:
+The HTML of fields can be customized even further, by passing an array of `extraAttributes()`:
 
 ```php
 Field::make('name')->extraAttributes(['step' => 10])
@@ -58,6 +58,18 @@ You may disable a field to prevent it from being edited:
 
 ```php
 Field::make('name')->disabled()
+```
+
+Most fields will be autofocusable. Ideally, you should aim for the first significant field in your form to be autofocused for the best user experience.
+
+```php
+Field::make('name')->autofocus()
+```
+
+Many fields will also include a placeholder value for when it has no value. You may customize this using the `placeholder()` method:
+
+```php
+Field::make('name')->placeholder('John Doe')
 ```
 
 ## Builder
@@ -140,7 +152,33 @@ Builder\Block::make('heading')->icon('heroicon-o-archive')
 
 ## Checkbox
 
-## Date picker
+The checkbox component, similar to a [toggle](#toggle), allows you to interact a boolean value.
+
+```php
+use Filament\Forms\Components\Checkbox;
+
+Checkbox::make('is_admin'),
+```
+
+Checkbox fields have two layout modes, inline and stacked. By default, they are inline.
+
+When the checkbox is inline, its label is adjacent to it:
+
+```php
+use Filament\Forms\Components\Checkbox;
+
+Checkbox::make('is_admin')->inline(),
+```
+
+When the checkbox is stacked, its label is above it:
+
+```php
+use Filament\Forms\Components\Checkbox;
+
+Checkbox::make('is_admin')->stacked(),
+```
+
+## Date-time picker
 
 ## File upload
 
@@ -192,6 +230,42 @@ Repeater::make('members')
 ## Text input
 
 ## Toggle
+
+The toggle component, similar to a [checkbox](#checkbox), allows you to interact a boolean value.
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin'),
+```
+
+Toggle fields have two layout modes, inline and stacked. By default, they are inline.
+
+When the toggle is inline, its label is adjacent to it:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')->inline(),
+```
+
+When the toggle is stacked, its label is above it:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')->stacked(),
+```
+
+Toggles may also use an "on icon" and an "off icon". These are displayed on its handle and could provide a greater indication to what your field represents. The parameter to each method must contain the name of a Blade icon component:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')
+    ->onIcon('heroicon-s-lightning-bolt'),
+    ->offIcon('heroicon-s-user'),
+```
 
 ## View
 
