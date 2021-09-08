@@ -11,7 +11,7 @@
 
 Filament is a collection of tools for rapidly building beautiful TALL stack interfaces, designed for humans.
 
-> Packages in the same version series are compatible.
+> **Packages in the same version series are compatible.**
 
 ### [Admin Panel](https://filamentadmin.com/docs/admin)
 **Current version series:** v1.x. **Next version series:** v2.x, expected Winter 2021.
