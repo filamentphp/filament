@@ -21,8 +21,6 @@ Filament is a collection of tools for rapidly building beautiful TALL stack inte
 | `filament/spatie-laravel-media-library-plugin` | Filament support for [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). | v2.x | | [Documentation](https://filamentadmin.com/docs/spatie-laravel-media-library-plugin) |
 | `filament/spatie-laravel-tags-plugin` | Filament support for [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). | v2.x | | [Documentation](https://filamentadmin.com/docs/spatie-laravel-tags-plugin) |
 
-### [Visit the Filament documentation &rarr;](https://filamentadmin.com/docs)
-
 ## Need Help?
 
 🐞 If you spot a bug, please [submit a detailed issue](https://github.com/laravel-filament/filament/issues/new), and wait for assistance.
