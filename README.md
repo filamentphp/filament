@@ -13,7 +13,7 @@ Filament is a collection of tools for rapidly building beautiful TALL stack inte
 
 The Filament project currently consists of several packages. Packages in the same version series are compatible in the same project.
 
-| Package | Description | Current version series | Next version series | Documentation |
+| Package | Description | Current version series | Next version series | |
 | --- | --- | --- | --- | --- |
 | `filament/filament` | TALL stack admin panel. | v1.x | v2.x, expected Winter 2021. | [Documentation](https://filamentadmin.com/docs/admin) |
 | `filament/forms` | TALL stack form builder. | v2.x | | [Documentation](https://filamentadmin.com/docs/forms) |
