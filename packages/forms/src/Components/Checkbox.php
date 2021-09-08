@@ -13,6 +13,6 @@ class Checkbox extends Field
     {
         $this->default(false);
 
-        $this->inline();
+        $this->rule('boolean');
     }
 }

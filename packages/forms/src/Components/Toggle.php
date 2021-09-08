@@ -17,7 +17,7 @@ class Toggle extends Field
     {
         $this->default(false);
 
-        $this->inline();
+        $this->rule('boolean');
     }
 
     public function offIcon(string | callable $icon): static

@@ -167,7 +167,7 @@ When the checkbox is inline, its label is adjacent to it:
 ```php
 use Filament\Forms\Components\Checkbox;
 
-Checkbox::make('is_admin')->inline(),
+Checkbox::make('is_admin')->inline()
 ```
 
 When the checkbox is stacked, its label is above it:
@@ -175,10 +175,72 @@ When the checkbox is stacked, its label is above it:
 ```php
 use Filament\Forms\Components\Checkbox;
 
-Checkbox::make('is_admin')->stacked(),
+Checkbox::make('is_admin')->stacked()
 ```
 
 ## Date-time picker
+
+The date-time picker provides an interactive interface for selecting a date, and optionally a time.
+
+```php
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+
+DatePicker::make('date_of_birth')
+
+DateTimePicker::make('published_at')
+```
+
+You may restrict the minimum and maximum date that can be selected with the picker. The `minDate()` and `maxDate()` methods accept a `DateTime` instance (e.g. Carbon), or a string:
+
+```php
+use Filament\Forms\Components\DatePicker;
+
+DatePicker::make('date_of_birth')
+    ->minDate(now()->subYears(150))
+    ->maxDate(now())
+```
+
+You may customize the format of the field when it is saved in your database, using the `format()` method. This accepts a string date format, using [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
+
+```php
+use Filament\Forms\Components\DatePicker;
+
+DatePicker::make('date_of_birth')->format('d/m/Y')
+```
+
+You may also customize the display format of the field, separately from the format used when it is saved in your database. For this, use the `displayFormat()` method, which also accepts a string date format, using [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
+
+```php
+use Filament\Forms\Components\DatePicker;
+
+DatePicker::make('date_of_birth')->displayFormat('d/m/Y')
+```
+
+When using the time picker, you may disable the seconds input using the `withoutSeconds()` method:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('published_at')->withoutSeconds()
+```
+
+In some countries, the first day of the week is not Monday. To customize the first day of the week in the date picker, use the `forms.components.date_time_picker.first_day_of_week` config option, or the `firstDayOfWeek()` method on the component. 0 to 7 are accepted values, with Monday as 1 and Sunday as 7 or 0:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('published_at')->firstDayOfWeek(7)
+```
+
+There are additionally convenient helper methods to set the first day of the week more semantically:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('published_at')->weekStartsOnMonday()
+DateTimePicker::make('published_at')->weekStartsOnSunday()
+```
 
 ## File upload
 
@@ -221,6 +283,8 @@ Repeater::make('members')
     ])
 ```
 
+If you wish to define a repeater with multiple schema blocks that can be repeated in any order, please use the [builder](#builder).
+
 ## Rich editor
 
 ## Select
@@ -236,7 +300,7 @@ The toggle component, similar to a [checkbox](#checkbox), allows you to interact
 ```php
 use Filament\Forms\Components\Toggle;
 
-Toggle::make('is_admin'),
+Toggle::make('is_admin')
 ```
 
 Toggle fields have two layout modes, inline and stacked. By default, they are inline.
@@ -246,7 +310,7 @@ When the toggle is inline, its label is adjacent to it:
 ```php
 use Filament\Forms\Components\Toggle;
 
-Toggle::make('is_admin')->inline(),
+Toggle::make('is_admin')->inline()
 ```
 
 When the toggle is stacked, its label is above it:
@@ -254,7 +318,7 @@ When the toggle is stacked, its label is above it:
 ```php
 use Filament\Forms\Components\Toggle;
 
-Toggle::make('is_admin')->stacked(),
+Toggle::make('is_admin')->stacked()
 ```
 
 Toggles may also use an "on icon" and an "off icon". These are displayed on its handle and could provide a greater indication to what your field represents. The parameter to each method must contain the name of a Blade icon component:
@@ -264,7 +328,7 @@ use Filament\Forms\Components\Toggle;
 
 Toggle::make('is_admin')
     ->onIcon('heroicon-s-lightning-bolt'),
-    ->offIcon('heroicon-s-user'),
+    ->offIcon('heroicon-s-user')
 ```
 
 ## View

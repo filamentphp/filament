@@ -2,6 +2,8 @@
 
 namespace Filament\Forms\Components;
 
+use DateTime;
+
 class DatePicker extends Field
 {
     use Concerns\HasPlaceholder;
@@ -31,6 +33,12 @@ class DatePicker extends Field
         $this->format('Y-m-d');
 
         $this->resetFirstDayOfWeek();
+
+        $this->rule(function (DatePicker $component) {
+            $format = $component->getFormat();
+
+            return "date_format:{$format}";
+        });
     }
 
     public function displayFormat(string | callable $format): static
@@ -58,12 +66,16 @@ class DatePicker extends Field
         return $this;
     }
 
-    public function maxDate(string | callable $date): static
+    public function maxDate(DateTime | string | callable $date): static
     {
         $this->maxDate = $date;
 
         $this->rule(function () use ($date) {
             $date = $this->evaluate($date);
+
+            if ($date instanceof DateTime) {
+                $date = $date->format('Y-m-d');
+            }
 
             return "before_or_equal:{$date}";
         }, fn (): bool => (bool) $this->evaluate($date));
@@ -71,12 +83,16 @@ class DatePicker extends Field
         return $this;
     }
 
-    public function minDate(string | callable $date): static
+    public function minDate(DateTime | string | callable $date): static
     {
         $this->minDate = $date;
 
         $this->rule(function () use ($date) {
             $date = $this->evaluate($date);
+
+            if ($date instanceof DateTime) {
+                $date = $date->format('Y-m-d');
+            }
 
             return "after_or_equal:{$date}";
         }, fn (): bool => (bool) $this->evaluate($date));
@@ -122,12 +138,24 @@ class DatePicker extends Field
 
     public function getMaxDate(): ?string
     {
-        return $this->evaluate($this->maxDate);
+        $date = $this->evaluate($this->maxDate);
+
+        if ($date instanceof DateTime) {
+            $date = $date->format($this->getFormat());
+        }
+
+        return $date;
     }
 
     public function getMinDate(): ?string
     {
-        return $this->evaluate($this->minDate);
+        $date = $this->evaluate($this->minDate);
+
+        if ($date instanceof DateTime) {
+            $date = $date->format($this->getFormat());
+        }
+
+        return $date;
     }
 
     public function hasSeconds(): bool
