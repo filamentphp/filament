@@ -129,7 +129,7 @@ use Filament\Forms\Components\Builder;
 Builder\Block::make('heading')->label(__('blocks.heading'))
 ```
 
-Blocks may also have an icon, which is displayed next to the label. The `icon()` method accepts the name of any Blade icon component.
+Blocks may also have an icon, which is displayed next to the label. The `icon()` method accepts the name of any Blade icon component:
 
 ```php
 use Filament\Forms\Components\Builder;
