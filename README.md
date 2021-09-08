@@ -13,6 +13,41 @@ Filament is a collection of tools for rapidly building beautiful TALL stack inte
 
 > Packages in the same version series are compatible in the same project.
 
+### [Admin Panel](https://filamentadmin.com/docs/admin)
+**Current version series:** v1.x. **Next version series:** v2.x, expected Winter 2021.
+
+```bash
+composer require filament/filament
+```
+
+### [Form Builder](https://filamentadmin.com/docs/forms)
+**Current version series:** v2.x.
+
+```bash
+composer require filament/forms
+```
+
+### [Table Builder](https://filamentadmin.com/docs/tables)
+**Coming soon**, expected Winter 2021.
+
+```bash
+composer require filament/forms
+```
+
+### [`spatie/laravel-medialibrary` Plugin](https://filamentadmin.com/docs/spatie-laravel-media-library-plugin)
+**Current version series:** v2.x.
+
+```bash
+composer require filament/spatie-laravel-media-library-plugin
+```
+
+### [`spatie/laravel-tags` Plugin](https://filamentadmin.com/docs/spatie-laravel-tags-plugin)
+**Current version series:** v2.x.
+
+```bash
+composer require filament/spatie-laravel-tags-plugin
+```
+
 | Package | Description | Current version series | Next version series | |
 | --- | --- | --- | --- | --- |
 | `filament/filament` | TALL stack admin panel. | v1.x | v2.x, expected Winter 2021. | [Documentation](https://filamentadmin.com/docs/admin) |
