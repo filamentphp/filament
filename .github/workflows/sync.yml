@@ -10,10 +10,9 @@ jobs:
         steps:
             - name: Sync admin
               uses: wei/git-sync@v3
-              env:
-                  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
               with:
                   source_repo: 'laravel-filament/filament'
                   source_branch: '1.x'
                   destination_repo: 'laravel-filament/admin'
                   destination_branch: "1.x"
+                  ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
