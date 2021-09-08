@@ -43,14 +43,6 @@ composer require filament/spatie-laravel-media-library-plugin
 composer require filament/spatie-laravel-tags-plugin
 ```
 
-| Package | Description | Current version series | Next version series | |
-| --- | --- | --- | --- | --- |
-| `filament/filament` | TALL stack admin panel. | v1.x | v2.x, expected Winter 2021. | [Documentation](https://filamentadmin.com/docs/admin) |
-| `filament/forms` | TALL stack form builder. | v2.x | | [Documentation](https://filamentadmin.com/docs/forms) |
-| `filament/tables` | TALL stack table builder. | | v2.x, expected Fall 2021. | [Documentation](https://filamentadmin.com/docs/tables) |
-| `filament/spatie-laravel-media-library-plugin` | Filament support for [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). | v2.x | | [Documentation](https://filamentadmin.com/docs/spatie-laravel-media-library-plugin) |
-| `filament/spatie-laravel-tags-plugin` | Filament support for [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). | v2.x | | [Documentation](https://filamentadmin.com/docs/spatie-laravel-tags-plugin) |
-
 ## Need Help?
 
 🐞 If you spot a bug, please [submit a detailed issue](https://github.com/laravel-filament/filament/issues/new), and wait for assistance.
