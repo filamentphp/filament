@@ -18,8 +18,8 @@ Filament is a collection of tools for rapidly building beautiful TALL stack inte
 | `filament/filament` | TALL stack admin panel. | v1.x | v2.x, expected Winter 2021. | [Documentation](https://filamentadmin.com/docs/admin) |
 | `filament/forms` | TALL stack form builder. | v2.x | | [Documentation](https://filamentadmin.com/docs/forms) |
 | `filament/tables` | TALL stack table builder. | | v2.x, expected Fall 2021. | [Documentation](https://filamentadmin.com/docs/tables) |
-| `filament/spatie-laravel-media-library-plugin` | Filament support for `spatie/laravel-medialibrary`. | v2.x | | [Documentation](https://filamentadmin.com/docs/spatie-laravel-media-library-plugin) |
-| `filament/spatie-laravel-tags-plugin` | Filament support for `spatie/laravel-tags`. | v2.x | | [Documentation](https://filamentadmin.com/docs/spatie-laravel-tags-plugin) |
+| `filament/spatie-laravel-media-library-plugin` | Filament support for [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). | v2.x | | [Documentation](https://filamentadmin.com/docs/spatie-laravel-media-library-plugin) |
+| `filament/spatie-laravel-tags-plugin` | Filament support for [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). | v2.x | | [Documentation](https://filamentadmin.com/docs/spatie-laravel-tags-plugin) |
 
 ### [Visit the Filament documentation &rarr;](https://filamentadmin.com/docs)
 
