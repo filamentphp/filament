@@ -36,7 +36,6 @@
 
     <div
         x-show="! isCollapsed"
-        x-transition
         x-bind:aria-expanded="(! isCollapsed).toString()"
     >
         {{ $getChildComponentContainer() }}

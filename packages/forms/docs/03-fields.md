@@ -248,6 +248,8 @@ DateTimePicker::make('published_at')->weekStartsOnSunday()
 
 ## Markdown editor
 
+## Multi-select
+
 ## Repeater
 
 The repeater component allows you to output a JSON array of repeated form components.
