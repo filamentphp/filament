@@ -16,9 +16,11 @@ trait InteractsWithForms
 
     protected ?array $cachedForms = null;
 
+    protected bool $isCachingForms = false;
+
     public function __get($property)
     {
-        if ($form = $this->getCachedForm($property)) {
+        if (! $this->isCachingForms && $form = $this->getCachedForm($property)) {
             return $form;
         }
 
@@ -143,7 +145,13 @@ trait InteractsWithForms
 
     protected function cacheForms(): array
     {
-        return $this->cachedForms = $this->getForms();
+        $this->isCachingForms = true;
+
+        $this->cachedForms = $this->getForms();
+
+        $this->isCachingForms = false;
+
+        return $this->cachedForms;
     }
 
     protected function focusConcealedComponents(array $statePaths): void
