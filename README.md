@@ -13,7 +13,7 @@ Filament is a collection of tools for rapidly building beautiful TALL stack inte
 
 ## Packages
 
-> **Packages in the same version series are compatible.**
+> **Packages in the same version series are compatible.** For more information, please see this [GitHub Discussion](https://github.com/laravel-filament/filament/discussions/495).
 
 ### Admin Panel • [Documentation](https://filamentadmin.com/docs/admin)
 **Current version series:** v1.x. **Next version series:** v2.x, expected Winter 2021.
