@@ -109,6 +109,7 @@ As evident in the above example, blocks can be defined within the `blocks()` met
 
 ```php
 use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\TextInput;
 
 Builder::make('content')
     ->blocks([
@@ -148,6 +149,39 @@ Builder\Block::make('heading')->icon('heroicon-o-archive')
 ## Markdown editor
 
 ## Repeater
+
+The repeater component allows you to output a JSON array of repeated form components.
+
+```php
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+
+Repeater::make('members')
+    ->schema([
+        TextInput::make('name')->required(),
+        Select::make('role')
+            ->options([
+                'member' => 'Member',
+                'administrator' => 'Administrator',
+                'owner' => 'Owner',
+            ])
+            ->required(),
+    ])
+```
+
+As evident in the above example, the component schema can be defined within the `schema()` method of the component:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
+
+Repeater::make('members')
+    ->schema([
+        TextInput::make('name')->required(),
+        // ...
+    ])
+```
 
 ## Rich editor
 
