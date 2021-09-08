@@ -29,9 +29,6 @@ composer require filament/filament
 composer require filament/forms
 ```
 
-### Table Builder
-**Coming soon**, expected Fall 2021.
-
 ### `spatie/laravel-medialibrary` Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-media-library-plugin)
 **Current version series:** v2.x.
 
