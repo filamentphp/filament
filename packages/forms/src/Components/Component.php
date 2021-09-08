@@ -23,6 +23,7 @@ class Component extends ViewComponent implements Htmlable
     use Concerns\HasExtraAttributes;
     use Concerns\HasId;
     use Concerns\HasLabel;
+    use Concerns\HasMeta;
     use Concerns\HasState;
     use Concerns\HasView;
     use Concerns\ListensToEvents;
