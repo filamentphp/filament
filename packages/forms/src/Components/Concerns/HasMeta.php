@@ -8,7 +8,7 @@ trait HasMeta
 {
     protected array $meta = [];
 
-    public function getMeta(string|array $keys = null): mixed
+    public function getMeta(string | array $keys = null): mixed
     {
         if ($keys !== null) {
             return Arr::only($this->meta, $keys);
@@ -17,7 +17,7 @@ trait HasMeta
         return $this->meta;
     }
 
-    public function hasMeta(string|array $keys): bool
+    public function hasMeta(string | array $keys): bool
     {
         return Arr::has($this->meta, $keys);
     }
