@@ -10,8 +10,12 @@ trait HasMeta
 
     public function getMeta(string | array $keys = null): mixed
     {
-        if ($keys !== null) {
+        if (is_array($keys)) {
             return Arr::only($this->meta, $keys);
+        }
+
+        if (is_string($keys)) {
+            return Arr::get($this->meta, $keys);
         }
 
         return $this->meta;
