@@ -129,7 +129,7 @@ class Mask implements Jsonable
                 'money' => fn (Mask $mask) => $mask
                     ->numeric()
                     ->thousandsSeparator($thousandsSeparator)
-                    ->decimalPlaces($decimalPlaces)
+                    ->decimalPlaces($decimalPlaces),
             ])
             ->pattern("{$prefix}money");
 
