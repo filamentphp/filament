@@ -3,6 +3,7 @@
 namespace Filament\Forms\Concerns;
 
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Field;
 
 trait HasComponents
 {
@@ -24,6 +25,15 @@ trait HasComponents
         $this->components($components);
 
         return $this;
+    }
+
+    public function getComponent(string | callable $callback): ?Component
+    {
+        $callback = is_callable($callback)
+            ? $callback
+            : fn (Component $component): bool => $component instanceof Field && $component->getName() === $callback;
+
+        return collect($this->components)->first($callback);
     }
 
     public function getComponents(): array

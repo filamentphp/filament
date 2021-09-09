@@ -2,6 +2,7 @@
 
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\TextInput;
 use Tests\TestCase;
 use Tests\Unit\Forms\Fixtures\Livewire;
 
@@ -40,4 +41,15 @@ it('belongs to parent component', function () {
 
     expect($container)
         ->getParentComponent()->toBe($component);
+});
+
+it('can return a component by name and callback', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->components([
+            $input = TextInput::make('foo_bar'),
+        ]);
+
+    expect($container)
+        ->getComponent('foo_bar')->toBe($input)
+        ->getComponent(fn (Component $component) => $component->getName() === 'foo_bar')->toBe($input);
 });
