@@ -3,6 +3,7 @@
 namespace Filament\Forms\Concerns;
 
 use Filament\Forms\Components\Component;
+use Illuminate\Support\Collection;
 
 trait HasComponents
 {
@@ -29,5 +30,11 @@ trait HasComponents
     public function getComponents(): array
     {
         return array_filter($this->components, fn (Component $component) => ! $component->isHidden());
+    }
+
+    public function getComponent(string $name): ?Component
+    {
+        return Collection::make($this->components)
+            ->first(fn (Component $component) => $component->getName() === $name);
     }
 }
