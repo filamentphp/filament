@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Concerns;
 
+use Closure;
 use Filament\Forms\Components\Component;
 use Illuminate\Support\Collection;
 
@@ -32,9 +33,12 @@ trait HasComponents
         return array_filter($this->components, fn (Component $component) => ! $component->isHidden());
     }
 
-    public function getComponent(string $name): ?Component
+    public function getComponent(string | Closure $callback): ?Component
     {
-        return Collection::make($this->components)
-            ->first(fn (Component $component) => $component->getName() === $name);
+        $callback = $callback instanceof Closure
+            ? $callback
+            : fn (Component $component) => method_exists($component, 'getName') && $component->getName() === $callback;
+
+        return Collection::make($this->components)->first($callback);
     }
 }
