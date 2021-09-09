@@ -54,3 +54,17 @@ it('has a label', function () {
     expect($component)
         ->getLabel()->toBe($label);
 });
+
+it('can have meta', function () {
+    $component = (new Component())
+        ->meta('foo', 'bar')
+        ->meta('bob', 'baz');
+
+    expect($component)
+        ->hasMeta('foo')->toBeTrue()
+        ->getMeta('foo')->toBe('bar')
+        ->getMeta(['foo', 'bob'])->toEqual([
+            'foo' => 'bar',
+            'bob' => 'baz',
+        ]);
+});
