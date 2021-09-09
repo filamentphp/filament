@@ -264,6 +264,8 @@ FileUpload::make('attachment')
     ->visibility('private')
 ```
 
+> Please note, it is the responsibility of the developer to delete these files from the disk if they are removed, as Filament is unaware if they are depended on elsewhere. One way to do this automatically is observing a [model event](https://laravel.com/docs/eloquent#events).
+
 You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types. You may also use the `image()` method as shorthand to allow all image MIME types.
 
 ```php
@@ -282,6 +284,8 @@ FileUpload::make('attachment')
     ->minSize(512)
     ->maxSize(1024)
 ```
+
+> To customize Livewire's default file upload validation rules, please refer to its [documentation](https://laravel-livewire.com/docs/file-uploads#global-validation).
 
 Filepond allows you to crop and resize images before they are uploaded. You can customize this behaviour using the `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods.
 
