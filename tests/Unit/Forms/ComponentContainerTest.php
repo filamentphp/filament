@@ -46,7 +46,7 @@ it('belongs to parent component', function () {
 it('can return a component by name and callback', function () {
     $container = ComponentContainer::make(Livewire::make())
         ->components([
-            $input = TextInput::make('foo_bar')
+            $input = TextInput::make('foo_bar'),
         ]);
 
     expect($container)
