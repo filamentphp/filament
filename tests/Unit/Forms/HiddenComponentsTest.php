@@ -20,7 +20,7 @@ test('components can be hidden based on condition', function () {
     $container = ComponentContainer::make(Livewire::make())
         ->components([
             (new Component())
-                ->when(fn (callable $get) => $get('foo_bar') === false)
+                ->when(fn (callable $get) => $get('foo_bar') === false),
         ])
         ->fill([
             'foo_bar' => true,
@@ -31,7 +31,7 @@ test('components can be hidden based on condition', function () {
 
     $container->components([
         (new Component())
-            ->whenTruthy('foo_bar')
+            ->whenTruthy('foo_bar'),
     ]);
 
     expect($container->getComponents())
@@ -39,7 +39,7 @@ test('components can be hidden based on condition', function () {
 
     $container->components([
         (new Component())
-            ->whenFalsy('foo_bar')
+            ->whenFalsy('foo_bar'),
     ]);
 
     expect($container->getComponents())
