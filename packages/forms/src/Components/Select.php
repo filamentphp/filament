@@ -41,11 +41,11 @@ class Select extends Field
         $this->placeholder(__('forms::components.select.placeholder'));
     }
 
-    public function boolean(): static
+    public function boolean(string $true = 'Yes', string $false = 'No'): static
     {
         $this->options([
-            1 => 'Yes',
-            0 => 'No',
+            1 => $true,
+            0 => $false,
         ]);
 
         return $this;
