@@ -22,14 +22,14 @@ trait CanBeHidden
 
     public function whenTruthy(string $path): static
     {
-        $this->visible(fn (callable $get): bool => ! ! $get($path));
+        $this->hidden(fn (callable $get): bool => ! $get($path));
 
         return $this;
     }
 
     public function whenFalsy(string $path): static
     {
-        $this->visible(fn (callable $get): bool => ! $get($path));
+        $this->hidden(fn (callable $get): bool => (bool) $get($path));
 
         return $this;
     }

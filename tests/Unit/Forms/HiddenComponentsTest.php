@@ -2,6 +2,7 @@
 
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 use Tests\Unit\Forms\Fixtures\Livewire;
 
@@ -17,13 +18,15 @@ test('components can be hidden', function () {
 });
 
 test('components can be hidden based on condition', function () {
+    $statePath = Str::random();
+
     $container = ComponentContainer::make(Livewire::make())
         ->components([
             (new Component())
-                ->when(fn (callable $get) => $get('foo_bar') === false),
+                ->when(fn (callable $get) => $get($statePath) === false),
         ])
         ->fill([
-            'foo_bar' => true,
+            $statePath => true,
         ]);
 
     expect($container->getComponents())
@@ -31,7 +34,7 @@ test('components can be hidden based on condition', function () {
 
     $container->components([
         (new Component())
-            ->whenTruthy('foo_bar'),
+            ->whenTruthy($statePath),
     ]);
 
     expect($container->getComponents())
@@ -39,7 +42,7 @@ test('components can be hidden based on condition', function () {
 
     $container->components([
         (new Component())
-            ->whenFalsy('foo_bar'),
+            ->whenFalsy($statePath),
     ]);
 
     expect($container->getComponents())
