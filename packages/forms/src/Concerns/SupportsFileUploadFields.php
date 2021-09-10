@@ -14,6 +14,10 @@ trait SupportsFileUploadFields
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 if ($url = $container->getUploadedFileUrl($statePath)) {
                     return $url;
                 }
@@ -33,6 +37,10 @@ trait SupportsFileUploadFields
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 if ($container->removeUploadedFile($statePath)) {
                     return true;
                 }

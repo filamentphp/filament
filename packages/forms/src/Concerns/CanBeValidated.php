@@ -14,6 +14,10 @@ trait CanBeValidated
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 if ($componentToFocus = $container->getInvalidComponentToFocus($statePaths)) {
                     return $componentToFocus;
                 }
@@ -33,6 +37,10 @@ trait CanBeValidated
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 $attributes = array_merge($attributes, $container->getValidationAttributes());
             }
         }
@@ -53,6 +61,10 @@ trait CanBeValidated
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 $rules = array_merge($rules, $container->getValidationRules());
             }
         }

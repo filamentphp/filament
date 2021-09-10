@@ -20,6 +20,10 @@ trait SupportsComponentFileAttachments
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 if ($url = $container->getComponentFileAttachmentUrl($statePath)) {
                     return $url;
                 }

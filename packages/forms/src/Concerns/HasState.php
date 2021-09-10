@@ -14,6 +14,10 @@ trait HasState
             $component->callAfterStateHydrated();
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 $container->callAfterStateHydrated();
             }
         }
@@ -29,6 +33,10 @@ trait HasState
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 if ($container->callAfterStateUpdated($path)) {
                     return true;
                 }
@@ -48,6 +56,10 @@ trait HasState
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 $container->callBeforeStateDehydrated();
             }
         }
@@ -66,6 +78,10 @@ trait HasState
                 }
 
                 foreach ($component->getChildComponentContainers() as $container) {
+                    if ($container->isHidden()) {
+                        continue;
+                    }
+
                     $container->dehydrateState($state);
                 }
             } else {

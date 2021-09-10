@@ -10,6 +10,10 @@ trait ListensToEvents
             $component->dispatchEvent($event, ...$parameters);
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 $container->dispatchEvent($event, ...$parameters);
             }
         }

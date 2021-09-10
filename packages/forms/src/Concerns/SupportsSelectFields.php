@@ -14,6 +14,10 @@ trait SupportsSelectFields
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 if ($results = $container->getSelectOptionLabel($statePath)) {
                     return $results;
                 }
@@ -31,6 +35,10 @@ trait SupportsSelectFields
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 if ($results = $container->getSelectSearchResults($statePath, $query)) {
                     return $results;
                 }

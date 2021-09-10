@@ -23,6 +23,10 @@ trait BelongsToModel
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 $container->saveRelationships();
             }
         }

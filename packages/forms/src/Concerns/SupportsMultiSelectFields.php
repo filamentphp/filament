@@ -14,6 +14,10 @@ trait SupportsMultiSelectFields
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 if ($results = $container->getMultiSelectOptionLabels($statePath)) {
                     return $results;
                 }
@@ -31,6 +35,10 @@ trait SupportsMultiSelectFields
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
                 if ($results = $container->getMultiSelectSearchResults($statePath, $query)) {
                     return $results;
                 }
