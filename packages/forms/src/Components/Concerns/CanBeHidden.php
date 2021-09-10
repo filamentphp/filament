@@ -20,6 +20,20 @@ trait CanBeHidden
         return $this;
     }
 
+    public function whenTruthy(string $path): static
+    {
+        $this->visible(fn (callable $get): bool => ! ! $get($path));
+
+        return $this;
+    }
+
+    public function whenFalsy(string $path): static
+    {
+        $this->visible(fn (callable $get): bool => ! $get($path));
+
+        return $this;
+    }
+
     public function visible(bool | callable $condition = true): static
     {
         $this->isHidden = fn (): bool => ! $this->evaluate($condition);
