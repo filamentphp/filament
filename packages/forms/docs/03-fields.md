@@ -336,7 +336,69 @@ MultipleFileUpload::make('attachments')
 
 ## Hidden
 
+The hidden component allows you to create a hidden field in your form that holds a value.
+
+```php
+use Filament\Forms\Components\Hidden;
+
+Hidden::make('token')
+```
+
 ## Markdown editor
+
+The markdown editor allows you to edit and preview markdown content, as well as upload images.
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+
+MarkdownEditor::make('content')
+```
+
+You may enable / disable toolbar buttons using a range of convenient methods:
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+
+MarkdownEditor::make('content')
+    ->toolbarButtons([
+        'attachFiles',
+        'bold',
+        'bulletList',
+        'codeBlock',
+        'edit',
+        'italic',
+        'link',
+        'orderedList',
+        'preview',
+        'strike',
+    ])
+MarkdownEditor::make('content')
+    ->disableToolbarButtons([
+        'attachFiles',
+        'codeBlock',
+    ])
+MarkdownEditor::make('content')
+    ->disableAllToolbarButtons()
+    ->enableToolbarButtons([
+        'bold',
+        'bulletList',
+        'edit',
+        'italic',
+        'preview',
+        'strike',
+    ])
+```
+
+You may customise how images are uploaded using configuration methods:
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+
+MarkdownEditor::make('content')
+    ->fileAttachmentsDisk('s3')
+    ->fileAttachmentsDirectory('attachments')
+    ->fileAttachmentsVisibility('private')
+```
 
 ## Multi-select
 
@@ -378,6 +440,61 @@ Repeater::make('members')
 If you wish to define a repeater with multiple schema blocks that can be repeated in any order, please use the [builder](#builder).
 
 ## Rich editor
+
+The rich editor allows you to edit and preview HTML content, as well as upload images.
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+```
+
+You may enable / disable toolbar buttons using a range of convenient methods:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->toolbarButtons([
+        'attachFiles',
+        'blockquote',
+        'bold',
+        'bulletList',
+        'codeBlock',
+        'h2',
+        'h3',
+        'italic',
+        'link',
+        'orderedList',
+        'redo',
+        'strike',
+        'undo',
+    ])
+RichEditor::make('content')
+    ->disableToolbarButtons([
+        'attachFiles',
+        'codeBlock',
+    ])
+RichEditor::make('content')
+    ->disableAllToolbarButtons()
+    ->enableToolbarButtons([
+        'bold',
+        'bulletList',
+        'italic',
+        'strike',
+    ])
+```
+
+You may customise how images are uploaded using configuration methods:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->fileAttachmentsDisk('s3')
+    ->fileAttachmentsDirectory('attachments')
+    ->fileAttachmentsVisibility('private')
+```
 
 ## Select
 
