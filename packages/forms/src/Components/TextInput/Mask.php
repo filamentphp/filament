@@ -122,6 +122,20 @@ class Mask implements Jsonable
         return $this;
     }
 
+    public function money(string $prefix, string $thousandsSeparator = ',', int $decimalPlaces = 2): static
+    {
+        $this
+            ->patternBlocks([
+                'money' => fn (Mask $mask) => $mask
+                    ->numeric()
+                    ->thousandsSeparator($thousandsSeparator)
+                    ->decimalPlaces($decimalPlaces),
+            ])
+            ->pattern("{$prefix}money");
+
+        return $this;
+    }
+
     public function numeric(bool $condition = true): static
     {
         $this->isNumeric = $condition;
