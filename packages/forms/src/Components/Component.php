@@ -14,6 +14,7 @@ class Component extends ViewComponent implements Htmlable
     use Concerns\BelongsToContainer;
     use Concerns\BelongsToModel;
     use Concerns\CanBeConcealed;
+    use Concerns\CanBeConditionallyModified;
     use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
     use Concerns\CanSpanColumns;
