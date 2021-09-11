@@ -430,9 +430,9 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
 
 ## Field relationships
 
-Some fields, such as the `BelongsToManyMultiSelect`, `SpatieMediaLibraryFileUpload`, or `SpatieTagsInput` are able to interact with model relationships.
+Some fields, such as the `BelongsToSelect`, `BelongsToManyMultiSelect`, `SpatieMediaLibraryFileUpload`, or `SpatieTagsInput` are able to interact with model relationships.
 
-For example, `BelongsToManyMultiSelect` is a multi-select field that can be used to attach records to a `BelongstoMany` relationship. When [registering a model](#registering-a-model) to the form, these relationships will be automatically saved to the pivot table [when `getState()` is called](#getting-data-from-forms):
+For example, `BelongsToManyMultiSelect` is a multi-select field that can be used to attach records to a `BelongstoMany` relationship. When [registering a model](#registering-a-model) to the form or component, these relationships will be automatically saved to the pivot table [when `getState()` is called](#getting-data-from-forms):
 
 ```php
 <?php

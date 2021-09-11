@@ -178,6 +178,21 @@ use Filament\Forms\Components\Checkbox;
 Checkbox::make('is_admin')->stacked()
 ```
 
+If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    protected $casts = [
+        'is_admin' => 'boolean',
+    ];
+    
+    // ...
+}
+```
+
 ## Date-time picker
 
 The date-time picker provides an interactive interface for selecting a date, and optionally a time.
@@ -404,6 +419,59 @@ MarkdownEditor::make('content')
 
 ## Multi-select
 
+The multi-select component allows you to select multiple values from a list of predefined options:
+
+```php
+use Filament\Forms\Components\MultiSelect;
+
+MultiSelect::make('technologies')
+    ->options([
+        'tailwind' => 'TailwindCSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+```
+
+These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class App extends Model
+{
+    protected $casts = [
+        'technologies' => 'array',
+    ];
+    
+    // ...
+}
+```
+
+### Populating automatically from a `belongsToMany` relationship
+
+You may employ the `relationship()` method of the `BelongsToManyMultiSelect` to configure a relationship to automatically retrieve and save options from:
+
+```php
+use App\Models\App;
+use Filament\Forms\Components\BelongsToManyMultiSelect;
+
+BelongsToManyMultiSelect::make('technologies')
+    ->relationship('technologies', 'name')
+```
+
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](building-forms#field-relationships) section**.
+
+You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
+
+```php
+use Filament\Forms\Components\BelongsToManyMultiSelect;
+use Illuminate\Database\Eloquent\Builder;
+
+BelongsToManyMultiSelect::make('technologies')
+    ->relationship('technologies', 'name', fn (Builder $query) => $query->withTrashed())
+```
+
 ## Repeater
 
 The repeater component allows you to output a JSON array of repeated form components.
@@ -499,6 +567,63 @@ RichEditor::make('content')
 ```
 
 ## Select
+
+The select component allows you to select from a list of predefined options:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'review' => 'In review',
+        'published' => 'Published',
+    ])
+```
+
+You may enable a search input to allow easier access to many options, using the `searchable()` method:
+
+```php
+use App\Models\User;
+use Filament\Forms\Components\Select;
+
+Select::make('authorId')
+    ->options(User::all()->pluck('name', 'id'))
+    ->searchable()
+```
+
+### Dependant selects
+
+Commonly, you may desire "dependant" select inputs, which populate their options based on the state of another.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/W_eNyimRi3w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Some of the techniques described in the [dynamic forms](dynamic-forms) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customisation possibilities.
+
+### Populating automatically from a `belongsTo` relationship
+
+You may employ the `relationship()` method of the `BelongsToSelect` to configure a relationship to automatically retrieve and save options from:
+
+```php
+use App\Models\Post;
+use Filament\Forms\Components\BelongsToSelect;
+
+BelongsToSelect::make('authorId')
+    ->relationship('author', 'name')
+```
+
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](building-forms#field-relationships) section**.
+
+You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
+
+```php
+use App\Models\App;
+use Filament\Forms\Components\BelongsToSelect;
+use Illuminate\Database\Eloquent\Builder;
+
+BelongsToSelect::make('authorId')
+    ->relationship('author', 'name', fn (Builder $query) => $query->withTrashed())
+```
 
 ## Tags input
 
@@ -747,6 +872,21 @@ use Filament\Forms\Components\Toggle;
 Toggle::make('is_admin')
     ->onIcon('heroicon-s-lightning-bolt'),
     ->offIcon('heroicon-s-user')
+```
+
+If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    protected $casts = [
+        'is_admin' => 'boolean',
+    ];
+    
+    // ...
+}
 ```
 
 ## View
