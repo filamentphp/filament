@@ -891,4 +891,47 @@ class User extends Model
 
 ## View
 
+Aside from [building custom fields](#building-custom-fields), you may create "view" fields which allow you to create custom fields without extra classes.
+
+```php
+use Filament\Forms\Components\ViewField;
+
+ViewField::make('notifications')->view('filament.forms.components.checkbox-list')
+```
+
+Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
+
+The `$getStatePath()` callable may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
+
+```blade
+<div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+    <!-- Interact with the `state` property in Alpine.js -->
+</div>
+```
+
 ## Building custom fields
+
+You may create your own custom field classes and views, which you can reuse across your project, and even release as a plugin to the community.
+
+> If you're just creating a simple custom field to use once, you could instead use a [view field](#view) to render any custom Blade file.
+
+Extend the `Filament\Forms\Components\Field` class, and define the `$view` path of the custom field:
+
+```php
+use Filament\Forms\Components\Field;
+
+class CheckboxList extends Field
+{
+    protected string $view = 'filament.forms.components.checkbox-list';
+}
+```
+
+Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
+
+The `$getStatePath()` callable may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
+
+```blade
+<div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+    <!-- Interact with the `state` property in Alpine.js -->
+</div>
+```
