@@ -334,6 +334,8 @@ MultipleFileUpload::make('attachments')
     )
 ```
 
+> Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/docs/spatie-laravel-media-library-plugin) for more information.
+
 ## Hidden
 
 The hidden component allows you to create a hidden field in your form that holds a value.
@@ -500,7 +502,214 @@ RichEditor::make('content')
 
 ## Tags input
 
+The tags input component allows you to interact with a list of tags.
+
+By default, tags are stored in JSON:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+```
+
+If you're saving the JSON tags using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class Post extends Model
+{
+    protected $casts = [
+        'tags' => 'array',
+    ];
+    
+    // ...
+}
+```
+
+You may allow the tags to be stored in a separated string, instead of JSON. To set this up, pass the separating character to the `separator()` method:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')->separator(',')
+```
+
+> Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](/docs/spatie-laravel-tags-plugin) for more information.
+
 ## Text input
+
+The text input allows you to interact with a string:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+```
+
+You may set the type of string using a set of methods. Some, such as `email()`, also provide validation:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('text')
+    ->email()
+    ->numeric()
+    ->password()
+    ->tel()
+    ->url()
+```
+
+You may instead use the `type()` method to pass another [HTML input type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#input_types):
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('backgroundColor')->type('color')
+```
+
+You may place text before and after the input using the `prefix()` and `postfix()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->url()
+    ->prefix('https://')
+    ->postfix('.com')
+```
+
+You may limit the length of the string by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->minLength(2)
+    ->maxLength(255)
+```
+
+In addition, you may validate the minimum and maximum value of the input by setting the `minValue()` and `maxValue()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->numeric()
+    ->minValue(1)
+    ->maxValue(100)
+```
+
+### Input masking
+
+Input masking is the practice of defining a format that the input value must conform to.
+
+In Filament, you may interact with the `Mask` object in the `mask()` method to configure your mask:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->mask(fn (TextInput\Mask $mask) => $mask->pattern('+{7}(000)000-00-00'))
+```
+
+Under the hood, masking is powered by [`imaskjs`](https://imask.js.org). The vast majority of its masking features are also available in Filament. Reading their [guide](https://imask.js.org/guide.html) first, and then approaching the same task using Filament is probably the easiest option.
+
+You may define and configure a [numeric mask](https://imask.js.org/guide.html#masked-number) to deal with numbers:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('number')
+    ->numeric()
+    ->mask(fn (TextInput\Mask $mask) => $mask
+        ->numeric()
+        ->decimalPlaces(2) // Set the number of digits after the decimal point.
+        ->decimalSeparator(',') // Add a separator for decimal numbers.
+        ->integer() // Disallow decimal numbers.
+        ->mapToDecimalSeparator([',']) // Map additional characters to the decimal separator.
+        ->minValue(1) // Set a minimum and maximum value that the number can be.
+        ->minValue(100) // Set a minimum and maximum value that the number can be.
+        ->normalizeZeros() // Append or remove zeros at the end of the number.
+        ->padFractionalZeros() // Pad zeros at the end of the number to always maintain the maximum number of decimal places.
+        ->thousandsSeparator(','), // Add a separator for thousands.
+    )
+```
+
+[Enum masks](https://imask.js.org/guide.html#enum) limit the options that the user can input:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('code')->mask(fn (TextInput\Mask $mask) => $mask->enum(['F1', 'G2', 'H3']))
+```
+
+[Range masks](https://imask.js.org/guide.html#masked-range) can be used to restrict input to a number range:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('code')->mask(fn (TextInput\Mask $mask) => $mask
+    ->range()
+    ->from(1) // Set the lower limit.
+    ->to(100) // Set the upper limit.
+    ->maxValue(100), // Pad zeros at the start of smaller numbers.
+)
+```
+
+In addition to simple pattens, you may also define multiple [pattern blocks](https://imask.js.org/guide.html#masked-pattern):
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask
+    ->patternBlocks([
+        'money' => fn (Mask $mask) => $mask
+            ->numeric()
+            ->thousandsSeparator(',')
+            ->decimalPlaces('.'),
+    ])
+    ->pattern("$money"),
+)
+```
+
+There is also a `money()` method that is able to define easier formatting for currency inputs. This example, the symbol prefix is `$`, there is a `,` thousands separator, and two decimal places:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('code')->mask(fn (TextInput\Mask $mask) => $mask->money('$', ',', 2))
+```
+
+## Textarea
+
+The textarea allows you to interact with a multi-line string:
+
+```php
+use Filament\Forms\Components\Textarea;
+
+Textarea::make('description')
+```
+
+You may change the size of the textarea by defining the `rows()` and `cols()` methods:
+
+```php
+use Filament\Forms\Components\Textarea;
+
+Textarea::make('domain')
+    ->rows(10)
+    ->cols(20)
+```
+
+You may limit the length of the string by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
+
+```php
+use Filament\Forms\Components\Textarea;
+
+Textarea::make('description')
+    ->minLength(50)
+    ->maxLength(500)
+```
 
 ## Toggle
 

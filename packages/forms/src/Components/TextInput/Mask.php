@@ -66,6 +66,13 @@ class Mask implements Jsonable
         return $this;
     }
 
+    public function decimalSeparator(?string $separator = '.'): static
+    {
+        $this->decimalSeparator = $separator;
+
+        return $this;
+    }
+
     public function enum(array $values): static
     {
         $this->enum = $values;
