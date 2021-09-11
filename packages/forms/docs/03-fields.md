@@ -891,7 +891,7 @@ class User extends Model
 
 ## View
 
-Aside from [building custom fields](#building-custom-fields), you may create "view" fields which allow you to create custom fields without extra classes.
+Aside from [building custom fields](#building-custom-fields), you may create "view" fields which allow you to create custom fields without extra PHP classes.
 
 ```php
 use Filament\Forms\Components\ViewField;
