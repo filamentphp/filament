@@ -130,6 +130,28 @@ Grid::make([
     ])
 ```
 
+You may specify the number of columns that any component may span, at any breakpoint in an identical way:
+
+```php
+use Filament\Forms\Components\Grid;use Filament\Forms\Components\TextInput;
+
+Grid::make([
+    'default' => 1,
+    'sm' => 3,
+    'xl' => 6,
+    '2xl' => 8,
+])
+    ->schema([
+        TextInput::make('name')
+            ->columnSpan([
+                'sm' => 2,
+                'xl' => 3,
+                '2xl' => 4,
+            ]),
+        // ...
+    ])
+```
+
 ## Placeholder
 
 Placeholders can be used to render text-only "fields" within your forms. Each placeholder has a state, which is cannot be changed by the user.

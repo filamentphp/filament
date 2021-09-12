@@ -72,6 +72,30 @@ Many fields will also include a placeholder value for when it has no value. You 
 Field::make('name')->placeholder('John Doe')
 ```
 
+If your field is in a grid layout, you may specify the number of columns it spans at any breakpoint:
+
+```php
+use Filament\Forms\Components\Grid;use Filament\Forms\Components\TextInput;
+
+Grid::make([
+    'default' => 1,
+    'sm' => 3,
+    'xl' => 6,
+    '2xl' => 8,
+])
+    ->schema([
+        TextInput::make('name')
+            ->columnSpan([
+                'sm' => 2,
+                'xl' => 3,
+                '2xl' => 4,
+            ]),
+        // ...
+    ])
+```
+
+> More information about grids is available in the [layout documentation](layout#grid).
+
 ## Builder
 
 Similar to a [repeater](#repeater), the builder component allows you to output a JSON array of repeated form components. Unlike the repeater, which only defines one form schema to repeat, the builder allows you to define different schema "blocks", which you can repeat in any order. This makes it useful for building more advanced array structures.
