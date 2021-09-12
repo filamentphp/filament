@@ -167,6 +167,8 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
 }
 ```
 
+> You may customize what happens after fields are hydrated [using the `afterStateHydrated()` method](advanced-forms#hydration).
+
 ## Getting data from forms
 
 To get all form data in an array, call the `getState()` method on your form.
@@ -213,6 +215,8 @@ When `getState()` is run:
 1) [Validation](#validation) rules are checked, and if errors are present, the form is not submitted.
 2) Any pending file uploads are stored permanently in the filesystem.
 3) [Field relationships](#field-relationships), if they are defined, are saved.
+
+> You may transform the value that is dehydrated from a field [using the `dehydrateStateUsing()` method](advanced-forms#dehydration).
 
 ## Validation
 

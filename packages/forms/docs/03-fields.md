@@ -598,7 +598,7 @@ Commonly, you may desire "dependant" select inputs, which populate their options
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/W_eNyimRi3w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-Some of the techniques described in the [dynamic forms](dynamic-forms) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customisation possibilities.
+Some of the techniques described in the [advanced forms](advanced-forms) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customisation possibilities.
 
 ### Populating automatically from a `belongsTo` relationship
 

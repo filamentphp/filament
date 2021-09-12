@@ -1,5 +1,5 @@
 ---
-title: Dynamic Forms
+title: Advanced Forms
 ---
 
 ## Using callback customisation
@@ -127,4 +127,63 @@ TextInput::make('newPassword')->password()
 TextInput::make('newPasswordConfirmation')
     ->password()
     ->hidden(fn (callable $get) => $get('newPassword') !== null)
+```
+
+## Field lifecycle
+
+### Hydration
+
+Hydration is the process which fill fields with data. It runs when you call the [form's `fill()` method](building-forms#filling-forms-with-data). You may customize what happens after a field is hydrated using the `afterStateHydrated()`.
+
+In this example, the `name` field will always be hydrated with the correctly capitalized name:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->afterStateHydrated(function (TextInput $component, callable $set, $state) {
+        $set($component, ucwords($state));
+    })
+```
+
+### Updates
+
+You may use the `afterStateHydrated()` method to customize what happens after a field is updated.
+
+In this example, the `slug` field is updated with the slug version of the `title` field automatically:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Str;
+
+TextInput::make('title')
+    ->reactive()
+    ->afterStateUpdated(function (callable $set, $state) {
+        $set('slug', Str::slug($state));
+    })
+TextInput::make('slug')
+```
+
+### Dehydration
+
+Hydration is the process which gets data from fields, and transforms it. It runs when you call the [form's `getState()` method](building-forms#getting-data-from-forms). You may customize how the state is dehydrated from the form by returning the transformed state from the `afterStateHydrated()` callback.
+
+In this example, the `name` field will always be dehydrated with the correctly capitalized name:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')->dehydrateStateUsing(fn ($state) => ucwords($state))
+```
+
+You may also prevent the field from being dehydrated altogether by passing `false` to `dehydrated()`.
+
+In this example, the `passwordConfirmation` field will not be present in the array returned from `getData()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('passwordConfirmation')
+    ->password()
+    ->dehydrated(false)
 ```
