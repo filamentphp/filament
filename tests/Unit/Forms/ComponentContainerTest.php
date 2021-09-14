@@ -63,9 +63,9 @@ it('can return a flat array of components', function () {
         ->components([
             Fieldset::make(Str::random())
                 ->schema([
-                    $field = TextInput::make(Str::random())
+                    $field = TextInput::make(Str::random()),
                 ]),
-            $section = Section::make(Str::random())
+            $section = Section::make(Str::random()),
         ]);
 
     expect($container)
@@ -75,7 +75,7 @@ it('can return a flat array of components', function () {
         ->toContain($section)
         ->toMatchArray([
             $field,
-            $section
+            $section,
         ]);
 });
 
@@ -84,9 +84,9 @@ it('can return a flat array of fields', function () {
         ->components([
             Fieldset::make(Str::random())
                 ->schema([
-                    $field = TextInput::make($name = Str::random())
+                    $field = TextInput::make($name = Str::random()),
                 ]),
-            $section = Section::make(Str::random())
+            $section = Section::make(Str::random()),
         ]);
 
     expect($container)

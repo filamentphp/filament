@@ -52,12 +52,18 @@ trait HasComponents
 
     public function getFlatFields(): array
     {
+<<<<<<< HEAD
         return collect($this->getFlatComponents())
             ->whereInstanceOf(Field::class)
             ->mapWithKeys(fn (Field $field) => [
                 $field->getName() => $field
             ])
             ->all();
+=======
+        return collect($this->getFlatComponents())->whereInstanceOf(Field::class)->mapWithKeys(fn (Field $field) => [
+            $field->getName() => $field,
+        ])->all();
+>>>>>>> b35bcf63e6c2c517badb9a690ff522b247ccc62f
     }
 
     public function getComponents(): array
