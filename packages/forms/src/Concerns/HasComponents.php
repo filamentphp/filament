@@ -31,9 +31,9 @@ trait HasComponents
     {
         $callback = is_callable($callback)
             ? $callback
-            : fn (Component $component): bool => $component instanceof Field && $component->getName() === $callback;
+            : fn (Component $component): bool => $component->getName() === $callback;
 
-        return collect($this->components)->first($callback);
+        return collect($this->getFlatFields())->first($callback);
     }
 
     public function getFlatComponents(): array
