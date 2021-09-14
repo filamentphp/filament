@@ -33,7 +33,7 @@ trait HasComponents
              ? $callback
              : fn (Component $component): bool => $component instanceof Field && $component->getStatePath() === $callback;
 
-         return collect($this->getFlatComponents())->first($callback);
+        return collect($this->getFlatComponents())->first($callback);
     }
 
     public function getFlatComponents(): array
