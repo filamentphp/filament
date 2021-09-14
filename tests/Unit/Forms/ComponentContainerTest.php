@@ -3,6 +3,9 @@
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 use Tests\Unit\Forms\Fixtures\Livewire;
@@ -53,4 +56,42 @@ it('can return a component by name and callback', function () {
     expect($container)
         ->getComponent($statePath)->toBe($input)
         ->getComponent(fn (Component $component) => $component->getName() === $statePath)->toBe($input);
+});
+
+it('can return a flat array of components', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->components([
+            $fieldset = Fieldset::make(Str::random())
+                ->schema([
+                    $field = TextInput::make(Str::random()),
+                ]),
+            $section = Section::make(Str::random()),
+        ]);
+
+    expect($container)
+        ->getFlatComponents()
+        ->toHaveCount(3)
+        ->toMatchArray([
+            $fieldset,
+            $field,
+            $section,
+        ]);
+});
+
+it('can return a flat array of fields', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->components([
+            Fieldset::make(Str::random())
+                ->schema([
+                    $field = TextInput::make($name = Str::random()),
+                ]),
+            $section = Section::make(Str::random()),
+        ]);
+
+    expect($container)
+        ->getFlatFields()
+        ->toHaveCount(1)
+        ->toMatchArray([
+            $name => $field,
+        ]);
 });
