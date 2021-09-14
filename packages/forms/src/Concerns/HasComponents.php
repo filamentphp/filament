@@ -53,7 +53,7 @@ trait HasComponents
     public function getFlatFields(): array
     {
         return collect($this->getFlatComponents())->whereInstanceOf(Field::class)->mapWithKeys(fn (Field $field) => [
-            $field->getName() => $field
+            $field->getName() => $field,
         ])->all();
     }
 
