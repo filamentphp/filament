@@ -45,7 +45,7 @@ trait CanBeHidden
 
         $this->hidden(function (callable $get) use ($paths): bool {
             foreach ($paths as $path) {
-                if (!! $get($path)) {
+                if (! ! $get($path)) {
                     return true;
                 }
             }
