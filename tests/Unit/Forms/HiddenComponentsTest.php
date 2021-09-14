@@ -47,6 +47,30 @@ test('components can be hidden based on condition', function () {
 
     expect($container->getComponents())
         ->toHaveLength(0);
+
+    $container
+        ->components([
+            (new Component())
+                ->whenFalsy([$statePath, 'bob']),
+        ])
+        ->fill([
+            'bob' => true,
+        ]);
+
+    expect($container->getComponents())
+        ->toHaveLength(0);
+
+    $container
+        ->components([
+            (new Component())
+                ->whenTruthy([$statePath, 'bob']),
+        ])
+        ->fill([
+            'bob' => true,
+        ]);
+
+    expect($container->getComponents())
+        ->toHaveLength(1);
 });
 
 test('hidden components are not returned from container', function () {
