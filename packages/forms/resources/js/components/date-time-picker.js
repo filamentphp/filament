@@ -64,8 +64,6 @@ export default (Alpine) => {
                 this.minute = date.minute()
                 this.second = date.second()
 
-                if (isRequired && ! this.getSelectedDate()) this.setState(date)
-
                 this.setDisplayText()
 
                 if (isAutofocused) this.openPicker()
