@@ -29,7 +29,6 @@
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
             format: '{{ convert_date_format($getFormat())->to('day.js') }}',
             isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
-            isRequired: {{ $isRequired() ? 'true' : 'false' }},
             locale: '{{ Str::of(app()->getLocale())->lower()->kebab() }}',
             maxDate: '{{ $getMaxDate() }}',
             minDate: '{{ $getMinDate() }}',

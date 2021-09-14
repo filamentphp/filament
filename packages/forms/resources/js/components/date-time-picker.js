@@ -13,7 +13,6 @@ export default (Alpine) => {
         firstDayOfWeek,
         format,
         isAutofocused,
-        isRequired,
         locale,
         maxDate,
         minDate,
@@ -57,14 +56,12 @@ export default (Alpine) => {
 
                 let date = this.getSelectedDate() ?? dayjs()
 
-                if (this.maxDate !== null && date.isAfter(this.maxDate)) date = isRequired ? this.maxDate : null
-                if (this.minDate !== null && date.isBefore(this.minDate)) date = isRequired ? this.minDate : null
+                if (this.maxDate !== null && date.isAfter(this.maxDate)) date = null
+                if (this.minDate !== null && date.isBefore(this.minDate)) date = null
 
                 this.hour = date.hour()
                 this.minute = date.minute()
                 this.second = date.second()
-
-                if (isRequired && ! this.getSelectedDate()) this.setState(date)
 
                 this.setDisplayText()
 
@@ -160,8 +157,8 @@ export default (Alpine) => {
                 this.$watch('state', () => {
                     let date = this.getSelectedDate() ?? dayjs()
 
-                    if (this.maxDate !== null && date.isAfter(this.maxDate)) date = isRequired ? this.maxDate : null
-                    if (this.minDate !== null && date.isBefore(this.minDate)) date = isRequired ? this.minDate : null
+                    if (this.maxDate !== null && date.isAfter(this.maxDate)) date = null
+                    if (this.minDate !== null && date.isBefore(this.minDate)) date = null
 
                     this.hour = date.hour()
                     this.minute = date.minute()
@@ -305,18 +302,11 @@ export default (Alpine) => {
 
             setState: function (date) {
                 if (date === null) {
-                    if (isRequired) {
-                        date = dayjs()
+                    this.state = null
 
-                        if (this.maxDate !== null && date.isAfter(this.maxDate)) date = this.maxDate
-                        if (this.minDate !== null && date.isBefore(this.minDate)) date = this.minDate
-                    } else {
-                        this.state = null
+                    this.setDisplayText()
 
-                        this.setDisplayText()
-
-                        return
-                    }
+                    return
                 } else {
                     if (this.dateIsDisabled(date)) return
                 }
