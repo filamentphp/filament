@@ -30,10 +30,10 @@ trait HasComponents
     public function getComponent(string | callable $callback): ?Component
     {
         $callback = is_callable($callback)
-            ? $callback
-            : fn (Component $component): bool => $component instanceof Field && $component->getName() === $callback;
+             ? $callback
+             : fn (Component $component): bool => $component instanceof Field && $component->getStatePath() === $callback;
 
-        return collect($this->components)->first($callback);
+        return collect($this->getFlatComponents())->first($callback);
     }
 
     public function getFlatComponents(): array
