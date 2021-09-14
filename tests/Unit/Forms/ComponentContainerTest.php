@@ -61,7 +61,7 @@ it('can return a component by name and callback', function () {
 it('can return a flat array of components', function () {
     $container = ComponentContainer::make(Livewire::make())
         ->components([
-            Fieldset::make(Str::random())
+            $fieldset = Fieldset::make(Str::random())
                 ->schema([
                     $field = TextInput::make(Str::random()),
                 ]),
@@ -70,10 +70,9 @@ it('can return a flat array of components', function () {
 
     expect($container)
         ->getFlatComponents()
-        ->toHaveCount(2)
-        ->toContain($field)
-        ->toContain($section)
+        ->toHaveCount(3)
         ->toMatchArray([
+            $fieldset,
             $field,
             $section,
         ]);
@@ -92,8 +91,6 @@ it('can return a flat array of fields', function () {
     expect($container)
         ->getFlatFields()
         ->toHaveCount(1)
-        ->toContain($field)
-        ->not->toContain($section)
         ->toMatchArray([
             $name => $field,
         ]);

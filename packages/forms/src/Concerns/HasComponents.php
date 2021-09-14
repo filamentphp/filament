@@ -41,7 +41,7 @@ trait HasComponents
         return collect($this->getComponents())
             ->map(function (Component $component) {
                 if ($component->hasChildComponentContainer()) {
-                    return $component->getChildComponentContainer()->getFlatComponents();
+                    return array_merge([$component], $component->getChildComponentContainer()->getFlatComponents());
                 }
 
                 return $component;
