@@ -30,11 +30,11 @@ trait HasComponents
     public function getComponent(string | callable $callback): ?Component
     {
         $fields = $this->getFlatFields();
-        
+
         if (is_callable($callback)) {
             return collect($fields)->first($callback);
         }
-        
+
         return $fields[$callback] ?? null;
     }
 
