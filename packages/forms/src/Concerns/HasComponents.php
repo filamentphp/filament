@@ -36,6 +36,27 @@ trait HasComponents
         return collect($this->components)->first($callback);
     }
 
+    public function getFlatComponents(): array
+    {
+        return collect($this->getComponents())
+            ->map(function (Component $component) {
+                if ($component->hasChildComponentContainer()) {
+                    return $component->getChildComponentContainer()->getFlatComponents();
+                }
+
+                return $component;
+            })
+            ->flatten()
+            ->all();
+    }
+
+    public function getFlatFields(): array
+    {
+        return collect($this->getFlatComponents())->whereInstanceOf(Field::class)->mapWithKeys(fn (Field $field) => [
+            $field->getName() => $field
+        ])->all();
+    }
+
     public function getComponents(): array
     {
         return array_filter($this->components, fn (Component $component) => ! $component->isHidden());
