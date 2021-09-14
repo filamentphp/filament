@@ -2,6 +2,8 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Illuminate\Support\Arr;
+
 trait CanBeHidden
 {
     protected $isHidden = false;
@@ -20,16 +22,36 @@ trait CanBeHidden
         return $this;
     }
 
-    public function whenTruthy(string $path): static
+    public function whenTruthy(string | array $paths): static
     {
-        $this->hidden(fn (callable $get): bool => ! $get($path));
+        $paths = Arr::wrap($paths);
+
+        $this->hidden(function (callable $get) use ($paths): bool {
+            foreach ($paths as $path) {
+                if (! $get($path)) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
 
         return $this;
     }
 
-    public function whenFalsy(string $path): static
+    public function whenFalsy(string | array $paths): static
     {
-        $this->hidden(fn (callable $get): bool => (bool) $get($path));
+        $paths = Arr::wrap($paths);
+
+        $this->hidden(function (callable $get) use ($paths): bool {
+            foreach ($paths as $path) {
+                if (! ! $get($path)) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
 
         return $this;
     }
