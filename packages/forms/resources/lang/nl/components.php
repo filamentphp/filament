@@ -52,7 +52,7 @@ return [
         'search_prompt' => 'Start met typen om te zoeken...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'Nieuwe tag',
     ],
 

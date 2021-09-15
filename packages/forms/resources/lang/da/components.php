@@ -52,7 +52,7 @@ return [
         'search_prompt' => 'Begynd at skrive for at søge ...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'Ny mærkat',
     ],
 

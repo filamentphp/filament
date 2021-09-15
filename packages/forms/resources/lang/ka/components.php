@@ -52,7 +52,7 @@ return [
         'search_prompt' => 'ძიება...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'ახალი ტეგი',
     ],
 

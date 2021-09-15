@@ -52,7 +52,7 @@ return [
         'search_prompt' => 'Mulai mengetik untuk mencari...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'Tag baru',
     ],
 

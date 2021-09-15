@@ -103,7 +103,7 @@ return [
         'search_prompt' => '搜索...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => '新标签',
     ],
 

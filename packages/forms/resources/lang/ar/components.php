@@ -52,7 +52,7 @@ return [
         'search_prompt' => 'ابدأ الكتابة للبحث ...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'كلمة مفتاحية جديدة',
     ],
 

@@ -103,7 +103,7 @@ return [
         'search_prompt' => 'دەستبکە بە نوسین بۆ گەڕان ...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'تاگی نوێ',
     ],
 

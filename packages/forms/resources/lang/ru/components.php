@@ -52,7 +52,7 @@ return [
         'search_prompt' => 'введите текст для поиска',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'новый тег',
     ],
 

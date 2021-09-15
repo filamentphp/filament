@@ -52,7 +52,7 @@ return [
         'search_prompt' => 'Commencez à taper pour rechercher...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'Nouveau tag',
     ],
 

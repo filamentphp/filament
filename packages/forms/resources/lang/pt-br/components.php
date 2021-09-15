@@ -52,7 +52,7 @@ return [
         'search_prompt' => 'Comece a digitar para pesquisar...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'Novo rótulo',
     ],
 

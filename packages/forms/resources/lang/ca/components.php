@@ -52,7 +52,7 @@ return [
         'search_prompt' => 'Comenceu a escriure per cercar...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'Nova Etiqueta',
     ],
 

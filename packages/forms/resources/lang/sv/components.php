@@ -103,7 +103,7 @@ return [
         'search_prompt' => 'Börja skriva för att söka...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'Ny tagg',
     ],
 

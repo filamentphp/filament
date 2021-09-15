@@ -52,7 +52,7 @@ return [
         'search_prompt' => 'Beginnen Sie mit der Eingabe, um zu suchen...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'Neues Etikett',
     ],
 

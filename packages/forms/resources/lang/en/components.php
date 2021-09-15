@@ -155,7 +155,7 @@ return [
         'search_prompt' => 'Start typing to search...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'New tag',
     ],
 

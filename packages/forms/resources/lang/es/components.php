@@ -103,7 +103,7 @@ return [
         'search_prompt' => 'Escribe para buscar...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'Nueva etiqueta',
     ],
 

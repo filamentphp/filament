@@ -103,7 +103,7 @@ return [
         'search_prompt' => 'برای جستجو تایپ کنید...',
     ],
 
-    'tags_input' =>[
+    'tags_input' => [
         'placeholder' => 'تگ جدید',
     ],
 
