@@ -14,7 +14,7 @@ class Section extends Component implements Contracts\CanConcealComponents
 
     protected $description = null;
 
-    protected $heading;
+    protected $heading = null;
 
     final public function __construct(string | callable $heading)
     {
@@ -31,6 +31,8 @@ class Section extends Component implements Contracts\CanConcealComponents
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->columnSpan('full');
     }
 

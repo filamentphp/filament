@@ -20,7 +20,7 @@ FilePond.registerPlugin(FilePondPluginImageResize)
 FilePond.registerPlugin(FilePondPluginImageTransform)
 
 export default (Alpine) => {
-    Alpine.data('fileUploadFormComponent', ({
+    Alpine.data('FileUploadFormComponent', ({
         acceptedFileTypes,
         getUploadedFileUrlUsing,
         imageCropAspectRatio,

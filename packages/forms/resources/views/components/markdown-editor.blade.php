@@ -7,7 +7,7 @@
     :state-path="$getStatePath()"
 >
     <div
-        x-data="markdownEditorFormComponent({
+        x-data="MarkdownEditorFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
             tab: '{{ $isDisabled() ? 'preview' : 'edit' }}',
         })"
@@ -135,7 +135,7 @@
                                 <button
                                     x-on:click.prevent="tab = 'edit'"
                                     x-bind:class="{ 'text-gray-400': tab !== 'edit' }"
-                                    class="font-mono text-sm hover:underline"
+                                    class="text-sm hover:underline"
                                 >
                                     {{ __('forms::components.markdownEditor.toolbarButtons.edit') }}
                                 </button>
@@ -145,7 +145,7 @@
                                 <button
                                     x-on:click.prevent="tab = 'preview'"
                                     x-bind:class="{ 'text-gray-400': tab !== 'preview' }"
-                                    class="font-mono text-sm hover:underline"
+                                    class="text-sm hover:underline"
                                 >
                                     {{ __('forms::components.markdownEditor.toolbarButtons.preview') }}
                                 </button>
@@ -210,7 +210,7 @@
                 ></div>
             </div>
 
-            <div class="block w-full h-full min-h-full px-6 py-4 border border-gray-300 rounded shadow-sm focus:border-blue-300" x-show="tab === 'preview'" style="min-height: 150px;">
+            <div class="block w-full h-full min-h-full px-6 py-4 border border-gray-300 rounded shadow-sm focus:border-primary-300" x-show="tab === 'preview'" style="min-height: 150px;">
                 <div class="prose" x-html="preview"></div>
             </div>
         </div>

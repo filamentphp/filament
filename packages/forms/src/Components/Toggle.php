@@ -15,6 +15,8 @@ class Toggle extends Field
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->default(false);
 
         $this->rule('boolean');

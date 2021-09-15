@@ -7,11 +7,11 @@ use Illuminate\Support\Str;
 
 class BelongsToSelect extends Select
 {
-    protected $displayColumnName;
+    protected $displayColumnName = null;
 
     protected $isPreloaded = false;
 
-    protected $relationship;
+    protected $relationship = null;
 
     protected function setUp(): void
     {

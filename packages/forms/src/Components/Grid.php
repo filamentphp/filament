@@ -21,6 +21,8 @@ class Grid extends Component
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->columnSpan('full');
     }
 }

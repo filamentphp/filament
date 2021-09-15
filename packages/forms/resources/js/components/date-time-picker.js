@@ -8,7 +8,7 @@ dayjs.extend(localeData)
 window.dayjs = dayjs
 
 export default (Alpine) => {
-    Alpine.data('dateTimePickerFormComponent', ({
+    Alpine.data('DateTimePickerFormComponent', ({
         displayFormat,
         firstDayOfWeek,
         format,

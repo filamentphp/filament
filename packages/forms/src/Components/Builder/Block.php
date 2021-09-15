@@ -12,7 +12,7 @@ class Block extends Component
 
     protected string $view = 'forms::components.builder.block';
 
-    protected $icon;
+    protected $icon = null;
 
     final public function __construct(string $name)
     {

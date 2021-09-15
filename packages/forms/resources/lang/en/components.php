@@ -55,7 +55,7 @@ return [
 
     'multiSelect' => [
         'noOptionsMessage' => 'Start typing to search...',
-        'noSearchResultsMessage' => 'No options match your search.',
+        'searchPrompt' => 'No options match your search.',
         'placeholder' => 'Select an option',
     ],
 
@@ -99,7 +99,7 @@ return [
 
     'select' => [
         'noOptionsMessage' => 'Start typing to search...',
-        'noSearchResultsMessage' => 'No options match your search.',
+        'searchPrompt' => 'No options match your search.',
         'placeholder' => 'Select an option',
     ],
 

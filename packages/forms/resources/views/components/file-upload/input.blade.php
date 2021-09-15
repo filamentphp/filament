@@ -1,5 +1,5 @@
 <div
-    x-data="fileUploadFormComponent({
+    x-data="FileUploadFormComponent({
         state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         statePath: '{{ $getStatePath() }}',
         disk: '{{ $getDiskName() }}',

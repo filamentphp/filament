@@ -41,7 +41,7 @@
                 @endif
 
                 @if ($hint)
-                    <div class="font-mono text-xs leading-tight text-gray-500">
+                    <div class="text-xs leading-tight text-gray-500">
                         {!! Str::of($hint)->markdown() !!}
                     </div>
                 @endif

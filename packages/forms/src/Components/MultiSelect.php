@@ -16,9 +16,9 @@ class MultiSelect extends Field
 
     protected $noOptionsMessage = null;
 
-    protected $noSearchResultsMessage = null;
-
     protected $options = [];
+
+    protected $searchPrompt = null;
 
     protected function setUp(): void
     {
@@ -34,7 +34,7 @@ class MultiSelect extends Field
 
         $this->noOptionsMessage(__('forms::components.multiSelect.noOptionsMessage'));
 
-        $this->noSearchResultsMessage(__('forms::components.multiSelect.noSearchResultsMessage'));
+        $this->searchPrompt(__('forms::components.multiSelect.searchPrompt'));
 
         $this->placeholder(__('forms::components.multiSelect.placeholder'));
     }
@@ -60,13 +60,6 @@ class MultiSelect extends Field
         return $this;
     }
 
-    public function noSearchResultsMessage(string | callable $message): static
-    {
-        $this->noSearchResultsMessage = $message;
-
-        return $this;
-    }
-
     public function options(array | callable $options): static
     {
         $this->options = $options;
@@ -74,14 +67,16 @@ class MultiSelect extends Field
         return $this;
     }
 
+    public function searchPrompt(string | callable $message): static
+    {
+        $this->searchPrompt = $message;
+
+        return $this;
+    }
+
     public function getNoOptionsMessage(): string
     {
         return $this->evaluate($this->noOptionsMessage);
-    }
-
-    public function getNoSearchResultsMessage(): string
-    {
-        return $this->evaluate($this->noSearchResultsMessage);
     }
 
     public function getOptionLabels(): array
@@ -106,6 +101,11 @@ class MultiSelect extends Field
         }
 
         return $options;
+    }
+
+    public function getSearchPrompt(): string
+    {
+        return $this->evaluate($this->searchPrompt);
     }
 
     public function getSearchResults(string $query): array

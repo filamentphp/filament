@@ -30,6 +30,8 @@ class Placeholder extends Component
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->dehydrated(false);
     }
 

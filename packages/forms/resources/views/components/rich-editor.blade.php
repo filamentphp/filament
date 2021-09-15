@@ -7,7 +7,7 @@
     :state-path="$getStatePath()"
 >
     <div
-        x-data="richEditorFormComponent({
+        x-data="RichEditorFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
         x-on:trix-change="state = $event.target.value"

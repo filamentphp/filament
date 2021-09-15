@@ -1,7 +1,7 @@
 import IMask from 'imask'
 
 export default (Alpine) => {
-    Alpine.data('textInputFormComponent', ({
+    Alpine.data('TextInputFormComponent', ({
         getMaskOptionsUsing,
         state,
     }) => {

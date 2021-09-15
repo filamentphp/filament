@@ -24,7 +24,7 @@
     :state-path="$getStatePath()"
 >
     <div
-        x-data="dateTimePickerFormComponent({
+        x-data="DateTimePickerFormComponent({
             displayFormat: '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
             format: '{{ convert_date_format($getFormat())->to('day.js') }}',

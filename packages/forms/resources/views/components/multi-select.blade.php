@@ -7,7 +7,7 @@
     :state-path="$getStatePath()"
 >
     <div
-        x-data="multiSelectFormComponent({
+        x-data="MultiSelectFormComponent({
             getOptionLabelsUsing: async (values) => {
                 return await $wire.getMultiSelectOptionLabels('{{ $getStatePath() }}')
             },
@@ -129,7 +129,7 @@
 
                         <div
                             x-show="! Object.keys(options).length"
-                            x-text="! search || isLoading ? '{{ $getNoOptionsMessage() }}' : '{{ $getNoSearchResultsMessage() }}'"
+                            x-text="! search || isLoading ? '{{ $getNoOptionsMessage() }}' : '{{ $getSearchPrompt() }}'"
                             class="px-3 py-2 text-sm text-gray-900 cursor-default select-none"
                         ></div>
                     </ul>
@@ -149,7 +149,7 @@
                         @endunless
                         type="button"
                         @class([
-                            'inline-flex items-center justify-center h-6 px-2 my-1 text-sm font-semibold tracking-tight text-primary-700 rounded-full bg-primary-500/10 space-x-1',
+                            'inline-flex items-center justify-center h-6 px-2 my-1 text-sm font-medium tracking-tight text-primary-700 rounded-full bg-primary-500/10 space-x-1',
                             'cursor-default' => $isDisabled(),
                         ])
                     >

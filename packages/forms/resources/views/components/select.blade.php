@@ -29,7 +29,7 @@
         </select>
     @else
         <div
-            x-data="selectFormComponent({
+            x-data="SelectFormComponent({
                 getOptionLabelUsing: async (value) => {
                     return await $wire.getSelectOptionLabel('{{ $getStatePath() }}')
                 },
@@ -160,7 +160,7 @@
 
                         <div
                             x-show="! Object.keys(options).length"
-                            x-text="! search || isLoading ? '{{ $getNoOptionsMessage() }}' : '{{ $getNoSearchResultsMessage() }}'"
+                            x-text="! search || isLoading ? '{{ $getNoOptionsMessage() }}' : '{{ $getSearchPrompt() }}'"
                             class="px-3 py-2 text-sm text-gray-900 cursor-default select-none"
                         ></div>
                     </ul>

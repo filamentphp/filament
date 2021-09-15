@@ -72,7 +72,7 @@ trait InteractsWithForms
         return [];
     }
 
-    public function getSelectOptionLabel(string $statePath)
+    public function getSelectOptionLabel(string $statePath): ?string
     {
         foreach ($this->getCachedForms() as $form) {
             if ($label = $form->getSelectOptionLabel($statePath)) {

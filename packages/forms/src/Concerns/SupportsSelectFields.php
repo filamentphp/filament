@@ -6,7 +6,7 @@ use Filament\Forms\Components\Select;
 
 trait SupportsSelectFields
 {
-    public function getSelectOptionLabel(string $statePath)
+    public function getSelectOptionLabel(string $statePath): ?string
     {
         foreach ($this->getComponents() as $component) {
             if ($component instanceof Select && $component->getStatePath() === $statePath) {
