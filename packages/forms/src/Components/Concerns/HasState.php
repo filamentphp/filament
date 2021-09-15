@@ -153,7 +153,7 @@ trait HasState
         return implode('.', $pathComponents);
     }
 
-    public function hasDefaultState(): bool
+    protected function hasDefaultState(): bool
     {
         return $this->hasDefaultState;
     }
