@@ -1,5 +1,5 @@
 <div
-    x-data="{ isCollapsed: {{ $isCollapsed ? 'true' : 'false' }} }"
+    x-data="{ isCollapsed: {{ $isCollapsed() ? 'true' : 'false' }} }"
     x-on:expand-concealing-component.window="if ($event.detail.id === $el.id) isCollapsed = false"
     id="{{ $getId() }}"
     class="p-6 space-y-6 rounded-xl shadow-sm border border-gray-300"

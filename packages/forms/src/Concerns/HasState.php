@@ -89,10 +89,6 @@ trait HasState
             }
         }
 
-        if ($statePath = $this->getStatePath()) {
-            $state = data_get($state, $statePath, []);
-        }
-
         return $state;
     }
 
@@ -108,11 +104,11 @@ trait HasState
                     data_set($livewire, $key, $value);
                 }
             }
-
-            $this->callAfterStateHydrated();
         } else {
             $this->hydrateDefaultState();
         }
+
+        $this->callAfterStateHydrated();
 
         return $this;
     }
@@ -121,7 +117,6 @@ trait HasState
     {
         foreach ($this->getComponents() as $component) {
             $component->hydrateDefaultState();
-            $component->callAfterStateHydrated();
 
             foreach ($component->getChildComponentContainers() as $container) {
                 $container->hydrateDefaultState();
@@ -142,7 +137,13 @@ trait HasState
     {
         $state = $this->validate();
 
-        return $this->dehydrateState($state);
+        $this->dehydrateState($state);
+
+        if ($statePath = $this->getStatePath()) {
+            return data_get($state, $statePath, []);
+        }
+
+        return $state;
     }
 
     public function getStatePath(bool $isAbsolute = true): string

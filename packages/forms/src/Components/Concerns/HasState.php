@@ -16,6 +16,8 @@ trait HasState
 
     protected $dehydrateStateUsing = null;
 
+    protected bool $hasDefaultState = false;
+
     protected $isDehydrated = true;
 
     protected ?string $statePath = null;
@@ -71,6 +73,7 @@ trait HasState
     public function default($state): static
     {
         $this->defaultState = $state;
+        $this->hasDefaultState = true;
 
         return $this;
     }
@@ -100,6 +103,10 @@ trait HasState
 
     public function hydrateDefaultState(): static
     {
+        if (! $this->hasDefaultState()) {
+            return $this;
+        }
+
         $this->state($this->getDefaultState());
 
         return $this;
@@ -144,6 +151,11 @@ trait HasState
         }
 
         return implode('.', $pathComponents);
+    }
+
+    public function hasDefaultState(): bool
+    {
+        return $this->hasDefaultState;
     }
 
     public function isDehydrated(): bool
