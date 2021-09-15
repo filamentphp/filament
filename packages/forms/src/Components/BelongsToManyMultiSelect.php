@@ -60,7 +60,7 @@ class BelongsToManyMultiSelect extends MultiSelect
         $this->getSearchResultsUsing(function (BelongsToManyMultiSelect $component, ?string $query) use ($callback): array {
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated();
+            $relationshipQuery = $relationship->getRelated()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
                 $relationshipQuery = $callback($relationshipQuery);
@@ -85,7 +85,7 @@ class BelongsToManyMultiSelect extends MultiSelect
 
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated();
+            $relationshipQuery = $relationship->getRelated()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
                 $relationshipQuery = $callback($relationshipQuery);

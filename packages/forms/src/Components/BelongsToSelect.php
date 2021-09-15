@@ -58,7 +58,7 @@ class BelongsToSelect extends Select
         $this->getSearchResultsUsing(function (BelongsToSelect $component, ?string $query) use ($callback): array {
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated();
+            $relationshipQuery = $relationship->getRelated()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
                 $relationshipQuery = $callback($relationshipQuery);
@@ -83,7 +83,7 @@ class BelongsToSelect extends Select
 
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated();
+            $relationshipQuery = $relationship->getRelated()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
                 $relationshipQuery = $callback($relationshipQuery);
