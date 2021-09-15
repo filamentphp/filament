@@ -25,7 +25,7 @@
                 <input
                     autocomplete="off"
                     {!! $isAutofocused() ? 'autofocus' : null !!}
-                    {!! $getPlaceholder() ? 'placeholder="' . __($getPlaceholder()) . '"' : null !!}
+                    {!! $getPlaceholder() ? 'placeholder="' . $getPlaceholder() . '"' : null !!}
                     type="text"
                     x-on:keydown.enter.stop.prevent="createTag()"
                     x-model="newTag"

@@ -2,7 +2,7 @@
 
 return [
 
-    'keyValue' => [
+    'key_value' => [
 
         'buttons' => [
 
@@ -36,30 +36,30 @@ return [
 
     ],
 
-    'markdownEditor' => [
+    'markdown_editor' => [
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Lägg till filer',
+        'toolbar_buttons' => [
+            'attach_files' => 'Lägg till filer',
             'bold' => 'Fet',
-            'bulletList' => 'Lista',
-            'codeBlock' => 'Kod',
+            'bullet_list' => 'Lista',
+            'code_block' => 'Kod',
             'edit' => 'Skriv',
             'italic' => 'Kursiv',
             'link' => 'Länk',
-            'orderedList' => 'Nummer',
+            'ordered_list' => 'Nummer',
             'preview' => 'Förhandsvisa',
             'strike' => 'Överstruken',
         ],
 
     ],
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'Finns inga alternativ.',
-        'searchPrompt' => 'Hittade inget som matchade din sökning.',
+    'multi_select' => [
+        'no_search_results_message' => 'Hittade inget som matchade din sökning.',
         'placeholder' => 'Välj ett alternativ',
+        'search_prompt' => 'Finns inga alternativ.',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -78,32 +78,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Lägg till filer',
+        'toolbar_buttons' => [
+            'attach_files' => 'Lägg till filer',
+            'blockquote' => 'Citat',
             'bold' => 'Fet',
-            'bulletList' => 'Lista',
-            'codeBlock' => 'Kod',
-            'heading' => 'Rubrik',
+            'bullet_list' => 'Lista',
+            'code_block' => 'Kod',
+            'h1' => 'Titel',
+            'h2' => 'Rubrik',
+            'h3' => 'Underrubrik',
             'italic' => 'Kursiv',
             'link' => 'Länk',
-            'orderedList' => 'Nummer',
-            'quote' => 'Citat',
+            'ordered_list' => 'Nummer',
             'redo' => 'Igen',
             'strike' => 'Överstruken',
-            'subheading' => 'Underrubrik',
-            'title' => 'Titel',
             'undo' => 'Ångra',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'Börja skriva för att söka...',
-        'searchPrompt' => 'Hittar inget som matchar din sökning.',
+        'no_search_results_message' => 'Hittar inget som matchar din sökning.',
         'placeholder' => 'Välj ett alternativ',
+        'search_prompt' => 'Börja skriva för att söka...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'Ny tagg',
     ],
 

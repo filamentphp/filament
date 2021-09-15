@@ -2,14 +2,13 @@
 
 return [
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'не найдено вариантов для выбора.',
-        'searchPrompt' => 'не найдено результатов по вашему поиску.',
+    'multi_select' => [
+        'no_search_results_message' => 'не найдено результатов по вашему поиску.',
         'placeholder' => 'выберите опцию',
-
+        'search_prompt' => 'не найдено вариантов для выбора.',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -28,32 +27,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Прикрепить файлы',
+        'toolbar_buttons' => [
+            'attach_files' => 'Прикрепить файлы',
+            'blockquote' => 'Цитата',
             'bold' => 'Жирный',
-            'bulletList' => 'маркировочный список',
-            'codeBlock' => 'код',
-            'heading' => 'заголовок',
+            'bullet_list' => 'маркировочный список',
+            'code_block' => 'код',
+            'h1' => 'заглавие',
+            'h2' => 'заголовок',
+            'h3' => 'подзаголовок',
             'italic' => 'Курсив',
             'link' => 'ссылка',
-            'orderedList' => 'нумерованный список',
-            'quote' => 'Цитата',
+            'ordered_list' => 'нумерованный список',
             'redo' => 'Повторить',
             'strike' => 'Зачеркнутый',
-            'subheading' => 'подзаголовок',
-            'title' => 'заглавие',
             'undo' => 'Отменить',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'введите текст для поиска',
-        'searchPrompt' => 'не найдено результатов по вашему поиску',
+        'no_search_results_message' => 'не найдено результатов по вашему поиску',
         'placeholder' => 'выберите опцию',
+        'search_prompt' => 'введите текст для поиска',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'новый тег',
     ],
 

@@ -2,7 +2,7 @@
 
 return [
 
-    'keyValue' => [
+    'key_value' => [
 
         'buttons' => [
 
@@ -36,30 +36,30 @@ return [
 
     ],
 
-    'markdownEditor' => [
+    'markdown_editor' => [
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Adjuntar archivos',
+        'toolbar_buttons' => [
+            'attach_files' => 'Adjuntar archivos',
             'bold' => 'Negrita',
-            'bulletList' => 'Viñetas',
-            'codeBlock' => 'Código',
+            'bullet_list' => 'Viñetas',
+            'code_block' => 'Código',
             'edit' => 'Escribir',
             'italic' => 'Cursiva',
             'link' => 'Link',
-            'orderedList' => 'Números',
+            'ordered_list' => 'Números',
             'preview' => 'Vista previa',
             'strike' => 'Tachado',
         ],
 
     ],
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'No hay opciones para elegir.',
-        'searchPrompt' => 'No se encontranron coincidencias con su búsqueda.',
+    'multi_select' => [
+        'no_search_results_message' => 'No se encontranron coincidencias con su búsqueda.',
         'placeholder' => 'Seleccionar una opción',
+        'search_prompt' => 'No hay opciones para elegir.',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -78,32 +78,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Adjuntar archivos',
+        'toolbar_buttons' => [
+            'attach_files' => 'Adjuntar archivos',
+            'blockquote' => 'Cita',
             'bold' => 'Negrita',
-            'bulletList' => 'Viñetas',
-            'codeBlock' => 'Código',
-            'heading' => 'Encabezado',
+            'bullet_list' => 'Viñetas',
+            'code_block' => 'Código',
+            'h1' => 'Título',
+            'h2' => 'Encabezado',
+            'h3' => 'Subtítulo',
             'italic' => 'Cursiva',
             'link' => 'Link',
-            'orderedList' => 'Números',
-            'quote' => 'Cita',
+            'ordered_list' => 'Números',
             'redo' => 'Rehacer',
             'strike' => 'Tachado',
-            'subheading' => 'Subtítulo',
-            'title' => 'Título',
             'undo' => 'Deshacer',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'Escribe para buscar...',
-        'searchPrompt' => 'No se encontraron coincidencias con su búsqueda.',
+        'no_search_results_message' => 'No se encontraron coincidencias con su búsqueda.',
         'placeholder' => 'Selecciona una opción',
+        'search_prompt' => 'Escribe para buscar...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'Nueva etiqueta',
     ],
 

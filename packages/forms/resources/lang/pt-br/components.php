@@ -2,13 +2,13 @@
 
 return [
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'Sem opções disponívels.',
-        'searchPrompt' => 'Nenhuma opção corresponde à sua pesquisa.',
+    'multi_select' => [
+        'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
         'placeholder' => 'Selecione uma opção',
+        'search_prompt' => 'Sem opções disponívels.',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -27,32 +27,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Anexar arquivos',
+        'toolbar_buttons' => [
+            'attach_files' => 'Anexar arquivos',
+            'blockquote' => 'Citar',
             'bold' => 'Negrito',
-            'bulletList' => 'Marcadores',
-            'codeBlock' => 'codeBlock',
-            'heading' => 'Cabeçalho',
+            'bullet_list' => 'Marcadores',
+            'code_block' => 'codeBlock',
+            'h1' => 'Título',
+            'h2' => 'Cabeçalho',
+            'h3' => 'Subtítulo',
             'italic' => 'Itálico',
             'link' => 'Link',
-            'orderedList' => 'Números',
-            'quote' => 'Citar',
+            'ordered_list' => 'Números',
             'redo' => 'Refazer',
             'strike' => 'Tachado',
-            'subheading' => 'Subtítulo',
-            'title' => 'Título',
             'undo' => 'Desfazer',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'Comece a digitar para pesquisar...',
-        'searchPrompt' => 'Nenhuma opção corresponde à sua pesquisa.',
+        'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
         'placeholder' => 'Selecione uma opção',
+        'search_prompt' => 'Comece a digitar para pesquisar...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'Novo rótulo',
     ],
 

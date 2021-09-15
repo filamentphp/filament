@@ -2,13 +2,13 @@
 
 return [
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'Nessuna opzione disponibile.',
-        'searchPrompt' => 'Nessuna opzione trovata per la ricerca.',
+    'multi_select' => [
+        'no_search_results_message' => 'Nessuna opzione trovata per la ricerca.',
         'placeholder' => 'Seleziona un\'opzione',
+        'search_prompt' => 'Nessuna opzione disponibile.',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -27,32 +27,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Allega file',
+        'toolbar_buttons' => [
+            'attach_files' => 'Allega file',
+            'blockquote' => 'Citazione',
             'bold' => 'Grassetto',
-            'bulletList' => 'Elenco puntato',
-            'codeBlock' => 'Codice',
-            'heading' => 'Testata',
+            'bullet_list' => 'Elenco puntato',
+            'code_block' => 'Codice',
+            'h1' => 'Titolo',
+            'h2' => 'Testata',
+            'h3' => 'Sottotestata',
             'italic' => 'Corsivo',
             'link' => 'Link',
-            'orderedList' => 'Numeri',
-            'quote' => 'Citazione',
+            'ordered_list' => 'Numeri',
             'redo' => 'Rifai',
             'strike' => 'Barrato',
-            'subheading' => 'Sottotestata',
-            'title' => 'Titolo',
             'undo' => 'Annulla',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'Digita per cercare...',
-        'searchPrompt' => 'Nessuna opzione trovata per la ricerca.',
+        'no_search_results_message' => 'Nessuna opzione trovata per la ricerca.',
         'placeholder' => 'Seleziona un\'opzione',
+        'search_prompt' => 'Digita per cercare...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'Nuovo tag',
     ],
 

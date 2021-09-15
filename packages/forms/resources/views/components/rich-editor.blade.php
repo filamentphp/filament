@@ -39,12 +39,12 @@
                                 <button
                                     data-trix-attribute="bold"
                                     data-trix-key="b"
-                                    title="{{ __('forms::components.richEditor.toolbarButtons.bold') }}"
+                                    title="{{ __('forms::components.rich_editor.toolbar_buttons.bold') }}"
                                     tabindex="-1"
                                     type="button"
                                     class="trix-button trix-button--icon trix-button--icon-bold"
                                 >
-                                    {{ __('forms::components.richEditor.toolbarButtons.bold') }}
+                                    {{ __('forms::components.rich_editor.toolbar_buttons.bold') }}
                                 </button>
                             @endif
 
@@ -52,24 +52,24 @@
                                 <button
                                     data-trix-attribute="italic"
                                     data-trix-key="i"
-                                    title="{{ __('forms::components.richEditor.toolbarButtons.italic') }}"
+                                    title="{{ __('forms::components.rich_editor.toolbar_buttons.italic') }}"
                                     tabindex="-1"
                                     type="button"
                                     class="trix-button trix-button--icon trix-button--icon-italic"
                                 >
-                                    {{ __('forms::components.richEditor.toolbarButtons.italic') }}
+                                    {{ __('forms::components.rich_editor.toolbar_buttons.italic') }}
                                 </button>
                             @endif
 
                             @if ($hasToolbarButton('strike'))
                                 <button
                                     data-trix-attribute="strike"
-                                    title="{{ __('forms::components.richEditor.toolbarButtons.strike') }}"
+                                    title="{{ __('forms::components.rich_editor.toolbar_buttons.strike') }}"
                                     tabindex="-1"
                                     type="button"
                                     class="trix-button trix-button--icon trix-button--icon-strike"
                                 >
-                                    {{ __('forms::components.richEditor.toolbarButtons.strike') }}
+                                    {{ __('forms::components.rich_editor.toolbar_buttons.strike') }}
                                 </button>
                             @endif
 
@@ -78,12 +78,12 @@
                                     data-trix-attribute="href"
                                     data-trix-action="link"
                                     data-trix-key="k"
-                                    title="{{ __('forms::components.richEditor.toolbarButtons.link') }}"
+                                    title="{{ __('forms::components.rich_editor.toolbar_buttons.link') }}"
                                     tabindex="-1"
                                     type="button"
                                     class="trix-button trix-button--icon trix-button--icon-link"
                                 >
-                                    {{ __('forms::components.richEditor.toolbarButtons.link') }}
+                                    {{ __('forms::components.rich_editor.toolbar_buttons.link') }}
                                 </button>
                             @endif
                         </span>
@@ -94,36 +94,36 @@
                             @if ($hasToolbarButton('h1'))
                                 <button
                                     data-trix-attribute="heading1"
-                                    title="{{ __('forms::components.richEditor.toolbarButtons.h1') }}"
+                                    title="{{ __('forms::components.rich_editor.toolbar_buttons.h1') }}"
                                     tabindex="-1"
                                     type="button"
                                     class="trix-button trix-button--icon trix-button--icon-heading-1"
                                 >
-                                    {{ __('forms::components.richEditor.toolbarButtons.h1') }}
+                                    {{ __('forms::components.rich_editor.toolbar_buttons.h1') }}
                                 </button>
                             @endif
 
                             @if ($hasToolbarButton('h2'))
                                 <button
                                     data-trix-attribute="heading"
-                                    title="{{ __('forms::components.richEditor.toolbarButtons.h2') }}"
+                                    title="{{ __('forms::components.rich_editor.toolbar_buttons.h2') }}"
                                     tabindex="-1"
                                     type="button"
                                     class="trix-button"
                                 >
-                                    {{ __('forms::components.richEditor.toolbarButtons.h2') }}
+                                    {{ __('forms::components.rich_editor.toolbar_buttons.h2') }}
                                 </button>
                             @endif
 
                             @if ($hasToolbarButton('h3'))
                                 <button
                                     data-trix-attribute="subHeading"
-                                    title="{{ __('forms::components.richEditor.toolbarButtons.h3') }}"
+                                    title="{{ __('forms::components.rich_editor.toolbar_buttons.h3') }}"
                                     tabindex="-1"
                                     type="button"
                                     class="trix-button"
                                 >
-                                    {{ __('forms::components.richEditor.toolbarButtons.h3') }}
+                                    {{ __('forms::components.rich_editor.toolbar_buttons.h3') }}
                                 </button>
                             @endif
                         </span>
@@ -134,48 +134,48 @@
                             @if ($hasToolbarButton('blockquote'))
                                 <button
                                     data-trix-attribute="quote"
-                                    title="{{ __('forms::components.richEditor.toolbarButtons.blockquote') }}"
+                                    title="{{ __('forms::components.rich_editor.toolbar_buttons.blockquote') }}"
                                     tabindex="-1"
                                     type="button"
                                     class="trix-button trix-button--icon trix-button--icon-quote"
                                 >
-                                    {{ __('forms::components.richEditor.toolbarButtons.blockquote') }}
+                                    {{ __('forms::components.rich_editor.toolbar_buttons.blockquote') }}
                                 </button>
                             @endif
 
                             @if ($hasToolbarButton('codeBlock'))
                                 <button
                                     data-trix-attribute="code"
-                                    title="{{ __('forms::components.richEditor.toolbarButtons.codeBlock') }}"
+                                    title="{{ __('forms::components.rich_editor.toolbar_buttons.code_block') }}"
                                     tabindex="-1"
                                     type="button"
                                     class="trix-button trix-button--icon trix-button--icon-code"
                                 >
-                                    {{ __('forms::components.richEditor.toolbarButtons.codeBlock') }}
+                                    {{ __('forms::components.rich_editor.toolbar_buttons.code_block') }}
                                 </button>
                             @endif
 
                             @if ($hasToolbarButton('bulletList'))
                                 <button
                                     data-trix-attribute="bullet"
-                                    title="{{ __('forms::components.richEditor.toolbarButtons.bulletList') }}"
+                                    title="{{ __('forms::components.rich_editor.toolbar_buttons.bullet_list') }}"
                                     tabindex="-1"
                                     type="button"
                                     class="trix-button trix-button--icon trix-button--icon-bullet-list"
                                 >
-                                    {{ __('forms::components.richEditor.toolbarButtons.bulletList') }}
+                                    {{ __('forms::components.rich_editor.toolbar_buttons.bullet_list') }}
                                 </button>
                             @endif
 
                             @if ($hasToolbarButton('orderedList'))
                                 <button
                                     data-trix-attribute="number"
-                                    title="{{ __('forms::components.richEditor.toolbarButtons.orderedList') }}"
+                                    title="{{ __('forms::components.rich_editor.toolbar_buttons.ordered_list') }}"
                                     tabindex="-1"
                                     type="button"
                                     class="trix-button trix-button--icon trix-button--icon-number-list"
                                 >
-                                    {{ __('forms::components.richEditor.toolbarButtons.orderedList') }}
+                                    {{ __('forms::components.rich_editor.toolbar_buttons.ordered_list') }}
                                 </button>
                             @endif
                         </span>
@@ -185,12 +185,12 @@
                         <span data-trix-button-group="file-tools" class="trix-button-group trix-button-group--file-tools">
                             <button
                                 data-trix-action="attachFiles"
-                                title="{{ __('forms::components.richEditor.toolbarButtons.attachFiles') }}"
+                                title="{{ __('forms::components.rich_editor.toolbar_buttons.attach_files') }}"
                                 tabindex="-1"
                                 type="button"
                                 class="trix-button trix-button--icon trix-button--icon-attach"
                             >
-                                {{ __('forms::components.richEditor.toolbarButtons.attachFiles') }}
+                                {{ __('forms::components.rich_editor.toolbar_buttons.attach_files') }}
                             </button>
                         </span>
                     @endif
@@ -206,12 +206,12 @@
                                 <button
                                     data-trix-action="undo"
                                     data-trix-key="z"
-                                    title="{{ __('forms::components.richEditor.toolbarButtons.undo') }}"
+                                    title="{{ __('forms::components.rich_editor.toolbar_buttons.undo') }}"
                                     tabindex="-1"
                                     type="button"
                                     class="trix-button trix-button--icon trix-button--icon-undo"
                                 >
-                                    {{ __('forms::components.richEditor.toolbarButtons.undo') }}
+                                    {{ __('forms::components.rich_editor.toolbar_buttons.undo') }}
                                 </button>
                             @endif
 
@@ -219,12 +219,12 @@
                                 <button
                                     data-trix-action="redo"
                                     data-trix-key="shift+z"
-                                    title="{{ __('forms::components.richEditor.toolbarButtons.redo') }}"
+                                    title="{{ __('forms::components.rich_editor.toolbar_buttons.redo') }}"
                                     tabindex="-1"
                                     type="button"
                                     class="trix-button trix-button--icon trix-button--icon-redo"
                                 >
-                                    {{ __('forms::components.richEditor.toolbarButtons.redo') }}
+                                    {{ __('forms::components.rich_editor.toolbar_buttons.redo') }}
                                 </button>
                             @endif
                         </span>
@@ -240,7 +240,7 @@
                         <div class="trix-dialog__link-fields">
                             <input
                                 name="href"
-                                placeholder="{{ __('forms::components.richEditor.dialogs.link.placeholder') }}" aria-label="{{ __('forms::components.richEditor.dialogs.link.label') }}" required data-trix-input
+                                placeholder="{{ __('forms::components.rich_editor.dialogs.link.placeholder') }}" aria-label="{{ __('forms::components.rich_editor.dialogs.link.label') }}" required data-trix-input
                                 disabled
                                 type="url"
                                 class="trix-input trix-input--dialog"
@@ -248,14 +248,14 @@
 
                             <div class="trix-button-group">
                                 <input
-                                    value="{{ __('forms::components.richEditor.dialogs.link.buttons.link') }}"
+                                    value="{{ __('forms::components.rich_editor.dialogs.link.buttons.link') }}"
                                     data-trix-method="setAttribute"
                                     type="button"
                                     class="trix-button trix-button--dialog"
                                 >
 
                                 <input
-                                    value="{{ __('forms::components.richEditor.dialogs.link.buttons.unlink') }}"
+                                    value="{{ __('forms::components.rich_editor.dialogs.link.buttons.unlink') }}"
                                     data-trix-method="removeAttribute"
                                     type="button"
                                     class="trix-button trix-button--dialog"
@@ -270,7 +270,7 @@
                 {!! $isAutofocused() ? 'autofocus' : null !!}
                 id="{{ $getId() }}"
                 input="trix-value-{{ $getId() }}"
-                placeholder="{{ __($getPlaceholder()) }}"
+                placeholder="{{ $getPlaceholder() }}"
                 toolbar="trix-toolbar-{{ $getId() }}"
                 x-ref="trix"
                 {{ $attributes->merge($getExtraAttributes())->class([

@@ -16,11 +16,11 @@ class Select extends Field
 
     protected $isSearchable = false;
 
-    protected $noOptionsMessage = null;
+    protected $searchPrompt = null;
 
     protected $options = [];
 
-    protected $searchPrompt = null;
+    protected $noSearchResultsMessage = null;
 
     protected function setUp(): void
     {
@@ -34,11 +34,11 @@ class Select extends Field
             return $value;
         });
 
-        $this->noOptionsMessage(__('forms::components.select.noOptionsMessage'));
-
-        $this->searchPrompt(__('forms::components.select.searchPrompt'));
+        $this->noSearchResultsMessage(__('forms::components.select.no_search_results_message'));
 
         $this->placeholder(__('forms::components.select.placeholder'));
+
+        $this->searchPrompt(__('forms::components.select.search_prompt'));
     }
 
     public function boolean(string $trueLabel = 'Yes', string $falseLabel = 'No'): static
@@ -65,9 +65,9 @@ class Select extends Field
         return $this;
     }
 
-    public function noOptionsMessage(string | callable $message): static
+    public function searchPrompt(string | callable $message): static
     {
-        $this->noOptionsMessage = $message;
+        $this->searchPrompt = $message;
 
         return $this;
     }
@@ -86,16 +86,16 @@ class Select extends Field
         return $this;
     }
 
-    public function searchPrompt(string | callable $message): static
+    public function noSearchResultsMessage(string | callable $message): static
     {
-        $this->searchPrompt = $message;
+        $this->noSearchResultsMessage = $message;
 
         return $this;
     }
 
-    public function getNoOptionsMessage(): string
+    public function getSearchPrompt(): string
     {
-        return $this->evaluate($this->noOptionsMessage);
+        return $this->evaluate($this->searchPrompt);
     }
 
     public function getOptionLabel(): ?string
@@ -116,9 +116,9 @@ class Select extends Field
         return $options;
     }
 
-    public function getSearchPrompt(): string
+    public function getNoSearchResultsMessage(): string
     {
-        return $this->evaluate($this->searchPrompt);
+        return $this->evaluate($this->noSearchResultsMessage);
     }
 
     public function getSearchResults(string $query): array

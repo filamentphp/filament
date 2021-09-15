@@ -2,13 +2,13 @@
 
 return [
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'Ingen muligheder at vælge imellem.',
-        'searchPrompt' => 'Ingen resultater der matcher din søgning.',
+    'multi_select' => [
+        'no_search_results_message' => 'Ingen resultater der matcher din søgning.',
         'placeholder' => 'Vælg en indstilling',
+        'search_prompt' => 'Ingen muligheder at vælge imellem.',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -27,32 +27,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Vedhæft filer',
+        'toolbar_buttons' => [
+            'attach_files' => 'Vedhæft filer',
+            'blockquote' => 'Citere',
             'bold' => 'Fed',
-            'bulletList' => 'Punkter',
-            'codeBlock' => 'Kode',
-            'heading' => 'Overskrift',
+            'bullet_list' => 'Punkter',
+            'code_block' => 'Kode',
+            'h1' => 'Titel',
+            'h2' => 'Overskrift',
+            'h3' => 'Underoverskrift',
             'italic' => 'Kursiv',
             'link' => 'Link',
-            'orderedList' => 'Tal',
-            'quote' => 'Citere',
+            'ordered_list' => 'Tal',
             'redo' => 'Gentag',
             'strike' => 'Gennemstreget',
-            'subheading' => 'Underoverskrift',
-            'title' => 'Titel',
             'undo' => 'Fortryd',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'Begynd at skrive for at søge ...',
-        'searchPrompt' => 'Ingen muligheder der matcher din søgning.',
+        'no_search_results_message' => 'Ingen muligheder der matcher din søgning.',
         'placeholder' => 'Vælg en indstilling',
+        'search_prompt' => 'Begynd at skrive for at søge ...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'Ny mærkat',
     ],
 

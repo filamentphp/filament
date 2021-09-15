@@ -2,13 +2,13 @@
 
 return [
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'Es stehen keine Optionen zur Auswahl.',
-        'searchPrompt' => 'Keine Optionen passen zu Ihrer Suche.',
+    'multi_select' => [
+        'no_search_results_message' => 'Keine Optionen passen zu Ihrer Suche.',
         'placeholder' => 'Wählen Sie eine Option',
+        'search_prompt' => 'Es stehen keine Optionen zur Auswahl.',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -27,32 +27,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Dateien anhängen',
+        'toolbar_buttons' => [
+            'attach_files' => 'Dateien anhängen',
+            'blockquote' => 'Zitat',
             'bold' => 'Fett',
-            'bulletList' => 'Aufzählung',
-            'codeBlock' => 'codeBlock',
-            'heading' => 'Überschrift',
+            'bullet_list' => 'Aufzählung',
+            'code_block' => 'codeBlock',
+            'h1' => 'Titel',
+            'h2' => 'Überschrift',
+            'h3' => 'Unterüberschrift',
             'italic' => 'kursiv',
             'link' => 'Link',
-            'orderedList' => 'Nummerierte Aufzählung',
-            'quote' => 'Zitat',
+            'ordered_list' => 'Nummerierte Aufzählung',
             'redo' => 'Wiederholen',
             'strike' => 'Durchgestrichen',
-            'subheading' => 'Unterüberschrift',
-            'title' => 'Titel',
             'undo' => 'Rückgängig',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'Beginnen Sie mit der Eingabe, um zu suchen...',
-        'searchPrompt' => 'Keine Optionen passen zu Ihrer Suche.',
+        'no_search_results_message' => 'Keine Optionen passen zu Ihrer Suche.',
         'placeholder' => 'Wählen Sie eine Option',
+        'search_prompt' => 'Beginnen Sie mit der Eingabe, um zu suchen...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'Neues Etikett',
     ],
 

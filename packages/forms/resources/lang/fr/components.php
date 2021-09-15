@@ -2,13 +2,13 @@
 
 return [
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'Aucune option à choisir.',
-        'searchPrompt' => 'Aucune option ne correspond à votre recherche.',
+    'multi_select' => [
+        'no_search_results_message' => 'Aucune option ne correspond à votre recherche.',
         'placeholder' => 'Sélectionnez une option',
+        'search_prompt' => 'Aucune option à choisir.',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -27,32 +27,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Joindre fichiers',
+        'toolbar_buttons' => [
+            'attach_files' => 'Joindre fichiers',
+            'blockquote' => 'Citation',
             'bold' => 'Gras',
-            'bulletList' => 'Points',
-            'codeBlock' => 'codeBlock',
-            'heading' => 'Titre',
+            'bullet_list' => 'Points',
+            'code_block' => 'codeBlock',
+            'h1' => 'Titre',
+            'h2' => 'Titre',
+            'h3' => 'Sous-titre',
             'italic' => 'Italique',
             'link' => 'Lien',
-            'orderedList' => 'Nombres',
-            'quote' => 'Citation',
+            'ordered_list' => 'Nombres',
             'redo' => 'Refaire',
             'strike' => 'Barré',
-            'subheading' => 'Sous-titre',
-            'title' => 'Titre',
             'undo' => 'Annuler',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'Commencez à taper pour rechercher...',
-        'searchPrompt' => 'Aucune option ne correspond à votre recherche.',
+        'no_search_results_message' => 'Aucune option ne correspond à votre recherche.',
         'placeholder' => 'Sélectionnez une option',
+        'search_prompt' => 'Commencez à taper pour rechercher...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'Nouveau tag',
     ],
 

@@ -2,7 +2,7 @@
 
 return [
 
-    'keyValue' => [
+    'key_value' => [
 
         'buttons' => [
 
@@ -36,31 +36,30 @@ return [
 
     ],
 
-    'markdownEditor' => [
+    'markdown_editor' => [
 
-        'toolbarButtons' => [
-            'attachFiles' => 'پوستن فایلها',
+        'toolbar_buttons' => [
+            'attach_files' => 'پوستن فایلها',
             'bold' => 'پر رنگ',
-            'bulletList' => 'گولوله',
-            'codeBlock' => 'کود',
+            'bullet_list' => 'گولوله',
+            'code_block' => 'کود',
             'edit' => 'نوشتن',
             'italic' => 'خوابیده',
             'link' => 'ارتباط',
-            'orderedList' => 'اعداد',
+            'ordered_list' => 'اعداد',
             'preview' => 'پیش نمایش',
             'strike' => 'خط زده',
         ],
 
     ],
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'گزینه ای برای انتخاب موجود نیست.',
-        'emptyOptionsMessage' => 'برای جستجو تایپ کنید...',
-        'searchPrompt' => 'هیچ گزینه ای با جستجوی شما مطابقت ندارد',
+    'multi_select' => [
+        'no_search_results_message' => 'هیچ گزینه ای با جستجوی شما مطابقت ندارد',
         'placeholder' => 'یک گزینه را انتخاب کنید',
+        'search_prompt' => 'برای جستجو تایپ کنید...',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -79,32 +78,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'پیوستن فایلها',
+        'toolbar_buttons' => [
+            'attach_files' => 'پیوستن فایلها',
+            'blockquote' => 'نقل قول',
             'bold' => 'پررنگ',
-            'bulletList' => 'گولوله',
-            'codeBlock' => 'کود',
-            'heading' => 'عنوان برجسته',
+            'bullet_list' => 'گولوله',
+            'code_block' => 'کود',
+            'h1' => 'عنوان',
+            'h2' => 'عنوان برجسته',
+            'h3' => 'زیرنویس',
             'italic' => 'خوابیده',
             'link' => 'ارتباط',
-            'orderedList' => 'اعداد',
-            'quote' => 'نقل قول',
+            'ordered_list' => 'اعداد',
             'redo' => 'انجام مجدد',
             'strike' => 'خط زده',
-            'subheading' => 'زیرنویس',
-            'title' => 'عنوان',
             'undo' => 'واگرد',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'برای جستجو تایپ کنید...',
-        'searchPrompt' => 'هیچ گزینه ای با جستجوی شما مطابقت ندارد',
+        'no_search_results_message' => 'هیچ گزینه ای با جستجوی شما مطابقت ندارد',
         'placeholder' => 'یک گزینه را انتخاب کنید',
+        'search_prompt' => 'برای جستجو تایپ کنید...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'تگ جدید',
     ],
 

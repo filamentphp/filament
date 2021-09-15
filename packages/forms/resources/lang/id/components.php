@@ -2,13 +2,13 @@
 
 return [
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'Tidak ada opsi yang bisa dipilih.',
-        'searchPrompt' => 'Tidak ada opsi yang sesuai pencarian anda.',
+    'multi_select' => [
+        'no_search_results_message' => 'Tidak ada opsi yang sesuai pencarian anda.',
         'placeholder' => 'Pilih Opsi',
+        'search_prompt' => 'Tidak ada opsi yang bisa dipilih.',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -27,32 +27,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Lampirkan File',
+        'toolbar_buttons' => [
+            'attach_files' => 'Lampirkan File',
+            'blockquote' => 'Quote',
             'bold' => 'Bold',
-            'bulletList' => 'bulletList',
-            'codeBlock' => 'Kode',
-            'heading' => 'Judul',
+            'bullet_list' => 'bullet_list',
+            'code_block' => 'Kode',
+            'h1' => 'Judul',
+            'h2' => 'Judul',
+            'h3' => 'Anak judul',
             'italic' => 'Italic',
             'link' => 'Tautan',
-            'orderedList' => 'Nomor',
-            'quote' => 'Quote',
+            'ordered_list' => 'Nomor',
             'redo' => 'Redo',
             'strike' => 'Coret',
-            'subheading' => 'Anak judul',
-            'title' => 'Judul',
             'undo' => 'Undo',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'Mulai mengetik untuk mencari...',
-        'searchPrompt' => 'Tidak ada opsi yang sesuai pencarian anda.',
+        'no_search_results_message' => 'Tidak ada opsi yang sesuai pencarian anda.',
         'placeholder' => 'Pilih salah satu opsi',
+        'search_prompt' => 'Mulai mengetik untuk mencari...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'Tag baru',
     ],
 

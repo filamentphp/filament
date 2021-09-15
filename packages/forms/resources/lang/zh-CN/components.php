@@ -2,7 +2,7 @@
 
 return [
 
-    'keyValue' => [
+    'key_value' => [
 
         'buttons' => [
 
@@ -36,30 +36,30 @@ return [
 
     ],
 
-    'markdownEditor' => [
+    'markdown_editor' => [
 
-        'toolbarButtons' => [
-            'attachFiles' => '附件',
+        'toolbar_buttons' => [
+            'attach_files' => '附件',
             'bold' => '加粗',
-            'bulletList' => '普通列表',
-            'codeBlock' => '代码',
+            'bullet_list' => '普通列表',
+            'code_block' => '代码',
             'edit' => 'Edit',
             'italic' => '斜体',
             'link' => '链接',
-            'orderedList' => '数字列表',
+            'ordered_list' => '数字列表',
             'preview' => '预览',
             'strike' => '文字中线',
         ],
 
     ],
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => '没有可供选择的选项.',
-        'searchPrompt' => '没有选项匹配您的搜索.',
+    'multi_select' => [
+        'no_search_results_message' => '没有选项匹配您的搜索.',
         'placeholder' => '请选择',
+        'search_prompt' => '没有可供选择的选项.',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -78,32 +78,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => '附件',
+        'toolbar_buttons' => [
+            'attach_files' => '附件',
+            'blockquote' => '引用',
             'bold' => '加粗',
-            'bulletList' => '普通列表',
-            'codeBlock' => '代码',
-            'heading' => '标题',
+            'bullet_list' => '普通列表',
+            'code_block' => '代码',
+            'h1' => '标题',
+            'h2' => '标题',
+            'h3' => '副标题',
             'italic' => '斜体',
             'link' => '链接',
-            'orderedList' => '数字列表',
-            'quote' => '引用',
+            'ordered_list' => '数字列表',
             'redo' => '下一步',
             'strike' => '文字中线',
-            'subheading' => '副标题',
-            'title' => '标题',
             'undo' => '上一步',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => '搜索...',
-        'searchPrompt' => '没有选项匹配您的搜索.',
+        'no_search_results_message' => '没有选项匹配您的搜索.',
         'placeholder' => '请选择',
+        'search_prompt' => '搜索...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => '新标签',
     ],
 

@@ -36,7 +36,7 @@ class TagsInput extends Field
             return $state;
         });
 
-        $this->placeholder(__('forms::components.tags.placeholder'));
+        $this->placeholder(__('forms::components.tags_input.placeholder'));
     }
 
     public function separator(string | callable $separator = ','): static

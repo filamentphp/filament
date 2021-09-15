@@ -2,13 +2,13 @@
 
 return [
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'Geen opties om te selecteren.',
-        'searchPrompt' => 'Er zijn geen resultaten voor je zoekopdracht.',
+    'multi_select' => [
+        'no_search_results_message' => 'Er zijn geen resultaten voor je zoekopdracht.',
         'placeholder' => 'Selecteer een optie',
+        'search_prompt' => 'Geen opties om te selecteren.',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -27,32 +27,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Voeg bestanden toe',
+        'toolbar_buttons' => [
+            'attach_files' => 'Voeg bestanden toe',
+            'blockquote' => 'Quote',
             'bold' => 'Dikgedrukt',
-            'bulletList' => 'Bullets',
-            'codeBlock' => 'codeBlock',
-            'heading' => 'Hoofdtekst',
+            'bullet_list' => 'Bullets',
+            'code_block' => 'codeBlock',
+            'h1' => 'Titel',
+            'h2' => 'Hoofdtekst',
+            'h3' => 'Sub hoofdtekst',
             'italic' => 'Schuingedrukt',
             'link' => 'Link',
-            'orderedList' => 'Nummers',
-            'quote' => 'Quote',
+            'ordered_list' => 'Nummers',
             'redo' => 'Opnieuw doen',
             'strike' => 'Doorgehaald',
-            'subheading' => 'Sub hoofdtekst',
-            'title' => 'Titel',
             'undo' => 'Ongedaan maken',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'Start met typen om te zoeken...',
-        'searchPrompt' => 'Er zijn geen resultaten voor je zoekopdracht.',
+        'no_search_results_message' => 'Er zijn geen resultaten voor je zoekopdracht.',
         'placeholder' => 'Selecteer een optie',
+        'search_prompt' => 'Start met typen om te zoeken...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'Nieuwe tag',
     ],
 

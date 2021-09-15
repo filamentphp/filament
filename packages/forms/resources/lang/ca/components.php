@@ -2,13 +2,13 @@
 
 return [
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'No hi ha opcions disponibles',
-        'searchPrompt' => 'No s\'ha trobat cap opció que coincideixi amb la vostra cerca.',
+    'multi_select' => [
+        'no_search_results_message' => 'No s\'ha trobat cap opció que coincideixi amb la vostra cerca.',
         'placeholder' => 'Trieu una opció',
+        'search_prompt' => 'No hi ha opcions disponibles',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -27,32 +27,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Adjuntar fitxers',
+        'toolbar_buttons' => [
+            'attach_files' => 'Adjuntar fitxers',
+            'blockquote' => 'Bloc de cita',
             'bold' => 'Negreta',
-            'bulletList' => 'Bullets',
-            'codeBlock' => 'Codi',
-            'heading' => 'Capçaleres',
+            'bullet_list' => 'Bullets',
+            'code_block' => 'Codi',
+            'h1' => 'Títol',
+            'h2' => 'Capçaleres',
+            'h3' => 'Subtítol',
             'italic' => 'Cursiva',
             'link' => 'Enllaç',
-            'orderedList' => 'Números',
-            'quote' => 'Bloc de cita',
+            'ordered_list' => 'Números',
             'redo' => 'Refés',
             'strike' => 'Barrat',
-            'subheading' => 'Subtítol',
-            'title' => 'Títol',
             'undo' => 'Desfer',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'Comenceu a escriure per cercar...',
-        'searchPrompt' => 'No s\'ha trobat cap opció que coincideixi amb la vostra cerca',
+        'no_search_results_message' => 'No s\'ha trobat cap opció que coincideixi amb la vostra cerca',
         'placeholder' => 'Trieu una opció',
+        'search_prompt' => 'Comenceu a escriure per cercar...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'Nova Etiqueta',
     ],
 

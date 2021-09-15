@@ -2,13 +2,13 @@
 
 return [
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'ჩანაწერების სია ცარიელია.',
-        'searchPrompt' => 'ამ პარამეტრებით არცერთი ჩანაწერი არ მოიძებნა.',
+    'multi_select' => [
+        'no_search_results_message' => 'ამ პარამეტრებით არცერთი ჩანაწერი არ მოიძებნა.',
         'placeholder' => 'აირჩიეთ ჩანაწერი',
+        'search_prompt' => 'ჩანაწერების სია ცარიელია.',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -27,32 +27,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'ფაილების დამატება',
+        'toolbar_buttons' => [
+            'attach_files' => 'ფაილების დამატება',
+            'blockquote' => 'ციტატა',
             'bold' => 'მსხვილი',
-            'bulletList' => 'სია',
-            'codeBlock' => 'კოდი',
-            'heading' => 'სათაური',
+            'bullet_list' => 'სია',
+            'code_block' => 'კოდი',
+            'h1' => 'სათაური',
+            'h2' => 'სათაური',
+            'h3' => 'ქვესათაური',
             'italic' => 'დახრილი',
             'link' => 'ლინკი',
-            'orderedList' => 'რიცხვები',
-            'quote' => 'ციტატა',
+            'ordered_list' => 'რიცხვები',
             'redo' => 'Redo',
             'strike' => 'ხაზგადასმული',
-            'subheading' => 'ქვესათაური',
-            'title' => 'სათაური',
             'undo' => 'Undo',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'ძიება...',
-        'searchPrompt' => 'ამ პარამეტრებით არცერთი ჩანაწერი არ მოიძებნა.',
+        'no_search_results_message' => 'ამ პარამეტრებით არცერთი ჩანაწერი არ მოიძებნა.',
         'placeholder' => 'აირჩიეთ ჩანაწერი',
+        'search_prompt' => 'ძიება...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'ახალი ტეგი',
     ],
 

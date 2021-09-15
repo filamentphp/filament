@@ -2,7 +2,35 @@
 
 return [
 
-    'keyValue' => [
+    'builder' => [
+
+        'buttons' => [
+
+            'add_item' => [
+                'label' => 'Add block to :label',
+            ],
+
+            'add_item_between' => [
+                'label' => 'Add block between',
+            ],
+
+            'delete_item' => [
+                'label' => 'Delete block',
+            ],
+
+            'move_item_down' => [
+                'label' => 'Move block down',
+            ],
+
+            'move_item_up' => [
+                'label' => 'Move block up',
+            ],
+
+        ],
+
+    ],
+
+    'key_value' => [
 
         'buttons' => [
 
@@ -36,30 +64,54 @@ return [
 
     ],
 
-    'markdownEditor' => [
+    'markdown_editor' => [
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Attach files',
+        'toolbar_buttons' => [
+            'attach_files' => 'Attach files',
             'bold' => 'Bold',
-            'bulletList' => 'Bullet list',
-            'codeBlock' => 'Code block',
+            'bullet_list' => 'Bullet list',
+            'code_block' => 'Code block',
             'edit' => 'Edit',
             'italic' => 'Italic',
             'link' => 'Link',
-            'orderedList' => 'Numbered list',
+            'ordered_list' => 'Numbered list',
             'preview' => 'Preview',
             'strike' => 'Strikethrough',
         ],
 
     ],
 
-    'multiSelect' => [
-        'noOptionsMessage' => 'Start typing to search...',
-        'searchPrompt' => 'No options match your search.',
+    'multi_select' => [
+        'no_search_results_message' => 'No options match your search.',
         'placeholder' => 'Select an option',
+        'search_prompt' => 'Start typing to search...',
     ],
 
-    'richEditor' => [
+    'repeater' => [
+
+        'buttons' => [
+
+            'add_item' => [
+                'label' => 'Add item to :label',
+            ],
+
+            'delete_item' => [
+                'label' => 'Delete item',
+            ],
+
+            'move_item_down' => [
+                'label' => 'Move item down',
+            ],
+
+            'move_item_up' => [
+                'label' => 'Move item up',
+            ],
+
+        ],
+
+    ],
+
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -78,18 +130,18 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'Attach files',
+        'toolbar_buttons' => [
+            'attach_files' => 'Attach files',
             'blockquote' => 'Blockquote',
             'bold' => 'Bold',
-            'bulletList' => 'Bullet list',
-            'codeBlock' => 'Code block',
+            'bullet_list' => 'Bullet list',
+            'code_block' => 'Code block',
             'h1' => 'Title',
             'h2' => 'Heading',
             'h3' => 'Subheading',
             'italic' => 'Italic',
             'link' => 'Link',
-            'orderedList' => 'Numbered list',
+            'ordered_list' => 'Numbered list',
             'redo' => 'Redo',
             'strike' => 'Strikethrough',
             'undo' => 'Undo',
@@ -98,12 +150,12 @@ return [
     ],
 
     'select' => [
-        'noOptionsMessage' => 'Start typing to search...',
-        'searchPrompt' => 'No options match your search.',
+        'no_search_results_message' => 'No options match your search.',
         'placeholder' => 'Select an option',
+        'search_prompt' => 'Start typing to search...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'New tag',
     ],
 

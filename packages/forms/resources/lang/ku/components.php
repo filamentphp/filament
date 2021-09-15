@@ -2,7 +2,7 @@
 
 return [
 
-    'keyValue' => [
+    'key_value' => [
 
         'buttons' => [
 
@@ -36,30 +36,30 @@ return [
 
     ],
 
-    'markdownEditor' => [
+    'markdown_editor' => [
 
-        'toolbarButtons' => [
-            'attachFiles' => 'لکاندنی فایل',
+        'toolbar_buttons' => [
+            'attach_files' => 'لکاندنی فایل',
             'bold' => 'ڕەشکردن',
-            'bulletList' => 'خاڵ',
-            'codeBlock' => 'جۆد',
+            'bullet_list' => 'خاڵ',
+            'code_block' => 'جۆد',
             'edit' => 'نوسین',
             'italic' => 'لارکردنەوە',
             'link' => 'لینک',
-            'orderedList' => 'ژمارە',
+            'ordered_list' => 'ژمارە',
             'preview' => 'بینین',
             'strike' => 'هێڵ بەسەردا',
         ],
 
     ],
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'هیچ هەڵبژاردەیەک نییە تا دیاریبکەیت',
-        'searchPrompt' => 'هیچ هەڵبژاردەیەک نییە وەک گەڕانەکەت.',
+    'multi_select' => [
+        'no_search_results_message' => 'هیچ هەڵبژاردەیەک نییە وەک گەڕانەکەت.',
         'placeholder' => 'هەڵبژاردەیەک دیاریبکە',
+        'search_prompt' => 'هیچ هەڵبژاردەیەک نییە تا دیاریبکەیت',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -78,32 +78,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'لکاندنی فایل',
+        'toolbar_buttons' => [
+            'attach_files' => 'لکاندنی فایل',
+            'blockquote' => 'کۆت',
             'bold' => 'ڕەشکردن',
-            'bulletList' => 'خاڵ',
-            'codeBlock' => 'کۆد',
-            'heading' => 'هێدەر',
+            'bullet_list' => 'خاڵ',
+            'code_block' => 'کۆد',
+            'h1' => 'ناونیشان',
+            'h2' => 'هێدەر',
+            'h3' => 'ژێر هێدەر',
             'italic' => 'لارکردنەوە',
             'link' => 'لینک',
-            'orderedList' => 'ژمارە',
-            'quote' => 'کۆت',
+            'ordered_list' => 'ژمارە',
             'redo' => 'بیکەرەوە',
             'strike' => 'هێڵ بەسەردا',
-            'subheading' => 'ژێر هێدەر',
-            'title' => 'ناونیشان',
             'undo' => 'گەڕانەوە',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'دەستبکە بە نوسین بۆ گەڕان ...',
-        'searchPrompt' => 'هیچ هەڵبژاردەیەک نەدۆزرایەوە بۆ گەڕانەکەت.',
+        'no_search_results_message' => 'هیچ هەڵبژاردەیەک نەدۆزرایەوە بۆ گەڕانەکەت.',
         'placeholder' => 'هەڵبژاردەیەک دیاری بکە',
+        'search_prompt' => 'دەستبکە بە نوسین بۆ گەڕان ...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'تاگی نوێ',
     ],
 

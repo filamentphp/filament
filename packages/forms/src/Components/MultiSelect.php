@@ -14,11 +14,11 @@ class MultiSelect extends Field
 
     protected $getSearchResultsUsing = null;
 
-    protected $noOptionsMessage = null;
+    protected $searchPrompt = null;
 
     protected $options = [];
 
-    protected $searchPrompt = null;
+    protected $noSearchResultsMessage = null;
 
     protected function setUp(): void
     {
@@ -32,11 +32,11 @@ class MultiSelect extends Field
                 ->toArray();
         });
 
-        $this->noOptionsMessage(__('forms::components.multiSelect.noOptionsMessage'));
+        $this->noSearchResultsMessage(__('forms::components.multi_select.no_search_results_message'));
 
-        $this->searchPrompt(__('forms::components.multiSelect.searchPrompt'));
+        $this->placeholder(__('forms::components.multi_select.placeholder'));
 
-        $this->placeholder(__('forms::components.multiSelect.placeholder'));
+        $this->searchPrompt(__('forms::components.multi_select.search_prompt'));
     }
 
     public function getOptionLabelsUsing(callable $callback): static
@@ -53,9 +53,9 @@ class MultiSelect extends Field
         return $this;
     }
 
-    public function noOptionsMessage(string | callable $message): static
+    public function searchPrompt(string | callable $message): static
     {
-        $this->noOptionsMessage = $message;
+        $this->searchPrompt = $message;
 
         return $this;
     }
@@ -67,16 +67,16 @@ class MultiSelect extends Field
         return $this;
     }
 
-    public function searchPrompt(string | callable $message): static
+    public function noSearchResultsMessage(string | callable $message): static
     {
-        $this->searchPrompt = $message;
+        $this->noSearchResultsMessage = $message;
 
         return $this;
     }
 
-    public function getNoOptionsMessage(): string
+    public function getSearchPrompt(): string
     {
-        return $this->evaluate($this->noOptionsMessage);
+        return $this->evaluate($this->searchPrompt);
     }
 
     public function getOptionLabels(): array
@@ -103,9 +103,9 @@ class MultiSelect extends Field
         return $options;
     }
 
-    public function getSearchPrompt(): string
+    public function getNoSearchResultsMessage(): string
     {
-        return $this->evaluate($this->searchPrompt);
+        return $this->evaluate($this->noSearchResultsMessage);
     }
 
     public function getSearchResults(string $query): array

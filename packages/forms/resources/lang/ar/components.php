@@ -2,13 +2,13 @@
 
 return [
 
-    'multiSelect' => [
-        'emptyOptionsMessage' => 'لا توجد خيارات للاختيار من بينها.',
-        'searchPrompt' => 'لا توجد خيارات تطابق بحثك.',
+    'multi_select' => [
+        'no_search_results_message' => 'لا توجد خيارات تطابق بحثك.',
         'placeholder' => 'إختر خيارًا',
+        'search_prompt' => 'لا توجد خيارات للاختيار من بينها.',
     ],
 
-    'richEditor' => [
+    'rich_editor' => [
 
         'dialogs' => [
 
@@ -27,32 +27,32 @@ return [
 
         ],
 
-        'toolbarButtons' => [
-            'attachFiles' => 'إرفاق ملفات',
+        'toolbar_buttons' => [
+            'attach_files' => 'إرفاق ملفات',
+            'blockquote' => 'اقتباس',
             'bold' => 'عريض',
-            'bulletList' => 'نقاط',
-            'codeBlock' => 'كود',
-            'heading' => 'عنوان',
+            'bullet_list' => 'نقاط',
+            'code_block' => 'كود',
+            'h1' => 'عنوان',
+            'h2' => 'عنوان',
+            'h3' => 'عنوان فرعي',
             'italic' => 'مائل',
             'link' => 'رابط',
-            'orderedList' => 'أرقام',
-            'quote' => 'اقتباس',
+            'ordered_list' => 'أرقام',
             'redo' => 'إعادة',
             'strike' => 'يتوسطه خط',
-            'subheading' => 'عنوان فرعي',
-            'title' => 'عنوان',
             'undo' => 'تراجع',
         ],
 
     ],
 
     'select' => [
-        'emptyOptionsMessage' => 'ابدأ الكتابة للبحث ...',
-        'searchPrompt' => 'لا توجد خيارات تطابق بحثك.',
+        'no_search_results_message' => 'لا توجد خيارات تطابق بحثك.',
         'placeholder' => 'إختر خيارًا',
+        'search_prompt' => 'ابدأ الكتابة للبحث ...',
     ],
 
-    'tags' => [
+    'tags_input' =>[
         'placeholder' => 'كلمة مفتاحية جديدة',
     ],
 
