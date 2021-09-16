@@ -15,10 +15,11 @@
                 id="{{ $getId() }}"
                 {!! $isRequired() ? 'required' : null !!}
                 {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
+                x-init="hasValue = $el.value"
                 x-on:change="hasValue = $el.value"
                 x-bind:class="{
-                    'text-gray-900' => ! ! hasValue,
-                    'text-gray-400' => ! hasValue,
+                    'text-gray-900': ! ! hasValue,
+                    'text-gray-400': ! hasValue,
                 }"
                 {{ $attributes->merge($getExtraAttributes())->class([
                     'block w-full h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600',
