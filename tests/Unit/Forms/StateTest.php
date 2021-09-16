@@ -128,7 +128,9 @@ test('state can be dehydrated', function () {
         ->fill();
 
     expect($container)
-        ->dehydrateState()->toBe([$statePath => $state]);
+        ->dehydrateState()->toBe([
+            'data' => [$statePath => $state],
+        ]);
 });
 
 test('state can be dehydrated using custom logic', function () {
@@ -143,7 +145,9 @@ test('state can be dehydrated using custom logic', function () {
         ->fill();
 
     expect($container)
-        ->dehydrateState()->toBe([$statePath => strrev($state)]);
+        ->dehydrateState()->toBe([
+            'data' => [$statePath => strrev($state)],
+        ]);
 });
 
 test('custom logic can be executed before state is dehydrated', function () {
@@ -158,7 +162,9 @@ test('custom logic can be executed before state is dehydrated', function () {
         ->fill();
 
     expect($container)
-        ->dehydrateState()->toBe([$statePath => strrev($state)]);
+        ->dehydrateState()->toBe([
+            'data' => [$statePath => strrev($state)],
+        ]);
 });
 
 test('components can be excluded from state dehydration', function () {
