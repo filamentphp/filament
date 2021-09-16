@@ -19,7 +19,7 @@
                 'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
             ]) }}
         >
-            <option value="" {!! $isRequired() ? 'disabled' : '' !!}></option>
+            <option value="" {!! $isRequired() ? 'disabled' : '' !!}>{{ $getPlaceholder() }}</option>
 
             @foreach ($getOptions() as $value => $label)
                 <option value="{{ $value }}">
@@ -61,7 +61,7 @@
                     tabindex="1"
                 @endunless
                 @class([
-                    'relative flex items-center h-10 pl-3 pr-10 border overflow-hidden transition duration-75 rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600 focus:outline-none',
+                    'relative flex items-center h-10 pl-3 pr-10 border bg-white overflow-hidden transition duration-75 rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600 focus:outline-none',
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                 ])
