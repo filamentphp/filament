@@ -10,10 +10,10 @@
     "require": {
         "php": "^8.0",
         "blade-ui-kit/blade-heroicons": "^1.2",
-        "danharrin/date-format-converter": "^0.2.0",
-        "laravel/framework": "^8.56",
+        "danharrin/date-format-converter": "^0.2",
+        "laravel/framework": "^8.61",
         "laravel/ui": "^3.3",
-        "livewire/livewire": "^2.5",
+        "livewire/livewire": "^2.6",
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {
