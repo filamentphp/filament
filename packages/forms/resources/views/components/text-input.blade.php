@@ -9,6 +9,7 @@
 <x-forms::field-wrapper
     :id="$getId()"
     :label="$getLabel()"
+    :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
     :required="$isRequired()"
