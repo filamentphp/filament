@@ -19,7 +19,7 @@
                         <div class="flex">
                             <div class="w-8">
                                 <div class="bg-white divide-y shadow-sm rounded-l-lg border-b border-l border-t border-gray-300 overflow-hidden">
-                                    @unless ($loop->first)
+                                    @unless ($loop->first || $isItemMovementDisabled())
                                         <button
                                             wire:click="dispatchFormEvent('builder.moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                             type="button"
@@ -33,7 +33,7 @@
                                         </button>
                                     @endunless
 
-                                    @unless ($loop->last)
+                                    @unless ($loop->last || $isItemMovementDisabled())
                                         <button
                                             wire:click="dispatchFormEvent('builder.moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                             type="button"
@@ -82,7 +82,7 @@
                                         }"
                                     >
                                         <span class="sr-only">
-                                            {{ __('forms::components.builder.buttons.add_item_between.label') }}
+                                            {{ $getCreateItemBetweenButtonLabel() }}
                                         </span>
 
                                         <x-heroicon-o-plus class="w-5 h-5" />
@@ -129,9 +129,7 @@
             >
                 <x-heroicon-s-plus class="w-6 h-6 mr-1 -ml-2" />
 
-                {{ __('forms::components.builder.buttons.add_item.label', [
-                    'label' => lcfirst($getLabel()),
-                ]) }}
+                {{ $getCreateItemButtonLabel() }}
             </button>
 
             <div

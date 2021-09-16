@@ -16,7 +16,7 @@
                     >
                         <div class="w-8">
                             <div class="bg-white divide-y shadow-sm rounded-l-lg border-b border-l border-t border-gray-300 overflow-hidden">
-                                @unless ($loop->first)
+                                @unless ($loop->first || $isItemMovementDisabled())
                                     <button
                                         wire:click="dispatchFormEvent('repeater.moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
@@ -30,7 +30,7 @@
                                     </button>
                                 @endunless
 
-                                @unless ($loop->last)
+                                @unless ($loop->last || $isItemMovementDisabled())
                                     <button
                                         wire:click="dispatchFormEvent('repeater.moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
@@ -73,9 +73,7 @@
         >
             <x-heroicon-s-plus class="w-6 h-6 mr-1 -ml-2" />
 
-            {{ __('forms::components.repeater.buttons.add_item.label', [
-                'label' => lcfirst($getLabel()),
-            ]) }}
+            {{ $getCreateItemButtonLabel() }}
         </button>
     </div>
 </x-forms::field-wrapper>

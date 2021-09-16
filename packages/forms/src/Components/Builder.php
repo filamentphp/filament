@@ -11,6 +11,12 @@ class Builder extends Field
 {
     protected string $view = 'forms::components.builder';
 
+    protected $createItemBetweenButtonLabel = null;
+
+    protected $createItemButtonLabel = null;
+
+    protected $isItemMovementDisabled = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -77,6 +83,10 @@ class Builder extends Field
                         return;
                     }
 
+                    if ($component->isItemMovementDisabled()) {
+                        return;
+                    }
+
                     if ($statePath !== $component->getStatePath()) {
                         return;
                     }
@@ -93,6 +103,10 @@ class Builder extends Field
                         return;
                     }
 
+                    if ($component->isItemMovementDisabled()) {
+                        return;
+                    }
+
                     if ($statePath !== $component->getStatePath()) {
                         return;
                     }
@@ -104,11 +118,40 @@ class Builder extends Field
                 },
             ],
         ]);
+
+        $this->createItemBetweenButtonLabel(__('forms::components.builder.buttons.create_item_between.label'));
+
+        $this->createItemButtonLabel(function (Builder $component) {
+            return __('forms::components.builder.buttons.create_item.label', [
+                'label' => lcfirst($component->getLabel()),
+            ]);
+        });
     }
 
     public function blocks(array $blocks): static
     {
         $this->childComponents($blocks);
+
+        return $this;
+    }
+
+    public function createItemBetweenButtonLabel(string | callable $label): static
+    {
+        $this->createItemBetweenButtonLabel = $label;
+
+        return $this;
+    }
+
+    public function createItemButtonLabel(string | callable $label): static
+    {
+        $this->createItemButtonLabel = $label;
+
+        return $this;
+    }
+
+    public function disableItemMovement(bool | callable $condition = true): static
+    {
+        $this->isItemMovementDisabled = $condition;
 
         return $this;
     }
@@ -142,6 +185,16 @@ class Builder extends Field
             })->toArray();
     }
 
+    public function getCreateItemBetweenButtonLabel(): string
+    {
+        return $this->evaluate($this->createItemBetweenButtonLabel);
+    }
+
+    public function getCreateItemButtonLabel(): string
+    {
+        return $this->evaluate($this->createItemButtonLabel);
+    }
+
     public function getNormalisedState(): array
     {
         if (! is_array($state = $this->getState())) {
@@ -157,5 +210,10 @@ class Builder extends Field
     public function hasBlock($name): bool
     {
         return (bool) $this->getBlock($name);
+    }
+
+    public function isItemMovementDisabled(): bool
+    {
+        return $this->evaluate($this->isItemMovementDisabled);
     }
 }

@@ -6,24 +6,24 @@ return [
 
         'buttons' => [
 
-            'add_item' => [
-                'label' => 'Add block to :label',
+            'create_item' => [
+                'label' => 'Add to :label',
             ],
 
-            'add_item_between' => [
-                'label' => 'Add block between',
+            'create_item_between' => [
+                'label' => 'Add between',
             ],
 
             'delete_item' => [
-                'label' => 'Delete block',
+                'label' => 'Delete',
             ],
 
             'move_item_down' => [
-                'label' => 'Move block down',
+                'label' => 'Move down',
             ],
 
             'move_item_up' => [
-                'label' => 'Move block up',
+                'label' => 'Move up',
             ],
 
         ],
@@ -91,20 +91,20 @@ return [
 
         'buttons' => [
 
-            'add_item' => [
-                'label' => 'Add item to :label',
+            'create_item' => [
+                'label' => 'Add to :label',
             ],
 
             'delete_item' => [
-                'label' => 'Delete item',
+                'label' => 'Delete',
             ],
 
             'move_item_down' => [
-                'label' => 'Move item down',
+                'label' => 'Move down',
             ],
 
             'move_item_up' => [
-                'label' => 'Move item up',
+                'label' => 'Move up',
             ],
 
         ],

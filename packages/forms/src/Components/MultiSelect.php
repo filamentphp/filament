@@ -14,11 +14,11 @@ class MultiSelect extends Field
 
     protected $getSearchResultsUsing = null;
 
-    protected $searchPrompt = null;
-
     protected $options = [];
 
     protected $noSearchResultsMessage = null;
+
+    protected $searchPrompt = null;
 
     protected function setUp(): void
     {
@@ -53,13 +53,6 @@ class MultiSelect extends Field
         return $this;
     }
 
-    public function searchPrompt(string | callable $message): static
-    {
-        $this->searchPrompt = $message;
-
-        return $this;
-    }
-
     public function options(array | callable $options): static
     {
         $this->options = $options;
@@ -74,9 +67,11 @@ class MultiSelect extends Field
         return $this;
     }
 
-    public function getSearchPrompt(): string
+    public function searchPrompt(string | callable $message): static
     {
-        return $this->evaluate($this->searchPrompt);
+        $this->searchPrompt = $message;
+
+        return $this;
     }
 
     public function getOptionLabels(): array
@@ -106,6 +101,11 @@ class MultiSelect extends Field
     public function getNoSearchResultsMessage(): string
     {
         return $this->evaluate($this->noSearchResultsMessage);
+    }
+
+    public function getSearchPrompt(): string
+    {
+        return $this->evaluate($this->searchPrompt);
     }
 
     public function getSearchResults(string $query): array

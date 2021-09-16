@@ -16,11 +16,11 @@ class Select extends Field
 
     protected $isSearchable = false;
 
-    protected $searchPrompt = null;
-
     protected $options = [];
 
     protected $noSearchResultsMessage = null;
+
+    protected $searchPrompt = null;
 
     protected function setUp(): void
     {
@@ -65,13 +65,6 @@ class Select extends Field
         return $this;
     }
 
-    public function searchPrompt(string | callable $message): static
-    {
-        $this->searchPrompt = $message;
-
-        return $this;
-    }
-
     public function options(array | callable $options): static
     {
         $this->options = $options;
@@ -86,16 +79,18 @@ class Select extends Field
         return $this;
     }
 
+    public function searchPrompt(string | callable $message): static
+    {
+        $this->searchPrompt = $message;
+
+        return $this;
+    }
+
     public function noSearchResultsMessage(string | callable $message): static
     {
         $this->noSearchResultsMessage = $message;
 
         return $this;
-    }
-
-    public function getSearchPrompt(): string
-    {
-        return $this->evaluate($this->searchPrompt);
     }
 
     public function getOptionLabel(): ?string
@@ -119,6 +114,11 @@ class Select extends Field
     public function getNoSearchResultsMessage(): string
     {
         return $this->evaluate($this->noSearchResultsMessage);
+    }
+
+    public function getSearchPrompt(): string
+    {
+        return $this->evaluate($this->searchPrompt);
     }
 
     public function getSearchResults(string $query): array

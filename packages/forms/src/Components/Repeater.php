@@ -10,6 +10,12 @@ class Repeater extends Field
 {
     protected string $view = 'forms::components.repeater';
 
+    protected $createItemButtonLabel = null;
+
+    protected $defaultItems = 1;
+
+    protected $isItemMovementDisabled = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -57,6 +63,10 @@ class Repeater extends Field
                         return;
                     }
 
+                    if ($component->isItemMovementDisabled()) {
+                        return;
+                    }
+
                     if ($statePath !== $component->getStatePath()) {
                         return;
                     }
@@ -73,6 +83,10 @@ class Repeater extends Field
                         return;
                     }
 
+                    if ($component->isItemMovementDisabled()) {
+                        return;
+                    }
+
                     if ($statePath !== $component->getStatePath()) {
                         return;
                     }
@@ -84,6 +98,33 @@ class Repeater extends Field
                 },
             ],
         ]);
+
+        $this->createItemButtonLabel(function (Repeater $component) {
+            return __('forms::components.repeater.buttons.create_item.label', [
+                'label' => lcfirst($component->getLabel()),
+            ]);
+        });
+    }
+
+    public function createItemButtonLabel(string | callable $label): static
+    {
+        $this->createItemButtonLabel = $label;
+
+        return $this;
+    }
+
+    public function defaultItems(int | callable $count): static
+    {
+        $this->default(fn (Repeater $component) => array_pad([], $component->evaluate($count), []));
+
+        return $this;
+    }
+
+    public function disableItemMovement(bool | callable $condition = true): static
+    {
+        $this->isItemMovementDisabled = $condition;
+
+        return $this;
     }
 
     public function hydrateDefaultItemState(string $uuid): void
@@ -102,6 +143,11 @@ class Repeater extends Field
             })->toArray();
     }
 
+    public function getCreateItemButtonLabel(): string
+    {
+        return $this->evaluate($this->createItemButtonLabel);
+    }
+
     public function getNormalisedState(): array
     {
         if (! is_array($state = $this->getState())) {
@@ -109,5 +155,10 @@ class Repeater extends Field
         }
 
         return array_filter($state, fn ($item) => is_array($item));
+    }
+
+    public function isItemMovementDisabled(): bool
+    {
+        return $this->evaluate($this->isItemMovementDisabled);
     }
 }
