@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
@@ -127,7 +128,7 @@ trait CanBeValidated
         foreach ($this->rules as [$rule, $condition]) {
             if (is_numeric($rule)) {
                 $rules[] = $condition;
-            } elseif (is_callable($condition) && $this->evaluate($condition)) {
+            } elseif ($condition instanceof Closure && $this->evaluate($condition)) {
                 $rules[] = $rule;
             } elseif ($condition) {
                 $rules[] = $rule;
@@ -135,7 +136,7 @@ trait CanBeValidated
         }
 
         return array_map(function (string | object | callable $rule): string | object {
-            if (is_callable($rule)) {
+            if ($rule instanceof Closure) {
                 $rule = $this->evaluate($rule);
             }
 

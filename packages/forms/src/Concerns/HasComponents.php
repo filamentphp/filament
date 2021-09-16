@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Concerns;
 
+use Closure;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 
@@ -29,7 +30,7 @@ trait HasComponents
 
     public function getComponent(string | callable $callback): ?Component
     {
-        $callback = is_callable($callback)
+        $callback = $callback instanceof Closure
              ? $callback
              : fn (Component $component): bool => $component instanceof Field && $component->getStatePath() === $callback;
 

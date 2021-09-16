@@ -2,11 +2,13 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
+
 trait EvaluatesCallbacks
 {
     protected function evaluate(&$value, array $parameters = [])
     {
-        if (is_callable($value)) {
+        if ($value instanceof Closure) {
             return $value = app()->call($value, array_merge([
                 'component' => $this,
                 'get' => $this->getGetCallback(),
