@@ -18,6 +18,7 @@
 <x-forms::field-wrapper
     :id="$getId()"
     :label="$getLabel()"
+    :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
     :required="$isRequired()"
@@ -32,7 +33,6 @@
             locale: '{{ Str::of(app()->getLocale())->lower()->kebab() }}',
             maxDate: '{{ $getMaxDate() }}',
             minDate: '{{ $getMinDate() }}',
-            placeholder: '{{ $getPlaceholder() }}',
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
         x-on:click.away="closePicker()"

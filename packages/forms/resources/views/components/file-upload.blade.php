@@ -1,7 +1,7 @@
 <x-forms::field-wrapper
     :id="$getId()"
     :label="$getLabel()"
-    :label-sr-only="$isAvatar() || $isMultiple()"
+    :label-sr-only="$isAvatar() || $isMultiple() || $isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
     :required="$isRequired()"
