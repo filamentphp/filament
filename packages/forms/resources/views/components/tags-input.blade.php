@@ -7,7 +7,7 @@
     :state-path="$getStatePath()"
 >
     <div
-        x-data="TagsInputFormComponent({
+        x-data="tagsInputFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
         {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}

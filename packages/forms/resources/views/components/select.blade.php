@@ -29,7 +29,7 @@
         </select>
     @else
         <div
-            x-data="SelectFormComponent({
+            x-data="selectFormComponent({
                 getOptionLabelUsing: async (value) => {
                     return await $wire.getSelectOptionLabel('{{ $getStatePath() }}')
                 },

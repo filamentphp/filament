@@ -7,7 +7,7 @@
     :state-path="$getStatePath()"
 >
     <div
-        x-data="MultiSelectFormComponent({
+        x-data="multiSelectFormComponent({
             getOptionLabelsUsing: async (values) => {
                 return await $wire.getMultiSelectOptionLabels('{{ $getStatePath() }}')
             },

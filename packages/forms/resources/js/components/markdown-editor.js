@@ -4,7 +4,7 @@ import marked from 'marked'
 import { highlight } from 'mdhl'
 
 export default (Alpine) => {
-    Alpine.data('MarkdownEditorFormComponent', ({
+    Alpine.data('markdownEditorFormComponent', ({
         state,
         tab,
     }) => {

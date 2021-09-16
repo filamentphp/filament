@@ -1,5 +1,5 @@
 export default (Alpine) => {
-    Alpine.data('MultiSelectFormComponent', ({
+    Alpine.data('multiSelectFormComponent', ({
         getOptionLabelsUsing,
         getSearchResultsUsing,
         isAutofocused,

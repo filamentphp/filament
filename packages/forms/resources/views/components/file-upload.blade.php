@@ -11,7 +11,7 @@
         @class([
             'w-32 mx-auto' => $isAvatar(),
         ])
-        x-data="FileUploadFormComponent({
+        x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
             getUploadedFileUrlUsing: async () => {
                 return await $wire.getUploadedFileUrl('{{ $getStatePath() }}')

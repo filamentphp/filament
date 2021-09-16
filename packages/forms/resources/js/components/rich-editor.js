@@ -17,7 +17,7 @@ Trix.config.blockAttributes.subHeading = {
 }
 
 export default (Alpine) => {
-    Alpine.data('RichEditorFormComponent', ({
+    Alpine.data('richEditorFormComponent', ({
         state,
     }) => {
         return {

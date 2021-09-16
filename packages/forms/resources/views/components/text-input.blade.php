@@ -27,7 +27,7 @@
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                     type="{{ $getType() }}"
                 @else
-                    x-data="TextInputFormComponent({
+                    x-data="textInputFormComponent({
                         {{ $hasMask() ? "getMaskOptionsUsing: (IMask) => ({$getJsonMaskConfiguration()})," : null }}
                         state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
                     })"

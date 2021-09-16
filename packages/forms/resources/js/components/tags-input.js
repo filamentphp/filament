@@ -1,5 +1,5 @@
 export default (Alpine) => {
-    Alpine.data('TagsInputFormComponent', ({
+    Alpine.data('tagsInputFormComponent', ({
         state,
     }) => {
         return {

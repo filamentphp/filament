@@ -7,7 +7,7 @@
     :state-path="$getStatePath()"
 >
     <div
-        x-data="MarkdownEditorFormComponent({
+        x-data="markdownEditorFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
             tab: '{{ $isDisabled() ? 'preview' : 'edit' }}',
         })"

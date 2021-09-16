@@ -1,5 +1,5 @@
 export default (Alpine) => {
-    Alpine.data('SelectFormComponent', ({
+    Alpine.data('selectFormComponent', ({
         getOptionLabelUsing,
         getSearchResultsUsing,
         isAutofocused,
