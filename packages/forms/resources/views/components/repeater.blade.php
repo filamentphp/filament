@@ -23,7 +23,7 @@
                                         class="w-full flex items-center justify-center h-8 text-gray-800 transition hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600"
                                     >
                                         <span class="sr-only">
-                                            {{ __('forms::components.repeater.buttons.move_item_up') }}
+                                            {{ __('forms::components.repeater.buttons.move_item_up.label') }}
                                         </span>
 
                                         <x-heroicon-s-chevron-up class="w-5 h-5" />
@@ -37,7 +37,7 @@
                                         class="w-full flex items-center justify-center h-8 text-gray-800 transition hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600"
                                     >
                                         <span class="sr-only">
-                                            {{ __('forms::components.repeater.buttons.move_item_down') }}
+                                            {{ __('forms::components.repeater.buttons.move_item_down.label') }}
                                         </span>
 
                                         <x-heroicon-s-chevron-down class="w-5 h-5" />
@@ -50,7 +50,7 @@
                                     class="w-full flex items-center justify-center h-8 text-danger-600 transition hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-danger-600 focus:bg-primary-50 focus:border-primary-600"
                                 >
                                     <span class="sr-only">
-                                        {{ __('forms::components.repeater.buttons.delete_item') }}
+                                        {{ __('forms::components.repeater.buttons.delete_item.label') }}
                                     </span>
 
                                     <x-heroicon-s-trash class="w-5 h-5" />
@@ -73,7 +73,7 @@
         >
             <x-heroicon-s-plus class="w-6 h-6 mr-1 -ml-2" />
 
-            {{ __('forms::components.repeater.buttons.add_block', [
+            {{ __('forms::components.repeater.buttons.add_item.label', [
                 'label' => lcfirst($getLabel()),
             ]) }}
         </button>
