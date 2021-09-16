@@ -8,26 +8,33 @@
     :state-path="$getStatePath()"
 >
     @unless ($isSearchable())
-        <select
-            {!! $isAutofocused() ? 'autofocus' : null !!}
-            {!! $isDisabled() ? 'disabled' : null !!}
-            id="{{ $getId() }}"
-            {!! $isRequired() ? 'required' : null !!}
-            {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
-            {{ $attributes->merge($getExtraAttributes())->class([
-                'block w-full h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600',
-                'border-gray-300' => ! $errors->has($getStatePath()),
-                'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
-            ]) }}
-        >
-            <option value="" {!! $isRequired() ? 'disabled' : '' !!}>{{ $getPlaceholder() }}</option>
+        <div x-data="{ hasValue: true }">
+            <select
+                {!! $isAutofocused() ? 'autofocus' : null !!}
+                {!! $isDisabled() ? 'disabled' : null !!}
+                id="{{ $getId() }}"
+                {!! $isRequired() ? 'required' : null !!}
+                {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
+                x-on:change="hasValue = $el.value"
+                x-bind:class="{
+                    'text-gray-900' => ! ! hasValue,
+                    'text-gray-400' => ! hasValue,
+                }"
+                {{ $attributes->merge($getExtraAttributes())->class([
+                    'block w-full h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600',
+                    'border-gray-300' => ! $errors->has($getStatePath()),
+                    'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+                ]) }}
+            >
+                <option value="" {!! $isRequired() ? 'disabled' : '' !!}>{{ $getPlaceholder() }}</option>
 
-            @foreach ($getOptions() as $value => $label)
-                <option value="{{ $value }}">
-                    {{ $label }}
-                </option>
-            @endforeach
-        </select>
+                @foreach ($getOptions() as $value => $label)
+                    <option value="{{ $value }}">
+                        {{ $label }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
     @else
         <div
             x-data="selectFormComponent({
