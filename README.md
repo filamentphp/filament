@@ -29,14 +29,14 @@ composer require filament/filament
 composer require filament/forms
 ```
 
-### `spatie/laravel-medialibrary` Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-media-library-plugin)
+### spatie/laravel-medialibrary Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-media-library-plugin)
 **Current version series:** v2.x.
 
 ```bash
 composer require filament/spatie-laravel-media-library-plugin
 ```
 
-### `spatie/laravel-tags` Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-tags-plugin)
+### spatie/laravel-tags Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-tags-plugin)
 **Current version series:** v2.x.
 
 ```bash
