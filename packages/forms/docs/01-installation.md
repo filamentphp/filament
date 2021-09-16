@@ -51,7 +51,7 @@ module.exports = {
         extend: {
             colors: { // [tl! focus:start]
                 danger: colors.rose,
-                primary: colors.yellow,
+                primary: colors.blue,
             }, // [tl! focus:end]
         },
     },
