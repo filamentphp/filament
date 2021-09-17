@@ -22,7 +22,13 @@ trait HasStateBindingModifiers
 
     public function stateBindingModifiers(array | callable $modifiers): static
     {
-        $this->stateBindingModifiers = $modifiers;
+        if ($this->getChildComponents() !== []) {
+            foreach ($this->getChildComponents() as $component) {
+                $component->stateBindingModifiers($modifiers);
+            }
+        } else {
+            $this->stateBindingModifiers = $modifiers;
+        }
 
         return $this;
     }

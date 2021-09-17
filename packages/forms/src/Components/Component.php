@@ -25,6 +25,7 @@ class Component extends ViewComponent implements Htmlable
     use Concerns\HasLabel;
     use Concerns\HasMeta;
     use Concerns\HasState;
+    use Concerns\HasStateBindingModifiers;
     use Concerns\HasView;
     use Concerns\ListensToEvents;
     use HasColumns;
