@@ -3,7 +3,6 @@
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Support\Str;
 use Tests\TestCase;
 use Tests\Unit\Forms\Fixtures\Livewire;
 
@@ -31,7 +30,7 @@ test('components with children pass through reactive calls', function () {
     $component = ((new Component()))
         ->container(ComponentContainer::make(Livewire::make()))
         ->childComponents([
-            TextInput::make('foo')
+            TextInput::make('foo'),
         ])
         ->reactive();
 
@@ -44,7 +43,7 @@ test('components with children pass through lazy calls', function () {
     $component = ((new Component()))
         ->container(ComponentContainer::make(Livewire::make()))
         ->childComponents([
-            TextInput::make('foo')
+            TextInput::make('foo'),
         ])
         ->lazy();
 
