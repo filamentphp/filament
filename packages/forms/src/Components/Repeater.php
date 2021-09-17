@@ -115,7 +115,15 @@ class Repeater extends Field
 
     public function defaultItems(int | callable $count): static
     {
-        $this->default(fn (Repeater $component) => array_pad([], $component->evaluate($count), []));
+        $this->default(function (Repeater $component) use ($count): array {
+            $items = [];
+
+            foreach (range(1, $component->evaluate($count)) as $index) {
+                $items[(string) Str::uuid()] = [];
+            }
+
+            return $items;
+        });
 
         return $this;
     }
