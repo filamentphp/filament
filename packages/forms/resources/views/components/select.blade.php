@@ -27,7 +27,7 @@
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                 ]) }}
             >
-                <option value="" {!! $isRequired() ? 'disabled' : '' !!}>{{ $getPlaceholder() }}</option>
+                <option value="">{{ $getPlaceholder() }}</option>
 
                 @foreach ($getOptions() as $value => $label)
                     <option value="{{ $value }}">
