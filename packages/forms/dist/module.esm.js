@@ -5926,7 +5926,6 @@ var date_time_picker_default = (Alpine) => {
     firstDayOfWeek,
     format: format3,
     isAutofocused,
-    isRequired,
     locale,
     maxDate,
     minDate,
@@ -5956,14 +5955,12 @@ var date_time_picker_default = (Alpine) => {
           this.minDate = null;
         let date = this.getSelectedDate() ?? esm_default();
         if (this.maxDate !== null && date.isAfter(this.maxDate))
-          date = isRequired ? this.maxDate : null;
+          date = null;
         if (this.minDate !== null && date.isBefore(this.minDate))
-          date = isRequired ? this.minDate : null;
+          date = null;
         this.hour = date.hour();
         this.minute = date.minute();
         this.second = date.second();
-        if (isRequired && !this.getSelectedDate())
-          this.setState(date);
         this.setDisplayText();
         if (isAutofocused)
           this.openPicker();
@@ -6038,14 +6035,12 @@ var date_time_picker_default = (Alpine) => {
         this.$watch("state", () => {
           let date2 = this.getSelectedDate() ?? esm_default();
           if (this.maxDate !== null && date2.isAfter(this.maxDate))
-            date2 = isRequired ? this.maxDate : null;
+            date2 = null;
           if (this.minDate !== null && date2.isBefore(this.minDate))
-            date2 = isRequired ? this.minDate : null;
+            date2 = null;
           this.hour = date2.hour();
           this.minute = date2.minute();
           this.second = date2.second();
-          if (isRequired && !this.getSelectedDate())
-            this.setState(date2);
           this.setDisplayText();
         });
       },
@@ -6146,17 +6141,9 @@ var date_time_picker_default = (Alpine) => {
       },
       setState: function(date) {
         if (date === null) {
-          if (isRequired) {
-            date = esm_default();
-            if (this.maxDate !== null && date.isAfter(this.maxDate))
-              date = this.maxDate;
-            if (this.minDate !== null && date.isBefore(this.minDate))
-              date = this.minDate;
-          } else {
-            this.state = null;
-            this.setDisplayText();
-            return;
-          }
+          this.state = null;
+          this.setDisplayText();
+          return;
         } else {
           if (this.dateIsDisabled(date))
             return;

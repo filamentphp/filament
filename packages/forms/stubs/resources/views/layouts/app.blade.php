@@ -17,6 +17,7 @@
         <!-- Scripts -->
         @livewireScripts
         <script src="{{ mix('js/app.js') }}" defer></script>
+        <script src="https://unpkg.com/dayjs@1.8.21/locale/{{ str_replace('_', '-', app()->getLocale()) }}.js"></script>
     </head>
 
     <body class="antialiased">
