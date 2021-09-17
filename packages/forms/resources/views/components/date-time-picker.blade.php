@@ -1,6 +1,6 @@
 @once
     @push('scripts')
-        <script src="https://unpkg.com/dayjs@1.10.4/locale/{{ Str::of(app()->getLocale())->lower()->kebab() }}.js"></script>
+        <script src="//unpkg.com/dayjs@1.10.4/locale/{{ \Illuminate\Support\Str::of(app()->getLocale())->lower()->kebab() }}.js" defer></script>
     @endpush
 @endonce
 
@@ -30,7 +30,7 @@
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
             format: '{{ convert_date_format($getFormat())->to('day.js') }}',
             isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
-            locale: '{{ Str::of(app()->getLocale())->lower()->kebab() }}',
+            locale: '{{ \Illuminate\Support\Str::of(app()->getLocale())->lower()->kebab() }}',
             maxDate: '{{ $getMaxDate() }}',
             minDate: '{{ $getMinDate() }}',
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},

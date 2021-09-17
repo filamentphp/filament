@@ -104,7 +104,7 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 
 ```blade
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ \Illuminate\Support\Str::of(app()->getLocale())->lower()->kebab() }}">
     <head>
         <meta charset="utf-8">
 
@@ -122,7 +122,7 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
         <!-- Scripts -->
         @livewireScripts
         <script src="{{ mix('js/app.js') }}" defer></script>
-        <script src="https://unpkg.com/dayjs@1.8.21/locale/{{ str_replace('_', '-', app()->getLocale()) }}.js"></script>
+        @stack('scripts')
     </head>
 
     <body class="antialiased">

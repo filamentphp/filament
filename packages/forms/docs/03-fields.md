@@ -280,12 +280,6 @@ DateTimePicker::make('published_at')->weekStartsOnMonday()
 DateTimePicker::make('published_at')->weekStartsOnSunday()
 ```
 
-If you're using the date picker in a locale other than `en`, you should make sure to load the appropriate translations for your app:
-
-```blade
-<script src="https://unpkg.com/dayjs@1.8.21/locale/{{ str_replace('_', '-', app()->getLocale()) }}.js"></script>
-```
-
 ## File upload
 
 The file upload field is based on [Filepond](https://pqina.nl/filepond).
