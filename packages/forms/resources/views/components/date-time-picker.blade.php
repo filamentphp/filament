@@ -51,9 +51,9 @@
                 x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
                 x-on:keydown.arrow-up.stop.prevent="focusPreviousWeek()"
                 x-on:keydown.arrow-down.stop.prevent="focusNextWeek()"
-                x-on:keydown.backspace.stop.prevent="clearValue()"
-                x-on:keydown.clear.stop.prevent="clearValue()"
-                x-on:keydown.delete.stop.prevent="clearValue()"
+                x-on:keydown.backspace.stop.prevent="clearState()"
+                x-on:keydown.clear.stop.prevent="clearState()"
+                x-on:keydown.delete.stop.prevent="clearState()"
                 x-bind:aria-expanded="open"
                 aria-label="{{ $getPlaceholder() }}"
             @endunless
