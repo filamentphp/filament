@@ -53,7 +53,7 @@ class MultiSelect extends Field
         return $this;
     }
 
-    public function options(array | callable $options): static
+    public function options(array | Arrayable | callable $options): static
     {
         $this->options = $options;
 
