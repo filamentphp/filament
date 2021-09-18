@@ -3,13 +3,21 @@
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 use Tests\Unit\Forms\Fixtures\Livewire;
 
 uses(TestCase::class);
 
-test('components can be reactive', function () {
-    $component = ((new Component()))
+test('component state binding is deferred by default', function () {
+    $component = (new Component())->container(ComponentContainer::make(Livewire::make()));
+
+    expect($component)
+        ->getStateBindingModifiers()->toBe(['defer']);
+});
+
+test('component state binding can be reactive', function () {
+    $component = (new Component())
         ->container(ComponentContainer::make(Livewire::make()))
         ->reactive();
 
@@ -17,8 +25,8 @@ test('components can be reactive', function () {
         ->getStateBindingModifiers()->toBe([]);
 });
 
-test('components can be lazy', function () {
-    $component = ((new Component()))
+test('component state binding can be lazy', function () {
+    $component = (new Component())
         ->container(ComponentContainer::make(Livewire::make()))
         ->lazy();
 
@@ -26,28 +34,15 @@ test('components can be lazy', function () {
         ->getStateBindingModifiers()->toBe(['lazy']);
 });
 
-test('components with children pass through reactive calls', function () {
-    $component = ((new Component()))
-        ->container(ComponentContainer::make(Livewire::make()))
-        ->childComponents([
-            TextInput::make('foo'),
-        ])
-        ->reactive();
+test('components inherit their state binding modifiers', function () {
+    $component = (new Component())
+        ->container(
+            ComponentContainer::make(Livewire::make())
+                ->parentComponent(
+                    (new Component())->stateBindingModifiers($modifiers = [Str::random()]),
+                ),
+        );
 
     expect($component)
-        ->getChildComponents()->{0}
-        ->getStateBindingModifiers()->toBe([]);
-});
-
-test('components with children pass through lazy calls', function () {
-    $component = ((new Component()))
-        ->container(ComponentContainer::make(Livewire::make()))
-        ->childComponents([
-            TextInput::make('foo'),
-        ])
-        ->lazy();
-
-    expect($component)
-        ->getChildComponents()->{0}
-        ->getStateBindingModifiers()->toBe(['lazy']);
+        ->getStateBindingModifiers()->toBe($modifiers);
 });

@@ -21,6 +21,7 @@ class ComponentContainer extends ViewComponent implements Htmlable
     use Concerns\HasColumns;
     use Concerns\HasComponents;
     use Concerns\HasState;
+    use Concerns\HasStateBindingModifiers;
     use Concerns\ListensToEvents;
     use Concerns\SupportsComponentFileAttachments;
     use Concerns\SupportsFileUploadFields;

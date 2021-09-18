@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Filament\Forms\Concerns\HasColumns;
+use Filament\Forms\Concerns\HasStateBindingModifiers;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Traits\Macroable;
@@ -25,10 +26,10 @@ class Component extends ViewComponent implements Htmlable
     use Concerns\HasLabel;
     use Concerns\HasMeta;
     use Concerns\HasState;
-    use Concerns\HasStateBindingModifiers;
     use Concerns\HasView;
     use Concerns\ListensToEvents;
     use HasColumns;
+    use HasStateBindingModifiers;
     use Macroable;
     use Tappable;
 
