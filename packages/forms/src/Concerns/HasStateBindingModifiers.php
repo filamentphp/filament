@@ -47,7 +47,7 @@ trait HasStateBindingModifiers
             return $this->getContainer()->getStateBindingModifiers();
         }
 
-        if ($this instanceof ComponentContainer && $this->getParentComponent()) {
+        if ($this->getParentComponent()) {
             return $this->getParentComponent()->getStateBindingModifiers();
         }
 
