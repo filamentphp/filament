@@ -1,10 +1,12 @@
 <?php
 
-namespace Filament\Forms\Components\Concerns;
+namespace Filament\Forms\Concerns;
+
+use Filament\Forms\Components\Component;
 
 trait HasStateBindingModifiers
 {
-    protected array $stateBindingModifiers = ['defer'];
+    protected $stateBindingModifiers = null;
 
     public function reactive(): static
     {
@@ -20,7 +22,7 @@ trait HasStateBindingModifiers
         return $this;
     }
 
-    public function stateBindingModifiers(array | callable $modifiers): static
+    public function stateBindingModifiers(array $modifiers): static
     {
         $this->stateBindingModifiers = $modifiers;
 
@@ -36,6 +38,18 @@ trait HasStateBindingModifiers
 
     public function getStateBindingModifiers(): array
     {
-        return $this->evaluate($this->stateBindingModifiers);
+        if ($this->stateBindingModifiers !== null) {
+            return $this->stateBindingModifiers;
+        }
+
+        if ($this instanceof Component) {
+            return $this->getContainer()->getStateBindingModifiers();
+        }
+
+        if ($this->getParentComponent()) {
+            return $this->getParentComponent()->getStateBindingModifiers();
+        }
+
+        return ['defer'];
     }
 }

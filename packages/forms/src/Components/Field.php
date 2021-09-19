@@ -11,7 +11,6 @@ class Field extends Component implements Contracts\HasValidationRules
     use Concerns\HasHelperText;
     use Concerns\HasHint;
     use Concerns\HasName;
-    use Concerns\HasStateBindingModifiers;
 
     final public function __construct(string $name)
     {

@@ -9,7 +9,7 @@ use Tests\Unit\Forms\Fixtures\Livewire;
 uses(TestCase::class);
 
 it('belongs to container', function () {
-    $component = ((new Component()))
+    $component = (new Component())
         ->container($container = ComponentContainer::make(Livewire::make()));
 
     expect($component)
