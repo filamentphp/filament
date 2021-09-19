@@ -39,10 +39,8 @@ trait HasStateBindingModifiers
 
     public function getStateBindingModifiers(): array
     {
-        $modifiers = $this->stateBindingModifiers;
-
-        if ($modifiers !== null) {
-            return $modifiers;
+        if ($this->stateBindingModifiers !== null) {
+            return $this->stateBindingModifiers;
         }
 
         if ($this instanceof Component) {
