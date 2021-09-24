@@ -20,6 +20,7 @@ trait CanPaginateRecords
     public function setPage($page)
     {
         $this->page = $page;
+        $this->paginators['page'] = $page;
 
         $this->selected = [];
     }

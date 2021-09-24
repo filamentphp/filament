@@ -15,7 +15,7 @@
         "illuminate/http": "^8.0",
         "illuminate/support": "^8.0",
         "illuminate/validation": "^8.0",
-        "livewire/livewire": "^2.2"
+        "livewire/livewire": "^2.6"
     },
     "autoload": {
         "psr-4": {
