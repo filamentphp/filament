@@ -43,7 +43,10 @@ class ResetPassword extends Component
     {
         $this->validate();
 
-        $resetStatus = Password::broker('filament_users')
+        // Use filament_users broker only when we're using filament guard. Otherwise, use Laravel's default
+        $broker = config('filament.auth.guard') === 'filament' ? 'filament_users' : null;
+
+        $resetStatus = Password::broker($broker)
             ->reset(
                 $this->only(['email', 'password', 'token']),
                 function ($user, $password) {
