@@ -6,6 +6,7 @@ use Filament\Filament;
 use Filament\Http\Livewire\Auth\ResetPassword;
 use Filament\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -30,6 +31,36 @@ class ResetPasswordTest extends TestCase
             ->assertRedirect(route('filament.dashboard'));
 
         $this->assertAuthenticatedAs($user);
+
+        $this->assertTrue(Filament::auth()->attempt([
+            'email' => $user->email,
+            'password' => $newPassword,
+        ]));
+    }
+
+    /** @test */
+    public function can_reset_password_with_web_guard()
+    {
+        // Configure filament to use default Laravel's auth guard
+        Config::set('filament.auth.guard', 'web');
+
+        // Set Laravel's default user model to filament's one, so it has filament's attributes
+        Config::set('auth.providers.users.model', User::class);
+
+        $user = User::factory()->create();
+        $newPassword = Str::random();
+
+        Livewire::test(ResetPassword::class, [
+            'token' => $this->generateToken($user)
+        ])
+            ->set('email', $user->email)
+            ->set('password', $newPassword)
+            ->set('passwordConfirmation', $newPassword)
+            ->call('submit')
+            ->assertHasNoErrors()
+            ->assertRedirect(route('filament.dashboard'));
+
+        $this->assertAuthenticatedAs($user, config('filament.auth.guard'));
 
         $this->assertTrue(Filament::auth()->attempt([
             'email' => $user->email,
@@ -137,6 +168,9 @@ class ResetPasswordTest extends TestCase
             $user = User::factory()->create();
         }
 
-        return Password::broker('filament_users')->createToken($user);
+        // Use filament_users broker only when we're using filament guard. Otherwise, use Laravel's default
+        $broker = config('filament.auth.guard') === 'filament' ? 'filament_users' : null;
+
+        return Password::broker($broker)->createToken($user);
     }
 }
