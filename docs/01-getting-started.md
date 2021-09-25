@@ -96,6 +96,8 @@ public function isFilamentAdmin()
 }
 ```
 
+Finally, for the reset password procedure to work correctly your user should implement a `sendPasswordResetNotification($token)` function. You can use the trait `Filament\Models\Concerns\SendsPasswordResetNotification` to add this functionality to your User model, fully integrated with Filament login and routes.
+
 ### Disabling the Default Migrations
 
 You may wish to prevent the migration for the default users table from being registered. You may do this by calling:
