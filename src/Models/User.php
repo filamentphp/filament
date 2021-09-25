@@ -4,6 +4,7 @@ namespace Filament\Models;
 
 use Filament\Database\Factories\UserFactory;
 use Filament\Models\Concerns\IsFilamentUser;
+use Filament\Models\Concerns\SendsPasswordResetNotification;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,6 +15,7 @@ class User extends Authenticatable implements FilamentUser
     use HasFactory;
     use IsFilamentUser;
     use Notifiable;
+    use SendsPasswordResetNotification;
 
     public static $filamentAdminColumn = 'is_admin';
 
