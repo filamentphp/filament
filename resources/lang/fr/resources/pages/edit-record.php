@@ -4,6 +4,10 @@ return [
 
     'buttons' => [
 
+        'cancel' => [
+            'label' => 'Annuler',
+        ],
+
         'delete' => [
             'label' => 'Supprimer',
         ],
@@ -30,7 +34,7 @@ return [
 
             ],
 
-            'description' => 'Voulez-vous vraiment supprimer cet enregistrement? Cette action ne peut pas être annulée.',
+            'description' => 'Voulez-vous vraiment supprimer cet enregistrement? Cette action est irréversible',
 
             'heading' => 'Supprimer cet enregistrement?',
 

@@ -94,7 +94,7 @@ return [
 
             ],
 
-            'description' => 'Voulez-vous vraiment détacher les enregistrements sélectionnés? Cette action ne peut pas être annulée.',
+            'description' => 'Voulez-vous vraiment détacher les enregistrements sélectionnés? Cette action est irréversible.',
 
             'heading' => 'Détacher les enregistrements sélectionnés?',
 
