@@ -96,7 +96,26 @@ public function isFilamentAdmin()
 }
 ```
 
-Finally, for the reset password procedure to work correctly your user should implement a `sendPasswordResetNotification($token)` function. You can use the trait `Filament\Models\Concerns\SendsPasswordResetNotification` to add this functionality to your User model, fully integrated with Filament login and routes.
+Finally, for the correct reset password URL to be sent, you should implement a `sendPasswordResetNotification($token)` function. You can use the `Filament\Models\Concerns\SendsFilamentPasswordResetNotification` trait to add this functionality to your User model, fully integrated with Filament:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Filament\Models\Concerns\IsFilamentUser;
+use Filament\Models\Concerns\SendsFilamentPasswordResetNotification;
+use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class User extends Authenticatable implements FilamentUser
+{
+    use IsFilamentUser;
+    use SendsFilamentPasswordResetNotification;
+
+    // ...
+}
+```
 
 ### Disabling the Default Migrations
 

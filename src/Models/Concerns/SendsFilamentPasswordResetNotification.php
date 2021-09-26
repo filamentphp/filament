@@ -5,7 +5,7 @@ namespace Filament\Models\Concerns;
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Support\Facades\URL;
 
-trait SendsPasswordResetNotification
+trait SendsFilamentPasswordResetNotification
 {
     public function sendPasswordResetNotification($token)
     {
