@@ -34,7 +34,7 @@ return [
 
             ],
 
-            'description' => 'Voulez-vous vraiment supprimer cet enregistrement? Cette action est irréversible',
+            'description' => 'Voulez-vous vraiment supprimer cet enregistrement? Cette action est irréversible.',
 
             'heading' => 'Supprimer cet enregistrement?',
 
