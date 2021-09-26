@@ -29,7 +29,7 @@ class RequestPasswordTest extends TestCase
     }
 
     /** @test */
-    public function can_request_password_reset_with_web_guard()
+    public function can_request_password_reset_with_custom_user_model()
     {
         Config::set('filament.auth.guard', 'web');
         Config::set('auth.providers.users.model', User::class);
