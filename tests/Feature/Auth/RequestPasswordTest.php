@@ -31,24 +31,10 @@ class RequestPasswordTest extends TestCase
     /** @test */
     public function can_request_password_reset_with_web_guard()
     {
-        Notification::fake();
-
-        // Configure filament to use default Laravel's auth guard
         Config::set('filament.auth.guard', 'web');
-
-        // Set Laravel's default user model to filament's one, so it has filament's attributes
-        // and uses 'IsFilamentUser' trait (needed to send the notification)
         Config::set('auth.providers.users.model', User::class);
 
-        $user = User::factory()->create();
-
-        Livewire::test(RequestPassword::class)
-            ->set('email', $user->email)
-            ->call('submit')
-            ->assertHasNoErrors()
-            ->assertDispatchedBrowserEvent('notify');
-
-        Notification::assertSentTo($user, ResetPasswordNotification::class);
+        $this->can_request_password_reset();
     }
 
     /** @test */
