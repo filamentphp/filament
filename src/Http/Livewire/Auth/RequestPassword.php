@@ -36,7 +36,7 @@ class RequestPassword extends Component
             return;
         }
 
-        // Use filament_users broker only when we're using filament guard. Otherwise, use Laravel's default
+        // Use the `filament_users` broker only with the `filament` guard.
         $broker = config('filament.auth.guard') === 'filament' ? 'filament_users' : null;
 
         $requestStatus = Password::broker($broker)->sendResetLink($this->validate());
