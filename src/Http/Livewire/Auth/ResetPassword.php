@@ -43,7 +43,10 @@ class ResetPassword extends Component
     {
         $this->validate();
 
-        $resetStatus = Password::broker('filament_users')
+        // Use the `filament_users` broker only with the `filament` guard.
+        $broker = config('filament.auth.guard') === 'filament' ? 'filament_users' : null;
+
+        $resetStatus = Password::broker($broker)
             ->reset(
                 $this->only(['email', 'password', 'token']),
                 function ($user, $password) {
@@ -55,7 +58,7 @@ class ResetPassword extends Component
             );
 
         if (Password::PASSWORD_RESET !== $resetStatus) {
-            $this->addError('email', __("filament::auth/request-password.messages.{$resetStatus}"));
+            $this->addError('email', __("filament::auth/reset-password.messages.{$resetStatus}"));
 
             return;
         }

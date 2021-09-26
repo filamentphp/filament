@@ -6,6 +6,7 @@ use Filament\Filament;
 use Filament\Http\Livewire\Auth\ResetPassword;
 use Filament\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -29,12 +30,21 @@ class ResetPasswordTest extends TestCase
             ->assertHasNoErrors()
             ->assertRedirect(route('filament.dashboard'));
 
-        $this->assertAuthenticatedAs($user);
+        $this->assertAuthenticatedAs($user, config('filament.auth.guard'));
 
         $this->assertTrue(Filament::auth()->attempt([
             'email' => $user->email,
             'password' => $newPassword,
         ]));
+    }
+
+    /** @test */
+    public function can_reset_password_with_custom_user_model()
+    {
+        Config::set('filament.auth.guard', 'web');
+        Config::set('auth.providers.users.model', User::class);
+
+        $this->can_reset_password();
     }
 
     /** @test */
@@ -137,6 +147,9 @@ class ResetPasswordTest extends TestCase
             $user = User::factory()->create();
         }
 
-        return Password::broker('filament_users')->createToken($user);
+        // Use filament_users broker only when we're using filament guard. Otherwise, use Laravel's default
+        $broker = config('filament.auth.guard') === 'filament' ? 'filament_users' : null;
+
+        return Password::broker($broker)->createToken($user);
     }
 }

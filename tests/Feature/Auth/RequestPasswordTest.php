@@ -6,6 +6,7 @@ use Filament\Http\Livewire\Auth\RequestPassword;
 use Filament\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 
@@ -25,6 +26,15 @@ class RequestPasswordTest extends TestCase
             ->assertDispatchedBrowserEvent('notify');
 
         Notification::assertSentTo($user, ResetPasswordNotification::class);
+    }
+
+    /** @test */
+    public function can_request_password_reset_with_custom_user_model()
+    {
+        Config::set('filament.auth.guard', 'web');
+        Config::set('auth.providers.users.model', User::class);
+
+        $this->can_request_password_reset();
     }
 
     /** @test */

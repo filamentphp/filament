@@ -36,7 +36,10 @@ class RequestPassword extends Component
             return;
         }
 
-        $requestStatus = Password::broker('filament_users')->sendResetLink($this->validate());
+        // Use the `filament_users` broker only with the `filament` guard.
+        $broker = config('filament.auth.guard') === 'filament' ? 'filament_users' : null;
+
+        $requestStatus = Password::broker($broker)->sendResetLink($this->validate());
 
         if (Password::RESET_LINK_SENT !== $requestStatus) {
             $this->addError('email', __("filament::auth/request-password.messages.{$requestStatus}"));
