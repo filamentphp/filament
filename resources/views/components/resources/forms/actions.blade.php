@@ -2,7 +2,7 @@
     'actions' => [],
 ])
 
-<div class="flex flex-wrap items-center gap-3">
+<div class="flex flex-wrap items-center gap-3 rtl:flex-row-reverse">
     @foreach ($actions as $button)
         <x-filament::button
             :color="$button->getColor()"
