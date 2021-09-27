@@ -55,7 +55,7 @@ class Select extends Field
 
     public function disableOptionWhen(bool | callable $callback): static
     {
-        $this->disableOption = $callback;
+        $this->isOptionDisabled = $callback;
 
         return $this;
     }
