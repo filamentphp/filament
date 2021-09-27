@@ -30,7 +30,7 @@
                 <option value="">{{ $getPlaceholder() }}</option>
 
                 @foreach ($getOptions() as $value => $label)
-                    <option value="{{ $value }}">
+                    <option value="{{ $value }}" @if($isOptionDisabled($value, $label)) disabled @endif>
                         {{ $label }}
                     </option>
                 @endforeach

@@ -16,6 +16,8 @@ class Select extends Field
 
     protected $isSearchable = false;
 
+    protected $isOptionDisabled = false;
+
     protected $options = [];
 
     protected $noSearchResultsMessage = null;
@@ -47,6 +49,13 @@ class Select extends Field
             1 => $trueLabel,
             0 => $falseLabel,
         ]);
+
+        return $this;
+    }
+
+    public function disableOptionWhen(bool | callable $callback): static
+    {
+        $this->disableOption = $callback;
 
         return $this;
     }
@@ -136,6 +145,14 @@ class Select extends Field
         }
 
         return $results;
+    }
+
+    public function isOptionDisabled(mixed $value, string $label): bool
+    {
+        return (bool) $this->evaluate($this->isOptionDisabled, [
+            'label' => $label,
+            'value' => $value,
+        ]);
     }
 
     public function isSearchable(): bool
