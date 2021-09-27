@@ -14,9 +14,9 @@ class Select extends Field
 
     protected $getSearchResultsUsing = null;
 
-    protected $isSearchable = false;
+    protected $isOptionDisabled = null;
 
-    protected $isOptionDisabled = false;
+    protected $isSearchable = false;
 
     protected $options = [];
 
@@ -147,8 +147,12 @@ class Select extends Field
         return $results;
     }
 
-    public function isOptionDisabled(mixed $value, string $label): bool
+    public function isOptionDisabled($value, string $label): bool
     {
+        if ($this->isOptionDisabled === null) {
+            return false;
+        }
+
         return (bool) $this->evaluate($this->isOptionDisabled, [
             'label' => $label,
             'value' => $value,
