@@ -14,6 +14,8 @@ class DateTimePicker extends DatePicker
 
     protected $hasTime = true;
 
+    protected $hasDate = true;
+
     protected $view = 'forms::components.date-time-picker';
 
     protected function setUp()

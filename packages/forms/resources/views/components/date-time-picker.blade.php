@@ -438,59 +438,61 @@
                 role="dialog"
                 x-cloak
                 class="absolute z-10 w-64 p-4 my-1 bg-white border border-gray-300 rounded shadow-sm"
-            >
+                >
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
-                        <select
-                            x-model="focusedMonth"
-                            class="flex-grow p-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none"
-                        >
-                            <template x-for="(month, index) in dayjs.months()">
-                                <option x-bind:value="index" x-text="month"></option>
+                    @if($formComponent->hasDate())
+                        <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
+                            <select
+                                x-model="focusedMonth"
+                                class="flex-grow p-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none"
+                            >
+                                <template x-for="(month, index) in dayjs.months()">
+                                    <option x-bind:value="index" x-text="month"></option>
+                                </template>
+                            </select>
+
+                            <input
+                                type="number"
+                                x-model.debounce="focusedYear"
+                                class="w-20 p-0 text-lg text-right text-gray-600 border-0 focus:ring-0 focus:outline-none"
+                            />
+                        </div>
+
+                        <div class="grid grid-cols-7 gap-1">
+                            <template x-for="(day, index) in getDayLabels()" :key="index">
+                                <div
+                                    x-text="day"
+                                    class="text-xs font-medium text-center text-gray-800"
+                                ></div>
                             </template>
-                        </select>
+                        </div>
 
-                        <input
-                            type="number"
-                            x-model.debounce="focusedYear"
-                            class="w-20 p-0 text-lg text-right text-gray-600 border-0 focus:ring-0 focus:outline-none"
-                        />
-                    </div>
+                        <div role="grid" class="grid grid-cols-7 gap-1">
+                            <template x-for="day in emptyDaysInFocusedMonth" x-bind:key="day">
+                                <div class="text-sm text-center border border-transparent"></div>
+                            </template>
 
-                    <div class="grid grid-cols-7 gap-1">
-                        <template x-for="(day, index) in getDayLabels()" :key="index">
-                            <div
-                                x-text="day"
-                                class="text-xs font-medium text-center text-gray-800"
-                            ></div>
-                        </template>
-                    </div>
-
-                    <div role="grid" class="grid grid-cols-7 gap-1">
-                        <template x-for="day in emptyDaysInFocusedMonth" x-bind:key="day">
-                            <div class="text-sm text-center border border-transparent"></div>
-                        </template>
-
-                        <template x-for="day in daysInFocusedMonth" x-bind:key="day">
-                            <div
-                                x-text="day"
-                                x-on:click="dayIsDisabled(day) || selectDate(day)"
-                                x-on:mouseenter="setFocusedDay(day)"
-                                role="option"
-                                x-bind:aria-selected="focusedDate.date() === day"
-                                x-bind:class="{
-                                    'bg-blue-600 text-white': dayIsSelected(day),
-                                    'text-gray-700': ! dayIsSelected(day),
-                                    'bg-blue-50': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
-                                    'bg-blue-200': focusedDate.date() === day && ! dayIsSelected(day),
-                                    'bg-gray-100': dayIsDisabled(day) && focusedDate.date() !== day,
-                                    'cursor-pointer': ! dayIsDisabled(day),
-                                    'cursor-not-allowed': dayIsDisabled(day),
-                                }"
-                                class="text-sm leading-none leading-loose text-center transition duration-100 ease-in-out rounded"
-                            ></div>
-                        </template>
-                    </div>
+                            <template x-for="day in daysInFocusedMonth" x-bind:key="day">
+                                <div
+                                    x-text="day"
+                                    x-on:click="dayIsDisabled(day) || selectDate(day)"
+                                    x-on:mouseenter="setFocusedDay(day)"
+                                    role="option"
+                                    x-bind:aria-selected="focusedDate.date() === day"
+                                    x-bind:class="{
+                                        'bg-blue-600 text-white': dayIsSelected(day),
+                                        'text-gray-700': ! dayIsSelected(day),
+                                        'bg-blue-50': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
+                                        'bg-blue-200': focusedDate.date() === day && ! dayIsSelected(day),
+                                        'bg-gray-100': dayIsDisabled(day) && focusedDate.date() !== day,
+                                        'cursor-pointer': ! dayIsDisabled(day),
+                                        'cursor-not-allowed': dayIsDisabled(day),
+                                    }"
+                                    class="text-sm leading-none leading-loose text-center transition duration-100 ease-in-out rounded"
+                                ></div>
+                            </template>
+                        </div>
+                    @endif
 
                     @if ($formComponent->hasTime())
                         <div class="flex items-center justify-center py-2 bg-gray-100 rounded">

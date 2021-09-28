@@ -19,6 +19,8 @@ class DatePicker extends Field
 
     protected $hasTime = false;
 
+    protected $hasDate = true;
+
     protected $maxDate;
 
     protected $minDate;
@@ -146,5 +148,10 @@ class DatePicker extends Field
     protected function getDefaultFirstDayOfWeek()
     {
         return config('forms.first_day_of_week', 1);
+    }
+
+    public function hasDate()
+    {
+        return $this->hasDate;
     }
 }
