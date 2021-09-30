@@ -68,7 +68,9 @@ trait CanRunBulkRecordActions
 
     public function updatedShowingBulkActionConfirmationModal($value)
     {
-        if ($value === false) $this->reset('bulkRecordAction');
+        if ($value === false) {
+            $this->reset('bulkRecordAction');
+        }
     }
 
     public function updatedHasConfirmedBulkAction()
