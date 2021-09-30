@@ -29,6 +29,20 @@ class Text extends Column
         return $this;
     }
 
+    public function getDefaultValue()
+    {
+        return $this->defaultValue;
+    }
+
+    public function dateTime($format = 'F j, Y H:i:s')
+    {
+        $this->configure(function () use ($format) {
+            $this->date($format);
+        });
+
+        return $this;
+    }
+
     public function date($format = 'F j, Y')
     {
         $this->configure(function () use ($format) {
@@ -37,15 +51,6 @@ class Text extends Column
 
                 return $value;
             };
-        });
-
-        return $this;
-    }
-
-    public function dateTime($format = 'F j, Y H:i:s')
-    {
-        $this->configure(function () use ($format) {
-            $this->date($format);
         });
 
         return $this;
@@ -67,11 +72,6 @@ class Text extends Column
         });
 
         return $this;
-    }
-
-    public function getDefaultValue()
-    {
-        return $this->defaultValue;
     }
 
     public function getValue($record, $attribute = null)

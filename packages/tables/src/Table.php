@@ -30,6 +30,18 @@ class Table
 
     protected $shouldPrimaryColumnUrlOpenInNewTab = false;
 
+    public static function for($livewire)
+    {
+        return (new static())->livewire($livewire);
+    }
+
+    public function livewire($component)
+    {
+        $this->livewire = $component;
+
+        return $this;
+    }
+
     public function bulkRecordActions($actions)
     {
         $this->bulkRecordActions = collect(value($actions))
@@ -85,24 +97,14 @@ class Table
         return $this;
     }
 
-    public static function for($livewire)
-    {
-        return (new static())->livewire($livewire);
-    }
-
-    public function getBulkRecordActions()
-    {
-        return $this->bulkRecordActions;
-    }
-
-    public function getColumns()
-    {
-        return $this->columns;
-    }
-
     public function getContext()
     {
         return get_class($this->getLivewire());
+    }
+
+    public function getLivewire()
+    {
+        return $this->livewire;
     }
 
     public function getDefaultSort()
@@ -118,16 +120,6 @@ class Table
     public function getDefaultSortDirection()
     {
         return $this->defaultSortDirection;
-    }
-
-    public function getFilters()
-    {
-        return $this->filters;
-    }
-
-    public function getLivewire()
-    {
-        return $this->livewire;
     }
 
     public function getPrimaryColumnAction($record = null)
@@ -166,6 +158,11 @@ class Table
         return $columns;
     }
 
+    public function getColumns()
+    {
+        return $this->columns;
+    }
+
     public function getVisibleFilters()
     {
         $filters = collect($this->getFilters())
@@ -173,6 +170,11 @@ class Table
             ->toArray();
 
         return $filters;
+    }
+
+    public function getFilters()
+    {
+        return $this->filters;
     }
 
     public function getVisibleActions()
@@ -184,23 +186,14 @@ class Table
         return $actions;
     }
 
+    public function getBulkRecordActions()
+    {
+        return $this->bulkRecordActions;
+    }
+
     public function isReorderable()
     {
         return $this->reorderUsing !== null;
-    }
-
-    public function livewire($component)
-    {
-        $this->livewire = $component;
-
-        return $this;
-    }
-
-    public function openPrimaryColumnUrlInNewTab()
-    {
-        $this->shouldPrimaryColumnUrlOpenInNewTab = true;
-
-        return $this;
     }
 
     public function pagination($enabled)
@@ -234,6 +227,13 @@ class Table
         if ($shouldOpenInNewTab) {
             $this->openPrimaryColumnUrlInNewTab();
         }
+
+        return $this;
+    }
+
+    public function openPrimaryColumnUrlInNewTab()
+    {
+        $this->shouldPrimaryColumnUrlOpenInNewTab = true;
 
         return $this;
     }

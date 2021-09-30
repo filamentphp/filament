@@ -35,29 +35,11 @@ class BulkAction
         $this->setUp();
     }
 
-    protected function setUp()
+    public function name($name)
     {
-        //
-    }
-
-    public function run($records)
-    {
-        if (! $records instanceof Collection) {
-            $records = collect($records);
-        }
-
-        $callback = $this->getCallback();
-
-        return $callback($records);
-    }
-
-    public function callback($callback)
-    {
-        $this->configure(function () use ($callback) {
-            $this->callback = $callback;
+        $this->configure(function () use ($name) {
+            $this->name = $name;
         });
-
-        return $this;
     }
 
     public function configure($callback = null)
@@ -79,6 +61,46 @@ class BulkAction
         }
 
         return $this;
+    }
+
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    public function callback($callback)
+    {
+        $this->configure(function () use ($callback) {
+            $this->callback = $callback;
+        });
+
+        return $this;
+    }
+
+    protected function setUp()
+    {
+        //
+    }
+
+    public static function make($name = null, $callback = null)
+    {
+        return new static($name, $callback);
+    }
+
+    public function run($records)
+    {
+        if (! $records instanceof Collection) {
+            $records = collect($records);
+        }
+
+        $callback = $this->getCallback();
+
+        return $callback($records);
+    }
+
+    public function getCallback()
+    {
+        return $this->callback;
     }
 
     public function except($contexts, $callback = null)
@@ -104,6 +126,20 @@ class BulkAction
         return $this;
     }
 
+    public function hidden()
+    {
+        $this->configure(function () {
+            $this->isHidden = true;
+        });
+
+        return $this;
+    }
+
+    public function getContext()
+    {
+        return $this->getTable()->getContext();
+    }
+
     public function requiresConfirmation($requiresConfirmation = true)
     {
         $this->configure(function () use ($requiresConfirmation) {
@@ -111,16 +147,6 @@ class BulkAction
         });
 
         return $this;
-    }
-
-    public function getCallback()
-    {
-        return $this->callback;
-    }
-
-    public function getContext()
-    {
-        return $this->getTable()->getContext();
     }
 
     public function getRequiresConfirmation()
@@ -140,28 +166,14 @@ class BulkAction
         return $this->label;
     }
 
-    public function getLivewire()
-    {
-        return $this->getTable()->getLivewire();
-    }
-
     public function getName()
     {
         return $this->name;
     }
 
-    public function getTable()
+    public function getLivewire()
     {
-        return $this->table;
-    }
-
-    public function hidden()
-    {
-        $this->configure(function () {
-            $this->isHidden = true;
-        });
-
-        return $this;
+        return $this->getTable()->getLivewire();
     }
 
     public function isHidden()
@@ -176,18 +188,6 @@ class BulkAction
         });
 
         return $this;
-    }
-
-    public static function make($name = null, $callback = null)
-    {
-        return new static($name, $callback);
-    }
-
-    public function name($name)
-    {
-        $this->configure(function () use ($name) {
-            $this->name = $name;
-        });
     }
 
     public function only($contexts, $callback = null)

@@ -19,15 +19,6 @@ trait CanOpenUrl
         return $this->url;
     }
 
-    public function openUrlInNewTab()
-    {
-        $this->configure(function () {
-            $this->shouldUrlOpenInNewTab = true;
-        });
-
-        return $this;
-    }
-
     public function shouldUrlOpenInNewTab()
     {
         return $this->shouldUrlOpenInNewTab;
@@ -40,6 +31,15 @@ trait CanOpenUrl
             if ($shouldOpenInNewTab) {
                 $this->openUrlInNewTab();
             }
+        });
+
+        return $this;
+    }
+
+    public function openUrlInNewTab()
+    {
+        $this->configure(function () {
+            $this->shouldUrlOpenInNewTab = true;
         });
 
         return $this;

@@ -32,25 +32,11 @@ class Filter
         $this->setUp();
     }
 
-    protected function setUp()
+    protected function name($name)
     {
-        //
-    }
-
-    public function apply($query)
-    {
-        $callback = $this->getCallback();
-
-        return $callback($query);
-    }
-
-    public function callback($callback)
-    {
-        $this->configure(function () use ($callback) {
-            $this->callback = $callback;
+        $this->configure(function () use ($name) {
+            $this->name = $name;
         });
-
-        return $this;
     }
 
     public function configure($callback = null)
@@ -72,6 +58,42 @@ class Filter
         }
 
         return $this;
+    }
+
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    public function callback($callback)
+    {
+        $this->configure(function () use ($callback) {
+            $this->callback = $callback;
+        });
+
+        return $this;
+    }
+
+    protected function setUp()
+    {
+        //
+    }
+
+    public static function make($name = null, $callback = null)
+    {
+        return new static($name, $callback);
+    }
+
+    public function apply($query)
+    {
+        $callback = $this->getCallback();
+
+        return $callback($query);
+    }
+
+    public function getCallback()
+    {
+        return $this->callback;
     }
 
     public function except($contexts, $callback = null)
@@ -97,9 +119,13 @@ class Filter
         return $this;
     }
 
-    public function getCallback()
+    public function hidden()
     {
-        return $this->callback;
+        $this->configure(function () {
+            $this->isHidden = true;
+        });
+
+        return $this;
     }
 
     public function getContext()
@@ -119,28 +145,14 @@ class Filter
         return $this->label;
     }
 
-    public function getLivewire()
-    {
-        return $this->getTable()->getLivewire();
-    }
-
     public function getName()
     {
         return $this->name;
     }
 
-    public function getTable()
+    public function getLivewire()
     {
-        return $this->table;
-    }
-
-    public function hidden()
-    {
-        $this->configure(function () {
-            $this->isHidden = true;
-        });
-
-        return $this;
+        return $this->getTable()->getLivewire();
     }
 
     public function isHidden()
@@ -155,11 +167,6 @@ class Filter
         });
 
         return $this;
-    }
-
-    public static function make($name = null, $callback = null)
-    {
-        return new static($name, $callback);
     }
 
     public function only($contexts, $callback = null)
@@ -201,12 +208,5 @@ class Filter
         });
 
         return $this;
-    }
-
-    protected function name($name)
-    {
-        $this->configure(function () use ($name) {
-            $this->name = $name;
-        });
     }
 }

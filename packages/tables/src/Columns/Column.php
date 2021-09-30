@@ -43,9 +43,13 @@ class Column
         $this->setUp();
     }
 
-    protected function setUp()
+    protected function name($name)
     {
-        //
+        $this->configure(function () use ($name) {
+            $this->name = $name;
+        });
+
+        return $this;
     }
 
     public function configure($callback = null)
@@ -67,6 +71,21 @@ class Column
         }
 
         return $this;
+    }
+
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    protected function setUp()
+    {
+        //
+    }
+
+    public static function make($name)
+    {
+        return new static($name);
     }
 
     public function except($contexts, $callback = null)
@@ -92,6 +111,15 @@ class Column
         return $this;
     }
 
+    public function hidden()
+    {
+        $this->configure(function () {
+            $this->isHidden = true;
+        });
+
+        return $this;
+    }
+
     public function getContext()
     {
         return $this->getTable()->getContext();
@@ -109,19 +137,14 @@ class Column
         return $this->label;
     }
 
-    public function getLivewire()
-    {
-        return $this->getTable()->getLivewire();
-    }
-
     public function getName()
     {
         return $this->name;
     }
 
-    public function getRelationshipName()
+    public function getLivewire()
     {
-        return Str::of($this->getName())->beforeLast('.');
+        return $this->getTable()->getLivewire();
     }
 
     public function getSearchColumns()
@@ -145,6 +168,16 @@ class Column
         return [$this->getName()];
     }
 
+    public function isRelationship()
+    {
+        return Str::of($this->getName())->contains('.');
+    }
+
+    public function getRelationshipName()
+    {
+        return Str::of($this->getName())->beforeLast('.');
+    }
+
     public function getSortColumns()
     {
         $columns = $this->sortColumns;
@@ -164,11 +197,6 @@ class Column
         }
 
         return [$this->getName()];
-    }
-
-    public function getTable()
-    {
-        return $this->table;
     }
 
     public function getValue($record, $attribute = null)
@@ -206,33 +234,9 @@ class Column
         return $this;
     }
 
-    public function getView()
-    {
-        return $this->view;
-    }
-
-    public function hidden()
-    {
-        $this->configure(function () {
-            $this->isHidden = true;
-        });
-
-        return $this;
-    }
-
-    public function isHidden()
-    {
-        return $this->isHidden;
-    }
-
     public function isPrimary()
     {
         return $this->isPrimary;
-    }
-
-    public function isRelationship()
-    {
-        return Str::of($this->getName())->contains('.');
     }
 
     public function isSearchable()
@@ -252,11 +256,6 @@ class Column
         });
 
         return $this;
-    }
-
-    public static function make($name)
-    {
-        return new static($name);
     }
 
     public function only($contexts, $callback = null)
@@ -303,6 +302,16 @@ class Column
             'column' => $this,
             'record' => $record,
         ]));
+    }
+
+    public function isHidden()
+    {
+        return $this->isHidden;
+    }
+
+    public function getView()
+    {
+        return $this->view;
     }
 
     public function searchable($columns = [])
@@ -382,15 +391,6 @@ class Column
     {
         $this->configure(function () {
             $this->isHidden = false;
-        });
-
-        return $this;
-    }
-
-    protected function name($name)
-    {
-        $this->configure(function () use ($name) {
-            $this->name = $name;
         });
 
         return $this;

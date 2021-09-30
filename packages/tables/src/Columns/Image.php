@@ -18,30 +18,6 @@ class Image extends Column
 
     protected $width;
 
-    protected function setUp()
-    {
-        $this->disk(config('forms.default_filesystem_disk'));
-    }
-
-    public function disk($disk)
-    {
-        $this->configure(function () use ($disk) {
-            $this->disk = $disk;
-        });
-
-        return $this;
-    }
-
-    public function getDisk()
-    {
-        return Storage::disk($this->getDiskName());
-    }
-
-    public function getDiskName()
-    {
-        return $this->disk ?? config('forms.default_filesystem_disk');
-    }
-
     public function getHeight()
     {
         if ($this->height === null) {
@@ -80,6 +56,16 @@ class Image extends Column
         }
 
         return $storage->url($path);
+    }
+
+    public function getDisk()
+    {
+        return Storage::disk($this->getDiskName());
+    }
+
+    public function getDiskName()
+    {
+        return $this->disk ?? config('forms.default_filesystem_disk');
     }
 
     public function getWidth()
@@ -132,6 +118,20 @@ class Image extends Column
     {
         $this->configure(function () use ($width) {
             $this->width = $width;
+        });
+
+        return $this;
+    }
+
+    protected function setUp()
+    {
+        $this->disk(config('forms.default_filesystem_disk'));
+    }
+
+    public function disk($disk)
+    {
+        $this->configure(function () use ($disk) {
+            $this->disk = $disk;
         });
 
         return $this;

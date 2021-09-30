@@ -12,11 +12,6 @@ trait CanRunBulkRecordActions
 
     public $hasConfirmedBulkAction = false;
 
-    public function isBulkActionable()
-    {
-        return $this->isBulkActionable && count($this->getTable()->getBulkRecordActions());
-    }
-
     public function updatedBulkRecordAction()
     {
         $action = $this->getBulkAction();
@@ -30,14 +25,24 @@ trait CanRunBulkRecordActions
         $this->runBulkAction();
     }
 
-    public function updatedShowingBulkActionConfirmationModal($value)
+    public function getBulkAction()
     {
-        if ($value === false) $this->reset('bulkRecordAction');
+        if (
+            ! $this->isBulkActionable() ||
+            $this->bulkRecordAction === '' ||
+            $this->bulkRecordAction === null
+        ) {
+            return;
+        }
+
+        return collect($this->getTable()->getBulkRecordActions())
+            ->filter(fn ($action) => $action->getName() === $this->bulkRecordAction)
+            ->first();
     }
 
-    public function updatedHasConfirmedBulkAction()
+    public function isBulkActionable()
     {
-        $this->runBulkAction();
+        return $this->isBulkActionable && count($this->getTable()->getBulkRecordActions());
     }
 
     protected function runBulkAction()
@@ -61,18 +66,13 @@ trait CanRunBulkRecordActions
         $this->hasConfirmedBulkAction = false;
     }
 
-    public function getBulkAction()
+    public function updatedShowingBulkActionConfirmationModal($value)
     {
-        if (
-            ! $this->isBulkActionable() ||
-            $this->bulkRecordAction === '' ||
-            $this->bulkRecordAction === null
-        ) {
-            return;
-        }
+        if ($value === false) $this->reset('bulkRecordAction');
+    }
 
-        return collect($this->getTable()->getBulkRecordActions())
-            ->filter(fn ($action) => $action->getName() === $this->bulkRecordAction)
-            ->first();
+    public function updatedHasConfirmedBulkAction()
+    {
+        $this->runBulkAction();
     }
 }

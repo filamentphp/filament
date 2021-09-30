@@ -32,9 +32,13 @@ class Action
         $this->setUp();
     }
 
-    protected function setUp()
+    protected function name($name)
     {
-        //
+        $this->configure(function () use ($name) {
+            $this->name = $name;
+        });
+
+        return $this;
     }
 
     public function configure($callback = null)
@@ -58,6 +62,30 @@ class Action
         return $this;
     }
 
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    public function when($callback)
+    {
+        $this->configure(function () use ($callback) {
+            $this->when = $callback;
+        });
+
+        return $this;
+    }
+
+    protected function setUp()
+    {
+        //
+    }
+
+    public static function make($name)
+    {
+        return new static($name);
+    }
+
     public function getLivewire()
     {
         return $this->getTable()->getLivewire();
@@ -66,11 +94,6 @@ class Action
     public function getName()
     {
         return $this->name;
-    }
-
-    public function getTable()
-    {
-        return $this->table;
     }
 
     public function getTitle()
@@ -83,21 +106,6 @@ class Action
         }
 
         return $this->title;
-    }
-
-    public function getView()
-    {
-        return $this->view;
-    }
-
-    public function getViewData()
-    {
-        return $this->viewData;
-    }
-
-    public static function make($name)
-    {
-        return new static($name);
     }
 
     public function render($record)
@@ -114,6 +122,16 @@ class Action
             'record' => $record,
             'recordAction' => $this,
         ]));
+    }
+
+    public function getView()
+    {
+        return $this->view;
+    }
+
+    public function getViewData()
+    {
+        return $this->viewData;
     }
 
     public function table($table)
@@ -149,24 +167,6 @@ class Action
     {
         $this->configure(function () use ($data) {
             $this->viewData = array_merge($this->viewData, $data);
-        });
-
-        return $this;
-    }
-
-    public function when($callback)
-    {
-        $this->configure(function () use ($callback) {
-            $this->when = $callback;
-        });
-
-        return $this;
-    }
-
-    protected function name($name)
-    {
-        $this->configure(function () use ($name) {
-            $this->name = $name;
         });
 
         return $this;

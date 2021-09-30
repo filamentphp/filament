@@ -8,14 +8,6 @@ class Boolean extends Icon
 
     protected $trueIcon = 'heroicon-s-check-circle';
 
-    protected function setUp()
-    {
-        $this->options([
-            $this->getFalseIcon() => fn ($value) => ! $value,
-            $this->getTrueIcon() => fn ($value) => $value,
-        ]);
-    }
-
     public function falseIcon($icon)
     {
         $this->configure(function () use ($icon) {
@@ -25,6 +17,14 @@ class Boolean extends Icon
         });
 
         return $this;
+    }
+
+    protected function setUp()
+    {
+        $this->options([
+            $this->getFalseIcon() => fn ($value) => ! $value,
+            $this->getTrueIcon() => fn ($value) => $value,
+        ]);
     }
 
     public function getFalseIcon()

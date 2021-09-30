@@ -12,18 +12,6 @@ trait CanSearchRecords
 
     protected $hasSearchQueriesApplied = false;
 
-    public function getSearch()
-    {
-        return Str::lower($this->search);
-    }
-
-    public function isSearchable()
-    {
-        return $this->isSearchable && collect($this->getTable()->getColumns())
-                ->filter(fn ($column) => $column->isSearchable())
-                ->count();
-    }
-
     public function updatedSearch()
     {
         $this->selected = [];
@@ -33,17 +21,6 @@ trait CanSearchRecords
         }
 
         $this->resetPage();
-    }
-
-    protected function applyRelationshipSearch($query, $searchColumn)
-    {
-        $relationshipName = (string) Str::of($searchColumn)->beforeLast('.');
-        $relatedColumnName = (string) Str::of($searchColumn)->afterLast('.');
-
-        return $query->{$this->hasNoSearchQueriesApplied() ? 'whereHas' : 'orWhereHas'}(
-            $relationshipName,
-            fn ($query) => $query->where($relatedColumnName, $this->getSearchOperator(), "%{$this->getSearch()}%"),
-        );
     }
 
     protected function applySearch($query)
@@ -79,11 +56,27 @@ trait CanSearchRecords
         return $query;
     }
 
-    protected function getSearchOperator()
+    public function isSearchable()
     {
-        return [
-            'pgsql' => 'ilike',
-        ][$this->getQuery()->getConnection()->getDriverName()] ?? 'like';
+        return $this->isSearchable && collect($this->getTable()->getColumns())
+                ->filter(fn ($column) => $column->isSearchable())
+                ->count();
+    }
+
+    protected function isRelationshipSearch($column)
+    {
+        return Str::of($column)->contains('.');
+    }
+
+    protected function applyRelationshipSearch($query, $searchColumn)
+    {
+        $relationshipName = (string) Str::of($searchColumn)->beforeLast('.');
+        $relatedColumnName = (string) Str::of($searchColumn)->afterLast('.');
+
+        return $query->{$this->hasNoSearchQueriesApplied() ? 'whereHas' : 'orWhereHas'}(
+            $relationshipName,
+            fn ($query) => $query->where($relatedColumnName, $this->getSearchOperator(), "%{$this->getSearch()}%"),
+        );
     }
 
     protected function hasNoSearchQueriesApplied()
@@ -91,13 +84,20 @@ trait CanSearchRecords
         return ! $this->hasSearchQueriesApplied;
     }
 
+    protected function getSearchOperator()
+    {
+        return [
+                'pgsql' => 'ilike',
+            ][$this->getQuery()->getConnection()->getDriverName()] ?? 'like';
+    }
+
+    public function getSearch()
+    {
+        return Str::lower($this->search);
+    }
+
     protected function hasSearchQueriesApplied()
     {
         return $this->hasSearchQueriesApplied;
-    }
-
-    protected function isRelationshipSearch($column)
-    {
-        return Str::of($column)->contains('.');
     }
 }

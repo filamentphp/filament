@@ -18,6 +18,15 @@ class Link extends Action
         return $this->icon;
     }
 
+    public function getTitle()
+    {
+        if ($this->title === null) {
+            return $this->getLabel();
+        }
+
+        return parent::getTitle();
+    }
+
     public function getLabel()
     {
         if ($this->label === null) {
@@ -28,15 +37,6 @@ class Link extends Action
         }
 
         return $this->label;
-    }
-
-    public function getTitle()
-    {
-        if ($this->title === null) {
-            return $this->getLabel();
-        }
-
-        return parent::getTitle();
     }
 
     public function hasIcon()
