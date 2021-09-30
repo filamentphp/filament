@@ -8,6 +8,8 @@ class Table
 {
     use Tappable;
 
+    protected $bulkRecordActions = [];
+
     protected $columns = [];
 
     protected $defaultSortColumn;
@@ -27,6 +29,17 @@ class Table
     protected $reorderUsing;
 
     protected $shouldPrimaryColumnUrlOpenInNewTab = false;
+
+    public function bulkRecordActions($actions)
+    {
+        $this->bulkRecordActions = collect(value($actions))
+            ->map(function ($action) {
+                return $action->table($this);
+            })
+            ->toArray();
+
+        return $this;
+    }
 
     public function columns($columns)
     {
@@ -75,6 +88,11 @@ class Table
     public static function for($livewire)
     {
         return (new static())->livewire($livewire);
+    }
+
+    public function getBulkRecordActions()
+    {
+        return $this->bulkRecordActions;
     }
 
     public function getColumns()
@@ -155,6 +173,15 @@ class Table
             ->toArray();
 
         return $filters;
+    }
+
+    public function getVisibleActions()
+    {
+        $actions = collect($this->getBulkRecordActions())
+            ->filter(fn ($action) => ! $action->isHidden())
+            ->toArray();
+
+        return $actions;
     }
 
     public function isReorderable()
