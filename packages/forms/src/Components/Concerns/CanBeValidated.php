@@ -127,21 +127,13 @@ trait CanBeValidated
 
         foreach ($this->rules as [$rule, $condition]) {
             if (is_numeric($rule)) {
-                $rules[] = $condition;
-            } elseif ($condition instanceof Closure && $this->evaluate($condition)) {
-                $rules[] = $rule;
-            } elseif ($condition) {
-                $rules[] = $rule;
+                $rules[] = $this->evaluate($condition);
+            } elseif ($this->evaluate($condition)) {
+                $rules[] = $this->evaluate($rule);
             }
         }
 
-        return array_map(function (string | object | callable $rule): string | object {
-            if ($rule instanceof Closure) {
-                $rule = $this->evaluate($rule);
-            }
-
-            return $rule;
-        }, $rules);
+        return $rules;
     }
 
     public function isRequired(): bool
