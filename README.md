@@ -29,6 +29,13 @@ composer require filament/filament
 composer require filament/forms
 ```
 
+### Table Builder • [Documentation](https://filamentadmin.com/docs/tables)
+**Current version series:** v2.x.
+
+```bash
+composer require filament/tables
+```
+
 ### spatie/laravel-medialibrary Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-media-library-plugin)
 **Current version series:** v2.x.
 
