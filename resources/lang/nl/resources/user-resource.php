@@ -13,8 +13,8 @@ return [
         ],
 
         'isAdmin' => [
-            'label' => 'Filament admin?',
-            'helpMessage' => 'Filament admins hebben toegang op alle gebieden van Filament en maakt het beheren van andere gebruikers mogelijk',
+            'label' => 'Filament beheerder?',
+            'helpMessage' => 'Filament beheerders hebben toegang op alle gebieden van Filament en maakt het beheren van andere gebruikers mogelijk',
         ],
 
         'isUser' => [
@@ -74,7 +74,7 @@ return [
         'filters' => [
 
             'administrators' => [
-                'label' => 'Administrators',
+                'label' => 'Beheerders',
             ],
 
         ],
