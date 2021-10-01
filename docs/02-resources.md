@@ -190,6 +190,19 @@ For further customization opportunities, you can override the static `$view` pro
 ```php
 public static $view = 'customers.list-records';
 ```
+#### Form Redirect
+
+You may specify the redirect URL on submit for the `Create` and `Edit` page by overriding the `getRouteUrl()` method. 
+
+In this case we set the redirect URL to the resource index route.
+```php
+protected function getRedirectUrl(Model $record): string
+{
+    return $this->getResource()::generateUrl(static::$indexRoute, [
+        'record' => $record,
+    ]);
+}
+```
 
 #### Hooks
 
