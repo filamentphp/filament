@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components\Concerns;
 
-use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
