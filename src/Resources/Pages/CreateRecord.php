@@ -58,13 +58,6 @@ class CreateRecord extends Page
         $this->redirect($this->getRedirectUrl($this->record));
     }
 
-    protected function getRedirectUrl(Model $record): string
-    {
-        return $this->getResource()::generateUrl(static::$showRoute, [
-            'record' => $record,
-        ]);
-    }
-
     public static function getBreadcrumbs()
     {
         return [
@@ -114,5 +107,12 @@ class CreateRecord extends Page
         return static::getResource()::form(
             $form->model(static::getModel()),
         );
+    }
+
+    protected function getRedirectUrl(Model $record): string
+    {
+        return $this->getResource()::generateUrl(static::$showRoute, [
+            'record' => $record,
+        ]);
     }
 }
