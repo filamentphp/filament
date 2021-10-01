@@ -6,6 +6,7 @@ use Filament\Filament;
 use Filament\Resources\Forms\Actions;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Forms\HasForm;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class CreateRecord extends Page
@@ -54,9 +55,14 @@ class CreateRecord extends Page
             return;
         }
 
-        $this->redirect($this->getResource()::generateUrl(static::$showRoute, [
-            'record' => $this->record,
-        ]));
+        $this->redirect($this->getRedirectUrl($this->record));
+    }
+
+    protected function getRedirectUrl(Model $record): string
+    {
+        return $this->getResource()::generateUrl(static::$showRoute, [
+            'record' => $record,
+        ]);
     }
 
     public static function getBreadcrumbs()

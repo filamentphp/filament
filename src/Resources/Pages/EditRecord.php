@@ -6,6 +6,7 @@ use Filament\Filament;
 use Filament\Resources\Forms\Actions;
 use Filament\Resources\Forms\Form;
 use Filament\Resources\Forms\HasForm;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
 
@@ -50,7 +51,14 @@ class EditRecord extends Page
 
         $this->callHook('afterDelete');
 
-        $this->redirect($this->getResource()::generateUrl(static::$indexRoute));
+        $this->redirect($this->getRedirectUrl($this->record));
+    }
+
+    protected function getRedirectUrl(Model $record): string
+    {
+        return $this->getResource()::generateUrl(static::$indexRoute, [
+            'record' => $record,
+        ]);
     }
 
     public static function getBreadcrumbs()
