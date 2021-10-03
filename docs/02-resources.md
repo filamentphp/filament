@@ -191,6 +191,19 @@ For further customization opportunities, you can override the static `$view` pro
 public static $view = 'customers.list-records';
 ```
 
+#### Customizing Form Redirects
+
+You may specify a custom redirect URL for the Create and Edit pages by overriding the `getRedirectUrl()` method.
+
+For example, the Create form can redirect back to the List page when it is submitted:
+
+```php
+protected function getRedirectUrl(Model $record): string
+{
+    return $this->getResource()::generateUrl('index');
+}
+```
+
 #### Hooks
 
 Hooks may be used to customize the behaviour of a default page. To set up a hook, create a protected method on the page class with the name of the hook:
