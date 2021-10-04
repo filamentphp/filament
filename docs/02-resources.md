@@ -115,9 +115,9 @@ namespace App\Filament\Resources\CategoryResource\RelationManagers;
 
 use Filament\Resources\RelationManager;
 
-class PostsRelationManager extends RelationManager
+class OrdersRelationManager extends RelationManager
 {
-    public static $primaryColumn = 'title';
+    public static $primaryColumn = 'name';
 
     public static $relationship = 'posts';
 }
