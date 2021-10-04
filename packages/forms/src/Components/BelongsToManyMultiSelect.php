@@ -115,6 +115,14 @@ class BelongsToManyMultiSelect extends MultiSelect
             return (string) $this->label;
         }
 
+        if ($this->label === null) {
+            return (string) Str::of($this->getRelationshipName())
+                ->before('.')
+                ->kebab()
+                ->replace(['-', '_'], ' ')
+                ->ucfirst();
+        }
+
         return parent::getLabel();
     }
 
