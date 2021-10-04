@@ -39,7 +39,7 @@ class Section extends Component implements Contracts\CanConcealComponents
     public function collapsed(bool | callable $condition = true): static
     {
         $this->isCollapsed = $condition;
-        $this->collapsible($condition);
+        $this->collapsible(true);
 
         return $this;
     }
