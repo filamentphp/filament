@@ -111,15 +111,15 @@ You must set the primary column of related records using the static `$primaryCol
 ```php
 <?php
 
-namespace App\Filament\Resources\CategoryResource\RelationManagers;
+namespace App\Filament\Resources\CustomerResource\RelationManagers;
 
 use Filament\Resources\RelationManager;
 
-class PostsRelationManager extends RelationManager
+class OrdersRelationManager extends RelationManager
 {
-    public static $primaryColumn = 'title';
+    public static $primaryColumn = 'name';
 
-    public static $relationship = 'posts';
+    public static $relationship = 'orders';
 }
 ```
 
