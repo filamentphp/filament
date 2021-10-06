@@ -207,7 +207,7 @@
                     x-ref="overlay"
                     x-html="overlay"
                     style="padding: 8px 12px"
-                    class="w-full h-full border border-transparent font-mono tracking-normal text-black break-words whitespace-pre-wrap"
+                    class="w-full h-full border border-transparent font-mono tracking-normal text-base text-gray-900 break-words whitespace-pre-wrap"
                 ></div>
             </div>
 
