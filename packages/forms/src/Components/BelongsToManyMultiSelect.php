@@ -111,7 +111,7 @@ class BelongsToManyMultiSelect extends MultiSelect
 
     public function getLabel(): string
     {
-        if ($this->label) {
+        if ($this->label === null) {
             return (string) Str::of($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
