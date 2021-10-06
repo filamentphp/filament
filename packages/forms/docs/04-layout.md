@@ -4,6 +4,17 @@ title: Layout
 
 Layout component classes can be found in the `Filament\Form\Components` namespace.
 
+They reside within the schema of your form, alongside any [fields](fields):
+
+```php
+protected function getFormSchema(): array
+{
+    return [
+        // ...
+    ];
+}
+```
+
 Components may be created using the static `make()` method. Usually, you will then define the child component `schema()` to display inside:
 
 ```php
@@ -200,7 +211,7 @@ Section::make('Heading')
     ->collapsible()
 ```
 
-You may `collapse()` sections by default:
+Your sections may be `collapsed()` by default:
 
 ```php
 use Filament\Forms\Components\Section;
@@ -209,7 +220,7 @@ Section::make('Heading')
     ->schema([
         // ...
     ])
-    ->collapsible()
+    ->collapsed()
 ```
 
 ## Tabs
