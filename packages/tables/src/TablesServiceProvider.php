@@ -2,35 +2,30 @@
 
 namespace Filament\Tables;
 
-use Illuminate\Support\ServiceProvider;
+use Filament\Tables\Commands\InstallCommand;
+use Laravel\Ui\UiCommand;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class TablesServiceProvider extends ServiceProvider
+class TablesServiceProvider extends PackageServiceProvider
 {
-    public function boot()
+    public function configurePackage(Package $package): void
     {
-        $this->bootLoaders();
-        $this->bootPublishing();
+        $package
+            ->name('tables')
+            ->hasCommand(InstallCommand::class)
+            ->hasTranslations()
+            ->hasViews();
     }
 
-    protected function bootLoaders()
+    public function packageBooted(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'tables');
+        UiCommand::macro('forms', function (UiCommand $command) {
+            TablesPreset::install();
 
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'tables');
-    }
+            $command->info('Scaffolding installed successfully.');
 
-    protected function bootPublishing()
-    {
-        if (! $this->app->runningInConsole()) {
-            return;
-        }
-
-        $this->publishes([
-            __DIR__ . '/../resources/lang' => resource_path('lang/vendor/tables'),
-        ], 'tables-lang');
-
-        $this->publishes([
-            __DIR__ . '/../resources/views' => resource_path('views/vendor/tables'),
-        ], 'tables-views');
+            $command->comment('Please run "npm install && npm run dev" to compile your new assets.');
+        });
     }
 }

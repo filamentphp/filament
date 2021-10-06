@@ -83,13 +83,10 @@ In `/resources/css/app.css`, import [TailwindCSS](https://tailwindcss.com):
 @tailwind utilities;
 ```
 
-In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/tables` plugin, and register it:
+In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev):
 
 ```js
 import Alpine from 'alpinejs'
-import TablesAlpinePlugin from '../../vendor/filament/tables/dist/module.esm'
-
-Alpine.plugin(TablesAlpinePlugin)
 
 window.Alpine = Alpine
 
