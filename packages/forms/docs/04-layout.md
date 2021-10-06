@@ -4,13 +4,13 @@ title: Layout
 
 Layout component classes can be found in the `Filament\Form\Components` namespace.
 
-Your layout components will need to reside within the `getFormSchema()` method of your Livewire component.
+They reside within the schema of your form, alongside any [fields](fields):
 
 ```php
 protected function getFormSchema(): array
 {
     return [
-        // Components here, returning the fields
+        // ...
     ];
 }
 ```
