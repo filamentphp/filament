@@ -154,7 +154,7 @@
                             'cursor-default' => $isDisabled(),
                         ])
                     >
-                        <span x-text="labels[option]"></span>
+                        <span x-text="options[option]"></span>
 
                         @unless ($isDisabled())
                             <x-heroicon-s-x class="w-3 h-3" />
