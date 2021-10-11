@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Contracts;
 
-interface HasTable {
+interface HasTable
+{
     public function getTableColumns(): array;
 }
