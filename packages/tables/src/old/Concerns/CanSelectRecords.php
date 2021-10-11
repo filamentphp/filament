@@ -4,16 +4,16 @@ namespace Filament\Tables\Concerns;
 
 trait CanSelectRecords
 {
-    public $selected = [];
+    public array $selected = [];
 
-    public function deleteSelected()
+    public function deleteSelected(): void
     {
         static::getModel()::destroy($this->selected);
 
         $this->selected = [];
     }
 
-    public function toggleSelectAll()
+    public function toggleSelectAll(): void
     {
         $records = $this->getRecords();
 
@@ -30,7 +30,7 @@ trait CanSelectRecords
         }
     }
 
-    public function toggleSelected($record)
+    public function toggleSelected($record): void
     {
         if (! in_array($record, $this->selected)) {
             $this->selected[] = $record;

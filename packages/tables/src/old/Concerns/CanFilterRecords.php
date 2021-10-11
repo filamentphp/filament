@@ -2,18 +2,20 @@
 
 namespace Filament\Tables\Concerns;
 
+use Illuminate\Database\Eloquent\Builder;
+
 trait CanFilterRecords
 {
-    public $filter;
+    public ?string $filter = null;
 
-    public $isFilterable = true;
+    protected bool $isFilterable = true;
 
-    public function isFilterable()
+    public function isFilterable(): bool
     {
         return $this->isFilterable && count($this->getTable()->getFilters());
     }
 
-    public function updatedFilter()
+    public function updatedFilter(): void
     {
         $this->selected = [];
 
@@ -24,7 +26,7 @@ trait CanFilterRecords
         $this->resetPage();
     }
 
-    protected function applyFilters($query)
+    protected function applyFilters(Builder $query): Builder
     {
         if (
             ! $this->isFilterable() ||

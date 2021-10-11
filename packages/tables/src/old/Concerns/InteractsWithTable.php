@@ -6,7 +6,14 @@ use Filament\Tables\Table;
 
 trait InteractsWithTable
 {
-    use HasColumns;
+    use CanFilterRecords;
+    use CanGetRecords;
+    use CanPaginateRecords;
+    use CanReorderRecords;
+    use CanRunBulkRecordActions;
+    use CanSearchRecords;
+    use CanSelectRecords;
+    use CanSortRecords;
 
     protected Table $table;
 

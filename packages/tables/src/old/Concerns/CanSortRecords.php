@@ -2,36 +2,37 @@
 
 namespace Filament\Tables\Concerns;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 trait CanSortRecords
 {
-    public $defaultSortColumn;
+    public ?string $defaultSortColumn = null;
 
-    public $defaultSortDirection;
+    public ?string $defaultSortDirection = null;
 
     public $isSortable = true;
 
-    public $sortColumn;
+    public ?string $sortColumn = null;
 
-    public $sortDirection = 'asc';
+    public string $sortDirection = 'asc';
 
-    public function getDefaultSort()
+    public function getDefaultSort(): array
     {
         return [$this->getDefaultSortColumn(), $this->getDefaultSortDirection()];
     }
 
-    public function getDefaultSortColumn()
+    public function getDefaultSortColumn(): ?string
     {
         return $this->defaultSortColumn ?? $this->getTable()->getDefaultSortColumn();
     }
 
-    public function getDefaultSortDirection()
+    public function getDefaultSortDirection(): ?string
     {
         return $this->defaultSortDirection ?? $this->getTable()->getDefaultSortDirection();
     }
 
-    public function getSorts()
+    public function getSorts(): array
     {
         $sortColumn = $this->sortColumn;
         $sortDirection = $this->sortDirection;
@@ -63,19 +64,19 @@ trait CanSortRecords
             ->toArray();
     }
 
-    public function hasDefaultSort()
+    public function hasDefaultSort(): bool
     {
         return $this->getDefaultSortColumn() !== null;
     }
 
-    public function isSortable()
+    public function isSortable(): bool
     {
         return $this->isSortable && collect($this->getTable()->getColumns())
-                ->filter(fn ($column) => $column->isSortable())
-                ->count();
+            ->filter(fn ($column) => $column->isSortable())
+            ->count();
     }
 
-    public function sortBy($column)
+    public function sortBy(string $column): void
     {
         if ($this->sortColumn === $column) {
             switch ($this->sortDirection) {
@@ -97,7 +98,7 @@ trait CanSortRecords
         $this->sortDirection = 'asc';
     }
 
-    protected function applyRelationshipSort($query, $sort)
+    protected function applyRelationshipSort(Builder $query, array $sort): Builder
     {
         [$sortColumn, $sortDirection] = $sort;
 
@@ -119,7 +120,7 @@ trait CanSortRecords
         );
     }
 
-    protected function applySorting($query)
+    protected function applySorting(Builder $query): Builder
     {
         foreach ($this->getSorts() as $sort) {
             [$column, $direction] = $sort;
@@ -137,7 +138,7 @@ trait CanSortRecords
         return $query;
     }
 
-    protected function isRelationshipSort($column)
+    protected function isRelationshipSort($column): bool
     {
         return Str::of($column)->contains('.');
     }

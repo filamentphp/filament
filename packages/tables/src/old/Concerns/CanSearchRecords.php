@@ -2,17 +2,18 @@
 
 namespace Filament\Tables\Concerns;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 trait CanSearchRecords
 {
-    public $isSearchable = true;
+    public bool $isSearchable = true;
 
-    public $search = '';
+    public string $search = '';
 
-    protected $hasSearchQueriesApplied = false;
+    protected bool $hasSearchQueriesApplied = false;
 
-    public function updatedSearch()
+    public function updatedSearch(): void
     {
         $this->selected = [];
 
@@ -23,7 +24,7 @@ trait CanSearchRecords
         $this->resetPage();
     }
 
-    protected function applySearch($query)
+    protected function applySearch(Builder $query): Builder
     {
         if (
             ! $this->isSearchable() ||
@@ -56,19 +57,19 @@ trait CanSearchRecords
         return $query;
     }
 
-    public function isSearchable()
+    public function isSearchable(): bool
     {
         return $this->isSearchable && collect($this->getTable()->getColumns())
                 ->filter(fn ($column) => $column->isSearchable())
                 ->count();
     }
 
-    protected function isRelationshipSearch($column)
+    protected function isRelationshipSearch(string $column): bool
     {
         return Str::of($column)->contains('.');
     }
 
-    protected function applyRelationshipSearch($query, $searchColumn)
+    protected function applyRelationshipSearch(Builder $query, string $searchColumn): Builder
     {
         $relationshipName = (string) Str::of($searchColumn)->beforeLast('.');
         $relatedColumnName = (string) Str::of($searchColumn)->afterLast('.');
@@ -79,24 +80,24 @@ trait CanSearchRecords
         );
     }
 
-    protected function hasNoSearchQueriesApplied()
+    protected function hasNoSearchQueriesApplied(): bool
     {
         return ! $this->hasSearchQueriesApplied;
     }
 
-    protected function getSearchOperator()
+    protected function getSearchOperator(): string
     {
         return [
-                'pgsql' => 'ilike',
-            ][$this->getQuery()->getConnection()->getDriverName()] ?? 'like';
+            'pgsql' => 'ilike',
+        ][$this->getQuery()->getConnection()->getDriverName()] ?? 'like';
     }
 
-    public function getSearch()
+    public function getSearch(): string
     {
         return Str::lower($this->search);
     }
 
-    protected function hasSearchQueriesApplied()
+    protected function hasSearchQueriesApplied(): bool
     {
         return $this->hasSearchQueriesApplied;
     }

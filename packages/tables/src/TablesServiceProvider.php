@@ -20,7 +20,7 @@ class TablesServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        UiCommand::macro('forms', function (UiCommand $command) {
+        UiCommand::macro('tables', function (UiCommand $command) {
             TablesPreset::install();
 
             $command->info('Scaffolding installed successfully.');

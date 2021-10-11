@@ -8,7 +8,7 @@
             <option>{{ __('tables::table.filter.placeholder') }}</option>
 
             @foreach ($table->getVisibleFilters() as $filter)
-                <option value="{{ $filter->getName() }}">{{ __($filter->getLabel()) }}</option>
+                <option value="{{ $filter->getName() }}">{{ $filter->getLabel() }}</option>
             @endforeach
         </select>
     @endif

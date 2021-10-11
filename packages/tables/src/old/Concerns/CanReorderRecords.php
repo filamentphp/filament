@@ -4,15 +4,15 @@ namespace Filament\Tables\Concerns;
 
 trait CanReorderRecords
 {
-    public $isReorderable = true;
+    public bool $isReorderable = true;
 
-    public function isReorderable()
+    public function isReorderable(): bool
     {
         return $this->isReorderable && $this->getTable()->isReorderable();
     }
 
-    public function reorder($order)
+    public function reorder($order): void
     {
-        return $this->getTable()->reorder($order);
+        $this->getTable()->reorder($order);
     }
 }

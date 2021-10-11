@@ -13,7 +13,7 @@
             <option>{{ __('tables::table.actions.placeholder') }}</option>
 
             @foreach ($table->getVisibleActions() as $action)
-                <option value="{{ $action->getName() }}">{{ __($action->getLabel()) }}</option>
+                <option value="{{ $action->getName() }}">{{ $action->getLabel() }}</option>
             @endforeach
         </select>
     @endif
@@ -26,7 +26,7 @@
 >
     @if($this->getBulkAction())
         <x-filament::card class="space-y-5">
-            <x-filament::card-header :title="__($this->getBulkAction()->getName())" />
+            <x-filament::card-header :title="$this->getBulkAction()->getName()" />
 
             <div class="my-6">
                 <p>Are you sure you want to run this action?</p>

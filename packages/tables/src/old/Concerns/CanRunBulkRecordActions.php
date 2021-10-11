@@ -2,17 +2,19 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Tables\BulkAction;
+
 trait CanRunBulkRecordActions
 {
-    public $bulkRecordAction;
+    public ?string $bulkRecordAction = null;
 
-    public $isBulkActionable = true;
+    public bool $isBulkActionable = true;
 
-    public $showingBulkActionConfirmationModal = false;
+    public bool $showingBulkActionConfirmationModal = false;
 
-    public $hasConfirmedBulkAction = false;
+    public bool $hasConfirmedBulkAction = false;
 
-    public function updatedBulkRecordAction()
+    public function updatedBulkRecordAction(): void
     {
         $action = $this->getBulkAction();
 
@@ -25,14 +27,14 @@ trait CanRunBulkRecordActions
         $this->runBulkAction();
     }
 
-    public function getBulkAction()
+    public function getBulkAction(): ?BulkAction
     {
         if (
             ! $this->isBulkActionable() ||
             $this->bulkRecordAction === '' ||
             $this->bulkRecordAction === null
         ) {
-            return;
+            return null;
         }
 
         return collect($this->getTable()->getBulkRecordActions())
@@ -40,12 +42,12 @@ trait CanRunBulkRecordActions
             ->first();
     }
 
-    public function isBulkActionable()
+    public function isBulkActionable(): bool
     {
         return $this->isBulkActionable && count($this->getTable()->getBulkRecordActions());
     }
 
-    protected function runBulkAction()
+    protected function runBulkAction(): void
     {
         $action = $this->getBulkAction();
 
@@ -66,14 +68,16 @@ trait CanRunBulkRecordActions
         $this->hasConfirmedBulkAction = false;
     }
 
-    public function updatedShowingBulkActionConfirmationModal($value)
+    public function updatedShowingBulkActionConfirmationModal($value): void
     {
-        if ($value === false) {
-            $this->reset('bulkRecordAction');
+        if ($value !== false) {
+            return;
         }
+
+        $this->reset('bulkRecordAction');
     }
 
-    public function updatedHasConfirmedBulkAction()
+    public function updatedHasConfirmedBulkAction(): void
     {
         $this->runBulkAction();
     }

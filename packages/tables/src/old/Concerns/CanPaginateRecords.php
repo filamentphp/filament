@@ -8,24 +8,24 @@ trait CanPaginateRecords
 {
     use WithPagination;
 
-    public $hasPagination = true;
+    public bool $hasPagination = true;
 
-    public $recordsPerPage = 25;
+    public int $recordsPerPage = 25;
 
-    public function hasPagination()
+    public function hasPagination(): bool
     {
         return $this->hasPagination;
     }
 
-    public function setPage($page)
+    public function setPage($page, $pageName = 'page'): void
     {
-        $this->page = $page;
-        $this->paginators['page'] = $page;
+        $this->syncInput('paginators.' . $pageName, $page);
+        $this->syncInput($pageName, $page);
 
         $this->selected = [];
     }
 
-    public function updatedRecordsPerPage()
+    public function updatedRecordsPerPage(): void
     {
         $this->selected = [];
 

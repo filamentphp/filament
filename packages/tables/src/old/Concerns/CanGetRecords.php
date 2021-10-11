@@ -2,11 +2,13 @@
 
 namespace Filament\Tables\Concerns;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
 trait CanGetRecords
 {
-    public function getRecords()
+    public function getRecords(): Collection
     {
         $query = static::getQuery();
 
@@ -25,7 +27,7 @@ trait CanGetRecords
         return $query->get();
     }
 
-    protected function loadRelationships($query)
+    protected function loadRelationships(Builder $query): Builder
     {
         $relationships = collect($this->getTable()->getColumns())
             ->filter(fn ($column) => Str::of($column->getName())->contains('.'))
