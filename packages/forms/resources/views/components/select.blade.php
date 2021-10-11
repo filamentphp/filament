@@ -8,37 +8,29 @@
     :state-path="$getStatePath()"
 >
     @unless ($isSearchable())
-        <div x-data="{ hasValue: true }">
-            <select
-                {!! $isAutofocused() ? 'autofocus' : null !!}
-                {!! $isDisabled() ? 'disabled' : null !!}
-                id="{{ $getId() }}"
-                {!! $isRequired() ? 'required' : null !!}
-                {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
-                x-init="hasValue = $el.value"
-                x-on:change="hasValue = $el.value"
-                x-bind:class="{
-                    'text-gray-900': ! ! hasValue,
-                    'text-gray-400': ! hasValue,
-                }"
-                {{ $attributes->merge($getExtraAttributes())->class([
-                    'block w-full h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600',
-                    'border-gray-300' => ! $errors->has($getStatePath()),
-                    'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
-                ]) }}
-            >
-                <option value="">{{ $getPlaceholder() }}</option>
+        <select
+            {!! $isAutofocused() ? 'autofocus' : null !!}
+            {!! $isDisabled() ? 'disabled' : null !!}
+            id="{{ $getId() }}"
+            {!! $isRequired() ? 'required' : null !!}
+            {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
+            {{ $attributes->merge($getExtraAttributes())->class([
+                'text-gray-900 invalid:text-gray-400 block w-full h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600',
+                'border-gray-300' => ! $errors->has($getStatePath()),
+                'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+            ]) }}
+        >
+            <option value="">{{ $getPlaceholder() }}</option>
 
-                @foreach ($getOptions() as $value => $label)
-                    <option
-                        value="{{ $value }}"
-                        {!! $isOptionDisabled($value, $label) ? 'disabled' : null !!}
-                    >
-                        {{ $label }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+            @foreach ($getOptions() as $value => $label)
+                <option
+                    value="{{ $value }}"
+                    {!! $isOptionDisabled($value, $label) ? 'disabled' : null !!}
+                >
+                    {{ $label }}
+                </option>
+            @endforeach
+        </select>
     @else
         <div
             x-data="selectFormComponent({
@@ -83,7 +75,7 @@
                     x-text="label ?? '{{ $getPlaceholder() }}'"
                     class="absolute w-full bg-white"
                     x-bind:class="{
-                        'text-gray-400': label === null,
+                        'text-gray-500': label === null,
                     }"
                 ></span>
 
@@ -173,7 +165,7 @@
                         <div
                             x-show="! Object.keys(options).length"
                             x-text="! search || isLoading ? '{{ $getSearchPrompt() }}' : '{{ $getNoSearchResultsMessage() }}'"
-                            class="px-3 py-2 text-sm text-gray-900 cursor-default select-none"
+                            class="px-3 py-2 text-sm text-gray-700 cursor-default select-none"
                         ></div>
                     </ul>
                 </div>
