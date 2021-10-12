@@ -33,17 +33,17 @@ export default (Alpine) => {
 
             focusedYear: null,
 
-            hours: null,
+            hour: null,
 
             maxDate,
 
             minDate,
 
-            minutes: null,
+            minute: null,
 
             open: false,
 
-            seconds: null,
+            second: null,
 
             state,
 
