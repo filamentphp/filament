@@ -5939,12 +5939,12 @@ var date_time_picker_default = (Alpine) => {
       focusedDate: null,
       focusedMonth: null,
       focusedYear: null,
-      hours: null,
+      hour: null,
       maxDate,
       minDate,
-      minutes: null,
+      minute: null,
       open: false,
-      seconds: null,
+      second: null,
       state: state2,
       init: function() {
         this.maxDate = esm_default(this.maxDate);
