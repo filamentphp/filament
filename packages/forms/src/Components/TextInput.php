@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Filament\Forms\Components\TextInput\Mask;
+use Illuminate\Contracts\Support\Arrayable;
 
 class TextInput extends Field
 {
@@ -13,6 +14,8 @@ class TextInput extends Field
     protected string $view = 'forms::components.text-input';
 
     protected $configureMaskUsing = null;
+
+    protected $datalistOptions = null;
 
     protected $isEmail = false;
 
@@ -37,6 +40,13 @@ class TextInput extends Field
     public function currentPassword(bool | callable $condition = true): static
     {
         $this->rule('current_password', $condition);
+
+        return $this;
+    }
+
+    public function datalist(array | Arrayable | callable $options): static
+    {
+        $this->datalistOptions = $options;
 
         return $this;
     }
@@ -134,6 +144,17 @@ class TextInput extends Field
         $this->rule('url', $condition);
 
         return $this;
+    }
+
+    public function getDatalistOptions(): ?array
+    {
+        $options = $this->evaluate($this->datalistOptions);
+
+        if ($options instanceof Arrayable) {
+            $options = $options->toArray();
+        }
+
+        return $options;
     }
 
     public function getMask(): ?Mask
