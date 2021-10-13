@@ -211,7 +211,7 @@
                 ></div>
             </div>
 
-            <div class="block w-full h-full min-h-full px-6 py-4 bg-white border border-gray-300 rounded shadow-sm focus:border-primary-300" x-show="tab === 'preview'" style="min-height: 150px;">
+            <div class="block w-full h-full min-h-full px-6 py-4 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-primary-300" x-show="tab === 'preview'" style="min-height: 150px;">
                 <div class="prose" x-html="preview"></div>
             </div>
         </div>
