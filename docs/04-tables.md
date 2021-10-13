@@ -52,7 +52,7 @@ Column::make($name)
     ->url($url, $shouldOpenInNewTab = false); // Set URL callback that should be used to generate a URL to send the user to when this column is clicked.
 ```
 
-> `sortable` and `searchable` only works if you're not using `getValueUsing`
+> Since sorting and searching are done by the database, `sortable()` and `searchable()` will not be fully functional when using a custom `getValueUsing()` callback.
 
 ### Displaying Relationship Data
 
