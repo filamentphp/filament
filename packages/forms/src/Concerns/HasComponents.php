@@ -28,21 +28,21 @@ trait HasComponents
         return $this;
     }
 
-    public function getComponent(string | callable $callback): ?Component
+    public function getComponent(string | callable $callback, bool $withHidden = false): ?Component
     {
         $callback = $callback instanceof Closure
              ? $callback
              : fn (Component $component): bool => $component instanceof Field && $component->getStatePath() === $callback;
 
-        return collect($this->getFlatComponents())->first($callback);
+        return collect($this->getFlatComponents($withHidden))->first($callback);
     }
 
-    public function getFlatComponents(): array
+    public function getFlatComponents(bool $withHidden = false): array
     {
-        return collect($this->getComponents())
-            ->map(function (Component $component) {
+        return collect($this->getComponents($withHidden))
+            ->map(function (Component $component) use ($withHidden) {
                 if ($component->hasChildComponentContainer()) {
-                    return array_merge([$component], $component->getChildComponentContainer()->getFlatComponents());
+                    return array_merge([$component], $component->getChildComponentContainer()->getFlatComponents($withHidden));
                 }
 
                 return $component;
@@ -51,9 +51,9 @@ trait HasComponents
             ->all();
     }
 
-    public function getFlatFields(): array
+    public function getFlatFields(bool $withHidden = false): array
     {
-        return collect($this->getFlatComponents())
+        return collect($this->getFlatComponents($withHidden))
             ->whereInstanceOf(Field::class)
             ->mapWithKeys(fn (Field $field) => [
                 $field->getName() => $field,
@@ -61,8 +61,8 @@ trait HasComponents
             ->all();
     }
 
-    public function getComponents(): array
+    public function getComponents(bool $withHidden = false): array
     {
-        return array_filter($this->components, fn (Component $component) => ! $component->isHidden());
+        return array_filter($this->components, fn (Component $component) => $withHidden ?: ! $component->isHidden());
     }
 }
