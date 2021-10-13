@@ -206,12 +206,12 @@
                 <div
                     x-ref="overlay"
                     x-html="overlay"
-                    style="padding: 8px 12px"
-                    class="w-full h-full border border-transparent font-mono tracking-normal text-base text-gray-900 break-words whitespace-pre-wrap"
+                    style="padding: 8px 12px; min-height: 150px;"
+                    class="w-full h-full rounded-lg border border-transparent font-mono tracking-normal bg-white text-base text-gray-900 break-words whitespace-pre-wrap"
                 ></div>
             </div>
 
-            <div class="block w-full h-full min-h-full px-6 py-4 border border-gray-300 rounded shadow-sm focus:border-primary-300" x-show="tab === 'preview'" style="min-height: 150px;">
+            <div class="block w-full h-full min-h-full px-6 py-4 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-primary-300" x-show="tab === 'preview'" style="min-height: 150px;">
                 <div class="prose" x-html="preview"></div>
             </div>
         </div>
