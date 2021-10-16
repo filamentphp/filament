@@ -1,4 +1,6 @@
 @php
+    $datalistOptions = $getDatalistOptions();
+
     $sideLabelClasses = [
         'whitespace-nowrap transition group-focus-within:text-primary-500',
         'text-gray-400' => ! $errors->has($getStatePath()),
@@ -39,6 +41,7 @@
                 {!! $isAutofocused() ? 'autofocus' : null !!}
                 {!! $isDisabled() ? 'disabled' : null !!}
                 id="{{ $getId() }}"
+                {!! $datalistOptions ? "list=\"{$getId()}-list\"" : null !!}
                 {!! ($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
                 {!! ($value = $getMaxValue()) ? "max=\"{$value}\"" : null !!}
                 {!! ($length = $getMinLength()) ? "minlength=\"{$length}\"" : null !!}
@@ -59,4 +62,12 @@
             </span>
         @endif
     </div>
+
+    @if ($datalistOptions)
+        <datalist id="{{ $getId() }}-list">
+            @foreach ($datalistOptions as $option)
+                <option value="{{ $option }}" />
+            @endforeach
+        </datalist>
+    @endif
 </x-forms::field-wrapper>

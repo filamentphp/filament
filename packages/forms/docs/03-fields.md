@@ -841,6 +841,25 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('code')->mask(fn (TextInput\Mask $mask) => $mask->money('$', ',', 2))
 ```
 
+### Datalists
+
+You may specify [datalist](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) options for a text input using the `datalist()` method:
+
+```php
+TextInput::make('manufacturer')
+    ->datalist([
+        'BWM',
+        'Ford',
+        'Mercedes-Benz',
+        'Porsche',
+        'Toyota',
+        'Tesla',
+        'Volkswagen',
+    ])
+```
+
+Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking for strictly predefined options, check out [select fields](#select).
+
 ## Textarea
 
 The textarea allows you to interact with a multi-line string:
