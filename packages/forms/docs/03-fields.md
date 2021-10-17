@@ -829,7 +829,7 @@ TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask
             ->thousandsSeparator(',')
             ->decimalPlaces('.'),
     ])
-    ->pattern("$money"),
+    ->pattern('$money'),
 )
 ```
 
