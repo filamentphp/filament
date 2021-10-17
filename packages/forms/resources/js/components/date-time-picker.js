@@ -167,7 +167,7 @@ export default (Alpine) => {
                 })
 
                 this.$watch('state', () => {
-                    let date = this.getSelectedDate() ?? dayjs()
+                    let date = this.getSelectedDate()
 
                     if (this.maxDate !== null && date.isAfter(this.maxDate)) {
                         date = null
