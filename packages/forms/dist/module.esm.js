@@ -6034,7 +6034,7 @@ var date_time_picker_default = (Alpine) => {
           this.setState(date2.set("second", this.second));
         });
         this.$watch("state", () => {
-          let date2 = this.getSelectedDate() ?? esm_default();
+          let date2 = this.getSelectedDate();
           if (this.maxDate !== null && date2.isAfter(this.maxDate)) {
             date2 = null;
           }
