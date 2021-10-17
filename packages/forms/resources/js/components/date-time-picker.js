@@ -49,15 +49,27 @@ export default (Alpine) => {
 
             init: function () {
                 this.maxDate = dayjs(this.maxDate)
-                if (! this.maxDate.isValid()) this.maxDate = null
+                if (! this.maxDate.isValid()) {
+                    this.maxDate = null
+                }
 
                 this.minDate = dayjs(this.minDate)
-                if (! this.minDate.isValid()) this.minDate = null
+                if (! this.minDate.isValid()) {
+                    this.minDate = null
+                }
 
                 let date = this.getSelectedDate() ?? dayjs()
+                    .set('hour', 0)
+                    .set('minute', 0)
+                    .set('second', 0)
 
-                if (this.maxDate !== null && date.isAfter(this.maxDate)) date = null
-                if (this.minDate !== null && date.isBefore(this.minDate)) date = null
+                if (this.maxDate !== null && date.isAfter(this.maxDate)) {
+                    date = null
+                }
+
+                if (this.minDate !== null && date.isBefore(this.minDate)) {
+                    date = null
+                }
 
                 this.hour = date.hour()
                 this.minute = date.minute()
@@ -65,12 +77,16 @@ export default (Alpine) => {
 
                 this.setDisplayText()
 
-                if (isAutofocused) this.openPicker()
+                if (isAutofocused) {
+                    this.openPicker()
+                }
 
                 this.$watch('focusedMonth', () => {
                     this.focusedMonth = +this.focusedMonth
 
-                    if (this.focusedDate.month() === this.focusedMonth) return
+                    if (this.focusedDate.month() === this.focusedMonth) {
+                        return
+                    }
 
                     this.focusedDate = this.focusedDate.set('month', this.focusedMonth)
                 })
@@ -78,7 +94,9 @@ export default (Alpine) => {
                 this.$watch('focusedYear', () => {
                     this.focusedYear = Number.isInteger(+this.focusedYear) ? +this.focusedYear : dayjs().year()
 
-                    if (this.focusedDate.year() === this.focusedYear) return
+                    if (this.focusedDate.year() === this.focusedYear) {
+                        return
+                    }
 
                     this.focusedDate = this.focusedDate.set('year', this.focusedYear)
                 })
@@ -107,9 +125,7 @@ export default (Alpine) => {
                         this.hour = hour
                     }
 
-                    let date = this.getSelectedDate()
-
-                    if (date === null) return
+                    let date = this.getSelectedDate() ?? this.focusedDate
 
                     this.setState(date.set('hour', this.hour))
                 })
@@ -127,9 +143,7 @@ export default (Alpine) => {
                         this.minute = minute
                     }
 
-                    let date = this.getSelectedDate()
-
-                    if (date === null) return
+                    let date = this.getSelectedDate() ?? this.focusedDate
 
                     this.setState(date.set('minute', this.minute))
                 })
@@ -147,9 +161,7 @@ export default (Alpine) => {
                         this.second = second
                     }
 
-                    let date = this.getSelectedDate()
-
-                    if (date === null) return
+                    let date = this.getSelectedDate() ?? this.focusedDate
 
                     this.setState(date.set('second', this.second))
                 })
@@ -157,8 +169,12 @@ export default (Alpine) => {
                 this.$watch('state', () => {
                     let date = this.getSelectedDate() ?? dayjs()
 
-                    if (this.maxDate !== null && date.isAfter(this.maxDate)) date = null
-                    if (this.minDate !== null && date.isBefore(this.minDate)) date = null
+                    if (this.maxDate !== null && date.isAfter(this.maxDate)) {
+                        date = null
+                    }
+                    if (this.minDate !== null && date.isBefore(this.minDate)) {
+                        date = null
+                    }
 
                     this.hour = date.hour()
                     this.minute = date.minute()
@@ -179,8 +195,12 @@ export default (Alpine) => {
             },
 
             dateIsDisabled: function (date) {
-                if (this.maxDate && date.isAfter(this.maxDate)) return true
-                if (this.minDate && date.isBefore(this.minDate)) return true
+                if (this.maxDate && date.isAfter(this.maxDate)) {
+                    return true
+                }
+                if (this.minDate && date.isBefore(this.minDate)) {
+                    return true
+                }
 
                 return false
             },
@@ -192,7 +212,9 @@ export default (Alpine) => {
             dayIsSelected: function (day) {
                 let selectedDate = this.getSelectedDate()
 
-                if (selectedDate === null) return false
+                if (selectedDate === null) {
+                    return false
+                }
 
                 return selectedDate.date() === day &&
                     selectedDate.month() === this.focusedDate.month() &&
@@ -259,7 +281,9 @@ export default (Alpine) => {
             getSelectedDate: function () {
                 let date = dayjs(this.state, format)
 
-                if (! date.isValid()) return null
+                if (! date.isValid()) {
+                    return null
+                }
 
                 return date
             },
@@ -277,7 +301,9 @@ export default (Alpine) => {
             },
 
             selectDate: function (day = null) {
-                if (day) this.setFocusedDay(day)
+                if (day) {
+                    this.setFocusedDay(day)
+                }
 
                 this.setState(this.focusedDate)
             },
@@ -308,7 +334,9 @@ export default (Alpine) => {
 
                     return
                 } else {
-                    if (this.dateIsDisabled(date)) return
+                    if (this.dateIsDisabled(date)) {
+                        return
+                    }
                 }
 
                 this.state = date
