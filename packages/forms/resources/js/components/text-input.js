@@ -11,7 +11,9 @@ export default (Alpine) => {
             state,
 
             init: function () {
-                if (! getMaskOptionsUsing) return
+                if (! getMaskOptionsUsing) {
+                    return
+                }
 
                 if (this.state) {
                     this.$el.value = this.state?.valueOf()

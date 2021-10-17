@@ -2,9 +2,9 @@
 
 namespace Filament\Forms\Components;
 
-class DatePicker extends DateTimePicker
+class TimePicker extends DateTimePicker
 {
-    public function hasTime(): bool
+    public function hasDate(): bool
     {
         return false;
     }

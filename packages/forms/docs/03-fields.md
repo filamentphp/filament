@@ -230,14 +230,16 @@ class User extends Model
 
 ## Date-time picker
 
-The date-time picker provides an interactive interface for selecting a date, and optionally a time.
+The date-time picker provides an interactive interface for selecting a date and a time.
 
 ```php
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\TimePicker;
 
-DatePicker::make('date_of_birth')
 DateTimePicker::make('published_at')
+DatePicker::make('date_of_birth')
+TimePicker::make('alarm_at')
 ```
 
 You may restrict the minimum and maximum date that can be selected with the picker. The `minDate()` and `maxDate()` methods accept a `DateTime` instance (e.g. Carbon), or a string:
@@ -829,7 +831,7 @@ TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask
             ->thousandsSeparator(',')
             ->decimalPlaces('.'),
     ])
-    ->pattern("$money"),
+    ->pattern('$money'),
 )
 ```
 

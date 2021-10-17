@@ -106,7 +106,9 @@ export default (Alpine) => {
                         return
                     }
 
-                    if (this.state.startsWith('livewire-file:')) return
+                    if (this.state.startsWith('livewire-file:')) {
+                        return
+                    }
 
                     let uploadedFileUrl = await getUploadedFileUrlUsing()
 

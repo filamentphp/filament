@@ -22,7 +22,9 @@ export default (Alpine) => {
             state,
 
             init: async function () {
-                if (isAutofocused) this.openListbox()
+                if (isAutofocused) {
+                    this.openListbox()
+                }
 
                 if (! this.state) {
                     this.state = []
@@ -105,7 +107,9 @@ export default (Alpine) => {
                     return
                 }
 
-                if (this.focusedOptionIndex + 1 >= Object.keys(this.options).length) return
+                if (this.focusedOptionIndex + 1 >= Object.keys(this.options).length) {
+                    return
+                }
 
                 this.focusedOptionIndex++
 
@@ -121,7 +125,9 @@ export default (Alpine) => {
                     return
                 }
 
-                if (this.focusedOptionIndex <= 0) return
+                if (this.focusedOptionIndex <= 0) {
+                    return
+                }
 
                 this.focusedOptionIndex--
 

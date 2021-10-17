@@ -23,7 +23,9 @@ export default (Alpine) => {
                 this.resize()
 
                 this.$watch('tab', () => {
-                    if (this.tab !== 'preview') return
+                    if (this.tab !== 'preview') {
+                        return
+                    }
 
                     this.preview = marked(this.state)
                 })
