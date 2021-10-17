@@ -27,7 +27,9 @@ export default (Alpine) => {
                 this.$refs.trix?.editor?.loadHTML(this.state)
 
                 this.$watch('state', () => {
-                    if (document.activeElement === this.$refs.trix) return
+                    if (document.activeElement === this.$refs.trix) {
+                        return
+                    }
 
                     this.$refs.trix?.editor?.loadHTML(this.state)
                 })

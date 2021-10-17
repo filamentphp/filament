@@ -22,7 +22,9 @@ export default (Alpine) => {
             state,
 
             init: async function () {
-                if (isAutofocused) this.openListbox()
+                if (isAutofocused) {
+                    this.openListbox()
+                }
 
                 this.label = await getOptionLabelUsing()
 
@@ -101,7 +103,9 @@ export default (Alpine) => {
                     return
                 }
 
-                if (this.focusedOptionIndex + 1 >= Object.keys(this.options).length) return
+                if (this.focusedOptionIndex + 1 >= Object.keys(this.options).length) {
+                    return
+                }
 
                 this.focusedOptionIndex++
 
@@ -117,7 +121,9 @@ export default (Alpine) => {
                     return
                 }
 
-                if (this.focusedOptionIndex <= 0) return
+                if (this.focusedOptionIndex <= 0) {
+                    return
+                }
 
                 this.focusedOptionIndex--
 
@@ -129,7 +135,9 @@ export default (Alpine) => {
             openListbox: function () {
                 this.focusedOptionIndex = Object.keys(this.options).indexOf(this.state)
 
-                if (this.focusedOptionIndex < 0) this.focusedOptionIndex = 0
+                if (this.focusedOptionIndex < 0) {
+                    this.focusedOptionIndex = 0
+                }
 
                 this.isOpen = true
 

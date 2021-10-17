@@ -138,7 +138,7 @@ var require_customParseFormat = __commonJS({
               } catch (t6) {
                 return new Date("");
               }
-            }(e4, a3, r4), this.init(), d2 && d2 !== true && (this.$L = this.locale(d2).$L), h2 && e4 !== this.format(a3) && (this.$d = new Date("")), o2 = {};
+            }(e4, a3, r4), this.init(), d2 && d2 !== true && (this.$L = this.locale(d2).$L), h2 && e4 != this.format(a3) && (this.$d = new Date("")), o2 = {};
           } else if (a3 instanceof Array)
             for (var l = a3.length, m = 1; m <= l; m += 1) {
               s3[1] = a3[m - 1];
@@ -5663,7 +5663,7 @@ var Dayjs = /* @__PURE__ */ function() {
     this.parse(cfg);
   }
   var _proto = Dayjs2.prototype;
-  _proto.parse = function parse4(cfg) {
+  _proto.parse = function parse5(cfg) {
     this.$d = parseDate(cfg);
     this.$x = cfg.x || {};
     this.init();
@@ -5948,32 +5948,39 @@ var date_time_picker_default = (Alpine) => {
       state: state2,
       init: function() {
         this.maxDate = esm_default(this.maxDate);
-        if (!this.maxDate.isValid())
+        if (!this.maxDate.isValid()) {
           this.maxDate = null;
+        }
         this.minDate = esm_default(this.minDate);
-        if (!this.minDate.isValid())
+        if (!this.minDate.isValid()) {
           this.minDate = null;
-        let date = this.getSelectedDate() ?? esm_default();
-        if (this.maxDate !== null && date.isAfter(this.maxDate))
+        }
+        let date = this.getSelectedDate() ?? esm_default().set("hour", 0).set("minute", 0).set("second", 0);
+        if (this.maxDate !== null && date.isAfter(this.maxDate)) {
           date = null;
-        if (this.minDate !== null && date.isBefore(this.minDate))
+        }
+        if (this.minDate !== null && date.isBefore(this.minDate)) {
           date = null;
+        }
         this.hour = date.hour();
         this.minute = date.minute();
         this.second = date.second();
         this.setDisplayText();
-        if (isAutofocused)
+        if (isAutofocused) {
           this.openPicker();
+        }
         this.$watch("focusedMonth", () => {
           this.focusedMonth = +this.focusedMonth;
-          if (this.focusedDate.month() === this.focusedMonth)
+          if (this.focusedDate.month() === this.focusedMonth) {
             return;
+          }
           this.focusedDate = this.focusedDate.set("month", this.focusedMonth);
         });
         this.$watch("focusedYear", () => {
           this.focusedYear = Number.isInteger(+this.focusedYear) ? +this.focusedYear : esm_default().year();
-          if (this.focusedDate.year() === this.focusedYear)
+          if (this.focusedDate.year() === this.focusedYear) {
             return;
+          }
           this.focusedDate = this.focusedDate.set("year", this.focusedYear);
         });
         this.$watch("focusedDate", () => {
@@ -5995,9 +6002,7 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.hour = hour;
           }
-          let date2 = this.getSelectedDate();
-          if (date2 === null)
-            return;
+          let date2 = this.getSelectedDate() ?? this.focusedDate;
           this.setState(date2.set("hour", this.hour));
         });
         this.$watch("minute", () => {
@@ -6011,9 +6016,7 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.minute = minute;
           }
-          let date2 = this.getSelectedDate();
-          if (date2 === null)
-            return;
+          let date2 = this.getSelectedDate() ?? this.focusedDate;
           this.setState(date2.set("minute", this.minute));
         });
         this.$watch("second", () => {
@@ -6027,17 +6030,17 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.second = second;
           }
-          let date2 = this.getSelectedDate();
-          if (date2 === null)
-            return;
+          let date2 = this.getSelectedDate() ?? this.focusedDate;
           this.setState(date2.set("second", this.second));
         });
         this.$watch("state", () => {
           let date2 = this.getSelectedDate() ?? esm_default();
-          if (this.maxDate !== null && date2.isAfter(this.maxDate))
+          if (this.maxDate !== null && date2.isAfter(this.maxDate)) {
             date2 = null;
-          if (this.minDate !== null && date2.isBefore(this.minDate))
+          }
+          if (this.minDate !== null && date2.isBefore(this.minDate)) {
             date2 = null;
+          }
           this.hour = date2.hour();
           this.minute = date2.minute();
           this.second = date2.second();
@@ -6052,10 +6055,12 @@ var date_time_picker_default = (Alpine) => {
         this.open = false;
       },
       dateIsDisabled: function(date) {
-        if (this.maxDate && date.isAfter(this.maxDate))
+        if (this.maxDate && date.isAfter(this.maxDate)) {
           return true;
-        if (this.minDate && date.isBefore(this.minDate))
+        }
+        if (this.minDate && date.isBefore(this.minDate)) {
           return true;
+        }
         return false;
       },
       dayIsDisabled: function(day) {
@@ -6063,8 +6068,9 @@ var date_time_picker_default = (Alpine) => {
       },
       dayIsSelected: function(day) {
         let selectedDate = this.getSelectedDate();
-        if (selectedDate === null)
+        if (selectedDate === null) {
           return false;
+        }
         return selectedDate.date() === day && selectedDate.month() === this.focusedDate.month() && selectedDate.year() === this.focusedDate.year();
       },
       dayIsToday: function(day) {
@@ -6108,8 +6114,9 @@ var date_time_picker_default = (Alpine) => {
       },
       getSelectedDate: function() {
         let date = esm_default(this.state, format3);
-        if (!date.isValid())
+        if (!date.isValid()) {
           return null;
+        }
         return date;
       },
       openPicker: function() {
@@ -6121,8 +6128,9 @@ var date_time_picker_default = (Alpine) => {
         });
       },
       selectDate: function(day = null) {
-        if (day)
+        if (day) {
           this.setFocusedDay(day);
+        }
         this.setState(this.focusedDate);
       },
       setDisplayText: function() {
@@ -6145,8 +6153,9 @@ var date_time_picker_default = (Alpine) => {
           this.setDisplayText();
           return;
         } else {
-          if (this.dateIsDisabled(date))
+          if (this.dateIsDisabled(date)) {
             return;
+          }
         }
         this.state = date.set("hour", this.hour).set("minute", this.minute).set("second", this.second).format(format3);
         this.setDisplayText();
@@ -7388,6 +7397,10 @@ var defaultOptions = {
   chunkRetryDelays: [[500, 1e3, 3e3], Type.ARRAY],
   server: [null, Type.SERVER_API],
   fileSizeBase: [1e3, Type.INT],
+  labelFileSizeBytes: ["bytes", Type.STRING],
+  labelFileSizeKilobytes: ["KB", Type.STRING],
+  labelFileSizeMegabytes: ["MB", Type.STRING],
+  labelFileSizeGigabytes: ["GB", Type.STRING],
   labelDecimalSeparator: [getDecimalSeparator(), Type.STRING],
   labelThousandsSeparator: [getThousandsSeparator(), Type.STRING],
   labelIdle: [
@@ -7573,7 +7586,13 @@ var queries = (state2) => ({
   GET_ITEMS_BY_STATUS: (status) => getActiveItems(state2.items).filter((item2) => item2.status === status),
   GET_TOTAL_ITEMS: () => getActiveItems(state2.items).length,
   SHOULD_UPDATE_FILE_INPUT: () => state2.options.storeAsFile && canUpdateFileInput() && !isAsync(state2),
-  IS_ASYNC: () => isAsync(state2)
+  IS_ASYNC: () => isAsync(state2),
+  GET_FILE_SIZE_LABELS: (query) => ({
+    labelBytes: query("GET_LABEL_FILE_SIZE_BYTES") || void 0,
+    labelKilobytes: query("GET_LABEL_FILE_SIZE_KILOBYTES") || void 0,
+    labelMegabytes: query("GET_LABEL_FILE_SIZE_MEGABYTES") || void 0,
+    labelGigabytes: query("GET_LABEL_FILE_SIZE_GIGABYTES") || void 0
+  })
 });
 var hasRoomForItem = (state2) => {
   const count = getActiveItems(state2.items).length;
@@ -8490,7 +8509,6 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
     });
     processor.on("abort", (serverFileReference2) => {
       state2.activeProcessor = null;
-      state2.transferId = null;
       state2.serverFileReference = serverFileReference2;
       setStatus(ItemStatus.IDLE);
       fire("process-abort");
@@ -8528,12 +8546,14 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
     state2.activeProcessor.abort();
   });
   const revert = (revertFileUpload, forceRevert) => new Promise((resolve, reject) => {
-    if (state2.serverFileReference === null) {
+    const serverTransferId = state2.serverFileReference !== null ? state2.serverFileReference : state2.transferId;
+    if (serverTransferId === null) {
       resolve();
       return;
     }
-    revertFileUpload(state2.serverFileReference, () => {
+    revertFileUpload(serverTransferId, () => {
       state2.serverFileReference = null;
+      state2.transferId = null;
       resolve();
     }, (error2) => {
       if (!forceRevert) {
@@ -8989,8 +9009,14 @@ var actions = (dispatch2, query, state2) => ({
       };
       applyFilterChain("DID_LOAD_ITEM", item2, { query, dispatch: dispatch2 }).then(() => {
         optionalPromise(query("GET_BEFORE_ADD_FILE"), createItemAPI(item2)).then(handleAdd);
-      }).catch(() => {
-        handleAdd(false);
+      }).catch((e2) => {
+        if (!e2 || !e2.error || !e2.status)
+          return handleAdd(false);
+        dispatch2("DID_THROW_ITEM_INVALID", {
+          id,
+          error: e2.error,
+          status: e2.status
+        });
       });
     });
     item2.on("process-start", () => {
@@ -9223,7 +9249,7 @@ var actions = (dispatch2, query, state2) => ({
         });
       });
     } else {
-      if (options.revert && item2.origin !== FileOrigin.LOCAL && item2.serverId !== null) {
+      if (options.revert && item2.origin !== FileOrigin.LOCAL && item2.serverId !== null || state2.options.chunkUploads && item2.file.size > state2.options.chunkSize || state2.options.chunkUploads && state2.options.chunkForce) {
         item2.revert(createRevertFunction(state2.options.server.url, state2.options.server.revert), query("GET_FORCE_REVERT"));
       }
       removeFromView();
@@ -9279,11 +9305,22 @@ var actions = (dispatch2, query, state2) => ({
     });
   }),
   SET_OPTIONS: ({ options }) => {
-    forin(options, (key, value) => {
-      dispatch2(`SET_${fromCamels(key, "_").toUpperCase()}`, { value });
+    const optionKeys = Object.keys(options);
+    const prioritizedOptionKeys = PrioritizedOptions.filter((key) => optionKeys.includes(key));
+    const orderedOptionKeys = [
+      ...prioritizedOptionKeys,
+      ...Object.keys(options).filter((key) => !prioritizedOptionKeys.includes(key))
+    ];
+    orderedOptionKeys.forEach((key) => {
+      dispatch2(`SET_${fromCamels(key, "_").toUpperCase()}`, {
+        value: options[key]
+      });
     });
   }
 });
+var PrioritizedOptions = [
+  "server"
+];
 var formatFilename = (name2) => name2;
 var createElement$1 = (tagName) => {
   return document.createElement(tagName);
@@ -9413,21 +9450,27 @@ var fileActionButton = createView({
   create: create$1,
   write: write$1
 });
-var toNaturalFileSize = (bytes, decimalSeparator = ".", base = 1e3) => {
+var toNaturalFileSize = (bytes, decimalSeparator = ".", base = 1e3, options = {}) => {
+  const {
+    labelBytes = "bytes",
+    labelKilobytes = "KB",
+    labelMegabytes = "MB",
+    labelGigabytes = "GB"
+  } = options;
   bytes = Math.round(Math.abs(bytes));
   const KB = base;
   const MB = base * base;
   const GB = base * base * base;
   if (bytes < KB) {
-    return `${bytes} bytes`;
+    return `${bytes} ${labelBytes}`;
   }
   if (bytes < MB) {
-    return `${Math.floor(bytes / KB)} KB`;
+    return `${Math.floor(bytes / KB)} ${labelKilobytes}`;
   }
   if (bytes < GB) {
-    return `${removeDecimalsWhenZero(bytes / MB, 1, decimalSeparator)} MB`;
+    return `${removeDecimalsWhenZero(bytes / MB, 1, decimalSeparator)} ${labelMegabytes}`;
   }
-  return `${removeDecimalsWhenZero(bytes / GB, 2, decimalSeparator)} GB`;
+  return `${removeDecimalsWhenZero(bytes / GB, 2, decimalSeparator)} ${labelGigabytes}`;
 };
 var removeDecimalsWhenZero = (value, decimalCount, separator) => {
   return value.toFixed(decimalCount).split(".").filter((part) => part !== "0").join(separator);
@@ -9446,11 +9489,12 @@ var create$2 = ({ root: root2, props }) => {
   text(fileName, formatFilename(root2.query("GET_ITEM_NAME", props.id)));
 };
 var updateFile = ({ root: root2, props }) => {
-  text(root2.ref.fileSize, toNaturalFileSize(root2.query("GET_ITEM_SIZE", props.id), ".", root2.query("GET_FILE_SIZE_BASE")));
+  text(root2.ref.fileSize, toNaturalFileSize(root2.query("GET_ITEM_SIZE", props.id), ".", root2.query("GET_FILE_SIZE_BASE"), root2.query("GET_FILE_SIZE_LABELS", root2.query)));
   text(root2.ref.fileName, formatFilename(root2.query("GET_ITEM_NAME", props.id)));
 };
 var updateFileSizeOnError = ({ root: root2, props }) => {
   if (isInt(root2.query("GET_ITEM_SIZE", props.id))) {
+    updateFile({ root: root2, props });
     return;
   }
   text(root2.ref.fileSize, root2.query("GET_LABEL_FILE_SIZE_NOT_AVAILABLE"));
@@ -12448,7 +12492,7 @@ var plugin = ({ addFilter: addFilter2, utils }) => {
         status: {
           main: query("GET_LABEL_MAX_FILE_SIZE_EXCEEDED"),
           sub: replaceInString2(query("GET_LABEL_MAX_FILE_SIZE"), {
-            filesize: toNaturalFileSize2(sizeMax, ".", query("GET_FILE_SIZE_BASE"))
+            filesize: toNaturalFileSize2(sizeMax, ".", query("GET_FILE_SIZE_BASE"), query("GET_FILE_SIZE_LABELS", query))
           })
         }
       });
@@ -12460,7 +12504,7 @@ var plugin = ({ addFilter: addFilter2, utils }) => {
         status: {
           main: query("GET_LABEL_MIN_FILE_SIZE_EXCEEDED"),
           sub: replaceInString2(query("GET_LABEL_MIN_FILE_SIZE"), {
-            filesize: toNaturalFileSize2(sizeMin, ".", query("GET_FILE_SIZE_BASE"))
+            filesize: toNaturalFileSize2(sizeMin, ".", query("GET_FILE_SIZE_BASE"), query("GET_FILE_SIZE_LABELS", query))
           })
         }
       });
@@ -12476,7 +12520,7 @@ var plugin = ({ addFilter: addFilter2, utils }) => {
           status: {
             main: query("GET_LABEL_MAX_TOTAL_FILE_SIZE_EXCEEDED"),
             sub: replaceInString2(query("GET_LABEL_MAX_TOTAL_FILE_SIZE"), {
-              filesize: toNaturalFileSize2(totalSizeMax)
+              filesize: toNaturalFileSize2(totalSizeMax, ".", query("GET_FILE_SIZE_BASE"), query("GET_FILE_SIZE_LABELS", query))
             })
           }
         });
@@ -13503,13 +13547,14 @@ var createImageOverlayView = (fpAPI) => fpAPI.utils.createView({
   tag: "div",
   ignoreRect: true,
   create: ({ root: root2, props }) => {
+    let mask = SVG_MASK;
     if (document.querySelector("base")) {
       const url = window.location.href.replace(window.location.hash, "");
-      SVG_MASK = SVG_MASK.replace(/url\(\#/g, "url(" + url + "#");
+      mask = mask.replace(/url\(\#/g, "url(" + url + "#");
     }
     SVGMaskUniqueId++;
     root2.element.classList.add(`filepond--image-preview-overlay-${props.status}`);
-    root2.element.innerHTML = SVG_MASK.replace(/__UID__/g, SVGMaskUniqueId);
+    root2.element.innerHTML = mask.replace(/__UID__/g, SVGMaskUniqueId);
   },
   mixins: {
     styles: ["opacity"],
@@ -13784,7 +13829,7 @@ var createImageWrapperView = (_) => {
     if (/crop|markup|resize/.test(action.change.key)) {
       const crop = item2.getMetadata("crop");
       const image = root2.ref.images[root2.ref.images.length - 1];
-      if (Math.abs(crop.aspectRatio - image.crop.aspectRatio) > 1e-5) {
+      if (crop && crop.aspectRatio && image.crop && image.crop.aspectRatio && Math.abs(crop.aspectRatio - image.crop.aspectRatio) > 1e-5) {
         const imageView = shiftImage({ root: root2 });
         pushImage({ root: root2, props, image: cloneCanvas(imageView.image) });
       } else {
@@ -14054,8 +14099,10 @@ var plugin5 = (fpAPI) => {
       }
       if (root2.ref.shouldDrawPreview) {
         requestAnimationFrame(() => {
-          root2.dispatch("DID_FINISH_CALCULATE_PREVIEWSIZE", {
-            id: props.id
+          requestAnimationFrame(() => {
+            root2.dispatch("DID_FINISH_CALCULATE_PREVIEWSIZE", {
+              id: props.id
+            });
           });
         });
         root2.ref.shouldDrawPreview = false;
@@ -15630,8 +15677,9 @@ var file_upload_default = (Alpine) => {
             this.pond.removeFiles();
             return;
           }
-          if (this.state.startsWith("livewire-file:"))
+          if (this.state.startsWith("livewire-file:")) {
             return;
+          }
           let uploadedFileUrl2 = await getUploadedFileUrlUsing();
           if (uploadedFileUrl2) {
             this.pond.files = [{
@@ -16000,6 +16048,11 @@ var MarkdownQuoteButtonElement = class extends MarkdownButtonElement {
     super();
     styles2.set(this, { prefix: "> ", multiline: true, surroundWithNewlines: true });
   }
+  connectedCallback() {
+    super.connectedCallback();
+    this.setAttribute("hotkey", ".");
+    this.setAttribute("hotkey-requires-shift", "true");
+  }
 };
 if (!window.customElements.get("md-quote")) {
   window.MarkdownQuoteButtonElement = MarkdownQuoteButtonElement;
@@ -16048,6 +16101,11 @@ var MarkdownUnorderedListButtonElement = class extends MarkdownButtonElement {
     super();
     styles2.set(this, { prefix: "- ", multiline: true, surroundWithNewlines: true });
   }
+  connectedCallback() {
+    super.connectedCallback();
+    this.setAttribute("hotkey", "8");
+    this.setAttribute("hotkey-requires-shift", "true");
+  }
 };
 if (!window.customElements.get("md-unordered-list")) {
   window.MarkdownUnorderedListButtonElement = MarkdownUnorderedListButtonElement;
@@ -16057,6 +16115,11 @@ var MarkdownOrderedListButtonElement = class extends MarkdownButtonElement {
   constructor() {
     super();
     styles2.set(this, { prefix: "1. ", multiline: true, orderedList: true });
+  }
+  connectedCallback() {
+    super.connectedCallback();
+    this.setAttribute("hotkey", "7");
+    this.setAttribute("hotkey-requires-shift", "true");
   }
 };
 if (!window.customElements.get("md-ordered-list")) {
@@ -16188,9 +16251,12 @@ function focusKeydown(event) {
   buttons[n2].focus();
 }
 var shortcutListeners = new WeakMap();
-function findHotkey(toolbar, key) {
+function elementHotkeyRequiresShift(element) {
+  return element.hasAttribute("hotkey-requires-shift") && element.getAttribute("hotkey-requires-shift") !== "false";
+}
+function findHotkey(toolbar, key, shiftPressed) {
   for (const el of toolbar.querySelectorAll("[hotkey]")) {
-    if (el.getAttribute("hotkey") === key) {
+    if (el.getAttribute("hotkey") === key && (!elementHotkeyRequiresShift(el) || shiftPressed)) {
       return el;
     }
   }
@@ -16199,7 +16265,7 @@ function findHotkey(toolbar, key) {
 function shortcut(toolbar, event) {
   if (event.metaKey && modifierKey === "Meta" || event.ctrlKey && modifierKey === "Control") {
     const key = event.shiftKey ? event.key.toUpperCase() : event.key;
-    const button = findHotkey(toolbar, key);
+    const button = findHotkey(toolbar, key, event.shiftKey);
     if (button) {
       button.click();
       event.preventDefault();
@@ -16477,6 +16543,7 @@ function applyStyle(button, stylesToApply) {
 }
 
 // node_modules/marked/lib/marked.esm.js
+var esmEntry$1 = { exports: {} };
 var defaults$5 = { exports: {} };
 function getDefaults$1() {
   return {
@@ -16735,20 +16802,22 @@ var {
   escape: escape$2,
   findClosingBracket
 } = helpers;
-function outputLink(cap, link, raw, lexer) {
+function outputLink(cap, link, raw, lexer2) {
   const href = link.href;
   const title = link.title ? escape$2(link.title) : null;
   const text2 = cap[1].replace(/\\([\[\]])/g, "$1");
   if (cap[0].charAt(0) !== "!") {
-    lexer.state.inLink = true;
-    return {
+    lexer2.state.inLink = true;
+    const token = {
       type: "link",
       raw,
       href,
       title,
       text: text2,
-      tokens: lexer.inlineTokens(text2, [])
+      tokens: lexer2.inlineTokens(text2, [])
     };
+    lexer2.state.inLink = false;
+    return token;
   } else {
     return {
       type: "image",
@@ -16777,7 +16846,7 @@ function indentCodeCompensation(raw, text2) {
     return node;
   }).join("\n");
 }
-var Tokenizer_1 = class Tokenizer {
+var Tokenizer_1$1 = class Tokenizer {
   constructor(options) {
     this.options = options || defaults$4;
   }
@@ -17388,7 +17457,7 @@ block$1.paragraph = edit(block$1._paragraph).replace("hr", block$1.hr).replace("
 block$1.blockquote = edit(block$1.blockquote).replace("paragraph", block$1.paragraph).getRegex();
 block$1.normal = merge$1({}, block$1);
 block$1.gfm = merge$1({}, block$1.normal, {
-  table: "^ *([^\\n ].*\\|.*)\\n {0,3}(?:\\| *)?(:?-+:? *(?:\\| *:?-+:? *)*)\\|?(?:\\n *((?:(?!\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)"
+  table: "^ *([^\\n ].*\\|.*)\\n {0,3}(?:\\| *)?(:?-+:? *(?:\\| *:?-+:? *)*)(?:\\| *)?(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)"
 });
 block$1.gfm.table = edit(block$1.gfm.table).replace("hr", block$1.hr).replace("heading", " {0,3}#{1,6} ").replace("blockquote", " {0,3}>").replace("code", " {4}[^\\n]").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)]) ").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", block$1._tag).getRegex();
 block$1.pedantic = merge$1({}, block$1.normal, {
@@ -17409,8 +17478,8 @@ var inline$1 = {
   reflinkSearch: "reflink|nolink(?!\\()",
   emStrong: {
     lDelim: /^(?:\*+(?:([punct_])|[^\s*]))|^_+(?:([punct*])|([^\s_]))/,
-    rDelimAst: /\_\_[^_*]*?\*[^_*]*?\_\_|[punct_](\*+)(?=[\s]|$)|[^punct*_\s](\*+)(?=[punct_\s]|$)|[punct_\s](\*+)(?=[^punct*_\s])|[\s](\*+)(?=[punct_])|[punct_](\*+)(?=[punct_])|[^punct*_\s](\*+)(?=[^punct*_\s])/,
-    rDelimUnd: /\*\*[^_*]*?\_[^_*]*?\*\*|[punct*](\_+)(?=[\s]|$)|[^punct*_\s](\_+)(?=[punct*\s]|$)|[punct*\s](\_+)(?=[^punct*_\s])|[\s](\_+)(?=[punct*])|[punct*](\_+)(?=[punct*])/
+    rDelimAst: /^[^_*]*?\_\_[^_*]*?\*[^_*]*?(?=\_\_)|[punct_](\*+)(?=[\s]|$)|[^punct*_\s](\*+)(?=[punct_\s]|$)|[punct_\s](\*+)(?=[^punct*_\s])|[\s](\*+)(?=[punct_])|[punct_](\*+)(?=[punct_])|[^punct*_\s](\*+)(?=[^punct*_\s])/,
+    rDelimUnd: /^[^_*]*?\*\*[^_*]*?\_[^_*]*?(?=\*\*)|[punct*](\_+)(?=[\s]|$)|[^punct*_\s](\_+)(?=[punct*\s]|$)|[punct*\s](\_+)(?=[^punct*_\s])|[\s](\_+)(?=[punct*])|[punct*](\_+)(?=[punct*])/
   },
   code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
   br: /^( {2,}|\\)\n(?!\s*$)/,
@@ -17472,7 +17541,7 @@ var rules = {
   block: block$1,
   inline: inline$1
 };
-var Tokenizer$1 = Tokenizer_1;
+var Tokenizer$2 = Tokenizer_1$1;
 var { defaults: defaults$3 } = defaults$5.exports;
 var { block, inline } = rules;
 var { repeatString } = helpers;
@@ -17491,12 +17560,12 @@ function mangle(text2) {
   }
   return out;
 }
-var Lexer_1 = class Lexer {
+var Lexer_1$1 = class Lexer {
   constructor(options) {
     this.tokens = [];
     this.tokens.links = Object.create(null);
     this.options = options || defaults$3;
-    this.options.tokenizer = this.options.tokenizer || new Tokenizer$1();
+    this.options.tokenizer = this.options.tokenizer || new Tokenizer$2();
     this.tokenizer = this.options.tokenizer;
     this.tokenizer.options = this.options;
     this.tokenizer.lexer = this;
@@ -17530,12 +17599,12 @@ var Lexer_1 = class Lexer {
     };
   }
   static lex(src, options) {
-    const lexer = new Lexer(options);
-    return lexer.lex(src);
+    const lexer2 = new Lexer(options);
+    return lexer2.lex(src);
   }
   static lexInline(src, options) {
-    const lexer = new Lexer(options);
-    return lexer.inlineTokens(src);
+    const lexer2 = new Lexer(options);
+    return lexer2.inlineTokens(src);
   }
   lex(src) {
     src = src.replace(/\r\n|\r/g, "\n").replace(/\t/g, "    ");
@@ -17840,7 +17909,7 @@ var {
   cleanUrl,
   escape: escape$1
 } = helpers;
-var Renderer_1 = class Renderer {
+var Renderer_1$1 = class Renderer {
   constructor(options) {
     this.options = options || defaults$2;
   }
@@ -17943,7 +18012,7 @@ var Renderer_1 = class Renderer {
     return text2;
   }
 };
-var TextRenderer_1 = class TextRenderer {
+var TextRenderer_1$1 = class TextRenderer {
   strong(text2) {
     return text2;
   }
@@ -17972,7 +18041,7 @@ var TextRenderer_1 = class TextRenderer {
     return "";
   }
 };
-var Slugger_1 = class Slugger {
+var Slugger_1$1 = class Slugger {
   constructor() {
     this.seen = {};
   }
@@ -18000,29 +18069,29 @@ var Slugger_1 = class Slugger {
     return this.getNextSafeSlug(slug, options.dryrun);
   }
 };
-var Renderer$1 = Renderer_1;
-var TextRenderer$1 = TextRenderer_1;
-var Slugger$1 = Slugger_1;
+var Renderer$2 = Renderer_1$1;
+var TextRenderer$2 = TextRenderer_1$1;
+var Slugger$2 = Slugger_1$1;
 var { defaults: defaults$1 } = defaults$5.exports;
 var {
   unescape: unescape2
 } = helpers;
-var Parser_1 = class Parser {
+var Parser_1$1 = class Parser {
   constructor(options) {
     this.options = options || defaults$1;
-    this.options.renderer = this.options.renderer || new Renderer$1();
+    this.options.renderer = this.options.renderer || new Renderer$2();
     this.renderer = this.options.renderer;
     this.renderer.options = this.options;
-    this.textRenderer = new TextRenderer$1();
-    this.slugger = new Slugger$1();
+    this.textRenderer = new TextRenderer$2();
+    this.slugger = new Slugger$2();
   }
   static parse(tokens, options) {
-    const parser = new Parser(options);
-    return parser.parse(tokens);
+    const parser2 = new Parser(options);
+    return parser2.parse(tokens);
   }
   static parseInline(tokens, options) {
-    const parser = new Parser(options);
-    return parser.parseInline(tokens);
+    const parser2 = new Parser(options);
+    return parser2.parseInline(tokens);
   }
   parse(tokens, top = true) {
     let out = "", i, j, k, l2, l3, row, cell, header, body, token, ordered, start, loose, itemBody, item2, checked, task, checkbox, ret;
@@ -18212,12 +18281,12 @@ var Parser_1 = class Parser {
     return out;
   }
 };
-var Lexer2 = Lexer_1;
-var Parser2 = Parser_1;
-var Tokenizer2 = Tokenizer_1;
-var Renderer2 = Renderer_1;
-var TextRenderer2 = TextRenderer_1;
-var Slugger2 = Slugger_1;
+var Lexer$1 = Lexer_1$1;
+var Parser$1 = Parser_1$1;
+var Tokenizer$1 = Tokenizer_1$1;
+var Renderer$1 = Renderer_1$1;
+var TextRenderer$1 = TextRenderer_1$1;
+var Slugger$1 = Slugger_1$1;
 var {
   merge,
   checkSanitizeDeprecation,
@@ -18228,7 +18297,7 @@ var {
   changeDefaults,
   defaults: defaults2
 } = defaults$5.exports;
-function marked(src, opt, callback) {
+function marked$1(src, opt, callback) {
   if (typeof src === "undefined" || src === null) {
     throw new Error("marked(): input parameter is undefined or null");
   }
@@ -18239,13 +18308,13 @@ function marked(src, opt, callback) {
     callback = opt;
     opt = null;
   }
-  opt = merge({}, marked.defaults, opt || {});
+  opt = merge({}, marked$1.defaults, opt || {});
   checkSanitizeDeprecation(opt);
   if (callback) {
     const highlight = opt.highlight;
     let tokens;
     try {
-      tokens = Lexer2.lex(src, opt);
+      tokens = Lexer$1.lex(src, opt);
     } catch (e2) {
       return callback(e2);
     }
@@ -18254,9 +18323,9 @@ function marked(src, opt, callback) {
       if (!err) {
         try {
           if (opt.walkTokens) {
-            marked.walkTokens(tokens, opt.walkTokens);
+            marked$1.walkTokens(tokens, opt.walkTokens);
           }
-          out = Parser2.parse(tokens, opt);
+          out = Parser$1.parse(tokens, opt);
         } catch (e2) {
           err = e2;
         }
@@ -18271,7 +18340,7 @@ function marked(src, opt, callback) {
     if (!tokens.length)
       return done();
     let pending = 0;
-    marked.walkTokens(tokens, function(token) {
+    marked$1.walkTokens(tokens, function(token) {
       if (token.type === "code") {
         pending++;
         setTimeout(() => {
@@ -18297,11 +18366,11 @@ function marked(src, opt, callback) {
     return;
   }
   try {
-    const tokens = Lexer2.lex(src, opt);
+    const tokens = Lexer$1.lex(src, opt);
     if (opt.walkTokens) {
-      marked.walkTokens(tokens, opt.walkTokens);
+      marked$1.walkTokens(tokens, opt.walkTokens);
     }
-    return Parser2.parse(tokens, opt);
+    return Parser$1.parse(tokens, opt);
   } catch (e2) {
     e2.message += "\nPlease report this to https://github.com/markedjs/marked.";
     if (opt.silent) {
@@ -18310,16 +18379,16 @@ function marked(src, opt, callback) {
     throw e2;
   }
 }
-marked.options = marked.setOptions = function(opt) {
-  merge(marked.defaults, opt);
-  changeDefaults(marked.defaults);
-  return marked;
+marked$1.options = marked$1.setOptions = function(opt) {
+  merge(marked$1.defaults, opt);
+  changeDefaults(marked$1.defaults);
+  return marked$1;
 };
-marked.getDefaults = getDefaults;
-marked.defaults = defaults2;
-marked.use = function(...args) {
+marked$1.getDefaults = getDefaults;
+marked$1.defaults = defaults2;
+marked$1.use = function(...args) {
   const opts = merge({}, ...args);
-  const extensions = marked.defaults.extensions || { renderers: {}, childTokens: {} };
+  const extensions = marked$1.defaults.extensions || { renderers: {}, childTokens: {} };
   let hasExtensions;
   args.forEach((pack) => {
     if (pack.extensions) {
@@ -18373,7 +18442,7 @@ marked.use = function(...args) {
       });
     }
     if (pack.renderer) {
-      const renderer = marked.defaults.renderer || new Renderer2();
+      const renderer = marked$1.defaults.renderer || new Renderer$1();
       for (const prop in pack.renderer) {
         const prevRenderer = renderer[prop];
         renderer[prop] = (...args2) => {
@@ -18387,7 +18456,7 @@ marked.use = function(...args) {
       opts.renderer = renderer;
     }
     if (pack.tokenizer) {
-      const tokenizer = marked.defaults.tokenizer || new Tokenizer2();
+      const tokenizer = marked$1.defaults.tokenizer || new Tokenizer$1();
       for (const prop in pack.tokenizer) {
         const prevTokenizer = tokenizer[prop];
         tokenizer[prop] = (...args2) => {
@@ -18401,7 +18470,7 @@ marked.use = function(...args) {
       opts.tokenizer = tokenizer;
     }
     if (pack.walkTokens) {
-      const walkTokens = marked.defaults.walkTokens;
+      const walkTokens = marked$1.defaults.walkTokens;
       opts.walkTokens = (token) => {
         pack.walkTokens.call(this, token);
         if (walkTokens) {
@@ -18412,55 +18481,55 @@ marked.use = function(...args) {
     if (hasExtensions) {
       opts.extensions = extensions;
     }
-    marked.setOptions(opts);
+    marked$1.setOptions(opts);
   });
 };
-marked.walkTokens = function(tokens, callback) {
+marked$1.walkTokens = function(tokens, callback) {
   for (const token of tokens) {
     callback(token);
     switch (token.type) {
       case "table": {
         for (const cell of token.header) {
-          marked.walkTokens(cell.tokens, callback);
+          marked$1.walkTokens(cell.tokens, callback);
         }
         for (const row of token.rows) {
           for (const cell of row) {
-            marked.walkTokens(cell.tokens, callback);
+            marked$1.walkTokens(cell.tokens, callback);
           }
         }
         break;
       }
       case "list": {
-        marked.walkTokens(token.items, callback);
+        marked$1.walkTokens(token.items, callback);
         break;
       }
       default: {
-        if (marked.defaults.extensions && marked.defaults.extensions.childTokens && marked.defaults.extensions.childTokens[token.type]) {
-          marked.defaults.extensions.childTokens[token.type].forEach(function(childTokens) {
-            marked.walkTokens(token[childTokens], callback);
+        if (marked$1.defaults.extensions && marked$1.defaults.extensions.childTokens && marked$1.defaults.extensions.childTokens[token.type]) {
+          marked$1.defaults.extensions.childTokens[token.type].forEach(function(childTokens) {
+            marked$1.walkTokens(token[childTokens], callback);
           });
         } else if (token.tokens) {
-          marked.walkTokens(token.tokens, callback);
+          marked$1.walkTokens(token.tokens, callback);
         }
       }
     }
   }
 };
-marked.parseInline = function(src, opt) {
+marked$1.parseInline = function(src, opt) {
   if (typeof src === "undefined" || src === null) {
     throw new Error("marked.parseInline(): input parameter is undefined or null");
   }
   if (typeof src !== "string") {
     throw new Error("marked.parseInline(): input parameter is of type " + Object.prototype.toString.call(src) + ", string expected");
   }
-  opt = merge({}, marked.defaults, opt || {});
+  opt = merge({}, marked$1.defaults, opt || {});
   checkSanitizeDeprecation(opt);
   try {
-    const tokens = Lexer2.lexInline(src, opt);
+    const tokens = Lexer$1.lexInline(src, opt);
     if (opt.walkTokens) {
-      marked.walkTokens(tokens, opt.walkTokens);
+      marked$1.walkTokens(tokens, opt.walkTokens);
     }
-    return Parser2.parseInline(tokens, opt);
+    return Parser$1.parseInline(tokens, opt);
   } catch (e2) {
     e2.message += "\nPlease report this to https://github.com/markedjs/marked.";
     if (opt.silent) {
@@ -18469,16 +18538,34 @@ marked.parseInline = function(src, opt) {
     throw e2;
   }
 };
-marked.Parser = Parser2;
-marked.parser = Parser2.parse;
-marked.Renderer = Renderer2;
-marked.TextRenderer = TextRenderer2;
-marked.Lexer = Lexer2;
-marked.lexer = Lexer2.lex;
-marked.Tokenizer = Tokenizer2;
-marked.Slugger = Slugger2;
-marked.parse = marked;
-var marked_1 = marked;
+marked$1.Parser = Parser$1;
+marked$1.parser = Parser$1.parse;
+marked$1.Renderer = Renderer$1;
+marked$1.TextRenderer = TextRenderer$1;
+marked$1.Lexer = Lexer$1;
+marked$1.lexer = Lexer$1.lex;
+marked$1.Tokenizer = Tokenizer$1;
+marked$1.Slugger = Slugger$1;
+marked$1.parse = marked$1;
+var marked_1 = marked$1;
+var marked = marked_1;
+var Lexer2 = Lexer_1$1;
+var Parser2 = Parser_1$1;
+var Tokenizer2 = Tokenizer_1$1;
+var Renderer2 = Renderer_1$1;
+var TextRenderer2 = TextRenderer_1$1;
+var Slugger2 = Slugger_1$1;
+esmEntry$1.exports = marked;
+var parse2 = esmEntry$1.exports.parse = marked;
+var Parser_1 = esmEntry$1.exports.Parser = Parser2;
+var parser = esmEntry$1.exports.parser = Parser2.parse;
+var Renderer_1 = esmEntry$1.exports.Renderer = Renderer2;
+var TextRenderer_1 = esmEntry$1.exports.TextRenderer = TextRenderer2;
+var Lexer_1 = esmEntry$1.exports.Lexer = Lexer2;
+var lexer = esmEntry$1.exports.lexer = Lexer2.lex;
+var Tokenizer_1 = esmEntry$1.exports.Tokenizer = Tokenizer2;
+var Slugger_1 = esmEntry$1.exports.Slugger = Slugger2;
+var esmEntry = esmEntry$1.exports;
 
 // node_modules/mdhl/dist/mdhl.esm.js
 function e(e2) {
@@ -18549,9 +18636,10 @@ var markdown_editor_default = (Alpine) => {
       init: function() {
         this.resize();
         this.$watch("tab", () => {
-          if (this.tab !== "preview")
+          if (this.tab !== "preview") {
             return;
-          this.preview = marked_1(this.state);
+          }
+          this.preview = esmEntry(this.state);
         });
       },
       checkForAutoInsertion($event) {
@@ -18614,8 +18702,9 @@ var multi_select_default = (Alpine) => {
       search: "",
       state: state2,
       init: async function() {
-        if (isAutofocused)
+        if (isAutofocused) {
           this.openListbox();
+        }
         if (!this.state) {
           this.state = [];
         }
@@ -18674,8 +18763,9 @@ var multi_select_default = (Alpine) => {
           this.focusedOptionIndex = Object.keys(this.options).length - 1;
           return;
         }
-        if (this.focusedOptionIndex + 1 >= Object.keys(this.options).length)
+        if (this.focusedOptionIndex + 1 >= Object.keys(this.options).length) {
           return;
+        }
         this.focusedOptionIndex++;
         this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
           block: "center"
@@ -18686,8 +18776,9 @@ var multi_select_default = (Alpine) => {
           this.focusedOptionIndex = 0;
           return;
         }
-        if (this.focusedOptionIndex <= 0)
+        if (this.focusedOptionIndex <= 0) {
           return;
+        }
         this.focusedOptionIndex--;
         this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
           block: "center"
@@ -18754,8 +18845,9 @@ var rich_editor_default = (Alpine) => {
       init: function() {
         this.$refs.trix?.editor?.loadHTML(this.state);
         this.$watch("state", () => {
-          if (document.activeElement === this.$refs.trix)
+          if (document.activeElement === this.$refs.trix) {
             return;
+          }
           this.$refs.trix?.editor?.loadHTML(this.state);
         });
       }
@@ -18781,8 +18873,9 @@ var select_default = (Alpine) => {
       search: "",
       state: state2,
       init: async function() {
-        if (isAutofocused)
+        if (isAutofocused) {
           this.openListbox();
+        }
         this.label = await getOptionLabelUsing();
         this.$watch("search", async () => {
           if (!this.isOpen || this.search === "" || this.search === null) {
@@ -18838,8 +18931,9 @@ var select_default = (Alpine) => {
           this.focusedOptionIndex = Object.keys(this.options).length - 1;
           return;
         }
-        if (this.focusedOptionIndex + 1 >= Object.keys(this.options).length)
+        if (this.focusedOptionIndex + 1 >= Object.keys(this.options).length) {
           return;
+        }
         this.focusedOptionIndex++;
         this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
           block: "center"
@@ -18850,8 +18944,9 @@ var select_default = (Alpine) => {
           this.focusedOptionIndex = 0;
           return;
         }
-        if (this.focusedOptionIndex <= 0)
+        if (this.focusedOptionIndex <= 0) {
           return;
+        }
         this.focusedOptionIndex--;
         this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
           block: "center"
@@ -18859,8 +18954,9 @@ var select_default = (Alpine) => {
       },
       openListbox: function() {
         this.focusedOptionIndex = Object.keys(this.options).indexOf(this.state);
-        if (this.focusedOptionIndex < 0)
+        if (this.focusedOptionIndex < 0) {
           this.focusedOptionIndex = 0;
+        }
         this.isOpen = true;
         this.$nextTick(() => {
           this.$refs.search.focus();
@@ -18917,7 +19013,7 @@ var tags_input_default = (Alpine) => {
   });
 };
 
-// node_modules/imask/esm/_rollupPluginBabelHelpers-74ba0139.js
+// node_modules/imask/esm/_rollupPluginBabelHelpers-a0b34764.js
 function _typeof(obj) {
   "@babel/helpers - typeof";
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
@@ -19049,6 +19145,8 @@ function _assertThisInitialized(self2) {
 function _possibleConstructorReturn(self2, call) {
   if (call && (typeof call === "object" || typeof call === "function")) {
     return call;
+  } else if (call !== void 0) {
+    throw new TypeError("Derived constructors may only return object or undefined");
   }
   return _assertThisInitialized(self2);
 }
@@ -19310,7 +19408,6 @@ var ActionDetails = /* @__PURE__ */ function() {
   }]);
   return ActionDetails2;
 }();
-var action_details_default = ActionDetails;
 
 // node_modules/imask/esm/core/change-details.js
 var ChangeDetails = /* @__PURE__ */ function() {
@@ -19340,7 +19437,6 @@ var ChangeDetails = /* @__PURE__ */ function() {
   }]);
   return ChangeDetails2;
 }();
-var change_details_default = ChangeDetails;
 
 // node_modules/imask/esm/core/continuous-tail-details.js
 var ContinuousTailDetails = /* @__PURE__ */ function() {
@@ -19394,14 +19490,12 @@ var ContinuousTailDetails = /* @__PURE__ */ function() {
   }]);
   return ContinuousTailDetails2;
 }();
-var continuous_tail_details_default = ContinuousTailDetails;
 
 // node_modules/imask/esm/core/holder.js
 function IMask(el) {
   var opts = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
   return new IMask.InputMask(el, opts);
 }
-var holder_default = IMask;
 
 // node_modules/imask/esm/masked/base.js
 var Masked = /* @__PURE__ */ function() {
@@ -19510,22 +19604,22 @@ var Masked = /* @__PURE__ */ function() {
     value: function extractTail() {
       var fromPos = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : 0;
       var toPos = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : this.value.length;
-      return new continuous_tail_details_default(this.extractInput(fromPos, toPos), fromPos);
+      return new ContinuousTailDetails(this.extractInput(fromPos, toPos), fromPos);
     }
   }, {
     key: "appendTail",
     value: function appendTail(tail) {
       if (isString2(tail))
-        tail = new continuous_tail_details_default(String(tail));
+        tail = new ContinuousTailDetails(String(tail));
       return tail.appendTo(this);
     }
   }, {
     key: "_appendCharRaw",
     value: function _appendCharRaw(ch) {
       if (!ch)
-        return new change_details_default();
+        return new ChangeDetails();
       this._value += ch;
-      return new change_details_default({
+      return new ChangeDetails({
         inserted: ch,
         rawInserted: ch
       });
@@ -19552,7 +19646,7 @@ var Masked = /* @__PURE__ */ function() {
             this.state = beforeTailState;
         }
         if (!appended) {
-          details = new change_details_default();
+          details = new ChangeDetails();
           this.state = consistentState;
           if (checkTail && consistentTail)
             checkTail.state = consistentTail;
@@ -19563,15 +19657,15 @@ var Masked = /* @__PURE__ */ function() {
   }, {
     key: "_appendPlaceholder",
     value: function _appendPlaceholder() {
-      return new change_details_default();
+      return new ChangeDetails();
     }
   }, {
     key: "append",
     value: function append(str, flags, tail) {
       if (!isString2(str))
         throw new Error("value should be string");
-      var details = new change_details_default();
-      var checkTail = isString2(tail) ? new continuous_tail_details_default(String(tail)) : tail;
+      var details = new ChangeDetails();
+      var checkTail = isString2(tail) ? new ContinuousTailDetails(String(tail)) : tail;
       if (flags && flags.tail)
         flags._beforeTailState = this.state;
       for (var ci = 0; ci < str.length; ++ci) {
@@ -19588,7 +19682,7 @@ var Masked = /* @__PURE__ */ function() {
       var fromPos = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : 0;
       var toPos = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : this.value.length;
       this._value = this.value.slice(0, fromPos) + this.value.slice(toPos);
-      return new change_details_default();
+      return new ChangeDetails();
     }
   }, {
     key: "withValueRefresh",
@@ -19651,7 +19745,7 @@ var Masked = /* @__PURE__ */ function() {
       var tailPos = start + deleteCount;
       var tail = this.extractTail(tailPos);
       var startChangePos = this.nearestInputPos(start, removeDirection);
-      var changeDetails = new change_details_default({
+      var changeDetails = new ChangeDetails({
         tailShift: startChangePos - start
       }).aggregate(this.remove(startChangePos)).aggregate(this.append(inserted, {
         input: true
@@ -19665,12 +19759,11 @@ Masked.DEFAULTS = {
   format: function format(v) {
     return v;
   },
-  parse: function parse2(v) {
+  parse: function parse3(v) {
     return v;
   }
 };
-holder_default.Masked = Masked;
-var base_default = Masked;
+IMask.Masked = Masked;
 
 // node_modules/imask/esm/masked/factory.js
 function maskedClass(mask) {
@@ -19678,38 +19771,37 @@ function maskedClass(mask) {
     throw new Error("mask property should be defined");
   }
   if (mask instanceof RegExp)
-    return holder_default.MaskedRegExp;
+    return IMask.MaskedRegExp;
   if (isString2(mask))
-    return holder_default.MaskedPattern;
+    return IMask.MaskedPattern;
   if (mask instanceof Date || mask === Date)
-    return holder_default.MaskedDate;
+    return IMask.MaskedDate;
   if (mask instanceof Number || typeof mask === "number" || mask === Number)
-    return holder_default.MaskedNumber;
+    return IMask.MaskedNumber;
   if (Array.isArray(mask) || mask === Array)
-    return holder_default.MaskedDynamic;
-  if (holder_default.Masked && mask.prototype instanceof holder_default.Masked)
+    return IMask.MaskedDynamic;
+  if (IMask.Masked && mask.prototype instanceof IMask.Masked)
     return mask;
   if (mask instanceof Function)
-    return holder_default.MaskedFunction;
-  if (mask instanceof holder_default.Masked)
+    return IMask.MaskedFunction;
+  if (mask instanceof IMask.Masked)
     return mask.constructor;
   console.warn("Mask not found for mask", mask);
-  return holder_default.Masked;
+  return IMask.Masked;
 }
 function createMask(opts) {
-  if (holder_default.Masked && opts instanceof holder_default.Masked)
+  if (IMask.Masked && opts instanceof IMask.Masked)
     return opts;
   opts = Object.assign({}, opts);
   var mask = opts.mask;
-  if (holder_default.Masked && mask instanceof holder_default.Masked)
+  if (IMask.Masked && mask instanceof IMask.Masked)
     return mask;
   var MaskedClass = maskedClass(mask);
   if (!MaskedClass)
     throw new Error("Masked class is not found for provided mask, appropriate module needs to be import manually before creating mask.");
   return new MaskedClass(opts);
 }
-holder_default.createMask = createMask;
-var factory_default = createMask;
+IMask.createMask = createMask;
 
 // node_modules/imask/esm/masked/pattern/input-definition.js
 var _excluded = ["mask"];
@@ -19722,7 +19814,7 @@ var PatternInputDefinition = /* @__PURE__ */ function() {
   function PatternInputDefinition2(opts) {
     _classCallCheck(this, PatternInputDefinition2);
     var mask = opts.mask, blockOpts = _objectWithoutProperties(opts, _excluded);
-    this.masked = factory_default({
+    this.masked = createMask({
       mask
     });
     Object.assign(this, blockOpts);
@@ -19742,7 +19834,7 @@ var PatternInputDefinition = /* @__PURE__ */ function() {
         this._isFilled = false;
         return this.masked.remove(fromPos, toPos);
       }
-      return new change_details_default();
+      return new ChangeDetails();
     }
   }, {
     key: "value",
@@ -19764,7 +19856,7 @@ var PatternInputDefinition = /* @__PURE__ */ function() {
     value: function _appendChar(str) {
       var flags = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
       if (this._isFilled)
-        return new change_details_default();
+        return new ChangeDetails();
       var state2 = this.masked.state;
       var details = this.masked._appendChar(str, flags);
       if (details.inserted && this.doValidate(flags) === false) {
@@ -19787,7 +19879,7 @@ var PatternInputDefinition = /* @__PURE__ */ function() {
   }, {
     key: "_appendPlaceholder",
     value: function _appendPlaceholder() {
-      var details = new change_details_default();
+      var details = new ChangeDetails();
       if (this._isFilled || this.isOptional)
         return details;
       this._isFilled = true;
@@ -19859,7 +19951,6 @@ var PatternInputDefinition = /* @__PURE__ */ function() {
   }]);
   return PatternInputDefinition2;
 }();
-var input_definition_default = PatternInputDefinition;
 
 // node_modules/imask/esm/masked/pattern/fixed-definition.js
 var PatternFixedDefinition = /* @__PURE__ */ function() {
@@ -19892,7 +19983,7 @@ var PatternFixedDefinition = /* @__PURE__ */ function() {
       this._value = this._value.slice(0, fromPos) + this._value.slice(toPos);
       if (!this._value)
         this._isRawInput = false;
-      return new change_details_default();
+      return new ChangeDetails();
     }
   }, {
     key: "nearestInputPos",
@@ -19928,7 +20019,7 @@ var PatternFixedDefinition = /* @__PURE__ */ function() {
     key: "_appendChar",
     value: function _appendChar(str) {
       var flags = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
-      var details = new change_details_default();
+      var details = new ChangeDetails();
       if (this._value)
         return details;
       var appended = this.char === str[0];
@@ -19942,7 +20033,7 @@ var PatternFixedDefinition = /* @__PURE__ */ function() {
   }, {
     key: "_appendPlaceholder",
     value: function _appendPlaceholder() {
-      var details = new change_details_default();
+      var details = new ChangeDetails();
       if (this._value)
         return details;
       this._value = details.inserted = this.char;
@@ -19952,13 +20043,13 @@ var PatternFixedDefinition = /* @__PURE__ */ function() {
     key: "extractTail",
     value: function extractTail() {
       arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : this.value.length;
-      return new continuous_tail_details_default("");
+      return new ContinuousTailDetails("");
     }
   }, {
     key: "appendTail",
     value: function appendTail(tail) {
       if (isString2(tail))
-        tail = new continuous_tail_details_default(String(tail));
+        tail = new ContinuousTailDetails(String(tail));
       return tail.appendTo(this);
     }
   }, {
@@ -19988,7 +20079,6 @@ var PatternFixedDefinition = /* @__PURE__ */ function() {
   }]);
   return PatternFixedDefinition2;
 }();
-var fixed_definition_default = PatternFixedDefinition;
 
 // node_modules/imask/esm/masked/pattern/chunk-tail-details.js
 var _excluded2 = ["chunks"];
@@ -20011,10 +20101,10 @@ var ChunksTailDetails = /* @__PURE__ */ function() {
       if (!String(tailChunk))
         return;
       if (isString2(tailChunk))
-        tailChunk = new continuous_tail_details_default(String(tailChunk));
+        tailChunk = new ContinuousTailDetails(String(tailChunk));
       var lastChunk = this.chunks[this.chunks.length - 1];
       var extendLast = lastChunk && (lastChunk.stop === tailChunk.stop || tailChunk.stop == null) && tailChunk.from === lastChunk.from + lastChunk.toString().length;
-      if (tailChunk instanceof continuous_tail_details_default) {
+      if (tailChunk instanceof ContinuousTailDetails) {
         if (extendLast) {
           lastChunk.extend(tailChunk.toString());
         } else {
@@ -20038,11 +20128,11 @@ var ChunksTailDetails = /* @__PURE__ */ function() {
   }, {
     key: "appendTo",
     value: function appendTo(masked) {
-      if (!(masked instanceof holder_default.MaskedPattern)) {
-        var tail = new continuous_tail_details_default(this.toString());
+      if (!(masked instanceof IMask.MaskedPattern)) {
+        var tail = new ContinuousTailDetails(this.toString());
         return tail.appendTo(masked);
       }
-      var details = new change_details_default();
+      var details = new ChangeDetails();
       for (var ci = 0; ci < this.chunks.length && !details.skip; ++ci) {
         var chunk = this.chunks[ci];
         var lastBlockIter = masked._mapPosToBlock(masked.value.length);
@@ -20088,7 +20178,7 @@ var ChunksTailDetails = /* @__PURE__ */ function() {
       var chunks = state2.chunks, props = _objectWithoutProperties(state2, _excluded2);
       Object.assign(this, props);
       this.chunks = chunks.map(function(cstate) {
-        var chunk = "chunks" in cstate ? new ChunksTailDetails2() : new continuous_tail_details_default();
+        var chunk = "chunks" in cstate ? new ChunksTailDetails2() : new ContinuousTailDetails();
         chunk.state = cstate;
         return chunk;
       });
@@ -20118,7 +20208,6 @@ var ChunksTailDetails = /* @__PURE__ */ function() {
   }]);
   return ChunksTailDetails2;
 }();
-var chunk_tail_details_default = ChunksTailDetails;
 
 // node_modules/imask/esm/masked/regexp.js
 var MaskedRegExp = /* @__PURE__ */ function(_Masked) {
@@ -20139,8 +20228,8 @@ var MaskedRegExp = /* @__PURE__ */ function(_Masked) {
     }
   }]);
   return MaskedRegExp2;
-}(base_default);
-holder_default.MaskedRegExp = MaskedRegExp;
+}(Masked);
+IMask.MaskedRegExp = MaskedRegExp;
 
 // node_modules/imask/esm/masked/pattern.js
 var _excluded3 = ["_blocks"];
@@ -20186,7 +20275,7 @@ var MaskedPattern = /* @__PURE__ */ function(_Masked) {
             });
             var bName = bNames[0];
             if (bName) {
-              var maskedBlock = factory_default(Object.assign({
+              var maskedBlock = createMask(Object.assign({
                 parent: _this,
                 lazy: _this.lazy,
                 placeholderChar: _this.placeholderChar,
@@ -20226,13 +20315,13 @@ var MaskedPattern = /* @__PURE__ */ function(_Masked) {
             break;
           _isInput = false;
         }
-        var def = _isInput ? new input_definition_default({
+        var def = _isInput ? new PatternInputDefinition({
           parent: this,
           lazy: this.lazy,
           placeholderChar: this.placeholderChar,
           mask: defs[char],
           isOptional: optionalBlock
-        }) : new fixed_definition_default({
+        }) : new PatternFixedDefinition({
           char,
           isUnmasking: unmaskingBlock
         });
@@ -20308,7 +20397,7 @@ var MaskedPattern = /* @__PURE__ */ function(_Masked) {
     value: function _appendCharRaw(ch) {
       var flags = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
       var blockIter = this._mapPosToBlock(this.value.length);
-      var details = new change_details_default();
+      var details = new ChangeDetails();
       if (!blockIter)
         return details;
       for (var bi = blockIter.index; ; ++bi) {
@@ -20329,14 +20418,14 @@ var MaskedPattern = /* @__PURE__ */ function(_Masked) {
       var _this2 = this;
       var fromPos = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : 0;
       var toPos = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : this.value.length;
-      var chunkTail = new chunk_tail_details_default();
+      var chunkTail = new ChunksTailDetails();
       if (fromPos === toPos)
         return chunkTail;
       this._forEachBlocksInRange(fromPos, toPos, function(b, bi, bFromPos, bToPos) {
         var blockChunk = b.extractTail(bFromPos, bToPos);
         blockChunk.stop = _this2._findStopBefore(bi);
         blockChunk.from = _this2._blockStartPos(bi);
-        if (blockChunk instanceof chunk_tail_details_default)
+        if (blockChunk instanceof ChunksTailDetails)
           blockChunk.blockIndex = bi;
         chunkTail.extend(blockChunk);
       });
@@ -20373,7 +20462,7 @@ var MaskedPattern = /* @__PURE__ */ function(_Masked) {
     key: "_appendPlaceholder",
     value: function _appendPlaceholder(toBlockIndex) {
       var _this3 = this;
-      var details = new change_details_default();
+      var details = new ChangeDetails();
       if (this.lazy && toBlockIndex == null)
         return details;
       var startBlockIter = this._mapPosToBlock(this.value.length);
@@ -20605,23 +20694,22 @@ var MaskedPattern = /* @__PURE__ */ function(_Masked) {
     }
   }]);
   return MaskedPattern2;
-}(base_default);
+}(Masked);
 MaskedPattern.DEFAULTS = {
   lazy: true,
   placeholderChar: "_"
 };
 MaskedPattern.STOP_CHAR = "`";
 MaskedPattern.ESCAPE_CHAR = "\\";
-MaskedPattern.InputDefinition = input_definition_default;
-MaskedPattern.FixedDefinition = fixed_definition_default;
+MaskedPattern.InputDefinition = PatternInputDefinition;
+MaskedPattern.FixedDefinition = PatternFixedDefinition;
 function isInput(block2) {
   if (!block2)
     return false;
   var value = block2.value;
   return !value || block2.nearestInputPos(0, DIRECTION.NONE) !== value.length;
 }
-holder_default.MaskedPattern = MaskedPattern;
-var pattern_default = MaskedPattern;
+IMask.MaskedPattern = MaskedPattern;
 
 // node_modules/imask/esm/masked/range.js
 var MaskedRange = /* @__PURE__ */ function(_MaskedPattern) {
@@ -20714,9 +20802,8 @@ var MaskedRange = /* @__PURE__ */ function(_MaskedPattern) {
     }
   }]);
   return MaskedRange2;
-}(pattern_default);
-holder_default.MaskedRange = MaskedRange;
-var range_default = MaskedRange;
+}(MaskedPattern);
+IMask.MaskedRange = MaskedRange;
 
 // node_modules/imask/esm/masked/date.js
 var MaskedDate = /* @__PURE__ */ function(_MaskedPattern) {
@@ -20788,7 +20875,7 @@ var MaskedDate = /* @__PURE__ */ function(_MaskedPattern) {
     }
   }]);
   return MaskedDate2;
-}(pattern_default);
+}(MaskedPattern);
 MaskedDate.DEFAULTS = {
   pattern: "d{.}`m{.}`Y",
   format: function format2(date) {
@@ -20797,7 +20884,7 @@ MaskedDate.DEFAULTS = {
     var year = date.getFullYear();
     return [day, month, year].join(".");
   },
-  parse: function parse3(str) {
+  parse: function parse4(str) {
     var _str$split = str.split("."), _str$split2 = _slicedToArray(_str$split, 3), day = _str$split2[0], month = _str$split2[1], year = _str$split2[2];
     return new Date(year, month - 1, day);
   }
@@ -20805,26 +20892,25 @@ MaskedDate.DEFAULTS = {
 MaskedDate.GET_DEFAULT_BLOCKS = function() {
   return {
     d: {
-      mask: range_default,
+      mask: MaskedRange,
       from: 1,
       to: 31,
       maxLength: 2
     },
     m: {
-      mask: range_default,
+      mask: MaskedRange,
       from: 1,
       to: 12,
       maxLength: 2
     },
     Y: {
-      mask: range_default,
+      mask: MaskedRange,
       from: 1900,
       to: 9999
     }
   };
 };
-holder_default.MaskedDate = MaskedDate;
-var date_default = MaskedDate;
+IMask.MaskedDate = MaskedDate;
 
 // node_modules/imask/esm/controls/mask-element.js
 var MaskElement = /* @__PURE__ */ function() {
@@ -20881,8 +20967,7 @@ var MaskElement = /* @__PURE__ */ function() {
   }]);
   return MaskElement2;
 }();
-holder_default.MaskElement = MaskElement;
-var mask_element_default = MaskElement;
+IMask.MaskElement = MaskElement;
 
 // node_modules/imask/esm/controls/html-mask-element.js
 var HTMLMaskElement = /* @__PURE__ */ function(_MaskElement) {
@@ -20959,7 +21044,7 @@ var HTMLMaskElement = /* @__PURE__ */ function(_MaskElement) {
     }
   }]);
   return HTMLMaskElement2;
-}(mask_element_default);
+}(MaskElement);
 HTMLMaskElement.EVENTS_MAP = {
   selectionChange: "keydown",
   input: "input",
@@ -20968,8 +21053,7 @@ HTMLMaskElement.EVENTS_MAP = {
   focus: "focus",
   commit: "blur"
 };
-holder_default.HTMLMaskElement = HTMLMaskElement;
-var html_mask_element_default = HTMLMaskElement;
+IMask.HTMLMaskElement = HTMLMaskElement;
 
 // node_modules/imask/esm/controls/html-contenteditable-mask-element.js
 var HTMLContenteditableMaskElement = /* @__PURE__ */ function(_HTMLMaskElement) {
@@ -21018,17 +21102,16 @@ var HTMLContenteditableMaskElement = /* @__PURE__ */ function(_HTMLMaskElement) 
     }
   }]);
   return HTMLContenteditableMaskElement2;
-}(html_mask_element_default);
-holder_default.HTMLContenteditableMaskElement = HTMLContenteditableMaskElement;
-var html_contenteditable_mask_element_default = HTMLContenteditableMaskElement;
+}(HTMLMaskElement);
+IMask.HTMLContenteditableMaskElement = HTMLContenteditableMaskElement;
 
 // node_modules/imask/esm/controls/input.js
 var _excluded4 = ["mask"];
 var InputMask = /* @__PURE__ */ function() {
   function InputMask2(el, opts) {
     _classCallCheck(this, InputMask2);
-    this.el = el instanceof mask_element_default ? el : el.isContentEditable && el.tagName !== "INPUT" && el.tagName !== "TEXTAREA" ? new html_contenteditable_mask_element_default(el) : new html_mask_element_default(el);
-    this.masked = factory_default(opts);
+    this.el = el instanceof MaskElement ? el : el.isContentEditable && el.tagName !== "INPUT" && el.tagName !== "TEXTAREA" ? new HTMLContenteditableMaskElement(el) : new HTMLMaskElement(el);
+    this.masked = createMask(opts);
     this._listeners = {};
     this._value = "";
     this._unmaskedValue = "";
@@ -21052,13 +21135,13 @@ var InputMask = /* @__PURE__ */ function() {
     set: function set2(mask) {
       if (this.maskEquals(mask))
         return;
-      if (!(mask instanceof holder_default.Masked) && this.masked.constructor === maskedClass(mask)) {
+      if (!(mask instanceof IMask.Masked) && this.masked.constructor === maskedClass(mask)) {
         this.masked.updateOptions({
           mask
         });
         return;
       }
-      var masked = factory_default({
+      var masked = createMask({
         mask
       });
       masked.unmaskedValue = this.masked.unmaskedValue;
@@ -21067,7 +21150,7 @@ var InputMask = /* @__PURE__ */ function() {
   }, {
     key: "maskEquals",
     value: function maskEquals(mask) {
-      return mask == null || mask === this.masked.mask || mask === Date && this.masked instanceof date_default;
+      return mask == null || mask === this.masked.mask || mask === Date && this.masked instanceof MaskedDate;
     }
   }, {
     key: "value",
@@ -21266,7 +21349,7 @@ var InputMask = /* @__PURE__ */ function() {
       this._abortUpdateCursor();
       if (!this._selection)
         return this.updateValue();
-      var details = new action_details_default(this.el.value, this.cursorPos, this.value, this._selection);
+      var details = new ActionDetails(this.el.value, this.cursorPos, this.value, this._selection);
       var oldRawValue = this.masked.rawInputValue;
       var offset = this.masked.splice(details.startChangePos, details.removed.length, details.inserted, details.removeDirection).offset;
       var removeDirection = oldRawValue === this.masked.rawInputValue ? details.removeDirection : DIRECTION.NONE;
@@ -21311,7 +21394,7 @@ var InputMask = /* @__PURE__ */ function() {
   }]);
   return InputMask2;
 }();
-holder_default.InputMask = InputMask;
+IMask.InputMask = InputMask;
 
 // node_modules/imask/esm/masked/enum.js
 var MaskedEnum = /* @__PURE__ */ function(_MaskedPattern) {
@@ -21341,8 +21424,8 @@ var MaskedEnum = /* @__PURE__ */ function(_MaskedPattern) {
     }
   }]);
   return MaskedEnum2;
-}(pattern_default);
-holder_default.MaskedEnum = MaskedEnum;
+}(MaskedPattern);
+IMask.MaskedEnum = MaskedEnum;
 
 // node_modules/imask/esm/masked/number.js
 var MaskedNumber = /* @__PURE__ */ function(_Masked) {
@@ -21476,7 +21559,7 @@ var MaskedNumber = /* @__PURE__ */ function(_Masked) {
       var prevBeforeTailSeparatorsCount = this._separatorsCount(valueBeforePos.length);
       this._value = this._insertThousandsSeparators(this._removeThousandsSeparators(valueBeforePos + valueAfterPos));
       var beforeTailSeparatorsCount = this._separatorsCountFromSlice(valueBeforePos);
-      return new change_details_default({
+      return new ChangeDetails({
         tailShift: (beforeTailSeparatorsCount - prevBeforeTailSeparatorsCount) * this.thousandsSeparator.length
       });
     }
@@ -21598,7 +21681,7 @@ var MaskedNumber = /* @__PURE__ */ function(_Masked) {
     }
   }]);
   return MaskedNumber2;
-}(base_default);
+}(Masked);
 MaskedNumber.DEFAULTS = {
   radix: ",",
   thousandsSeparator: "",
@@ -21608,7 +21691,7 @@ MaskedNumber.DEFAULTS = {
   normalizeZeros: true,
   padFractionalZeros: false
 };
-holder_default.MaskedNumber = MaskedNumber;
+IMask.MaskedNumber = MaskedNumber;
 
 // node_modules/imask/esm/masked/function.js
 var MaskedFunction = /* @__PURE__ */ function(_Masked) {
@@ -21627,8 +21710,8 @@ var MaskedFunction = /* @__PURE__ */ function(_Masked) {
     }
   }]);
   return MaskedFunction2;
-}(base_default);
-holder_default.MaskedFunction = MaskedFunction;
+}(Masked);
+IMask.MaskedFunction = MaskedFunction;
 
 // node_modules/imask/esm/masked/dynamic.js
 var _excluded5 = ["compiledMasks", "currentMaskRef", "currentMask"];
@@ -21648,7 +21731,7 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
       _get(_getPrototypeOf(MaskedDynamic2.prototype), "_update", this).call(this, opts);
       if ("mask" in opts) {
         this.compiledMasks = Array.isArray(opts.mask) ? opts.mask.map(function(m) {
-          return factory_default(m);
+          return createMask(m);
         }) : [];
       }
     }
@@ -21672,7 +21755,7 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
       var insertValue = flags.tail && flags._beforeTailState != null ? flags._beforeTailState._rawInputValue : inputValue;
       var tailValue = inputValue.slice(insertValue.length);
       var prevMask = this.currentMask;
-      var details = new change_details_default();
+      var details = new ChangeDetails();
       var prevMaskState = prevMask && prevMask.state;
       this.currentMask = this.doDispatch(appended, Object.assign({}, flags));
       if (this.currentMask) {
@@ -21766,7 +21849,7 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
   }, {
     key: "remove",
     value: function remove() {
-      var details = new change_details_default();
+      var details = new ChangeDetails();
       if (this.currentMask) {
         var _this$currentMask2;
         details.aggregate((_this$currentMask2 = this.currentMask).remove.apply(_this$currentMask2, arguments)).aggregate(this._applyDispatch());
@@ -21837,7 +21920,7 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
     }
   }]);
   return MaskedDynamic2;
-}(base_default);
+}(Masked);
 MaskedDynamic.DEFAULTS = {
   dispatch: function dispatch(appended, masked, flags) {
     if (!masked.compiledMasks.length)
@@ -21861,7 +21944,7 @@ MaskedDynamic.DEFAULTS = {
     return masked.compiledMasks[inputs[0].index];
   }
 };
-holder_default.MaskedDynamic = MaskedDynamic;
+IMask.MaskedDynamic = MaskedDynamic;
 
 // node_modules/imask/esm/masked/pipe.js
 var PIPE_TYPE = {
@@ -21872,7 +21955,7 @@ var PIPE_TYPE = {
 function createPipe(mask) {
   var from = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : PIPE_TYPE.MASKED;
   var to = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : PIPE_TYPE.MASKED;
-  var masked = factory_default(mask);
+  var masked = createMask(mask);
   return function(value) {
     return masked.runIsolated(function(m) {
       m[from] = value;
@@ -21886,13 +21969,13 @@ function pipe(value) {
   }
   return createPipe.apply(void 0, pipeArgs)(value);
 }
-holder_default.PIPE_TYPE = PIPE_TYPE;
-holder_default.createPipe = createPipe;
-holder_default.pipe = pipe;
+IMask.PIPE_TYPE = PIPE_TYPE;
+IMask.createPipe = createPipe;
+IMask.pipe = pipe;
 
 // node_modules/imask/esm/index.js
 try {
-  globalThis.IMask = holder_default;
+  globalThis.IMask = IMask;
 } catch (e2) {
 }
 
@@ -21906,12 +21989,13 @@ var text_input_default = (Alpine) => {
       mask: null,
       state: state2,
       init: function() {
-        if (!getMaskOptionsUsing)
+        if (!getMaskOptionsUsing) {
           return;
+        }
         if (this.state) {
           this.$el.value = this.state?.valueOf();
         }
-        this.mask = holder_default(this.$el, getMaskOptionsUsing(holder_default)).on("accept", () => {
+        this.mask = IMask(this.$el, getMaskOptionsUsing(IMask)).on("accept", () => {
           this.state = this.mask.unmaskedValue;
         });
       }
@@ -21934,12 +22018,12 @@ export {
   js_default as default
 };
 /*!
- * FilePond 4.28.2
+ * FilePond 4.30.3
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
 /*!
- * FilePondPluginFileValidateSize 2.2.4
+ * FilePondPluginFileValidateSize 2.2.5
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -21959,7 +22043,7 @@ export {
  * Please visit https://pqina.nl/filepond/ for details.
  */
 /*!
- * FilePondPluginImagePreview 4.6.7
+ * FilePondPluginImagePreview 4.6.10
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -21969,7 +22053,7 @@ export {
  * Please visit https://pqina.nl/filepond/ for details.
  */
 /*!
- * FilePondPluginImageTransform 3.8.6
+ * FilePondPluginImageTransform 3.8.7
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
