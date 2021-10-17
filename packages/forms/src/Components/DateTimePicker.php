@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Carbon\CarbonInterface;
 use DateTime;
 
 class DateTimePicker extends Field
@@ -29,6 +30,16 @@ class DateTimePicker extends Field
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->afterStateHydrated(function (DateTimePicker $component, callable $set, $state): void {
+            if (! $state instanceof CarbonInterface) {
+                return;
+            }
+
+            $state = $state->format($component->getFormat());
+
+            $set($component, $state);
+        });
 
         $this->resetFirstDayOfWeek();
 
