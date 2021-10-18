@@ -144,7 +144,8 @@ Grid::make([
 You may specify the number of columns that any component may span, at any breakpoint in an identical way:
 
 ```php
-use Filament\Forms\Components\Grid;use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TextInput;
 
 Grid::make([
     'default' => 1,
