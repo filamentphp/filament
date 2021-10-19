@@ -17,6 +17,8 @@ class TextInput extends Field
 
     protected $datalistOptions = null;
 
+    protected $inputMode = null;
+
     protected $isEmail = false;
 
     protected $isNumeric = false;
@@ -60,6 +62,21 @@ class TextInput extends Field
         return $this;
     }
 
+    public function inputMode(string | callable $mode): static
+    {
+        $this->inputMode = $mode;
+
+        return $this;
+    }
+
+    public function integer(bool | callable $condition = true): static
+    {
+        $this->numeric($condition);
+        $this->inputMode(fn () => $condition ? 'numeric' : null);
+
+        return $this;
+    }
+
     public function mask(?callable $configuration): static
     {
         $this->configureMaskUsing = $configuration;
@@ -97,6 +114,7 @@ class TextInput extends Field
     {
         $this->isNumeric = $condition;
 
+        $this->inputMode(fn () => $condition ? 'decimal' : null);
         $this->rule('numeric', $condition);
 
         return $this;
@@ -155,6 +173,11 @@ class TextInput extends Field
         }
 
         return $options;
+    }
+
+    public function getInputMode(): ?string
+    {
+        return $this->evaluate($this->inputMode);
     }
 
     public function getMask(): ?Mask
