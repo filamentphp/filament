@@ -41,6 +41,7 @@
                 {!! $isAutofocused() ? 'autofocus' : null !!}
                 {!! $isDisabled() ? 'disabled' : null !!}
                 id="{{ $getId() }}"
+                {!! ($inputMode = $getInputMode()) ? "inputmode=\"{$inputMode}\"" : null !!}
                 {!! $datalistOptions ? "list=\"{$getId()}-list\"" : null !!}
                 {!! ($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
                 {!! ($value = $getMaxValue()) ? "max=\"{$value}\"" : null !!}
