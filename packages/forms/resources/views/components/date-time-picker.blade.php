@@ -142,6 +142,7 @@
                                 max="23"
                                 min="0"
                                 type="number"
+                                inputmode="numeric"
                                 x-model.debounce="hour"
                                 @class([
                                     'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
@@ -160,6 +161,7 @@
                                 max="59"
                                 min="0"
                                 type="number"
+                                inputmode="numeric"
                                 x-model.debounce="minute"
                                 @class([
                                     'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
@@ -179,6 +181,7 @@
                                     max="59"
                                     min="0"
                                     type="number"
+                                    inputmode="numeric"
                                     x-model.debounce="second"
                                     @class([
                                         'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
