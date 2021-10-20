@@ -756,7 +756,7 @@ In addition, you may validate the minimum and maximum value of the input by sett
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('name')
+TextInput::make('number')
     ->numeric()
     ->minValue(1)
     ->maxValue(100)
@@ -840,7 +840,7 @@ There is also a `money()` method that is able to define easier formatting for cu
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('code')->mask(fn (TextInput\Mask $mask) => $mask->money('$', ',', 2))
+TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money('$', ',', 2))
 ```
 
 ### Datalists
@@ -877,7 +877,7 @@ You may change the size of the textarea by defining the `rows()` and `cols()` me
 ```php
 use Filament\Forms\Components\Textarea;
 
-Textarea::make('domain')
+Textarea::make('description')
     ->rows(10)
     ->cols(20)
 ```
