@@ -24,6 +24,8 @@ class CreateRecord extends Component
     public function close()
     {
         $this->dispatchBrowserEvent('close', "{$this->manager}RelationManagerCreateModal");
+
+        $this->fillRecord();
     }
 
     public function create($another = false)
