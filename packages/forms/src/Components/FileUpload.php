@@ -170,6 +170,13 @@ class FileUpload extends Field
         return $this;
     }
 
+    public function idleLabel(string | callable $label): static
+    {
+        $this->placeholder($label);
+
+        return $this;
+    }
+
     public function image(): static
     {
         $this->acceptedFileTypes([
