@@ -337,6 +337,24 @@ To generate a URL for a resource route, you may call the static `generateUrl()` 
 SortCustomers::generateUrl($parameters = [], $absolute = true);
 ```
 
+To access a custom page, such as a "show" route, you may define a new action for each table:
+
+```php
+use Filament\Resources\Tables\Table;
+use Filament\Tables\RecordActions\Link;
+
+public static function table(Table $table)
+{
+    return $table
+        // ...
+        ->prependRecordActions([
+            Link::make('view')->url(fn ($record) => static::generateUrl('show', ['record' => $record])),
+        ]);
+}
+```
+
+By passing a callback to the `url` method, you can get access to each row's record. You may also use the `pushRecordActions` or `recordActions` method to define actions on a `$table`.
+
 ## Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The `viewAny` action may be used to completely disable resources and remove them from the navigation menu.
