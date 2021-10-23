@@ -2,22 +2,31 @@
 
 namespace Filament\Tables\Columns;
 
-use Illuminate\Support\Str;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
+use Illuminate\View\Component;
 
-class Column
+class Column extends Component implements Htmlable
 {
+    use Concerns\BelongsToTable;
+    use Concerns\CanBeSearchable;
+    use Concerns\CanBeSortable;
+    use Concerns\CanCallAction;
+    use Concerns\CanOpenUrl;
+    use Concerns\HasLabel;
+    use Concerns\HasName;
+    use Concerns\HasRecord;
+    use Concerns\HasState;
+    use Concerns\HasView;
+    use Concerns\InteractsWithTableQuery;
     use Macroable;
     use Tappable;
 
-    public ?string $label = null;
-
-    public string $name;
-
     final public function __construct(string $name)
     {
-        $this->name = $name;
+        $this->name($name);
     }
 
     public static function make(string $name): static
@@ -32,17 +41,15 @@ class Column
     {
     }
 
-    public function getLabel(): string
+    public function toHtml(): string
     {
-        return $this->label ?? (string) Str::of($this->getName())
-            ->afterLast('.')
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
+        return $this->render()->render();
     }
 
-    public function getName(): string
+    public function render(): View
     {
-        return $this->name;
+        return view($this->getView(), array_merge($this->data(), [
+            'column' => $this,
+        ]));
     }
 }

@@ -5,6 +5,7 @@ namespace Filament\Tables;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
 use Illuminate\View\Component as ViewComponent;
@@ -30,7 +31,12 @@ class Table extends ViewComponent implements Htmlable
 
     public function getColumns(): array
     {
-        return $this->getLivewire()->getTableColumns();
+        return $this->getLivewire()->getCachedTableColumns();
+    }
+
+    public function getRecords(): Collection
+    {
+        return $this->getLivewire()->getTableRecords();
     }
 
     public function toHtml(): string
