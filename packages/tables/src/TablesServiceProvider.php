@@ -14,6 +14,7 @@ class TablesServiceProvider extends PackageServiceProvider
         $package
             ->name('tables')
             ->hasCommand(InstallCommand::class)
+            ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
     }
