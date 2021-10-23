@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 trait HasState
