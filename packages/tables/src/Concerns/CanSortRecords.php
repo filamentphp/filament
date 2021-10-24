@@ -6,17 +6,15 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait CanSortRecords
 {
-    public $tableSort = [];
+    public $tableSortColumn = null;
+    public $tableSortDirection = null;
 
     public function sortTable(?string $column = null): void
     {
-        $existingColumn = $this->tableSort[0] ?? null;
-        $existingDirection = $this->tableSort[1] ?? null;
-
-        if ($column === $existingColumn) {
-            if ($existingDirection === 'asc') {
+        if ($column === $this->tableSortColumn) {
+            if ($this->tableSortDirection === 'asc') {
                 $direction = 'desc';
-            } elseif ($existingDirection === 'desc') {
+            } elseif ($this->tableSortDirection === 'desc') {
                 $column = null;
                 $direction = null;
             } else {
@@ -26,7 +24,10 @@ trait CanSortRecords
             $direction = 'asc';
         }
 
-        $this->tableSort = [$column, $direction];
+        $this->tableSortColumn = $column;
+        $this->tableSortDirection = $direction;
+
+        $this->updatedTableSort();
     }
 
     public function updatedTableSort(): void
@@ -38,7 +39,7 @@ trait CanSortRecords
 
     protected function applySortingToTableQuery(Builder $query): Builder
     {
-        $columnName = $this->getTableSortColumn();
+        $columnName = $this->tableSortColumn;
 
         if (! $columnName) {
             return $query;
@@ -50,18 +51,8 @@ trait CanSortRecords
             return $query;
         }
 
-        $column->applySort($query, $this->getTableSortDirection());
+        $column->applySort($query, $this->tableSortDirection ?? 'asc');
 
         return $query;
-    }
-
-    protected function getTableSortColumn(): ?string
-    {
-        return $this->tableSort[0] ?? null;
-    }
-
-    protected function getTableSortDirection(): string
-    {
-        return $this->tableSort[1] ?? 'asc';
     }
 }

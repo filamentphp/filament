@@ -81,22 +81,15 @@
                                         {{ $column->getLabel() }}
                                     </span>
 
-                                    <span class="relative flex items-center">
-                                        @php
-                                            $sortColumn = $this->tableSort[0] ?? null;
-                                            $sortDirection = $this->tableSort[1] ?? null;
-                                        @endphp
-
-                                        @if ($sortColumn === $column->getName())
-                                            <span>
-                                                @if ($sortDirection === 'asc')
-                                                    <x-heroicon-s-chevron-down class="w-3 h-3" />
-                                                @elseif ($sortDirection === 'desc')
-                                                    <x-heroicon-s-chevron-up class="w-3 h-3" />
-                                                @endif
-                                            </span>
-                                        @endif
-                                    </span>
+                                    @if ($this->tableSortColumn === $column->getName())
+                                        <span class="relative flex items-center">
+                                            @if ($this->tableSortDirection === 'asc')
+                                                <x-heroicon-s-chevron-down class="w-3 h-3" />
+                                            @elseif ($this->tableSortDirection === 'desc')
+                                                <x-heroicon-s-chevron-up class="w-3 h-3" />
+                                            @endif
+                                        </span>
+                                    @endif
                                 </button>
                             </th>
                         @endforeach
