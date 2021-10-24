@@ -2,8 +2,6 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
-use Illuminate\Support\Str;
-
 trait CanBeHidden
 {
     protected ?string $hiddenFrom = null;
