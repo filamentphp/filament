@@ -44,10 +44,30 @@ return [
 
     'pagination' => [
 
+        'label' => 'Pagination Navigation',
+
+        'overview' => 'Showing :first to :last of :total results',
+
         'fields' => [
 
-            'recordsPerPage' => [
+            'records_per_page' => [
                 'label' => 'per page',
+            ],
+
+        ],
+
+        'buttons' => [
+
+            'go_to_page' => [
+                'label' => 'Go to page :page',
+            ],
+
+            'next' => [
+                'label' => 'Next',
+            ],
+
+            'previous' => [
+                'label' => 'Previous',
             ],
 
         ],

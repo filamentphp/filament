@@ -7,11 +7,15 @@ use Livewire\WithPagination;
 
 trait InteractsWithTable
 {
+    use CanPaginateRecords;
+    use CanSearchRecords;
     use HasColumns;
     use HasRecords;
     use WithPagination;
 
     protected array $cachedTableColumns;
+
+    protected bool $isTablePaginationEnabled = true;
 
     protected Table $table;
 

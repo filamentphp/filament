@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns;
 
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
 use Illuminate\View\Component;
@@ -21,6 +22,7 @@ class Column extends Component implements Htmlable
     use Concerns\HasState;
     use Concerns\HasView;
     use Concerns\InteractsWithTableQuery;
+    use Conditionable;
     use Macroable;
     use Tappable;
 

@@ -1,12 +1,11 @@
-<div class="space-x-1 rtl:space-x-reverse">
-    <select wire:model="recordsPerPage" id="records-per-page" class="text-sm md:text-base rounded shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 border-gray-300">
-        <option value="5">5</option>
-        <option value="10">10</option>
-        <option value="25">25</option>
-        <option value="50">50</option>
+<div class="flex items-center space-x-2 rtl:space-x-reverse">
+    <select wire:model="tableRecordsPerPage" id="tableRecordsPerPageSelect" class="h-8 text-sm pr-8 leading-none transition duration-75 border-gray-300 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600">
+        @foreach ($this->tableRecordsPerPageSelectOptions as $option)
+            <option value="{{ $option }}">{{ $option }}</option>
+        @endforeach
     </select>
 
-    <label for="records-per-page" class="text-sm md:text-base leading-tight font-medium cursor-pointer">
-        {{ __('tables::table.pagination.fields.recordsPerPage.label') }}
+    <label for="tableRecordsPerPageSelect" class="text-sm font-medium">
+        {{ __('tables::table.pagination.fields.records_per_page.label') }}
     </label>
 </div>

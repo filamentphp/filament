@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Contracts;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -13,5 +14,9 @@ interface HasTable
 
     public function getTableQuery(): Builder;
 
-    public function getTableRecords(): Collection;
+    public function getTableRecords(): Collection | LengthAwarePaginator;
+
+    public function isTablePaginationEnabled(): bool;
+
+    public function isTableSearchable(): bool;
 }
