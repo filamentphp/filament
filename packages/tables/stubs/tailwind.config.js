@@ -4,6 +4,7 @@ module.exports = {
     mode: 'jit',
     purge: [
         './resources/**/*.blade.php',
+        './vendor/filament/forms/resources/views/**/*.blade.php',
         './vendor/filament/tables/resources/views/**/*.blade.php',
     ],
     theme: {

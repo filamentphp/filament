@@ -16,6 +16,8 @@ trait HasRecords
             $column->applyEagreLoading($query);
         }
 
+        $this->applyFiltersToTableQuery($query);
+
         $this->applySearchToTableQuery($query);
 
         if ($this->isTablePaginationEnabled()) {

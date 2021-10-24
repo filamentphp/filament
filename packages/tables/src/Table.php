@@ -34,9 +34,39 @@ class Table extends ViewComponent implements Htmlable
         return $this->getLivewire()->getCachedTableColumns();
     }
 
+    public function getEmptyStateDescription(): ?string
+    {
+        return $this->getLivewire()->getTableEmptyStateDescription();
+    }
+
+    public function getEmptyStateHeading(): string
+    {
+        return $this->getLivewire()->getTableEmptyStateHeading();
+    }
+
+    public function getEmptyStateIcon(): string
+    {
+        return $this->getLivewire()->getTableEmptyStateIcon();
+    }
+
+    public function getEmptyStateView(): ?View
+    {
+        return $this->getLivewire()->getTableEmptyStateView();
+    }
+
+    public function getFilters(): array
+    {
+        return $this->getLivewire()->getCachedTableFilters();
+    }
+
     public function getRecords(): Collection | LengthAwarePaginator
     {
         return $this->getLivewire()->getTableRecords();
+    }
+
+    public function isFilterable(): bool
+    {
+        return $this->getLivewire()->isTableFilterable();
     }
 
     public function isPaginationEnabled(): bool

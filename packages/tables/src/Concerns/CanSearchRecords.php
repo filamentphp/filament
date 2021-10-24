@@ -21,7 +21,7 @@ trait CanSearchRecords
         return false;
     }
 
-    public function updatedTableSearchQuery()
+    public function updatedTableSearchQuery(): void
     {
         $this->selected = [];
 
@@ -30,20 +30,22 @@ trait CanSearchRecords
 
     protected function applySearchToTableQuery(Builder $query): Builder
     {
-        if ($this->tableSearchQuery === '' || $this->tableSearchQuery === null) {
+        $searchQuery = $this->getTableSearchQuery();
+
+        if ($searchQuery === '') {
             return $query;
         }
 
-        return $query->where(function (Builder $query) {
+        return $query->where(function (Builder $query) use ($searchQuery) {
             $isFirst = true;
 
             foreach ($this->getCachedTableColumns() as $column) {
-                $column->applySearchConstraint($query, $this->tableSearchQuery, $isFirst);
+                $column->applySearchConstraint($query, $searchQuery, $isFirst);
             }
         });
     }
 
-    protected function getTableSearchQuery()
+    protected function getTableSearchQuery(): string
     {
         return strtolower($this->tableSearchQuery);
     }

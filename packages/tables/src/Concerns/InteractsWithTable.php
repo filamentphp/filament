@@ -10,19 +10,21 @@ trait InteractsWithTable
     use CanPaginateRecords;
     use CanSearchRecords;
     use HasColumns;
+    use HasEmptyState;
+    use HasFilters;
     use HasRecords;
     use WithPagination;
-
-    protected array $cachedTableColumns;
-
-    protected bool $isTablePaginationEnabled = true;
 
     protected Table $table;
 
     public function bootInteractsWithTable(): void
     {
         $this->table = $this->makeTable();
+
         $this->cacheTableColumns();
+
+        $this->cacheTableFilters();
+        $this->filtersForm->fill();
     }
 
     public function getTable(): Table

@@ -20,7 +20,7 @@ trait CanPaginateRecords
         return $this->isTablePaginationEnabled;
     }
 
-    public function updatedTableRecordsPerPage()
+    public function updatedTableRecordsPerPage(): void
     {
         $this->selected = [];
 

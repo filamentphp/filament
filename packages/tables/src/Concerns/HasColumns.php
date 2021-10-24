@@ -6,6 +6,8 @@ use Filament\Tables\Columns\Column;
 
 trait HasColumns
 {
+    protected array $cachedTableColumns;
+
     public function cacheTableColumns(): void
     {
         $this->cachedTableColumns = collect($this->getTableColumns())
