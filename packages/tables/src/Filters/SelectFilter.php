@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Filters;
 
-use Closure;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 
