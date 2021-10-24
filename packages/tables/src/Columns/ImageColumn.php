@@ -6,9 +6,9 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 
-class Image extends Column
+class ImageColumn extends Column
 {
-    protected string $view = 'tables::columns.image';
+    protected string $view = 'tables::columns.image-column';
 
     protected string $disk;
 

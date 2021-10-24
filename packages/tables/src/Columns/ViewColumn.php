@@ -2,6 +2,6 @@
 
 namespace Filament\Tables\Columns;
 
-class View extends Column
+class ViewColumn extends Column
 {
 }

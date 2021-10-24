@@ -2,9 +2,9 @@
 
 namespace Filament\Tables\Columns;
 
-class Boolean extends Column
+class BooleanColumn extends Column
 {
-    protected string $view = 'tables::columns.boolean';
+    protected string $view = 'tables::columns.boolean-column';
 
     protected ?string $falseColor = null;
 

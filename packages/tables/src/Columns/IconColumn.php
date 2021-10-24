@@ -4,11 +4,11 @@ namespace Filament\Tables\Columns;
 
 use Closure;
 
-class Icon extends Column
+class IconColumn extends Column
 {
     use Concerns\HasColors;
 
-    protected string $view = 'tables::columns.icon';
+    protected string $view = 'tables::columns.icon-column';
 
     protected array $options = [];
 
