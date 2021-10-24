@@ -12,6 +12,7 @@ use Illuminate\View\Component;
 class Column extends Component implements Htmlable
 {
     use Concerns\BelongsToTable;
+    use Concerns\CanBeHidden;
     use Concerns\CanBeSearchable;
     use Concerns\CanBeSortable;
     use Concerns\CanCallAction;

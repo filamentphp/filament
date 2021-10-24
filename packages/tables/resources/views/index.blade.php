@@ -1,3 +1,29 @@
+@php
+    $getHiddenClasses = function (\Filament\Tables\Columns\Column $column): ?string {
+        if ($breakpoint = $column->getHiddenFrom()) {
+            return match ($breakpoint) {
+                'sm' => 'sm:hidden',
+                'md' => 'md:hidden',
+                'lg' => 'lg:hidden',
+                'xl' => 'xl:hidden',
+                '2xl' => '2xl:hidden',
+            };
+        }
+
+        if ($breakpoint = $column->getVisibleFrom()) {
+            return match ($breakpoint) {
+                'sm' => 'hidden sm:block',
+                'md' => 'hidden md:block',
+                'lg' => 'hidden lg:block',
+                'xl' => 'hidden xl:block',
+                '2xl' => 'hidden 2xl:block',
+            };
+        }
+
+        return null;
+    }
+@endphp
+
 <div class="border border-gray-300 divide-y bg-white shadow rounded-xl">
     <div class="flex items-center justify-between space-x-2 p-2">
         <div class="max-w-md">
@@ -66,7 +92,10 @@
                 <thead>
                     <tr class="divide-x bg-gray-50">
                         @foreach ($getColumns() as $column)
-                            <th class="px-4 py-2 text-sm font-semibold text-gray-600">
+                            <th @class([
+                                'px-4 py-2 text-sm font-semibold text-gray-600',
+                                $getHiddenClasses($column),
+                            ])>
                                 <button
                                     @if ($column->isSortable())
                                         wire:click="sortTable('{{ $column->getName() }}')"
@@ -104,7 +133,7 @@
                                     $column->record($record);
                                 @endphp
 
-                                <td>
+                                <td class="{!! $getHiddenClasses($column) !!}">
                                     @if ($action = $column->getAction())
                                         <button
                                             @if (is_string($action))
