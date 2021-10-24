@@ -2,8 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Illuminate\Database\Eloquent\Builder;
-
 trait CanPaginateRecords
 {
     public $tableRecordsPerPage = 10;
