@@ -20,6 +20,8 @@ trait HasRecords
 
         $this->applySearchToTableQuery($query);
 
+        $this->applySortingToTableQuery($query);
+
         if ($this->isTablePaginationEnabled()) {
             return $query->paginate($this->getTableRecordsPerPage());
         } else {

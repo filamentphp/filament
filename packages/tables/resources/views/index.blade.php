@@ -67,7 +67,37 @@
                     <tr class="divide-x bg-gray-50">
                         @foreach ($getColumns() as $column)
                             <th class="px-4 py-2 text-sm font-semibold text-gray-600">
-                                {{ $column->getLabel() }}
+                                <button
+                                    @if ($column->isSortable())
+                                        wire:click="sortTable('{{ $column->getName() }}')"
+                                    @endif
+                                    type="button"
+                                    @class([
+                                        'flex items-center space-x-1',
+                                        'cursor-default' => ! $column->isSortable(),
+                                    ])
+                                >
+                                    <span>
+                                        {{ $column->getLabel() }}
+                                    </span>
+
+                                    <span class="relative flex items-center">
+                                        @php
+                                            $sortColumn = $this->tableSort[0] ?? null;
+                                            $sortDirection = $this->tableSort[1] ?? null;
+                                        @endphp
+
+                                        @if ($sortColumn === $column->getName())
+                                            <span>
+                                                @if ($sortDirection === 'asc')
+                                                    <x-heroicon-s-chevron-down class="w-3 h-3" />
+                                                @elseif ($sortDirection === 'desc')
+                                                    <x-heroicon-s-chevron-up class="w-3 h-3" />
+                                                @endif
+                                            </span>
+                                        @endif
+                                    </span>
+                                </button>
                             </th>
                         @endforeach
                     </tr>

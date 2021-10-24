@@ -9,6 +9,7 @@ trait InteractsWithTable
 {
     use CanPaginateRecords;
     use CanSearchRecords;
+    use CanSortRecords;
     use HasColumns;
     use HasEmptyState;
     use HasFilters;
