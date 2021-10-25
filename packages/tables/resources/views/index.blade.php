@@ -12,11 +12,11 @@
 
         if ($breakpoint = $column->getVisibleFrom()) {
             return match ($breakpoint) {
-                'sm' => 'hidden sm:block',
-                'md' => 'hidden md:block',
-                'lg' => 'hidden lg:block',
-                'xl' => 'hidden xl:block',
-                '2xl' => 'hidden 2xl:block',
+                'sm' => 'hidden sm:table-cell',
+                'md' => 'hidden md:table-cell',
+                'lg' => 'hidden lg:table-cell',
+                'xl' => 'hidden xl:table-cell',
+                '2xl' => 'hidden 2xl:table-cell',
             };
         }
 
@@ -91,6 +91,17 @@
             <table class="w-full text-left divide-y table-auto">
                 <thead>
                     <tr class="divide-x bg-gray-50">
+                        @if ($isSelectionEnabled())
+                            <th class="w-4 px-4 whitespace-nowrap">
+                                <input
+                                    {{ $areAllRecordsOnCurrentPageSelected() ? 'checked' : null }}
+                                    wire:click="{{ $isPaginationEnabled() ? 'toggleSelectTableRecordsOnPage' : 'toggleSelectAllTableRecords' }}"
+                                    type="checkbox"
+                                    class="border-gray-300 rounded shadow-sm text-primary-600 focus:border-primary-600 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
+                                />
+                            </th>
+                        @endif
+
                         @foreach ($getColumns() as $column)
                             <th @class([
                                 'px-4 py-2 text-sm font-semibold text-gray-600',
@@ -128,6 +139,17 @@
                 <tbody class="divide-y whitespace-nowrap">
                     @foreach ($records as $record)
                         <tr class="divide-x">
+                            @if ($isSelectionEnabled())
+                                <td class="px-4 whitespace-nowrap">
+                                    <input
+                                        {{ $isRecordSelected($record->getKey()) ? 'checked' : null }}
+                                        wire:click="toggleSelectTableRecord('{{ $record->getKey() }}')"
+                                        type="checkbox"
+                                        class="border-gray-300 rounded shadow-sm text-primary-600 focus:border-primary-600 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                    />
+                                </td>
+                            @endif
+
                             @foreach ($getColumns() as $column)
                                 @php
                                     $column->record($record);

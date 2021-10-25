@@ -42,7 +42,7 @@ trait HasFilters
 
     public function updatedTableFilters(): void
     {
-        $this->selected = [];
+        $this->deselectAllTableRecords();
 
         $this->resetPage();
     }

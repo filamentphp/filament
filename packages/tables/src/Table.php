@@ -29,6 +29,21 @@ class Table extends ViewComponent implements Htmlable
         return new static($livewire);
     }
 
+    public function areAllRecordsOnCurrentPageSelected(): bool
+    {
+        return $this->getLivewire()->areAllRecordsOnCurrentTablePageSelected();
+    }
+
+    public function getActions(): array
+    {
+        return $this->getLivewire()->getActions();
+    }
+
+    public function getBulkActions(): array
+    {
+        return $this->getLivewire()->getBulkActions();
+    }
+
     public function getColumns(): array
     {
         return $this->getLivewire()->getCachedTableColumns();
@@ -72,6 +87,16 @@ class Table extends ViewComponent implements Htmlable
     public function isPaginationEnabled(): bool
     {
         return $this->getLivewire()->isTablePaginationEnabled();
+    }
+
+    public function isRecordSelected(string $record): bool
+    {
+        return $this->getLivewire()->isTableRecordSelected($record);
+    }
+
+    public function isSelectionEnabled(): bool
+    {
+        return $this->getLivewire()->isTableSelectionEnabled();
     }
 
     public function isSearchable(): bool

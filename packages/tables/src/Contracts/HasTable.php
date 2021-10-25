@@ -9,7 +9,13 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface HasTable
 {
+    public function areAllRecordsOnCurrentTablePageSelected(): bool;
+
     public function callTableColumnAction(string $columnName, string $recordKey): void;
+
+    public function getCachedTableActions(): array;
+
+    public function getCachedTableBulkActions(): array;
 
     public function getCachedTableColumns(): array;
 
@@ -31,5 +37,9 @@ interface HasTable
 
     public function isTablePaginationEnabled(): bool;
 
+    public function isTableRecordSelected(string $record): bool;
+
     public function isTableSearchable(): bool;
+
+    public function isTableSelectionEnabled(): bool;
 }

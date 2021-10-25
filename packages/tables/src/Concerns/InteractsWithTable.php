@@ -9,7 +9,10 @@ trait InteractsWithTable
 {
     use CanPaginateRecords;
     use CanSearchRecords;
+    use CanSelectRecords;
     use CanSortRecords;
+    use HasActions;
+    use HasBulkActions;
     use HasColumns;
     use HasEmptyState;
     use HasFilters;
@@ -21,6 +24,10 @@ trait InteractsWithTable
     public function bootInteractsWithTable(): void
     {
         $this->table = $this->makeTable();
+
+        $this->cacheTableActions();
+
+        $this->cacheTableBulkActions();
 
         $this->cacheTableColumns();
 

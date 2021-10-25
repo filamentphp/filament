@@ -19,7 +19,7 @@ trait HasColumns
             ->toArray();
     }
 
-    public function callTableColumnAction(string $columnName, string $recordKey): void
+    public function callTableColumnAction(string $name, string $recordKey): void
     {
         $record = $this->resolveTableRecord($recordKey);
 
@@ -27,7 +27,7 @@ trait HasColumns
             return;
         }
 
-        $column = $this->getCachedTableColumn($columnName);
+        $column = $this->getCachedTableColumn($name);
 
         if (! $column) {
             return;

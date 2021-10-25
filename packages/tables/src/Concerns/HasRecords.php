@@ -3,22 +3,30 @@
 namespace Filament\Tables\Concerns;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasRecords
 {
-    public function getTableRecords(): Collection | LengthAwarePaginator
+    public function getFilteredTableQuery(): Builder
     {
         $query = $this->getTableQuery();
-
-        foreach ($this->getCachedTableColumns() as $column) {
-            $column->applyEagreLoading($query);
-        }
 
         $this->applyFiltersToTableQuery($query);
 
         $this->applySearchToTableQuery($query);
+
+        return $query;
+    }
+
+    public function getTableRecords(): Collection | LengthAwarePaginator
+    {
+        $query = $this->getFilteredTableQuery();
+
+        foreach ($this->getCachedTableColumns() as $column) {
+            $column->applyEagreLoading($query);
+        }
 
         $this->applySortingToTableQuery($query);
 

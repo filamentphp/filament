@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 trait CanSortRecords
 {
     public $tableSortColumn = null;
+
     public $tableSortDirection = null;
 
     public function sortTable(?string $column = null): void
@@ -32,8 +33,6 @@ trait CanSortRecords
 
     public function updatedTableSort(): void
     {
-        $this->selected = [];
-
         $this->resetPage();
     }
 

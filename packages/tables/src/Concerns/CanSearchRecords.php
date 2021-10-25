@@ -23,7 +23,7 @@ trait CanSearchRecords
 
     public function updatedTableSearchQuery(): void
     {
-        $this->selected = [];
+        $this->deselectAllTableRecords();
 
         $this->resetPage();
     }
