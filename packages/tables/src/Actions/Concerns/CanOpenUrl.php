@@ -3,6 +3,7 @@
 namespace Filament\Tables\Actions\Concerns;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 
 trait CanOpenUrl
 {
@@ -25,12 +26,12 @@ trait CanOpenUrl
         return $this;
     }
 
-    public function getUrl(): ?string
+    public function getUrl(Model $record): ?string
     {
         if ($this->url instanceof Closure) {
             return app()->call($this->url, [
                 'livewire' => $this->getLivewire(),
-                'record' => $this->getRecord(),
+                'record' => $record,
             ]);
         }
 

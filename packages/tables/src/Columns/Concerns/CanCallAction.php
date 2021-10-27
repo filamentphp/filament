@@ -15,7 +15,7 @@ trait CanCallAction
         return $this;
     }
 
-    public function callAction(): void
+    public function callAction()
     {
         $action = $this->getAction();
 
@@ -23,7 +23,7 @@ trait CanCallAction
             return;
         }
 
-        app()->call($action, [
+        return app()->call($action, [
             'livewire' => $this->getLivewire(),
             'record' => $this->getRecord(),
         ]);

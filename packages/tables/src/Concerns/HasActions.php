@@ -2,10 +2,17 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Forms\ComponentContainer;
 use Filament\Tables\Actions\Action;
 
 trait HasActions
 {
+    public $mountedTableAction = null;
+
+    public $mountedTableActionData = [];
+
+    public $mountedTableActionRecord = null;
+
     protected array $cachedTableActions;
 
     public function cacheTableActions(): void
@@ -19,21 +26,57 @@ trait HasActions
             ->toArray();
     }
 
-    public function callTableAction(string $name, string $recordKey): void
+    public function callMountedTableAction()
     {
-        $record = $this->resolveTableRecord($recordKey);
-
-        if (! $record) {
-            return;
-        }
-
-        $action = $this->getCachedTableAction($name);
+        $action = $this->getMountedTableAction();
 
         if (! $action) {
             return;
         }
 
-        $action->record($record)->callAction();
+        $record = $this->resolveTableRecord($this->mountedTableActionRecord);
+
+        if (! $record) {
+            return;
+        }
+
+        $data = $this->getMountedTableActionForm()->getState();
+
+        try {
+            return $action->call($record, $data);
+        } finally {
+            $this->dispatchBrowserEvent('close-modal', [
+                'id' => 'action',
+            ]);
+        }
+    }
+
+    public function mountTableAction(string $name, string $record)
+    {
+        $this->mountedTableAction = $name;
+
+        $action = $this->getMountedTableAction();
+
+        if (! $action) {
+            return;
+        }
+
+        $this->mountedTableActionRecord = $record;
+
+        if (! $action->shouldOpenModal()) {
+            return $this->callTableAction();
+        }
+
+        $this->getMountedTableActionForm()->fill();
+
+        $this->dispatchBrowserEvent('open-modal', [
+            'id' => 'action',
+        ]);
+    }
+
+    public function getCachedTableAction(string $name): ?Action
+    {
+        return $this->getCachedTableActions()[$name] ?? null;
     }
 
     public function getCachedTableActions(): array
@@ -41,13 +84,23 @@ trait HasActions
         return $this->cachedTableActions;
     }
 
+    public function getMountedTableAction(): ?Action
+    {
+        if (! $this->mountedTableAction) {
+            return null;
+        }
+
+        return $this->getCachedTableAction($this->mountedTableAction);
+    }
+
+    public function getMountedTableActionForm(): ComponentContainer
+    {
+        return $this->mountedTableActionForm
+            ->schema($this->getMountedTableAction()->getFormSchema());
+    }
+
     public function getTableActions(): array
     {
         return [];
-    }
-
-    protected function getCachedTableAction(string $name): ?Action
-    {
-        return $this->getCachedTableActions()[$name] ?? null;
     }
 }

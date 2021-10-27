@@ -1,7 +1,7 @@
 @php
     $state = $getState();
 
-    $stateIcon = $getStateIcon() ?? ($state ? 'heroicon-s-check-circle' : 'heroicon-s-x-circle');
+    $stateIcon = $getStateIcon() ?? ($state ? 'heroicon-o-check-circle' : 'heroicon-o-x-circle');
     $stateColor = $getStateColor() ?? ($state ? 'success' : 'danger');
 
     $stateColor = [

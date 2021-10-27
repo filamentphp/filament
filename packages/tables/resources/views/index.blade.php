@@ -25,46 +25,91 @@
 @endphp
 
 <div class="border border-gray-300 divide-y bg-white shadow rounded-xl">
-    <div class="flex items-center justify-between space-x-2 p-2">
-        <div class="max-w-md">
-            @if ($isSearchable())
-                <label for="tableSearchQueryInput" class="sr-only">
-                    {{ __('tables::table.fields.search_query.label') }}
-                </label>
+    <div class="flex items-center justify-between p-2">
+        <div>
+            @if ($isSelectionEnabled() && $getSelectedRecordCount())
+                <div
+                    x-data="{
+                        isOpen: false,
+                    }"
+                    x-cloak
+                    class="relative mr-2"
+                >
+                    <x-tables::icon-button
+                        icon="heroicon-o-dots-vertical"
+                        x-on:click="isOpen = ! isOpen"
+                        :label="__('tables::table.buttons.open_actions.label')"
+                    />
 
-                <div class="relative group">
-                    <span class="absolute inset-y-0 left-0 flex items-center justify-center w-9 h-9 text-gray-400 transition pointer-events-none group-focus-within:text-primary-500">
-                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle cx="11" cy="11" r="6.25" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
-                            <path fill="currentColor" d="M18.7197 19.7803C19.0126 20.0732 19.4874 20.0732 19.7803 19.7803C20.0732 19.4874 20.0732 19.0126 19.7803 18.7197L18.7197 19.7803ZM14.9697 16.0303L18.7197 19.7803L19.7803 18.7197L16.0303 14.9697L14.9697 16.0303Z"/>
-                        </svg>
-                    </span>
-
-                    <input
-                        wire:model="tableSearchQuery"
-                        id="tableSearchQueryInput"
-                        placeholder="{{ __('tables::table.fields.search_query.placeholder') }}"
-                        type="search"
-                        class="block w-full h-9 pl-9 placeholder-gray-400 transition duration-75 border-gray-200 rounded-lg shadow-sm focus:border-primary-60 focus:ring-1 focus:ring-inset focus:ring-primary-600"
+                    <div
+                        x-show="isOpen"
+                        x-on:click.away="isOpen = false"
+                        x-transition:enter="transition"
+                        x-transition:enter-start="-translate-y-1 opacity-0"
+                        x-transition:enter-end="translate-y-0 opacity-100"
+                        x-transition:leave="transition"
+                        x-transition:leave-start="translate-y-0 opacity-100"
+                        x-transition:leave-end="-translate-y-1 opacity-0"
+                        class="absolute z-10 mt-2 shadow-xl rounded-xl w-52 top-full"
                     >
+                        <ul class="py-1 space-y-1 overflow-hidden bg-white shadow rounded-xl">
+                            @if (! $areAllRecordsSelected())
+                                <x-tables::dropdown.item wire:click="toggleSelectAllTableRecords" icon="heroicon-o-duplicate">
+                                    {{ __('tables::table.actions.buttons.select_all.label', ['count' => $getAllRecordsCount()]) }}
+                                </x-tables::dropdown.item>
+
+                                <div aria-hidden="true" class="border-t border-gray-200 ml-11"></div>
+                            @endif
+
+                            @foreach($getBulkActions() as $bulkAction)
+                                <x-tables::dropdown.item
+                                    :wire:click="'mountTableBulkAction(\'' . $bulkAction->getName() . '\')'"
+                                    :icon="$bulkAction->getIcon()"
+                                    :color="$bulkAction->getColor()"
+                                >
+                                    {{ $bulkAction->getLabel() }}
+                                </x-tables::dropdown.item>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
             @endif
         </div>
 
-        <div>
-            @if ($isFilterable())
-                <div x-data="{ isOpen: false }" class="relative inline-block">
-                    <button
-                        x-on:click="isOpen = ! isOpen"
-                        type="button"
-                        class="inline-flex items-center justify-center px-4 font-semibold tracking-tight text-gray-800 transition border rounded-lg h-9 hover:bg-gray-500/5 focus:ring-inset focus:ring-primary-600 focus:ring-1 focus:text-primary-600 focus:bg-primary-500/10 focus:border-primary-600 focus:outline-none"
-                    >
-                        <span>
-                            {{ __('tables::table.buttons.filter.label') }}
+        <div class="w-full md:w-auto flex items-center space-x-2 md:max-w-md">
+            @if ($isSearchable())
+                <div class="flex-1">
+                    <label for="tableSearchQueryInput" class="sr-only">
+                        {{ __('tables::table.fields.search_query.label') }}
+                    </label>
+
+                    <div class="relative group">
+                        <span class="absolute inset-y-0 left-0 flex items-center justify-center w-9 h-9 text-gray-400 transition pointer-events-none group-focus-within:text-primary-500">
+                            <x-heroicon-o-search class="w-5 h-5" />
                         </span>
 
-                        <x-heroicon-o-filter class="w-4 h-4 ml-3 -mr-1" />
-                    </button>
+                        <input
+                            wire:model="tableSearchQuery"
+                            id="tableSearchQueryInput"
+                            placeholder="{{ __('tables::table.fields.search_query.placeholder') }}"
+                            type="search"
+                            class="block w-full h-9 pl-9 placeholder-gray-400 transition duration-75 border-gray-200 rounded-lg shadow-sm focus:border-primary-60 focus:ring-1 focus:ring-inset focus:ring-primary-600"
+                        >
+                    </div>
+                </div>
+            @endif
+
+            @if ($isFilterable())
+                <div
+                    x-data="{ isOpen: false }"
+                    x-cloak
+                    class="flex-shrink-0 relative inline-block"
+                >
+                    <x-tables::icon-button
+                        icon="heroicon-o-filter"
+                        x-on:click="isOpen = ! isOpen"
+                        :label="__('tables::table.buttons.filter.label')"
+                    />
 
                     <div
                         x-show="isOpen"
@@ -78,7 +123,7 @@
                         class="absolute right-0 z-10 w-screen max-w-xs mt-2 shadow-xl top-full rounded-xl"
                     >
                         <div class="px-6 py-4 bg-white shadow rounded-xl">
-                            {{ $this->filtersForm }}
+                            {{ $getFiltersForm() }}
                         </div>
                     </div>
                 </div>
@@ -121,11 +166,11 @@
                                         {{ $column->getLabel() }}
                                     </span>
 
-                                    @if ($this->tableSortColumn === $column->getName())
+                                    @if ($getSortColumn() === $column->getName())
                                         <span class="relative flex items-center">
-                                            @if ($this->tableSortDirection === 'asc')
+                                            @if ($getSortDirection() === 'asc')
                                                 <x-heroicon-s-chevron-down class="w-3 h-3" />
-                                            @elseif ($this->tableSortDirection === 'desc')
+                                            @elseif ($getSortDirection() === 'desc')
                                                 <x-heroicon-s-chevron-up class="w-3 h-3" />
                                             @endif
                                         </span>
@@ -189,22 +234,24 @@
             @if ($view = $getEmptyStateView())
                 {{ $view }}
             @else
-                <div class="flex flex-col items-center justify-center max-w-md p-6 mx-auto space-y-6 text-center bg-white border m-4 rounded-2xl">
-                    <div class="flex items-center justify-center w-16 h-16 text-blue-500 rounded-full bg-blue-50">
-                        <x-dynamic-component :component="$getEmptyStateIcon()" class="w-6 h-6" />
+                <div class="flex items-center justify-center p-4">
+                    <div class="flex flex-1 flex-col items-center justify-center max-w-md p-6 mx-auto space-y-6 text-center bg-white border rounded-2xl">
+                        <div class="flex items-center justify-center w-16 h-16 text-blue-500 rounded-full bg-blue-50">
+                            <x-dynamic-component :component="$getEmptyStateIcon()" class="w-6 h-6" />
+                        </div>
+
+                        <header class="max-w-xs space-y-1">
+                            <h2 class="text-xl font-semibold tracking-tight">
+                                {{ $getEmptyStateHeading() }}
+                            </h2>
+
+                            @if ($description = $getEmptyStateDescription())
+                                <p class="text-sm font-medium text-gray-500">
+                                    {{ $description }}
+                                </p>
+                            @endif
+                        </header>
                     </div>
-
-                    <header class="max-w-xs space-y-1">
-                        <h2 class="text-xl font-semibold tracking-tight">
-                            {{ $getEmptyStateHeading() }}
-                        </h2>
-
-                        @if ($description = $getEmptyStateDescription())
-                            <p class="text-sm font-medium text-gray-500">
-                                {{ $description }}
-                            </p>
-                        @endif
-                    </header>
                 </div>
             @endif
         @endif
@@ -212,7 +259,74 @@
 
     @if ($isPaginationEnabled())
         <div class="p-2">
-            <x-tables::pagination :paginator="$records" />
+            <x-tables::pagination
+                :paginator="$records"
+                :records-per-page-select-options="$getRecordsPerPageSelectOptions()"
+            />
         </div>
     @endif
 </div>
+
+<form wire:submit.prevent="callMountedTableAction">
+    <x-tables::modal id="action">
+        @if ($action = $getMountedAction())
+            <x-slot name="heading">
+                {{ $action->getModalHeading() }}
+            </x-slot>
+
+            @if ($subheading = $action->getModalSubheading())
+                <x-slot name="subheading">
+                    {{ $subheading }}
+                </x-slot>
+            @endif
+
+            @if ($action->hasFormSchema())
+                {{ $getMountedActionForm() }}
+            @endif
+
+            <x-slot name="footer">
+                <x-tables::modal.actions full-width>
+                    <x-tables::button x-on:click="isOpen = false" color="secondary">
+                        Cancel
+                    </x-tables::button>
+
+                    <x-tables::button type="submit" :color="$action->getColor()">
+                        {{ $action->getModalButtonLabel() }}
+                    </x-tables::button>
+                </x-tables::modal.actions>
+            </x-slot>
+        @endif
+    </x-tables::modal>
+</form>
+
+<form wire:submit.prevent="callMountedTableBulkAction">
+    <x-tables::modal id="bulk-action">
+        @if ($action = $getMountedBulkAction())
+            <x-slot name="heading">
+                {{ $action->getModalHeading() }}
+            </x-slot>
+
+            @if ($subheading = $action->getModalSubheading())
+                <x-slot name="subheading">
+                    {{ $subheading }}
+                </x-slot>
+            @endif
+
+            @if ($action->hasFormSchema())
+                {{ $getMountedBulkActionForm() }}
+            @endif
+
+            <x-slot name="footer">
+                <x-tables::modal.actions full-width>
+                    <x-tables::button x-on:click="isOpen = false" color="secondary">
+                        Cancel
+                    </x-tables::button>
+
+                    <x-tables::button type="submit" :color="$action->getColor()">
+                        {{ $action->getModalButtonLabel() }}
+                    </x-tables::button>
+                </x-tables::modal.actions>
+            </x-slot>
+        @endif
+    </x-tables::modal>
+</form>

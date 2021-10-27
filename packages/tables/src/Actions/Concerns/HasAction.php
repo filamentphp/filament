@@ -4,7 +4,7 @@ namespace Filament\Tables\Actions\Concerns;
 
 use Closure;
 
-trait CanCallAction
+trait HasAction
 {
     protected $action = null;
 
@@ -13,20 +13,6 @@ trait CanCallAction
         $this->action = $action;
 
         return $this;
-    }
-
-    public function callAction(): void
-    {
-        $action = $this->getAction();
-
-        if (! $action instanceof Closure) {
-            return;
-        }
-
-        app()->call($action, [
-            'livewire' => $this->getLivewire(),
-            'record' => $this->getRecord(),
-        ]);
     }
 
     public function getAction(): string | callable | null

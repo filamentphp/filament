@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 
 trait HasRecords
 {
+    protected Collection | LengthAwarePaginator | null $records = null;
+
     public function getFilteredTableQuery(): Builder
     {
         $query = $this->getTableQuery();
@@ -22,6 +24,10 @@ trait HasRecords
 
     public function getTableRecords(): Collection | LengthAwarePaginator
     {
+        if ($this->records) {
+            return $this->records;
+        }
+
         $query = $this->getFilteredTableQuery();
 
         foreach ($this->getCachedTableColumns() as $column) {
@@ -31,9 +37,9 @@ trait HasRecords
         $this->applySortingToTableQuery($query);
 
         if ($this->isTablePaginationEnabled()) {
-            return $query->paginate($this->getTableRecordsPerPage());
+            return $this->records = $query->paginate($this->getTableRecordsPerPage());
         } else {
-            return $query->get();
+            return $this->records = $query->get();
         }
     }
 

@@ -10,13 +10,18 @@ trait CanSelectRecords
 
     protected bool $isTableSelectionEnabled = true;
 
+    public function deselectAllTableRecords(): void
+    {
+        $this->selectedTableRecords = [];
+    }
+
     public function toggleSelectAllTableRecords(): void
     {
         $query = $this->getFilteredTableQuery();
 
         $allRecords = $query->pluck($query->getModel()->getKeyName());
 
-        if ($allRecords->count() > count($this->selectedTableRecords)) {
+        if ($allRecords->count() > $this->getSelectedTableRecordCount()) {
             $this->selectedTableRecords = $allRecords->toArray();
 
             return;
@@ -51,11 +56,11 @@ trait CanSelectRecords
         $this->deselectTableRecord($record);
     }
 
-    public function areAllRecordsOnCurrentTablePageSelected(): bool
+    public function areAllTableRecordsOnCurrentPageSelected(): bool
     {
         if (! $this->isTablePaginationEnabled()) {
-            $allRecordsCount = $this->getFilteredTableQuery()->count();
-            $selectedRecordsCount = count($this->selectedTableRecords);
+            $allRecordsCount = $this->getAllTableRecordsCount();
+            $selectedRecordsCount = $this->getSelectedTableRecordCount();
 
             return $allRecordsCount && ($allRecordsCount === $selectedRecordsCount);
         }
@@ -67,9 +72,27 @@ trait CanSelectRecords
         return (bool) ! array_diff($pageRecords, $this->selectedTableRecords);
     }
 
+    public function areAllTableRecordsSelected(): bool
+    {
+        $allRecordsCount = $this->getAllTableRecordsCount();
+        $selectedRecordCount = $this->getSelectedTableRecordCount();
+
+        return (bool) $selectedRecordCount && ($allRecordsCount === $selectedRecordCount);
+    }
+
+    public function getAllTableRecordsCount(): int
+    {
+        return $this->getFilteredTableQuery()->count();
+    }
+
     public function getSelectedTableRecords(): Collection
     {
         return $this->getTableQuery()->find($this->selectedTableRecords);
+    }
+
+    public function getSelectedTableRecordCount(): int
+    {
+        return count($this->selectedTableRecords);
     }
 
     public function isTableRecordSelected(string $record): bool
@@ -79,12 +102,7 @@ trait CanSelectRecords
 
     public function isTableSelectionEnabled(): bool
     {
-        return $this->isTableSelectionEnabled;
-    }
-
-    protected function deselectAllTableRecords(): void
-    {
-        $this->selectedTableRecords = [];
+        return $this->isTableSelectionEnabled && count($this->getCachedTableBulkActions());
     }
 
     protected function deselectTableRecord(string $record): void

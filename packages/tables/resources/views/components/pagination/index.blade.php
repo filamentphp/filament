@@ -1,5 +1,6 @@
 @props([
     'paginator',
+    'recordsPerPageSelectOptions',
 ])
 
 <nav
@@ -10,23 +11,23 @@
     <div class="flex justify-between items-center flex-1 lg:hidden">
         <div class="w-10">
             @if ($paginator->hasPages() && (! $paginator->onFirstPage()))
-                <x-tables::pagination.mobile-button
+                <x-tables::icon-button
                     wire:click="previousPage"
                     rel="prev"
-                    icon="heroicon-s-chevron-left"
+                    icon="heroicon-o-chevron-left"
                     :label="__('tables::table.pagination.buttons.previous.label')"
                 />
             @endif
         </div>
 
-        <x-tables::pagination.records-per-page-selector />
+        <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
 
         <div class="w-10">
             @if ($paginator->hasPages() && $paginator->hasMorePages())
-                <x-tables::pagination.mobile-button
+                <x-tables::icon-button
                     wire:click="nextPage"
                     rel="next"
-                    icon="heroicon-s-chevron-right"
+                    icon="heroicon-o-chevron-right"
                     :label="__('tables::table.pagination.buttons.next.label')"
                 />
             @endif
@@ -45,7 +46,7 @@
         </div>
 
         <div class="flex items-center justify-center">
-            <x-tables::pagination.records-per-page-selector />
+            <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
         </div>
 
         <div class="flex items-center justify-end">

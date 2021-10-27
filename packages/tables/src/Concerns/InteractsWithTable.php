@@ -32,12 +32,24 @@ trait InteractsWithTable
         $this->cacheTableColumns();
 
         $this->cacheTableFilters();
-        $this->filtersForm->fill();
+        $this->getTableFiltersForm()->fill();
     }
 
-    public function getTable(): Table
+    protected function getTable(): Table
     {
         return $this->table;
+    }
+
+    protected function getForms(): array
+    {
+        return [
+            'mountedTableActionForm' => $this->makeForm()->statePath('mountedTableActionData'),
+            'mountedTableBulkActionForm' => $this->makeForm()->statePath('mountedTableBulkActionData'),
+            'tableFiltersForm' => $this->makeForm()
+                ->schema($this->getTableFiltersFormSchema())
+                ->statePath('tableFilters')
+                ->reactive(),
+        ];
     }
 
     protected function makeTable(): Table

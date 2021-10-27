@@ -3,18 +3,21 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
 
-class Action
+class BulkAction
 {
     use Concerns\BelongsToTable;
+    use Concerns\CanDeselectRecordsAfterCompletion;
     use Concerns\CanOpenModal;
-    use Concerns\CanOpenUrl;
     use Concerns\CanRequireConfirmation;
     use Concerns\HasAction;
+    use Concerns\HasColor;
+    use Concerns\HasFormSchema;
+    use Concerns\HasIcon;
     use Concerns\HasLabel;
     use Concerns\HasName;
     use Conditionable;
@@ -38,7 +41,7 @@ class Action
     {
     }
 
-    public function call(Model $record, array $data = [])
+    public function call(Collection $records, array $data = [])
     {
         $action = $this->getAction();
 
@@ -46,10 +49,16 @@ class Action
             return;
         }
 
-        return app()->call($action, [
-            'data' => $data,
-            'livewire' => $this->getLivewire(),
-            'record' => $record,
-        ]);
+        try {
+            return app()->call($action, [
+                'data' => $data,
+                'livewire' => $this->getLivewire(),
+                'records' => $records,
+            ]);
+        } finally {
+            if ($this->shouldDeselectRecordsAfterCompletion()) {
+                $this->getLivewire()->deselectAllTableRecords();
+            }
+        }
     }
 }

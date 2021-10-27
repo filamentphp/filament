@@ -49,40 +49,42 @@ return [
             'label' => 'Filter',
         ],
 
+        'open_actions' => [
+            'label' => 'Open actions',
+        ],
+
     ],
 
     'actions' => [
 
-        'delete' => [
+        'modal' => [
 
-            'button' => [
-                'label' => 'Delete selected',
-            ],
+            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
 
-            'modal' => [
+            'buttons' => [
 
-                'description' => 'Are you sure you would like to delete the selected records? This action cannot be undone.',
+                'cancel' => [
+                    'label' => 'Submit',
+                ],
 
-                'heading' => 'Delete the selected records?',
+                'confirm' => [
+                    'label' => 'Confirm',
+                ],
 
-                'buttons' => [
-
-                    'cancel' => [
-                        'label' => 'Cancel',
-                    ],
-
-                    'delete' => [
-                        'label' => 'Delete selected',
-                    ],
-
+                'submit' => [
+                    'label' => 'Submit',
                 ],
 
             ],
 
         ],
 
-        'actions' => [
-            'placeholder' => 'Actions',
+        'buttons' => [
+
+            'select_all' => [
+                'label' => 'Select all :count records',
+            ],
+
         ],
 
     ],

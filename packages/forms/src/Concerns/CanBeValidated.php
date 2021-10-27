@@ -74,6 +74,10 @@ trait CanBeValidated
 
     public function validate(): array
     {
+        if (! count($this->getComponents())) {
+            return [];
+        }
+
         return $this->getLivewire()->validate($this->getValidationRules(), [], $this->getValidationAttributes());
     }
 }

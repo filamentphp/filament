@@ -35,6 +35,11 @@ trait HasFilters
         return [];
     }
 
+    public function getTableFiltersForm(): Forms\ComponentContainer
+    {
+        return $this->tableFiltersForm;
+    }
+
     public function isTableFilterable(): bool
     {
         return (bool) count($this->getCachedTableFilters());
@@ -49,7 +54,7 @@ trait HasFilters
 
     protected function applyFiltersToTableQuery(Builder $query): Builder
     {
-        $data = $this->filtersForm->getState();
+        $data = $this->getTableFiltersForm()->getState();
 
         return $query->where(function (Builder $query) use ($data) {
             foreach ($this->getCachedTableFilters() as $filter) {
@@ -59,16 +64,6 @@ trait HasFilters
                 );
             }
         });
-    }
-
-    protected function getForms(): array
-    {
-        return [
-            'filtersForm' => $this->makeForm()
-                ->schema($this->getTableFiltersFormSchema())
-                ->statePath('tableFilters')
-                ->reactive(),
-        ];
     }
 
     protected function getTableFiltersFormSchema(): array

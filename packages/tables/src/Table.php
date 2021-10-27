@@ -2,6 +2,9 @@
 
 namespace Filament\Tables;
 
+use Filament\Forms\ComponentContainer;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Support\Htmlable;
@@ -29,19 +32,39 @@ class Table extends ViewComponent implements Htmlable
         return new static($livewire);
     }
 
+    public function getAllRecordsCount(): int
+    {
+        return $this->getLivewire()->getAllTableRecordsCount();
+    }
+
     public function areAllRecordsOnCurrentPageSelected(): bool
     {
-        return $this->getLivewire()->areAllRecordsOnCurrentTablePageSelected();
+        return $this->getLivewire()->areAllTableRecordsOnCurrentPageSelected();
+    }
+
+    public function areAllRecordsSelected(): bool
+    {
+        return $this->getLivewire()->areAllTableRecordsSelected();
+    }
+
+    public function getAction(string $name): ?Action
+    {
+        return $this->getLivewire()->getCachedTableAction($name);
     }
 
     public function getActions(): array
     {
-        return $this->getLivewire()->getActions();
+        return $this->getLivewire()->getCachedTableActions();
+    }
+
+    public function getBulkAction(string $name): ?BulkAction
+    {
+        return $this->getLivewire()->getCachedTableBulkAction($name);
     }
 
     public function getBulkActions(): array
     {
-        return $this->getLivewire()->getBulkActions();
+        return $this->getLivewire()->getCachedTableBulkActions();
     }
 
     public function getColumns(): array
@@ -74,9 +97,54 @@ class Table extends ViewComponent implements Htmlable
         return $this->getLivewire()->getCachedTableFilters();
     }
 
+    public function getFiltersForm(): ComponentContainer
+    {
+        return $this->getLivewire()->getTableFiltersForm();
+    }
+
+    public function getMountedAction(): ?Action
+    {
+        return $this->getLivewire()->getMountedTableAction();
+    }
+
+    public function getMountedActionForm(): ComponentContainer
+    {
+        return $this->getLivewire()->getMountedTableActionForm();
+    }
+
+    public function getMountedBulkAction(): ?BulkAction
+    {
+        return $this->getLivewire()->getMountedTableBulkAction();
+    }
+
+    public function getMountedBulkActionForm(): ComponentContainer
+    {
+        return $this->getLivewire()->getMountedTableBulkActionForm();
+    }
+
     public function getRecords(): Collection | LengthAwarePaginator
     {
         return $this->getLivewire()->getTableRecords();
+    }
+
+    public function getRecordsPerPageSelectOptions(): array
+    {
+        return $this->getLivewire()->getTableRecordsPerPageSelectOptions();
+    }
+
+    public function getSelectedRecordCount(): int
+    {
+        return $this->getLivewire()->getSelectedTableRecordCount();
+    }
+
+    public function getSortColumn(): ?string
+    {
+        return $this->getLivewire()->getTableSortColumn();
+    }
+
+    public function getSortDirection(): ?string
+    {
+        return $this->getLivewire()->getTableSortDirection();
     }
 
     public function isFilterable(): bool
