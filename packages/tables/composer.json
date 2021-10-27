@@ -17,7 +17,6 @@
         "illuminate/database": "^8.6",
         "illuminate/filesystem": "^8.6",
         "illuminate/support": "^8.6",
-        "illuminate/validation": "^8.6",
         "illuminate/view": "^8.6",
         "laravel/ui": "^3.3",
         "livewire/livewire": "^2.6",
