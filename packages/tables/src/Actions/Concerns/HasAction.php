@@ -2,8 +2,6 @@
 
 namespace Filament\Tables\Actions\Concerns;
 
-use Closure;
-
 trait HasAction
 {
     protected $action = null;
