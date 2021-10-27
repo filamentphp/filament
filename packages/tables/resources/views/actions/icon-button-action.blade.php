@@ -19,4 +19,5 @@
     :color="$getColor()"
     :label="$getLabel()"
     :icon="$getIcon()"
+    class="-my-2"
 />

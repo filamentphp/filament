@@ -236,8 +236,8 @@
                             @endforeach
 
                             @if (count($actions = $getActions()))
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center justify-center space-x-3">
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <div class="flex items-center justify-center space-x-2">
                                         @foreach ($actions as $action)
                                             {{ $action->record($record) }}
                                         @endforeach
