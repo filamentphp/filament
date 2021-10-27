@@ -1,4 +1,7 @@
 @php
+    $actions = $getActions();
+    $columns = $getColumns();
+
     $getHiddenClasses = function (\Filament\Tables\Columns\Column $column): ?string {
         if ($breakpoint = $column->getHiddenFrom()) {
             return match ($breakpoint) {
@@ -147,7 +150,7 @@
                             </th>
                         @endif
 
-                        @foreach ($getColumns() as $column)
+                        @foreach ($columns as $column)
                             <th @class([
                                 'px-4 py-2 text-sm font-semibold text-gray-600',
                                 $getHiddenClasses($column),
@@ -203,7 +206,7 @@
                                 </td>
                             @endif
 
-                            @foreach ($getColumns() as $column)
+                            @foreach ($columns as $column)
                                 @php
                                     $column->record($record);
                                 @endphp
@@ -235,7 +238,7 @@
                                 </td>
                             @endforeach
 
-                            @if (count($actions = $getActions()))
+                            @if (count($actions))
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <div class="flex items-center justify-center space-x-2">
                                         @foreach ($actions as $action)
