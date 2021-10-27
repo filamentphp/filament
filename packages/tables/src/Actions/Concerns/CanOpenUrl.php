@@ -26,12 +26,12 @@ trait CanOpenUrl
         return $this;
     }
 
-    public function getUrl(Model $record): ?string
+    public function getUrl(): ?string
     {
         if ($this->url instanceof Closure) {
             return app()->call($this->url, [
                 'livewire' => $this->getLivewire(),
-                'record' => $record,
+                'record' => $this->getRecord(),
             ]);
         }
 

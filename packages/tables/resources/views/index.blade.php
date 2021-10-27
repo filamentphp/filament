@@ -178,6 +178,14 @@
                                 </button>
                             </th>
                         @endforeach
+
+                        @if (count($getActions()))
+                            <th>
+                                <span class="sr-only">
+                                    Actions
+                                </span>
+                            </th>
+                        @endif
                     </tr>
                 </thead>
 
@@ -226,6 +234,16 @@
                                     @endif
                                 </td>
                             @endforeach
+
+                            @if (count($actions = $getActions()))
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center justify-center space-x-3">
+                                        @foreach ($actions as $action)
+                                            {{ $action->record($record) }}
+                                        @endforeach
+                                    </div>
+                                </td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>
