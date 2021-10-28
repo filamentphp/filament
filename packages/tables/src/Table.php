@@ -20,7 +20,19 @@ class Table extends ViewComponent implements Htmlable
     use Macroable;
     use Tappable;
 
+    protected ?string $emptyStateDescription = null;
+
+    protected ?string $emptyStateHeading = null;
+
+    protected ?string $emptyStateIcon = null;
+
+    protected ?View $emptyStateView = null;
+
+    protected bool $isPaginationEnabled = true;
+
     protected array $meta = [];
+
+    protected ?array $recordsPerPageSelectOptions = null;
 
     final public function __construct(HasTable $livewire)
     {
@@ -32,9 +44,46 @@ class Table extends ViewComponent implements Htmlable
         return new static($livewire);
     }
 
-    public function getAllRecordsCount(): int
+    public function emptyStateDescription(?string $description): static
     {
-        return $this->getLivewire()->getAllTableRecordsCount();
+        $this->emptyStateDescription = $description;
+
+        return $this;
+    }
+
+    public function emptyStateHeading(?string $heading): static
+    {
+        $this->emptyStateHeading = $heading;
+
+        return $this;
+    }
+
+    public function emptyStateIcon(?string $icon): static
+    {
+        $this->emptyStateIcon = $icon;
+
+        return $this;
+    }
+
+    public function emptyStateView(?View $view): static
+    {
+        $this->emptyStateView = $view;
+
+        return $this;
+    }
+
+    public function enablePagination(bool $condition = true): static
+    {
+        $this->isPaginationEnabled = $condition;
+
+        return $this;
+    }
+
+    public function recordsPerPageSelectOptions(?array $options): static
+    {
+        $this->recordsPerPageSelectOptions = $options;
+
+        return $this;
     }
 
     public function areAllRecordsOnCurrentPageSelected(): bool
@@ -47,19 +96,14 @@ class Table extends ViewComponent implements Htmlable
         return $this->getLivewire()->areAllTableRecordsSelected();
     }
 
-    public function getAction(string $name): ?Action
-    {
-        return $this->getLivewire()->getCachedTableAction($name);
-    }
-
     public function getActions(): array
     {
         return $this->getLivewire()->getCachedTableActions();
     }
 
-    public function getBulkAction(string $name): ?BulkAction
+    public function getAllRecordsCount(): int
     {
-        return $this->getLivewire()->getCachedTableBulkAction($name);
+        return $this->getLivewire()->getAllTableRecordsCount();
     }
 
     public function getBulkActions(): array
@@ -74,22 +118,22 @@ class Table extends ViewComponent implements Htmlable
 
     public function getEmptyStateDescription(): ?string
     {
-        return $this->getLivewire()->getTableEmptyStateDescription();
+        return $this->emptyStateDescription;
     }
 
     public function getEmptyStateHeading(): string
     {
-        return $this->getLivewire()->getTableEmptyStateHeading();
+        return $this->emptyStateHeading ?? __('tables::table.empty.heading');
     }
 
     public function getEmptyStateIcon(): string
     {
-        return $this->getLivewire()->getTableEmptyStateIcon();
+        return $this->emptyStateIcon ?? 'heroicon-o-x';
     }
 
     public function getEmptyStateView(): ?View
     {
-        return $this->getLivewire()->getTableEmptyStateView();
+        return $this->emptyStateView;
     }
 
     public function getFilters(): array
@@ -129,7 +173,7 @@ class Table extends ViewComponent implements Htmlable
 
     public function getRecordsPerPageSelectOptions(): array
     {
-        return $this->getLivewire()->getTableRecordsPerPageSelectOptions();
+        return $this->recordsPerPageSelectOptions ?? [5, 10, 25, 50];
     }
 
     public function getSelectedRecordCount(): int
@@ -154,7 +198,7 @@ class Table extends ViewComponent implements Htmlable
 
     public function isPaginationEnabled(): bool
     {
-        return $this->getLivewire()->isTablePaginationEnabled();
+        return $this->isPaginationEnabled;
     }
 
     public function isRecordSelected(string $record): bool

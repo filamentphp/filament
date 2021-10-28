@@ -8,8 +8,6 @@ trait CanSelectRecords
 {
     public array $selectedTableRecords = [];
 
-    protected bool $isTableSelectionEnabled = true;
-
     public function deselectAllTableRecords(): void
     {
         $this->selectedTableRecords = [];
@@ -102,7 +100,7 @@ trait CanSelectRecords
 
     public function isTableSelectionEnabled(): bool
     {
-        return $this->isTableSelectionEnabled && count($this->getCachedTableBulkActions());
+        return (bool) count($this->getCachedTableBulkActions());
     }
 
     protected function deselectTableRecord(string $record): void

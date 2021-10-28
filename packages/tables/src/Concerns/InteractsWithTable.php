@@ -23,7 +23,7 @@ trait InteractsWithTable
 
     public function bootInteractsWithTable(): void
     {
-        $this->table = $this->makeTable();
+        $this->table = $this->getTable();
 
         $this->cacheTableActions();
 
@@ -35,9 +35,20 @@ trait InteractsWithTable
         $this->getTableFiltersForm()->fill();
     }
 
-    protected function getTable(): Table
+    protected function getCachedTable(): Table
     {
         return $this->table;
+    }
+
+    protected function getTable(): Table
+    {
+        return $this->makeTable()
+            ->emptyStateDescription($this->getTableEmptyStateDescription())
+            ->emptyStateHeading($this->getTableEmptyStateHeading())
+            ->emptyStateIcon($this->getTableEmptyStateIcon())
+            ->emptyStateView($this->getTableEmptyStateView())
+            ->enablePagination($this->isTablePaginationEnabled())
+            ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions());
     }
 
     protected function getForms(): array

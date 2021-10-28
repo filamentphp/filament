@@ -18,7 +18,7 @@ trait HasFilters
     {
         $this->cachedTableFilters = collect($this->getTableFilters())
             ->mapWithKeys(function (Filter $filter): array {
-                $filter->table($this->getTable());
+                $filter->table($this->getCachedTable());
 
                 return [$filter->getName() => $filter];
             })
@@ -28,11 +28,6 @@ trait HasFilters
     public function getCachedTableFilters(): array
     {
         return $this->cachedTableFilters;
-    }
-
-    public function getTableFilters(): array
-    {
-        return [];
     }
 
     public function getTableFiltersForm(): Forms\ComponentContainer
@@ -64,6 +59,11 @@ trait HasFilters
                 );
             }
         });
+    }
+
+    protected function getTableFilters(): array
+    {
+        return [];
     }
 
     protected function getTableFiltersFormSchema(): array

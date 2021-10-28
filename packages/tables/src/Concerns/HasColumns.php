@@ -12,7 +12,7 @@ trait HasColumns
     {
         $this->cachedTableColumns = collect($this->getTableColumns())
             ->mapWithKeys(function (Column $column): array {
-                $column->table($this->getTable());
+                $column->table($this->getCachedTable());
 
                 return [$column->getName() => $column];
             })
@@ -41,13 +41,13 @@ trait HasColumns
         return $this->cachedTableColumns;
     }
 
-    public function getTableColumns(): array
-    {
-        return [];
-    }
-
     protected function getCachedTableColumn(string $name): ?Column
     {
         return $this->getCachedTableColumns()[$name] ?? null;
+    }
+
+    protected function getTableColumns(): array
+    {
+        return [];
     }
 }

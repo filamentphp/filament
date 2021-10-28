@@ -19,7 +19,7 @@ trait HasActions
     {
         $this->cachedTableActions = collect($this->getTableActions())
             ->mapWithKeys(function (Action $action): array {
-                $action->table($this->getTable());
+                $action->table($this->getCachedTable());
 
                 return [$action->getName() => $action];
             })
@@ -74,11 +74,6 @@ trait HasActions
         ]);
     }
 
-    public function getCachedTableAction(string $name): ?Action
-    {
-        return $this->getCachedTableActions()[$name] ?? null;
-    }
-
     public function getCachedTableActions(): array
     {
         return $this->cachedTableActions;
@@ -99,7 +94,12 @@ trait HasActions
             ->schema($this->getMountedTableAction()->getFormSchema());
     }
 
-    public function getTableActions(): array
+    protected function getCachedTableAction(string $name): ?Action
+    {
+        return $this->getCachedTableActions()[$name] ?? null;
+    }
+
+    protected function getTableActions(): array
     {
         return [];
     }

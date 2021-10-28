@@ -22,11 +22,7 @@ interface HasTable
 
     public function getAllTableRecordsCount(): int;
 
-    public function getCachedTableAction(string $name): ?Action;
-
     public function getCachedTableActions(): array;
-
-    public function getCachedTableBulkAction(string $name): ?BulkAction;
 
     public function getCachedTableBulkActions(): array;
 
@@ -46,29 +42,15 @@ interface HasTable
 
     public function getSelectedTableRecordCount(): int;
 
-    public function getTableEmptyStateDescription(): ?string;
-
-    public function getTableEmptyStateHeading(): string;
-
-    public function getTableEmptyStateIcon(): string;
-
-    public function getTableEmptyStateView(): ?View;
-
     public function getTableFiltersForm(): ComponentContainer;
 
-    public function getTableQuery(): Builder;
-
     public function getTableRecords(): Collection | LengthAwarePaginator;
-
-    public function getTableRecordsPerPageSelectOptions(): array;
 
     public function getTableSortColumn(): ?string;
 
     public function getTableSortDirection(): ?string;
 
     public function isTableFilterable(): bool;
-
-    public function isTablePaginationEnabled(): bool;
 
     public function isTableRecordSelected(string $record): bool;
 

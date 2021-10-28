@@ -6,22 +6,22 @@ use Illuminate\Contracts\View\View;
 
 trait HasEmptyState
 {
-    public function getTableEmptyStateDescription(): ?string
+    protected function getTableEmptyStateDescription(): ?string
     {
         return null;
     }
 
-    public function getTableEmptyStateHeading(): string
+    protected function getTableEmptyStateHeading(): ?string
     {
-        return __('tables::table.empty.heading');
+        return null;
     }
 
-    public function getTableEmptyStateIcon(): string
+    protected function getTableEmptyStateIcon(): ?string
     {
-        return 'heroicon-o-x';
+        return null;
     }
 
-    public function getTableEmptyStateView(): ?View
+    protected function getTableEmptyStateView(): ?View
     {
         return null;
     }

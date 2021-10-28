@@ -6,23 +6,23 @@ trait CanPaginateRecords
 {
     public $tableRecordsPerPage = 10;
 
-    public function getTableRecordsPerPage(): int
+    public function updatedTableRecordsPerPage(): void
+    {
+        $this->resetPage();
+    }
+
+    protected function getTableRecordsPerPage(): int
     {
         return intval($this->tableRecordsPerPage);
     }
 
-    public function getTableRecordsPerPageSelectOptions(): array
+    protected function getTableRecordsPerPageSelectOptions(): ?array
     {
-        return [5, 10, 25, 50];
+        return null;
     }
 
-    public function isTablePaginationEnabled(): bool
+    protected function isTablePaginationEnabled(): bool
     {
         return true;
-    }
-
-    public function updatedTableRecordsPerPage(): void
-    {
-        $this->resetPage();
     }
 }

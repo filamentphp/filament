@@ -17,7 +17,7 @@ trait HasBulkActions
     {
         $this->cachedTableBulkActions = collect($this->getTableBulkActions())
             ->mapWithKeys(function (BulkAction $action): array {
-                $action->table($this->getTable());
+                $action->table($this->getCachedTable());
 
                 return [$action->getName() => $action];
             })
@@ -64,11 +64,6 @@ trait HasBulkActions
         ]);
     }
 
-    public function getCachedTableBulkAction(string $name): ?BulkAction
-    {
-        return $this->getCachedTableBulkActions()[$name] ?? null;
-    }
-
     public function getCachedTableBulkActions(): array
     {
         return $this->cachedTableBulkActions;
@@ -89,7 +84,12 @@ trait HasBulkActions
             ->schema($this->getMountedTableBulkAction()->getFormSchema());
     }
 
-    public function getTableBulkActions(): array
+    protected function getCachedTableBulkAction(string $name): ?BulkAction
+    {
+        return $this->getCachedTableBulkActions()[$name] ?? null;
+    }
+
+    protected function getTableBulkActions(): array
     {
         return [];
     }
