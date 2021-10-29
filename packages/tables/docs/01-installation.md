@@ -4,11 +4,9 @@ title: Installation
 
 ## New Laravel projects
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/iy1DO8JXRDQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
 To get started with the table builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [TailwindCSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with just one command:
 
-```
+```bash
 composer require filament/tables && php artisan tables:install && npm install && npm run dev
 ```
 
@@ -19,8 +17,6 @@ You're now ready to start [building tables](building-tables)!
 ## Existing Laravel projects
 
 > Please note that this package is incompatible with `filament/filament` v1, until v2 is released in late 2021. This is due to namespacing collisions.
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/XslPKxtMR70" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 You may download the table builder using Composer:
 
@@ -45,6 +41,7 @@ module.exports = {
     mode: 'jit',
     purge: [
         './resources/**/*.blade.php', // [tl! focus:start]
+        './vendor/filament/forms/resources/views/**/*.blade.php', // [tl! focus:end]
         './vendor/filament/tables/resources/views/**/*.blade.php', // [tl! focus:end]
     ],
     theme: {
@@ -52,6 +49,8 @@ module.exports = {
             colors: { // [tl! focus:start]
                 danger: colors.rose,
                 primary: colors.blue,
+                success: colors.green,
+                warning: colors.yellow,
             }, // [tl! focus:end]
         },
     },
@@ -75,18 +74,24 @@ mix.js('resources/js/app.js', 'public/js')
     ])
 ```
 
-In `/resources/css/app.css`, import [TailwindCSS](https://tailwindcss.com):
+In `/resources/css/app.css`, import `filament/forms` vendor CSS and [TailwindCSS](https://tailwindcss.com):
 
 ```css
+@import '../../vendor/filament/forms/dist/module.esm.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 ```
 
-In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev):
-
+In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/forms` and `@alpinejs/trap` plugins, and register them:
 ```js
 import Alpine from 'alpinejs'
+import FormsAlpinePlugin from '../../vendor/filament/forms/dist/module.esm'
+import Trap from '@alpinejs/trap'
+
+Alpine.plugin(FormsAlpinePlugin)
+Alpine.plugin(Trap)
 
 window.Alpine = Alpine
 

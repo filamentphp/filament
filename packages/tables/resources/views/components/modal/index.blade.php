@@ -50,6 +50,7 @@
 
         <div
             x-show="isOpen"
+            x-trap="isOpen"
             x-transition:enter="transition ease duration-300"
             x-transition:enter-start="translate-y-8"
             x-transition:enter-end="translate-y-0"

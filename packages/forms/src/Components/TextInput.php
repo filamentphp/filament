@@ -33,6 +33,8 @@ class TextInput extends Field
 
     protected $minValue = null;
 
+    protected $step = null;
+
     protected $postfixLabel = null;
 
     protected $prefixLabel = null;
@@ -72,7 +74,8 @@ class TextInput extends Field
     public function integer(bool | callable $condition = true): static
     {
         $this->numeric($condition);
-        $this->inputMode(fn () => $condition ? 'numeric' : null);
+        $this->inputMode(fn (): ?string => $condition ? 'numeric' : null);
+        $this->step(fn (): ?int => $condition ? 1 : null);
 
         return $this;
     }
@@ -114,8 +117,9 @@ class TextInput extends Field
     {
         $this->isNumeric = $condition;
 
-        $this->inputMode(fn () => $condition ? 'decimal' : null);
+        $this->inputMode(fn (): ?string => $condition ? 'decimal' : null);
         $this->rule('numeric', $condition);
+        $this->step(fn (): ?string => $condition ? 'any' : null);
 
         return $this;
     }
@@ -137,6 +141,13 @@ class TextInput extends Field
     public function postfix(string | callable $label): static
     {
         $this->postfixLabel = $label;
+
+        return $this;
+    }
+
+    public function step(int | float | string | callable $interval): static
+    {
+        $this->step = $interval;
 
         return $this;
     }
@@ -214,6 +225,11 @@ class TextInput extends Field
     public function getPostfixLabel(): ?string
     {
         return $this->evaluate($this->postfixLabel);
+    }
+
+    public function getStep(): int | float | string | null
+    {
+        return $this->evaluate($this->step);
     }
 
     public function getType(): string

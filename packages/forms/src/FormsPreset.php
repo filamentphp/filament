@@ -11,7 +11,7 @@ class FormsPreset extends Preset
     public const NPM_PACKAGES_TO_ADD = [
         '@tailwindcss/forms' => '^0.3',
         '@tailwindcss/typography' => '^0.4',
-        'alpinejs' => '^3.3',
+        'alpinejs' => '^3.4',
         'tailwindcss' => '^2.2',
     ];
 

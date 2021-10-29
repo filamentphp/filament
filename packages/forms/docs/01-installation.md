@@ -8,7 +8,7 @@ title: Installation
 
 To get started with the form builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [TailwindCSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with just one command:
 
-```
+```bash
 composer require filament/forms && php artisan forms:install && npm install && npm run dev
 ```
 

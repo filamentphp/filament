@@ -48,6 +48,7 @@
                 {!! ($length = $getMinLength()) ? "minlength=\"{$length}\"" : null !!}
                 {!! ($value = $getMinValue()) ? "min=\"{$value}\"" : null !!}
                 {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
+                {!! ($interval = $getStep()) ? "step=\"{$interval}\"" : null !!}
                 {!! $isRequired() ? 'required' : null !!}
                 {{ $attributes->merge($getExtraAttributes())->class([
                     'block w-full h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600',
