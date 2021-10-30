@@ -51,8 +51,18 @@ class EditPost extends Component implements Forms\Contracts\HasForms
 {
     use Forms\Concerns\InteractsWithForms;
     
-    public $title = '';
-    public $content = '';
+    public Post $post;
+    
+    public $title;
+    public $content;
+    
+    public function mount(): void
+    {
+        $this->form->fill([
+            'title' => $this->post->title,
+            'content' => $this->post->content,
+        ]);
+    }
     
     protected function getFormSchema(): array // [tl! focus:start]
     {
@@ -96,8 +106,8 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     
     public Post $post;
     
-    public $title = '';
-    public $content = '';
+    public $title;
+    public $content;
     
     public function mount(): void // [tl! focus:start]
     {
@@ -189,6 +199,11 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
     
     public $title = '';
     public $content = '';
+    
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
     
     protected function getFormSchema(): array
     {
@@ -332,12 +347,24 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     
     public Post $post;
     
+    public $title;
+    public $content;
+    public $tags;
+    
+    public function mount(): void
+    {
+        $this->form->fill([
+            'title' => $this->post->title,
+            'content' => $this->post->content,
+        ]);
+    }
+    
     protected function getFormSchema(): array
     {
         return [
-            Forms\Components\TextInput::make('post.title')->required(),
-            Forms\Components\MarkdownEditor::make('post.content'),
-            Forms\Components\SpatieTagsInput::make('post.tags'),
+            Forms\Components\TextInput::make('title')->required(),
+            Forms\Components\MarkdownEditor::make('content'),
+            Forms\Components\SpatieTagsInput::make('tags'),
         ];
     }
     
@@ -371,12 +398,24 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     
     public Post $post;
     
+    public $title;
+    public $content;
+    public $tags;
+    
+    public function mount(): void
+    {
+        $this->form->fill([
+            'title' => $this->post->title,
+            'content' => $this->post->content,
+        ]);
+    }
+    
     protected function getFormSchema(): array
     {
         return [
-            Forms\Components\TextInput::make('post.title')->required(),
-            Forms\Components\MarkdownEditor::make('post.content'),
-            Forms\Components\SpatieTagsInput::make('post.tags')->model($this->post), // [tl! focus]
+            Forms\Components\TextInput::make('title')->required(),
+            Forms\Components\MarkdownEditor::make('content'),
+            Forms\Components\SpatieTagsInput::make('tags')->model($this->post), // [tl! focus]
         ];
     }
     
@@ -386,6 +425,8 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     }
 }
 ```
+
+You may now use [field relationships](#field-relationships);
 
 ### Registering a model class
 
@@ -411,6 +452,11 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
     public $content = '';
     public $categories = [];
     
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+    
     protected function getFormSchema(): array
     {
         return [
@@ -431,6 +477,8 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
     }
 }
 ```
+
+You may now use [field relationships](#field-relationships).
 
 ## Field relationships
 
@@ -454,12 +502,24 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     
     public Post $post;
     
+    public $title;
+    public $content;
+    public $categories;
+    
+    public function mount(): void
+    {
+        $this->form->fill([
+            'title' => $this->post->title,
+            'content' => $this->post->content,
+        ]);
+    }
+    
     protected function getFormSchema(): array
     {
         return [
-            Forms\Components\TextInput::make('post.title')->required(),
-            Forms\Components\MarkdownEditor::make('post.content'),
-            Forms\Components\BelongsToManyMultiSelect::make('post.categories')->relationship('categories', 'name'),
+            Forms\Components\TextInput::make('title')->required(),
+            Forms\Components\MarkdownEditor::make('content'),
+            Forms\Components\BelongsToManyMultiSelect::make('categories')->relationship('categories', 'name'),
         ];
     }
     
@@ -505,6 +565,11 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
     public $title = '';
     public $content = '';
     public $tags = [];
+    
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
     
     protected function getFormSchema(): array
     {
@@ -556,19 +621,38 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     public Author $author;
     public Post $post;
     
+    public $title;
+    public $content;
+    
+    public $name;
+    public $email;
+    
+    public function mount(): void
+    {
+        $this->postForm->fill([
+            'title' => $this->post->title,
+            'content' => $this->post->content,
+        ]);
+        
+        $this->authorForm->fill([
+            'name' => $this->author->name,
+            'email' => $this->author->email,
+        ]);
+    }
+    
     protected function getPostFormSchema(): array
     {
         return [
-            Forms\Components\TextInput::make('post.title')->required(),
-            Forms\Components\MarkdownEditor::make('post.content'),
+            Forms\Components\TextInput::make('title')->required(),
+            Forms\Components\MarkdownEditor::make('content'),
         ];
     }
     
     protected function getAuthorFormSchema(): array
     {
         return [
-            Forms\Components\TextInput::make('author.name')->required(),
-            Forms\Components\TextInput::make('author.email')->email()->required(),
+            Forms\Components\TextInput::make('name')->required(),
+            Forms\Components\TextInput::make('email')->email()->required(),
         ];
     }
     
