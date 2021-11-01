@@ -11,19 +11,6 @@ trait CanFormatState
 {
     protected $formatStateUsing = null;
 
-    public function currency(string $currency = 'usd', bool $shouldConvert = false): static
-    {
-        $this->formatStateUsing(function ($state) use ($currency, $shouldConvert) {
-            return (new Money\Money(
-                $state,
-                (new Money\Currency(strtoupper($currency))),
-                $shouldConvert,
-            ))->format();
-        });
-
-        return $this;
-    }
-
     public function date(string $format = 'M j, Y'): static
     {
         $this->formatStateUsing(fn ($state) => Carbon::parse($state)->translatedFormat($format));
@@ -38,16 +25,16 @@ trait CanFormatState
         return $this;
     }
 
-    public function enum(array $options): static
+    public function enum(array $options, $default): static
     {
-        $this->formatStateUsing(fn ($state) => $options[$state] ?? $state);
+        $this->formatStateUsing(fn ($state) => $options[$state] ?? ($default ?? $state));
 
         return $this;
     }
 
-    public function limit(int $length = -1): static
+    public function limit(int $length = 100, string $end = '...'): static
     {
-        $this->formatStateUsing(fn ($state) => Str::limit($state, $length));
+        $this->formatStateUsing(fn ($state) => Str::limit($state, $length, $end));
 
         return $this;
     }
@@ -55,6 +42,19 @@ trait CanFormatState
     public function formatStateUsing(callable $callback): static
     {
         $this->formatStateUsing = $callback;
+
+        return $this;
+    }
+
+    public function money(string $currency = 'usd', bool $shouldConvert = false): static
+    {
+        $this->formatStateUsing(function ($state) use ($currency, $shouldConvert) {
+            return (new Money\Money(
+                $state,
+                (new Money\Currency(strtoupper($currency))),
+                $shouldConvert,
+            ))->format();
+        });
 
         return $this;
     }

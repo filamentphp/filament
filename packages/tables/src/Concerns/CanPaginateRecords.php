@@ -16,9 +16,9 @@ trait CanPaginateRecords
         return intval($this->tableRecordsPerPage);
     }
 
-    protected function getTableRecordsPerPageSelectOptions(): ?array
+    protected function getTableRecordsPerPageSelectOptions(): array
     {
-        return null;
+        return [5, 10, 25, 50];
     }
 
     protected function isTablePaginationEnabled(): bool

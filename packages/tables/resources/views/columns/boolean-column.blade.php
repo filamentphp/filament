@@ -7,6 +7,7 @@
     $stateColor = [
         'danger' => 'text-danger-500',
         'primary' => 'text-primary-500',
+        'secondary' => 'text-gray-700',
         'success' => 'text-success-500',
         'warning' => 'text-warning-500',
     ][$stateColor] ?? $stateColor;

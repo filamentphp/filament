@@ -556,7 +556,8 @@ namespace App\Http\Livewire;
 use App\Models\Post;
 use Filament\Forms;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Model;use Livewire\Component;
+use Illuminate\Database\Eloquent\Model;
+use Livewire\Component;
 
 class CreatePost extends Component implements Forms\Contracts\HasForms
 {

@@ -79,7 +79,7 @@ class Table extends ViewComponent implements Htmlable
         return $this;
     }
 
-    public function recordsPerPageSelectOptions(?array $options): static
+    public function recordsPerPageSelectOptions(array $options): static
     {
         $this->recordsPerPageSelectOptions = $options;
 
@@ -173,7 +173,7 @@ class Table extends ViewComponent implements Htmlable
 
     public function getRecordsPerPageSelectOptions(): array
     {
-        return $this->recordsPerPageSelectOptions ?? [5, 10, 25, 50];
+        return $this->recordsPerPageSelectOptions;
     }
 
     public function getSelectedRecordCount(): int

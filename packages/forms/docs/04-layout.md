@@ -2,6 +2,8 @@
 title: Layout
 ---
 
+## Getting started
+
 Layout component classes can be found in the `Filament\Form\Components` namespace.
 
 They reside within the schema of your form, alongside any [fields](fields):
@@ -18,80 +20,44 @@ protected function getFormSchema(): array
 Components may be created using the static `make()` method. Usually, you will then define the child component `schema()` to display inside:
 
 ```php
-Component::make()
+use Filament\Forms\Components\Grid;
+
+Grid::make()
     ->schema([
         // ...
     ])
 ```
+
+### Columns
 
 You may create multiple columns within each layout component using the `columns()` method:
 
 ```php
-Component::make()->columns(2)
+use Filament\Forms\Components\Card;
+
+Card::make()->columns(2)
 ```
 
 > For more information about creating advanced, responsive column layouts, please see the [grid section](#grid). All column options in that section are also available in other layout components.
 
+### Setting an ID
+
 You may define an ID for the component using the `id()` method:
 
 ```php
-Component::make()->id('main-card')
+use Filament\Forms\Components\Card;
+
+Card::make()->id('main-card')
 ```
+
+### Custom attributes
 
 The HTML of components can be customized even further, by passing an array of `extraAttributes()`:
 
 ```php
-Component::make()->extraAttributes(['step' => 10])
-```
-
-## Card
-
-The card component may be used to render the form components inside a card:
-
-```php
 use Filament\Forms\Components\Card;
 
-Card::make()
-    ->schema([
-        // ...
-    ])
-```
-
-You may use the `columns()` method to easily create a [grid](#grid) within the card:
-
-```php
-use Filament\Forms\Components\Card;
-
-Card::make()
-    ->schema([
-        // ...
-    ])
-    ->columns(2)
-```
-
-## Fieldset
-
-You may want to group fields into a Fieldset. Each fieldset has a label, a border, and a two-column grid by default:
-
-```php
-use Filament\Forms\Components\Fieldset;
-
-Fieldset::make('Label')
-    ->schema([
-        // ...
-    ])
-```
-
-You may use the `columns()` method to customize the [grid](#grid) within the fieldset:
-
-```php
-use Filament\Forms\Components\Fieldset;
-
-Fieldset::make('Label')
-    ->schema([
-        // ...
-    ])
-    ->columns(3)
+Card::make()->extraAttributes(['class' => 'bg-gray-50'])
 ```
 
 ## Grid
@@ -164,14 +130,53 @@ Grid::make([
     ])
 ```
 
-## Placeholder
+## Fieldset
 
-Placeholders can be used to render text-only "fields" within your forms. Each placeholder has a state, which is cannot be changed by the user.
+You may want to group fields into a Fieldset. Each fieldset has a label, a border, and a two-column grid by default:
 
 ```php
-use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Fieldset;
 
-Placeholder::make('Label')->state('Value, displayed underneath the label')
+Fieldset::make('Label')
+    ->schema([
+        // ...
+    ])
+```
+
+You may use the `columns()` method to customize the [grid](#grid) within the fieldset:
+
+```php
+use Filament\Forms\Components\Fieldset;
+
+Fieldset::make('Label')
+    ->schema([
+        // ...
+    ])
+    ->columns(3)
+```
+
+## Tabs
+
+Some forms can be long and complex. You may want to use tabs to reduce the number of components that are visible at once:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Label 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Label 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Label 3')
+            ->schema([
+                // ...
+            ]),
+    ])
 ```
 
 ## Section
@@ -224,28 +229,39 @@ Section::make('Heading')
     ->collapsed()
 ```
 
-## Tabs
+## Placeholder
 
-Some forms can be long and complex. You may want to use tabs to reduce the number of components that are visible at once:
+Placeholders can be used to render text-only "fields" within your forms. Each placeholder has a state, which is cannot be changed by the user.
 
 ```php
-use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Placeholder;
 
-Tabs::make('Heading')
-    ->tabs([
-        Tabs\Tab::make('Label 1')
-            ->schema([
-                // ...
-            ]),
-        Tabs\Tab::make('Label 2')
-            ->schema([
-                // ...
-            ]),
-        Tabs\Tab::make('Label 3')
-            ->schema([
-                // ...
-            ]),
+Placeholder::make('Label')->state('Value, displayed underneath the label')
+```
+
+## Card
+
+The card component may be used to render the form components inside a card:
+
+```php
+use Filament\Forms\Components\Card;
+
+Card::make()
+    ->schema([
+        // ...
     ])
+```
+
+You may use the `columns()` method to easily create a [grid](#grid) within the card:
+
+```php
+use Filament\Forms\Components\Card;
+
+Card::make()
+    ->schema([
+        // ...
+    ])
+    ->columns(2)
 ```
 
 ## View

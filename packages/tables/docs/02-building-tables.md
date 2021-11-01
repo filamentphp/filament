@@ -49,14 +49,14 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
-class ListPosts extends Component implements Forms\Contracts\HasForms, Table\Contracts\HasTable // [tl! focus]
+class ListPosts extends Component implements Forms\Contracts\HasForms, Table\Contracts\HasTable
 {
-    use Tables\Concerns\InteractsWithTable; // [tl! focus]
+    use Tables\Concerns\InteractsWithTable;
     
-    protected function getTableQuery(): Builder
+    protected function getTableQuery(): Builder // [tl! focus:start]
     {
         return Post::query();
-    }
+    } // [tl! focus:end]
     
     public function render(): View
     {
@@ -77,20 +77,21 @@ use Filament\Forms;
 use Filament\Tables;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;use Livewire\Component;
+use Illuminate\Database\Eloquent\Collection;
+use Livewire\Component;
 
-class ListPosts extends Component implements Forms\Contracts\HasForms, Table\Contracts\HasTable // [tl! focus]
+class ListPosts extends Component implements Forms\Contracts\HasForms, Table\Contracts\HasTable
 {
-    use Tables\Concerns\InteractsWithTable; // [tl! focus]
+    use Tables\Concerns\InteractsWithTable;
     
     protected function getTableQuery(): Builder
     {
         return Post::query();
     }
     
-    protected function getTableColumns(): array
+    protected function getTableColumns(): array // [tl! focus:start]
     {
-        return [
+        return [ // [tl! collapse:start]
             Tables\Columns\ImageColumn::make('author.avatar')
                 ->size(40)
                 ->rounded(),
@@ -99,16 +100,16 @@ class ListPosts extends Component implements Forms\Contracts\HasForms, Table\Con
             Tables\Columns\BadgeColumn::make('status')
                 ->colors([
                     'danger' => 'draft',
-                    'warning' => 'in_review',
-                    'success' => 'approved',
+                    'warning' => 'reviewing',
+                    'success' => 'published',
                 ]),
-            Tables\Columns\BooleanColumn::make('is_published'),
-        ];
+            Tables\Columns\BooleanColumn::make('is_featured'),
+        ]; // [tl! collapse:end]
     }
     
     protected function getTableFilters(): array
     {
-        return [
+        return [ // [tl! collapse:start]
             Tables\Filters\Filter::make('published')
                 ->query(fn (Builder $query): $query => $query->where('is_published', true)),
             Tables\Filters\SelectFilter::make('status')
@@ -117,20 +118,20 @@ class ListPosts extends Component implements Forms\Contracts\HasForms, Table\Con
                     'in_review' => 'In Review',
                     'approved' => 'Approved',
                 ]),
-        ];
+        ]; // [tl! collapse:end]
     }
     
     protected function getTableActions(): array
     {
-        return [
+        return [ // [tl! collapse:start]
             Tables\Actions\LinkAction::make('edit')
                 ->url(fn (Post $record): string => route('posts.edit', $record)),
-        ];
+        ]; // [tl! collapse:end]
     }
     
     protected function getTableBulkActions(): array
     {
-        return [
+        return [ // [tl! collapse:start]
             Tables\Actions\BulkAction::make('delete')
                 ->label('Delete selected')
                 ->color('danger')
@@ -138,8 +139,8 @@ class ListPosts extends Component implements Forms\Contracts\HasForms, Table\Con
                     $records->each->delete();
                 })
                 ->requiresConfirmation(),
-        ];
-    }
+        ]; // [tl! collapse:end]
+    } // [tl! focus:end]
     
     public function render(): View
     {
@@ -152,4 +153,88 @@ Visit your Livewire component in the browser, and you should see the table.
 
 ## Pagination
 
-By default, 
+By default, tables will be paginated. To disable this, you should override the `isTablePaginationEnabled()` method on your Livewire component:
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Forms;
+use Filament\Tables;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
+
+class ListPosts extends Component implements Forms\Contracts\HasForms, Table\Contracts\HasTable
+{
+    use Tables\Concerns\InteractsWithTable;
+    
+    protected function getTableQuery(): Builder
+    {
+        return Post::query();
+    }
+    
+    protected function getTableColumns(): array
+    {
+        return [
+            Tables\Columns\TextColumn::make('title'),
+            Tables\Columns\TextColumn::make('author.name'),
+        ];
+    }
+    
+    protected function isTablePaginationEnabled(): bool // [tl! focus:start]
+    {
+        return false;
+    } // [tl! focus:end]
+    
+    public function render(): View
+    {
+        return view('list-posts');
+    }
+}
+```
+
+You may customise the options for the paginated records per page select by overriding the `getTableRecordsPerPageSelectOptions()` method on your Livewire component:
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Forms;
+use Filament\Tables;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
+
+class ListPosts extends Component implements Forms\Contracts\HasForms, Table\Contracts\HasTable
+{
+    use Tables\Concerns\InteractsWithTable;
+    
+    protected function getTableQuery(): Builder
+    {
+        return Post::query();
+    }
+    
+    protected function getTableColumns(): array
+    {
+        return [
+            Tables\Columns\TextColumn::make('title'),
+            Tables\Columns\TextColumn::make('author.name'),
+        ];
+    }
+    
+    protected function getTableRecordsPerPageSelectOptions(): array // [tl! focus:start]
+    {
+        return [10, 25, 50, 100];
+    } // [tl! focus:end]
+    
+    public function render(): View
+    {
+        return view('list-posts');
+    }
+}
+```
