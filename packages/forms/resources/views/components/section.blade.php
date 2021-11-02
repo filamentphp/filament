@@ -1,6 +1,8 @@
 <div
-    x-data="{ isCollapsed: {{ $isCollapsed() ? 'true' : 'false' }} }"
-    x-on:expand-concealing-component.window="if ($event.detail.id === $el.id) isCollapsed = false"
+    @if ($isCollapsible())
+        x-data="{ isCollapsed: {{ $isCollapsed() ? 'true' : 'false' }} }"
+        x-on:expand-concealing-component.window="if ($event.detail.id === $el.id) isCollapsed = false"
+    @endif
     id="{{ $getId() }}"
     class="p-6 space-y-6 rounded-xl shadow-sm border border-gray-300"
 >
@@ -35,8 +37,10 @@
     </div>
 
     <div
-        x-show="! isCollapsed"
-        x-bind:aria-expanded="(! isCollapsed).toString()"
+        @if ($isCollapsible())
+            x-show="! isCollapsed"
+            x-bind:aria-expanded="(! isCollapsed).toString()"
+        @endif
     >
         {{ $getChildComponentContainer() }}
     </div>
