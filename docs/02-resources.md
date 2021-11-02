@@ -337,7 +337,7 @@ To generate a URL for a resource route, you may call the static `generateUrl()` 
 SortCustomers::generateUrl($parameters = [], $absolute = true);
 ```
 
-To access a custom page, such as a "show" route, you may define a new action for each table:
+To access a custom page, such as a "show" route, from the table, you can define a new action:
 
 ```php
 use Filament\Resources\Tables\Table;
@@ -353,7 +353,7 @@ public static function table(Table $table)
 }
 ```
 
-By passing a callback to the `url` method, you can get access to each row's record. You may also use the `pushRecordActions` or `recordActions` method to define actions on a `$table`.
+By passing a callback to the `url()` method, you can get access to each row's record.
 
 ## Authorization
 
