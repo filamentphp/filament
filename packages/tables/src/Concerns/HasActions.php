@@ -64,7 +64,7 @@ trait HasActions
         $this->mountedTableActionRecord = $record;
 
         if (! $action->shouldOpenModal()) {
-            return $this->callTableAction();
+            return $this->callMountedTableAction();
         }
 
         $this->getMountedTableActionForm()->fill();
