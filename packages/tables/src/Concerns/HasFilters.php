@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait HasFilters
 {
-    use Forms\Concerns\InteractsWithForms;
-
     protected array $cachedTableFilters;
 
     public $tableFilters = [];

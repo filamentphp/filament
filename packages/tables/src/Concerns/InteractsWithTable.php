@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Forms;
 use Filament\Tables\Table;
 use Livewire\WithPagination;
 
@@ -17,6 +18,7 @@ trait InteractsWithTable
     use HasEmptyState;
     use HasFilters;
     use HasRecords;
+    use Forms\Concerns\InteractsWithForms;
     use WithPagination;
 
     protected Table $table;
@@ -53,12 +55,19 @@ trait InteractsWithTable
 
     protected function getForms(): array
     {
+        $model = $this->getTableQuery()->getModel()::class;
+
         return [
-            'mountedTableActionForm' => $this->makeForm()->statePath('mountedTableActionData'),
-            'mountedTableBulkActionForm' => $this->makeForm()->statePath('mountedTableBulkActionData'),
+            'mountedTableActionForm' => $this->makeForm()
+                ->statePath('mountedTableActionData')
+                ->model($model),
+            'mountedTableBulkActionForm' => $this->makeForm()
+                ->statePath('mountedTableBulkActionData')
+                ->model($model),
             'tableFiltersForm' => $this->makeForm()
                 ->schema($this->getTableFiltersFormSchema())
                 ->statePath('tableFilters')
+                ->model($model)
                 ->reactive(),
         ];
     }

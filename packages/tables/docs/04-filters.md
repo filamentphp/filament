@@ -24,7 +24,7 @@ use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
 Filter::make('is_featured')
-    ->query(fn (Builder $query): Builder => $query->where('is_featured', true));
+    ->query(fn (Builder $query): Builder => $query->where('is_featured', true))
 ```
 
 ### Setting a label
@@ -67,7 +67,7 @@ SelectFilter::make('status')
         'reviewing' => 'Reviewing',
         'published' => 'Published',
     ])
-    ->column('status_id');
+    ->column('status_id')
 ```
 
 ### Custom filter forms
@@ -75,14 +75,14 @@ SelectFilter::make('status')
 You may use components from the [Form Builder](/docs/forms/fields) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
 
 ```php
-use Filament\Forms\Components\DatePicker;
+use Filament\Forms;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
 Filter::make('created_at')
     ->form([
-        DatePicker::make('created_from'),
-        DatePicker::make('created_until'),
+        Forms\Components\DatePicker::make('created_from'),
+        Forms\Components\DatePicker::make('created_until'),
     ])
     ->query(function (Builder $query, array $data): Builder {
         return $query
@@ -94,5 +94,5 @@ Filter::make('created_at')
                 $data['created_until'],
                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
             );
-    });
+    })
 ```

@@ -91,7 +91,8 @@ trait HasActions
     public function getMountedTableActionForm(): ComponentContainer
     {
         return $this->mountedTableActionForm
-            ->schema($this->getMountedTableAction()->getFormSchema());
+            ->schema($this->getMountedTableAction()->getFormSchema())
+            ->model($this->getTableQuery()->find($this->mountedTableActionRecord));
     }
 
     protected function getCachedTableAction(string $name): ?Action

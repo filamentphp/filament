@@ -4,19 +4,18 @@ title: Building Tables
 
 ## Preparing your Livewire component
 
-Implement the `HasTable` and `HasForms` interface, and use the `InteractsWithTable` trait:
+Implement the `HasTable` interface and use the `InteractsWithTable` trait:
 
 ```php
 <?php
 
 namespace App\Http\Livewire;
 
-use Filament\Forms;
 use Filament\Tables;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class ListPosts extends Component implements Forms\Contracts\HasForms, Table\Contracts\HasTable // [tl! focus]
+class ListPosts extends Component implements Table\Contracts\HasTable // [tl! focus]
 {
     use Tables\Concerns\InteractsWithTable; // [tl! focus]
     
@@ -43,13 +42,12 @@ Next, add the Eloquent query you would like the table to be based upon in the `g
 namespace App\Http\Livewire;
 
 use App\Models\Post;
-use Filament\Forms;
 use Filament\Tables;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
-class ListPosts extends Component implements Forms\Contracts\HasForms, Table\Contracts\HasTable
+class ListPosts extends Component implements Table\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
     
@@ -73,14 +71,13 @@ Finally, add any [columns](columns), [filters](filters), and [actions](actions) 
 namespace App\Http\Livewire;
 
 use App\Models\Post;
-use Filament\Forms;
 use Filament\Tables;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
-class ListPosts extends Component implements Forms\Contracts\HasForms, Table\Contracts\HasTable
+class ListPosts extends Component implements Table\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
     
@@ -161,13 +158,12 @@ By default, tables will be paginated. To disable this, you should override the `
 namespace App\Http\Livewire;
 
 use App\Models\Post;
-use Filament\Forms;
 use Filament\Tables;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
-class ListPosts extends Component implements Forms\Contracts\HasForms, Table\Contracts\HasTable
+class ListPosts extends Component implements Table\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
     
@@ -204,13 +200,12 @@ You may customise the options for the paginated records per page select by overr
 namespace App\Http\Livewire;
 
 use App\Models\Post;
-use Filament\Forms;
 use Filament\Tables;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
-class ListPosts extends Component implements Forms\Contracts\HasForms, Table\Contracts\HasTable
+class ListPosts extends Component implements Table\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
     

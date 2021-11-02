@@ -37,7 +37,7 @@ trait CanOpenModal
             return $this->modalButtonLabel;
         }
 
-        if ($this->requiresConfirmation()) {
+        if ($this->isConfirmationRequired()) {
             return __('tables::table.actions.modal.buttons.confirm.label');
         }
 
@@ -55,7 +55,7 @@ trait CanOpenModal
             return $this->modalSubheading;
         }
 
-        if (! $this->requiresConfirmation()) {
+        if (! $this->isConfirmationRequired()) {
             return null;
         }
 
