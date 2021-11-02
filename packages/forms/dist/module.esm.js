@@ -21998,6 +21998,9 @@ var text_input_default = (Alpine) => {
         this.mask = IMask(this.$el, getMaskOptionsUsing(IMask)).on("accept", () => {
           this.state = this.mask.unmaskedValue;
         });
+        this.$watch("state", () => {
+          this.mask.unmaskedValue = this.state?.valueOf();
+        });
       }
     };
   });
