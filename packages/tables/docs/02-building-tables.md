@@ -15,7 +15,7 @@ use Filament\Tables;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class ListPosts extends Component implements Table\Contracts\HasTable // [tl! focus]
+class ListPosts extends Component implements Tables\Contracts\HasTable // [tl! focus]
 {
     use Tables\Concerns\InteractsWithTable; // [tl! focus]
     
@@ -47,7 +47,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
-class ListPosts extends Component implements Table\Contracts\HasTable
+class ListPosts extends Component implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
     
@@ -77,7 +77,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
-class ListPosts extends Component implements Table\Contracts\HasTable
+class ListPosts extends Component implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
     
@@ -163,7 +163,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
-class ListPosts extends Component implements Table\Contracts\HasTable
+class ListPosts extends Component implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
     
@@ -205,7 +205,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
-class ListPosts extends Component implements Table\Contracts\HasTable
+class ListPosts extends Component implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
     
