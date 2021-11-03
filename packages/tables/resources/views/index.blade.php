@@ -183,7 +183,7 @@
                         @endforeach
 
                         @if (count($getActions()))
-                            <th>
+                            <th class="w-5">
                                 <span class="sr-only">
                                     Actions
                                 </span>
