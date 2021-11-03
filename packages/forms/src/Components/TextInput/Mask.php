@@ -318,7 +318,7 @@ class Mask implements Jsonable
 
     public function toJson($options = 0): string
     {
-        $json = json_encode($this->getArrayableConfiguration(), $options);
+        $json = json_encode($this->getArrayableConfiguration(), JSON_UNESCAPED_SLASHES | $options);
 
         return str_replace(
             [
