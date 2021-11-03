@@ -192,7 +192,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
 }
 ```
 
-You may customise the options for the paginated records per page select by overriding the `getTableRecordsPerPageSelectOptions()` method on your Livewire component:
+You may customize the options for the paginated records per page select by overriding the `getTableRecordsPerPageSelectOptions()` method on your Livewire component:
 
 ```php
 <?php
@@ -225,6 +225,81 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
     protected function getTableRecordsPerPageSelectOptions(): array // [tl! focus:start]
     {
         return [10, 25, 50, 100];
+    } // [tl! focus:end]
+    
+    public function render(): View
+    {
+        return view('list-posts');
+    }
+}
+```
+
+## Empty state
+
+By default, an "empty state" card will be rendered when the table is empty. To customize this, you may define methods on your Livewire component:
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Tables;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Livewire\Component;
+
+class ListPosts extends Component implements Tables\Contracts\HasTable
+{
+    use Tables\Concerns\InteractsWithTable;
+    
+    protected function getTableQuery(): Builder
+    {
+        return Post::query();
+    }
+    
+    protected function getTableColumns(): array
+    {
+        return [ // [tl! collapse:start]
+            Tables\Columns\ImageColumn::make('author.avatar')
+                ->size(40)
+                ->rounded(),
+            Tables\Columns\TextColumn::make('title'),
+            Tables\Columns\TextColumn::make('author.name'),
+            Tables\Columns\BadgeColumn::make('status')
+                ->colors([
+                    'danger' => 'draft',
+                    'warning' => 'reviewing',
+                    'success' => 'published',
+                ]),
+            Tables\Columns\BooleanColumn::make('is_featured'),
+        ]; // [tl! collapse:end]
+    }
+    
+    protected function getTableEmptyStateIcon(): ?string // [tl! focus:start]
+    {
+        return 'heroicon-o-bookmark';
+    }
+    
+    protected function getTableEmptyStateHeading(): ?string
+    {
+        return 'No posts yet';
+    }
+    
+    protected function getTableEmptyStateDescription(): ?string
+    {
+        return 'You may create a post using the button below.';
+    }
+    
+    protected function getTableEmptyStateActions(): array
+    {
+        return [
+            Tables\Actions\ButtonAction::make('create')
+                ->label('Create post')
+                ->url(route('posts.create'))
+                ->icon('heroicon-o-plus'),
+        ];
     } // [tl! focus:end]
     
     public function render(): View

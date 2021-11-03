@@ -9,6 +9,7 @@ use Filament\Tables\Actions\BulkAction;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\View\View;
 
 interface HasTable extends HasForms
 {

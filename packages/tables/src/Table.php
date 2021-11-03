@@ -20,13 +20,23 @@ class Table extends ViewComponent implements Htmlable
     use Macroable;
     use Tappable;
 
+    protected ?string $description = null;
+
+    protected ?View $emptyState = null;
+
+    protected array $emptyStateActions = [];
+
     protected ?string $emptyStateDescription = null;
 
     protected ?string $emptyStateHeading = null;
 
     protected ?string $emptyStateIcon = null;
 
-    protected ?View $emptyStateView = null;
+    protected ?View $header = null;
+
+    protected array $headerActions = [];
+
+    protected ?string $heading = null;
 
     protected bool $isPaginationEnabled = true;
 
@@ -42,6 +52,27 @@ class Table extends ViewComponent implements Htmlable
     public static function make(HasTable $livewire): static
     {
         return new static($livewire);
+    }
+
+    public function description(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function emptyState(?View $view): static
+    {
+        $this->emptyState = $view;
+
+        return $this;
+    }
+
+    public function emptyStateActions(array $actions): static
+    {
+        $this->emptyStateActions = $actions;
+
+        return $this;
     }
 
     public function emptyStateDescription(?string $description): static
@@ -65,16 +96,30 @@ class Table extends ViewComponent implements Htmlable
         return $this;
     }
 
-    public function emptyStateView(?View $view): static
+    public function enablePagination(bool $condition = true): static
     {
-        $this->emptyStateView = $view;
+        $this->isPaginationEnabled = $condition;
 
         return $this;
     }
 
-    public function enablePagination(bool $condition = true): static
+    public function header(?View $view): static
     {
-        $this->isPaginationEnabled = $condition;
+        $this->header = $view;
+
+        return $this;
+    }
+
+    public function headerActions(array $actions): static
+    {
+        $this->headerActions = $actions;
+
+        return $this;
+    }
+
+    public function heading(?string $heading): static
+    {
+        $this->heading = $heading;
 
         return $this;
     }
@@ -116,6 +161,21 @@ class Table extends ViewComponent implements Htmlable
         return $this->getLivewire()->getCachedTableColumns();
     }
 
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function getEmptyState(): ?View
+    {
+        return $this->emptyState;
+    }
+
+    public function getEmptyStateActions(): array
+    {
+        return $this->emptyStateActions;
+    }
+
     public function getEmptyStateDescription(): ?string
     {
         return $this->emptyStateDescription;
@@ -131,11 +191,6 @@ class Table extends ViewComponent implements Htmlable
         return $this->emptyStateIcon ?? 'heroicon-o-x';
     }
 
-    public function getEmptyStateView(): ?View
-    {
-        return $this->emptyStateView;
-    }
-
     public function getFilters(): array
     {
         return $this->getLivewire()->getCachedTableFilters();
@@ -144,6 +199,21 @@ class Table extends ViewComponent implements Htmlable
     public function getFiltersForm(): ComponentContainer
     {
         return $this->getLivewire()->getTableFiltersForm();
+    }
+
+    public function getHeader(): ?View
+    {
+        return $this->header;
+    }
+
+    public function getHeaderActions(): array
+    {
+        return $this->headerActions;
+    }
+
+    public function getHeading(): ?string
+    {
+        return $this->heading;
     }
 
     public function getMountedAction(): ?Action

@@ -17,6 +17,7 @@ trait InteractsWithTable
     use HasColumns;
     use HasEmptyState;
     use HasFilters;
+    use HasHeader;
     use HasRecords;
     use Forms\Concerns\InteractsWithForms;
     use WithPagination;
@@ -45,11 +46,16 @@ trait InteractsWithTable
     protected function getTable(): Table
     {
         return $this->makeTable()
+            ->description($this->getTableDescription())
+            ->emptyState($this->getTableEmptyState())
+            ->emptyStateActions($this->getTableEmptyStateActions())
             ->emptyStateDescription($this->getTableEmptyStateDescription())
             ->emptyStateHeading($this->getTableEmptyStateHeading())
             ->emptyStateIcon($this->getTableEmptyStateIcon())
-            ->emptyStateView($this->getTableEmptyStateView())
             ->enablePagination($this->isTablePaginationEnabled())
+            ->header($this->getTableHeader())
+            ->headerActions($this->getTableHeaderActions())
+            ->heading($this->getTableHeading())
             ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions());
     }
 

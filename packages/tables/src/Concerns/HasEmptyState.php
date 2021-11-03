@@ -6,6 +6,16 @@ use Illuminate\Contracts\View\View;
 
 trait HasEmptyState
 {
+    protected function getTableEmptyState(): ?View
+    {
+        return null;
+    }
+
+    protected function getTableEmptyStateActions(): array
+    {
+        return [];
+    }
+
     protected function getTableEmptyStateDescription(): ?string
     {
         return null;
@@ -17,11 +27,6 @@ trait HasEmptyState
     }
 
     protected function getTableEmptyStateIcon(): ?string
-    {
-        return null;
-    }
-
-    protected function getTableEmptyStateView(): ?View
     {
         return null;
     }

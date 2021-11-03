@@ -20,7 +20,6 @@
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
     size="sm"
-    class="-my-2"
 >
     {{ $getLabel() }}
 </x-tables::button>

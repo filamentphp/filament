@@ -79,7 +79,7 @@ When a cell is clicked, you may run an "action", or open a URL.
 
 #### Running actions
 
-To run an action, you may use the `action()` method, passing a callback or the name of a Livewire method to run. Each method accepts a `$record` parameter which you may use to customise the behaviour of the action:
+To run an action, you may use the `action()` method, passing a callback or the name of a Livewire method to run. Each method accepts a `$record` parameter which you may use to customize the behaviour of the action:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -94,7 +94,7 @@ TextColumn::make('title')
 
 #### Opening URLs
 
-To open a URL, you may use the `url()` method, passing a callback or static URL to open. Callbacks accept a `$record` parameter which you may use to customise the URL:
+To open a URL, you may use the `url()` method, passing a callback or static URL to open. Callbacks accept a `$record` parameter which you may use to customize the URL:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
