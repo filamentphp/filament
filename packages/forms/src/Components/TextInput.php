@@ -7,6 +7,7 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class TextInput extends Field
 {
+    use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasPlaceholder;

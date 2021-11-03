@@ -9,6 +9,7 @@
 >
     <textarea
         {!! ($autocomplete = $getAutocomplete()) ? "autocomplete=\"{$autocomplete}\"" : null !!}
+        {!! ($autocapitalize = $getAutocapitalize()) ? "autocapitalize=\"{$autocapitalize}\"" : null !!}
         {!! $isAutofocused() ? 'autofocus' : null !!}
         {!! ($cols = $getCols()) ? "cols=\"{$cols}\"" : null !!}
         {!! $isDisabled() ? 'disabled' : null !!}
