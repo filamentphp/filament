@@ -20,6 +20,7 @@ class BulkAction
     use Concerns\HasIcon;
     use Concerns\HasLabel;
     use Concerns\HasName;
+    use Concerns\HasRecords;
     use Conditionable;
     use Macroable;
     use Tappable;
@@ -41,7 +42,7 @@ class BulkAction
     {
     }
 
-    public function call(Collection $records, array $data = [])
+    public function call(array $data = [])
     {
         $action = $this->getAction();
 
@@ -53,7 +54,7 @@ class BulkAction
             return app()->call($action, [
                 'data' => $data,
                 'livewire' => $this->getLivewire(),
-                'records' => $records,
+                'records' => $this->getRecords(),
             ]);
         } finally {
             if ($this->shouldDeselectRecordsAfterCompletion()) {

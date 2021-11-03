@@ -35,7 +35,7 @@ trait HasBulkActions
         $data = $this->getMountedTableBulkActionForm()->getState();
 
         try {
-            return $action->call($this->getSelectedTableRecords(), $data);
+            return $action->records($this->getSelectedTableRecords())->call($data);
         } finally {
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => 'bulk-action',

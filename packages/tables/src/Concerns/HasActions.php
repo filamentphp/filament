@@ -36,14 +36,10 @@ trait HasActions
 
         $record = $this->resolveTableRecord($this->mountedTableActionRecord);
 
-        if (! $record) {
-            return;
-        }
-
         $data = $this->getMountedTableActionForm()->getState();
 
         try {
-            return $action->call($record, $data);
+            return $action->record($record)->call($data);
         } finally {
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => 'action',
@@ -51,7 +47,7 @@ trait HasActions
         }
     }
 
-    public function mountTableAction(string $name, string $record)
+    public function mountTableAction(string $name, ?string $record = null)
     {
         $this->mountedTableAction = $name;
 

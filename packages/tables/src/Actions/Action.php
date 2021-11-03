@@ -45,7 +45,7 @@ class Action extends Component implements Htmlable
     {
     }
 
-    public function call(Model $record, array $data = [])
+    public function call(array $data = [])
     {
         $action = $this->getAction();
 
@@ -56,7 +56,7 @@ class Action extends Component implements Htmlable
         return app()->call($action, [
             'data' => $data,
             'livewire' => $this->getLivewire(),
-            'record' => $record,
+            'record' => $this->getRecord(),
         ]);
     }
 
