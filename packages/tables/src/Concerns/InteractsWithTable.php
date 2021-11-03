@@ -55,19 +55,14 @@ trait InteractsWithTable
 
     protected function getForms(): array
     {
-        $model = $this->getTableQuery()->getModel()::class;
-
         return [
             'mountedTableActionForm' => $this->makeForm()
-                ->statePath('mountedTableActionData')
-                ->model($model),
+                ->statePath('mountedTableActionData'),
             'mountedTableBulkActionForm' => $this->makeForm()
-                ->statePath('mountedTableBulkActionData')
-                ->model($model),
+                ->statePath('mountedTableBulkActionData'),
             'tableFiltersForm' => $this->makeForm()
                 ->schema($this->getTableFiltersFormSchema())
                 ->statePath('tableFilters')
-                ->model($model)
                 ->reactive(),
         ];
     }

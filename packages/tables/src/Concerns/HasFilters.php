@@ -30,7 +30,7 @@ trait HasFilters
 
     public function getTableFiltersForm(): Forms\ComponentContainer
     {
-        return $this->tableFiltersForm;
+        return $this->tableFiltersForm->model($this->getTableQuery()->getModel()::class);
     }
 
     public function isTableFilterable(): bool

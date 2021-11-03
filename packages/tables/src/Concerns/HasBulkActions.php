@@ -81,7 +81,8 @@ trait HasBulkActions
     public function getMountedTableBulkActionForm(): ComponentContainer
     {
         return $this->mountedTableBulkActionForm
-            ->schema($this->getMountedTableBulkAction()->getFormSchema());
+            ->schema($this->getMountedTableBulkAction()->getFormSchema())
+            ->model($this->getTableQuery()->getModel()::class);
     }
 
     protected function getCachedTableBulkAction(string $name): ?BulkAction
