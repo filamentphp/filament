@@ -36,13 +36,17 @@ trait CanSearchRecords
             return $query;
         }
 
-        return $query->where(function (Builder $query) use ($searchQuery) {
-            $isFirst = true;
+        foreach (explode(' ', $searchQuery) as $searchQueryWord) {
+            $query->where(function (Builder $query) use ($searchQueryWord) {
+                $isFirst = true;
 
-            foreach ($this->getCachedTableColumns() as $column) {
-                $column->applySearchConstraint($query, $searchQuery, $isFirst);
-            }
-        });
+                foreach ($this->getCachedTableColumns() as $column) {
+                    $column->applySearchConstraint($query, $searchQueryWord, $isFirst);
+                }
+            });
+        }
+
+        return $query;
     }
 
     protected function getTableSearchQuery(): string
