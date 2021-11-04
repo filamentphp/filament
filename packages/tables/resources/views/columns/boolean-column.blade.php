@@ -4,13 +4,13 @@
     $stateIcon = $getStateIcon() ?? ($state ? 'heroicon-o-check-circle' : 'heroicon-o-x-circle');
     $stateColor = $getStateColor() ?? ($state ? 'success' : 'danger');
 
-    $stateColor = [
+    $stateColor = match ($stateColor) {
         'danger' => 'text-danger-500',
         'primary' => 'text-primary-500',
-        'secondary' => 'text-gray-700',
         'success' => 'text-success-500',
         'warning' => 'text-warning-500',
-    ][$stateColor] ?? $stateColor;
+        default => 'text-gray-700',
+    };
 @endphp
 
 <div class="px-4 py-3">
