@@ -104,7 +104,7 @@ class FilamentManager
             return true;
         }
 
-        return Gate::check($action, $target);
+        return Gate::forUser($user)->check($action, $target);
     }
 
     public function getAuthorizations()
