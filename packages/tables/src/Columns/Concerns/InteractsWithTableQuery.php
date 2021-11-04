@@ -43,9 +43,9 @@ trait InteractsWithTableQuery
             }
 
             $isFirst = false;
-
-            return $query;
         }
+
+        return $query;
     }
 
     public function applySort(Builder $query, string $direction = 'asc'): Builder
@@ -75,9 +75,9 @@ trait InteractsWithTableQuery
                     $direction,
                 );
             }
-
-            return $query;
         }
+
+        return $query;
     }
 
     public function queriesRelationships(): bool
@@ -112,8 +112,9 @@ trait InteractsWithTableQuery
 
     protected function getQuerySearchOperator(Builder $query): string
     {
-        return [
+        return match ($query->getConnection()->getDriverName()) {
             'pgsql' => 'ilike',
-        ][$query->getConnection()->getDriverName()] ?? 'like';
+            default => 'like',
+        };
     }
 }

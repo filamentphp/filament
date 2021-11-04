@@ -47,6 +47,6 @@ trait CanSearchRecords
 
     protected function getTableSearchQuery(): string
     {
-        return strtolower($this->tableSearchQuery);
+        return trim(strtolower($this->tableSearchQuery));
     }
 }
