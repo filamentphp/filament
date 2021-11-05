@@ -156,7 +156,8 @@ class Mask implements Jsonable
                     ->thousandsSeparator($thousandsSeparator)
                     ->decimalPlaces($decimalPlaces),
             ])
-            ->pattern("{$prefix}money");
+            ->pattern("{$prefix}money")
+            ->lazyPlaceholder(false);
 
         return $this;
     }

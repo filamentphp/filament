@@ -61,7 +61,15 @@ trait InteractsWithTable
 
     protected function getForms(): array
     {
+        return $this->getTableForms();
+    }
+
+    protected function getTableForms(): array
+    {
         return [
+            'form' => $this->makeForm()
+                ->schema($this->getFormSchema())
+                ->model($this->getFormModel()),
             'mountedTableActionForm' => $this->makeForm()
                 ->statePath('mountedTableActionData'),
             'mountedTableBulkActionForm' => $this->makeForm()
