@@ -308,3 +308,148 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
     }
 }
 ```
+
+## Using the form builder
+
+Internally, the table builder uses the [form builder](/docs/forms) to implement filtering, actions, and bulk actions. Because of this, the form builder is already set up on your Livewire component and ready to use with your own custom forms.
+
+You may use the default `form` out of the box:
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Tables;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Livewire\Component;
+
+class ListPosts extends Component implements Tables\Contracts\HasTable
+{
+    use Tables\Concerns\InteractsWithTable;
+    
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+    
+    protected function getFormSchema(): array
+    {
+        return [
+            // ...
+        ];
+    }
+    
+    protected function getTableQuery(): Builder // [tl! collapse:start]
+    {
+        return Post::query();
+    }
+    
+    protected function getTableColumns(): array
+    {
+        return [
+            Tables\Columns\ImageColumn::make('author.avatar')
+                ->size(40)
+                ->rounded(),
+            Tables\Columns\TextColumn::make('title'),
+            Tables\Columns\TextColumn::make('author.name'),
+            Tables\Columns\BadgeColumn::make('status')
+                ->colors([
+                    'danger' => 'draft',
+                    'warning' => 'reviewing',
+                    'success' => 'published',
+                ]),
+            Tables\Columns\BooleanColumn::make('is_featured'),
+        ];
+    } // [tl! collapse:end]
+    
+    public function render(): View
+    {
+        return view('list-posts');
+    }
+}
+```
+
+You may also [register multiple custom forms](/docs/forms/building-forms#using-multiple-forms) on your component:
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Tables;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Livewire\Component;
+
+class ListPosts extends Component implements Tables\Contracts\HasTable
+{
+    use Tables\Concerns\InteractsWithTable;
+    
+    public ?Post $postToEdit = null;
+    
+    public function mount(): void
+    {
+        $this->createPostForm->fill();
+    }
+    
+    protected function getCreatePostFormSchema(): array
+    {
+        return [
+            // ...
+        ];
+    }
+    
+    protected function getEditPostFormSchema(): array
+    {
+        return [
+            // ...
+        ];
+    }
+    
+    protected function getForms(): array
+    {
+        return array_merge($this->getTableForms(), [
+            'createPostForm' => $this->makeForm()
+                ->schema($this->getCreatePostFormSchema())
+                ->model(Post::class),
+            'editPostForm' => $this->makeForm()
+                ->schema($this->getEditPostFormSchema())
+                ->model($this->postToEdit),
+        ]);
+    }
+    
+    protected function getTableQuery(): Builder // [tl! collapse:start]
+    {
+        return Post::query();
+    }
+    
+    protected function getTableColumns(): array
+    {
+        return [
+            Tables\Columns\ImageColumn::make('author.avatar')
+                ->size(40)
+                ->rounded(),
+            Tables\Columns\TextColumn::make('title'),
+            Tables\Columns\TextColumn::make('author.name'),
+            Tables\Columns\BadgeColumn::make('status')
+                ->colors([
+                    'danger' => 'draft',
+                    'warning' => 'reviewing',
+                    'success' => 'published',
+                ]),
+            Tables\Columns\BooleanColumn::make('is_featured'),
+        ];
+    } // [tl! collapse:end]
+    
+    public function render(): View
+    {
+        return view('list-posts');
+    }
+}
+```

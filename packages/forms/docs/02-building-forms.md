@@ -674,8 +674,12 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     protected function getForms(): array // [tl! focus:start]
     {
         return [
-            'postForm' => $this->makeForm()->schema($this->getPostFormSchema()),
-            'authorForm' => $this->makeForm()->schema($this->getAuthorFormSchema()),
+            'postForm' => $this->makeForm()
+                ->schema($this->getPostFormSchema())
+                ->model($this->post),
+            'authorForm' => $this->makeForm()
+                ->schema($this->getAuthorFormSchema())
+                ->model($this->author),
         ];
     } // [tl! focus:end]
     
