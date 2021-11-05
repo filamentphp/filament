@@ -33,8 +33,8 @@
     };
 @endphp
 
-<div class="border border-gray-300 bg-white shadow rounded-xl overflow-hidden">
-    @if ($header || $heading || $headerActions || $isBulkActionsDropdownVisible || $isSearchVisible || $isFiltersDropdownVisible)
+<div class="border border-gray-300 bg-white shadow rounded-xl">
+    @if ($hasTableHeader = ($header || $heading || $headerActions || $isBulkActionsDropdownVisible || $isSearchVisible || $isFiltersDropdownVisible))
         @if ($header)
             {{ $header }}
         @elseif ($heading || $headerActions)
@@ -179,169 +179,173 @@
                     @endif
                 </div>
             @endif
-        @endif
+        </div>
+    @endif
 
-        <div class="overflow-y-auto">
-            @if (($records = $getRecords())->count())
-                <table class="w-full text-left divide-y table-auto">
-                    <thead>
-                        <tr class="bg-gray-50">
+    <div @class([
+        'overflow-y-auto',
+        'rounded-t-xl' => ! $hasTableHeader,
+        'border-t' => $hasTableHeader,
+    ])>
+        @if (($records = $getRecords())->count())
+            <table class="w-full text-left divide-y table-auto">
+                <thead>
+                    <tr class="bg-gray-50">
+                        @if ($isSelectionEnabled())
+                            <th class="w-4 px-4 whitespace-nowrap">
+                                <input
+                                    {{ $areAllRecordsOnCurrentPageSelected() ? 'checked' : null }}
+                                    wire:click="{{ $isPaginationEnabled() ? 'toggleSelectTableRecordsOnPage' : 'toggleSelectAllTableRecords' }}"
+                                    type="checkbox"
+                                    class="border-gray-300 rounded shadow-sm text-primary-600 focus:border-primary-600 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
+                                />
+                            </th>
+                        @endif
+
+                        @foreach ($columns as $column)
+                            <th @class([
+                                'px-4 py-2 text-sm font-semibold text-gray-600',
+                                $getHiddenClasses($column),
+                            ])>
+                                <button
+                                    @if ($column->isSortable())
+                                        wire:click="sortTable('{{ $column->getName() }}')"
+                                    @endif
+                                    type="button"
+                                    @class([
+                                        'flex items-center space-x-1',
+                                        'cursor-default' => ! $column->isSortable(),
+                                    ])
+                                >
+                                    <span>
+                                        {{ $column->getLabel() }}
+                                    </span>
+
+                                    @if ($getSortColumn() === $column->getName())
+                                        <span class="relative flex items-center">
+                                            @if ($getSortDirection() === 'asc')
+                                                <x-heroicon-s-chevron-down class="w-3 h-3" />
+                                            @elseif ($getSortDirection() === 'desc')
+                                                <x-heroicon-s-chevron-up class="w-3 h-3" />
+                                            @endif
+                                        </span>
+                                    @endif
+                                </button>
+                            </th>
+                        @endforeach
+
+                        @if (count($getActions()))
+                            <th class="w-5">
+                                <span class="sr-only">
+                                    Actions
+                                </span>
+                            </th>
+                        @endif
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y whitespace-nowrap">
+                    @foreach ($records as $record)
+                        <tr>
                             @if ($isSelectionEnabled())
-                                <th class="w-4 px-4 whitespace-nowrap">
+                                <td class="px-4 whitespace-nowrap">
                                     <input
-                                        {{ $areAllRecordsOnCurrentPageSelected() ? 'checked' : null }}
-                                        wire:click="{{ $isPaginationEnabled() ? 'toggleSelectTableRecordsOnPage' : 'toggleSelectAllTableRecords' }}"
+                                        {{ $isRecordSelected($record->getKey()) ? 'checked' : null }}
+                                        wire:click="toggleSelectTableRecord('{{ $record->getKey() }}')"
                                         type="checkbox"
-                                        class="border-gray-300 rounded shadow-sm text-primary-600 focus:border-primary-600 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
+                                        class="border-gray-300 rounded shadow-sm text-primary-600 focus:border-primary-600 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                     />
-                                </th>
+                                </td>
                             @endif
 
                             @foreach ($columns as $column)
-                                <th @class([
-                                    'px-4 py-2 text-sm font-semibold text-gray-600',
-                                    $getHiddenClasses($column),
-                                ])>
-                                    <button
-                                        @if ($column->isSortable())
-                                            wire:click="sortTable('{{ $column->getName() }}')"
-                                        @endif
-                                        type="button"
-                                        @class([
-                                            'flex items-center space-x-1',
-                                            'cursor-default' => ! $column->isSortable(),
-                                        ])
-                                    >
-                                        <span>
-                                            {{ $column->getLabel() }}
-                                        </span>
+                                @php
+                                    $column->record($record);
+                                @endphp
 
-                                        @if ($getSortColumn() === $column->getName())
-                                            <span class="relative flex items-center">
-                                                @if ($getSortDirection() === 'asc')
-                                                    <x-heroicon-s-chevron-down class="w-3 h-3" />
-                                                @elseif ($getSortDirection() === 'desc')
-                                                    <x-heroicon-s-chevron-up class="w-3 h-3" />
-                                                @endif
-                                            </span>
-                                        @endif
-                                    </button>
-                                </th>
+                                <td class="{!! $getHiddenClasses($column) !!}">
+                                    @if ($action = $column->getAction())
+                                        <button
+                                            @if (is_string($action))
+                                                wire:click="{{ $action }}('{{ $record->getKey() }}')"
+                                            @elseif ($action instanceof \Closure)
+                                                wire:click="callTableColumnAction('{{ $column->getName() }}', '{{ $record->getKey() }}')"
+                                            @endif
+                                            type="button"
+                                            class="block text-left transition hover:underline focus:outline-none focus:underline"
+                                        >
+                                            {{ $column }}
+                                        </button>
+                                    @elseif ($url = $column->getUrl())
+                                        <a
+                                            href="{{ $url }}"
+                                            {{ $column->shouldOpenUrlInNewTab() ? 'target="_blank"' : null }}
+                                            class="block transition hover:underline focus:outline-none focus:underline"
+                                        >
+                                            {{ $column }}
+                                        </a>
+                                    @else
+                                        {{ $column }}
+                                    @endif
+                                </td>
                             @endforeach
 
-                            @if (count($getActions()))
-                                <th class="w-5">
-                                    <span class="sr-only">
-                                        Actions
-                                    </span>
-                                </th>
+                            @if (count($actions))
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <div class="flex items-center justify-center space-x-2">
+                                        @foreach ($actions as $action)
+                                            {{ $action->record($record) }}
+                                        @endforeach
+                                    </div>
+                                </td>
                             @endif
                         </tr>
-                    </thead>
-
-                    <tbody class="divide-y whitespace-nowrap">
-                        @foreach ($records as $record)
-                            <tr>
-                                @if ($isSelectionEnabled())
-                                    <td class="px-4 whitespace-nowrap">
-                                        <input
-                                            {{ $isRecordSelected($record->getKey()) ? 'checked' : null }}
-                                            wire:click="toggleSelectTableRecord('{{ $record->getKey() }}')"
-                                            type="checkbox"
-                                            class="border-gray-300 rounded shadow-sm text-primary-600 focus:border-primary-600 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                        />
-                                    </td>
-                                @endif
-
-                                @foreach ($columns as $column)
-                                    @php
-                                        $column->record($record);
-                                    @endphp
-
-                                    <td class="{!! $getHiddenClasses($column) !!}">
-                                        @if ($action = $column->getAction())
-                                            <button
-                                                @if (is_string($action))
-                                                    wire:click="{{ $action }}('{{ $record->getKey() }}')"
-                                                @elseif ($action instanceof \Closure)
-                                                    wire:click="callTableColumnAction('{{ $column->getName() }}', '{{ $record->getKey() }}')"
-                                                @endif
-                                                type="button"
-                                                class="block text-left transition hover:underline focus:outline-none focus:underline"
-                                            >
-                                                {{ $column }}
-                                            </button>
-                                        @elseif ($url = $column->getUrl())
-                                            <a
-                                                href="{{ $url }}"
-                                                {{ $column->shouldOpenUrlInNewTab() ? 'target="_blank"' : null }}
-                                                class="block transition hover:underline focus:outline-none focus:underline"
-                                            >
-                                                {{ $column }}
-                                            </a>
-                                        @else
-                                            {{ $column }}
-                                        @endif
-                                    </td>
-                                @endforeach
-
-                                @if (count($actions))
-                                    <td class="px-4 py-3 whitespace-nowrap">
-                                        <div class="flex items-center justify-center space-x-2">
-                                            @foreach ($actions as $action)
-                                                {{ $action->record($record) }}
-                                            @endforeach
-                                        </div>
-                                    </td>
-                                @endif
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            @if ($emptyState = $getEmptyState())
+                {{ $emptyState }}
             @else
-                @if ($emptyState = $getEmptyState())
-                    {{ $emptyState }}
-                @else
-                    <div class="flex items-center justify-center p-4">
-                        <div class="flex flex-1 flex-col items-center justify-center max-w-md p-6 mx-auto space-y-6 text-center bg-white border rounded-2xl">
-                            <div class="flex items-center justify-center w-16 h-16 text-blue-500 rounded-full bg-blue-50">
-                                <x-dynamic-component :component="$getEmptyStateIcon()" class="w-6 h-6" />
-                            </div>
+                <div class="flex items-center justify-center p-4">
+                    <div class="flex flex-1 flex-col items-center justify-center max-w-md p-6 mx-auto space-y-6 text-center bg-white border rounded-2xl">
+                        <div class="flex items-center justify-center w-16 h-16 text-blue-500 rounded-full bg-blue-50">
+                            <x-dynamic-component :component="$getEmptyStateIcon()" class="w-6 h-6" />
+                        </div>
 
-                            <div class="max-w-xs space-y-1">
-                                <h2 class="text-xl font-semibold tracking-tight">
-                                    {{ $getEmptyStateHeading() }}
-                                </h2>
+                        <div class="max-w-xs space-y-1">
+                            <h2 class="text-xl font-semibold tracking-tight">
+                                {{ $getEmptyStateHeading() }}
+                            </h2>
 
-                                @if ($description = $getEmptyStateDescription())
-                                    <p class="text-sm font-medium text-gray-500">
-                                        {{ $description }}
-                                    </p>
-                                @endif
-                            </div>
-
-                            @if ($actions = $getEmptyStateActions())
-                                <div class="flex items-center justify-center space-x-4">
-                                    @foreach ($actions as $action)
-                                        {{ $action }}
-                                    @endforeach
-                                </div>
+                            @if ($description = $getEmptyStateDescription())
+                                <p class="text-sm font-medium text-gray-500">
+                                    {{ $description }}
+                                </p>
                             @endif
                         </div>
-                    </div>
-                @endif
-            @endif
-        </div>
 
-        @if ($isPaginationEnabled())
-            <div class="p-2">
-                <x-tables::pagination
-                    :paginator="$records"
-                    :records-per-page-select-options="$getRecordsPerPageSelectOptions()"
-                />
-            </div>
+                        @if ($actions = $getEmptyStateActions())
+                            <div class="flex items-center justify-center space-x-4">
+                                @foreach ($actions as $action)
+                                    {{ $action }}
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
         @endif
     </div>
+
+    @if ($isPaginationEnabled())
+        <div class="p-2 border-t">
+            <x-tables::pagination
+                :paginator="$records"
+                :records-per-page-select-options="$getRecordsPerPageSelectOptions()"
+            />
+        </div>
+    @endif
 </div>
 
 <form wire:submit.prevent="callMountedTableAction">
