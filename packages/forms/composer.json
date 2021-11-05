@@ -18,7 +18,6 @@
         "illuminate/support": "^8.6",
         "illuminate/validation": "^8.6",
         "illuminate/view": "^8.6",
-        "laravel/ui": "^3.3",
         "livewire/livewire": "^2.6",
         "spatie/laravel-package-tools": "^1.9"
     },

@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Commands;
 
+use Filament\Forms\FormsPreset;
 use Illuminate\Console\Command;
 
 class InstallCommand extends Command
@@ -12,9 +13,11 @@ class InstallCommand extends Command
 
     public function __invoke(): int
     {
-        $this->call('ui', [
-            'type' => 'forms',
-        ]);
+        FormsPreset::install();
+
+        $this->info('Scaffolding installed successfully.');
+
+        $this->comment('Please run "npm install && npm run dev" to compile your new assets.');
 
         return static::SUCCESS;
     }
