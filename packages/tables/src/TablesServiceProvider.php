@@ -20,6 +20,5 @@ class TablesServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        
     }
 }
