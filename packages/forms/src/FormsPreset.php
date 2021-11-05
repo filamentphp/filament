@@ -4,7 +4,6 @@ namespace Filament\Forms;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
-use Laravel\Ui\Presets\Preset;
 
 class FormsPreset extends Preset
 {
