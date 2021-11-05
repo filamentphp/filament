@@ -47,7 +47,9 @@ class Mask implements Jsonable
     protected ?string $thousandsSeparator = null;
 
     protected ?int $toValue = null;
-
+    
+    protected ?string $overrideConfiguration = null;
+    
     final public function __construct()
     {
     }
@@ -58,7 +60,23 @@ class Mask implements Jsonable
 
         return $this;
     }
-
+    
+    
+    public function overrideWithObject(?string $json = null): static
+    {
+        $this->overrideConfiguration = $json;
+        
+        return $this;
+    }
+    
+    public function removeObjectOverride(): static
+    {
+        $this->overrideConfiguration = null;
+        
+        return $this;
+    }
+    
+    
     public function decimalPlaces(?int $places): static
     {
         $this->decimalPlaces = $places;
@@ -318,6 +336,11 @@ class Mask implements Jsonable
 
     public function toJson($options = 0): string
     {
+        if($this->overrideConfiguration){
+            
+            return $this->overrideConfiguration;
+        }
+        
         $json = json_encode($this->getArrayableConfiguration(), JSON_UNESCAPED_SLASHES | $options);
 
         return str_replace(
