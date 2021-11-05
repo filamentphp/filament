@@ -8,6 +8,7 @@
     :state-path="$getStatePath()"
 >
     <textarea
+        {!! ($autocapitalize = $getAutocapitalize()) ? "autocapitalize=\"{$autocapitalize}\"" : null !!}
         {!! ($autocomplete = $getAutocomplete()) ? "autocomplete=\"{$autocomplete}\"" : null !!}
         {!! $isAutofocused() ? 'autofocus' : null !!}
         {!! ($cols = $getCols()) ? "cols=\"{$cols}\"" : null !!}

@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 class Textarea extends Field
 {
+    use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasPlaceholder;
