@@ -2,7 +2,6 @@
 
 namespace Filament\Facades;
 
-use Filament\FilamentManager;
 use Illuminate\Support\Facades\Facade;
 
 /**

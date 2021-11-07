@@ -2,8 +2,6 @@
 
 namespace Filament;
 
-use Illuminate\Support\Str;
-
 class FilamentManager
 {
     protected array $navigationGroups = [];

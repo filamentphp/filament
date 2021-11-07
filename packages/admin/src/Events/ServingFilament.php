@@ -11,5 +11,6 @@ class ServingFilament
 
     public function __construct(
         public Request $request,
-    ) {}
+    ) {
+    }
 }

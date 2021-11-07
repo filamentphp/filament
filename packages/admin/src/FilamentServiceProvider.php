@@ -40,7 +40,7 @@ class FilamentServiceProvider extends PackageServiceProvider
         parent::register();
 
         $this->app->singleton('filament', function (): FilamentManager {
-            return new FilamentManager;
+            return new FilamentManager();
         });
 
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');

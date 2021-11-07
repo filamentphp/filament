@@ -2,8 +2,6 @@
 
 namespace Filament\Pages;
 
-use Filament\Concerns\CanRegisterNavigationItems;
-use Filament\Concerns\CanRegisterRoutes;
 use Filament\Facades\Filament;
 use Filament\NavigationItem;
 use Illuminate\Contracts\View\View;
