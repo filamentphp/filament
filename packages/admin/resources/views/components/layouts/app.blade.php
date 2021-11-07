@@ -7,6 +7,8 @@
 
         <title>{{ $title ? "{$title} - " : null }} {{ config('app.name') }}</title>
 
+        <style>[x-cloak] { display: none !important; }</style>
+
         @livewireStyles
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,9 +27,13 @@
 
     <body>
         <div class="min-h-screen bg-white text-gray-800 font-sans antialiased grid grid-cols-[20rem,1fr]">
-            <aside class="bg-gray-100 grid grid-rows-[4rem,1fr,auto]">
+            <aside
+                x-data="{}"
+                x-bind:class="{ '-translate-x-full': ! $store.sidebar.isOpen, 'translate-x-0': $store.sidebar.isOpen }"
+                class="fixed inset-y-0 left-0 z-20 w-80 h-screen bg-gray-100 grid grid-rows-[4rem,1fr,auto] transition transform lg:translate-x-0 -translate-x-full"
+            >
                 <header class="border-b px-6 flex items-center">
-                    <a class="text-xl font-bold" href="">
+                    <a class="text-xl font-bold" href="{{ \Filament\Http\Livewire\Dashboard::geturl() }}">
                         {{ config('app.name') }}
                     </a>
                 </header>
@@ -47,12 +53,16 @@
                                     'mt-2' => $group,
                                 ])>
                                     @foreach ($items as $item)
+                                        @php
+                                            $isActive = $item->isActive();
+                                        @endphp
                                         <li>
                                             <a
                                                 href="{{ $item->getUrl() }}"
                                                 @class([
-                                                    'flex items-center gap-3 px-3 py-2 rounded-md font-medium',
-                                                    'bg-primary-500 text-white' => $item->isActive(),
+                                                    'flex items-center gap-3 px-3 py-2 rounded-md font-medium transition',
+                                                    'hover:bg-gray-500/10 focus:bg-gray-500/10' => ! $isActive,
+                                                    'bg-primary-500 text-white' => $isActive,
                                                 ])
                                             >
                                                 <x-dynamic-component :component="$item->getIcon()" class="h-5 w-5" />
@@ -90,24 +100,41 @@
                 </footer>
             </aside>
 
-            <main class="grid grid-rows-[4rem,1fr] relative shadow-lg">
-                <header class="flex items-center border-b px-6">
-                    <ul class="flex gap-4 items-center font-medium text-sm">
-                        <li>
-                            <a href="" id="">Articles</a>
-                        </li>
+            <div
+                x-data="{}"
+                x-cloak
+                x-show="$store.sidebar.isOpen"
+                x-on:click="$store.sidebar.close()"
+                class="fixed inset-0 z-10 transition bg-gray-900/50 lg:hidden"
+            ></div>
 
-                        <li class="h-6 border-r -skew-x-12"></li>
+            <main
+                x-data="{}"
+                x-bind:class="{ 'translate-x-40 lg:translate-x-0': $store.sidebar.isOpen }"
+                class="w-screen grid grid-rows-[4rem,1fr] transform transition relative lg:pl-80 lg:transition-none"
+            >
+                <header class="w-full flex items-center border-b px-3 lg:px-6">
+                    <button x-on:click="$store.sidebar.open()" class="flex items-center justify-center w-10 h-10 text-primary-500 transition rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none lg:hidden">
+                        <x-heroicon-o-menu class="w-6 h-6" />
+                    </button>
 
-                        <li>
-                            <a href="" id="">why-inertia-js-is-goat</a>
-                        </li>
+                    <ul class="hidden gap-4 items-center font-medium text-sm lg:flex">
+                        @foreach ($breadcrumbs as $url => $label)
+                            <li>
+                                <a
+                                    href="{{ is_int($url) ? '#' : $url }}"
+                                    @class([
+                                        'text-gray-500' => $loop->last,
+                                    ])
+                                >
+                                    {{ $label }}
+                                </a>
+                            </li>
 
-                        <li class="h-6 border-r -skew-x-12"></li>
-
-                        <li>
-                            <a class="text-gray-500" href="" id="">Edit</a>
-                        </li>
+                            @if (! $loop->last)
+                                <li class="h-6 border-r -skew-x-12"></li>
+                            @endif
+                        @endforeach
                     </ul>
                 </header>
 

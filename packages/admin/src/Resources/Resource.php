@@ -47,18 +47,35 @@ class Resource
         //
     }
 
-    protected static function getLabel(): string
+    public static function getLabel(): string
     {
         return static::$label ?? (string) Str::of(class_basename(static::getModel()))
-            ->kebab()
-            ->replace('-', ' ');
+                ->kebab()
+                ->replace('-', ' ');
     }
 
-    protected static function getModel(): string
+    public static function getModel(): string
     {
         return static::$model ?? (string) Str::of(class_basename(static::class))
-            ->beforeLast('Resource')
-            ->prepend('App\\Models\\');
+                ->beforeLast('Resource')
+                ->prepend('App\\Models\\');
+    }
+
+    public static function getPluralLabel(): string
+    {
+        return static::$pluralLabel ?? Str::plural(static::getLabel());
+    }
+
+    public static function getSlug(): string
+    {
+        return static::$slug ?? (string) Str::of(class_basename(static::getModel()))
+                ->plural()
+                ->kebab();
+    }
+
+    public static function getUrl(): string
+    {
+        return route(static::getRouteName());
     }
 
     protected static function getNavigationGroup(): ?string
@@ -86,27 +103,10 @@ class Resource
         return '';
     }
 
-    protected static function getPluralLabel(): string
-    {
-        return static::$pluralLabel ?? Str::plural(static::getLabel());
-    }
-
     protected static function getRouteName(): string
     {
         $slug = static::getSlug();
 
         return static::$routeName ?? "filament.resources.{$slug}";
-    }
-
-    protected static function getSlug(): string
-    {
-        return static::$slug ?? (string) Str::of(class_basename(static::getModel()))
-            ->plural()
-            ->kebab();
-    }
-
-    protected static function getUrl(): string
-    {
-        return route(static::getRouteName());
     }
 }

@@ -49,6 +49,24 @@ class Page extends Component
         //
     }
 
+    public static function getSlug(): string
+    {
+        return static::$slug ?? (string) Str::kebab(static::getTitle());
+    }
+
+    public static function getTitle(): string
+    {
+        return static::$title ?? (string) Str::of(class_basename(static::class))
+                ->kebab()
+                ->replace('-', ' ')
+                ->title();
+    }
+
+    public static function getUrl(): string
+    {
+        return route(static::getRouteName());
+    }
+
     public function render(): View
     {
         return view(static::$view, $this->getViewData())
@@ -58,7 +76,7 @@ class Page extends Component
     protected static function getBreadcrumbs(): array
     {
         return [
-
+            static::getTitle(),
         ];
     }
 
@@ -94,27 +112,10 @@ class Page extends Component
         return static::$routeName ?? "filament.pages.{$slug}";
     }
 
-    protected static function getSlug(): string
-    {
-        return static::$slug ?? (string) Str::kebab(static::getTitle());
-    }
-
-    protected static function getTitle(): string
-    {
-        return static::$title ?? (string) Str::of(class_basename(static::class))
-            ->kebab()
-            ->replace('-', ' ')
-            ->title();
-    }
-
-    protected static function getUrl(): string
-    {
-        return route(static::getRouteName());
-    }
-
     protected function getLayoutData(): array
     {
         return [
+            'breadcrumbs' => static::getBreadcrumbs(),
             'title' => static::getTitle(),
         ];
     }
