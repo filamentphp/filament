@@ -2,29 +2,36 @@
 
 namespace Filament\Resources;
 
+use Closure;
 use Filament\Facades\Filament;
 use Filament\NavigationItem;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
 class Resource
 {
-    public static ?string $label = null;
+    protected static ?string $breadcrumb = null;
 
-    public static ?string $model = null;
+    protected static ?string $label = null;
 
-    public static ?string $navigationGroup = null;
+    protected static ?string $model = null;
 
-    public static ?string $navigationIcon = null;
+    protected static ?string $navigationGroup = null;
 
-    public static ?string $navigationLabel = null;
+    protected static ?string $navigationIcon = null;
 
-    public static ?int $navigationSort = null;
+    protected static ?string $navigationLabel = null;
 
-    public static ?string $pluralLabel = null;
+    protected static ?int $navigationSort = null;
 
-    public static ?string $routeName = null;
+    protected static ?string $pluralLabel = null;
 
-    public static ?string $slug = null;
+    protected static ?string $slug = null;
+
+    public static function form(Form $form): Form
+    {
+        return $form;
+    }
 
     public static function registerNavigationItems(): void
     {
@@ -42,23 +49,33 @@ class Resource
         ]);
     }
 
-    public static function registerRoutes(): void
+    public static function routes(): array
     {
-        //
+        return [];
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table;
+    }
+
+    public static function getBreadcrumb(): string
+    {
+        return static::$breadcrumb ?? Str::title(static::getPluralLabel());
     }
 
     public static function getLabel(): string
     {
         return static::$label ?? (string) Str::of(class_basename(static::getModel()))
-                ->kebab()
-                ->replace('-', ' ');
+            ->kebab()
+            ->replace('-', ' ');
     }
 
     public static function getModel(): string
     {
         return static::$model ?? (string) Str::of(class_basename(static::class))
-                ->beforeLast('Resource')
-                ->prepend('App\\Models\\');
+            ->beforeLast('Resource')
+            ->prepend('App\\Models\\');
     }
 
     public static function getPluralLabel(): string
@@ -66,11 +83,24 @@ class Resource
         return static::$pluralLabel ?? Str::plural(static::getLabel());
     }
 
+    public static function getRoutes(): Closure
+    {
+        return function () {
+            $slug = static::getSlug();
+
+            Route::name("{$slug}.")->prefix($slug)->group(function () use ($slug) {
+                foreach (static::routes() as $route) {
+                    Route::get($route['path'], $route['page'])->name($route['name']);
+                }
+            });
+        };
+    }
+
     public static function getSlug(): string
     {
         return static::$slug ?? (string) Str::of(class_basename(static::getModel()))
-                ->plural()
-                ->kebab();
+            ->plural()
+            ->kebab();
     }
 
     public static function getUrl(): string
@@ -100,13 +130,13 @@ class Resource
 
     protected static function getNavigationUrl(): string
     {
-        return '';
+        return static::getUrl();
     }
 
     protected static function getRouteName(): string
     {
         $slug = static::getSlug();
 
-        return static::$routeName ?? "filament.resources.{$slug}";
+        return "filament.resources.{$slug}.index";
     }
 }

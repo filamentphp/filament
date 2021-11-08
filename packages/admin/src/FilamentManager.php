@@ -4,6 +4,8 @@ namespace Filament;
 
 class FilamentManager
 {
+    protected bool $isNavigationMounted = false;
+
     protected array $navigationGroups = [];
 
     protected array $navigationItems = [];
@@ -20,6 +22,19 @@ class FilamentManager
 
     protected array $widgets = [];
 
+    public function mountNavigation(): void
+    {
+        foreach (static::getPages() as $page) {
+            $page::registerNavigationItems();
+        }
+
+        foreach (static::getResources() as $resource) {
+            $resource::registerNavigationItems();
+        }
+
+        $this->isNavigationMounted = true;
+    }
+
     public function registerNavigationGroups(array $groups): void
     {
         $this->navigationGroups = array_merge($this->navigationGroups, $groups);
@@ -33,19 +48,11 @@ class FilamentManager
     public function registerPages(array $pages): void
     {
         $this->pages = array_merge($this->pages, $pages);
-
-        foreach ($pages as $page) {
-            $page::registerNavigationItems();
-        }
     }
 
     public function registerResources(array $resources): void
     {
         $this->resources = array_merge($this->resources, $resources);
-
-        foreach ($resources as $resource) {
-            $resource::registerNavigationItems();
-        }
     }
 
     public function registerScripts(array $scripts): void
@@ -70,6 +77,10 @@ class FilamentManager
 
     public function getNavigation(): array
     {
+        if (! $this->isNavigationMounted) {
+            $this->mountNavigation();
+        }
+
         $groupedItems = collect($this->navigationItems)
             ->sortBy(fn (NavigationItem $item): int => $item->getSort())
             ->groupBy(fn (NavigationItem $item): ?string => $item->getGroup());

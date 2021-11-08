@@ -3,7 +3,7 @@
 namespace Filament;
 
 use Filament\Facades\Filament;
-use Filament\Http\Livewire\Dashboard;
+use Filament\Pages\Dashboard;
 use Filament\Resources\Resource;
 use Filament\Widgets\Widget;
 use Illuminate\Filesystem\Filesystem;
@@ -56,8 +56,8 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     protected function bootLivewireComponents(): void
     {
-        $this->registerLivewireComponentDirectory(__DIR__ . '/Http/Livewire', 'Filament\\Http\\Livewire', 'filament.core.');
-        $this->registerLivewireComponentDirectory(__DIR__ . '/Resources', 'Filament\\Resources', 'filament.core.resources.');
+        $this->registerLivewireComponentDirectory(__DIR__ . '/Pages', 'Filament\\Pages', 'filament.pages.');
+        $this->registerLivewireComponentDirectory(__DIR__ . '/Resources', 'Filament\\Resources', 'filament.resources.');
         $this->registerLivewireComponentDirectory(app_path('Filament'), 'App\\Filament', 'filament.');
     }
 

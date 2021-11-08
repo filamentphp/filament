@@ -26,14 +26,14 @@
     </head>
 
     <body>
-        <div class="min-h-screen bg-white text-gray-800 font-sans antialiased grid grid-cols-[20rem,1fr]">
+        <div class="min-h-screen bg-gray-100 text-gray-800 font-sans antialiased grid grid-cols-[20rem,1fr]">
             <aside
                 x-data="{}"
                 x-bind:class="{ '-translate-x-full': ! $store.sidebar.isOpen, 'translate-x-0': $store.sidebar.isOpen }"
-                class="fixed inset-y-0 left-0 z-20 w-80 h-screen bg-gray-100 grid grid-rows-[4rem,1fr,auto] transition duration-500 transform lg:translate-x-0 -translate-x-full"
+                class="fixed inset-y-0 left-0 z-20 w-80 h-screen bg-white shadow-xl rounded-r-2xl grid grid-rows-[4rem,1fr,auto] transition duration-500 transform lg:translate-x-0 -translate-x-full"
             >
                 <header class="border-b px-6 flex items-center">
-                    <a class="text-xl font-bold" href="{{ \Filament\Http\Livewire\Dashboard::geturl() }}">
+                    <a class="text-xl font-bold" href="{{ \Filament\Pages\Dashboard::geturl() }}">
                         {{ config('app.name') }}
                     </a>
                 </header>
@@ -61,7 +61,7 @@
                                                 href="{{ $item->getUrl() }}"
                                                 @class([
                                                     'flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition',
-                                                    'hover:bg-gray-500/10 focus:bg-gray-500/10' => ! $isActive,
+                                                    'hover:bg-gray-500/5 focus:bg-gray-500/5' => ! $isActive,
                                                     'bg-primary-500 text-white' => $isActive,
                                                 ])
                                             >
@@ -136,14 +136,16 @@
                                 </li>
 
                                 @if (! $loop->last)
-                                    <li class="h-6 border-r -skew-x-12"></li>
+                                    <li class="h-6 border-r border-gray-300 -skew-x-12"></li>
                                 @endif
                             @endforeach
                         </ul>
                     </div>
                 </header>
 
-                {{ $slot }}
+                <div class="w-full max-w-6xl px-4 py-4 mx-auto sm:px-4 md:px-6 lg:px-8">
+                    {{ $slot }}
+                </div>
             </main>
         </div>
 

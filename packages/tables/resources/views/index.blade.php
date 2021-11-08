@@ -33,7 +33,7 @@
     };
 @endphp
 
-<div class="border border-gray-300 bg-white shadow rounded-xl">
+<div class="border border-gray-300 shadow-sm bg-white rounded-xl">
     @if ($hasTableHeader = ($header || $heading || $headerActions || $isBulkActionsDropdownVisible || $isSearchVisible || $isFiltersDropdownVisible))
         @if ($header)
             {{ $header }}
@@ -140,7 +140,7 @@
                                             id="tableSearchQueryInput"
                                             placeholder="{{ __('tables::table.fields.search_query.placeholder') }}"
                                             type="search"
-                                            class="block w-full h-9 pl-9 placeholder-gray-400 transition duration-75 border-gray-200 rounded-lg shadow-sm focus:border-primary-60 focus:ring-1 focus:ring-inset focus:ring-primary-600"
+                                            class="block w-full h-9 pl-9 placeholder-gray-400 transition duration-75 border-gray-200 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600"
                                         >
                                     </div>
                                 </div>
@@ -246,14 +246,14 @@
 
                 <tbody class="divide-y whitespace-nowrap">
                     @foreach ($records as $record)
-                        <tr>
+                        <tr wire:key="{{ $record->getKey() }}">
                             @if ($isSelectionEnabled())
                                 <td class="px-4 whitespace-nowrap">
                                     <input
                                         {{ $isRecordSelected($record->getKey()) ? 'checked' : null }}
                                         wire:click="toggleSelectTableRecord('{{ $record->getKey() }}')"
                                         type="checkbox"
-                                        class="border-gray-300 rounded shadow-sm text-primary-600 focus:border-primary-600 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                        class="border-gray-300 rounded shadow-sm text-primary-600 focus:border-primary-600 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
                                     />
                                 </td>
                             @endif
@@ -308,8 +308,8 @@
                 {{ $emptyState }}
             @else
                 <div class="flex items-center justify-center p-4">
-                    <div class="flex flex-1 flex-col items-center justify-center max-w-md p-6 mx-auto space-y-6 text-center bg-white border rounded-2xl">
-                        <div class="flex items-center justify-center w-16 h-16 text-blue-500 rounded-full bg-blue-50">
+                    <div class="flex flex-1 flex-col items-center justify-center p-6 mx-auto space-y-6 text-center bg-white">
+                        <div class="flex items-center justify-center w-16 h-16 text-primary-500 rounded-full bg-primary-50">
                             <x-dynamic-component :component="$getEmptyStateIcon()" class="w-6 h-6" />
                         </div>
 

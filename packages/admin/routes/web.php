@@ -2,7 +2,7 @@
 
 use Filament\Facades\Filament;
 use Filament\Http\Controllers\AssetController;
-use Filament\Http\Livewire;
+use Filament\Pages\Dashboard;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
 
@@ -11,15 +11,17 @@ Route::domain(config('filament.domain'))
     ->name('filament.')
     ->prefix(config('filament.path'))
     ->group(function () {
-        Route::get('/', Livewire\Dashboard::class)->name('dashboard');
+        Route::name('pages.')->group(function () {
+            foreach (Filament::getPages() as $page) {
+                Route::group([], $page::getRoutes());
+            }
+        });
 
-        foreach (Filament::getResources() as $resource) {
-            $resource::registerRoutes();
-        }
-
-        foreach (Filament::getPages() as $page) {
-            $page::registerRoutes();
-        }
+        Route::name('resources.')->group(function () {
+            foreach (Filament::getResources() as $resource) {
+                Route::group([], $resource::getRoutes());
+            }
+        });
 
         Route::get('/assets/{path}', AssetController::class)->name('asset');
 

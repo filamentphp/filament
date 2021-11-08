@@ -2,31 +2,43 @@
 
 namespace Filament\Pages;
 
+use Closure;
 use Filament\Facades\Filament;
 use Filament\NavigationItem;
+use Filament\Resources\Form;
+use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
 class Page extends Component
 {
-    public static string $layout = 'filament::components.layouts.app';
+    protected static string $layout = 'filament::components.layouts.app';
 
-    public static ?string $navigationGroup = null;
+    protected static ?string $navigationGroup = null;
 
-    public static ?string $navigationIcon = null;
+    protected static ?string $navigationIcon = null;
 
-    public static ?string $navigationLabel = null;
+    protected static ?string $navigationLabel = null;
 
-    public static ?int $navigationSort = null;
+    protected static ?int $navigationSort = null;
 
-    public static ?string $routeName = null;
+    protected static ?string $slug = null;
 
-    public static ?string $slug = null;
+    protected static ?string $title = null;
 
-    public static ?string $title = null;
+    protected static string $view;
 
-    public static string $view;
+    public static function form(Form $form): Form
+    {
+        return $form;
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table;
+    }
 
     public static function registerNavigationItems(): void
     {
@@ -44,9 +56,13 @@ class Page extends Component
         ]);
     }
 
-    public static function registerRoutes(): void
+    public static function getRoutes(): Closure
     {
-        //
+        return function () {
+            $slug = static::getSlug();
+
+            Route::get($slug, static::class)->name($slug);
+        };
     }
 
     public static function getSlug(): string
@@ -57,9 +73,9 @@ class Page extends Component
     public static function getTitle(): string
     {
         return static::$title ?? (string) Str::of(class_basename(static::class))
-                ->kebab()
-                ->replace('-', ' ')
-                ->title();
+            ->kebab()
+            ->replace('-', ' ')
+            ->title();
     }
 
     public static function getUrl(): string
@@ -100,14 +116,14 @@ class Page extends Component
 
     protected static function getNavigationUrl(): string
     {
-        return '';
+        return static::getUrl();
     }
 
     protected static function getRouteName(): string
     {
         $slug = static::getSlug();
 
-        return static::$routeName ?? "filament.pages.{$slug}";
+        return "filament.pages.{$slug}";
     }
 
     protected function getLayoutData(): array
