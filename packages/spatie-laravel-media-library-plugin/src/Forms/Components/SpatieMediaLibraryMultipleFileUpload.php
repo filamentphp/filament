@@ -2,8 +2,8 @@
 
 namespace Filament\Forms\Components;
 
-use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
 
 class SpatieMediaLibraryMultipleFileUpload extends MultipleFileUpload
 {
