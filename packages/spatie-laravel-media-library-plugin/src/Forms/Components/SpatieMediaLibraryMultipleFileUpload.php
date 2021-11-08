@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Str;
 
 class SpatieMediaLibraryMultipleFileUpload extends MultipleFileUpload
@@ -30,11 +31,7 @@ class SpatieMediaLibraryMultipleFileUpload extends MultipleFileUpload
         $collection = $this->getCollection();
         $model = $this->getModel();
 
-        if (! $collection) {
-            return [];
-        }
-
-        if (! $model) {
+        if (! $model instanceof HasMedia) {
             return [];
         }
 
@@ -60,7 +57,7 @@ class SpatieMediaLibraryMultipleFileUpload extends MultipleFileUpload
 
     public function getCollection(): ?string
     {
-        return $this->evaluate($this->collection) ?? $this->getName();
+        return $this->evaluate($this->collection) ?? 'default';
     }
 
     protected function getDefaultUploadComponent(): Component
