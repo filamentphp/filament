@@ -6,7 +6,6 @@ use Filament\Resources\Table;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Str;
 
 class ListRecords extends Page implements HasTable
 {

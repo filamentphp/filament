@@ -2,7 +2,6 @@
 
 use Filament\Facades\Filament;
 use Filament\Http\Controllers\AssetController;
-use Filament\Pages\Dashboard;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
 
