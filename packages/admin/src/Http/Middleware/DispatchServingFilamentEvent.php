@@ -10,7 +10,7 @@ class DispatchServingFilamentEvent
 {
     public function handle(Request $request, Closure $next)
     {
-        ServingFilament::dispatch($request);
+        ServingFilament::dispatch();
 
         return $next($request);
     }

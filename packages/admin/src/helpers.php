@@ -15,6 +15,8 @@ if (! function_exists('Filament\get_asset_id')) {
 
         $manifest = json_decode(file_get_contents($manifestPath), true);
 
+        $path = "/{$path}";
+
         if (! array_key_exists($path, $manifest)) {
             return null;
         }

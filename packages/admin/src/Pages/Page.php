@@ -75,9 +75,7 @@ class Page extends Component
 
     protected static function getBreadcrumbs(): array
     {
-        return [
-            static::getTitle(),
-        ];
+        return [];
     }
 
     protected static function getNavigationGroup(): ?string

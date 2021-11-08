@@ -30,7 +30,7 @@
             <aside
                 x-data="{}"
                 x-bind:class="{ '-translate-x-full': ! $store.sidebar.isOpen, 'translate-x-0': $store.sidebar.isOpen }"
-                class="fixed inset-y-0 left-0 z-20 w-80 h-screen bg-gray-100 grid grid-rows-[4rem,1fr,auto] transition transform lg:translate-x-0 -translate-x-full"
+                class="fixed inset-y-0 left-0 z-20 w-80 h-screen bg-gray-100 grid grid-rows-[4rem,1fr,auto] transition duration-500 transform lg:translate-x-0 -translate-x-full"
             >
                 <header class="border-b px-6 flex items-center">
                     <a class="text-xl font-bold" href="{{ \Filament\Http\Livewire\Dashboard::geturl() }}">
@@ -60,7 +60,7 @@
                                             <a
                                                 href="{{ $item->getUrl() }}"
                                                 @class([
-                                                    'flex items-center gap-3 px-3 py-2 rounded-md font-medium transition',
+                                                    'flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition',
                                                     'hover:bg-gray-500/10 focus:bg-gray-500/10' => ! $isActive,
                                                     'bg-primary-500 text-white' => $isActive,
                                                 ])
@@ -93,8 +93,10 @@
                             {{ auth()->user()->name }}
                         </p>
 
-                        <p class="text-xs text-gray-500">
-                            Sign out
+                        <p class="text-xs text-gray-500 transition hover:text-gray-700 focus:text-gray-700">
+                            <a href="{{ route('filament.logout') }}">
+                                Sign out
+                            </a>
                         </p>
                     </div>
                 </footer>
@@ -104,38 +106,41 @@
                 x-data="{}"
                 x-cloak
                 x-show="$store.sidebar.isOpen"
+                x-transition.opacity.500ms
                 x-on:click="$store.sidebar.close()"
-                class="fixed inset-0 z-10 transition bg-gray-900/50 lg:hidden"
+                class="fixed inset-0 z-10 bg-gray-900/50 lg:hidden"
             ></div>
 
             <main
                 x-data="{}"
                 x-bind:class="{ 'translate-x-40 lg:translate-x-0': $store.sidebar.isOpen }"
-                class="w-screen grid grid-rows-[4rem,1fr] transform transition relative lg:pl-80 lg:transition-none"
+                class="w-screen grid grid-rows-[4rem,1fr] transform transition duration-500 relative lg:pl-80 lg:transition-none"
             >
-                <header class="w-full flex items-center border-b px-3 lg:px-6">
-                    <button x-on:click="$store.sidebar.open()" class="flex items-center justify-center w-10 h-10 text-primary-500 transition rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none lg:hidden">
-                        <x-heroicon-o-menu class="w-6 h-6" />
-                    </button>
+                <header class="border-b flex items-center">
+                    <div class="w-full max-w-6xl px-2 mx-auto sm:px-4 md:px-6 lg:px-8">
+                        <button x-on:click="$store.sidebar.open()" class="flex-shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 transition rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none lg:hidden">
+                            <x-heroicon-o-menu class="w-6 h-6" />
+                        </button>
 
-                    <ul class="hidden gap-4 items-center font-medium text-sm lg:flex">
-                        @foreach ($breadcrumbs as $url => $label)
-                            <li>
-                                <a
-                                    href="{{ is_int($url) ? '#' : $url }}"
-                                    @class([
-                                        'text-gray-500' => $loop->last,
-                                    ])
-                                >
-                                    {{ $label }}
-                                </a>
-                            </li>
+                        <ul class="hidden gap-4 items-center font-medium text-sm lg:flex">
+                            @foreach ($breadcrumbs as $url => $label)
+                                <li>
+                                    <a
+                                        href="{{ is_int($url) ? '#' : $url }}"
+                                        @class([
+                                            'text-gray-500' => $loop->last,
+                                        ])
+                                    >
+                                        {{ $label }}
+                                    </a>
+                                </li>
 
-                            @if (! $loop->last)
-                                <li class="h-6 border-r -skew-x-12"></li>
-                            @endif
-                        @endforeach
-                    </ul>
+                                @if (! $loop->last)
+                                    <li class="h-6 border-r -skew-x-12"></li>
+                                @endif
+                            @endforeach
+                        </ul>
+                    </div>
                 </header>
 
                 {{ $slot }}
