@@ -2615,6 +2615,10 @@ select{
 	margin-top: -0.75rem;
 	margin-bottom: -0.75rem;
 }
+.-mx-4{
+	margin-left: -1rem;
+	margin-right: -1rem;
+}
 .mt-2{
 	margin-top: 0.5rem;
 }
@@ -2668,6 +2672,12 @@ select{
 }
 .mt-auto{
 	margin-top: auto;
+}
+.mt-6{
+	margin-top: 1.5rem;
+}
+.mt-4{
+	margin-top: 1rem;
 }
 .block{
 	display: block;
@@ -2729,6 +2739,12 @@ select{
 .h-16{
 	height: 4rem;
 }
+.h-\[4rem\]{
+	height: 4rem;
+}
+.h-14{
+	height: 3.5rem;
+}
 .max-h-60{
 	max-height: 15rem;
 }
@@ -2789,6 +2805,9 @@ select{
 .w-9{
 	width: 2.25rem;
 }
+.w-auto{
+	width: auto;
+}
 .max-w-6xl{
 	max-width: 72rem;
 }
@@ -2824,6 +2843,9 @@ select{
 }
 .max-w-7xl{
 	max-width: 80rem;
+}
+.max-w-full{
+	max-width: 100%;
 }
 .flex-1{
 	flex: 1 1 0%;
@@ -3045,11 +3067,23 @@ select{
 	--tw-divide-opacity: 1;
 	border-color: rgba(209, 213, 219, var(--tw-divide-opacity));
 }
+.place-self-end{
+	place-self: end;
+}
+.self-end{
+	align-self: flex-end;
+}
+.justify-self-end{
+	justify-self: end;
+}
 .overflow-auto{
 	overflow: auto;
 }
 .overflow-hidden{
 	overflow: hidden;
+}
+.overflow-x-auto{
+	overflow-x: auto;
 }
 .overflow-y-auto{
 	overflow-y: auto;
@@ -3303,6 +3337,9 @@ select{
 .pr-8{
 	padding-right: 2rem;
 }
+.pl-10{
+	padding-left: 2.5rem;
+}
 .text-left{
 	text-align: left;
 }
@@ -3479,6 +3516,42 @@ select{
 .placeholder-gray-400::placeholder{
 	--tw-placeholder-opacity: 1;
 	color: rgba(156, 163, 175, var(--tw-placeholder-opacity));
+}
+.placeholder-gray-200::-moz-placeholder{
+	--tw-placeholder-opacity: 1;
+	color: rgba(229, 231, 235, var(--tw-placeholder-opacity));
+}
+.placeholder-gray-200:-ms-input-placeholder{
+	--tw-placeholder-opacity: 1;
+	color: rgba(229, 231, 235, var(--tw-placeholder-opacity));
+}
+.placeholder-gray-200::placeholder{
+	--tw-placeholder-opacity: 1;
+	color: rgba(229, 231, 235, var(--tw-placeholder-opacity));
+}
+.placeholder-gray-600::-moz-placeholder{
+	--tw-placeholder-opacity: 1;
+	color: rgba(75, 85, 99, var(--tw-placeholder-opacity));
+}
+.placeholder-gray-600:-ms-input-placeholder{
+	--tw-placeholder-opacity: 1;
+	color: rgba(75, 85, 99, var(--tw-placeholder-opacity));
+}
+.placeholder-gray-600::placeholder{
+	--tw-placeholder-opacity: 1;
+	color: rgba(75, 85, 99, var(--tw-placeholder-opacity));
+}
+.placeholder-gray-500::-moz-placeholder{
+	--tw-placeholder-opacity: 1;
+	color: rgba(107, 114, 128, var(--tw-placeholder-opacity));
+}
+.placeholder-gray-500:-ms-input-placeholder{
+	--tw-placeholder-opacity: 1;
+	color: rgba(107, 114, 128, var(--tw-placeholder-opacity));
+}
+.placeholder-gray-500::placeholder{
+	--tw-placeholder-opacity: 1;
+	color: rgba(107, 114, 128, var(--tw-placeholder-opacity));
 }
 .opacity-50{
 	opacity: 0.5;
@@ -3714,6 +3787,10 @@ select{
 .focus\:bg-warning-500\/10:focus{
 	background-color: rgba(245, 158, 11, 0.1);
 }
+.focus\:bg-white:focus{
+	--tw-bg-opacity: 1;
+	background-color: rgba(255, 255, 255, var(--tw-bg-opacity));
+}
 .focus\:text-gray-700:focus{
 	--tw-text-opacity: 1;
 	color: rgba(55, 65, 81, var(--tw-text-opacity));
@@ -3744,6 +3821,18 @@ select{
 .focus\:placeholder-gray-500:focus::placeholder{
 	--tw-placeholder-opacity: 1;
 	color: rgba(107, 114, 128, var(--tw-placeholder-opacity));
+}
+.focus\:placeholder-gray-400:focus::-moz-placeholder{
+	--tw-placeholder-opacity: 1;
+	color: rgba(156, 163, 175, var(--tw-placeholder-opacity));
+}
+.focus\:placeholder-gray-400:focus:-ms-input-placeholder{
+	--tw-placeholder-opacity: 1;
+	color: rgba(156, 163, 175, var(--tw-placeholder-opacity));
+}
+.focus\:placeholder-gray-400:focus::placeholder{
+	--tw-placeholder-opacity: 1;
+	color: rgba(156, 163, 175, var(--tw-placeholder-opacity));
 }
 .focus\:outline-none:focus{
 	outline: 2px solid transparent;
@@ -4151,6 +4240,11 @@ select{
 		font-size: 1.875rem;
 		line-height: 2.25rem;
 	}
+
+	.md\:text-lg{
+		font-size: 1.125rem;
+		line-height: 1.75rem;
+	}
 }
 @media (min-width: 1024px){
 
@@ -4204,6 +4298,10 @@ select{
 
 	.lg\:col-span-full{
 		grid-column: 1 / -1;
+	}
+
+	.lg\:block{
+		display: block;
 	}
 
 	.lg\:flex{
@@ -4282,6 +4380,11 @@ select{
 
 	.lg\:pl-80{
 		padding-left: 20rem;
+	}
+
+	.lg\:text-lg{
+		font-size: 1.125rem;
+		line-height: 1.75rem;
 	}
 
 	.lg\:transition-none{

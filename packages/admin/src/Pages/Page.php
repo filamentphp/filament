@@ -56,6 +56,13 @@ class Page extends Component
         ]);
     }
 
+    public static function getRouteName(): string
+    {
+        $slug = static::getSlug();
+
+        return "filament.pages.{$slug}";
+    }
+
     public static function getRoutes(): Closure
     {
         return function () {
@@ -117,13 +124,6 @@ class Page extends Component
     protected static function getNavigationUrl(): string
     {
         return static::getUrl();
-    }
-
-    protected static function getRouteName(): string
-    {
-        $slug = static::getSlug();
-
-        return "filament.pages.{$slug}";
     }
 
     protected function getLayoutData(): array

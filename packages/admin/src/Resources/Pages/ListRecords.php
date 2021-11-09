@@ -3,13 +3,13 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Resources\Table;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Contracts\HasTable;
+use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
-class ListRecords extends Page implements HasTable
+class ListRecords extends Page implements Tables\Contracts\HasTable
 {
-    use InteractsWithTable;
+    use Tables\Concerns\InteractsWithTable;
 
     protected ?Table $resourceTable = null;
 
@@ -20,14 +20,9 @@ class ListRecords extends Page implements HasTable
         return static::$breadcrumb ?? 'List';
     }
 
-    protected static function getBreadcrumbs(): array
+    public static function getTitle(): string
     {
-        $resource = static::getResource();
-
-        return [
-            $resource::getUrl() => $resource::getBreadcrumb(),
-            static::getBreadcrumb(),
-        ];
+        return static::$title ?? Str::title(static::getResource()::getPluralLabel());
     }
 
     protected function getResourceTable(): Table
@@ -61,6 +56,6 @@ class ListRecords extends Page implements HasTable
 
     protected function getTableQuery(): Builder
     {
-        return static::getResource()::getModel()::query();
+        return static::getResource()::getEloquentQuery();
     }
 }

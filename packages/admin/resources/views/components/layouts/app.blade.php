@@ -33,7 +33,7 @@
                 class="fixed inset-y-0 left-0 z-20 w-80 h-screen bg-white shadow-xl rounded-r-2xl grid grid-rows-[4rem,1fr,auto] transition duration-500 transform lg:translate-x-0 -translate-x-full"
             >
                 <header class="border-b px-6 flex items-center">
-                    <a class="text-xl font-bold" href="{{ \Filament\Pages\Dashboard::geturl() }}">
+                    <a class="text-xl font-bold tracking-tight" href="{{ \Filament\Pages\Dashboard::geturl() }}">
                         {{ config('app.name') }}
                     </a>
                 </header>
@@ -114,32 +114,55 @@
             <main
                 x-data="{}"
                 x-bind:class="{ 'translate-x-40 lg:translate-x-0': $store.sidebar.isOpen }"
-                class="w-screen grid grid-rows-[4rem,1fr] transform transition duration-500 relative lg:pl-80 lg:transition-none"
+                class="w-screen transform transition duration-500 relative lg:pl-80 lg:transition-none"
             >
-                <header class="border-b flex items-center">
-                    <div class="w-full max-w-6xl px-2 mx-auto sm:px-4 md:px-6 lg:px-8">
+                <header class="h-[4rem] border-b flex items-center">
+                    <div class="flex items-center w-full max-w-6xl px-2 mx-auto sm:px-4 md:px-6 lg:px-8">
                         <button x-on:click="$store.sidebar.open()" class="flex-shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 transition rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none lg:hidden">
                             <x-heroicon-o-menu class="w-6 h-6" />
                         </button>
 
-                        <ul class="hidden gap-4 items-center font-medium text-sm lg:flex">
-                            @foreach ($breadcrumbs as $url => $label)
-                                <li>
-                                    <a
-                                        href="{{ is_int($url) ? '#' : $url }}"
-                                        @class([
-                                            'text-gray-500' => $loop->last,
-                                        ])
-                                    >
-                                        {{ $label }}
-                                    </a>
-                                </li>
+                        <div class="flex-1 flex items-center justify-between">
+                            <div>
+                                <ul class="hidden gap-4 items-center font-medium text-sm lg:flex">
+                                    @foreach ($breadcrumbs as $url => $label)
+                                        <li>
+                                            <a
+                                                href="{{ is_int($url) ? '#' : $url }}"
+                                                @class([
+                                                    'text-gray-500' => $loop->last,
+                                                ])
+                                            >
+                                                {{ $label }}
+                                            </a>
+                                        </li>
 
-                                @if (! $loop->last)
-                                    <li class="h-6 border-r border-gray-300 -skew-x-12"></li>
-                                @endif
-                            @endforeach
-                        </ul>
+                                        @if (! $loop->last)
+                                            <li class="h-6 border-r border-gray-300 -skew-x-12"></li>
+                                        @endif
+                                    @endforeach
+                                </ul>
+                            </div>
+
+                            <div>
+                                <label for="searchQueryInput" class="sr-only">
+                                    {{ __('tables::table.fields.search_query.label') }}
+                                </label>
+
+                                <div class="relative group max-w-md">
+                                    <span class="absolute inset-y-0 left-0 flex items-center justify-center w-10 h-10 text-gray-500 transition pointer-events-none group-focus-within:text-primary-500">
+                                        <x-heroicon-o-search class="w-5 h-5" />
+                                    </span>
+
+                                    <input
+                                        id="searchQueryInput"
+                                        placeholder="{{ __('tables::table.fields.search_query.placeholder') }}"
+                                        type="search"
+                                        class="block w-full h-10 pl-10 lg:text-lg bg-gray-200 placeholder-gray-500 border-gray-200 transition duration-75 rounded-lg focus:bg-white focus:placeholder-gray-400 focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600"
+                                    >
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </header>
 

@@ -21,7 +21,17 @@ class Page extends BasePage
 
     public static function getBreadcrumb(): string
     {
-        return static::$breadcrumb;
+        return static::$breadcrumb ?? static::getTitle();
+    }
+
+    protected static function getBreadcrumbs(): array
+    {
+        $resource = static::getResource();
+
+        return [
+            $resource::getUrl() => $resource::getBreadcrumb(),
+            static::getBreadcrumb(),
+        ];
     }
 
     public static function getResource(): string

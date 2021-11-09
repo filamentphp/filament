@@ -71,7 +71,7 @@
 
         <div class="divide-y">
             @if ($isBulkActionsDropdownVisible || $isSearchVisible || $isFiltersDropdownVisible)
-                <div class="flex items-center justify-between p-2">
+                <div class="flex items-center justify-between p-2 h-14">
                     <div>
                         @if ($isBulkActionsDropdownVisible)
                             <div
