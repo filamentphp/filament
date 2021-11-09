@@ -2,13 +2,11 @@
 
 namespace Filament\Resources;
 
-use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\LinkAction;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 
 class Table
 {

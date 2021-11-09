@@ -4,7 +4,6 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms;
 use Filament\Resources\Form;
-use Filament\Resources\Table;
 use Filament\View\Components\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
