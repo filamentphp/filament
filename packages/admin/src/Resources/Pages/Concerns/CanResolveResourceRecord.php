@@ -9,7 +9,7 @@ trait CanResolveResourceRecord
 {
     protected function resolveRecord($key): Model
     {
-        $model = static::getResource()::getModel();
+        $model = static::getModel();
 
         $record = (new $model())->resolveRouteBinding($key);
 

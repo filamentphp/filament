@@ -15,25 +15,51 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
     protected static string $view = 'filament::resources.pages.create-record';
 
+    public $record;
+
     public $data;
 
     protected ?Form $resourceForm = null;
 
-    public static function getBreadcrumb(): string
+    public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? 'Create';
     }
 
     public function mount(): void
     {
+        $this->callHook('beforeFill');
+
         $this->form->fill();
+
+        $this->callHook('afterFill');
+    }
+
+    public function create(): void
+    {
+        $this->callHook('beforeValidate');
+
+        $data = $this->form->getState();
+
+        $this->callHook('afterValidate');
+
+        $this->callHook('beforeCreate');
+
+        $this->record = static::getModel()::create($data);
+
+        $this->form->model($this->record)->saveRelationships();
+
+        $this->callHook('afterCreate');
+
+        $this->redirect($this->getRedirectUrl());
     }
 
     protected function getFormActions(): array
     {
         return [
             ButtonAction::make('create')
-                ->label('Create'),
+                ->label('Create')
+                ->submit(),
             ButtonAction::make('cancel')
                 ->label('Cancel')
                 ->url(static::getResource()::getUrl())
@@ -45,9 +71,18 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
     {
         return [
             'form' => $this->makeForm()
-                ->model(static::getResource()::getModel())
+                ->model(static::getModel())
                 ->schema($this->getResourceForm()->getSchema())
                 ->statePath('data'),
         ];
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        if (static::getResource()::hasViewPage()) {
+            return static::getResource()::getViewUrl($this->record);
+        }
+
+        return static::getResource()::getEditUrl($this->record);
     }
 }

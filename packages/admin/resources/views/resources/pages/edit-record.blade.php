@@ -5,7 +5,9 @@
         </x-slot>
     </x-filament::header>
 
-    {{ $this->form }}
+    <x-filament::form wire:submit.prevent="save">
+        {{ $this->form }}
 
-    <x-filament::actions :actions="$this->getFormActions()" />
+        <x-filament::actions :actions="$this->getFormActions()" />
+    </x-filament::form>
 </x-filament::page>

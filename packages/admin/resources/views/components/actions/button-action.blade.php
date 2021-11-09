@@ -8,6 +8,7 @@
     :wire:click="$action"
     :href="$url"
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
+    :type="$canSubmitForm() ? 'submit' : 'button'"
     :color="$getColor()"
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"

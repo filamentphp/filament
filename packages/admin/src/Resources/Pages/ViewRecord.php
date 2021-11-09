@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class ViewRecord extends Page implements Forms\Contracts\HasForms
 {
     use Concerns\CanResolveResourceRecord;
+    use Concerns\HasRecordBreadcrumb;
     use Concerns\UsesResourceForm;
     use Forms\Concerns\InteractsWithForms;
 
@@ -20,7 +21,7 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
 
     public $data;
 
-    public static function getBreadcrumb(): string
+    public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? 'View';
     }
@@ -29,7 +30,11 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
     {
         $this->record = $this->resolveRecord($record);
 
+        $this->callHook('beforeFill');
+
         $this->form->fill($this->record->toArray());
+
+        $this->callHook('afterFill');
     }
 
     protected function canEdit(): bool

@@ -30,6 +30,8 @@ class Resource
 
     protected static ?string $pluralLabel = null;
 
+    protected static ?string $primaryAttribute = null;
+
     protected static ?string $slug = null;
 
     public static function form(Form $form): Form
@@ -122,6 +124,16 @@ class Resource
         return static::$pluralLabel ?? Str::plural(static::getLabel());
     }
 
+    public static function getPrimaryAttribute(): ?string
+    {
+        return static::$primaryAttribute;
+    }
+
+    public static function getPrimaryAttributeForModel(Model $model): ?string
+    {
+        return $model->getAttribute(static::getPrimaryAttribute());
+    }
+
     public static function getRouteBaseName(): string
     {
         $slug = static::getSlug();
@@ -169,6 +181,11 @@ class Resource
     public static function getViewUrl(Model $record): string
     {
         return route(static::getViewRouteName(), ['record' => $record]);
+    }
+
+    public static function hasPrimaryAttribute(): bool
+    {
+        return static::getPrimaryAttribute() !== null;
     }
 
     public static function hasViewPage(): bool

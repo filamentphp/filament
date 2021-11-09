@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class EditRecord extends Page implements Forms\Contracts\HasForms
 {
     use Concerns\CanResolveResourceRecord;
+    use Concerns\HasRecordBreadcrumb;
     use Concerns\UsesResourceForm;
     use Forms\Concerns\InteractsWithForms;
 
@@ -20,7 +21,7 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
     public $data;
 
-    public static function getBreadcrumb(): string
+    public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? 'Edit';
     }
@@ -29,7 +30,30 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
     {
         $this->record = $this->resolveRecord($record);
 
+        $this->callHook('beforeFill');
+
         $this->form->fill($this->record->toArray());
+
+        $this->callHook('afterFill');
+    }
+
+    public function save(): void
+    {
+        $this->callHook('beforeValidate');
+
+        $data = $this->form->getState();
+
+        $this->callHook('afterValidate');
+
+        $this->callHook('beforeSave');
+
+        $this->record->update($data);
+
+        $this->callHook('afterSave');
+
+        if ($redirectUrl = $this->getRedirectUrl()) {
+            $this->redirect($redirectUrl);
+        }
     }
 
     protected function canDelete(): bool
@@ -61,7 +85,8 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
     {
         return [
             ButtonAction::make('save')
-                ->label('Save'),
+                ->label('Save')
+                ->submit(),
             ButtonAction::make('cancel')
                 ->label('Cancel')
                 ->url(static::getResource()::getUrl())
@@ -77,5 +102,14 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
                 ->schema($this->getResourceForm()->getSchema())
                 ->statePath('data'),
         ];
+    }
+
+    protected function getRedirectUrl(): ?string
+    {
+        if (! static::getResource()::hasViewPage()) {
+            return null;
+        }
+
+        return static::getResource()::getViewUrl($this->record);
     }
 }

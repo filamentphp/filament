@@ -96,7 +96,7 @@ class Page extends Component
             ->layout(static::$layout, $this->getLayoutData());
     }
 
-    protected static function getBreadcrumbs(): array
+    protected function getBreadcrumbs(): array
     {
         return [];
     }
@@ -129,7 +129,7 @@ class Page extends Component
     protected function getLayoutData(): array
     {
         return [
-            'breadcrumbs' => static::getBreadcrumbs(),
+            'breadcrumbs' => $this->getBreadcrumbs(),
             'title' => static::getTitle(),
         ];
     }

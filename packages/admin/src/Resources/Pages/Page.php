@@ -19,23 +19,37 @@ class Page extends BasePage
         ];
     }
 
-    public static function getBreadcrumb(): string
+    public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? static::getTitle();
     }
 
-    protected static function getBreadcrumbs(): array
+    protected function getBreadcrumbs(): array
     {
         $resource = static::getResource();
 
         return [
             $resource::getUrl() => $resource::getBreadcrumb(),
-            static::getBreadcrumb(),
+            $this->getBreadcrumb(),
         ];
+    }
+
+    public static function getModel(): string
+    {
+        return static::getResource()::getModel();
     }
 
     public static function getResource(): string
     {
         return static::$resource;
+    }
+
+    protected function callHook(string $hook): void
+    {
+        if (! method_exists($this, $hook)) {
+            return;
+        }
+
+        $this->{$hook}();
     }
 }
