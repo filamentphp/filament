@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class EditRecord extends Page implements Forms\Contracts\HasForms
 {
+    use Concerns\CanResolveResourceRecord;
+    use Concerns\UsesResourceForm;
     use Forms\Concerns\InteractsWithForms;
 
     protected static string $view = 'filament::resources.pages.edit-record';
@@ -17,8 +19,6 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
     public $record;
 
     public $data;
-
-    protected ?Form $resourceForm = null;
 
     public static function getBreadcrumb(): string
     {
@@ -32,12 +32,28 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
         $this->form->fill($this->record->toArray());
     }
 
+    protected function canDelete(): bool
+    {
+        return true;
+    }
+
+    protected function canView(): bool
+    {
+        return true;
+    }
+
     protected function getActions(): array
     {
         return [
+            ButtonAction::make('view')
+                ->label('View')
+                ->url(static::getResource()::getViewUrl($this->record))
+                ->color('secondary')
+                ->hidden((! static::getResource()::hasViewPage()) || (! $this->canView())),
             ButtonAction::make('delete')
                 ->label('Delete')
-                ->color('danger'),
+                ->color('danger')
+                ->hidden(! $this->canDelete()),
         ];
     }
 
@@ -46,57 +62,20 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
         return [
             ButtonAction::make('save')
                 ->label('Save'),
+            ButtonAction::make('cancel')
+                ->label('Cancel')
+                ->url(static::getResource()::getUrl())
+                ->color('secondary'),
         ];
-    }
-
-    protected function getFormActionsComponent(): Forms\Components\Actions
-    {
-        return Forms\Components\Actions::make($this->getFormActions());
     }
 
     protected function getForms(): array
     {
         return [
             'form' => $this->makeForm()
-                ->schema($this->getFormSchema())
-                ->statePath('data')
-                ->model($this->record),
+                ->model($this->record)
+                ->schema($this->getResourceForm()->getSchema())
+                ->statePath('data'),
         ];
-    }
-
-    protected function getFormSchema(): array
-    {
-        $resourceForm = $this->getResourceForm();
-        $schema = $resourceForm->getSchema();
-
-        if (is_array($schema)) {
-            $component = Forms\Components\Grid::make()
-                ->schema(array_merge($schema, [$this->getFormActionsComponent()]))
-                ->columns($resourceForm->getColumns());
-        }
-
-        return [$component];
-    }
-
-    protected function getResourceForm(): Form
-    {
-        if (! $this->resourceForm) {
-            $this->resourceForm = static::getResource()::form(Form::make());
-        }
-
-        return $this->resourceForm;
-    }
-
-    protected function resolveRecord($key): Model
-    {
-        $model = static::getResource()::getModel();
-
-        $record = (new $model())->resolveRouteBinding($key);
-
-        if ($record === null) {
-            throw (new ModelNotFoundException())->setModel($model, [$key]);
-        }
-
-        return $record;
     }
 }

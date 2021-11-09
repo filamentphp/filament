@@ -166,7 +166,7 @@
                     </div>
                 </header>
 
-                <div class="w-full max-w-6xl px-4 py-4 mx-auto sm:px-4 md:px-6 lg:px-8">
+                <div class="w-full max-w-6xl px-4 py-6 mx-auto sm:px-4 md:px-6 lg:px-8">
                     {{ $slot }}
                 </div>
             </main>

@@ -1,7 +1,12 @@
+@php
+    $action = $getAction();
+    $url = $getUrl();
+@endphp
+
 <x-tables::button
-    :tag="((! $getAction()) && $getAction()) ? 'a' : 'button'"
-    :wire:click="$getAction()"
-    :href="$getUrl()"
+    :tag="((! $action) && $url) ? 'a' : 'button'"
+    :wire:click="$action"
+    :href="$url"
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
     :color="$getColor()"
     :icon="$getIcon()"

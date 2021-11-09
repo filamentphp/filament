@@ -3,6 +3,8 @@
 namespace Filament\Resources;
 
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Contracts\HasForms;
 
 class Form
 {
@@ -12,7 +14,7 @@ class Form
 
     protected array | Component $schema = [];
 
-    public static function make(): static
+    public static function make(HasForms $livewire): static
     {
         return new static();
     }
@@ -38,6 +40,14 @@ class Form
 
     public function getSchema(): array | Component
     {
-        return $this->schema;
+        $schema = $this->schema;
+
+        if (is_array($this->schema)) {
+            $schema = Grid::make()
+                ->schema($schema)
+                ->columns($this->getColumns());
+        }
+
+        return [$schema];
     }
 }

@@ -4,11 +4,14 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms;
 use Filament\Resources\Form;
+use Filament\View\Components\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ViewRecord extends Page implements Forms\Contracts\HasForms
 {
+    use Concerns\CanResolveResourceRecord;
+    use Concerns\UsesResourceForm;
     use Forms\Concerns\InteractsWithForms;
 
     protected static string $view = 'filament::resources.pages.view-record';
@@ -29,27 +32,29 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
         $this->form->fill($this->record->toArray());
     }
 
+    protected function canEdit(): bool
+    {
+        return true;
+    }
+
+    protected function getActions(): array
+    {
+        return [
+            ButtonAction::make('edit')
+                ->label('Edit')
+                ->url(static::getResource()::getEditUrl($this->record))
+                ->hidden(! $this->canEdit()),
+        ];
+    }
+
     protected function getForms(): array
     {
         return [
             'form' => $this->makeForm()
-                ->schema(static::getResource()::form(Form::make())->getSchema())
-                ->statePath('data')
+                ->disabled()
                 ->model($this->record)
-                ->disabled(),
+                ->schema($this->getResourceForm()->getSchema())
+                ->statePath('data'),
         ];
-    }
-
-    protected function resolveRecord($key): Model
-    {
-        $model = static::getResource()::getModel();
-
-        $record = (new $model())->resolveRouteBinding($key);
-
-        if ($record === null) {
-            throw (new ModelNotFoundException())->setModel($model, [$key]);
-        }
-
-        return $record;
     }
 }

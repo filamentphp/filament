@@ -18,15 +18,23 @@ class Table
 
     protected array $filters = [];
 
-    public static function make(): static
+    public static function make(HasTable $livewire): static
     {
         $static = new static();
 
-        $static->actions([
-            LinkAction::make('edit')
-                ->label('Edit')
-                ->url(fn (HasTable $livewire, Model $record): string => $livewire::getResource()::getRecordUrl($record)),
-        ]);
+        if ($livewire::getResource()::hasViewPage()) {
+            $static->actions([
+                LinkAction::make('view')
+                    ->label('View')
+                    ->url(fn (HasTable $livewire, Model $record): string => $livewire::getResource()::getViewUrl($record)),
+            ]);
+        } else {
+            $static->actions([
+                LinkAction::make('edit')
+                    ->label('Edit')
+                    ->url(fn (HasTable $livewire, Model $record): string => $livewire::getResource()::getEditUrl($record)),
+            ]);
+        }
 
         $static->bulkActions([
             BulkAction::make('delete')

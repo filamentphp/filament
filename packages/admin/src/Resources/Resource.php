@@ -14,6 +14,8 @@ class Resource
 {
     protected static ?string $breadcrumb = null;
 
+    protected static bool $hasViewPage = false;
+
     protected static ?string $label = null;
 
     protected static ?string $model = null;
@@ -65,6 +67,30 @@ class Resource
         return static::$breadcrumb ?? Str::title(static::getPluralLabel());
     }
 
+    public static function getCreateRouteName(): string
+    {
+        $base = static::getRouteBaseName();
+
+        return "{$base}.create";
+    }
+
+    public static function getCreateUrl(): string
+    {
+        return route(static::getCreateRouteName());
+    }
+
+    public static function getEditRouteName(): string
+    {
+        $base = static::getRouteBaseName();
+
+        return "{$base}.edit";
+    }
+
+    public static function getEditUrl(Model $record): string
+    {
+        return route(static::getEditRouteName(), ['record' => $record]);
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return static::getModel()::query();
@@ -94,18 +120,6 @@ class Resource
     public static function getPluralLabel(): string
     {
         return static::$pluralLabel ?? Str::plural(static::getLabel());
-    }
-
-    public static function getRecordRouteName(): string
-    {
-        $base = static::getRouteBaseName();
-
-        return "{$base}.edit";
-    }
-
-    public static function getRecordUrl(Model $record): string
-    {
-        return route(static::getRecordRouteName(), ['record' => $record]);
     }
 
     public static function getRouteBaseName(): string
@@ -143,6 +157,23 @@ class Resource
     public static function getUrl(): string
     {
         return route(static::getRouteName());
+    }
+
+    public static function getViewRouteName(): string
+    {
+        $base = static::getRouteBaseName();
+
+        return "{$base}.view";
+    }
+
+    public static function getViewUrl(Model $record): string
+    {
+        return route(static::getViewRouteName(), ['record' => $record]);
+    }
+
+    public static function hasViewPage(): bool
+    {
+        return static::$hasViewPage;
     }
 
     protected static function getNavigationGroup(): ?string

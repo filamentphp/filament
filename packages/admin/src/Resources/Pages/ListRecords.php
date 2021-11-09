@@ -4,14 +4,14 @@ namespace Filament\Resources\Pages;
 
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\View\Components\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class ListRecords extends Page implements Tables\Contracts\HasTable
 {
+    use Concerns\UsesResourceTable;
     use Tables\Concerns\InteractsWithTable;
-
-    protected ?Table $resourceTable = null;
 
     protected static string $view = 'filament::resources.pages.list-records';
 
@@ -25,13 +25,21 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return static::$title ?? Str::title(static::getResource()::getPluralLabel());
     }
 
-    protected function getResourceTable(): Table
+    protected function canCreate(): bool
     {
-        if (! $this->resourceTable) {
-            $this->resourceTable = static::getResource()::table(Table::make());
-        }
+        return true;
+    }
 
-        return $this->resourceTable;
+    protected function getActions(): array
+    {
+        $label = static::getResource()::getLabel();
+
+        return [
+            ButtonAction::make('create')
+                ->label("New {$label}")
+                ->url(static::getResource()::getCreateUrl())
+                ->hidden(! $this->canCreate()),
+        ];
     }
 
     protected function getTableActions(): array

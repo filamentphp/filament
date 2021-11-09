@@ -11,6 +11,7 @@ use Illuminate\View\Component;
 
 class Action extends Component implements Htmlable
 {
+    use Concerns\CanBeHidden;
     use Concerns\CanOpenUrl;
     use Concerns\HasAction;
     use Concerns\HasColor;
