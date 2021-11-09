@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\View\Components\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Builder;

@@ -2,8 +2,6 @@
 
 namespace Filament\View\Components\Actions\Concerns;
 
-use Closure;
-
 trait CanOpenUrl
 {
     protected bool $shouldOpenUrlInNewTab = false;
