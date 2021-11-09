@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
-use Filament\Resources\Form;
 use Filament\Resources\Table;
 
 trait UsesResourceTable
