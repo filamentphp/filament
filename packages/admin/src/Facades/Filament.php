@@ -5,6 +5,7 @@ namespace Filament\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
+ * @method static string getAvatar()
  * @method static array getPages()
  * @method static array getNavigation()
  * @method static array getNavigationGroups()

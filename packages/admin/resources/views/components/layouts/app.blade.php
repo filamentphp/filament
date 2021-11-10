@@ -96,11 +96,14 @@
                 </nav>
 
                 <footer class="border-t px-6 py-3 flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-full bg-gray-200"></div>
+                    <div
+                        class="w-11 h-11 rounded-full bg-gray-200 bg-cover bg-center"
+                        style="background-image: url('{{ \Filament\Facades\Filament::getAvatar(auth()->user()) }}')"
+                    ></div>
 
                     <div>
                         <p class="text-sm font-bold">
-                            {{ auth()->user()->name }}
+                            {{ auth()->user()->getFilamentName() }}
                         </p>
 
                         <p class="text-xs text-gray-500 transition hover:text-gray-700 focus:text-gray-700">

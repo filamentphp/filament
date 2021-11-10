@@ -1,8 +1,8 @@
 <?php
 
+use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
-use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -36,6 +36,20 @@ return [
     */
 
     'domain' => env('FILAMENT_DOMAIN', null),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Auth
+    |--------------------------------------------------------------------------
+    |
+    | This is the configuration that Filament will use to handle authentication
+    | into the admin panel.
+    |
+    */
+
+    'auth' => [
+        'guard' => env('FILAMENT_AUTH_GUARD', 'web'),
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -88,6 +102,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Default Avatar Provider
+    |--------------------------------------------------------------------------
+    |
+    | This is the service that will be used to retrieve default avatars if one
+    | has not been uploaded.
+    |
+    */
+
+    'default_avatar_provider' => \Filament\AvatarProviders\UiAvatarProvider::class,
+
+    /*
+    |--------------------------------------------------------------------------
     | Default Filesystem Disk
     |--------------------------------------------------------------------------
     |
@@ -109,7 +135,6 @@ return [
     */
 
     'middleware' => [
-        Authenticate::class,
         EncryptCookies::class,
         AddQueuedCookiesToResponse::class,
         StartSession::class,
@@ -119,6 +144,7 @@ return [
         SubstituteBindings::class,
         DispatchServingFilamentEvent::class,
         MirrorConfigToSubpackages::class,
+        Authenticate::class,
     ],
 
 ];

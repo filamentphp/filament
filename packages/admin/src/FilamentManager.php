@@ -2,6 +2,10 @@
 
 namespace Filament;
 
+use Filament\AvatarProviders\Contracts\AvatarProvider;
+use Filament\AvatarProviders\GravatarProvider;
+use Filament\Models\Contracts\HasAvatar;
+
 class FilamentManager
 {
     protected bool $isNavigationMounted = false;
@@ -73,6 +77,25 @@ class FilamentManager
     public function registerWidgets(array $widgets): void
     {
         $this->widgets = array_merge($this->widgets, $widgets);
+    }
+
+    public function getAvatar(): string
+    {
+        $user = auth()->user();
+
+        $avatar = null;
+
+        if ($user instanceof HasAvatar) {
+            $avatar = $user->getFilamentAvatar();
+        }
+
+        if ($avatar) {
+            return $avatar;
+        }
+
+        $provider = config('filament.default_avatar_provider');
+
+        return (new $provider())->get($user);
     }
 
     public function getNavigation(): array
