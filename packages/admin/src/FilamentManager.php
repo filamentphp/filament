@@ -2,8 +2,6 @@
 
 namespace Filament;
 
-use Filament\AvatarProviders\Contracts\AvatarProvider;
-use Filament\AvatarProviders\GravatarProvider;
 use Filament\Models\Contracts\HasAvatar;
 
 class FilamentManager
