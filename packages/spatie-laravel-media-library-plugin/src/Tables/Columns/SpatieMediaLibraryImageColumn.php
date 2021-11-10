@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Columns;
 
-use Filament\Forms\Components\SpatieMediaLibraryMultipleFileUpload;
 use Illuminate\Database\Eloquent\Builder;
 
 class SpatieMediaLibraryImageColumn extends ImageColumn

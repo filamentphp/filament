@@ -35,7 +35,8 @@ trait InteractsWithTableQuery
         $searchOperator = match ($query->getConnection()->getDriverName()) {
             'pgsql' => 'ilike',
             default => 'like',
-        };;
+        };
+        ;
 
         foreach ($this->getSearchColumns() as $searchColumnName) {
             if (Str::of($searchColumnName)->contains('.')) {
