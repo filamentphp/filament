@@ -26,19 +26,29 @@
     </head>
 
     <body>
-        <div class="min-h-screen bg-gray-100 text-gray-800 font-sans antialiased grid grid-cols-[20rem,1fr]">
+        <div class="flex min-h-screen w-full bg-gray-100">
+            <div
+                x-data="{}"
+                x-cloak
+                x-show="$store.sidebar.isOpen"
+                x-transition.opacity.500ms
+                x-on:click="$store.sidebar.close()"
+                class="fixed inset-0 z-20 w-full h-full bg-gray-900/50 lg:hidden"
+            ></div>
+
             <aside
                 x-data="{}"
-                x-bind:class="{ '-translate-x-full': ! $store.sidebar.isOpen, 'translate-x-0': $store.sidebar.isOpen }"
-                class="fixed inset-y-0 left-0 z-20 w-80 h-screen bg-white shadow-xl rounded-r-2xl grid grid-rows-[4rem,1fr,auto] transition duration-500 transform lg:translate-x-0 -translate-x-full"
+                x-cloak
+                x-bind:class="$store.sidebar.isOpen ? 'translate-x-0' : '-translate-x-full'"
+                class="fixed inset-y-0 left-0 z-20 flex flex-col h-screen overflow-hidden shadow-2xl rounded-r-2xl transition duration-300 bg-white lg:border-r w-80 lg:z-0 lg:translate-x-0"
             >
-                <header class="border-b px-6 flex items-center">
+                <header class="border-b h-[4rem] px-6 flex items-center">
                     <a class="text-xl font-bold tracking-tight" href="{{ \Filament\Pages\Dashboard::geturl() }}">
                         {{ config('app.name') }}
                     </a>
                 </header>
 
-                <nav class="py-6">
+                <nav class="flex-1 py-6">
                     <ul class="space-y-6 px-6">
                         @foreach (\Filament\Facades\Filament::getNavigation() as $group => $items)
                             <li>
@@ -49,9 +59,9 @@
                                 @endif
 
                                 <ul @class([
-                                    'text-sm space-y-1 -mx-3',
-                                    'mt-2' => $group,
-                                ])>
+                                        'text-sm space-y-1 -mx-3',
+                                        'mt-2' => $group,
+                                    ])>
                                     @foreach ($items as $item)
                                         @php
                                             $isActive = $item->isActive();
@@ -68,8 +78,8 @@
                                                 <x-dynamic-component :component="$item->getIcon()" class="h-5 w-5" />
 
                                                 <span>
-                                                    {{ $item->getLabel() }}
-                                                </span>
+                                                        {{ $item->getLabel() }}
+                                                    </span>
                                             </a>
                                         </li>
                                     @endforeach
@@ -102,23 +112,10 @@
                 </footer>
             </aside>
 
-            <div
-                x-data="{}"
-                x-cloak
-                x-show="$store.sidebar.isOpen"
-                x-transition.opacity.500ms
-                x-on:click="$store.sidebar.close()"
-                class="fixed inset-0 z-10 bg-gray-900/50 lg:hidden"
-            ></div>
-
-            <main
-                x-data="{}"
-                x-bind:class="{ 'translate-x-40 lg:translate-x-0': $store.sidebar.isOpen }"
-                class="w-screen transform transition duration-500 relative lg:pl-80 lg:transition-none"
-            >
+            <div class="w-screen flex-1 lg:pl-80">
                 <header class="h-[4rem] border-b flex items-center">
                     <div class="flex items-center w-full max-w-6xl px-2 mx-auto sm:px-4 md:px-6 lg:px-8">
-                        <button x-on:click="$store.sidebar.open()" class="flex-shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 transition rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none lg:hidden">
+                        <button x-data="{}" x-on:click="$store.sidebar.open()" class="flex-shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 transition rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none lg:hidden">
                             <x-heroicon-o-menu class="w-6 h-6" />
                         </button>
 
@@ -149,10 +146,10 @@
                     </div>
                 </header>
 
-                <div class="w-full max-w-6xl px-4 py-6 mx-auto sm:px-4 md:px-6 lg:px-8">
+                <div class="max-w-6xl px-4 py-6 mx-auto md:px-6 lg:px-8">
                     {{ $slot }}
                 </div>
-            </main>
+            </div>
         </div>
 
         @livewireScripts

@@ -57,6 +57,22 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
         }
     }
 
+    public function openDeleteModal(): void
+    {
+        $this->dispatchBrowserEvent('open-modal', [
+            'id' => 'delete',
+        ]);
+    }
+
+    public function delete(): void
+    {
+        abort_unless(static::getResource()::canDelete($this->record), 403);
+
+        $this->record->delete();
+
+        $this->redirect(static::getResource()::getUrl('index'));
+    }
+
     protected function getActions(): array
     {
         $resource = static::getResource();
@@ -69,6 +85,7 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
                 ->hidden(! $resource::canView($this->record)),
             ButtonAction::make('delete')
                 ->label('Delete')
+                ->action('openDeleteModal')
                 ->color('danger')
                 ->hidden(! $resource::canDelete($this->record)),
         ];
