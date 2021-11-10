@@ -4,5 +4,5 @@ namespace Filament\Models\Contracts;
 
 interface HasAvatar
 {
-    public function getFilamentAvatar(): ?string;
+    public function getFilamentAvatarUrl(): ?string;
 }

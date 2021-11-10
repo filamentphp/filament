@@ -2,10 +2,11 @@
 
 namespace Filament\Facades;
 
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static string getAvatar()
+ * @method static string getAvatarUrl(FilamentUser $user)
  * @method static array getPages()
  * @method static array getNavigation()
  * @method static array getNavigationGroups()

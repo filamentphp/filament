@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 
 class FilamentManager
@@ -77,14 +78,12 @@ class FilamentManager
         $this->widgets = array_merge($this->widgets, $widgets);
     }
 
-    public function getAvatar(): string
+    public function getAvatarUrl(FilamentUser $user): string
     {
-        $user = auth()->user();
-
         $avatar = null;
 
         if ($user instanceof HasAvatar) {
-            $avatar = $user->getFilamentAvatar();
+            $avatar = $user->getFilamentAvatarUrl();
         }
 
         if ($avatar) {
