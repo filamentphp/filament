@@ -95,7 +95,7 @@ class Resource
 
     public static function canDelete(Model $record): bool
     {
-        return static::hasPage('delete') && static::can('delete');
+        return static::can('delete');
     }
 
     public static function canView(Model $record): bool
