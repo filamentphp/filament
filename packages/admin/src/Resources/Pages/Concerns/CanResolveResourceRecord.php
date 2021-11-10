@@ -20,14 +20,14 @@ trait CanResolveResourceRecord
         return $record;
     }
 
-    protected function getRecordPrimaryAttribute(): ?string
+    protected function getRecordTitle(): ?string
     {
         $resource = static::getResource();
 
-        if (! $resource::hasPrimaryAttribute()) {
+        if (! $resource::hasRecordTitle()) {
             return null;
         }
 
-        return $resource::getPrimaryAttributeForModel($this->record);
+        return $resource::getRecordTitle($this->record);
     }
 }

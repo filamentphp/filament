@@ -76,7 +76,7 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
     protected function getDynamicTitle(): string
     {
-        return "Edit {$this->getRecordPrimaryAttribute()}";
+        return ($recordTitle = $this->getRecordTitle()) ? "Edit {$recordTitle}" : static::getTitle();
     }
 
     protected function getFormActions(): array

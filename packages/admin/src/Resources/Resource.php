@@ -7,6 +7,8 @@ use Filament\Facades\Filament;
 use Filament\NavigationItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -14,6 +16,8 @@ use Illuminate\Support\Str;
 class Resource
 {
     protected static ?string $breadcrumb = null;
+
+    protected static bool $isGloballySearchable = true;
 
     protected static ?string $label = null;
 
@@ -29,7 +33,7 @@ class Resource
 
     protected static ?string $pluralLabel = null;
 
-    protected static ?string $primaryAttribute = null;
+    protected static ?string $recordTitleAttribute = null;
 
     protected static ?string $slug = null;
 
@@ -57,7 +61,7 @@ class Resource
         ]);
     }
 
-    public static function pages(): array
+    public static function getPages(): array
     {
         return [];
     }
@@ -98,6 +102,11 @@ class Resource
         return static::can('delete');
     }
 
+    public static function canGloballySearch(): bool
+    {
+        return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canAccess();
+    }
+
     public static function canView(Model $record): bool
     {
         return static::hasPage('view') && static::can('view');
@@ -111,6 +120,63 @@ class Resource
     public static function getEloquentQuery(): Builder
     {
         return static::getModel()::query();
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        $titleAttribute = static::getRecordTitleAttribute();
+
+        if ($titleAttribute === null) {
+            return [];
+        }
+
+        return [$titleAttribute];
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [];
+    }
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return static::getRecordTitle($record);
+    }
+
+    public static function getGlobalSearchResultUrl(Model $record): ?string
+    {
+        if (static::canView($record)) {
+            return static::getUrl('view', ['record' => $record]);
+        }
+
+        if (static::canEdit($record)) {
+            return static::getUrl('edit', ['record' => $record]);
+        }
+
+        return null;
+    }
+
+    public static function getGlobalSearchResults(string $searchQuery): Collection
+    {
+        $query = static::getEloquentQuery();
+
+        foreach (explode(' ', $searchQuery) as $searchQueryWord) {
+            $query->where(function (Builder $query) use ($searchQueryWord) {
+                $isFirst = true;
+
+                foreach (static::getGloballySearchableAttributes() as $attributes) {
+                    static::applyGlobalSearchAttributeConstraint($query, Arr::wrap($attributes), $searchQueryWord, $isFirst);
+                }
+            });
+        }
+
+        return $query
+            ->get()
+            ->map(fn (Model $record): array => [
+                'details' => static::getGlobalSearchResultDetails($record),
+                'title' => static::getGlobalSearchResultTitle($record),
+                'url' => static::getGlobalSearchResultUrl($record),
+            ]);
     }
 
     public static function getLabel(): string
@@ -132,14 +198,14 @@ class Resource
         return static::$pluralLabel ?? Str::plural(static::getLabel());
     }
 
-    public static function getPrimaryAttribute(): ?string
+    public static function getRecordTitleAttribute(): ?string
     {
-        return static::$primaryAttribute;
+        return static::$recordTitleAttribute;
     }
 
-    public static function getPrimaryAttributeForModel(Model $model): ?string
+    public static function getRecordTitle(Model $record): ?string
     {
-        return $model->getAttribute(static::getPrimaryAttribute());
+        return $record->getAttribute(static::getRecordTitleAttribute());
     }
 
     public static function getRouteBaseName(): string
@@ -155,7 +221,7 @@ class Resource
             $slug = static::getSlug();
 
             Route::name("{$slug}.")->prefix($slug)->group(function () use ($slug) {
-                foreach (static::pages() as $name => $page) {
+                foreach (static::getPages() as $name => $page) {
                     Route::get($page['route'], $page['class'])->name($name);
                 }
             });
@@ -178,12 +244,43 @@ class Resource
 
     public static function hasPage($page): bool
     {
-        return array_key_exists($page, static::pages());
+        return array_key_exists($page, static::getPages());
     }
 
-    public static function hasPrimaryAttribute(): bool
+    public static function hasRecordTitle(): bool
     {
-        return static::getPrimaryAttribute() !== null;
+        return static::getRecordTitleAttribute() !== null;
+    }
+
+    protected static function applyGlobalSearchAttributeConstraint(Builder $query, array $searchAttributes, string $searchQuery, bool &$isFirst): Builder
+    {
+        $searchOperator = match ($query->getConnection()->getDriverName()) {
+            'pgsql' => 'ilike',
+            default => 'like',
+        };
+
+        foreach ($searchAttributes as $searchAttribute) {
+            if (Str::of($searchAttribute)->contains('.')) {
+                $query->{$isFirst ? 'whereHas' : 'orWhereHas'}(
+                    Str::of($searchAttribute)->beforeLast('.'),
+                    fn ($query) => $query->where(
+                        $searchAttribute,
+                        $searchOperator,
+                        "%{$searchQuery}%",
+                    ),
+                );
+            } else {
+                $query->{$isFirst ? 'where' : 'orWhere'}(
+                    $searchAttribute,
+                    $searchOperator,
+                    "%{$searchQuery}%"
+                );
+            }
+
+            $isFirst = false;
+        }
+
+        return $query;
     }
 
     protected static function getNavigationGroup(): ?string

@@ -52,7 +52,7 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
 
     protected function getDynamicTitle(): string
     {
-        return $this->getRecordPrimaryAttribute();
+        return ($recordTitle = $this->getRecordTitle()) ? $recordTitle : static::getTitle();
     }
 
     protected function getForms(): array
