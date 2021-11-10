@@ -18,6 +18,7 @@ trait HasActions
     public function cacheTableActions(): void
     {
         $this->cachedTableActions = collect($this->getTableActions())
+            ->filter(fn (Action $action): bool => ! $action->isHidden())
             ->mapWithKeys(function (Action $action): array {
                 $action->table($this->getCachedTable());
 

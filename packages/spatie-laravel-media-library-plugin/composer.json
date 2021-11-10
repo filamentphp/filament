@@ -9,7 +9,6 @@
     },
     "require": {
         "php": "^8.0",
-        "filament/forms": "self.version",
         "illuminate/support": "^8.6",
         "spatie/laravel-medialibrary": "^9.0"
     },

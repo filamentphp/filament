@@ -16,6 +16,7 @@ trait HasBulkActions
     public function cacheTableBulkActions(): void
     {
         $this->cachedTableBulkActions = collect($this->getTableBulkActions())
+            ->filter(fn (BulkAction $action): bool => ! $action->isHidden())
             ->mapWithKeys(function (BulkAction $action): array {
                 $action->table($this->getCachedTable());
 

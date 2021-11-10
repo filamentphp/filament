@@ -75,6 +75,17 @@
 ])>
     @foreach ($getComponents() as $formComponent)
         <div @class([
+            'max-w-xs' => $formComponent->getMaxWidth() === 'xs',
+            'max-w-sm' => $formComponent->getMaxWidth() === 'sm',
+            'max-w-md' => $formComponent->getMaxWidth() === 'md',
+            'max-w-lg' => $formComponent->getMaxWidth() === 'lg',
+            'max-w-xl' => $formComponent->getMaxWidth() === 'xl',
+            'max-w-2xl' => $formComponent->getMaxWidth() === '2xl',
+            'max-w-3xl' => $formComponent->getMaxWidth() === '3xl',
+            'max-w-4xl' => $formComponent->getMaxWidth() === '4xl',
+            'max-w-5xl' => $formComponent->getMaxWidth() === '5xl',
+            'max-w-6xl' => $formComponent->getMaxWidth() === '6xl',
+            'max-w-7xl' => $formComponent->getMaxWidth() === '7xl',
             'col-span-1' => $formComponent->getColumnSpan('default') === 1,
             'col-span-2' => $formComponent->getColumnSpan('default') === 2,
             'col-span-3' => $formComponent->getColumnSpan('default') === 3,
