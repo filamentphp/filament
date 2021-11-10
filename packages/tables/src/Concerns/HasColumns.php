@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Filters\Filter;
 
 trait HasColumns
 {
@@ -11,6 +12,7 @@ trait HasColumns
     public function cacheTableColumns(): void
     {
         $this->cachedTableColumns = collect($this->getTableColumns())
+            ->filter(fn (Column $column): bool => ! $column->isHidden())
             ->mapWithKeys(function (Column $column): array {
                 $column->table($this->getCachedTable());
 

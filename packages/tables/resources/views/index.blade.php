@@ -294,7 +294,9 @@
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <div class="flex items-center justify-center space-x-2">
                                         @foreach ($actions as $action)
-                                            {{ $action->record($record) }}
+                                            @if (! $action->record($record)->isHidden())
+                                                {{ $action }}
+                                            @endif
                                         @endforeach
                                     </div>
                                 </td>

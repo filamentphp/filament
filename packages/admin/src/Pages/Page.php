@@ -126,18 +126,23 @@ class Page extends Component
         return static::getUrl();
     }
 
+    protected function getDynamicTitle(): string
+    {
+        return static::getTitle();
+    }
+
     protected function getLayoutData(): array
     {
         return [
             'breadcrumbs' => $this->getBreadcrumbs(),
-            'title' => static::getTitle(),
+            'title' => $this->getDynamicTitle(),
         ];
     }
 
     protected function getViewData(): array
     {
         return [
-            'title' => static::getTitle(),
+            'title' => $this->getDynamicTitle(),
         ];
     }
 }

@@ -10,12 +10,11 @@ class Page extends BasePage
 
     protected static string $resource;
 
-    public static function routeTo(string $path, string $name): array
+    public static function route(string $path): array
     {
         return [
-            'name' => $name,
-            'page' => static::class,
-            'path' => $path,
+            'class' => static::class,
+            'route' => $path,
         ];
     }
 
@@ -32,6 +31,11 @@ class Page extends BasePage
             $resource::getUrl() => $resource::getBreadcrumb(),
             $this->getBreadcrumb(),
         ];
+    }
+
+    public static function authorizeResourceAccess(): void
+    {
+        abort_unless(static::getResource()::canAccess(), 403);
     }
 
     public static function getModel(): string

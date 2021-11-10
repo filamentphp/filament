@@ -1,7 +1,7 @@
 <x-filament::page>
     <x-filament::header :actions="$this->getActions()">
         <x-slot name="heading">
-            {{ static::getTitle() }}
+            {{ $title }}
         </x-slot>
     </x-filament::header>
 

@@ -11,6 +11,10 @@ trait InteractsWithTableQuery
 {
     public function applyEagreLoading(Builder $query): Builder
     {
+        if ($this->isHidden()) {
+            return $query;
+        }
+
         if ($this->queriesRelationships()) {
             $query->with([$this->getRelationshipName()]);
         }
@@ -20,6 +24,10 @@ trait InteractsWithTableQuery
 
     public function applySearchConstraint(Builder $query, string $searchQuery, bool &$isFirst): Builder
     {
+        if ($this->isHidden()) {
+            return $query;
+        }
+
         if (! $this->isSearchable()) {
             return $query;
         }
@@ -55,6 +63,10 @@ trait InteractsWithTableQuery
 
     public function applySort(Builder $query, string $direction = 'asc'): Builder
     {
+        if ($this->isHidden()) {
+            return $query;
+        }
+
         if (! $this->isSortable()) {
             return $query;
         }

@@ -25,7 +25,7 @@ trait CanOpenUrl
 
     public function getUrl(): ?string
     {
-        return $this->url;
+        return value($this->url);
     }
 
     public function shouldOpenUrlInNewTab(): bool

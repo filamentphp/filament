@@ -5,6 +5,7 @@ namespace Filament\Tables\Actions;
 use Closure;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
@@ -27,6 +28,8 @@ class Action extends Component implements Htmlable
     use Macroable;
     use Tappable;
 
+    protected $isHidden = false;
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -46,6 +49,10 @@ class Action extends Component implements Htmlable
 
     public function call(array $data = [])
     {
+        if ($this->isHidden()) {
+            return;
+        }
+
         $action = $this->getAction();
 
         if (! $action instanceof Closure) {
@@ -54,6 +61,29 @@ class Action extends Component implements Htmlable
 
         return app()->call($action, [
             'data' => $data,
+            'livewire' => $this->getLivewire(),
+            'record' => $this->getRecord(),
+        ]);
+    }
+
+    public function hidden(bool | callable $condition = true): static
+    {
+        $this->isHidden = $condition;
+
+        return $this;
+    }
+
+    public function isHidden(): bool
+    {
+        if (! $this->isHidden instanceof Closure) {
+            return $this->isHidden;
+        }
+
+        if (! $this->getRecord()) {
+            return false;
+        }
+
+        return app()->call($this->isHidden, [
             'livewire' => $this->getLivewire(),
             'record' => $this->getRecord(),
         ]);

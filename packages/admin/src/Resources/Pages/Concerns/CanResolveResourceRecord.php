@@ -19,4 +19,15 @@ trait CanResolveResourceRecord
 
         return $record;
     }
+
+    protected function getRecordPrimaryAttribute(): ?string
+    {
+        $resource = static::getResource();
+
+        if (! $resource::hasPrimaryAttribute()) {
+            return null;
+        }
+
+        return $resource::getPrimaryAttributeForModel($this->record);
+    }
 }

@@ -25,7 +25,11 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
     public function mount($record): void
     {
+        static::authorizeResourceAccess();
+
         $this->record = $this->resolveRecord($record);
+
+        abort_unless(static::getResource()::canEdit($this->record), 403);
 
         $this->callHook('beforeFill');
 
@@ -53,29 +57,26 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
         }
     }
 
-    protected function canDelete(): bool
-    {
-        return true;
-    }
-
-    protected function canView(): bool
-    {
-        return true;
-    }
-
     protected function getActions(): array
     {
+        $resource = static::getResource();
+
         return [
             ButtonAction::make('view')
                 ->label('View')
-                ->url(static::getResource()::getViewUrl($this->record))
+                ->url(fn () => $resource::getUrl('view', ['record' => $this->record]))
                 ->color('secondary')
-                ->hidden((! static::getResource()::hasViewPage()) || (! $this->canView())),
+                ->hidden(! $resource::canView($this->record)),
             ButtonAction::make('delete')
                 ->label('Delete')
                 ->color('danger')
-                ->hidden(! $this->canDelete()),
+                ->hidden(! $resource::canDelete($this->record)),
         ];
+    }
+
+    protected function getDynamicTitle(): string
+    {
+        return "Edit {$this->getRecordPrimaryAttribute()}";
     }
 
     protected function getFormActions(): array
@@ -103,10 +104,12 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
     protected function getRedirectUrl(): ?string
     {
-        if (! static::getResource()::hasViewPage()) {
+        $resource = static::getResource();
+
+        if (! $resource::canView($this->record)) {
             return null;
         }
 
-        return static::getResource()::getViewUrl($this->record);
+        return $resource::getUrl('view', ['record' => $this->record]);
     }
 }

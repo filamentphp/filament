@@ -14,6 +14,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected static string $view = 'filament::resources.pages.list-records';
 
+    public function mount(): void
+    {
+        static::authorizeResourceAccess();
+    }
+
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? 'List';
@@ -24,20 +29,16 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return static::$title ?? Str::title(static::getResource()::getPluralLabel());
     }
 
-    protected function canCreate(): bool
-    {
-        return true;
-    }
-
     protected function getActions(): array
     {
-        $label = static::getResource()::getLabel();
+        $resource = static::getResource();
+        $label = $resource::getLabel();
 
         return [
             ButtonAction::make('create')
                 ->label("New {$label}")
-                ->url(static::getResource()::getCreateUrl())
-                ->hidden(! $this->canCreate()),
+                ->url(fn () => $resource::getUrl('create'))
+                ->hidden(! $resource::canCreate()),
         ];
     }
 

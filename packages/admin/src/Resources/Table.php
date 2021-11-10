@@ -22,17 +22,21 @@ class Table
     {
         $static = new static();
 
-        if ($livewire::getResource()::hasViewPage()) {
+        $resource = $livewire::getResource();
+
+        if ($resource::hasPage('view')) {
             $static->actions([
                 LinkAction::make('view')
                     ->label('View')
-                    ->url(fn (HasTable $livewire, Model $record): string => $livewire::getResource()::getViewUrl($record)),
+                    ->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]))
+                    ->hidden(fn (Model $record): bool => ! $resource::canView($record)),
             ]);
-        } else {
+        } elseif ($resource::hasPage('edit')) {
             $static->actions([
                 LinkAction::make('edit')
                     ->label('Edit')
-                    ->url(fn (HasTable $livewire, Model $record): string => $livewire::getResource()::getEditUrl($record)),
+                    ->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]))
+                    ->hidden(fn (Model $record): bool => ! $resource::canEdit($record)),
             ]);
         }
 

@@ -25,7 +25,11 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
 
     public function mount($record): void
     {
+        static::authorizeResourceAccess();
+
         $this->record = $this->resolveRecord($record);
+
+        abort_unless(static::getResource()::canView($this->record), 403);
 
         $this->callHook('beforeFill');
 
@@ -34,19 +38,21 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
         $this->callHook('afterFill');
     }
 
-    protected function canEdit(): bool
-    {
-        return true;
-    }
-
     protected function getActions(): array
     {
+        $resource = static::getResource();
+
         return [
             ButtonAction::make('edit')
                 ->label('Edit')
-                ->url(static::getResource()::getEditUrl($this->record))
-                ->hidden(! $this->canEdit()),
+                ->url(fn () => $resource::getUrl('edit', ['record' => $this->record]))
+                ->hidden(! $resource::canEdit($this->record)),
         ];
+    }
+
+    protected function getDynamicTitle(): string
+    {
+        return $this->getRecordPrimaryAttribute();
     }
 
     protected function getForms(): array

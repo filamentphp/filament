@@ -26,6 +26,10 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
     public function mount(): void
     {
+        static::authorizeResourceAccess();
+
+        abort_unless(static::getResource()::canCreate(), 403);
+
         $this->callHook('beforeFill');
 
         $this->form->fill();
@@ -49,7 +53,9 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
         $this->callHook('afterCreate');
 
-        $this->redirect($this->getRedirectUrl());
+        if ($redirectUrl = $this->getRedirectUrl()) {
+            $this->redirect($redirectUrl);
+        }
     }
 
     protected function getFormActions(): array
@@ -75,12 +81,18 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
         ];
     }
 
-    protected function getRedirectUrl(): string
+    protected function getRedirectUrl(): ?string
     {
-        if (static::getResource()::hasViewPage()) {
-            return static::getResource()::getViewUrl($this->record);
+        $resource = static::getResource();
+
+        if ($resource::canView($this->record)) {
+            return $resource::getUrl('view', ['record' => $this->record]);
         }
 
-        return static::getResource()::getEditUrl($this->record);
+        if ($resource::canEdit($this->record)) {
+            return $resource::getUrl('edit', ['record' => $this->record]);
+        }
+
+        return null;
     }
 }

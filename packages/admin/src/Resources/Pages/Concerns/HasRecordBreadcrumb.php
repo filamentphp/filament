@@ -13,26 +13,23 @@ trait HasRecordBreadcrumb
         ];
 
         if ($resource::hasPrimaryAttribute()) {
-            [$recordBreadcrumbUrl, $recordBreadcrumbLabel] = $this->getRecordBreadcrumb();
+            $recordBreadcrumbUrl = null;
 
-            $breadcrumbs[$recordBreadcrumbUrl] = $recordBreadcrumbLabel;
+            if ($resource::canView($this->record)) {
+                $breadcrumbs[
+                    $resource::getUrl('view', ['record' => $this->record])
+                ] = $this->getRecordPrimaryAttribute();;
+            } elseif ($resource::canEdit($this->record)) {
+                $breadcrumbs[
+                    $resource::getUrl('edit', ['record' => $this->record])
+                ] = $this->getRecordPrimaryAttribute();;
+            } else {
+                $breadcrumbs[] = $this->getRecordPrimaryAttribute();
+            }
         }
 
         $breadcrumbs[] = $this->getBreadcrumb();
 
         return $breadcrumbs;
-    }
-
-    protected function getRecordBreadcrumb(): array
-    {
-        $resource = static::getResource();
-
-        if ($resource::hasViewPage()) {
-            $url = $resource::getViewUrl($this->record);
-        } else {
-            $url = $resource::getEditUrl($this->record);
-        }
-
-        return [$url, $resource::getPrimaryAttributeForModel($this->record)];
     }
 }

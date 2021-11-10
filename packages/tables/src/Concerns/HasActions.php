@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
 
 trait HasActions
 {
@@ -18,6 +19,7 @@ trait HasActions
     public function cacheTableActions(): void
     {
         $this->cachedTableActions = collect($this->getTableActions())
+            ->filter(fn (Action $action): bool => ! $action->isHidden())
             ->mapWithKeys(function (Action $action): array {
                 $action->table($this->getCachedTable());
 
