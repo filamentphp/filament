@@ -31,8 +31,6 @@ class BelongsToSelect extends Select
                 ),
             );
         });
-
-        $this->dehydrated(false);
     }
 
     public function preload(bool | callable $condition = true): static
