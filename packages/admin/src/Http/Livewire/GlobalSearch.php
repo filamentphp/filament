@@ -45,6 +45,8 @@ class GlobalSearch extends Component
                 return true;
             }
         }
+
+        return false;
     }
 
     public function render()
