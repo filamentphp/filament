@@ -43,7 +43,7 @@
                     <div class="space-y-2 items-center justify-between md:flex md:space-y-0 md:space-x-2">
                         <div>
                             @if ($heading)
-                                <h2 class="text-xl font-semibold tracking-tight">
+                                <h2 class="text-xl font-bold tracking-tight">
                                     {{ $heading }}
                                 </h2>
                             @endif
@@ -204,7 +204,7 @@
 
                         @foreach ($columns as $column)
                             <th @class([
-                                'px-4 py-2 text-sm font-semibold text-gray-600',
+                                'px-4 py-2',
                                 $getHiddenClasses($column),
                             ])>
                                 <button
@@ -213,7 +213,7 @@
                                     @endif
                                     type="button"
                                     @class([
-                                        'flex items-center space-x-1',
+                                        'flex items-center space-x-1 font-medium text-sm text-gray-600',
                                         'cursor-default' => ! $column->isSortable(),
                                     ])
                                 >
@@ -316,7 +316,7 @@
                         </div>
 
                         <div class="max-w-xs space-y-1">
-                            <h2 class="text-xl font-semibold tracking-tight">
+                            <h2 class="text-xl font-bold tracking-tight">
                                 {{ $getEmptyStateHeading() }}
                             </h2>
 

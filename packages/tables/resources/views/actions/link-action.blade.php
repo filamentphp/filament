@@ -17,7 +17,7 @@
     :href="$getUrl()"
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
     :color="$getColor()"
-    class="text-sm font-semibold"
+    class="text-sm font-medium"
 >
     {{ $getLabel() }}
 </x-tables::link>
