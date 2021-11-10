@@ -2,6 +2,7 @@ name: monorepo-split
 
 on:
     push:
+        tags: '*'
 
 jobs:
     provide-packages-list:
