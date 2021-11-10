@@ -18,11 +18,13 @@ trait HasRecordBreadcrumb
             if ($resource::canView($this->record)) {
                 $breadcrumbs[
                     $resource::getUrl('view', ['record' => $this->record])
-                ] = $this->getRecordPrimaryAttribute();;
+                ] = $this->getRecordPrimaryAttribute();
+                ;
             } elseif ($resource::canEdit($this->record)) {
                 $breadcrumbs[
                     $resource::getUrl('edit', ['record' => $this->record])
-                ] = $this->getRecordPrimaryAttribute();;
+                ] = $this->getRecordPrimaryAttribute();
+                ;
             } else {
                 $breadcrumbs[] = $this->getRecordPrimaryAttribute();
             }
