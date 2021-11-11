@@ -10,7 +10,7 @@ trait CanBeSortable
 
     protected ?array $sortColumns = [];
 
-    public function sortable(bool $condition = true): static
+    public function sortable(bool | array $condition = true): static
     {
         if (is_array($condition)) {
             $this->isSortable = true;

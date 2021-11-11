@@ -1,9 +1,13 @@
-import dayjs from 'dayjs/esm/index'
+import dayjs from 'dayjs/esm'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import localeData from 'dayjs/plugin/localeData'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 
 dayjs.extend(customParseFormat)
 dayjs.extend(localeData)
+dayjs.extend(timezone)
+dayjs.extend(utc)
 
 window.dayjs = dayjs
 
@@ -13,12 +17,13 @@ export default (Alpine) => {
         firstDayOfWeek,
         format,
         isAutofocused,
-        locale,
         maxDate,
         minDate,
         state,
     }) => {
-        dayjs.locale(locale)
+        const timezone = dayjs.tz.guess()
+
+        dayjs.locale(window.dayjs_locale)
 
         return {
             daysInFocusedMonth: [],
@@ -58,10 +63,10 @@ export default (Alpine) => {
                     this.minDate = null
                 }
 
-                let date = this.getSelectedDate() ?? dayjs()
-                    .set('hour', 0)
-                    .set('minute', 0)
-                    .set('second', 0)
+                let date = this.getSelectedDate() ?? dayjs().tz(timezone)
+                    .hour(0)
+                    .minute(0)
+                    .second(0)
 
                 if (this.maxDate !== null && date.isAfter(this.maxDate)) {
                     date = null
@@ -71,9 +76,9 @@ export default (Alpine) => {
                     date = null
                 }
 
-                this.hour = date.hour()
-                this.minute = date.minute()
-                this.second = date.second()
+                this.hour = date?.hour() ?? 0
+                this.minute = date?.minute() ?? 0
+                this.second = date?.second() ?? 0
 
                 this.setDisplayText()
 
@@ -88,7 +93,7 @@ export default (Alpine) => {
                         return
                     }
 
-                    this.focusedDate = this.focusedDate.set('month', this.focusedMonth)
+                    this.focusedDate = this.focusedDate.month(this.focusedMonth)
                 })
 
                 this.$watch('focusedYear', () => {
@@ -98,7 +103,7 @@ export default (Alpine) => {
                         return
                     }
 
-                    this.focusedDate = this.focusedDate.set('year', this.focusedYear)
+                    this.focusedDate = this.focusedDate.year(this.focusedYear)
                 })
 
                 this.$watch('focusedDate', () => {
@@ -116,7 +121,7 @@ export default (Alpine) => {
                     let hour = +this.hour
 
                     if (! Number.isInteger(hour)) {
-                        this.hour = dayjs().hour()
+                        this.hour = 0
                     } else if (hour > 23) {
                         this.hour = 0
                     } else if (hour < 0) {
@@ -127,14 +132,14 @@ export default (Alpine) => {
 
                     let date = this.getSelectedDate() ?? this.focusedDate
 
-                    this.setState(date.set('hour', this.hour))
+                    this.setState(date.hour(this.hour ?? 0))
                 })
 
                 this.$watch('minute', () => {
                     let minute = +this.minute
 
                     if (! Number.isInteger(minute)) {
-                        this.minute = dayjs().minute()
+                        this.minute = 0
                     } else if (minute > 59) {
                         this.minute = 0
                     } else if (minute < 0) {
@@ -145,14 +150,14 @@ export default (Alpine) => {
 
                     let date = this.getSelectedDate() ?? this.focusedDate
 
-                    this.setState(date.set('minute', this.minute))
+                    this.setState(date.minute(this.minute ?? 0))
                 })
 
                 this.$watch('second', () => {
                     let second = +this.second
 
                     if (! Number.isInteger(second)) {
-                        this.second = dayjs().second()
+                        this.second = 0
                     } else if (second > 59) {
                         this.second = 0
                     } else if (second < 0) {
@@ -163,7 +168,7 @@ export default (Alpine) => {
 
                     let date = this.getSelectedDate() ?? this.focusedDate
 
-                    this.setState(date.set('second', this.second))
+                    this.setState(date.second(this.second ?? 0))
                 })
 
                 this.$watch('state', () => {
@@ -222,7 +227,7 @@ export default (Alpine) => {
             },
 
             dayIsToday: function (day) {
-                let date = dayjs()
+                let date = dayjs().tz(timezone)
 
                 return date.date() === day &&
                     date.month() === this.focusedDate.month() &&
@@ -289,7 +294,7 @@ export default (Alpine) => {
             },
 
             openPicker: function () {
-                this.focusedDate = this.getSelectedDate() ?? dayjs()
+                this.focusedDate = this.getSelectedDate() ?? dayjs().tz(timezone)
 
                 this.setupDaysGrid()
 
@@ -340,9 +345,9 @@ export default (Alpine) => {
                 }
 
                 this.state = date
-                    .set('hour', this.hour)
-                    .set('minute', this.minute)
-                    .set('second', this.second)
+                    .hour(this.hour ?? 0)
+                    .minute(this.minute ?? 0)
+                    .second(this.second ?? 0)
                     .format(format)
 
                 this.setDisplayText()
