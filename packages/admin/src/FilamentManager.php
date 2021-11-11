@@ -4,6 +4,7 @@ namespace Filament;
 
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
+use Illuminate\Contracts\Auth\StatefulGuard;
 
 class FilamentManager
 {
@@ -24,6 +25,11 @@ class FilamentManager
     protected array $styles = [];
 
     protected array $widgets = [];
+
+    public function auth(): StatefulGuard
+    {
+        return auth()->guard(config('filament.auth.guard'));
+    }
 
     public function mountNavigation(): void
     {

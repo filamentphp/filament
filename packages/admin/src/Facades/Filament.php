@@ -3,9 +3,11 @@
 namespace Filament\Facades;
 
 use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Support\Facades\Facade;
 
 /**
+ * @method static StatefulGuard auth()
  * @method static string getAvatarUrl(FilamentUser $user)
  * @method static array getPages()
  * @method static array getNavigation()

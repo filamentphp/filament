@@ -9,6 +9,7 @@
     },
     "require": {
         "php": "^8.0",
+        "danharrin/livewire-rate-limiting": "^0.3.0",
         "livewire/livewire": "^2.6",
         "spatie/laravel-package-tools": "^1.9"
     },

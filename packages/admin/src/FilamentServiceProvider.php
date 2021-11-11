@@ -4,6 +4,7 @@ namespace Filament;
 
 use Filament\Facades\Filament;
 use Filament\Http\Livewire\GlobalSearch;
+use Filament\Http\Livewire\Login;
 use Filament\Pages\Dashboard;
 use Filament\Resources\Resource;
 use Filament\Widgets\Widget;
@@ -58,6 +59,7 @@ class FilamentServiceProvider extends PackageServiceProvider
     protected function bootLivewireComponents(): void
     {
         Livewire::component('filament.global-search', GlobalSearch::class);
+        Livewire::component('filament.login', Login::class);
 
         $this->registerLivewireComponentDirectory(__DIR__ . '/Pages', 'Filament\\Pages', 'filament.pages.');
         $this->registerLivewireComponentDirectory(__DIR__ . '/Resources', 'Filament\\Resources', 'filament.resources.');

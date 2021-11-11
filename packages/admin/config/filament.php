@@ -135,16 +135,20 @@ return [
     */
 
     'middleware' => [
-        EncryptCookies::class,
-        AddQueuedCookiesToResponse::class,
-        StartSession::class,
-        AuthenticateSession::class,
-        ShareErrorsFromSession::class,
-        VerifyCsrfToken::class,
-        SubstituteBindings::class,
-        DispatchServingFilamentEvent::class,
-        MirrorConfigToSubpackages::class,
-        Authenticate::class,
+        'auth' => [
+            Authenticate::class,
+        ],
+        'base' => [
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            AuthenticateSession::class,
+            ShareErrorsFromSession::class,
+            VerifyCsrfToken::class,
+            SubstituteBindings::class,
+            DispatchServingFilamentEvent::class,
+            MirrorConfigToSubpackages::class,
+        ],
     ],
 
 ];

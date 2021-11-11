@@ -2,6 +2,7 @@
 
 namespace Filament\Http\Middleware;
 
+use Exception;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
@@ -21,15 +22,20 @@ class Authenticate extends Middleware
         $this->auth->shouldUse($guardName);
 
         $user = $this->auth->user();
+        $userClass = $user::class;
+
+        if (! $user instanceof FilamentUser) {
+            throw new Exception("Class [{$userClass}] does not implement the \Filament\Models\Contracts\FilamentUser interface.");
+        }
 
         abort_unless(
-            $user instanceof FilamentUser && $user->canAccessFilament(),
+            $user->canAccessFilament(),
             404,
         );
     }
 
     protected function redirectTo($request): string
     {
-        return route('login');
+        return route('filament.login');
     }
 }
