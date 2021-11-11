@@ -168,7 +168,7 @@
                                             x-transition:leave="transition ease duration-300"
                                             x-transition:leave-start="opacity-100 translate-y-0"
                                             x-transition:leave-end="opacity-0 translate-y-2"
-                                            class="absolute right-0 z-10 max-w-xs mt-2 shadow-xl top-full rounded-xl"
+                                            class="absolute right-0 z-10 w-screen max-w-xs mt-2 shadow-xl top-full rounded-xl"
                                         >
                                             <div class="px-6 py-4 bg-white shadow rounded-xl">
                                                 {{ $getFiltersForm() }}
