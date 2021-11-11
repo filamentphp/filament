@@ -13,6 +13,8 @@ Route::domain(config('filament.domain'))
     ->group(function () {
         Route::get('/login', Login::class)->name('login');
 
+        Route::get('/assets/{path}', AssetController::class)->name('asset');
+
         Route::middleware(config('filament.middleware.auth'))->group(function () {
             Route::name('pages.')->group(function () {
                 foreach (Filament::getPages() as $page) {
@@ -25,8 +27,6 @@ Route::domain(config('filament.domain'))
                     Route::group([], $resource::getRoutes());
                 }
             });
-
-            Route::get('/assets/{path}', AssetController::class)->name('asset');
 
             Route::get('/logout', function (): RedirectResponse {
                 Filament::auth()->logout();
