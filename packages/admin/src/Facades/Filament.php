@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerScriptData(array $data)
  * @method static void registerStyles(array $styles)
  * @method static void registerWidgets(array $widgets)
+ * @method static void serving(callable $widgets)
  *
  * @see \Filament\FilamentManager
  */

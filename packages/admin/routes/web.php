@@ -13,7 +13,7 @@ Route::domain(config('filament.domain'))
     ->group(function () {
         Route::get('/login', Login::class)->name('login');
 
-        Route::get('/assets/{path}', AssetController::class)->name('asset');
+        Route::get('/assets/{path}', AssetController::class)->where('path', '.*')->name('asset');
 
         Route::middleware(config('filament.middleware.auth'))->group(function () {
             Route::name('pages.')->group(function () {

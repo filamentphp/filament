@@ -1,5 +1,5 @@
 <x-filament::layouts.base :title="$title">
-    <div class="flex min-h-screen w-full bg-gray-100">
+    <div class="flex min-h-screen w-full bg-gray-50">
         <div
             x-data="{}"
             x-cloak
@@ -15,13 +15,13 @@
             x-bind:class="$store.sidebar.isOpen ? 'translate-x-0' : '-translate-x-full'"
             class="fixed inset-y-0 left-0 z-20 flex flex-col h-screen overflow-hidden shadow-2xl rounded-r-2xl transition duration-300 bg-white lg:border-r w-80 lg:z-0 lg:translate-x-0"
         >
-            <header class="border-b h-[4rem] px-6 flex items-center">
+            <header class="border-b h-[4rem] flex-shrink-0 px-6 flex items-center">
                 <a href="{{ \Filament\Pages\Dashboard::geturl() }}">
                     <x-filament::brand />
                 </a>
             </header>
 
-            <nav class="flex-1 py-6">
+            <nav class="flex-1 overflow-y-auto py-6">
                 <ul class="space-y-6 px-6">
                     @foreach (\Filament\Facades\Filament::getNavigation() as $group => $items)
                         <li>
@@ -68,7 +68,7 @@
                 </ul>
             </nav>
 
-            <footer class="border-t px-6 py-3 flex items-center gap-3">
+            <footer class="border-t px-6 py-3 flex flex-shrink-0 items-center gap-3">
                 @php
                     $user = \Filament\Facades\Filament::auth()->user();
                 @endphp
@@ -93,7 +93,7 @@
         </aside>
 
         <div class="w-screen flex-1 flex flex-col lg:pl-80">
-            <header class="h-[4rem] w-full border-b flex items-center">
+            <header class="h-[4rem] flex-shrink-0 w-full border-b flex items-center">
                 <div class="flex items-center w-full max-w-6xl px-2 mx-auto sm:px-4 md:px-6 lg:px-8">
                     <button x-data="{}" x-on:click="$store.sidebar.open()" class="flex-shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 transition rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none lg:hidden">
                         <x-heroicon-o-menu class="w-6 h-6" />
@@ -130,7 +130,7 @@
                 {{ $slot }}
             </div>
 
-            <div class="py-8">
+            <div class="py-8 flex-shrink-0">
                 <x-filament::footer />
             </div>
         </div>

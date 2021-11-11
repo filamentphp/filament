@@ -2,9 +2,11 @@
 
 namespace Filament;
 
+use Filament\Events\ServingFilament;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Support\Facades\Event;
 
 class FilamentManager
 {
@@ -82,6 +84,11 @@ class FilamentManager
     public function registerWidgets(array $widgets): void
     {
         $this->widgets = array_merge($this->widgets, $widgets);
+    }
+
+    public function serving(callable $callback): void
+    {
+        Event::listen(ServingFilament::class, $callback);
     }
 
     public function getAvatarUrl(FilamentUser $user): string

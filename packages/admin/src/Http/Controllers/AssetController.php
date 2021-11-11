@@ -2,6 +2,9 @@
 
 namespace Filament\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
 class AssetController
 {
     public function __invoke($path)
@@ -15,6 +18,14 @@ class AssetController
                 return $this->pretendResponseIsFile(__DIR__ . '/../../../dist/app.js', 'application/javascript; charset=utf-8');
             case 'app.js.map':
                 return $this->pretendResponseIsFile(__DIR__ . '/../../../dist/app.js.map', 'application/json; charset=utf-8');
+        }
+
+        if (Str::endsWith($path, '.js')) {
+            return $this->pretendResponseIsFile($path, 'application/javascript; charset=utf-8');
+        }
+
+        if (Str::endsWith($path, '.css')) {
+            return $this->pretendResponseIsFile($path, 'text/css; charset=utf-8');
         }
 
         abort(404);

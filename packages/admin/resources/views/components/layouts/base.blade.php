@@ -25,7 +25,13 @@
         ]) }}" />
 
         @foreach (\Filament\Facades\Filament::getStyles() as $path)
-            <link rel="stylesheet" href="{{ $path }}" />
+            @if (Str::of($path)->startsWith(['http://', 'https://']))
+                <link rel="stylesheet" href="{{ $path }}" />
+            @else
+                <link rel="stylesheet" href="{{ route('filament.asset', [
+                    'path' => $path,
+                ]) }}" />
+            @endif
         @endforeach
     </head>
 
@@ -44,7 +50,13 @@
         ]) }}"></script>
 
         @foreach (\Filament\Facades\Filament::getScripts() as $path)
-            <script src="{{ $path }}"></script>
+            @if (Str::of($path)->startsWith(['http://', 'https://']))
+                <script src="{{ $path }}"></script>
+            @else
+                <script src="{{ route('filament.asset', [
+                    'path' => $path,
+                ]) }}"></script>
+            @endif
         @endforeach
 
         @stack('scripts')
