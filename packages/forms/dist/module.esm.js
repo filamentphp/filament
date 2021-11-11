@@ -238,6 +238,154 @@ var require_localeData = __commonJS((exports, module) => {
   });
 });
 
+// node_modules/dayjs/plugin/timezone.js
+var require_timezone = __commonJS((exports, module) => {
+  !function(t2, e2) {
+    typeof exports == "object" && typeof module != "undefined" ? module.exports = e2() : typeof define == "function" && define.amd ? define(e2) : (t2 = typeof globalThis != "undefined" ? globalThis : t2 || self).dayjs_plugin_timezone = e2();
+  }(exports, function() {
+    "use strict";
+    var t2 = {year: 0, month: 1, day: 2, hour: 3, minute: 4, second: 5}, e2 = {};
+    return function(n2, i, o2) {
+      var r2, a2 = function(t3, n3, i2) {
+        i2 === void 0 && (i2 = {});
+        var o3 = new Date(t3);
+        return function(t4, n4) {
+          n4 === void 0 && (n4 = {});
+          var i3 = n4.timeZoneName || "short", o4 = t4 + "|" + i3, r3 = e2[o4];
+          return r3 || (r3 = new Intl.DateTimeFormat("en-US", {hour12: false, timeZone: t4, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", timeZoneName: i3}), e2[o4] = r3), r3;
+        }(n3, i2).formatToParts(o3);
+      }, u = function(e3, n3) {
+        for (var i2 = a2(e3, n3), r3 = [], u2 = 0; u2 < i2.length; u2 += 1) {
+          var f2 = i2[u2], s3 = f2.type, m = f2.value, c2 = t2[s3];
+          c2 >= 0 && (r3[c2] = parseInt(m, 10));
+        }
+        var d = r3[3], l = d === 24 ? 0 : d, v = r3[0] + "-" + r3[1] + "-" + r3[2] + " " + l + ":" + r3[4] + ":" + r3[5] + ":000", h = +e3;
+        return (o2.utc(v).valueOf() - (h -= h % 1e3)) / 6e4;
+      }, f = i.prototype;
+      f.tz = function(t3, e3) {
+        t3 === void 0 && (t3 = r2);
+        var n3 = this.utcOffset(), i2 = this.toDate(), a3 = i2.toLocaleString("en-US", {timeZone: t3}), u2 = Math.round((i2 - new Date(a3)) / 1e3 / 60), f2 = o2(a3).$set("millisecond", this.$ms).utcOffset(15 * -Math.round(i2.getTimezoneOffset() / 15) - u2, true);
+        if (e3) {
+          var s3 = f2.utcOffset();
+          f2 = f2.add(n3 - s3, "minute");
+        }
+        return f2.$x.$timezone = t3, f2;
+      }, f.offsetName = function(t3) {
+        var e3 = this.$x.$timezone || o2.tz.guess(), n3 = a2(this.valueOf(), e3, {timeZoneName: t3}).find(function(t4) {
+          return t4.type.toLowerCase() === "timezonename";
+        });
+        return n3 && n3.value;
+      };
+      var s2 = f.startOf;
+      f.startOf = function(t3, e3) {
+        if (!this.$x || !this.$x.$timezone)
+          return s2.call(this, t3, e3);
+        var n3 = o2(this.format("YYYY-MM-DD HH:mm:ss:SSS"));
+        return s2.call(n3, t3, e3).tz(this.$x.$timezone, true);
+      }, o2.tz = function(t3, e3, n3) {
+        var i2 = n3 && e3, a3 = n3 || e3 || r2, f2 = u(+o2(), a3);
+        if (typeof t3 != "string")
+          return o2(t3).tz(a3);
+        var s3 = function(t4, e4, n4) {
+          var i3 = t4 - 60 * e4 * 1e3, o3 = u(i3, n4);
+          if (e4 === o3)
+            return [i3, e4];
+          var r3 = u(i3 -= 60 * (o3 - e4) * 1e3, n4);
+          return o3 === r3 ? [i3, o3] : [t4 - 60 * Math.min(o3, r3) * 1e3, Math.max(o3, r3)];
+        }(o2.utc(t3, i2).valueOf(), f2, a3), m = s3[0], c2 = s3[1], d = o2(m).utcOffset(c2);
+        return d.$x.$timezone = a3, d;
+      }, o2.tz.guess = function() {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+      }, o2.tz.setDefault = function(t3) {
+        r2 = t3;
+      };
+    };
+  });
+});
+
+// node_modules/dayjs/plugin/utc.js
+var require_utc = __commonJS((exports, module) => {
+  !function(t2, i) {
+    typeof exports == "object" && typeof module != "undefined" ? module.exports = i() : typeof define == "function" && define.amd ? define(i) : (t2 = typeof globalThis != "undefined" ? globalThis : t2 || self).dayjs_plugin_utc = i();
+  }(exports, function() {
+    "use strict";
+    var t2 = "minute", i = /[+-]\d\d(?::?\d\d)?/g, e2 = /([+-]|\d\d)/g;
+    return function(s2, f, n2) {
+      var u = f.prototype;
+      n2.utc = function(t3) {
+        var i2 = {date: t3, utc: true, args: arguments};
+        return new f(i2);
+      }, u.utc = function(i2) {
+        var e3 = n2(this.toDate(), {locale: this.$L, utc: true});
+        return i2 ? e3.add(this.utcOffset(), t2) : e3;
+      }, u.local = function() {
+        return n2(this.toDate(), {locale: this.$L, utc: false});
+      };
+      var o2 = u.parse;
+      u.parse = function(t3) {
+        t3.utc && (this.$u = true), this.$utils().u(t3.$offset) || (this.$offset = t3.$offset), o2.call(this, t3);
+      };
+      var r2 = u.init;
+      u.init = function() {
+        if (this.$u) {
+          var t3 = this.$d;
+          this.$y = t3.getUTCFullYear(), this.$M = t3.getUTCMonth(), this.$D = t3.getUTCDate(), this.$W = t3.getUTCDay(), this.$H = t3.getUTCHours(), this.$m = t3.getUTCMinutes(), this.$s = t3.getUTCSeconds(), this.$ms = t3.getUTCMilliseconds();
+        } else
+          r2.call(this);
+      };
+      var a2 = u.utcOffset;
+      u.utcOffset = function(s3, f2) {
+        var n3 = this.$utils().u;
+        if (n3(s3))
+          return this.$u ? 0 : n3(this.$offset) ? a2.call(this) : this.$offset;
+        if (typeof s3 == "string" && (s3 = function(t3) {
+          t3 === void 0 && (t3 = "");
+          var s4 = t3.match(i);
+          if (!s4)
+            return null;
+          var f3 = ("" + s4[0]).match(e2) || ["-", 0, 0], n4 = f3[0], u3 = 60 * +f3[1] + +f3[2];
+          return u3 === 0 ? 0 : n4 === "+" ? u3 : -u3;
+        }(s3)) === null)
+          return this;
+        var u2 = Math.abs(s3) <= 16 ? 60 * s3 : s3, o3 = this;
+        if (f2)
+          return o3.$offset = u2, o3.$u = s3 === 0, o3;
+        if (s3 !== 0) {
+          var r3 = this.$u ? this.toDate().getTimezoneOffset() : -1 * this.utcOffset();
+          (o3 = this.local().add(u2 + r3, t2)).$offset = u2, o3.$x.$localOffset = r3;
+        } else
+          o3 = this.utc();
+        return o3;
+      };
+      var h = u.format;
+      u.format = function(t3) {
+        var i2 = t3 || (this.$u ? "YYYY-MM-DDTHH:mm:ss[Z]" : "");
+        return h.call(this, i2);
+      }, u.valueOf = function() {
+        var t3 = this.$utils().u(this.$offset) ? 0 : this.$offset + (this.$x.$localOffset || new Date().getTimezoneOffset());
+        return this.$d.valueOf() - 6e4 * t3;
+      }, u.isUTC = function() {
+        return !!this.$u;
+      }, u.toISOString = function() {
+        return this.toDate().toISOString();
+      }, u.toString = function() {
+        return this.toDate().toUTCString();
+      };
+      var l = u.toDate;
+      u.toDate = function(t3) {
+        return t3 === "s" && this.$offset ? n2(this.format("YYYY-MM-DD HH:mm:ss:SSS")).toDate() : l.call(this);
+      };
+      var c2 = u.diff;
+      u.diff = function(t3, i2, e3) {
+        if (t3 && this.$u === t3.$u)
+          return c2.call(this, t3, i2, e3);
+        var s3 = this.local(), f2 = n2(t3).local();
+        return c2.call(s3, f2, i2, e3);
+      };
+    };
+  });
+});
+
 // node_modules/trix/dist/trix.js
 var require_trix = __commonJS((exports, module) => {
   (function() {
@@ -5635,7 +5783,7 @@ Utils.l = parseLocale;
 Utils.i = isDayjs;
 Utils.w = wrapper;
 var parseDate = function parseDate2(cfg) {
-  var date = cfg.date, utc = cfg.utc;
+  var date = cfg.date, utc2 = cfg.utc;
   if (date === null)
     return new Date(NaN);
   if (Utils.u(date))
@@ -5647,7 +5795,7 @@ var parseDate = function parseDate2(cfg) {
     if (d) {
       var m = d[2] - 1 || 0;
       var ms = (d[7] || "0").substring(0, 3);
-      if (utc) {
+      if (utc2) {
         return new Date(Date.UTC(d[1], m, d[3] || 1, d[4] || 0, d[5] || 0, d[6] || 0, ms));
       }
       return new Date(d[1], m, d[3] || 1, d[4] || 0, d[5] || 0, d[6] || 0, ms);
@@ -5915,8 +6063,12 @@ var esm_default = dayjs;
 // packages/forms/resources/js/components/date-time-picker.js
 var import_customParseFormat = __toModule(require_customParseFormat());
 var import_localeData = __toModule(require_localeData());
+var import_timezone = __toModule(require_timezone());
+var import_utc = __toModule(require_utc());
 esm_default.extend(import_customParseFormat.default);
 esm_default.extend(import_localeData.default);
+esm_default.extend(import_timezone.default);
+esm_default.extend(import_utc.default);
 window.dayjs = esm_default;
 var date_time_picker_default = (Alpine) => {
   Alpine.data("dateTimePickerFormComponent", ({
@@ -5924,12 +6076,12 @@ var date_time_picker_default = (Alpine) => {
     firstDayOfWeek,
     format: format3,
     isAutofocused,
-    locale,
     maxDate,
     minDate,
     state: state2
   }) => {
-    esm_default.locale(locale);
+    const timezone2 = esm_default.tz.guess();
+    esm_default.locale(window.dayjs_locale);
     return {
       daysInFocusedMonth: [],
       displayText: "",
@@ -5953,16 +6105,16 @@ var date_time_picker_default = (Alpine) => {
         if (!this.minDate.isValid()) {
           this.minDate = null;
         }
-        let date = this.getSelectedDate() ?? esm_default().set("hour", 0).set("minute", 0).set("second", 0);
+        let date = this.getSelectedDate() ?? esm_default().tz(timezone2).hour(0).minute(0).second(0);
         if (this.maxDate !== null && date.isAfter(this.maxDate)) {
           date = null;
         }
         if (this.minDate !== null && date.isBefore(this.minDate)) {
           date = null;
         }
-        this.hour = date.hour();
-        this.minute = date.minute();
-        this.second = date.second();
+        this.hour = date?.hour() ?? 0;
+        this.minute = date?.minute() ?? 0;
+        this.second = date?.second() ?? 0;
         this.setDisplayText();
         if (isAutofocused) {
           this.openPicker();
@@ -5972,14 +6124,14 @@ var date_time_picker_default = (Alpine) => {
           if (this.focusedDate.month() === this.focusedMonth) {
             return;
           }
-          this.focusedDate = this.focusedDate.set("month", this.focusedMonth);
+          this.focusedDate = this.focusedDate.month(this.focusedMonth);
         });
         this.$watch("focusedYear", () => {
           this.focusedYear = Number.isInteger(+this.focusedYear) ? +this.focusedYear : esm_default().year();
           if (this.focusedDate.year() === this.focusedYear) {
             return;
           }
-          this.focusedDate = this.focusedDate.set("year", this.focusedYear);
+          this.focusedDate = this.focusedDate.year(this.focusedYear);
         });
         this.$watch("focusedDate", () => {
           this.focusedMonth = this.focusedDate.month();
@@ -5992,7 +6144,7 @@ var date_time_picker_default = (Alpine) => {
         this.$watch("hour", () => {
           let hour = +this.hour;
           if (!Number.isInteger(hour)) {
-            this.hour = esm_default().hour();
+            this.hour = 0;
           } else if (hour > 23) {
             this.hour = 0;
           } else if (hour < 0) {
@@ -6001,12 +6153,12 @@ var date_time_picker_default = (Alpine) => {
             this.hour = hour;
           }
           let date2 = this.getSelectedDate() ?? this.focusedDate;
-          this.setState(date2.set("hour", this.hour));
+          this.setState(date2.hour(this.hour ?? 0));
         });
         this.$watch("minute", () => {
           let minute = +this.minute;
           if (!Number.isInteger(minute)) {
-            this.minute = esm_default().minute();
+            this.minute = 0;
           } else if (minute > 59) {
             this.minute = 0;
           } else if (minute < 0) {
@@ -6015,12 +6167,12 @@ var date_time_picker_default = (Alpine) => {
             this.minute = minute;
           }
           let date2 = this.getSelectedDate() ?? this.focusedDate;
-          this.setState(date2.set("minute", this.minute));
+          this.setState(date2.minute(this.minute ?? 0));
         });
         this.$watch("second", () => {
           let second = +this.second;
           if (!Number.isInteger(second)) {
-            this.second = esm_default().second();
+            this.second = 0;
           } else if (second > 59) {
             this.second = 0;
           } else if (second < 0) {
@@ -6029,7 +6181,7 @@ var date_time_picker_default = (Alpine) => {
             this.second = second;
           }
           let date2 = this.getSelectedDate() ?? this.focusedDate;
-          this.setState(date2.set("second", this.second));
+          this.setState(date2.second(this.second ?? 0));
         });
         this.$watch("state", () => {
           let date2 = this.getSelectedDate();
@@ -6072,7 +6224,7 @@ var date_time_picker_default = (Alpine) => {
         return selectedDate.date() === day && selectedDate.month() === this.focusedDate.month() && selectedDate.year() === this.focusedDate.year();
       },
       dayIsToday: function(day) {
-        let date = esm_default();
+        let date = esm_default().tz(timezone2);
         return date.date() === day && date.month() === this.focusedDate.month() && date.year() === this.focusedDate.year();
       },
       evaluatePosition: function() {
@@ -6118,7 +6270,7 @@ var date_time_picker_default = (Alpine) => {
         return date;
       },
       openPicker: function() {
-        this.focusedDate = this.getSelectedDate() ?? esm_default();
+        this.focusedDate = this.getSelectedDate() ?? esm_default().tz(timezone2);
         this.setupDaysGrid();
         this.open = true;
         this.$nextTick(() => {
@@ -6155,7 +6307,7 @@ var date_time_picker_default = (Alpine) => {
             return;
           }
         }
-        this.state = date.set("hour", this.hour).set("minute", this.minute).set("second", this.second).format(format3);
+        this.state = date.hour(this.hour ?? 0).minute(this.minute ?? 0).second(this.second ?? 0).format(format3);
         this.setDisplayText();
       },
       togglePickerVisibility: function() {

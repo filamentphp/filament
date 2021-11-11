@@ -1,6 +1,7 @@
 @once
     @push('scripts')
-        <script src="//unpkg.com/dayjs@1.10.4/locale/{{ \Illuminate\Support\Str::of(app()->getLocale())->lower()->kebab() }}.js" defer></script>
+        <script>window.dayjs = { locale: function (locale) { window.dayjs_locale = locale } }</script>
+        <script src="//unpkg.com/dayjs@1.10.4/locale/{{ \Illuminate\Support\Str::of(app()->getLocale())->lower()->kebab() }}.js"></script>
     @endpush
 @endonce
 
@@ -19,7 +20,6 @@
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
             format: '{{ convert_date_format($getFormat())->to('day.js') }}',
             isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
-            locale: '{{ \Illuminate\Support\Str::of(app()->getLocale())->lower()->kebab() }}',
             maxDate: '{{ $getMaxDate() }}',
             minDate: '{{ $getMinDate() }}',
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
@@ -27,7 +27,6 @@
         x-on:click.away="closePicker()"
         x-on:keydown.escape.stop="closePicker()"
         x-on:blur="closePicker()"
-        {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
         class="relative"
         {{ $attributes->merge($getExtraAttributes()) }}
     >
@@ -53,6 +52,7 @@
                 readonly
                 placeholder="{{ $getPlaceholder() }}"
                 x-model="displayText"
+                {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
                 class="w-full h-full p-0 placeholder-gray-400 border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none"
             />
 
