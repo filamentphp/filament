@@ -2,7 +2,6 @@
 
 namespace Filament\Http\Controllers;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class AssetController
