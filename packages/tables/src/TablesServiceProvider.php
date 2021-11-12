@@ -2,7 +2,6 @@
 
 namespace Filament\Tables;
 
-use Filament\Tables\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
