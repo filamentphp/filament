@@ -18,7 +18,7 @@ class InstallCommand extends Command
 
         $filesystem = new Filesystem();
         $filesystem->delete(resource_path('js/bootstrap.js'));
-        $filesystem->copyDirectory(__DIR__ . '/../../stubs', base_path());
+        $filesystem->copyDirectory(__DIR__ . '/../../stubs/scaffolding', base_path());
 
         $this->info('Scaffolding installed successfully.');
 
