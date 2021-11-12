@@ -26,6 +26,11 @@ trait InteractsWithTable
 
     public function bootInteractsWithTable(): void
     {
+        
+    }
+
+    public function bootedInteractsWithTable(): void
+    {
         $this->table = $this->getTable();
 
         $this->cacheTableActions();
@@ -35,6 +40,7 @@ trait InteractsWithTable
         $this->cacheTableColumns();
 
         $this->cacheTableFilters();
+        
         $this->getTableFiltersForm()->fill();
     }
 
