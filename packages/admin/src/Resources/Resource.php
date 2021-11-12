@@ -215,6 +215,11 @@ class Resource
         return $record->getAttribute(static::getRecordTitleAttribute());
     }
 
+    public static function getRelations(): array
+    {
+        return [];
+    }
+
     public static function getRouteBaseName(): string
     {
         $slug = static::getSlug();

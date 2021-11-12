@@ -16,6 +16,8 @@ class MakeResourceCommand extends Command
     public function handle(): int
     {
         $model = (string) Str::of($this->argument('name'))
+            ->studly()
+            ->beforeLast('Resource')
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
@@ -58,6 +60,8 @@ class MakeResourceCommand extends Command
             'createResourcePageClass' => $createResourcePageClass,
             'editResourcePageClass' => $editResourcePageClass,
             'indexResourcePageClass' => $indexResourcePageClass,
+            'model' => $model,
+            'modelClass' => $modelClass,
             'namespace' => 'App\\Filament\\Resources' . ($resourceNamespace !== '' ? "\\{$resourceNamespace}" : ''),
             'resource' => $resource,
             'resourceClass' => $resourceClass,

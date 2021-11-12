@@ -4,6 +4,7 @@ namespace {{ namespace }};
 
 use App\Filament\Resources\{{ resource }}\Pages;
 use App\Filament\Resources\{{ resource }}\RelationManagers;
+use App\Models\{{ model }};
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -12,7 +13,9 @@ use Filament\Tables;
 
 class {{ resourceClass }} extends Resource
 {
-    public static string $icon = 'heroicon-o-collection';
+    protected static ?string $model = {{ modelClass }}::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-collection';
 
     public static function form(Form $form): Form
     {

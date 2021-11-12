@@ -3179,6 +3179,10 @@ select{
 .border-gray-900\/5{
 	border-color: rgba(28, 25, 23, 0.05);
 }
+.border-gray-100{
+	--tw-border-opacity: 1;
+	border-color: rgba(245, 245, 244, var(--tw-border-opacity));
+}
 .bg-gray-200{
 	--tw-bg-opacity: 1;
 	background-color: rgba(231, 229, 228, var(--tw-bg-opacity));

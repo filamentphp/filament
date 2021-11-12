@@ -30,10 +30,15 @@ class MakePageCommand extends Command
 
         if ($this->option('resource') !== null) {
             $resource = (string) Str::of($this->option('resource'))
+                ->studly()
                 ->trim('/')
                 ->trim('\\')
                 ->trim(' ')
                 ->replace('/', '\\');
+
+            if (! Str::of($resource)->endsWith('Resource')) {
+                $resource .= 'Resource';
+            }
 
             $resourceClass = (string) Str::of($resource)
                 ->afterLast('\\');
@@ -86,6 +91,10 @@ class MakePageCommand extends Command
         $this->copyStubToApp('PageView', $viewPath);
 
         $this->info("Successfully created {$page}!");
+
+        if ($resource === null) {
+            $this->info("Make sure to register the page in `{$resourceClass}::getPages()`.");
+        }
 
         return static::SUCCESS;
     }

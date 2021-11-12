@@ -2,121 +2,92 @@
 
 namespace Filament;
 
-use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-abstract class PluginServiceProvider extends ServiceProvider
+abstract class PluginServiceProvider extends PackageServiceProvider
 {
-    protected $pages = [];
+    protected string $name;
 
-    protected $resources = [];
+    protected array $pages = [];
 
-    protected $roles = [];
+    protected array $resources = [];
 
-    protected $scripts = [];
+    protected array $scripts = [];
 
-    protected $styles = [];
+    protected array $styles = [];
 
-    protected $widgets = [];
+    protected array $widgets = [];
 
-    public function register()
+    public function configurePackage(Package $package): void
     {
-        $this->registeringPlugin();
-
-        $this->app->booting(function () {
-            foreach ($this->pages() as $page) {
-                Filament::registerPage($page);
-            }
-
-            foreach ($this->resources() as $resource) {
-                Filament::registerResource($resource);
-            }
-
-            foreach ($this->roles() as $role) {
-                Filament::registerRole($role);
-            }
-
-            foreach ($this->widgets() as $widget) {
-                Filament::registerWidget($widget);
-            }
-
-            Filament::serving(function () {
-                foreach ($this->scripts() as $name => $path) {
-                    Filament::registerScript($name, $path);
-                }
-
-                foreach ($this->styles() as $name => $path) {
-                    Filament::registerStyle($name, $path);
-                }
-
-                Filament::provideToScript($this->scriptData());
-            });
-        });
-
-        $this->app->booted(function () {
-            foreach ($this->pages() as $page) {
-                Livewire::component($page::getName(), $page);
-            }
-
-            foreach ($this->resources() as $resource) {
-                foreach ($resource::relations() as $relation) {
-                    Livewire::component($relation::getName(), $relation);
-                }
-
-                foreach ($resource::routes() as $route) {
-                    Livewire::component($route->page::getName(), $route->page);
-                }
-            }
-
-            foreach ($this->widgets() as $widget) {
-                Livewire::component($widget::getName(), $widget);
-            }
-        });
-
-        $this->pluginRegistered();
+        $package
+            ->name($this->name)
+            ->hasTranslations()
+            ->hasViews();
     }
 
-    protected function pages()
+    public function packageRegistered(): void
+    {
+        Facades\Filament::registerPages($this->getPages());
+        Facades\Filament::registerResources($this->getResources());
+        Facades\Filament::registerWidgets($this->getWidgets());
+
+        Facades\Filament::serving(function () {
+            Facades\Filament::registerScripts($this->getScripts());
+            Facades\Filament::registerStyles($this->getStyles());
+            Facades\Filament::registerScriptData($this->getScriptData());
+        });
+    }
+
+    public function packageBooted(): void
+    {
+        foreach ($this->getPages() as $page) {
+            Livewire::component($page::getName(), $page);
+        }
+
+        foreach ($this->getResources() as $resource) {
+            foreach ($resource::getPages() as $page) {
+                Livewire::component($page['class']::getName(), $page['class']);
+            }
+
+            foreach ($resource::getRelations() as $relation) {
+                Livewire::component($relation::getName(), $relation);
+            }
+        }
+
+        foreach ($this->getWidgets() as $widget) {
+            Livewire::component($widget::getName(), $widget);
+        }
+    }
+
+    protected function getPages(): array
     {
         return $this->pages;
     }
 
-    protected function pluginRegistered()
-    {
-        //
-    }
-
-    protected function registeringPlugin()
-    {
-        //
-    }
-
-    protected function resources()
+    protected function getResources(): array
     {
         return $this->resources;
     }
 
-    protected function roles()
-    {
-        return $this->roles;
-    }
-
-    protected function scriptData()
+    protected function getScriptData(): array
     {
         return [];
     }
 
-    protected function scripts()
+    protected function getScripts(): array
     {
         return $this->scripts;
     }
 
-    protected function styles()
+    protected function getStyles(): array
     {
         return $this->styles;
     }
 
-    protected function widgets()
+    protected function getWidgets(): array
     {
         return $this->widgets;
     }

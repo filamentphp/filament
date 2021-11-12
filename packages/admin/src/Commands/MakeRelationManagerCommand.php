@@ -16,10 +16,15 @@ class MakeRelationManagerCommand extends Command
     public function handle(): int
     {
         $resource = (string) Str::of($this->argument('resource'))
+            ->studly()
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
+
+        if (! Str::of($resource)->endsWith('Resource')) {
+            $resource .= 'Resource';
+        }
 
         $relationship = (string) Str::of($this->argument('relationship'))->trim(' ');
         $managerClass = (string) Str::of($relationship)

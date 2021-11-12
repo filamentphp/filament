@@ -37,7 +37,6 @@ class FilamentServiceProvider extends PackageServiceProvider
             Commands\MakePageCommand::class,
             Commands\MakeRelationManagerCommand::class,
             Commands\MakeResourceCommand::class,
-            Commands\MakeThemeCommand::class,
             Commands\MakeUserCommand::class,
             Commands\MakeWidgetCommand::class,
             Commands\UpgradeCommand::class,

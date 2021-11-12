@@ -16,6 +16,7 @@ class MakeWidgetCommand extends Command
     public function handle(): int
     {
         $widget = (string) Str::of($this->argument('name'))
+            ->studly()
             ->trim('/')
             ->trim('\\')
             ->trim(' ')

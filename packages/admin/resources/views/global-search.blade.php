@@ -14,7 +14,7 @@
                 id="globalSearchQueryInput"
                 placeholder="Search"
                 type="search"
-                class="block w-full h-10 pl-10 lg:text-lg bg-gray-900/5 placeholder-gray-500 border-gray-900/5 transition duration-75 rounded-lg focus:bg-white focus:placeholder-gray-400 focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600"
+                class="block w-full h-10 pl-10 lg:text-lg bg-gray-200 placeholder-gray-500 border-gray-200 transition duration-75 rounded-lg focus:bg-white focus:placeholder-gray-400 focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600"
             >
 
             @if ($results !== null)
