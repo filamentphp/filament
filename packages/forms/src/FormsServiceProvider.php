@@ -2,7 +2,6 @@
 
 namespace Filament\Forms;
 
-use Filament\Forms\Commands\InstallCommand;
 use Illuminate\Support\Arr;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
