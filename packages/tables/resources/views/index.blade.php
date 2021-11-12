@@ -348,7 +348,7 @@
     </div>
 
     <form wire:submit.prevent="callMountedTableAction">
-        <x-tables::modal id="action">
+        <x-tables::modal id="action" display-classes="block">
             @if ($action = $getMountedAction())
                 <x-slot name="heading">
                     {{ $action->getModalHeading() }}
@@ -380,7 +380,7 @@
     </form>
 
     <form wire:submit.prevent="callMountedTableBulkAction">
-        <x-tables::modal id="bulk-action">
+        <x-tables::modal id="bulk-action" display-classes="block">
             @if ($action = $getMountedBulkAction())
                 <x-slot name="heading">
                     {{ $action->getModalHeading() }}
