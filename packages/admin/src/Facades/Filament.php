@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getScripts()
  * @method static array getScriptData()
  * @method static array getStyles()
+ * @method static string getThemeUrl()
  * @method static array getWidgets()
  * @method static void registerNavigationGroups(array $groups)
  * @method static void registerNavigationItems(array $items)
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerScripts(array $scripts)
  * @method static void registerScriptData(array $data)
  * @method static void registerStyles(array $styles)
+ * @method static void registerTheme(string $url)
  * @method static void registerWidgets(array $widgets)
  * @method static void serving(callable $widgets)
  *

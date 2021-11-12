@@ -26,6 +26,8 @@ class FilamentManager
 
     protected array $styles = [];
 
+    protected ?string $themeUrl = null;
+
     protected array $widgets = [];
 
     public function auth(): StatefulGuard
@@ -79,6 +81,11 @@ class FilamentManager
     public function registerStyles(array $styles): void
     {
         $this->styles = array_merge($this->styles, $styles);
+    }
+
+    public function registerTheme(string $url): void
+    {
+        $this->themeUrl = $url;
     }
 
     public function registerWidgets(array $widgets): void
@@ -174,6 +181,14 @@ class FilamentManager
     public function getStyles(): array
     {
         return $this->styles;
+    }
+
+    public function getThemeUrl(): string
+    {
+        return $this->themeUrl ?? route('filament.asset', [
+            'id' => get_asset_id('app.css'),
+            'path' => 'app.css',
+        ]);
     }
 
     public function getWidgets(): array

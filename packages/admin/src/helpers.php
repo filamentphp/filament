@@ -5,9 +5,9 @@ namespace Filament;
 use Illuminate\Support\Str;
 
 if (! function_exists('Filament\get_asset_id')) {
-    function get_asset_id($path)
+    function get_asset_id(string $file, string $manifestPath = null): ?string
     {
-        $manifestPath = __DIR__ . '/../dist/mix-manifest.json';
+        $manifestPath ??= __DIR__ . '/../dist/mix-manifest.json';
 
         if (! file_exists($manifestPath)) {
             return null;
@@ -15,18 +15,18 @@ if (! function_exists('Filament\get_asset_id')) {
 
         $manifest = json_decode(file_get_contents($manifestPath), true);
 
-        $path = "/{$path}";
+        $file = "/{$file}";
 
-        if (! array_key_exists($path, $manifest)) {
+        if (! array_key_exists($file, $manifest)) {
             return null;
         }
 
-        $path = $manifest[$path];
+        $file = $manifest[$file];
 
-        if (! str_contains($path, 'id=')) {
+        if (! str_contains($file, 'id=')) {
             return null;
         }
 
-        return (string) Str::of($path)->after('id=');
+        return (string) Str::of($file)->after('id=');
     }
 }
