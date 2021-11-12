@@ -2,6 +2,7 @@
 
 namespace Filament\Http\Controllers;
 
+use Filament\Facades\Filament;
 use Illuminate\Support\Str;
 
 class AssetController
@@ -20,10 +21,20 @@ class AssetController
         }
 
         if (Str::endsWith($path, '.js')) {
+            abort_unless(
+                in_array($path, Filament::getScripts()),
+                404
+            );
+
             return $this->pretendResponseIsFile($path, 'application/javascript; charset=utf-8');
         }
 
         if (Str::endsWith($path, '.css')) {
+            abort_unless(
+                in_array($path, Filament::getStyles()),
+                404
+            );
+
             return $this->pretendResponseIsFile($path, 'text/css; charset=utf-8');
         }
 

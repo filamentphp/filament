@@ -5,16 +5,14 @@ namespace Filament\Resources\Pages\Concerns;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-trait CanResolveResourceRecord
+trait InteractsWithRecord
 {
-    protected function resolveRecord($key): Model
+    protected function getRecord($key): Model
     {
-        $model = static::getModel();
-
-        $record = (new $model())->resolveRouteBinding($key);
+        $record = static::getResource()::resolveRecordRouteBinding($key);
 
         if ($record === null) {
-            throw (new ModelNotFoundException())->setModel($model, [$key]);
+            throw (new ModelNotFoundException())->setModel(static::getModel(), [$key]);
         }
 
         return $record;

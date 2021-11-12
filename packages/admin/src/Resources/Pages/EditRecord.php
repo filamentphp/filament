@@ -7,8 +7,8 @@ use Filament\View\Components\Actions\ButtonAction;
 
 class EditRecord extends Page implements Forms\Contracts\HasForms
 {
-    use Concerns\CanResolveResourceRecord;
     use Concerns\HasRecordBreadcrumb;
+    use Concerns\InteractsWithRecord;
     use Concerns\UsesResourceForm;
     use Forms\Concerns\InteractsWithForms;
 
@@ -27,7 +27,7 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
     {
         static::authorizeResourceAccess();
 
-        $this->record = $this->resolveRecord($record);
+        $this->record = $this->getRecord($record);
 
         abort_unless(static::getResource()::canEdit($this->record), 403);
 

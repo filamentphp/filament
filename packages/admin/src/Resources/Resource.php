@@ -61,14 +61,16 @@ class Resource
         ]);
     }
 
-    public static function getPages(): array
-    {
-        return [];
-    }
-
     public static function table(Table $table): Table
     {
         return $table;
+    }
+
+    public static function resolveRecordRouteBinding($key): ?Model
+    {
+        $model = static::getModel();
+
+        return (new $model())->resolveRouteBinding($key);
     }
 
     public static function can(string $action, ?Model $record = null): bool
@@ -191,6 +193,11 @@ class Resource
         return static::$model ?? (string) Str::of(class_basename(static::class))
             ->beforeLast('Resource')
             ->prepend('App\\Models\\');
+    }
+
+    public static function getPages(): array
+    {
+        return [];
     }
 
     public static function getPluralLabel(): string
