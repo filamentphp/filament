@@ -1005,9 +1005,19 @@ Inside your view, you may interact with the state of the form component using Li
 The `$getStatePath()` callable may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
 
 ```blade
-<div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
-    <!-- Interact with the `state` property in Alpine.js -->
-</div>
+<x-forms::field-wrapper
+    :id="$getId()"
+    :label="$getLabel()"
+    :label-sr-only="$isLabelHidden()"
+    :helper-text="$getHelperText()"
+    :hint="$getHint()"
+    :required="$isRequired()"
+    :state-path="$getStatePath()"
+>
+    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+        <!-- Interact with the `state` property in Alpine.js -->
+    </div>
+</x-forms::field-wrapper>
 ```
 
 ## Building custom fields
@@ -1032,7 +1042,17 @@ Inside your view, you may interact with the state of the form component using Li
 The `$getStatePath()` callable may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
 
 ```blade
-<div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
-    <!-- Interact with the `state` property in Alpine.js -->
-</div>
+<x-forms::field-wrapper
+    :id="$getId()"
+    :label="$getLabel()"
+    :label-sr-only="$isLabelHidden()"
+    :helper-text="$getHelperText()"
+    :hint="$getHint()"
+    :required="$isRequired()"
+    :state-path="$getStatePath()"
+>
+    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+        <!-- Interact with the `state` property in Alpine.js -->
+    </div>
+</x-forms::field-wrapper>
 ```

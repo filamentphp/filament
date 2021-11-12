@@ -24,23 +24,47 @@ class FilamentServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament')
+            ->hasCommands($this->getCommands())
             ->hasConfigFile()
             ->hasRoutes(['web'])
             ->hasTranslations()
             ->hasViews();
     }
 
-    public function boot(): void
+    protected function getCommands(): array
     {
-        parent::boot();
+        $commands = [
+            Commands\MakePageCommand::class,
+            Commands\MakeRelationManagerCommand::class,
+            Commands\MakeResourceCommand::class,
+            Commands\MakeThemeCommand::class,
+            Commands\MakeUserCommand::class,
+            Commands\MakeWidgetCommand::class,
+            Commands\UpgradeCommand::class,
+        ];
 
+        $aliases = [];
+
+        foreach ($commands as $command) {
+            $class = 'Filament\\Commands\\Aliases\\' . class_basename($command);
+
+            if (! class_exists($class)) {
+                continue;
+            }
+
+            $aliases[] = $class;
+        }
+
+        return array_merge($commands, $aliases);
+    }
+
+    public function packageBooted(): void
+    {
         $this->bootLivewireComponents();
     }
 
-    public function register(): void
+    public function packageRegistered(): void
     {
-        parent::register();
-
         $this->app->singleton('filament', function (): FilamentManager {
             return new FilamentManager();
         });
@@ -58,8 +82,8 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     protected function bootLivewireComponents(): void
     {
+        Livewire::component('filament.auth.login', Login::class);
         Livewire::component('filament.global-search', GlobalSearch::class);
-        Livewire::component('filament.login', Login::class);
 
         $this->registerLivewireComponentDirectory(__DIR__ . '/Pages', 'Filament\\Pages', 'filament.pages.');
         $this->registerLivewireComponentDirectory(__DIR__ . '/Resources', 'Filament\\Resources', 'filament.resources.');

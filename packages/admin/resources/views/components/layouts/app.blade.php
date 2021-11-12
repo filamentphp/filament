@@ -84,7 +84,7 @@
                     </p>
 
                     <p class="text-xs text-gray-500 transition hover:text-gray-700 focus:text-gray-700">
-                        <a href="{{ route('filament.logout') }}">
+                        <a href="{{ route('filament.auth.logout') }}">
                             Sign out
                         </a>
                     </p>

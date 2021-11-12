@@ -1,0 +1,10 @@
+<?php
+
+namespace {{ namespace }};
+
+use Filament\Forms\Components\Field;
+
+class {{ class }} extends Field
+{
+    protected string $view = '{{ view }}';
+}

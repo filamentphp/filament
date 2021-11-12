@@ -3223,8 +3223,8 @@ select{
 .border-transparent{
 	border-color: transparent;
 }
-.border-gray-100{
-	border-color: var(--f-gray-100);
+.bg-gray-200{
+	background-color: var(--f-gray-200);
 }
 .bg-white{
 	--tw-bg-opacity: 1;
@@ -3250,9 +3250,6 @@ select{
 }
 .bg-primary-500{
 	background-color: var(--f-primary-500);
-}
-.bg-gray-200{
-	background-color: var(--f-gray-200);
 }
 .bg-black\/50{
 	background-color: rgba(0, 0, 0, 0.5);

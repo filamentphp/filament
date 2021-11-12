@@ -36,6 +36,6 @@ class Authenticate extends Middleware
 
     protected function redirectTo($request): string
     {
-        return route('filament.login');
+        return route('filament.auth.login');
     }
 }
