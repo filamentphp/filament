@@ -35,7 +35,6 @@ trait InteractsWithTable
         $this->cacheTableColumns();
 
         $this->cacheTableFilters();
-        
         $this->getTableFiltersForm()->fill();
     }
 
