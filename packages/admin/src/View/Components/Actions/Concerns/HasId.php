@@ -2,8 +2,6 @@
 
 namespace Filament\View\Components\Actions\Concerns;
 
-use Illuminate\Support\Str;
-
 trait HasId
 {
     protected ?string $id = null;
