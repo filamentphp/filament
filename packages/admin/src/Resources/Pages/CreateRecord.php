@@ -5,6 +5,8 @@ namespace Filament\Resources\Pages;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\View\Components\Actions\ButtonAction;
+use Filament\View\Components\Actions\SelectAction;
+use Illuminate\Support\Arr;
 
 class CreateRecord extends Page implements Forms\Contracts\HasForms
 {
@@ -17,7 +19,7 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
     public $data;
 
-    protected ?Form $resourceForm = null;
+    public $activeFormLocale = null;
 
     public function getBreadcrumb(): string
     {
@@ -28,8 +30,19 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
     {
         static::authorizeResourceAccess();
 
-        abort_unless(static::getResource()::canCreate(), 403);
+        $resource = static::getResource();
 
+        abort_unless($resource::canCreate(), 403);
+
+        if ($resource::isTranslatable()) {
+            $this->activeFormLocale = $resource::getDefaultTranslatableLocale();
+        }
+
+        $this->fillForm();
+    }
+
+    protected function fillForm(): void
+    {
         $this->callHook('beforeFill');
 
         $this->form->fill();
@@ -47,7 +60,16 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
         $this->callHook('beforeCreate');
 
-        $this->record = static::getModel()::create($data);
+        $resource = static::getResource();
+
+        if ($resource::isTranslatable()) {
+            $this->record = static::getModel()::usingLocale(
+                $this->activeFormLocale,
+            )->fill($data);
+            $this->record->save();
+        } else {
+            $this->record = static::getModel()::fill($data)->save();
+        }
 
         $this->form->model($this->record)->saveRelationships();
 
@@ -56,6 +78,24 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
         if ($redirectUrl = $this->getRedirectUrl()) {
             $this->redirect($redirectUrl);
         }
+    }
+
+    protected function getActions(): array
+    {
+        $resource = static::getResource();
+
+        return [
+            SelectAction::make('activeFormLocale')
+                ->label('Locale')
+                ->options(
+                    collect($resource::getTranslatableLocales())
+                        ->mapWithKeys(function (string $locale): array {
+                            return [$locale => $locale];
+                        })
+                        ->toArray(),
+                )
+                ->hidden(! $resource::isTranslatable()),
+        ];
     }
 
     protected function getFormActions(): array

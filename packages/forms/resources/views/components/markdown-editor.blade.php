@@ -163,8 +163,7 @@
                         id="{{ $getId() }}"
                         {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
                         {!! $isRequired() ? 'required' : null !!}
-                        {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
-                        x-on:input="resize"
+                        x-model="state"
                         x-on:keyup.enter="checkForAutoInsertion"
                         x-on:file-attachment-accepted.window="
                             attachment = $event.detail?.attachments?.[0]

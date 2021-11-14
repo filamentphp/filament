@@ -12,10 +12,7 @@ use Illuminate\View\Component;
 class Action extends Component implements Htmlable
 {
     use Concerns\CanBeHidden;
-    use Concerns\CanOpenUrl;
     use Concerns\CanSubmitForm;
-    use Concerns\HasAction;
-    use Concerns\HasColor;
     use Concerns\HasLabel;
     use Concerns\HasName;
     use Concerns\HasView;

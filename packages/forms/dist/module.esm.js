@@ -18825,6 +18825,9 @@ var markdown_editor_default = (Alpine) => {
       tab,
       init: function() {
         this.resize();
+        this.$watch("state", () => {
+          this.resize();
+        });
         this.$watch("tab", () => {
           if (this.tab !== "preview") {
             return;
@@ -18860,7 +18863,7 @@ var markdown_editor_default = (Alpine) => {
             delete lines[currentLine - 2];
           }
         }
-        this.$refs.textarea.value = lines.join("\n");
+        this.state = lines.join("\n");
         this.resize();
       },
       resize: function() {
@@ -18868,7 +18871,7 @@ var markdown_editor_default = (Alpine) => {
           this.$refs.overlay.style.height = "150px";
           this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + "px";
         }
-        this.overlay = a(this.state = this.$refs.textarea.value);
+        this.overlay = a(this.state);
       }
     };
   });

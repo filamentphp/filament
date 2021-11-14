@@ -4,6 +4,7 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms;
 use Filament\View\Components\Actions\ButtonAction;
+use Filament\View\Components\Actions\SelectAction;
 
 class ViewRecord extends Page implements Forms\Contracts\HasForms
 {
@@ -18,6 +19,8 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
 
     public $data;
 
+    public $activeFormLocale = null;
+
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? 'View';
@@ -31,11 +34,46 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
 
         abort_unless(static::getResource()::canView($this->record), 403);
 
+        $this->fillForm();
+    }
+
+    protected function fillForm(): void
+    {
         $this->callHook('beforeFill');
 
-        $this->form->fill($this->record->toArray());
+        if (static::getResource()::isTranslatable()) {
+            $this->fillTranslatableForm();
+        } else {
+            $this->form->fill($this->record->toArray());
+        }
 
         $this->callHook('afterFill');
+    }
+
+    protected function fillTranslatableForm(): void
+    {
+        $resource = static::getResource();
+
+        if ($this->activeFormLocale === null) {
+            $availableLocales = array_keys($this->record->getTranslations($resource::getTranslatableAttributes()[0]));
+            $resourceLocales = $resource::getTranslatableLocales();
+
+            $this->activeFormLocale = array_intersect($availableLocales, $resourceLocales)[0] ?? $resource::getDefaultTranslatableLocale();
+            $this->record->setLocale($this->activeFormLocale);
+        }
+
+        $data = $this->record->toArray();
+
+        foreach ($resource::getTranslatableAttributes() as $attribute) {
+            $data[$attribute] = $this->record->getTranslation($attribute, $this->activeFormLocale);
+        }
+
+        $this->form->fill($data);
+    }
+
+    public function updatedActiveFormLocale(): void
+    {
+        $this->fillTranslatableForm();
     }
 
     protected function getActions(): array
@@ -43,6 +81,16 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
         $resource = static::getResource();
 
         return [
+            SelectAction::make('activeFormLocale')
+                ->label('Locale')
+                ->options(
+                    collect($resource::getTranslatableLocales())
+                        ->mapWithKeys(function (string $locale): array {
+                            return [$locale => $locale];
+                        })
+                        ->toArray(),
+                )
+                ->hidden(! $resource::isTranslatable()),
             ButtonAction::make('edit')
                 ->label('Edit')
                 ->url(fn () => $resource::getUrl('edit', ['record' => $this->record]))

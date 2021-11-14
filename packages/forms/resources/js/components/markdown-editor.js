@@ -22,6 +22,10 @@ export default (Alpine) => {
             init: function () {
                 this.resize()
 
+                this.$watch('state', () => {
+                    this.resize()
+                })
+
                 this.$watch('tab', () => {
                     if (this.tab !== 'preview') {
                         return
@@ -66,7 +70,7 @@ export default (Alpine) => {
                     }
                 }
 
-                this.$refs.textarea.value = lines.join("\n")
+                this.state = lines.join("\n")
 
                 this.resize()
             },
@@ -77,7 +81,7 @@ export default (Alpine) => {
                     this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + 'px'
                 }
 
-                this.overlay = highlight(this.state = this.$refs.textarea.value)
+                this.overlay = highlight(this.state)
             },
         }
     })

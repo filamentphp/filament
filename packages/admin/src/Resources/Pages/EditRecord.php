@@ -4,6 +4,8 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms;
 use Filament\View\Components\Actions\ButtonAction;
+use Filament\View\Components\Actions\SelectAction;
+use Illuminate\Support\Arr;
 
 class EditRecord extends Page implements Forms\Contracts\HasForms
 {
@@ -18,6 +20,8 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
     public $data;
 
+    public $activeFormLocale = null;
+
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? 'Edit';
@@ -31,14 +35,44 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
         abort_unless(static::getResource()::canEdit($this->record), 403);
 
+        $this->fillForm();
+    }
+
+    protected function fillForm(): void
+    {
         $this->callHook('beforeFill');
 
-        $this->form->fill($this->record->toArray());
+        if (static::getResource()::isTranslatable()) {
+            $this->fillTranslatableForm();
+        } else {
+            $this->form->fill($this->record->toArray());
+        }
 
         $this->callHook('afterFill');
     }
 
-    public function save(): void
+    protected function fillTranslatableForm(): void
+    {
+        $resource = static::getResource();
+
+        if ($this->activeFormLocale === null) {
+            $availableLocales = array_keys($this->record->getTranslations($resource::getTranslatableAttributes()[0]));
+            $resourceLocales = $resource::getTranslatableLocales();
+
+            $this->activeFormLocale = array_intersect($availableLocales, $resourceLocales)[0] ?? $resource::getDefaultTranslatableLocale();
+            $this->record->setLocale($this->activeFormLocale);
+        }
+
+        $data = $this->record->toArray();
+
+        foreach ($resource::getTranslatableAttributes() as $attribute) {
+            $data[$attribute] = $this->record->getTranslation($attribute, $this->activeFormLocale);
+        }
+
+        $this->form->fill($data);
+    }
+
+    public function save(bool $shouldRedirect = true): void
     {
         $this->callHook('beforeValidate');
 
@@ -48,11 +82,17 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
         $this->callHook('beforeSave');
 
-        $this->record->update($data);
+        $resource = static::getResource();
+
+        if ($resource::isTranslatable()) {
+            $this->record->setLocale($this->activeFormLocale)->fill($data)->save();
+        } else {
+            $this->record->update($data);
+        }
 
         $this->callHook('afterSave');
 
-        if ($redirectUrl = $this->getRedirectUrl()) {
+        if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
             $this->redirect($redirectUrl);
         }
     }
@@ -73,11 +113,31 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
         $this->redirect(static::getResource()::getUrl('index'));
     }
 
+    public function updatedActiveFormLocale(): void
+    {
+        $this->fillTranslatableForm();
+    }
+
+    public function updatingActiveFormLocale(): void
+    {
+        $this->save(shouldRedirect: false);
+    }
+
     protected function getActions(): array
     {
         $resource = static::getResource();
 
         return [
+            SelectAction::make('activeFormLocale')
+                ->label('Locale')
+                ->options(
+                    collect($resource::getTranslatableLocales())
+                        ->mapWithKeys(function (string $locale): array {
+                            return [$locale => $locale];
+                        })
+                        ->toArray(),
+                )
+                ->hidden(! $resource::isTranslatable()),
             ButtonAction::make('view')
                 ->label('View')
                 ->url(fn () => $resource::getUrl('view', ['record' => $this->record]))

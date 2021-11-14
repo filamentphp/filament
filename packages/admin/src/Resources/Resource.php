@@ -3,6 +3,7 @@
 namespace Filament\Resources;
 
 use Closure;
+use Exception;
 use Filament\Facades\Filament;
 use Filament\NavigationItem;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,6 +19,8 @@ class Resource
     protected static ?string $breadcrumb = null;
 
     protected static bool $isGloballySearchable = true;
+
+    protected static bool $isTranslatable = false;
 
     protected static ?string $label = null;
 
@@ -36,6 +39,8 @@ class Resource
     protected static ?string $recordTitleAttribute = null;
 
     protected static ?string $slug = null;
+
+    protected static ?array $translatableLocales = null;
 
     public static function form(Form $form): Form
     {
@@ -117,6 +122,11 @@ class Resource
     public static function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? Str::title(static::getPluralLabel());
+    }
+
+    public static function getDefaultTranslatableLocale(): string
+    {
+        return static::getTranslatableLocales()[0];
     }
 
     public static function getEloquentQuery(): Builder
@@ -247,6 +257,28 @@ class Resource
             ->kebab();
     }
 
+    public static function getTranslatableAttributes(): array
+    {
+        $model = static::getModel();
+
+        if (! method_exists($model, 'getTranslatableAttributes')) {
+            throw new Exception("Model [{$model}] must use trait [Spatie\Translatable\HasTranslations].");
+        }
+
+        $attributes = (new $model())->getTranslatableAttributes();
+
+        if (! count($attributes)) {
+            throw new Exception("Model [{$model}] must have [\$translatable] properties defined.");
+        }
+
+        return $attributes;
+    }
+
+    public static function getTranslatableLocales(): array
+    {
+        return static::$translatableLocales ?? config('filament.default_translatable_locales');
+    }
+
     public static function getUrl($name = 'index', $params = []): string
     {
         $routeBaseName = static::getRouteBaseName();
@@ -262,6 +294,11 @@ class Resource
     public static function hasRecordTitle(): bool
     {
         return static::getRecordTitleAttribute() !== null;
+    }
+
+    public static function isTranslatable(): bool
+    {
+        return static::$isTranslatable;
     }
 
     protected static function applyGlobalSearchAttributeConstraint(Builder $query, array $searchAttributes, string $searchQuery, bool &$isFirst): Builder

@@ -4,6 +4,9 @@ namespace Filament\View\Components\Actions;
 
 class ButtonAction extends Action
 {
+    use Concerns\CanOpenUrl;
+    use Concerns\HasAction;
+    use Concerns\HasColor;
     use Concerns\HasIcon;
 
     protected string $view = 'filament::components.actions.button-action';

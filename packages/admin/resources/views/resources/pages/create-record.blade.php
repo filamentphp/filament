@@ -1,5 +1,5 @@
 <x-filament::page>
-    <x-filament::header>
+    <x-filament::header :actions="$this->getActions()">
         <x-slot name="heading">
             {{ $title }}
         </x-slot>
