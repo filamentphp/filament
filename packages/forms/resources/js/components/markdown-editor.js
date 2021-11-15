@@ -20,15 +20,21 @@ export default (Alpine) => {
             tab,
 
             init: function () {
-                this.resize()
+                this.render()
 
-                this.$watch('tab', () => {
-                    if (this.tab !== 'preview') {
-                        return
-                    }
-
-                    this.preview = marked(this.state)
+                this.$watch('state', () => {
+                    this.render()
                 })
+            },
+
+            render: function () {
+                if (this.$refs.textarea.scrollHeight > 0) {
+                    this.$refs.overlay.style.height = '150px'
+                    this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + 'px'
+                }
+
+                this.overlay = highlight(this.state)
+                this.preview = marked(this.state)
             },
 
             checkForAutoInsertion($event) {
@@ -66,18 +72,9 @@ export default (Alpine) => {
                     }
                 }
 
-                this.$refs.textarea.value = lines.join("\n")
+                this.state = lines.join("\n")
 
-                this.resize()
-            },
-
-            resize: function () {
-                if (this.$refs.textarea.scrollHeight > 0) {
-                    this.$refs.overlay.style.height = '150px'
-                    this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + 'px'
-                }
-
-                this.overlay = highlight(this.state = this.$refs.textarea.value)
+                this.render()
             },
         }
     })

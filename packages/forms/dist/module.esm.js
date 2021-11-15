@@ -18824,13 +18824,18 @@ var markdown_editor_default = (Alpine) => {
       state: state2,
       tab,
       init: function() {
-        this.resize();
-        this.$watch("tab", () => {
-          if (this.tab !== "preview") {
-            return;
-          }
-          this.preview = esmEntry(this.state);
+        this.render();
+        this.$watch("state", () => {
+          this.render();
         });
+      },
+      render: function() {
+        if (this.$refs.textarea.scrollHeight > 0) {
+          this.$refs.overlay.style.height = "150px";
+          this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + "px";
+        }
+        this.overlay = a(this.state);
+        this.preview = esmEntry(this.state);
       },
       checkForAutoInsertion($event) {
         const lines = this.$refs.textarea.value.split("\n");
@@ -18860,15 +18865,8 @@ var markdown_editor_default = (Alpine) => {
             delete lines[currentLine - 2];
           }
         }
-        this.$refs.textarea.value = lines.join("\n");
-        this.resize();
-      },
-      resize: function() {
-        if (this.$refs.textarea.scrollHeight > 0) {
-          this.$refs.overlay.style.height = "150px";
-          this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + "px";
-        }
-        this.overlay = a(this.state = this.$refs.textarea.value);
+        this.state = lines.join("\n");
+        this.render();
       }
     };
   });

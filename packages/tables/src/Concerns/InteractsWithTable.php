@@ -24,7 +24,7 @@ trait InteractsWithTable
 
     protected Table $table;
 
-    public function bootedInteractsWithTable(): void
+    public function bootInteractsWithTable(): void
     {
         $this->table = $this->getTable();
 
