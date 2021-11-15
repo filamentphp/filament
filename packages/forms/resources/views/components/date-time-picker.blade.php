@@ -1,6 +1,12 @@
 @once
     @push('scripts')
-        <script>window.dayjs = { locale: function (locale) { window.dayjs_locale = locale } }</script>
+        <script src="//unpkg.com/dayjs@1.10.4/dayjs.min.js"></script>
+        <script src="//unpkg.com/dayjs@1.10.4/plugin/localeData.js"></script>
+        <script>
+            dayjs.extend(window.dayjs_plugin_localeData)
+
+            window.dayjs_locale = dayjs.locale()
+        </script>
         <script src="//unpkg.com/dayjs@1.10.4/locale/{{ \Illuminate\Support\Str::of(app()->getLocale())->lower()->kebab() }}.js"></script>
     @endpush
 @endonce
