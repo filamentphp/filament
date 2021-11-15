@@ -130,7 +130,7 @@
                 {{ $slot }}
             </div>
 
-            <div class="py-8 flex-shrink-0">
+            <div class="pb-8 flex-shrink-0">
                 <x-filament::footer />
             </div>
         </div>

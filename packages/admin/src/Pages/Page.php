@@ -46,7 +46,7 @@ class Page extends Component
             NavigationItem::make()
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
-                ->isActiveWhen(fn () => request()->routeIs([
+                ->isActiveWhen(fn (): bool => request()->routeIs([
                     $routeName = static::getRouteName(),
                     "{$routeName}*",
                 ]))
@@ -88,6 +88,14 @@ class Page extends Component
     public static function getUrl(): string
     {
         return route(static::getRouteName());
+    }
+
+    protected function notify(string $status, string $message): void
+    {
+        session()->flash('notification', [
+            'message' => $message,
+            'status' => $status,
+        ]);
     }
 
     public function render(): View

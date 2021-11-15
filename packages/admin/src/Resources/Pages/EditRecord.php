@@ -93,6 +93,8 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
             $this->redirect($redirectUrl);
+        } else {
+            $this->notify('success', 'Saved!');
         }
     }
 
