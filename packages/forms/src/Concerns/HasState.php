@@ -135,14 +135,22 @@ trait HasState
         return $this;
     }
 
-    public function getState(): array
+    public function getState(array $only = [], array $except = []): array
     {
         $state = $this->validate();
 
         $this->dehydrateState($state);
 
         if ($statePath = $this->getStatePath()) {
-            return data_get($state, $statePath, []);
+            $state = data_get($state, $statePath, []);
+        }
+
+        if ($only !== []) {
+            return Arr::only($state, $only);
+        }
+
+        if ($except !== []) {
+            return Arr::except($state, $except);
         }
 
         return $state;
