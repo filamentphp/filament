@@ -43,11 +43,7 @@ class DateTimePicker extends Field
 
         $this->resetFirstDayOfWeek();
 
-        $this->rule(function (DateTimePicker $component) {
-            $format = $component->getFormat();
-
-            return "date_format:{$format}";
-        });
+        $this->rule('date');
     }
 
     public function displayFormat(string | callable $format): static
