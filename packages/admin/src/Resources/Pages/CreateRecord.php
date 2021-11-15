@@ -66,7 +66,7 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
             )->fill($data);
             $this->record->save();
         } else {
-            $this->record = static::getModel()::fill($data)->save();
+            $this->record = static::getModel()::create($data);
         }
 
         $this->form->model($this->record)->saveRelationships();

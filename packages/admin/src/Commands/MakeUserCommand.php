@@ -19,7 +19,6 @@ class MakeUserCommand extends Command
         $auth = Filament::auth();
 
         $userModel = $auth->getProvider()->getModel();
-        ;
 
         $user = $userModel::create([
             'name' => $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']),
