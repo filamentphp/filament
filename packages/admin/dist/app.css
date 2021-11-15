@@ -1947,7 +1947,7 @@ pre,
 code,
 kbd,
 samp {
-  font-family: JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 /**
@@ -3294,6 +3294,10 @@ select{
 	padding-left: 0.75rem;
 	padding-right: 0.75rem;
 }
+.py-1{
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
+}
 .py-6{
 	padding-top: 1.5rem;
 	padding-bottom: 1.5rem;
@@ -3309,10 +3313,6 @@ select{
 .py-8{
 	padding-top: 2rem;
 	padding-bottom: 2rem;
-}
-.py-1{
-	padding-top: 0.25rem;
-	padding-bottom: 0.25rem;
 }
 .px-1{
 	padding-left: 0.25rem;
@@ -3361,7 +3361,7 @@ select{
 	text-align: right;
 }
 .font-mono{
-	font-family: JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 .text-xs{
 	font-size: 0.75rem;

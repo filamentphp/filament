@@ -18,7 +18,6 @@ module.exports = {
                 warning: colors.amber,
             },
             fontFamily: {
-                mono: ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
                 sans: ['DM Sans', ...defaultTheme.fontFamily.sans],
             },
         },
