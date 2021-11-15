@@ -18824,7 +18824,9 @@ var markdown_editor_default = (Alpine) => {
       state: state2,
       tab,
       init: function() {
-        this.render();
+        if (this.state !== null) {
+          this.render();
+        }
         this.$watch("state", () => {
           this.render();
         });

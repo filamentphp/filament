@@ -20,7 +20,9 @@ export default (Alpine) => {
             tab,
 
             init: function () {
-                this.render()
+                if (this.state !== null) {
+                    this.render()
+                }
 
                 this.$watch('state', () => {
                     this.render()
