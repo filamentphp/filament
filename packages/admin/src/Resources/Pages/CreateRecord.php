@@ -28,15 +28,22 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
     {
         static::authorizeResourceAccess();
 
-        $resource = static::getResource();
+        abort_unless(static::getResource()::canCreate(), 403);
 
-        abort_unless($resource::canCreate(), 403);
-
-        if ($resource::isTranslatable()) {
-            $this->activeFormLocale = $resource::getDefaultTranslatableLocale();
-        }
+        $this->setActiveFormLocale();
 
         $this->fillForm();
+    }
+
+    protected function setActiveFormLocale(): void
+    {
+        $resource = static::getResource();
+
+        if (! $resource::isTranslatable()) {
+            return;
+        }
+
+        $this->activeFormLocale = $resource::getDefaultTranslatableLocale();
     }
 
     protected function fillForm(): void
@@ -64,6 +71,7 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
             $this->record = static::getModel()::usingLocale(
                 $this->activeFormLocale,
             )->fill($data);
+
             $this->record->save();
         } else {
             $this->record = static::getModel()::create($data);

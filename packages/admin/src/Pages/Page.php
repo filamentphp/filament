@@ -74,15 +74,7 @@ class Page extends Component
 
     public static function getSlug(): string
     {
-        return static::$slug ?? (string) Str::kebab(static::getTitle());
-    }
-
-    public static function getTitle(): string
-    {
-        return static::$title ?? (string) Str::of(class_basename(static::class))
-            ->kebab()
-            ->replace('-', ' ')
-            ->title();
+        return static::$slug ?? Str::kebab(static::$title ?? class_basename(static::class));
     }
 
     public static function getUrl(): string
@@ -121,7 +113,10 @@ class Page extends Component
 
     protected static function getNavigationLabel(): string
     {
-        return static::$navigationLabel ?? static::getTitle();
+        return static::$navigationLabel ?? static::$title ?? Str::of(class_basename(static::class))
+            ->kebab()
+            ->replace('-', ' ')
+            ->title();
     }
 
     protected static function getNavigationSort(): ?int
@@ -134,23 +129,44 @@ class Page extends Component
         return static::getUrl();
     }
 
-    protected function getDynamicTitle(): string
+    protected function getActions(): array | View | null
     {
-        return static::getTitle();
+        return null;
+    }
+
+    protected function getFooter(): ?View
+    {
+        return null;
+    }
+
+    protected function getHeader(): ?View
+    {
+        return null;
+    }
+
+    protected function getHeading(): string
+    {
+        return $this->getTitle();
+    }
+
+    protected function getTitle(): string
+    {
+        return static::$title ?? (string) Str::of(class_basename(static::class))
+            ->kebab()
+            ->replace('-', ' ')
+            ->title();
     }
 
     protected function getLayoutData(): array
     {
         return [
             'breadcrumbs' => $this->getBreadcrumbs(),
-            'title' => $this->getDynamicTitle(),
+            'title' => $this->getTitle(),
         ];
     }
 
     protected function getViewData(): array
     {
-        return [
-            'title' => $this->getDynamicTitle(),
-        ];
+        return [];
     }
 }

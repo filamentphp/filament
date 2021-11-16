@@ -24,7 +24,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return static::$breadcrumb ?? 'List';
     }
 
-    public static function getTitle(): string
+    protected function getTitle(): string
     {
         return static::$title ?? Str::title(static::getResource()::getPluralLabel());
     }

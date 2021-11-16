@@ -20,30 +20,20 @@
         @if (($label && ! $labelSrOnly) || $hint)
             <div class="flex items-center justify-between space-x-2 rtl:space-x-reverse">
                 @if ($label && ! $labelSrOnly)
-                    <label
-                        for="{{ $id }}"
-                        class="inline-flex items-center space-x-3"
+                    <x-forms::field-wrapper.label
+                        :for="$id"
+                        :error="$errors->has($statePath)"
+                        :prefix="$labelPrefix"
+                        :required="$required"
                     >
-                        {{ $labelPrefix }}
-
-                        <span @class([
-                            'text-sm font-medium leading-4',
-                            'text-gray-700' => ! $errors->has($statePath),
-                            'text-danger-700' => $errors->has($statePath),
-                        ])>
-                            {{ $label }}
-
-                            @if ($required)
-                                <sup class="font-medium text-danger-700">*</sup>
-                            @endif
-                        </span>
-                    </label>
+                        {{ $label }}
+                    </x-forms::field-wrapper.label>
                 @endif
 
                 @if ($hint)
-                    <div class="text-xs leading-tight text-gray-500">
+                    <x-forms::field-wrapper.hint>
                         {!! Str::of($hint)->markdown() !!}
-                    </div>
+                    </x-forms::field-wrapper.hint>
                 @endif
             </div>
         @endif
@@ -51,15 +41,15 @@
         {{ $slot }}
 
         @if ($errors->has($statePath))
-            <p class="text-sm text-danger-600">
+            <x-forms::field-wrapper.error-message>
                 {{ $errors->first($statePath) }}
-            </p>
+            </x-forms::field-wrapper.error-message>
         @endif
 
         @if ($helperText)
-            <div class="text-sm text-gray-600">
+            <x-forms::field-wrapper.helper-text>
                 {!! Str::of($helperText)->markdown() !!}
-            </div>
+            </x-forms::field-wrapper.helper-text>
         @endif
     </div>
 </div>

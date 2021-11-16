@@ -51,7 +51,7 @@ class GlobalSearch extends Component
 
     public function render()
     {
-        return view('filament::global-search', [
+        return view('filament::components.global-search.index', [
             'results' => $this->getResults(),
         ]);
     }

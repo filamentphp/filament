@@ -92,7 +92,7 @@
             </footer>
         </aside>
 
-        <div class="w-screen flex-1 flex flex-col lg:pl-80">
+        <div class="w-screen space-y-6 flex-1 flex flex-col lg:pl-80">
             <header class="h-[4rem] flex-shrink-0 w-full border-b flex items-center">
                 <div class="flex items-center w-full max-w-6xl px-2 mx-auto sm:px-4 md:px-6 lg:px-8">
                     <button x-data="{}" x-on:click="$store.sidebar.open()" class="flex-shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 transition rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none lg:hidden">
@@ -126,11 +126,11 @@
                 </div>
             </header>
 
-            <div class="max-w-6xl flex-1 w-full px-4 py-6 mx-auto md:px-6 lg:px-8">
+            <div class="max-w-6xl flex-1 w-full px-4 mx-auto md:px-6 lg:px-8">
                 {{ $slot }}
             </div>
 
-            <div class="pb-8 flex-shrink-0">
+            <div class="py-4 flex-shrink-0">
                 <x-filament::footer />
             </div>
         </div>

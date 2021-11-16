@@ -52,23 +52,28 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
     protected function fillTranslatableForm(): void
     {
-        $resource = static::getResource();
-
         if ($this->activeFormLocale === null) {
-            $availableLocales = array_keys($this->record->getTranslations($resource::getTranslatableAttributes()[0]));
-            $resourceLocales = $resource::getTranslatableLocales();
-
-            $this->activeFormLocale = array_intersect($availableLocales, $resourceLocales)[0] ?? $resource::getDefaultTranslatableLocale();
-            $this->record->setLocale($this->activeFormLocale);
+            $this->setActiveFormLocale();
         }
 
         $data = $this->record->toArray();
 
-        foreach ($resource::getTranslatableAttributes() as $attribute) {
+        foreach (static::getResource()::getTranslatableAttributes() as $attribute) {
             $data[$attribute] = $this->record->getTranslation($attribute, $this->activeFormLocale);
         }
 
         $this->form->fill($data);
+    }
+
+    protected function setActiveFormLocale(): void
+    {
+        $resource = static::getResource();
+
+        $availableLocales = array_keys($this->record->getTranslations($resource::getTranslatableAttributes()[0]));
+        $resourceLocales = $resource::getTranslatableLocales();
+
+        $this->activeFormLocale = array_intersect($availableLocales, $resourceLocales)[0] ?? $resource::getDefaultTranslatableLocale();
+        $this->record->setLocale($this->activeFormLocale);
     }
 
     public function save(bool $shouldRedirect = true): void
@@ -152,9 +157,9 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
         ];
     }
 
-    protected function getDynamicTitle(): string
+    protected function getTitle(): string
     {
-        return ($recordTitle = $this->getRecordTitle()) ? "Edit {$recordTitle}" : static::getTitle();
+        return static::$title ?? (($recordTitle = $this->getRecordTitle()) ? "Edit {$recordTitle}" : parent::getTitle());
     }
 
     protected function getFormActions(): array
