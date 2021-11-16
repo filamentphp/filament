@@ -4,7 +4,6 @@ namespace Filament\Forms\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 
 trait HasState
 {
@@ -136,17 +135,17 @@ trait HasState
         return $this;
     }
 
-    public function getState(): Collection
+    public function getState(): array
     {
         $state = $this->validate();
 
         $this->dehydrateState($state);
 
         if ($statePath = $this->getStatePath()) {
-            $state = data_get($state, $statePath, []);
+            return data_get($state, $statePath, []);
         }
 
-        return collect($state);
+        return $state;
     }
 
     public function getStatePath(bool $isAbsolute = true): string
