@@ -6191,9 +6191,9 @@ var date_time_picker_default = (Alpine) => {
           if (this.minDate !== null && date2.isBefore(this.minDate)) {
             date2 = null;
           }
-          this.hour = date2.hour();
-          this.minute = date2.minute();
-          this.second = date2.second();
+          this.hour = date2?.hour() ?? 0;
+          this.minute = date2?.minute() ?? 0;
+          this.second = date2?.second() ?? 0;
           this.setDisplayText();
         });
       },

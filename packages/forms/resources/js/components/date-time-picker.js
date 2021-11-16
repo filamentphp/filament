@@ -181,9 +181,9 @@ export default (Alpine) => {
                         date = null
                     }
 
-                    this.hour = date.hour()
-                    this.minute = date.minute()
-                    this.second = date.second()
+                    this.hour = date?.hour() ?? 0
+                    this.minute = date?.minute() ?? 0
+                    this.second = date?.second() ?? 0
 
                     this.setDisplayText()
                 })
