@@ -2,7 +2,6 @@
 
 namespace Filament\Tables;
 
-use Filament\Tables\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -12,13 +11,31 @@ class TablesServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('tables')
-            ->hasCommand(InstallCommand::class)
+            ->hasCommands($this->getCommands())
             ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
     }
 
-    public function packageBooted(): void
+    protected function getCommands(): array
     {
+        $commands = [
+            Commands\InstallCommand::class,
+            Commands\MakeColumnCommand::class,
+        ];
+
+        $aliases = [];
+
+        foreach ($commands as $command) {
+            $class = 'Filament\\Tables\\Commands\\Aliases\\' . class_basename($command);
+
+            if (! class_exists($class)) {
+                continue;
+            }
+
+            $aliases[] = $class;
+        }
+
+        return array_merge($commands, $aliases);
     }
 }

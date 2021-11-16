@@ -10,6 +10,7 @@ use Illuminate\Support\Traits\Tappable;
 class BulkAction
 {
     use Concerns\BelongsToTable;
+    use Concerns\CanBeHidden;
     use Concerns\CanDeselectRecordsAfterCompletion;
     use Concerns\CanOpenModal;
     use Concerns\CanRequireConfirmation;
@@ -43,6 +44,10 @@ class BulkAction
 
     public function call(array $data = [])
     {
+        if ($this->isHidden()) {
+            return;
+        }
+
         $action = $this->getAction();
 
         if (! $action instanceof Closure) {

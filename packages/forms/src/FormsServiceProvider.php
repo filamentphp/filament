@@ -2,7 +2,6 @@
 
 namespace Filament\Forms;
 
-use Filament\Forms\Commands\InstallCommand;
 use Illuminate\Support\Arr;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -13,10 +12,33 @@ class FormsServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('forms')
-            ->hasCommand(InstallCommand::class)
+            ->hasCommands($this->getCommands())
             ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
+    }
+
+    protected function getCommands(): array
+    {
+        $commands = [
+            Commands\InstallCommand::class,
+            Commands\MakeFieldCommand::class,
+            Commands\MakeLayoutComponentCommand::class,
+        ];
+
+        $aliases = [];
+
+        foreach ($commands as $command) {
+            $class = 'Filament\\Forms\\Commands\\Aliases\\' . class_basename($command);
+
+            if (! class_exists($class)) {
+                continue;
+            }
+
+            $aliases[] = $class;
+        }
+
+        return array_merge($commands, $aliases);
     }
 
     public function packageBooted(): void

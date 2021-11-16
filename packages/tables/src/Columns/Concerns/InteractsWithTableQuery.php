@@ -11,6 +11,10 @@ trait InteractsWithTableQuery
 {
     public function applyEagreLoading(Builder $query): Builder
     {
+        if ($this->isHidden()) {
+            return $query;
+        }
+
         if ($this->queriesRelationships()) {
             $query->with([$this->getRelationshipName()]);
         }
@@ -20,19 +24,24 @@ trait InteractsWithTableQuery
 
     public function applySearchConstraint(Builder $query, string $searchQuery, bool &$isFirst): Builder
     {
+        if ($this->isHidden()) {
+            return $query;
+        }
+
         if (! $this->isSearchable()) {
             return $query;
         }
 
-        $isRelationshipColumn = $this->queriesRelationships();
-        $relationshipName = $this->getRelationshipName();
-        $searchColumns = $this->getSearchColumns();
-        $searchOperator = $this->getQuerySearchOperator($query);
+        $searchOperator = match ($query->getConnection()->getDriverName()) {
+            'pgsql' => 'ilike',
+            default => 'like',
+        };
+        ;
 
-        foreach ($searchColumns as $searchColumnName) {
-            if ($isRelationshipColumn) {
+        foreach ($this->getSearchColumns() as $searchColumnName) {
+            if (Str::of($searchColumnName)->contains('.')) {
                 $query->{$isFirst ? 'whereHas' : 'orWhereHas'}(
-                    $relationshipName,
+                    Str::of($searchColumnName)->beforeLast('.'),
                     fn ($query) => $query->where(
                         $searchColumnName,
                         $searchOperator,
@@ -55,6 +64,10 @@ trait InteractsWithTableQuery
 
     public function applySort(Builder $query, string $direction = 'asc'): Builder
     {
+        if ($this->isHidden()) {
+            return $query;
+        }
+
         if (! $this->isSortable()) {
             return $query;
         }
@@ -90,11 +103,6 @@ trait InteractsWithTableQuery
         return Str::of($this->getName())->contains('.');
     }
 
-    protected function getRelationshipColumnName(): string
-    {
-        return Str::of($this->getName())->afterLast('.');
-    }
-
     protected function getRelatedModel(Builder $query): Model
     {
         return $this->getRelationship($query)->getModel();
@@ -113,13 +121,5 @@ trait InteractsWithTableQuery
     protected function getQueryModel(Builder $query): Model
     {
         return $query->getModel();
-    }
-
-    protected function getQuerySearchOperator(Builder $query): string
-    {
-        return match ($query->getConnection()->getDriverName()) {
-            'pgsql' => 'ilike',
-            default => 'like',
-        };
     }
 }

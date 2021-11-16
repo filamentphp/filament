@@ -11,6 +11,10 @@ trait InteractsWithTableQuery
 
     public function apply(Builder $query, array $data = []): Builder
     {
+        if ($this->isHidden()) {
+            return $query;
+        }
+
         if (! $this->hasQueryModificationCallback()) {
             return $query;
         }

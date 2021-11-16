@@ -132,3 +132,13 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 ```
 
 You're now ready to start [building forms](building-forms)!
+
+## Upgrade Guide
+
+To upgrade the package to the latest version, you must run:
+
+```bash
+composer update
+php artisan config:clear
+php artisan view:clear
+```

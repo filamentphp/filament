@@ -2,8 +2,6 @@
 title: Form Components
 ---
 
-## File upload
-
 To use the media library file upload, you may pass a `model()` to the component:
 
 ```php

@@ -218,6 +218,14 @@ use Filament\Tables\Columns\ImageColumn;
 ImageColumn::make('header_image')
 ```
 
+You may make the image fully `rounded()`, which is useful for rendering avatars:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('author.avatar')->rounded()
+```
+
 You may customize the image size by passing a `width()` and `height()`, or both with `size()`:
 
 ```php
@@ -228,16 +236,6 @@ ImageColumn::make('header_image')->width(200)
 ImageColumn::make('header_image')->height(50)
 
 ImageColumn::make('author.avatar')->size(40)
-```
-
-You may make the image fully `rounded()`, which is useful for rendering avatars:
-
-```php
-use Filament\Tables\Columns\ImageColumn;
-
-ImageColumn::make('author.avatar')
-    ->rounded()
-    ->size(40)
 ```
 
 By default, the `public` disk will be used to retrieve images. You may pass a custom disk name to the `disk()` method:

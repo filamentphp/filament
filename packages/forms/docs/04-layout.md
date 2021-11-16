@@ -274,6 +274,14 @@ use Filament\Forms\Components\View;
 View::make('filament.forms.components.wizard')
 ```
 
+Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` callable:
+
+```blade
+<div id="{{ $getId }}">
+    {{ $getChildComponentContainer() }}
+</div>
+```
+
 ## Building custom layout components
 
 You may create your own custom component classes and views, which you can reuse across your project, and even release as a plugin to the community.
@@ -294,4 +302,12 @@ class Wizard extends Component
         return new static();
     }
 }
+```
+
+Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` callable:
+
+```blade
+<div id="{{ $getId }}">
+    {{ $getChildComponentContainer() }}
+</div>
 ```

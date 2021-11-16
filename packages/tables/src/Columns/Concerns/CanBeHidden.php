@@ -6,7 +6,16 @@ trait CanBeHidden
 {
     protected ?string $hiddenFrom = null;
 
+    protected bool $isHidden = false;
+
     protected ?string $visibleFrom = null;
+
+    public function hidden(bool $condition = true): static
+    {
+        $this->isHidden = $condition;
+
+        return $this;
+    }
 
     public function hiddenFrom(string $breakpoint): static
     {
@@ -30,5 +39,10 @@ trait CanBeHidden
     public function getVisibleFrom(): ?string
     {
         return $this->visibleFrom;
+    }
+
+    public function isHidden(): bool
+    {
+        return $this->isHidden;
     }
 }
