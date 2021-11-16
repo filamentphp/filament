@@ -148,6 +148,16 @@ trait HasState
         return $state;
     }
 
+    public function getStateOnly(array $keys): array
+    {
+        return Arr::only($this->getState(), $keys);
+    }
+
+    public function getStateExcept(array $keys): array
+    {
+        return Arr::except($this->getState(), $keys);
+    }
+
     public function getStatePath(bool $isAbsolute = true): string
     {
         $pathComponents = [];
