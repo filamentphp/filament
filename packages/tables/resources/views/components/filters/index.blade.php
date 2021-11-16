@@ -7,7 +7,7 @@
     x-cloak
     {{ $attributes->class(['relative inline-block']) }}
 >
-    <x-tables::trigger />
+    <x-tables::filters.trigger />
 
     <div
         x-show="isOpen"
