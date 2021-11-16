@@ -69,12 +69,12 @@ TextInput::make('name')->default('John')
 
 Sometimes, you may wish to provide extra information for the user of the form. For this purpose, you may use helper messages and hints.
 
-Help messages are displayed below the field. The `helpMessage()` method supports Markdown formatting:
+Help messages are displayed below the field. The `helperText()` method supports Markdown formatting:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('name')->helpMessage('Your full name here, including any middle names.')
+TextInput::make('name')->helperText('Your full name here, including any middle names.')
 ```
 
 Hints can be used to display text adjacent to its label:
