@@ -1,6 +1,0 @@
-parameters:
-    paths:
-        - packages/forms/src
-        - packages/spatie-laravel-media-library-plugin/src
-        - packages/spatie-laravel-tags-plugin/src
-    level: 5
