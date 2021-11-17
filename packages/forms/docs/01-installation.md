@@ -55,6 +55,11 @@ module.exports = {
             }, // [tl! focus:end]
         },
     },
+    variants: {
+        extend: {
+            backgroundColor: ["disabled"], // [tl! focus:start]
+        },
+    },
     plugins: [
         require('@tailwindcss/forms'), // [tl! focus:start]
         require('@tailwindcss/typography'), // [tl! focus:end]
