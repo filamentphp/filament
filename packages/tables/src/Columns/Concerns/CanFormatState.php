@@ -13,7 +13,7 @@ trait CanFormatState
 
     public function date(string $format = 'M j, Y'): static
     {
-        $this->formatStateUsing(fn ($state) => Carbon::parse($state)->translatedFormat($format));
+        $this->formatStateUsing(fn ($state): ?string => $state ? Carbon::parse($state)->translatedFormat($format) : null);
 
         return $this;
     }
@@ -27,14 +27,14 @@ trait CanFormatState
 
     public function enum(array $options, $default = null): static
     {
-        $this->formatStateUsing(fn ($state) => $options[$state] ?? ($default ?? $state));
+        $this->formatStateUsing(fn ($state): string => $options[$state] ?? ($default ?? $state));
 
         return $this;
     }
 
     public function limit(int $length = 100, string $end = '...'): static
     {
-        $this->formatStateUsing(fn ($state) => Str::limit($state, $length, $end));
+        $this->formatStateUsing(fn ($state): string => Str::limit($state, $length, $end));
 
         return $this;
     }
@@ -48,7 +48,7 @@ trait CanFormatState
 
     public function money(string $currency = 'usd', bool $shouldConvert = false): static
     {
-        $this->formatStateUsing(function ($state) use ($currency, $shouldConvert) {
+        $this->formatStateUsing(function ($state) use ($currency, $shouldConvert): string {
             return (new Money\Money(
                 $state,
                 (new Money\Currency(strtoupper($currency))),

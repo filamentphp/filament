@@ -277,7 +277,7 @@ View::make('filament.forms.components.wizard')
 Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` callable:
 
 ```blade
-<div id="{{ $getId }}">
+<div>
     {{ $getChildComponentContainer() }}
 </div>
 ```
@@ -307,7 +307,7 @@ class Wizard extends Component
 Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` callable:
 
 ```blade
-<div id="{{ $getId }}">
+<div>
     {{ $getChildComponentContainer() }}
 </div>
 ```
