@@ -4,7 +4,7 @@
         x-on:expand-concealing-component.window="if ($event.detail.id === $el.id) isCollapsed = false"
     @endif
     id="{{ $getId() }}"
-    class="p-6 space-y-6 rounded-xl shadow-sm border border-gray-300"
+    {{ $attributes->merge($getExtraAttributes())->class(['p-6 space-y-6 rounded-xl shadow-sm border border-gray-300']) }}
 >
     <div class="flex space-x-3">
         <div class="flex-1 space-y-1">
