@@ -104,11 +104,13 @@ use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')->disabled()
 ```
-Optionally, pass a boolean value to control the disabled state. Example below will disable the field if a user is logged in.
-```php
-use Filament\Forms\Components\TextInput;
 
-TextInput::make('name')->disabled( auth()->check() )
+Optionally, you may pass a boolean value to control the disabled state:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')->disabled(! auth()->user()->isAdmin())
 ```
 
 ### Autofocusing
