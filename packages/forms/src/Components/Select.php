@@ -147,6 +147,13 @@ class Select extends Field
         return $results;
     }
 
+    public function getState()
+    {
+        $state = parent::getState();
+
+        return $state !== '' ? $state : null;
+    }
+
     public function isOptionDisabled($value, string $label): bool
     {
         if ($this->isOptionDisabled === null) {
