@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Route;
 
 class Dashboard extends Page
 {
-    public static ?string $navigationIcon = 'heroicon-o-home';
+    protected static ?string $navigationIcon = 'heroicon-o-home';
 
-    public static ?int $navigationSort = -2;
+    protected static ?int $navigationSort = -2;
 
-    public static string $view = 'filament::dashboard';
+    protected static string $view = 'filament::pages.dashboard';
 
     public static function getRoutes(): Closure
     {

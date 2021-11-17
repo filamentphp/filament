@@ -24,7 +24,7 @@ class Login extends Component implements HasForms
     public function mount(): void
     {
         if (Filament::auth()->check()) {
-            redirect()->route('filament.pages.dashboard');
+            redirect()->intended(Filament::getUrl());
         }
 
         $this->form->fill();
@@ -54,7 +54,7 @@ class Login extends Component implements HasForms
             return;
         }
 
-        redirect()->intended(route('filament.pages.dashboard'));
+        redirect()->intended(Filament::getUrl());
     }
 
     protected function getFormSchema(): array

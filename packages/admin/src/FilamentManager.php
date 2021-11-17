@@ -2,10 +2,12 @@
 
 namespace Filament;
 
+use Composer\InstalledVersions;
 use Filament\Events\ServingFilament;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 
 class FilamentManager
@@ -189,6 +191,28 @@ class FilamentManager
             'id' => get_asset_id('app.css'),
             'path' => 'app.css',
         ]);
+    }
+
+    public function getUrl(): ?string
+    {
+        $flatNavigation = Arr::flatten($this->getNavigation());
+
+        $firstItem = $flatNavigation[0] ?? null;
+
+        if (! $firstItem) {
+            return null;
+        }
+
+        return $firstItem->getUrl();
+    }
+
+    public function getVersion(): ?string
+    {
+        if (! class_exists('Composer\\InstalledVersions')) {
+            return null;
+        }
+
+        return InstalledVersions::getPrettyVersion('filament/filament');
     }
 
     public function getWidgets(): array

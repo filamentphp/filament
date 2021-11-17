@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getScriptData()
  * @method static array getStyles()
  * @method static string getThemeUrl()
+ * @method static string | null getUrl()
  * @method static array getWidgets()
  * @method static void registerNavigationGroups(array $groups)
  * @method static void registerNavigationItems(array $items)

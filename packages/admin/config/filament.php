@@ -3,6 +3,9 @@
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
+use Filament\Pages;
+use Filament\Resources;
+use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -35,7 +38,7 @@ return [
     |
     */
 
-    'domain' => env('FILAMENT_DOMAIN', null),
+    'domain' => env('FILAMENT_DOMAIN'),
 
     /*
     |--------------------------------------------------------------------------
@@ -57,13 +60,16 @@ return [
     |--------------------------------------------------------------------------
     |
     | This is the namespace and directory that Filament will automatically
-    | register pages from.
+    | register pages from. You may also register pages here.
     |
     */
 
     'pages' => [
         'namespace' => 'App\\Filament\\Pages',
         'path' => app_path('Filament/Pages'),
+        'register' => [
+            Pages\Dashboard::class,
+        ],
     ],
 
     /*
@@ -72,13 +78,14 @@ return [
     |--------------------------------------------------------------------------
     |
     | This is the namespace and directory that Filament will automatically
-    | register resources from.
+    | register resources from. You may also register resources here.
     |
     */
 
     'resources' => [
         'namespace' => 'App\\Filament\\Resources',
         'path' => app_path('Filament/Resources'),
+        'register' => [],
     ],
 
     /*
@@ -87,16 +94,16 @@ return [
     |--------------------------------------------------------------------------
     |
     | This is the namespace and directory that Filament will automatically
-    | register widgets from.
+    | register dashboard widgets from. You may also register widgets here.
     |
     */
 
     'widgets' => [
         'namespace' => 'App\\Filament\\Widgets',
         'path' => app_path('Filament/Widgets'),
-        'default' => [
-            'account' => true,
-            'info' => true,
+        'register' => [
+            Widgets\AccountWidget::class,
+            Widgets\FilamentInfoWidget::class,
         ],
     ],
 

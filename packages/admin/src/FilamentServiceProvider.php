@@ -7,6 +7,8 @@ use Filament\Http\Livewire\GlobalSearch;
 use Filament\Http\Livewire\Login;
 use Filament\Pages\Dashboard;
 use Filament\Resources\Resource;
+use Filament\Widgets\AccountWidget;
+use Filament\Widgets\FilamentInfoWidget;
 use Filament\Widgets\Widget;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
@@ -73,19 +75,16 @@ class FilamentServiceProvider extends PackageServiceProvider
         $this->discoverPages();
         $this->discoverResources();
         $this->discoverWidgets();
-
-        Filament::registerPages([
-            Dashboard::class,
-        ]);
     }
 
     protected function bootLivewireComponents(): void
     {
-        Livewire::component('filament.auth.login', Login::class);
-        Livewire::component('filament.global-search', GlobalSearch::class);
+        Livewire::component('filament.core.auth.login', Login::class);
+        Livewire::component('filament.core.global-search', GlobalSearch::class);
+        Livewire::component('filament.core.pages.dashboard', Dashboard::class);
+        Livewire::component('filament.core.widgets.account-widget', AccountWidget::class);
+        Livewire::component('filament.core.widgets.filament-info-widget', FilamentInfoWidget::class);
 
-        $this->registerLivewireComponentDirectory(__DIR__ . '/Pages', 'Filament\\Pages', 'filament.pages.');
-        $this->registerLivewireComponentDirectory(__DIR__ . '/Resources', 'Filament\\Resources', 'filament.resources.');
         $this->registerLivewireComponentDirectory(app_path('Filament'), 'App\\Filament', 'filament.');
     }
 
@@ -94,6 +93,8 @@ class FilamentServiceProvider extends PackageServiceProvider
         $filesystem = new Filesystem();
 
         $filesystem->ensureDirectoryExists(config('filament.pages.path'));
+
+        Filament::registerPages(config('filament.pages.register', []));
 
         Filament::registerPages(collect($filesystem->allFiles(config('filament.pages.path')))
             ->map(function (SplFileInfo $file): string {
@@ -111,6 +112,8 @@ class FilamentServiceProvider extends PackageServiceProvider
 
         $filesystem->ensureDirectoryExists(config('filament.resources.path'));
 
+        Filament::registerResources(config('filament.resources.register', []));
+
         Filament::registerResources(collect($filesystem->allFiles(config('filament.resources.path')))
             ->map(function (SplFileInfo $file): string {
                 return (string) Str::of(config('filament.resources.namespace'))
@@ -126,6 +129,8 @@ class FilamentServiceProvider extends PackageServiceProvider
         $filesystem = new Filesystem();
 
         $filesystem->ensureDirectoryExists(config('filament.widgets.path'));
+
+        Filament::registerWidgets(config('filament.widgets.register', []));
 
         Filament::registerWidgets(collect($filesystem->allFiles(config('filament.widgets.path')))
             ->map(function (SplFileInfo $file): string {
@@ -154,7 +159,7 @@ class FilamentServiceProvider extends PackageServiceProvider
                 continue;
             }
 
-            if ($key === 'middleware') {
+            if ($key === 'middleware' || $key === 'register') {
                 continue;
             }
 
