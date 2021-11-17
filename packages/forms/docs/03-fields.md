@@ -105,6 +105,14 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->disabled()
 ```
 
+Optionally, you may pass a boolean value to control the disabled state:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')->disabled(! auth()->user()->isAdmin())
+```
+
 ### Autofocusing
 
 Most fields will be autofocusable. Ideally, you should aim for the first significant field in your form to be autofocused for the best user experience.
