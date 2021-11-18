@@ -1,0 +1,1607 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"unit",
+				"unit_price"
+			],
+			[
+				"un",
+				"unit_price"
+			],
+			[
+				"uni",
+				"unit_price_inc_tax"
+			],
+			[
+				"text-align",
+				"text-align\tproperty"
+			],
+			[
+				"font",
+				"font-size\tproperty"
+			],
+			[
+				"padding",
+				"padding-bottom\tproperty"
+			],
+			[
+				"invoice",
+				"invoice_date"
+			],
+			[
+				"HasT",
+				"HasTags"
+			],
+			[
+				"show",
+				"show_success"
+			],
+			[
+				"hasM",
+				"HasMedia"
+			],
+			[
+				"log",
+				"logo-roundel"
+			],
+			[
+				"nav",
+				"navigator"
+			],
+			[
+				"Navi",
+				"Navigator"
+			],
+			[
+				"spruce",
+				"Spruce"
+			],
+			[
+				"n",
+				"Navigation"
+			],
+			[
+				"navigation",
+				"navigation-hover"
+			],
+			[
+				"hi",
+				"hideFromIndex"
+			],
+			[
+				"hideFr",
+				"hideFromIndex"
+			],
+			[
+				"first",
+				"first_name"
+			],
+			[
+				"C",
+				"ClientObserver"
+			],
+			[
+				"f",
+				"file"
+			],
+			[
+				"asgard",
+				"asgard-module-coursican"
+			],
+			[
+				"date",
+				"dateTimes"
+			],
+			[
+				"lead",
+				"leadClient"
+			],
+			[
+				"workshop",
+				"workshop_id"
+			],
+			[
+				"leadCl",
+				"leadClientId"
+			],
+			[
+				"l",
+				"leadClient"
+			],
+			[
+				"client",
+				"clientId"
+			],
+			[
+				"add",
+				"add_first_name"
+			],
+			[
+				"clien",
+				"client_id"
+			],
+			[
+				"row",
+				"rowId"
+			],
+			[
+				"js",
+				"js-attendees-body"
+			],
+			[
+				"enum",
+				"enumFrenchNames"
+			],
+			[
+				"content",
+				"content-header"
+			],
+			[
+				"col-",
+				"col-sm-offset-1"
+			],
+			[
+				"strt",
+				"strtoupper"
+			],
+			[
+				"da",
+				"data"
+			],
+			[
+				"course",
+				"course_id"
+			],
+			[
+				"no",
+				"no_of_days"
+			],
+			[
+				"lo",
+				"location_id"
+			],
+			[
+				"cou",
+				"course_id"
+			],
+			[
+				"box",
+				"box-body"
+			],
+			[
+				"has",
+				"hasLocales"
+			],
+			[
+				"enu",
+				"enumulate"
+			],
+			[
+				"re",
+				"repository"
+			],
+			[
+				"Repos",
+				"repository"
+			],
+			[
+				"E",
+				"Enumulator"
+			],
+			[
+				"nam",
+				"NamespacedEntity"
+			],
+			[
+				"tag",
+				"TaggableTrait"
+			],
+			[
+				"Ta",
+				"TaggableTrait"
+			],
+			[
+				"te",
+				"text-transform"
+			],
+			[
+				"owner",
+				"owner_id"
+			],
+			[
+				"di",
+				"display"
+			],
+			[
+				"fon",
+				"font-size"
+			],
+			[
+				"p",
+				"position"
+			],
+			[
+				"li",
+				"line-height"
+			],
+			[
+				"co",
+				"color"
+			],
+			[
+				"b",
+				"background-color"
+			],
+			[
+				"ur",
+				"url_info"
+			],
+			[
+				"con",
+				"content"
+			],
+			[
+				"is",
+				"is_array"
+			],
+			[
+				"text",
+				"text-decoration"
+			],
+			[
+				"pr",
+				"processing"
+			],
+			[
+				"qu",
+				"queue_indexes"
+			],
+			[
+				"jo",
+				"jobs"
+			],
+			[
+				"load_",
+				"load_queue"
+			],
+			[
+				"pro",
+				"proxy_zip"
+			],
+			[
+				"success",
+				"successes"
+			],
+			[
+				"sc",
+				"scraper"
+			],
+			[
+				"a",
+				"all_results"
+			],
+			[
+				"inet",
+				"interrogator"
+			],
+			[
+				"yah",
+				"yahoo_proxy"
+			],
+			[
+				"path",
+				"path_to_logs"
+			],
+			[
+				"fun",
+				"function"
+			],
+			[
+				"ret",
+				"retData"
+			],
+			[
+				"engin",
+				"engine_url"
+			],
+			[
+				"scra",
+				"Scraper"
+			],
+			[
+				"c",
+				"color"
+			],
+			[
+				"array_r",
+				"array_reverse"
+			],
+			[
+				"fo",
+				"font-weight"
+			],
+			[
+				"P",
+				"Proxies"
+			],
+			[
+				"Dom",
+				"Domain"
+			],
+			[
+				"engine",
+				"engine_ids"
+			],
+			[
+				"eng",
+				"engine_id"
+			],
+			[
+				"currenT",
+				"current_rank"
+			],
+			[
+				"json",
+				"json_decode"
+			],
+			[
+				"v",
+				"vertical-align"
+			],
+			[
+				"ra",
+				"ranking"
+			],
+			[
+				"rank",
+				"rankings"
+			],
+			[
+				"FI",
+				"FIRST_RANK"
+			],
+			[
+				"ranking",
+				"ranking_tabs"
+			],
+			[
+				"i",
+				"italic"
+			],
+			[
+				"background",
+				"background-color"
+			],
+			[
+				"ba",
+				"background-color"
+			],
+			[
+				"margin-",
+				"margin-bottom"
+			],
+			[
+				"en",
+				"engine_id"
+			],
+			[
+				"first_",
+				"first_run"
+			],
+			[
+				"base",
+				"base_url"
+			],
+			[
+				"for",
+				"foreach\tforeach …"
+			],
+			[
+				"q",
+				"query_url"
+			],
+			[
+				"pa",
+				"page_source"
+			],
+			[
+				"goo",
+				"good_curl"
+			],
+			[
+				"rs",
+				"rsout"
+			],
+			[
+				"url",
+				"urlencode"
+			],
+			[
+				"class",
+				"class_name"
+			],
+			[
+				"error",
+				"error_log"
+			],
+			[
+				"cla",
+				"class_path"
+			],
+			[
+				"domain",
+				"domain_id"
+			],
+			[
+				"array_s",
+				"array_slice"
+			],
+			[
+				"m",
+				"max_page"
+			],
+			[
+				"result",
+				"result_count"
+			],
+			[
+				"proxy",
+				"proxy_ip"
+			],
+			[
+				"Doma",
+				"domain"
+			],
+			[
+				"do",
+				"domain"
+			],
+			[
+				"mar",
+				"margin-left"
+			],
+			[
+				"border",
+				"border-style"
+			],
+			[
+				"str_re",
+				"str_replace"
+			],
+			[
+				"html",
+				"htmlspecialchars"
+			],
+			[
+				"model",
+				"model_name"
+			],
+			[
+				"field",
+				"field_name"
+			],
+			[
+				"ta",
+				"table_name"
+			],
+			[
+				"set",
+				"set_data"
+			],
+			[
+				"border-col",
+				"border-color"
+			],
+			[
+				"inline",
+				"inline-block"
+			],
+			[
+				"margin",
+				"margin-right"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "table.php",
+			"settings":
+			{
+				"buffer_size": 1563,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					11,
+					1,
+					"paste",
+					null,
+					"BAAAAH8AAAAAAAAAggAAAAAAAAAAAAAAggAAAAAAAACCAAAAAAAAAAYAAABTZWFyY2hYAAAAAAAAAFsAAAAAAAAAAAAAAFsAAAAAAAAAWwAAAAAAAAAGAAAAU2VhcmNo",
+					"AQAAAAAAAAACAAAAWAAAAAAAAABeAAAAAAAAAAAAAAAAAPC/fwAAAAAAAACFAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					19,
+					1,
+					"paste",
+					null,
+					"AgAAAMEAAAAAAAAA0AAAAAAAAAAAAAAA0AAAAAAAAADQAAAAAAAAABQAAABQYWdpbmF0aW9uIE5hdmlnYXRpbw",
+					"AQAAAAAAAAABAAAAwQAAAAAAAADVAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					20,
+					1,
+					"right_delete",
+					null,
+					"AQAAANAAAAAAAAAA0AAAAAAAAAABAAAAbg",
+					"AQAAAAAAAAABAAAA0AAAAAAAAADQAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					25,
+					1,
+					"paste",
+					null,
+					"AgAAAOsAAAAAAAAA9QAAAAAAAAAAAAAA9QAAAAAAAAD1AAAAAAAAAAcAAABTaG93aW5n",
+					"AQAAAAAAAAABAAAA6wAAAAAAAADyAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					28,
+					1,
+					"insert",
+					{
+						"characters": "ill"
+					},
+					"AwAAAP4AAAAAAAAA/wAAAAAAAAAAAAAA/wAAAAAAAAAAAQAAAAAAAAAAAAAAAQAAAAAAAAEBAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA/gAAAAAAAAD+AAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					29,
+					1,
+					"right_delete",
+					null,
+					"AQAAAAEBAAAAAAAAAQEAAAAAAAABAAAAbw",
+					"AQAAAAAAAAABAAAAAQEAAAAAAAABAQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					38,
+					1,
+					"insert",
+					{
+						"characters": "av"
+					},
+					"AwAAAAgBAAAAAAAACQEAAAAAAAAAAAAACQEAAAAAAAAJAQAAAAAAAAIAAABvZgkBAAAAAAAACgEAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAACAEAAAAAAAAKAQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					41,
+					7,
+					"left_delete",
+					null,
+					"BwAAABgBAAAAAAAAGAEAAAAAAAABAAAAcxcBAAAAAAAAFwEAAAAAAAABAAAAdBYBAAAAAAAAFgEAAAAAAAABAAAAbBUBAAAAAAAAFQEAAAAAAAABAAAAdRQBAAAAAAAAFAEAAAAAAAABAAAAcxMBAAAAAAAAEwEAAAAAAAABAAAAZRIBAAAAAAAAEgEAAAAAAAABAAAAcg",
+					"AQAAAAAAAAABAAAAGQEAAAAAAAAZAQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					42,
+					1,
+					"insert",
+					{
+						"characters": "totalt"
+					},
+					"BgAAABIBAAAAAAAAEwEAAAAAAAAAAAAAEwEAAAAAAAAUAQAAAAAAAAAAAAAUAQAAAAAAABUBAAAAAAAAAAAAABUBAAAAAAAAFgEAAAAAAAAAAAAAFgEAAAAAAAAXAQAAAAAAAAAAAAAXAQAAAAAAABgBAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAEgEAAAAAAAASAQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					45,
+					4,
+					"left_delete",
+					null,
+					"BAAAAHoBAAAAAAAAegEAAAAAAAABAAAAZXkBAAAAAAAAeQEAAAAAAAABAAAAZ3gBAAAAAAAAeAEAAAAAAAABAAAAYXcBAAAAAAAAdwEAAAAAAAABAAAAcA",
+					"AQAAAAAAAAABAAAAewEAAAAAAAB7AQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					46,
+					1,
+					"insert",
+					{
+						"characters": "sida"
+					},
+					"BAAAAHcBAAAAAAAAeAEAAAAAAAAAAAAAeAEAAAAAAAB5AQAAAAAAAAAAAAB5AQAAAAAAAHoBAAAAAAAAAAAAAHoBAAAAAAAAewEAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAdwEAAAAAAAB3AQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					49,
+					1,
+					"paste",
+					null,
+					"AgAAAOwBAAAAAAAA8wEAAAAAAAAAAAAA8wEAAAAAAADzAQAAAAAAAAoAAABHbyB0byBwYWdl",
+					"AQAAAAAAAAABAAAA7AEAAAAAAAD2AQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					54,
+					1,
+					"paste",
+					null,
+					"AgAAAEACAAAAAAAARQIAAAAAAAAAAAAARQIAAAAAAABFAgAAAAAAAAQAAABOZXh0",
+					"AQAAAAAAAAABAAAAQAIAAAAAAABEAgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					59,
+					1,
+					"paste",
+					null,
+					"AgAAAJACAAAAAAAAmgIAAAAAAAAAAAAAmgIAAAAAAACaAgAAAAAAAAgAAABQcmV2aW91cw",
+					"AQAAAAAAAAABAAAAkAIAAAAAAACYAgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					64,
+					6,
+					"left_delete",
+					null,
+					"BgAAAFEDAAAAAAAAUQMAAAAAAAAHAAAAYWN0aW9uc1ADAAAAAAAAUAMAAAAAAAABAAAAIE8DAAAAAAAATwMAAAAAAAABAAAAbk4DAAAAAAAATgMAAAAAAAABAAAAZU0DAAAAAAAATQMAAAAAAAABAAAAcEwDAAAAAAAATAMAAAAAAAABAAAATw",
+					"AQAAAAAAAAABAAAAUQMAAAAAAABYAwAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					65,
+					1,
+					"paste",
+					null,
+					"AQAAAEwDAAAAAAAAWgMAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAATAMAAAAAAABMAwAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					68,
+					1,
+					"paste",
+					null,
+					"AgAAAM4DAAAAAAAA9AMAAAAAAAAAAAAA9AMAAAAAAAD0AwAAAAAAACcAAABBcmUgeW91IHN1cmUgeW91IHdvdWxkIGxpa2UgdG8gZG8gdGhpcz8",
+					"AQAAAAAAAAABAAAAzgMAAAAAAAD1AwAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					73,
+					1,
+					"paste",
+					null,
+					"AgAAAFIEAAAAAAAAVwQAAAAAAAAAAAAAVwQAAAAAAABXBAAAAAAAAAYAAABDYW5jZWw",
+					"AQAAAAAAAAABAAAAUgQAAAAAAABYBAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					79,
+					1,
+					"paste",
+					null,
+					"AgAAAK0EAAAAAAAAtQQAAAAAAAAAAAAAtQQAAAAAAAC1BAAAAAAAAAcAAABDb25maXJt",
+					"AQAAAAAAAAABAAAArQQAAAAAAAC0BAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					84,
+					1,
+					"paste",
+					null,
+					"AgAAAAoFAAAAAAAAFAUAAAAAAAAAAAAAFAUAAAAAAAAUBQAAAAAAAAYAAABTdWJtaXQ",
+					"AQAAAAAAAAABAAAACgUAAAAAAAAQBQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					85,
+					1,
+					"left_delete",
+					null,
+					"AQAAABMFAAAAAAAAEwUAAAAAAAABAAAACg",
+					"AQAAAAAAAAABAAAAFAUAAAAAAAAUBQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					88,
+					1,
+					"paste",
+					null,
+					"AgAAAJgFAAAAAAAArAUAAAAAAAAAAAAArAUAAAAAAACsBQAAAAAAABkAAABTZWxlY3QgYWxsIDpjb3VudCByZWNvcmRz",
+					"AQAAAAAAAAABAAAAmAUAAAAAAACxBQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					89,
+					1,
+					"left_delete",
+					null,
+					"AQAAAKsFAAAAAAAAqwUAAAAAAAABAAAACg",
+					"AQAAAAAAAAABAAAArAUAAAAAAACsBQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					92,
+					2,
+					"left_delete",
+					null,
+					"AgAAAKMFAAAAAAAAowUAAAAAAAABAAAAMqIFAAAAAAAAogUAAAAAAAABAAAAMQ",
+					"AQAAAAAAAAABAAAApAUAAAAAAACkBQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					93,
+					1,
+					"insert",
+					{
+						"characters": ":count"
+					},
+					"BgAAAKIFAAAAAAAAowUAAAAAAAAAAAAAowUAAAAAAACkBQAAAAAAAAAAAACkBQAAAAAAAKUFAAAAAAAAAAAAAKUFAAAAAAAApgUAAAAAAAAAAAAApgUAAAAAAACnBQAAAAAAAAAAAACnBQAAAAAAAKgFAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAogUAAAAAAACiBQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					98,
+					1,
+					"paste",
+					null,
+					"AgAAAP0FAAAAAAAADQYAAAAAAAAAAAAADQYAAAAAAAANBgAAAAAAABAAAABObyByZWNvcmRzIGZvdW5k",
+					"AQAAAAAAAAABAAAA/QUAAAAAAAANBgAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 354.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"package res",
+				"PackageResourceViewer: Extract Package"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"pa",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 467.0
+	},
+	"console":
+	{
+		"height": 239.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '261dd1222b4693ce6d4f85f9c827ac06' + '6d5ab8ebdd020086947172a8a1356bb6'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/Stuart/Work/filament-packages",
+		"/Users/Stuart/Work/filament-packages/tables",
+		"/Users/Stuart/Work/filament-packages/tables/resources",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/da",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/de",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/en",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/es",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/fr",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/it"
+	],
+	"file_history":
+	[
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/it/table.php",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/pt-br/table.php",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/nl/table.php",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/da/table.php",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/fr/table.php",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/de/table.php",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/es/table.php",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/ca/table.php",
+		"/Users/Stuart/Work/filament-packages/tables/resources/lang/en/table.php",
+		"/Users/Stuart/Work/Projects/Enjouanisson.sublime-project",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/office/app/Filament/Resources/InvoiceResource.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/office/vendor/filament/filament/src/PluginServiceProvider.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/office/app/Filament/Providers/StylesOverrideProvider.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/office/app/Filament/Plugins/StylesOverride.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/office/vendor/filament/filament/src/Pages/Page.php",
+		"/Users/Stuart/Work/Projects/TotalTraining.sublime-project",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/office/app/Filament/Resources/InvoiceResource/Pages/PreviewInvoice.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/database/migrations/2021_04_02_070215_add_display_name_to_customers_table.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/database/migrations/2020_11_26_232177_create-table-tax-lines.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Models/Invoice.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/config/app.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/resources/css/app.css",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Filament/Resources/InvoiceResource/Pages/CreateInvoice.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Filament/Resources/InvoiceResource/Pages/ListInvoices.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Models/TVARate.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Models/LineItem.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/database/seeders/InvoicesSeeder.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/database/seeders/CustomersSeeder.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/.env",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Mail/MailInvoice.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/README.md",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/resources/views/emails/invoice.blade.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Http/Controllers/PDFController.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/tailwind.config.js",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Models/Customer.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/laravel/framework/src/Illuminate/Routing/Router.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/laravel/framework/src/Illuminate/Routing/Redirector.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/routes/web.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/src/Resources/Forms/Components/BelongsToSelect.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Filament/Resources/InvoiceResource.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Models/TaxLine.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Filament/Resources/InvoiceResource/RelationManagers/TaxlineRelationManager.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/database/migrations/2021_05_17_123612_adjust_customer_display_name.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/database/migrations/2021_04_22_185814_add_includes_tax_flag_to_line_item.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Filament/Resources/CustomerResource/RelationManagers/InvoicesRelationManager.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Filament/Resources/CustomerResource.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Filament/Resources/InvoiceResource/RelationManagers/LineitemRelationManager.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/src/Resources/RelationManager.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/resources/views/pdf/invoice.blade.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/app/Filament/Resources/InvoiceResource/Pages/EditInvoice.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/webpack.mix.js",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/packages/forms/src/Components/Concerns/CanBeAutocompleted.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemAdapter.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/src/Resources/RelationManager/CreateRecord.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/src/Resources/Pages/CreateRecord.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/src/Resources/Pages/Page.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/src/Pages/Page.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/packages/forms/src/Components/Component.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/src/Resources/Forms/HasForm.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/src/Resources/Pages/EditRecord.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/src/Resources/Resource.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/database/migrations/2021_04_02_131656_add_unit_type_to_line_item_table.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/.gitignore",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/resources/views/resources/pages/create-record.blade.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/packages/tables/src/RecordActions/Concerns/CanOpenUrl.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/resources/views/resources/pages/list-records.blade.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/src/Resources/Pages/ListRecords.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/livewire/livewire/src/Component.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/packages/tables/src/HasTable.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/laravel/framework/src/Illuminate/Collections/Collection.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/packages/tables/src/Columns/Column.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/packages/tables/resources/views/components/filter.blade.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/packages/tables/src/Table.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/src/Http/Controllers/Controller.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/composer.lock",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebuild/vendor/filament/filament/packages/forms/src/Components/Select.php",
+		"/Users/Stuart/Work/Black Pig/Enjouanisson/rebirth/app/Http/Resources/CustomerCollection.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/nova/resources/views/dashboard/navigation.blade.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/nova/config/nova.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/database/migrations/2020_10_16_173845_create_reviews_table.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/config/app.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/js/app.js",
+		"/Users/Stuart/Work/Black Pig/LBP/site/app/Review.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/app/Providers/ViewComposerServiceProvider.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/sass/components/furniture_bkp.scss",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/sass/elements/_icons.scss",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/views/components/panel-button.blade.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/app/Http/ViewComposers/NavigatorComposer.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/sass/components/footer/_footer.scss",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/sass/elements/_typography.scss",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/sass/components/furniture_old.scss",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/sass/components/shared/_header.scss",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/views/components/top-link.blade.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/sass/components/shared/_navigator.scss",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/sass/components/footer/_newsletter.scss",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/sass/components/footer/_navigation.scss",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/views/partials/icons.blade.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/vendor/spatie/laravel-newsletter/src/Newsletter.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/views/components/loading.blade.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/views/fonts.blade.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/routes/web.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/views/livewire/newsletter/register.blade.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/app/Http/Livewire/Newsletter.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/js/components/utils.js",
+		"/Users/Stuart/Work/Black Pig/LBP/site/vendor/laravel/framework/src/Illuminate/Support/Str.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/app/Client.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/sass/app.scss",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/lang/fr/general.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/readme.md",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/views/livewire/newsletter/register-aos.blade.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/views/layouts/master.blade.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/sass/components/shared/_content.scss",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/sass/settings/_variables.scss",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/views/partials/footer/newsletter.blade.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/lang/en/navigation.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/views/partials/footer/navigation.blade.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/sass/settings/_fonts.scss",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/sass/components/home/_workshops.scss",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/views/partials/home/workshops.blade.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/views/partials/footer.blade.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/views/partials/footer/static_links.blade.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/app/Scopes/IsActiveScope.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/config/media-library.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/vendor/spatie/laravel-medialibrary/src/HasMedia.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/vendor/spatie/laravel-medialibrary/src/InteractsWithMedia.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/vendor/spatie/laravel-medialibrary/src/MediaCollections/Models/Media.php",
+		"/Users/Stuart/Work/Black Pig/LBP/site/resources/js/components/navigator.js",
+		"/Users/Stuart/Work/Black Pig/LBP/site/app/Nova/Actions/SetLeadClient.php"
+	],
+	"find":
+	{
+		"height": 32.0
+	},
+	"find_in_files":
+	{
+		"height": 158.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"Search"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "table.php",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1563,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1562,
+								1562
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1894.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 32.0
+	},
+	"input":
+	{
+		"height": 70.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "filament.sublime-project",
+	"replace":
+	{
+		"height": 60.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"routes/web.php"
+			],
+			[
+				"com",
+				"composer.json"
+			],
+			[
+				"web",
+				"routes/web.php"
+			],
+			[
+				".en",
+				".env"
+			],
+			[
+				"we",
+				"routes/web.php"
+			],
+			[
+				"edit",
+				"app/Filament/Resources/InvoiceResource/Pages/EditInvoice.php"
+			],
+			[
+				"page",
+				"vendor/filament/filament/src/Pages/Page.php"
+			],
+			[
+				"prev",
+				"app/Filament/Resources/InvoiceResource/Pages/PreviewInvoice.php"
+			],
+			[
+				"inv",
+				"app/Models/Invoice.php"
+			],
+			[
+				"APPCS",
+				"resources/css/app.css"
+			],
+			[
+				"pdf",
+				"app/Http/Controllers/PDFController.php"
+			],
+			[
+				".",
+				".env"
+			],
+			[
+				"in",
+				"app/Models/Invoice.php"
+			],
+			[
+				"invo",
+				"app/Models/Invoice.php"
+			],
+			[
+				"create-rec.bl",
+				"vendor/filament/filament/resources/views/resources/pages/create-record.blade.php"
+			],
+			[
+				"cust",
+				"app/Models/Customer.php"
+			],
+			[
+				"invre",
+				"app/Filament/Resources/InvoiceResource.php"
+			],
+			[
+				"listrec",
+				"vendor/filament/filament/src/Resources/Pages/ListRecords.php"
+			],
+			[
+				"wo",
+				"app/Workshop.php"
+			],
+			[
+				"navibl",
+				"nova/resources/views/dashboard/navigation.blade.php"
+			],
+			[
+				"work",
+				"resources/views/partials/home/workshops.blade.php"
+			],
+			[
+				"f",
+				"Find Results"
+			],
+			[
+				"fon",
+				"resources/views/fonts.blade.php"
+			],
+			[
+				"app",
+				"resources/sass/app.scss"
+			],
+			[
+				"ico",
+				"resources/views/partials/icons.blade.php"
+			],
+			[
+				"foo",
+				"resources/sass/components/footer-navigation.scss"
+			],
+			[
+				"navsc",
+				"resources/sass/components/navigator.scss"
+			],
+			[
+				"news",
+				"resources/sass/components/newsletter.scss"
+			],
+			[
+				"foona",
+				"resources/views/partials/footer/navigation.blade.php"
+			],
+			[
+				"reg",
+				"resources/views/livewire/newsletter/register.blade.php"
+			],
+			[
+				"newslet",
+				"app/Http/Livewire/Newsletter.php"
+			],
+			[
+				"regis",
+				"resources/views/livewire/newsletter/register.blade.php"
+			],
+			[
+				"newss",
+				"resources/sass/components/newsletter.scss"
+			],
+			[
+				"form",
+				"resources/sass/elements/forms.scss"
+			],
+			[
+				"new",
+				"app/Http/Livewire/Newsletter.php"
+			],
+			[
+				"rout",
+				"vendor/symfony/routing/Route.php"
+			],
+			[
+				"forms",
+				"resources/sass/elements/forms.scss"
+			],
+			[
+				"furni",
+				"resources/sass/components/furniture.scss"
+			],
+			[
+				"heabla",
+				"resources/views/partials/header.blade.php"
+			],
+			[
+				"illumtrans",
+				"vendor/laravel/framework/src/Illuminate/Translation/Translator.php"
+			],
+			[
+				"illcoll",
+				"vendor/laravel/framework/src/Illuminate/Collections/Collection.php"
+			],
+			[
+				"illumstr",
+				"vendor/laravel/framework/src/Illuminate/Support/Str.php"
+			],
+			[
+				"vendor/laravel/framework/src/Illuminate/Support/Str",
+				"vendor/laravel/framework/src/Illuminate/Support/Str.php"
+			],
+			[
+				"foot",
+				"resources/views/partials/footer.blade.php"
+			],
+			[
+				"typo",
+				"resources/sass/components/typography.scss"
+			],
+			[
+				"na",
+				"app/Nova/Navigator.php"
+			],
+			[
+				"novcour",
+				"app/Nova/Course.php"
+			],
+			[
+				"nav",
+				"resources/js/components/navigator.js"
+			],
+			[
+				"novnav",
+				"app/Nova/Navigator.php"
+			],
+			[
+				"navi",
+				"app/Navigator.php"
+			],
+			[
+				"frnavi",
+				"resources/lang/fr/navigator.php"
+			],
+			[
+				"typ",
+				"resources/sass/components/typography.scss"
+			],
+			[
+				"icon",
+				"resources/views/partials/icons.blade.php"
+			],
+			[
+				"gene",
+				"resources/lang/fr/general.php"
+			],
+			[
+				"navigat",
+				"resources/lang/en/navigator.php"
+			],
+			[
+				"a",
+				"resources/js/app.js"
+			],
+			[
+				"webpaccon",
+				"node_modules/laravel-mix/src/builder/WebpackConfig.js"
+			],
+			[
+				"mix-tailwindcss",
+				"node_modules/mix-tailwindcss/package.json"
+			],
+			[
+				"tai",
+				"tailwind.config.js"
+			],
+			[
+				"laravel-mix",
+				"node_modules/laravel-mix/setup/webpack.mix.js"
+			],
+			[
+				"laravel-m",
+				"node_modules/laravel-mix/setup/webpack.config.js"
+			],
+			[
+				"webpa",
+				"webpack.mix.js"
+			],
+			[
+				"head",
+				"resources/sass/components/header.scss"
+			],
+			[
+				"master",
+				"resources/views/layouts/master.blade.php"
+			],
+			[
+				"app.js",
+				"resources/js/app.js"
+			],
+			[
+				"boo",
+				"app/Nova/Booking.php"
+			],
+			[
+				"cl",
+				"app/Client.php"
+			],
+			[
+				"clie",
+				"app/Client.php"
+			],
+			[
+				"course",
+				"app/Course.php"
+			],
+			[
+				"add",
+				"app/Address.php"
+			],
+			[
+				"cou",
+				"app/Nova/Course.php"
+			],
+			[
+				"novcou",
+				"app/Nova/Course.php"
+			],
+			[
+				"locat",
+				"app/Nova/Location.php"
+			],
+			[
+				"datacours",
+				"database/migrations/2019_08_10_123520_create_courses_table.php"
+			],
+			[
+				"loca",
+				"app/Nova/Location.php"
+			],
+			[
+				"composer",
+				"composer.json"
+			],
+			[
+				"cli",
+				"app/Nova/Client.php"
+			],
+			[
+				"clien",
+				"app/Nova/Client.php"
+			],
+			[
+				"loadcon",
+				"vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php"
+			],
+			[
+				"prese",
+				"Modules/Menu/Presenters/MenuPresenter.php"
+			],
+			[
+				"presenter",
+				"Modules/Menu/Presenters/MenuPresenter.php"
+			],
+			[
+				"clic",
+				"Modules/Client/Http/Controllers/Admin/ClientsController.php"
+			],
+			[
+				"navh",
+				"Themes/LBP2/views/partials/navheader.blade.php"
+			],
+			[
+				"courcontr",
+				"Modules/Coursican/Http/Controllers/Admin/CourseController.php"
+			],
+			[
+				"modcoremacr",
+				"Modules/Core/macros.php"
+			],
+			[
+				"modulcoemacr",
+				"Modules/Core/collectionMacros.php"
+			],
+			[
+				"lay",
+				"Themes/LBP2/views/layouts/master.blade.php"
+			],
+			[
+				"lbplay",
+				"Themes/LBP2/views/layouts/master.blade.php"
+			],
+			[
+				"widmenu",
+				"vendor/nwidart/laravel-menus/src/Menu.php"
+			],
+			[
+				"tail",
+				"Themes/LBP2/tailwind.js"
+			],
+			[
+				"mediafor",
+				"Modules/Media/Assets/js/components/MediaForm.vue"
+			],
+			[
+				"fullp",
+				"Modules/Page/Transformers/FullPageTransformer.php"
+			],
+			[
+				"utiapicon",
+				"Modules/Utility/Http/Controllers/Api/CountryController.php"
+			],
+			[
+				"coufor",
+				"Modules/Utility/Assets/js/components/CountryForm.vue"
+			],
+			[
+				"pagefo",
+				"Modules/Page/Assets/js/components/PageForm.vue"
+			],
+			[
+				"utilcouedol",
+				"Modules/Utility/Resources/views/admin/country/edit.old.blade.php"
+			],
+			[
+				"utilcouedi",
+				"Modules/Utility/Resources/views/admin/country/edit.blade.php"
+			],
+			[
+				"utileditfi",
+				"Modules/Utility/Resources/views/admin/country/partials/edit-fields.blade.php"
+			],
+			[
+				"country",
+				"Modules/Utility/Resources/lang/en/country.php"
+			],
+			[
+				"couta",
+				"Modules/Utility/Assets/js/components/CountryTable.vue"
+			],
+			[
+				"countra",
+				"Modules/Utility/Transformers/CountryTransformer.php"
+			],
+			[
+				"elopag",
+				"Modules/Page/Repositories/Eloquent/EloquentPageRepository.php"
+			],
+			[
+				"eloqcou",
+				"Modules/Utility/Repositories/Eloquent/EloquentCountryRepository.php"
+			],
+			[
+				"userco",
+				"Modules/User/Http/Controllers/Api/UserController.php"
+			],
+			[
+				"pagere",
+				"Modules/Page/Repositories/PageRepository.php"
+			],
+			[
+				"coutra",
+				"Modules/Utility/Transformers/CountryTransformer.php"
+			],
+			[
+				"utility",
+				"Modules/Utility/Providers/UtilityServiceProvider.php"
+			],
+			[
+				"apicou",
+				"Modules/Utility/Http/Controllers/Api/CountryController.php"
+			],
+			[
+				"fullcoutry",
+				"Modules/Utility/Transformers/FullCountryTransformer.php"
+			],
+			[
+				"countransf",
+				"Modules/Utility/Transformers/CountryTransformer.php"
+			],
+			[
+				"courou",
+				"Modules/Utility/Assets/js/CountryRoutes.js"
+			],
+			[
+				"pager",
+				"public/__modules/page/js/PageRoutes.js"
+			],
+			[
+				"countrta",
+				"Modules/Utility/Assets/js/components/CountryTable.vue"
+			],
+			[
+				"pagetabe",
+				"Modules/Page/Assets/js/components/PageTable.vue"
+			],
+			[
+				"utiliserv",
+				"Modules/Utility/Providers/UtilityServiceProvider.php"
+			],
+			[
+				"tranffullpa",
+				"Modules/Page/Transformers/FullPageTransformer.php"
+			],
+			[
+				"client",
+				"Modules/Client/Entities/Clients.php"
+			],
+			[
+				"eloboo",
+				"Modules/Coursican/Repositories/Eloquent/EloquentBookingRepository.php"
+			],
+			[
+				"booki",
+				"Modules/Coursican/Entities/Booking.php"
+			],
+			[
+				"book",
+				"Modules/Coursican/Http/Controllers/Admin/BookingController.php"
+			],
+			[
+				"couworkcre",
+				"Modules/Coursican/Resources/views/admin/workshops/create.blade.php"
+			],
+			[
+				"elobook",
+				"Modules/Coursican/Repositories/Eloquent/EloquentBookingRepository.php"
+			],
+			[
+				"b",
+				"Modules/Coursican/Entities/Booking.php"
+			],
+			[
+				"clientcreate",
+				"Modules/Client/Resources/views/admin/clients/partials/create-fields.blade.php"
+			],
+			[
+				"enu",
+				"Modules/Utility/Services/Traits/Enumulator/Enumulator.php"
+			],
+			[
+				"clients",
+				"Modules/Client/Entities/Clients.php"
+			],
+			[
+				"enuma",
+				"Modules/Utility/Services/Traits/Enumulator/Enumulator.php"
+			],
+			[
+				"entitclient",
+				"Modules/Client/Entities/Clients.php"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Work/Projects/HubCareSupport.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 354.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 864.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 302.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

@@ -1,0 +1,21 @@
+{
+	"folders":
+	[
+		{
+			"folder_exclude_patterns":
+			[
+				"storage",
+			],
+			/*"folder_toggle_patterns":
+			[
+				"vendor",
+				"public",
+				"storage",
+				"node_modules"
+			],*/
+			/*"follow_symlinks": true,*/
+			"name": "Filament",
+			"path": "/Users/Stuart/Work/filament",
+		}
+	],
+}

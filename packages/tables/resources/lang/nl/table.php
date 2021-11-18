@@ -5,22 +5,22 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Search',
-            'placeholder' => 'Search',
+            'label' => 'Zoeken',
+            'placeholder' => 'Zoeken',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => 'Paginatie navigatie',
 
-        'overview' => 'Showing :first to :last of :total results',
+        'overview' => 'Toont :first tot :last van :total resultaten',
 
         'fields' => [
 
             'records_per_page' => [
-                'label' => 'per page',
+                'label' => 'per pagina',
             ],
 
         ],
@@ -28,15 +28,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'Go to page :page',
+                'label' => 'Ga naar pagina :page',
             ],
 
             'next' => [
-                'label' => 'Next',
+                'label' => 'Volgende',
             ],
 
             'previous' => [
-                'label' => 'Previous',
+                'label' => 'Vorige',
             ],
 
         ],
@@ -50,7 +50,7 @@ return [
         ],
 
         'open_actions' => [
-            'label' => 'Open actions',
+            'label' => 'Acties openen',
         ],
 
     ],
@@ -59,20 +59,20 @@ return [
 
         'modal' => [
 
-            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
+            'requires_confirmation_subheading' => 'Weet u zeker dat u dit wilt doen?',
 
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => 'Annuleren',
                 ],
 
                 'confirm' => [
-                    'label' => 'Confirm',
+                    'label' => 'Bevestig',
                 ],
 
                 'submit' => [
-                    'label' => 'Submit',
+                    'label' => 'Verzenden',
                 ],
 
             ],
@@ -82,7 +82,8 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Select all :count records',
+                'label' => 'Selecteer alle :count records
+',
             ],
 
         ],
@@ -90,7 +91,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'No records found',
+        'heading' => 'Geen resultaten gevonden',
     ],
 
 ];

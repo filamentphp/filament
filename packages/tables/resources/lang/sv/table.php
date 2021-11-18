@@ -5,22 +5,22 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Search',
-            'placeholder' => 'Search',
+            'label' => 'Sök',
+            'placeholder' => 'Sök',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => 'Pagineringsmeny',
 
-        'overview' => 'Showing :first to :last of :total results',
+        'overview' => 'Visar från :first till :last av :total totalt',
 
         'fields' => [
 
             'records_per_page' => [
-                'label' => 'per page',
+                'label' => 'per sida',
             ],
 
         ],
@@ -28,15 +28,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'Go to page :page',
+                'label' => 'Gå till :page',
             ],
 
             'next' => [
-                'label' => 'Next',
+                'label' => 'Nästa',
             ],
 
             'previous' => [
-                'label' => 'Previous',
+                'label' => 'Föregående',
             ],
 
         ],
@@ -50,7 +50,7 @@ return [
         ],
 
         'open_actions' => [
-            'label' => 'Open actions',
+            'label' => 'Öppna åtgärder',
         ],
 
     ],
@@ -59,20 +59,20 @@ return [
 
         'modal' => [
 
-            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
+            'requires_confirmation_subheading' => 'Är du säker på att du vill göra detta?',
 
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => 'Ångra',
                 ],
 
                 'confirm' => [
-                    'label' => 'Confirm',
+                    'label' => 'Bekräfta',
                 ],
 
                 'submit' => [
-                    'label' => 'Submit',
+                    'label' => 'Skicka in',
                 ],
 
             ],
@@ -82,7 +82,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Select all :count records',
+                'label' => 'Välj alla :count poster',
             ],
 
         ],
@@ -90,7 +90,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'No records found',
+        'heading' => 'Finns inga rader',
     ],
 
 ];
