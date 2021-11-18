@@ -6,6 +6,7 @@ use Filament\Facades\Filament;
 use Filament\Http\Livewire\GlobalSearch;
 use Filament\Http\Livewire\Login;
 use Filament\Pages\Dashboard;
+use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
