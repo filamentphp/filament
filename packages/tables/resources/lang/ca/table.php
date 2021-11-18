@@ -5,22 +5,22 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'بحث',
-            'placeholder' => 'بحث',
+            'label' => 'Cerca',
+            'placeholder' => 'Cerca',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'التنقل بين الصفحات',
+        'label' => 'Paginació',
 
-        'overview' => 'عرض :first إلي :last من :total النتائج',
+        'overview' => 'Mostrant :first a :last de :total resultatss',
 
         'fields' => [
 
             'records_per_page' => [
-                'label' => 'لكل صفحة',
+                'label' => 'per pàgina',
             ],
 
         ],
@@ -28,15 +28,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'انتقل إلى صفحة :page',
+                'label' => 'Anar a la pàgina :page',
             ],
 
             'next' => [
-                'label' => 'التالي',
+                'label' => 'Següent',
             ],
 
             'previous' => [
-                'label' => 'السابق',
+                'label' => 'Anterior',
             ],
 
         ],
@@ -46,7 +46,7 @@ return [
     'buttons' => [
 
         'filter' => [
-            'label' => 'تصفية',
+            'label' => 'Filtre',
         ],
 
         'open_actions' => [
@@ -64,7 +64,7 @@ return [
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'إلغاء',
+                    'label' => 'Cancela',
                 ],
 
                 'confirm' => [
@@ -90,7 +90,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'لا توجد سجلات',
+        'heading' => 'No s\'han trobat registres.',
     ],
 
 ];
