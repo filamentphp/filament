@@ -5,22 +5,22 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Search',
-            'placeholder' => 'Search',
+            'label' => 'Søg',
+            'placeholder' => 'Søg',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => 'Paginering Navigation',
 
-        'overview' => 'Showing :first to :last of :total results',
+        'overview' => 'Viser :first til :last af :total resultater',
 
         'fields' => [
 
             'records_per_page' => [
-                'label' => 'per page',
+                'label' => 'per side',
             ],
 
         ],
@@ -28,15 +28,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'Go to page :page',
+                'label' => 'Gå til side :page',
             ],
 
             'next' => [
-                'label' => 'Next',
+                'label' => 'Næste',
             ],
 
             'previous' => [
-                'label' => 'Previous',
+                'label' => 'Forrige',
             ],
 
         ],
@@ -46,11 +46,11 @@ return [
     'buttons' => [
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'Filtrer',
         ],
 
         'open_actions' => [
-            'label' => 'Open actions',
+            'label' => 'Åbn handlinger',
         ],
 
     ],
@@ -59,20 +59,20 @@ return [
 
         'modal' => [
 
-            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
+            'requires_confirmation_subheading' => 'Er du sikker på, at du gerne vil gøre dette?',
 
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => 'Annuller',
                 ],
 
                 'confirm' => [
-                    'label' => 'Confirm',
+                    'label' => 'Bekræft',
                 ],
 
                 'submit' => [
-                    'label' => 'Submit',
+                    'label' => 'Indsend',
                 ],
 
             ],
@@ -82,7 +82,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Select all :count records',
+                'label' => 'Vælg alle :count poster',
             ],
 
         ],
@@ -90,7 +90,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'No records found',
+        'heading' => 'Ingen resultater',
     ],
 
 ];

@@ -5,22 +5,22 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Search',
-            'placeholder' => 'Search',
+            'label' => 'Cerca',
+            'placeholder' => 'Cerca',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => 'Paginació',
 
-        'overview' => 'Showing :first to :last of :total results',
+        'overview' => 'Mostrant :first a :last de :total resultatss',
 
         'fields' => [
 
             'records_per_page' => [
-                'label' => 'per page',
+                'label' => 'per pàgina',
             ],
 
         ],
@@ -28,15 +28,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'Go to page :page',
+                'label' => 'Anar a la pàgina :page',
             ],
 
             'next' => [
-                'label' => 'Next',
+                'label' => 'Següent',
             ],
 
             'previous' => [
-                'label' => 'Previous',
+                'label' => 'Anterior',
             ],
 
         ],
@@ -46,7 +46,7 @@ return [
     'buttons' => [
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'Filtre',
         ],
 
         'open_actions' => [
@@ -64,7 +64,7 @@ return [
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => 'Cancela',
                 ],
 
                 'confirm' => [
@@ -90,7 +90,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'No records found',
+        'heading' => 'No s\'han trobat registres.',
     ],
 
 ];

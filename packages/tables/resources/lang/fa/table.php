@@ -5,22 +5,22 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Search',
-            'placeholder' => 'Search',
+            'label' => 'جستجو',
+            'placeholder' => 'جستجو',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => 'جهت یابی صفحه بندی',
 
-        'overview' => 'Showing :first to :last of :total results',
+        'overview' => 'در حال نمایش :first به :last از :total نتایج',
 
         'fields' => [
 
             'records_per_page' => [
-                'label' => 'per page',
+                'label' => 'در هر صفحه',
             ],
 
         ],
@@ -28,15 +28,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'Go to page :page',
+                'label' => 'برو به صفحه :page',
             ],
 
             'next' => [
-                'label' => 'Next',
+                'label' => 'بعدی',
             ],
 
             'previous' => [
-                'label' => 'Previous',
+                'label' => 'قبلی',
             ],
 
         ],
@@ -46,7 +46,7 @@ return [
     'buttons' => [
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'فلتر',
         ],
 
         'open_actions' => [
@@ -64,7 +64,7 @@ return [
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => 'لغو',
                 ],
 
                 'confirm' => [
@@ -90,7 +90,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'No records found',
+        'heading' => 'هیچ ریکارد دریافت نشد.',
     ],
 
 ];

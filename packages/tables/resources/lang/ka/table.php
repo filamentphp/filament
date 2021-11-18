@@ -5,22 +5,22 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Search',
-            'placeholder' => 'Search',
+            'label' => 'ძიება',
+            'placeholder' => 'ძიება',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => 'გვერდების ნავიგაცია',
 
         'overview' => 'Showing :first to :last of :total results',
 
         'fields' => [
 
             'records_per_page' => [
-                'label' => 'per page',
+                'label' => 'ჩანაწერი თითო გვერდზე',
             ],
 
         ],
@@ -28,15 +28,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'Go to page :page',
+                'label' => ':page-ე გვერდზე გადასვლა',
             ],
 
             'next' => [
-                'label' => 'Next',
+                'label' => 'შემდეგი',
             ],
 
             'previous' => [
-                'label' => 'Previous',
+                'label' => 'წინა',
             ],
 
         ],
@@ -46,7 +46,7 @@ return [
     'buttons' => [
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'ფილტრი',
         ],
 
         'open_actions' => [
@@ -64,7 +64,7 @@ return [
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => 'გაუქმება',
                 ],
 
                 'confirm' => [
@@ -90,7 +90,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'No records found',
+        'heading' => 'ჩანაწერები არ არსებობს.',
     ],
 
 ];

@@ -5,22 +5,22 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Search',
-            'placeholder' => 'Search',
+            'label' => 'Buscar',
+            'placeholder' => 'Buscar',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => 'Navegación de paginación',
 
-        'overview' => 'Showing :first to :last of :total results',
+        'overview' => 'Mostrando :first a :last de :total resultados',
 
         'fields' => [
 
             'records_per_page' => [
-                'label' => 'per page',
+                'label' => 'por página',
             ],
 
         ],
@@ -28,15 +28,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'Go to page :page',
+                'label' => 'Ir a la página :page',
             ],
 
             'next' => [
-                'label' => 'Next',
+                'label' => 'Siguiente',
             ],
 
             'previous' => [
-                'label' => 'Previous',
+                'label' => 'Anterior',
             ],
 
         ],
@@ -46,11 +46,11 @@ return [
     'buttons' => [
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'Filtro',
         ],
 
         'open_actions' => [
-            'label' => 'Open actions',
+            'label' => 'Abrir acciones',
         ],
 
     ],
@@ -59,20 +59,20 @@ return [
 
         'modal' => [
 
-            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
+            'requires_confirmation_subheading' => '¿Estás seguro de que quieres hacer esto?',
 
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => 'Cancelar',
                 ],
 
                 'confirm' => [
-                    'label' => 'Confirm',
+                    'label' => 'Confirmar',
                 ],
 
                 'submit' => [
-                    'label' => 'Submit',
+                    'label' => 'Enviar',
                 ],
 
             ],
@@ -82,7 +82,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Select all :count records',
+                'label' => 'Seleccione los :count registros',
             ],
 
         ],
@@ -90,7 +90,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'No records found',
+        'heading' => 'No se encontraron registros',
     ],
 
 ];
