@@ -1,3 +1,3 @@
 <p {{ $attributes->class(['text-gray-900']) }}>
-    {{ $description }}
+    {{ $slot }}
 </p>
