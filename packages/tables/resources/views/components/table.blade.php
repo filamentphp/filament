@@ -9,7 +9,7 @@
         {{ $slot }}
     </tbody>
 
-    @if(isset($footer))
+    @if ($footer)
         <tfoot>
             <tr class="bg-gray-50">
                 {{ $footer }}
