@@ -1,6 +1,7 @@
 @php
     $actions = $getActions();
     $columns = $getColumns();
+    $contentFooter = $getContentFooter();
     $header = $getHeader();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
@@ -152,6 +153,13 @@
                             @endif
                         </x-tables::row>
                     @endforeach
+
+                    @if ($contentFooter)
+                        <x-slot name="footer">
+                            {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
+                        </x-slot>
+                    @endif
+
                 </x-tables::table>
             @else
                 @if ($emptyState = $getEmptyState())

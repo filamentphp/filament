@@ -8,4 +8,12 @@
     <tbody class="divide-y whitespace-nowrap">
         {{ $slot }}
     </tbody>
+
+    @if ($footer)
+        <tfoot>
+            <tr class="bg-gray-50">
+                {{ $footer }}
+            </tr>
+        </tfoot>
+    @endif
 </table>
