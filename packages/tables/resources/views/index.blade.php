@@ -1,8 +1,8 @@
 @php
     $actions = $getActions();
     $columns = $getColumns();
-    $header = $getHeader();
     $contentFooter = $getContentFooter();
+    $header = $getHeader();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
     $isBulkActionsDropdownVisible = $isSelectionEnabled() && $getSelectedRecordCount();
@@ -154,9 +154,9 @@
                         </x-tables::row>
                     @endforeach
 
-                    @if($contentFooter)
+                    @if ($contentFooter)
                         <x-slot name="footer">
-                            {{ $contentFooter->with(['records' => $records, 'columns' => $columns]) }}
+                            {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
                         </x-slot>
                     @endif
 
