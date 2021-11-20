@@ -15,9 +15,9 @@ trait InteractsWithTable
     use HasActions;
     use HasBulkActions;
     use HasColumns;
+    use HasContentFooter;
     use HasEmptyState;
     use HasFilters;
-    use HasContentFooter;
     use HasHeader;
     use HasRecords;
     use Forms\Concerns\InteractsWithForms;
