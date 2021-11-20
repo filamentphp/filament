@@ -5,22 +5,22 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Search',
-            'placeholder' => 'Search',
+            'label' => '搜索',
+            'placeholder' => '搜索',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => '分页',
 
-        'overview' => 'Showing :first to :last of :total results',
+        'overview' => '显示 :first 到 :last 的 :total 结果',
 
         'fields' => [
 
             'records_per_page' => [
-                'label' => 'per page',
+                'label' => '每页',
             ],
 
         ],
@@ -28,15 +28,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'Go to page :page',
+                'label' => '跳转到 :page',
             ],
 
             'next' => [
-                'label' => 'Next',
+                'label' => '下一页',
             ],
 
             'previous' => [
-                'label' => 'Previous',
+                'label' => '上一页',
             ],
 
         ],
@@ -46,7 +46,7 @@ return [
     'buttons' => [
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => '筛选',
         ],
 
         'open_actions' => [
@@ -64,7 +64,7 @@ return [
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => '取消',
                 ],
 
                 'confirm' => [
@@ -90,7 +90,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'No records found',
+        'heading' => '没有找到相关记录',
     ],
 
 ];

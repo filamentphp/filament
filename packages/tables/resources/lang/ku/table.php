@@ -5,22 +5,22 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Search',
-            'placeholder' => 'Search',
+            'label' => 'گەڕان',
+            'placeholder' => 'گەڕان',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => 'ڕێنوێیی پەڕەکردن',
 
-        'overview' => 'Showing :first to :last of :total results',
+        'overview' => 'پیشاندان :first بۆ :last لە :total ئەنجام',
 
         'fields' => [
 
             'records_per_page' => [
-                'label' => 'per page',
+                'label' => 'بۆ هەر پەڕەیەک',
             ],
 
         ],
@@ -28,15 +28,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'Go to page :page',
+                'label' => 'بڕۆ بۆ پەیچی :page',
             ],
 
             'next' => [
-                'label' => 'Next',
+                'label' => 'داهاتو',
             ],
 
             'previous' => [
-                'label' => 'Previous',
+                'label' => 'پێشتر',
             ],
 
         ],
@@ -46,7 +46,7 @@ return [
     'buttons' => [
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'فیلتەر',
         ],
 
         'open_actions' => [
@@ -64,7 +64,7 @@ return [
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => 'ڕەتکردنەوە',
                 ],
 
                 'confirm' => [
@@ -90,7 +90,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'No records found',
+        'heading' => 'هیچ تۆمارێک نەدۆزرایەوە',
     ],
 
 ];
