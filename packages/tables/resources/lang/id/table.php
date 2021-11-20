@@ -5,22 +5,22 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Search',
-            'placeholder' => 'Search',
+            'label' => 'Cari',
+            'placeholder' => 'Cari',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => 'Navigasi halaman',
 
-        'overview' => 'Showing :first to :last of :total results',
+        'overview' => 'Menampilkan :first sampai :last dari :total hasil',
 
         'fields' => [
 
             'records_per_page' => [
-                'label' => 'per page',
+                'label' => 'per halaman',
             ],
 
         ],
@@ -28,15 +28,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'Go to page :page',
+                'label' => 'Ke halaman :page',
             ],
 
             'next' => [
-                'label' => 'Next',
+                'label' => 'Selanjutnya',
             ],
 
             'previous' => [
-                'label' => 'Previous',
+                'label' => 'Sebelumnya',
             ],
 
         ],
@@ -64,7 +64,7 @@ return [
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => 'Batalkan',
                 ],
 
                 'confirm' => [
@@ -90,7 +90,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'No records found',
+        'heading' => 'Data tidak ditemukan',
     ],
 
 ];

@@ -5,22 +5,22 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Search',
-            'placeholder' => 'Search',
+            'label' => 'Suche',
+            'placeholder' => 'Suche',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => 'Seitennavigation',
 
-        'overview' => 'Showing :first to :last of :total results',
+        'overview' => 'Anzeigen von :first bis :last von :total Ergebnissen',
 
         'fields' => [
 
             'records_per_page' => [
-                'label' => 'per page',
+                'label' => 'pro Seite',
             ],
 
         ],
@@ -28,15 +28,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'Go to page :page',
+                'label' => 'Weiter zur Seite :page',
             ],
 
             'next' => [
-                'label' => 'Next',
+                'label' => 'Nächste',
             ],
 
             'previous' => [
-                'label' => 'Previous',
+                'label' => 'Vorherige',
             ],
 
         ],
@@ -46,11 +46,11 @@ return [
     'buttons' => [
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'Filtern',
         ],
 
         'open_actions' => [
-            'label' => 'Open actions',
+            'label' => 'Aktionen öffnen',
         ],
 
     ],
@@ -59,20 +59,20 @@ return [
 
         'modal' => [
 
-            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
+            'requires_confirmation_subheading' => 'Sind Sie sicher, dass Sie dies tun möchten?',
 
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => 'Abbrechen',
                 ],
 
                 'confirm' => [
-                    'label' => 'Confirm',
+                    'label' => 'Bestätigen Sie',
                 ],
 
                 'submit' => [
-                    'label' => 'Submit',
+                    'label' => 'Absenden',
                 ],
 
             ],
@@ -82,7 +82,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Select all :count records',
+                'label' => 'Alle :count Datensätze auswählen',
             ],
 
         ],
@@ -90,7 +90,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'No records found',
+        'heading' => 'Keine Datensätze gefunden',
     ],
 
 ];
