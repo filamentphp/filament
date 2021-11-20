@@ -2,6 +2,7 @@
     $actions = $getActions();
     $columns = $getColumns();
     $header = $getHeader();
+    $contentFooter = $getContentFooter();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
     $isBulkActionsDropdownVisible = $isSelectionEnabled() && $getSelectedRecordCount();
@@ -152,6 +153,13 @@
                             @endif
                         </x-tables::row>
                     @endforeach
+
+                    @if($contentFooter)
+                        <x-slot name="footer">
+                            {{ $contentFooter->with(['records' => $records, 'columns' => $columns]) }}
+                        </x-slot>
+                    @endif
+
                 </x-tables::table>
             @else
                 @if ($emptyState = $getEmptyState())

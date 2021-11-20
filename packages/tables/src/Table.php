@@ -20,6 +20,8 @@ class Table extends ViewComponent implements Htmlable
     use Macroable;
     use Tappable;
 
+    protected ?View $contentFooter = null;
+
     protected ?string $description = null;
 
     protected ?View $emptyState = null;
@@ -103,6 +105,13 @@ class Table extends ViewComponent implements Htmlable
         return $this;
     }
 
+    public function contentFooter(?View $view): static
+    {
+        $this->contentFooter = $view;
+
+        return $this;
+    }
+
     public function header(?View $view): static
     {
         $this->header = $view;
@@ -159,6 +168,11 @@ class Table extends ViewComponent implements Htmlable
     public function getColumns(): array
     {
         return $this->getLivewire()->getCachedTableColumns();
+    }
+
+    public function getContentFooter(): ?View
+    {
+        return $this->contentFooter;
     }
 
     public function getDescription(): ?string
