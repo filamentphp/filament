@@ -1,9 +1,16 @@
+@props([
+    'footer' => null,
+    'header' => null,
+])
+
 <table {{ $attributes->class(['w-full text-left divide-y table-auto']) }}>
-    <thead>
-        <tr class="bg-gray-50">
-            {{ $header }}
-        </tr>
-    </thead>
+    @if ($header)
+        <thead>
+            <tr class="bg-gray-50">
+                {{ $header }}
+            </tr>
+        </thead>
+    @endif
 
     <tbody class="divide-y whitespace-nowrap">
         {{ $slot }}
