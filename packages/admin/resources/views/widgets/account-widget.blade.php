@@ -1,19 +1,21 @@
-<x-filament::card class="flex">
-    <div class="flex items-center space-x-4 rtl:space-x-reverse">
-        @php
-            $user = \Filament\Facades\Filament::auth()->user();
-        @endphp
+<x-filament::card>
+    @php
+        $user = \Filament\Facades\Filament::auth()->user();
+    @endphp
 
+    <div class="h-12 flex items-center space-x-4 rtl:space-x-reverse">
         <div
-            class="w-11 h-11 rounded-full bg-gray-200 bg-cover bg-center"
+            class="w-10 h-10 rounded-full bg-gray-200 bg-cover bg-center"
             style="background-image: url('{{ \Filament\Facades\Filament::getAvatarUrl($user) }}')"
         ></div>
 
-        <div class="space-y-1">
-            <h2 class="text-2xl">Welcome, {{ $user->getFilamentName() }}</h2>
+        <div>
+            <h2 class="text-lg sm:text-xl font-bold tracking-tight">
+                Welcome, {{ $user->getFilamentName() }}
+            </h2>
 
             <p class="text-sm">
-                <a href="{{ route('filament.auth.logout') }}" class="link">
+                <a href="{{ route('filament.auth.logout') }}" class="text-gray-600 hover:text-primary-500 transition focus:outline-none focus:underline">
                     Sign out
                 </a>
             </p>
