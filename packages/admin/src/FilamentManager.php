@@ -2,11 +2,9 @@
 
 namespace Filament;
 
-use Composer\InstalledVersions;
 use Filament\Events\ServingFilament;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
-use Filament\Widgets\Widget;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
