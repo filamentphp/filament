@@ -26,7 +26,7 @@
                         :prefix="$labelPrefix"
                         :required="$required"
                     >
-                        {{ $label }}
+                        {!! $label !!}
                     </x-forms::field-wrapper.label>
                 @endif
 

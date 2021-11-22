@@ -15,9 +15,9 @@ trait HasLabel
         return $this;
     }
 
-    public function label(string | callable $label): static
+    public function label(string | callable $label, bool $escape = true): static
     {
-        $this->label = $label;
+        $this->label = $escape ? htmlspecialchars($label) :$label;
 
         return $this;
     }
