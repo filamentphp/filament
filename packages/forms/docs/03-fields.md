@@ -35,6 +35,17 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->label(__('fields.name'))
 ```
 
+You may additionally pass a boolean to the `label()` method to determine whether the label should be escaped:
+
+```php
+use App\Models\Post;
+use Filament\Forms\Components\BelongsToSelect;
+ 
+BelongsToSelect::make('authorId')
+    ->relationship('author', 'name')
+    ->label("Select the author or <button wire:click=\"$emit('create-author-modal')\">create one</span>", false);
+```
+
 ### Setting an ID
 
 In the same way as labels, field IDs are also automatically determined based on their names. To override a field ID, use the `id()` method:
