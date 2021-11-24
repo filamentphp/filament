@@ -2,20 +2,17 @@
 
 namespace {{ namespace }};
 
-use Filament\Resources\Forms\Components;
-use Filament\Resources\Forms\Form;
-use Filament\Resources\RelationManager;
-use Filament\Resources\Tables\Columns;
-use Filament\Resources\Tables\Filter;
-use Filament\Resources\Tables\Table;
+use Filament\Forms;
+use Filament\Resources\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Table;
+use Filament\Tables;
 
 class {{ managerClass }} extends RelationManager
 {
-    public static $primaryColumn = '';
+    public static string $relationship = '{{ relationship }}';
 
-    public static $relationship = '{{ relationship }}';
-
-    public static function form(Form $form)
+    public static function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -23,7 +20,7 @@ class {{ managerClass }} extends RelationManager
             ]);
     }
 
-    public static function table(Table $table)
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
