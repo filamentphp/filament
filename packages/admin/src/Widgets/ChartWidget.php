@@ -2,8 +2,6 @@
 
 namespace Filament\Widgets;
 
-use Illuminate\Contracts\Support\Arrayable;
-
 class ChartWidget extends Widget
 {
     public string $dataChecksum;
