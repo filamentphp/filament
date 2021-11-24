@@ -36,12 +36,11 @@ trait InteractsWithTableQuery
             'pgsql' => 'ilike',
             default => 'like',
         };
-        ;
 
         foreach ($this->getSearchColumns() as $searchColumnName) {
-            if (Str::of($searchColumnName)->contains('.')) {
+            if ($this->queriesRelationships()) {
                 $query->{$isFirst ? 'whereHas' : 'orWhereHas'}(
-                    Str::of($searchColumnName)->beforeLast('.'),
+                    $this->getRelationshipName(),
                     fn ($query) => $query->where(
                         $searchColumnName,
                         $searchOperator,
