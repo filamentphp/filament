@@ -12,6 +12,7 @@
         "@tailwindcss/forms": "^0.3.4",
         "@tailwindcss/typography": "^0.4.1",
         "alpinejs": "^3.5.0",
+        "chart.js": "^3.6.0",
         "dayjs": "^1.10.6",
         "esbuild": "^0.8.57",
         "filepond": "^4.28.2",

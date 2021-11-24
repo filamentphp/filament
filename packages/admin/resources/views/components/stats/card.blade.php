@@ -15,7 +15,7 @@
     <div class="space-y-2">
         <div class="text-sm font-medium text-gray-500">{{ $label }}</div>
 
-        <div class="text-5xl font-light md:text-6xl">{{ $value }}</div>
+        <div class="text-3xl">{{ $value }}</div>
 
         @if ($description)
             <div class="flex items-center space-x-1 text-sm font-medium {{ [
@@ -28,7 +28,7 @@
                 <span>{{ $description }}</span>
 
                 @if ($descriptionIcon)
-                    <x-dynamic-component :component="$descriptionIcon" class="w-7 h-7" />
+                    <x-dynamic-component :component="$descriptionIcon" class="w-4 h-4" />
                 @endif
             </div>
         @endif

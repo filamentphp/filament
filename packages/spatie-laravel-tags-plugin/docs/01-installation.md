@@ -2,6 +2,16 @@
 title: Installation
 ---
 
+## Requirements
+
+Filament has a few requirements to run:
+
+- PHP 8.0+
+- Laravel v8.0+
+- Livewire v2.0+
+
+## Installation
+
 Install the plugin with Composer:
 
 ```bash

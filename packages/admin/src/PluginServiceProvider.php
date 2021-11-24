@@ -8,7 +8,7 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 abstract class PluginServiceProvider extends PackageServiceProvider
 {
-    protected string $name;
+    public static string $name;
 
     protected array $pages = [];
 
@@ -23,7 +23,7 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name($this->name)
+            ->name(static::$name)
             ->hasTranslations()
             ->hasViews();
     }

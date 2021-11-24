@@ -1,6 +1,7 @@
 import '../css/app.css'
 
 import Alpine from 'alpinejs'
+import Chart from 'chart.js/auto'
 import FormsAlpinePlugin from '../../../forms/dist/module.esm'
 import Trap from '@alpinejs/trap'
 
@@ -19,6 +20,10 @@ Alpine.store('sidebar', {
     },
 })
 
+Chart.defaults.font.family = `'DM Sans', sans-serif`
+Chart.defaults.backgroundColor = '#737373'
+
 window.Alpine = Alpine
+window.Chart = Chart
 
 Alpine.start()
