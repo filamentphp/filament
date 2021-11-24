@@ -2,9 +2,6 @@
 
 namespace Filament\Resources\RelationManagers;
 
-use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;

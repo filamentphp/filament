@@ -2,8 +2,6 @@
 
 namespace Filament\Resources\RelationManagers;
 
-use Filament\Forms;
-use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 
 class HasManyRelationManager extends RelationManager
