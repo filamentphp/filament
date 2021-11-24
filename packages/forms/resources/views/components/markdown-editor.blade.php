@@ -17,7 +17,7 @@
     >
         <div class="space-y-2">
             @unless ($isDisabled())
-                <div class="flex justify-between space-x-4 items-stretch h-8">
+                <div class="flex justify-between flex-wrap space-y-4 md:space-y-0  md:space-x-4 items-stretch md:h-8">
                     <markdown-toolbar
                         for="{{ $getId() }}"
                         x-bind:class="{ 'pointer-events-none opacity-75': tab === 'preview' }"
