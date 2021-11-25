@@ -427,6 +427,7 @@ class App extends Model
     protected $casts = [
         'technologies' => 'array',
     ];
+    
     // ...
 }
 ```
@@ -493,6 +494,7 @@ class User extends Model
     protected $casts = [
         'is_admin' => 'boolean',
     ];
+    
     // ...
 }
 ```
@@ -545,6 +547,7 @@ class User extends Model
     protected $casts = [
         'is_admin' => 'boolean',
     ];
+    
     // ...
 }
 ```
@@ -969,6 +972,7 @@ class Post extends Model
     protected $casts = [
         'tags' => 'array',
     ];
+    
     // ...
 }
 ```
