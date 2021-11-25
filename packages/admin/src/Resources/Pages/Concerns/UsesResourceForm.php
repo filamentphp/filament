@@ -11,7 +11,7 @@ trait UsesResourceForm
     protected function getResourceForm(): Form
     {
         if (! $this->resourceForm) {
-            $this->resourceForm = static::getResource()::form(Form::make($this));
+            $this->resourceForm = static::getResource()::form(Form::make($this)->columns(2));
         }
 
         return $this->resourceForm;

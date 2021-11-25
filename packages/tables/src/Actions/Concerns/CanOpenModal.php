@@ -66,11 +66,13 @@ trait CanOpenModal
             return $this->modalActions;
         }
 
+        $color = $this->getColor();
+
         $actions = [
             ButtonAction::make('submit')
                 ->label($this->getModalButtonLabel())
                 ->submit()
-                ->color($this->getColor()),
+                ->color($color !== 'secondary' ? $color : null),
             ButtonAction::make('cancel')
                 ->label(__('tables::table.actions.modal.buttons.cancel.label'))
                 ->cancel()

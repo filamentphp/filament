@@ -8,9 +8,7 @@ use Filament\Forms\Contracts\HasForms;
 
 class Form
 {
-    protected array | int | null $columns = [
-        'md' => 2,
-    ];
+    protected array | int | null $columns = null;
 
     protected array | Component $schema = [];
 

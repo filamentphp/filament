@@ -6,6 +6,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
@@ -18,9 +19,35 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     public Model $ownerRecord;
 
+    protected static ?string $recordTitleAttribute = null;
+
     protected static string $relationship;
 
+    protected static ?string $inverseRelationship = null;
+
+    protected ?Form $resourceForm = null;
+
+    protected ?Table $resourceTable = null;
+
+    protected static string $title;
+
     protected static string $view;
+
+    public function mount(): void
+    {
+        if (! $this->canAccess()) {
+            $this->skipRender();
+        }
+    }
+
+    protected function getResourceForm(): Form
+    {
+        if (! $this->resourceForm) {
+            $this->resourceForm = static::form(Form::make($this)->columns(2));
+        }
+
+        return $this->resourceForm;
+    }
 
     protected function callHook(string $hook): void
     {
@@ -47,34 +74,17 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return $this->can('viewAny');
     }
 
-    protected function canCreate(): bool
-    {
-        return $this->can('create');
-    }
-
-    protected function canEdit(Model $record): bool
-    {
-        return $this->can('update', $record);
-    }
-
-    protected function canDelete(Model $record): bool
-    {
-        return $this->can('delete', $record);
-    }
-
-    protected function canDeleteAny(): bool
-    {
-        return $this->can('deleteAny');
-    }
-
-    protected function canView(Model $record): bool
-    {
-        return $this->can('view', $record);
-    }
-
     public static function form(Form $form): Form
     {
         return $form;
+    }
+
+    public function getInverseRelationshipName(): string
+    {
+        return static::$inverseRelationship ?? (string) Str::of(class_basename($this->ownerRecord))
+            ->lower()
+            ->plural()
+            ->camel();
     }
 
     public static function table(Table $table): Table
@@ -95,6 +105,16 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
             ->title();
     }
 
+    public static function getRecordTitleAttribute(): ?string
+    {
+        return static::$recordTitleAttribute;
+    }
+
+    public static function getRecordTitle(?Model $record): ?string
+    {
+        return $record?->getAttribute(static::getRecordTitleAttribute());
+    }
+
     protected function getRelatedModel(): string
     {
         return $this->getRelationship()->getQuery()->getModel()::class;
@@ -103,6 +123,41 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     protected function getRelationship(): Relation
     {
         return $this->ownerRecord->{static::getRelationshipName()}();
+    }
+
+    protected function getTableActions(): array
+    {
+        return $this->getResourceTable()->getActions();
+    }
+
+    protected function getTableBulkActions(): array
+    {
+        return $this->getResourceTable()->getBulkActions();
+    }
+
+    protected function getTableColumns(): array
+    {
+        return $this->getResourceTable()->getColumns();
+    }
+
+    protected function getTableFilters(): array
+    {
+        return $this->getResourceTable()->getFilters();
+    }
+
+    protected function getTableHeaderActions(): array
+    {
+        return $this->getResourceTable()->getHeaderActions();
+    }
+
+    protected function getTableHeading(): ?string
+    {
+        return static::getTitle();
+    }
+
+    protected function getTableQuery(): Builder
+    {
+        return $this->getRelationship()->getQuery();
     }
 
     public function render(): View

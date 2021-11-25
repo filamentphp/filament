@@ -225,9 +225,9 @@ class Resource
         return static::$recordTitleAttribute;
     }
 
-    public static function getRecordTitle(Model $record): ?string
+    public static function getRecordTitle(?Model $record): ?string
     {
-        return $record->getAttribute(static::getRecordTitleAttribute());
+        return $record?->getAttribute(static::getRecordTitleAttribute());
     }
 
     public static function getRelations(): array
