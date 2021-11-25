@@ -408,7 +408,7 @@ class App extends Model
     protected $casts = [
         'technologies' => 'array',
     ];
-    
+
     // ...
 }
 ```
@@ -475,7 +475,7 @@ class User extends Model
     protected $casts = [
         'is_admin' => 'boolean',
     ];
-    
+
     // ...
 }
 ```
@@ -528,9 +528,52 @@ class User extends Model
     protected $casts = [
         'is_admin' => 'boolean',
     ];
-    
+
     // ...
 }
+```
+
+## Radio
+
+The radio provides a radio button group for selecting a single value from from a list of predefined options:
+
+```php
+use Filament\Forms\Components\Radio;
+
+Radio::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'scheduled' => 'Scheduled',
+        'published' => 'Published'
+    ]);
+```
+
+You can optionally provide descriptions to each option using the `descriptions()` method:
+
+```php
+use Filament\Forms\Components\Radio;
+
+Radio::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'scheduled' => 'Scheduled',
+        'published' => 'Published'
+    ])
+    ->descriptions([
+        'draft' => 'Is not visible.',
+        'scheduled' => 'Will be visible.',
+        'published' => 'Is visible.'
+    ]);
+```
+
+Be sure to use the same `key` in the descriptions array as the `key` in the options array so the right description matches the right option.
+
+If you want a simple boolean radio button group (e.g Yes or No), you can use the `boolean()` method:
+
+```php
+Radio::make('feedback')
+    ->label('Do you like this post?')
+    ->boolean();
 ```
 
 ## Date-time picker
@@ -953,7 +996,7 @@ class Post extends Model
     protected $casts = [
         'tags' => 'array',
     ];
-    
+
     // ...
 }
 ```
