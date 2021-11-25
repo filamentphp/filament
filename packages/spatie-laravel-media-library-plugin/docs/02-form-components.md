@@ -23,7 +23,7 @@ SpatieMediaLibraryFileUpload::make('avatar')
     ->model(auth()->user()),
 ```
 
-The [collection](https://spatie.be/docs/laravel-medialibrary/v9/working-with-media-collections/simple-media-collections) you to group files into categories.
+The [collection](https://spatie.be/docs/laravel-medialibrary/v9/working-with-media-collections/simple-media-collections) allows you to group files into categories.
 
 The media library file upload supports all the customization options of the [original file upload component](/docs/forms/fields#file-upload).
 
