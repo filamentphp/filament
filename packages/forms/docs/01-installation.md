@@ -2,6 +2,14 @@
 title: Installation
 ---
 
+## Requirements
+
+Filament has a few requirements to run:
+
+- PHP 8.0+
+- Laravel v8.0+
+- Livewire v2.0+
+
 ## New Laravel projects
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/iy1DO8JXRDQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

@@ -2,6 +2,14 @@
 title: Installation
 ---
 
+## Requirements
+
+Filament has a few requirements to run:
+
+- PHP 8.0+
+- Laravel v8.0+
+- Livewire v2.0+
+
 ## New Laravel projects
 
 To get started with the table builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [TailwindCSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with just one command:
