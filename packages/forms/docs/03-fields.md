@@ -349,9 +349,9 @@ Select::make('authorId')
     ->searchable()
 ```
 
-If you have a lot of options would rather populate it based on a database search or other external data source, you can use the `getSearchResultsUsing()` method and pass a callback containing the search query string. Make sure to return a `$key => $value` array of results.
+If you have a lot of options and want to populate it based on a database search or other external data source, you can use the `getSearchResultsUsing()` method and pass a callback containing the search query string. Make sure to return a `$key => $value` array of results.
 
-Next, you'll want to transform the selected value into a label. You can do this using the `getOptionLabelUsing()` method. This also accepts a callback containing the selected value. You can tranform the value into a label by returning a string.
+Next, you'll want to transform the selected value into a label. You can do this using the `getOptionLabelUsing()` method. This also accepts a callback containing the selected value. You can transform the value into a label by returning a string.
 
 ```php
 Select::make('post_id')
