@@ -2,8 +2,8 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Tables;
 use Filament\Pages\Actions\ButtonAction;
+use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
