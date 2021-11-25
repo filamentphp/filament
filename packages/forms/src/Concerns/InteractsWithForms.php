@@ -147,7 +147,11 @@ trait InteractsWithForms
     {
         $this->isCachingForms = true;
 
-        $this->cachedForms[$name] = $this->getForms()[$name];
+        if ($this->cachedForms === null) {
+            $this->cacheForms();
+        } else {
+            $this->cachedForms[$name] = $this->getForms()[$name];
+        }
 
         $this->isCachingForms = false;
 
