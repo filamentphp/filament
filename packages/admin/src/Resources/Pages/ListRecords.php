@@ -3,7 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Tables;
-use Filament\View\Components\Actions\ButtonAction;
+use Filament\Pages\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 

@@ -42,7 +42,7 @@
             @endif
             class="focus:outline-none"
         >
-            @livewire(\Livewire\Livewire::getAlias($manager, $manager::getName()), ['ownerRecord' => $ownerRecord])
+            @livewire(\Livewire\Livewire::getAlias($manager, $manager::getName()), ['ownerRecord' => $ownerRecord], key($manager))
         </div>
     @endforeach
 </div>

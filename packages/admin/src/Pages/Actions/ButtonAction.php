@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\View\Components\Actions;
+namespace Filament\Pages\Actions;
 
 class ButtonAction extends Action
 {

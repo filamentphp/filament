@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\View\Components\Actions;
+namespace Filament\Pages\Actions;
 
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;

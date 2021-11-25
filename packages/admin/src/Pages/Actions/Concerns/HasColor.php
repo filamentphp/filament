@@ -1,12 +1,12 @@
 <?php
 
-namespace Filament\View\Components\Actions\Concerns;
+namespace Filament\Pages\Actions\Concerns;
 
 trait HasColor
 {
     protected ?string $color = null;
 
-    public function color(string $color): static
+    public function color(?string $color): static
     {
         $this->color = $color;
 

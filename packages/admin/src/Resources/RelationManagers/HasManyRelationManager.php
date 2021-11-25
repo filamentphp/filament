@@ -38,9 +38,15 @@ class HasManyRelationManager extends RelationManager
                     ->label('Edit')
                     ->form($this->getEditFormSchema())
                     ->mountUsing(fn () => $this->fillEditForm())
+                    ->modalButton('Save')
                     ->action(fn () => $this->saveRecord())
-                    ->modalWidth('4xl')
                     ->hidden(fn (Model $record): bool => ! static::canEdit($record)),
+                Tables\Actions\LinkAction::make('delete')
+                    ->label('Delete')
+                    ->requiresConfirmation()
+                    ->action(fn () => $this->deleteRecord())
+                    ->color('danger')
+                    ->hidden(fn (Model $record): bool => ! static::canDelete($record)),
             ]);
 
             if ($this->canDeleteAny()) {
@@ -61,8 +67,8 @@ class HasManyRelationManager extends RelationManager
                         ->label('Create')
                         ->form($this->getCreateFormSchema())
                         ->mountUsing(fn () => $this->fillCreateForm())
-                        ->action(fn () => $this->createRecord())
-                        ->modalWidth('4xl'),
+                        ->modalButton('Create')
+                        ->action(fn () => $this->createRecord()),
                 ]);
             }
 
@@ -117,6 +123,15 @@ class HasManyRelationManager extends RelationManager
         $this->getMountedTableActionForm()->model($record)->saveRelationships();
 
         $this->callHook('afterCreate');
+    }
+
+    protected function deleteRecord(): void
+    {
+        $this->callHook('beforeDelete');
+
+        $this->getMountedTableActionRecord()->delete();
+
+        $this->callHook('afterDelete');
     }
 
     protected function saveRecord(): void

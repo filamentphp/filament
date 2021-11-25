@@ -3,8 +3,8 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Forms;
-use Filament\View\Components\Actions\ButtonAction;
-use Filament\View\Components\Actions\SelectAction;
+use Filament\Pages\Actions\ButtonAction;
+use Filament\Pages\Actions\SelectAction;
 
 class EditRecord extends Page implements Forms\Contracts\HasForms
 {
