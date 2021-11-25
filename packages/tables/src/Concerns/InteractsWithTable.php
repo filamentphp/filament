@@ -38,7 +38,6 @@ trait InteractsWithTable
 
         $this->cacheTableFilters();
         $this->getTableFiltersForm()->fill();
-
     }
 
     protected function getCachedTable(): Table

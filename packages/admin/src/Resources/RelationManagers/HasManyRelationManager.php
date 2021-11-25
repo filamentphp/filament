@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\RelationManagers;
 
-use Filament\Forms\ComponentContainer;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Tables;
