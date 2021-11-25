@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Tables\Actions\Action;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasActions
 {
@@ -35,12 +36,10 @@ trait HasActions
             return;
         }
 
-        $record = $this->resolveTableRecord($this->mountedTableActionRecord);
-
         $data = $this->getMountedTableActionForm()->getState();
 
         try {
-            return $action->record($record)->call($data);
+            return $action->record($this->getMountedTableActionRecord())->call($data);
         } finally {
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => 'action',
@@ -60,11 +59,17 @@ trait HasActions
 
         $this->mountedTableActionRecord = $record;
 
+        $this->cacheForm('mountedTableActionForm');
+
+        app()->call($action->getMountUsing(), [
+            'action' => $action,
+            'form' => $this->getMountedTableActionForm(),
+            'record' => $this->getMountedTableActionRecord(),
+        ]);
+
         if (! $action->shouldOpenModal()) {
             return $this->callMountedTableAction();
         }
-
-        $this->getMountedTableActionForm()->fill();
 
         $this->dispatchBrowserEvent('open-modal', [
             'id' => 'action',
@@ -82,14 +87,17 @@ trait HasActions
             return null;
         }
 
-        return $this->getCachedTableAction($this->mountedTableAction);
+        return $this->getCachedTableAction($this->mountedTableAction) ?? $this->getCachedTableEmptyStateAction($this->mountedTableAction) ?? $this->getCachedTableHeaderAction($this->mountedTableAction);
     }
 
     public function getMountedTableActionForm(): ComponentContainer
     {
-        return $this->mountedTableActionForm
-            ->schema($this->getMountedTableAction()->getFormSchema())
-            ->model($this->getTableQuery()->find($this->mountedTableActionRecord));
+        return $this->mountedTableActionForm;
+    }
+
+    public function getMountedTableActionRecord(): ?Model
+    {
+        return $this->resolveTableRecord($this->mountedTableActionRecord);
     }
 
     protected function getCachedTableAction(string $name): ?Action

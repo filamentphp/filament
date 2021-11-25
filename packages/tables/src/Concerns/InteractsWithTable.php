@@ -30,13 +30,15 @@ trait InteractsWithTable
         $this->table = $this->getTable();
 
         $this->cacheTableActions();
-
         $this->cacheTableBulkActions();
+        $this->cacheTableEmptyStateActions();
+        $this->cacheTableHeaderActions();
 
         $this->cacheTableColumns();
 
         $this->cacheTableFilters();
         $this->getTableFiltersForm()->fill();
+
     }
 
     protected function getCachedTable(): Table
@@ -50,13 +52,11 @@ trait InteractsWithTable
             ->contentFooter($this->getTableContentFooter())
             ->description($this->getTableDescription())
             ->emptyState($this->getTableEmptyState())
-            ->emptyStateActions($this->getTableEmptyStateActions())
             ->emptyStateDescription($this->getTableEmptyStateDescription())
             ->emptyStateHeading($this->getTableEmptyStateHeading())
             ->emptyStateIcon($this->getTableEmptyStateIcon())
             ->enablePagination($this->isTablePaginationEnabled())
             ->header($this->getTableHeader())
-            ->headerActions($this->getTableHeaderActions())
             ->heading($this->getTableHeading())
             ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions());
     }
@@ -73,8 +73,12 @@ trait InteractsWithTable
                 ->schema($this->getFormSchema())
                 ->model($this->getFormModel()),
             'mountedTableActionForm' => $this->makeForm()
+                ->schema(($action = $this->getMountedTableAction()) ? $action->getFormSchema() : [])
+                ->model($this->getMountedTableActionRecord() ?? $this->getTableQuery()->getModel()::class)
                 ->statePath('mountedTableActionData'),
             'mountedTableBulkActionForm' => $this->makeForm()
+                ->schema(($action = $this->getMountedTableBulkAction()) ? $action->getFormSchema() : [])
+                ->model($this->getTableQuery()->getModel()::class)
                 ->statePath('mountedTableBulkActionData'),
             'tableFiltersForm' => $this->makeForm()
                 ->schema($this->getTableFiltersFormSchema())

@@ -18836,7 +18836,9 @@ var markdown_editor_default = (Alpine) => {
           this.$refs.overlay.style.height = "150px";
           this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + "px";
         }
+        this.overlay = null;
         this.overlay = a(this.state);
+        this.preview = null;
         this.preview = esmEntry(this.state);
       },
       checkForAutoInsertion($event) {

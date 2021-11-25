@@ -93,7 +93,7 @@ class BelongsToSelect extends Select
         });
 
         $this->exists(
-            fn (BelongsToSelect $component): string => get_class($component->getRelationship()->getModel()),
+            fn (BelongsToSelect $component): ?string => ($relationship = $component->getRelationship()) ? $relationship->getModel()::class : null,
             fn (BelongsToSelect $component): string => $component->getRelationship()->getOwnerKeyName(),
         );
 
@@ -124,9 +124,13 @@ class BelongsToSelect extends Select
         return parent::getLabel();
     }
 
-    public function getRelationship(): BelongsTo
+    public function getRelationship(): ?BelongsTo
     {
         $model = $this->getModel();
+
+        if (! $model) {
+            return null;
+        }
 
         if (is_string($model)) {
             $model = new $model();

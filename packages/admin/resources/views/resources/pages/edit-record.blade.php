@@ -5,6 +5,8 @@
         <x-filament::actions :actions="$this->getFormActions()" />
     </x-filament::form>
 
+    <x-filament::hr />
+
     @foreach ($this->getResource()::getRelations() as $manager)
         @livewire(\Livewire\Livewire::getAlias($manager, $manager::getName()), ['ownerRecord' => $record])
     @endforeach

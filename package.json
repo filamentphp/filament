@@ -1,8 +1,8 @@
 {
     "name": "filament",
     "scripts": {
-        "build": "mix --production && node bin/build",
-        "watch": "mix watch && node bin/build --watch"
+        "build": "node bin/build && mix --production",
+        "watch": "node bin/build && mix watch"
     },
     "devDependencies": {
         "@alpinejs/trap": "^3.5.0",

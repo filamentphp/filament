@@ -32,13 +32,17 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function getActions(): array
     {
         $resource = static::getResource();
+
+        if ($resource::canCreate()) {
+            return [];
+        }
+
         $label = $resource::getLabel();
 
         return [
             ButtonAction::make('create')
                 ->label("New {$label}")
-                ->url(fn () => $resource::getUrl('create'))
-                ->hidden(! $resource::canCreate()),
+                ->url(fn () => $resource::getUrl('create')),
         ];
     }
 
@@ -60,6 +64,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function getTableFilters(): array
     {
         return $this->getResourceTable()->getFilters();
+    }
+
+    protected function getTableHeaderActions(): array
+    {
+        return $this->getResourceTable()->getHeaderActions();
     }
 
     protected function getTableQuery(): Builder

@@ -54,11 +54,17 @@ trait HasBulkActions
             return;
         }
 
+        $this->cacheForm('mountedTableBulkActionForm');
+
+        app()->call($action->getMountUsing(), [
+            'action' => $action,
+            'form' => $this->getMountedTableBulkActionForm(),
+            'records' => $this->getSelectedTableRecords(),
+        ]);
+
         if (! $action->shouldOpenModal()) {
             return $this->callMountedTableBulkAction();
         }
-
-        $this->getMountedTableBulkActionForm()->fill();
 
         $this->dispatchBrowserEvent('open-modal', [
             'id' => 'bulk-action',
@@ -81,9 +87,7 @@ trait HasBulkActions
 
     public function getMountedTableBulkActionForm(): ComponentContainer
     {
-        return $this->mountedTableBulkActionForm
-            ->schema($this->getMountedTableBulkAction()->getFormSchema())
-            ->model($this->getTableQuery()->getModel()::class);
+        return $this->mountedTableBulkActionForm;
     }
 
     protected function getCachedTableBulkAction(string $name): ?BulkAction

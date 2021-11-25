@@ -2774,6 +2774,12 @@ select{
 .max-h-60{
 	max-height: 15rem;
 }
+.max-h-full{
+	max-height: 100%;
+}
+.max-h-screen{
+	max-height: 100vh;
+}
 .min-h-screen{
 	min-height: 100vh;
 }
@@ -3415,13 +3421,13 @@ select{
 	font-size: 1.125rem;
 	line-height: 1.75rem;
 }
-.text-base{
-	font-size: 1rem;
-	line-height: 1.5rem;
-}
 .text-3xl{
 	font-size: 1.875rem;
 	line-height: 2.25rem;
+}
+.text-base{
+	font-size: 1rem;
+	line-height: 1.5rem;
 }
 .font-bold{
 	font-weight: 700;
@@ -3431,9 +3437,6 @@ select{
 }
 .font-semibold{
 	font-weight: 600;
-}
-.font-light{
-	font-weight: 300;
 }
 .font-normal{
 	font-weight: 400;
@@ -4200,6 +4203,10 @@ select{
 		margin-bottom: auto;
 	}
 
+	.md\:mt-auto{
+		margin-top: auto;
+	}
+
 	.md\:flex{
 		display: flex;
 	}
@@ -4266,6 +4273,10 @@ select{
 
 	.md\:grid-cols-12{
 		grid-template-columns: repeat(12, minmax(0, 1fr));
+	}
+
+	.md\:items-center{
+		align-items: center;
 	}
 
 	.md\:space-y-0 > :not([hidden]) ~ :not([hidden]){
@@ -4438,11 +4449,6 @@ select{
 		font-size: 1.125rem;
 		line-height: 1.75rem;
 	}
-
-	.lg\:text-3xl{
-		font-size: 1.875rem;
-		line-height: 2.25rem;
-	}
 }
 @media (min-width: 1280px){
 
@@ -4564,11 +4570,6 @@ select{
 
 	.xl\:justify-between{
 		justify-content: space-between;
-	}
-
-	.xl\:text-3xl{
-		font-size: 1.875rem;
-		line-height: 2.25rem;
 	}
 }
 @media (min-width: 1536px){

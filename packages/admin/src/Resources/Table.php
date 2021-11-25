@@ -2,12 +2,6 @@
 
 namespace Filament\Resources;
 
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\LinkAction;
-use Filament\Tables\Contracts\HasTable;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-
 class Table
 {
     protected array $actions = [];
@@ -18,39 +12,11 @@ class Table
 
     protected array $filters = [];
 
-    public static function make(HasTable $livewire): static
+    protected array $headerActions = [];
+
+    public static function make(): static
     {
-        $static = new static();
-
-        $resource = $livewire::getResource();
-
-        if ($resource::hasPage('view')) {
-            $static->actions([
-                LinkAction::make('view')
-                    ->label('View')
-                    ->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]))
-                    ->hidden(fn (Model $record): bool => ! $resource::canView($record)),
-            ]);
-        } elseif ($resource::hasPage('edit')) {
-            $static->actions([
-                LinkAction::make('edit')
-                    ->label('Edit')
-                    ->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]))
-                    ->hidden(fn (Model $record): bool => ! $resource::canEdit($record)),
-            ]);
-        }
-
-        $static->bulkActions([
-            BulkAction::make('delete')
-                ->label('Delete selected')
-                ->action(fn (Collection $records) => $records->each->delete())
-                ->requiresConfirmation()
-                ->deselectRecordsAfterCompletion()
-                ->color('danger')
-                ->icon('heroicon-o-trash'),
-        ]);
-
-        return $static;
+        return new static();
     }
 
     public function actions(array $actions): static
@@ -81,6 +47,13 @@ class Table
         return $this;
     }
 
+    public function headerActions(array $actions): static
+    {
+        $this->headerActions = $actions;
+
+        return $this;
+    }
+
     public function prependActions(array $actions): static
     {
         $this->actions = array_merge($actions, $this->actions);
@@ -95,6 +68,13 @@ class Table
         return $this;
     }
 
+    public function prependHeaderActions(array $actions): static
+    {
+        $this->headerActions = array_merge($actions, $this->headerActions);
+
+        return $this;
+    }
+
     public function pushActions(array $actions): static
     {
         $this->actions = array_merge($this->actions, $actions);
@@ -105,6 +85,13 @@ class Table
     public function pushBulkActions(array $actions): static
     {
         $this->bulkActions = array_merge($this->bulkActions, $actions);
+
+        return $this;
+    }
+
+    public function pushHeaderActions(array $actions): static
+    {
+        $this->headerActions = array_merge($this->headerActions, $actions);
 
         return $this;
     }
@@ -127,5 +114,10 @@ class Table
     public function getFilters(): array
     {
         return $this->filters;
+    }
+
+    public function getHeaderActions(): array
+    {
+        return $this->headerActions;
     }
 }

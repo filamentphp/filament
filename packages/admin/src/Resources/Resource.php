@@ -101,12 +101,17 @@ class Resource
 
     public static function canEdit(Model $record): bool
     {
-        return static::hasPage('edit') && static::can('update');
+        return static::hasPage('edit') && static::can('update', $record);
     }
 
     public static function canDelete(Model $record): bool
     {
-        return static::can('delete');
+        return static::can('delete', $record);
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return static::can('deleteAny');
     }
 
     public static function canGloballySearch(): bool
@@ -116,7 +121,7 @@ class Resource
 
     public static function canView(Model $record): bool
     {
-        return static::hasPage('view') && static::can('view');
+        return static::hasPage('view') && static::can('view', $record);
     }
 
     public static function getBreadcrumb(): string
