@@ -5,7 +5,6 @@ namespace Filament\Resources\Pages;
 use Filament\Forms;
 use Filament\Pages\Actions\ButtonAction;
 use Filament\Pages\Actions\SelectAction;
-use Filament\Resources\Forms\Actions\Button;
 
 class EditRecord extends Page implements Forms\Contracts\HasForms
 {
