@@ -13,7 +13,7 @@ class SpatieTagsInput extends TagsInput
         parent::setUp();
 
         $this->afterStateHydrated(function (SpatieTagsInput $component, Model|string|null $model): void {
-            if (!$model || is_string($model)) {
+            if (! $model || is_string($model)) {
                 $component->state([]);
 
                 return;
