@@ -26,7 +26,9 @@
                         :prefix="$labelPrefix"
                         :required="$required"
                     >
-                        {!! \Illuminate\Support\Str::markdown($label) !!}
+                        <span>
+                            {!! \Illuminate\Support\Str::markdown($label) !!}
+                        </span>
                     </x-forms::field-wrapper.label>
                 @endif
 
