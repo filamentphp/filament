@@ -36,7 +36,10 @@ trait InteractsWithTable
         $this->cacheTableColumns();
 
         $this->cacheTableFilters();
-        $this->getTableFiltersForm()->fill();
+
+        if ($this->tableFilters === null) {
+            $this->getTableFiltersForm()->fill();
+        }
     }
 
     protected function getCachedTable(): Table
