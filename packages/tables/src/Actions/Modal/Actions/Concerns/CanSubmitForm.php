@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\View\Components\Actions\Concerns;
+namespace Filament\Tables\Actions\Modal\Actions\Concerns;
 
 trait CanSubmitForm
 {
