@@ -349,6 +349,19 @@ Select::make('authorId')
     ->searchable()
 ```
 
+If you have lots of options and want to populate them based on a database search or other external data source, you can use the `getSearchResultsUsing()` and `getOptionLabelUsing()` methods instead of `options()`.
+
+The `getSearchResultsUsing()` method accepts a callback that returns search results in `$key => $value` format.
+
+The `getOptionLabelUsing()` method accepts a callback that transforms the selected option `$value` into a label.
+
+```php
+Select::make('authorId')
+    ->searchable()
+    ->getSearchResultsUsing(fn (string $query) => User::where('name', 'like', "%{$query}%")->pluck('name', 'id'))
+    ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name)),
+```
+
 ### Dependant selects
 
 Commonly, you may desire "dependant" select inputs, which populate their options based on the state of another.
