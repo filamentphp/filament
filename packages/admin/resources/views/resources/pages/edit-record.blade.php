@@ -5,11 +5,11 @@
         <x-filament::actions :actions="$this->getFormActions()" />
     </x-filament::form>
 
-    <x-filament::hr />
+    @if (count($relationManagers = $this->getResource()::getRelations()))
+        <x-filament::hr />
 
-    @foreach ($this->getResource()::getRelations() as $manager)
-        @livewire(\Livewire\Livewire::getAlias($manager, $manager::getName()), ['ownerRecord' => $record])
-    @endforeach
+        <x-filament::resources.relation-managers :managers="$relationManagers" :owner-record="$record" />
+    @endif
 
     <x-slot name="modals">
         <x-filament::modal id="delete">

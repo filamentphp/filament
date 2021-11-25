@@ -169,10 +169,7 @@ class HasManyRelationManager extends RelationManager
 
     protected function getTableHeading(): ?string
     {
-        return static::$title ?? (string) Str::of(static::getRelationshipName())
-            ->kebab()
-            ->replace('-', ' ')
-            ->title();
+        return static::getTitle();
     }
 
     protected function getTableQuery(): Builder

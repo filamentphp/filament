@@ -9,6 +9,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class RelationManager extends Component implements Tables\Contracts\HasTable
@@ -84,6 +85,14 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     public static function getRelationshipName(): string
     {
         return static::$relationship;
+    }
+
+    public static function getTitle(): string
+    {
+        return static::$title ?? (string) Str::of(static::getRelationshipName())
+            ->kebab()
+            ->replace('-', ' ')
+            ->title();
     }
 
     protected function getRelatedModel(): string

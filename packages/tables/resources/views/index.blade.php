@@ -149,7 +149,7 @@
                             @endforeach
 
                             @if (count($actions))
-                                <x-tables::actions-cell :actions="$actions" :record="$record" />
+                                <x-tables::actions-cell :actions="$actions" :record="$record" class="justify-center" />
                             @endif
                         </x-tables::row>
                     @endforeach
