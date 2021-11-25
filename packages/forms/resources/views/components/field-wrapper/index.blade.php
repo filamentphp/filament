@@ -12,7 +12,7 @@
 <div {{ $attributes }}>
     @if ($label && $labelSrOnly)
         <label for="{{ $id }}" class="sr-only">
-            {!! \Illuminate\Support\Str::markdown($label) !!}
+            {{ $label }}
         </label>
     @endif
 
@@ -26,9 +26,7 @@
                         :prefix="$labelPrefix"
                         :required="$required"
                     >
-                        <span>
-                            {!! \Illuminate\Support\Str::markdown($label) !!}
-                        </span>
+                        {{ $label }}
                     </x-forms::field-wrapper.label>
                 @endif
 
