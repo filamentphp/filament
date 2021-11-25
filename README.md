@@ -43,6 +43,13 @@ composer require filament/tables
 composer require filament/spatie-laravel-media-library-plugin
 ```
 
+### spatie/laravel-settings Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-settings-plugin)
+**Current version series:** v2.x.
+
+```bash
+composer require filament/spatie-laravel-settings-plugin
+```
+
 ### spatie/laravel-tags Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-tags-plugin)
 **Current version series:** v2.x.
 

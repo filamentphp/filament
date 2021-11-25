@@ -10,7 +10,7 @@ trait HasFilters
 {
     protected array $cachedTableFilters;
 
-    public $tableFilters = [];
+    public $tableFilters = null;
 
     public function cacheTableFilters(): void
     {
