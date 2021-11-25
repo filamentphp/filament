@@ -35,7 +35,10 @@ export default (Alpine) => {
                     this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + 'px'
                 }
 
+                this.overlay = null
                 this.overlay = highlight(this.state)
+
+                this.preview = null
                 this.preview = marked(this.state)
             },
 

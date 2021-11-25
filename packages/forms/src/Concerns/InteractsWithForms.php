@@ -143,6 +143,17 @@ trait InteractsWithForms
         }
     }
 
+    protected function cacheForm(string $name): ComponentContainer
+    {
+        $this->isCachingForms = true;
+
+        $this->cachedForms[$name] = $this->getForms()[$name];
+
+        $this->isCachingForms = false;
+
+        return $this->cachedForms[$name];
+    }
+
     protected function cacheForms(): array
     {
         $this->isCachingForms = true;
