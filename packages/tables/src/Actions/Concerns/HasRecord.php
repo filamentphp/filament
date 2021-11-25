@@ -8,7 +8,7 @@ trait HasRecord
 {
     protected ?Model $record = null;
 
-    public function record(Model $record): static
+    public function record(?Model $record): static
     {
         $this->record = $record;
 

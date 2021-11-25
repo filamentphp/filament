@@ -12,7 +12,7 @@
         @endif
         type="button"
         @class([
-            'flex items-center space-x-1 font-medium text-sm text-gray-600',
+            'flex items-center whitespace-nowrap space-x-1 font-medium text-sm text-gray-600',
             'cursor-default' => ! $sortable,
         ])
     >

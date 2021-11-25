@@ -26,8 +26,6 @@ class Table extends ViewComponent implements Htmlable
 
     protected ?View $emptyState = null;
 
-    protected array $emptyStateActions = [];
-
     protected ?string $emptyStateDescription = null;
 
     protected ?string $emptyStateHeading = null;
@@ -35,8 +33,6 @@ class Table extends ViewComponent implements Htmlable
     protected ?string $emptyStateIcon = null;
 
     protected ?View $header = null;
-
-    protected array $headerActions = [];
 
     protected ?string $heading = null;
 
@@ -66,13 +62,6 @@ class Table extends ViewComponent implements Htmlable
     public function emptyState(?View $view): static
     {
         $this->emptyState = $view;
-
-        return $this;
-    }
-
-    public function emptyStateActions(array $actions): static
-    {
-        $this->emptyStateActions = $actions;
 
         return $this;
     }
@@ -115,13 +104,6 @@ class Table extends ViewComponent implements Htmlable
     public function header(?View $view): static
     {
         $this->header = $view;
-
-        return $this;
-    }
-
-    public function headerActions(array $actions): static
-    {
-        $this->headerActions = $actions;
 
         return $this;
     }
@@ -187,7 +169,7 @@ class Table extends ViewComponent implements Htmlable
 
     public function getEmptyStateActions(): array
     {
-        return $this->emptyStateActions;
+        return $this->getLivewire()->getCachedTableEmptyStateActions();
     }
 
     public function getEmptyStateDescription(): ?string
@@ -222,7 +204,7 @@ class Table extends ViewComponent implements Htmlable
 
     public function getHeaderActions(): array
     {
-        return $this->headerActions;
+        return $this->getLivewire()->getCachedTableHeaderActions();
     }
 
     public function getHeading(): ?string

@@ -28,7 +28,11 @@ interface HasTable extends HasForms
 
     public function getCachedTableColumns(): array;
 
+    public function getCachedTableEmptyStateActions(): array;
+
     public function getCachedTableFilters(): array;
+
+    public function getCachedTableHeaderActions(): array;
 
     public function getFilteredTableQuery(): Builder;
 

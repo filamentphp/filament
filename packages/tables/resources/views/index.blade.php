@@ -117,7 +117,7 @@
                             </x-tables::header-cell>
                         @endforeach
 
-                        @if (count($getActions()))
+                        @if (count($actions))
                             <th class="w-5"></th>
                         @endif
                     </x-slot>
@@ -149,7 +149,7 @@
                             @endforeach
 
                             @if (count($actions))
-                                <x-tables::actions-cell :actions="$actions" :record="$record" />
+                                <x-tables::actions-cell :actions="$actions" :record="$record" class="justify-center" />
                             @endif
                         </x-tables::row>
                     @endforeach
@@ -191,8 +191,12 @@
     </x-tables::container>
 
     <form wire:submit.prevent="callMountedTableAction">
-        <x-tables::modal id="action" display-classes="block">
-            @if ($action = $getMountedAction())
+        @php
+            $action = $getMountedAction();
+        @endphp
+
+        <x-tables::modal id="action" :width="$action?->getModalWidth()" display-classes="block">
+            @if ($action)
                 <x-slot name="heading">
                     {{ $action->getModalHeading() }}
                 </x-slot>
@@ -223,8 +227,12 @@
     </form>
 
     <form wire:submit.prevent="callMountedTableBulkAction">
-        <x-tables::modal id="bulk-action" display-classes="block">
-            @if ($action = $getMountedBulkAction())
+        @php
+            $action = $getMountedBulkAction();
+        @endphp
+
+        <x-tables::modal id="bulk-action" :width="$action?->getModalWidth()" display-classes="block">
+            @if ($action)
                 <x-slot name="heading">
                     {{ $action->getModalHeading() }}
                 </x-slot>

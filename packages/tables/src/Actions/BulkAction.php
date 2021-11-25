@@ -11,6 +11,7 @@ class BulkAction
 {
     use Concerns\BelongsToTable;
     use Concerns\CanBeHidden;
+    use Concerns\CanBeMounted;
     use Concerns\CanDeselectRecordsAfterCompletion;
     use Concerns\CanOpenModal;
     use Concerns\CanRequireConfirmation;

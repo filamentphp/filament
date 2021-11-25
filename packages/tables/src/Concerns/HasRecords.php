@@ -43,7 +43,7 @@ trait HasRecords
         }
     }
 
-    protected function resolveTableRecord(string $key): ?Model
+    protected function resolveTableRecord(?string $key): ?Model
     {
         return $this->getTableQuery()->find($key);
     }

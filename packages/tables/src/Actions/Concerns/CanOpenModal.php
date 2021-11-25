@@ -10,6 +10,8 @@ trait CanOpenModal
 
     protected ?string $modalSubheading = null;
 
+    protected ?string $modalWidth = null;
+
     public function modalButton(?string $label = null): static
     {
         $this->modalButtonLabel = $label;
@@ -27,6 +29,13 @@ trait CanOpenModal
     public function modalSubheading(?string $subheading = null): static
     {
         $this->modalSubheading = $subheading;
+
+        return $this;
+    }
+
+    public function modalWidth(?string $width = null): static
+    {
+        $this->modalWidth = $width;
 
         return $this;
     }
@@ -60,6 +69,11 @@ trait CanOpenModal
         }
 
         return __('tables::table.actions.modal.requires_confirmation_subheading');
+    }
+
+    public function getModalWidth(): string
+    {
+        return $this->modalWidth ?? 'sm';
     }
 
     public function shouldOpenModal(): bool

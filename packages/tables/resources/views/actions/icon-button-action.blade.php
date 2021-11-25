@@ -5,9 +5,17 @@
     $clickAction = null;
 
     if (is_string($action)) {
-        $clickAction = "{$action}('{$record->getKey()}')";
+        if ($record) {
+            $clickAction = "{$action}('{$record->getKey()}')";
+        } else {
+            $clickAction = $action;
+        }
     } elseif ($action instanceof \Closure) {
-        $clickAction = "mountTableAction('{$getName()}', '{$record->getKey()}')";
+        if ($record) {
+            $clickAction = "mountTableAction('{$getName()}', '{$record->getKey()}')";
+        } else {
+            $clickAction = "mountTableAction('{$getName()}')";
+        }
     }
 @endphp
 

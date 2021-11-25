@@ -2,10 +2,35 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Tables\Actions\Action;
 use Illuminate\Contracts\View\View;
 
 trait HasEmptyState
 {
+    protected array $cachedTableEmptyStateActions;
+
+    public function cacheTableEmptyStateActions(): void
+    {
+        $this->cachedTableEmptyStateActions = collect($this->getTableEmptyStateActions())
+            ->filter(fn (Action $action): bool => ! $action->isHidden())
+            ->mapWithKeys(function (Action $action): array {
+                $action->table($this->getCachedTable());
+
+                return [$action->getName() => $action];
+            })
+            ->toArray();
+    }
+
+    public function getCachedTableEmptyStateActions(): array
+    {
+        return $this->cachedTableEmptyStateActions;
+    }
+
+    protected function getCachedTableEmptyStateAction(string $name): ?Action
+    {
+        return $this->getCachedTableEmptyStateActions()[$name] ?? null;
+    }
+
     protected function getTableEmptyState(): ?View
     {
         return null;
