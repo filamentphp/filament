@@ -349,6 +349,25 @@ Select::make('authorId')
     ->searchable()
 ```
 
+If you have a lot of options would rather populate it based on a database search or other external data source, you can use the `getSearchResultsUsing()` method and pass a callback containing the search query string. Make sure to return a `$key => $value` array of results.
+
+Next, you'll want to transform the selected value into a label. You can do this using the `getOptionLabelUsing()` method. This also accepts a callback containing the selected value. You can tranform the value into a label by returning a string.
+
+```php
+Select::make('post_id')
+    ->searchable()
+    ->getSearchResultsUsing(function ($query) {
+        // use the search $query to return a $key => $value array of results
+        return Post::where('title', 'like', "%$query%")->pluck('title', 'id')->toArray();
+    })
+    ->getOptionLabelUsing(function ($value) {
+        // use $value and transform it into a label for the selected option
+        if ($value) {
+            return Post::find($value)->title;
+        }
+    }),
+```
+
 ### Dependant selects
 
 Commonly, you may desire "dependant" select inputs, which populate their options based on the state of another.
@@ -408,7 +427,7 @@ class App extends Model
     protected $casts = [
         'technologies' => 'array',
     ];
-    
+
     // ...
 }
 ```
@@ -475,7 +494,7 @@ class User extends Model
     protected $casts = [
         'is_admin' => 'boolean',
     ];
-    
+
     // ...
 }
 ```
@@ -528,7 +547,7 @@ class User extends Model
     protected $casts = [
         'is_admin' => 'boolean',
     ];
-    
+
     // ...
 }
 ```
@@ -953,7 +972,7 @@ class Post extends Model
     protected $casts = [
         'tags' => 'array',
     ];
-    
+
     // ...
 }
 ```
