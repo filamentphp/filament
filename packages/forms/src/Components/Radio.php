@@ -76,15 +76,22 @@ class Radio extends Field
         return $options;
     }
 
+    public function descriptions(array | Arrayable | callable $descriptions): static
+    {
+        $this->descriptions = $descriptions;
+
+        return $this;
+    }
+
     public function hasDescription($value): bool
     {
-        return isset($this->getDescriptions[$value]);
+        return isset($this->getDescriptions()[$value]);
     }
 
     public function getDescription($value): string
     {
         if ($this->hasDescription($value)) {
-            return $this->getDescriptions[$value];
+            return $this->getDescriptions()[$value];
         }
 
         return '';
