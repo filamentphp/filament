@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages;
 use Filament\Forms;
 use Filament\Pages\Actions\ButtonAction;
 use Filament\Pages\Actions\SelectAction;
+use Filament\Resources\Forms\Actions\Button;
 
 class EditRecord extends Page implements Forms\Contracts\HasForms
 {
@@ -133,28 +134,40 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
     {
         $resource = static::getResource();
 
-        return [
-            SelectAction::make('activeFormLocale')
-                ->label('Locale')
-                ->options(
-                    collect($resource::getTranslatableLocales())
-                        ->mapWithKeys(function (string $locale): array {
-                            return [$locale => $locale];
-                        })
-                        ->toArray(),
-                )
-                ->hidden(! $resource::isTranslatable()),
-            ButtonAction::make('view')
-                ->label('View')
-                ->url(fn () => $resource::getUrl('view', ['record' => $this->record]))
-                ->color('secondary')
-                ->hidden(! $resource::canView($this->record)),
-            ButtonAction::make('delete')
-                ->label('Delete')
-                ->action('openDeleteModal')
-                ->color('danger')
-                ->hidden(! $resource::canDelete($this->record)),
-        ];
+        return array_merge(
+            ($resource::isTranslatable() ? [$this->getActiveFormLocaleSelectAction()] : []),
+            ($resource::canView($this->record) ? [$this->getViewButtonAction()] : []),
+            ($resource::canDelete($this->record) ? [$this->getDeleteButtonAction()] : []),
+        );
+    }
+
+    protected function getActiveFormLocaleSelectAction(): SelectAction
+    {
+        return SelectAction::make('activeFormLocale')
+            ->label('Locale')
+            ->options(
+                collect(static::getResource()::getTranslatableLocales())
+                    ->mapWithKeys(function (string $locale): array {
+                        return [$locale => $locale];
+                    })
+                    ->toArray(),
+            );
+    }
+
+    protected function getViewButtonAction(): ButtonAction
+    {
+        return ButtonAction::make('view')
+            ->label('View')
+            ->url(fn () => static::getResource()::getUrl('view', ['record' => $this->record]))
+            ->color('secondary');
+    }
+
+    protected function getDeleteButtonAction(): ButtonAction
+    {
+        return ButtonAction::make('delete')
+            ->label('Delete')
+            ->action('openDeleteModal')
+            ->color('danger');
     }
 
     protected function getTitle(): string

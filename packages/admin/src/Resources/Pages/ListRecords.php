@@ -37,13 +37,17 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             return [];
         }
 
+        return [$this->getCreateButtonAction()];
+    }
+
+    protected function getCreateButtonAction(): ButtonAction
+    {
+        $resource = static::getResource();
         $label = $resource::getLabel();
 
-        return [
-            ButtonAction::make('create')
-                ->label("New {$label}")
-                ->url(fn () => $resource::getUrl('create')),
-        ];
+        return ButtonAction::make('create')
+            ->label("New {$label}")
+            ->url(fn () => $resource::getUrl('create'));
     }
 
     protected function getTableActions(): array

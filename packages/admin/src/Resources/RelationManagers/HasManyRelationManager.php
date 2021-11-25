@@ -34,48 +34,64 @@ class HasManyRelationManager extends RelationManager
             $table = Table::make();
 
             $table->actions([
-                Tables\Actions\LinkAction::make('edit')
-                    ->label('Edit')
-                    ->form($this->getEditFormSchema())
-                    ->mountUsing(fn () => $this->fillEditForm())
-                    ->modalButton('Save')
-                    ->action(fn () => $this->saveRecord())
-                    ->hidden(fn (Model $record): bool => ! static::canEdit($record)),
-                Tables\Actions\LinkAction::make('delete')
-                    ->label('Delete')
-                    ->requiresConfirmation()
-                    ->action(fn () => $this->deleteRecord())
-                    ->color('danger')
-                    ->hidden(fn (Model $record): bool => ! static::canDelete($record)),
+                $this->getEditLinkTableAction(),
+                $this->getDeleteLinkTableAction(),
             ]);
 
             if ($this->canDeleteAny()) {
-                $table->bulkActions([
-                    Tables\Actions\BulkAction::make('delete')
-                        ->label('Delete selected')
-                        ->action(fn (Collection $records) => $records->each->delete())
-                        ->requiresConfirmation()
-                        ->deselectRecordsAfterCompletion()
-                        ->color('danger')
-                        ->icon('heroicon-o-trash'),
-                ]);
+                $table->bulkActions([$this->getDeleteTableBulkAction()]);
             }
 
             if ($this->canCreate()) {
-                $table->headerActions([
-                    Tables\Actions\ButtonAction::make('create')
-                        ->label('Create')
-                        ->form($this->getCreateFormSchema())
-                        ->mountUsing(fn () => $this->fillCreateForm())
-                        ->modalButton('Create')
-                        ->action(fn () => $this->createRecord()),
-                ]);
+                $table->headerActions([$this->getCreateButtonTableHeaderAction()]);
             }
 
             $this->resourceTable = static::table($table);
         }
 
         return $this->resourceTable;
+    }
+
+    protected function getEditLinkTableAction(): Tables\Actions\LinkAction
+    {
+        return Tables\Actions\LinkAction::make('edit')
+            ->label('Edit')
+            ->form($this->getEditFormSchema())
+            ->mountUsing(fn () => $this->fillEditForm())
+            ->modalButton('Save')
+            ->action(fn () => $this->save())
+            ->hidden(fn (Model $record): bool => ! static::canEdit($record));
+    }
+
+    protected function getDeleteLinkTableAction(): Tables\Actions\LinkAction
+    {
+        return Tables\Actions\LinkAction::make('delete')
+            ->label('Delete')
+            ->requiresConfirmation()
+            ->action(fn () => $this->delete())
+            ->color('danger')
+            ->hidden(fn (Model $record): bool => ! static::canDelete($record));
+    }
+
+    protected function getDeleteTableBulkAction(): Tables\Actions\BulkAction
+    {
+        return Tables\Actions\BulkAction::make('delete')
+            ->label('Delete selected')
+            ->action(fn (Collection $records) => $records->each->delete())
+            ->requiresConfirmation()
+            ->deselectRecordsAfterCompletion()
+            ->color('danger')
+            ->icon('heroicon-o-trash');
+    }
+
+    protected function getCreateButtonTableHeaderAction(): Tables\Actions\ButtonAction
+    {
+        return Tables\Actions\ButtonAction::make('create')
+            ->label('Create')
+            ->form($this->getCreateFormSchema())
+            ->mountUsing(fn () => $this->fillCreateForm())
+            ->modalButton('Create')
+            ->action(fn () => $this->create());
     }
 
     protected function getCreateFormSchema(): array
@@ -107,7 +123,7 @@ class HasManyRelationManager extends RelationManager
         $this->callHook('afterEditFill');
     }
 
-    protected function createRecord(): void
+    protected function create(): void
     {
         $this->callHook('beforeValidate');
         $this->callHook('beforeCreateValidate');
@@ -125,7 +141,7 @@ class HasManyRelationManager extends RelationManager
         $this->callHook('afterCreate');
     }
 
-    protected function deleteRecord(): void
+    protected function delete(): void
     {
         $this->callHook('beforeDelete');
 
@@ -134,7 +150,7 @@ class HasManyRelationManager extends RelationManager
         $this->callHook('afterDelete');
     }
 
-    protected function saveRecord(): void
+    protected function save(): void
     {
         $this->callHook('beforeValidate');
         $this->callHook('beforeEditValidate');

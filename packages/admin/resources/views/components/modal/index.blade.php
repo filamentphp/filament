@@ -45,12 +45,13 @@
             x-on:click="isOpen = false"
             type="button"
             aria-hidden="true"
-            class="fixed inset-0 w-full h-screen bg-black/50 focus:outline-none"
+            class="fixed inset-0 w-full h-full bg-black/50 focus:outline-none"
         ></button>
 
         <div
             x-show="isOpen"
             x-trap="isOpen"
+            x-on:keydown.window.escape="isOpen = false"
             x-transition:enter="transition ease duration-300"
             x-transition:enter-start="translate-y-8"
             x-transition:enter-end="translate-y-0"
@@ -58,66 +59,70 @@
             x-transition:leave-start="translate-y-0"
             x-transition:leave-end="translate-y-8"
             x-cloak
-            {{ $attributes->class([
-                'relative w-full p-2 mx-auto mt-auto space-y-2 bg-white md:mb-auto mt-full rounded-xl',
-                'max-w-xs' => $width === 'xs',
-                'max-w-sm' => $width === 'sm',
-                'max-w-md' => $width === 'md',
-                'max-w-lg' => $width === 'lg',
-                'max-w-xl' => $width === 'xl',
-                'max-w-2xl' => $width === '2xl',
-                'max-w-3xl' => $width === '3xl',
-                'max-w-4xl' => $width === '4xl',
-                'max-w-5xl' => $width === '5xl',
-                'max-w-6xl' => $width === '6xl',
-                'max-w-7xl' => $width === '7xl',
-            ]) }}
+            {{ $attributes->class(['relative w-full mt-auto md:mb-auto cursor-pointer']) }}
         >
-            @if ($header)
-                <div class="px-4 py-2">
-                    {{ $header }}
+            <div
+                @class([
+                    'w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default',
+                    'max-w-xs' => $width === 'xs',
+                    'max-w-sm' => $width === 'sm',
+                    'max-w-md' => $width === 'md',
+                    'max-w-lg' => $width === 'lg',
+                    'max-w-xl' => $width === 'xl',
+                    'max-w-2xl' => $width === '2xl',
+                    'max-w-3xl' => $width === '3xl',
+                    'max-w-4xl' => $width === '4xl',
+                    'max-w-5xl' => $width === '5xl',
+                    'max-w-6xl' => $width === '6xl',
+                    'max-w-7xl' => $width === '7xl',
+                ])
+            >
+                @if ($header)
+                    <div class="px-4 py-2">
+                        {{ $header }}
+                    </div>
+                @endif
+
+                @if ($header && ($actions || $heading || $slot->isNotEmpty() || $subheading))
+                    <x-tables::hr />
+                @endif
+
+                <div class="space-y-2">
+                    @if ($heading || $subheading)
+                        <div class="p-4 space-y-2 text-center">
+                            @if ($heading)
+                                <x-tables::modal.heading :id="$id . '.heading'">
+                                    {{ $heading }}
+                                </x-tables::modal.heading>
+                            @endif
+
+                            @if ($subheading)
+                                <x-tables::modal.subheading>
+                                    {{ $subheading }}
+                                </x-tables::modal.subheading>
+                            @endif
+                        </div>
+                    @endif
+
+                    @if ($slot->isNotEmpty())
+                        <div class="px-4 py-2 space-y-4">
+                            {{ $slot }}
+                        </div>
+                    @endif
+
+                    {{ $actions }}
                 </div>
-            @endif
 
-            @if ($header && ($actions || $heading || $slot->isNotEmpty() || $subheading))
-                <x-tables::hr />
-            @endif
-
-            <div class="space-y-2">
-                @if ($heading || $subheading)
-                    <div class="p-4 space-y-2 text-center">
-                        @if ($heading)
-                            <x-tables::modal.heading :id="$id . '.heading'">
-                                {{ $heading }}
-                            </x-tables::modal.heading>
-                        @endif
-
-                        @if ($subheading)
-                            <x-tables::modal.subheading>
-                                {{ $subheading }}
-                            </x-tables::modal.subheading>
-                        @endif
-                    </div>
+                @if ($footer && ($actions || $heading || $slot->isNotEmpty() || $subheading))
+                    <x-tables::hr />
                 @endif
 
-                @if ($slot->isNotEmpty())
-                    <div class="px-4 py-2 space-y-4">
-                        {{ $slot }}
+                @if ($footer)
+                    <div class="px-4 py-2">
+                        {{ $footer }}
                     </div>
                 @endif
-
-                {{ $actions }}
             </div>
-
-            @if ($footer && ($actions || $heading || $slot->isNotEmpty() || $subheading))
-                <x-tables::hr />
-            @endif
-
-            @if ($footer)
-                <div class="px-4 py-2">
-                    {{ $footer }}
-                </div>
-            @endif
         </div>
     </div>
 </div>

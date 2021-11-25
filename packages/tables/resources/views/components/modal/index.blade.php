@@ -50,7 +50,8 @@
 
         <div
             x-show="isOpen"
-            x-on:click="isOpen = false"
+            x-trap="isOpen"
+            x-on:keydown.window.escape="isOpen = false"
             x-transition:enter="transition ease duration-300"
             x-transition:enter-start="translate-y-8"
             x-transition:enter-end="translate-y-0"

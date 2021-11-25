@@ -88,33 +88,49 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
     protected function getActions(): array
     {
-        $resource = static::getResource();
+        if (! static::getResource()::isTranslatable()) {
+            return [];
+        }
 
         return [
-            SelectAction::make('activeFormLocale')
-                ->label('Locale')
-                ->options(
-                    collect($resource::getTranslatableLocales())
-                        ->mapWithKeys(function (string $locale): array {
-                            return [$locale => $locale];
-                        })
-                        ->toArray(),
-                )
-                ->hidden(! $resource::isTranslatable()),
+            $this->getActiveFormLocaleSelectAction(),
         ];
+    }
+
+    protected function getActiveFormLocaleSelectAction(): SelectAction
+    {
+        return SelectAction::make('activeFormLocale')
+            ->label('Locale')
+            ->options(
+                collect(static::getResource()::getTranslatableLocales())
+                    ->mapWithKeys(function (string $locale): array {
+                        return [$locale => $locale];
+                    })
+                    ->toArray(),
+            );
     }
 
     protected function getFormActions(): array
     {
         return [
-            ButtonAction::make('create')
-                ->label('Create')
-                ->submit(),
-            ButtonAction::make('cancel')
-                ->label('Cancel')
-                ->url(static::getResource()::getUrl())
-                ->color('secondary'),
+            $this->getCreateButtonFormAction(),
+            $this->getCancelButtonFormAction(),
         ];
+    }
+
+    protected function getCreateButtonFormAction(): ButtonAction
+    {
+        return ButtonAction::make('create')
+            ->label('Create')
+            ->submit();
+    }
+
+    protected function getCancelButtonFormAction(): ButtonAction
+    {
+        return ButtonAction::make('cancel')
+            ->label('Cancel')
+            ->url(static::getResource()::getUrl())
+            ->color('secondary');
     }
 
     protected function getForms(): array

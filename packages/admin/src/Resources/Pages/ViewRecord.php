@@ -85,22 +85,30 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
     {
         $resource = static::getResource();
 
-        return [
-            SelectAction::make('activeFormLocale')
-                ->label('Locale')
-                ->options(
-                    collect($resource::getTranslatableLocales())
-                        ->mapWithKeys(function (string $locale): array {
-                            return [$locale => $locale];
-                        })
-                        ->toArray(),
-                )
-                ->hidden(! $resource::isTranslatable()),
-            ButtonAction::make('edit')
-                ->label('Edit')
-                ->url(fn () => $resource::getUrl('edit', ['record' => $this->record]))
-                ->hidden(! $resource::canEdit($this->record)),
-        ];
+        return array_merge(
+            ($resource::isTranslatable() ? [$this->getActiveFormLocaleSelectAction()] : []),
+            ($resource::canEdit($this->record) ? [$this->getEditButtonAction()] : []),
+        );
+    }
+
+    protected function getActiveFormLocaleSelectAction(): SelectAction
+    {
+        return SelectAction::make('activeFormLocale')
+            ->label('Locale')
+            ->options(
+                collect(static::getResource()::getTranslatableLocales())
+                    ->mapWithKeys(function (string $locale): array {
+                        return [$locale => $locale];
+                    })
+                    ->toArray(),
+            );
+    }
+
+    protected function getEditButtonAction(): ButtonAction
+    {
+        return ButtonAction::make('edit')
+            ->label('Edit')
+            ->url(fn () => static::getResource()::getUrl('edit', ['record' => $this->record]));
     }
 
     protected function getTitle(): string
