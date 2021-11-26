@@ -23,7 +23,7 @@
                 rel="noopener noreferrer"
                 class="text-gray-600 hover:text-primary-500 transition focus:outline-none focus:underline"
             >
-                Documentation
+                {{ __('filament::widgets/filament-info-widget.buttons.visit_documentation.label') }}
             </a>
 
             <span>
@@ -36,7 +36,7 @@
                 rel="noopener noreferrer"
                 class="text-gray-600 hover:text-primary-500 transition focus:outline-none focus:underline"
             >
-                GitHub
+                {{ __('filament::widgets/filament-info-widget.buttons.visit_github.label') }}
             </a>
         </div>
     </div>

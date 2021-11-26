@@ -8,14 +8,15 @@ use Illuminate\Support\Str;
 class MakePageCommand extends Command
 {
     use Concerns\CanManipulateFiles;
+    use Concerns\CanValidateInput;
 
     protected $description = 'Creates a Filament page class and view.';
 
-    protected $signature = 'make:filament-page {name} {--R|resource=}';
+    protected $signature = 'make:filament-page {name?} {--R|resource=}';
 
     public function handle(): int
     {
-        $page = (string) Str::of($this->argument('name'))
+        $page = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `Settings`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
@@ -28,8 +29,10 @@ class MakePageCommand extends Command
         $resource = null;
         $resourceClass = null;
 
-        if ($this->option('resource') !== null) {
-            $resource = (string) Str::of($this->option('resource'))
+        $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `UserResource`)');
+
+        if ($resourceInput !== null) {
+            $resource = (string) Str::of($resourceInput)
                 ->studly()
                 ->trim('/')
                 ->trim('\\')
@@ -92,7 +95,7 @@ class MakePageCommand extends Command
 
         $this->info("Successfully created {$page}!");
 
-        if ($resource === null) {
+        if ($resource !== null) {
             $this->info("Make sure to register the page in `{$resourceClass}::getPages()`.");
         }
 

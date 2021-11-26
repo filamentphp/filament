@@ -4,7 +4,7 @@ namespace Filament\AvatarProviders;
 
 use Filament\Models\Contracts\FilamentUser;
 
-class UiAvatarProvider implements Contracts\AvatarProvider
+class UiAvatarsProvider implements Contracts\AvatarProvider
 {
     public function get(FilamentUser $user): string
     {

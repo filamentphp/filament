@@ -112,7 +112,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     public static function getRecordTitle(?Model $record): ?string
     {
-        return $record?->getAttribute(static::getRecordTitleAttribute());
+        return $record?->getAttribute(static::getRecordTitleAttribute()) ?? $record?->getKey();
     }
 
     protected function getRelatedModel(): string

@@ -123,8 +123,8 @@ class FilamentManager
         }
 
         $groupedItems = collect($this->navigationItems)
-            ->sortBy(fn (NavigationItem $item): int => $item->getSort())
-            ->groupBy(fn (NavigationItem $item): ?string => $item->getGroup());
+            ->sortBy(fn (Navigation\NavigationItem $item): int => $item->getSort())
+            ->groupBy(fn (Navigation\NavigationItem $item): ?string => $item->getGroup());
 
         $sortedGroups = $groupedItems
             ->keys()

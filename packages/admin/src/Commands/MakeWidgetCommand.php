@@ -8,14 +8,15 @@ use Illuminate\Support\Str;
 class MakeWidgetCommand extends Command
 {
     use Concerns\CanManipulateFiles;
+    use Concerns\CanValidateInput;
 
     protected $description = 'Creates a Filament widget class.';
 
-    protected $signature = 'make:filament-widget {name}';
+    protected $signature = 'make:filament-widget {name?}';
 
     public function handle(): int
     {
-        $widget = (string) Str::of($this->argument('name'))
+        $widget = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `BlogPostsChartWidget`)', 'name'))
             ->studly()
             ->trim('/')
             ->trim('\\')

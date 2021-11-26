@@ -1,3 +1,3 @@
 <div {{ $attributes->class(['px-6 py-4']) }}>
-    No search results found.
+    {{ __('filament::global-search.no_results_message') }}
 </div>

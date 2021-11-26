@@ -11,12 +11,12 @@
 
         <div>
             <h2 class="text-lg sm:text-xl font-bold tracking-tight">
-                Welcome, {{ $user->getFilamentName() }}
+                {{ __('filament::widgets/account-widget.welcome', ['user' => $user->getFilamentName()]) }}
             </h2>
 
             <p class="text-sm">
                 <a href="{{ route('filament.auth.logout') }}" class="text-gray-600 hover:text-primary-500 transition focus:outline-none focus:underline">
-                    Sign out
+                    {{ __('filament::widgets/account-widget.buttons.logout.label') }}
                 </a>
             </p>
         </div>

@@ -8,14 +8,15 @@ use Illuminate\Support\Str;
 class MakeResourceCommand extends Command
 {
     use Concerns\CanManipulateFiles;
+    use Concerns\CanValidateInput;
 
     protected $description = 'Creates a Filament resource class and default page classes.';
 
-    protected $signature = 'make:filament-resource {name}';
+    protected $signature = 'make:filament-resource {name?}';
 
     public function handle(): int
     {
-        $model = (string) Str::of($this->argument('name'))
+        $model = (string) Str::of($this->argument('name') ?? $this->askRequired('Model (e.g. `BlogPost`)', 'name'))
             ->studly()
             ->beforeLast('Resource')
             ->trim('/')

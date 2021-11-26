@@ -8,5 +8,5 @@ class MakeResourceCommand extends Commands\MakeResourceCommand
 {
     protected $hidden = true;
 
-    protected $signature = 'filament:resource {name}';
+    protected $signature = 'filament:resource {name?}';
 }

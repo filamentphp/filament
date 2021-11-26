@@ -5,17 +5,18 @@ namespace Filament\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
-class MakeRelationManagerCommand extends Command
+class MakeBelongsToManyCommand extends Command
 {
     use Concerns\CanManipulateFiles;
+    use Concerns\CanValidateInput;
 
-    protected $description = 'Creates a Filament relation manager class for a resource.';
+    protected $description = 'Creates a Filament BelongsToMany relation manager class for a resource.';
 
-    protected $signature = 'make:filament-relation-manager {resource} {relationship}';
+    protected $signature = 'make:filament-belongs-to-many {resource?} {relationship?} {recordTitleAttribute?}';
 
     public function handle(): int
     {
-        $resource = (string) Str::of($this->argument('resource'))
+        $resource = (string) Str::of($this->argument('resource') ?? $this->askRequired('Resource (e.g. `DepartmentResource`)', 'resource'))
             ->studly()
             ->trim('/')
             ->trim('\\')
@@ -26,10 +27,14 @@ class MakeRelationManagerCommand extends Command
             $resource .= 'Resource';
         }
 
-        $relationship = (string) Str::of($this->argument('relationship'))->trim(' ');
+        $relationship = (string) Str::of($this->argument('relationship') ?? $this->askRequired('Relationship (e.g. `members`)', 'relationship'))
+            ->trim(' ');
         $managerClass = (string) Str::of($relationship)
             ->studly()
             ->append('RelationManager');
+
+        $recordTitleAttribute = (string) Str::of($this->argument('recordTitleAttribute') ?? $this->askRequired('Title attribute (e.g. `name`)', 'title attribute'))
+            ->trim(' ');
 
         $path = app_path(
             (string) Str::of($managerClass)
@@ -44,9 +49,10 @@ class MakeRelationManagerCommand extends Command
             return static::INVALID;
         }
 
-        $this->copyStubToApp('RelationManager', $path, [
+        $this->copyStubToApp('BelongsToManyRelationManager', $path, [
             'namespace' => "App\\Filament\\Resources\\{$resource}\\RelationManagers",
             'managerClass' => $managerClass,
+            'recordTitleAttribute' => $recordTitleAttribute,
             'relationship' => $relationship,
         ]);
 

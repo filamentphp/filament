@@ -5,7 +5,7 @@ namespace Filament\Resources;
 use Closure;
 use Exception;
 use Filament\Facades\Filament;
-use Filament\NavigationItem;
+use Filament\Navigation\NavigationItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -227,7 +227,7 @@ class Resource
 
     public static function getRecordTitle(?Model $record): ?string
     {
-        return $record?->getAttribute(static::getRecordTitleAttribute());
+        return $record?->getAttribute(static::getRecordTitleAttribute()) ?? $record?->getKey();
     }
 
     public static function getRelations(): array

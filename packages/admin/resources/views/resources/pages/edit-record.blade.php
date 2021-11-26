@@ -14,21 +14,21 @@
     <x-slot name="modals">
         <x-filament::modal id="delete">
             <x-slot name="heading">
-                Delete {{ $this->getRecordTitle() ?? static::getResource()::getLabel() }}
+                {{ __('filament::resources/pages/edit-record.modals.delete.heading', ['record' => $this->getRecordTitle() ?? static::getResource()::getLabel()]) }}
             </x-slot>
 
             <x-slot name="subheading">
-                Are you sure you would like to do this?
+                {{ __('filament::resources/pages/edit-record.modals.delete.subheading') }}
             </x-slot>
 
             <x-slot name="actions">
                 <x-filament::modal.actions full-width>
                     <x-filament::button x-on:click="isOpen = false" color="secondary">
-                        Cancel
+                        {{ __('filament::resources/pages/edit-record.modals.delete.buttons.cancel.label') }}
                     </x-filament::button>
 
                     <x-filament::button wire:click="delete" color="danger">
-                        Delete
+                        {{ __('filament::resources/pages/edit-record.modals.delete.buttons.delete.label') }}
                     </x-filament::button>
                 </x-filament::modal.actions>
             </x-slot>
