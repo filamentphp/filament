@@ -6,7 +6,7 @@ use Filament\Pages\Page;
 
 class {{ class }} extends Page
 {
-    public static string $icon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    public static string $view = '{{ view }}';
+    protected static string $view = '{{ view }}';
 }

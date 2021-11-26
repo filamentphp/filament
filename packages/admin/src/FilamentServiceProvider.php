@@ -61,11 +61,6 @@ class FilamentServiceProvider extends PackageServiceProvider
         return array_merge($commands, $aliases);
     }
 
-    public function packageBooted(): void
-    {
-        $this->bootLivewireComponents();
-    }
-
     public function packageRegistered(): void
     {
         $this->app->singleton('filament', function (): FilamentManager {
@@ -77,6 +72,11 @@ class FilamentServiceProvider extends PackageServiceProvider
         $this->discoverPages();
         $this->discoverResources();
         $this->discoverWidgets();
+    }
+
+    public function packageBooted(): void
+    {
+        $this->bootLivewireComponents();
     }
 
     protected function bootLivewireComponents(): void

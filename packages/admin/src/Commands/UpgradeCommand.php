@@ -14,10 +14,8 @@ class UpgradeCommand extends Command
 
     public function handle(): int
     {
-        system('composer update');
-
         foreach ([
-            'migrate',
+            'config:clear',
             'livewire:discover',
             'route:clear',
             'view:clear',

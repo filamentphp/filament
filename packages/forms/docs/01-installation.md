@@ -10,23 +10,26 @@ Filament has a few requirements to run:
 - Laravel v8.0+
 - Livewire v2.0+
 
+The form builder comes pre-installed inside the [admin panel 2.x](/docs/admin/2.x), but you must still follow the installation instructions below if you're using it in the rest of your app.
+
 ## New Laravel projects
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/iy1DO8JXRDQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-To get started with the form builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [TailwindCSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with just one command:
+To get started with the form builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [TailwindCSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with these commands:
 
 ```bash
-composer require filament/forms && php artisan forms:install && npm install && npm run dev
+composer require filament/forms
+php artisan forms:install
+npm install
+npm run dev
 ```
 
-> This command will ruthlessly overwrite existing files in your application, hence why we only recommend using it for new projects.
+> These commands will ruthlessly overwrite existing files in your application, hence why we only recommend using this method for new projects.
 
 You're now ready to start [building forms](building-forms)!
 
 ## Existing Laravel projects
-
-> Please note that this package is incompatible with `filament/filament` v1, until v2 is released in late 2021. This is due to namespacing collisions.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/XslPKxtMR70" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
@@ -149,4 +152,14 @@ To upgrade the package to the latest version, you must run:
 composer update
 php artisan config:clear
 php artisan view:clear
+```
+
+To do this automatically, we recommend adding these commands to your `composer.json`'s `post-update-cmd`:
+
+```json
+"post-update-cmd": [
+    // ...
+    "@php artisan config:clear",
+    "@php artisan view:clear"
+],
 ```
