@@ -34,7 +34,7 @@ trait CanFilterRecords
         if (($this->filter === '' || $this->filter === null) &&
             ($defaultFilter = $this->getTable()->getDefaultFilter())
         ) {
-            $this->filter = $defaultFilter->getName();
+            $this->filter = $defaultFilter;
         }
 
         // We don't have any filter selected and no default one
