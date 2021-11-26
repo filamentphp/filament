@@ -58,6 +58,8 @@ class MakeHasManyCommand extends Command
 
         $this->info("Successfully created {$managerClass}!");
 
+        $this->info("Make sure to register the relation in `{$resource}::getRelations()`.");
+
         return static::SUCCESS;
     }
 }
