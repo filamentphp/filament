@@ -15,8 +15,6 @@ class Filter
 
     protected $isHidden = false;
 
-    protected $isDefault = false;
-
     protected $label;
 
     protected $name;
@@ -148,20 +146,6 @@ class Filter
     public function isHidden()
     {
         return $this->isHidden;
-    }
-
-    public function default()
-    {
-        $this->configure(function () {
-            $this->isDefault = true;
-        });
-
-        return $this;
-    }
-
-    public function isDefault()
-    {
-        return $this->isDefault;
     }
 
     public function label($label)
