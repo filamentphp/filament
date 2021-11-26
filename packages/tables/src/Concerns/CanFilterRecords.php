@@ -26,11 +26,19 @@ trait CanFilterRecords
 
     protected function applyFilters($query)
     {
-        if (
-            ! $this->isFilterable() ||
-            $this->filter === '' ||
-            $this->filter === null
+        if (! $this->isFilterable()) {
+            return $query;
+        }
+
+        // Check if we have a default filter when no filter is selected
+        if (($this->filter === '' || $this->filter === null) &&
+            ($defaultFilter = $this->getTable()->getDefaultFilter())
         ) {
+            $this->filter = $defaultFilter->getName();
+        }
+
+        // We don't have any filter selected and no default one
+        if ($this->filter === '' || $this->filter === null) {
             return $query;
         }
 
