@@ -19,4 +19,9 @@ class Dashboard extends Page
             Route::get('/', static::class)->name(static::getSlug());
         };
     }
+
+    protected function getTitle(): string
+    {
+        return static::$title ?? __('filament::pages/dashboard.title');
+    }
 }

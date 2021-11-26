@@ -21,7 +21,7 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
     public function getBreadcrumb(): string
     {
-        return static::$breadcrumb ?? 'Create';
+        return static::$breadcrumb ?? __('filament::resources/pages/create-record.breadcrumb');
     }
 
     public function mount(): void
@@ -100,7 +100,7 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
     protected function getActiveFormLocaleSelectAction(): SelectAction
     {
         return SelectAction::make('activeFormLocale')
-            ->label('Locale')
+            ->label(__('filament::resources/pages/create-record.actions.active_form_locale.label'))
             ->options(
                 collect(static::getResource()::getTranslatableLocales())
                     ->mapWithKeys(function (string $locale): array {
@@ -121,14 +121,14 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
     protected function getCreateButtonFormAction(): ButtonAction
     {
         return ButtonAction::make('create')
-            ->label('Create')
+            ->label(__('filament::resources/pages/create-record.form.actions.create.label'))
             ->submit();
     }
 
     protected function getCancelButtonFormAction(): ButtonAction
     {
         return ButtonAction::make('cancel')
-            ->label('Cancel')
+            ->label(__('filament::resources/pages/create-record.form.actions.cancel.label'))
             ->url(static::getResource()::getUrl())
             ->color('secondary');
     }

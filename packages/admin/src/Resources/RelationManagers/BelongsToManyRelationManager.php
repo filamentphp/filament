@@ -26,9 +26,10 @@ class BelongsToManyRelationManager extends RelationManager
                 $this->getDeleteLinkTableAction(),
             ]);
 
-            if ($this->canDeleteAny()) {
-                $table->bulkActions([$this->getDeleteTableBulkAction()]);
-            }
+            $table->bulkActions(array_merge(
+                ($this->canDeleteAny() ? [$this->getDeleteTableBulkAction()] : []),
+                ($this->canDetachAny() ? [$this->getDetachTableBulkAction()] : []),
+            ));
 
             $table->headerActions(array_merge(
                 ($this->canCreate() ? [$this->getCreateButtonTableHeaderAction()] : []),

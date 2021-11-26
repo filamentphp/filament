@@ -2,6 +2,46 @@
 
 return [
 
+    'title' => 'Edit :record',
+
+    'breadcrumb' => 'Edit',
+
+    'actions' => [
+
+        'active_form_locale' => [
+            'label' => 'Locale',
+        ],
+
+        'delete' => [
+            'label' => 'Delete',
+        ],
+
+        'view' => [
+            'label' => 'View',
+        ],
+
+    ],
+
+    'form' => [
+
+        'actions' => [
+
+            'cancel' => [
+                'label' => 'Cancel',
+            ],
+
+            'save' => [
+                'label' => 'Save',
+            ],
+
+        ],
+
+    ],
+
+    'messages' => [
+        'saved' => 'Saved'
+    ],
+
     'modals' => [
 
         'delete' => [

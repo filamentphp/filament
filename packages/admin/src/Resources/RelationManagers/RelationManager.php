@@ -29,7 +29,11 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     protected ?Table $resourceTable = null;
 
-    protected static string $title;
+    protected static ?string $label = null;
+
+    protected static ?string $pluralLabel = null;
+
+    protected static ?string $title = null;
 
     protected static string $view;
 
@@ -99,10 +103,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     public static function getTitle(): string
     {
-        return static::$title ?? (string) Str::of(static::getRelationshipName())
-            ->kebab()
-            ->replace('-', ' ')
-            ->title();
+        return static::$title ?? Str::title(static::getPluralRecordLabel());
     }
 
     public static function getRecordTitleAttribute(): ?string
@@ -113,6 +114,18 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     public static function getRecordTitle(?Model $record): ?string
     {
         return $record?->getAttribute(static::getRecordTitleAttribute()) ?? $record?->getKey();
+    }
+
+    protected static function getRecordLabel(): string
+    {
+        return static::$label ?? Str::singular(static::getPluralRecordLabel());
+    }
+
+    protected static function getPluralRecordLabel(): string
+    {
+        return static::$pluralLabel ?? (string) Str::of(static::getRelationshipName())
+            ->kebab()
+            ->replace('-', ' ');
     }
 
     protected function getRelatedModel(): string

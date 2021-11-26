@@ -48,10 +48,11 @@ trait CanCreateRecords
     protected function getCreateButtonTableHeaderAction(): Tables\Actions\ButtonAction
     {
         return Tables\Actions\ButtonAction::make('create')
-            ->label('Create')
+            ->label(__('filament::resources/relation-managers/create.action.label'))
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
-            ->modalButton('Create')
+            ->modalButton(__('filament::resources/relation-managers/create.action.modal.actions.create.label'))
+            ->modalHeading(__('filament::resources/relation-managers/create.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->create());
     }
 }

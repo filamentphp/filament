@@ -37,7 +37,7 @@ trait CanAttachRecords
     protected static function getAttachFormRecordSelect(): Select
     {
         return Select::make('recordId')
-            ->label('Record')
+            ->label(__('filament::resources/relation-managers/attach.action.modal.fields.record_id.label'))
             ->searchable()
             ->getSearchResultsUsing(function (RelationManager $livewire, string $query): array {
                 $relationship = $livewire->getRelationship();
@@ -104,10 +104,11 @@ trait CanAttachRecords
     protected function getAttachButtonTableHeaderAction(): Tables\Actions\ButtonAction
     {
         return Tables\Actions\ButtonAction::make('attach')
-            ->label('Attach')
+            ->label(__('filament::resources/relation-managers/attach.action.label'))
             ->form($this->getAttachFormSchema())
             ->mountUsing(fn () => $this->fillAttachForm())
-            ->modalButton('Attach')
+            ->modalButton(__('filament::resources/relation-managers/attach.action.modal.actions.attach.label'))
+            ->modalHeading(__('filament::resources/relation-managers/attach.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->modalWidth('sm')
             ->action(fn () => $this->attach())
             ->color('secondary');

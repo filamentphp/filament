@@ -30,8 +30,9 @@ trait CanDeleteRecords
     protected function getDeleteLinkTableAction(): Tables\Actions\LinkAction
     {
         return Tables\Actions\LinkAction::make('delete')
-            ->label('Delete')
+            ->label(__('filament::resources/relation-managers/delete.action.label'))
             ->requiresConfirmation()
+            ->modalHeading(__('filament::resources/relation-managers/delete.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->delete())
             ->color('danger')
             ->hidden(fn (Model $record): bool => ! static::canDelete($record));
@@ -40,9 +41,10 @@ trait CanDeleteRecords
     protected function getDeleteTableBulkAction(): Tables\Actions\BulkAction
     {
         return Tables\Actions\BulkAction::make('delete')
-            ->label('Delete selected')
+            ->label(__('filament::resources/relation-managers/delete.bulk_action.label'))
             ->action(fn (Collection $records) => $records->each->delete())
             ->requiresConfirmation()
+            ->modalHeading(__('filament::resources/relation-managers/delete.bulk_action.modal.heading', ['label' => static::getPluralRecordLabel()]))
             ->deselectRecordsAfterCompletion()
             ->color('danger')
             ->icon('heroicon-o-trash');

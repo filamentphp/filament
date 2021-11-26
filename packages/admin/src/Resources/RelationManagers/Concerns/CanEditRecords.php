@@ -50,10 +50,11 @@ trait CanEditRecords
     protected function getEditLinkTableAction(): Tables\Actions\LinkAction
     {
         return Tables\Actions\LinkAction::make('edit')
-            ->label('Edit')
+            ->label(__('filament::resources/relation-managers/edit.action.label'))
             ->form($this->getEditFormSchema())
             ->mountUsing(fn () => $this->fillEditForm())
-            ->modalButton('Save')
+            ->modalButton(__('filament::resources/relation-managers/edit.action.modal.actions.save.label'))
+            ->modalHeading(__('filament::resources/relation-managers/edit.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->save())
             ->hidden(fn (Model $record): bool => ! static::canEdit($record));
     }

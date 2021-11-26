@@ -23,7 +23,7 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
 
     public function getBreadcrumb(): string
     {
-        return static::$breadcrumb ?? 'View';
+        return static::$breadcrumb ?? __('filament::resources/pages/view-record.breadcrumb');
     }
 
     public function mount($record): void
@@ -94,7 +94,7 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
     protected function getActiveFormLocaleSelectAction(): SelectAction
     {
         return SelectAction::make('activeFormLocale')
-            ->label('Locale')
+            ->label(__('filament::resources/pages/view-record.actions.active_form_locale.label'))
             ->options(
                 collect(static::getResource()::getTranslatableLocales())
                     ->mapWithKeys(function (string $locale): array {
@@ -107,7 +107,7 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
     protected function getEditButtonAction(): ButtonAction
     {
         return ButtonAction::make('edit')
-            ->label('Edit')
+            ->label(__('filament::resources/pages/view-record.actions.edit.label'))
             ->url(fn () => static::getResource()::getUrl('edit', ['record' => $this->record]));
     }
 
