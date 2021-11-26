@@ -107,6 +107,13 @@ class Table
         return $this->filters;
     }
 
+    public function getDefaultFilter()
+    {
+        return collect($this->getFilters())
+            ->filter(fn (Filter $filter) => $filter->isDefault())
+            ->first();
+    }
+
     public function getLivewire()
     {
         return $this->livewire;
