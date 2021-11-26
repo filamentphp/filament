@@ -169,7 +169,8 @@ They have access to the following customization options:
 
 ```php
 Filter::make($name, $callback = fn ($query) => $query)
-    ->label($label); // Set custom label text for with the filter, which is otherwise automatically generated based on its name. It supports localization strings.
+    ->label($label) // Set custom label text for with the filter, which is otherwise automatically generated based on its name. It supports localization strings.
+    ->default(); // Set the filter to be applied when no other filter is selected. Only the first default filter is applied.
 ```
 
 ### Reusable Filters
