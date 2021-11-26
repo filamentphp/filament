@@ -3,7 +3,7 @@
 namespace Filament\Pages;
 
 use Filament\Forms;
-use Filament\View\Components\Actions\ButtonAction;
+use Filament\Pages\Actions\ButtonAction;
 
 class SettingsPage extends Page implements Forms\Contracts\HasForms
 {
