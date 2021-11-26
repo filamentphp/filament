@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Actions\Concerns;
+namespace Filament\Tables\Actions\Modal\Actions\Concerns;
 
 trait HasColor
 {

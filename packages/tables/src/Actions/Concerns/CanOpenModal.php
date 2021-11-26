@@ -2,8 +2,14 @@
 
 namespace Filament\Tables\Actions\Concerns;
 
+use Filament\Tables\Actions\Modal\Actions\ButtonAction;
+
 trait CanOpenModal
 {
+    protected ?bool $isModalCentered = null;
+
+    protected ?array $modalActions = null;
+
     protected ?string $modalButtonLabel = null;
 
     protected ?string $modalHeading = null;
@@ -11,6 +17,20 @@ trait CanOpenModal
     protected ?string $modalSubheading = null;
 
     protected ?string $modalWidth = null;
+
+    public function centerModal(?bool $condition = true): static
+    {
+        $this->isModalCentered = $condition;
+
+        return $this;
+    }
+
+    public function modalActions(?array $actions = null): static
+    {
+        $this->modalActions = $actions;
+
+        return $this;
+    }
 
     public function modalButton(?string $label = null): static
     {
@@ -40,6 +60,32 @@ trait CanOpenModal
         return $this;
     }
 
+    public function getModalActions(): array
+    {
+        if ($this->modalActions !== null) {
+            return $this->modalActions;
+        }
+
+        $color = $this->getColor();
+
+        $actions = [
+            ButtonAction::make('submit')
+                ->label($this->getModalButtonLabel())
+                ->submit()
+                ->color($color !== 'secondary' ? $color : null),
+            ButtonAction::make('cancel')
+                ->label(__('tables::table.actions.modal.buttons.cancel.label'))
+                ->cancel()
+                ->color('secondary'),
+        ];
+
+        if ($this->isModalCentered()) {
+            $actions = array_reverse($actions);
+        }
+
+        return $actions;
+    }
+
     public function getModalButtonLabel(): string
     {
         if ($this->modalButtonLabel) {
@@ -64,24 +110,41 @@ trait CanOpenModal
             return $this->modalSubheading;
         }
 
-        if (! $this->isConfirmationRequired()) {
-            return null;
+        if ($this->isConfirmationRequired()) {
+            return __('tables::table.actions.modal.requires_confirmation_subheading');
         }
 
-        return __('tables::table.actions.modal.requires_confirmation_subheading');
+        return null;
     }
 
     public function getModalWidth(): string
     {
-        return $this->modalWidth ?? 'sm';
+        if ($this->modalWidth) {
+            return $this->modalWidth;
+        }
+
+        if ($this->isConfirmationRequired()) {
+            return 'sm';
+        }
+
+        return '4xl';
+    }
+
+    public function isModalCentered(): bool
+    {
+        if ($this->isModalCentered !== null) {
+            return $this->isModalCentered;
+        }
+
+        if (in_array($this->getModalWidth(), ['xs', 'sm'])) {
+            return true;
+        }
+
+        return $this->isConfirmationRequired();
     }
 
     public function shouldOpenModal(): bool
     {
-        if ($this->isConfirmationRequired()) {
-            return true;
-        }
-
-        return $this->hasFormSchema();
+        return $this->isConfirmationRequired() || $this->hasFormSchema();
     }
 }

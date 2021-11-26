@@ -70,7 +70,7 @@
                         </div>
 
                         @if ($isSearchVisible || $isFiltersDropdownVisible)
-                            <div class="w-full md:w-auto flex items-center space-x-2 md:max-w-md">
+                            <div class="w-full md:w-auto flex items-center gap-2 md:max-w-md">
                                 @if ($isSearchVisible)
                                     <div class="flex-1">
                                         <x-tables::search-input />
@@ -149,7 +149,7 @@
                             @endforeach
 
                             @if (count($actions))
-                                <x-tables::actions-cell :actions="$actions" :record="$record" class="justify-center" />
+                                <x-tables::actions-cell :actions="$actions" :record="$record" />
                             @endif
                         </x-tables::row>
                     @endforeach
@@ -197,13 +197,21 @@
 
         <x-tables::modal id="action" :width="$action?->getModalWidth()" display-classes="block">
             @if ($action)
-                <x-slot name="heading">
-                    {{ $action->getModalHeading() }}
-                </x-slot>
+                @if ($action->isModalCentered())
+                    <x-slot name="heading">
+                        {{ $action->getModalHeading() }}
+                    </x-slot>
 
-                @if ($subheading = $action->getModalSubheading())
-                    <x-slot name="subheading">
-                        {{ $subheading }}
+                    @if ($subheading = $action->getModalSubheading())
+                        <x-slot name="subheading">
+                            {{ $subheading }}
+                        </x-slot>
+                    @endif
+                @else
+                    <x-slot name="header">
+                        <x-tables::modal.heading>
+                            {{ $action->getModalHeading() }}
+                        </x-tables::modal.heading>
                     </x-slot>
                 @endif
 
@@ -212,14 +220,10 @@
                 @endif
 
                 <x-slot name="footer">
-                    <x-tables::modal.actions full-width>
-                        <x-tables::button x-on:click="isOpen = false" color="secondary">
-                            Cancel
-                        </x-tables::button>
-
-                        <x-tables::button type="submit" :color="$action->getColor()">
-                            {{ $action->getModalButtonLabel() }}
-                        </x-tables::button>
+                    <x-tables::modal.actions :full-width="$action->isModalCentered()">
+                        @foreach ($action->getModalActions() as $modalAction)
+                            {{ $modalAction }}
+                        @endforeach
                     </x-tables::modal.actions>
                 </x-slot>
             @endif
@@ -233,13 +237,21 @@
 
         <x-tables::modal id="bulk-action" :width="$action?->getModalWidth()" display-classes="block">
             @if ($action)
-                <x-slot name="heading">
-                    {{ $action->getModalHeading() }}
-                </x-slot>
+                @if ($action->isModalCentered())
+                    <x-slot name="heading">
+                        {{ $action->getModalHeading() }}
+                    </x-slot>
 
-                @if ($subheading = $action->getModalSubheading())
-                    <x-slot name="subheading">
-                        {{ $subheading }}
+                    @if ($subheading = $action->getModalSubheading())
+                        <x-slot name="subheading">
+                            {{ $subheading }}
+                        </x-slot>
+                    @endif
+                @else
+                    <x-slot name="header">
+                        <x-tables::modal.heading>
+                            {{ $action->getModalHeading() }}
+                        </x-tables::modal.heading>
                     </x-slot>
                 @endif
 
@@ -248,14 +260,10 @@
                 @endif
 
                 <x-slot name="footer">
-                    <x-tables::modal.actions full-width>
-                        <x-tables::button x-on:click="isOpen = false" color="secondary">
-                            Cancel
-                        </x-tables::button>
-
-                        <x-tables::button type="submit" :color="$action->getColor()">
-                            {{ $action->getModalButtonLabel() }}
-                        </x-tables::button>
+                    <x-tables::modal.actions :full-width="$action->isModalCentered()">
+                        @foreach ($action->getModalActions() as $modalAction)
+                            {{ $modalAction }}
+                        @endforeach
                     </x-tables::modal.actions>
                 </x-slot>
             @endif
