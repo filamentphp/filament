@@ -169,8 +169,25 @@ They have access to the following customization options:
 
 ```php
 Filter::make($name, $callback = fn ($query) => $query)
-    ->label($label) // Set custom label text for with the filter, which is otherwise automatically generated based on its name. It supports localization strings.
-    ->default(); // Set the filter to be applied when no other filter is selected. Only the first default filter is applied.
+    ->label($label); // Set custom label text for with the filter, which is otherwise automatically generated based on its name. It supports localization strings.
+```
+
+You can define a default filter to be applied when no other filter is selected by the user by calling `defaultFilter()` on the `Table` object:
+
+```php
+public static function table(Table $table)
+{
+    return $table
+        ->columns([
+            ...
+        ])
+        ->filters([
+            Filter::make('individuals', fn ($query) => $query->where('type', 'individual')),
+            Filter::make('organizations', fn ($query) => $query->where('type', 'organization')),
+            Filter::make('active', fn ($query) => $query->where('is_active', true)),
+        ])
+        ->defaultFilter('individuals');
+}
 ```
 
 ### Reusable Filters
