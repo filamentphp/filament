@@ -39,7 +39,7 @@ return [
     ],
 
     'messages' => [
-        'saved' => 'Saved'
+        'saved' => 'Saved',
     ],
 
     'modals' => [
