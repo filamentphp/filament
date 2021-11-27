@@ -18900,6 +18900,7 @@ var multi_select_default = (Alpine) => {
         if (!this.state) {
           this.state = [];
         }
+        this.state = this.state.map((value) => value.toString());
         this.labels = await getOptionLabelsUsing();
         this.$watch("search", async () => {
           if (!this.isOpen || this.search === "" || this.search === null) {
@@ -19069,6 +19070,9 @@ var select_default = (Alpine) => {
           this.openListbox();
         }
         this.label = await getOptionLabelUsing();
+        if (this.state !== null) {
+          this.state = this.state.toString();
+        }
         this.$watch("search", async () => {
           if (!this.isOpen || this.search === "" || this.search === null) {
             this.options = options;
