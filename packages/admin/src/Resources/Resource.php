@@ -3,7 +3,6 @@
 namespace Filament\Resources;
 
 use Closure;
-use Exception;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Database\Eloquent\Builder;
