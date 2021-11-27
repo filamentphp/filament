@@ -4,14 +4,6 @@ return [
 
     'breadcrumb' => 'Create',
 
-    'actions' => [
-
-        'active_form_locale' => [
-            'label' => 'Locale',
-        ],
-
-    ],
-
     'form' => [
 
         'actions' => [

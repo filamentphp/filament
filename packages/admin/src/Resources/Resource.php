@@ -19,8 +19,6 @@ class Resource
 
     protected static bool $isGloballySearchable = true;
 
-    protected static bool $isTranslatable = false;
-
     protected static ?string $label = null;
 
     protected static ?string $model = null;
@@ -38,8 +36,6 @@ class Resource
     protected static ?string $recordTitleAttribute = null;
 
     protected static ?string $slug = null;
-
-    protected static ?array $translatableLocales = null;
 
     public static function form(Form $form): Form
     {

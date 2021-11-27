@@ -17,8 +17,6 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
     public $data;
 
-    public $activeFormLocale = null;
-
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? __('filament::resources/pages/create-record.breadcrumb');
@@ -30,20 +28,7 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
         abort_unless(static::getResource()::canCreate(), 403);
 
-        $this->setActiveFormLocale();
-
         $this->fillForm();
-    }
-
-    protected function setActiveFormLocale(): void
-    {
-        $resource = static::getResource();
-
-        if (! $resource::isTranslatable()) {
-            return;
-        }
-
-        $this->activeFormLocale = $resource::getDefaultTranslatableLocale();
     }
 
     protected function fillForm(): void
@@ -67,15 +52,7 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
         $resource = static::getResource();
 
-        if ($resource::isTranslatable()) {
-            $this->record = static::getModel()::usingLocale(
-                $this->activeFormLocale,
-            )->fill($data);
-
-            $this->record->save();
-        } else {
-            $this->record = static::getModel()::create($data);
-        }
+        $this->record = static::getModel()::create($data);
 
         $this->form->model($this->record)->saveRelationships();
 
@@ -84,30 +61,6 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
         if ($redirectUrl = $this->getRedirectUrl()) {
             $this->redirect($redirectUrl);
         }
-    }
-
-    protected function getActions(): array
-    {
-        if (! static::getResource()::isTranslatable()) {
-            return [];
-        }
-
-        return [
-            $this->getActiveFormLocaleSelectAction(),
-        ];
-    }
-
-    protected function getActiveFormLocaleSelectAction(): SelectAction
-    {
-        return SelectAction::make('activeFormLocale')
-            ->label(__('filament::resources/pages/create-record.actions.active_form_locale.label'))
-            ->options(
-                collect(static::getResource()::getTranslatableLocales())
-                    ->mapWithKeys(function (string $locale): array {
-                        return [$locale => $locale];
-                    })
-                    ->toArray(),
-            );
     }
 
     protected function getFormActions(): array

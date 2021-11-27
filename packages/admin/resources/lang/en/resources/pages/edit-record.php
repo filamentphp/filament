@@ -8,10 +8,6 @@ return [
 
     'actions' => [
 
-        'active_form_locale' => [
-            'label' => 'Locale',
-        ],
-
         'delete' => [
             'label' => 'Delete',
         ],

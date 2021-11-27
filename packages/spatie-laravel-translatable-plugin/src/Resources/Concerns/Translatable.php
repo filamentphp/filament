@@ -4,6 +4,8 @@ namespace Filament\Resources\Concerns;
 
 trait Translatable
 {
+    protected static ?array $translatableLocales = null;
+
     public static function getDefaultTranslatableLocale(): string
     {
         return static::getTranslatableLocales()[0];
@@ -28,11 +30,6 @@ trait Translatable
 
     public static function getTranslatableLocales(): array
     {
-        return static::$translatableLocales ?? config('filament.default_translatable_locales');
-    }
-
-    public static function isTranslatable(): bool
-    {
-        return static::$isTranslatable;
+        return static::$translatableLocales ?? config('filament-spatie-laravel-translatable-plugin.default_locales');
     }
 }

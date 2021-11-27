@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Translatable Locales
+    | Default Locales
     |--------------------------------------------------------------------------
     |
     | These are the locales that Filament will use to put translate resource
@@ -13,6 +13,6 @@ return [
     |
     */
 
-    'default_translatable_locales' => [config('app.locale')],
+    'default_locales' => [config('app.locale')],
 
 ];
