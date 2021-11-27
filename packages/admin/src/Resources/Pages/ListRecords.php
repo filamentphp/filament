@@ -91,7 +91,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         $resource = static::getResource();
 
-        if ($resource::canCreate()) {
+        if (! $resource::canCreate()) {
             return [];
         }
 
