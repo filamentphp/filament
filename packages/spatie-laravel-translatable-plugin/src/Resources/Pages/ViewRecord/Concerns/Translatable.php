@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Pages\ViewRecord\Concerns;
 
-use Filament\Pages\Actions\SelectAction;
 use Filament\Resources\Pages\Concerns\HasActiveFormLocaleSelect;
 
 trait Translatable

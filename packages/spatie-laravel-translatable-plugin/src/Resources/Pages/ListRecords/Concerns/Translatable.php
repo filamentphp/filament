@@ -2,4 +2,6 @@
 
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
-trait Translatable {}
+trait Translatable
+{
+}
