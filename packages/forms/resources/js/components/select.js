@@ -28,6 +28,10 @@ export default (Alpine) => {
 
                 this.label = await getOptionLabelUsing()
 
+                if (this.state !== null) {
+                    this.state = this.state.toString()
+                }
+
                 this.$watch('search', async () => {
                     if (! this.isOpen || this.search === '' || this.search === null) {
                         this.options = options
