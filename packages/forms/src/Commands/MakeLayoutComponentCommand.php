@@ -8,14 +8,15 @@ use Illuminate\Support\Str;
 class MakeLayoutComponentCommand extends Command
 {
     use Concerns\CanManipulateFiles;
+    use Concerns\CanValidateInput;
 
     protected $description = 'Creates a form layout component class and view.';
 
-    protected $signature = 'make:form-layout {name}';
+    protected $signature = 'make:form-layout {name?}';
 
     public function handle(): int
     {
-        $component = (string) Str::of($this->argument('name'))
+        $component = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `Wizard`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')

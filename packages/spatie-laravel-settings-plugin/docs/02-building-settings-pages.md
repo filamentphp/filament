@@ -35,7 +35,9 @@ protected function getFormSchema(): array
         Repeater::make('links')
             ->schema([
                 TextInput::make('label')->required(),
-                TextInput::make('url')->url()->required(),
+                TextInput::make('url')
+                    ->url()
+                    ->required(),
             ]),
     ];
 }

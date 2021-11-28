@@ -28,16 +28,4 @@ To upgrade the package to the latest version, you must run:
 
 ```bash
 composer update
-php artisan config:clear
-php artisan view:clear
-```
-
-To do this automatically, we recommend adding these commands to your `composer.json`'s `post-update-cmd`:
-
-```json
-"post-update-cmd": [
-    // ...
-    "@php artisan config:clear",
-    "@php artisan view:clear"
-],
 ```

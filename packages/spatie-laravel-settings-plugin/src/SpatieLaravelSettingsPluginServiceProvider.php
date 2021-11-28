@@ -10,6 +10,10 @@ class SpatieLaravelSettingsPluginServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands($this->getCommands());
+
+            $this->publishes([
+                __DIR__ . '/../resources/views' => resource_path('views/vendor/filament-spatie-laravel-settings-plugin'),
+            ]);
         }
 
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'filament-spatie-laravel-settings-plugin');
