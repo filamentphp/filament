@@ -3,6 +3,7 @@
 namespace Filament\Resources\RelationManagers;
 
 use Filament\Resources\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
 class BelongsToManyRelationManager extends RelationManager
@@ -88,5 +89,11 @@ class BelongsToManyRelationManager extends RelationManager
         $relationship->updateExistingPivot($record, $pivotData);
 
         $this->callHook('afterSave');
+    }
+
+    // https://github.com/laravel/framework/issues/4962
+    public function applySelectToTableQuery(Builder $query): Builder
+    {
+        return $query->select($this->getRelationship()->getTable().'.*', $query->getModel()->getTable().'.*');
     }
 }

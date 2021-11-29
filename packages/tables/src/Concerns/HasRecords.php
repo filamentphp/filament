@@ -36,6 +36,8 @@ trait HasRecords
 
         $this->applySortingToTableQuery($query);
 
+        $this->applySelectToTableQuery($query);
+
         if ($this->isTablePaginationEnabled()) {
             return $this->records = $query->paginate($this->getTableRecordsPerPage())->onEachSide(1);
         } else {
@@ -46,5 +48,10 @@ trait HasRecords
     protected function resolveTableRecord(?string $key): ?Model
     {
         return $this->getTableQuery()->find($key);
+    }
+
+    protected function applySelectToTableQuery(Builder $query): Builder
+    {
+        return $query;
     }
 }
