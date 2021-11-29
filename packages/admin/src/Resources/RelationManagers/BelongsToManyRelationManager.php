@@ -92,8 +92,10 @@ class BelongsToManyRelationManager extends RelationManager
     }
 
     // https://github.com/laravel/framework/issues/4962
-    public function applySelectToTableQuery(Builder $query): Builder
+    protected function getTableQuery(): Builder
     {
+        $query = parent::getTableQuery();
+
         return $query->select($this->getRelationship()->getTable().'.*', $query->getModel()->getTable().'.*');
     }
 }
