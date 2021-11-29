@@ -2,7 +2,6 @@
 
 namespace Filament\Http\Middleware;
 
-use Exception;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
