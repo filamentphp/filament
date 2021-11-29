@@ -3,13 +3,14 @@
 namespace Filament\Tables\Filters;
 
 use Filament\Forms\Components\Select;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 
 class SelectFilter extends Filter
 {
     protected ?string $column = null;
 
-    protected array $options = [];
+    protected array | Arrayable $options = [];
 
     public function apply(Builder $query, array $data = []): Builder
     {
@@ -33,7 +34,7 @@ class SelectFilter extends Filter
         return $this;
     }
 
-    public function options(array $options): static
+    public function options(array | Arrayable $options): static
     {
         $this->options = $options;
 
@@ -47,7 +48,13 @@ class SelectFilter extends Filter
 
     public function getOptions(): array
     {
-        return $this->options;
+        $options = $this->options;
+
+        if ($options instanceof Arrayable) {
+            $options = $options->toArray();
+        }
+
+        return $options;
     }
 
     public function getFormSchema(): array

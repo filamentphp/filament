@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
+use Illuminate\Contracts\Support\Arrayable;
 
 class IconColumn extends Column
 {
@@ -10,9 +11,9 @@ class IconColumn extends Column
 
     protected string $view = 'tables::columns.icon-column';
 
-    protected array $options = [];
+    protected array | Arrayable $options = [];
 
-    public function options(array $options): static
+    public function options(array | Arrayable $options): static
     {
         $this->options = $options;
 
@@ -39,6 +40,12 @@ class IconColumn extends Column
 
     public function getOptions(): array
     {
-        return $this->options;
+        $options = $this->options;
+
+        if ($options instanceof Arrayable) {
+            $options = $options->toArray();
+        }
+
+        return $options;
     }
 }
