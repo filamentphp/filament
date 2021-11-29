@@ -8,14 +8,15 @@ use Illuminate\Support\Str;
 class MakeColumnCommand extends Command
 {
     use Concerns\CanManipulateFiles;
+    use Concerns\CanValidateInput;
 
     protected $description = 'Creates a table column class and cell view.';
 
-    protected $signature = 'make:table-column {name}';
+    protected $signature = 'make:table-column {name?}';
 
     public function handle(): int
     {
-        $column = (string) Str::of($this->argument('name'))
+        $column = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `StatusSwitcher`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
