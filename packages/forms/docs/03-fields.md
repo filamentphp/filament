@@ -57,7 +57,7 @@ TextInput::make('name')->validationAttribute('full name')
 
 ### Setting a default value
 
-Fields may have a default value. This will be filled if the [form's `fill()` method](building-forms#default-data) is called without any arguments. To define a default value, use the `default()` method:
+Fields may have a default value. This will be filled if the [form's `fill()` method](getting-started#default-data) is called without any arguments. To define a default value, use the `default()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -390,7 +390,7 @@ Commonly, you may desire "dependant" select inputs, which populate their options
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/W_eNyimRi3w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-Some of the techniques described in the [advanced forms](advanced-forms) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customisation possibilities.
+Some of the techniques described in the [advanced forms](advanced) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customisation possibilities.
 
 ### Populating automatically from a `belongsTo` relationship
 
@@ -404,7 +404,7 @@ BelongsToSelect::make('authorId')
     ->relationship('author', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](building-forms#field-relationships) section**.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**.
 
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
@@ -460,7 +460,7 @@ BelongsToManyMultiSelect::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](building-forms#field-relationships) section**.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**.
 
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 

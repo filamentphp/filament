@@ -1,5 +1,5 @@
 ---
-title: Building Tables
+title: Getting Started
 ---
 
 ## Preparing your Livewire component
@@ -373,7 +373,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
 }
 ```
 
-You may also [register multiple custom forms](/docs/forms/building-forms#using-multiple-forms) on your component:
+You may also [register multiple custom forms](/docs/forms/getting-started#using-multiple-forms) on your component:
 
 ```php
 <?php

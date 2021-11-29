@@ -1,5 +1,5 @@
 ---
-title: Building Forms
+title: Getting Started
 ---
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Kab21689E5A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -36,7 +36,7 @@ In your Livewire component's view, render the form:
 </div>
 ```
 
-Finally, add any [fields](fields), [layout components](layout), and [custom components](building-custom-components) to the Livewire component's `getFormSchema()` method:
+Finally, add any [fields](fields) and [layout components](layout) to the Livewire component's `getFormSchema()` method:
 
 ```php
 <?php
@@ -177,7 +177,7 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
 }
 ```
 
-> You may customize what happens after fields are hydrated [using the `afterStateHydrated()` method](advanced-forms#hydration).
+> You may customize what happens after fields are hydrated [using the `afterStateHydrated()` method](advanced#hydration).
 
 ## Getting data from forms
 
@@ -231,7 +231,7 @@ When `getState()` is run:
 2) Any pending file uploads are stored permanently in the filesystem.
 3) [Field relationships](#field-relationships), if they are defined, are saved.
 
-> You may transform the value that is dehydrated from a field [using the `dehydrateStateUsing()` method](advanced-forms#dehydration).
+> You may transform the value that is dehydrated from a field [using the `dehydrateStateUsing()` method](advanced#dehydration).
 
 ## Validation
 

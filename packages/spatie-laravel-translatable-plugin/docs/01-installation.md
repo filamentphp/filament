@@ -20,7 +20,7 @@ Install the plugin with Composer:
 composer require filament/spatie-laravel-translatable-plugin
 ```
 
-You're now ready to start [translating resources](translating-resources)!
+You're now ready to start [translating resources](getting-started)!
 
 ## Publishing the configuration
 

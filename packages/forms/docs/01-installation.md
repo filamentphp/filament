@@ -27,7 +27,7 @@ npm run dev
 
 > These commands will ruthlessly overwrite existing files in your application, hence why we only recommend using this method for new projects.
 
-You're now ready to start [building forms](building-forms)!
+You're now ready to start [building forms](getting-started)!
 
 ## Existing Laravel projects
 
@@ -142,7 +142,15 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 </html>
 ```
 
-You're now ready to start [building forms](building-forms)!
+You're now ready to start [building forms](getting-started)!
+
+## Publishing the configuration
+
+If you wish, you may publish the configuration of the package using:
+
+```bash
+php artisan vendor:publish --tag=forms-config
+```
 
 ## Upgrade Guide
 

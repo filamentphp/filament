@@ -22,16 +22,16 @@ class Authenticate extends Middleware
         $this->auth->shouldUse($guardName);
 
         $user = $this->auth->user();
-        $userClass = $user::class;
 
-        if (! $user instanceof FilamentUser) {
-            throw new Exception("Class [{$userClass}] does not implement the \Filament\Models\Contracts\FilamentUser interface.");
+        if (config('app.env') === 'local') {
+            return;
         }
 
-        abort_unless(
-            $user->canAccessFilament(),
-            404,
-        );
+        if ($user instanceof FilamentUser && $user->canAccessFilament()) {
+            return;
+        }
+
+        abort(404);
     }
 
     protected function redirectTo($request): string

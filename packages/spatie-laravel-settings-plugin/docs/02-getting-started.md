@@ -1,5 +1,5 @@
 ---
-title: Building Settings Pages
+title: Getting Started
 ---
 
 ## Preparing your page class

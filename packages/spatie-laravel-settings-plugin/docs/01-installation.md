@@ -20,7 +20,7 @@ Install the plugin with Composer:
 composer require filament/spatie-laravel-settings-plugin
 ```
 
-You're now ready to start building [settings pages](building-settings-pages)!
+You're now ready to start building [settings pages](getting-started)!
 
 ## Upgrade Guide
 

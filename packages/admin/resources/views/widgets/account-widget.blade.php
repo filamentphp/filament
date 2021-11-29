@@ -6,12 +6,12 @@
     <div class="h-12 flex items-center space-x-4 rtl:space-x-reverse">
         <div
             class="w-10 h-10 rounded-full bg-gray-200 bg-cover bg-center"
-            style="background-image: url('{{ \Filament\Facades\Filament::getAvatarUrl($user) }}')"
+            style="background-image: url('{{ \Filament\Facades\Filament::getUserAvatarUrl($user) }}')"
         ></div>
 
         <div>
             <h2 class="text-lg sm:text-xl font-bold tracking-tight">
-                {{ __('filament::widgets/account-widget.welcome', ['user' => $user->getFilamentName()]) }}
+                {{ __('filament::widgets/account-widget.welcome', ['user' => \Filament\Facades\Filament::getUserName($user)]) }}
             </h2>
 
             <p class="text-sm">

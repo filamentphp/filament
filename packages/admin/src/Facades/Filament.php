@@ -2,13 +2,12 @@
 
 namespace Filament\Facades;
 
-use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static StatefulGuard auth()
- * @method static string getAvatarUrl(FilamentUser $user)
  * @method static array getPages()
  * @method static array getNavigation()
  * @method static array getNavigationGroups()
@@ -19,6 +18,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getStyles()
  * @method static string getThemeUrl()
  * @method static string | null getUrl()
+ * @method static string | null getUserAvatarUrl(Authenticatable $user)
+ * @method static string getUserName(Authenticatable $user)
  * @method static array getWidgets()
  * @method static void registerNavigationGroups(array $groups)
  * @method static void registerNavigationItems(array $items)

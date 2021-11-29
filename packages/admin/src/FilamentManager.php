@@ -3,8 +3,9 @@
 namespace Filament;
 
 use Filament\Events\ServingFilament;
-use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\HasName;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
@@ -99,23 +100,6 @@ class FilamentManager
         Event::listen(ServingFilament::class, $callback);
     }
 
-    public function getAvatarUrl(FilamentUser $user): string
-    {
-        $avatar = null;
-
-        if ($user instanceof HasAvatar) {
-            $avatar = $user->getFilamentAvatarUrl();
-        }
-
-        if ($avatar) {
-            return $avatar;
-        }
-
-        $provider = config('filament.default_avatar_provider');
-
-        return (new $provider())->get($user);
-    }
-
     public function getNavigation(): array
     {
         if (! $this->isNavigationMounted) {
@@ -203,6 +187,32 @@ class FilamentManager
         }
 
         return $firstItem->getUrl();
+    }
+
+    public function getUserAvatarUrl(Authenticatable $user): string
+    {
+        $avatar = null;
+
+        if ($user instanceof HasAvatar) {
+            $avatar = $user->getFilamentAvatarUrl();
+        }
+
+        if ($avatar) {
+            return $avatar;
+        }
+
+        $provider = config('filament.default_avatar_provider');
+
+        return (new $provider())->get($user);
+    }
+
+    public function getUserName(Authenticatable $user): string
+    {
+        if ($user instanceof HasName) {
+            return $user->getFilamentName();
+        }
+
+        return $user->name;
     }
 
     public function getWidgets(): array

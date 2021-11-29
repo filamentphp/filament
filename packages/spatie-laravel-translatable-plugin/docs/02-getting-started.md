@@ -1,5 +1,5 @@
 ---
-title: Translating resources
+title: Getting Started
 ---
 
 This guide assumes that you've already set up your model to be translatable as per [Spatie's documentation](https://github.com/spatie/laravel-translatable#making-a-model-translatable).

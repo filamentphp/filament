@@ -51,8 +51,8 @@
                                             <x-dynamic-component :component="$item->getIcon()" class="h-5 w-5" />
 
                                             <span>
-                                                    {{ $item->getLabel() }}
-                                                </span>
+                                                {{ $item->getLabel() }}
+                                            </span>
                                         </a>
                                     </li>
                                 @endforeach
@@ -75,12 +75,12 @@
 
                 <div
                     class="w-11 h-11 rounded-full bg-gray-200 bg-cover bg-center"
-                    style="background-image: url('{{ \Filament\Facades\Filament::getAvatarUrl($user) }}')"
+                    style="background-image: url('{{ \Filament\Facades\Filament::getUserAvatarUrl($user) }}')"
                 ></div>
 
                 <div>
                     <p class="text-sm font-bold">
-                        {{ $user->getFilamentName() }}
+                        {{ \Filament\Facades\Filament::getUserName($user) }}
                     </p>
 
                     <p class="text-xs text-gray-500 transition hover:text-gray-700 focus:text-gray-700">

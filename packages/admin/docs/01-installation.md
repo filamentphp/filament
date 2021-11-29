@@ -14,7 +14,27 @@ This plugin is compatible with other Filament v2.x packages. The [form builder](
 
 ## Installation
 
-You're now ready to start [building resources](building-resources)!
+To get started with the admin panel, you can install it using the command:
+
+```bash
+composer require filament/filament
+```
+
+If you don't have one, you may create a new user account using:
+
+```bash
+php artisan make:filament-user
+```
+
+Visit your admin panel at `/admin` to sign in, and you're now ready to start [building resources](resources)!
+
+## Publishing the configuration
+
+If you wish, you may publish the configuration of the package using:
+
+```bash
+php artisan vendor:publish --tag=filament-config
+```
 
 ## Upgrade Guide
 
