@@ -10,10 +10,16 @@ class SelectFilter extends Filter
 {
     protected ?string $column = null;
 
+    protected bool $isStatic = false;
+
     protected array | Arrayable $options = [];
 
     public function apply(Builder $query, array $data = []): Builder
     {
+        if ($this->isStatic) {
+            return $query;
+        }
+
         if ($this->hasQueryModificationCallback()) {
             return parent::apply($query, $data);
         }
@@ -37,6 +43,13 @@ class SelectFilter extends Filter
     public function options(array | Arrayable $options): static
     {
         $this->options = $options;
+
+        return $this;
+    }
+
+    public function static(bool $condition = true): static
+    {
+        $this->isStatic = $condition;
 
         return $this;
     }
