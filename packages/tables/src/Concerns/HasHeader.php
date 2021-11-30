@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Closure;
 use Filament\Tables\Actions\Action;
 use Illuminate\Contracts\View\View;
 
@@ -46,7 +47,7 @@ trait HasHeader
         return [];
     }
 
-    protected function getTableHeading(): ?string
+    protected function getTableHeading(): string | Closure | null
     {
         return null;
     }

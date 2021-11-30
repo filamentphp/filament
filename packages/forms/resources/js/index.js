@@ -6,6 +6,7 @@ import RichEditorFormComponentAlpinePlugin from './components/rich-editor'
 import SelectFormComponentAlpinePlugin from './components/select'
 import TagsInputFormComponentAlpinePlugin from './components/tags-input'
 import TextInputFormComponentAlpinePlugin from './components/text-input'
+import TextareaFormComponentAlpinePlugin from './components/textarea'
 
 export default (Alpine) => {
     Alpine.plugin(DateTimePickerFormComponentAlpinePlugin)
@@ -16,4 +17,5 @@ export default (Alpine) => {
     Alpine.plugin(SelectFormComponentAlpinePlugin)
     Alpine.plugin(TagsInputFormComponentAlpinePlugin)
     Alpine.plugin(TextInputFormComponentAlpinePlugin)
+    Alpine.plugin(TextareaFormComponentAlpinePlugin)
 }

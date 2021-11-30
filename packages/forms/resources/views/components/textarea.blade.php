@@ -25,5 +25,10 @@
             'border-gray-300' => ! $errors->has($getStatePath()),
             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
         ]) }}
+
+        @if ($shouldAutosize())
+            x-data="textareaFormComponent()"
+            x-on:input="resize()"
+        @endif
     ></textarea>
 </x-forms::field-wrapper>
