@@ -2,6 +2,7 @@
 
 namespace Filament\Tables;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
@@ -34,7 +35,7 @@ class Table extends ViewComponent implements Htmlable
 
     protected ?View $header = null;
 
-    protected ?string $heading = null;
+    protected string | Closure | null $heading = null;
 
     protected bool $isPaginationEnabled = true;
 
@@ -108,7 +109,7 @@ class Table extends ViewComponent implements Htmlable
         return $this;
     }
 
-    public function heading(?string $heading): static
+    public function heading(string | Closure | null $heading): static
     {
         $this->heading = $heading;
 
@@ -209,7 +210,7 @@ class Table extends ViewComponent implements Htmlable
 
     public function getHeading(): ?string
     {
-        return $this->heading;
+        return value($this->heading);
     }
 
     public function getMountedAction(): ?Action
