@@ -15,6 +15,15 @@ class Textarea extends Field
 
     protected $rows = null;
 
+    protected $autosize = false;
+
+    public function autosize(bool | callable $autosize): static
+    {
+        $this->autosize = $autosize;
+
+        return $this;
+    }
+
     public function cols(int | callable $cols): static
     {
         $this->cols = $cols;
@@ -37,5 +46,10 @@ class Textarea extends Field
     public function getRows(): ?int
     {
         return $this->evaluate($this->rows);
+    }
+
+    public function shouldAutosize(): bool
+    {
+        return (bool) $this->evaluate($this->autosize);
     }
 }

@@ -25,5 +25,15 @@
             'border-gray-300' => ! $errors->has($getStatePath()),
             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
         ]) }}
+        @if($shouldAutosize())
+            x-data="{
+                resize() {
+                    this.$root.style.height = '0px'
+                    this.$root.style.height = this.$root.scrollHeight + 'px'
+                }
+            }"
+            x-init="resize()"
+            x-on:input="resize()"
+        @endif
     ></textarea>
 </x-forms::field-wrapper>
