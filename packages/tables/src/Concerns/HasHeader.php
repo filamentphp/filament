@@ -46,7 +46,7 @@ trait HasHeader
         return [];
     }
 
-    protected function getTableHeading(): ?string
+    protected function getTableHeading(): string | callable | null
     {
         return null;
     }
