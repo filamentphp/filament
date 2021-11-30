@@ -17,7 +17,7 @@ class Textarea extends Field
 
     protected $autosize = false;
 
-    public function autosize(bool | callable $autosize): static
+    public function autosize(bool | callable $autosize = true): static
     {
         $this->autosize = $autosize;
 
