@@ -26,7 +26,7 @@
             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
         ]) }}
 
-        @if($shouldAutosize())
+        @if ($shouldAutosize())
             x-data="textareaFormComponent()"
             x-on:input="resize()"
         @endif
