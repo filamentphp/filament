@@ -35,7 +35,7 @@ class Table extends ViewComponent implements Htmlable
 
     protected ?View $header = null;
 
-    protected string | null | Closure $heading = null;
+    protected string | Closure | null $heading = null;
 
     protected bool $isPaginationEnabled = true;
 
@@ -109,9 +109,9 @@ class Table extends ViewComponent implements Htmlable
         return $this;
     }
 
-    public function heading(string | null | callable $heading): static
+    public function heading(string | Closure | null $heading): static
     {
-        $this->heading = is_callable($heading) ? Closure::fromCallable($heading) : $heading;
+        $this->heading = $heading;
 
         return $this;
     }
