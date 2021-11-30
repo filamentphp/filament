@@ -77,9 +77,9 @@ class Page extends Component
         return static::$slug ?? Str::kebab(static::$title ?? class_basename(static::class));
     }
 
-    public static function getUrl(): string
+    public static function getUrl(array $parameters = [], bool $absolute = true): string
     {
-        return route(static::getRouteName());
+        return route(static::getRouteName(), $parameters, $absolute);
     }
 
     protected function notify(string $status, string $message): void
