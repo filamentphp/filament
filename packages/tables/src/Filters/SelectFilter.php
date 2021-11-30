@@ -10,13 +10,13 @@ class SelectFilter extends Filter
 {
     protected ?string $column = null;
 
-    protected bool $static = false;
+    protected bool $isStatic = false;
 
     protected array | Arrayable $options = [];
 
     public function apply(Builder $query, array $data = []): Builder
     {
-        if ($this->static) {
+        if ($this->isStatic) {
             return $query;
         }
 
@@ -47,9 +47,9 @@ class SelectFilter extends Filter
         return $this;
     }
 
-    public function static(bool $static = true): static
+    public function static(bool $condition = true): static
     {
-        $this->static = $static;
+        $this->isStatic = $condition;
 
         return $this;
     }
