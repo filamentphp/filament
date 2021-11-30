@@ -18,7 +18,7 @@ class SelectFilter extends Filter
             return parent::apply($query, $data);
         }
 
-        if ($data['value'] === null || $data['value'] === '') {
+        if (blank($data['value'])) {
             return $query;
         }
 
