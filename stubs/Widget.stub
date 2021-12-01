@@ -7,4 +7,9 @@ use Filament\Widgets\Widget;
 class {{ class }} extends Widget
 {
     public static $view = '{{ view }}';
+
+    /**
+     * @var bool $hidden
+     */
+    public static $hidden = false;
 }
