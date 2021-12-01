@@ -7,4 +7,9 @@ use Filament\Widgets\Widget;
 class {{ class }} extends Widget
 {
     public static $view = '{{ view }}';
+
+    /**
+     * @var int $sort
+     */
+    public static $sort = 0;
 }
