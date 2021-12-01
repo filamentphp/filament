@@ -20,7 +20,15 @@ Install the plugin with Composer:
 composer require filament/spatie-laravel-translatable-plugin
 ```
 
-You're now ready to start [translating content](translating-content)!
+You're now ready to start [translating resources](getting-started)!
+
+## Publishing the configuration
+
+If you wish, you may publish the configuration of the package using:
+
+```bash
+php artisan vendor:publish --tag=filament-spatie-laravel-translatable-plugin-config
+```
 
 ## Upgrade Guide
 
@@ -28,16 +36,4 @@ To upgrade the package to the latest version, you must run:
 
 ```bash
 composer update
-php artisan config:clear
-php artisan view:clear
-```
-
-To do this automatically, we recommend adding these commands to your `composer.json`'s `post-update-cmd`:
-
-```json
-"post-update-cmd": [
-    // ...
-    "@php artisan config:clear",
-    "@php artisan view:clear"
-],
 ```

@@ -51,9 +51,9 @@ trait Translatable
 
     protected function getActions(): array
     {
-        return array_merge([
+        return array_merge(
             [$this->getActiveFormLocaleSelectAction()],
-            parent::getActions(),
-        ]);
+            parent::getActions() ?? [],
+        );
     }
 }

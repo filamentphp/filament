@@ -63,7 +63,7 @@ trait Translatable
 
     public function updatedActiveFormLocale(): void
     {
-        $this->fillTranslatableForm();
+        $this->fillForm();
     }
 
     public function updatingActiveFormLocale(): void
