@@ -284,3 +284,15 @@ You may remove any roles from the `App\Filament\Roles` directory, and delete any
 ### `Filament::ignoreMigrations()` method removed
 
 Since Filament doesn't have any migrations anymore, you don't need to ignore them.
+
+### Property changes to custom page classes
+
+The following properties and method signatures been updated:
+
+```php
+protected static ?string $title; // Protected the property. Added the `?string` type.
+
+protected static ?string $navigationLabel; // Protected the property. Added the `?string` type.
+
+protected static ?string $slug; // Protected the property. Added the `?string` type.
+```
