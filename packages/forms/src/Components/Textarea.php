@@ -50,6 +50,6 @@ class Textarea extends Field
 
     public function shouldAutosize(): bool
     {
-        return $this->rows === null || ((bool) $this->evaluate($this->autosize));
+        return $this->rows === null || ((bool) $this->evaluate($this->shouldAutosize));
     }
 }
