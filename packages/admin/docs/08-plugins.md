@@ -15,9 +15,9 @@ class ExampleServiceProvider extends PluginServiceProvider
 }
 ```
 
-## Registering Plugins
+## Registering plugins
 
-### Application Plugins
+### Application plugins
 
 If you're developing a plugin for a specific application, you should register the new service provider in your `config/app.php` file:
 
@@ -34,7 +34,7 @@ return [
 
 Laravel will load your service provider when bootstrapping and your plugin will be initialised.
 
-### Distributed Plugins
+### Distributed plugins
 
 Much like a normal Laravel package, you should add your service provider's fully qualified class name to the `extra.laravel.providers` array in your package's `composer.json` file:
 
@@ -115,7 +115,7 @@ class ExampleServiceProvider extends PluginServiceProvider
 
 Filament will automatically register your `Widget` and ensure that Livewire can discover it.
 
-## Frontend Assets
+## Frontend assets
 
 Filament plugins can also register their own frontend assets. These assets will be included on all Filament related pages, allowing you to use your own CSS and JavaScript.
 
@@ -155,7 +155,7 @@ class ExampleServiceProvider extends PluginServiceProvider
 }
 ```
 
-### Providing Data to the Frontend
+### Providing data to the frontend
 
 Whilst building your plugin, you might find the need to generate some data on the server and access it on the client.
 

@@ -4,6 +4,8 @@ title: Resources
 
 Resources are static classes that describe how administrators should be able to interact with data from your app. They are associated with Eloquent models from your app.
 
+## Getting started
+
 To create a resource for the `App\Models\Customer` model:
 
 ```bash

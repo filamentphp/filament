@@ -4,6 +4,8 @@ title: Pages
 
 Filament allows you to create completely custom pages for the admin panel.
 
+## Getting started
+
 To create a new page, you can use:
 
 ```bash
