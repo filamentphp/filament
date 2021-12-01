@@ -150,12 +150,6 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
     protected function getRedirectUrl(): ?string
     {
-        $resource = static::getResource();
-
-        if (! $resource::canView($this->record)) {
-            return null;
-        }
-
-        return $resource::getUrl('view', ['record' => $this->record]);
+        return null;
     }
 }

@@ -99,12 +99,12 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
     {
         $resource = static::getResource();
 
-        if ($resource::canView($this->record)) {
-            return $resource::getUrl('view', ['record' => $this->record]);
-        }
-
         if ($resource::canEdit($this->record)) {
             return $resource::getUrl('edit', ['record' => $this->record]);
+        }
+
+        if ($resource::canView($this->record)) {
+            return $resource::getUrl('view', ['record' => $this->record]);
         }
 
         return null;

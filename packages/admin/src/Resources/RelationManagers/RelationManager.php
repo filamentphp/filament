@@ -64,13 +64,13 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     protected function can(string $action, ?Model $record = null): bool
     {
-        $policy = Gate::getPolicyFor($this->getRelatedModel());
+        $policy = Gate::getPolicyFor($model = $this->getRelatedModel());
 
-        if ($policy === null || ! method_exists($policy, $action)) {
+        if ($policy === null || (! method_exists($policy, $action))) {
             return true;
         }
 
-        return Gate::check($action, $record);
+        return Gate::check($action, $record ?? $model);
     }
 
     protected function canAccess(): bool

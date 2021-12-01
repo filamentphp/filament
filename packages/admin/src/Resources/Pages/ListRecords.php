@@ -35,11 +35,10 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
             $resource = static::getResource();
 
-            if ($resource::hasPage('view')) {
-                $table->actions([$this->getViewLinkTableAction()]);
-            } elseif ($resource::hasPage('edit')) {
-                $table->actions([$this->getEditLinkTableAction()]);
-            }
+            $table->actions(array_merge(
+                ($resource::hasPage('view') ? [$this->getViewLinkTableAction()] : []),
+                ($resource::hasPage('edit') ? [$this->getEditLinkTableAction()] : []),
+            ));
 
             if ($resource::canDeleteAny()) {
                 $table->bulkActions([$this->getDeleteTableBulkAction()]);

@@ -75,13 +75,13 @@ class Resource
 
     public static function can(string $action, ?Model $record = null): bool
     {
-        $policy = Gate::getPolicyFor(static::getModel());
+        $policy = Gate::getPolicyFor($model = static::getModel());
 
-        if ($policy === null || ! method_exists($policy, $action)) {
+        if ($policy === null || (! method_exists($policy, $action))) {
             return true;
         }
 
-        return Gate::check($action, $record);
+        return Gate::check($action, $record ?? $model);
     }
 
     public static function canAccess(): bool
@@ -152,12 +152,12 @@ class Resource
 
     public static function getGlobalSearchResultUrl(Model $record): ?string
     {
-        if (static::canView($record)) {
-            return static::getUrl('view', ['record' => $record]);
-        }
-
         if (static::canEdit($record)) {
             return static::getUrl('edit', ['record' => $record]);
+        }
+
+        if (static::canView($record)) {
+            return static::getUrl('view', ['record' => $record]);
         }
 
         return null;
