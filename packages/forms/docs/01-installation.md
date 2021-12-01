@@ -39,7 +39,7 @@ You may download the form builder using Composer:
 composer require filament/forms
 ```
 
-The package uses [Alpine.js](https://alpinejs.dev),  [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin. You may install these through NPM:
+The package uses [Alpine.js](https://alpinejs.dev), [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin. You may install these through NPM:
 
 ```bash
 npm install alpinejs tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev

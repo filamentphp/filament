@@ -35,7 +35,7 @@ class Page extends BasePage
 
     public static function authorizeResourceAccess(): void
     {
-        abort_unless(static::getResource()::canAccess(), 403);
+        abort_unless(static::getResource()::canViewAny(), 403);
     }
 
     public static function getModel(): string

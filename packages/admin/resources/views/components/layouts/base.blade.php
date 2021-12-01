@@ -21,7 +21,7 @@
 
         <link rel="stylesheet" href="{{ \Filament\Facades\Filament::getThemeUrl() }}" />
 
-        @foreach (\Filament\Facades\Filament::getStyles() as $name => $path)
+        @foreach (\Filament\Facades\Filament::getStyles() as $path)
             @if (Str::of($path)->startsWith(['http://', 'https://']))
                 <link rel="stylesheet" href="{{ $path }}" />
             @else

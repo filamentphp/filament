@@ -44,7 +44,7 @@ class Resource
 
     public static function registerNavigationItems(): void
     {
-        if (! static::canAccess()) {
+        if (! static::canViewAny()) {
             return;
         }
 
@@ -84,7 +84,7 @@ class Resource
         return Gate::check($action, $record ?? $model);
     }
 
-    public static function canAccess(): bool
+    public static function canViewAny(): bool
     {
         return static::can('viewAny');
     }
@@ -111,7 +111,7 @@ class Resource
 
     public static function canGloballySearch(): bool
     {
-        return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canAccess();
+        return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canViewAny();
     }
 
     public static function canView(Model $record): bool

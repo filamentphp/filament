@@ -24,7 +24,7 @@ This will create several files in the `app/Filament/Resources` directory:
 
 Your new resource class lives in `CustomerResource.php`. Resource classes register [forms](#forms), [tables](#tables), [relations](#relations), and [pages](#pages) associated with that model.
 
-The classes in the `Pages` directory are used to customize the pages in the admin panel that interact with your resource. They're all full-page Livewire components that you can customize in any way you wish.
+The classes in the `Pages` directory are used to customize the pages in the admin panel that interact with your resource. They're all full-page [Livewire](https://laravel-livewire.com) components that you can customize in any way you wish.
 
 By default, the model associated with your resource is guessed based on the class name of the resource. You may set the static `$model` property to disable this behaviour:
 
@@ -263,7 +263,7 @@ public static function attachForm(Form $form): Form
 
 ## Pages
 
-Pages are classes that are associated with a resource. They are full-page Livewire components with a few extra utilities you can use with the admin panel.
+Pages are classes that are associated with a resource. They are full-page [Livewire](https://laravel-livewire.com) components with a few extra utilities you can use with the admin panel.
 
 Page class files are in the `/Pages` directory of your resource directory.
 
