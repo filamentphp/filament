@@ -44,7 +44,7 @@
                 </x-filament::card>
             @endif
 
-            @foreach (\Filament\Filament::getWidgets(true) as $widget)
+            @foreach (\Filament\Filament::getWidgets() as $widget)
                 @livewire(\Livewire\Livewire::getAlias($widget))
             @endforeach
         </section>
