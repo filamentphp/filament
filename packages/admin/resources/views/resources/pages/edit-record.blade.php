@@ -8,7 +8,7 @@
     @if (count($relationManagers = $this->getResource()::getRelations()))
         <x-filament::hr />
 
-        <x-filament::resources.relation-managers :managers="$relationManagers" :owner-record="$record" />
+        <x-filament::resources.relation-managers :active-manager="$activeRelationManager" :managers="$relationManagers" :owner-record="$record" />
     @endif
 
     <x-slot name="modals">
