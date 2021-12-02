@@ -148,6 +148,7 @@ class FilamentManager
     public function getWidgets()
     {
         return collect($this->widgets)
+            ->filter(fn ($widget) => $widget::isVisible())
             ->sortBy(fn ($widget) => $widget::$sort ?? 0)
             ->toArray();
     }
