@@ -14,7 +14,7 @@ class Widget extends Component
 
     public static function isVisible()
     {
-        return static::$isHidden !== true;
+        return static::$isHidden;
     }
 
     public function render()
