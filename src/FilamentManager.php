@@ -147,7 +147,9 @@ class FilamentManager
 
     public function getWidgets()
     {
-        return $this->widgets;
+        return collect($this->widgets)
+            ->sortBy(fn ($widget) => $widget::$sort ?? 0)
+            ->toArray();
     }
 
     public function ignoreMigrations()
