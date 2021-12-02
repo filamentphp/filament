@@ -62,23 +62,34 @@ trait CanBeValidated
         return $this;
     }
 
+    public function different(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    {
+        return $this->fieldComparisonRule('different', $statePath, $isStatePathAbsolute);
+    }
+
+    public function gt(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    {
+        return $this->fieldComparisonRule('gt', $statePath, $isStatePathAbsolute);
+    }
+
+    public function gte(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    {
+        return $this->fieldComparisonRule('gte', $statePath, $isStatePathAbsolute);
+    }
+
+    public function lt(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    {
+        return $this->fieldComparisonRule('lt', $statePath, $isStatePathAbsolute);
+    }
+
+    public function lte(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    {
+        return $this->fieldComparisonRule('lte', $statePath, $isStatePathAbsolute);
+    }
+
     public function same(string | callable $statePath, bool $isStatePathAbsolute = false): static
     {
-        $this->rule(function () use ($isStatePathAbsolute, $statePath): string {
-            $statePath = $this->evaluate($statePath);
-
-            if (! $isStatePathAbsolute) {
-                $containerStatePath = $this->getContainer()->getStatePath();
-
-                if ($containerStatePath) {
-                    $statePath = "{$containerStatePath}.{$statePath}";
-                }
-            }
-
-            return "same:{$statePath}";
-        }, fn (): bool => (bool) $this->evaluate($statePath));
-
-        return $this;
+        return $this->fieldComparisonRule('same', $statePath, $isStatePathAbsolute);
     }
 
     public function unique(string | callable | null $table = null, string | callable | null $column = null, Model | callable $ignorable = null): static
@@ -138,5 +149,24 @@ trait CanBeValidated
     public function isRequired(): bool
     {
         return (bool) $this->evaluate($this->isRequired);
+    }
+
+    protected function fieldComparisonRule(string $rule, string | callable $statePath, bool $isStatePathAbsolute = false): static
+    {
+        $this->rule(function () use ($isStatePathAbsolute, $rule, $statePath): string {
+            $statePath = $this->evaluate($statePath);
+
+            if (! $isStatePathAbsolute) {
+                $containerStatePath = $this->getContainer()->getStatePath();
+
+                if ($containerStatePath) {
+                    $statePath = "{$containerStatePath}.{$statePath}";
+                }
+            }
+
+            return "{$rule}:{$statePath}";
+        }, fn (): bool => (bool) $this->evaluate($statePath));
+
+        return $this;
     }
 }
