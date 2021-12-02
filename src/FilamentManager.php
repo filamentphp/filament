@@ -145,9 +145,12 @@ class FilamentManager
         return $this->styles;
     }
 
-    public function getWidgets()
+    public function getWidgets($onlyVisibles = false)
     {
         return collect($this->widgets)
+            ->when($onlyVisibles, function ($widgets) {
+                return $widgets->filter(fn ($widget) => $widget::isVisible());
+            })
             ->sortBy(fn ($widget) => $widget::$sort ?? 0)
             ->toArray();
     }
