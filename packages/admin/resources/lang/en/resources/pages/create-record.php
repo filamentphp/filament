@@ -24,4 +24,8 @@ return [
 
     ],
 
+    'messages' => [
+        'created' => 'Created',
+    ],
+
 ];

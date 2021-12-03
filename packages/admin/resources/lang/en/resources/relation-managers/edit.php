@@ -20,6 +20,10 @@ return [
 
         ],
 
+        'messages' => [
+            'saved' => 'Saved',
+        ],
+
     ],
 
 ];

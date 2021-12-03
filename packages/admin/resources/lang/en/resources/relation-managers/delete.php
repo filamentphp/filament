@@ -10,6 +10,10 @@ return [
             'heading' => 'Delete :label',
         ],
 
+        'messages' => [
+            'deleted' => 'Deleted',
+        ],
+
     ],
 
     'bulk_action' => [
@@ -18,6 +22,10 @@ return [
 
         'modal' => [
             'heading' => 'Delete selected :label',
+        ],
+
+        'messages' => [
+            'deleted' => 'Deleted',
         ],
 
     ],

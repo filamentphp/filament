@@ -10,6 +10,10 @@ return [
             'heading' => 'Detach :label',
         ],
 
+        'messages' => [
+            'detached' => 'Detached',
+        ],
+
     ],
 
     'bulk_action' => [
@@ -18,6 +22,10 @@ return [
 
         'modal' => [
             'heading' => 'Detach selected :label',
+        ],
+
+        'messages' => [
+            'detached' => 'Detached',
         ],
 
     ],
