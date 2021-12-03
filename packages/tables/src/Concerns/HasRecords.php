@@ -37,7 +37,11 @@ trait HasRecords
         $this->applySortingToTableQuery($query);
 
         if ($this->isTablePaginationEnabled()) {
-            return $this->records = $query->paginate($this->getTableRecordsPerPage())->onEachSide(1);
+            return $this->records = $query->paginate(
+                $this->getTableRecordsPerPage(),
+                ['*'],
+                $this->getTablePaginationPageName(),
+            )->onEachSide(1);
         } else {
             return $this->records = $query->get();
         }

@@ -4,7 +4,6 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Forms;
 use Filament\Tables\Table;
-use Livewire\WithPagination;
 
 trait InteractsWithTable
 {
@@ -21,7 +20,6 @@ trait InteractsWithTable
     use HasHeader;
     use HasRecords;
     use Forms\Concerns\InteractsWithForms;
-    use WithPagination;
 
     protected Table $table;
 
@@ -43,6 +41,13 @@ trait InteractsWithTable
         }
     }
 
+    public function mountInteractsWithTable(): void
+    {
+        if ($this->isTablePaginationEnabled()) {
+            $this->tableRecordsPerPage = $this->getDefaultRecordsPerPageSelectOption();
+        }
+    }
+
     protected function getCachedTable(): Table
     {
         return $this->table;
@@ -61,6 +66,20 @@ trait InteractsWithTable
             ->header($this->getTableHeader())
             ->heading($this->getTableHeading())
             ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions());
+    }
+
+    protected function getTableQueryStringIdentifier(): ?string
+    {
+        return null;
+    }
+
+    protected function getIdentifiedTableQueryStringPropertyNameFor(string $property): string
+    {
+        if (filled($this->getTableQueryStringIdentifier())) {
+            return $this->getTableQueryStringIdentifier() . ucfirst($property);
+        }
+
+        return $property;
     }
 
     protected function getForms(): array

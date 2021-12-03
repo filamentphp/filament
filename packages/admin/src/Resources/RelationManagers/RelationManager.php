@@ -44,6 +44,11 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         }
     }
 
+    protected function getTableQueryStringIdentifier(): ?string
+    {
+        return lcfirst(class_basename(static::class));
+    }
+
     protected function getResourceForm(): Form
     {
         if (! $this->resourceForm) {

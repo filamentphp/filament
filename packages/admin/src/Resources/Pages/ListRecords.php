@@ -18,6 +18,12 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected ?Table $resourceTable = null;
 
+    protected $queryString = [
+        'tableSortColumn',
+        'tableSortDirection',
+        'tableSearchQuery' => ['except' => ''],
+    ];
+
     public function mount(): void
     {
         static::authorizeResourceAccess();

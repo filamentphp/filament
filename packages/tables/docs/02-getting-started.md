@@ -309,6 +309,33 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
 }
 ```
 
+## Query string
+
+Livewire ships with a feature to store data in the URL's query string, to access across requests.
+
+With Filament, this allows you to store your table's sort, search and pagination state in the URL.
+
+To store the sort and search state of your table in the query string:
+
+```php
+protected $queryString = [
+    'tableSortColumn',
+    'tableSortDirection',
+    'tableSearchQuery' => ['except' => ''],
+];
+```
+
+By default, Livewire stores the pagination state in a `page` parameter of the query string. If you have multiple tables on the same page, this will mean that the pagination state of one table may be overwritten by the state of another table.
+
+To fix this, you may define a `getTableQueryStringIdentifier()` on your component, to return a unique query string identifier for that table:
+
+```php
+protected function getTableQueryStringIdentifier(): string
+{
+    return 'users';
+}
+```
+
 ## Using the form builder
 
 Internally, the table builder uses the [form builder](/docs/forms) to implement filtering, actions, and bulk actions. Because of this, the form builder is already set up on your Livewire component and ready to use with your own custom forms.
