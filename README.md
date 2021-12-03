@@ -57,6 +57,13 @@ composer require filament/spatie-laravel-settings-plugin
 composer require filament/spatie-laravel-tags-plugin
 ```
 
+### spatie/laravel-translatable Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-translatable-plugin)
+**Current version series:** v2.x.
+
+```bash
+composer require filament/spatie-laravel-translatable-plugin
+```
+
 ## Need Help?
 
 🐞 If you spot a bug, please [submit a detailed issue](https://github.com/laravel-filament/filament/issues/new), and wait for assistance.
