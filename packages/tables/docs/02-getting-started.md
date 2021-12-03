@@ -234,6 +234,17 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
 }
 ```
 
+By default, Livewire stores the pagination state in a `page` parameter of the URL query string. If you have multiple tables on the same page, this will mean that the pagination state of one table may be overwritten by the state of another table.
+
+To fix this, you may define a `getTableQueryStringIdentifier()` on your component, to return a unique query string identifier for that table:
+
+```php
+protected function getTableQueryStringIdentifier(): string
+{
+    return 'users';
+}
+```
+
 ## Empty state
 
 By default, an "empty state" card will be rendered when the table is empty. To customize this, you may define methods on your Livewire component:
@@ -323,17 +334,6 @@ protected $queryString = [
     'tableSortDirection',
     'tableSearchQuery' => ['except' => ''],
 ];
-```
-
-By default, Livewire stores the pagination state in a `page` parameter of the query string. If you have multiple tables on the same page, this will mean that the pagination state of one table may be overwritten by the state of another table.
-
-To fix this, you may define a `getTableQueryStringIdentifier()` on your component, to return a unique query string identifier for that table:
-
-```php
-protected function getTableQueryStringIdentifier(): string
-{
-    return 'users';
-}
 ```
 
 ## Using the form builder
