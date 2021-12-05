@@ -85,6 +85,7 @@ trait HasFilters
         return match ($this->getTableFiltersFormColumns()) {
             2 => '2xl',
             3 => '4xl',
+            4 => '6xl',
             default => null,
         };
     }

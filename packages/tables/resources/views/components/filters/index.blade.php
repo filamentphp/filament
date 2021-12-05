@@ -22,7 +22,7 @@
         @class([
             'absolute right-0 z-10 w-screen pl-12 mt-2 top-full',
             match ($width) {
-                'sm' => 'max-w-sm',
+                'xs' => 'max-w-xs',
                 'md' => 'max-w-md',
                 'lg' => 'max-w-lg',
                 'xl' => 'max-w-xl',
@@ -32,8 +32,7 @@
                 '5xl' => 'max-w-5xl',
                 '6xl' => 'max-w-6xl',
                 '7xl' => 'max-w-7xl',
-                'full' => 'max-w-full',
-                default => 'max-w-xs',
+                default => 'max-w-sm',
             },
         ])
     >

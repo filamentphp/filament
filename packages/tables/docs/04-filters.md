@@ -96,3 +96,25 @@ Filter::make('created_at')
             );
     })
 ```
+
+## Customizing popover columns
+
+By default, filters are displayed in a thin popover on the right side of the table, in 1 column.
+
+To change the number of columns that filters may occupy, you may use the `getTableFiltersFormColumns()` method:
+
+```php
+protected function getTableFiltersFormColumns(): int
+{
+    return 3;
+}
+```
+
+Adding more columns to the filter form will automatically widen the popover. To customize the popover width, you may use the `getTableFiltersFormWidth()` method, and specify a width from `xs` to `7xl`:
+
+```php
+protected function getTableFiltersFormWidth(): string
+{
+    return '4xl';
+}
+```
