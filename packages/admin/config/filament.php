@@ -52,6 +52,9 @@ return [
 
     'auth' => [
         'guard' => env('FILAMENT_AUTH_GUARD', 'web'),
+        'pages' => [
+            'login' => \Filament\Http\Livewire\Auth\Login::class,
+        ],
     ],
 
     /*
@@ -105,6 +108,22 @@ return [
             Widgets\AccountWidget::class,
             Widgets\FilamentInfoWidget::class,
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Layout
+    |--------------------------------------------------------------------------
+    |
+    | This is the configuration for the general appearance of the admin panel.
+    |
+    | You may configure the max content width from `xl` to `7xl`, or `full`
+    | for no max width.
+    |
+    */
+
+    'layout' => [
+        'max_content_width' => null,
     ],
 
     /*

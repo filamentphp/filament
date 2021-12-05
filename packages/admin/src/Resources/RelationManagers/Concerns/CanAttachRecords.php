@@ -6,6 +6,7 @@ use Filament\Forms\Components\Select;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Actions\Modal\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
@@ -80,12 +81,14 @@ trait CanAttachRecords
         $this->callHook('afterAttachFill');
     }
 
-    protected function attach(): void
+    public function attach(bool $another = false): void
     {
+        $form = $this->getMountedTableActionForm();
+
         $this->callHook('beforeValidate');
         $this->callHook('beforeCreateValidate');
 
-        $data = $this->getMountedTableActionForm()->getState();
+        $data = $form->getState();
 
         $this->callHook('afterValidate');
         $this->callHook('afterCreateValidate');
@@ -99,6 +102,10 @@ trait CanAttachRecords
         $relationship->attach($record, Arr::only($data, $pivotColumns));
 
         $this->callHook('afterCreate');
+
+        if ($another) {
+            $form->fill();
+        }
     }
 
     protected function getAttachButtonTableHeaderAction(): Tables\Actions\ButtonAction
@@ -107,9 +114,22 @@ trait CanAttachRecords
             ->label(__('filament::resources/relation-managers/attach.action.label'))
             ->form($this->getAttachFormSchema())
             ->mountUsing(fn () => $this->fillAttachForm())
-            ->modalButton(__('filament::resources/relation-managers/attach.action.modal.actions.attach.label'))
+            ->modalActions([
+                ButtonAction::make('submit')
+                    ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach.label'))
+                    ->submit()
+                    ->color('primary'),
+                ButtonAction::make('submit')
+                    ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach_and_attach_another.label'))
+                    ->action('attach(true)')
+                    ->color('secondary'),
+                ButtonAction::make('cancel')
+                    ->label(__('tables::table.actions.modal.buttons.cancel.label'))
+                    ->cancel()
+                    ->color('secondary'),
+            ])
             ->modalHeading(__('filament::resources/relation-managers/attach.action.modal.heading', ['label' => static::getRecordLabel()]))
-            ->modalWidth('sm')
+            ->modalWidth('lg')
             ->action(fn () => $this->attach())
             ->color('secondary');
     }

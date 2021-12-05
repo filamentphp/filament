@@ -30,7 +30,7 @@ trait CanEditRecords
         $this->callHook('afterEditFill');
     }
 
-    protected function save(): void
+    public function save(): void
     {
         $this->callHook('beforeValidate');
         $this->callHook('beforeEditValidate');

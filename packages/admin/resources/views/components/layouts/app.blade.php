@@ -9,92 +9,23 @@
             class="fixed inset-0 z-20 w-full h-full bg-gray-900/50 lg:hidden"
         ></div>
 
-        <aside
-            x-data="{}"
-            x-cloak
-            x-bind:class="$store.sidebar.isOpen ? 'translate-x-0' : '-translate-x-full'"
-            class="fixed inset-y-0 left-0 z-20 flex flex-col h-screen overflow-hidden shadow-2xl rounded-r-2xl transition duration-300 bg-white lg:border-r w-80 lg:z-0 lg:translate-x-0"
-        >
-            <header class="border-b h-[4rem] flex-shrink-0 px-6 flex items-center">
-                <a href="{{ \Filament\Facades\Filament::geturl() }}">
-                    <x-filament::brand />
-                </a>
-            </header>
-
-            <nav class="flex-1 overflow-y-auto py-6">
-                <ul class="space-y-6 px-6">
-                    @foreach (\Filament\Facades\Filament::getNavigation() as $group => $items)
-                        <li>
-                            @if ($group)
-                                <p class="font-bold uppercase text-gray-600 text-xs tracking-wider">
-                                    {{ $group }}
-                                </p>
-                            @endif
-
-                            <ul @class([
-                                    'text-sm space-y-1 -mx-3',
-                                    'mt-2' => $group,
-                                ])>
-                                @foreach ($items as $item)
-                                    @php
-                                        $isActive = $item->isActive();
-                                    @endphp
-                                    <li>
-                                        <a
-                                            href="{{ $item->getUrl() }}"
-                                            @class([
-                                                'flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition',
-                                                'hover:bg-gray-500/5 focus:bg-gray-500/5' => ! $isActive,
-                                                'bg-primary-500 text-white' => $isActive,
-                                            ])
-                                        >
-                                            <x-dynamic-component :component="$item->getIcon()" class="h-5 w-5" />
-
-                                            <span>
-                                                {{ $item->getLabel() }}
-                                            </span>
-                                        </a>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </li>
-
-                        @if (! $loop->last)
-                            <li>
-                                <div class="border-t -mr-6"></div>
-                            </li>
-                        @endif
-                    @endforeach
-                </ul>
-            </nav>
-
-            <footer class="border-t px-6 py-3 flex flex-shrink-0 items-center gap-3">
-                @php
-                    $user = \Filament\Facades\Filament::auth()->user();
-                @endphp
-
-                <div
-                    class="w-11 h-11 rounded-full bg-gray-200 bg-cover bg-center"
-                    style="background-image: url('{{ \Filament\Facades\Filament::getUserAvatarUrl($user) }}')"
-                ></div>
-
-                <div>
-                    <p class="text-sm font-bold">
-                        {{ \Filament\Facades\Filament::getUserName($user) }}
-                    </p>
-
-                    <p class="text-xs text-gray-500 transition hover:text-gray-700 focus:text-gray-700">
-                        <a href="{{ route('filament.auth.logout') }}">
-                            {{ __('filament::layout.buttons.logout.label') }}
-                        </a>
-                    </p>
-                </div>
-            </footer>
-        </aside>
+        <x-filament::layouts.app.sidebar />
 
         <div class="w-screen space-y-6 flex-1 flex flex-col lg:pl-80">
             <header class="h-[4rem] flex-shrink-0 w-full border-b flex items-center">
-                <div class="flex items-center w-full max-w-6xl px-2 mx-auto sm:px-4 md:px-6 lg:px-8">
+                <div @class([
+                    'flex items-center w-full px-2 mx-auto sm:px-4 md:px-6 lg:px-8',
+                    match(config('filament.layout.max_content_width')) {
+                        'xl' => 'max-w-xl',
+                        '2xl' => 'max-w-2xl',
+                        '3xl' => 'max-w-3xl',
+                        '4xl' => 'max-w-4xl',
+                        '5xl' => 'max-w-5xl',
+                        '7xl' => 'max-w-7xl',
+                        'full' => 'max-w-full',
+                        default => 'max-w-6xl',
+                    },
+                ])>
                     <button x-data="{}" x-on:click="$store.sidebar.open()" class="flex-shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 transition rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none lg:hidden">
                         <x-heroicon-o-menu class="w-6 h-6" />
                     </button>
@@ -126,7 +57,19 @@
                 </div>
             </header>
 
-            <div class="max-w-6xl flex-1 w-full px-4 mx-auto md:px-6 lg:px-8">
+            <div @class([
+                'flex-1 w-full px-4 mx-auto md:px-6 lg:px-8',
+                match(config('filament.layout.max_content_width')) {
+                    'xl' => 'max-w-xl',
+                    '2xl' => 'max-w-2xl',
+                    '3xl' => 'max-w-3xl',
+                    '4xl' => 'max-w-4xl',
+                    '5xl' => 'max-w-5xl',
+                    '7xl' => 'max-w-7xl',
+                    'full' => 'max-w-full',
+                    default => 'max-w-6xl',
+                },
+            ])>
                 {{ $slot }}
             </div>
 

@@ -18,7 +18,7 @@ trait CanDeleteRecords
         return $this->can('deleteAny');
     }
 
-    protected function delete(): void
+    public function delete(): void
     {
         $this->callHook('beforeDelete');
 

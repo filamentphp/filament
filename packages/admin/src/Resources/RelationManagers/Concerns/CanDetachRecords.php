@@ -18,7 +18,7 @@ trait CanDetachRecords
         return $this->can('detachAny');
     }
 
-    protected function detach(): void
+    public function detach(): void
     {
         $this->callHook('beforeDetach');
 

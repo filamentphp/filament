@@ -39,7 +39,7 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
         $this->callHook('afterFill');
     }
 
-    public function create(): void
+    public function create(bool $another = false): void
     {
         $this->callHook('beforeValidate');
 
@@ -49,13 +49,19 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
         $this->callHook('beforeCreate');
 
-        $resource = static::getResource();
-
         $this->record = static::getModel()::create($data);
 
         $this->form->model($this->record)->saveRelationships();
 
         $this->callHook('afterCreate');
+
+        if ($another) {
+            $this->fillForm();
+
+            $this->notify('success', __('filament::resources/pages/create-record.messages.created'));
+
+            return;
+        }
 
         if ($redirectUrl = $this->getRedirectUrl()) {
             $this->redirect($redirectUrl);
@@ -66,6 +72,7 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
     {
         return [
             $this->getCreateButtonFormAction(),
+            $this->getCreateAndCreateAnotherButtonFormAction(),
             $this->getCancelButtonFormAction(),
         ];
     }
@@ -75,6 +82,14 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
         return ButtonAction::make('create')
             ->label(__('filament::resources/pages/create-record.form.actions.create.label'))
             ->submit();
+    }
+
+    protected function getCreateAndCreateAnotherButtonFormAction(): ButtonAction
+    {
+        return ButtonAction::make('createAnother')
+            ->label(__('filament::resources/pages/create-record.form.actions.create_and_create_another.label'))
+            ->action('create(true)')
+            ->color('secondary');
     }
 
     protected function getCancelButtonFormAction(): ButtonAction

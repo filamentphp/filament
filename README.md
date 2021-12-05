@@ -13,52 +13,43 @@ Filament is a collection of tools for rapidly building beautiful TALL stack inte
 
 ## Packages
 
-> **Packages in the same version series are compatible.** For more information, please see this [GitHub Discussion](https://github.com/laravel-filament/filament/discussions/495).
-
 ### Admin Panel • [Documentation](https://filamentadmin.com/docs/admin)
-**Current version series:** v1.x. **Next version series:** v2.x, expected Winter 2021.
 
 ```bash
 composer require filament/filament
 ```
 
 ### Form Builder • [Documentation](https://filamentadmin.com/docs/forms)
-**Current version series:** v2.x.
 
 ```bash
 composer require filament/forms
 ```
 
 ### Table Builder • [Documentation](https://filamentadmin.com/docs/tables)
-**Current version series:** v2.x.
 
 ```bash
 composer require filament/tables
 ```
 
 ### spatie/laravel-medialibrary Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-media-library-plugin)
-**Current version series:** v2.x.
 
 ```bash
 composer require filament/spatie-laravel-media-library-plugin
 ```
 
 ### spatie/laravel-settings Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-settings-plugin)
-**Current version series:** v2.x.
 
 ```bash
 composer require filament/spatie-laravel-settings-plugin
 ```
 
 ### spatie/laravel-tags Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-tags-plugin)
-**Current version series:** v2.x.
 
 ```bash
 composer require filament/spatie-laravel-tags-plugin
 ```
 
 ### spatie/laravel-translatable Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-translatable-plugin)
-**Current version series:** v2.x.
 
 ```bash
 composer require filament/spatie-laravel-translatable-plugin
@@ -70,4 +61,4 @@ composer require filament/spatie-laravel-translatable-plugin
 
 🤔 If you have a question or feature request, please [start a new discussion](https://github.com/laravel-filament/filament/discussions/new). We also have a [Discord community](https://discord.gg/cpqnMTHZja). For quick help, ask questions in the appropriate package help channel.
 
-🔐 If you discover a vulnerability, please review our [security policy](https://github.com/laravel-filament/filament/blob/1.x/SECURITY.md).
+🔐 If you discover a vulnerability, please review our [security policy](https://github.com/laravel-filament/filament/blob/2.x/SECURITY.md).

@@ -3,8 +3,8 @@
 namespace Filament;
 
 use Filament\Facades\Filament;
+use Filament\Http\Livewire\Auth\Login;
 use Filament\Http\Livewire\GlobalSearch;
-use Filament\Http\Livewire\Login;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
@@ -76,14 +76,6 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../stubs/v1.x-upgrades/FilamentUserModel.stub' => app_path('Models/FilamentUser.php'),
-                __DIR__ . '/../stubs/v1.x-upgrades/FilamentUsersMigration.stub' => database_path('migrations/0000_00_00_000000_create_filament_users_table.php'),
-                __DIR__ . '/../stubs/v1.x-upgrades/FilamentPasswordResetsMigration.stub' => database_path('migrations/0000_00_00_000001_create_filament_password_resets_table.php'),
-            ], 'filament-v1.x-users-upgrades');
-        }
-
         $this->bootLivewireComponents();
     }
 

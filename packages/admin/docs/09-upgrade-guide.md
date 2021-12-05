@@ -301,4 +301,4 @@ protected static ?string $slug; // Protected the property. Added the `?string` t
 
 The theming system has entirely changed, to add support for Tailwind JIT's opacity features, which don't support static color codes.
 
-Follow the instructions on the [theming page](theming) to find out how to compile your own Filament stylesheet.
+Follow the instructions on the [appearance page](appearance#building-themes) to find out how to compile your own Filament stylesheet.

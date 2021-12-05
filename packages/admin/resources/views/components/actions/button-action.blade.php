@@ -3,7 +3,7 @@
     $url = $getUrl();
 @endphp
 
-<x-tables::button
+<x-filament::button
     :tag="((! $action) && $url) ? 'a' : 'button'"
     :wire:click="$action"
     :href="$url"
@@ -14,4 +14,4 @@
     :icon-position="$getIconPosition()"
 >
     {{ $getLabel() }}
-</x-tables::button>
+</x-filament::button>

@@ -2,7 +2,6 @@
 
 use Filament\Facades\Filament;
 use Filament\Http\Controllers\AssetController;
-use Filament\Http\Livewire\Login;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
 
@@ -11,7 +10,9 @@ Route::domain(config('filament.domain'))
     ->name('filament.')
     ->prefix(config('filament.path'))
     ->group(function () {
-        Route::get('/login', Login::class)->name('auth.login');
+        if ($loginPage = config('filament.auth.pages.login')) {
+            Route::get('/login', $loginPage)->name('auth.login');
+        }
 
         Route::get('/assets/{path}', AssetController::class)->where('path', '.*')->name('asset');
 

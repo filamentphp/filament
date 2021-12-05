@@ -84,22 +84,22 @@
                 @endif
 
                 @if ($header && ($actions || $heading || $slot->isNotEmpty() || $subheading))
-                    <x-tables::hr />
+                    <x-filament::hr />
                 @endif
 
                 <div class="space-y-2">
                     @if ($heading || $subheading)
                         <div class="p-4 space-y-2 text-center">
                             @if ($heading)
-                                <x-tables::modal.heading :id="$id . '.heading'">
+                                <x-filament::modal.heading :id="$id . '.heading'">
                                     {{ $heading }}
-                                </x-tables::modal.heading>
+                                </x-filament::modal.heading>
                             @endif
 
                             @if ($subheading)
-                                <x-tables::modal.subheading>
+                                <x-filament::modal.subheading>
                                     {{ $subheading }}
-                                </x-tables::modal.subheading>
+                                </x-filament::modal.subheading>
                             @endif
                         </div>
                     @endif
@@ -114,7 +114,7 @@
                 </div>
 
                 @if ($footer && ($actions || $heading || $slot->isNotEmpty() || $subheading))
-                    <x-tables::hr />
+                    <x-filament::hr />
                 @endif
 
                 @if ($footer)
