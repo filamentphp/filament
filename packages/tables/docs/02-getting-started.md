@@ -245,6 +245,24 @@ protected function getTableQueryStringIdentifier(): string
 }
 ```
 
+## Record URLs (clickable rows)
+
+You may allow table rows to be completely clickable by overriding the `getTableRecordUrlUsing()` method on your Livewire component:
+
+```php
+use Closure;
+use Illuminate\Database\Eloquent\Model;
+
+protected function getTableRecordUrlUsing(): Closure
+{
+    return fn (Model $record): string => route('posts.edit', ['record' => $record]);
+}
+```
+
+In this example, clicking on each post will take you to the `posts.edit` route.
+
+If you'd like to [override the URL](columns#opening-urls) for a specific column, or instead [run a Livewire action](columns#running-actions) when a column is clicked, see the [columns documentation](columns#opening-urls).
+
 ## Empty state
 
 By default, an "empty state" card will be rendered when the table is empty. To customize this, you may define methods on your Livewire component:

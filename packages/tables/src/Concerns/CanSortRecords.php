@@ -41,6 +41,16 @@ trait CanSortRecords
         return $this->tableSortDirection;
     }
 
+    protected function getDefaultTableSortColumn(): ?string
+    {
+        return null;
+    }
+
+    protected function getDefaultTableSortDirection(): ?string
+    {
+        return null;
+    }
+
     public function updatedTableSort(): void
     {
         $this->resetPage();

@@ -37,6 +37,16 @@ use Filament\Tables\Filters\Filter;
 Filter::make('is_featured')->label('Featured')
 ```
 
+### Default filters
+
+You may set a filter to be enabled by default, using the `default()` method:
+
+```php
+use Filament\Tables\Filters\Filter;
+
+Filter::make('is_featured')->label('Featured')->default()
+```
+
 ## Filter forms
 
 By default, filters have two states: enabled and disabled. When the filter is enabled, it is applied to the query. When it is disabled it is not. This is controlled through a checkbox. However, some filters may require extra data input to narrow down the results further. You may use a custom filter form to collect this data.
@@ -95,6 +105,22 @@ Filter::make('created_at')
                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
             );
     })
+```
+
+### Setting default values
+
+If you wish to set a default filter value, you may use the `default()` method on the form component:
+
+```php
+use Filament\Forms;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Eloquent\Builder;
+
+Filter::make('created_at')
+    ->form([
+        Forms\Components\DatePicker::make('created_from'),
+        Forms\Components\DatePicker::make('created_until')->default(now()),
+    ])
 ```
 
 ## Customizing popover columns

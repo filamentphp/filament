@@ -27,7 +27,7 @@ trait CanPaginateRecords
         return [5, 10, 25, 50];
     }
 
-    protected function getDefaultRecordsPerPageSelectOption(): int
+    protected function getDefaultTableRecordsPerPageSelectOption(): int
     {
         return 10;
     }

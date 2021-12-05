@@ -45,8 +45,11 @@ trait InteractsWithTable
     public function mountInteractsWithTable(): void
     {
         if ($this->isTablePaginationEnabled()) {
-            $this->tableRecordsPerPage = $this->getDefaultRecordsPerPageSelectOption();
+            $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
         }
+
+        $this->tableSortColumn = $this->getDefaultTableSortColumn();
+        $this->tableSortDirection = $this->getDefaultTableSortDirection();
     }
 
     protected function getCachedTable(): Table

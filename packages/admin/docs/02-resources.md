@@ -100,6 +100,25 @@ To view a full list of available table [columns](/docs/tables/columns), see the 
 
 > You may also use the same table builder outside of the admin panel, by following [these installation instructions](/docs/tables/installation).
 
+### Applying a default sort
+
+If a column is `sortable()`, you may choose to sort it by default using the `defaultSort()` method:
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            Tables\Columns\TextColumn::make('name')->sortable(),
+            // ...
+        ])
+        ->defaultSort('name');
+}
+```
+
 ## Relations
 
 "Relation managers" in Filament allow administrators to list, create, attach, edit, detach and delete related records without leaving the resource's edit page. Resource classes contain a static `relations()` method that is used to register relation managers for your resource.

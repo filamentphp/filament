@@ -10,6 +10,10 @@ class Table
 
     protected array $columns = [];
 
+    protected ?string $defaultSortColumn = null;
+
+    protected ?string $defaultSortDirection = null;
+
     protected array $filters = [];
 
     protected array $headerActions = [];
@@ -36,6 +40,14 @@ class Table
     public function columns(array $columns): static
     {
         $this->columns = $columns;
+
+        return $this;
+    }
+
+    public function defaultSort(string $column, string $direction = 'asc'): static
+    {
+        $this->defaultSortColumn = $column;
+        $this->defaultSortDirection = $direction;
 
         return $this;
     }
@@ -109,6 +121,16 @@ class Table
     public function getColumns(): array
     {
         return $this->columns;
+    }
+
+    public function getDefaultSortColumn(): ?string
+    {
+        return $this->defaultSortColumn;
+    }
+
+    public function getDefaultSortDirection(): ?string
+    {
+        return $this->defaultSortDirection;
     }
 
     public function getFilters(): array
