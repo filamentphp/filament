@@ -167,7 +167,7 @@ class Resource
 
     public static function getGlobalSearchResults(string $searchQuery): Collection
     {
-        $query = static::getEloquentQuery();
+        $query = static::getGlobalSearchEloquentQuery();
 
         foreach (explode(' ', $searchQuery) as $searchQueryWord) {
             $query->where(function (Builder $query) use ($searchQueryWord) {
@@ -281,9 +281,9 @@ class Resource
         foreach ($searchAttributes as $searchAttribute) {
             if (Str::of($searchAttribute)->contains('.')) {
                 $query->{$isFirst ? 'whereHas' : 'orWhereHas'}(
-                    Str::of($searchAttribute)->beforeLast('.'),
+                    (string) Str::of($searchAttribute)->beforeLast('.'),
                     fn ($query) => $query->where(
-                        $searchAttribute,
+                        (string) Str::of($searchAttribute)->afterLast('.'),
                         $searchOperator,
                         "%{$searchQuery}%",
                     ),
@@ -300,6 +300,11 @@ class Resource
         }
 
         return $query;
+    }
+
+    protected static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return static::getEloquentQuery();
     }
 
     protected static function getNavigationGroup(): ?string
