@@ -27,14 +27,16 @@ trait CanOpenUrl
 
     public function getUrl(): ?string
     {
+        $record = $this->getRecord();
+
         if ($this->url instanceof Closure) {
             return app()->call($this->url, [
                 'livewire' => $this->getLivewire(),
-                'record' => $this->getRecord(),
+                'record' => $record,
             ]);
         }
 
-        return $this->url;
+        return $this->url ?? $this->getTable()->getRecordUrl($record);
     }
 
     public function shouldOpenUrlInNewTab(): bool

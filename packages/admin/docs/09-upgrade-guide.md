@@ -31,6 +31,8 @@ protected static ?string $navigationLabel; // Protected the property. Added the 
 
 protected static ?int $navigationSort; // Protected the property. Added the `?int` type.
 
+protected static ?string $recordTitleAttribute; // Renamed from `$primaryColumn`. Protected the property. Added the `?string` type.
+
 protected static ?string $slug; // Protected the property. Added the `?string` type.
 
 public static function form(Form $form): Form; // Added the `Form` return type.
@@ -268,7 +270,7 @@ The following properties and method signatures been updated:
 ```php
 protected static ?string $inverseRelationship; // Protected the property. Added the `?string` type.
 
-protected static ?string $recordTitleAttribute = null; // Renamed from `$primaryColumn`. Protected the property. Added the `?string` type.
+protected static ?string $recordTitleAttribute; // Renamed from `$primaryColumn`. Protected the property. Added the `?string` type.
 
 protected static string $relationship; // Protected the property. Added the `string` type.
 ```

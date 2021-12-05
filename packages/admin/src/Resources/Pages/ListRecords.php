@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\Pages;
 
+use Closure;
 use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Table;
 use Filament\Tables;
@@ -136,6 +137,23 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function getTableHeaderActions(): array
     {
         return $this->getResourceTable()->getHeaderActions();
+    }
+
+    protected function getTableRecordUrlUsing(): ?Closure
+    {
+        return function (Model $record): ?string {
+            $resource = static::getResource();
+
+            if ($resource::canEdit($record)) {
+                return $resource::getUrl('edit', ['record' => $record]);
+            }
+
+            if ($resource::canView($record)) {
+                return $resource::getUrl('view', ['record' => $record]);
+            }
+
+            return null;
+        };
     }
 
     protected function getTableQuery(): Builder

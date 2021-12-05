@@ -19,6 +19,7 @@ trait InteractsWithTable
     use HasFilters;
     use HasHeader;
     use HasRecords;
+    use HasRecordUrl;
     use Forms\Concerns\InteractsWithForms;
 
     protected Table $table;
@@ -64,6 +65,7 @@ trait InteractsWithTable
             ->emptyStateIcon($this->getTableEmptyStateIcon())
             ->enablePagination($this->isTablePaginationEnabled())
             ->filtersFormWidth($this->getTableFiltersFormWidth())
+            ->getRecordUrlUsing($this->getTableRecordUrlUsing())
             ->header($this->getTableHeader())
             ->heading($this->getTableHeading())
             ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions());
