@@ -457,3 +457,27 @@ SortUsers::getUrl($parameters = [], $absolute = true);
 ## Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The `viewAny` action may be used to completely disable resources and remove them from the navigation menu.
+
+## Disabling global scopes
+
+By default, Filament will observe all global scopes that are registered to your model. However, this may not be ideal if you wish to access, for example, soft deleted records.
+
+To overcome this, you may override the base Eloquent query that Filament uses to fetch records in your resource class:
+
+```php
+public static function getEloquentQuery(): Builder
+{
+    return parent::getEloquentQuery()->withoutGlobalScopes();
+}
+```
+
+Alternatively, you may remove specific global scopes:
+
+```php
+public static function getEloquentQuery(): Builder
+{
+    return parent::getEloquentQuery()->withoutGlobalScopes([ActiveScope::class]);
+}
+```
+
+More information may be found in the [Laravel documentation](https://laravel.com/docs/eloquent#removing-global-scopes).

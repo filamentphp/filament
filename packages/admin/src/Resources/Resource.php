@@ -70,7 +70,9 @@ class Resource
     {
         $model = static::getModel();
 
-        return (new $model())->resolveRouteBinding($key);
+        return static::getEloquentQuery()
+            ->where((new $model())->getRouteKeyName(), $key)
+            ->first();
     }
 
     public static function can(string $action, ?Model $record = null): bool
