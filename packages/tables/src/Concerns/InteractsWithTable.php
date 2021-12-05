@@ -63,6 +63,7 @@ trait InteractsWithTable
             ->emptyStateHeading($this->getTableEmptyStateHeading())
             ->emptyStateIcon($this->getTableEmptyStateIcon())
             ->enablePagination($this->isTablePaginationEnabled())
+            ->filtersFormWidth($this->getTableFiltersFormWidth())
             ->header($this->getTableHeader())
             ->heading($this->getTableHeading())
             ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions());
@@ -103,6 +104,7 @@ trait InteractsWithTable
                 ->statePath('mountedTableBulkActionData'),
             'tableFiltersForm' => $this->makeForm()
                 ->schema($this->getTableFiltersFormSchema())
+                ->columns($this->getTableFiltersFormColumns())
                 ->statePath('tableFilters')
                 ->reactive(),
         ];

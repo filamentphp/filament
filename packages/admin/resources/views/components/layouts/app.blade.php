@@ -15,7 +15,7 @@
             <header class="h-[4rem] flex-shrink-0 w-full border-b flex items-center">
                 <div @class([
                     'flex items-center w-full px-2 mx-auto sm:px-4 md:px-6 lg:px-8',
-                    match(config('filament.layout.max_content_width')) {
+                    match (config('filament.layout.max_content_width')) {
                         'xl' => 'max-w-xl',
                         '2xl' => 'max-w-2xl',
                         '3xl' => 'max-w-3xl',
@@ -59,7 +59,7 @@
 
             <div @class([
                 'flex-1 w-full px-4 mx-auto md:px-6 lg:px-8',
-                match(config('filament.layout.max_content_width')) {
+                match (config('filament.layout.max_content_width')) {
                     'xl' => 'max-w-xl',
                     '2xl' => 'max-w-2xl',
                     '3xl' => 'max-w-3xl',

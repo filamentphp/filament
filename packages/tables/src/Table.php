@@ -33,6 +33,8 @@ class Table extends ViewComponent implements Htmlable
 
     protected ?string $emptyStateIcon = null;
 
+    protected ?string $filtersFormWidth = null;
+
     protected ?View $header = null;
 
     protected string | Closure | null $heading = null;
@@ -98,6 +100,13 @@ class Table extends ViewComponent implements Htmlable
     public function contentFooter(?View $view): static
     {
         $this->contentFooter = $view;
+
+        return $this;
+    }
+
+    public function filtersFormWidth(?string $width): static
+    {
+        $this->filtersFormWidth = $width;
 
         return $this;
     }
@@ -196,6 +205,11 @@ class Table extends ViewComponent implements Htmlable
     public function getFiltersForm(): ComponentContainer
     {
         return $this->getLivewire()->getTableFiltersForm();
+    }
+
+    public function getFiltersFormWidth(): ?string
+    {
+        return $this->filtersFormWidth;
     }
 
     public function getHeader(): ?View
