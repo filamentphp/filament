@@ -114,12 +114,12 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->url(fn () => $resource::getUrl('create'));
     }
 
-    protected function getDefaultTableSortColumn(): array
+    protected function getDefaultTableSortColumn(): ?string
     {
         return $this->getResourceTable()->getDefaultSortColumn();
     }
 
-    protected function getDefaultTableSortDirection(): array
+    protected function getDefaultTableSortDirection(): ?string
     {
         return $this->getResourceTable()->getDefaultSortDirection();
     }

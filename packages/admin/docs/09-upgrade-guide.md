@@ -152,7 +152,7 @@ class CreateFilamentUsersTable extends Migration
 
 <details>
 <summary>
-<code>database/migrations/0000_00_00_000000_create_filament_users_table.php</code>
+<code>database/migrations/0000_00_00_000001_create_filament_password_resets_table.php</code>
 </summary>
 
 ```php
@@ -257,6 +257,22 @@ Are you already using <code>App\Models\User</code>?
 You should be able to safely rename all instances of this class to the new one.
 
 ## Medium impact changes
+
+### Forms
+
+The entire `Filament\Resources\Forms` namespace has been moved to `Filament\Forms`.
+
+### Tables
+
+The entire `Filament\Resources\Tables` namespace has been moved to `Filament\Tables`.
+
+The `Filament\Resources\Tables\Tab` component has been moved to `Filament\Tables\Tabs\Tab`.
+
+Method changes:
+
+- The `primary()` method has been removed from columns. All columns link to the record page by default unless another URL or action is specified for that column.
+- The `getValueUsing()` method has been renamed to `getStateUsing()`.
+- The `currency()` method has been renamed to `money()`.
 
 ### Relation managers
 

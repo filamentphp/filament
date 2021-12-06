@@ -143,12 +143,12 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return $this->ownerRecord->{static::getRelationshipName()}();
     }
 
-    protected function getDefaultTableSortColumn(): array
+    protected function getDefaultTableSortColumn(): ?string
     {
         return $this->getResourceTable()->getDefaultSortColumn();
     }
 
-    protected function getDefaultTableSortDirection(): array
+    protected function getDefaultTableSortDirection(): ?string
     {
         return $this->getResourceTable()->getDefaultSortDirection();
     }
