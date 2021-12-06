@@ -179,7 +179,7 @@ public static function table(Table $table)
 {
     return $table
         ->columns([
-            ...
+            // ...
         ])
         ->filters([
             Filter::make('individuals', fn ($query) => $query->where('type', 'individual')),
