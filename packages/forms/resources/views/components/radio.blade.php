@@ -7,7 +7,7 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-<div class="pt-2 space-y-5">
+<div class="space-y-2">
     @foreach ($getOptions() as $value => $label)
         <div class="relative flex items-start">
             <div class="flex items-center h-5">
@@ -25,6 +25,7 @@
                     {!! $isOptionDisabled($value, $label) ? 'disabled' : null !!}
                 />
             </div>
+
             <div class="ml-3 text-sm">
                 <label for="{{ $getId() }}-{{ $value }}" @class([
                     'font-medium',
