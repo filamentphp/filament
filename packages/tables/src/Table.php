@@ -10,13 +10,13 @@ class Table
 
     protected $columns = [];
 
+    protected $defaultFilter = null;
+
     protected $defaultSortColumn;
 
     protected $defaultSortDirection = 'asc';
 
     protected $filters = [];
-
-    protected $defaultFilter = null;
 
     protected $livewire;
 
@@ -37,6 +37,13 @@ class Table
                 return $column->table($this);
             })
             ->toArray();
+
+        return $this;
+    }
+
+    public function defaultFilter($filter)
+    {
+        $this->defaultFilter = $filter;
 
         return $this;
     }
@@ -74,13 +81,6 @@ class Table
         return $this;
     }
 
-    public function defaultFilter($filter)
-    {
-        $this->defaultFilter = $filter;
-
-        return $this;
-    }
-
     public static function for($livewire)
     {
         return (new static())->livewire($livewire);
@@ -94,6 +94,11 @@ class Table
     public function getContext()
     {
         return get_class($this->getLivewire());
+    }
+
+    public function getDefaultFilter()
+    {
+        return $this->defaultFilter;
     }
 
     public function getDefaultSort()
@@ -114,11 +119,6 @@ class Table
     public function getFilters()
     {
         return $this->filters;
-    }
-
-    public function getDefaultFilter()
-    {
-        return $this->defaultFilter;
     }
 
     public function getLivewire()
