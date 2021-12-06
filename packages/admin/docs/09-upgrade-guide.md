@@ -13,8 +13,9 @@ title: Upgrading from v1.x
 Changes to Resource classes
 </summary>
 
-- The `Filament\Resources\Forms\Form` class has been renamed to `Filament\Resources\Form`.
-- The `Filament\Resources\Tables\Table` class has been renamed to `Filament\Resources\Table`.
+The `Filament\Resources\Forms\Form` class has been renamed to `Filament\Resources\Form`. 
+
+The `Filament\Resources\Tables\Table` class has been renamed to `Filament\Resources\Table`.
 
 The following properties and method signatures been updated:
 
@@ -403,10 +404,11 @@ Are you already using <code>App\Models\User</code>?
 
 ### Relation managers
 
-- `HasMany` and `MorphMany` relation manager classes should now extend `Filament\Resources\RelationManagers\HasManyRelationManager`.
-- `BelongsToMany` relation manager classes should now extend `Filament\Resources\RelationManagers\BelongsToManyRelationManager`.
-- The `Filament\Resources\Forms\Form` class has been renamed to `Filament\Resources\Form`.
-- The `Filament\Resources\Tables\Table` class has been renamed to `Filament\Resources\Table`.
+`HasMany` and `MorphMany` relation manager classes should now extend `Filament\Resources\RelationManagers\HasManyRelationManager`. `BelongsToMany` relation manager classes should now extend `Filament\Resources\RelationManagers\BelongsToManyRelationManager`. 
+
+The `Filament\Resources\Forms\Form` class has been renamed to `Filament\Resources\Form`. 
+
+The `Filament\Resources\Tables\Table` class has been renamed to `Filament\Resources\Table`.
 
 The following properties and method signatures been updated:
 
