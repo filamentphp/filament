@@ -288,7 +288,13 @@ You may create your own custom component classes and views, which you can reuse 
 
 > If you're just creating a simple custom component to use once, you could instead use a [view component](#view) to render any custom Blade file.
 
-Extend the `Filament\Forms\Components\Component` class, and define the `$view` path of the custom component:
+To create a custom column class and view, you may use the following command:
+
+```bash
+php artisan make:form-layout Wizard
+```
+
+This will create the following layout component class:
 
 ```php
 use Filament\Forms\Components\Component;

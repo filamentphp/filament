@@ -10,21 +10,24 @@ Filament has a few requirements to run:
 - Laravel v8.0+
 - Livewire v2.0+
 
+The table builder comes pre-installed inside the [admin panel 2.x](/docs/admin/2.x), but you must still follow the installation instructions below if you're using it in the rest of your app.
+
 ## New Laravel projects
 
-To get started with the table builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [TailwindCSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with just one command:
+To get started with the table builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [TailwindCSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with these commands:
 
 ```bash
-composer require filament/tables && php artisan tables:install && npm install && npm run dev
+composer require filament/tables
+php artisan tables:install
+npm install
+npm run dev
 ```
 
-> This command will ruthlessly overwrite existing files in your application, hence why we only recommend using it for new projects.
+> These commands will ruthlessly overwrite existing files in your application, hence why we only recommend using this method for new projects.
 
-You're now ready to start [building tables](building-tables)!
+You're now ready to start [building tables](getting-started)!
 
 ## Existing Laravel projects
-
-> Please note that this package is incompatible with `filament/filament` v1, until v2 is released in late 2021. This is due to namespacing collisions.
 
 You may download the table builder using Composer:
 
@@ -139,7 +142,15 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 </html>
 ```
 
-You're now ready to start [building tables](building-tables)!
+You're now ready to start [building tables](getting-started)!
+
+## Publishing the configuration
+
+If you wish, you may publish the configuration of the package using:
+
+```bash
+php artisan vendor:publish --tag=tables-config
+```
 
 ## Upgrade Guide
 
@@ -151,3 +162,12 @@ php artisan config:clear
 php artisan view:clear
 ```
 
+To do this automatically, we recommend adding these commands to your `composer.json`'s `post-update-cmd`:
+
+```json
+"post-update-cmd": [
+    // ...
+    "@php artisan config:clear",
+    "@php artisan view:clear"
+],
+```

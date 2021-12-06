@@ -1,5 +1,5 @@
 ---
-title: Building Forms
+title: Getting Started
 ---
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Kab21689E5A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -36,7 +36,7 @@ In your Livewire component's view, render the form:
 </div>
 ```
 
-Finally, add any [fields](fields), [layout components](layout), and [custom components](building-custom-components) to the Livewire component's `getFormSchema()` method:
+Finally, add any [fields](fields) and [layout components](layout) to the Livewire component's `getFormSchema()` method:
 
 ```php
 <?php
@@ -177,7 +177,7 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
 }
 ```
 
-> You may customize what happens after fields are hydrated [using the `afterStateHydrated()` method](advanced-forms#hydration).
+> You may customize what happens after fields are hydrated [using the `afterStateHydrated()` method](advanced#hydration).
 
 ## Getting data from forms
 
@@ -231,7 +231,7 @@ When `getState()` is run:
 2) Any pending file uploads are stored permanently in the filesystem.
 3) [Field relationships](#field-relationships), if they are defined, are saved.
 
-> You may transform the value that is dehydrated from a field [using the `dehydrateStateUsing()` method](advanced-forms#dehydration).
+> You may transform the value that is dehydrated from a field [using the `dehydrateStateUsing()` method](advanced#dehydration).
 
 ## Validation
 
@@ -248,6 +248,14 @@ A full list of validation rules may be found in the [Laravel documentation](http
 There are also dedicated methods for some validation rules, some of which are able to add frontend validation as well as backend validation.
 
 We recommend that you use dedicated validation methods wherever possible.
+
+#### Different
+
+The field value must be different to another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-different)
+
+```php
+Field::make('backupEmail')->different('email')
+```
 
 #### Exists
 
@@ -269,6 +277,38 @@ By default, the field name will be used as the column to search. You may specify
 
 ```php
 Field::make('invitation')->exists(column: 'id')
+```
+
+#### Greater than
+
+The field value must be greater than another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-gt)
+
+```php
+Field::make('newNumber')->gt('oldNumber')
+```
+
+#### Greater than or equal to
+
+The field value must be greater than or equal to another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-gte)
+
+```php
+Field::make('newNumber')->gte('oldNumber')
+```
+
+#### Less than
+
+The field value must be less than another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-lt)
+
+```php
+Field::make('newNumber')->lt('oldNumber')
+```
+
+#### Less than or equal to
+
+The field value must be less than or equal to another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-lte)
+
+```php
+Field::make('newNumber')->lte('oldNumber')
 ```
 
 #### Nullable

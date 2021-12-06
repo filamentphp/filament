@@ -11,6 +11,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
 use Illuminate\View\Component as ViewComponent;
@@ -32,6 +33,10 @@ class Table extends ViewComponent implements Htmlable
     protected ?string $emptyStateHeading = null;
 
     protected ?string $emptyStateIcon = null;
+
+    protected ?string $filtersFormWidth = null;
+
+    protected ?Closure $getRecordUrlUsing = null;
 
     protected ?View $header = null;
 
@@ -98,6 +103,20 @@ class Table extends ViewComponent implements Htmlable
     public function contentFooter(?View $view): static
     {
         $this->contentFooter = $view;
+
+        return $this;
+    }
+
+    public function filtersFormWidth(?string $width): static
+    {
+        $this->filtersFormWidth = $width;
+
+        return $this;
+    }
+
+    public function getRecordUrlUsing(?Closure $callback): static
+    {
+        $this->getRecordUrlUsing = $callback;
 
         return $this;
     }
@@ -198,6 +217,11 @@ class Table extends ViewComponent implements Htmlable
         return $this->getLivewire()->getTableFiltersForm();
     }
 
+    public function getFiltersFormWidth(): ?string
+    {
+        return $this->filtersFormWidth;
+    }
+
     public function getHeader(): ?View
     {
         return $this->header;
@@ -241,6 +265,17 @@ class Table extends ViewComponent implements Htmlable
     public function getRecordsPerPageSelectOptions(): array
     {
         return $this->recordsPerPageSelectOptions;
+    }
+
+    public function getRecordUrl(Model $record): ?string
+    {
+        $callback = $this->getRecordUrlUsing;
+
+        if (! $callback) {
+            return null;
+        }
+
+        return $callback($record);
     }
 
     public function getSelectedRecordCount(): int

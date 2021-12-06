@@ -363,7 +363,13 @@ You may create your own custom column classes and cell views, which you can reus
 
 > If you're just creating a simple custom column to use once, you could instead use a [view column](#view-column) to render any custom Blade file.
 
-Extend the `Filament\Tables\Columns\Column` class, and define the `$view` path of the custom field:
+To create a custom column class and view, you may use the following command:
+
+```bash
+php artisan make:table-column StatusSwitcher
+```
+
+This will create the following column class:
 
 ```php
 use Filament\Tables\Columns\Column;

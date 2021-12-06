@@ -28,7 +28,7 @@
 
         @if ($shouldAutosize())
             x-data="textareaFormComponent()"
-            x-on:input="resize()"
+            x-on:input="render()"
         @endif
     ></textarea>
 </x-forms::field-wrapper>

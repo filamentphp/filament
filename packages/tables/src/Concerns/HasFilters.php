@@ -65,6 +65,11 @@ trait HasFilters
         return [];
     }
 
+    protected function getTableFiltersFormColumns(): int | array
+    {
+        return 1;
+    }
+
     protected function getTableFiltersFormSchema(): array
     {
         return array_map(
@@ -73,5 +78,15 @@ trait HasFilters
                 ->statePath($filter->getName()),
             $this->getCachedTableFilters(),
         );
+    }
+
+    protected function getTableFiltersFormWidth(): ?string
+    {
+        return match ($this->getTableFiltersFormColumns()) {
+            2 => '2xl',
+            3 => '4xl',
+            4 => '6xl',
+            default => null,
+        };
     }
 }

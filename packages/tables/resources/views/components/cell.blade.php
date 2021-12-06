@@ -15,7 +15,7 @@
                 wire:click="callTableColumnAction('{{ $name }}', '{{ $record->getKey() }}')"
             @endif
             type="button"
-            class="block text-left transition hover:underline focus:outline-none focus:underline"
+            class="block text-left"
         >
             {{ $slot }}
         </button>
@@ -23,7 +23,7 @@
         <a
             href="{{ $url }}"
             {{ $shouldOpenUrlInNewTab ? 'target="_blank"' : null }}
-            class="block transition hover:underline focus:outline-none focus:underline"
+            class="block"
         >
             {{ $slot }}
         </a>

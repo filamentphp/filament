@@ -4,7 +4,6 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Forms;
 use Filament\Tables\Table;
-use Livewire\WithPagination;
 
 trait InteractsWithTable
 {
@@ -20,8 +19,8 @@ trait InteractsWithTable
     use HasFilters;
     use HasHeader;
     use HasRecords;
+    use HasRecordUrl;
     use Forms\Concerns\InteractsWithForms;
-    use WithPagination;
 
     protected Table $table;
 
@@ -43,6 +42,16 @@ trait InteractsWithTable
         }
     }
 
+    public function mountInteractsWithTable(): void
+    {
+        if ($this->isTablePaginationEnabled()) {
+            $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
+        }
+
+        $this->tableSortColumn = $this->getDefaultTableSortColumn();
+        $this->tableSortDirection = $this->getDefaultTableSortDirection();
+    }
+
     protected function getCachedTable(): Table
     {
         return $this->table;
@@ -58,9 +67,25 @@ trait InteractsWithTable
             ->emptyStateHeading($this->getTableEmptyStateHeading())
             ->emptyStateIcon($this->getTableEmptyStateIcon())
             ->enablePagination($this->isTablePaginationEnabled())
+            ->filtersFormWidth($this->getTableFiltersFormWidth())
+            ->getRecordUrlUsing($this->getTableRecordUrlUsing())
             ->header($this->getTableHeader())
             ->heading($this->getTableHeading())
             ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions());
+    }
+
+    protected function getTableQueryStringIdentifier(): ?string
+    {
+        return null;
+    }
+
+    protected function getIdentifiedTableQueryStringPropertyNameFor(string $property): string
+    {
+        if (filled($this->getTableQueryStringIdentifier())) {
+            return $this->getTableQueryStringIdentifier() . ucfirst($property);
+        }
+
+        return $property;
     }
 
     protected function getForms(): array
@@ -84,6 +109,7 @@ trait InteractsWithTable
                 ->statePath('mountedTableBulkActionData'),
             'tableFiltersForm' => $this->makeForm()
                 ->schema($this->getTableFiltersFormSchema())
+                ->columns($this->getTableFiltersFormColumns())
                 ->statePath('tableFilters')
                 ->reactive(),
         ];

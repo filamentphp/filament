@@ -1,5 +1,5 @@
 ---
-title: Building Tables
+title: Getting Started
 ---
 
 ## Preparing your Livewire component
@@ -234,6 +234,35 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
 }
 ```
 
+By default, Livewire stores the pagination state in a `page` parameter of the URL query string. If you have multiple tables on the same page, this will mean that the pagination state of one table may be overwritten by the state of another table.
+
+To fix this, you may define a `getTableQueryStringIdentifier()` on your component, to return a unique query string identifier for that table:
+
+```php
+protected function getTableQueryStringIdentifier(): string
+{
+    return 'users';
+}
+```
+
+## Record URLs (clickable rows)
+
+You may allow table rows to be completely clickable by overriding the `getTableRecordUrlUsing()` method on your Livewire component:
+
+```php
+use Closure;
+use Illuminate\Database\Eloquent\Model;
+
+protected function getTableRecordUrlUsing(): Closure
+{
+    return fn (Model $record): string => route('posts.edit', ['record' => $record]);
+}
+```
+
+In this example, clicking on each post will take you to the `posts.edit` route.
+
+If you'd like to [override the URL](columns#opening-urls) for a specific column, or instead [run a Livewire action](columns#running-actions) when a column is clicked, see the [columns documentation](columns#opening-urls).
+
 ## Empty state
 
 By default, an "empty state" card will be rendered when the table is empty. To customize this, you may define methods on your Livewire component:
@@ -309,6 +338,22 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
 }
 ```
 
+## Query string
+
+Livewire ships with a feature to store data in the URL's query string, to access across requests.
+
+With Filament, this allows you to store your table's sort, search and pagination state in the URL.
+
+To store the sort and search state of your table in the query string:
+
+```php
+protected $queryString = [
+    'tableSortColumn',
+    'tableSortDirection',
+    'tableSearchQuery' => ['except' => ''],
+];
+```
+
 ## Using the form builder
 
 Internally, the table builder uses the [form builder](/docs/forms) to implement filtering, actions, and bulk actions. Because of this, the form builder is already set up on your Livewire component and ready to use with your own custom forms.
@@ -373,7 +418,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
 }
 ```
 
-You may also [register multiple custom forms](/docs/forms/building-forms#using-multiple-forms) on your component:
+You may also [register multiple custom forms](/docs/forms/getting-started#using-multiple-forms) on your component:
 
 ```php
 <?php

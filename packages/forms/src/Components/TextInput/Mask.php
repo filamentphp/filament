@@ -138,7 +138,7 @@ class Mask implements Jsonable
         return $this;
     }
 
-    public function money(string $prefix, string $thousandsSeparator = ',', int $decimalPlaces = 2): static
+    public function money(string $prefix = '$', string $thousandsSeparator = ',', int $decimalPlaces = 2): static
     {
         $this
             ->patternBlocks([

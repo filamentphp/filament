@@ -1,5 +1,5 @@
 ---
-title: Advanced Forms
+title: Advanced
 ---
 
 ## Using callback customisation
@@ -133,7 +133,7 @@ TextInput::make('newPasswordConfirmation')
 
 ### Hydration
 
-Hydration is the process which fill fields with data. It runs when you call the [form's `fill()` method](building-forms#filling-forms-with-data). You may customize what happens after a field is hydrated using the `afterStateHydrated()`.
+Hydration is the process which fill fields with data. It runs when you call the [form's `fill()` method](getting-started#filling-forms-with-data). You may customize what happens after a field is hydrated using the `afterStateHydrated()`.
 
 In this example, the `name` field will always be hydrated with the correctly capitalized name:
 
@@ -166,7 +166,7 @@ TextInput::make('slug')
 
 ### Dehydration
 
-Hydration is the process which gets data from fields, and transforms it. It runs when you call the [form's `getState()` method](building-forms#getting-data-from-forms). You may customize how the state is dehydrated from the form by returning the transformed state from the `afterStateHydrated()` callback.
+Hydration is the process which gets data from fields, and transforms it. It runs when you call the [form's `getState()` method](getting-started#getting-data-from-forms). You may customize how the state is dehydrated from the form by returning the transformed state from the `afterStateHydrated()` callback.
 
 In this example, the `name` field will always be dehydrated with the correctly capitalized name:
 
