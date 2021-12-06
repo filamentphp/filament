@@ -86,7 +86,7 @@ public static function table(Table $table): Table
         ])
         ->filters([
             Tables\Filters\Filter::make('verified')
-                ->apply(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
+                ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
             // ...
         ]);
 }
