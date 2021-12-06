@@ -262,11 +262,13 @@ You should be able to safely rename all instances of this class to the new one.
 
 The entire `Filament\Resources\Forms` namespace has been moved to `Filament\Forms`.
 
+Layout components, such as Grid and Tabs, now have their own separate `schema()` for form components, instead of using a parameter of the `make()` method. For more information, check out the [form builder layout documentation](/docs/forms/layout).
+
+The `Filament\Resources\Forms\Tab` component has been moved to `Filament\Forms\Tabs\Tab`.
+
 ### Tables
 
 The entire `Filament\Resources\Tables` namespace has been moved to `Filament\Tables`.
-
-The `Filament\Resources\Tables\Tab` component has been moved to `Filament\Tables\Tabs\Tab`.
 
 Method changes:
 
