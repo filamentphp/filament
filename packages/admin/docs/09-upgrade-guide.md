@@ -94,9 +94,31 @@ protected static string $resource; // Protected the property. Added the `string`
 ```
 </details>
 
+### Forms
+
+The entire `Filament\Resources\Forms` namespace has been moved to `Filament\Forms`.
+
+Layout components, such as Grid and Tabs, now have their own separate `schema()` for form components, instead of using a parameter of the `make()` method. For more information, check out the [form builder layout documentation](/docs/forms/layout).
+
+The `Filament\Resources\Forms\Tab` component has been moved to `Filament\Forms\Tabs\Tab`.
+
+### Tables
+
+The entire `Filament\Resources\Tables` namespace has been moved to `Filament\Tables`.
+
+Column class names now have `Column` at the end, for example `TextColumn` not `Text`.
+
+Filters now have a dedicated `query()` method for applying the query, instead of using the second parameter of the `make()` method. For more information, check out the [table builder filters documentation](/docs/tables/filters).
+
+Method changes:
+
+- The `primary()` method has been removed from columns. All columns link to the record page by default unless another URL or action is specified for that column.
+- The `getValueUsing()` method has been renamed to `getStateUsing()`.
+- The `currency()` method has been renamed to `money()`.
+
 ### Published configuration updates
 
-If you've published the v1.x `filament.php` configuration file, you should run the following command to overwrite it:
+If you've published the v1.x `filament.php` configuration file, you should republish it. Run the following command **after you have upgraded Filament via Composer**:
 
 ```bash
 php artisan vendor:publish --tag=filament-config --force
@@ -257,26 +279,6 @@ Are you already using <code>App\Models\User</code>?
 You should be able to safely rename all instances of this class to the new one.
 
 ## Medium impact changes
-
-### Forms
-
-The entire `Filament\Resources\Forms` namespace has been moved to `Filament\Forms`.
-
-Layout components, such as Grid and Tabs, now have their own separate `schema()` for form components, instead of using a parameter of the `make()` method. For more information, check out the [form builder layout documentation](/docs/forms/layout).
-
-The `Filament\Resources\Forms\Tab` component has been moved to `Filament\Forms\Tabs\Tab`.
-
-### Tables
-
-The entire `Filament\Resources\Tables` namespace has been moved to `Filament\Tables`.
-
-Filters now have a dedicated `query()` method for applying the query, instead of using the second parameter of the `make()` method. For more information, check out the [table builder filters documentation](/docs/tables/filters).
-
-Method changes:
-
-- The `primary()` method has been removed from columns. All columns link to the record page by default unless another URL or action is specified for that column.
-- The `getValueUsing()` method has been renamed to `getStateUsing()`.
-- The `currency()` method has been renamed to `money()`.
 
 ### Relation managers
 
