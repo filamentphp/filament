@@ -22,6 +22,8 @@ class Mask implements Jsonable
 
     protected bool $isSigned = true;
 
+    protected ?string $jsonOptions = null;
+
     protected array $mapToDecimalSeparator = [','];
 
     protected ?int $maxLength = null;
@@ -90,6 +92,13 @@ class Mask implements Jsonable
     public function integer(): static
     {
         $this->decimalPlaces(0);
+
+        return $this;
+    }
+
+    public function jsonOptions(?string $json = null): static
+    {
+        $this->jsonOptions = $json;
 
         return $this;
     }
@@ -319,6 +328,10 @@ class Mask implements Jsonable
 
     public function toJson($options = 0): string
     {
+        if (filled($this->jsonOptions)) {
+            return $this->jsonOptions;
+        }
+
         $json = json_encode($this->getArrayableConfiguration(), JSON_UNESCAPED_SLASHES | $options);
 
         return str_replace(
