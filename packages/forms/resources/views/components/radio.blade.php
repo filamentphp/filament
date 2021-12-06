@@ -13,7 +13,7 @@
             <div class="flex items-center h-5">
                 <input
                     name="{{ $getId() }}"
-                    id="{{ $value }}"
+                    id="{{ $getId() }}-{{ $value }}"
                     type="radio"
                     value="{{ $value }}"
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
@@ -26,7 +26,7 @@
                 />
             </div>
             <div class="ml-3 text-sm">
-                <label for="{{ $value }}" @class([
+                <label for="{{ $getId() }}-{{ $value }}" @class([
                     'font-medium',
                     'text-gray-700' => ! $errors->has($getStatePath()),
                     'text-danger-600' => $errors->has($getStatePath()),
@@ -34,8 +34,8 @@
                     {{ $label }}
                 </label>
 
-                @if($hasDescription($value))
-                    <p id="{{ $value }}-description" class="text-gray-500">
+                @if ($hasDescription($value))
+                    <p class="text-gray-500">
                         {{ $getDescription($value) }}
                     </p>
                 @endif
