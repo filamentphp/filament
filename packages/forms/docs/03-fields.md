@@ -535,7 +535,7 @@ class User extends Model
 
 ## Radio
 
-The radio provides a radio button group for selecting a single value from from a list of predefined options:
+The radio input provides a radio button group for selecting a single value from a list of predefined options:
 
 ```php
 use Filament\Forms\Components\Radio;
@@ -545,7 +545,7 @@ Radio::make('status')
         'draft' => 'Draft',
         'scheduled' => 'Scheduled',
         'published' => 'Published'
-    ]);
+    ])
 ```
 
 You can optionally provide descriptions to each option using the `descriptions()` method:
@@ -563,12 +563,12 @@ Radio::make('status')
         'draft' => 'Is not visible.',
         'scheduled' => 'Will be visible.',
         'published' => 'Is visible.'
-    ]);
+    ])
 ```
 
 Be sure to use the same `key` in the descriptions array as the `key` in the options array so the right description matches the right option.
 
-If you want a simple boolean radio button group (e.g Yes or No), you can use the `boolean()` method:
+If you want a simple boolean radio button group, with "Yes" and "No" options, you can use the `boolean()` method:
 
 ```php
 Radio::make('feedback')
