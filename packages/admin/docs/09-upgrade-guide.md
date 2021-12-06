@@ -399,10 +399,6 @@ Are you already using <code>App\Models\User</code>?
 4) Remove the `$filamentAdminColumn` and `$filamentRolesColumn` properties, and `isFilamentAdmin()` method, if you use them. Filament now only uses policies for authorization, so you may implement whichever roles system you wish there. We recommend [`spatie/laravel-permission`](https://github.com/spatie/laravel-permission).
 </details>
 
-### `Filament\Filament` facade renamed to `Filament\Facades\Filament`
-
-You should be able to safely rename all instances of this class to the new one.
-
 ## Medium impact changes
 
 ### Relation managers
@@ -421,6 +417,10 @@ protected static ?string $recordTitleAttribute; // Renamed from `$primaryColumn`
 
 protected static string $relationship; // Protected the property. Added the `string` type.
 ```
+
+### `Filament\Filament` facade renamed to `Filament\Facades\Filament`
+
+You should be able to safely rename all instances of this class to the new one.
 
 ### Roles
 
