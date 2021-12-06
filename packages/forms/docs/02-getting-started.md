@@ -249,6 +249,14 @@ There are also dedicated methods for some validation rules, some of which are ab
 
 We recommend that you use dedicated validation methods wherever possible.
 
+#### Different
+
+The field value must be different to another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-different)
+
+```php
+Field::make('backupEmail')->different('email')
+```
+
 #### Exists
 
 The field value must exist in the database. [See the Laravel documentation](https://laravel.com/docs/validation#rule-exists).
@@ -269,6 +277,38 @@ By default, the field name will be used as the column to search. You may specify
 
 ```php
 Field::make('invitation')->exists(column: 'id')
+```
+
+#### Greater than
+
+The field value must be greater than another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-gt)
+
+```php
+Field::make('newNumber')->gt('oldNumber')
+```
+
+#### Greater than or equal to
+
+The field value must be greater than or equal to another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-gte)
+
+```php
+Field::make('newNumber')->gte('oldNumber')
+```
+
+#### Less than
+
+The field value must be less than another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-lt)
+
+```php
+Field::make('newNumber')->lt('oldNumber')
+```
+
+#### Less than or equal to
+
+The field value must be less than or equal to another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-lte)
+
+```php
+Field::make('newNumber')->lte('oldNumber')
 ```
 
 #### Nullable
