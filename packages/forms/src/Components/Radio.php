@@ -17,14 +17,6 @@ class Radio extends Field
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->getOptionLabelUsing(function (Radio $component, $value): ?string {
-            if (array_key_exists($value, $options = $component->getOptions())) {
-                return $options[$value];
-            }
-
-            return $value;
-        });
     }
 
     public function boolean(string $trueLabel = 'Yes', string $falseLabel = 'No'): static
@@ -44,36 +36,11 @@ class Radio extends Field
         return $this;
     }
 
-    public function getOptionLabelUsing(callable $callback): static
-    {
-        $this->getOptionLabelUsing = $callback;
-
-        return $this;
-    }
-
     public function options(array | Arrayable | callable $options): static
     {
         $this->options = $options;
 
         return $this;
-    }
-
-    public function getOptionLabel(): ?string
-    {
-        return $this->evaluate($this->getOptionLabelUsing, [
-            'value' => $this->getState(),
-        ]);
-    }
-
-    public function getOptions(): array
-    {
-        $options = $this->evaluate($this->options);
-
-        if ($options instanceof Arrayable) {
-            $options = $options->toArray();
-        }
-
-        return $options;
     }
 
     public function descriptions(array | Arrayable | callable $descriptions): static
@@ -85,16 +52,12 @@ class Radio extends Field
 
     public function hasDescription($value): bool
     {
-        return isset($this->getDescriptions()[$value]);
+        return array_key_exists($value, $this->getDescriptions());
     }
 
-    public function getDescription($value): string
+    public function getDescription($value): ?string
     {
-        if ($this->hasDescription($value)) {
-            return $this->getDescriptions()[$value];
-        }
-
-        return '';
+        return $this->getDescriptions()[$value] ?? null;
     }
 
     public function getDescriptions(): array
@@ -106,6 +69,17 @@ class Radio extends Field
         }
 
         return $descriptions;
+    }
+
+    public function getOptions(): array
+    {
+        $options = $this->evaluate($this->options);
+
+        if ($options instanceof Arrayable) {
+            $options = $options->toArray();
+        }
+
+        return $options;
     }
 
     public function isOptionDisabled($value, string $label): bool
