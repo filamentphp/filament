@@ -30,15 +30,11 @@ trait CanFilterRecords
             return $query;
         }
 
-        // Check if we have a default filter when no filter is selected
-        if (($this->filter === '' || $this->filter === null) &&
-            ($defaultFilter = $this->getTable()->getDefaultFilter())
-        ) {
+        if (blank($this->filter) && ($defaultFilter = $this->getTable()->getDefaultFilter())) {
             $this->filter = $defaultFilter;
         }
 
-        // We don't have any filter selected and no default one
-        if ($this->filter === '' || $this->filter === null) {
+        if (blank($this->filter)) {
             return $query;
         }
 
