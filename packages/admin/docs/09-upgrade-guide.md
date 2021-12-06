@@ -2,8 +2,6 @@
 title: Upgrading from v1.x
 ---
 
-> Due to the nature of these changes, we recommend that you make them before you upgrade the Filament package to v2.x. This will prevent errors from occurring during the Composer upgrade process.
-
 > If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/laravel-filament/filament/edit/2.x/packages/admin/docs/09-upgrade-guide.md) to our repository! Any help is appreciated!
 
 ## High impact changes
@@ -118,7 +116,7 @@ Method changes:
 
 ### Published configuration updates
 
-If you've published the v1.x `filament.php` configuration file, you should republish it. Run the following command **after you have upgraded Filament via Composer**:
+If you've published the v1.x `filament.php` configuration file, you should republish it:
 
 ```bash
 php artisan vendor:publish --tag=filament-config --force
