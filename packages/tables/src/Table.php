@@ -16,6 +16,8 @@ class Table
 
     protected $filters = [];
 
+    protected $defaultFilter = null;
+
     protected $livewire;
 
     protected $primaryColumnAction;
@@ -72,6 +74,13 @@ class Table
         return $this;
     }
 
+    public function defaultFilter($filter)
+    {
+        $this->defaultFilter = $filter;
+
+        return $this;
+    }
+
     public static function for($livewire)
     {
         return (new static())->livewire($livewire);
@@ -105,6 +114,11 @@ class Table
     public function getFilters()
     {
         return $this->filters;
+    }
+
+    public function getDefaultFilter()
+    {
+        return $this->defaultFilter;
     }
 
     public function getLivewire()

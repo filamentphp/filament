@@ -26,11 +26,15 @@ trait CanFilterRecords
 
     protected function applyFilters($query)
     {
-        if (
-            ! $this->isFilterable() ||
-            $this->filter === '' ||
-            $this->filter === null
-        ) {
+        if (! $this->isFilterable()) {
+            return $query;
+        }
+
+        if (blank($this->filter) && ($defaultFilter = $this->getTable()->getDefaultFilter())) {
+            $this->filter = $defaultFilter;
+        }
+
+        if (blank($this->filter)) {
             return $query;
         }
 
