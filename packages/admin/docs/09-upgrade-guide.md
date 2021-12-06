@@ -270,6 +270,8 @@ The `Filament\Resources\Forms\Tab` component has been moved to `Filament\Forms\T
 
 The entire `Filament\Resources\Tables` namespace has been moved to `Filament\Tables`.
 
+Filters now have a dedicated `query()` method for applying the query, instead of using the second parameter of the `make()` method. For more information, check out the [table builder filters documentation](/docs/tables/filters).
+
 Method changes:
 
 - The `primary()` method has been removed from columns. All columns link to the record page by default unless another URL or action is specified for that column.
