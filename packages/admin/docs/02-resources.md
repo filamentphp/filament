@@ -37,7 +37,7 @@ This is required for features like [global search](#global-search) to work.
 For example, this could be a blog post's `title` or a customer's `name`.
 
 ```php
-protected static string $recordTitleAttribute = 'name';
+protected static ?string $recordTitleAttribute = 'name';
 ```
 
 > You may specify the name of an [Eloquent accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) if just one column is unable to describe a record effectively.
@@ -285,7 +285,7 @@ public static function attachForm(Form $form): Form
 To enable global search on your model, you must [set a title attribute](#setting-a-title-attribute) for your resource:
 
 ```php
-protected static string $recordTitleAttribute = 'title';
+protected static ?string $recordTitleAttribute = 'title';
 ```
 
 If you would like to search across multiple columns of your resource, you may override the `getGloballySearchableAttributes()` method. "Dot-syntax" allows you to search inside of relationships:
