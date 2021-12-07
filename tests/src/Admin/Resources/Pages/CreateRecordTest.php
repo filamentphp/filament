@@ -28,3 +28,12 @@ it('can create', function () {
         'title' => $newData->title,
     ]);
 });
+
+it('can validate input', function () {
+    $newData = Post::factory()->make();
+
+    livewire(PostResource\Pages\CreatePost::class)
+        ->set('data.title', null)
+        ->call('create')
+        ->assertHasErrors(['data.title' => 'required']);
+});

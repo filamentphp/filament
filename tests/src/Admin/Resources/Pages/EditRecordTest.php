@@ -51,3 +51,15 @@ it('can save', function () {
         ->tags->toBe($newData->tags)
         ->title->toBe($newData->title);
 });
+
+it('can validate input', function () {
+    $post = Post::factory()->create();
+    $newData = Post::factory()->make();
+
+    livewire(PostResource\Pages\EditPost::class, [
+        'record' => $post->getKey(),
+    ])
+        ->set('data.title', null)
+        ->call('save')
+        ->assertHasErrors(['data.title' => 'required']);
+});
