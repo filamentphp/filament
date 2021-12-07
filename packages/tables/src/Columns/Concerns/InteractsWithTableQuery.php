@@ -72,26 +72,14 @@ trait InteractsWithTableQuery
         }
 
         foreach (array_reverse($this->getSortColumns()) as $sortColumnName) {
-            if ($this->queriesRelationships()) {
-                $relatedModel = $this->getRelatedModel($query);
-                $relationship = $this->getRelationship($query);
-
-                $query->orderBy(
-                    $relatedModel
-                        ->query()
-                        ->select($sortColumnName)
-                        ->whereColumn(
-                            "{$relatedModel->getTable()}.{$relationship->getOwnerKeyName()}",
-                            "{$this->getQueryModel($query)->getTable()}.{$relationship->getForeignKeyName()}",
-                        ),
-                    $direction,
-                );
-            } else {
-                $query->orderBy(
-                    $sortColumnName,
-                    $direction,
-                );
-            }
+            $query->when(
+                $this->queriesRelationships(),
+                fn ($query) => $query->orderBy(
+                    $this->getRelationship($query)->getRelationExistenceQuery($this->getRelatedModel($query)->query(), $query, $sortColumnName),
+                    $direction
+                ),
+                fn ($query) => $query->orderBy($sortColumnName, $direction),
+            );
         }
 
         return $query;
