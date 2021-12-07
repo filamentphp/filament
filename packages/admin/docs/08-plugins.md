@@ -11,9 +11,13 @@ use Filament\PluginServiceProvider;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'example';
+    
     // ...
 }
 ```
+
+Plugins must have a unique name property.
 
 ## Registering plugins
 
@@ -62,6 +66,8 @@ use Vendor\Package\Resources\CustomResource;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'example';
+    
     protected function getResources(): array
     {
         return [
@@ -83,6 +89,8 @@ use Vendor\Package\Pages\CustomPage;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'example';
+    
     protected function getPages(): array
     {
         return [
@@ -104,6 +112,8 @@ use Vendor\Package\Widgers\CustomWidget;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'example';
+    
     protected function getWidgets(): array
     {
         return [
@@ -128,6 +138,8 @@ use Filament\PluginServiceProvider;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'example';
+    
     protected function getStyles(): array
     {
         return [
@@ -146,6 +158,8 @@ use Filament\PluginServiceProvider;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'example';
+    
     protected function getScripts(): array
     {
         return [
@@ -167,6 +181,8 @@ use Illuminate\Support\Facades\Auth;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'example';
+    
     protected function getScriptData(): array
     {
         return [
