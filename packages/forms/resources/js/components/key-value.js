@@ -1,5 +1,3 @@
-import Sortable from 'sortablejs'
-
 export default (Alpine) => {
     Alpine.data('keyValueFormComponent', ({
         canAddRows,
