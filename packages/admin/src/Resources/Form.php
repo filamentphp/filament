@@ -4,7 +4,6 @@ namespace Filament\Resources;
 
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Contracts\HasForms;
 
 class Form
 {
@@ -12,7 +11,7 @@ class Form
 
     protected array | Component $schema = [];
 
-    public static function make(HasForms $livewire): static
+    public static function make(): static
     {
         return new static();
     }
