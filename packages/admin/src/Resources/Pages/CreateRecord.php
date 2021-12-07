@@ -47,6 +47,8 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
         $this->callHook('afterValidate');
 
+        $data = $this->mutateFormDataBeforeCreate($data);
+
         $this->callHook('beforeCreate');
 
         $this->record = static::getModel()::create($data);
@@ -66,6 +68,11 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
         if ($redirectUrl = $this->getRedirectUrl()) {
             $this->redirect($redirectUrl);
         }
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        return $data;
     }
 
     protected function getFormActions(): array

@@ -55,6 +55,8 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
         $this->callHook('afterValidate');
 
+        $data = $this->mutateFormDataBeforeSave($data);
+
         $this->callHook('beforeSave');
 
         $this->record->update($data);
@@ -66,6 +68,11 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
         } else {
             $this->notify('success', __('filament::resources/pages/edit-record.messages.saved'));
         }
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        return $data;
     }
 
     public function openDeleteModal(): void

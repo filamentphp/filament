@@ -40,6 +40,8 @@ trait CanCreateRecords
         $this->callHook('afterValidate');
         $this->callHook('afterCreateValidate');
 
+        $data = $this->mutateFormDataBeforeCreate($data);
+
         $this->callHook('beforeCreate');
 
         $record = $this->getRelationship()->create($data);
@@ -50,6 +52,11 @@ trait CanCreateRecords
         if ($another) {
             $form->fill();
         }
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        return $data;
     }
 
     protected function getCreateButtonTableHeaderAction(): Tables\Actions\ButtonAction

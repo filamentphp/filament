@@ -40,11 +40,18 @@ trait CanEditRecords
         $this->callHook('afterValidate');
         $this->callHook('afterEditValidate');
 
+        $data = $this->mutateFormDataBeforeSave($data);
+
         $this->callHook('beforeSave');
 
         $this->getMountedTableActionRecord()->update($data);
 
         $this->callHook('afterSave');
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        return $data;
     }
 
     protected function getEditLinkTableAction(): Tables\Actions\LinkAction

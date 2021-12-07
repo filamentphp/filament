@@ -386,9 +386,33 @@ public static function getPages(): array
 }
 ```
 
-### Hooks
+### Customizing data before saving
 
-Hooks may be used to customize the behaviour of a default page. To set up a hook, create a protected method on the page class with the name of the hook:
+On create pages, you may define a `mutateFormDataBeforeCreate()` method to modify the form data before it is saved to the database:
+
+```php
+protected function mutateFormDataBeforeCreate(array $data): array
+{
+    $data['user_id'] = auth()->id();
+    
+    return $data;
+}
+```
+
+On edit pages, you may do the same using the `mutateFormDataBeforeSave()` method:
+
+```php
+protected function mutateFormDataBeforeSave(array $data): array
+{
+    $data['last_edited_by_id'] = auth()->id();
+    
+    return $data;
+}
+```
+
+### Lifecycle hooks
+
+Hooks may be used to execute methods at various points within a page's lifecycle, like before a form is saved. To set up a hook, create a protected method on the page class with the name of the hook:
 
 ```php
 protected function beforeSave(): void
