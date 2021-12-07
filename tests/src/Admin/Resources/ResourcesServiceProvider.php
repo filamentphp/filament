@@ -3,7 +3,7 @@
 namespace Filament\Tests\Admin\Resources;
 
 use Filament\PluginServiceProvider;
-use Filament\Tests\Admin\Fixtures\PostResource;
+use Filament\Tests\Admin\Fixtures\Resources\PostResource;
 
 class ResourcesServiceProvider extends PluginServiceProvider
 {

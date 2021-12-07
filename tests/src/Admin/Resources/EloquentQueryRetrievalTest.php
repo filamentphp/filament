@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Tests\Admin\Fixtures\PostResource;
+use Filament\Tests\Admin\Fixtures\Resources\PostResource;
 use Filament\Tests\Admin\Resources\TestCase;
 use Filament\Tests\Models\Post;
 use Illuminate\Database\Eloquent\Builder;

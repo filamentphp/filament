@@ -1,13 +1,13 @@
 <?php
 
-namespace Filament\Tests\Admin\Fixtures;
+namespace Filament\Tests\Admin\Fixtures\Resources;
 
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Filament\Tests\Admin\Fixtures\PostResource\Pages;
+use Filament\Tests\Admin\Fixtures\Resources\PostResource\Pages;
 use Filament\Tests\Models\Post;
 
 class PostResource extends Resource
