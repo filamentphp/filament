@@ -5,6 +5,7 @@ namespace Filament\Tables\Filters;
 use Filament\Forms\Components\Select;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class SelectFilter extends Filter
 {
@@ -28,9 +29,16 @@ class SelectFilter extends Filter
             return $query;
         }
 
-        $query->where($this->getColumn(), $data['value']);
+        $filterColumnName = $this->getColumn();
+        if (Str::of($filterColumnName)->contains('.')) {
+            return $query->whereRelation(
+                (string) Str::of($filterColumnName)->beforeLast('.'),
+                (string) Str::of($filterColumnName)->afterLast('.'),
+                $data['value']
+            );
+        }
 
-        return $query;
+        return $query->where($this->getColumn(), $data['value']);
     }
 
     public function column(string $name): static
