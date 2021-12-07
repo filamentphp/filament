@@ -609,7 +609,13 @@ SortUsers::getUrl($parameters = [], $absolute = true);
 
 ## Authorization
 
-For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The `viewAny` action may be used to completely disable resources and remove them from the navigation menu.
+For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The following methods are used:
+
+- `delete` is used to prevent a record from being deleted. It removes the "Delete" button from the "Edit" page.
+- `deleteAny` is used to prevent records from being bulk deleted. It removes the "Delete selected" bulk action from the resource table.
+- `edit` is used to control editing of a record. It prevents the "Edit" link from being displayed on the resource table, and prevents the user from visiting the Edit page.
+- `view` is used to control viewing of a record. If you have a [view page](#view-page), it prevents the "View" link from being displayed on the table, and prevents the user from visiting the View page.
+- `viewAny` is used to completely disable resources and remove them from the navigation menu.
 
 ## Disabling global scopes
 
