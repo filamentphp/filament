@@ -2,9 +2,9 @@
 
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
-use Illuminate\Support\Str;
-use Filament\Tests\TestCase;
 use Filament\Tests\Forms\Fixtures\Livewire;
+use Filament\Tests\TestCase;
+use Illuminate\Support\Str;
 
 uses(TestCase::class);
 
