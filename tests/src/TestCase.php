@@ -2,6 +2,8 @@
 
 namespace Filament\Tests;
 
+use BladeUI\Heroicons\BladeHeroiconsServiceProvider;
+use BladeUI\Icons\BladeIconsServiceProvider;
 use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\SpatieLaravelSettingsPluginServiceProvider;
@@ -20,6 +22,8 @@ abstract class TestCase extends BaseTestCase
     protected function getPackageProviders($app): array
     {
         return [
+            BladeHeroiconsServiceProvider::class,
+            BladeIconsServiceProvider::class,
             FilamentServiceProvider::class,
             FormsServiceProvider::class,
             LivewireServiceProvider::class,

@@ -6,6 +6,7 @@
         "php": "^8.0"
     },
     "require-dev": {
+        "blade-ui-kit/blade-heroicons": "^1.2",
         "danharrin/livewire-rate-limiting": "^0.3.0",
         "laravel/ui": "^3.3",
         "livewire/livewire": "^2.5",
