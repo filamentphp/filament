@@ -1,0 +1,36 @@
+name: monorepo-split
+
+on:
+    push:
+        tags: '*'
+
+jobs:
+    split-monorepo:
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                package:
+                    - admin
+                    - forms
+                    - spatie-laravel-media-library-plugin
+                    - spatie-laravel-settings-plugin
+                    - spatie-laravel-tags-plugin
+                    - spatie-laravel-translatable-plugin
+                    - tables
+        steps:
+            - uses: actions/checkout@v2
+            - id: previous-tag
+              uses: "WyriHaximus/github-action-get-previous-tag@master"
+            - name: Monorepo Split of ${{ matrix.package }}
+              uses: symplify/github-action-monorepo-split@main
+              env:
+                  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+              with:
+                  package_directory: 'packages/${{ matrix.package }}'
+                  repository_organization: 'laravel-filament'
+                  repository_name: '${{ matrix.package }}'
+                  branch: 2.x
+                  tag: ${{ steps.previous-tag.outputs.tag }}
+                  user_name: "Dan Harrin"
+                  user_email: "dan@danharrin.com"
