@@ -8,7 +8,6 @@ use Filament\SpatieLaravelSettingsPluginServiceProvider;
 use Filament\SpatieLaravelTranslatablePluginServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Filament\Tests\Models\User;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
