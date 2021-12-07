@@ -42,22 +42,16 @@ return [
                 'label' => 'Delete Row',
             ],
 
-            'sort' => [
-                'label' => 'Hold to Sort',
-            ],
-
         ],
 
         'fields' => [
 
             'key' => [
                 'label' => 'Key',
-                'placeholder' => 'Enter a key...',
             ],
 
             'value' => [
                 'label' => 'Value',
-                'placeholder' => 'Enter a value...',
             ],
 
         ],

@@ -1076,6 +1076,37 @@ Textarea::make('description')
     ->maxLength(500)
 ```
 
+## Key-value
+
+The key-value field allows you to interact with one-dimensional JSON object:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+```
+
+You may customize the labels for the key and value fields using the `keyLabel()` and `valueLabel()` methods:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+    ->keyLabel('Property name')
+    ->valueLabel('Property value')
+```
+
+You may also prevent the user from adding rows, deleting rows, or editing keys:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+    ->disableAddingRows()
+    ->disableDeletingRows()
+    ->disableEditingKeys()
+```
+
 ## View
 
 Aside from [building custom fields](#building-custom-fields), you may create "view" fields which allow you to create custom fields without extra PHP classes.
