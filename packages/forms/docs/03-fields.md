@@ -931,6 +931,18 @@ Repeater::make('members')
 
 If you wish to define a repeater with multiple schema blocks that can be repeated in any order, please use the [builder](#builder).
 
+Repeaters may have a certain number of empty items created by default, using the `defaultItems()` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->defaultItems(1)
+```
+
 ## Builder
 
 Similar to a [repeater](#repeater), the builder component allows you to output a JSON array of repeated form components. Unlike the repeater, which only defines one form schema to repeat, the builder allows you to define different schema "blocks", which you can repeat in any order. This makes it useful for building more advanced array structures.
