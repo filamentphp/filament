@@ -1,1 +1,0 @@
-<div aria-hidden="true" {{ $attributes->class(['border-t']) }}></div>
