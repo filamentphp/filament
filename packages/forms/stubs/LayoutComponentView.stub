@@ -1,0 +1,3 @@
+<div {{ $attributes }}>
+    {{ $getChildComponentContainer() }}
+</div>

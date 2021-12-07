@@ -1,0 +1,43 @@
+name: monorepo-split
+
+on:
+    push:
+        tags: '*'
+
+jobs:
+    provide-packages-list:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: 8.0
+                  coverage: none
+            - uses: "ramsey/composer-install@v1"
+            - id: packages-list
+              run: echo "::set-output name=matrix::$(vendor/bin/monorepo-builder packages-json)"
+        outputs:
+            matrix: ${{ steps.packages-list.outputs.matrix }}
+    split-monorepo:
+        needs: provide-packages-list
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                package: ${{fromJson(needs.provide-packages-list.outputs.matrix)}}
+        steps:
+            - uses: actions/checkout@v2
+            - id: previous-tag
+              uses: "WyriHaximus/github-action-get-previous-tag@master"
+            - name: Monorepo Split of ${{ matrix.package }}
+              uses: symplify/github-action-monorepo-split@main
+              env:
+                  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+              with:
+                  package_directory: 'packages/${{ matrix.package }}'
+                  repository_organization: 'laravel-filament'
+                  repository_name: '${{ matrix.package }}'
+                  branch: 2.x
+                  tag: ${{ steps.previous-tag.outputs.tag }}
+                  user_name: "Dan Harrin"
+                  user_email: "dan@danharrin.com"

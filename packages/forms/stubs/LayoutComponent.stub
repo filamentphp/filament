@@ -1,0 +1,15 @@
+<?php
+
+namespace {{ namespace }};
+
+use Filament\Forms\Components\Component;
+
+class {{ class }} extends Component
+{
+    protected string $view = '{{ view }}';
+
+    public static function make(): static
+    {
+        return new static();
+    }
+}
