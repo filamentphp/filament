@@ -5,7 +5,6 @@ namespace Filament\Tests\Database\Factories;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class PostFactory extends Factory
 {
