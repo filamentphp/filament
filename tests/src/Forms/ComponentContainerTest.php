@@ -7,8 +7,8 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Str;
-use Tests\TestCase;
-use Tests\Unit\Forms\Fixtures\Livewire;
+use Filament\Tests\TestCase;
+use Filament\Tests\Forms\Fixtures\Livewire;
 
 uses(TestCase::class);
 

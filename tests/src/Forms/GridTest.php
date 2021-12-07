@@ -2,8 +2,8 @@
 
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
-use Tests\TestCase;
-use Tests\Unit\Forms\Fixtures\Livewire;
+use Filament\Tests\TestCase;
+use Filament\Tests\Forms\Fixtures\Livewire;
 
 uses(TestCase::class);
 

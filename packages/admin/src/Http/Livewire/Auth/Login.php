@@ -30,7 +30,7 @@ class Login extends Component implements HasForms
         $this->form->fill();
     }
 
-    public function submit(): void
+    public function authenticate(): void
     {
         try {
             $this->rateLimit(5);

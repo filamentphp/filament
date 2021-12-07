@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Forms\Fixtures;
+namespace Filament\Tests\Forms\Fixtures;
 
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
