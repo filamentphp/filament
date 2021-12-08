@@ -69,7 +69,17 @@ If you have defined a form or component Eloquent model, define a `$model` parame
 ```php
 use Illuminate\Database\Eloquent\Model;
 
-function (Model $model) {
+function (Model | string $model) {
+    // ...
+}
+```
+
+If you'd only like to receive model instances, define a `$record` parameter instead:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+function (Model $record) {
     // ...
 }
 ```
