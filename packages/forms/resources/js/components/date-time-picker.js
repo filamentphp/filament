@@ -53,6 +53,8 @@ export default (Alpine) => {
             state,
 
             init: function () {
+                this.focusedDate = dayjs().tz(timezone)
+
                 this.maxDate = dayjs(this.maxDate)
                 if (! this.maxDate.isValid()) {
                     this.maxDate = null

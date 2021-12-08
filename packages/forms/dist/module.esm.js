@@ -6097,6 +6097,7 @@ var date_time_picker_default = (Alpine) => {
       second: null,
       state: state2,
       init: function() {
+        this.focusedDate = esm_default().tz(timezone2);
         this.maxDate = esm_default(this.maxDate);
         if (!this.maxDate.isValid()) {
           this.maxDate = null;
