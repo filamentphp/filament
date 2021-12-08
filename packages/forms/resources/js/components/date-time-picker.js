@@ -97,7 +97,7 @@ export default (Alpine) => {
                 })
 
                 this.$watch('focusedYear', () => {
-                    this.focusedYear = Number.isInteger(+this.focusedYear) ? +this.focusedYear : dayjs().year()
+                    this.focusedYear = Number.isInteger(+this.focusedYear) ? +this.focusedYear : dayjs().tz(timezone).year()
 
                     if (this.focusedDate.year() === this.focusedYear) {
                         return
@@ -211,6 +211,8 @@ export default (Alpine) => {
             },
 
             dayIsDisabled: function (day) {
+                this.focusedDate ??= dayjs().tz(timezone)
+
                 return this.dateIsDisabled(this.focusedDate.date(day))
             },
 
@@ -221,6 +223,8 @@ export default (Alpine) => {
                     return false
                 }
 
+                this.focusedDate ??= dayjs().tz(timezone)
+
                 return selectedDate.date() === day &&
                     selectedDate.month() === this.focusedDate.month() &&
                     selectedDate.year() === this.focusedDate.year()
@@ -228,6 +232,7 @@ export default (Alpine) => {
 
             dayIsToday: function (day) {
                 let date = dayjs().tz(timezone)
+                this.focusedDate ??= date
 
                 return date.date() === day &&
                     date.month() === this.focusedDate.month() &&
@@ -255,18 +260,26 @@ export default (Alpine) => {
             },
 
             focusPreviousDay: function () {
+                this.focusedDate ??= dayjs().tz(timezone)
+
                 this.focusedDate = this.focusedDate.subtract(1, 'day')
             },
 
             focusPreviousWeek: function () {
+                this.focusedDate ??= dayjs().tz(timezone)
+
                 this.focusedDate = this.focusedDate.subtract(1, 'week')
             },
 
             focusNextDay: function () {
+                this.focusedDate ??= dayjs().tz(timezone)
+
                 this.focusedDate = this.focusedDate.add(1, 'day')
             },
 
             focusNextWeek: function () {
+                this.focusedDate ??= dayjs().tz(timezone)
+
                 this.focusedDate = this.focusedDate.add(1, 'week')
             },
 
@@ -310,6 +323,8 @@ export default (Alpine) => {
                     this.setFocusedDay(day)
                 }
 
+                this.focusedDate ??= dayjs().tz(timezone)
+
                 this.setState(this.focusedDate)
             },
 
@@ -318,6 +333,8 @@ export default (Alpine) => {
             },
 
             setupDaysGrid: function () {
+                this.focusedDate ??= dayjs().tz(timezone)
+
                 this.emptyDaysInFocusedMonth = Array.from({
                     length: this.focusedDate.date(8 - firstDayOfWeek).day(),
                 }, (_, i) => i + 1)
@@ -328,7 +345,7 @@ export default (Alpine) => {
             },
 
             setFocusedDay: function (day) {
-                this.focusedDate = this.focusedDate.date(day)
+                this.focusedDate = (this.focusedDate ?? dayjs().tz(timezone)).date(day)
             },
 
             setState: function (date) {
