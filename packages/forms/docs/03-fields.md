@@ -916,6 +916,8 @@ Repeater::make('members')
     ])
 ```
 
+We recommend that you store repeater data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
+
 As evident in the above example, the component schema can be defined within the `schema()` method of the component:
 
 ```php
@@ -987,6 +989,8 @@ Builder::make('content')
             ]),
     ])
 ```
+
+We recommend that you store builder data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
 
 As evident in the above example, blocks can be defined within the `blocks()` method of the component. Blocks are `Builder\Block` objects, and require a unique name, and a component schema:
 
