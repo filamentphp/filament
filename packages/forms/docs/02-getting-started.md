@@ -257,42 +257,29 @@ The field value must be a value after a given date. [See the Laravel documentati
 Field::make('start_date')->after('tomorrow')
 ```
 
-You may also specify another field to compare against:
+#### After or equal to (date)
 
-```php
-Field::make('start_date')
-Field::make('end_date')->after('start_date')
-```
-
-#### After or equal (date)
-
-The field value must be a value after or equal to the given date. [See the Laravel documentation](https://laravel.com/docs/validation#rule-after-or-equal)
+The field value must be a date after or equal to the given date. [See the Laravel documentation](https://laravel.com/docs/validation#rule-after-or-equal)
 
 ```php
 Field::make('start_date')->afterOrEqual('tomorrow')
 ```
 
-Similar to the `after()` method, you may specify another field to compare against.
-
 #### Before (date)
 
-The field value must be a value before a given date. [See the Laravel documentation](https://laravel.com/docs/validation#rule-before)
+The field value must be a date before a given date. [See the Laravel documentation](https://laravel.com/docs/validation#rule-before)
 
 ```php
 Field::make('start_date')->before('first day of next month')
 ```
 
-Similar to the `after()` method, you may specify another field to compare against.
+#### Before or equal to (date)
 
-#### Before or equal (date)
-
-The field value must be a value before or equal to the given date. [See the Laravel documentation](https://laravel.com/docs/validation#rule-before-or-equal)
+The field value must be a date before or equal to the given date. [See the Laravel documentation](https://laravel.com/docs/validation#rule-before-or-equal)
 
 ```php
 Field::make('start_date')->beforeOrEqual('end of this month')
 ```
-
-Similar to the `after()` method, you may specify another field to compare against.
 
 #### Different
 
