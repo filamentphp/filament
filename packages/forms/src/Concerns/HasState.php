@@ -98,6 +98,8 @@ trait HasState
     public function fill(?array $state = null): static
     {
         if ($state !== null) {
+            $this->hydrateNullState();
+
             $livewire = $this->getLivewire();
 
             if ($statePath = $this->getStatePath()) {
@@ -124,6 +126,19 @@ trait HasState
 
             foreach ($component->getChildComponentContainers() as $container) {
                 $container->hydrateDefaultState();
+            }
+        }
+
+        return $this;
+    }
+
+    public function hydrateNullState(): static
+    {
+        foreach ($this->getComponents() as $component) {
+            $component->hydrateNullState();
+
+            foreach ($component->getChildComponentContainers() as $container) {
+                $container->hydrateNullState();
             }
         }
 
