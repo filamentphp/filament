@@ -62,6 +62,26 @@ trait CanBeValidated
         return $this;
     }
 
+    public function after(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    {
+        return $this->fieldComparisonRule('after', $statePath, $isStatePathAbsolute);
+    }
+
+    public function afterOrEqual(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    {
+        return $this->fieldComparisonRule('after_or_equal', $statePath, $isStatePathAbsolute);
+    }
+
+    public function before(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    {
+        return $this->fieldComparisonRule('before', $statePath, $isStatePathAbsolute);
+    }
+
+    public function beforeOrEqual(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    {
+        return $this->fieldComparisonRule('before_or_equal', $statePath, $isStatePathAbsolute);
+    }
+
     public function different(string | callable $statePath, bool $isStatePathAbsolute = false): static
     {
         return $this->fieldComparisonRule('different', $statePath, $isStatePathAbsolute);
