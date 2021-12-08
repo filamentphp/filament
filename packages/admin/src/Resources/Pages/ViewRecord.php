@@ -38,7 +38,7 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
     {
         $this->callHook('beforeFill');
 
-        $this->form->fill($this->record->toArray());
+        $this->form->fill($this->record->setHidden([])->toArray());
 
         $this->callHook('afterFill');
     }
