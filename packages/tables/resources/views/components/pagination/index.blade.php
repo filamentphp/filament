@@ -12,7 +12,7 @@
         <div class="w-10">
             @if ($paginator->hasPages() && (! $paginator->onFirstPage()))
                 <x-tables::icon-button
-                    wire:click="previousPage"
+                    :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
                     rel="prev"
                     icon="heroicon-o-chevron-left"
                     :label="__('tables::table.pagination.buttons.previous.label')"
@@ -25,7 +25,7 @@
         <div class="w-10">
             @if ($paginator->hasPages() && $paginator->hasMorePages())
                 <x-tables::icon-button
-                    wire:click="nextPage"
+                    :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                     rel="next"
                     icon="heroicon-o-chevron-right"
                     :label="__('tables::table.pagination.buttons.next.label')"
@@ -54,7 +54,7 @@
                 <div class="py-3 border rounded-lg">
                     <ol class="flex items-center text-sm text-gray-500 divide-x divide-gray-300">
                         <x-tables::pagination.item
-                            wire:click="previousPage"
+                            :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
                             icon="heroicon-s-chevron-left"
                             aria-label="{{ __('tables::table.pagination.buttons.previous.label') }}"
                             :disabled="$paginator->onFirstPage()"
@@ -69,18 +69,18 @@
                             @if (is_array($element))
                                 @foreach ($element as $page => $url)
                                     <x-tables::pagination.item
-                                        :wire:click="'gotoPage(' . $page . ')'"
+                                        :wire:click="'gotoPage(' . $page . ', \'' . $paginator->getPageName() . '\')'"
                                         :label="$page"
                                         :aria-label="__('tables::table.pagination.buttons.go_to_page.label', ['page' => $page])"
                                         :active="$page === $paginator->currentPage()"
-                                        :wire:key="'paginationPage' . $page"
+                                        :wire:key="'pagination-' . $paginator->getPageName() . '-page' . $page"
                                     />
                                 @endforeach
                             @endif
                         @endforeach
 
                         <x-tables::pagination.item
-                            wire:click="nextPage"
+                            :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                             icon="heroicon-s-chevron-right"
                             aria-label="{{ __('tables::table.pagination.buttons.next.label') }}"
                             :disabled="! $paginator->hasMorePages()"

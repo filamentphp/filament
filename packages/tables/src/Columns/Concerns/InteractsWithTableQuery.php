@@ -97,7 +97,7 @@ trait InteractsWithTableQuery
 
     protected function getRelationshipName(): string
     {
-        return Str::of($this->getName())->beforeLast('.');
+        return (string) Str::of($this->getName())->beforeLast('.');
     }
 
     protected function getQueryModel(Builder $query): Model

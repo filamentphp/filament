@@ -13,7 +13,7 @@ SpatieTagsInput::make('tags')
     ->model(Post::find(1)),
 ```
 
-When a model instance is attached, tags will automatically be populated [and saved](/docs/forms/building-forms#field-relationships) to that model. Alternatively, if you do not have access to a model instance, you may [attach the model instance after the form is saved](/docs/forms/building-forms#saving-field-relationships-manually).
+When a model instance is attached, tags will automatically be populated [and saved](/docs/forms/getting-started#field-relationships) to that model. Alternatively, if you do not have access to a model instance, you may [attach the model instance after the form is saved](/docs/forms/getting-started#saving-field-relationships-manually).
 
 Optionally, you may pass a `type()`:
 

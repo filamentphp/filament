@@ -8,14 +8,15 @@ use Illuminate\Support\Str;
 class MakeFieldCommand extends Command
 {
     use Concerns\CanManipulateFiles;
+    use Concerns\CanValidateInput;
 
     protected $description = 'Creates a form field class and view.';
 
-    protected $signature = 'make:form-field {name}';
+    protected $signature = 'make:form-field {name?}';
 
     public function handle(): int
     {
-        $field = (string) Str::of($this->argument('name'))
+        $field = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `RangeSlider`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')

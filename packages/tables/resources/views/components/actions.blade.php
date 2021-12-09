@@ -2,7 +2,7 @@
     'actions',
 ])
 
-<div {{ $attributes->class(['flex items-center gap-4']) }}>
+<div {{ $attributes->class(['flex flex-wrap items-center gap-4']) }}>
     @foreach ($actions as $action)
         {{ $action }}
     @endforeach

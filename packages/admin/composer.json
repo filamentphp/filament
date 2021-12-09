@@ -1,0 +1,48 @@
+{
+    "name": "filament/filament",
+    "description": "Effortlessly build TALL-powered admin panels.",
+    "license": "MIT",
+    "homepage": "https://github.com/laravel-filament/filament",
+    "support": {
+        "issues": "https://github.com/laravel-filament/filament/issues",
+        "source": "https://github.com/laravel-filament/filament"
+    },
+    "require": {
+        "php": "^8.0",
+        "danharrin/livewire-rate-limiting": "^0.3.0",
+        "filament/forms": "self.version",
+        "filament/tables": "self.version",
+        "illuminate/auth": "^8.6",
+        "illuminate/console": "^8.6",
+        "illuminate/contracts": "^8.6",
+        "illuminate/cookie": "^8.6",
+        "illuminate/database": "^8.6",
+        "illuminate/http": "^8.6",
+        "illuminate/routing": "^8.6",
+        "illuminate/session": "^8.6",
+        "illuminate/support": "^8.6",
+        "illuminate/view": "^8.6",
+        "livewire/livewire": "^2.6",
+        "spatie/laravel-package-tools": "^1.9"
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "Filament\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Filament\\FilamentServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

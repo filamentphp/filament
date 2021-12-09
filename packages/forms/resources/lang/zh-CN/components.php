@@ -14,22 +14,16 @@ return [
                 'label' => '删除行',
             ],
 
-            'sort' => [
-                'label' => '排序',
-            ],
-
         ],
 
         'fields' => [
 
             'key' => [
                 'label' => '键名',
-                'placeholder' => '输入键名...',
             ],
 
             'value' => [
                 'label' => '值',
-                'placeholder' => '输入值...',
             ],
 
         ],

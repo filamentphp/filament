@@ -14,22 +14,16 @@ return [
                 'label' => 'Radera Rad',
             ],
 
-            'sort' => [
-                'label' => 'Tryck, ordna',
-            ],
-
         ],
 
         'fields' => [
 
             'key' => [
                 'label' => 'Namn',
-                'placeholder' => 'Ange namn...',
             ],
 
             'value' => [
                 'label' => 'Värde',
-                'placeholder' => 'Ange ett värde...',
             ],
 
         ],

@@ -134,6 +134,8 @@ BulkAction::make('delete')
     ->requiresConfirmation()
 ```
 
+> Note: The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` callback.
+
 ### Custom forms
 
 You may also render a form in this modal to collect extra information from the user before the action runs.
