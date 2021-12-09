@@ -80,6 +80,16 @@ SelectFilter::make('status')
     ->column('status_id')
 ```
 
+#### Relationship select filters
+
+Select filters are also able to automatically populate themselves based on a `BelongsTo` relationship. For example, if your table has a `author` relationship with a `name` column, you may use `relationship()` to filter the records belonging to an author:
+
+```php
+use Filament\Tables\Filters\SelectFilter;
+
+SelectFilter::make('author')->relationship('author', 'name')
+```
+
 ### Custom filter forms
 
 You may use components from the [Form Builder](/docs/forms/fields) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:

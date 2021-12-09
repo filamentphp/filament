@@ -7,7 +7,6 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 interface HasTable extends HasForms
@@ -33,8 +32,6 @@ interface HasTable extends HasForms
     public function getCachedTableFilters(): array;
 
     public function getCachedTableHeaderActions(): array;
-
-    public function getFilteredTableQuery(): Builder;
 
     public function getMountedTableAction(): ?Action;
 
