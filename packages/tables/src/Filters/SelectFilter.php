@@ -5,7 +5,6 @@ namespace Filament\Tables\Filters;
 use Filament\Forms\Components\Select;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
