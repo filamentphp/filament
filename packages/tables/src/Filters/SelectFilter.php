@@ -30,15 +30,16 @@ class SelectFilter extends Filter
         }
 
         $filterColumnName = $this->getColumn();
+
         if (Str::of($filterColumnName)->contains('.')) {
             return $query->whereRelation(
                 (string) Str::of($filterColumnName)->beforeLast('.'),
                 (string) Str::of($filterColumnName)->afterLast('.'),
-                $data['value']
+                $data['value'],
             );
         }
 
-        return $query->where($this->getColumn(), $data['value']);
+        return $query->where($filterColumnName, $data['value']);
     }
 
     public function column(string $name): static
