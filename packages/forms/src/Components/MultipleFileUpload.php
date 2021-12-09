@@ -11,6 +11,10 @@ class MultipleFileUpload extends Field
 
     protected $uploadComponent = null;
 
+    protected $maxFiles = null;
+
+    protected $minFiles = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -32,9 +36,11 @@ class MultipleFileUpload extends Field
                 }
             }
 
-            $state[(string) Str::uuid()] = [
-                'file' => null,
-            ];
+            if (!$this->reachedMaxFiles($files)) {
+                $state[(string)Str::uuid()] = [
+                    'file' => null,
+                ];
+            }
 
             $component->state($state);
         });
@@ -52,9 +58,65 @@ class MultipleFileUpload extends Field
         });
     }
 
+
+    public function maxFiles($value): static
+    {
+        $this->maxFiles = $value;
+
+        $this
+            ->rule('array')
+            ->rule(function (): string {
+                $value = $this->getMaxFiles();
+
+                return "max:{$value}";
+            });
+
+        return $this;
+    }
+
+    public function minFiles($value): static
+    {
+        $this->minFiles = $value;
+
+        $this->rule(function (): callable {
+            $minFiles = $this->getMinFiles();
+            $label = $this->getValidationAttribute();
+
+            return function($attribute, $value, $fail) use ($minFiles, $label) {
+                if (count(array_filter($value, fn($item) => !is_null($item['file']))) < $minFiles) {
+                    $fail(trans('validation.min.array', [
+                        'attribute' => $label,
+                        'min' => $minFiles
+                    ]));
+                }
+            } ;
+        });
+
+        return $this;
+    }
+
+    public function getMaxFiles()
+    {
+        return $this->evaluate($this->maxFiles);
+    }
+
+    public function getMinFiles()
+    {
+        return $this->evaluate($this->minFiles);
+    }
+
+    protected function reachedMaxFiles($files): bool
+    {
+        return $this->getMaxFiles() !== null && count($files) >= $this->getMaxFiles();
+    }
+
     public function appendNewUploadField(): void
     {
         $files = $this->getState();
+
+        if ($this->reachedMaxFiles($files)) {
+            return;
+        }
 
         $files[(string) Str::uuid()] = [
             'file' => null,
@@ -68,6 +130,12 @@ class MultipleFileUpload extends Field
         $files = $this->getState();
 
         unset($files[$uuid]);
+
+        if (!in_array(['file' => null], $files)) {
+            $files[(string)Str::uuid()] = [
+                'file' => null,
+            ];
+        }
 
         $this->state($files);
     }

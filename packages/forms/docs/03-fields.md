@@ -769,6 +769,20 @@ MultipleFileUpload::make('attachments')
     )
 ```
 
+You can limit the maximum and minimum amount of files to be uploaded:
+
+```php
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MultipleFileUpload;
+
+MultipleFileUpload::make('attachments')
+    ->minFiles(2)
+    ->maxFiles(5)
+    ->uploadComponent(
+        FileUpload::make('file')->image(),
+    )
+```
+
 > Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/docs/spatie-laravel-media-library-plugin) for more information.
 
 ## Rich editor
