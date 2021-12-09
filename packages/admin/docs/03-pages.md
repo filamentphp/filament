@@ -99,6 +99,9 @@ protected static ?string $slug = 'custom-url-slug';
 You may also specify a custom header and footer view for any page. You may return them from the `getHeader()` and `getFooter()` methods:
 
 ```php
+
+use Illuminate\Contracts\View\View;
+
 protected function getHeader(): View
 {
     return view('filament.settings.custom-header');
