@@ -39,15 +39,20 @@ trait InteractsWithTableQuery
 
         foreach ($this->getSearchColumns() as $searchColumnName) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
+
             $query->when(
                 $this->queriesRelationships(),
-                fn ($query) => $query->{$whereClause . 'Relation'}(
+                fn ($query) => $query->{"{$whereClause}Relation"}(
                     $this->getRelationshipName(),
                     $searchColumnName,
                     $searchOperator,
                     "%{$searchQuery}%",
                 ),
-                fn ($query) => $query->{$whereClause}($searchColumnName, $searchOperator, "%{$searchQuery}%"),
+                fn ($query) => $query->{$whereClause}(
+                    $searchColumnName,
+                    $searchOperator,
+                    "%{$searchQuery}%",
+                ),
             );
 
             $isFirst = false;
