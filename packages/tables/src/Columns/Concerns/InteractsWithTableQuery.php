@@ -45,7 +45,7 @@ trait InteractsWithTableQuery
                     $this->getRelationshipName(),
                     $searchColumnName,
                     $searchOperator,
-                    "%{$searchQuery}%"
+                    "%{$searchQuery}%",
                 ),
                 fn ($query) => $query->{$whereClause}($searchColumnName, $searchOperator, "%{$searchQuery}%"),
             );
@@ -70,8 +70,13 @@ trait InteractsWithTableQuery
             $query->when(
                 $this->queriesRelationships(),
                 fn ($query) => $query->orderBy(
-                    $this->getRelationship($query)->getRelationExistenceQuery($this->getRelatedModel($query)->query(), $query, $sortColumnName),
-                    $direction
+                    $this->getRelationship($query)
+                        ->getRelationExistenceQuery(
+                            $this->getRelatedModel($query)->query(),
+                            $query,
+                            $sortColumnName,
+                        ),
+                    $direction,
                 ),
                 fn ($query) => $query->orderBy($sortColumnName, $direction),
             );
