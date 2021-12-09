@@ -24,7 +24,7 @@ trait Translatable
         $this->activeFormLocale = static::getResource()::getDefaultTranslatableLocale();
     }
 
-    public function create(): void
+    public function create(bool $another = false): void
     {
         $this->callHook('beforeValidate');
 
@@ -43,6 +43,14 @@ trait Translatable
         $this->form->model($this->record)->saveRelationships();
 
         $this->callHook('afterCreate');
+
+        if ($another) {
+            $this->fillForm();
+
+            $this->notify('success', __('filament::resources/pages/create-record.messages.created'));
+
+            return;
+        }
 
         if ($redirectUrl = $this->getRedirectUrl()) {
             $this->redirect($redirectUrl);

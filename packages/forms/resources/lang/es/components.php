@@ -14,22 +14,16 @@ return [
                 'label' => 'Eliminar Fila',
             ],
 
-            'sort' => [
-                'label' => 'Mantener para Reordenar',
-            ],
-
         ],
 
         'fields' => [
 
             'key' => [
                 'label' => 'Clave',
-                'placeholder' => 'Introduce una clave...',
             ],
 
             'value' => [
                 'label' => 'Valor',
-                'placeholder' => 'Introduce un valor...',
             ],
 
         ],

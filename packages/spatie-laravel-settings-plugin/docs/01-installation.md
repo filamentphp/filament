@@ -10,6 +10,8 @@ Filament has a few requirements to run:
 - Laravel v8.0+
 - Livewire v2.0+
 
+This plugin is compatible with other Filament v2.x packages.
+
 ## Installation
 
 Install the plugin with Composer:
@@ -18,9 +20,7 @@ Install the plugin with Composer:
 composer require filament/spatie-laravel-settings-plugin
 ```
 
-> Please note that this package is incompatible with `filament/filament` v1, until v2 is released in late 2021. This is due to namespacing collisions.
-
-You're now ready to start building [settings pages](building-settings-pages)!
+You're now ready to start building [settings pages](getting-started)!
 
 ## Upgrade Guide
 
@@ -28,6 +28,4 @@ To upgrade the package to the latest version, you must run:
 
 ```bash
 composer update
-php artisan view:clear
 ```
-

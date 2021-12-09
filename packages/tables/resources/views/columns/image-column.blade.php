@@ -4,7 +4,7 @@
             <div
                 class="rounded-full bg-center bg-cover"
                 style="
-                    background-image: url('{{ $path }}');
+                    background-image: url('{{ addslashes($path) }}');
                     height: {{ $getHeight() ?? '40px' }};
                     width: {{ $getWidth() ?? '40px' }};
                 "

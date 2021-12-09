@@ -14,22 +14,16 @@ return [
                 'label' => 'سڕینەوەی ڕیز',
             ],
 
-            'sort' => [
-                'label' => 'ڕایگرە بۆ ڕێکخستن',
-            ],
-
         ],
 
         'fields' => [
 
             'key' => [
                 'label' => 'کلیل',
-                'placeholder' => 'کلیلێک بنوسە ...',
             ],
 
             'value' => [
                 'label' => 'Value',
-                'placeholder' => 'نرخێک بنوسە',
             ],
 
         ],

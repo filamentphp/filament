@@ -57,7 +57,7 @@ TextInput::make('name')->validationAttribute('full name')
 
 ### Setting a default value
 
-Fields may have a default value. This will be filled if the [form's `fill()` method](building-forms#default-data) is called without any arguments. To define a default value, use the `default()` method:
+Fields may have a default value. This will be filled if the [form's `fill()` method](getting-started#default-data) is called without any arguments. To define a default value, use the `default()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -115,7 +115,7 @@ Toggle::make('is_admin')->disabled(! auth()->user()->isAdmin())
 
 ### Autofocusing
 
-Most fields will be autofocusable. Ideally, you should aim for the first significant field in your form to be autofocused for the best user experience.
+Most fields will be autofocusable. Typically, you should aim for the first significant field in your form to be autofocused for the best user experience.
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -222,6 +222,28 @@ TextInput::make('number')
     ->minValue(1)
     ->maxValue(100)
 ```
+
+You may set the autocomplete configuration for the text field using the `autocomplete()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('password')
+    ->password()
+    ->autocomplete('new-password')
+```
+
+As a shortcut for `autocomplete="off"`, you may `disableAutocomplete()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('password')
+    ->password()
+    ->disableAutocomplete()
+```
+
+For more complex autocomplete options, text inputs also support [datalists](#datalists).
 
 ### Input masking
 
@@ -359,7 +381,7 @@ The `getOptionLabelUsing()` method accepts a callback that transforms the select
 Select::make('authorId')
     ->searchable()
     ->getSearchResultsUsing(fn (string $query) => User::where('name', 'like', "%{$query}%")->pluck('name', 'id'))
-    ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name)),
+    ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
 ```
 
 ### Dependant selects
@@ -368,7 +390,7 @@ Commonly, you may desire "dependant" select inputs, which populate their options
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/W_eNyimRi3w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-Some of the techniques described in the [advanced forms](advanced-forms) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customisation possibilities.
+Some of the techniques described in the [advanced forms](advanced) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customisation possibilities.
 
 ### Populating automatically from a `belongsTo` relationship
 
@@ -382,7 +404,7 @@ BelongsToSelect::make('authorId')
     ->relationship('author', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](building-forms#field-relationships) section**.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**.
 
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
@@ -421,7 +443,7 @@ class App extends Model
     protected $casts = [
         'technologies' => 'array',
     ];
-    
+
     // ...
 }
 ```
@@ -438,7 +460,7 @@ BelongsToManyMultiSelect::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](building-forms#field-relationships) section**.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**.
 
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
@@ -488,7 +510,7 @@ class User extends Model
     protected $casts = [
         'is_admin' => 'boolean',
     ];
-    
+
     // ...
 }
 ```
@@ -541,9 +563,52 @@ class User extends Model
     protected $casts = [
         'is_admin' => 'boolean',
     ];
-    
+
     // ...
 }
+```
+
+## Radio
+
+The radio input provides a radio button group for selecting a single value from a list of predefined options:
+
+```php
+use Filament\Forms\Components\Radio;
+
+Radio::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'scheduled' => 'Scheduled',
+        'published' => 'Published'
+    ])
+```
+
+You can optionally provide descriptions to each option using the `descriptions()` method:
+
+```php
+use Filament\Forms\Components\Radio;
+
+Radio::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'scheduled' => 'Scheduled',
+        'published' => 'Published'
+    ])
+    ->descriptions([
+        'draft' => 'Is not visible.',
+        'scheduled' => 'Will be visible.',
+        'published' => 'Is visible.'
+    ])
+```
+
+Be sure to use the same `key` in the descriptions array as the `key` in the options array so the right description matches the right option.
+
+If you want a simple boolean radio button group, with "Yes" and "No" options, you can use the `boolean()` method:
+
+```php
+Radio::make('feedback')
+    ->label('Do you like this post?')
+    ->boolean();
 ```
 
 ## Date-time picker
@@ -851,6 +916,8 @@ Repeater::make('members')
     ])
 ```
 
+We recommend that you store repeater data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
+
 As evident in the above example, the component schema can be defined within the `schema()` method of the component:
 
 ```php
@@ -865,6 +932,18 @@ Repeater::make('members')
 ```
 
 If you wish to define a repeater with multiple schema blocks that can be repeated in any order, please use the [builder](#builder).
+
+Repeaters may have a certain number of empty items created by default, using the `defaultItems()` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->defaultItems(1)
+```
 
 ## Builder
 
@@ -910,6 +989,8 @@ Builder::make('content')
             ]),
     ])
 ```
+
+We recommend that you store builder data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
 
 As evident in the above example, blocks can be defined within the `blocks()` method of the component. Blocks are `Builder\Block` objects, and require a unique name, and a component schema:
 
@@ -966,7 +1047,7 @@ class Post extends Model
     protected $casts = [
         'tags' => 'array',
     ];
-    
+
     // ...
 }
 ```
@@ -1011,6 +1092,37 @@ Textarea::make('description')
     ->maxLength(500)
 ```
 
+## Key-value
+
+The key-value field allows you to interact with one-dimensional JSON object:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+```
+
+You may customize the labels for the key and value fields using the `keyLabel()` and `valueLabel()` methods:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+    ->keyLabel('Property name')
+    ->valueLabel('Property value')
+```
+
+You may also prevent the user from adding rows, deleting rows, or editing keys:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+    ->disableAddingRows()
+    ->disableDeletingRows()
+    ->disableEditingKeys()
+```
+
 ## View
 
 Aside from [building custom fields](#building-custom-fields), you may create "view" fields which allow you to create custom fields without extra PHP classes.
@@ -1018,7 +1130,7 @@ Aside from [building custom fields](#building-custom-fields), you may create "vi
 ```php
 use Filament\Forms\Components\ViewField;
 
-ViewField::make('notifications')->view('filament.forms.components.checkbox-list')
+ViewField::make('notifications')->view('filament.forms.components.range-slider')
 ```
 
 Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
@@ -1047,14 +1159,20 @@ You may create your own custom field classes and views, which you can reuse acro
 
 > If you're just creating a simple custom field to use once, you could instead use a [view field](#view) to render any custom Blade file.
 
-Extend the `Filament\Forms\Components\Field` class, and define the `$view` path of the custom field:
+To create a custom column class and view, you may use the following command:
+
+```bash
+php artisan make:form-field RangeSlider
+```
+
+This will create the following field class:
 
 ```php
 use Filament\Forms\Components\Field;
 
-class CheckboxList extends Field
+class RangeSlider extends Field
 {
-    protected string $view = 'filament.forms.components.checkbox-list';
+    protected string $view = 'filament.forms.components.range-slider';
 }
 ```
 

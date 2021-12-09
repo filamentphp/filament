@@ -5,26 +5,19 @@ on:
         tags: '*'
 
 jobs:
-    provide-packages-list:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-            - uses: shivammathur/setup-php@v2
-              with:
-                  php-version: 8.0
-                  coverage: none
-            - uses: "ramsey/composer-install@v1"
-            - id: packages-list
-              run: echo "::set-output name=matrix::$(vendor/bin/monorepo-builder packages-json)"
-        outputs:
-            matrix: ${{ steps.packages-list.outputs.matrix }}
     split-monorepo:
-        needs: provide-packages-list
         runs-on: ubuntu-latest
         strategy:
             fail-fast: false
             matrix:
-                package: ${{fromJson(needs.provide-packages-list.outputs.matrix)}}
+                package:
+                    - admin
+                    - forms
+                    - spatie-laravel-media-library-plugin
+                    - spatie-laravel-settings-plugin
+                    - spatie-laravel-tags-plugin
+                    - spatie-laravel-translatable-plugin
+                    - tables
         steps:
             - uses: actions/checkout@v2
             - id: previous-tag

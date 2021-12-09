@@ -22,6 +22,8 @@ class Mask implements Jsonable
 
     protected bool $isSigned = true;
 
+    protected ?string $jsonOptions = null;
+
     protected array $mapToDecimalSeparator = [','];
 
     protected ?int $maxLength = null;
@@ -94,6 +96,13 @@ class Mask implements Jsonable
         return $this;
     }
 
+    public function jsonOptions(?string $json = null): static
+    {
+        $this->jsonOptions = $json;
+
+        return $this;
+    }
+
     public function lazyPlaceholder(bool $condition = true): static
     {
         $this->hasLazyPlaceholder = $condition;
@@ -129,7 +138,7 @@ class Mask implements Jsonable
         return $this;
     }
 
-    public function money(string $prefix, string $thousandsSeparator = ',', int $decimalPlaces = 2): static
+    public function money(string $prefix = '$', string $thousandsSeparator = ',', int $decimalPlaces = 2): static
     {
         $this
             ->patternBlocks([
@@ -319,6 +328,10 @@ class Mask implements Jsonable
 
     public function toJson($options = 0): string
     {
+        if (filled($this->jsonOptions)) {
+            return $this->jsonOptions;
+        }
+
         $json = json_encode($this->getArrayableConfiguration(), JSON_UNESCAPED_SLASHES | $options);
 
         return str_replace(
