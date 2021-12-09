@@ -129,6 +129,7 @@ To create a relation manager for a `HasMany` or `MorphMany` relationship, you ca
 
 ```bash
 php artisan make:filament-has-many CategoryResource posts title
+php artisan make:filament-morph-many CategoryResource posts title
 ```
 
 - `CategoryResource` is the name of the resource class for the parent model.
