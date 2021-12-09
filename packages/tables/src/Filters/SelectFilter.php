@@ -5,6 +5,8 @@ namespace Filament\Tables\Filters;
 use Filament\Forms\Components\Select;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
 class SelectFilter extends Filter
@@ -13,7 +15,7 @@ class SelectFilter extends Filter
 
     protected bool $isStatic = false;
 
-    protected array | Arrayable $options = [];
+    protected array | Arrayable | null $options = null;
 
     public function apply(Builder $query, array $data = []): Builder
     {
@@ -25,21 +27,19 @@ class SelectFilter extends Filter
             return parent::apply($query, $data);
         }
 
-        if (blank($data['value'])) {
+        if (blank($data['value'] ?? null)) {
             return $query;
         }
 
-        $filterColumnName = $this->getColumn();
-
-        if (Str::of($filterColumnName)->contains('.')) {
+        if ($this->queriesRelationships()) {
             return $query->whereRelation(
-                (string) Str::of($filterColumnName)->beforeLast('.'),
-                (string) Str::of($filterColumnName)->afterLast('.'),
+                $this->getRelationshipName(),
+                $this->getRelationship()->getOwnerKeyName(),
                 $data['value'],
             );
         }
 
-        return $query->where($filterColumnName, $data['value']);
+        return $query->where($this->getColumn(), $data['value']);
     }
 
     public function column(string $name): static
@@ -49,9 +49,16 @@ class SelectFilter extends Filter
         return $this;
     }
 
-    public function options(array | Arrayable $options): static
+    public function options(array | Arrayable | null $options): static
     {
         $this->options = $options;
+
+        return $this;
+    }
+
+    public function relationship(string $relationshipName, string $displayColumnName): static
+    {
+        $this->column("{$relationshipName}.{$displayColumnName}");
 
         return $this;
     }
@@ -72,11 +79,27 @@ class SelectFilter extends Filter
     {
         $options = $this->options;
 
+        if ($options === null) {
+            $options = $this->queriesRelationships() ? $this->getRelationshipOptions() : [];
+        }
+
         if ($options instanceof Arrayable) {
             $options = $options->toArray();
         }
 
         return $options;
+    }
+
+    protected function getRelationshipOptions(): array
+    {
+        $relationship = $this->getRelationship();
+        $displayColumnName = $this->getRelationshipDisplayColumnName();
+
+        $relationshipQuery = $relationship->getRelated()->orderBy($displayColumnName);
+
+        return $relationshipQuery
+            ->pluck($displayColumnName, $relationship->getOwnerKeyName())
+            ->toArray();
     }
 
     public function getFormSchema(): array
@@ -86,5 +109,27 @@ class SelectFilter extends Filter
                 ->label($this->getLabel())
                 ->options($this->getOptions()),
         ];
+    }
+
+    public function queriesRelationships(): bool
+    {
+        return Str::of($this->getColumn())->contains('.');
+    }
+
+    protected function getRelationship(): Relation
+    {
+        $model = new ($this->getTable()->getModel())();
+
+        return $model->{$this->getRelationshipName()}();
+    }
+
+    protected function getRelationshipName(): string
+    {
+        return (string) Str::of($this->getColumn())->beforeLast('.');
+    }
+
+    protected function getRelationshipDisplayColumnName(): string
+    {
+        return (string) Str::of($this->getColumn())->afterLast('.');
     }
 }

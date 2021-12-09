@@ -34,8 +34,6 @@ interface HasTable extends HasForms
 
     public function getCachedTableHeaderActions(): array;
 
-    public function getFilteredTableQuery(): Builder;
-
     public function getMountedTableAction(): ?Action;
 
     public function getMountedTableActionForm(): ComponentContainer;
