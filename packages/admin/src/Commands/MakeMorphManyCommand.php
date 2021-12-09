@@ -16,7 +16,7 @@ class MakeMorphManyCommand extends Command
 
     public function handle(): int
     {
-        $resource = (string) Str::of($this->argument('resource') ?? $this->askRequired('Resource (e.g. `UserResource`)', 'resource'))
+        $resource = (string) Str::of($this->argument('resource') ?? $this->askRequired('Resource (e.g. `BlogPostResource`)', 'resource'))
             ->studly()
             ->trim('/')
             ->trim('\\')
@@ -27,7 +27,7 @@ class MakeMorphManyCommand extends Command
             $resource .= 'Resource';
         }
 
-        $relationship = (string) Str::of($this->argument('relationship') ?? $this->askRequired('Relationship (e.g. `blogPosts`)', 'relationship'))
+        $relationship = (string) Str::of($this->argument('relationship') ?? $this->askRequired('Relationship (e.g. `comments`)', 'relationship'))
             ->trim(' ');
         $managerClass = (string) Str::of($relationship)
             ->studly()
