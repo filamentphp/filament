@@ -19,7 +19,7 @@ The form builder comes pre-installed inside the [admin panel 2.x](/docs/admin/2.
 To get started with the form builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [TailwindCSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with these commands:
 
 ```bash
-composer require filament/forms
+composer require filament/forms:^2.0
 php artisan forms:install
 npm install
 npm run dev
@@ -36,7 +36,7 @@ You're now ready to start [building forms](getting-started)!
 You may download the form builder using Composer:
 
 ```bash
-composer require filament/forms
+composer require filament/forms:^2.0
 ```
 
 The package uses [Alpine.js](https://alpinejs.dev), [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin. You may install these through NPM:
@@ -45,7 +45,7 @@ The package uses [Alpine.js](https://alpinejs.dev), [Tailwind CSS](https://tailw
 npm install alpinejs tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
 ```
 
-To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npm tailwindcss init`.
+To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
 
 In `tailwind.config.js`, enable JIT mode, register the plugins you installed, and add custom colors used by the form builder:
 
@@ -150,6 +150,14 @@ If you wish, you may publish the configuration of the package using:
 
 ```bash
 php artisan vendor:publish --tag=forms-config
+```
+
+## Publishing the translations
+
+If you wish to translate the package, you may publish the language files using:
+
+```bash
+php artisan vendor:publish --tag=forms-translations
 ```
 
 ## Upgrade Guide

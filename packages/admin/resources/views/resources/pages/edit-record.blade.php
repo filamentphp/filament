@@ -14,7 +14,7 @@
     <x-slot name="modals">
         <x-filament::modal id="delete">
             <x-slot name="heading">
-                {{ __('filament::resources/pages/edit-record.modals.delete.heading', ['record' => $this->getRecordTitle() ?? static::getResource()::getLabel()]) }}
+                {{ __('filament::resources/pages/edit-record.modals.delete.heading', ['label' => $this->getRecordTitle() ?? static::getResource()::getLabel()]) }}
             </x-slot>
 
             <x-slot name="subheading">
