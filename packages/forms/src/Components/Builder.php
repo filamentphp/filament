@@ -9,6 +9,9 @@ use Illuminate\Support\Str;
 
 class Builder extends Field
 {
+    use Concerns\HasMinItems;
+    use Concerns\HasMaxItems;
+
     protected string $view = 'forms::components.builder';
 
     protected $createItemBetweenButtonLabel = null;

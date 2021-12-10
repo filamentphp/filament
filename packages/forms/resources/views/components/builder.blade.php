@@ -122,42 +122,44 @@
             </ul>
         @endif
 
-        <div x-data="{ isCreateButtonDropdownOpen: false }" class="relative flex justify-center">
-            <button
-                x-on:click="isCreateButtonDropdownOpen = true"
-                type="button"
-                class="w-full h-9 px-4 inline-flex items-center justify-center font-medium tracking-tight transition rounded-lg text-gray-800 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600"
-            >
-                <x-heroicon-s-plus class="w-6 h-6 mr-1 -ml-2" />
+        @unless ($isGreaterThanMaxItems(count($getChildComponentContainers())))
+            <div x-data="{ isCreateButtonDropdownOpen: false }" class="relative flex justify-center">
+                <button
+                    x-on:click="isCreateButtonDropdownOpen = true"
+                    type="button"
+                    class="w-full h-9 px-4 inline-flex items-center justify-center font-medium tracking-tight transition rounded-lg text-gray-800 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600"
+                >
+                    <x-heroicon-s-plus class="w-6 h-6 mr-1 -ml-2" />
 
-                {{ $getCreateItemButtonLabel() }}
-            </button>
+                    {{ $getCreateItemButtonLabel() }}
+                </button>
 
-            <div
-                x-show="isCreateButtonDropdownOpen"
-                x-on:click.away="isCreateButtonDropdownOpen = false"
-                x-transition
-                class="absolute z-10 mt-9 shadow-xl overflow-hidden rounded-xl w-52"
-            >
-                <ul class="py-1 space-y-1 bg-white shadow rounded-xl">
-                    @foreach ($getBlocks() as $block)
-                        <li>
-                            <button
-                                wire:click="dispatchFormEvent('builder.createItem', '{{ $getStatePath() }}', '{{ $block->getName() }}')"
-                                x-on:click="isCreateButtonDropdownOpen = false"
-                                type="button"
-                                class="flex items-center w-full h-8 px-3 text-sm font-medium focus:outline-none hover:text-white hover:bg-primary-600 focus:bg-primary-700 focus:text-white group"
-                            >
-                                @if ($icon = $block->getIcon())
-                                    <x-dynamic-component :component="$icon" class="mr-2 -ml-1 text-primary-500 w-5 h-5 group-hover:text-white group-focus:text-white" />
-                                @endif
+                <div
+                    x-show="isCreateButtonDropdownOpen"
+                    x-on:click.away="isCreateButtonDropdownOpen = false"
+                    x-transition
+                    class="absolute z-10 mt-9 shadow-xl overflow-hidden rounded-xl w-52"
+                >
+                    <ul class="py-1 space-y-1 bg-white shadow rounded-xl">
+                        @foreach ($getBlocks() as $block)
+                            <li>
+                                <button
+                                    wire:click="dispatchFormEvent('builder.createItem', '{{ $getStatePath() }}', '{{ $block->getName() }}')"
+                                    x-on:click="isCreateButtonDropdownOpen = false"
+                                    type="button"
+                                    class="flex items-center w-full h-8 px-3 text-sm font-medium focus:outline-none hover:text-white hover:bg-primary-600 focus:bg-primary-700 focus:text-white group"
+                                >
+                                    @if ($icon = $block->getIcon())
+                                        <x-dynamic-component :component="$icon" class="mr-2 -ml-1 text-primary-500 w-5 h-5 group-hover:text-white group-focus:text-white" />
+                                    @endif
 
-                                {{ $block->getLabel() }}
-                            </button>
-                        </li>
-                    @endforeach
-                </ul>
+                                    {{ $block->getLabel() }}
+                                </button>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
             </div>
-        </div>
+        @endunless
     </div>
 </x-forms::field-wrapper>
