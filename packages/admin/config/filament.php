@@ -188,6 +188,7 @@ return [
     */
 
     'styles' => [
+        'sidebar_container' => 'fixed inset-y-0 left-0 z-20 flex flex-col h-screen overflow-hidden shadow-2xl transition duration-300 bg-white lg:border-r w-80 lg:z-0 lg:translate-x-0',
         'form_action_buttons' => 'flex flex-wrap items-center gap-4'
     ]
 ];
