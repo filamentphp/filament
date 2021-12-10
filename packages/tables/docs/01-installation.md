@@ -41,7 +41,7 @@ The package uses [Alpine.js](https://alpinejs.dev),  [Tailwind CSS](https://tail
 npm install alpinejs @alpinejs/trap tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
 ```
 
-To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npm tailwindcss init`.
+To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
 
 In `tailwind.config.js`, enable JIT mode, register the plugins you installed, and add custom colors used by the table builder:
 
