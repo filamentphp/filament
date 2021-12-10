@@ -13,7 +13,7 @@
     @endphp
 
     @if (count($actions))
-        <div {{ $attributes->class(['flex flex-wrap items-center gap-4']) }}>
+        <div {{ $attributes->class([config("filament.styles.form_action_button_row")]) }}>
             @foreach ($actions as $action)
                 {{ $action }}
             @endforeach

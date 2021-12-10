@@ -177,4 +177,17 @@ return [
         ],
     ],
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default classes
+    |--------------------------------------------------------------------------
+    |
+    | You may customise some parts of filaments default classes
+    |
+    */
+
+    'styles' => [
+        'form_action_buttons' => 'flex flex-wrap items-center gap-4'
+    ]
 ];
