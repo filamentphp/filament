@@ -608,6 +608,42 @@ To generate a URL for a resource route, you may call the static `getUrl()` metho
 SortUsers::getUrl($parameters = [], $absolute = true);
 ```
 
+### Widgets
+
+Filament allows you to use Widgets inside pages, you can display widgets below the header and above footer.
+
+You can use an existing dashboard widget or create one specifically for the resource
+
+To get started building a resource widget:
+
+```bash
+php artisan make:filament-widget CustomerOverview --resource=CustomerResource
+```
+
+This command will create two files - a widget class in the `app/Filament/Resources/CustomerResource/Widgets` directory, and a view in the `resources/views/filament/resources/customer-resource/widgets` directory.
+
+To register a widget in a page use `getHeaderWidgets()` or `getFooterWidgets()` methods:
+
+```php
+<?php
+ 
+namespace App\Filament\Resources\CustomerResource\Pages;
+
+use App/Filament/Resources/CustomerResource/Widgets/CustomerOverview;
+
+class ListCustomers extends ListRecords
+{
+    public static function getHeaderWidgets(): array
+    {
+        return [
+            CustomerOverview::class
+        ];
+    }
+}
+```
+
+You can use any existing widget.
+
 ## Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The following methods are used:

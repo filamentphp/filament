@@ -101,6 +101,16 @@ class Page extends Component
         return [];
     }
 
+    public function getHeaderWidgets(): array
+    {
+        return [];
+    }
+
+    public function getFooterWidgets(): array
+    {
+        return [];
+    }
+
     protected static function getNavigationGroup(): ?string
     {
         return static::$navigationGroup;

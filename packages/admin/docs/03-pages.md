@@ -84,6 +84,26 @@ protected function getActions(): array
 }
 ```
 
+## Widgets
+
+Filament allows you to use Widgets inside pages, you can display widgets below the header and above footer.
+
+To register a widget in a page use `getHeaderWidgets()` or `getFooterWidgets()` methods:
+
+```php
+
+use App/Filament/Widgets/StatsOverviewWidget;
+
+public static function getHeaderWidgets(): array
+{
+    return [
+        StatsOverviewWidget::class
+    ];
+}
+```
+
+You can use any existing widget.
+
 ## Customization
 
 Filament will automatically generate a title, navigation label and URL (slug) for your page based on its name. You may override it using static properties of your page class:
