@@ -2,17 +2,17 @@
 title: Getting Started
 ---
 
-## Preparing your page class
+## Usage
 
 Settings pages are Filament pages that extend the `Filament\Pages\SettingsPage` class.
 
 You can create a settings page using the following command:
 
 ```bash
-php artisan make:filament-settings-page ManageFooter FooterSettings
+php artisan make:filament-settings-page ManageSite SiteSettings
 ```
 
-This command presumes that you have a `FooterSettings` class in your `app/Settings` directory:
+This command will create a setting's class `SiteSettings`, migration `create_site_settings` and page `ManageSite`
 
 ```php
 protected static string $settings = FooterSettings::class;
