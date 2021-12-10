@@ -31,6 +31,8 @@ class Resource
 
     protected static ?int $navigationSort = null;
 
+    protected static bool $shouldRegisterNavigation = true;
+
     protected static ?string $pluralLabel = null;
 
     protected static ?string $recordTitleAttribute = null;
@@ -44,7 +46,11 @@ class Resource
 
     public static function registerNavigationItems(): void
     {
-        if (! static::canViewAny()) {
+        if (!static::$shouldRegisterNavigation) {
+            return;
+        }
+
+        if (!static::canViewAny()) {
             return;
         }
 
@@ -79,7 +85,7 @@ class Resource
     {
         $policy = Gate::getPolicyFor($model = static::getModel());
 
-        if ($policy === null || (! method_exists($policy, $action))) {
+        if ($policy === null || (!method_exists($policy, $action))) {
             return true;
         }
 
