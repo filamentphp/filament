@@ -2,9 +2,10 @@
 
 namespace Filament\Commands;
 
+use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Artisan;
 
 class MakeSettingsPageCommand extends Command
 {
@@ -26,12 +27,6 @@ class MakeSettingsPageCommand extends Command
         $pageNamespace = Str::of($page)->contains('\\') ?
             (string) Str::of($page)->beforeLast('\\') :
             '';
-
-        $settingsClass = (string) Str::of($this->argument('settingsClass') ?? $this->askRequired('Settings class (e.g. `FooterSettings`)', 'settings class'))
-            ->trim('/')
-            ->trim('\\')
-            ->trim(' ');
-
         $path = app_path(
             (string) Str::of($page)
                 ->prepend('Filament\\Pages\\')
@@ -39,17 +34,47 @@ class MakeSettingsPageCommand extends Command
                 ->append('.php'),
         );
 
-        if ($this->checkForCollision([$path])) {
+        $settingsPage = (string) Str::of($this->argument('settingsClass') ?? $this->askRequired('Settings class (e.g. `FooterSettings`)', 'settings class'))
+            ->trim('/')
+            ->trim('\\')
+            ->trim(' ')
+            ->replace('/', '\\');
+        $settingsClass = (string) Str::of($settingsPage)->afterLast('\\');
+        $settingsNamespace = Str::of($settingsPage)->contains('\\')
+            ? (string) Str::of($settingsPage)->beforeLast('\\')
+            : '';
+        $settingsPath = app_path(
+            (string) Str::of($settingsPage)
+                ->prepend('Filament\\Settings\\')
+                ->replace('\\','/')
+                ->append('.php'),
+        );
+
+        if ($this->checkForCollision([$path, $settingsPath])) {
             return static::INVALID;
         }
+
+        $this->publishSettingsMigration();
+
+        Artisan::call('make:settings-migration',['name' => 'Create'.$settingsClass]);
+        $this->info("Successfully created setting's migration: database/".Str::after(database_path('settings/Create'.$settingsClass),'/database/'));
+
+        $this->copyStubToApp('Settings', $settingsPath, [
+            'class' => $settingsClass,
+            'namespace' => 'App\\Filament\\Settings' . ($settingsNamespace !== '' ? "\\{$settingsNamespace}" : '')
+        ]);
+
+        $this->info("Successfully created setting's class: App/".Str::after($settingsPath,'/app/'));
+
 
         $this->copyStubToApp('SettingsPage', $path, [
             'class' => $pageClass,
             'namespace' => 'App\\Filament\\Pages' . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
             'settingsClass' => $settingsClass,
+            'settingsNamespace' => 'App\\Filament\\Settings' . ($settingsNamespace !== '' ? "\\{$settingsNamespace}" :'')
         ]);
 
-        $this->info("Successfully created {$page}!");
+        $this->info("Successfully created setting's page: App/".Str::after($path,'/app/')."!");
 
         return static::SUCCESS;
     }
@@ -71,5 +96,18 @@ class MakeSettingsPageCommand extends Command
         $stub = (string) $stub;
 
         $this->writeFile($targetPath, $stub);
+    }
+
+    protected function publishSettingsMigration(): void
+    {
+        $filesystem = new Filesystem();
+
+        if (! Str::contains(collect($filesystem->glob(database_path('migrations/*.*')))->implode(''),'create_settings_table.php'))
+        {
+            Artisan::call('vendor:publish',[
+                '--provider' => 'Spatie\LaravelSettings\LaravelSettingsServiceProvider',
+                '--tag' => 'migrations'
+            ]);
+        }
     }
 }
