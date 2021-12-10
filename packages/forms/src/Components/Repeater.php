@@ -13,6 +13,10 @@ class Repeater extends Field
     protected $createItemButtonLabel = null;
 
     protected $defaultItems = 1;
+    
+    protected $minimumItems = 1;
+    
+    protected $maximumItems = -1;
 
     protected $isItemMovementDisabled = false;
 
@@ -125,6 +129,24 @@ class Repeater extends Field
             return $items;
         });
 
+        return $this;
+    }
+    
+    public function minimumItems(int | callable $count): static
+    {
+        $this->minimumItems = $this->evaluate($count);
+        
+        $this->rules(["min:{$this->minimumItems}"]);
+
+        return $this;
+    }
+    
+    public function maximumItems(int | callable $count): static
+    {
+        $this->maximumItems = $this->evaluate($count);
+        
+        $this->rules(["max:{$this->maximumItems}"]);
+        
         return $this;
     }
 
