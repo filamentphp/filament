@@ -57,7 +57,6 @@ class MakeSettingsPageCommand extends Command
         $this->publishSettingsMigration();
 
         Artisan::call('make:settings-migration',['name' => 'Create'.$settingsClass]);
-        $this->info("Successfully created setting's migration: database/".Str::after(database_path('settings/Create'.$settingsClass),'/database/'));
 
         $this->copyStubToApp('Settings', $settingsPath, [
             'class' => $settingsClass,
@@ -66,6 +65,7 @@ class MakeSettingsPageCommand extends Command
 
         $this->info("Successfully created setting's class: App/".Str::after($settingsPath,'/app/'));
 
+        $this->info("Successfully created setting's migration: database/".Str::after(database_path('settings/Create'.$settingsClass),'/database/'));
 
         $this->copyStubToApp('SettingsPage', $path, [
             'class' => $pageClass,
