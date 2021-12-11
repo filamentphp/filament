@@ -3,10 +3,13 @@
 namespace Filament\Tables\Columns;
 
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class SpatieMediaLibraryImageColumn extends ImageColumn
 {
     protected ?string $collection = null;
+
+    protected string $conversion = '';
 
     public function collection(string $collection): static
     {
@@ -15,9 +18,21 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         return $this;
     }
 
+    public function conversion(string $conversion): static
+    {
+        $this->conversion = $conversion;
+
+        return $this;
+    }
+
     public function getCollection(): ?string
     {
         return $this->collection ?? 'default';
+    }
+
+    public function getConversion(Media $media): string
+    {
+        return $media->hasGeneratedConversion($this->conversion) ? $this->conversion : '';
     }
 
     public function getImagePath(): ?string
@@ -32,7 +47,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             ->getMedia($this->getCollection())
             ->first();
 
-        return $media?->getUrl();
+        return $media?->getUrl($this->getConversion($media));
     }
 
     public function applyEagreLoading(Builder $query): Builder
