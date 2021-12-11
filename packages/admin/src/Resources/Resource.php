@@ -279,22 +279,22 @@ class Resource
         };
 
         foreach ($searchAttributes as $searchAttribute) {
-            if (Str::of($searchAttribute)->contains('.')) {
-                $query->{$isFirst ? 'whereHas' : 'orWhereHas'}(
+            $whereClause = $isFirst ? 'where' : 'orWhere';
+
+            $query->when(
+                Str::of($searchAttribute)->contains('.'),
+                fn ($query) => $query->{"{$whereClause}Relation"}(
                     (string) Str::of($searchAttribute)->beforeLast('.'),
-                    fn ($query) => $query->where(
-                        (string) Str::of($searchAttribute)->afterLast('.'),
-                        $searchOperator,
-                        "%{$searchQuery}%",
-                    ),
-                );
-            } else {
-                $query->{$isFirst ? 'where' : 'orWhere'}(
+                    (string) Str::of($searchAttribute)->afterLast('.'),
+                    $searchOperator,
+                    "%{$searchQuery}%",
+                ),
+                fn ($query) => $query->{$whereClause}(
                     $searchAttribute,
                     $searchOperator,
-                    "%{$searchQuery}%"
-                );
-            }
+                    "%{$searchQuery}%",
+                ),
+            );
 
             $isFirst = false;
         }
