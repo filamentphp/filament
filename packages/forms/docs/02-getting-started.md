@@ -599,3 +599,61 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     }
 }
 ```
+
+## Scoping form data to an array property
+
+You may scope the entire form data to a single array property on your Livewire component. This will allow you to avoid having to define a new property for each field:
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Forms;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
+
+class EditPost extends Component implements Forms\Contracts\HasForms
+{
+    use Forms\Concerns\InteractsWithForms;
+    
+    public Post $post;
+    
+    public $data; // [tl! focus]
+    
+    public function mount(): void
+    {
+        $this->form->fill([
+            'title' => $this->post->title,
+            'content' => $this->post->content,
+        ]);
+    }
+    
+    protected function getFormSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('title')->required(),
+            Forms\Components\MarkdownEditor::make('content'),
+            Forms\Components\SpatieTagsInput::make('tags'),
+        ];
+    }
+    
+    protected function getFormModel(): Post
+    {
+        return $this->post;
+    }
+    
+    protected function getFormStatePath(): string // [tl! focus:start]
+    {
+        return 'data';
+    } // [tl! focus:end]
+    
+    public function render(): View
+    {
+        return view('edit-post');
+    }
+}
+```
+
+In this example, all data from your form will be stored in the `$data` array.
