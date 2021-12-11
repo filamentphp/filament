@@ -46,11 +46,11 @@ class Resource
 
     public static function registerNavigationItems(): void
     {
-        if (!static::$shouldRegisterNavigation) {
+        if (! static::shouldRegisterNavigation()) {
             return;
         }
 
-        if (!static::canViewAny()) {
+        if (! static::canViewAny()) {
             return;
         }
 
@@ -85,7 +85,7 @@ class Resource
     {
         $policy = Gate::getPolicyFor($model = static::getModel());
 
-        if ($policy === null || (!method_exists($policy, $action))) {
+        if ($policy === null || (! method_exists($policy, $action))) {
             return true;
         }
 
@@ -336,5 +336,10 @@ class Resource
     protected static function getNavigationUrl(): string
     {
         return static::getUrl();
+    }
+
+    protected static function shouldRegisterNavigation(): bool
+    {
+        return static::$shouldRegisterNavigation;
     }
 }

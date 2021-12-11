@@ -643,6 +643,8 @@ public static function getEloquentQuery(): Builder
 
 More information may be found in the [Laravel documentation](https://laravel.com/docs/eloquent#removing-global-scopes).
 
+## Customization
+
 ### Customizing the label
 
 A label for this resource is generated based on the name of the resource's model. You may customize it using the static `$label` property:
@@ -655,12 +657,4 @@ The plural version is generated based on the singular `$label`, which you may al
 
 ```php
 protected static string $pluralLabel = 'customers';
-```
-
-### Disable registering resource to navigation
-
-There are times when you want to prevent resources to show up in navigation. To do this, simply add:
-
-```php
-protected static bool $shouldRegisterNavigation = false; // default false
 ```
