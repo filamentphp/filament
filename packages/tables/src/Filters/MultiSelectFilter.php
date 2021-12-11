@@ -26,7 +26,7 @@ class MultiSelectFilter extends Filter
             return parent::apply($query, $data);
         }
 
-        if (blank($data['value'] ?? null)) {
+        if (blank($data['values'] ?? null)) {
             return $query;
         }
 
@@ -35,12 +35,12 @@ class MultiSelectFilter extends Filter
                 $this->getRelationshipName(),
                 fn (Builder $query) => $query->whereIn(
                     $this->getRelationship()->getOwnerKeyName(),
-                    $data['value']
-                )
+                    $data['values'],
+                ),
             );
         }
 
-        return $query->whereIn($this->getColumn(), $data['value']);
+        return $query->whereIn($this->getColumn(), $data['values']);
     }
 
     public function column(string $name): static
@@ -106,7 +106,7 @@ class MultiSelectFilter extends Filter
     public function getFormSchema(): array
     {
         return $this->formSchema ?? [
-            MultiSelect::make('value')
+            MultiSelect::make('values')
                 ->label($this->getLabel())
                 ->options($this->getOptions()),
         ];
