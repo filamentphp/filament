@@ -132,9 +132,9 @@ php artisan make:filament-has-many CategoryResource posts title
 php artisan make:filament-morph-many CategoryResource posts title
 ```
 
-- `CategoryResource` is the name of the resource class for the parent model.
-- `posts` is the name of the relationship you want to manage.
-- `title` is the name of the attribute that will be used to identify posts.
+-   `CategoryResource` is the name of the resource class for the parent model.
+-   `posts` is the name of the relationship you want to manage.
+-   `title` is the name of the attribute that will be used to identify posts.
 
 This will create a `CategoryResource/RelationManagers/PostsRelationManager.php` file. This contains a class where you are able to define a [form](/docs/forms/fields) and [table](/docs/tables/columns) for your relation manager:
 
@@ -184,9 +184,9 @@ To create a relation manager for a `BelongsToMany` relationship, you can use:
 php artisan make:filament-belongs-to-many UserResource teams name
 ```
 
-- `UserResource` is the name of the resource class for the parent model.
-- `teams` is the name of the relationship you want to manage.
-- `name` is the name of the attribute that will be used to identify teams.
+-   `UserResource` is the name of the resource class for the parent model.
+-   `teams` is the name of the relationship you want to manage.
+-   `name` is the name of the attribute that will be used to identify teams.
 
 This will create a `UserResource/RelationManagers/TeamsRelationManager.php` file. This contains a class where you are able to define a [form](/docs/forms/fields) and [table](/docs/tables/columns) for your relation manager:
 
@@ -345,16 +345,16 @@ Page class files are in the `/Pages` directory of your resource directory.
 
 By default, resources are generated with three pages:
 
-- List has a [table](#tables) for displaying, searching and deleting resource records. From here, you are able to access the create and edit pages. It is routed to `/`.
-- Create has a [form](#forms) that is able to create a resource record. It is routed to `/create`.
-- Edit has a [form](#forms) that is able to update a resource record, along with the [relation managers](#relations) registered to your resource. It is routed to `/{record}/edit`.
+-   List has a [table](#tables) for displaying, searching and deleting resource records. From here, you are able to access the create and edit pages. It is routed to `/`.
+-   Create has a [form](#forms) that is able to create a resource record. It is routed to `/create`.
+-   Edit has a [form](#forms) that is able to update a resource record, along with the [relation managers](#relations) registered to your resource. It is routed to `/{record}/edit`.
 
 ### View page
 
 Filament also comes with a "view" page for resources, which you can enable by creating a new page in your resource's `Pages` directory:
 
 ```bash
-php artisan make:filament-page ViewUser --resource=UserResource 
+php artisan make:filament-page ViewUser --resource=UserResource
 ```
 
 Inside the new page class, you may extend the `Filament\Resources\Pages\ViewRecord` class and remove the `$view` property:
@@ -395,7 +395,7 @@ On create pages, you may define a `mutateFormDataBeforeCreate()` method to modif
 protected function mutateFormDataBeforeCreate(array $data): array
 {
     $data['user_id'] = auth()->id();
-    
+
     return $data;
 }
 ```
@@ -406,7 +406,7 @@ On edit pages, you may do the same using the `mutateFormDataBeforeSave()` method
 protected function mutateFormDataBeforeSave(array $data): array
 {
     $data['last_edited_by_id'] = auth()->id();
-    
+
     return $data;
 }
 ```
@@ -432,32 +432,32 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateUser extends CreateRecord
 {
     // ...
-    
+
     protected function beforeFill(): void
     {
         // Runs before the form fields are populated with their default values.
     }
-    
+
     protected function afterFill(): void
     {
         // Runs after the form fields are populated with their default values.
     }
-    
+
     protected function beforeValidate(): void
     {
         // Runs before the form fields are validated when the form is submitted.
     }
-    
+
     protected function afterValidate(): void
     {
         // Runs after the form fields are validated when the form is submitted.
     }
-    
+
     protected function beforeCreate(): void
     {
         // Runs before the form fields are saved to the database.
     }
-    
+
     protected function afterCreate(): void
     {
         // Runs after the form fields are saved to the database.
@@ -471,42 +471,42 @@ use Filament\Resources\Pages\EditRecord;
 class EditUser extends EditRecord
 {
     // ...
-    
+
     protected function beforeFill(): void
     {
         // Runs before the form fields are populated from the database.
     }
-    
+
     protected function afterFill(): void
     {
         // Runs after the form fields are populated from the database.
     }
-    
+
     protected function beforeValidate(): void
     {
         // Runs before the form fields are validated when the form is saved.
     }
-    
+
     protected function afterValidate(): void
     {
         // Runs after the form fields are validated when the form is saved.
     }
-    
+
     protected function beforeSave(): void
     {
         // Runs before the form fields are saved to the database.
     }
-    
+
     protected function afterSave(): void
     {
         // Runs after the form fields are saved to the database.
     }
-    
+
     protected function beforeDelete(): void
     {
         // Runs before the record is deleted.
     }
-    
+
     protected function afterDelete(): void
     {
         // Runs after the record is deleted.
@@ -612,12 +612,12 @@ SortUsers::getUrl($parameters = [], $absolute = true);
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The following methods are used:
 
-- `create` is used to control creation of new records. It removes the "New" button from the "Index" page.
-- `view` is used to control viewing of a record. If you have a [view page](#view-page), it prevents the "View" link from being displayed on the table, and prevents the user from visiting the View page.
-- `viewAny` is used to completely disable resources and remove them from the navigation menu.
-- `update` is used to control editing of a record. It prevents the "Edit" link from being displayed on the resource table, and prevents the user from visiting the Edit page.
-- `delete` is used to prevent a record from being deleted. It removes the "Delete" button from the "Edit" page.
-- `deleteAny` is used to prevent records from being bulk deleted. It removes the "Delete selected" bulk action from the resource table.
+-   `create` is used to control creation of new records. It removes the "New" button from the "Index" page.
+-   `view` is used to control viewing of a record. If you have a [view page](#view-page), it prevents the "View" link from being displayed on the table, and prevents the user from visiting the View page.
+-   `viewAny` is used to completely disable resources and remove them from the navigation menu.
+-   `update` is used to control editing of a record. It prevents the "Edit" link from being displayed on the resource table, and prevents the user from visiting the Edit page.
+-   `delete` is used to prevent a record from being deleted. It removes the "Delete" button from the "Edit" page.
+-   `deleteAny` is used to prevent records from being bulk deleted. It removes the "Delete selected" bulk action from the resource table.
 
 ## Disabling global scopes
 
@@ -655,4 +655,12 @@ The plural version is generated based on the singular `$label`, which you may al
 
 ```php
 protected static string $pluralLabel = 'customers';
+```
+
+### Disable registering resource to navigation
+
+There are times when you want to prevent resources to show up in navigation. To do this, simply add:
+
+```php
+protected static bool $shouldRegisterNavigation = false; // default false
 ```

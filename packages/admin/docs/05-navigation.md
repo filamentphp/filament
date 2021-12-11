@@ -67,11 +67,3 @@ public static function registerNavigationItems(): void
     ]);
 }
 ```
-
-## Disable registering resource to navigation
-
-There are times when you want to prevent resources to show up in navigation. To do this, simply add:
-
-```php
-protected static bool $shouldRegisterNavigation = false; // default false
-```
