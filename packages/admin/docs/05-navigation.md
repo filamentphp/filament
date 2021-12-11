@@ -67,3 +67,11 @@ public static function registerNavigationItems(): void
     ]);
 }
 ```
+
+### Disabling resource or page navigation items
+
+To prevent resources or pages from showing up in navigation, you may use:
+
+```php
+protected static bool $shouldRegisterNavigation = false;
+```

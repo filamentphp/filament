@@ -354,7 +354,7 @@ By default, resources are generated with three pages:
 Filament also comes with a "view" page for resources, which you can enable by creating a new page in your resource's `Pages` directory:
 
 ```bash
-php artisan make:filament-page ViewUser --resource=UserResource 
+php artisan make:filament-page ViewUser --resource=UserResource
 ```
 
 Inside the new page class, you may extend the `Filament\Resources\Pages\ViewRecord` class and remove the `$view` property:
@@ -395,7 +395,7 @@ On create pages, you may define a `mutateFormDataBeforeCreate()` method to modif
 protected function mutateFormDataBeforeCreate(array $data): array
 {
     $data['user_id'] = auth()->id();
-    
+
     return $data;
 }
 ```
@@ -406,7 +406,7 @@ On edit pages, you may do the same using the `mutateFormDataBeforeSave()` method
 protected function mutateFormDataBeforeSave(array $data): array
 {
     $data['last_edited_by_id'] = auth()->id();
-    
+
     return $data;
 }
 ```
@@ -432,32 +432,32 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateUser extends CreateRecord
 {
     // ...
-    
+
     protected function beforeFill(): void
     {
         // Runs before the form fields are populated with their default values.
     }
-    
+
     protected function afterFill(): void
     {
         // Runs after the form fields are populated with their default values.
     }
-    
+
     protected function beforeValidate(): void
     {
         // Runs before the form fields are validated when the form is submitted.
     }
-    
+
     protected function afterValidate(): void
     {
         // Runs after the form fields are validated when the form is submitted.
     }
-    
+
     protected function beforeCreate(): void
     {
         // Runs before the form fields are saved to the database.
     }
-    
+
     protected function afterCreate(): void
     {
         // Runs after the form fields are saved to the database.
@@ -471,42 +471,42 @@ use Filament\Resources\Pages\EditRecord;
 class EditUser extends EditRecord
 {
     // ...
-    
+
     protected function beforeFill(): void
     {
         // Runs before the form fields are populated from the database.
     }
-    
+
     protected function afterFill(): void
     {
         // Runs after the form fields are populated from the database.
     }
-    
+
     protected function beforeValidate(): void
     {
         // Runs before the form fields are validated when the form is saved.
     }
-    
+
     protected function afterValidate(): void
     {
         // Runs after the form fields are validated when the form is saved.
     }
-    
+
     protected function beforeSave(): void
     {
         // Runs before the form fields are saved to the database.
     }
-    
+
     protected function afterSave(): void
     {
         // Runs after the form fields are saved to the database.
     }
-    
+
     protected function beforeDelete(): void
     {
         // Runs before the record is deleted.
     }
-    
+
     protected function afterDelete(): void
     {
         // Runs after the record is deleted.
@@ -642,6 +642,8 @@ public static function getEloquentQuery(): Builder
 ```
 
 More information may be found in the [Laravel documentation](https://laravel.com/docs/eloquent#removing-global-scopes).
+
+## Customization
 
 ### Customizing the label
 
