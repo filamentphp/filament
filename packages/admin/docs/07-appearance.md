@@ -20,8 +20,7 @@ In `tailwind.config.js`, enable JIT mode, register the plugins you installed, an
 const colors = require('tailwindcss/colors')
 
 module.exports = {
-    mode: 'jit',
-    purge: [
+    content: [
         './vendor/filament/**/*.blade.php', // [tl! focus]
     ],
     theme: {
