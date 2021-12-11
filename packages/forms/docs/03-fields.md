@@ -945,7 +945,7 @@ Repeater::make('members')
     ->defaultItems(1)
 ```
 
-You may set a label to customize the text that should be displayed in the button for adding a repeater row.
+You may set a label to customize the text that should be displayed in the button for adding a repeater row:
 
 
 ```php
