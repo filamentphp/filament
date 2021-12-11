@@ -275,7 +275,7 @@
                 toolbar="trix-toolbar-{{ $getId() }}"
                 x-ref="trix"
                 {{ $attributes->merge($getExtraAttributes())->class([
-                    'block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600 prose max-w-none',
+                    'bg-white block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600 prose max-w-none',
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                 ]) }}

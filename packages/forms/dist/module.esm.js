@@ -15859,8 +15859,8 @@ var file_upload_default = (Alpine) => {
               let blob2 = await response.blob();
               load(blob2);
             },
-            process: (fieldName, file2, metadata, load, error2, progress) => {
-              uploadUsing(file2, load, error2, progress);
+            process: async (fieldName, file2, metadata, load, error2, progress) => {
+              await uploadUsing(file2, load, error2, progress);
             },
             remove: async (source, load) => {
               await removeUploadedFileUsing();
