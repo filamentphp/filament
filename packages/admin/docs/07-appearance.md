@@ -14,7 +14,7 @@ npm install tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
 
 To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
 
-In `tailwind.config.js`, enable JIT mode, register the plugins you installed, and add custom colors used by the form builder:
+In `tailwind.config.js`, register the plugins you installed, and add custom colors used by the form builder:
 
 ```js
 const colors = require('tailwindcss/colors')
