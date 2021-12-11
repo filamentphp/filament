@@ -38,7 +38,7 @@ composer require filament/tables:^2.0
 The package uses [Alpine.js](https://alpinejs.dev),  [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin. You may install these through NPM:
 
 ```bash
-npm install alpinejs @alpinejs/trap tailwindcss@latest postcss@latest autoprefixer@latest @tailwindcss/forms@latest @tailwindcss/typography@latest --save-dev
+npm install alpinejs @alpinejs/trap tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
 ```
 
 To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
