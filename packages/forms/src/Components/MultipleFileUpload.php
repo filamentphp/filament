@@ -34,7 +34,7 @@ class MultipleFileUpload extends Field
                     ];
                 }
             }
-
+              
             if (!$this->reachedMaxItems($files)) {
                 $state[(string)Str::uuid()] = [
                     'file' => null,
@@ -42,6 +42,7 @@ class MultipleFileUpload extends Field
             }
 
             $component->state($state);
+            $component->appendNewUploadField();
         });
 
         $this->dehydrateStateUsing(function ($state) {
