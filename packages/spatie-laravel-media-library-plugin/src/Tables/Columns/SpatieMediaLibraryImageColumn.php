@@ -9,7 +9,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
 {
     protected ?string $collection = null;
 
-    protected ?string $conversion = '';
+    protected string $conversion = '';
 
     public function collection(string $collection): static
     {
@@ -30,7 +30,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         return $this->collection ?? 'default';
     }
 
-    public function getConversion(Media $media): ?string
+    public function getConversion(Media $media): string
     {
         return $media->hasGeneratedConversion($this->conversion) ? $this->conversion : '';
     }
