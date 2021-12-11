@@ -132,9 +132,9 @@ php artisan make:filament-has-many CategoryResource posts title
 php artisan make:filament-morph-many CategoryResource posts title
 ```
 
--   `CategoryResource` is the name of the resource class for the parent model.
--   `posts` is the name of the relationship you want to manage.
--   `title` is the name of the attribute that will be used to identify posts.
+- `CategoryResource` is the name of the resource class for the parent model.
+- `posts` is the name of the relationship you want to manage.
+- `title` is the name of the attribute that will be used to identify posts.
 
 This will create a `CategoryResource/RelationManagers/PostsRelationManager.php` file. This contains a class where you are able to define a [form](/docs/forms/fields) and [table](/docs/tables/columns) for your relation manager:
 
@@ -184,9 +184,9 @@ To create a relation manager for a `BelongsToMany` relationship, you can use:
 php artisan make:filament-belongs-to-many UserResource teams name
 ```
 
--   `UserResource` is the name of the resource class for the parent model.
--   `teams` is the name of the relationship you want to manage.
--   `name` is the name of the attribute that will be used to identify teams.
+- `UserResource` is the name of the resource class for the parent model.
+- `teams` is the name of the relationship you want to manage.
+- `name` is the name of the attribute that will be used to identify teams.
 
 This will create a `UserResource/RelationManagers/TeamsRelationManager.php` file. This contains a class where you are able to define a [form](/docs/forms/fields) and [table](/docs/tables/columns) for your relation manager:
 
@@ -345,9 +345,9 @@ Page class files are in the `/Pages` directory of your resource directory.
 
 By default, resources are generated with three pages:
 
--   List has a [table](#tables) for displaying, searching and deleting resource records. From here, you are able to access the create and edit pages. It is routed to `/`.
--   Create has a [form](#forms) that is able to create a resource record. It is routed to `/create`.
--   Edit has a [form](#forms) that is able to update a resource record, along with the [relation managers](#relations) registered to your resource. It is routed to `/{record}/edit`.
+- List has a [table](#tables) for displaying, searching and deleting resource records. From here, you are able to access the create and edit pages. It is routed to `/`.
+- Create has a [form](#forms) that is able to create a resource record. It is routed to `/create`.
+- Edit has a [form](#forms) that is able to update a resource record, along with the [relation managers](#relations) registered to your resource. It is routed to `/{record}/edit`.
 
 ### View page
 
@@ -612,12 +612,12 @@ SortUsers::getUrl($parameters = [], $absolute = true);
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The following methods are used:
 
--   `create` is used to control creation of new records. It removes the "New" button from the "Index" page.
--   `view` is used to control viewing of a record. If you have a [view page](#view-page), it prevents the "View" link from being displayed on the table, and prevents the user from visiting the View page.
--   `viewAny` is used to completely disable resources and remove them from the navigation menu.
--   `update` is used to control editing of a record. It prevents the "Edit" link from being displayed on the resource table, and prevents the user from visiting the Edit page.
--   `delete` is used to prevent a record from being deleted. It removes the "Delete" button from the "Edit" page.
--   `deleteAny` is used to prevent records from being bulk deleted. It removes the "Delete selected" bulk action from the resource table.
+- `create` is used to control creation of new records. It removes the "New" button from the "Index" page.
+- `view` is used to control viewing of a record. If you have a [view page](#view-page), it prevents the "View" link from being displayed on the table, and prevents the user from visiting the View page.
+- `viewAny` is used to completely disable resources and remove them from the navigation menu.
+- `update` is used to control editing of a record. It prevents the "Edit" link from being displayed on the resource table, and prevents the user from visiting the Edit page.
+- `delete` is used to prevent a record from being deleted. It removes the "Delete" button from the "Edit" page.
+- `deleteAny` is used to prevent records from being bulk deleted. It removes the "Delete selected" bulk action from the resource table.
 
 ## Disabling global scopes
 
