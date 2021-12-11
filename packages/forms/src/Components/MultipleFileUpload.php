@@ -61,7 +61,7 @@ class MultipleFileUpload extends Field
     {
         $files = $this->getState();
 
-        if ($this->reachedMaxItems($files)) {
+        if ($this->reachedMaxItems(count($files))) {
             return;
         }
 
