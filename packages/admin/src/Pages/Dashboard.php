@@ -4,6 +4,7 @@ namespace Filament\Pages;
 
 use Closure;
 use Illuminate\Support\Facades\Route;
+use Filament\Facades\Filament;
 
 class Dashboard extends Page
 {
@@ -23,5 +24,10 @@ class Dashboard extends Page
     protected function getTitle(): string
     {
         return static::$title ?? __('filament::pages/dashboard.title');
+    }
+
+    public function getHeaderWidgets(): array
+    {
+        return Filament::getWidgets();
     }
 }
