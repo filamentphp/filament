@@ -769,6 +769,19 @@ MultipleFileUpload::make('attachments')
     )
 ```
 
+You may customise the number of files that can be uploaded:
+
+```php
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MultipleFileUpload;
+MultipleFileUpload::make('attachments')
+    ->minFiles(2)
+    ->maxFiles(5)
+    ->uploadComponent(
+        FileUpload::make('file')->image(),
+    )
+```
+
 > Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/docs/spatie-laravel-media-library-plugin) for more information.
 
 ## Rich editor
@@ -916,6 +929,29 @@ Repeater::make('members')
     ])
 ```
 
+You may customise the number of times the componet repeats:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+
+Repeater::make('members')
+    ->schema([
+        TextInput::make('name')->required(),
+        Select::make('role')
+            ->options([
+                'member' => 'Member',
+                'administrator' => 'Administrator',
+                'owner' => 'Owner',
+            ])
+            ->required(),
+    ])
+    ->minItems(1)
+    ->maxItems(10)
+```
+
+
 We recommend that you store repeater data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
 
 As evident in the above example, the component schema can be defined within the `schema()` method of the component:
@@ -988,6 +1024,25 @@ Builder::make('content')
                     ->required(),
             ]),
     ])
+```
+
+You may customise the number of times the componet can be used:
+
+```php
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\TextInput;
+
+Builder::make('content')
+    ->blocks([
+        Builder\Block::make('heading')
+            ->schema([
+                TextInput::make('content')->required(),
+                // ...
+            ]),
+        // ...
+    ])
+    ->minItems(1)
+    ->maxItems(10)
 ```
 
 We recommend that you store builder data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.

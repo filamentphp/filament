@@ -122,7 +122,7 @@
             </ul>
         @endif
 
-        @unless ($isGreaterThanMaxItems(count($getChildComponentContainers())))
+        @unless ($reachedMaxItems(count($getChildComponentContainers())))
             <div x-data="{ isCreateButtonDropdownOpen: false }" class="relative flex justify-center">
                 <button
                     x-on:click="isCreateButtonDropdownOpen = true"

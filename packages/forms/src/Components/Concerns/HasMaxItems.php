@@ -10,7 +10,13 @@ trait HasMaxItems
     {
         $this->maxItems = $count;
 
-        $this->rules(["max:{$this->getMaxItems()}"]);
+        $this
+            ->rule('array')
+            ->rule(function (): string {
+                $value = $this->getMaxItems();
+
+                return "max:{$value}";
+            });
 
         return $this;
     }
@@ -20,8 +26,8 @@ trait HasMaxItems
         return $this->evaluate($this->maxItems);
     }
 
-    public function isLessThanMaxItems(int | callable $count): bool
+    public function reachedMaxItems(int | callable $count): bool
     {
-        return $this->maxItems === null ? true : $this->evaluate($this->count) < $this->getMaxItems();
+        return $this->getMaxItems() !== null && $this->evaluate($this->count) < $this->getMaxItems();
     }
 }

@@ -67,7 +67,7 @@
             </ul>
         @endif
 
-        @unless ($isGreaterThanMaxItems(count($getChildComponentContainers())))
+        @unless ($reachedMaxItems(count($getChildComponentContainers())))
             <button
                 wire:click="dispatchFormEvent('repeater.createItem', '{{ $getStatePath() }}')"
                 type="button"

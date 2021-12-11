@@ -10,7 +10,19 @@ trait HasMinItems
     {
         $this->minItems = $count;
 
-        $this->rules(["min:{$this->getMinItems()}"]);
+        $this->rule(function (): callable {
+            $minItems = $this->getMinItems();
+            $label = $this->getValidationAttribute();
+
+            return function($attribute, $value, $fail) use ($minItems, $label) {
+                if (count(array_filter($value, fn($item) => !array_filter(array_map('array_filter', $item)))) < $minItems) {
+                    $fail(trans('validation.min.array', [
+                        'attribute' => $label,
+                        'min' => $minItems
+                    ]));
+                }
+            } ;
+        });
 
         return $this;
     }
@@ -20,8 +32,8 @@ trait HasMinItems
         return $this->evaluate($this->minItems);
     }
 
-    public function isGreaterThanMinItems(int | callable $count): bool
+    public function reachedMinItems(int | callable $count): bool
     {
-        return $this->minItems === null ? true : $this->evaluate($this->count) > $this->getMinItems();
+        return $this->getMinItems() !== null && $this->evaluate($this->count) > $this->getMinItems();
     }
 }

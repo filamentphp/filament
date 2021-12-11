@@ -7,6 +7,9 @@ use Illuminate\Support\Str;
 
 class MultipleFileUpload extends Field
 {
+    use Concerns\HasMinItems;
+    use Concerns\HasMaxItems;
+
     protected string $view = 'forms::components.multiple-file-upload';
 
     protected $uploadComponent = null;
@@ -32,9 +35,11 @@ class MultipleFileUpload extends Field
                 }
             }
 
-            $state[(string) Str::uuid()] = [
-                'file' => null,
-            ];
+            if (!$this->reachedMaxItems($files)) {
+                $state[(string)Str::uuid()] = [
+                    'file' => null,
+                ];
+            }
 
             $component->state($state);
         });
@@ -56,6 +61,10 @@ class MultipleFileUpload extends Field
     {
         $files = $this->getState();
 
+        if ($this->reachedMaxItems($files)) {
+            return;
+        }
+
         $files[(string) Str::uuid()] = [
             'file' => null,
         ];
@@ -70,6 +79,16 @@ class MultipleFileUpload extends Field
         unset($files[$uuid]);
 
         $this->state($files);
+    }
+
+    public function minFiles(int | callable $count): static
+    {
+        $this->minItems($count);
+    }
+
+    public function maxFiles(int | callable $count): static
+    {
+        $this->maxItems($count);
     }
 
     public function uploadComponent(Component | callable $component): static
