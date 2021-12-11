@@ -123,7 +123,7 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
     protected function getTitle(): string
     {
-        return static::$title ?? (($recordTitle = $this->getRecordTitle()) ? __('filament::resources/pages/edit-record.title', ['record' => $recordTitle]) : parent::getTitle());
+        return static::$title ?? (($recordTitle = $this->getRecordTitle()) ? __('filament::resources/pages/edit-record.title', ['label' => $recordTitle]) : parent::getTitle());
     }
 
     protected function getFormActions(): array
