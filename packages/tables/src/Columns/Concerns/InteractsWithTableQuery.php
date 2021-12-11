@@ -38,22 +38,22 @@ trait InteractsWithTableQuery
         };
 
         foreach ($this->getSearchColumns() as $searchColumnName) {
-            if ($this->queriesRelationships()) {
-                $query->{$isFirst ? 'whereHas' : 'orWhereHas'}(
+            $whereClause = $isFirst ? 'where' : 'orWhere';
+
+            $query->when(
+                $this->queriesRelationships(),
+                fn ($query) => $query->{"{$whereClause}Relation"}(
                     $this->getRelationshipName(),
-                    fn ($query) => $query->where(
-                        $searchColumnName,
-                        $searchOperator,
-                        "%{$searchQuery}%",
-                    ),
-                );
-            } else {
-                $query->{$isFirst ? 'where' : 'orWhere'}(
                     $searchColumnName,
                     $searchOperator,
-                    "%{$searchQuery}%"
-                );
-            }
+                    "%{$searchQuery}%",
+                ),
+                fn ($query) => $query->{$whereClause}(
+                    $searchColumnName,
+                    $searchOperator,
+                    "%{$searchQuery}%",
+                ),
+            );
 
             $isFirst = false;
         }
@@ -72,26 +72,19 @@ trait InteractsWithTableQuery
         }
 
         foreach (array_reverse($this->getSortColumns()) as $sortColumnName) {
-            if ($this->queriesRelationships()) {
-                $relatedModel = $this->getRelatedModel($query);
-                $relationship = $this->getRelationship($query);
-
-                $query->orderBy(
-                    $relatedModel
-                        ->query()
-                        ->select($sortColumnName)
-                        ->whereColumn(
-                            "{$relatedModel->getTable()}.{$relationship->getOwnerKeyName()}",
-                            "{$this->getQueryModel($query)->getTable()}.{$relationship->getForeignKeyName()}",
+            $query->when(
+                $this->queriesRelationships(),
+                fn ($query) => $query->orderBy(
+                    $this->getRelationship($query)
+                        ->getRelationExistenceQuery(
+                            $this->getRelatedModel($query)->query(),
+                            $query,
+                            $sortColumnName,
                         ),
                     $direction,
-                );
-            } else {
-                $query->orderBy(
-                    $sortColumnName,
-                    $direction,
-                );
-            }
+                ),
+                fn ($query) => $query->orderBy($sortColumnName, $direction),
+            );
         }
 
         return $query;

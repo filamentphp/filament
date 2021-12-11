@@ -404,7 +404,7 @@ Are you already using <code>App\Models\User</code>?
 
 ### Relation managers
 
-`HasMany` and `MorphMany` relation manager classes should now extend `Filament\Resources\RelationManagers\HasManyRelationManager`. `BelongsToMany` relation manager classes should now extend `Filament\Resources\RelationManagers\BelongsToManyRelationManager`. 
+`HasMany` relation manager classes should now extend `Filament\Resources\RelationManagers\HasManyRelationManager`. `MorphMany` relation manager classes should now extend `Filament\Resources\RelationManagers\MorphManyRelationManager`. `BelongsToMany` relation manager classes should now extend `Filament\Resources\RelationManagers\BelongsToManyRelationManager`. 
 
 The `Filament\Resources\Forms\Form` class has been renamed to `Filament\Resources\Form`. 
 
