@@ -26,6 +26,6 @@
                 }
             }"
             wire:ignore
-            ></canvas>
+        ></canvas>
     </div>
 </x-filament::card>
