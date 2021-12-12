@@ -4,15 +4,14 @@
     </x-slot>
 
     <div {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}=\"updateChartData\"" : '' !!}>
-        <canvas
-            x-data="{
+        <canvas x-data="{
                 chart: null,
 
                 init: function () {
                     chart = new Chart(
                         $el,
                         {
-                            type: 'line',
+                            type: {{ json_encode($this->getType()) }},
                             data: {{ json_encode($this->getData()) }},
                             options: {{ json_encode($this->getOptions()) ?? '{}' }},
                         },
@@ -24,8 +23,6 @@
                         chart.update('resize')
                     })
                 }
-            }"
-            wire:ignore
-        ></canvas>
+            }" wire:ignore></canvas>
     </div>
 </x-filament::card>
