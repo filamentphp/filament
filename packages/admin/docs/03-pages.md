@@ -84,6 +84,28 @@ protected function getActions(): array
 }
 ```
 
+## Sending flash notifications
+
+You can send notficiations to the user from each page by calling the `notify(string $status, string $message)` method of your `Page`:
+
+```php
+$this->notify('success', __('This is my message'));
+```
+
+From any other place in your code, you could add a notification as well, by adding it to the session flash:
+
+```php
+session()->flash('notification', [
+    'message' => __('This is my message'),
+    'status' => 'success',
+]);
+```
+There are three types of staties available:
+ - `default` 
+ - `danger`
+ - `success`
+ - `warning`
+
 ## Customization
 
 Filament will automatically generate a title, navigation label and URL (slug) for your page based on its name. You may override it using static properties of your page class:
