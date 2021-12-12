@@ -945,6 +945,19 @@ Repeater::make('members')
     ->defaultItems(1)
 ```
 
+You may set a label to customize the text that should be displayed in the button for adding a repeater row:
+
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->createItemButtonLabel('Add new row')
+```
+
 ## Builder
 
 Similar to a [repeater](#repeater), the builder component allows you to output a JSON array of repeated form components. Unlike the repeater, which only defines one form schema to repeat, the builder allows you to define different schema "blocks", which you can repeat in any order. This makes it useful for building more advanced array structures.
