@@ -12,7 +12,7 @@
                     chart = new Chart(
                         $el,
                         {
-                            type: 'line',
+                            type: '{{ $this->getType() }}',
                             data: {{ json_encode($this->getData()) }},
                             options: {{ json_encode($this->getOptions()) ?? '{}' }},
                         },
