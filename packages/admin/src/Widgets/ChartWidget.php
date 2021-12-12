@@ -6,8 +6,6 @@ class ChartWidget extends Widget
 {
     public string $dataChecksum;
 
-    protected static ?string $type = 'line';
-
     protected static ?string $heading = null;
 
     protected static ?array $options = null;
@@ -24,11 +22,6 @@ class ChartWidget extends Widget
     protected function generateDataChecksum(): string
     {
         return md5(json_encode($this->getData()));
-    }
-
-    protected function getType(): ?string
-    {
-        return static::$type;
     }
 
     protected function getData(): array
