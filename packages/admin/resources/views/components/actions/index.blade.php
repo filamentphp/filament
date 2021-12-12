@@ -15,7 +15,7 @@
     @if (count($actions))
         @php($alignment = config('filament.layout.forms.actions.alignment'))
         <div {{ $attributes->class([
-                'flex flex-wrap items-center gap-4 justify-end',
+                'flex flex-wrap items-center gap-4',
                 $alignment == 'center' ? 'justify-center' : ($alignment == 'right' ? 'justify-end' : '')
             ]) }}>
             @foreach ($actions as $action)
