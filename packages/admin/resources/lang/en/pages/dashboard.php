@@ -3,5 +3,6 @@
 return [
 
     'title' => 'Dashboard',
+    'label' => 'Dashboard',
 
 ];
