@@ -21,7 +21,7 @@ class Repeater extends Field
         parent::setUp();
 
         $this->registerListeners([
-            'repeater.createItem' => [
+            'repeater::createItem' => [
                 function (Repeater $component, string $statePath): void {
                     if ($component->isDisabled()) {
                         return;
@@ -39,7 +39,7 @@ class Repeater extends Field
                     $component->hydrateDefaultItemState($newUuid);
                 },
             ],
-            'repeater.deleteItem' => [
+            'repeater::deleteItem' => [
                 function (Repeater $component, string $statePath, string $uuidToDelete): void {
                     if ($component->isDisabled()) {
                         return;
@@ -57,7 +57,7 @@ class Repeater extends Field
                     data_set($livewire, $statePath, $items);
                 },
             ],
-            'repeater.moveItemDown' => [
+            'repeater::moveItemDown' => [
                 function (Repeater $component, string $statePath, string $uuidToMoveDown): void {
                     if ($component->isDisabled()) {
                         return;
@@ -77,7 +77,7 @@ class Repeater extends Field
                     data_set($livewire, $statePath, $items);
                 },
             ],
-            'repeater.moveItemUp' => [
+            'repeater::moveItemUp' => [
                 function (Repeater $component, string $statePath, string $uuidToMoveUp): void {
                     if ($component->isDisabled()) {
                         return;
@@ -143,11 +143,11 @@ class Repeater extends Field
     public function getChildComponentContainers(): array
     {
         return collect($this->getNormalisedState())
-            ->map(function ($item, $index): ComponentContainer {
+            ->map(function ($itemData, $itemIndex): ComponentContainer {
                 return $this
                     ->getChildComponentContainer()
                     ->getClone()
-                    ->statePath($index);
+                    ->statePath($itemIndex);
             })->toArray();
     }
 

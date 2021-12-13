@@ -79,11 +79,11 @@ class MultipleFileUpload extends Field
     public function getChildComponentContainers(): array
     {
         return collect($this->getState())
-            ->map(function ($item, $index): ComponentContainer {
+            ->map(function ($itemData, $itemIndex): ComponentContainer {
                 return $this
                     ->getChildComponentContainer()
                     ->getClone()
-                    ->statePath($index);
+                    ->statePath($itemIndex);
             })->toArray();
     }
 
