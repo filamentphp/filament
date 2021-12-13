@@ -404,7 +404,7 @@ BelongsToSelect::make('authorId')
     ->relationship('author', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
@@ -460,7 +460,7 @@ BelongsToManyMultiSelect::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
