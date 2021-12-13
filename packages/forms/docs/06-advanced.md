@@ -79,7 +79,7 @@ If you'd only like to receive model instances, define a `$record` parameter inst
 ```php
 use Illuminate\Database\Eloquent\Model;
 
-function (Model $record) {
+function (?Model $record) {
     // ...
 }
 ```
