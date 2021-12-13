@@ -966,8 +966,8 @@ You may employ the `relationship()` method of the `HasManyRepeater` to configure
 use App\Models\App;
 use Filament\Forms\Components\HasManyRepeater;
 
-HasManyRepeater::make('variants')
-    ->relationship('variants')
+HasManyRepeater::make('qualifications')
+    ->relationship('qualifications')
     ->schema([
         // ...
     ])
