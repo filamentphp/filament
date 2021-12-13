@@ -7,7 +7,10 @@ use Illuminate\Support\Facades\Route;
 
 class Dashboard extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-home';
+    protected static function getNavigationIcon(): string
+    {
+        return config('filament.pages.dashboard.icon', 'heroicon-o-home');
+    }
 
     protected static ?int $navigationSort = -2;
 
@@ -18,6 +21,11 @@ class Dashboard extends Page
         return function () {
             Route::get('/', static::class)->name(static::getSlug());
         };
+    }
+    
+    protected static function getNavigationLabel(): string
+    {
+        return static::$navigationLabel ?? __('filament::pages/dashboard.label');
     }
 
     protected function getTitle(): string
