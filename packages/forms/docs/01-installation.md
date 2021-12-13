@@ -114,7 +114,7 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 
 ```blade
 <!DOCTYPE html>
-<html lang="{{ \Illuminate\Support\Str::of(app()->getLocale())->lower()->kebab() }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
 
