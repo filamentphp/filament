@@ -206,10 +206,12 @@ You may also use [closure rules](https://laravel.com/docs/validation#using-closu
 
 ```php
 TextInput::make('slug')->rules([
-    function (string $attribute, $value, Closure $fail) {
-        if ($value === 'foo') {
-            $fail("The {$attribute} is invalid.");
-        }
+    function () {
+        return function (string $attribute, $value, Closure $fail) {
+            if ($value === 'foo') {
+                $fail("The {$attribute} is invalid.");
+            }
+        };
     },
 ])
 ```

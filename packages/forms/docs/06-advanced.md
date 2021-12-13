@@ -133,11 +133,16 @@ Sometimes, you may wish to conditionally hide any form component. You may do thi
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('newPassword')->password()
+TextInput::make('newPassword')
+    ->password()
+    ->reactive()
+    
 TextInput::make('newPasswordConfirmation')
     ->password()
     ->hidden(fn (callable $get) => $get('newPassword') !== null)
 ```
+
+The field/s you're depending on should be `reactive()`, to ensure the Livewire component is reloaded when they are updated.
 
 ## Field lifecycle
 
