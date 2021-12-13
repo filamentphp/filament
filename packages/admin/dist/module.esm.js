@@ -6097,6 +6097,7 @@ var date_time_picker_default = (Alpine) => {
       second: null,
       state: state2,
       init: function() {
+        this.focusedDate = esm_default().tz(timezone2);
         this.maxDate = esm_default(this.maxDate);
         if (!this.maxDate.isValid()) {
           this.maxDate = null;
@@ -6127,7 +6128,7 @@ var date_time_picker_default = (Alpine) => {
           this.focusedDate = this.focusedDate.month(this.focusedMonth);
         });
         this.$watch("focusedYear", () => {
-          this.focusedYear = Number.isInteger(+this.focusedYear) ? +this.focusedYear : esm_default().year();
+          this.focusedYear = Number.isInteger(+this.focusedYear) ? +this.focusedYear : esm_default().tz(timezone2).year();
           if (this.focusedDate.year() === this.focusedYear) {
             return;
           }
@@ -6214,6 +6215,7 @@ var date_time_picker_default = (Alpine) => {
         return false;
       },
       dayIsDisabled: function(day) {
+        this.focusedDate ??= esm_default().tz(timezone2);
         return this.dateIsDisabled(this.focusedDate.date(day));
       },
       dayIsSelected: function(day) {
@@ -6221,10 +6223,12 @@ var date_time_picker_default = (Alpine) => {
         if (selectedDate === null) {
           return false;
         }
+        this.focusedDate ??= esm_default().tz(timezone2);
         return selectedDate.date() === day && selectedDate.month() === this.focusedDate.month() && selectedDate.year() === this.focusedDate.year();
       },
       dayIsToday: function(day) {
         let date = esm_default().tz(timezone2);
+        this.focusedDate ??= date;
         return date.date() === day && date.month() === this.focusedDate.month() && date.year() === this.focusedDate.year();
       },
       evaluatePosition: function() {
@@ -6241,15 +6245,19 @@ var date_time_picker_default = (Alpine) => {
         this.$refs.picker.style.bottom = `${this.$refs.button.offsetHeight}px`;
       },
       focusPreviousDay: function() {
+        this.focusedDate ??= esm_default().tz(timezone2);
         this.focusedDate = this.focusedDate.subtract(1, "day");
       },
       focusPreviousWeek: function() {
+        this.focusedDate ??= esm_default().tz(timezone2);
         this.focusedDate = this.focusedDate.subtract(1, "week");
       },
       focusNextDay: function() {
+        this.focusedDate ??= esm_default().tz(timezone2);
         this.focusedDate = this.focusedDate.add(1, "day");
       },
       focusNextWeek: function() {
+        this.focusedDate ??= esm_default().tz(timezone2);
         this.focusedDate = this.focusedDate.add(1, "week");
       },
       getDayLabels: function() {
@@ -6281,12 +6289,14 @@ var date_time_picker_default = (Alpine) => {
         if (day) {
           this.setFocusedDay(day);
         }
+        this.focusedDate ??= esm_default().tz(timezone2);
         this.setState(this.focusedDate);
       },
       setDisplayText: function() {
         this.displayText = this.getSelectedDate() ? this.getSelectedDate().format(displayFormat) : "";
       },
       setupDaysGrid: function() {
+        this.focusedDate ??= esm_default().tz(timezone2);
         this.emptyDaysInFocusedMonth = Array.from({
           length: this.focusedDate.date(8 - firstDayOfWeek).day()
         }, (_, i) => i + 1);
@@ -6295,7 +6305,7 @@ var date_time_picker_default = (Alpine) => {
         }, (_, i) => i + 1);
       },
       setFocusedDay: function(day) {
-        this.focusedDate = this.focusedDate.date(day);
+        this.focusedDate = (this.focusedDate ?? esm_default().tz(timezone2)).date(day);
       },
       setState: function(date) {
         if (date === null) {
@@ -15849,8 +15859,8 @@ var file_upload_default = (Alpine) => {
               let blob2 = await response.blob();
               load(blob2);
             },
-            process: (fieldName, file2, metadata, load, error2, progress) => {
-              uploadUsing(file2, load, error2, progress);
+            process: async (fieldName, file2, metadata, load, error2, progress) => {
+              await uploadUsing(file2, load, error2, progress);
             },
             remove: async (source, load) => {
               await removeUploadedFileUsing();
@@ -15899,7 +15909,7 @@ var key_value_default = (Alpine) => {
     state: state2,
     rows: [],
     init: function() {
-      for (let [value, key] of Object.entries(this.state ?? {})) {
+      for (let [key, value] of Object.entries(this.state ?? {})) {
         this.rows.push({
           key,
           value

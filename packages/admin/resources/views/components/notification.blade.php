@@ -33,7 +33,7 @@
                 'warning' => 'heroicon-o-exclamation',
                 default => 'heroicon-o-information-circle',
             }" :class="\Illuminate\Support\Arr::toCssClasses([
-                'flex-shrink-0 w-6 h-6',
+                'shrink-0 w-6 h-6',
                 match ($status) {
                     'danger' => 'text-danger-600',
                     'success' => 'text-success-600',

@@ -381,7 +381,7 @@ The `getOptionLabelUsing()` method accepts a callback that transforms the select
 Select::make('authorId')
     ->searchable()
     ->getSearchResultsUsing(fn (string $query) => User::where('name', 'like', "%{$query}%")->pluck('name', 'id'))
-    ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name)),
+    ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
 ```
 
 ### Dependant selects
@@ -404,7 +404,7 @@ BelongsToSelect::make('authorId')
     ->relationship('author', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
@@ -460,7 +460,7 @@ BelongsToManyMultiSelect::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
@@ -916,6 +916,8 @@ Repeater::make('members')
     ])
 ```
 
+We recommend that you store repeater data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
+
 As evident in the above example, the component schema can be defined within the `schema()` method of the component:
 
 ```php
@@ -942,6 +944,36 @@ Repeater::make('members')
     ])
     ->defaultItems(1)
 ```
+
+You may set a label to customize the text that should be displayed in the button for adding a repeater row:
+
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->createItemButtonLabel('Add new row')
+```
+
+### Populating automatically from a `hasMany` relationship
+
+You may employ the `relationship()` method of the `HasManyRepeater` to configure a relationship to automatically retrieve and save repeater items:
+
+```php
+use App\Models\App;
+use Filament\Forms\Components\HasManyRepeater;
+
+HasManyRepeater::make('qualifications')
+    ->relationship('qualifications')
+    ->schema([
+        // ...
+    ])
+```
+
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
 ## Builder
 
@@ -987,6 +1019,8 @@ Builder::make('content')
             ]),
     ])
 ```
+
+We recommend that you store builder data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
 
 As evident in the above example, blocks can be defined within the `blocks()` method of the component. Blocks are `Builder\Block` objects, and require a unique name, and a component schema:
 
@@ -1119,6 +1153,16 @@ KeyValue::make('meta')
     ->disableEditingKeys()
 ```
 
+You may also add placeholders for the key and value fields using the `keyPlaceholder()` and `valuePlaceholder()` methods:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+    ->keyPlaceholder('Property name')
+    ->valuePlaceholder('Property value')
+```
+
 ## View
 
 Aside from [building custom fields](#building-custom-fields), you may create "view" fields which allow you to create custom fields without extra PHP classes.
@@ -1131,7 +1175,7 @@ ViewField::make('notifications')->view('filament.forms.components.range-slider')
 
 Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
 
-The `$getStatePath()` callable may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
+The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
 
 ```blade
 <x-forms::field-wrapper
@@ -1174,7 +1218,7 @@ class RangeSlider extends Field
 
 Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
 
-The `$getStatePath()` callable may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
+The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
 
 ```blade
 <x-forms::field-wrapper

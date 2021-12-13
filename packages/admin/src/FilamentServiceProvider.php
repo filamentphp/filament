@@ -39,6 +39,7 @@ class FilamentServiceProvider extends PackageServiceProvider
         $commands = [
             Commands\MakeBelongsToManyCommand::class,
             Commands\MakeHasManyCommand::class,
+            Commands\MakeMorphManyCommand::class,
             Commands\MakePageCommand::class,
             Commands\MakeResourceCommand::class,
             Commands\MakeUserCommand::class,

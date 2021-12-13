@@ -31,6 +31,8 @@ class Resource
 
     protected static ?int $navigationSort = null;
 
+    protected static bool $shouldRegisterNavigation = true;
+
     protected static ?string $pluralLabel = null;
 
     protected static ?string $recordTitleAttribute = null;
@@ -44,6 +46,10 @@ class Resource
 
     public static function registerNavigationItems(): void
     {
+        if (! static::shouldRegisterNavigation()) {
+            return;
+        }
+
         if (! static::canViewAny()) {
             return;
         }
@@ -279,22 +285,22 @@ class Resource
         };
 
         foreach ($searchAttributes as $searchAttribute) {
-            if (Str::of($searchAttribute)->contains('.')) {
-                $query->{$isFirst ? 'whereHas' : 'orWhereHas'}(
+            $whereClause = $isFirst ? 'where' : 'orWhere';
+
+            $query->when(
+                Str::of($searchAttribute)->contains('.'),
+                fn ($query) => $query->{"{$whereClause}Relation"}(
                     (string) Str::of($searchAttribute)->beforeLast('.'),
-                    fn ($query) => $query->where(
-                        (string) Str::of($searchAttribute)->afterLast('.'),
-                        $searchOperator,
-                        "%{$searchQuery}%",
-                    ),
-                );
-            } else {
-                $query->{$isFirst ? 'where' : 'orWhere'}(
+                    (string) Str::of($searchAttribute)->afterLast('.'),
+                    $searchOperator,
+                    "%{$searchQuery}%",
+                ),
+                fn ($query) => $query->{$whereClause}(
                     $searchAttribute,
                     $searchOperator,
-                    "%{$searchQuery}%"
-                );
-            }
+                    "%{$searchQuery}%",
+                ),
+            );
 
             $isFirst = false;
         }
@@ -330,5 +336,10 @@ class Resource
     protected static function getNavigationUrl(): string
     {
         return static::getUrl();
+    }
+
+    protected static function shouldRegisterNavigation(): bool
+    {
+        return static::$shouldRegisterNavigation;
     }
 }
