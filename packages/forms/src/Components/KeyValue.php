@@ -20,6 +20,10 @@ class KeyValue extends Field
 
     protected $valueLabel = null;
 
+    protected $keyPlaceholder = null;
+
+    protected $valuePlaceholder = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -82,6 +86,20 @@ class KeyValue extends Field
         return $this;
     }
 
+    public function keyPlaceholder(string | callable | null $placeholder): static
+    {
+        $this->keyPlaceholder = $placeholder;
+
+        return $this;
+    }
+
+    public function valuePlaceholder(string | callable | null $placeholder): static
+    {
+        $this->valuePlaceholder = $placeholder;
+
+        return $this;
+    }
+
     public function canAddRows(): bool
     {
         return $this->evaluate($this->canAddRows);
@@ -115,5 +133,15 @@ class KeyValue extends Field
     public function getValueLabel(): string
     {
         return $this->evaluate($this->valueLabel);
+    }
+
+    public function getKeyPlaceholder(): ?string
+    {
+        return $this->evaluate($this->keyPlaceholder);
+    }
+
+    public function getValuePlaceholder(): ?string
+    {
+        return $this->evaluate($this->valuePlaceholder);
     }
 }

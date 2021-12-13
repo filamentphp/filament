@@ -2,7 +2,7 @@
     <x-filament::form wire:submit.prevent="save">
         {{ $this->form }}
 
-        <x-filament::actions :actions="$this->getFormActions()" />
+        <x-filament::form.actions :actions="$this->getFormActions()" />
     </x-filament::form>
 
     @if (count($relationManagers = $this->getResource()::getRelations()))

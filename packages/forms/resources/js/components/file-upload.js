@@ -83,8 +83,8 @@ export default (Alpine) => {
 
                             load(blob)
                         },
-                        process: (fieldName, file, metadata, load, error, progress) => {
-                            uploadUsing(file, load, error, progress)
+                        process: async (fieldName, file, metadata, load, error, progress) => {
+                            await uploadUsing(file, load, error, progress)
                         },
                         remove: async (source, load) => {
                             await removeUploadedFileUsing()

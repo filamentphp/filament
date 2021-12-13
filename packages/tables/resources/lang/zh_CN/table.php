@@ -50,7 +50,7 @@ return [
         ],
 
         'open_actions' => [
-            'label' => 'Open actions',
+            'label' => '展开操作项',
         ],
 
     ],
@@ -59,7 +59,7 @@ return [
 
         'modal' => [
 
-            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
+            'requires_confirmation_subheading' => '您确定要这样做吗？',
 
             'buttons' => [
 
@@ -68,11 +68,11 @@ return [
                 ],
 
                 'confirm' => [
-                    'label' => 'Confirm',
+                    'label' => '确认',
                 ],
 
                 'submit' => [
-                    'label' => 'Submit',
+                    'label' => '提交',
                 ],
 
             ],
@@ -82,7 +82,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Select all :count records',
+                'label' => '选择全部 :count 条记录',
             ],
 
         ],

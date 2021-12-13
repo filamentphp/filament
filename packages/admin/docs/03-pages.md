@@ -84,6 +84,21 @@ protected function getActions(): array
 }
 ```
 
+## Sending flash notifications
+
+You can send flash notifications to the user from each page by calling the `notify()` method on the page class:
+
+```php
+$this->notify('success', 'Saved');
+```
+
+There are four types of notifications available, each with a different color and icon:
+
+ - `primary` - for providing information.
+ - `danger` - for reporting errors.
+ - `success` - for success messages.
+ - `warning` - for reporting non-critical issues.
+
 ## Customization
 
 Filament will automatically generate a title, navigation label and URL (slug) for your page based on its name. You may override it using static properties of your page class:

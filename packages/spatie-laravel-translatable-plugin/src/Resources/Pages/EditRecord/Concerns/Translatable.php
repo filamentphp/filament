@@ -49,6 +49,8 @@ trait Translatable
 
         $this->callHook('afterValidate');
 
+        $data = $this->mutateFormDataBeforeSave($data);
+
         $this->callHook('beforeSave');
 
         $this->record->setLocale($this->activeFormLocale)->fill($data)->save();

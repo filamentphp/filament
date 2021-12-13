@@ -20,6 +20,10 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
     public $activeRelationManager = null;
 
+    protected $queryString = [
+        'activeRelationManager',
+    ];
+
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? __('filament::resources/pages/edit-record.breadcrumb');
@@ -35,7 +39,7 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
         $this->fillForm();
 
-        $this->activeRelationManager = $this->getResource()::getRelations()[0] ?? null;
+        $this->activeRelationManager ??= ($this->getResource()::getRelations()[0] ?? null);
     }
 
     protected function fillForm(): void

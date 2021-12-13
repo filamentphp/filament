@@ -24,6 +24,8 @@ class Page extends Component
 
     protected static ?int $navigationSort = null;
 
+    protected static bool $shouldRegisterNavigation = true;
+
     protected static ?string $slug = null;
 
     protected static ?string $title = null;
@@ -42,6 +44,10 @@ class Page extends Component
 
     public static function registerNavigationItems(): void
     {
+        if (! static::shouldRegisterNavigation()) {
+            return;
+        }
+
         Filament::registerNavigationItems([
             NavigationItem::make()
                 ->group(static::getNavigationGroup())
@@ -168,5 +174,10 @@ class Page extends Component
     protected function getViewData(): array
     {
         return [];
+    }
+
+    protected static function shouldRegisterNavigation(): bool
+    {
+        return static::$shouldRegisterNavigation;
     }
 }
