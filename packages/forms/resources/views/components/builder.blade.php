@@ -22,7 +22,7 @@
                                 <div class="bg-white divide-y shadow-sm rounded-l-lg border-b border-l border-t border-gray-300 overflow-hidden">
                                     @unless ($loop->first || $isItemMovementDisabled())
                                         <button
-                                            wire:click="dispatchFormEvent('builder.moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                            wire:click="dispatchFormEvent('builder::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                             type="button"
                                             class="w-full flex items-center justify-center h-8 text-gray-800 transition hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600"
                                         >
@@ -36,7 +36,7 @@
 
                                     @unless ($loop->last || $isItemMovementDisabled())
                                         <button
-                                            wire:click="dispatchFormEvent('builder.moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                            wire:click="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                             type="button"
                                             class="w-full flex items-center justify-center h-8 text-gray-800 transition hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600"
                                         >
@@ -49,7 +49,7 @@
                                     @endunless
 
                                     <button
-                                        wire:click="dispatchFormEvent('builder.deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                        wire:click="dispatchFormEvent('builder::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
                                         class="w-full flex items-center justify-center h-8 text-danger-600 transition hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-danger-600 focus:bg-primary-50 focus:border-primary-600"
                                     >
@@ -99,7 +99,7 @@
                                             @foreach ($getBlocks() as $block)
                                                 <li>
                                                     <button
-                                                        wire:click="dispatchFormEvent('builder.createItem', '{{ $getStatePath() }}', '{{ $block->getName() }}', '{{ $uuid }}')"
+                                                        wire:click="dispatchFormEvent('builder::createItem', '{{ $getStatePath() }}', '{{ $block->getName() }}', '{{ $uuid }}')"
                                                         x-on:click="isCreateButtonDropdownOpen = false"
                                                         type="button"
                                                         class="flex items-center w-full h-8 px-3 text-sm font-medium focus:outline-none hover:text-white hover:bg-primary-600 focus:bg-primary-700 focus:text-white group"
@@ -143,7 +143,7 @@
                     @foreach ($getBlocks() as $block)
                         <li>
                             <button
-                                wire:click="dispatchFormEvent('builder.createItem', '{{ $getStatePath() }}', '{{ $block->getName() }}')"
+                                wire:click="dispatchFormEvent('builder::createItem', '{{ $getStatePath() }}', '{{ $block->getName() }}')"
                                 x-on:click="isCreateButtonDropdownOpen = false"
                                 type="button"
                                 class="flex items-center w-full h-8 px-3 text-sm font-medium focus:outline-none hover:text-white hover:bg-primary-600 focus:bg-primary-700 focus:text-white group"

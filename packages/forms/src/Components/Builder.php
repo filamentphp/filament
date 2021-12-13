@@ -22,7 +22,7 @@ class Builder extends Field
         parent::setUp();
 
         $this->registerListeners([
-            'builder.createItem' => [
+            'builder::createItem' => [
                 function (Builder $component, string $statePath, string $block, ?string $afterUuid = null): void {
                     if ($component->isDisabled()) {
                         return;
@@ -59,7 +59,7 @@ class Builder extends Field
                     $component->hydrateDefaultItemState($newUuid);
                 },
             ],
-            'builder.deleteItem' => [
+            'builder::deleteItem' => [
                 function (Builder $component, string $statePath, string $uuidToDelete): void {
                     if ($component->isDisabled()) {
                         return;
@@ -77,7 +77,7 @@ class Builder extends Field
                     data_set($livewire, $statePath, $items);
                 },
             ],
-            'builder.moveItemDown' => [
+            'builder::moveItemDown' => [
                 function (Builder $component, string $statePath, string $uuidToMoveDown): void {
                     if ($component->isDisabled()) {
                         return;
@@ -97,7 +97,7 @@ class Builder extends Field
                     data_set($livewire, $statePath, $items);
                 },
             ],
-            'builder.moveItemUp' => [
+            'builder::moveItemUp' => [
                 function (Builder $component, string $statePath, string $uuidToMoveUp): void {
                     if ($component->isDisabled()) {
                         return;

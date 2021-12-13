@@ -19,7 +19,7 @@
                             <div class="bg-white divide-y shadow-sm rounded-l-lg border-b border-l border-t border-gray-300 overflow-hidden">
                                 @unless ($loop->first || $isItemMovementDisabled())
                                     <button
-                                        wire:click="dispatchFormEvent('repeater.moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                        wire:click="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
                                         class="w-full flex items-center justify-center h-8 text-gray-800 transition hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600"
                                     >
@@ -33,7 +33,7 @@
 
                                 @unless ($loop->last || $isItemMovementDisabled())
                                     <button
-                                        wire:click="dispatchFormEvent('repeater.moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                        wire:click="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
                                         class="w-full flex items-center justify-center h-8 text-gray-800 transition hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600"
                                     >
@@ -46,7 +46,7 @@
                                 @endunless
 
                                 <button
-                                    wire:click="dispatchFormEvent('repeater.deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                    wire:click="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                     type="button"
                                     class="w-full flex items-center justify-center h-8 text-danger-600 transition hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-danger-600 focus:bg-primary-50 focus:border-primary-600"
                                 >
@@ -68,7 +68,7 @@
         @endif
 
         <button
-            wire:click="dispatchFormEvent('repeater.createItem', '{{ $getStatePath() }}')"
+            wire:click="dispatchFormEvent('repeater::createItem', '{{ $getStatePath() }}')"
             type="button"
             class="w-full h-9 px-4 inline-flex items-center justify-center font-medium tracking-tight transition rounded-lg text-gray-800 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600"
         >

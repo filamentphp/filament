@@ -194,7 +194,7 @@ class ExampleServiceProvider extends PluginServiceProvider
 
 You may now access this data in your scripts:
 
-```html
+```blade
 <script>
     console.log(window.filamentData.userId)
 </script>

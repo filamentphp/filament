@@ -197,3 +197,110 @@ TextInput::make('passwordConfirmation')
     ->password()
     ->dehydrated(false)
 ```
+
+## Using form events
+
+Forms can dispatch and listen to events, which allow the frontend and backend to communicate.
+
+These events can be dispatched in a component view, and then listened to by a component's class.
+
+### Dispatching events
+
+To dispatch a form event, call the `dispatchFormEvent()` Livewire method with the event name:
+
+```blade
+<button wire:click="dispatchFormEvent('save')">
+    Save
+</button>
+```
+
+Usually, you will want to dispatch events for a specific component class. In this case, you should prefix the event name with the component name, and pass the component's state path as a second parameter:
+
+```blade
+<button wire:click="dispatchFormEvent('repeater::createItem', '{{ $getStatePath() }}')">
+    Add item
+</button>
+```
+
+You may also pass other parameters to the event:
+
+```blade
+<button wire:click="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')">
+    Delete item
+</button>
+```
+
+### Listening to events
+
+You may register listeners for form events by calling the `registerListeners()` method when your component is `setUp()`:
+
+```php
+use Filament\Forms\Components\Component;
+
+protected function setUp(): void
+{
+    parent::setUp();
+
+    $this->registerListeners([
+        'save' => [
+            function (Component $component): void {
+                // ...
+            },
+        ],
+    ]);
+}
+```
+
+If your event is component-specific, you'll want to ensure that the component is not disabled, and that the component's state path matches the event's second parameter:
+
+```php
+use Filament\Forms\Components\Component;
+
+protected function setUp(): void
+{
+    parent::setUp();
+
+    $this->registerListeners([
+        'repeater::createItem' => [
+            function (Component $component, string $statePath): void {
+                if ($component->isDisabled()) {
+                    return;
+                }
+
+                if ($statePath !== $component->getStatePath()) {
+                    return;
+                }
+                
+                // ...
+            },
+        ],
+    ]);
+}
+```
+
+Additionally, you may receive other parameters from the event:
+
+```php
+use Filament\Forms\Components\Component;
+
+protected function setUp(): void
+{
+    parent::setUp();
+
+    $this->registerListeners([
+        'repeater::deleteItem' => [
+            function (Component $component, string $statePath, string $uuidToDelete): void {
+                if ($component->isDisabled()) {
+                    return;
+                }
+
+                if ($statePath !== $component->getStatePath()) {
+                    return;
+                }
+                
+                // Delete item with UUID `$uuidToDelete`
+            },
+        ],
+    ]);
+}
+```
