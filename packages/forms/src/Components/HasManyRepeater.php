@@ -49,6 +49,8 @@ class HasManyRepeater extends Repeater
             $relationship->find($keyToCheckForDeletion)->delete();
         }
 
+        $childComponentContainers = $this->getChildComponentContainers();
+
         foreach ($state as $itemKey => $itemData) {
             if ($record = $this->getRecordForItemKey($itemKey)) {
                 $record->update($itemData);
@@ -56,7 +58,8 @@ class HasManyRepeater extends Repeater
                 continue;
             }
 
-            $relationship->create($itemData);
+            $record = $relationship->create($itemData);
+            $childComponentContainers[$itemKey]->model($record)->saveRelationships();
         }
     }
 
