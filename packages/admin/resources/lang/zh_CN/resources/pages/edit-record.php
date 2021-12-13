@@ -44,7 +44,7 @@ return [
 
             'heading' => '删除 :label',
 
-            'subheading' => '您确定要删除吗？',
+            'subheading' => '您确定要这样做吗？',
 
             'buttons' => [
 
