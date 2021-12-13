@@ -177,11 +177,11 @@ class Builder extends Field
     public function getChildComponentContainers(): array
     {
         return collect($this->getNormalisedState())
-            ->map(function ($item, $index): ComponentContainer {
-                return $this->getBlock($item['type'])
+            ->map(function ($itemData, $itemIndex): ComponentContainer {
+                return $this->getBlock($itemData['type'])
                     ->getChildComponentContainer()
                     ->getClone()
-                    ->statePath("{$index}.data");
+                    ->statePath("{$itemIndex}.data");
             })->toArray();
     }
 

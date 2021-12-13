@@ -958,6 +958,23 @@ Repeater::make('members')
     ->createItemButtonLabel('Add new row')
 ```
 
+### Populating automatically from a `hasMany` relationship
+
+You may employ the `relationship()` method of the `HasManyRepeater` to configure a relationship to automatically retrieve and save repeater items:
+
+```php
+use App\Models\App;
+use Filament\Forms\Components\HasManyRepeater;
+
+HasManyRepeater::make('variants')
+    ->relationship('variants')
+    ->schema([
+        // ...
+    ])
+```
+
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
+
 ## Builder
 
 Similar to a [repeater](#repeater), the builder component allows you to output a JSON array of repeated form components. Unlike the repeater, which only defines one form schema to repeat, the builder allows you to define different schema "blocks", which you can repeat in any order. This makes it useful for building more advanced array structures.
