@@ -1153,6 +1153,16 @@ KeyValue::make('meta')
     ->disableEditingKeys()
 ```
 
+You may also add placeholders for the key and value fields using the `keyPlaceholder()` and `valuePlaceholder()` methods:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+    ->keyPlaceholder('Property name')
+    ->valuePlaceholder('Property value')
+```
+
 ## View
 
 Aside from [building custom fields](#building-custom-fields), you may create "view" fields which allow you to create custom fields without extra PHP classes.
