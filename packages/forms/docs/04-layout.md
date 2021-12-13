@@ -274,7 +274,7 @@ use Filament\Forms\Components\View;
 View::make('filament.forms.components.wizard')
 ```
 
-Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` callable:
+Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` closure:
 
 ```blade
 <div>
@@ -310,7 +310,7 @@ class Wizard extends Component
 }
 ```
 
-Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` callable:
+Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` closure:
 
 ```blade
 <div>

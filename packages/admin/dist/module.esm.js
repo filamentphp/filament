@@ -15909,7 +15909,7 @@ var key_value_default = (Alpine) => {
     state: state2,
     rows: [],
     init: function() {
-      for (let [value, key] of Object.entries(this.state ?? {})) {
+      for (let [key, value] of Object.entries(this.state ?? {})) {
         this.rows.push({
           key,
           value
