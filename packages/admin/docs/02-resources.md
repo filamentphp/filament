@@ -67,7 +67,7 @@ To view a full list of available form [fields](/docs/forms/fields) and [layout c
 
 > You may also use the same form builder outside of the admin panel, by following [these installation instructions](/docs/forms/installation).
 
-### Hiding fields based on the page
+### Hiding components based on the page
 
 The `hidden()` method of form components allows you to dynamically hide fields based on the current page.
 
