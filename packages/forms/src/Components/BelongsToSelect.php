@@ -59,7 +59,9 @@ class BelongsToSelect extends Select
             $relationshipQuery = $relationship->getRelated()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
-                $relationshipQuery = $callback($relationshipQuery);
+                $relationshipQuery = $this->evaluate($callback, [
+                    'query' => $relationshipQuery,
+                ]);
             }
 
             $query = strtolower($query);
@@ -84,7 +86,9 @@ class BelongsToSelect extends Select
             $relationshipQuery = $relationship->getRelated()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
-                $relationshipQuery = $callback($relationshipQuery);
+                $relationshipQuery = $this->evaluate($callback, [
+                    'query' => $relationshipQuery,
+                ]);
             }
 
             return $relationshipQuery
