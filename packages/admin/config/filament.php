@@ -73,6 +73,9 @@ return [
         'register' => [
             Pages\Dashboard::class,
         ],
+        'dashboard' => [
+            'icon' => 'heroicon-o-home',
+        ],
     ],
 
     /*
