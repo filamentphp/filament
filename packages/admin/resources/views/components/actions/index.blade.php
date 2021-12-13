@@ -1,5 +1,6 @@
 @props([
     'actions',
+    'align' => 'left',
 ])
 
 @if ($actions instanceof \Illuminate\Contracts\View\View)
@@ -13,11 +14,15 @@
     @endphp
 
     @if (count($actions))
-        @php($alignment = config('filament.layout.forms.actions.alignment'))
-        <div {{ $attributes->class([
+        <div
+            {{ $attributes->class([
                 'flex flex-wrap items-center gap-4',
-                $alignment == 'center' ? 'justify-center' : ($alignment == 'right' ? 'justify-end' : '')
-            ]) }}>
+                match ($align) {
+                    'center' => 'justify-center',
+                    'right' => 'justify-end',
+                },
+            ]) }}
+        >
             @foreach ($actions as $action)
                 {{ $action }}
             @endforeach
