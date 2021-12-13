@@ -2,6 +2,8 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Filament\Forms\Components\Component;
+use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Arr;
 
 trait CanBeHidden

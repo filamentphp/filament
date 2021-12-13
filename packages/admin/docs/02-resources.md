@@ -67,6 +67,34 @@ To view a full list of available form [fields](/docs/forms/fields) and [layout c
 
 > You may also use the same form builder outside of the admin panel, by following [these installation instructions](/docs/forms/installation).
 
+### Hiding fields based on the page
+
+The `hidden()` method of form components allows you to dynamically hide fields based on the current page.
+
+To do this, you must pass a closure to the `hidden()` method which checks if the Livewire component is a certain page or not. In this example, we hide the `password` field on the `EditUser` resource page:
+
+```php
+use Livewire\Component;
+
+Forms\Components\TextInput::make('password')
+    ->password()
+    ->required()
+    ->hidden(fn (Component $livewire): bool => $livewire instanceof EditUser),
+```
+
+You may instead use the `visible` to check if a component should be visible or not:
+
+```php
+use Livewire\Component;
+
+Forms\Components\TextInput::make('password')
+    ->password()
+    ->required()
+    ->visible(fn (Component $livewire): bool => $livewire instanceof CreateUser),
+```
+
+For more information about closure customization, see the [form builder documentation](/docs/forms/advanced#using-closure-customisation).
+
 ## Tables
 
 Resource classes contain a static `table()` method that is used to build the table on the list page:
