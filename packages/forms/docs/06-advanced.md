@@ -4,7 +4,7 @@ title: Advanced
 
 ## Using closure customisation
 
-All configuration methods for [fields](fields) and [layout components](layout) accept callback functions as parameters instead of hardcoded values:
+All configuration methods for [fields](fields) and [layout components](layout) accept closures as parameters instead of hardcoded values:
 
 ```php
 use App\Models\User;
@@ -34,7 +34,7 @@ TextInput::make('middle_name')
 
 This alone unlocks many customization possibilities.
 
-The package is also able to inject many utilities to use inside these callback functions, as parameters.
+The package is also able to inject many utilities to use inside these closures, as parameters.
 
 If you wish to access the current state (value) of the component, define a `$state` parameter:
 
@@ -84,19 +84,23 @@ function (?Model $record) {
 }
 ```
 
-You may also retrieve the value of another field from within a callback, using a callable `$get` parameter:
+You may also retrieve the value of another field from within a callback, using a closure `$get` parameter:
 
 ```php
-function (callable $get) {
+use Closure;
+
+function (Closure $get) {
     $email = $get('email'); // Store the value of the `email` field in the `$email` variable.
     //...
 }
 ```
 
-In a similar way to `$get`, you may also set the value of another field from within a callback, using a callable `$set` parameter:
+In a similar way to `$get`, you may also set the value of another field from within a callback, using a closure `$set` parameter:
 
 ```php
-function (callable $set) {
+use Closure;
+
+function (Closure $set) {
     $set('title', 'Blog Post'); // Set the `title` field to `Blog Post`.
     //...
 }
@@ -105,9 +109,10 @@ function (callable $set) {
 Callbacks are evaluated using Laravel's `app()->call()` under the hood, so you are able to combine multiple parameters in any order:
 
 ```php
+use Closure;
 use Livewire\Component as Livewire;
 
-function (Livewire $livewire, callable $get, callable $set) {
+function (Livewire $livewire, Closure $get, Closure $set) {
     // ...
 }
 ```
@@ -131,6 +136,7 @@ A great example to give a use case for this is when you wish to generate a slug 
 Sometimes, you may wish to conditionally hide any form component. You may do this with a `hidden()` method:
 
 ```php
+use Closure;
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('newPassword')
@@ -139,7 +145,7 @@ TextInput::make('newPassword')
     
 TextInput::make('newPasswordConfirmation')
     ->password()
-    ->hidden(fn (callable $get) => $get('newPassword') !== null)
+    ->hidden(fn (Closure $get) => $get('newPassword') !== null)
 ```
 
 The field/s you're depending on should be `reactive()`, to ensure the Livewire component is reloaded when they are updated.
@@ -153,10 +159,11 @@ Hydration is the process which fill fields with data. It runs when you call the 
 In this example, the `name` field will always be hydrated with the correctly capitalized name:
 
 ```php
+use Closure;
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')
-    ->afterStateHydrated(function (TextInput $component, callable $set, $state) {
+    ->afterStateHydrated(function (TextInput $component, Closure $set, $state) {
         $set($component, ucwords($state));
     })
 ```
@@ -168,12 +175,13 @@ You may use the `afterStateHydrated()` method to customize what happens after a 
 In this example, the `slug` field is updated with the slug version of the `title` field automatically:
 
 ```php
+use Closure;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Str;
 
 TextInput::make('title')
     ->reactive()
-    ->afterStateUpdated(function (callable $set, $state) {
+    ->afterStateUpdated(function (Closure $set, $state) {
         $set('slug', Str::slug($state));
     })
 TextInput::make('slug')

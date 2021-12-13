@@ -1175,7 +1175,7 @@ ViewField::make('notifications')->view('filament.forms.components.range-slider')
 
 Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
 
-The `$getStatePath()` callable may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
+The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
 
 ```blade
 <x-forms::field-wrapper
@@ -1218,7 +1218,7 @@ class RangeSlider extends Field
 
 Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
 
-The `$getStatePath()` callable may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
+The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
 
 ```blade
 <x-forms::field-wrapper
