@@ -20,6 +20,7 @@
                 match ($align) {
                     'center' => 'justify-center',
                     'right' => 'justify-end',
+                    default => 'justify-start',
                 },
             ]) }}
         >
