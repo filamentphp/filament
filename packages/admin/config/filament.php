@@ -126,10 +126,9 @@ return [
         'max_content_width' => null,
         'forms' => [
             'actions' => [
-                // Alignment of the form buttons: `left` (default), `center` or `right`
-                'alignment' => 'left'
-            ]
-        ]
+                'alignment' => 'left',
+            ],
+        ],
     ],
 
     /*
