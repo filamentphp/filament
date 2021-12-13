@@ -315,8 +315,8 @@ class Mask implements Jsonable
             $configuration['scale'] = $this->decimalPlaces;
         }
 
-        if (! $this->isSigned) {
-            $configuration['signed'] = false;
+        if ($this->isSigned) {
+            $configuration['signed'] = true;
         }
 
         if ($this->thousandsSeparator !== null) {
