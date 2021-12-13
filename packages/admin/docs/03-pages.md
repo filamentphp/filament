@@ -86,25 +86,18 @@ protected function getActions(): array
 
 ## Sending flash notifications
 
-You can send notficiations to the user from each page by calling the `notify(string $status, string $message)` method of your `Page`:
+You can send flash notifications to the user from each page by calling the `notify()` method on the page class:
 
 ```php
-$this->notify('success', __('This is my message'));
+$this->notify('success', 'Saved');
 ```
 
-From any other place in your code, you could add a notification as well, by adding it to the session flash:
+There are four types of notifications available, each with a different color and icon:
 
-```php
-session()->flash('notification', [
-    'message' => __('This is my message'),
-    'status' => 'success',
-]);
-```
-There are three types of staties available:
- - `default` 
- - `danger`
- - `success`
- - `warning`
+ - `primary` - for providing information.
+ - `danger` - for reporting errors.
+ - `success` - for success messages.
+ - `warning` - for reporting non-critical issues.
 
 ## Customization
 
