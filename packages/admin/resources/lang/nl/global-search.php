@@ -7,6 +7,6 @@ return [
         'placeholder' => 'Zoeken',
     ],
 
-    'no_results_message' => 'Geen resulaten gevonden.',
+    'no_results_message' => 'Geen resultaten gevonden.',
 
 ];
