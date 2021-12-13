@@ -184,6 +184,12 @@ Sometimes, you may wish to ignore a given model during unique validation. For ex
 Field::make('email')->unique(ignorable: $ignoredUser)
 ```
 
+If you're using the [admin panel](/docs/admin), you can ignore the current record by passing a [closure](advanced#closure-customisation) to the `ignorable` parameter:
+
+```php
+Field::make('email')->unique(ignorable: fn (?Model $record): ?Model => $record)
+```
+
 ## Other rules
 
 You may add other validation rules to any field using the `rules()` method:

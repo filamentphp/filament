@@ -2,7 +2,7 @@
 title: Advanced
 ---
 
-## Using callback customisation
+## Using closure customisation
 
 All configuration methods for [fields](fields) and [layout components](layout) accept callback functions as parameters instead of hardcoded values:
 
