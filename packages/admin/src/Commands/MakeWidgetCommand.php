@@ -84,7 +84,7 @@ class MakeWidgetCommand extends Command
         $this->info("Successfully created {$widget}!");
 
         if ($resource !== null) {
-            $this->info("Make sure to register the widget in `getHeaderWidgets()` or `getFooterWidgets()` of any `{$resourceClass}` page.");
+            $this->info("Make sure to register the widget in `{$resourceClass}::getWidgets()`, and then again in `getHeaderWidgets()` or `getFooterWidgets()` of any `{$resourceClass}` page.");
         }
 
         return static::SUCCESS;

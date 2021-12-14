@@ -149,7 +149,7 @@ public static function table(Table $table): Table
 
 ## Relations
 
-"Relation managers" in Filament allow administrators to list, create, attach, edit, detach and delete related records without leaving the resource's edit page. Resource classes contain a static `relations()` method that is used to register relation managers for your resource.
+"Relation managers" in Filament allow administrators to list, create, attach, edit, detach and delete related records without leaving the resource's edit page. Resource classes contain a static `getRelations()` method that is used to register relation managers for your resource.
 
 ### `HasMany` and `MorphMany`
 
@@ -191,7 +191,7 @@ public static function table(Table $table): Table
 }
 ```
 
-You must register the new relation manager in your resource's `relations()` method:
+You must register the new relation manager in your resource's `getRelations()` method:
 
 ```php
 public static function getRelations(): array
@@ -242,7 +242,7 @@ public static function table(Table $table): Table
 }
 ```
 
-You must register the new relation manager in your resource's `relations()` method:
+You must register the new relation manager in your resource's `getRelations()` method:
 
 ```php
 public static function getRelations(): array
@@ -650,7 +650,18 @@ php artisan make:filament-widget CustomerOverview --resource=CustomerResource
 
 This command will create two files - a widget class in the `app/Filament/Resources/CustomerResource/Widgets` directory, and a view in the `resources/views/filament/resources/customer-resource/widgets` directory.
 
-To register a widget on a resource page, use the `getHeaderWidgets()` or `getFooterWidgets()` methods:
+You must register the new widget in your resource's `getWidgets()` method:
+
+```php
+public static function getWidgets(): array
+{
+    return [
+        Widgets\CustomerOverview::class,
+    ];
+}
+```
+
+To display a widget on a resource page, use the `getHeaderWidgets()` or `getFooterWidgets()` methods for that page:
 
 ```php
 <?php
