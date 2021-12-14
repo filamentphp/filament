@@ -5,8 +5,6 @@ namespace Filament\Pages;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
-use Filament\Resources\Form;
-use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;

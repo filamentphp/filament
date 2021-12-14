@@ -4,7 +4,6 @@ namespace Filament\Pages;
 
 use Closure;
 use Illuminate\Support\Facades\Route;
-use Filament\Facades\Filament;
 
 class Dashboard extends Page
 {
