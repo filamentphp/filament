@@ -8,20 +8,16 @@ use Filament\Forms\Components\Field;
 
 trait HasComponents
 {
-    protected array $components = [];
+    protected array | Closure $components = [];
 
-    public function components(array $components): static
+    public function components(array | Closure $components): static
     {
-        $this->components = array_map(function (Component $component): Component {
-            $component->container($this);
-
-            return $component;
-        }, $components);
+        $this->components = $components;
 
         return $this;
     }
 
-    public function schema(array $components): static
+    public function schema(array | Closure $components): static
     {
         $this->components($components);
 
@@ -63,6 +59,15 @@ trait HasComponents
 
     public function getComponents(bool $withHidden = false): array
     {
-        return array_filter($this->components, fn (Component $component) => $withHidden ?: ! $component->isHidden());
+        $components = array_map(function (Component $component): Component {
+            $component->container($this);
+
+            return $component;
+        }, $this->evaluate($this->components));
+
+        return array_filter(
+            $components,
+            fn (Component $component) => $withHidden ?: ! $component->isHidden(),
+        );
     }
 }

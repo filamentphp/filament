@@ -18,6 +18,7 @@ class ComponentContainer extends ViewComponent implements Htmlable
     use Concerns\CanBeHidden;
     use Concerns\CanBeValidated;
     use Concerns\Cloneable;
+    use Concerns\EvaluatesClosures;
     use Concerns\HasColumns;
     use Concerns\HasComponents;
     use Concerns\HasState;
