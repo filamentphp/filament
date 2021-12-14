@@ -1,4 +1,6 @@
 @php
+    $state = $getFormattedState();
+
     $stateColor = match ($getStateColor()) {
         'danger' => 'text-danger-700 bg-danger-500/10',
         'primary' => 'text-primary-700 bg-primary-500/10',
@@ -9,7 +11,7 @@
 @endphp
 
 <div class="px-4 py-3">
-    @if ($state = $getFormattedState())
+    @if (blank($state))
         <span @class([
             'inline-flex items-center justify-center h-6 px-2 text-sm font-medium tracking-tight rounded-full',
             $stateColor => $stateColor,

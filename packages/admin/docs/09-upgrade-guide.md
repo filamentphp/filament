@@ -97,7 +97,7 @@ protected static string $resource; // Protected the property. Added the `string`
 
 The entire `Filament\Resources\Forms` namespace has been moved to `Filament\Forms`.
 
-The `when()`, `only()` and `except()` methods have been removed. You may now pass a closure to any field configuration method, for example `hidden()`, which determines if the method should be applied. For more information, please see the [advanced forms documentation](/docs/forms/advanced#using-callback-customisation);
+The `when()`, `only()` and `except()` methods have been removed. You may now pass a closure to any field configuration method, for example `hidden()`, which determines if the method should be applied. For more information, please see the [advanced forms documentation](/docs/forms/advanced#using-closure-customisation);
 
 #### Fields
 

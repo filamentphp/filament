@@ -91,10 +91,9 @@ Filament allows you to use Widgets inside pages, you can display widgets below t
 To register a widget in a page use `getHeaderWidgets()` or `getFooterWidgets()` methods:
 
 ```php
-
 use App/Filament/Widgets/StatsOverviewWidget;
 
-public static function getHeaderWidgets(): array
+protected function getHeaderWidgets(): array
 {
     return [
         StatsOverviewWidget::class
@@ -102,7 +101,20 @@ public static function getHeaderWidgets(): array
 }
 ```
 
-You can use any existing widget.
+## Sending flash notifications
+
+You can send flash notifications to the user from each page by calling the `notify()` method on the page class:
+
+```php
+$this->notify('success', 'Saved');
+```
+
+There are four types of notifications available, each with a different color and icon:
+
+ - `primary` - for providing information.
+ - `danger` - for reporting errors.
+ - `success` - for success messages.
+ - `warning` - for reporting non-critical issues.
 
 ## Customization
 

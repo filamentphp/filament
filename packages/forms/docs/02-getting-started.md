@@ -227,141 +227,11 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
 
 When `getState()` is run:
  
-1) [Validation](#validation) rules are checked, and if errors are present, the form is not submitted.
+1) [Validation](validation) rules are checked, and if errors are present, the form is not submitted.
 2) Any pending file uploads are stored permanently in the filesystem.
 3) [Field relationships](#field-relationships), if they are defined, are saved.
 
 > You may transform the value that is dehydrated from a field [using the `dehydrateStateUsing()` method](advanced#dehydration).
-
-## Validation
-
-You may add validation rules to any field using the `rules()` method:
-
-```php
-TextInput::make('slug')->rules(['alpha_dash'])
-```
-
-A full list of validation rules may be found in the [Laravel documentation](https://laravel.com/docs/validation#available-validation-rules).
-
-### Dedicated methods
-
-There are also dedicated methods for some validation rules, some of which are able to add frontend validation as well as backend validation.
-
-We recommend that you use dedicated validation methods wherever possible.
-
-#### Different
-
-The field value must be different to another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-different)
-
-```php
-Field::make('backupEmail')->different('email')
-```
-
-#### Exists
-
-The field value must exist in the database. [See the Laravel documentation](https://laravel.com/docs/validation#rule-exists).
-
-```php
-Field::make('invitation')->exists()
-```
-
-By default, the form's model will be searched, [if it is registered](#registering-a-model). You may specify a custom table name or model to search:
-
-```php
-use App\Models\Invitation;
-
-Field::make('invitation')->exists(table: Invitation::class)
-```
-
-By default, the field name will be used as the column to search. You may specify a custom column to search:
-
-```php
-Field::make('invitation')->exists(column: 'id')
-```
-
-#### Greater than
-
-The field value must be greater than another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-gt)
-
-```php
-Field::make('newNumber')->gt('oldNumber')
-```
-
-#### Greater than or equal to
-
-The field value must be greater than or equal to another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-gte)
-
-```php
-Field::make('newNumber')->gte('oldNumber')
-```
-
-#### Less than
-
-The field value must be less than another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-lt)
-
-```php
-Field::make('newNumber')->lt('oldNumber')
-```
-
-#### Less than or equal to
-
-The field value must be less than or equal to another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-lte)
-
-```php
-Field::make('newNumber')->lte('oldNumber')
-```
-
-#### Nullable
-
-The field value can be empty. This rule is applied by default if the `required` rule is not present. [See the Laravel documentation](https://laravel.com/docs/validation#rule-nullable)
-
-```php
-Field::make('name')->nullable()
-```
-
-#### Required
-
-The field value must not be empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-required)
-
-```php
-Field::make('name')->required()
-```
-
-#### Same
-
-The field value must be the same as another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-same)
-
-```php
-Field::make('password')->same('passwordConfirmation')
-```
-
-#### Unique
-
-The field value must not exist in the database. [See the Laravel documentation](https://laravel.com/docs/validation#rule-unique)
-
-```php
-Field::make('email')->unique()
-```
-
-By default, the form's model will be searched, [if it is registered](#registering-a-model). You may specify a custom table name or model to search:
-
-```php
-use App\Models\User;
-
-Field::make('email')->unique(table: User::class)
-```
-
-By default, the field name will be used as the column to search. You may specify a custom column to search:
-
-```php
-Field::make('email')->unique(column: 'email_address')
-```
-
-Sometimes, you may wish to ignore a given model during unique validation. For example, consider an "update profile" form that includes the user's name, email address, and location. You will probably want to verify that the email address is unique. However, if the user only changes the name field and not the email field, you do not want a validation error to be thrown because the user is already the owner of the email address in question.
-
-```php
-Field::make('email')->unique(ignorable: $ignoredUser)
-```
 
 ## Registering a model
 
@@ -729,3 +599,61 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     }
 }
 ```
+
+## Scoping form data to an array property
+
+You may scope the entire form data to a single array property on your Livewire component. This will allow you to avoid having to define a new property for each field:
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Forms;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
+
+class EditPost extends Component implements Forms\Contracts\HasForms
+{
+    use Forms\Concerns\InteractsWithForms;
+    
+    public Post $post;
+    
+    public $data; // [tl! focus]
+    
+    public function mount(): void
+    {
+        $this->form->fill([
+            'title' => $this->post->title,
+            'content' => $this->post->content,
+        ]);
+    }
+    
+    protected function getFormSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('title')->required(),
+            Forms\Components\MarkdownEditor::make('content'),
+            Forms\Components\SpatieTagsInput::make('tags'),
+        ];
+    }
+    
+    protected function getFormModel(): Post
+    {
+        return $this->post;
+    }
+    
+    protected function getFormStatePath(): string // [tl! focus:start]
+    {
+        return 'data';
+    } // [tl! focus:end]
+    
+    public function render(): View
+    {
+        return view('edit-post');
+    }
+}
+```
+
+In this example, all data from your form will be stored in the `$data` array.

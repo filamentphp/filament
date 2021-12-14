@@ -2,8 +2,7 @@ const colors = require('tailwindcss/colors')
 const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
-    mode: 'jit',
-    purge: [
+    content: [
         './packages/admin/resources/**/*.blade.php',
         './packages/forms/resources/**/*.blade.php',
         './packages/tables/resources/**/*.blade.php',
@@ -12,7 +11,7 @@ module.exports = {
         extend: {
             colors: {
                 danger: colors.rose,
-                gray: colors.warmGray,
+                gray: colors.stone,
                 primary: colors.yellow,
                 success: colors.green,
                 warning: colors.amber,
@@ -25,6 +24,5 @@ module.exports = {
     plugins: [
         require('@tailwindcss/forms'),
         require('@tailwindcss/typography'),
-        require('tailwindcss-dir'),
     ],
 }

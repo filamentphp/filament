@@ -51,6 +51,7 @@
                                     type="text"
                                     x-model="row.key"
                                     x-on:input="updateState"
+                                    {!! ($placeholder = $getKeyPlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
                                     @unless ($canEditKeys())
                                         disabled
                                     @endunless
@@ -63,6 +64,7 @@
                                     type="text"
                                     x-model="row.value"
                                     x-on:input="updateState"
+                                    {!! ($placeholder = $getValuePlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
                                     class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
                                 >
                             </td>
