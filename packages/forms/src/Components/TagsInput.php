@@ -10,6 +10,8 @@ class TagsInput extends Field
 
     protected $separator = null;
 
+    protected $suggestions = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -19,13 +21,19 @@ class TagsInput extends Field
                 return;
             }
 
-            if ($separator = $component->getSeparator()) {
-                $component->state(explode($separator, $state));
+            if (! ($separator = $component->getSeparator())) {
+                $component->state([]);
 
                 return;
             }
 
-            $component->state([]);
+            $state = explode($separator, $state);
+
+            if (count($state) === 1 && blank($state[0])) {
+                $state = [];
+            }
+
+            $component->state($state);
         });
 
         $this->dehydrateStateUsing(function (TagsInput $component, $state) {
@@ -46,8 +54,20 @@ class TagsInput extends Field
         return $this;
     }
 
+    public function suggestions(array | callable $suggestions): static
+    {
+        $this->suggestions = $suggestions;
+
+        return $this;
+    }
+
     public function getSeparator(): ?string
     {
         return $this->evaluate($this->separator);
+    }
+
+    public function getSuggestions(): array
+    {
+        return $this->evaluate($this->suggestions);
     }
 }
