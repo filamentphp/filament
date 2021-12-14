@@ -8,7 +8,7 @@ trait CanRequireConfirmation
 
     public function requiresConfirmation(bool $condition = true): static
     {
-        $this->isConfirmationRequired = true;
+        $this->isConfirmationRequired = $condition;
 
         return $this;
     }
