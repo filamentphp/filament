@@ -62,6 +62,12 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     public function saveRelationships(): void
     {
+        if ($this->saveRelationshipsUsing) {
+            parent::saveRelationships();
+
+            return;
+        }
+
         $this->saveUploadedFile();
     }
 

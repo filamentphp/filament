@@ -32,6 +32,12 @@ class SpatieTagsInput extends TagsInput
 
     public function saveRelationships(): void
     {
+        if ($this->saveRelationshipsUsing) {
+            parent::saveRelationships();
+
+            return;
+        }
+
         $model = $this->getModel();
         $tags = $this->getState();
 

@@ -106,6 +106,12 @@ class BelongsToSelect extends Select
 
     public function saveRelationships(): void
     {
+        if ($this->saveRelationshipsUsing) {
+            parent::saveRelationships();
+
+            return;
+        }
+
         $this->getRelationship()->associate($this->getState());
         $this->getModel()->save();
     }
