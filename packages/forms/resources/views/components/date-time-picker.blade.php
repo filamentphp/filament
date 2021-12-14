@@ -33,8 +33,7 @@
         x-on:click.away="closePicker()"
         x-on:keydown.escape.stop="closePicker()"
         x-on:blur="closePicker()"
-        class="relative"
-        {{ $attributes->merge($getExtraAttributes()) }}
+        {{ $attributes->class(['relative'])->merge($getExtraAttributes()) }}
     >
         <button
             @unless($isDisabled())
