@@ -10,6 +10,8 @@ class TagsInput extends Field
 
     protected $separator = null;
 
+    protected $suggestions = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -46,8 +48,20 @@ class TagsInput extends Field
         return $this;
     }
 
+    public function suggestions(array | callable $suggestions): static
+    {
+        $this->suggestions = $suggestions;
+
+        return $this;
+    }
+
     public function getSeparator(): ?string
     {
         return $this->evaluate($this->separator);
+    }
+
+    public function getSuggestions(): array
+    {
+        return $this->evaluate($this->suggestions);
     }
 }
