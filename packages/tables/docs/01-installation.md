@@ -43,14 +43,13 @@ npm install alpinejs @alpinejs/trap tailwindcss @tailwindcss/forms @tailwindcss/
 
 To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
 
-In `tailwind.config.js`, enable JIT mode, register the plugins you installed, and add custom colors used by the table builder:
+In `tailwind.config.js`, register the plugins you installed, and add custom colors used by the table builder:
 
 ```js
 const colors = require('tailwindcss/colors')
 
 module.exports = {
-    mode: 'jit',
-    purge: [
+    content: [
         './resources/**/*.blade.php', // [tl! focus:start]
         './vendor/filament/forms/resources/views/**/*.blade.php', // [tl! focus:end]
         './vendor/filament/tables/resources/views/**/*.blade.php', // [tl! focus:end]
@@ -115,7 +114,7 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 
 ```blade
 <!DOCTYPE html>
-<html lang="{{ \Illuminate\Support\Str::of(app()->getLocale())->lower()->kebab() }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
 

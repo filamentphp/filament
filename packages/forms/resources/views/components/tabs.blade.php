@@ -18,7 +18,7 @@
                 x-on:click="tab = '{{ $tabId }}'"
                 role="tab"
                 x-bind:tabindex="tab === '{{ $tabId }}' ? 0 : -1"
-                class="flex-shrink-0 p-3 text-sm font-medium"
+                class="shrink-0 p-3 text-sm font-medium"
                 x-bind:class="{ 'bg-white': tab === '{{ $tabId }}' }"
             >
                 {{ $tabLabel }}

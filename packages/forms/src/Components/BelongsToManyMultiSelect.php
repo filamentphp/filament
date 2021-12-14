@@ -63,7 +63,9 @@ class BelongsToManyMultiSelect extends MultiSelect
             $relationshipQuery = $relationship->getRelated()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
-                $relationshipQuery = $callback($relationshipQuery);
+                $relationshipQuery = $this->evaluate($callback, [
+                    'query' => $relationshipQuery,
+                ]);
             }
 
             $query = strtolower($query);
@@ -88,7 +90,9 @@ class BelongsToManyMultiSelect extends MultiSelect
             $relationshipQuery = $relationship->getRelated()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
-                $relationshipQuery = $callback($relationshipQuery);
+                $relationshipQuery = $this->evaluate($callback, [
+                    'query' => $relationshipQuery,
+                ]);
             }
 
             return $relationshipQuery
