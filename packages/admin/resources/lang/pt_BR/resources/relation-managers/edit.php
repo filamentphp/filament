@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'saved' => 'Gravado',
+            'saved' => 'Salvo!',
         ],
 
     ],

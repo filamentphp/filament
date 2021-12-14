@@ -4,11 +4,11 @@ return [
 
     'action' => [
 
-        'label' => 'Anexar',
+        'label' => 'Vincular',
 
         'modal' => [
 
-            'heading' => 'Anexar :label',
+            'heading' => 'Vincular :label',
 
             'fields' => [
 
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'Anexar',
+                    'label' => 'Vincular',
                 ],
 
                 'attach_and_attach_another' => [
-                    'label' => 'Anexar e repetir',
+                    'label' => 'Vincular e Vincular outro',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Anexado',
+            'attached' => 'Vinculado!',
         ],
 
     ],

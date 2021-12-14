@@ -25,7 +25,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Excluído',
+            'deleted' => 'Excluído!',
         ],
 
     ],

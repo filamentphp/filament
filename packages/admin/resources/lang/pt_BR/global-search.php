@@ -4,7 +4,7 @@ return [
 
     'field' => [
         'label' => 'Pesquisa global',
-        'placeholder' => 'Pesquisas',
+        'placeholder' => 'Pesquisar',
     ],
 
     'no_results_message' => 'Nenhum resultado encontrado',

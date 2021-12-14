@@ -13,11 +13,11 @@ return [
             ],
 
             'create' => [
-                'label' => 'Salvar',
+                'label' => 'Criar',
             ],
 
             'create_and_create_another' => [
-                'label' => 'Salvar e criar novo',
+                'label' => 'Criar e criar novo',
             ],
 
         ],
@@ -25,7 +25,7 @@ return [
     ],
 
     'messages' => [
-        'created' => 'Criado',
+        'created' => 'Salvo!',
     ],
 
 ];

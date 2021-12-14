@@ -25,7 +25,7 @@ return [
         ],
 
         'messages' => [
-            'created' => 'Criado',
+            'created' => 'Criado!',
         ],
 
     ],

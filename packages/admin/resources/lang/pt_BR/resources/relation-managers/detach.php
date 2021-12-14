@@ -4,28 +4,28 @@ return [
 
     'action' => [
 
-        'label' => 'Desanexar',
+        'label' => 'Desvincular',
 
         'modal' => [
-            'heading' => 'Desanexar :label',
+            'heading' => 'Desvincular :label',
         ],
 
         'messages' => [
-            'detached' => 'Desanexado',
+            'detached' => 'Desvinculado!',
         ],
 
     ],
 
     'bulk_action' => [
 
-        'label' => 'Desanexar selecionado',
+        'label' => 'Desvincular selecionado',
 
         'modal' => [
-            'heading' => 'Desanexar selecionado :label',
+            'heading' => 'Desvincular selecionado :label',
         ],
 
         'messages' => [
-            'detached' => 'Desanexado',
+            'detached' => 'Desvinculado!',
         ],
 
     ],
