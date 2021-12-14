@@ -25,9 +25,4 @@ class Dashboard extends Page
     {
         return static::$title ?? __('filament::pages/dashboard.title');
     }
-
-    public function getHeaderWidgets(): array
-    {
-        return Filament::getWidgets();
-    }
 }

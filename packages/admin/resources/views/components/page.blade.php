@@ -14,22 +14,22 @@
             </x-filament::header>
         @endif
 
-        @if($headerWidgets = $this->getHeaderWidgets())
-            <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 mb-6">
+        @if ($headerWidgets = $this->getHeaderWidgets())
+            <x-filament::widgets>
                 @foreach ($headerWidgets as $widget)
                     @livewire(\Livewire\Livewire::getAlias($widget))
                 @endforeach
-            </div>
+            </x-filament::widgets>
         @endif
 
         {{ $slot }}
 
-        @if($footerWidgets = $this->getFooterWidgets())
-            <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 mt-6">
+        @if ($footerWidgets = $this->getFooterWidgets())
+            <x-filament::widgets>
                 @foreach ($footerWidgets as $widget)
                     @livewire(\Livewire\Livewire::getAlias($widget))
                 @endforeach
-            </div>
+            </x-filament::widgets>
         @endif
 
         @if ($footer = $this->getFooter())
