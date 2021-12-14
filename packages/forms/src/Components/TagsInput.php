@@ -21,13 +21,19 @@ class TagsInput extends Field
                 return;
             }
 
-            if ($separator = $component->getSeparator()) {
-                $component->state(explode($separator, $state));
+            if (! ($separator = $component->getSeparator())) {
+                $component->state([]);
 
                 return;
             }
 
-            $component->state([]);
+            $state = explode($separator, $state);
+
+            if (count($state) === 1 && blank($state[0])) {
+                $state = [];
+            }
+
+            $component->state($state);
         });
 
         $this->dehydrateStateUsing(function (TagsInput $component, $state) {
