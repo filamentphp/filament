@@ -5,7 +5,7 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 
-trait EvaluatesCallbacks
+trait EvaluatesClosures
 {
     protected function evaluate($value, array $parameters = [])
     {
