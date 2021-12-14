@@ -30,16 +30,6 @@ class Page extends Component
 
     protected static string $view;
 
-    public static function form(Form $form): Form
-    {
-        return $form;
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table;
-    }
-
     public static function registerNavigationItems(): void
     {
         Filament::registerNavigationItems([
@@ -101,16 +91,6 @@ class Page extends Component
         return [];
     }
 
-    public function getHeaderWidgets(): array
-    {
-        return [];
-    }
-
-    public function getFooterWidgets(): array
-    {
-        return [];
-    }
-
     protected static function getNavigationGroup(): ?string
     {
         return static::$navigationGroup;
@@ -152,6 +132,16 @@ class Page extends Component
     protected function getHeader(): ?View
     {
         return null;
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [];
     }
 
     protected function getHeading(): string
