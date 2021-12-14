@@ -84,11 +84,11 @@ protected function getActions(): array
 }
 ```
 
-## Widgets
+### Building widgets
 
-Filament allows you to use Widgets inside pages, you can display widgets below the header and above footer.
+Filament allows you to display widgets inside pages, below the header and above the footer.
 
-To register a widget in a page use `getHeaderWidgets()` or `getFooterWidgets()` methods:
+To register a widget on a page, use the `getHeaderWidgets()` or `getFooterWidgets()` methods:
 
 ```php
 use App/Filament/Widgets/StatsOverviewWidget;

@@ -16,6 +16,8 @@ This command will create two files - a widget class in the `/Widgets` directory 
 
 Widgets are pure [Livewire](https://laravel-livewire.com) components, so may use any features of that package.
 
+Widgets may also used on [resource pages](resources#building-widgets) or other [custom pages](pages#building-widgets).
+
 ## Stats overview widgets
 
 Filament comes with a "stats overview" widget template, which you can use to display a number of different stats in a single widget, without needing to write a custom view.

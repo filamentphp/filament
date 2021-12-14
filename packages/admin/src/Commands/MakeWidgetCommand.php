@@ -16,13 +16,11 @@ class MakeWidgetCommand extends Command
 
     public function handle(): int
     {
-        $widget = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `BlogPostsChartWidget`)', 'name'))
-            ->studly()
+        $widget = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `BlogPostsChart`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
-        $baseNamespace = 'App\\Filament\\Widgets';
         $widgetClass = (string) Str::of($widget)->afterLast('\\');
         $widgetNamespace = Str::of($widget)->contains('\\') ?
             (string) Str::of($widget)->beforeLast('\\') :
@@ -31,10 +29,7 @@ class MakeWidgetCommand extends Command
         $resource = null;
         $resourceClass = null;
 
-        $resourceInput = $this->option('resource');
-        if (!$this->argument('name')) {
-            $resourceInput = $resourceInput ?? $this->ask('(Optional) Resource (e.g. `UserResource`)');
-        }
+        $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `BlogPostResource`)');
 
         if ($resourceInput !== null) {
             $resource = (string) Str::of($resourceInput)
@@ -50,7 +45,6 @@ class MakeWidgetCommand extends Command
 
             $resourceClass = (string) Str::of($resource)
                 ->afterLast('\\');
-            $baseNamespace = "App\\Filament\\Resources\\{$resource}\\Widgets";
         }
 
         $view = Str::of($widget)
@@ -81,7 +75,7 @@ class MakeWidgetCommand extends Command
 
         $this->copyStubToApp('Widget', $path, [
             'class' => $widgetClass,
-            'namespace' => $baseNamespace . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
+            'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
             'view' => $view,
         ]);
 
