@@ -497,7 +497,7 @@ When the checkbox is stacked, its label is above it:
 ```php
 use Filament\Forms\Components\Checkbox;
 
-Checkbox::make('is_admin')->stacked()
+Checkbox::make('is_admin')->inline(false)
 ```
 
 If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
