@@ -11,7 +11,7 @@
 
         <x-filament::layouts.app.sidebar />
 
-        <div class="w-screen space-y-6 flex-1 flex flex-col lg:pl-80">
+        <div class="w-screen space-y-6 flex-1 flex flex-col ltr:lg:pl-80 rtl:lg:pr-80">
             <header class="h-[4rem] shrink-0 w-full border-b flex items-center">
                 <div @class([
                     'flex items-center w-full px-2 mx-auto sm:px-4 md:px-6 lg:px-8',
