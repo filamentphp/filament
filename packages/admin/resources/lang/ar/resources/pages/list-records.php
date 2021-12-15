@@ -29,7 +29,7 @@ return [
         'bulk_actions' => [
 
             'delete' => [
-                'label' => 'حذف المختار',
+                'label' => 'حذف المحدد',
             ],
 
         ],

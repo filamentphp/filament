@@ -82,7 +82,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'اختيار :count من السجلات',
+                'label' => 'تحديد كل السجلات :count',
             ],
 
         ],
