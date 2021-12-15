@@ -769,17 +769,14 @@ MultipleFileUpload::make('attachments')
     )
 ```
 
-You may customise the number of files that can be uploaded:
+You may customise the number of files that may be uploaded, using the `minFiles()` and `maxFiles()` methods:
 
 ```php
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MultipleFileUpload;
+
 MultipleFileUpload::make('attachments')
     ->minFiles(2)
     ->maxFiles(5)
-    ->uploadComponent(
-        FileUpload::make('file')->image(),
-    )
 ```
 
 > Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/docs/spatie-laravel-media-library-plugin) for more information.
@@ -929,29 +926,6 @@ Repeater::make('members')
     ])
 ```
 
-You may customise the number of times the componet repeats:
-
-```php
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-
-Repeater::make('members')
-    ->schema([
-        TextInput::make('name')->required(),
-        Select::make('role')
-            ->options([
-                'member' => 'Member',
-                'administrator' => 'Administrator',
-                'owner' => 'Owner',
-            ])
-            ->required(),
-    ])
-    ->minItems(1)
-    ->maxItems(10)
-```
-
-
 We recommend that you store repeater data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
 
 As evident in the above example, the component schema can be defined within the `schema()` method of the component:
@@ -981,8 +955,7 @@ Repeater::make('members')
     ->defaultItems(1)
 ```
 
-You may set a label to customize the text that should be displayed in the button for adding a repeater row:
-
+You may set a label to customize the text that should be displayed in the button for adding a repeater item:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -991,7 +964,20 @@ Repeater::make('members')
     ->schema([
         // ...
     ])
-    ->createItemButtonLabel('Add new row')
+    ->createItemButtonLabel('Add member')
+```
+
+You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->minItems(1)
+    ->maxItems(10)
 ```
 
 ### Populating automatically from a `hasMany` relationship
@@ -1056,25 +1042,6 @@ Builder::make('content')
     ])
 ```
 
-You may customise the number of times the componet can be used:
-
-```php
-use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\TextInput;
-
-Builder::make('content')
-    ->blocks([
-        Builder\Block::make('heading')
-            ->schema([
-                TextInput::make('content')->required(),
-                // ...
-            ]),
-        // ...
-    ])
-    ->minItems(1)
-    ->maxItems(10)
-```
-
 We recommend that you store builder data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
 
 As evident in the above example, blocks can be defined within the `blocks()` method of the component. Blocks are `Builder\Block` objects, and require a unique name, and a component schema:
@@ -1108,6 +1075,20 @@ Blocks may also have an icon, which is displayed next to the label. The `icon()`
 use Filament\Forms\Components\Builder;
 
 Builder\Block::make('heading')->icon('heroicon-o-archive')
+```
+
+You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
+
+```php
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\TextInput;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->minItems(1)
+    ->maxItems(10)
 ```
 
 ## Tags input
