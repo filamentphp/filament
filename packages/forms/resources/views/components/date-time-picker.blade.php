@@ -33,7 +33,7 @@
         x-on:click.away="closePicker()"
         x-on:keydown.escape.stop="closePicker()"
         x-on:blur="closePicker()"
-        {{ $attributes->class(['relative'])->merge($getExtraAttributes()) }}
+        class="relative"
     >
         <button
             @unless($isDisabled())
@@ -51,7 +51,7 @@
                 aria-label="{{ $getPlaceholder() }}"
             @endunless
             type="button"
-            class="bg-white relative w-full border pl-3 pr-10 py-2 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600 {{ $isDisabled() ? 'text-gray-500' : '' }} {{ $errors->has($getStatePath()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300' }}"
+            {{ $attributes->merge($getExtraAttributes())->class(['bg-white relative w-full border pl-3 pr-10 py-2 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600', $isDisabled() ? 'text-gray-500' : '', $errors->has($getStatePath()) ? 'border-danger-600 motion-safe:animate-shake' : 'border-gray-300', ]) }}
         >
             <input
                 readonly
