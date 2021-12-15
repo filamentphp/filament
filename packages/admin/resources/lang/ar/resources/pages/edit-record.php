@@ -23,7 +23,7 @@ return [
         'actions' => [
 
             'cancel' => [
-                'label' => 'الغاد',
+                'label' => 'إلغاء',
             ],
 
             'save' => [
@@ -35,25 +35,25 @@ return [
     ],
 
     'messages' => [
-        'saved' => 'Saved',
+        'saved' => 'تم الحفظ',
     ],
 
     'modals' => [
 
         'delete' => [
 
-            'heading' => 'Delete :label',
+            'heading' => 'حذف :label',
 
-            'subheading' => 'Are you sure you would like to do this?',
+            'subheading' => 'هل أنت متأكد من القيام بهذا؟',
 
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => 'الغاء',
                 ],
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => 'حذف',
                 ],
 
             ],
