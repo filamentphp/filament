@@ -7,19 +7,27 @@ use Illuminate\Database\Eloquent\Model;
 
 trait EvaluatesClosures
 {
-    protected function evaluate($value, array $parameters = [])
+    public function evaluate($value, array $parameters = [])
     {
         if ($value instanceof Closure) {
-            $model = $this->getModel();
-
-            return app()->call($value, array_merge([
-                'container' => $this,
-                'livewire' => $this->getLivewire(),
-                'model' => $model,
-                'record' => $model instanceof Model ? $model : null,
-            ], $parameters));
+            return app()->call(
+                $value,
+                array_merge($this->getDefaultEvaluationParameters(), $parameters),
+            );
         }
 
         return $value;
+    }
+
+    protected function getDefaultEvaluationParameters(): array
+    {
+        $model = $this->getModel();
+
+        return [
+            'container' => $this,
+            'livewire' => $this->getLivewire(),
+            'model' => $model,
+            'record' => $model instanceof Model ? $model : null,
+        ];
     }
 }

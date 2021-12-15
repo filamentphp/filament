@@ -2,6 +2,8 @@
 
 namespace Filament\Forms\Components;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class Placeholder extends Component
@@ -40,6 +42,11 @@ class Placeholder extends Component
         $this->state = $state;
 
         return $this;
+    }
+
+    protected function shouldEvaluateWithState(): bool
+    {
+        return false;
     }
 
     public function getId(): string
