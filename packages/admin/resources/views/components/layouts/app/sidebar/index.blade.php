@@ -22,7 +22,7 @@
                             :icon="$item->getIcon()"
                             :url="$item->getUrl()"
                         >
-                            {{ $item->getLabel() }}
+                            {{ __($item->getLabel()) }}
                         </x-filament::layouts.app.sidebar.item>
                     @endforeach
                 </x-filament::layouts.app.sidebar.group>

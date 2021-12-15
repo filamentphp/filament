@@ -41,7 +41,7 @@
                                                 'text-gray-500' => $loop->last,
                                             ])
                                         >
-                                            {{ $label }}
+                                            {{ __($label) }}
                                         </a>
                                     </li>
 

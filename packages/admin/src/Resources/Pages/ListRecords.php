@@ -107,7 +107,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function getCreateButtonAction(): ButtonAction
     {
         $resource = static::getResource();
-        $label = $resource::getLabel();
+        $label = __(ucfirst($resource::getLabel()));
 
         return ButtonAction::make('create')
             ->label(__('filament::resources/pages/list-records.actions.create.label', ['label' => $label]))

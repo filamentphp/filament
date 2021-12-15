@@ -9,7 +9,7 @@
         @elseif ($heading = $this->getHeading())
             <x-filament::header :actions="$this->getActions()">
                 <x-slot name="heading">
-                    {{ $heading }}
+                    {{ __($heading) }}
                 </x-slot>
             </x-filament::header>
         @endif

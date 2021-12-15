@@ -5,7 +5,7 @@
 <li>
     @if ($label)
         <p class="font-bold uppercase text-gray-600 text-xs tracking-wider">
-            {{ $label }}
+            {{ __($label) }}
         </p>
     @endif
 
