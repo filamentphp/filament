@@ -19,6 +19,8 @@ protected function getTableActions(): array
 
 Actions may be created using the static `make()` method, passing its name. The name of the action should be unique. You can then pass a callback to `action()` which executes the task, or a callback to `url()` which generates a link URL:
 
+> If you would like the URL to open in a new tab, you can use the `openUrlInNewTab()` method.
+
 ```php
 use App\Models\Post;
 use Filament\Tables\Actions\LinkAction;
