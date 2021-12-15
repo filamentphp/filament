@@ -112,6 +112,13 @@ trait HasState
         return $this;
     }
 
+    public function hydrateNullState(): static
+    {
+        $this->state(null);
+
+        return $this;
+    }
+
     public function state($state): static
     {
         $livewire = $this->getLivewire();

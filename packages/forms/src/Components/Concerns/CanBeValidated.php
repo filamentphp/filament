@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
@@ -16,20 +17,20 @@ trait CanBeValidated
 
     public function exists(string | callable | null $table = null, string | callable | null $column = null): static
     {
-        $this->rule(function () use ($column, $table) {
-            $table = $this->evaluate($table) ?? $this->getModelClass();
-            $column = $this->evaluate($column) ?? $this->getName();
+        $this->rule(function (Component $component) use ($column, $table) {
+            $table = $component->evaluate($table) ?? $component->getModelClass();
+            $column = $component->evaluate($column) ?? $component->getName();
 
             return Rule::exists($table, $column);
-        }, fn (): bool => (bool) ($this->evaluate($table) ?? $this->getModelClass()));
+        }, fn (Component $component): bool => (bool) ($component->evaluate($table) ?? $component->getModelClass()));
 
         return $this;
     }
 
     public function nullable(bool | callable $condition = true): static
     {
-        $this->required(function () use ($condition): bool {
-            return ! $this->evaluate($condition);
+        $this->required(function (Component $component) use ($condition): bool {
+            return ! $component->evaluate($condition);
         });
 
         return $this;
@@ -60,6 +61,26 @@ trait CanBeValidated
         );
 
         return $this;
+    }
+
+    public function after(string | callable $date, bool $isStatePathAbsolute = false): static
+    {
+        return $this->dateComparisonRule('after', $date, $isStatePathAbsolute);
+    }
+
+    public function afterOrEqual(string | callable $date, bool $isStatePathAbsolute = false): static
+    {
+        return $this->dateComparisonRule('after_or_equal', $date, $isStatePathAbsolute);
+    }
+
+    public function before(string | callable $date, bool $isStatePathAbsolute = false): static
+    {
+        return $this->dateComparisonRule('before', $date, $isStatePathAbsolute);
+    }
+
+    public function beforeOrEqual(string | callable $date, bool $isStatePathAbsolute = false): static
+    {
+        return $this->dateComparisonRule('before_or_equal', $date, $isStatePathAbsolute);
     }
 
     public function different(string | callable $statePath, bool $isStatePathAbsolute = false): static
@@ -94,10 +115,10 @@ trait CanBeValidated
 
     public function unique(string | callable | null $table = null, string | callable | null $column = null, Model | callable $ignorable = null): static
     {
-        $this->rule(function () use ($column, $ignorable, $table) {
-            $table = $this->evaluate($table) ?? $this->getModelClass();
-            $column = $this->evaluate($column) ?? $this->getName();
-            $ignorable = $this->evaluate($ignorable);
+        $this->rule(function (Component $component) use ($column, $ignorable, $table) {
+            $table = $component->evaluate($table) ?? $component->getModelClass();
+            $column = $component->evaluate($column) ?? $component->getName();
+            $ignorable = $component->evaluate($ignorable);
 
             return Rule::unique($table, $column)
                 ->when(
@@ -107,7 +128,7 @@ trait CanBeValidated
                         $ignorable->getKeyName(),
                     ),
                 );
-        }, fn (): bool => (bool) ($this->evaluate($table) ?? $this->getModelClass()));
+        }, fn (Component $component): bool => (bool) ($component->evaluate($table) ?? $component->getModelClass()));
 
         return $this;
     }
@@ -151,13 +172,32 @@ trait CanBeValidated
         return (bool) $this->evaluate($this->isRequired);
     }
 
+    protected function dateComparisonRule(string $rule, string | callable $date, bool $isStatePathAbsolute = false): static
+    {
+        $this->rule(function (Component $component) use ($date, $isStatePathAbsolute, $rule): string {
+            $date = $component->evaluate($date);
+
+            if (! (strtotime($date) && $isStatePathAbsolute)) {
+                $containerStatePath = $component->getContainer()->getStatePath();
+
+                if ($containerStatePath) {
+                    $date = "{$containerStatePath}.{$date}";
+                }
+            }
+
+            return "{$rule}:{$date}";
+        }, fn (Component $component): bool => (bool) $component->evaluate($date));
+
+        return $this;
+    }
+
     protected function fieldComparisonRule(string $rule, string | callable $statePath, bool $isStatePathAbsolute = false): static
     {
-        $this->rule(function () use ($isStatePathAbsolute, $rule, $statePath): string {
-            $statePath = $this->evaluate($statePath);
+        $this->rule(function (Component $component) use ($isStatePathAbsolute, $rule, $statePath): string {
+            $statePath = $component->evaluate($statePath);
 
             if (! $isStatePathAbsolute) {
-                $containerStatePath = $this->getContainer()->getStatePath();
+                $containerStatePath = $component->getContainer()->getStatePath();
 
                 if ($containerStatePath) {
                     $statePath = "{$containerStatePath}.{$statePath}";
@@ -165,7 +205,7 @@ trait CanBeValidated
             }
 
             return "{$rule}:{$statePath}";
-        }, fn (): bool => (bool) $this->evaluate($statePath));
+        }, fn (Component $component): bool => (bool) $component->evaluate($statePath));
 
         return $this;
     }

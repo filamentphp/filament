@@ -124,6 +124,11 @@ return [
 
     'layout' => [
         'max_content_width' => null,
+        'forms' => [
+            'actions' => [
+                'alignment' => 'left',
+            ],
+        ],
     ],
 
     /*

@@ -39,6 +39,26 @@ it('has components', function () {
         );
 });
 
+it('has dynamic components', function () {
+    $components = [];
+
+    foreach (range(1, $count = rand(2, 10)) as $i) {
+        $components[] = new Component();
+    }
+
+    $componentsBoundToContainer = ($container = ComponentContainer::make(Livewire::make()))
+        ->components(fn (): array => $components)
+        ->getComponents();
+
+    expect($componentsBoundToContainer)
+        ->toHaveCount($count)
+        ->each(
+            fn ($component) => $component
+                ->toBeInstanceOf(Component::class)
+                ->getContainer()->toBe($container),
+        );
+});
+
 it('belongs to parent component', function () {
     $container = ComponentContainer::make(Livewire::make())
         ->parentComponent($component = new Component());

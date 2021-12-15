@@ -53,10 +53,10 @@ class InstallCommand extends Command
     {
         return array_merge(
             [
-                '@tailwindcss/forms' => '^0.3',
-                '@tailwindcss/typography' => '^0.4',
+                '@tailwindcss/forms' => '^0.4',
+                '@tailwindcss/typography' => '^0.5',
                 'alpinejs' => '^3.4',
-                'tailwindcss' => '^2.2',
+                'tailwindcss' => '^3.0',
             ],
             Arr::except($packages, [
                 'axios',

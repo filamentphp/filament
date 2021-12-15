@@ -36,6 +36,14 @@ If you wish, you may publish the configuration of the package using:
 php artisan vendor:publish --tag=filament-config
 ```
 
+## Publishing the translations
+
+If you wish to translate the package, you may publish the language files using:
+
+```bash
+php artisan vendor:publish --tag=filament-translations
+```
+
 ## Upgrade Guide
 
 To upgrade the package to the latest version, you must run:

@@ -65,7 +65,41 @@ The `schema()` method is used to define the structure of your form. It is an arr
 
 To view a full list of available form [fields](/docs/forms/fields) and [layout components](/docs/forms/layout), see the [Form Builder documentation](/docs/forms/fields).
 
+If you'd like to save time, Filament can automatically generate some fields and [tables](#tables) for you, based on your model's database columns:
+
+```bash
+php artisan make:filament-resource Customer --generate
+```
+
 > You may also use the same form builder outside of the admin panel, by following [these installation instructions](/docs/forms/installation).
+
+### Hiding components based on the page
+
+The `hidden()` method of form components allows you to dynamically hide fields based on the current page.
+
+To do this, you must pass a closure to the `hidden()` method which checks if the Livewire component is a certain page or not. In this example, we hide the `password` field on the `EditUser` resource page:
+
+```php
+use Livewire\Component;
+
+Forms\Components\TextInput::make('password')
+    ->password()
+    ->required()
+    ->hidden(fn (Component $livewire): bool => $livewire instanceof EditUser),
+```
+
+You may instead use the `visible` to check if a component should be visible or not:
+
+```php
+use Livewire\Component;
+
+Forms\Components\TextInput::make('password')
+    ->password()
+    ->required()
+    ->visible(fn (Component $livewire): bool => $livewire instanceof CreateUser),
+```
+
+For more information about closure customization, see the [form builder documentation](/docs/forms/advanced#using-closure-customisation).
 
 ## Tables
 
@@ -98,6 +132,12 @@ The `columns()` method is used to define the [columns](/docs/tables/columns) in 
 
 To view a full list of available table [columns](/docs/tables/columns), see the [Table Builder documentation](/docs/tables/columns).
 
+If you'd like to save time, Filament can automatically generate some columns and [form fields](#forms) for you, based on your model's database columns:
+
+```bash
+php artisan make:filament-resource Customer --generate
+```
+
 > You may also use the same table builder outside of the admin panel, by following [these installation instructions](/docs/tables/installation).
 
 ### Applying a default sort
@@ -121,7 +161,7 @@ public static function table(Table $table): Table
 
 ## Relations
 
-"Relation managers" in Filament allow administrators to list, create, attach, edit, detach and delete related records without leaving the resource's edit page. Resource classes contain a static `relations()` method that is used to register relation managers for your resource.
+"Relation managers" in Filament allow administrators to list, create, attach, edit, detach and delete related records without leaving the resource's edit page. Resource classes contain a static `getRelations()` method that is used to register relation managers for your resource.
 
 ### `HasMany` and `MorphMany`
 
@@ -163,7 +203,7 @@ public static function table(Table $table): Table
 }
 ```
 
-You must register the new relation manager in your resource's `relations()` method:
+You must register the new relation manager in your resource's `getRelations()` method:
 
 ```php
 public static function getRelations(): array
@@ -214,7 +254,7 @@ public static function table(Table $table): Table
 }
 ```
 
-You must register the new relation manager in your resource's `relations()` method:
+You must register the new relation manager in your resource's `getRelations()` method:
 
 ```php
 public static function getRelations(): array
@@ -354,7 +394,7 @@ By default, resources are generated with three pages:
 Filament also comes with a "view" page for resources, which you can enable by creating a new page in your resource's `Pages` directory:
 
 ```bash
-php artisan make:filament-page ViewUser --resource=UserResource 
+php artisan make:filament-page ViewUser --resource=UserResource
 ```
 
 Inside the new page class, you may extend the `Filament\Resources\Pages\ViewRecord` class and remove the `$view` property:
@@ -395,7 +435,7 @@ On create pages, you may define a `mutateFormDataBeforeCreate()` method to modif
 protected function mutateFormDataBeforeCreate(array $data): array
 {
     $data['user_id'] = auth()->id();
-    
+
     return $data;
 }
 ```
@@ -406,7 +446,7 @@ On edit pages, you may do the same using the `mutateFormDataBeforeSave()` method
 protected function mutateFormDataBeforeSave(array $data): array
 {
     $data['last_edited_by_id'] = auth()->id();
-    
+
     return $data;
 }
 ```
@@ -432,32 +472,32 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateUser extends CreateRecord
 {
     // ...
-    
+
     protected function beforeFill(): void
     {
         // Runs before the form fields are populated with their default values.
     }
-    
+
     protected function afterFill(): void
     {
         // Runs after the form fields are populated with their default values.
     }
-    
+
     protected function beforeValidate(): void
     {
         // Runs before the form fields are validated when the form is submitted.
     }
-    
+
     protected function afterValidate(): void
     {
         // Runs after the form fields are validated when the form is submitted.
     }
-    
+
     protected function beforeCreate(): void
     {
         // Runs before the form fields are saved to the database.
     }
-    
+
     protected function afterCreate(): void
     {
         // Runs after the form fields are saved to the database.
@@ -471,42 +511,42 @@ use Filament\Resources\Pages\EditRecord;
 class EditUser extends EditRecord
 {
     // ...
-    
+
     protected function beforeFill(): void
     {
         // Runs before the form fields are populated from the database.
     }
-    
+
     protected function afterFill(): void
     {
         // Runs after the form fields are populated from the database.
     }
-    
+
     protected function beforeValidate(): void
     {
         // Runs before the form fields are validated when the form is saved.
     }
-    
+
     protected function afterValidate(): void
     {
         // Runs after the form fields are validated when the form is saved.
     }
-    
+
     protected function beforeSave(): void
     {
         // Runs before the form fields are saved to the database.
     }
-    
+
     protected function afterSave(): void
     {
         // Runs after the form fields are saved to the database.
     }
-    
+
     protected function beforeDelete(): void
     {
         // Runs before the record is deleted.
     }
-    
+
     protected function afterDelete(): void
     {
         // Runs after the record is deleted.
@@ -608,6 +648,53 @@ To generate a URL for a resource route, you may call the static `getUrl()` metho
 SortUsers::getUrl($parameters = [], $absolute = true);
 ```
 
+### Building widgets
+
+Filament allows you to display widgets inside pages, below the header and above the footer.
+
+You can use an existing [dashboard widget](dashboard), or create one specifically for the resource.
+
+To get started building a resource widget:
+
+```bash
+php artisan make:filament-widget CustomerOverview --resource=CustomerResource
+```
+
+This command will create two files - a widget class in the `app/Filament/Resources/CustomerResource/Widgets` directory, and a view in the `resources/views/filament/resources/customer-resource/widgets` directory.
+
+You must register the new widget in your resource's `getWidgets()` method:
+
+```php
+public static function getWidgets(): array
+{
+    return [
+        Widgets\CustomerOverview::class,
+    ];
+}
+```
+
+To display a widget on a resource page, use the `getHeaderWidgets()` or `getFooterWidgets()` methods for that page:
+
+```php
+<?php
+ 
+namespace App\Filament\Resources\CustomerResource\Pages;
+
+use App\Filament\Resources\CustomerResource;
+
+class ListCustomers extends ListRecords
+{
+    public static string $resource = CustomerResource::class;
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            CustomerResource\Widgets\CustomerOverview::class,
+        ];
+    }
+}
+```
+
 ## Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The following methods are used:
@@ -642,6 +729,8 @@ public static function getEloquentQuery(): Builder
 ```
 
 More information may be found in the [Laravel documentation](https://laravel.com/docs/eloquent#removing-global-scopes).
+
+## Customization
 
 ### Customizing the label
 

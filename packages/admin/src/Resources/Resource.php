@@ -31,6 +31,8 @@ class Resource
 
     protected static ?int $navigationSort = null;
 
+    protected static bool $shouldRegisterNavigation = true;
+
     protected static ?string $pluralLabel = null;
 
     protected static ?string $recordTitleAttribute = null;
@@ -44,6 +46,10 @@ class Resource
 
     public static function registerNavigationItems(): void
     {
+        if (! static::shouldRegisterNavigation()) {
+            return;
+        }
+
         if (! static::canViewAny()) {
             return;
         }
@@ -227,6 +233,11 @@ class Resource
         return [];
     }
 
+    public static function getWidgets(): array
+    {
+        return [];
+    }
+
     public static function getRouteBaseName(): string
     {
         $slug = static::getSlug();
@@ -330,5 +341,10 @@ class Resource
     protected static function getNavigationUrl(): string
     {
         return static::getUrl();
+    }
+
+    protected static function shouldRegisterNavigation(): bool
+    {
+        return static::$shouldRegisterNavigation;
     }
 }

@@ -404,7 +404,7 @@ BelongsToSelect::make('authorId')
     ->relationship('author', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
@@ -460,7 +460,7 @@ BelongsToManyMultiSelect::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
@@ -945,6 +945,36 @@ Repeater::make('members')
     ->defaultItems(1)
 ```
 
+You may set a label to customize the text that should be displayed in the button for adding a repeater row:
+
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->createItemButtonLabel('Add new row')
+```
+
+### Populating automatically from a `hasMany` relationship
+
+You may employ the `relationship()` method of the `HasManyRepeater` to configure a relationship to automatically retrieve and save repeater items:
+
+```php
+use App\Models\App;
+use Filament\Forms\Components\HasManyRepeater;
+
+HasManyRepeater::make('qualifications')
+    ->relationship('qualifications')
+    ->schema([
+        // ...
+    ])
+```
+
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
+
 ## Builder
 
 Similar to a [repeater](#repeater), the builder component allows you to output a JSON array of repeated form components. Unlike the repeater, which only defines one form schema to repeat, the builder allows you to define different schema "blocks", which you can repeat in any order. This makes it useful for building more advanced array structures.
@@ -1060,6 +1090,20 @@ use Filament\Forms\Components\TagsInput;
 TagsInput::make('tags')->separator(',')
 ```
 
+Tags inputs may have autocomplete suggestions. To enable this, pass an array of suggestions to the `suggestions()` method:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->suggestions([
+        'tailwindcss',
+        'alpinejs',
+        'laravel',
+        'livewire',
+    ])
+```
+
 > Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](/docs/spatie-laravel-tags-plugin) for more information.
 
 ## Textarea
@@ -1123,6 +1167,16 @@ KeyValue::make('meta')
     ->disableEditingKeys()
 ```
 
+You may also add placeholders for the key and value fields using the `keyPlaceholder()` and `valuePlaceholder()` methods:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+    ->keyPlaceholder('Property name')
+    ->valuePlaceholder('Property value')
+```
+
 ## View
 
 Aside from [building custom fields](#building-custom-fields), you may create "view" fields which allow you to create custom fields without extra PHP classes.
@@ -1135,7 +1189,7 @@ ViewField::make('notifications')->view('filament.forms.components.range-slider')
 
 Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
 
-The `$getStatePath()` callable may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
+The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
 
 ```blade
 <x-forms::field-wrapper
@@ -1178,7 +1232,7 @@ class RangeSlider extends Field
 
 Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
 
-The `$getStatePath()` callable may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
+The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
 
 ```blade
 <x-forms::field-wrapper

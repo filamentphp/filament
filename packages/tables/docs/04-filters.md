@@ -90,6 +90,45 @@ use Filament\Tables\Filters\SelectFilter;
 SelectFilter::make('author')->relationship('author', 'name')
 ```
 
+### Multi-select filters
+
+Multi-select filters allow you to quickly create a filter that allows the user to select multiple options to apply the filter to their table. For example, a status filter may present the user with a few status options to pick from and filter the table using:
+
+```php
+use Filament\Tables\Filters\MultiSelectFilter;
+
+MultiSelectFilter::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+```
+
+Multi-select filters do not require a custom `query()` method. The column name used to scope the query is the name of the filter. To customize this, you may use the `column()` method:
+
+```php
+use Filament\Tables\Filters\MultiSelectFilter;
+
+MultiSelectFilter::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->column('status_id')
+```
+
+#### Relationship multi-select filters
+
+Multi-select filters are also able to automatically populate themselves based on a `BelongsTo` relationship. For example, if your table has a `author` relationship with a `name` column, you may use `relationship()` to filter the records belonging to a selection of authors:
+
+```php
+use Filament\Tables\Filters\MultiSelectFilter;
+
+MultiSelectFilter::make('author')->relationship('author', 'name')
+```
+
 ### Custom filter forms
 
 You may use components from the [Form Builder](/docs/forms/fields) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:

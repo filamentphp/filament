@@ -12,12 +12,11 @@ class MakeWidgetCommand extends Command
 
     protected $description = 'Creates a Filament widget class.';
 
-    protected $signature = 'make:filament-widget {name?}';
+    protected $signature = 'make:filament-widget {name?} {--R|resource=}';
 
     public function handle(): int
     {
-        $widget = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `BlogPostsChartWidget`)', 'name'))
-            ->studly()
+        $widget = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `BlogPostsChart`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
@@ -27,15 +26,36 @@ class MakeWidgetCommand extends Command
             (string) Str::of($widget)->beforeLast('\\') :
             '';
 
+        $resource = null;
+        $resourceClass = null;
+
+        $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `BlogPostResource`)');
+
+        if ($resourceInput !== null) {
+            $resource = (string) Str::of($resourceInput)
+                ->studly()
+                ->trim('/')
+                ->trim('\\')
+                ->trim(' ')
+                ->replace('/', '\\');
+
+            if (! Str::of($resource)->endsWith('Resource')) {
+                $resource .= 'Resource';
+            }
+
+            $resourceClass = (string) Str::of($resource)
+                ->afterLast('\\');
+        }
+
         $view = Str::of($widget)
-            ->prepend('filament\\widgets\\')
+            ->prepend($resource === null ? 'filament\\widgets\\' : "filament\\resources\\{$resource}\\widgets\\")
             ->explode('\\')
             ->map(fn ($segment) => Str::kebab($segment))
             ->implode('.');
 
         $path = app_path(
             (string) Str::of($widget)
-                ->prepend('Filament\\Widgets\\')
+                ->prepend($resource === null ? 'Filament\\Widgets\\' : "Filament\\Resources\\{$resource}\\Widgets\\")
                 ->replace('\\', '/')
                 ->append('.php'),
         );
@@ -55,13 +75,17 @@ class MakeWidgetCommand extends Command
 
         $this->copyStubToApp('Widget', $path, [
             'class' => $widgetClass,
-            'namespace' => 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
+            'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
             'view' => $view,
         ]);
 
         $this->copyStubToApp('WidgetView', $viewPath);
 
         $this->info("Successfully created {$widget}!");
+
+        if ($resource !== null) {
+            $this->info("Make sure to register the widget in `{$resourceClass}::getWidgets()`, and then again in `getHeaderWidgets()` or `getFooterWidgets()` of any `{$resourceClass}` page.");
+        }
 
         return static::SUCCESS;
     }

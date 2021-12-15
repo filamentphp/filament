@@ -33,8 +33,7 @@
         x-on:click.away="closePicker()"
         x-on:keydown.escape.stop="closePicker()"
         x-on:blur="closePicker()"
-        class="relative"
-        {{ $attributes->merge($getExtraAttributes()) }}
+        {{ $attributes->class(['relative'])->merge($getExtraAttributes()) }}
     >
         <button
             @unless($isDisabled())
@@ -87,7 +86,7 @@
                         <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
                             <select
                                 x-model="focusedMonth"
-                                class="flex-grow p-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none"
+                                class="grow p-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none"
                             >
                                 <template x-for="(month, index) in dayjs.months()">
                                     <option x-bind:value="index" x-text="month"></option>

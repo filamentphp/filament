@@ -13,7 +13,7 @@ export default (Alpine) => {
         rows: [],
 
         init: function () {
-            for (let [value, key] of Object.entries(this.state ?? {})) {
+            for (let [key, value] of Object.entries(this.state ?? {})) {
                 this.rows.push({
                     key,
                     value,
