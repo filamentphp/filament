@@ -14,7 +14,23 @@
             </x-filament::header>
         @endif
 
+        @if ($headerWidgets = $this->getHeaderWidgets())
+            <x-filament::widgets>
+                @foreach ($headerWidgets as $widget)
+                    @livewire(\Livewire\Livewire::getAlias($widget))
+                @endforeach
+            </x-filament::widgets>
+        @endif
+
         {{ $slot }}
+
+        @if ($footerWidgets = $this->getFooterWidgets())
+            <x-filament::widgets>
+                @foreach ($footerWidgets as $widget)
+                    @livewire(\Livewire\Livewire::getAlias($widget))
+                @endforeach
+            </x-filament::widgets>
+        @endif
 
         @if ($footer = $this->getFooter())
             {{ $footer }}

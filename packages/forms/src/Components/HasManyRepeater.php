@@ -38,6 +38,12 @@ class HasManyRepeater extends Repeater
 
     public function saveRelationships(): void
     {
+        if ($this->saveRelationshipsUsing) {
+            parent::saveRelationships();
+
+            return;
+        }
+
         $relationship = $this->getRelationship();
         $state = $this->getState();
 

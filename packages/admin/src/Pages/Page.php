@@ -5,8 +5,6 @@ namespace Filament\Pages;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
-use Filament\Resources\Form;
-use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -31,16 +29,6 @@ class Page extends Component
     protected static ?string $title = null;
 
     protected static string $view;
-
-    public static function form(Form $form): Form
-    {
-        return $form;
-    }
-
-    public static function table(Table $table): Table
-    {
-        return $table;
-    }
 
     public static function registerNavigationItems(): void
     {
@@ -148,6 +136,16 @@ class Page extends Component
     protected function getHeader(): ?View
     {
         return null;
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [];
     }
 
     protected function getHeading(): string

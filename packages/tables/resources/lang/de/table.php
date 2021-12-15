@@ -15,7 +15,7 @@ return [
 
         'label' => 'Seitennavigation',
 
-        'overview' => 'Anzeigen von :first bis :last von :total Ergebnissen',
+        'overview' => ':first bis :last von :total Ergebnissen',
 
         'fields' => [
 
@@ -68,7 +68,7 @@ return [
                 ],
 
                 'confirm' => [
-                    'label' => 'Bestätigen Sie',
+                    'label' => 'Bestätigen',
                 ],
 
                 'submit' => [

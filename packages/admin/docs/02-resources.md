@@ -65,6 +65,12 @@ The `schema()` method is used to define the structure of your form. It is an arr
 
 To view a full list of available form [fields](/docs/forms/fields) and [layout components](/docs/forms/layout), see the [Form Builder documentation](/docs/forms/fields).
 
+If you'd like to save time, Filament can automatically generate some fields and [tables](#tables) for you, based on your model's database columns:
+
+```bash
+php artisan make:filament-resource Customer --generate
+```
+
 > You may also use the same form builder outside of the admin panel, by following [these installation instructions](/docs/forms/installation).
 
 ### Hiding components based on the page
@@ -126,6 +132,12 @@ The `columns()` method is used to define the [columns](/docs/tables/columns) in 
 
 To view a full list of available table [columns](/docs/tables/columns), see the [Table Builder documentation](/docs/tables/columns).
 
+If you'd like to save time, Filament can automatically generate some columns and [form fields](#forms) for you, based on your model's database columns:
+
+```bash
+php artisan make:filament-resource Customer --generate
+```
+
 > You may also use the same table builder outside of the admin panel, by following [these installation instructions](/docs/tables/installation).
 
 ### Applying a default sort
@@ -149,7 +161,7 @@ public static function table(Table $table): Table
 
 ## Relations
 
-"Relation managers" in Filament allow administrators to list, create, attach, edit, detach and delete related records without leaving the resource's edit page. Resource classes contain a static `relations()` method that is used to register relation managers for your resource.
+"Relation managers" in Filament allow administrators to list, create, attach, edit, detach and delete related records without leaving the resource's edit page. Resource classes contain a static `getRelations()` method that is used to register relation managers for your resource.
 
 ### `HasMany` and `MorphMany`
 
@@ -191,7 +203,7 @@ public static function table(Table $table): Table
 }
 ```
 
-You must register the new relation manager in your resource's `relations()` method:
+You must register the new relation manager in your resource's `getRelations()` method:
 
 ```php
 public static function getRelations(): array
@@ -242,7 +254,7 @@ public static function table(Table $table): Table
 }
 ```
 
-You must register the new relation manager in your resource's `relations()` method:
+You must register the new relation manager in your resource's `getRelations()` method:
 
 ```php
 public static function getRelations(): array
@@ -634,6 +646,53 @@ To generate a URL for a resource route, you may call the static `getUrl()` metho
 
 ```php
 SortUsers::getUrl($parameters = [], $absolute = true);
+```
+
+### Building widgets
+
+Filament allows you to display widgets inside pages, below the header and above the footer.
+
+You can use an existing [dashboard widget](dashboard), or create one specifically for the resource.
+
+To get started building a resource widget:
+
+```bash
+php artisan make:filament-widget CustomerOverview --resource=CustomerResource
+```
+
+This command will create two files - a widget class in the `app/Filament/Resources/CustomerResource/Widgets` directory, and a view in the `resources/views/filament/resources/customer-resource/widgets` directory.
+
+You must register the new widget in your resource's `getWidgets()` method:
+
+```php
+public static function getWidgets(): array
+{
+    return [
+        Widgets\CustomerOverview::class,
+    ];
+}
+```
+
+To display a widget on a resource page, use the `getHeaderWidgets()` or `getFooterWidgets()` methods for that page:
+
+```php
+<?php
+ 
+namespace App\Filament\Resources\CustomerResource\Pages;
+
+use App\Filament\Resources\CustomerResource;
+
+class ListCustomers extends ListRecords
+{
+    public static string $resource = CustomerResource::class;
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            CustomerResource\Widgets\CustomerOverview::class,
+        ];
+    }
+}
 ```
 
 ## Authorization

@@ -84,6 +84,23 @@ protected function getActions(): array
 }
 ```
 
+### Building widgets
+
+Filament allows you to display widgets inside pages, below the header and above the footer.
+
+To register a widget on a page, use the `getHeaderWidgets()` or `getFooterWidgets()` methods:
+
+```php
+use App/Filament/Widgets/StatsOverviewWidget;
+
+protected function getHeaderWidgets(): array
+{
+    return [
+        StatsOverviewWidget::class
+    ];
+}
+```
+
 ## Sending flash notifications
 
 You can send flash notifications to the user from each page by calling the `notify()` method on the page class:

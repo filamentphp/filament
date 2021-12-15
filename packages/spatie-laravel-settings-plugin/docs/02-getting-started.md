@@ -2,86 +2,66 @@
 title: Getting Started
 ---
 
-## Usage
+## Preparing your page class
 
 Settings pages are Filament pages that extend the `Filament\Pages\SettingsPage` class.
 
 You can create a settings page using the following command:
 
 ```bash
-php artisan make:filament-settings-page ManageSite SiteSettings
+php artisan make:filament-settings-page ManageSite --settings=SiteSettings
 ```
 
-This command will create a settings class `SiteSettings`, migration `create_site_settings` and page `ManageSite`
-
-## Preparing your settings class
-
-Define your settings' properties.
+By default this command presumes that you have a `SiteSettings` class in your `app/Settings` directory:
 
 ```php
-use Filament\Settings;
-
-class SiteSettings extends Settings
-{
-    public string $name;
-    public string $slogan;
-    public ?string $logo;
-
-    public static function group(): string
-    {
-        return 'site';
-    }
-}
+protected static string $settings = SiteSettings::class;
 ```
-This plugin uses the [Spatie's Laravel Setting](https://github.com/spatie/laravel-settings) package under the hood, so for more options refer to the main package.
-## Preparing your settings' migration
 
-Each property in a settings class needs a default value that should be set in its migration.
+To override the default namespace, use the `--namespace | -N` flag as follow:
+
+```bash
+php artisan make:filament-settings-page ManageSite --settings=Filament/Settings/SiteSettings -N
+```
+
+The `-N` flag will honor your provided namespace and will use it.
 
 ```php
-use Spatie\LaravelSettings\Migrations\SettingsMigration;
+use Filament\Settings\SiteSettings; //[tl! focus]
+use Filament\Pages\SettingsPage;
 
-class CreateSiteSettings extends SettingsMigration
+class SiteSettings extends SettingsPage
 {
-    public function up(): void
-    {
-        $this->migrator->add('site.name', 'Filament');
-        $this->migrator->add('site.slogan', 'The elegant TALLkit for Laravel artisans.');
-        $this->migrator->add('site.logo', '');
-    }
+    ...
+    protected static string $settings = SiteSettings::class;//[tl! focus]
+    ...
 }
 ```
 
-## Preparing your page class
+This plugin uses the [Spatie's Laravel Setting](https://github.com/spatie/laravel-settings) package under the hood, so for information on how to setup your settings class and other options consult there.
 
-The name of each form field must correspond with the name of the property on your settings class:
+## Building a form
+
+Since the [form builder](/docs/forms) is installed in the admin panel by default, you may use any form [fields](/docs/forms/fields) or [layout components](/docs/forms/layout) you like, including those from Filament plugins:
 
 ```php
-...
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
-
-class ManageSite extends SettingsPage
+ 
+protected function getFormSchema(): array
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog';
-
-    protected static string $settings = SiteSettings::class;
-
-    protected function getFormSchema(): array
-    {
-        return [
-            TextInput::make('name')
-                ->label('Site Name')
-                ->required(),
-            TextInput::make('slogan')
-                ->label('Site Name')
-                ->required(),
-            FileUpload::make('logo')
-                ->required(),
-                ->avatar()
-        ];
-    }
+    return [
+        TextInput::make('copyright')
+            ->label('Copyright notice')
+            ->required(),
+        Repeater::make('links')
+            ->schema([
+                TextInput::make('label')->required(),
+                TextInput::make('url')
+                    ->url()
+                    ->required(),
+            ]),
+    ];
 }
 ```
-
-Since the [form builder](/docs/forms) is installed in the admin panel by default, you may use any form [fields](/docs/forms/fields) or [layout components](/docs/forms/layout) you like, including those from Filament plugins.
+The name of each form field must correspond with the name of the property on your [Settings](https://github.com/spatie/laravel-settings) class.

@@ -14,11 +14,14 @@ class MakeSettingsPageCommand extends Command
 
     protected $description = 'Creates a Filament settings page class.';
 
-    protected $signature = 'make:filament-settings-page {name?} {settingsClass?}';
+    protected $signature = 'make:filament-settings-page
+                            {name? : provide Settings Page name. i.e, `ManageSite`}
+                            {--S|settings= : Provide your Settings class name for the settings page. i.e, `SiteSettings`}
+                            {--N|namespace : Use this flag to Override the namesapace, provide your settings class name with the namespace of your choosing because by default the this command presumes that you have a Settings i.e, `SiteSettings` in your App\Settings directory.}';
 
     public function handle(): int
     {
-        $page = (string) Str::of($this->argument('name') ?? $this->askRequired('Page name (e.g. `ManageFooter`)', 'name'))
+        $page = (string) Str::of($this->argument('name') ?? $this->askRequired('Page name (e.g. `ManageSite`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
@@ -34,44 +37,25 @@ class MakeSettingsPageCommand extends Command
                 ->append('.php'),
         );
 
-        $settingsPage = (string) Str::of($this->argument('settingsClass') ?? $this->askRequired('Settings class (e.g. `FooterSettings`)', 'settings class'))
+        $settingsPage = (string) Str::of($this->option('settings') ?? $this->askRequired('Settings class (e.g. `SiteSettings`)', 'settings'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
+        $settingsNamespace = Str::of($settingsPage)->contains('\\') ?
+        (string) Str::of($settingsPage)->beforeLast('\\') :
+        '';
         $settingsClass = (string) Str::of($settingsPage)->afterLast('\\');
-        $settingsNamespace = Str::of($settingsPage)->contains('\\')
-            ? (string) Str::of($settingsPage)->beforeLast('\\')
-            : '';
-        $settingsPath = app_path(
-            (string) Str::of($settingsPage)
-                ->prepend('Filament\\Settings\\')
-                ->replace('\\','/')
-                ->append('.php'),
-        );
 
-        if ($this->checkForCollision([$path, $settingsPath])) {
+        if ($this->checkForCollision([$path])) {
             return static::INVALID;
         }
-
-        $this->publishSettingsMigration();
-
-        Artisan::call('make:settings-migration',['name' => 'Create'.$settingsClass]);
-
-        $this->copyStubToApp('Settings', $settingsPath, [
-            'class' => $settingsClass,
-            'namespace' => 'App\\Filament\\Settings' . ($settingsNamespace !== '' ? "\\{$settingsNamespace}" : '')
-        ]);
-
-        $this->info("Successfully created setting's class: App/".Str::after($settingsPath,'/app/'));
-
-        $this->info("Successfully created setting's migration: database/".Str::after(database_path('settings/Create'.$settingsClass),'/database/'));
 
         $this->copyStubToApp('SettingsPage', $path, [
             'class' => $pageClass,
             'namespace' => 'App\\Filament\\Pages' . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
             'settingsClass' => $settingsClass,
-            'settingsNamespace' => 'App\\Filament\\Settings' . ($settingsNamespace !== '' ? "\\{$settingsNamespace}" :'')
+            'settingsNamespace' => $this->option('namespace') ? $settingsNamespace : 'App\\Settings'
         ]);
 
         $this->info("Successfully created setting's page: App/".Str::after($path,'/app/')."!");
@@ -96,18 +80,5 @@ class MakeSettingsPageCommand extends Command
         $stub = (string) $stub;
 
         $this->writeFile($targetPath, $stub);
-    }
-
-    protected function publishSettingsMigration(): void
-    {
-        $filesystem = new Filesystem();
-
-        if (! Str::contains(collect($filesystem->glob(database_path('migrations/*.*')))->implode(''),'create_settings_table.php'))
-        {
-            Artisan::call('vendor:publish',[
-                '--provider' => 'Spatie\LaravelSettings\LaravelSettingsServiceProvider',
-                '--tag' => 'migrations'
-            ]);
-        }
     }
 }

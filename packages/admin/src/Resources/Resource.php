@@ -233,6 +233,11 @@ class Resource
         return [];
     }
 
+    public static function getWidgets(): array
+    {
+        return [];
+    }
+
     public static function getRouteBaseName(): string
     {
         $slug = static::getSlug();

@@ -19,7 +19,7 @@ class Component extends ViewComponent implements Htmlable
     use Concerns\CanBeHidden;
     use Concerns\CanSpanColumns;
     use Concerns\Cloneable;
-    use Concerns\EvaluatesCallbacks;
+    use Concerns\EvaluatesClosures;
     use Concerns\HasChildComponents;
     use Concerns\HasExtraAttributes;
     use Concerns\HasId;
