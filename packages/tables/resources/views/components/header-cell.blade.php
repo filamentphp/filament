@@ -23,9 +23,9 @@
         @if ($isSortColumn)
             <span class="relative flex items-center">
                 @if ($sortDirection === 'asc')
-                    <x-heroicon-s-chevron-down class="w-3 h-3" />
-                @elseif ($sortDirection === 'desc')
                     <x-heroicon-s-chevron-up class="w-3 h-3" />
+                @elseif ($sortDirection === 'desc')
+                    <x-heroicon-s-chevron-down class="w-3 h-3" />
                 @endif
             </span>
         @endif
