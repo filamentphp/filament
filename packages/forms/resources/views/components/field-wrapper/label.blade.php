@@ -4,7 +4,7 @@
     'required' => false,
 ])
 
-<label {{ $attributes->class(['inline-flex items-center space-x-3']) }}>
+<label {{ $attributes->class(['inline-flex items-center space-x-3 rtl:space-x-reverse']) }}>
     {{ $prefix }}
 
     <span @class([
