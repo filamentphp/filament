@@ -3,9 +3,9 @@
 return [
 
     'multi_select' => [
-        'no_search_results_message' => 'لا توجد خيارات تطابق بحثك.',
+        'no_search_results_message' => 'لا توجد عناصر تطابق بحثك.',
         'placeholder' => 'إختر خيارًا',
-        'search_prompt' => 'لا توجد خيارات للاختيار من بينها.',
+        'search_prompt' => 'لا توجد عناصر للاختيار من بينها.',
     ],
 
     'rich_editor' => [
@@ -47,9 +47,9 @@ return [
     ],
 
     'select' => [
-        'no_search_results_message' => 'لا توجد خيارات تطابق بحثك.',
-        'placeholder' => 'إختر خيارًا',
-        'search_prompt' => 'ابدأ الكتابة للبحث ...',
+        'no_search_results_message' => 'لا توجد عناصر تطابق بحثك.',
+        'placeholder' => 'إختر عنصرا',
+        'search_prompt' => 'إبدأ الكتابة للبحث ...',
     ],
 
     'tags_input' => [

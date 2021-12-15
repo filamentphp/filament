@@ -11,7 +11,7 @@
 @endphp
 
 <div class="px-4 py-3">
-    @if (blank($state))
+    @if (filled($state))
         <span @class([
             'inline-flex items-center justify-center h-6 px-2 text-sm font-medium tracking-tight rounded-full',
             $stateColor => $stateColor,

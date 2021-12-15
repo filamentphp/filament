@@ -2,20 +2,21 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
 
 trait HasChildComponents
 {
-    protected array $childComponents = [];
+    protected array | Closure $childComponents = [];
 
-    public function childComponents(array $components): static
+    public function childComponents(array | Closure $components): static
     {
         $this->childComponents = $components;
 
         return $this;
     }
 
-    public function schema(array $components): static
+    public function schema(array | Closure $components): static
     {
         $this->childComponents($components);
 
@@ -24,7 +25,7 @@ trait HasChildComponents
 
     public function getChildComponents(): array
     {
-        return $this->childComponents;
+        return $this->evaluate($this->childComponents);
     }
 
     public function getChildComponentContainer(): ?ComponentContainer

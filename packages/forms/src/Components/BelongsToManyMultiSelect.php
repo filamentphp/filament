@@ -105,6 +105,12 @@ class BelongsToManyMultiSelect extends MultiSelect
 
     public function saveRelationships(): void
     {
+        if ($this->saveRelationshipsUsing) {
+            parent::saveRelationships();
+
+            return;
+        }
+
         $this->getRelationship()->sync($this->getState());
     }
 

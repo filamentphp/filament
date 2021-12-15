@@ -25,12 +25,12 @@
         'w-6 h-6' => $size === 'md',
         'w-7 h-7' => $size === 'lg',
         'w-5 h-5' => $size === 'sm',
-        'mr-1 -ml-2' => ($iconPosition === 'before') && ($size === 'md'),
-        'mr-2 -ml-3' => ($iconPosition === 'before') && ($size === 'lg'),
-        'mr-1 -ml-1.5' => ($iconPosition === 'before') && ($size === 'sm'),
-        'ml-1 -mr-2' => ($iconPosition === 'after') && ($size === 'md'),
-        'ml-2 -mr-3' => ($iconPosition === 'after') && ($size === 'lg'),
-        'ml-1 -mr-1.5' => ($iconPosition === 'after') && ($size === 'sm'),
+        'ltr:mr-1 ltr:-ml-2 rtl:ml-1 ltr:-mr-2' => ($iconPosition === 'before') && ($size === 'md'),
+        'ltr:mr-2 ltr:-ml-3 rtl:ml-2 rtl:-mr-3' => ($iconPosition === 'before') && ($size === 'lg'),
+        'ltr:mr-1 ltr:-ml-1.5 rtl:ml-1 rtl:-mr-1.5' => ($iconPosition === 'before') && ($size === 'sm'),
+        'ltr:ml-1 ltr:-mr-2 rtl:mr-1 rtl:-ml-2' => ($iconPosition === 'after') && ($size === 'md'),
+        'ltr:ml-2 ltr:-mr-3 rtl:mr-2 rtl:-ml-3' => ($iconPosition === 'after') && ($size === 'lg'),
+        'ltr:ml-1 ltr:-mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm'),
     ]);
 @endphp
 

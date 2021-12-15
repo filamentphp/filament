@@ -497,7 +497,7 @@ When the checkbox is stacked, its label is above it:
 ```php
 use Filament\Forms\Components\Checkbox;
 
-Checkbox::make('is_admin')->stacked()
+Checkbox::make('is_admin')->inline(false)
 ```
 
 If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
@@ -1143,6 +1143,20 @@ You may allow the tags to be stored in a separated string, instead of JSON. To s
 use Filament\Forms\Components\TagsInput;
 
 TagsInput::make('tags')->separator(',')
+```
+
+Tags inputs may have autocomplete suggestions. To enable this, pass an array of suggestions to the `suggestions()` method:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->suggestions([
+        'tailwindcss',
+        'alpinejs',
+        'laravel',
+        'livewire',
+    ])
 ```
 
 > Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](/docs/spatie-laravel-tags-plugin) for more information.

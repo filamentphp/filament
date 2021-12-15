@@ -4,20 +4,20 @@ return [
 
     'action' => [
 
-        'label' => 'اضافة',
+        'label' => 'إضافة',
 
         'modal' => [
 
-            'heading' => 'اضافة :label',
+            'heading' => 'إضافة :label',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'اضافة',
+                    'label' => 'إضافة',
                 ],
 
                 'create_and_create_another' => [
-                    'label' => 'اضافة & اضافة المزيد',
+                    'label' => 'إضافة & إضافة المزيد',
                 ],
 
             ],
@@ -25,7 +25,7 @@ return [
         ],
 
         'messages' => [
-            'created' => 'تمت الاضافة',
+            'created' => 'تمت الإضافة',
         ],
 
     ],

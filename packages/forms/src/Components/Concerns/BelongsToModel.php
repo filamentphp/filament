@@ -2,11 +2,14 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
 use Illuminate\Database\Eloquent\Model;
 
 trait BelongsToModel
 {
     protected $model = null;
+
+    protected ?Closure $saveRelationshipsUsing = null;
 
     public function model(Model | string | callable | null $model = null): static
     {
@@ -17,6 +20,20 @@ trait BelongsToModel
 
     public function saveRelationships(): void
     {
+        $callback = $this->saveRelationshipsUsing;
+
+        if (! $callback) {
+            return;
+        }
+
+        $this->evaluate($callback);
+    }
+
+    public function saveRelationshipsUsing(?Closure $callback): static
+    {
+        $this->saveRelationshipsUsing = $callback;
+
+        return $this;
     }
 
     public function getModel(): Model | string | null

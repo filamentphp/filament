@@ -18,10 +18,10 @@ return [
 
     'bulk_action' => [
 
-        'label' => 'فصل المختار',
+        'label' => 'فصل المحدد',
 
         'modal' => [
-            'heading' => 'فصل المختار :label',
+            'heading' => 'فصل المحدد :label',
         ],
 
         'messages' => [

@@ -23,7 +23,11 @@ class HasManyRepeater extends Repeater
                 return;
             }
 
-            $component->state($relatedModels->keyBy($relationship->getLocalKeyName())->toArray());
+            $defaultState = $this->getState() ?? [];
+
+            if (count($defaultState) === 0) {
+                $component->state($relatedModels->keyBy($relationship->getLocalKeyName())->toArray());
+            }
         });
 
         $this->dehydrated(false);
@@ -38,6 +42,12 @@ class HasManyRepeater extends Repeater
 
     public function saveRelationships(): void
     {
+        if ($this->saveRelationshipsUsing) {
+            parent::saveRelationships();
+
+            return;
+        }
+
         $relationship = $this->getRelationship();
         $state = $this->getState();
 
