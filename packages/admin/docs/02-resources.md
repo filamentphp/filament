@@ -65,6 +65,12 @@ The `schema()` method is used to define the structure of your form. It is an arr
 
 To view a full list of available form [fields](/docs/forms/fields) and [layout components](/docs/forms/layout), see the [Form Builder documentation](/docs/forms/fields).
 
+If you'd like to save time, Filament can automatically generate some fields and [tables](#tables) for you, based on your model's database columns:
+
+```bash
+php artisan make:filament-resource Customer --generate
+```
+
 > You may also use the same form builder outside of the admin panel, by following [these installation instructions](/docs/forms/installation).
 
 ### Hiding components based on the page
@@ -125,6 +131,12 @@ The `columns()` method is used to define the [columns](/docs/tables/columns) in 
 [Filters](/docs/tables/filters) are predefined scopes that administrators can use to filter records in your table. The `filters()` method is used to register these.
 
 To view a full list of available table [columns](/docs/tables/columns), see the [Table Builder documentation](/docs/tables/columns).
+
+If you'd like to save time, Filament can automatically generate some columns and [form fields](#forms) for you, based on your model's database columns:
+
+```bash
+php artisan make:filament-resource Customer --generate
+```
 
 > You may also use the same table builder outside of the admin panel, by following [these installation instructions](/docs/tables/installation).
 
