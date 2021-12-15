@@ -9,8 +9,7 @@ use Illuminate\Support\Str;
 
 class Builder extends Field
 {
-    use Concerns\HasMinItems;
-    use Concerns\HasMaxItems;
+    use Concerns\CanLimitItemsLength;
 
     protected string $view = 'forms::components.builder';
 

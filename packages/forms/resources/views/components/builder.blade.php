@@ -122,7 +122,7 @@
             </ul>
         @endif
 
-        @unless ($reachedMaxItems(count($getChildComponentContainers())))
+        @if (blank($getMaxItems()) || ($getMaxItems() > $getItemsCount()))
             <div x-data="{ isCreateButtonDropdownOpen: false }" class="relative flex justify-center">
                 <button
                     x-on:click="isCreateButtonDropdownOpen = true"
@@ -160,6 +160,6 @@
                     </ul>
                 </div>
             </div>
-        @endunless
+        @endif
     </div>
 </x-forms::field-wrapper>

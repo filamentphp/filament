@@ -540,7 +540,7 @@ When the toggle is stacked, its label is above it:
 ```php
 use Filament\Forms\Components\Toggle;
 
-Toggle::make('is_admin')->stacked()
+Toggle::make('is_admin')->inline(false)
 ```
 
 Toggles may also use an "on icon" and an "off icon". These are displayed on its handle and could provide a greater indication to what your field represents. The parameter to each method must contain the name of a Blade icon component:

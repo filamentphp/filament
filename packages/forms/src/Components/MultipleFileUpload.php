@@ -7,8 +7,7 @@ use Illuminate\Support\Str;
 
 class MultipleFileUpload extends Field
 {
-    use Concerns\HasMinItems;
-    use Concerns\HasMaxItems;
+    use Concerns\CanLimitItemsLength;
 
     protected string $view = 'forms::components.multiple-file-upload';
 
@@ -56,7 +55,7 @@ class MultipleFileUpload extends Field
     {
         $files = $this->getState();
 
-        if ($this->reachedMaxItems(count($files))) {
+        if (filled($this->getMaxItems()) && $this->getMaxItems() <= $this->getItemsCount()) {
             return;
         }
 
@@ -119,5 +118,16 @@ class MultipleFileUpload extends Field
     protected function getDefaultUploadComponent(): Component
     {
         return FileUpload::make('file');
+    }
+
+    public function getItemsCount(): int
+    {
+        $files = $this->getState();
+        $files = array_filter(
+            is_array($files) ? $files : [],
+            fn (array $item): bool => filled($item['file'] ?? null),
+        );
+
+        return count($files);
     }
 }
