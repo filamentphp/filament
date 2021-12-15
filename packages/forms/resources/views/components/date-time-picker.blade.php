@@ -7,7 +7,7 @@
 
             window.dayjs_locale = dayjs.locale()
         </script>
-        <script src="//unpkg.com/dayjs@1.10.4/locale/{{ \Illuminate\Support\Str::of(app()->getLocale())->lower()->kebab() }}.js"></script>
+        <script src="//unpkg.com/dayjs@1.10.4/locale/{{ strtolower(str_replace('_', '-', app()->getLocale())) }}.js"></script>
     @endpush
 @endonce
 
