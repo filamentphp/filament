@@ -3,16 +3,18 @@
 namespace Filament\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class MakeResourceCommand extends Command
 {
+    use Concerns\CanGenerateResources;
     use Concerns\CanManipulateFiles;
     use Concerns\CanValidateInput;
 
     protected $description = 'Creates a Filament resource class and default page classes.';
 
-    protected $signature = 'make:filament-resource {name?}';
+    protected $signature = 'make:filament-resource {name?} {--G|generate}';
 
     public function handle(): int
     {
@@ -60,12 +62,14 @@ class MakeResourceCommand extends Command
         $this->copyStubToApp('Resource', $resourcePath, [
             'createResourcePageClass' => $createResourcePageClass,
             'editResourcePageClass' => $editResourcePageClass,
+            'formSchema' => $this->option('generate') ? $this->getResourceFormSchema("App\Models\\{$model}") : $this->indentString('//'),
             'indexResourcePageClass' => $indexResourcePageClass,
             'model' => $model,
             'modelClass' => $modelClass,
             'namespace' => 'App\\Filament\\Resources' . ($resourceNamespace !== '' ? "\\{$resourceNamespace}" : ''),
             'resource' => $resource,
             'resourceClass' => $resourceClass,
+            'tableColumns' => $this->option('generate') ? $this->getResourceTableColumns("App\Models\\{$model}") : $this->indentString('//'),
         ]);
 
         $this->copyStubToApp('DefaultResourcePage', $indexResourcePagePath, [
