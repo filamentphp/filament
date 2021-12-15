@@ -18,10 +18,10 @@ return [
 
     'bulk_action' => [
 
-        'label' => 'حذف المختار',
+        'label' => 'حذف المحدد',
 
         'modal' => [
-            'heading' => 'حذف المختار :label',
+            'heading' => 'حذف المحدد :label',
         ],
 
         'messages' => [
