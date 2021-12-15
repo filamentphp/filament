@@ -30,9 +30,9 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         return $this->collection ?? 'default';
     }
 
-    public function getConversion(Media $media): string
+    public function getConversion(): string
     {
-        return $media->hasGeneratedConversion($this->conversion) ? $this->conversion : '';
+        return $this->conversion ?? '';
     }
 
     public function getImagePath(): ?string
@@ -43,11 +43,8 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             return $state;
         }
 
-        $media = $this->getRecord()
-            ->getMedia($this->getCollection())
-            ->first();
-
-        return $media?->getUrl($this->getConversion($media));
+        return $this->getRecord()
+            ->getFirstMediaUrl($this->getCollection(), $this->getConversion());
     }
 
     public function applyEagreLoading(Builder $query): Builder
