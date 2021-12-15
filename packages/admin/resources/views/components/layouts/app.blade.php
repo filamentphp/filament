@@ -32,7 +32,7 @@
 
                     <div class="flex-1 flex items-center justify-between">
                         <div>
-                            <ul class="hidden gap-4 items-center font-medium text-sm lg:flex">
+                            <ul class="hidden gap-4 items-center font-medium text-sm lg:flex rtl:lg:flex-row-reverse ">
                                 @foreach ($breadcrumbs as $url => $label)
                                     <li>
                                         <a

@@ -3930,6 +3930,9 @@ select{
   --tw-rotate: 180deg;
   transform: var(--tw-transform);
 }
+[dir="rtl"] .rtl\:flex-row-reverse{
+  flex-direction: row-reverse;
+}
 [dir="rtl"] .rtl\:space-x-reverse > :not([hidden]) ~ :not([hidden]){
   --tw-space-x-reverse: 1;
 }
@@ -4384,6 +4387,10 @@ select{
 
   [dir="ltr"] .ltr\:lg\:pl-80{
     padding-left: 20rem;
+  }
+
+  [dir="rtl"] .rtl\:lg\:flex-row-reverse{
+    flex-direction: row-reverse;
   }
 
   [dir="rtl"] .rtl\:lg\:pr-80{
