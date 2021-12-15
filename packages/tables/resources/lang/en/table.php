@@ -85,12 +85,32 @@ return [
                 'label' => 'Select all :count records',
             ],
 
+            'deselect_all' => [
+                'label' => 'Deselect all :count records',
+            ],
+
         ],
 
     ],
 
     'empty' => [
         'heading' => 'No records found',
+    ],
+
+    'indicator' => [
+        'selected_rows' => 'You have selected :count records.',
+
+        'all_records' => ':count records?',
+
+        'buttons' => [
+            'select_all' => [
+                'label' => 'Select all',
+            ],
+
+            'deselect_all' => [
+                'label' => 'Deselect all',
+            ],
+        ],
     ],
 
 ];

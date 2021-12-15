@@ -64,6 +64,7 @@
                                     :actions="$getBulkActions()"
                                     :all-records-count="$getAllRecordsCount()"
                                     :all-records-selected="$areAllRecordsSelected()"
+                                    :show-select-bulk-actions="$areSelectBulkActionsEnabled()"
                                     class="mr-2"
                                 />
                             @endif
@@ -122,6 +123,16 @@
                             <th class="w-5"></th>
                         @endif
                     </x-slot>
+
+                    @if($isSelectionEnabled() && $getSelectedRecordCount() > 0)
+                        <x-tables::indicator
+                            :selected-record-count="$getSelectedRecordCount()"
+                            :all-records-count="$getAllRecordsCount()"
+                            :are-select-indicator-actions-enabled="$areSelectIndicatorActionsEnabled()"
+                            :are-all-records-on-current-page-selected="$areAllRecordsOnCurrentPageSelected()"
+                            :are-all-records-selected="$areAllRecordsSelected()"
+                        />
+                    @endif
 
                     @foreach ($records as $record)
                         <x-tables::row wire:key="{{ $record->getKey() }}">

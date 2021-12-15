@@ -1,6 +1,7 @@
 @props([
     'actions',
     'allRecordsCount',
+    'showSelectBulkActions',
     'allRecordsSelected' => false,
 ])
 
@@ -25,12 +26,20 @@
         class="absolute z-10 mt-2 shadow-xl rounded-xl w-52 top-full"
     >
         <ul class="py-1 space-y-1 overflow-hidden bg-white shadow rounded-xl">
-            @if (! $allRecordsSelected)
-                <x-tables::dropdown.item wire:click="toggleSelectAllTableRecords" icon="heroicon-o-duplicate">
-                    {{ __('tables::table.actions.buttons.select_all.label', ['count' => $allRecordsCount]) }}
-                </x-tables::dropdown.item>
+            @if($showSelectBulkActions)
+                @if (! $allRecordsSelected)
+                    <x-tables::dropdown.item wire:click="toggleSelectAllTableRecords" icon="heroicon-o-duplicate">
+                        {{ __('tables::table.actions.buttons.select_all.label', ['count' => $allRecordsCount]) }}
+                    </x-tables::dropdown.item>
 
-                <div aria-hidden="true" class="border-t border-gray-200 ml-11"></div>
+                    <div aria-hidden="true" class="border-t border-gray-200 ml-11"></div>
+                @else
+                    <x-tables::dropdown.item wire:click="deselectAllTableRecords" icon="heroicon-o-minus-circle">
+                        {{ __('tables::table.actions.buttons.deselect_all.label', ['count' => $allRecordsCount]) }}
+                    </x-tables::dropdown.item>
+
+                    <div aria-hidden="true" class="border-t border-gray-200 ml-11"></div>
+                @endif
             @endif
 
             @foreach($actions as $action)

@@ -136,4 +136,14 @@ trait CanSelectRecords
             $this->selectTableRecord($record);
         }
     }
+
+    protected function areSelectIndicatorActionsEnabled(): bool
+    {
+        return true;
+    }
+
+    protected function areSelectBulkActionsEnabled(): bool
+    {
+        return true;
+    }
 }
