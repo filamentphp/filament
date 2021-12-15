@@ -2,7 +2,7 @@
 
 namespace {{ namespace }};
 
-use App\Filament\Settings\{{ settingsClass }};
+use {{ settingsNamespace }}\{{ settingsClass }};
 use Filament\Pages\SettingsPage;
 
 class {{ class }} extends SettingsPage
