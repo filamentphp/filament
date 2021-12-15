@@ -2,7 +2,7 @@
 
 return [
 
-    'breadcrumb' => 'مشاهدة',
+    'breadcrumb' => 'عرض',
 
     'actions' => [
 
