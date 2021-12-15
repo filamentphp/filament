@@ -2,8 +2,6 @@
 
 namespace Filament\Forms\Components;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class Placeholder extends Component
