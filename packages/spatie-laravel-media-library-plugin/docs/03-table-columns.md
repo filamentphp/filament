@@ -5,7 +5,7 @@ title: Table Columns
 To use the media library image column:
 
 ```php
-use Filament\Tables\Components\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
 SpatieMediaLibraryImageColumn::make('avatar'),
 ```
@@ -13,7 +13,7 @@ SpatieMediaLibraryImageColumn::make('avatar'),
 Optionally, you may pass a `collection()`:
 
 ```php
-use Filament\Tables\Components\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
 SpatieMediaLibraryImageColumn::make('avatar')->collection('avatars'),
 ```
@@ -23,7 +23,7 @@ The [collection](https://spatie.be/docs/laravel-medialibrary/v9/working-with-med
 You may also specify a `conversion()` to use, if present:
 
 ```php
-use Filament\Tables\Components\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
 SpatieMediaLibraryImageColumn::make('avatar')->conversion('thumb'),
 ```
