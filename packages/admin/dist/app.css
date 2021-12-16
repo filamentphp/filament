@@ -2409,11 +2409,11 @@ select{
 .left-0{
   left: 0px;
 }
-.right-0{
-  right: 0px;
-}
 .top-auto{
   top: auto;
+}
+.right-0{
+  right: 0px;
 }
 .top-full{
   top: 100%;
@@ -3236,9 +3236,6 @@ select{
 .pl-9{
   padding-left: 2.25rem;
 }
-.pl-12{
-  padding-left: 3rem;
-}
 .pl-2{
   padding-left: 0.5rem;
 }
@@ -3929,6 +3926,9 @@ select{
 [dir="ltr"] .ltr\:-mr-1{
   margin-right: -0.25rem;
 }
+[dir="ltr"] .ltr\:ml-3{
+  margin-left: 0.75rem;
+}
 [dir="ltr"] .ltr\:pl-12{
   padding-left: 3rem;
 }
@@ -3976,6 +3976,9 @@ select{
 }
 [dir="rtl"] .rtl\:-mr-2{
   margin-right: -0.5rem;
+}
+[dir="rtl"] .rtl\:mr-3{
+  margin-right: 0.75rem;
 }
 [dir="rtl"] .rtl\:rotate-180{
   --tw-rotate: 180deg;
