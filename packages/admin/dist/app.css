@@ -3935,6 +3935,9 @@ select{
 [dir="ltr"] .ltr\:pl-12{
   padding-left: 3rem;
 }
+[dir="ltr"] .ltr\:pr-2{
+  padding-right: 0.5rem;
+}
 [dir="ltr"] .ltr\:text-left{
   text-align: left;
 }
@@ -3992,6 +3995,9 @@ select{
 }
 [dir="rtl"] .rtl\:pr-12{
   padding-right: 3rem;
+}
+[dir="rtl"] .rtl\:pl-2{
+  padding-left: 0.5rem;
 }
 [dir="rtl"] .rtl\:text-right{
   text-align: right;
