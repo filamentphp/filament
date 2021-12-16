@@ -54,7 +54,7 @@ trait HasState
 
             $componentModel = $component->getModel();
 
-            if ($componentModel instanceof Model && $componentModel->exists()) {
+            if ($componentModel instanceof Model && $componentModel->exists) {
                 $component->saveRelationships();
             }
 
