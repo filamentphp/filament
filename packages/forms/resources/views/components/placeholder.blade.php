@@ -6,5 +6,5 @@
     :hint="$getHint()"
     :state-path="$getStatePath()"
 >
-    {{ $getState() }}
+    {{ $getContent() }}
 </x-forms::field-wrapper>
