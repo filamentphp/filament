@@ -73,9 +73,11 @@
                 {{ $slot }}
             </div>
 
-            <div class="py-4 shrink-0">
-                <x-filament::footer />
-            </div>
+            @if(config('filament.layout.footer.show_logo'))
+                <div class="py-4 shrink-0">
+                    <x-filament::footer />
+                </div>
+            @endif
         </div>
     </div>
 </x-filament::layouts.base>

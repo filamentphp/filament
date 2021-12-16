@@ -129,6 +129,9 @@ return [
                 'alignment' => 'left',
             ],
         ],
+        'footer' => [
+            'show_logo' => env('FILAMENT_SHOW_FOOTER_LOGO', true),
+        ],
     ],
 
     /*
