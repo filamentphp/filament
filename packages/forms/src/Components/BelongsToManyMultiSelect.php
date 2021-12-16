@@ -25,11 +25,15 @@ class BelongsToManyMultiSelect extends MultiSelect
                 return;
             }
 
-            $component->state(
-                $relatedModels->pluck(
-                    $relationship->getRelatedKeyName(),
-                )->toArray(),
-            );
+            $defaultState = $this->getState() ?? [];
+
+            if (count($defaultState) === 0) {
+                $component->state(
+                    $relatedModels->pluck(
+                        $relationship->getRelatedKeyName(),
+                    )->toArray(),
+                );
+            }
         });
 
         $this->dehydrated(false);
