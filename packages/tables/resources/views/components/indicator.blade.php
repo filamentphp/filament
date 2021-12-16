@@ -1,16 +1,17 @@
 @props([
     'selectedRecordCount',
     'allRecordsCount',
+    'getColumnsCount',
     'areSelectIndicatorActionsEnabled' => true,
     'areAllRecordsOnCurrentPageSelected' => false,
-    'areAllRecordsSelected' => false
+    'areAllRecordsSelected' => false,
 ])
 
 <tr class="bg-primary-500/10">
-    <td class="px-4 py-2 whitespace-nowrap text-sm" colspan="10">
+    <td class="px-4 py-2 whitespace-nowrap text-sm" colspan="{{ $getColumnsCount }}">
         <div>
             <span>
-                {{ __('tables::table.indicator.selected_rows', ['count' => $selectedRecordCount]) }}
+                {{ trans_choice('tables::table.indicator.selected_rows', $selectedRecordCount, ['count' => $selectedRecordCount]) }}
 
                 @if($areSelectIndicatorActionsEnabled)
                      @if($areAllRecordsOnCurrentPageSelected && !$areAllRecordsSelected)
@@ -18,7 +19,9 @@
                             {{ __('tables::table.indicator.buttons.select_all.label') }}
                         </button>
 
-                        {{ __('tables::table.indicator.all_records', ['count' => $allRecordsCount]) }}
+                        <span>
+                            {{ __('tables::table.indicator.all_records', ['count' => $allRecordsCount]) }}
+                        </span>
                     @endif
 
                     <button wire:click="deselectAllTableRecords" class="text-primary-600 text-sm font-medium">

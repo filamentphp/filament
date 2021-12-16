@@ -98,7 +98,7 @@ return [
     ],
 
     'indicator' => [
-        'selected_rows' => 'You have selected :count records.',
+        'selected_rows' => '{1} You have selected :count record.|[2,*] You have selected :count records.',
 
         'all_records' => ':count records?',
 

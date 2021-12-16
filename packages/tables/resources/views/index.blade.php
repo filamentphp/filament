@@ -9,6 +9,10 @@
     $isSearchVisible = $isSearchable();
     $isFiltersDropdownVisible = $isFilterable();
 
+    $colspan = count($columns);
+    if ($isSelectionEnabled()) $colspan++;
+    if (count($actions) > 0) $colspan++;
+
     $getHiddenClasses = function (\Filament\Tables\Columns\Column $column): ?string {
         if ($breakpoint = $column->getHiddenFrom()) {
             return match ($breakpoint) {
@@ -131,6 +135,7 @@
                             :are-select-indicator-actions-enabled="$areSelectIndicatorActionsEnabled()"
                             :are-all-records-on-current-page-selected="$areAllRecordsOnCurrentPageSelected()"
                             :are-all-records-selected="$areAllRecordsSelected()"
+                            :get-columns-count="$colspan"
                         />
                     @endif
 
