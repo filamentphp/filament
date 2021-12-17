@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Cache;
 
 trait CanPaginateRecords
 {
@@ -14,6 +15,10 @@ trait CanPaginateRecords
 
     public function updatedTableRecordsPerPage(): void
     {
+        if (config('tables.remember_per_page')) {
+            Cache::forever($this->getPerPageRememberKey(), $this->getTableRecordsPerPage());
+        }
+
         $this->resetPage();
     }
 
@@ -29,7 +34,9 @@ trait CanPaginateRecords
 
     protected function getDefaultTableRecordsPerPageSelectOption(): int
     {
-        return 10;
+        return config('tables.remember_per_page')
+            ? Cache::get($this->getPerPageRememberKey(), 10)
+            : 10;
     }
 
     protected function isTablePaginationEnabled(): bool
@@ -40,6 +47,11 @@ trait CanPaginateRecords
     protected function getTablePaginationPageName(): string
     {
         return $this->getIdentifiedTableQueryStringPropertyNameFor('page');
+    }
+
+    public function getPerPageRememberKey(): string
+    {
+        return $this->getTablePaginationPageName() . '_' . 'per_page';
     }
 
     public function resetPage(?string $pageName = null): void
