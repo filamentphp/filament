@@ -381,7 +381,7 @@ The `getOptionLabelUsing()` method accepts a callback that transforms the select
 Select::make('authorId')
     ->searchable()
     ->getSearchResultsUsing(fn (string $query) => User::where('name', 'like', "%{$query}%")->pluck('name', 'id'))
-    ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name)),
+    ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
 ```
 
 ### Dependant selects
@@ -404,7 +404,7 @@ BelongsToSelect::make('authorId')
     ->relationship('author', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
@@ -460,7 +460,7 @@ BelongsToManyMultiSelect::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
@@ -497,7 +497,7 @@ When the checkbox is stacked, its label is above it:
 ```php
 use Filament\Forms\Components\Checkbox;
 
-Checkbox::make('is_admin')->stacked()
+Checkbox::make('is_admin')->inline(false)
 ```
 
 If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
@@ -540,7 +540,7 @@ When the toggle is stacked, its label is above it:
 ```php
 use Filament\Forms\Components\Toggle;
 
-Toggle::make('is_admin')->stacked()
+Toggle::make('is_admin')->inline(false)
 ```
 
 Toggles may also use an "on icon" and an "off icon". These are displayed on its handle and could provide a greater indication to what your field represents. The parameter to each method must contain the name of a Blade icon component:
@@ -769,6 +769,16 @@ MultipleFileUpload::make('attachments')
     )
 ```
 
+You may customise the number of files that may be uploaded, using the `minFiles()` and `maxFiles()` methods:
+
+```php
+use Filament\Forms\Components\MultipleFileUpload;
+
+MultipleFileUpload::make('attachments')
+    ->minFiles(2)
+    ->maxFiles(5)
+```
+
 > Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/docs/spatie-laravel-media-library-plugin) for more information.
 
 ## Rich editor
@@ -916,6 +926,8 @@ Repeater::make('members')
     ])
 ```
 
+We recommend that you store repeater data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
+
 As evident in the above example, the component schema can be defined within the `schema()` method of the component:
 
 ```php
@@ -930,6 +942,60 @@ Repeater::make('members')
 ```
 
 If you wish to define a repeater with multiple schema blocks that can be repeated in any order, please use the [builder](#builder).
+
+Repeaters may have a certain number of empty items created by default, using the `defaultItems()` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->defaultItems(1)
+```
+
+You may set a label to customize the text that should be displayed in the button for adding a repeater item:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->createItemButtonLabel('Add member')
+```
+
+You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->minItems(1)
+    ->maxItems(10)
+```
+
+### Populating automatically from a `hasMany` relationship
+
+You may employ the `relationship()` method of the `HasManyRepeater` to configure a relationship to automatically retrieve and save repeater items:
+
+```php
+use App\Models\App;
+use Filament\Forms\Components\HasManyRepeater;
+
+HasManyRepeater::make('qualifications')
+    ->relationship('qualifications')
+    ->schema([
+        // ...
+    ])
+```
+
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
 ## Builder
 
@@ -976,6 +1042,8 @@ Builder::make('content')
     ])
 ```
 
+We recommend that you store builder data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
+
 As evident in the above example, blocks can be defined within the `blocks()` method of the component. Blocks are `Builder\Block` objects, and require a unique name, and a component schema:
 
 ```php
@@ -1007,6 +1075,20 @@ Blocks may also have an icon, which is displayed next to the label. The `icon()`
 use Filament\Forms\Components\Builder;
 
 Builder\Block::make('heading')->icon('heroicon-o-archive')
+```
+
+You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
+
+```php
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\TextInput;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->minItems(1)
+    ->maxItems(10)
 ```
 
 ## Tags input
@@ -1042,6 +1124,20 @@ You may allow the tags to be stored in a separated string, instead of JSON. To s
 use Filament\Forms\Components\TagsInput;
 
 TagsInput::make('tags')->separator(',')
+```
+
+Tags inputs may have autocomplete suggestions. To enable this, pass an array of suggestions to the `suggestions()` method:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->suggestions([
+        'tailwindcss',
+        'alpinejs',
+        'laravel',
+        'livewire',
+    ])
 ```
 
 > Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](/docs/spatie-laravel-tags-plugin) for more information.
@@ -1107,6 +1203,16 @@ KeyValue::make('meta')
     ->disableEditingKeys()
 ```
 
+You may also add placeholders for the key and value fields using the `keyPlaceholder()` and `valuePlaceholder()` methods:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+    ->keyPlaceholder('Property name')
+    ->valuePlaceholder('Property value')
+```
+
 ## View
 
 Aside from [building custom fields](#building-custom-fields), you may create "view" fields which allow you to create custom fields without extra PHP classes.
@@ -1119,7 +1225,7 @@ ViewField::make('notifications')->view('filament.forms.components.range-slider')
 
 Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
 
-The `$getStatePath()` callable may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
+The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
 
 ```blade
 <x-forms::field-wrapper
@@ -1162,7 +1268,7 @@ class RangeSlider extends Field
 
 Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
 
-The `$getStatePath()` callable may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
+The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
 
 ```blade
 <x-forms::field-wrapper

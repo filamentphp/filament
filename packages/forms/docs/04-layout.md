@@ -231,12 +231,12 @@ Section::make('Heading')
 
 ## Placeholder
 
-Placeholders can be used to render text-only "fields" within your forms. Each placeholder has a state, which is cannot be changed by the user.
+Placeholders can be used to render text-only "fields" within your forms. Each placeholder has `content()`, which is cannot be changed by the user.
 
 ```php
 use Filament\Forms\Components\Placeholder;
 
-Placeholder::make('Label')->state('Value, displayed underneath the label')
+Placeholder::make('Label')->content('Content, displayed underneath the label')
 ```
 
 ## Card
@@ -274,7 +274,7 @@ use Filament\Forms\Components\View;
 View::make('filament.forms.components.wizard')
 ```
 
-Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` callable:
+Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` closure:
 
 ```blade
 <div>
@@ -310,7 +310,7 @@ class Wizard extends Component
 }
 ```
 
-Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` callable:
+Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` closure:
 
 ```blade
 <div>

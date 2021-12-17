@@ -12,7 +12,7 @@
         @endif
         type="button"
         @class([
-            'flex items-center whitespace-nowrap space-x-1 font-medium text-sm text-gray-600',
+            'flex items-center whitespace-nowrap space-x-1 rtl:space-x-reverse font-medium text-sm text-gray-600',
             'cursor-default' => ! $sortable,
         ])
     >
@@ -23,9 +23,9 @@
         @if ($isSortColumn)
             <span class="relative flex items-center">
                 @if ($sortDirection === 'asc')
-                    <x-heroicon-s-chevron-down class="w-3 h-3" />
-                @elseif ($sortDirection === 'desc')
                     <x-heroicon-s-chevron-up class="w-3 h-3" />
+                @elseif ($sortDirection === 'desc')
+                    <x-heroicon-s-chevron-down class="w-3 h-3" />
                 @endif
             </span>
         @endif

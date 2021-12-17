@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 
 class Builder extends Field
 {
+    use Concerns\CanLimitItemsLength;
+
     protected string $view = 'forms::components.builder';
 
     protected $createItemBetweenButtonLabel = null;
@@ -22,7 +24,7 @@ class Builder extends Field
         parent::setUp();
 
         $this->registerListeners([
-            'builder.createItem' => [
+            'builder::createItem' => [
                 function (Builder $component, string $statePath, string $block, ?string $afterUuid = null): void {
                     if ($component->isDisabled()) {
                         return;
@@ -59,7 +61,7 @@ class Builder extends Field
                     $component->hydrateDefaultItemState($newUuid);
                 },
             ],
-            'builder.deleteItem' => [
+            'builder::deleteItem' => [
                 function (Builder $component, string $statePath, string $uuidToDelete): void {
                     if ($component->isDisabled()) {
                         return;
@@ -77,7 +79,7 @@ class Builder extends Field
                     data_set($livewire, $statePath, $items);
                 },
             ],
-            'builder.moveItemDown' => [
+            'builder::moveItemDown' => [
                 function (Builder $component, string $statePath, string $uuidToMoveDown): void {
                     if ($component->isDisabled()) {
                         return;
@@ -97,7 +99,7 @@ class Builder extends Field
                     data_set($livewire, $statePath, $items);
                 },
             ],
-            'builder.moveItemUp' => [
+            'builder::moveItemUp' => [
                 function (Builder $component, string $statePath, string $uuidToMoveUp): void {
                     if ($component->isDisabled()) {
                         return;
@@ -177,11 +179,11 @@ class Builder extends Field
     public function getChildComponentContainers(): array
     {
         return collect($this->getNormalisedState())
-            ->map(function ($item, $index): ComponentContainer {
-                return $this->getBlock($item['type'])
+            ->map(function ($itemData, $itemIndex): ComponentContainer {
+                return $this->getBlock($itemData['type'])
                     ->getChildComponentContainer()
                     ->getClone()
-                    ->statePath("{$index}.data");
+                    ->statePath("{$itemIndex}.data");
             })->toArray();
     }
 

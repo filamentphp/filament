@@ -29,7 +29,7 @@ trait CanAttachRecords
     protected function getResourceAttachForm(): Form
     {
         if (! $this->resourceAttachForm) {
-            $this->resourceAttachForm = static::attachForm(Form::make($this));
+            $this->resourceAttachForm = static::attachForm(Form::make());
         }
 
         return $this->resourceAttachForm;

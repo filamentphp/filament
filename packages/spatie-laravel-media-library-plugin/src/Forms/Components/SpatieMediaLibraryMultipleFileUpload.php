@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components;
 
-use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 
 class SpatieMediaLibraryMultipleFileUpload extends MultipleFileUpload
@@ -14,13 +13,8 @@ class SpatieMediaLibraryMultipleFileUpload extends MultipleFileUpload
         parent::setUp();
 
         $this->afterStateHydrated(function (SpatieMediaLibraryMultipleFileUpload $component) {
-            $state = $component->getUploadedFiles();
-
-            $state[(string) Str::uuid()] = [
-                'file' => null,
-            ];
-
-            $component->state($state);
+            $component->state($component->getUploadedFiles());
+            $component->appendNewUploadField();
         });
 
         $this->dehydrated(false);

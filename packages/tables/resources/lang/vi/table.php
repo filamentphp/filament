@@ -5,22 +5,22 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => '搜索',
-            'placeholder' => '搜索',
+            'label' => 'Tìm kiếm',
+            'placeholder' => 'Tìm kiếm',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => '分页',
+        'label' => 'Pagination Navigation',
 
-        'overview' => '显示 :first 到 :last 的 :total 结果',
+        'overview' => 'Hiển thị từ :first đến :last trong số :total kết quả',
 
         'fields' => [
 
             'records_per_page' => [
-                'label' => '每页',
+                'label' => 'mỗi trang',
             ],
 
         ],
@@ -28,15 +28,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => '跳转到 :page',
+                'label' => 'Đi tới trang :page',
             ],
 
             'next' => [
-                'label' => '下一页',
+                'label' => 'Tiếp',
             ],
 
             'previous' => [
-                'label' => '上一页',
+                'label' => 'Trước',
             ],
 
         ],
@@ -46,11 +46,11 @@ return [
     'buttons' => [
 
         'filter' => [
-            'label' => '筛选',
+            'label' => 'Lọc',
         ],
 
         'open_actions' => [
-            'label' => 'Open actions',
+            'label' => 'Xem hành động',
         ],
 
     ],
@@ -59,20 +59,20 @@ return [
 
         'modal' => [
 
-            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
+            'requires_confirmation_subheading' => 'Bạn có chắc muốn thực hiện hành động này?',
 
             'buttons' => [
 
                 'cancel' => [
-                    'label' => '取消',
+                    'label' => 'Hủy',
                 ],
 
                 'confirm' => [
-                    'label' => 'Confirm',
+                    'label' => 'Xác nhận',
                 ],
 
                 'submit' => [
-                    'label' => 'Submit',
+                    'label' => 'Gửi',
                 ],
 
             ],
@@ -82,7 +82,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Select all :count records',
+                'label' => 'Chọn tất cả :count dòng',
             ],
 
         ],
@@ -90,7 +90,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => '没有找到相关记录',
+        'heading' => 'Không có dữ liệu nào',
     ],
 
 ];

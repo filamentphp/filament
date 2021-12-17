@@ -2,17 +2,17 @@
 
 namespace Filament\Resources;
 
+use Closure;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Contracts\HasForms;
 
 class Form
 {
     protected array | int | null $columns = null;
 
-    protected array | Component $schema = [];
+    protected array | Component | Closure $schema = [];
 
-    public static function make(HasForms $livewire): static
+    public static function make(): static
     {
         return new static();
     }
@@ -24,7 +24,7 @@ class Form
         return $this;
     }
 
-    public function schema(array | Component $schema): static
+    public function schema(array | Component | Closure $schema): static
     {
         $this->schema = $schema;
 
@@ -36,11 +36,11 @@ class Form
         return $this->columns;
     }
 
-    public function getSchema(): array | Component
+    public function getSchema(): array
     {
         $schema = $this->schema;
 
-        if (is_array($this->schema)) {
+        if (is_array($schema) || $schema instanceof Closure) {
             $schema = Grid::make()
                 ->schema($schema)
                 ->columns($this->getColumns());

@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 
 class MultipleFileUpload extends Field
 {
+    use Concerns\CanLimitItemsLength;
+
     protected string $view = 'forms::components.multiple-file-upload';
 
     protected $uploadComponent = null;
@@ -32,11 +34,8 @@ class MultipleFileUpload extends Field
                 }
             }
 
-            $state[(string) Str::uuid()] = [
-                'file' => null,
-            ];
-
             $component->state($state);
+            $component->appendNewUploadField();
         });
 
         $this->dehydrateStateUsing(function ($state) {
@@ -56,6 +55,10 @@ class MultipleFileUpload extends Field
     {
         $files = $this->getState();
 
+        if (filled($this->getMaxItems()) && $this->getMaxItems() <= $this->getItemsCount()) {
+            return;
+        }
+
         $files[(string) Str::uuid()] = [
             'file' => null,
         ];
@@ -72,6 +75,16 @@ class MultipleFileUpload extends Field
         $this->state($files);
     }
 
+    public function minFiles(int | callable $count): static
+    {
+        $this->minItems($count);
+    }
+
+    public function maxFiles(int | callable $count): static
+    {
+        $this->maxItems($count);
+    }
+
     public function uploadComponent(Component | callable $component): static
     {
         $this->uploadComponent = $component;
@@ -82,11 +95,11 @@ class MultipleFileUpload extends Field
     public function getChildComponentContainers(): array
     {
         return collect($this->getState())
-            ->map(function ($item, $index): ComponentContainer {
+            ->map(function ($itemData, $itemIndex): ComponentContainer {
                 return $this
                     ->getChildComponentContainer()
                     ->getClone()
-                    ->statePath($index);
+                    ->statePath($itemIndex);
             })->toArray();
     }
 
@@ -105,5 +118,16 @@ class MultipleFileUpload extends Field
     protected function getDefaultUploadComponent(): Component
     {
         return FileUpload::make('file');
+    }
+
+    public function getItemsCount(): int
+    {
+        $files = $this->getState();
+        $files = array_filter(
+            is_array($files) ? $files : [],
+            fn (array $item): bool => filled($item['file'] ?? null),
+        );
+
+        return count($files);
     }
 }

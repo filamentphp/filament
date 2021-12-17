@@ -32,6 +32,8 @@ trait Translatable
 
         $this->callHook('afterValidate');
 
+        $data = $this->mutateFormDataBeforeCreate($data);
+
         $this->callHook('beforeCreate');
 
         $this->record = static::getModel()::usingLocale(

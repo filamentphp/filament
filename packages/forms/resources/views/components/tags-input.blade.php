@@ -11,7 +11,7 @@
         x-data="tagsInputFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
-        {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
+        id="{{ $getId() }}"
         {{ $attributes->merge($getExtraAttributes()) }}
     >
         <div
@@ -23,22 +23,36 @@
             ])
         >
             @unless ($isDisabled())
-                <input
-                    autocomplete="off"
-                    {!! $isAutofocused() ? 'autofocus' : null !!}
-                    {!! $getPlaceholder() ? 'placeholder="' . $getPlaceholder() . '"' : null !!}
-                    type="text"
-                    x-on:keydown.enter.stop.prevent="createTag()"
-                    x-model="newTag"
-                    class="block w-full border-0"
-                />
+                <div>
+                    <input
+                        autocomplete="off"
+                        {!! $isAutofocused() ? 'autofocus' : null !!}
+                        id="{{ $getId() }}"
+                        list="{{ $getId() }}-suggestions"
+                        {!! $getPlaceholder() ? 'placeholder="' . $getPlaceholder() . '"' : null !!}
+                        type="text"
+                        x-on:keydown.enter.stop.prevent="createTag()"
+                        x-on:keydown.,.stop.prevent="createTag()"
+                        x-on:blur="createTag()"
+                        x-model="newTag"
+                        class="block w-full border-0"
+                    />
+
+                    <datalist id="{{ $getId() }}-suggestions">
+                        @foreach ($getSuggestions() as $suggestion)
+                            <template x-if="! state.includes('{{ $suggestion }}')" x-bind:key="'{{ $suggestion }}'">
+                                <option value="{{ $suggestion }}" />
+                            </template>
+                        @endforeach
+                    </datalist>
+                </div>
             @endunless
 
             <div
                 x-show="state.length"
                 class="overflow-hidden rtl:space-x-reverse relative w-full px-1 py-1"
             >
-                <div class="flex gap-1">
+                <div class="flex flex-wrap gap-1">
                     <template class="inline" x-for="tag in state" x-bind:key="tag">
                         <button
                             @unless ($isDisabled())

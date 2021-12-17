@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use SplFileInfo;
@@ -61,6 +62,12 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     public function saveRelationships(): void
     {
+        if ($this->saveRelationshipsUsing) {
+            parent::saveRelationships();
+
+            return;
+        }
+
         $this->saveUploadedFile();
     }
 
@@ -111,12 +118,21 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     protected function handleUploadedFileUrlRetrieval($file): ?string
     {
+        $storage = $this->getDisk();
+
         if (! $this->getModel()) {
             return null;
         }
 
         if ($file instanceof SplFileInfo) {
             return null;
+        }
+
+        if (
+            $storage->getDriver()->getAdapter() instanceof AwsS3Adapter &&
+            $this->getVisibility() === 'private'
+        ) {
+            return Media::findByUuid($file)?->getTemporaryUrl(now()->addMinutes(5));
         }
 
         return Media::findByUuid($file)?->getUrl();

@@ -110,7 +110,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         $label = $resource::getLabel();
 
         return ButtonAction::make('create')
-            ->label("New {$label}")
+            ->label(__('filament::resources/pages/list-records.actions.create.label', ['label' => $label]))
             ->url(fn () => $resource::getUrl('create'));
     }
 

@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Edit :record',
+    'title' => 'Edit :label',
 
     'breadcrumb' => 'Edit',
 
@@ -42,7 +42,7 @@ return [
 
         'delete' => [
 
-            'heading' => 'Delete :record',
+            'heading' => 'Delete :label',
 
             'subheading' => 'Are you sure you would like to do this?',
 

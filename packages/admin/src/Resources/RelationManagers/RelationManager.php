@@ -52,7 +52,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     protected function getResourceForm(): Form
     {
         if (! $this->resourceForm) {
-            $this->resourceForm = static::form(Form::make($this)->columns(2));
+            $this->resourceForm = static::form(Form::make()->columns(2));
         }
 
         return $this->resourceForm;

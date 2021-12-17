@@ -21,7 +21,7 @@
         </div>
 
         @if (count($actions))
-            <x-tables::actions :actions="$actions" class="flex-shrink-0" />
+            <x-tables::actions :actions="$actions" class="shrink-0" />
         @endif
     </div>
 </div>

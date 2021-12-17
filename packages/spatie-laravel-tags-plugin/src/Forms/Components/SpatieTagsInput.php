@@ -2,7 +2,9 @@
 
 namespace Filament\Forms\Components;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Tags\Tag;
 
 class SpatieTagsInput extends TagsInput
 {
@@ -19,11 +21,8 @@ class SpatieTagsInput extends TagsInput
                 return;
             }
 
-            if ($type = $component->getType()) {
-                $tags = $model->tagsWithType($type);
-            } else {
-                $tags = $model->tags;
-            }
+            $type = $component->getType();
+            $tags = $model->tagsWithType($type);
 
             $component->state($tags->pluck('name'));
         });
@@ -33,6 +32,12 @@ class SpatieTagsInput extends TagsInput
 
     public function saveRelationships(): void
     {
+        if ($this->saveRelationshipsUsing) {
+            parent::saveRelationships();
+
+            return;
+        }
+
         $model = $this->getModel();
         $tags = $this->getState();
 
@@ -50,6 +55,20 @@ class SpatieTagsInput extends TagsInput
         $this->type = $type;
 
         return $this;
+    }
+
+    public function getSuggestions(): array
+    {
+        $type = $this->getType();
+
+        return Tag::query()
+            ->when(
+                filled($type),
+                fn (Builder $query) => $query->withType($type),
+                fn (Builder $query) => $query->whereNull('type'),
+            )
+            ->pluck('name')
+            ->toArray();
     }
 
     public function getType(): ?string

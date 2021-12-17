@@ -123,6 +123,14 @@ return [
     */
 
     'layout' => [
+        'forms' => [
+            'actions' => [
+                'alignment' => 'left',
+            ],
+        ],
+        'footer' => [
+            'should_show_logo' => true,
+        ],
         'max_content_width' => null,
     ],
 

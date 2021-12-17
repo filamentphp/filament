@@ -17,7 +17,7 @@ This package is compatible with other Filament v2.x products. The [form builder]
 To get started with the admin panel, you can install it using the command:
 
 ```bash
-composer require filament/filament
+composer require filament/filament:^2.0
 ```
 
 If you don't have one, you may create a new user account using:
@@ -34,6 +34,14 @@ If you wish, you may publish the configuration of the package using:
 
 ```bash
 php artisan vendor:publish --tag=filament-config
+```
+
+## Publishing the translations
+
+If you wish to translate the package, you may publish the language files using:
+
+```bash
+php artisan vendor:publish --tag=filament-translations
 ```
 
 ## Upgrade Guide

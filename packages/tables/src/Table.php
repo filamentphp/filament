@@ -46,6 +46,8 @@ class Table extends ViewComponent implements Htmlable
 
     protected array $meta = [];
 
+    protected string $model;
+
     protected ?array $recordsPerPageSelectOptions = null;
 
     protected bool $areSelectIndicatorActionsEnabled = true;
@@ -153,6 +155,13 @@ class Table extends ViewComponent implements Htmlable
         return $this;
     }
 
+    public function model(string $model): static
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
     public function recordsPerPageSelectOptions(array $options): static
     {
         $this->recordsPerPageSelectOptions = $options;
@@ -253,6 +262,11 @@ class Table extends ViewComponent implements Htmlable
     public function getHeading(): ?string
     {
         return value($this->heading);
+    }
+
+    public function getModel(): string
+    {
+        return $this->model;
     }
 
     public function getMountedAction(): ?Action

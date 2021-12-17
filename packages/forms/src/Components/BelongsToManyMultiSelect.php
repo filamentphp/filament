@@ -18,6 +18,10 @@ class BelongsToManyMultiSelect extends MultiSelect
         parent::setUp();
 
         $this->afterStateHydrated(function (BelongsToManyMultiSelect $component): void {
+            if (count($this->getState() ?? [])) {
+                return;
+            }
+
             $relationship = $component->getRelationship();
             $relatedModels = $relationship->getResults();
 
@@ -63,7 +67,9 @@ class BelongsToManyMultiSelect extends MultiSelect
             $relationshipQuery = $relationship->getRelated()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
-                $relationshipQuery = $callback($relationshipQuery);
+                $relationshipQuery = $this->evaluate($callback, [
+                    'query' => $relationshipQuery,
+                ]);
             }
 
             $query = strtolower($query);
@@ -88,7 +94,9 @@ class BelongsToManyMultiSelect extends MultiSelect
             $relationshipQuery = $relationship->getRelated()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
-                $relationshipQuery = $callback($relationshipQuery);
+                $relationshipQuery = $this->evaluate($callback, [
+                    'query' => $relationshipQuery,
+                ]);
             }
 
             return $relationshipQuery
@@ -101,6 +109,12 @@ class BelongsToManyMultiSelect extends MultiSelect
 
     public function saveRelationships(): void
     {
+        if ($this->saveRelationshipsUsing) {
+            parent::saveRelationships();
+
+            return;
+        }
+
         $this->getRelationship()->sync($this->getState());
     }
 

@@ -8,5 +8,5 @@
         {{ $heading }}
     </x-filament::header.heading>
 
-    <x-filament::actions :actions="$actions" class="flex-shrink-0" />
+    <x-filament::actions :actions="$actions" class="shrink-0" />
 </header>

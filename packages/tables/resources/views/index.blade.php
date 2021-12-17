@@ -86,7 +86,7 @@
                                     <x-tables::filters
                                         :form="$getFiltersForm()"
                                         :width="$getFiltersFormWidth()"
-                                        class="flex-shrink-0"
+                                        class="shrink-0"
                                     />
                                 @endif
                             </div>

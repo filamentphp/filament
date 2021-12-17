@@ -68,12 +68,14 @@ class FileUpload extends Field
                 return;
             }
 
-            if (! $state) {
+            if (blank($state)) {
                 return;
             }
 
             $component->getContainer()->getParentComponent()->appendNewUploadField();
         });
+
+        $this->dehydrated(fn (FileUpload $component): bool => ! $component->isMultiple());
     }
 
     public function acceptedFileTypes(array | callable $types): static

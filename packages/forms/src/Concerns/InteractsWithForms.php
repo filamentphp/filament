@@ -215,8 +215,14 @@ trait InteractsWithForms
         return [
             'form' => $this->makeForm()
                 ->schema($this->getFormSchema())
-                ->model($this->getFormModel()),
+                ->model($this->getFormModel())
+                ->statePath($this->getFormStatePath()),
         ];
+    }
+
+    protected function getFormStatePath(): ?string
+    {
+        return null;
     }
 
     protected function getRules(): array
