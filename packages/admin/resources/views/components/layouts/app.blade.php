@@ -21,9 +21,9 @@
                         '3xl' => 'max-w-3xl',
                         '4xl' => 'max-w-4xl',
                         '5xl' => 'max-w-5xl',
-                        '7xl' => 'max-w-7xl',
+                        '6xl' => 'max-w-6xl',
                         'full' => 'max-w-full',
-                        default => 'max-w-6xl',
+                        default => 'max-w-7xl',
                     },
                 ])>
                     <button x-data="{}" x-on:click="$store.sidebar.open()" class="shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 transition rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none lg:hidden">
@@ -65,19 +65,17 @@
                     '3xl' => 'max-w-3xl',
                     '4xl' => 'max-w-4xl',
                     '5xl' => 'max-w-5xl',
-                    '7xl' => 'max-w-7xl',
+                    '6xl' => 'max-w-6xl',
                     'full' => 'max-w-full',
-                    default => 'max-w-6xl',
+                    default => 'max-w-7xl',
                 },
             ])>
                 {{ $slot }}
             </div>
 
-            @if(config('filament.layout.footer.show_logo'))
-                <div class="py-4 shrink-0">
-                    <x-filament::footer />
-                </div>
-            @endif
+            <div class="py-4 shrink-0">
+                <x-filament::footer />
+            </div>
         </div>
     </div>
 </x-filament::layouts.base>
