@@ -51,7 +51,11 @@ trait CanPaginateRecords
 
     public function getPerPageRememberKey(): string
     {
-        return $this->getTablePaginationPageName() . '_' . 'per_page';
+        return auth()->user()->id
+            . '_'
+            . $this->getTablePaginationPageName()
+            . '_'
+            . 'per_page';
     }
 
     public function resetPage(?string $pageName = null): void
