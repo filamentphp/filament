@@ -9,9 +9,9 @@
     $isSearchVisible = $isSearchable();
     $isFiltersDropdownVisible = $isFilterable();
 
-    $colspan = count($columns);
-    if ($isSelectionEnabled()) $colspan++;
-    if (count($actions) > 0) $colspan++;
+    $columnsCount = count($columns);
+    if ($isSelectionEnabled()) $columnsCount++;
+    if (count($actions) > 0) $columnsCount++;
 
     $getHiddenClasses = function (\Filament\Tables\Columns\Column $column): ?string {
         if ($breakpoint = $column->getHiddenFrom()) {
@@ -127,11 +127,10 @@
 
                     @if ($isSelectionEnabled() && $getSelectedRecordsCount() > 0)
                         <x-tables::selection-indicator
-                            :selected-record-count="$getSelectedRecordsCount()"
                             :all-records-count="$getAllRecordsCount()"
                             :are-all-records-on-current-page-selected="$areAllRecordsOnCurrentPageSelected()"
-                            :are-all-records-selected="$areAllRecordsSelected()"
-                            :get-columns-count="$colspan"
+                            :colspan="$columnsCount"
+                            :selected-records-count="$getSelectedRecordsCount()"
                         />
                     @endif
 

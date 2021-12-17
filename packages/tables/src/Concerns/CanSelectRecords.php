@@ -70,14 +70,6 @@ trait CanSelectRecords
         return (bool) ! array_diff($pageRecords, $this->selectedTableRecords);
     }
 
-    public function areAllTableRecordsSelected(): bool
-    {
-        $allRecordsCount = $this->getAllTableRecordsCount();
-        $selectedRecordCount = $this->getSelectedTableRecordsCount();
-
-        return (bool) $selectedRecordCount && ($allRecordsCount === $selectedRecordCount);
-    }
-
     public function getAllTableRecordsCount(): int
     {
         return $this->getFilteredTableQuery()->count();

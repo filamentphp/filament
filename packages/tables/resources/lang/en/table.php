@@ -79,18 +79,6 @@ return [
 
         ],
 
-        'buttons' => [
-
-            'select_all' => [
-                'label' => 'Select all :count records',
-            ],
-
-            'deselect_all' => [
-                'label' => 'Deselect all :count records',
-            ],
-
-        ],
-
     ],
 
     'empty' => [
@@ -98,19 +86,21 @@ return [
     ],
 
     'indicator' => [
-        'selected_rows' => '{1} You have selected :count record.|[2,*] You have selected :count records.',
 
-        'all_records' => ':count records?',
+        'selected_count' => '1 record selected.|:count records selected.',
 
         'buttons' => [
+
             'select_all' => [
-                'label' => 'Select all',
+                'label' => 'Select all :count',
             ],
 
             'deselect_all' => [
                 'label' => 'Deselect all',
             ],
+
         ],
+
     ],
 
 ];

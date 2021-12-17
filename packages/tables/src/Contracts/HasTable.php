@@ -13,8 +13,6 @@ interface HasTable extends HasForms
 {
     public function areAllTableRecordsOnCurrentPageSelected(): bool;
 
-    public function areAllTableRecordsSelected(): bool;
-
     public function callTableColumnAction(string $columnName, string $recordKey);
 
     public function deselectAllTableRecords(): void;
