@@ -2,9 +2,7 @@
 
 namespace Filament\Resources\RelationManagers;
 
-use Filament\Resources\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 class HasManyThroughRelationManager extends HasManyRelationManager
 {
