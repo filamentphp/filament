@@ -46,7 +46,7 @@ trait CanCreateRecords
 
         $record = $this->getRelationship()->create($data);
         $form->model($record)->saveRelationships();
-        
+
         $this->mountedTableActionRecord = $record->getKey();
 
         $this->callHook('afterCreate');
