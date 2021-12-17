@@ -79,18 +79,22 @@ return [
 
         ],
 
-        'buttons' => [
-
-            'select_all' => [
-                'label' => 'Chọn tất cả :count dòng',
-            ],
-
-        ],
-
     ],
 
     'empty' => [
         'heading' => 'Không có dữ liệu nào',
+    ],
+
+    'selection_indicator' => [
+
+        'buttons' => [
+
+            'select_all' => [
+                'label' => 'Chọn tất cả :count',
+            ],
+
+        ],
+
     ],
 
 ];

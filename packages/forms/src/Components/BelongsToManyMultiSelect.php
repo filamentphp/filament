@@ -18,6 +18,10 @@ class BelongsToManyMultiSelect extends MultiSelect
         parent::setUp();
 
         $this->afterStateHydrated(function (BelongsToManyMultiSelect $component): void {
+            if (count($this->getState() ?? [])) {
+                return;
+            }
+
             $relationship = $component->getRelationship();
             $relatedModels = $relationship->getResults();
 

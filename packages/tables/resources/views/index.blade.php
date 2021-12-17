@@ -5,9 +5,13 @@
     $header = $getHeader();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
-    $isBulkActionsDropdownVisible = $isSelectionEnabled() && $getSelectedRecordCount();
+    $isBulkActionsDropdownVisible = $isSelectionEnabled() && $getSelectedRecordsCount();
     $isSearchVisible = $isSearchable();
     $isFiltersDropdownVisible = $isFilterable();
+
+    $columnsCount = count($columns);
+    if ($isSelectionEnabled()) $columnsCount++;
+    if (count($actions) > 0) $columnsCount++;
 
     $getHiddenClasses = function (\Filament\Tables\Columns\Column $column): ?string {
         if ($breakpoint = $column->getHiddenFrom()) {
@@ -62,8 +66,6 @@
                             @if ($isBulkActionsDropdownVisible)
                                 <x-tables::bulk-actions
                                     :actions="$getBulkActions()"
-                                    :all-records-count="$getAllRecordsCount()"
-                                    :all-records-selected="$areAllRecordsSelected()"
                                     class="mr-2"
                                 />
                             @endif
@@ -122,6 +124,15 @@
                             <th class="w-5"></th>
                         @endif
                     </x-slot>
+
+                    @if ($isSelectionEnabled() && $getSelectedRecordsCount() > 0)
+                        <x-tables::selection-indicator
+                            :all-records-count="$getAllRecordsCount()"
+                            :are-all-records-on-current-page-selected="$areAllRecordsOnCurrentPageSelected()"
+                            :colspan="$columnsCount"
+                            :selected-records-count="$getSelectedRecordsCount()"
+                        />
+                    @endif
 
                     @foreach ($records as $record)
                         <x-tables::row wire:key="{{ $record->getKey() }}">

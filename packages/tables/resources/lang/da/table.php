@@ -79,18 +79,22 @@ return [
 
         ],
 
-        'buttons' => [
-
-            'select_all' => [
-                'label' => 'Vælg alle :count poster',
-            ],
-
-        ],
-
     ],
 
     'empty' => [
         'heading' => 'Ingen resultater',
+    ],
+
+    'selection_indicator' => [
+
+        'buttons' => [
+
+            'select_all' => [
+                'label' => 'Vælg alle :count',
+            ],
+
+        ],
+
     ],
 
 ];

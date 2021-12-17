@@ -79,18 +79,22 @@ return [
 
         ],
 
-        'buttons' => [
-
-            'select_all' => [
-                'label' => 'Select all :count records',
-            ],
-
-        ],
-
     ],
 
     'empty' => [
         'heading' => 'не найдено записей',
+    ],
+
+    'selection_indicator' => [
+
+        'buttons' => [
+
+            'select_all' => [
+                'label' => 'Select all :count',
+            ],
+
+        ],
+
     ],
 
 ];

@@ -123,12 +123,15 @@ return [
     */
 
     'layout' => [
-        'max_content_width' => null,
         'forms' => [
             'actions' => [
                 'alignment' => 'left',
             ],
         ],
+        'footer' => [
+            'should_show_logo' => true,
+        ],
+        'max_content_width' => null,
     ],
 
     /*

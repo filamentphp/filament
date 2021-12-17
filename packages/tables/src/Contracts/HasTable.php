@@ -13,8 +13,6 @@ interface HasTable extends HasForms
 {
     public function areAllTableRecordsOnCurrentPageSelected(): bool;
 
-    public function areAllTableRecordsSelected(): bool;
-
     public function callTableColumnAction(string $columnName, string $recordKey);
 
     public function deselectAllTableRecords(): void;
@@ -41,7 +39,7 @@ interface HasTable extends HasForms
 
     public function getMountedTableBulkActionForm(): ComponentContainer;
 
-    public function getSelectedTableRecordCount(): int;
+    public function getSelectedTableRecordsCount(): int;
 
     public function getTableFiltersForm(): ComponentContainer;
 

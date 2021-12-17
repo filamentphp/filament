@@ -18,6 +18,10 @@ class BelongsToSelect extends Select
         parent::setUp();
 
         $this->afterStateHydrated(function (BelongsToSelect $component): void {
+            if (filled($this->getState())) {
+                return;
+            }
+
             $relationship = $component->getRelationship();
             $relatedModel = $relationship->getResults();
 

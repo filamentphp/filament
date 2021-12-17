@@ -79,18 +79,22 @@ return [
 
         ],
 
-        'buttons' => [
-
-            'select_all' => [
-                'label' => 'Zaznacz wszystkie :count rekordów',
-            ],
-
-        ],
-
     ],
 
     'empty' => [
         'heading' => 'Nie znaleziono wyników',
+    ],
+
+    'selection_indicator' => [
+
+        'buttons' => [
+
+            'select_all' => [
+                'label' => 'Zaznacz wszystkie :count',
+            ],
+
+        ],
+
     ],
 
 ];
