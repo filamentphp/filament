@@ -3,9 +3,7 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
     content: [
-        './packages/admin/resources/**/*.blade.php',
-        './packages/forms/resources/**/*.blade.php',
-        './packages/tables/resources/**/*.blade.php',
+        './packages/**/*.blade.php',
     ],
     theme: {
         extend: {
