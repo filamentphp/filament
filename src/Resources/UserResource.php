@@ -42,7 +42,7 @@ class UserResource extends Resource
                         ->label('filament::resources/user-resource.form.password.fields.password.label')
                         ->password()
                         ->autocomplete('new-password')
-                        ->confirmed()
+                        ->same('passwordConfirmation')
                         ->minLength(8)
                         ->only(Pages\CreateUser::class, fn ($field) => $field->required()),
                     Components\TextInput::make('passwordConfirmation')
