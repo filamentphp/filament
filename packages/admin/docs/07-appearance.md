@@ -86,4 +86,4 @@ In `config/filament.php`, set the `layouts.max_content_width` to any value betwe
 ],
 ```
 
-The default is `6xl`.
+The default is `7xl`.
