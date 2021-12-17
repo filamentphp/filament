@@ -18,6 +18,10 @@ class BelongsToManyMultiSelect extends MultiSelect
         parent::setUp();
 
         $this->afterStateHydrated(function (BelongsToManyMultiSelect $component): void {
+            if (count($this->getState() ?? [])) {
+                return;
+            }
+
             $relationship = $component->getRelationship();
             $relatedModels = $relationship->getResults();
 
@@ -25,15 +29,11 @@ class BelongsToManyMultiSelect extends MultiSelect
                 return;
             }
 
-            $defaultState = $this->getState() ?? [];
-
-            if (count($defaultState) === 0) {
-                $component->state(
-                    $relatedModels->pluck(
-                        $relationship->getRelatedKeyName(),
-                    )->toArray(),
-                );
-            }
+            $component->state(
+                $relatedModels->pluck(
+                    $relationship->getRelatedKeyName(),
+                )->toArray(),
+            );
         });
 
         $this->dehydrated(false);
