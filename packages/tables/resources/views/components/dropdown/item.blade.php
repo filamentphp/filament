@@ -17,7 +17,7 @@
     >
         @if ($icon)
             <x-dynamic-component :component="$icon" :class="\Illuminate\Support\Arr::toCssClasses([
-                'ltr:mr-2 ltr:-ml-1 rtl:ml-2 rtl:-mr-1 group-hover:text-white group-focus:text-white w-6 h-6',
+                'mr-2 -ml-1 rtl:ml-2 rtl:-mr-1 group-hover:text-white group-focus:text-white w-6 h-6',
                 'text-primary-500' => $color === 'primary',
                 'text-danger-500' => $color === 'danger',
                 'text-success-500' => $color === 'success',
