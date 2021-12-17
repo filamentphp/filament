@@ -20,10 +20,10 @@ In `tailwind.config.js`, register the plugins you installed, and add custom colo
 const colors = require('tailwindcss/colors')
 
 module.exports = {
-    content: [ // [tl! focus:start]
+    content: [
         './resources/**/*.blade.php',
-        './vendor/filament/**/*.blade.php',
-    ], // [tl! focus:end]
+        './vendor/filament/**/*.blade.php', // [tl! focus]
+    ],
     theme: {
         extend: {
             colors: { // [tl! focus:start]
