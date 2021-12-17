@@ -7,7 +7,7 @@ return [
     'actions' => [
 
         'create' => [
-            'label' => 'جديد :label',
+            'label' => 'اضافة :label',
         ],
 
     ],
@@ -21,7 +21,7 @@ return [
             ],
 
             'view' => [
-                'label' => 'مشاهدة',
+                'label' => 'عرض',
             ],
 
         ],
