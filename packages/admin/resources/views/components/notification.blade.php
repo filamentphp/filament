@@ -18,7 +18,7 @@
             x-show="isVisible"
             x-transition
             @class([
-                'flex items-start px-3 py-2 space-x-2 text-xs shadow ring-1 rounded-xl',
+                'flex items-start px-3 py-2 space-x-2 rtl:space-x-reverse text-xs shadow ring-1 rounded-xl',
                 match ($status) {
                     'danger' => 'bg-danger-50 ring-danger-200',
                     'success' => 'bg-success-50 ring-success-200',

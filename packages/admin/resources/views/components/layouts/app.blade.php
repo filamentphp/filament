@@ -11,7 +11,7 @@
 
         <x-filament::layouts.app.sidebar />
 
-        <div class="w-screen space-y-6 flex-1 flex flex-col ltr:lg:pl-80 rtl:lg:pr-80">
+        <div class="w-screen space-y-6 flex-1 flex flex-col lg:pl-80 rtl:lg:pr-80">
             <header class="h-[4rem] shrink-0 w-full border-b flex items-center">
                 <div @class([
                     'flex items-center w-full px-2 mx-auto sm:px-4 md:px-6 lg:px-8',
@@ -21,9 +21,9 @@
                         '3xl' => 'max-w-3xl',
                         '4xl' => 'max-w-4xl',
                         '5xl' => 'max-w-5xl',
-                        '7xl' => 'max-w-7xl',
+                        '6xl' => 'max-w-6xl',
                         'full' => 'max-w-full',
-                        default => 'max-w-6xl',
+                        default => 'max-w-7xl',
                     },
                 ])>
                     <button x-data="{}" x-on:click="$store.sidebar.open()" class="shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 transition rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none lg:hidden">
@@ -65,9 +65,9 @@
                     '3xl' => 'max-w-3xl',
                     '4xl' => 'max-w-4xl',
                     '5xl' => 'max-w-5xl',
-                    '7xl' => 'max-w-7xl',
+                    '6xl' => 'max-w-6xl',
                     'full' => 'max-w-full',
-                    default => 'max-w-6xl',
+                    default => 'max-w-7xl',
                 },
             ])>
                 {{ $slot }}

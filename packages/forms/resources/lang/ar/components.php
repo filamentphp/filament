@@ -4,7 +4,7 @@ return [
 
     'multi_select' => [
         'no_search_results_message' => 'لا توجد عناصر تطابق بحثك.',
-        'placeholder' => 'إختر خيارًا',
+        'placeholder' => 'إختر عنصرا',
         'search_prompt' => 'لا توجد عناصر للاختيار من بينها.',
     ],
 
