@@ -79,6 +79,14 @@ return [
 
         ],
 
+    ],
+
+    'empty' => [
+        'heading' => 'لا توجد سجلات',
+    ],
+
+    'selection_indicator' => [
+
         'buttons' => [
 
             'select_all' => [
@@ -87,10 +95,6 @@ return [
 
         ],
 
-    ],
-
-    'empty' => [
-        'heading' => 'لا توجد سجلات',
     ],
 
 ];

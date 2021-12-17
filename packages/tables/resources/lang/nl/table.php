@@ -79,19 +79,22 @@ return [
 
         ],
 
-        'buttons' => [
-
-            'select_all' => [
-                'label' => 'Selecteer alle :count records
-',
-            ],
-
-        ],
-
     ],
 
     'empty' => [
         'heading' => 'Geen resultaten gevonden',
+    ],
+
+    'selection_indicator' => [
+
+        'buttons' => [
+
+            'select_all' => [
+                'label' => 'Selecteer alle :count',
+            ],
+
+        ],
+
     ],
 
 ];

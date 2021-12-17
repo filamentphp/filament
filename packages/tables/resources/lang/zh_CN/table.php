@@ -79,6 +79,14 @@ return [
 
         ],
 
+    ],
+
+    'empty' => [
+        'heading' => '没有找到相关记录',
+    ],
+
+    'selection_indicator' => [
+
         'buttons' => [
 
             'select_all' => [
@@ -87,10 +95,6 @@ return [
 
         ],
 
-    ],
-
-    'empty' => [
-        'heading' => '没有找到相关记录',
     ],
 
 ];
