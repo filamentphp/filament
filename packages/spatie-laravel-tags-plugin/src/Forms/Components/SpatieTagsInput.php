@@ -59,6 +59,10 @@ class SpatieTagsInput extends TagsInput
 
     public function getSuggestions(): array
     {
+        if ($this->suggestions !== null) {
+            return parent::getSuggestions();
+        }
+
         $type = $this->getType();
 
         return Tag::query()
