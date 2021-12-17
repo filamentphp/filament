@@ -41,7 +41,7 @@ interface HasTable extends HasForms
 
     public function getMountedTableBulkActionForm(): ComponentContainer;
 
-    public function getSelectedTableRecordCount(): int;
+    public function getSelectedTableRecordsCount(): int;
 
     public function getTableFiltersForm(): ComponentContainer;
 

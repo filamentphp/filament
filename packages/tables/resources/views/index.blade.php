@@ -5,7 +5,7 @@
     $header = $getHeader();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
-    $isBulkActionsDropdownVisible = $isSelectionEnabled() && $getSelectedRecordCount();
+    $isBulkActionsDropdownVisible = $isSelectionEnabled() && $getSelectedRecordsCount();
     $isSearchVisible = $isSearchable();
     $isFiltersDropdownVisible = $isFilterable();
 
@@ -66,9 +66,6 @@
                             @if ($isBulkActionsDropdownVisible)
                                 <x-tables::bulk-actions
                                     :actions="$getBulkActions()"
-                                    :all-records-count="$getAllRecordsCount()"
-                                    :all-records-selected="$areAllRecordsSelected()"
-                                    :show-select-bulk-actions="$areSelectBulkActionsEnabled()"
                                     class="mr-2"
                                 />
                             @endif
@@ -128,11 +125,10 @@
                         @endif
                     </x-slot>
 
-                    @if($isSelectionEnabled() && $getSelectedRecordCount() > 0)
-                        <x-tables::indicator
-                            :selected-record-count="$getSelectedRecordCount()"
+                    @if ($isSelectionEnabled() && $getSelectedRecordsCount() > 0)
+                        <x-tables::selection-indicator
+                            :selected-record-count="$getSelectedRecordsCount()"
                             :all-records-count="$getAllRecordsCount()"
-                            :are-select-indicator-actions-enabled="$areSelectIndicatorActionsEnabled()"
                             :are-all-records-on-current-page-selected="$areAllRecordsOnCurrentPageSelected()"
                             :are-all-records-selected="$areAllRecordsSelected()"
                             :get-columns-count="$colspan"

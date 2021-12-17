@@ -19,7 +19,7 @@ trait CanSelectRecords
 
         $allRecords = $query->pluck($query->getModel()->getKeyName());
 
-        if ($allRecords->count() > $this->getSelectedTableRecordCount()) {
+        if ($allRecords->count() > $this->getSelectedTableRecordsCount()) {
             $this->selectedTableRecords = $allRecords->toArray();
 
             return;
@@ -58,7 +58,7 @@ trait CanSelectRecords
     {
         if (! $this->isTablePaginationEnabled()) {
             $allRecordsCount = $this->getAllTableRecordsCount();
-            $selectedRecordsCount = $this->getSelectedTableRecordCount();
+            $selectedRecordsCount = $this->getSelectedTableRecordsCount();
 
             return $allRecordsCount && ($allRecordsCount === $selectedRecordsCount);
         }
@@ -73,7 +73,7 @@ trait CanSelectRecords
     public function areAllTableRecordsSelected(): bool
     {
         $allRecordsCount = $this->getAllTableRecordsCount();
-        $selectedRecordCount = $this->getSelectedTableRecordCount();
+        $selectedRecordCount = $this->getSelectedTableRecordsCount();
 
         return (bool) $selectedRecordCount && ($allRecordsCount === $selectedRecordCount);
     }
@@ -88,7 +88,7 @@ trait CanSelectRecords
         return $this->getTableQuery()->find($this->selectedTableRecords);
     }
 
-    public function getSelectedTableRecordCount(): int
+    public function getSelectedTableRecordsCount(): int
     {
         return count($this->selectedTableRecords);
     }
@@ -135,15 +135,5 @@ trait CanSelectRecords
 
             $this->selectTableRecord($record);
         }
-    }
-
-    protected function areSelectIndicatorActionsEnabled(): bool
-    {
-        return true;
-    }
-
-    protected function areSelectBulkActionsEnabled(): bool
-    {
-        return true;
     }
 }

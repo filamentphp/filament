@@ -50,10 +50,6 @@ class Table extends ViewComponent implements Htmlable
 
     protected ?array $recordsPerPageSelectOptions = null;
 
-    protected bool $areSelectIndicatorActionsEnabled = true;
-
-    protected bool $areSelectBulkActionsEnabled = true;
-
     final public function __construct(HasTable $livewire)
     {
         $this->livewire($livewire);
@@ -102,20 +98,6 @@ class Table extends ViewComponent implements Htmlable
     public function enablePagination(bool $condition = true): static
     {
         $this->isPaginationEnabled = $condition;
-
-        return $this;
-    }
-
-    public function enableSelectIndicatorActions(bool $condition = true): static
-    {
-        $this->areSelectIndicatorActionsEnabled = $condition;
-
-        return $this;
-    }
-
-    public function enableSelectBulkActions(bool $condition = true): static
-    {
-        $this->areSelectBulkActionsEnabled = $condition;
 
         return $this;
     }
@@ -310,9 +292,9 @@ class Table extends ViewComponent implements Htmlable
         return $callback($record);
     }
 
-    public function getSelectedRecordCount(): int
+    public function getSelectedRecordsCount(): int
     {
-        return $this->getLivewire()->getSelectedTableRecordCount();
+        return $this->getLivewire()->getSelectedTableRecordsCount();
     }
 
     public function getSortColumn(): ?string
@@ -343,16 +325,6 @@ class Table extends ViewComponent implements Htmlable
     public function isSelectionEnabled(): bool
     {
         return $this->getLivewire()->isTableSelectionEnabled();
-    }
-
-    public function areSelectIndicatorActionsEnabled(): bool
-    {
-        return $this->areSelectIndicatorActionsEnabled;
-    }
-
-    public function areSelectBulkActionsEnabled(): bool
-    {
-        return $this->areSelectBulkActionsEnabled;
     }
 
     public function isSearchable(): bool

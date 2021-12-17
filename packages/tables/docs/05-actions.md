@@ -181,19 +181,3 @@ BulkAction::make('delete')
     ->modalSubheading('Are you sure you\'d like to delete these posts? This cannot be undone.')
     ->modalButton('Yes, delete them')
 ```
-
-### Disable records select actions
-
-You may disable select actions in records indicator or bulk actions. Both are by default enabled.
-
-```php
-protected function areSelectIndicatorActionsEnabled(): bool
-{
-    return false;
-}
-
-protected function areSelectBulkActionsEnabled(): bool
-{
-    return false;
-}
-```
