@@ -79,18 +79,22 @@ return [
 
         ],
 
-        'buttons' => [
-
-            'select_all' => [
-                'label' => 'Välj alla :count poster',
-            ],
-
-        ],
-
     ],
 
     'empty' => [
         'heading' => 'Finns inga rader',
+    ],
+
+    'selection_indicator' => [
+
+        'buttons' => [
+
+            'select_all' => [
+                'label' => 'Välj alla :count',
+            ],
+
+        ],
+
     ],
 
 ];

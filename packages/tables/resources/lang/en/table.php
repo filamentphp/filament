@@ -85,7 +85,7 @@ return [
         'heading' => 'No records found',
     ],
 
-    'indicator' => [
+    'selection_indicator' => [
 
         'selected_count' => '1 record selected.|:count records selected.',
 
