@@ -8,7 +8,7 @@
     };
 @endphp
 
-<div class="px-4 py-3">
+<div {{ $attributes->merge(["class" => "px-4 py-3"]) }}>
     @if ($state = $getFormattedState())
         <span @class([
             'inline-flex items-center justify-center h-6 px-2 text-sm font-medium tracking-tight rounded-full',
