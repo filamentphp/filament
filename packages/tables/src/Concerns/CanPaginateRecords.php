@@ -53,7 +53,7 @@ trait CanPaginateRecords
         return $this->getListingResourceName() . '_per_page';
     }
 
-    public function getListingClassName(): string
+    public function getListingResourceName(): string
     {
         return (new \ReflectionClass($this))->getShortName();
     }
