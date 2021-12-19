@@ -26,7 +26,7 @@
                 />
             </div>
 
-            <div class="ml-3 text-sm">
+            <div class="ml-3 rtl:mr-3 text-sm">
                 <label for="{{ $getId() }}-{{ $value }}" @class([
                     'font-medium',
                     'text-gray-700' => ! $errors->has($getStatePath()),

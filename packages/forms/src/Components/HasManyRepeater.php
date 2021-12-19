@@ -16,6 +16,10 @@ class HasManyRepeater extends Repeater
         parent::setUp();
 
         $this->afterStateHydrated(function (HasManyRepeater $component): void {
+            if (count($this->getState() ?? [])) {
+                return;
+            }
+
             $relationship = $component->getRelationship();
             $relatedModels = $relationship->getResults();
 
@@ -23,11 +27,11 @@ class HasManyRepeater extends Repeater
                 return;
             }
 
-            $defaultState = $this->getState() ?? [];
-
-            if (count($defaultState) === 0) {
-                $component->state($relatedModels->keyBy($relationship->getLocalKeyName())->toArray());
-            }
+            $component->state(
+                $relatedModels->keyBy(
+                    $relationship->getLocalKeyName(),
+                )->toArray(),
+            );
         });
 
         $this->dehydrated(false);
@@ -56,7 +60,7 @@ class HasManyRepeater extends Repeater
                 continue;
             }
 
-            $relationship->find($keyToCheckForDeletion)->delete();
+            $relationship->find($keyToCheckForDeletion)?->delete();
         }
 
         $childComponentContainers = $this->getChildComponentContainers();

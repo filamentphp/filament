@@ -3,7 +3,7 @@
     x-on:expand-concealing-component.window="if ($event.detail.id in tabs) tab = $event.detail.id"
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
-    {{ $attributes->merge($getExtraAttributes())->class(['rounded-xl shadow-sm border border-gray-300']) }}
+    {{ $attributes->merge($getExtraAttributes())->class(['rounded-xl shadow-sm border border-gray-300 bg-white']) }}
 >
     <div
         {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}

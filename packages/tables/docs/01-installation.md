@@ -50,9 +50,8 @@ const colors = require('tailwindcss/colors')
 
 module.exports = {
     content: [
-        './resources/**/*.blade.php', // [tl! focus:start]
-        './vendor/filament/forms/resources/views/**/*.blade.php', // [tl! focus:end]
-        './vendor/filament/tables/resources/views/**/*.blade.php', // [tl! focus:end]
+        './resources/**/*.blade.php',
+        './vendor/filament/**/*.blade.php', // [tl! focus]
     ],
     theme: {
         extend: {

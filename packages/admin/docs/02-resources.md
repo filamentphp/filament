@@ -85,7 +85,7 @@ use Livewire\Component;
 Forms\Components\TextInput::make('password')
     ->password()
     ->required()
-    ->hidden(fn (Component $livewire): bool => $livewire instanceof EditUser),
+    ->hidden(fn (Component $livewire): bool => $livewire instanceof Pages\EditUser),
 ```
 
 You may instead use the `visible` to check if a component should be visible or not:
@@ -96,7 +96,7 @@ use Livewire\Component;
 Forms\Components\TextInput::make('password')
     ->password()
     ->required()
-    ->visible(fn (Component $livewire): bool => $livewire instanceof CreateUser),
+    ->visible(fn (Component $livewire): bool => $livewire instanceof Pages\CreateUser),
 ```
 
 For more information about closure customization, see the [form builder documentation](/docs/forms/advanced#using-closure-customisation).
@@ -163,13 +163,14 @@ public static function table(Table $table): Table
 
 "Relation managers" in Filament allow administrators to list, create, attach, edit, detach and delete related records without leaving the resource's edit page. Resource classes contain a static `getRelations()` method that is used to register relation managers for your resource.
 
-### `HasMany` and `MorphMany`
+### `HasMany`, `HasManyThrough` and `MorphMany`
 
-To create a relation manager for a `HasMany` or `MorphMany` relationship, you can use:
+To create a relation manager for a `HasMany`, `HasManyThrough` or `MorphMany` relationship, you can use:
 
 ```bash
 php artisan make:filament-has-many CategoryResource posts title
-php artisan make:filament-morph-many CategoryResource posts title
+php artisan make:filament-has-many-through ProjectResource deployments title
+php artisan make:filament-morph-many PostResource replies title
 ```
 
 - `CategoryResource` is the name of the resource class for the parent model.

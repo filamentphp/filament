@@ -19,7 +19,7 @@ trait CanSelectRecords
 
         $allRecords = $query->pluck($query->getModel()->getKeyName());
 
-        if ($allRecords->count() > $this->getSelectedTableRecordCount()) {
+        if ($allRecords->count() > $this->getSelectedTableRecordsCount()) {
             $this->selectedTableRecords = $allRecords->toArray();
 
             return;
@@ -58,7 +58,7 @@ trait CanSelectRecords
     {
         if (! $this->isTablePaginationEnabled()) {
             $allRecordsCount = $this->getAllTableRecordsCount();
-            $selectedRecordsCount = $this->getSelectedTableRecordCount();
+            $selectedRecordsCount = $this->getSelectedTableRecordsCount();
 
             return $allRecordsCount && ($allRecordsCount === $selectedRecordsCount);
         }
@@ -68,14 +68,6 @@ trait CanSelectRecords
             ->toArray();
 
         return (bool) ! array_diff($pageRecords, $this->selectedTableRecords);
-    }
-
-    public function areAllTableRecordsSelected(): bool
-    {
-        $allRecordsCount = $this->getAllTableRecordsCount();
-        $selectedRecordCount = $this->getSelectedTableRecordCount();
-
-        return (bool) $selectedRecordCount && ($allRecordsCount === $selectedRecordCount);
     }
 
     public function getAllTableRecordsCount(): int
@@ -88,7 +80,7 @@ trait CanSelectRecords
         return $this->getTableQuery()->find($this->selectedTableRecords);
     }
 
-    public function getSelectedTableRecordCount(): int
+    public function getSelectedTableRecordsCount(): int
     {
         return count($this->selectedTableRecords);
     }

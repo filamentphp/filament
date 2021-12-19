@@ -79,6 +79,14 @@ return [
 
         ],
 
+    ],
+
+    'empty' => [
+        'heading' => 'Keine Datensätze gefunden',
+    ],
+
+    'selection_indicator' => [
+
         'buttons' => [
 
             'select_all' => [
@@ -87,10 +95,6 @@ return [
 
         ],
 
-    ],
-
-    'empty' => [
-        'heading' => 'Keine Datensätze gefunden',
     ],
 
 ];

@@ -42,7 +42,7 @@ trait HasActions
             return $action->record($this->getMountedTableActionRecord())->call($data);
         } finally {
             $this->dispatchBrowserEvent('close-modal', [
-                'id' => 'action',
+                'id' => static::class . '-action',
             ]);
         }
     }
@@ -72,7 +72,7 @@ trait HasActions
         }
 
         $this->dispatchBrowserEvent('open-modal', [
-            'id' => 'action',
+            'id' => static::class . '-action',
         ]);
     }
 

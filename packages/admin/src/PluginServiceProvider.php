@@ -30,6 +30,11 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
+        $this->app->singletonIf(
+            'filament',
+            fn (): FilamentManager => new FilamentManager()
+        );
+
         Facades\Filament::registerPages($this->getPages());
         Facades\Filament::registerResources($this->getResources());
         Facades\Filament::registerWidgets($this->getWidgets());

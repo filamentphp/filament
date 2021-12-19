@@ -231,7 +231,7 @@ Section::make('Heading')
 
 ## Placeholder
 
-Placeholders can be used to render text-only "fields" within your forms. Each placeholder has `content()`, which is cannot be changed by the user.
+Placeholders can be used to render text-only "fields" within your forms. Each placeholder has `content()`, which cannot be changed by the user.
 
 ```php
 use Filament\Forms\Components\Placeholder;

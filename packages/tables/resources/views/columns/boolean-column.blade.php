@@ -13,7 +13,7 @@
     };
 @endphp
 
-<div class="px-4 py-3">
+<div {{ $attributes->merge($getExtraAttributes())->class(['px-4 py-3']) }}>
     @if ($state !== null)
         <x-dynamic-component
             :component="$stateIcon"

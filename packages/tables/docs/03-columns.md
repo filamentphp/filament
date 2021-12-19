@@ -133,6 +133,18 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('slug')->visibleFrom('md')
 ```
 
+### Custom attributes
+
+The HTML of columns can be customized, by passing an array of `extraAttributes()`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('slug')->extraAttributes(['class' => 'bg-gray-200'])
+```
+
+These get merged onto the outer `<div>` element of each cell in that column.
+
 ## Text column
 
 You may use the `date()` and `dateTime()` methods to format the column's state using [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
