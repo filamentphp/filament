@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 class RichEditor extends Field implements Contracts\HasFileAttachments
 {
+    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasFileAttachments;
     use Concerns\HasPlaceholder;
     use Concerns\InteractsWithToolbarButtons;

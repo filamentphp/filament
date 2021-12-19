@@ -13,6 +13,7 @@
         })"
         id="{{ $getId() }}"
         {{ $attributes->merge($getExtraAttributes()) }}
+        {{ $getExtraAlpineAttributeBag() }}
     >
         <div
             x-show="state.length || {{ $isDisabled() ? 'false' : 'true' }}"

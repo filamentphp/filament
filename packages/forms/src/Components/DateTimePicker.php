@@ -4,14 +4,18 @@ namespace Filament\Forms\Components;
 
 use Carbon\CarbonInterface;
 use DateTime;
+use Illuminate\View\ComponentAttributeBag;
 
 class DateTimePicker extends Field
 {
+    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasPlaceholder;
 
     protected string $view = 'forms::components.date-time-picker';
 
     protected $displayFormat = null;
+
+    protected $extraTriggerAttributes = [];
 
     protected $firstDayOfWeek = null;
 
@@ -49,6 +53,13 @@ class DateTimePicker extends Field
     public function displayFormat(string | callable $format): static
     {
         $this->displayFormat = $format;
+
+        return $this;
+    }
+
+    public function extraTriggerAttributes(array | callable $attributes): static
+    {
+        $this->extraTriggerAttributes = $attributes;
 
         return $this;
     }
@@ -168,6 +179,16 @@ class DateTimePicker extends Field
         }
 
         return "{$format}:s";
+    }
+
+    public function getExtraTriggerAttributes(): array
+    {
+        return $this->evaluate($this->extraTriggerAttributes);
+    }
+
+    public function getExtraTriggerAttributeBag(): ComponentAttributeBag
+    {
+        return new ComponentAttributeBag($this->getExtraTriggerAttributes());
     }
 
     public function getFirstDayOfWeek(): int

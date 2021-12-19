@@ -8,9 +8,6 @@
     :state-path="$getStatePath()"
 >
     <div
-        @class([
-            'w-32 mx-auto' => $isAvatar(),
-        ])
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
             getUploadedFileUrlUsing: async () => {
@@ -38,7 +35,10 @@
             },
         })"
         wire:ignore
-        {{ $attributes->merge($getExtraAttributes()) }}
+        {{ $attributes->merge($getExtraAttributes())->class([
+            'w-32 mx-auto' => $isAvatar(),
+        ]) }}
+        {{ $getExtraAlpineAttributeBag() }}
     >
         <input
             x-ref="input"

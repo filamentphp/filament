@@ -4,6 +4,8 @@ namespace Filament\Forms\Components;
 
 class KeyValue extends Field
 {
+    use Concerns\HasExtraAlpineAttributes;
+
     protected string $view = 'forms::components.key-value';
 
     protected $addButtonLabel = null;

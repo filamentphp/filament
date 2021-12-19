@@ -1,3 +1,3 @@
-<div class="py-8">
+<div {{ $attributes->merge($getExtraAttributes())->class(['py-8']) }}>
     {{ $getChildComponentContainer() }}
 </div>

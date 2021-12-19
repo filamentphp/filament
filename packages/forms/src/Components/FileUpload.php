@@ -9,6 +9,7 @@ use SplFileInfo;
 
 class FileUpload extends Field
 {
+    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasPlaceholder;
 
     protected string $view = 'forms::components.file-upload';

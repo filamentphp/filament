@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 class TagsInput extends Field
 {
+    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasPlaceholder;
 
     protected string $view = 'forms::components.tags-input';

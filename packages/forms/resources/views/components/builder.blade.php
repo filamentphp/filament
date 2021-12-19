@@ -7,7 +7,7 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div class="space-y-4">
+    <div {{ $attributes->merge($getExtraAttributes())->class(['space-y-4']) }}>
         @if (count($containers = $getChildComponentContainers()))
             <ul>
                 @foreach ($containers as $uuid => $item)

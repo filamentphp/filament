@@ -7,7 +7,7 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <ul class="space-y-2">
+    <ul {{ $attributes->merge($getExtraAttributes())->class(['space-y-2']) }}>
         @foreach ($getChildComponentContainers() as $uuid => $item)
             <li wire:key="{{ $item->getStatePath() }}">
                 {{ $item }}

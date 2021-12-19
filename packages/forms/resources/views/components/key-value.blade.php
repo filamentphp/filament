@@ -14,6 +14,7 @@
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
         {{ $attributes->merge($getExtraAttributes()) }}
+        {{ $getExtraAlpineAttributeBag() }}
     >
         <div class="border border-gray-300 divide-y shadow-sm bg-white rounded-xl overflow-hidden">
             <table class="w-full text-left divide-y table-auto">
