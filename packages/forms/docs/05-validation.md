@@ -100,6 +100,17 @@ By default, the field name will be used as the column to search. You may specify
 Field::make('invitation')->exists(column: 'id')
 ```
 
+You can further customize the rule by passing a [closure](advanced#closure-customisation) to the `callback` parameter:
+
+```php
+use Illuminate\Validation\Rules\Exists;
+
+Field::make('invitation')
+    ->exists(callback: function (Exists $rule) {
+        return $rule->where('is_active', 1);
+    })
+```
+
 ### Greater than
 
 The field value must be greater than another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-gt)
@@ -188,6 +199,17 @@ If you're using the [admin panel](/docs/admin), you can ignore the current recor
 
 ```php
 Field::make('email')->unique(ignorable: fn (?Model $record): ?Model => $record)
+```
+
+You can further customize the rule by passing a [closure](advanced#closure-customisation) to the `callback` parameter:
+
+```php
+use Illuminate\Validation\Rules\Unique;
+
+Field::make('email')
+    ->unique(callback: function (Unique $rule) {
+        return $rule->where('is_active', 1);
+    })
 ```
 
 ## Other rules
