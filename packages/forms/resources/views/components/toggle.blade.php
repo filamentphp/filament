@@ -30,6 +30,7 @@
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
                 ]) }}
+                {{ $getExtraAlpineAttributeBag() }}
             >
                 <span
                     class="pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200 translate-x-0"

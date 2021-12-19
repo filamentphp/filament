@@ -19,16 +19,16 @@
         {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
         {!! $isRequired() ? 'required' : null !!}
         {!! ($rows = $getRows()) ? "rows=\"{$rows}\"" : null !!}
-        {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
+            {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
         {{ $attributes->merge($getExtraAttributes())->class([
             'block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600',
             'border-gray-300' => ! $errors->has($getStatePath()),
             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
         ]) }}
-
         @if ($shouldAutosize())
             x-data="textareaFormComponent()"
             x-on:input="render()"
+            {{ $getExtraAlpineAttributeBag() }}
         @endif
     ></textarea>
 </x-forms::field-wrapper>

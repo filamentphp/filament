@@ -15,6 +15,7 @@
         x-cloak
         wire:ignore
         {{ $attributes->merge($getExtraAttributes()) }}
+        {{ $getExtraAlpineAttributeBag() }}
     >
         <div class="space-y-2">
             @unless ($isDisabled())

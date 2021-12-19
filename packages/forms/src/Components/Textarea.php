@@ -7,6 +7,7 @@ class Textarea extends Field
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
+    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasPlaceholder;
 
     protected string $view = 'forms::components.textarea';

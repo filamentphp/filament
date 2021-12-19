@@ -7,6 +7,7 @@ use DateTime;
 
 class DateTimePicker extends Field
 {
+    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasPlaceholder;
 
     protected string $view = 'forms::components.date-time-picker';

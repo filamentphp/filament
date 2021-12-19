@@ -6,6 +6,8 @@ use Filament\Forms\Components\Tabs\Tab;
 
 class Tabs extends Component
 {
+    use Concerns\HasExtraAlpineAttributes;
+
     protected string $view = 'forms::components.tabs';
 
     final public function __construct(string $label)

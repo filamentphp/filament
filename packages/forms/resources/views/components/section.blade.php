@@ -5,6 +5,7 @@
     @endif
     id="{{ $getId() }}"
     {{ $attributes->merge($getExtraAttributes())->class(['p-6 space-y-6 rounded-xl shadow-sm border border-gray-300']) }}
+    {{ $getExtraAlpineAttributeBag() }}
 >
     <div class="flex space-x-3">
         <div class="flex-1 space-y-1">

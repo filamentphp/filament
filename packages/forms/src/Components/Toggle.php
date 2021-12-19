@@ -6,6 +6,7 @@ class Toggle extends Field
 {
     use Concerns\CanBeAccepted;
     use Concerns\CanBeInline;
+    use Concerns\HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.toggle';
 

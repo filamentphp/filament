@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class Select extends Field
 {
+    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasPlaceholder;
 
     protected string $view = 'forms::components.select';

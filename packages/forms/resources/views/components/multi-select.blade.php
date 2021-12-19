@@ -25,6 +25,7 @@
             'border-gray-300' => ! $errors->has($getStatePath()),
             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
         ]) }}
+        {{ $getExtraAlpineAttributeBag() }}
     >
         @unless ($isDisabled())
             <div

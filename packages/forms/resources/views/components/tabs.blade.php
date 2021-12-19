@@ -4,6 +4,7 @@
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
     {{ $attributes->merge($getExtraAttributes())->class(['rounded-xl shadow-sm border border-gray-300 bg-white']) }}
+    {{ $getExtraAlpineAttributeBag() }}
 >
     <div
         {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}

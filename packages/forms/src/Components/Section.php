@@ -6,6 +6,8 @@ use Illuminate\Support\Str;
 
 class Section extends Component implements Contracts\CanConcealComponents
 {
+    use Concerns\HasExtraAlpineAttributes;
+
     protected string $view = 'forms::components.section';
 
     protected $isCollapsed = false;

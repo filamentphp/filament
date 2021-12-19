@@ -38,6 +38,7 @@
         {{ $attributes->merge($getExtraAttributes())->class([
             'w-32 mx-auto' => $isAvatar(),
         ]) }}
+        {{ $getExtraAlpineAttributeBag() }}
     >
         <input
             x-ref="input"

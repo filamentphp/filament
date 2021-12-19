@@ -49,6 +49,7 @@
             x-on:keydown.escape.stop="closeListbox()"
             {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
             {{ $attributes->merge($getExtraAttributes())->class(['relative']) }}
+            {{ $getExtraAlpineAttributeBag() }}
         >
             <div
                 @unless($isDisabled())

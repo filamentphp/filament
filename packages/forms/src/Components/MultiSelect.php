@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class MultiSelect extends Field
 {
+    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasPlaceholder;
 
     protected string $view = 'forms::components.multi-select';

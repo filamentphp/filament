@@ -29,6 +29,7 @@
         x-cloak
         wire:ignore
         {{ $attributes->merge($getExtraAttributes()) }}
+        {{ $getExtraAlpineAttributeBag() }}
     >
         @unless ($isDisabled())
             <input id="trix-value-{{ $getId() }}" type="hidden" />

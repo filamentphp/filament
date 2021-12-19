@@ -36,6 +36,7 @@
                     })"
                     type="text"
                     wire:ignore
+                    {{ $getExtraAlpineAttributeBag() }}
                 @endunless
                 {!! ($autocapitalize = $getAutocapitalize()) ? "autocapitalize=\"{$autocapitalize}\"" : null !!}
                 {!! ($autocomplete = $getAutocomplete()) ? "autocomplete=\"{$autocomplete}\"" : null !!}

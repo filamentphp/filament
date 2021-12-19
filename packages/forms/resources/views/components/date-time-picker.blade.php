@@ -34,6 +34,7 @@
         x-on:keydown.escape.stop="closePicker()"
         x-on:blur="closePicker()"
         {{ $attributes->merge($getExtraAttributes())->class(['relative']) }}
+        {{ $getExtraAlpineAttributeBag() }}
     >
         <button
             @unless($isDisabled())
