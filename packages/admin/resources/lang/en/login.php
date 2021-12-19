@@ -2,6 +2,10 @@
 
 return [
 
+    'title' => 'Login',
+
+    'heading' => 'Sign in to your account',
+
     'buttons' => [
 
         'submit' => [
@@ -30,7 +34,5 @@ return [
         'failed' => 'These credentials do not match our records.',
         'throttled' => 'Too many login attempts. Please try again in :seconds seconds.',
     ],
-
-    'heading' => 'Sign in to your account',
 
 ];
