@@ -89,7 +89,7 @@ class FilamentServiceProvider extends PackageServiceProvider
         Livewire::component('filament.core.widgets.account-widget', AccountWidget::class);
         Livewire::component('filament.core.widgets.filament-info-widget', FilamentInfoWidget::class);
 
-        $this->registerLivewireComponentDirectory(config('filament.components.path'), config('filament.components.namespace'), 'filament.');
+        $this->registerLivewireComponentDirectory(config('filament.livewire.path'), config('filament.livewire.namespace'), 'filament.');
     }
 
     protected function discoverPages(): void
