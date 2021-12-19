@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => 'Create :label',
+
     'breadcrumb' => 'Create',
 
     'form' => [

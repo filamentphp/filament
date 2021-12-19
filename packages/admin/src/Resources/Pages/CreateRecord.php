@@ -4,6 +4,7 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms;
 use Filament\Pages\Actions\ButtonAction;
+use Illuminate\Support\Str;
 
 class CreateRecord extends Page implements Forms\Contracts\HasForms
 {
@@ -105,6 +106,17 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
             ->label(__('filament::resources/pages/create-record.form.actions.cancel.label'))
             ->url(static::getResource()::getUrl())
             ->color('secondary');
+    }
+
+    protected function getTitle(): string
+    {
+        if (filled(static::$title)) {
+            return static::$title;
+        }
+
+        return __('filament::resources/pages/create-record.title', [
+            'label' => Str::title(static::getResource()::getLabel()),
+        ]);
     }
 
     protected function getForms(): array

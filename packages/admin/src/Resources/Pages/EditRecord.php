@@ -4,6 +4,7 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms;
 use Filament\Pages\Actions\ButtonAction;
+use Illuminate\Support\Str;
 
 class EditRecord extends Page implements Forms\Contracts\HasForms
 {
@@ -127,7 +128,19 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
     protected function getTitle(): string
     {
-        return static::$title ?? (($recordTitle = $this->getRecordTitle()) ? __('filament::resources/pages/edit-record.title', ['label' => $recordTitle]) : parent::getTitle());
+        if (filled(static::$title)) {
+            return static::$title;
+        }
+
+        if (filled($recordTitle = $this->getRecordTitle())) {
+            return __('filament::resources/pages/edit-record.title', [
+                'label' => $recordTitle,
+            ]);
+        }
+
+        return __('filament::resources/pages/edit-record.title', [
+            'label' => Str::title(static::getResource()::getLabel()),
+        ]);
     }
 
     protected function getFormActions(): array

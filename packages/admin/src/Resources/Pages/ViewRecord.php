@@ -4,6 +4,7 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms;
 use Filament\Pages\Actions\ButtonAction;
+use Illuminate\Support\Str;
 
 class ViewRecord extends Page implements Forms\Contracts\HasForms
 {
@@ -63,7 +64,15 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
 
     protected function getTitle(): string
     {
-        return static::$title ?? (($recordTitle = $this->getRecordTitle()) ? $recordTitle : parent::getTitle());
+        if (filled(static::$title)) {
+            return static::$title;
+        }
+
+        if (filled($recordTitle = $this->getRecordTitle())) {
+            return $recordTitle;
+        }
+
+        return Str::title(static::getResource()::getLabel());
     }
 
     protected function getForms(): array
