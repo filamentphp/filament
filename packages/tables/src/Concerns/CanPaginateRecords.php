@@ -14,9 +14,9 @@ trait CanPaginateRecords
 
     public function updatedTableRecordsPerPage(): void
     {
-        if (config('tables.remember_per_page')) {
-            session([$this->getPerPageRememberKey() => $this->getTableRecordsPerPage()]);
-        }
+        session()->put([
+            $this->getTablePerPageSessionKey() => $this->getTableRecordsPerPage(),
+        ]);
 
         $this->resetPage();
     }
@@ -33,9 +33,15 @@ trait CanPaginateRecords
 
     protected function getDefaultTableRecordsPerPageSelectOption(): int
     {
-        return config('tables.remember_per_page')
-            ? session($this->getPerPageRememberKey(), 10)
-            : 10;
+        $perPage = session()->get($this->getTablePerPageSessionKey(), 10);
+
+        if (in_array($perPage, $this->getTableRecordsPerPageSelectOptions())) {
+            return $perPage;
+        }
+
+        session()->remove($this->getTablePerPageSessionKey());
+
+        return $this->getTableRecordsPerPageSelectOptions()[0];
     }
 
     protected function isTablePaginationEnabled(): bool
@@ -48,14 +54,11 @@ trait CanPaginateRecords
         return $this->getIdentifiedTableQueryStringPropertyNameFor('page');
     }
 
-    public function getPerPageRememberKey(): string
+    public function getTablePerPageSessionKey(): string
     {
-        return $this->getListingResourceName() . '_per_page';
-    }
+        $table = class_basename($this::class);
 
-    public function getListingResourceName(): string
-    {
-        return (new \ReflectionClass($this))->getShortName();
+        return $table . '_per_page';
     }
 
     public function resetPage(?string $pageName = null): void
