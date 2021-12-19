@@ -59,21 +59,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Components
-    |--------------------------------------------------------------------------
-    |
-    | This is the namespace and directory that Filament will automatically
-    | register livewire components.
-    |
-    */
-
-    'components' => [
-        'namespace' => 'App\\Filament',
-        'path' => app_path('Filament'),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Pages
     |--------------------------------------------------------------------------
     |
@@ -123,6 +108,21 @@ return [
             Widgets\AccountWidget::class,
             Widgets\FilamentInfoWidget::class,
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Livewire
+    |--------------------------------------------------------------------------
+    |
+    | This is the namespace and directory that Filament will automatically
+    | register Livewire components inside.
+    |
+    */
+
+    'livewire' => [
+        'namespace' => 'App\\Filament',
+        'path' => app_path('Filament'),
     ],
 
     /*
