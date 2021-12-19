@@ -60,7 +60,7 @@ class HasManyRepeater extends Repeater
                 continue;
             }
 
-            $relationship->find($keyToCheckForDeletion)->delete();
+            $relationship->find($keyToCheckForDeletion)?->delete();
         }
 
         $childComponentContainers = $this->getChildComponentContainers();
