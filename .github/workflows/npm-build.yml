@@ -2,12 +2,14 @@ name: npm-build
 
 on:
   pull_request:
+    branches:
+      - 2.x
     types: [closed]
 
 jobs:
   npm-build:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == 'true'
+    if: github.event.pull_request.merged == true
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
