@@ -99,18 +99,36 @@ export default (Alpine) => {
                 })
 
                 this.$watch('focusedYear', () => {
-                    this.focusedYear = Number.isInteger(+this.focusedYear) ? +this.focusedYear : dayjs().tz(timezone).year()
-
-                    if (this.focusedDate.year() === this.focusedYear) {
+                    if (! this.focusedYear) {
                         return
                     }
 
-                    this.focusedDate = this.focusedDate.year(this.focusedYear)
+                    let year = +this.focusedYear
+
+                    if (! Number.isInteger(year)) {
+                        year = dayjs().tz(timezone).year()
+
+                        this.focusedYear = year
+                    }
+
+                    if (this.focusedDate.year() === year) {
+                        return
+                    }
+
+                    this.focusedDate = this.focusedDate.year(year)
                 })
 
                 this.$watch('focusedDate', () => {
-                    this.focusedMonth = this.focusedDate.month()
-                    this.focusedYear = this.focusedDate.year()
+                    let month = this.focusedDate.month()
+                    let year = this.focusedDate.year()
+
+                    if (this.focusedMonth !== month) {
+                        this.focusedMonth = month
+                    }
+
+                    if (this.focusedYear !== year) {
+                        this.focusedYear = year
+                    }
 
                     this.setupDaysGrid()
 

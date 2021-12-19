@@ -6128,15 +6128,28 @@ var date_time_picker_default = (Alpine) => {
           this.focusedDate = this.focusedDate.month(this.focusedMonth);
         });
         this.$watch("focusedYear", () => {
-          this.focusedYear = Number.isInteger(+this.focusedYear) ? +this.focusedYear : esm_default().tz(timezone2).year();
-          if (this.focusedDate.year() === this.focusedYear) {
+          if (!this.focusedYear) {
             return;
           }
-          this.focusedDate = this.focusedDate.year(this.focusedYear);
+          let year = +this.focusedYear;
+          if (!Number.isInteger(year)) {
+            year = esm_default().tz(timezone2).year();
+            this.focusedYear = year;
+          }
+          if (this.focusedDate.year() === year) {
+            return;
+          }
+          this.focusedDate = this.focusedDate.year(year);
         });
         this.$watch("focusedDate", () => {
-          this.focusedMonth = this.focusedDate.month();
-          this.focusedYear = this.focusedDate.year();
+          let month = this.focusedDate.month();
+          let year = this.focusedDate.year();
+          if (this.focusedMonth !== month) {
+            this.focusedMonth = month;
+          }
+          if (this.focusedYear !== year) {
+            this.focusedYear = year;
+          }
           this.setupDaysGrid();
           this.$nextTick(() => {
             this.evaluatePosition();
