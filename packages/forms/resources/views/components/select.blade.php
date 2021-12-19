@@ -48,8 +48,7 @@
             x-on:blur="closeListbox()"
             x-on:keydown.escape.stop="closeListbox()"
             {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
-            class="relative"
-            {{ $attributes->merge($getExtraAttributes()) }}
+            {{ $attributes->merge($getExtraAttributes())->class(['relative']) }}
         >
             <div
                 @unless($isDisabled())

@@ -6,5 +6,7 @@
     :hint="$getHint()"
     :state-path="$getStatePath()"
 >
-    {{ $getContent() }}
+    <div {{ $attributes->merge($getExtraAttributes()) }}>
+        {{ $getContent() }}
+    </div>
 </x-forms::field-wrapper>
