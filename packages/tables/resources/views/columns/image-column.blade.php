@@ -1,4 +1,4 @@
-<div {{ $attributes->merge(["class" => "px-4 py-3"]) }}>
+<div {{ $attributes->merge($getExtraAttributes())->class(['px-4 py-3']) }}>
     @if ($path = $getImagePath())
         @if ($isRounded())
             <div
