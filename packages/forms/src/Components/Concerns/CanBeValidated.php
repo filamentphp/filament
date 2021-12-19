@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
 use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
@@ -15,13 +16,21 @@ trait CanBeValidated
 
     protected $validationAttribute = null;
 
-    public function exists(string | callable | null $table = null, string | callable | null $column = null): static
+    public function exists(string | callable | null $table = null, string | callable | null $column = null, ?Closure $callback = null): static
     {
-        $this->rule(function (Component $component) use ($column, $table) {
+        $this->rule(function (Component $component) use ($callback, $column, $table) {
             $table = $component->evaluate($table) ?? $component->getModelClass();
             $column = $component->evaluate($column) ?? $component->getName();
 
-            return Rule::exists($table, $column);
+            $rule = Rule::exists($table, $column);
+
+            if ($callback) {
+                $rule = $this->evaluate($callback, [
+                    'rule' => $rule,
+                ]);
+            }
+
+            return $rule;
         }, fn (Component $component): bool => (bool) ($component->evaluate($table) ?? $component->getModelClass()));
 
         return $this;
@@ -113,14 +122,14 @@ trait CanBeValidated
         return $this->fieldComparisonRule('same', $statePath, $isStatePathAbsolute);
     }
 
-    public function unique(string | callable | null $table = null, string | callable | null $column = null, Model | callable $ignorable = null): static
+    public function unique(string | callable | null $table = null, string | callable | null $column = null, Model | callable $ignorable = null, ?Closure $callback = null): static
     {
-        $this->rule(function (Component $component) use ($column, $ignorable, $table) {
+        $this->rule(function (Component $component) use ($callback, $column, $ignorable, $table) {
             $table = $component->evaluate($table) ?? $component->getModelClass();
             $column = $component->evaluate($column) ?? $component->getName();
             $ignorable = $component->evaluate($ignorable);
 
-            return Rule::unique($table, $column)
+            $rule = Rule::unique($table, $column)
                 ->when(
                     $ignorable,
                     fn (Unique $rule) => $rule->ignore(
@@ -128,6 +137,14 @@ trait CanBeValidated
                         $ignorable->getKeyName(),
                     ),
                 );
+
+            if ($callback) {
+                $rule = $this->evaluate($callback, [
+                    'rule' => $rule,
+                ]);
+            }
+
+            return $rule;
         }, fn (Component $component): bool => (bool) ($component->evaluate($table) ?? $component->getModelClass()));
 
         return $this;
