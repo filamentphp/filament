@@ -85,7 +85,7 @@ use Livewire\Component;
 Forms\Components\TextInput::make('password')
     ->password()
     ->required()
-    ->hidden(fn (Component $livewire): bool => $livewire instanceof EditUser),
+    ->hidden(fn (Component $livewire): bool => $livewire instanceof Pages\EditUser),
 ```
 
 You may instead use the `visible` to check if a component should be visible or not:
@@ -96,7 +96,7 @@ use Livewire\Component;
 Forms\Components\TextInput::make('password')
     ->password()
     ->required()
-    ->visible(fn (Component $livewire): bool => $livewire instanceof CreateUser),
+    ->visible(fn (Component $livewire): bool => $livewire instanceof Pages\CreateUser),
 ```
 
 For more information about closure customization, see the [form builder documentation](/docs/forms/advanced#using-closure-customisation).
