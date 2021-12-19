@@ -11,7 +11,7 @@ trait HasRecords
 {
     protected Collection | LengthAwarePaginator | null $records = null;
 
-    public function getFilteredTableQuery(): Builder
+    protected function getFilteredTableQuery(): Builder
     {
         $query = $this->getTableQuery();
 

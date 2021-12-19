@@ -79,18 +79,22 @@ return [
 
         ],
 
-        'buttons' => [
-
-            'select_all' => [
-                'label' => 'Seleziona tutti i :count record',
-            ],
-
-        ],
-
     ],
 
     'empty' => [
         'heading' => 'Nessun valore trovato',
+    ],
+
+    'selection_indicator' => [
+
+        'buttons' => [
+
+            'select_all' => [
+                'label' => 'Seleziona tutti i :count',
+            ],
+
+        ],
+
     ],
 
 ];

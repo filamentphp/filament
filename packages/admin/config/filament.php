@@ -112,6 +112,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Livewire
+    |--------------------------------------------------------------------------
+    |
+    | This is the namespace and directory that Filament will automatically
+    | register Livewire components inside.
+    |
+    */
+
+    'livewire' => [
+        'namespace' => 'App\\Filament',
+        'path' => app_path('Filament'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Layout
     |--------------------------------------------------------------------------
     |
@@ -123,6 +138,14 @@ return [
     */
 
     'layout' => [
+        'forms' => [
+            'actions' => [
+                'alignment' => 'left',
+            ],
+        ],
+        'footer' => [
+            'should_show_logo' => true,
+        ],
         'max_content_width' => null,
     ],
 

@@ -15,7 +15,7 @@ return [
 
         'label' => 'Seitennavigation',
 
-        'overview' => 'Anzeigen von :first bis :last von :total Ergebnissen',
+        'overview' => ':first bis :last von :total Ergebnissen',
 
         'fields' => [
 
@@ -68,7 +68,7 @@ return [
                 ],
 
                 'confirm' => [
-                    'label' => 'Bestätigen Sie',
+                    'label' => 'Bestätigen',
                 ],
 
                 'submit' => [
@@ -79,6 +79,14 @@ return [
 
         ],
 
+    ],
+
+    'empty' => [
+        'heading' => 'Keine Datensätze gefunden',
+    ],
+
+    'selection_indicator' => [
+
         'buttons' => [
 
             'select_all' => [
@@ -87,10 +95,6 @@ return [
 
         ],
 
-    ],
-
-    'empty' => [
-        'heading' => 'Keine Datensätze gefunden',
     ],
 
 ];

@@ -50,7 +50,7 @@ return [
         ],
 
         'open_actions' => [
-            'label' => 'Open actions',
+            'label' => 'فتح الإجراءات',
         ],
 
     ],
@@ -59,7 +59,7 @@ return [
 
         'modal' => [
 
-            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
+            'requires_confirmation_subheading' => 'هل إنت متأكد من القيام بهذا؟',
 
             'buttons' => [
 
@@ -68,21 +68,13 @@ return [
                 ],
 
                 'confirm' => [
-                    'label' => 'Confirm',
+                    'label' => 'تأكيد',
                 ],
 
                 'submit' => [
-                    'label' => 'Submit',
+                    'label' => 'إعتماد',
                 ],
 
-            ],
-
-        ],
-
-        'buttons' => [
-
-            'select_all' => [
-                'label' => 'Select all :count records',
             ],
 
         ],
@@ -91,6 +83,18 @@ return [
 
     'empty' => [
         'heading' => 'لا توجد سجلات',
+    ],
+
+    'selection_indicator' => [
+
+        'buttons' => [
+
+            'select_all' => [
+                'label' => 'تحديد كل السجلات :count',
+            ],
+
+        ],
+
     ],
 
 ];

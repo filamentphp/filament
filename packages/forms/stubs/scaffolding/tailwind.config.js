@@ -1,10 +1,9 @@
 const colors = require('tailwindcss/colors')
 
 module.exports = {
-    mode: 'jit',
-    purge: [
+    content: [
         './resources/**/*.blade.php',
-        './vendor/filament/forms/resources/views/**/*.blade.php',
+        './vendor/filament/**/*.blade.php',
     ],
     theme: {
         extend: {

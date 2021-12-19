@@ -46,6 +46,8 @@ class Table extends ViewComponent implements Htmlable
 
     protected array $meta = [];
 
+    protected string $model;
+
     protected ?array $recordsPerPageSelectOptions = null;
 
     final public function __construct(HasTable $livewire)
@@ -135,6 +137,13 @@ class Table extends ViewComponent implements Htmlable
         return $this;
     }
 
+    public function model(string $model): static
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
     public function recordsPerPageSelectOptions(array $options): static
     {
         $this->recordsPerPageSelectOptions = $options;
@@ -145,11 +154,6 @@ class Table extends ViewComponent implements Htmlable
     public function areAllRecordsOnCurrentPageSelected(): bool
     {
         return $this->getLivewire()->areAllTableRecordsOnCurrentPageSelected();
-    }
-
-    public function areAllRecordsSelected(): bool
-    {
-        return $this->getLivewire()->areAllTableRecordsSelected();
     }
 
     public function getActions(): array
@@ -237,6 +241,11 @@ class Table extends ViewComponent implements Htmlable
         return value($this->heading);
     }
 
+    public function getModel(): string
+    {
+        return $this->model;
+    }
+
     public function getMountedAction(): ?Action
     {
         return $this->getLivewire()->getMountedTableAction();
@@ -278,9 +287,9 @@ class Table extends ViewComponent implements Htmlable
         return $callback($record);
     }
 
-    public function getSelectedRecordCount(): int
+    public function getSelectedRecordsCount(): int
     {
-        return $this->getLivewire()->getSelectedTableRecordCount();
+        return $this->getLivewire()->getSelectedTableRecordsCount();
     }
 
     public function getSortColumn(): ?string

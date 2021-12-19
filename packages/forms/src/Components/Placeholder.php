@@ -12,7 +12,7 @@ class Placeholder extends Component
 
     protected string $view = 'forms::components.placeholder';
 
-    protected $state = null;
+    protected $content = null;
 
     final public function __construct(string $name)
     {
@@ -35,11 +35,16 @@ class Placeholder extends Component
         $this->dehydrated(false);
     }
 
-    public function state($state): static
+    public function content($content): static
     {
-        $this->state = $state;
+        $this->content = $content;
 
         return $this;
+    }
+
+    protected function shouldEvaluateWithState(): bool
+    {
+        return false;
     }
 
     public function getId(): string
@@ -55,8 +60,8 @@ class Placeholder extends Component
             ->ucfirst();
     }
 
-    public function getState()
+    public function getContent()
     {
-        return $this->evaluate($this->state);
+        return $this->evaluate($this->content);
     }
 }

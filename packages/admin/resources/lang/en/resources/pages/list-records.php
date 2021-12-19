@@ -4,6 +4,14 @@ return [
 
     'breadcrumb' => 'List',
 
+    'actions' => [
+
+        'create' => [
+            'label' => 'New :label',
+        ],
+
+    ],
+
     'table' => [
 
         'actions' => [

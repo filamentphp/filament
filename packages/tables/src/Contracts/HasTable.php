@@ -7,14 +7,11 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 interface HasTable extends HasForms
 {
     public function areAllTableRecordsOnCurrentPageSelected(): bool;
-
-    public function areAllTableRecordsSelected(): bool;
 
     public function callTableColumnAction(string $columnName, string $recordKey);
 
@@ -34,8 +31,6 @@ interface HasTable extends HasForms
 
     public function getCachedTableHeaderActions(): array;
 
-    public function getFilteredTableQuery(): Builder;
-
     public function getMountedTableAction(): ?Action;
 
     public function getMountedTableActionForm(): ComponentContainer;
@@ -44,7 +39,7 @@ interface HasTable extends HasForms
 
     public function getMountedTableBulkActionForm(): ComponentContainer;
 
-    public function getSelectedTableRecordCount(): int;
+    public function getSelectedTableRecordsCount(): int;
 
     public function getTableFiltersForm(): ComponentContainer;
 

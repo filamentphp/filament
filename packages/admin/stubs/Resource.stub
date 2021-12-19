@@ -21,7 +21,7 @@ class {{ resourceClass }} extends Resource
     {
         return $form
             ->schema([
-                //
+{{ formSchema }}
             ]);
     }
 
@@ -29,7 +29,7 @@ class {{ resourceClass }} extends Resource
     {
         return $table
             ->columns([
-                //
+{{ tableColumns }}
             ])
             ->filters([
                 //

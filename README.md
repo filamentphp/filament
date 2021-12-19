@@ -13,7 +13,7 @@ Filament is a collection of tools for rapidly building beautiful TALL stack inte
 
 ## Packages
 
-### Admin Panel • [Documentation](https://filamentadmin.com/docs/admin)
+### Admin Panel • [Documentation](https://filamentadmin.com/docs/admin) • [Demo](https://demo.filamentadmin.com)
 
 ```bash
 composer require filament/filament

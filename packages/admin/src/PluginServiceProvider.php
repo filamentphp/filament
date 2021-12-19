@@ -30,6 +30,11 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
+        $this->app->singletonIf(
+            'filament',
+            fn (): FilamentManager => new FilamentManager()
+        );
+
         Facades\Filament::registerPages($this->getPages());
         Facades\Filament::registerResources($this->getResources());
         Facades\Filament::registerWidgets($this->getWidgets());
@@ -54,6 +59,10 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
             foreach ($resource::getRelations() as $relation) {
                 Livewire::component($relation::getName(), $relation);
+            }
+
+            foreach ($resource::getWidgets() as $widget) {
+                Livewire::component($widget::getName(), $widget);
             }
         }
 

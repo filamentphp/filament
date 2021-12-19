@@ -20,6 +20,10 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
     public $activeRelationManager = null;
 
+    protected $queryString = [
+        'activeRelationManager',
+    ];
+
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? __('filament::resources/pages/edit-record.breadcrumb');
@@ -35,7 +39,7 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
         $this->fillForm();
 
-        $this->activeRelationManager = $this->getResource()::getRelations()[0] ?? null;
+        $this->activeRelationManager ??= ($this->getResource()::getRelations()[0] ?? null);
     }
 
     protected function fillForm(): void
@@ -55,6 +59,8 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
         $this->callHook('afterValidate');
 
+        $data = $this->mutateFormDataBeforeSave($data);
+
         $this->callHook('beforeSave');
 
         $this->record->update($data);
@@ -66,6 +72,11 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
         } else {
             $this->notify('success', __('filament::resources/pages/edit-record.messages.saved'));
         }
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        return $data;
     }
 
     public function openDeleteModal(): void
@@ -116,7 +127,7 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
     protected function getTitle(): string
     {
-        return static::$title ?? (($recordTitle = $this->getRecordTitle()) ? __('filament::resources/pages/edit-record.title', ['record' => $recordTitle]) : parent::getTitle());
+        return static::$title ?? (($recordTitle = $this->getRecordTitle()) ? __('filament::resources/pages/edit-record.title', ['label' => $recordTitle]) : parent::getTitle());
     }
 
     protected function getFormActions(): array
