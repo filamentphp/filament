@@ -2,9 +2,6 @@
 
 namespace Filament\Tables\Columns;
 
-use Filament\Forms\Components\SpatieTagsInput;
-use Illuminate\Database\Eloquent\Model;
-
 class SpatieTagsColumn extends TagsColumn
 {
     protected ?string $type = null;
