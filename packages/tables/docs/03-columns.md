@@ -260,7 +260,7 @@ ImageColumn::make('header_image')->disk('s3')
 
 ## Icon column
 
-Icon columns render a Blade icon component representing their state:
+Icon columns render a Blade icon component representing their contents:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
@@ -310,7 +310,7 @@ IconColumn::make('is_featured')
 
 ## Badge column
 
-Icon columns render a colored badge representing their state. The badge contains the state of the cell. You may use the same formatting methods as for [text columns](#text-column):
+Badge columns render a colored badge with the cell's contents. You may use the same formatting methods as for [text columns](#text-column):
 
 ```php
 use Filament\Tables\Columns\BadgeColumn;
@@ -349,6 +349,39 @@ BadgeColumn::make('status')
         'warning' => fn ($state): bool => $state === 'reviewing',
         'success' => fn ($state): bool => $state === 'published',
     ])
+```
+
+## Tags column
+
+Tags columns render a list of tags from an array:
+
+```php
+use Filament\Tables\Columns\TagsColumn;
+
+TagsColumn::make('tags')
+```
+
+Be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class BlogPost extends Model
+{
+    protected $casts = [
+        'tags' => 'array',
+    ];
+
+    // ...
+}
+```
+
+Instead of using an array, you may use a separated string by passing the separator into `separator()`:
+
+```php
+use Filament\Tables\Columns\TagsColumn;
+
+TagsColumn::make('tags')->separator(',')
 ```
 
 ## View column

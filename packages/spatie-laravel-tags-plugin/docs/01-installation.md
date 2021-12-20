@@ -20,7 +20,7 @@ Install the plugin with Composer:
 composer require filament/spatie-laravel-tags-plugin:^2.0
 ```
 
-You're now ready to start using the [form components](form-components)!
+You're now ready to start using the [form components](form-components) and [table columns](table-columns)!
 
 ## Upgrade Guide
 
