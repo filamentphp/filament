@@ -61,17 +61,20 @@ public static function form(Form $form): Form
 }
 ```
 
+### Available field types
+
 The `schema()` method is used to define the structure of your form. It is an array of [fields](/docs/forms/fields), in the order they should appear in your form.
 
 To view a full list of available form [fields](/docs/forms/fields) and [layout components](/docs/forms/layout), see the [Form Builder documentation](/docs/forms/fields).
 
+### Automatically generating fields
+
 If you'd like to save time, Filament can automatically generate some fields and [tables](#tables) for you, based on your model's database columns:
 
 ```bash
+composer require doctrine/dbal
 php artisan make:filament-resource Customer --generate
 ```
-
-> You may also use the same form builder outside of the admin panel, by following [these installation instructions](/docs/forms/installation).
 
 ### Hiding components based on the page
 
@@ -126,21 +129,26 @@ public static function table(Table $table): Table
 }
 ```
 
+### Available column types
+
 The `columns()` method is used to define the [columns](/docs/tables/columns) in your table. It is an array of column objects, in the order they should appear in your table.
+
+To view a full list of available table [columns](/docs/tables/columns), see the [Table Builder documentation](/docs/tables/columns).
+
+### Filtering table data
 
 [Filters](/docs/tables/filters) are predefined scopes that administrators can use to filter records in your table. The `filters()` method is used to register these.
 
-To view a full list of available table [columns](/docs/tables/columns), see the [Table Builder documentation](/docs/tables/columns).
+### Automatically generating columns
 
 If you'd like to save time, Filament can automatically generate some columns and [form fields](#forms) for you, based on your model's database columns:
 
 ```bash
+composer require doctrine/dbal
 php artisan make:filament-resource Customer --generate
 ```
 
-> You may also use the same table builder outside of the admin panel, by following [these installation instructions](/docs/tables/installation).
-
-### Applying a default sort
+### Sorting a column by default
 
 If a column is `sortable()`, you may choose to sort it by default using the `defaultSort()` method:
 
@@ -156,6 +164,102 @@ public static function table(Table $table): Table
             // ...
         ])
         ->defaultSort('name');
+}
+```
+
+### Adding more actions
+
+You may add more [actions](/docs/tables/actions#single-actions) to each table row.
+
+To add actions before the default actions, use the `prependActions()` method:
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->prependActions([
+            Tables\Actions\LinkAction::make('delete')
+                ->action(fn (Post $record) => $record->delete())
+                ->requiresConfirmation()
+                ->color('danger'),
+        ]);
+}
+```
+
+To add actions after the default actions, use the `pushActions()` method:
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->pushActions([
+            Tables\Actions\LinkAction::make('delete')
+                ->action(fn (Post $record) => $record->delete())
+                ->requiresConfirmation()
+                ->color('danger'),
+        ]);
+}
+```
+
+### Adding more bulk actions
+
+You may add more [bulk actions](/docs/tables/actions#bulk-actions) to the table.
+
+To add bulk actions before the default actions, use the `prependBulkActions()` method:
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+use Illuminate\Database\Eloquent\Collection;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->prependBulkActions([
+            Tables\Actions\BulkAction::make('activate')
+                ->action(fn (Collection $records) => $records->each->activate())
+                ->requiresConfirmation()
+                ->color('success')
+                ->icon('heroicon-o-check'),
+        ]);
+}
+```
+
+To add bulk actions after the default actions, use the `pushBulkActions()` method:
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+use Illuminate\Database\Eloquent\Collection;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->pushBulkActions([
+            Tables\Actions\BulkAction::make('activate')
+                ->action(fn (Collection $records) => $records->each->activate())
+                ->requiresConfirmation()
+                ->color('success')
+                ->icon('heroicon-o-check'),
+        ]);
 }
 ```
 
