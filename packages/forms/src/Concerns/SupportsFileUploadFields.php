@@ -2,14 +2,14 @@
 
 namespace Filament\Forms\Concerns;
 
-use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\BaseFileUpload;
 
 trait SupportsFileUploadFields
 {
     public function getUploadedFileUrl(string $statePath): ?string
     {
         foreach ($this->getComponents() as $component) {
-            if ($component instanceof FileUpload && $component->getStatePath() === $statePath) {
+            if ($component instanceof BaseFileUpload && $component->getStatePath() === $statePath) {
                 return $component->getUploadedFileUrl();
             }
 
@@ -30,7 +30,7 @@ trait SupportsFileUploadFields
     public function removeUploadedFile(string $statePath): bool
     {
         foreach ($this->getComponents() as $component) {
-            if ($component instanceof FileUpload && $component->getStatePath() === $statePath) {
+            if ($component instanceof BaseFileUpload && $component->getStatePath() === $statePath) {
                 $component->removeUploadedFile();
 
                 return true;
