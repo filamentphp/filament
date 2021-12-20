@@ -1,12 +1,7 @@
 <?php
 
-use Filament\Facades\Filament;
 use Filament\Tests\Admin\Fixtures\Pages\Settings;
-use Filament\Tests\Admin\Fixtures\Resources\PostResource;
 use Filament\Tests\Admin\Pages\TestCase;
-use Filament\Tests\Models\Post;
-use Illuminate\Database\Eloquent\Builder;
-use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 
