@@ -2,9 +2,6 @@
 
 namespace Filament\Forms\Components;
 
-use Illuminate\Contracts\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Storage;
-
 class FileUpload extends BaseFileUpload
 {
     use Concerns\HasExtraAlpineAttributes;

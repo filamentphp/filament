@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components;
 
-use Filament\Forms\Components\Field;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
@@ -10,9 +9,9 @@ use SplFileInfo;
 
 class BaseFileUpload extends Field
 {
-	protected $visibility = 'public';
+    protected $visibility = 'public';
 
-	protected $directory = null;
+    protected $directory = null;
 
     protected $diskName = null;
 
