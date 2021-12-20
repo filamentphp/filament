@@ -40,5 +40,9 @@ abstract class TestCase extends BaseTestCase
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('auth.providers.users.model', User::class);
+        $app['config']->set('view.paths', array_merge(
+            $app['config']->get('view.paths'),
+            [__DIR__ . '/../resources/views'],
+        ));
     }
 }
