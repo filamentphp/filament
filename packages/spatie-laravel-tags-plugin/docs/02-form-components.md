@@ -2,8 +2,6 @@
 title: Form Components
 ---
 
-## Tags input
-
 You may use the field in the same way as the [original tags input](/docs/forms/fields#tags-input) field:
 
 ```php
