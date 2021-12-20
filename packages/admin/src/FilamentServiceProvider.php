@@ -96,9 +96,11 @@ class FilamentServiceProvider extends PackageServiceProvider
     {
         $filesystem = new Filesystem();
 
-        $filesystem->ensureDirectoryExists(config('filament.pages.path'));
-
         Filament::registerPages(config('filament.pages.register', []));
+
+        if (! $filesystem->exists(config('filament.pages.path'))) {
+            return;
+        }
 
         Filament::registerPages(collect($filesystem->allFiles(config('filament.pages.path')))
             ->map(function (SplFileInfo $file): string {
@@ -114,9 +116,11 @@ class FilamentServiceProvider extends PackageServiceProvider
     {
         $filesystem = new Filesystem();
 
-        $filesystem->ensureDirectoryExists(config('filament.resources.path'));
-
         Filament::registerResources(config('filament.resources.register', []));
+
+        if (! $filesystem->exists(config('filament.resources.path'))) {
+            return;
+        }
 
         Filament::registerResources(collect($filesystem->allFiles(config('filament.resources.path')))
             ->map(function (SplFileInfo $file): string {
@@ -132,9 +136,11 @@ class FilamentServiceProvider extends PackageServiceProvider
     {
         $filesystem = new Filesystem();
 
-        $filesystem->ensureDirectoryExists(config('filament.widgets.path'));
-
         Filament::registerWidgets(config('filament.widgets.register', []));
+
+        if (! $filesystem->exists(config('filament.widgets.path'))) {
+            return;
+        }
 
         Filament::registerWidgets(collect($filesystem->allFiles(config('filament.widgets.path')))
             ->map(function (SplFileInfo $file): string {
