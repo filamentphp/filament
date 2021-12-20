@@ -142,6 +142,23 @@ class BaseFileUpload extends Field
         return $this->getState() instanceof SplFileInfo;
     }
 
+    public function deleteUploadedFile($file = null): static
+    {
+        if (! $file) {
+            $file = $this->getState();
+        }
+
+        if ($callback = $this->deleteUploadedFileUsing) {
+            $this->evaluate($callback, [
+                'file' => $file,
+            ]);
+        } else {
+            $this->handleUploadedFileDeletion($file);
+        }
+
+        return $this;
+    }
+
     public function getUploadedFileUrl(): ?string
     {
         $file = $this->getState();

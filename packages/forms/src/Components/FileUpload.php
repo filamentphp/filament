@@ -91,23 +91,6 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function deleteUploadedFile($file = null): static
-    {
-        if (! $file) {
-            $file = $this->getState();
-        }
-
-        if ($callback = $this->deleteUploadedFileUsing) {
-            $this->evaluate($callback, [
-                'file' => $file,
-            ]);
-        } else {
-            $this->handleUploadedFileDeletion($file);
-        }
-
-        return $this;
-    }
-
     public function idleLabel(string | callable $label): static
     {
         $this->placeholder($label);
@@ -258,7 +241,7 @@ class FileUpload extends BaseFileUpload
     {
         return $this->getContainer()->getParentComponent() instanceof MultipleFileUpload;
     }
-    
+
     protected function handleUploadedFileRemoval($file): void
     {
         $this->state(null);
