@@ -6,10 +6,10 @@
     <div {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}=\"updateChartData\"" : '' !!}>
         <canvas
             x-data="{
-                {{ $this->getChartVariableName() }}: null,
+                chart: null,
 
                 init: function () {
-                    {{ $this->getChartVariableName() }} = new Chart(
+                    chart = new Chart(
                         $el,
                         {
                             type: '{{ $this->getType() }}',
@@ -19,9 +19,9 @@
                     )
 
                     $wire.on('updateChartData', async ({ data }) => {
-                        {{ $this->getChartVariableName() }}.data = data
+                        chart.data = data
 
-                        {{ $this->getChartVariableName() }}.update('resize')
+                        chart.update('resize')
                     })
                 }
             }"
