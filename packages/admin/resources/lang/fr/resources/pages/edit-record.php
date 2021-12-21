@@ -9,7 +9,7 @@ return [
     'actions' => [
 
         'delete' => [
-            'label' => 'Annuler',
+            'label' => 'Supprimer',
         ],
 
         'view' => [
