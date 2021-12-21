@@ -72,7 +72,7 @@
             >
                 <span
                     x-show="! isOpen"
-                    x-text="label ?? '{{ $getPlaceholder() }}'"
+                    x-text="label ?? '{{ addslashes($getPlaceholder()) }}'"
                     class="absolute w-full bg-white"
                 ></span>
 
