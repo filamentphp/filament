@@ -19,7 +19,7 @@ class ChartWidget extends Widget
     public function mount()
     {
         $this->dataChecksum = $this->generateDataChecksum();
-        $this->chartVariable = 'chart' . uniqid();
+        $this->chartVariable = uniqid('chart_');
     }
 
     protected function generateDataChecksum(): string
