@@ -15,7 +15,7 @@ return [
 
         'label' => 'Navigation par pagination',
 
-        'overview' => 'Montrer :first à :last de :total résultats',
+        'overview' => 'Affichage de :first à :last sur :total éléments',
 
         'fields' => [
 
@@ -59,7 +59,7 @@ return [
 
         'modal' => [
 
-            'requires_confirmation_subheading' => 'Êtes-vous sûr de vouloir faire ça?',
+            'requires_confirmation_subheading' => 'Êtes-vous sûr de vouloir faire cela ?',
 
             'buttons' => [
 
@@ -82,19 +82,24 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'Aucun document trouvé',
+        'heading' => 'Aucun élément trouvé',
     ],
 
     'selection_indicator' => [
 
+        'selected_count' => '1 élément sélectionné.|:count éléments sélectionnés.',
+
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Sélectionner tous les enregistrements',
+                'label' => 'Sélectionner tout (:count)',
+            ],
+
+            'deselect_all' => [
+                'label' => 'Désélectionner tout',
             ],
 
         ],
 
     ],
-
 ];
