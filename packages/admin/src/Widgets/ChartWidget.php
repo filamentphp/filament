@@ -52,7 +52,6 @@ class ChartWidget extends Widget
         return static::$pollingInterval;
     }
 
-
     public function updateChartData()
     {
         $newDataChecksum = $this->generateDataChecksum();
