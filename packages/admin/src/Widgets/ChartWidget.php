@@ -14,14 +14,22 @@ class ChartWidget extends Widget
 
     protected static string $view = 'filament::widgets.chart-widget';
 
+    private string $chartVariable;
+
     public function mount()
     {
         $this->dataChecksum = $this->generateDataChecksum();
+        $this->chartVariable = 'chart' . uniqid();
     }
 
     protected function generateDataChecksum(): string
     {
         return md5(json_encode($this->getData()));
+    }
+
+    protected function getChartVariableName(): string
+    {
+        return $this->chartVariable;
     }
 
     protected function getData(): array
@@ -43,6 +51,7 @@ class ChartWidget extends Widget
     {
         return static::$pollingInterval;
     }
+
 
     public function updateChartData()
     {
