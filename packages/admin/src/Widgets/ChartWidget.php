@@ -6,6 +6,8 @@ class ChartWidget extends Widget
 {
     public string $dataChecksum;
 
+    public ?string $filter = null;
+
     protected static ?string $heading = null;
 
     protected static ?array $options = null;
@@ -13,8 +15,6 @@ class ChartWidget extends Widget
     protected static ?string $pollingInterval = '5s';
 
     protected static string $view = 'filament::widgets.chart-widget';
-
-    public ?string $filter = null;
 
     public function mount()
     {
@@ -29,6 +29,11 @@ class ChartWidget extends Widget
     protected function getData(): array
     {
         return [];
+    }
+
+    protected function getFilters(): ?array
+    {
+        return null;
     }
 
     protected function getHeading(): ?string
@@ -59,13 +64,8 @@ class ChartWidget extends Widget
         }
     }
 
-    public function updatedFilter()
+    public function updatedFilter(): void
     {
         $this->updateChartData();
-    }
-
-    protected function getFilters(): ?array
-    {
-        return [];
     }
 }

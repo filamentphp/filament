@@ -1,29 +1,47 @@
 <x-filament::card>
+    <div class="flex items-center justify-between gap-8">
+        <x-filament::card.heading>
+            {{ $this->getHeading() }}
+        </x-filament::card.heading>
 
-    <x-filament::card.filter :filter="$filter" />
+        @if ($filters = $this->getFilters())
+            <select
+                wire:model="filter"
+                class="text-gray-900 border-gray-300 block h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600"
+            >
+                @foreach ($filters as $value => $label)
+                    <option value="{{ $value }}">
+                        {{ $label }}
+                    </option>
+                @endforeach
+            </select>
+        @endif
+    </div>
+
+    <x-filament::hr />
 
     <div class="bg-gray-900" {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}=\"updateChartData\"" : '' !!}>
-        <canvas x-data="{
+        <canvas
+            x-data="{
                 chart: null,
-                renderChart: function (data = null) {
-                    this.chart = new Chart(
+
+                init: function () {
+                    chart = new Chart(
                         $el,
                         {
                             type: '{{ $this->getType() }}',
-                            data: data != null ? data : {{ json_encode($this->getData()) }} ,
+                            data: {{ json_encode($this->getData()) }},
                             options: {{ json_encode($this->getOptions()) ?? '{}' }},
-                        }
+                        },
                     )
-                },
-
-                init: function () {
-                    this.renderChart()
 
                     $wire.on('updateChartData', async ({ data }) => {
-                        this.chart.destroy()
-                        this.renderChart(data)
+                        chart.data = data
+                        chart.update('resize')
                     })
                 },
-            }" wire:ignore></canvas>
+            }"
+            wire:ignore
+        ></canvas>
     </div>
 </x-filament::card>
