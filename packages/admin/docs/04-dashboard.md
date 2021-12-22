@@ -171,20 +171,19 @@ protected function getData(): array
 }
 ```
 
-### Filtering
+### Filtering chart data
 
-By Default, filtering is disabled. 
-To enable it, first override the `$filter` property by setting your default filter value:
+You can set up chart filters to change the data shown on chart. Commonly, this is used to change the time period that chart data is rendered for.
+
+To set a default filter value, set the `$filter` property:
 
 ```php
 public ?string $filter = 'today';
 ```
 
-Then, the `getFilters()` method is used to return an array of values and labels for your filter:
+Then, define the `getFilters()` method to return an array of values and labels for your filter:
 
 ```php
-public ?string $filter = 'today';
-
 protected function getFilters(): ?array
 {
     return [
@@ -194,6 +193,17 @@ protected function getFilters(): ?array
             '6months' => 'Last 6 Months',
             'year' => 'This Year',
     ];
+}
+```
+
+You can use the active filter value within your `getData()` method:
+
+```php
+protected function getData(): array
+{
+    $this->filter;
+    
+    // ...
 }
 ```
 
