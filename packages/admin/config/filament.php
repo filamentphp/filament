@@ -147,6 +147,11 @@ return [
             'should_show_logo' => true,
         ],
         'max_content_width' => null,
+        'tables' => [
+            'actions' => [
+                'type' => \Filament\Tables\Actions\LinkAction::class,
+            ],
+        ],
     ],
 
     /*

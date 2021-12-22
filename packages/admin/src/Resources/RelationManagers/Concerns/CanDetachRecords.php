@@ -27,14 +27,15 @@ trait CanDetachRecords
         $this->callHook('afterDetach');
     }
 
-    protected function getDetachLinkTableAction(): Tables\Actions\LinkAction
+    protected function getDetachTableAction(): Tables\Actions\Action
     {
-        return Tables\Actions\LinkAction::make('detach')
+        return config('filament.layout.tables.actions.type')::make('detach')
             ->label(__('filament::resources/relation-managers/detach.action.label'))
             ->requiresConfirmation()
             ->modalHeading(__('filament::resources/relation-managers/detach.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->detach())
             ->color('danger')
+            ->icon('heroicon-o-x')
             ->hidden(fn (Model $record): bool => ! static::canDetach($record));
     }
 

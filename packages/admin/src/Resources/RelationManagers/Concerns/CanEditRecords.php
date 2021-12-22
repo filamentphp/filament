@@ -54,15 +54,16 @@ trait CanEditRecords
         return $data;
     }
 
-    protected function getEditLinkTableAction(): Tables\Actions\LinkAction
+    protected function getEditTableAction(): Tables\Actions\Action
     {
-        return Tables\Actions\LinkAction::make('edit')
+        return config('filament.layout.tables.actions.type')::make('edit')
             ->label(__('filament::resources/relation-managers/edit.action.label'))
             ->form($this->getEditFormSchema())
             ->mountUsing(fn () => $this->fillEditForm())
             ->modalButton(__('filament::resources/relation-managers/edit.action.modal.actions.save.label'))
             ->modalHeading(__('filament::resources/relation-managers/edit.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->save())
+            ->icon('heroicon-o-pencil')
             ->hidden(fn (Model $record): bool => ! static::canEdit($record));
     }
 }

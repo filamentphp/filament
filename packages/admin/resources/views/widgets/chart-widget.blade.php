@@ -20,7 +20,7 @@
 
     <x-filament::hr />
 
-    <div class="bg-gray-900" {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}=\"updateChartData\"" : '' !!}>
+    <div {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}=\"updateChartData\"" : '' !!}>
         <canvas
             x-data="{
                 chart: null,

@@ -22,9 +22,9 @@ class BelongsToManyRelationManager extends RelationManager
             $table = Table::make();
 
             $table->actions([
-                $this->getEditLinkTableAction(),
-                $this->getDetachLinkTableAction(),
-                $this->getDeleteLinkTableAction(),
+                $this->getEditTableAction(),
+                $this->getDetachTableAction(),
+                $this->getDeleteTableAction(),
             ]);
 
             $table->bulkActions(array_merge(
