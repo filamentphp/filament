@@ -9,8 +9,6 @@ class FileUpload extends BaseFileUpload
 
     protected string $view = 'forms::components.file-upload';
 
-    protected $acceptedFileTypes = [];
-
     protected $imageCropAspectRatio = null;
 
     protected $imagePreviewHeight = null;
@@ -32,44 +30,6 @@ class FileUpload extends BaseFileUpload
     protected $uploadButtonPosition = 'right';
 
     protected $uploadProgressIndicatorPosition = 'right';
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->beforeStateDehydrated(function (FileUpload $component): void {
-            $component->saveUploadedFile();
-        });
-
-        $this->afterStateUpdated(function (FileUpload $component, $state): void {
-            if (! $component->isMultiple()) {
-                return;
-            }
-
-            if (blank($state)) {
-                return;
-            }
-
-            $component->getContainer()->getParentComponent()->appendNewUploadField();
-        });
-
-        $this->dehydrated(fn (FileUpload $component): bool => ! $component->isMultiple());
-    }
-
-    public function acceptedFileTypes(array | callable $types): static
-    {
-        $this->acceptedFileTypes = $types;
-
-        $this->rule(function () {
-            $types = implode(',', $this->getAcceptedFileTypes());
-
-            return "mimetypes:{$types}";
-        }, function () {
-            return $this->hasFileObjectState() && count($this->getAcceptedFileTypes());
-        });
-
-        return $this;
-    }
 
     public function avatar(): static
     {
@@ -172,11 +132,6 @@ class FileUpload extends BaseFileUpload
         $this->uploadProgressIndicatorPosition = $position;
 
         return $this;
-    }
-
-    public function getAcceptedFileTypes(): array
-    {
-        return $this->evaluate($this->acceptedFileTypes);
     }
 
     public function getImageCropAspectRatio(): ?string

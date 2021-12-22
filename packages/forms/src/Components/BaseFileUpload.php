@@ -9,7 +9,7 @@ use SplFileInfo;
 
 class BaseFileUpload extends Field
 {
-    protected $visibility = 'public';
+    protected $acceptedFileTypes = [];
 
     protected $directory = null;
 
@@ -19,6 +19,8 @@ class BaseFileUpload extends Field
 
     protected $minSize = null;
 
+    protected $visibility = 'public';
+
     protected $deleteUploadedFileUsing = null;
 
     protected $getUploadedFileUrlUsing = null;
@@ -27,9 +29,40 @@ class BaseFileUpload extends Field
 
     protected $saveUploadedFileUsing = null;
 
-    public function visibility(string | callable $visibility): static
+    protected function setUp(): void
     {
-        $this->visibility = $visibility;
+        parent::setUp();
+
+        $this->beforeStateDehydrated(function (BaseFileUpload $component): void {
+            $component->saveUploadedFile();
+        });
+
+        $this->afterStateUpdated(function (BaseFileUpload $component, $state): void {
+            if (! $component->isMultiple()) {
+                return;
+            }
+
+            if (blank($state)) {
+                return;
+            }
+
+            $component->getContainer()->getParentComponent()->appendNewUploadField();
+        });
+
+        $this->dehydrated(fn (BaseFileUpload $component): bool => ! $component->isMultiple());
+    }
+
+    public function acceptedFileTypes(array | callable $types): static
+    {
+        $this->acceptedFileTypes = $types;
+
+        $this->rule(function () {
+            $types = implode(',', $this->getAcceptedFileTypes());
+
+            return "mimetypes:{$types}";
+        }, function () {
+            return $this->hasFileObjectState() && count($this->getAcceptedFileTypes());
+        });
 
         return $this;
     }
@@ -78,6 +111,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function visibility(string | callable $visibility): static
+    {
+        $this->visibility = $visibility;
+
+        return $this;
+    }
+
     public function deleteUploadedFileUsing(callable $callback): static
     {
         $this->deleteUploadedFileUsing = $callback;
@@ -106,9 +146,9 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function getVisibility(): string
+    public function getAcceptedFileTypes(): array
     {
-        return $this->evaluate($this->visibility);
+        return $this->evaluate($this->acceptedFileTypes);
     }
 
     public function getDirectory(): ?string
@@ -134,6 +174,11 @@ class BaseFileUpload extends Field
     public function getMinSize(): ?int
     {
         return $this->evaluate($this->minSize);
+    }
+
+    public function getVisibility(): string
+    {
+        return $this->evaluate($this->visibility);
     }
 
     public function hasFileObjectState(): bool
