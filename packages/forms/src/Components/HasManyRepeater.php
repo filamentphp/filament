@@ -35,6 +35,8 @@ class HasManyRepeater extends Repeater
         });
 
         $this->dehydrated(false);
+
+        $this->disableItemMovement();
     }
 
     public function relationship(string | callable $name): static
