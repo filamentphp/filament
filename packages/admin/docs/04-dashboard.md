@@ -173,9 +173,8 @@ protected function getData(): array
 
 ### Filtering
 
-By Default, chart widget filter is disabled.
-
-To enable filtering, first override the `$filter` property by setting your default filter value:
+By Default, filtering is disabled. 
+To enable it, first override the `$filter` property by setting your default filter value:
 
 ```php
 public ?string $filter = 'today';
