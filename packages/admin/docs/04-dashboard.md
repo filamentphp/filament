@@ -171,6 +171,42 @@ protected function getData(): array
 }
 ```
 
+### Filtering chart data
+
+You can set up chart filters to change the data shown on chart. Commonly, this is used to change the time period that chart data is rendered for.
+
+To set a default filter value, set the `$filter` property:
+
+```php
+public ?string $filter = 'today';
+```
+
+Then, define the `getFilters()` method to return an array of values and labels for your filter:
+
+```php
+protected function getFilters(): ?array
+{
+    return [
+            'today' =>  'Today',
+            '7days' =>  'Last 7 Days',
+            '30days' => 'Last 30 Days',
+            '6months' => 'Last 6 Months',
+            'year' => 'This Year',
+    ];
+}
+```
+
+You can use the active filter value within your `getData()` method:
+
+```php
+protected function getData(): array
+{
+    $this->filter;
+    
+    // ...
+}
+```
+
 ### Live updating (polling)
 
 By default, chart widgets refresh their data every 5 seconds.

@@ -5,22 +5,22 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Rechercher',
-            'placeholder' => 'Rechercher',
+            'label' => 'Vyhledávání',
+            'placeholder' => 'Hledat',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'Navigation par pagination',
+        'label' => 'Stránkování',
 
-        'overview' => 'Affichage de :first à :last sur :total éléments',
+        'overview' => 'Zobrazeno od :first do :last z :total záznamů',
 
         'fields' => [
 
             'records_per_page' => [
-                'label' => 'par page',
+                'label' => 'na stránku',
             ],
 
         ],
@@ -28,15 +28,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'Aller à la page :page',
+                'label' => 'Jít na stránku :page',
             ],
 
             'next' => [
-                'label' => 'Suivant',
+                'label' => 'Další',
             ],
 
             'previous' => [
-                'label' => 'Précédent',
+                'label' => 'Předchozí',
             ],
 
         ],
@@ -46,11 +46,11 @@ return [
     'buttons' => [
 
         'filter' => [
-            'label' => 'Filtre',
+            'label' => 'Filtrovat',
         ],
 
         'open_actions' => [
-            'label' => 'Actions ouvertes',
+            'label' => 'Otevřít panel akcí',
         ],
 
     ],
@@ -59,20 +59,20 @@ return [
 
         'modal' => [
 
-            'requires_confirmation_subheading' => 'Êtes-vous sûr de vouloir faire cela ?',
+            'requires_confirmation_subheading' => 'Opravdu chcete tuto akci provést?',
 
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'Annuler',
+                    'label' => 'Zrušit',
                 ],
 
                 'confirm' => [
-                    'label' => 'Confirmer',
+                    'label' => 'Potvrdit',
                 ],
 
                 'submit' => [
-                    'label' => 'Envoyer',
+                    'label' => 'Odeslat',
                 ],
 
             ],
@@ -82,24 +82,25 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'Aucun élément trouvé',
+        'heading' => 'Žádné záznamy nenalezeny',
     ],
 
     'selection_indicator' => [
 
-        'selected_count' => '1 élément sélectionné.|:count éléments sélectionnés.',
+        'selected_count' => '1 záznam zvolen.|:count záznamů zvoleno.',
 
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Sélectionner tout (:count)',
+                'label' => 'Označit všechny :count',
             ],
 
             'deselect_all' => [
-                'label' => 'Désélectionner tout',
+                'label' => 'Odznačit všechny',
             ],
 
         ],
 
     ],
+
 ];
