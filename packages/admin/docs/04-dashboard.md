@@ -171,6 +171,33 @@ protected function getData(): array
 }
 ```
 
+### Filtering
+
+By Default, chart widget filter is disabled.
+
+To enable filtering, first override the `$filter` property by setting your default filter value:
+
+```php
+public ?string $filter = 'today';
+```
+
+Then, the `getFilters()` method is used to return an array of values and labels for your filter:
+
+```php
+public ?string $filter = 'today';
+
+protected function getFilters(): ?array
+{
+    return [
+            'today' =>  'Today',
+            '7days' =>  'Last 7 Days',
+            '30days' => 'Last 30 Days',
+            '6months' => 'Last 6 Months',
+            'year' => 'This Year',
+    ];
+}
+```
+
 ### Live updating (polling)
 
 By default, chart widgets refresh their data every 5 seconds.
