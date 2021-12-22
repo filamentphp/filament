@@ -6,6 +6,8 @@ class ChartWidget extends Widget
 {
     public string $dataChecksum;
 
+    public ?string $filter = null;
+
     protected static ?string $heading = null;
 
     protected static ?array $options = null;
@@ -27,6 +29,11 @@ class ChartWidget extends Widget
     protected function getData(): array
     {
         return [];
+    }
+
+    protected function getFilters(): ?array
+    {
+        return null;
     }
 
     protected function getHeading(): ?string
@@ -55,5 +62,10 @@ class ChartWidget extends Widget
                 'data' => $this->getData(),
             ]);
         }
+    }
+
+    public function updatedFilter(): void
+    {
+        $this->updateChartData();
     }
 }
