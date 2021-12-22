@@ -53,7 +53,7 @@
             @endunless
             type="button"
             {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full border pl-3 pr-10 py-2 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600',
+                'bg-white relative w-full border ltr:pl-3 rtl:pr-3 ltr:pr-10 rtl:pl-10 py-2 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600',
                 'border-gray-300' => ! $errors->has($getStatePath()),
                 'border-danger-600 motion-safe:animate-shake' => $errors->has($getStatePath()),
                 'text-gray-500' => $isDisabled(),
@@ -67,7 +67,7 @@
                 class="w-full h-full p-0 placeholder-gray-400 border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none"
             />
 
-            <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+            <span class="absolute inset-y-0 ltr:right-0 rtl:left-0 flex items-center ltr:pr-2 rtl:pl-2 pointer-events-none">
                 <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
