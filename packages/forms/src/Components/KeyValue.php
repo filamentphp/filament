@@ -10,11 +10,11 @@ class KeyValue extends Field
 
     protected $addButtonLabel = null;
 
-    protected $canAddRows = true;
+    protected $shouldDisableAddingRows = false;
 
-    protected $canDeleteRows = true;
+    protected $shouldDisableDeletingRows = false;
 
-    protected $canEditKeys = true;
+    protected $shouldDisableEditingKeys = false;
 
     protected $deleteButtonLabel = null;
 
@@ -55,21 +55,21 @@ class KeyValue extends Field
 
     public function disableAddingRows(bool | callable $condition = true): static
     {
-        $this->canAddRows = fn (): bool => ! $this->evaluate($condition);
+        $this->shouldDisableAddingRows = $condition;
 
         return $this;
     }
 
     public function disableDeletingRows(bool | callable $condition = true): static
     {
-        $this->canDeleteRows = fn (): bool => ! $this->evaluate($condition);
+        $this->shouldDisableDeletingRows = $condition;
 
         return $this;
     }
 
     public function disableEditingKeys(bool | callable $condition = true): static
     {
-        $this->canEditKeys = fn (): bool => ! $this->evaluate($condition);
+        $this->shouldDisableEditingKeys = $condition;
 
         return $this;
     }
@@ -104,17 +104,17 @@ class KeyValue extends Field
 
     public function canAddRows(): bool
     {
-        return $this->evaluate($this->canAddRows);
+        return ! $this->evaluate($this->shouldDisableAddingRows);
     }
 
     public function canDeleteRows(): bool
     {
-        return $this->evaluate($this->canDeleteRows);
+        return ! $this->evaluate($this->shouldDisableDeletingRows);
     }
 
     public function canEditKeys(): bool
     {
-        return $this->evaluate($this->canEditKeys);
+        return ! $this->evaluate($this->shouldDisableEditingKeys);
     }
 
     public function getAddButtonLabel(): string

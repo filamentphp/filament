@@ -8,6 +8,8 @@ trait CanBeHidden
 {
     protected $isHidden = false;
 
+    protected $isVisible = true;
+
     public function hidden(bool | callable $condition = true): static
     {
         $this->isHidden = $condition;
@@ -58,13 +60,17 @@ trait CanBeHidden
 
     public function visible(bool | callable $condition = true): static
     {
-        $this->isHidden = fn (): bool => ! $this->evaluate($condition);
+        $this->isVisible = $condition;
 
         return $this;
     }
 
     public function isHidden(): bool
     {
-        return (bool) $this->evaluate($this->isHidden);
+        if ($this->evaluate($this->isHidden)) {
+            return true;
+        }
+
+        return ! $this->evaluate($this->isVisible);
     }
 }

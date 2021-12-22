@@ -8,7 +8,7 @@ trait Cloneable
     {
         $components = [];
 
-        foreach ($this->getComponents() as $component) {
+        foreach ($this->getComponents(true) as $component) {
             $components[] = $component->getClone();
         }
 
