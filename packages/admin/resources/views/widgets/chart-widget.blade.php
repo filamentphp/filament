@@ -1,31 +1,29 @@
 <x-filament::card>
-    <x-slot name="heading">
-        {{ $this->getHeading() }}
-    </x-slot>
 
-    <div {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}=\"updateChartData\"" : '' !!}>
-        <canvas
-            x-data="{
+    <x-filament::card.filter :filter="$filter" />
+
+    <div class="bg-gray-900" {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}=\"updateChartData\"" : '' !!}>
+        <canvas x-data="{
                 chart: null,
-
-                init: function () {
-                    chart = new Chart(
+                renderChart: function (data = null) {
+                    this.chart = new Chart(
                         $el,
                         {
                             type: '{{ $this->getType() }}',
-                            data: {{ json_encode($this->getData()) }},
+                            data: data != null ? data : {{ json_encode($this->getData()) }} ,
                             options: {{ json_encode($this->getOptions()) ?? '{}' }},
-                        },
+                        }
                     )
+                },
+
+                init: function () {
+                    this.renderChart()
 
                     $wire.on('updateChartData', async ({ data }) => {
-                        chart.data = data
-
-                        chart.update('resize')
+                        this.chart.destroy()
+                        this.renderChart(data)
                     })
-                }
-            }"
-            wire:ignore
-        ></canvas>
+                },
+            }" wire:ignore></canvas>
     </div>
 </x-filament::card>

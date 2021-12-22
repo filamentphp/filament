@@ -14,6 +14,8 @@ class ChartWidget extends Widget
 
     protected static string $view = 'filament::widgets.chart-widget';
 
+    public ?string $filter = null;
+
     public function mount()
     {
         $this->dataChecksum = $this->generateDataChecksum();
@@ -55,5 +57,15 @@ class ChartWidget extends Widget
                 'data' => $this->getData(),
             ]);
         }
+    }
+
+    public function updatedFilter()
+    {
+        $this->updateChartData();
+    }
+
+    protected function getFilters(): ?array
+    {
+        return [];
     }
 }
