@@ -21,11 +21,11 @@ class DateTimePicker extends Field
 
     protected $format = null;
 
-    protected $hasDate = true;
+    protected $isWithoutDate = false;
 
-    protected $hasSeconds = true;
+    protected $isWithoutSeconds = false;
 
-    protected $hasTime = true;
+    protected $isWithoutTime = false;
 
     protected $maxDate = null;
 
@@ -139,21 +139,21 @@ class DateTimePicker extends Field
 
     public function withoutDate(bool | callable $condition = true): static
     {
-        $this->hasDate = fn (): bool => ! $this->evaluate($condition);
+        $this->isWithoutDate = $condition;
 
         return $this;
     }
 
     public function withoutSeconds(bool | callable $condition = true): static
     {
-        $this->hasSeconds = fn (): bool => ! $this->evaluate($condition);
+        $this->isWithoutSeconds = $condition;
 
         return $this;
     }
 
     public function withoutTime(bool | callable $condition = true): static
     {
-        $this->hasTime = fn (): bool => ! $this->evaluate($condition);
+        $this->isWithoutTime = $condition;
 
         return $this;
     }
@@ -243,17 +243,17 @@ class DateTimePicker extends Field
 
     public function hasDate(): bool
     {
-        return (bool) $this->evaluate($this->hasDate);
+        return ! $this->isWithoutDate;
     }
 
     public function hasSeconds(): bool
     {
-        return (bool) $this->evaluate($this->hasSeconds);
+        return ! $this->isWithoutSeconds;
     }
 
     public function hasTime(): bool
     {
-        return (bool) $this->evaluate($this->hasTime);
+        return ! $this->isWithoutTime;
     }
 
     protected function getDefaultFirstDayOfWeek(): int
