@@ -76,6 +76,58 @@ protected function getCards(): array
     ];
 }
 ```
+You may also add or chain a `chart()` to each card to provide more context. The `chart()` is used to return an array of datasets and labels. This structure is identical with the [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/line) library's `line` chart, which you could consult to fully understand all the possibilities.
+
+```php
+protected function getCards(): array
+{
+    return [
+        Card::make('Unique views', '192.1k')
+            ->chart( //inline
+                [
+                    'labels' => ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
+                    'datasets' => [
+                        [
+                            'backgroundColor' => 'rgb(29, 164, 76, 0.1)',
+                            'borderColor' => 'rgb(29, 164, 76, 0.8)',
+                            'borderWidth' => 2,
+                            'data' => [7, 2, 10, 3, 15, 4, 17],
+                            'fill' => 'start',
+                            'tension' => 0.5
+                        ]
+                    ]
+                ]
+            ),
+        Card::make('Bounce rate', '21%')
+            ->description('7% increase')
+            ->descriptionColor('danger')
+            ->descriptionIcon('heroicon-s-trending-down')
+            ->chart($this->bounceRateChartData()), //extracted to method
+        Card::make('Average time on page', '3:12')
+            ->description('3% increase')
+            ->descriptionColor('success')
+            ->descriptionIcon('heroicon-s-trending-up'),
+    ];
+}
+
+protected function bounceRateChartData(): array
+{
+    return [
+        'labels' => [5, 1, 3, 7, 2, 4, 6],
+        'datasets' => [
+            [
+                'backgroundColor' => 'rgb(229, 47, 83, 0.04)',
+                'borderColor' => 'rgb(229, 47, 83, 0.8)',
+                'borderWidth' => 2,
+                'data' => [5, 1, 3, 7, 2, 4, 6],
+                'fill' => 'start',
+                'tension' => 0.5
+            ]
+        ]
+    ];
+}
+```
+You could return the `line` chart data structure inline or extract it to a method to keep your code clean, readable and maintainable.
 
 ## Chart widgets
 
@@ -171,19 +223,21 @@ protected function getData(): array
 }
 ```
 
-### Filtering chart data
+### Filtering
 
-You can set up chart filters to change the data shown on chart. Commonly, this is used to change the time period that chart data is rendered for.
+By Default, chart widget filter is disabled.
 
-To set a default filter value, set the `$filter` property:
+To enable filtering, first override the `$filter` property by setting your default filter value:
 
 ```php
 public ?string $filter = 'today';
 ```
 
-Then, define the `getFilters()` method to return an array of values and labels for your filter:
+Then, the `getFilters()` method is used to return an array of values and labels for your filter:
 
 ```php
+public ?string $filter = 'today';
+
 protected function getFilters(): ?array
 {
     return [
@@ -193,17 +247,6 @@ protected function getFilters(): ?array
             '6months' => 'Last 6 Months',
             'year' => 'This Year',
     ];
-}
-```
-
-You can use the active filter value within your `getData()` method:
-
-```php
-protected function getData(): array
-{
-    $this->filter;
-    
-    // ...
 }
 ```
 
