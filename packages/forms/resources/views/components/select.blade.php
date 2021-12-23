@@ -73,7 +73,7 @@
                 <span
                     x-show="! isOpen"
                     x-text="label ?? '{{ addslashes($getPlaceholder()) }}'"
-                    x-bind:class="label ? '' : 'text-gray-500'"
+                    x-bind:class="label ? '' : 'text-gray-500 select-none'"
                     class="absolute w-full bg-white"
                 ></span>
 
