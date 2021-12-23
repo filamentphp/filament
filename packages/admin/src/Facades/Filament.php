@@ -2,6 +2,7 @@
 
 namespace Filament\Facades;
 
+use Closure;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Support\Facades\Facade;
@@ -30,7 +31,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerStyles(array $styles)
  * @method static void registerTheme(string $url)
  * @method static void registerWidgets(array $widgets)
- * @method static void serving(callable $widgets)
+ * @method static void serving(Closure $callback)
  *
  * @see \Filament\FilamentManager
  */
