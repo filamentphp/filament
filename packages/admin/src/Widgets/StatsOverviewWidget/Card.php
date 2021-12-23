@@ -8,6 +8,12 @@ use Illuminate\View\Component;
 
 class Card extends Component implements Htmlable
 {
+    protected ?array $chart = null;
+
+    protected ?string $chartColor = null;
+
+    protected ?string $color = null;
+
     protected ?string $description = null;
 
     protected ?string $descriptionIcon = null;
@@ -27,6 +33,20 @@ class Card extends Component implements Htmlable
     public static function make(string $label, $value): static
     {
         return new static($label, $value);
+    }
+
+    public function chartColor(?string $color): static
+    {
+        $this->chartColor = $color;
+
+        return $this;
+    }
+
+    public function color(?string $color): static
+    {
+        $this->color = $color;
+
+        return $this;
     }
 
     public function description(?string $description): static
@@ -50,6 +70,13 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
+    public function chart(?array $chart): static
+    {
+        $this->chart = $chart;
+
+        return $this;
+    }
+
     public function label(string $label): static
     {
         $this->label = $label;
@@ -64,6 +91,21 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
+    public function getChart(): ?array
+    {
+        return $this->chart;
+    }
+
+    public function getChartColor(): ?string
+    {
+        return $this->chartColor ?? $this->color;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
     public function getDescription(): ?string
     {
         return $this->description;
@@ -71,7 +113,7 @@ class Card extends Component implements Htmlable
 
     public function getDescriptionColor(): ?string
     {
-        return $this->descriptionColor;
+        return $this->descriptionColor ?? $this->color;
     }
 
     public function getDescriptionIcon(): ?string
