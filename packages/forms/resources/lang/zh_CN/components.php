@@ -2,6 +2,34 @@
 
 return [
 
+    'builder' => [
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => '添加 :label',
+            ],
+
+            'create_item_between' => [
+                'label' => '插入',
+            ],
+
+            'delete_item' => [
+                'label' => '删除',
+            ],
+
+            'move_item_down' => [
+                'label' => '下移',
+            ],
+
+            'move_item_up' => [
+                'label' => '上移',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -37,7 +65,7 @@ return [
             'bold' => '加粗',
             'bullet_list' => '普通列表',
             'code_block' => '代码',
-            'edit' => 'Edit',
+            'edit' => '编辑',
             'italic' => '斜体',
             'link' => '链接',
             'ordered_list' => '数字列表',
@@ -51,6 +79,30 @@ return [
         'no_search_results_message' => '没有选项匹配您的搜索.',
         'placeholder' => '请选择',
         'search_prompt' => '没有可供选择的选项.',
+    ],
+
+    'repeater' => [
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => '添加 :label',
+            ],
+
+            'delete_item' => [
+                'label' => '删除',
+            ],
+
+            'move_item_down' => [
+                'label' => '下移',
+            ],
+
+            'move_item_up' => [
+                'label' => '上移',
+            ],
+
+        ],
+
     ],
 
     'rich_editor' => [

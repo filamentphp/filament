@@ -2,6 +2,10 @@
 
 return [
 
+    'title' => '登录',
+
+    'heading' => '登录您的账号',
+
     'buttons' => [
 
         'submit' => [
@@ -30,7 +34,5 @@ return [
         'failed' => '登录凭证与记录不符。',
         'throttled' => '尝试登录次数过多，请在 :seconds 秒后重试。',
     ],
-
-    'heading' => '登录您的账号',
 
 ];
