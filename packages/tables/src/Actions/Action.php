@@ -20,6 +20,7 @@ class Action extends Component implements Htmlable
     use Concerns\HasAction;
     use Concerns\HasColor;
     use Concerns\HasFormSchema;
+    use Concerns\HasIcon;
     use Concerns\HasLabel;
     use Concerns\HasName;
     use Concerns\HasRecord;

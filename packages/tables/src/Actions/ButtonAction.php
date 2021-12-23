@@ -4,8 +4,6 @@ namespace Filament\Tables\Actions;
 
 class ButtonAction extends Action
 {
-    use Concerns\HasIcon;
-
     protected string $view = 'tables::actions.button-action';
 
     protected ?string $iconPosition = null;

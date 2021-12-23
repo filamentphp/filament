@@ -27,14 +27,15 @@ trait CanDeleteRecords
         $this->callHook('afterDelete');
     }
 
-    protected function getDeleteLinkTableAction(): Tables\Actions\LinkAction
+    protected function getDeleteTableAction(): Tables\Actions\Action
     {
-        return Tables\Actions\LinkAction::make('delete')
+        return config('filament.layout.tables.actions.type')::make('delete')
             ->label(__('filament::resources/relation-managers/delete.action.label'))
             ->requiresConfirmation()
             ->modalHeading(__('filament::resources/relation-managers/delete.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->delete())
             ->color('danger')
+            ->icon('heroicon-o-trash')
             ->hidden(fn (Model $record): bool => ! static::canDelete($record));
     }
 

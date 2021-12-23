@@ -18,8 +18,8 @@ class HasManyRelationManager extends RelationManager
             $table = Table::make();
 
             $table->actions([
-                $this->getEditLinkTableAction(),
-                $this->getDeleteLinkTableAction(),
+                $this->getEditTableAction(),
+                $this->getDeleteTableAction(),
             ]);
 
             if ($this->canDeleteAny()) {
