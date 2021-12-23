@@ -110,6 +110,7 @@ protected function getCards(): array
         // ...
     ];
 }
+```
 
 ## Chart widgets
 
