@@ -1,4 +1,5 @@
 parameters:
+    level: 5
     paths:
         - packages/admin/src
         - packages/forms/src
@@ -7,4 +8,4 @@ parameters:
         - packages/spatie-laravel-tags-plugin/src
         - packages/spatie-laravel-translatable-plugin/src
         - packages/tables/src
-    level: 5
+    checkMissingIterableValueType: false
