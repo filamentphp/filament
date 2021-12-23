@@ -19,12 +19,12 @@ trait HasFilters
     public function cacheTableFilters(): void
     {
         $this->cachedTableFilters = collect($this->getTableFilters())
-            ->filter(fn (Filter $filter): bool => ! $filter->isHidden())
             ->mapWithKeys(function (Filter $filter): array {
                 $filter->table($this->getCachedTable());
 
                 return [$filter->getName() => $filter];
             })
+            ->filter(fn (Filter $filter): bool => ! $filter->isHidden())
             ->toArray();
     }
 

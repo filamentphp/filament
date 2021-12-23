@@ -13,12 +13,12 @@ trait HasHeader
     public function cacheTableHeaderActions(): void
     {
         $this->cachedTableHeaderActions = collect($this->getTableHeaderActions())
-            ->filter(fn (Action $action): bool => ! $action->isHidden())
             ->mapWithKeys(function (Action $action): array {
                 $action->table($this->getCachedTable());
 
                 return [$action->getName() => $action];
             })
+            ->filter(fn (Action $action): bool => ! $action->isHidden())
             ->toArray();
     }
 

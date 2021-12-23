@@ -12,12 +12,12 @@ trait HasEmptyState
     public function cacheTableEmptyStateActions(): void
     {
         $this->cachedTableEmptyStateActions = collect($this->getTableEmptyStateActions())
-            ->filter(fn (Action $action): bool => ! $action->isHidden())
             ->mapWithKeys(function (Action $action): array {
                 $action->table($this->getCachedTable());
 
                 return [$action->getName() => $action];
             })
+            ->filter(fn (Action $action): bool => ! $action->isHidden())
             ->toArray();
     }
 
