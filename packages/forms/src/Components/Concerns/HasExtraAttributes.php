@@ -2,11 +2,13 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
+
 trait HasExtraAttributes
 {
-    protected $extraAttributes = [];
+    protected array | Closure $extraAttributes = [];
 
-    public function extraAttributes(array | callable $attributes): static
+    public function extraAttributes(array | Closure $attributes): static
     {
         $this->extraAttributes = $attributes;
 

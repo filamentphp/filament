@@ -1,0 +1,10 @@
+parameters:
+    paths:
+        - packages/admin/src
+        - packages/forms/src
+        - packages/spatie-laravel-media-library-plugin/src
+        - packages/spatie-laravel-settings-plugin/src
+        - packages/spatie-laravel-tags-plugin/src
+        - packages/spatie-laravel-translatable-plugin/src
+        - packages/tables/src
+    level: 0

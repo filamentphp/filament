@@ -2,11 +2,13 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
+
 trait HasHint
 {
-    protected $hint = null;
+    protected string | Closure | null $hint = null;
 
-    public function hint(string | callable $hint): static
+    public function hint(string | Closure | null $hint): static
     {
         $this->hint = $hint;
 

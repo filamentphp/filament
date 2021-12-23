@@ -10,13 +10,13 @@ use Illuminate\Validation\Rules\Unique;
 
 trait CanBeValidated
 {
-    protected $isRequired = false;
+    protected bool | Closure $isRequired = false;
 
     protected array $rules = [];
 
-    protected $validationAttribute = null;
+    protected string | Closure | null $validationAttribute = null;
 
-    public function exists(string | callable | null $table = null, string | callable | null $column = null, ?Closure $callback = null): static
+    public function exists(string | Closure | null $table = null, string | Closure | null $column = null, ?Closure $callback = null): static
     {
         $this->rule(function (Component $component) use ($callback, $column, $table) {
             $table = $component->evaluate($table) ?? $component->getModelClass();
@@ -36,7 +36,7 @@ trait CanBeValidated
         return $this;
     }
 
-    public function nullable(bool | callable $condition = true): static
+    public function nullable(bool | Closure $condition = true): static
     {
         $this->required(function (Component $component) use ($condition): bool {
             return ! $component->evaluate($condition);
@@ -45,14 +45,14 @@ trait CanBeValidated
         return $this;
     }
 
-    public function required(bool | callable $condition = true): static
+    public function required(bool | Closure $condition = true): static
     {
         $this->isRequired = $condition;
 
         return $this;
     }
 
-    public function rule(string | object | callable $rule, bool | callable $condition = true): static
+    public function rule(string | object $rule, bool | Closure $condition = true): static
     {
         $this->rules = array_merge(
             $this->rules,
@@ -62,67 +62,67 @@ trait CanBeValidated
         return $this;
     }
 
-    public function rules(array $rules, bool | callable $condition = true): static
+    public function rules(array $rules, bool | Closure $condition = true): static
     {
         $this->rules = array_merge(
             $this->rules,
-            array_map(fn (string | object | callable $rule) => [$rule, $condition], $rules),
+            array_map(fn (string | object $rule) => [$rule, $condition], $rules),
         );
 
         return $this;
     }
 
-    public function after(string | callable $date, bool $isStatePathAbsolute = false): static
+    public function after(string | Closure $date, bool $isStatePathAbsolute = false): static
     {
         return $this->dateComparisonRule('after', $date, $isStatePathAbsolute);
     }
 
-    public function afterOrEqual(string | callable $date, bool $isStatePathAbsolute = false): static
+    public function afterOrEqual(string | Closure $date, bool $isStatePathAbsolute = false): static
     {
         return $this->dateComparisonRule('after_or_equal', $date, $isStatePathAbsolute);
     }
 
-    public function before(string | callable $date, bool $isStatePathAbsolute = false): static
+    public function before(string | Closure $date, bool $isStatePathAbsolute = false): static
     {
         return $this->dateComparisonRule('before', $date, $isStatePathAbsolute);
     }
 
-    public function beforeOrEqual(string | callable $date, bool $isStatePathAbsolute = false): static
+    public function beforeOrEqual(string | Closure $date, bool $isStatePathAbsolute = false): static
     {
         return $this->dateComparisonRule('before_or_equal', $date, $isStatePathAbsolute);
     }
 
-    public function different(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    public function different(string | Closure $statePath, bool $isStatePathAbsolute = false): static
     {
         return $this->fieldComparisonRule('different', $statePath, $isStatePathAbsolute);
     }
 
-    public function gt(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    public function gt(string | Closure $statePath, bool $isStatePathAbsolute = false): static
     {
         return $this->fieldComparisonRule('gt', $statePath, $isStatePathAbsolute);
     }
 
-    public function gte(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    public function gte(string | Closure $statePath, bool $isStatePathAbsolute = false): static
     {
         return $this->fieldComparisonRule('gte', $statePath, $isStatePathAbsolute);
     }
 
-    public function lt(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    public function lt(string | Closure $statePath, bool $isStatePathAbsolute = false): static
     {
         return $this->fieldComparisonRule('lt', $statePath, $isStatePathAbsolute);
     }
 
-    public function lte(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    public function lte(string | Closure $statePath, bool $isStatePathAbsolute = false): static
     {
         return $this->fieldComparisonRule('lte', $statePath, $isStatePathAbsolute);
     }
 
-    public function same(string | callable $statePath, bool $isStatePathAbsolute = false): static
+    public function same(string | Closure $statePath, bool $isStatePathAbsolute = false): static
     {
         return $this->fieldComparisonRule('same', $statePath, $isStatePathAbsolute);
     }
 
-    public function unique(string | callable | null $table = null, string | callable | null $column = null, Model | callable $ignorable = null, ?Closure $callback = null): static
+    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure $ignorable = null, ?Closure $callback = null): static
     {
         $this->rule(function (Component $component) use ($callback, $column, $ignorable, $table) {
             $table = $component->evaluate($table) ?? $component->getModelClass();
@@ -150,7 +150,7 @@ trait CanBeValidated
         return $this;
     }
 
-    public function validationAttribute(string | callable $label): static
+    public function validationAttribute(string | Closure | null $label): static
     {
         $this->validationAttribute = $label;
 
@@ -189,7 +189,7 @@ trait CanBeValidated
         return (bool) $this->evaluate($this->isRequired);
     }
 
-    protected function dateComparisonRule(string $rule, string | callable $date, bool $isStatePathAbsolute = false): static
+    protected function dateComparisonRule(string $rule, string | Closure $date, bool $isStatePathAbsolute = false): static
     {
         $this->rule(function (Component $component) use ($date, $isStatePathAbsolute, $rule): string {
             $date = $component->evaluate($date);
@@ -208,7 +208,7 @@ trait CanBeValidated
         return $this;
     }
 
-    protected function fieldComparisonRule(string $rule, string | callable $statePath, bool $isStatePathAbsolute = false): static
+    protected function fieldComparisonRule(string $rule, string | Closure $statePath, bool $isStatePathAbsolute = false): static
     {
         $this->rule(function (Component $component) use ($isStatePathAbsolute, $rule, $statePath): string {
             $statePath = $component->evaluate($statePath);

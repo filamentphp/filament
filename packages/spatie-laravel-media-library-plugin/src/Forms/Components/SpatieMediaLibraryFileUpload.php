@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -9,7 +10,7 @@ use SplFileInfo;
 
 class SpatieMediaLibraryFileUpload extends FileUpload
 {
-    protected $collection = null;
+    protected string | Closure | null $collection = null;
 
     protected function setUp(): void
     {
@@ -28,7 +29,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         $this->dehydrated(false);
     }
 
-    public function collection(string | callable $collection): static
+    public function collection(string | Closure | null $collection): static
     {
         $this->collection = $collection;
 

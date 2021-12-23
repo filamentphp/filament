@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 trait BelongsToModel
 {
-    protected $model = null;
+    protected Model | string | Closure | null $model = null;
 
     protected ?Closure $saveRelationshipsUsing = null;
 
-    public function model(Model | string | callable | null $model = null): static
+    public function model(Model | string | Closure | null $model = null): static
     {
         $this->model = $model;
 

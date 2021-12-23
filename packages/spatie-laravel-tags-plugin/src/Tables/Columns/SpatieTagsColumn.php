@@ -14,7 +14,7 @@ class SpatieTagsColumn extends TagsColumn
         return $tags->pluck('name')->toArray();
     }
 
-    public function type(string | callable $type): static
+    public function type(?string $type): static
     {
         $this->type = $type;
 

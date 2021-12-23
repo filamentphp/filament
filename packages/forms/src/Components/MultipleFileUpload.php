@@ -78,11 +78,15 @@ class MultipleFileUpload extends Field
     public function minFiles(int | callable $count): static
     {
         $this->minItems($count);
+
+        return $this;
     }
 
     public function maxFiles(int | callable $count): static
     {
         $this->maxItems($count);
+
+        return $this;
     }
 
     public function uploadComponent(Component | callable $component): static

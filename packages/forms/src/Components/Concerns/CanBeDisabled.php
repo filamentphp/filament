@@ -2,11 +2,13 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
+
 trait CanBeDisabled
 {
-    protected $isDisabled = false;
+    protected bool | Closure $isDisabled = false;
 
-    public function disabled(bool | callable $condition = true): static
+    public function disabled(bool | Closure $condition = true): static
     {
         $this->isDisabled = $condition;
 

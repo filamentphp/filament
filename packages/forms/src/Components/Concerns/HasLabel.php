@@ -2,20 +2,22 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
+
 trait HasLabel
 {
-    protected $isLabelHidden = false;
+    protected bool | Closure $isLabelHidden = false;
 
-    protected $label = null;
+    protected string | Closure | null $label = null;
 
-    public function disableLabel(bool | callable $condition = true): static
+    public function disableLabel(bool | Closure $condition = true): static
     {
         $this->isLabelHidden = $condition;
 
         return $this;
     }
 
-    public function label(string | callable $label): static
+    public function label(string | Closure | null $label): static
     {
         $this->label = $label;
 

@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\TextInput;
 
+use Closure;
 use Illuminate\Contracts\Support\Jsonable;
 
 class Mask implements Jsonable
@@ -259,7 +260,7 @@ class Mask implements Jsonable
 
         if ($this->patternBlocks !== []) {
             $configuration['blocks'] = array_map(
-                fn (callable $configuration): array => $configuration(new static())->getArrayableConfiguration(),
+                fn (Closure $configuration): array => $configuration(new static())->getArrayableConfiguration(),
                 $this->patternBlocks,
             );
         }

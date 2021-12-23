@@ -2,15 +2,16 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
 use Filament\Forms\Components\Component;
 
 trait CanLimitItemsLength
 {
-    protected $maxItems = null;
+    protected int | Closure | null $maxItems = null;
 
-    protected $minItems = null;
+    protected int | Closure | null $minItems = null;
 
-    public function maxItems(int | callable $count): static
+    public function maxItems(int | Closure $count): static
     {
         $this->maxItems = $count;
 
@@ -24,7 +25,7 @@ trait CanLimitItemsLength
         return $this;
     }
 
-    public function minItems(int | callable $count): static
+    public function minItems(int | Closure $count): static
     {
         $this->minItems = $count;
 

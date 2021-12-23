@@ -2,13 +2,14 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Tags\Tag;
 
 class SpatieTagsInput extends TagsInput
 {
-    protected $type = null;
+    protected string | Closure | null $type = null;
 
     protected function setUp(): void
     {
@@ -50,7 +51,7 @@ class SpatieTagsInput extends TagsInput
         $model->syncTags($tags);
     }
 
-    public function type(string | callable $type): static
+    public function type(string | Closure | null $type): static
     {
         $this->type = $type;
 

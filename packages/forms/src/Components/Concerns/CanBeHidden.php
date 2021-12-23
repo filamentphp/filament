@@ -2,22 +2,23 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
 use Illuminate\Support\Arr;
 
 trait CanBeHidden
 {
-    protected $isHidden = false;
+    protected bool | Closure $isHidden = false;
 
-    protected $isVisible = true;
+    protected bool | Closure $isVisible = true;
 
-    public function hidden(bool | callable $condition = true): static
+    public function hidden(bool | Closure $condition = true): static
     {
         $this->isHidden = $condition;
 
         return $this;
     }
 
-    public function when(bool | callable $condition = true): static
+    public function when(bool | Closure $condition = true): static
     {
         $this->visible($condition);
 
@@ -28,7 +29,7 @@ trait CanBeHidden
     {
         $paths = Arr::wrap($paths);
 
-        $this->hidden(function (callable $get) use ($paths): bool {
+        $this->hidden(function (Closure $get) use ($paths): bool {
             foreach ($paths as $path) {
                 if (! $get($path)) {
                     return true;
@@ -45,7 +46,7 @@ trait CanBeHidden
     {
         $paths = Arr::wrap($paths);
 
-        $this->hidden(function (callable $get) use ($paths): bool {
+        $this->hidden(function (Closure $get) use ($paths): bool {
             foreach ($paths as $path) {
                 if (! ! $get($path)) {
                     return true;
@@ -58,7 +59,7 @@ trait CanBeHidden
         return $this;
     }
 
-    public function visible(bool | callable $condition = true): static
+    public function visible(bool | Closure $condition = true): static
     {
         $this->isVisible = $condition;
 

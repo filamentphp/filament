@@ -18,6 +18,10 @@ class Table
 
     protected array $headerActions = [];
 
+    final public function __construct()
+    {
+    }
+
     public static function make(): static
     {
         return new static();
