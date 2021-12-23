@@ -3,8 +3,12 @@
 namespace Filament\Pages;
 
 use Filament\Forms;
+use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
 
+/**
+ * @property ComponentContainer $form
+ */
 class SettingsPage extends Page implements Forms\Contracts\HasForms
 {
     use Forms\Concerns\InteractsWithForms;

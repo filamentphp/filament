@@ -43,7 +43,7 @@ trait CanDeleteRecords
     {
         return Tables\Actions\BulkAction::make('delete')
             ->label(__('filament::resources/relation-managers/delete.bulk_action.label'))
-            ->action(fn (Collection $records) => $records->each->delete())
+            ->action(fn (Collection $records) => $records->each(fn (Model $record) => $record->delete()))
             ->requiresConfirmation()
             ->modalHeading(__('filament::resources/relation-managers/delete.bulk_action.modal.heading', ['label' => static::getPluralRecordLabel()]))
             ->deselectRecordsAfterCompletion()

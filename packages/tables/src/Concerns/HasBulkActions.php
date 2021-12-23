@@ -5,6 +5,9 @@ namespace Filament\Tables\Concerns;
 use Filament\Forms\ComponentContainer;
 use Filament\Tables\Actions\BulkAction;
 
+/**
+ * @property ComponentContainer $mountedTableBulkActionForm
+ */
 trait HasBulkActions
 {
     public $mountedTableBulkAction = null;

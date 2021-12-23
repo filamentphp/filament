@@ -44,7 +44,7 @@
         "sort-packages": true
     },
     "scripts": {
-        "test": "./vendor/bin/pest --parallel"
+        "test": "./vendor/bin/pest --parallel && ./vendor/bin/phpstan analyse"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

@@ -7,7 +7,9 @@ use Filament\Events\ServingFilament;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 
@@ -33,7 +35,7 @@ class FilamentManager
 
     protected array $widgets = [];
 
-    public function auth(): StatefulGuard
+    public function auth(): Guard
     {
         return auth()->guard(config('filament.auth.guard'));
     }
@@ -190,7 +192,7 @@ class FilamentManager
         return $firstItem->getUrl();
     }
 
-    public function getUserAvatarUrl(Authenticatable $user): string
+    public function getUserAvatarUrl(Model $user): string
     {
         $avatar = null;
 
@@ -207,13 +209,13 @@ class FilamentManager
         return (new $provider())->get($user);
     }
 
-    public function getUserName(Authenticatable $user): string
+    public function getUserName(Model $user): string
     {
         if ($user instanceof HasName) {
             return $user->getFilamentName();
         }
 
-        return $user->name;
+        return $user->getAttributeValue('name');
     }
 
     public function getWidgets(): array

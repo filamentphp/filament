@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -32,7 +33,10 @@ trait InteractsWithTableQuery
             return $query;
         }
 
-        $searchOperator = match ($query->getConnection()->getDriverName()) {
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        $searchOperator = match ($databaseConnection->getDriverName()) {
             'pgsql' => 'ilike',
             default => 'like',
         };

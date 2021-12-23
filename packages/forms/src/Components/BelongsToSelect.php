@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
@@ -52,15 +53,15 @@ class BelongsToSelect extends Select
         $this->getOptionLabelUsing(function (BelongsToSelect $component, $value) {
             $relationship = $component->getRelationship();
 
-            $record = $relationship->getRelated()->where($relationship->getOwnerKeyName(), $value)->first();
+            $record = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $value)->first();
 
-            return $record ? $record->getAttributeValue($component->getDisplayColumnName()) : null;
+            return $record?->getAttributeValue($component->getDisplayColumnName());
         });
 
         $this->getSearchResultsUsing(function (BelongsToSelect $component, ?string $query) use ($callback): array {
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->orderBy($component->getDisplayColumnName());
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
                 $relationshipQuery = $this->evaluate($callback, [
@@ -69,7 +70,11 @@ class BelongsToSelect extends Select
             }
 
             $query = strtolower($query);
-            $searchOperator = match ($relationshipQuery->getConnection()->getDriverName()) {
+
+            /** @var Connection $databaseConnection */
+            $databaseConnection = $relationshipQuery->getConnection();
+
+            $searchOperator = match ($databaseConnection->getDriverName()) {
                 'pgsql' => 'ilike',
                 default => 'like',
             };
@@ -87,7 +92,7 @@ class BelongsToSelect extends Select
 
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->orderBy($component->getDisplayColumnName());
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
                 $relationshipQuery = $this->evaluate($callback, [

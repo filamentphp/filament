@@ -5,6 +5,7 @@ namespace Filament\Tables\Filters;
 use Filament\Forms\Components\Select;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
@@ -31,9 +32,12 @@ class SelectFilter extends Filter
         }
 
         if ($this->queriesRelationships()) {
+            /** @var BelongsTo $relationship */
+            $relationship = $this->getRelationship();
+
             return $query->whereRelation(
                 $this->getRelationshipName(),
-                $this->getRelationship()->getOwnerKeyName(),
+                $relationship->getOwnerKeyName(),
                 $data['value'],
             );
         }
@@ -91,10 +95,12 @@ class SelectFilter extends Filter
 
     protected function getRelationshipOptions(): array
     {
+        /** @var BelongsTo $relationship */
         $relationship = $this->getRelationship();
+
         $displayColumnName = $this->getRelationshipDisplayColumnName();
 
-        $relationshipQuery = $relationship->getRelated()->orderBy($displayColumnName);
+        $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
 
         return $relationshipQuery
             ->pluck($displayColumnName, $relationship->getOwnerKeyName())

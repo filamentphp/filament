@@ -19,7 +19,7 @@ use Livewire\Livewire;
 use ReflectionClass;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use SplFileInfo;
+use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentServiceProvider extends PackageServiceProvider
 {

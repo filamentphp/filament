@@ -3,7 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Field;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
@@ -18,7 +18,7 @@ trait CanBeValidated
 
     public function exists(string | Closure | null $table = null, string | Closure | null $column = null, ?Closure $callback = null): static
     {
-        $this->rule(function (Component $component) use ($callback, $column, $table) {
+        $this->rule(function (Field $component) use ($callback, $column, $table) {
             $table = $component->evaluate($table) ?? $component->getModelClass();
             $column = $component->evaluate($column) ?? $component->getName();
 
@@ -31,14 +31,14 @@ trait CanBeValidated
             }
 
             return $rule;
-        }, fn (Component $component): bool => (bool) ($component->evaluate($table) ?? $component->getModelClass()));
+        }, fn (Field $component): bool => (bool) ($component->evaluate($table) ?? $component->getModelClass()));
 
         return $this;
     }
 
     public function nullable(bool | Closure $condition = true): static
     {
-        $this->required(function (Component $component) use ($condition): bool {
+        $this->required(function (Field $component) use ($condition): bool {
             return ! $component->evaluate($condition);
         });
 
@@ -124,7 +124,7 @@ trait CanBeValidated
 
     public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure $ignorable = null, ?Closure $callback = null): static
     {
-        $this->rule(function (Component $component) use ($callback, $column, $ignorable, $table) {
+        $this->rule(function (Field $component) use ($callback, $column, $ignorable, $table) {
             $table = $component->evaluate($table) ?? $component->getModelClass();
             $column = $component->evaluate($column) ?? $component->getName();
             $ignorable = $component->evaluate($ignorable);
@@ -145,7 +145,7 @@ trait CanBeValidated
             }
 
             return $rule;
-        }, fn (Component $component): bool => (bool) ($component->evaluate($table) ?? $component->getModelClass()));
+        }, fn (Field $component): bool => (bool) ($component->evaluate($table) ?? $component->getModelClass()));
 
         return $this;
     }
@@ -191,7 +191,7 @@ trait CanBeValidated
 
     protected function dateComparisonRule(string $rule, string | Closure $date, bool $isStatePathAbsolute = false): static
     {
-        $this->rule(function (Component $component) use ($date, $isStatePathAbsolute, $rule): string {
+        $this->rule(function (Field $component) use ($date, $isStatePathAbsolute, $rule): string {
             $date = $component->evaluate($date);
 
             if (! (strtotime($date) && $isStatePathAbsolute)) {
@@ -203,14 +203,14 @@ trait CanBeValidated
             }
 
             return "{$rule}:{$date}";
-        }, fn (Component $component): bool => (bool) $component->evaluate($date));
+        }, fn (Field $component): bool => (bool) $component->evaluate($date));
 
         return $this;
     }
 
     protected function fieldComparisonRule(string $rule, string | Closure $statePath, bool $isStatePathAbsolute = false): static
     {
-        $this->rule(function (Component $component) use ($isStatePathAbsolute, $rule, $statePath): string {
+        $this->rule(function (Field $component) use ($isStatePathAbsolute, $rule, $statePath): string {
             $statePath = $component->evaluate($statePath);
 
             if (! $isStatePathAbsolute) {
@@ -222,7 +222,7 @@ trait CanBeValidated
             }
 
             return "{$rule}:{$statePath}";
-        }, fn (Component $component): bool => (bool) $component->evaluate($statePath));
+        }, fn (Field $component): bool => (bool) $component->evaluate($statePath));
 
         return $this;
     }

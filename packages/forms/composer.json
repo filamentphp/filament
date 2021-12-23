@@ -22,6 +22,9 @@
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
         "psr-4": {
             "Filament\\Forms\\": "src"
         }

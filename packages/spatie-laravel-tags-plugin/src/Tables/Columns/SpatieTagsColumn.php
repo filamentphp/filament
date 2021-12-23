@@ -8,8 +8,14 @@ class SpatieTagsColumn extends TagsColumn
 
     public function getTags(): array
     {
+        $record = $this->getRecord();
+
+        if (! method_exists($record, 'tagsWithType')) {
+            return [];
+        }
+
         $type = $this->getType();
-        $tags = $this->getRecord()->tagsWithType($type);
+        $tags = $record->tagsWithType($type);
 
         return $tags->pluck('name')->toArray();
     }

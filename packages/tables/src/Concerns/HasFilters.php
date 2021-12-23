@@ -3,9 +3,13 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Forms;
+use Filament\Forms\ComponentContainer;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @property ComponentContainer $tableFiltersForm
+ */
 trait HasFilters
 {
     protected array $cachedTableFilters;

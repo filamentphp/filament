@@ -83,7 +83,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         return Tables\Actions\BulkAction::make('delete')
             ->label(__('filament::resources/pages/list-records.table.bulk_actions.delete.label'))
-            ->action(fn (Collection $records) => $records->each->delete())
+            ->action(fn (Collection $records) => $records->each(fn (Model $record) => $record->delete()))
             ->requiresConfirmation()
             ->deselectRecordsAfterCompletion()
             ->color('danger')

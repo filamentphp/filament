@@ -7,4 +7,4 @@ parameters:
         - packages/spatie-laravel-tags-plugin/src
         - packages/spatie-laravel-translatable-plugin/src
         - packages/tables/src
-    level: 0
+    level: 5

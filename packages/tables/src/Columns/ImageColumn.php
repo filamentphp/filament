@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 
@@ -94,10 +95,14 @@ class ImageColumn extends Column
             return $state;
         }
 
+        /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
 
+        /** @var \League\Flysystem\Filesystem $storageDriver */
+        $storageDriver = $storage->getDriver();
+
         if (
-            $storage->getDriver()->getAdapter() instanceof AwsS3Adapter &&
+            $storageDriver->getAdapter() instanceof AwsS3Adapter &&
             $storage->getVisibility($state) === 'private'
         ) {
             return $storage->temporaryUrl(

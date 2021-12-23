@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use SplFileInfo;
@@ -46,7 +47,10 @@ class BaseFileUpload extends Field
                 return;
             }
 
-            $component->getContainer()->getParentComponent()->appendNewUploadField();
+            /** @var MultipleFileUpload $parentComponent */
+            $parentComponent = $component->getContainer()->getParentComponent();
+
+            $parentComponent->appendNewUploadField();
         });
 
         $this->dehydrated(fn (BaseFileUpload $component): bool => ! $component->isMultiple());
@@ -222,10 +226,14 @@ class BaseFileUpload extends Field
 
     protected function handleUploadedFileUrlRetrieval($file): ?string
     {
+        /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
 
+        /** @var \League\Flysystem\Filesystem $storageDriver */
+        $storageDriver = $storage->getDriver();
+
         if (
-            $storage->getDriver()->getAdapter() instanceof AwsS3Adapter &&
+            $storageDriver->getAdapter() instanceof AwsS3Adapter &&
             $storage->getVisibility($file) === 'private'
         ) {
             return $storage->temporaryUrl(
@@ -265,5 +273,45 @@ class BaseFileUpload extends Field
         $storeMethod = $this->getVisibility() === 'public' ? 'storePublicly' : 'store';
 
         return $file->{$storeMethod}($this->getDirectory(), $this->getDiskName());
+    }
+
+    public function isMultiple(): bool
+    {
+        return $this->getContainer()->getParentComponent() instanceof MultipleFileUpload;
+    }
+
+    protected function handleUploadedFileRemoval($file): void
+    {
+        $this->state(null);
+    }
+
+    protected function handleUploadedFileDeletion($file): void
+    {
+    }
+
+    public function removeUploadedFile(): static
+    {
+        $file = $this->getState();
+
+        if ($callback = $this->removeUploadedFileUsing) {
+            $this->evaluate($callback, [
+                'file' => $file,
+            ]);
+        } else {
+            $this->handleUploadedFileRemoval($file);
+        }
+
+        if ($this->isMultiple()) {
+            $container = $this->getContainer();
+
+            /** @var MultipleFileUpload $parentComponent */
+            $parentComponent = $container->getParentComponent();
+
+            $parentComponent->removeUploadedFile(
+                $container->getStatePath(isAbsolute: false),
+            );
+        }
+
+        return $this;
     }
 }

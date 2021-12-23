@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use SplFileInfo;
@@ -103,10 +104,14 @@ trait HasFileAttachments
 
     protected function handleUploadedAttachmentUrlRetrieval($file): ?string
     {
+        /** @var FilesystemAdapter $storage */
         $storage = $this->getFileAttachmentsDisk();
 
+        /** @var \League\Flysystem\Filesystem $storageDriver */
+        $storageDriver = $storage->getDriver();
+
         if (
-            $storage->getDriver()->getAdapter() instanceof AwsS3Adapter &&
+            $storageDriver->getAdapter() instanceof AwsS3Adapter &&
             $storage->getVisibility($file) === 'private'
         ) {
             return $storage->temporaryUrl(

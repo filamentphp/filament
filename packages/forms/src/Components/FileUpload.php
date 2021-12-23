@@ -188,40 +188,4 @@ class FileUpload extends BaseFileUpload
     {
         return (bool) $this->evaluate($this->isAvatar);
     }
-
-    public function isMultiple(): bool
-    {
-        return $this->getContainer()->getParentComponent() instanceof MultipleFileUpload;
-    }
-
-    protected function handleUploadedFileRemoval($file): void
-    {
-        $this->state(null);
-    }
-
-    protected function handleUploadedFileDeletion($file): void
-    {
-    }
-
-    public function removeUploadedFile(): static
-    {
-        $file = $this->getState();
-
-        if ($callback = $this->removeUploadedFileUsing) {
-            $this->evaluate($callback, [
-                'file' => $file,
-            ]);
-        } else {
-            $this->handleUploadedFileRemoval($file);
-        }
-
-        if ($this->isMultiple()) {
-            $container = $this->getContainer();
-            $container->getParentComponent()->removeUploadedFile(
-                $container->getStatePath(isAbsolute: false),
-            );
-        }
-
-        return $this;
-    }
 }

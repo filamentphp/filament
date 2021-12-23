@@ -5,6 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Tags\HasTags;
 use Spatie\Tags\Tag;
 
 class SpatieTagsInput extends TagsInput
@@ -19,6 +20,10 @@ class SpatieTagsInput extends TagsInput
             if (! $model || is_string($model)) {
                 $component->state([]);
 
+                return;
+            }
+
+            if (! method_exists($model, 'tagsWithType')) {
                 return;
             }
 
@@ -41,6 +46,10 @@ class SpatieTagsInput extends TagsInput
 
         $model = $this->getModel();
         $tags = $this->getState();
+
+        if (! (method_exists($model, 'syncTagsWithType') && method_exists($model, 'syncTags'))) {
+            return;
+        }
 
         if ($type = $this->getType()) {
             $model->syncTagsWithType($tags, $type);
@@ -69,7 +78,7 @@ class SpatieTagsInput extends TagsInput
         return Tag::query()
             ->when(
                 filled($type),
-                fn (Builder $query) => $query->withType($type),
+                fn (Builder $query) => $query->where('type', $type),
                 fn (Builder $query) => $query->whereNull('type'),
             )
             ->pluck('name')
