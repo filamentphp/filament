@@ -549,7 +549,7 @@ Toggles may also use an "on icon" and an "off icon". These are displayed on its 
 use Filament\Forms\Components\Toggle;
 
 Toggle::make('is_admin')
-    ->onIcon('heroicon-s-lightning-bolt'),
+    ->onIcon('heroicon-s-lightning-bolt')
     ->offIcon('heroicon-s-user')
 ```
 
