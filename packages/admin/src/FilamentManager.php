@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use Closure;
 use Filament\Events\ServingFilament;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
@@ -95,7 +96,7 @@ class FilamentManager
         $this->widgets = array_merge($this->widgets, $widgets);
     }
 
-    public function serving(callable $callback): void
+    public function serving(Closure $callback): void
     {
         Event::listen(ServingFilament::class, $callback);
     }

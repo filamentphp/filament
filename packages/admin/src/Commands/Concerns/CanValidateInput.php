@@ -2,6 +2,7 @@
 
 namespace Filament\Commands\Concerns;
 
+use Closure;
 use Illuminate\Support\Facades\Validator;
 
 trait CanValidateInput
@@ -11,7 +12,7 @@ trait CanValidateInput
         return $this->validateInput(fn () => $this->ask($question), $field, ['required']);
     }
 
-    protected function validateInput(callable $callback, string $field, array $rules): string
+    protected function validateInput(Closure $callback, string $field, array $rules): string
     {
         $input = $callback();
 
