@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait InteractsWithTableQuery
 {
-    protected $modifyQueryUsing = null;
+    protected ?Closure $modifyQueryUsing = null;
 
     public function apply(Builder $query, array $data = []): Builder
     {
@@ -29,7 +29,7 @@ trait InteractsWithTableQuery
         return $query;
     }
 
-    public function query(callable $callback): static
+    public function query(?Closure $callback): static
     {
         $this->modifyQueryUsing = $callback;
 

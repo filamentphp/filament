@@ -6,9 +6,9 @@ use Closure;
 
 trait CanCallAction
 {
-    protected $action = null;
+    protected string | Closure | null $action = null;
 
-    public function action(string | callable | null $action): static
+    public function action(string | Closure | null $action): static
     {
         $this->action = $action;
 
@@ -29,7 +29,7 @@ trait CanCallAction
         ]);
     }
 
-    public function getAction(): string | callable | null
+    public function getAction(): string | Closure | null
     {
         return $this->action;
     }
