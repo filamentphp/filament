@@ -2,11 +2,13 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
+
 trait CanBeInline
 {
-    protected $isInline = true;
+    protected bool | Closure $isInline = true;
 
-    public function inline(bool | callable $condition = true): static
+    public function inline(bool | Closure $condition = true): static
     {
         $this->isInline = $condition;
 

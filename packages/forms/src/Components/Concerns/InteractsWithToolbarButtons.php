@@ -2,6 +2,8 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
+
 trait InteractsWithToolbarButtons
 {
     public function disableAllToolbarButtons(bool $condition = true): static
@@ -29,7 +31,7 @@ trait InteractsWithToolbarButtons
         return $this;
     }
 
-    public function toolbarButtons(array | callable $buttons = []): static
+    public function toolbarButtons(array | Closure $buttons = []): static
     {
         $this->toolbarButtons = $buttons;
 

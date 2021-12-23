@@ -24,7 +24,7 @@ trait HasComponents
         return $this;
     }
 
-    public function getComponent(string | callable $callback, bool $withHidden = false): ?Component
+    public function getComponent(string | Closure $callback, bool $withHidden = false): ?Component
     {
         $callback = $callback instanceof Closure
              ? $callback

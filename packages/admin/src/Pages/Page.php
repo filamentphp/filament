@@ -86,8 +86,16 @@ class Page extends Component
 
     public function render(): View
     {
-        return view(static::$view, $this->getViewData())
-            ->layout(static::$layout, $this->getLayoutData());
+        $view = view(static::$view, $this->getViewData());
+
+        /*
+         * Livewire uses a macro for the `layout()` method.
+         *
+         * @phpstan-ignore-next-line
+         */
+        $view->layout(static::$layout, $this->getLayoutData());
+
+        return $view;
     }
 
     protected function getBreadcrumbs(): array

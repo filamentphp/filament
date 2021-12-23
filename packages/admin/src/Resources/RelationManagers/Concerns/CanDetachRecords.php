@@ -5,6 +5,7 @@ namespace Filament\Resources\RelationManagers\Concerns;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait CanDetachRecords
 {
@@ -22,7 +23,10 @@ trait CanDetachRecords
     {
         $this->callHook('beforeDetach');
 
-        $this->getRelationship()->detach($this->getMountedTableActionRecord());
+        /** @var BelongsToMany $relationship */
+        $relationship = $this->getRelationship();
+
+        $relationship->detach($this->getMountedTableActionRecord());
 
         $this->callHook('afterDetach');
     }
@@ -43,7 +47,12 @@ trait CanDetachRecords
     {
         return Tables\Actions\BulkAction::make('detach')
             ->label(__('filament::resources/relation-managers/detach.bulk_action.label'))
-            ->action(fn (Collection $records) => $this->getRelationship()->detach($records))
+            ->action(function (Collection $records) {
+                /** @var BelongsToMany $relationship */
+                $relationship = $this->getRelationship();
+
+                $relationship->detach($records);
+            })
             ->requiresConfirmation()
             ->modalHeading(__('filament::resources/relation-managers/detach.bulk_action.modal.heading', ['label' => static::getPluralRecordLabel()]))
             ->deselectRecordsAfterCompletion()

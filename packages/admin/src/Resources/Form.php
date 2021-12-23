@@ -12,6 +12,10 @@ class Form
 
     protected array | Component | Closure $schema = [];
 
+    final public function __construct()
+    {
+    }
+
     public static function make(): static
     {
         return new static();

@@ -6,6 +6,9 @@ use Filament\Forms\ComponentContainer;
 use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property ComponentContainer $mountedTableActionForm
+ */
 trait HasActions
 {
     public $mountedTableAction = null;

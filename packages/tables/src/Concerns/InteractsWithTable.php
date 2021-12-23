@@ -4,7 +4,11 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Forms;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @method Builder getTableQuery()
+ */
 trait InteractsWithTable
 {
     use CanPaginateRecords;

@@ -20,7 +20,7 @@ class Authenticate extends Middleware
 
         $this->auth->shouldUse($guardName);
 
-        $user = $this->auth->user();
+        $user = $guard->user();
 
         if (config('app.env') === 'local') {
             return;

@@ -31,9 +31,13 @@ class EditPost extends Component implements Forms\Contracts\HasForms // [tl! foc
 In your Livewire component's view, render the form:
 
 ```blade
-<div>
+<form wire:submit.prevent="submit">
     {{ $this->form }}
-</div>
+    
+    <button type="submit">
+        Submit
+    </button>
+</form>
 ```
 
 Finally, add any [fields](fields) and [layout components](layout) to the Livewire component's `getFormSchema()` method:
@@ -72,6 +76,11 @@ class EditPost extends Component implements Forms\Contracts\HasForms
             // ...
         ];
     } // [tl! focus:end]
+    
+    public function submit(): void
+    {
+        // ...
+    }
     
     public function render(): View
     {

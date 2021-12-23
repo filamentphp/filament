@@ -2,32 +2,35 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use SplFileInfo;
 
 class BaseFileUpload extends Field
 {
-    protected $acceptedFileTypes = [];
+    protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
-    protected $directory = null;
+    protected string | Closure | null $directory = null;
 
-    protected $diskName = null;
+    protected string | Closure | null $diskName = null;
 
-    protected $maxSize = null;
+    protected int | Closure | null $maxSize = null;
 
-    protected $minSize = null;
+    protected int | Closure | null $minSize = null;
 
-    protected $visibility = 'public';
+    protected string | Closure $visibility = 'public';
 
-    protected $deleteUploadedFileUsing = null;
+    protected ?Closure $deleteUploadedFileUsing = null;
 
-    protected $getUploadedFileUrlUsing = null;
+    protected ?Closure $getUploadedFileUrlUsing = null;
 
-    protected $removeUploadedFileUsing = null;
+    protected ?Closure $removeUploadedFileUsing = null;
 
-    protected $saveUploadedFileUsing = null;
+    protected ?Closure $saveUploadedFileUsing = null;
 
     protected function setUp(): void
     {
@@ -46,28 +49,31 @@ class BaseFileUpload extends Field
                 return;
             }
 
-            $component->getContainer()->getParentComponent()->appendNewUploadField();
+            /** @var MultipleFileUpload $parentComponent */
+            $parentComponent = $component->getContainer()->getParentComponent();
+
+            $parentComponent->appendNewUploadField();
         });
 
         $this->dehydrated(fn (BaseFileUpload $component): bool => ! $component->isMultiple());
     }
 
-    public function acceptedFileTypes(array | callable $types): static
+    public function acceptedFileTypes(array | Arrayable | Closure $types): static
     {
         $this->acceptedFileTypes = $types;
 
         $this->rule(function () {
-            $types = implode(',', $this->getAcceptedFileTypes());
+            $types = implode(',', ($this->getAcceptedFileTypes() ?? []));
 
             return "mimetypes:{$types}";
         }, function () {
-            return $this->hasFileObjectState() && count($this->getAcceptedFileTypes());
+            return $this->hasFileObjectState() && count($this->getAcceptedFileTypes() ?? []);
         });
 
         return $this;
     }
 
-    public function directory(string | callable $directory): static
+    public function directory(string | Closure | null $directory): static
     {
         $this->directory = $directory;
 
@@ -81,7 +87,7 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function maxSize(int | callable $size): static
+    public function maxSize(int | Closure | null $size): static
     {
         $this->maxSize = $size;
 
@@ -96,7 +102,7 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function minSize(int | callable $size): static
+    public function minSize(int | Closure | null $size): static
     {
         $this->minSize = $size;
 
@@ -111,44 +117,50 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function visibility(string | callable $visibility): static
+    public function visibility(string | Closure | null $visibility): static
     {
         $this->visibility = $visibility;
 
         return $this;
     }
 
-    public function deleteUploadedFileUsing(callable $callback): static
+    public function deleteUploadedFileUsing(?Closure $callback): static
     {
         $this->deleteUploadedFileUsing = $callback;
 
         return $this;
     }
 
-    public function getUploadedFileUrlUsing(callable $callback): static
+    public function getUploadedFileUrlUsing(?Closure $callback): static
     {
         $this->getUploadedFileUrlUsing = $callback;
 
         return $this;
     }
 
-    public function removeUploadedFileUsing(callable $callback): static
+    public function removeUploadedFileUsing(?Closure $callback): static
     {
         $this->removeUploadedFileUsing = $callback;
 
         return $this;
     }
 
-    public function saveUploadedFileUsing(callable $callback): static
+    public function saveUploadedFileUsing(?Closure $callback): static
     {
         $this->saveUploadedFileUsing = $callback;
 
         return $this;
     }
 
-    public function getAcceptedFileTypes(): array
+    public function getAcceptedFileTypes(): ?array
     {
-        return $this->evaluate($this->acceptedFileTypes);
+        $types = $this->evaluate($this->acceptedFileTypes);
+
+        if ($types instanceof Arrayable) {
+            $types = $types->toArray();
+        }
+
+        return $types;
     }
 
     public function getDirectory(): ?string
@@ -222,10 +234,14 @@ class BaseFileUpload extends Field
 
     protected function handleUploadedFileUrlRetrieval($file): ?string
     {
+        /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
 
+        /** @var \League\Flysystem\Filesystem $storageDriver */
+        $storageDriver = $storage->getDriver();
+
         if (
-            $storage->getDriver()->getAdapter() instanceof AwsS3Adapter &&
+            $storageDriver->getAdapter() instanceof AwsS3Adapter &&
             $storage->getVisibility($file) === 'private'
         ) {
             return $storage->temporaryUrl(
@@ -265,5 +281,45 @@ class BaseFileUpload extends Field
         $storeMethod = $this->getVisibility() === 'public' ? 'storePublicly' : 'store';
 
         return $file->{$storeMethod}($this->getDirectory(), $this->getDiskName());
+    }
+
+    public function isMultiple(): bool
+    {
+        return $this->getContainer()->getParentComponent() instanceof MultipleFileUpload;
+    }
+
+    protected function handleUploadedFileRemoval($file): void
+    {
+        $this->state(null);
+    }
+
+    protected function handleUploadedFileDeletion($file): void
+    {
+    }
+
+    public function removeUploadedFile(): static
+    {
+        $file = $this->getState();
+
+        if ($callback = $this->removeUploadedFileUsing) {
+            $this->evaluate($callback, [
+                'file' => $file,
+            ]);
+        } else {
+            $this->handleUploadedFileRemoval($file);
+        }
+
+        if ($this->isMultiple()) {
+            $container = $this->getContainer();
+
+            /** @var MultipleFileUpload $parentComponent */
+            $parentComponent = $container->getParentComponent();
+
+            $parentComponent->removeUploadedFile(
+                $container->getStatePath(isAbsolute: false),
+            );
+        }
+
+        return $this;
     }
 }

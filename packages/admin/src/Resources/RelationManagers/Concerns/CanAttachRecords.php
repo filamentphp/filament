@@ -7,7 +7,9 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\Modal\Actions\ButtonAction;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
 
 trait CanAttachRecords
@@ -45,10 +47,15 @@ trait CanAttachRecords
 
                 $displayColumnName = static::getRecordTitleAttribute();
 
-                $relationshipQuery = $relationship->getRelated()->orderBy($displayColumnName);
+                /** @var Builder $relationshipQuery */
+                $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
 
                 $query = strtolower($query);
-                $searchOperator = match ($relationshipQuery->getConnection()->getDriverName()) {
+
+                /** @var Connection $databaseConnection */
+                $databaseConnection = $relationshipQuery->getConnection();
+
+                $searchOperator = match ($databaseConnection->getDriverName()) {
                     'pgsql' => 'ilike',
                     default => 'like',
                 };
@@ -61,7 +68,7 @@ trait CanAttachRecords
                     ->pluck($displayColumnName, $relationship->getRelated()->getKeyName())
                     ->toArray();
             })
-            ->getOptionLabelUsing(fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->find($value)))
+            ->getOptionLabelUsing(fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->query()->find($value)))
             ->disableLabel();
     }
 
@@ -95,10 +102,12 @@ trait CanAttachRecords
 
         $this->callHook('beforeCreate');
 
+        /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
+
         $pivotColumns = $relationship->getPivotColumns();
 
-        $record = $relationship->getRelated()->find($data['recordId']);
+        $record = $relationship->getRelated()->query()->find($data['recordId']);
         $relationship->attach($record, Arr::only($data, $pivotColumns));
 
         $this->callHook('afterCreate');

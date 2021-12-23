@@ -2,29 +2,31 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
+
 class KeyValue extends Field
 {
     use Concerns\HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.key-value';
 
-    protected $addButtonLabel = null;
+    protected string | Closure | null $addButtonLabel = null;
 
-    protected $shouldDisableAddingRows = false;
+    protected bool | Closure $shouldDisableAddingRows = false;
 
-    protected $shouldDisableDeletingRows = false;
+    protected bool | Closure $shouldDisableDeletingRows = false;
 
-    protected $shouldDisableEditingKeys = false;
+    protected bool | Closure $shouldDisableEditingKeys = false;
 
-    protected $deleteButtonLabel = null;
+    protected string | Closure | null $deleteButtonLabel = null;
 
-    protected $keyLabel = null;
+    protected string | Closure | null $keyLabel = null;
 
-    protected $valueLabel = null;
+    protected string | Closure | null $valueLabel = null;
 
-    protected $keyPlaceholder = null;
+    protected string | Closure | null $keyPlaceholder = null;
 
-    protected $valuePlaceholder = null;
+    protected string | Closure | null $valuePlaceholder = null;
 
     protected function setUp(): void
     {
@@ -39,63 +41,63 @@ class KeyValue extends Field
         $this->valueLabel(__('forms::components.key_value.fields.value.label'));
     }
 
-    public function addButtonLabel(string | callable $label): static
+    public function addButtonLabel(string | Closure | null $label): static
     {
         $this->addButtonLabel = $label;
 
         return $this;
     }
 
-    public function deleteButtonLabel(string | callable $label): static
+    public function deleteButtonLabel(string | Closure | null $label): static
     {
         $this->deleteButtonLabel = $label;
 
         return $this;
     }
 
-    public function disableAddingRows(bool | callable $condition = true): static
+    public function disableAddingRows(bool | Closure $condition = true): static
     {
         $this->shouldDisableAddingRows = $condition;
 
         return $this;
     }
 
-    public function disableDeletingRows(bool | callable $condition = true): static
+    public function disableDeletingRows(bool | Closure $condition = true): static
     {
         $this->shouldDisableDeletingRows = $condition;
 
         return $this;
     }
 
-    public function disableEditingKeys(bool | callable $condition = true): static
+    public function disableEditingKeys(bool | Closure $condition = true): static
     {
         $this->shouldDisableEditingKeys = $condition;
 
         return $this;
     }
 
-    public function keyLabel(string | callable $label): static
+    public function keyLabel(string | Closure | null $label): static
     {
         $this->keyLabel = $label;
 
         return $this;
     }
 
-    public function valueLabel(string | callable $label): static
+    public function valueLabel(string | Closure | null $label): static
     {
         $this->valueLabel = $label;
 
         return $this;
     }
 
-    public function keyPlaceholder(string | callable | null $placeholder): static
+    public function keyPlaceholder(string | Closure | null $placeholder): static
     {
         $this->keyPlaceholder = $placeholder;
 
         return $this;
     }
 
-    public function valuePlaceholder(string | callable | null $placeholder): static
+    public function valuePlaceholder(string | Closure | null $placeholder): static
     {
         $this->valuePlaceholder = $placeholder;
 

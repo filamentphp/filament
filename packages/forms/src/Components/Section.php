@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Illuminate\Support\Str;
 
 class Section extends Component implements Contracts\CanConcealComponents
@@ -10,20 +11,20 @@ class Section extends Component implements Contracts\CanConcealComponents
 
     protected string $view = 'forms::components.section';
 
-    protected $isCollapsed = false;
+    protected bool | Closure $isCollapsed = false;
 
-    protected $isCollapsible = false;
+    protected bool | Closure $isCollapsible = false;
 
-    protected $description = null;
+    protected string | Closure | null $description = null;
 
-    protected $heading = null;
+    protected string | Closure $heading;
 
-    final public function __construct(string | callable $heading)
+    final public function __construct(string | Closure $heading)
     {
         $this->heading($heading);
     }
 
-    public static function make(string | callable $heading): static
+    public static function make(string | Closure $heading): static
     {
         $static = new static($heading);
         $static->setUp();
@@ -38,7 +39,7 @@ class Section extends Component implements Contracts\CanConcealComponents
         $this->columnSpan('full');
     }
 
-    public function collapsed(bool | callable $condition = true): static
+    public function collapsed(bool | Closure $condition = true): static
     {
         $this->isCollapsed = $condition;
         $this->collapsible(true);
@@ -46,21 +47,21 @@ class Section extends Component implements Contracts\CanConcealComponents
         return $this;
     }
 
-    public function collapsible(bool | callable $condition = true): static
+    public function collapsible(bool | Closure $condition = true): static
     {
         $this->isCollapsible = $condition;
 
         return $this;
     }
 
-    public function description(string | callable | null $description = null): static
+    public function description(string | Closure | null $description = null): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    public function heading(string | callable $heading): static
+    public function heading(string | Closure $heading): static
     {
         $this->heading = $heading;
 

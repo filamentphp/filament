@@ -5,6 +5,7 @@ namespace Filament\Tables\Filters;
 use Filament\Forms\Components\MultiSelect;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
@@ -31,16 +32,22 @@ class MultiSelectFilter extends Filter
         }
 
         if ($this->queriesRelationships()) {
+            /** @var BelongsTo $relationship */
+            $relationship = $this->getRelationship();
+
             return $query->whereHas(
                 $this->getRelationshipName(),
                 fn (Builder $query) => $query->whereIn(
-                    $this->getRelationship()->getOwnerKeyName(),
+                    $relationship->getOwnerKeyName(),
                     $data['values'],
                 ),
             );
         }
 
-        return $query->whereIn($this->getColumn(), $data['values']);
+        /** @var Builder $query */
+        $query = $query->whereIn($this->getColumn(), $data['values']);
+
+        return $query;
     }
 
     public function column(string $name): static
@@ -93,10 +100,12 @@ class MultiSelectFilter extends Filter
 
     protected function getRelationshipOptions(): array
     {
+        /** @var BelongsTo $relationship */
         $relationship = $this->getRelationship();
+
         $displayColumnName = $this->getRelationshipDisplayColumnName();
 
-        $relationshipQuery = $relationship->getRelated()->orderBy($displayColumnName);
+        $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
 
         return $relationshipQuery
             ->pluck($displayColumnName, $relationship->getOwnerKeyName())

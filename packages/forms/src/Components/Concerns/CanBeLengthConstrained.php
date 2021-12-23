@@ -2,13 +2,15 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
+
 trait CanBeLengthConstrained
 {
-    protected $maxLength = null;
+    protected int | Closure | null $maxLength = null;
 
-    protected $minLength = null;
+    protected int | Closure | null $minLength = null;
 
-    public function maxLength(int | callable $length): static
+    public function maxLength(int | Closure $length): static
     {
         $this->maxLength = $length;
 
@@ -21,7 +23,7 @@ trait CanBeLengthConstrained
         return $this;
     }
 
-    public function minLength(int | callable $length): static
+    public function minLength(int | Closure $length): static
     {
         $this->minLength = $length;
 

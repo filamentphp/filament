@@ -2,6 +2,8 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
+
 class FileUpload extends BaseFileUpload
 {
     use Concerns\HasExtraAlpineAttributes;
@@ -9,27 +11,27 @@ class FileUpload extends BaseFileUpload
 
     protected string $view = 'forms::components.file-upload';
 
-    protected $imageCropAspectRatio = null;
+    protected string | Closure | null $imageCropAspectRatio = null;
 
-    protected $imagePreviewHeight = null;
+    protected string | Closure | null $imagePreviewHeight = null;
 
-    protected $imageResizeTargetHeight = null;
+    protected string | Closure | null $imageResizeTargetHeight = null;
 
-    protected $imageResizeTargetWidth = null;
+    protected string | Closure | null $imageResizeTargetWidth = null;
 
-    protected $isAvatar = false;
+    protected bool | Closure $isAvatar = false;
 
-    protected $loadingIndicatorPosition = 'right';
+    protected string | Closure $loadingIndicatorPosition = 'right';
 
-    protected $panelAspectRatio = null;
+    protected string | Closure | null $panelAspectRatio = null;
 
-    protected $panelLayout = null;
+    protected string | Closure | null $panelLayout = null;
 
-    protected $removeUploadedFileButtonPosition = 'left';
+    protected string | Closure $removeUploadedFileButtonPosition = 'left';
 
-    protected $uploadButtonPosition = 'right';
+    protected string | Closure $uploadButtonPosition = 'right';
 
-    protected $uploadProgressIndicatorPosition = 'right';
+    protected string | Closure $uploadProgressIndicatorPosition = 'right';
 
     public function avatar(): static
     {
@@ -48,7 +50,7 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function idleLabel(string | callable $label): static
+    public function idleLabel(string | Closure | null $label): static
     {
         $this->placeholder($label);
 
@@ -64,70 +66,70 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function imageCropAspectRatio(string | callable $ratio): static
+    public function imageCropAspectRatio(string | Closure | null $ratio): static
     {
         $this->imageCropAspectRatio = $ratio;
 
         return $this;
     }
 
-    public function imagePreviewHeight(string | callable $height): static
+    public function imagePreviewHeight(string | Closure | null $height): static
     {
         $this->imagePreviewHeight = $height;
 
         return $this;
     }
 
-    public function imageResizeTargetHeight(string | callable $height): static
+    public function imageResizeTargetHeight(string | Closure | null $height): static
     {
         $this->imageResizeTargetHeight = $height;
 
         return $this;
     }
 
-    public function imageResizeTargetWidth(string | callable $width): static
+    public function imageResizeTargetWidth(string | Closure | null $width): static
     {
         $this->imageResizeTargetWidth = $width;
 
         return $this;
     }
 
-    public function loadingIndicatorPosition(string | callable $position): static
+    public function loadingIndicatorPosition(string | Closure | null $position): static
     {
         $this->loadingIndicatorPosition = $position;
 
         return $this;
     }
 
-    public function panelAspectRatio(string | callable $ratio): static
+    public function panelAspectRatio(string | Closure | null $ratio): static
     {
         $this->panelAspectRatio = $ratio;
 
         return $this;
     }
 
-    public function panelLayout(string | callable $layout): static
+    public function panelLayout(string | Closure | null $layout): static
     {
         $this->panelLayout = $layout;
 
         return $this;
     }
 
-    public function removeUploadedFileButtonPosition(string | callable $position): static
+    public function removeUploadedFileButtonPosition(string | Closure | null $position): static
     {
         $this->removeUploadedFileButtonPosition = $position;
 
         return $this;
     }
 
-    public function uploadButtonPosition(string | callable $position): static
+    public function uploadButtonPosition(string | Closure | null $position): static
     {
         $this->uploadButtonPosition = $position;
 
         return $this;
     }
 
-    public function uploadProgressIndicatorPosition(string | callable $position): static
+    public function uploadProgressIndicatorPosition(string | Closure | null $position): static
     {
         $this->uploadProgressIndicatorPosition = $position;
 
@@ -187,41 +189,5 @@ class FileUpload extends BaseFileUpload
     public function isAvatar(): bool
     {
         return (bool) $this->evaluate($this->isAvatar);
-    }
-
-    public function isMultiple(): bool
-    {
-        return $this->getContainer()->getParentComponent() instanceof MultipleFileUpload;
-    }
-
-    protected function handleUploadedFileRemoval($file): void
-    {
-        $this->state(null);
-    }
-
-    protected function handleUploadedFileDeletion($file): void
-    {
-    }
-
-    public function removeUploadedFile(): static
-    {
-        $file = $this->getState();
-
-        if ($callback = $this->removeUploadedFileUsing) {
-            $this->evaluate($callback, [
-                'file' => $file,
-            ]);
-        } else {
-            $this->handleUploadedFileRemoval($file);
-        }
-
-        if ($this->isMultiple()) {
-            $container = $this->getContainer();
-            $container->getParentComponent()->removeUploadedFile(
-                $container->getStatePath(isAbsolute: false),
-            );
-        }
-
-        return $this;
     }
 }

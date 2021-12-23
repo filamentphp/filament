@@ -18,6 +18,10 @@ class NavigationItem
 
     protected ?string $url = null;
 
+    final public function __construct()
+    {
+    }
+
     public static function make(): static
     {
         return new static();

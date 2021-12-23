@@ -9,9 +9,9 @@ trait HasState
 {
     protected $defaultState = null;
 
-    protected $getStateUsing = null;
+    protected ?Closure $getStateUsing = null;
 
-    public function getStateUsing(callable $callback): static
+    public function getStateUsing(?Closure $callback): static
     {
         $this->getStateUsing = $callback;
 

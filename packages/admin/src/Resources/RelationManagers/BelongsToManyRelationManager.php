@@ -4,6 +4,7 @@ namespace Filament\Resources\RelationManagers;
 
 use Filament\Resources\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
 
 class BelongsToManyRelationManager extends RelationManager
@@ -55,7 +56,9 @@ class BelongsToManyRelationManager extends RelationManager
 
         $this->callHook('beforeCreate');
 
+        /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
+
         $pivotColumns = $relationship->getPivotColumns();
         $pivotData = Arr::only($data, $pivotColumns);
         $data = Arr::except($data, $pivotColumns);
@@ -79,7 +82,9 @@ class BelongsToManyRelationManager extends RelationManager
 
         $this->callHook('beforeSave');
 
+        /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
+
         $pivotColumns = $relationship->getPivotColumns();
         $pivotData = Arr::only($data, $pivotColumns);
         $data = Arr::except($data, $pivotColumns);
@@ -96,6 +101,15 @@ class BelongsToManyRelationManager extends RelationManager
     {
         $query = parent::getTableQuery();
 
-        return $query->select($this->getRelationship()->getTable().'.*', $query->getModel()->getTable().'.*');
+        /** @var BelongsToMany $relationship */
+        $relationship = $this->getRelationship();
+
+        /** @var Builder $query */
+        $query->select(
+            $relationship->getTable().'.*',
+            $query->getModel()->getTable().'.*',
+        );
+
+        return $query;
     }
 }

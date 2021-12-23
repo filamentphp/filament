@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
 use Illuminate\Support\Str;
 
@@ -11,7 +12,7 @@ class MultipleFileUpload extends Field
 
     protected string $view = 'forms::components.multiple-file-upload';
 
-    protected $uploadComponent = null;
+    protected Component | Closure | null $uploadComponent = null;
 
     protected function setUp(): void
     {
@@ -75,17 +76,21 @@ class MultipleFileUpload extends Field
         $this->state($files);
     }
 
-    public function minFiles(int | callable $count): static
+    public function minFiles(int | Closure | null $count): static
     {
         $this->minItems($count);
+
+        return $this;
     }
 
-    public function maxFiles(int | callable $count): static
+    public function maxFiles(int | Closure | null $count): static
     {
         $this->maxItems($count);
+
+        return $this;
     }
 
-    public function uploadComponent(Component | callable $component): static
+    public function uploadComponent(Component | Closure | null $component): static
     {
         $this->uploadComponent = $component;
 

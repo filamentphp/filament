@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\Builder;
 
+use Closure;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns;
 use Illuminate\Support\Str;
@@ -12,7 +13,7 @@ class Block extends Component
 
     protected string $view = 'forms::components.builder.block';
 
-    protected $icon = null;
+    protected string | Closure | null $icon = null;
 
     final public function __construct(string $name)
     {
@@ -24,7 +25,7 @@ class Block extends Component
         return new static($name);
     }
 
-    public function icon(string | callable $icon): static
+    public function icon(string | Closure | null $icon): static
     {
         $this->icon = $icon;
 

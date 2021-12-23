@@ -6,7 +6,7 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 
 interface HasTable extends HasForms
@@ -43,7 +43,7 @@ interface HasTable extends HasForms
 
     public function getTableFiltersForm(): ComponentContainer;
 
-    public function getTableRecords(): Collection | LengthAwarePaginator;
+    public function getTableRecords(): Collection | Paginator;
 
     public function getTableSortColumn(): ?string;
 

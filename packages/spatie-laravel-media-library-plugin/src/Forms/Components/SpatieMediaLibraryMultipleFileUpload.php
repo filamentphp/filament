@@ -2,11 +2,12 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Spatie\MediaLibrary\HasMedia;
 
 class SpatieMediaLibraryMultipleFileUpload extends MultipleFileUpload
 {
-    protected $collection = null;
+    protected string | Closure | null $collection = null;
 
     protected function setUp(): void
     {
@@ -42,7 +43,7 @@ class SpatieMediaLibraryMultipleFileUpload extends MultipleFileUpload
         return $files;
     }
 
-    public function collection(string | callable $collection): static
+    public function collection(string | Closure | null $collection): static
     {
         $this->collection = $collection;
 

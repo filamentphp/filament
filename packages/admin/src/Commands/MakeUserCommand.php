@@ -3,6 +3,8 @@
 namespace Filament\Commands;
 
 use Filament\Facades\Filament;
+use Illuminate\Auth\EloquentUserProvider;
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,9 +18,13 @@ class MakeUserCommand extends Command
 
     public function handle(): int
     {
+        /** @var SessionGuard $auth */
         $auth = Filament::auth();
 
-        $userModel = $auth->getProvider()->getModel();
+        /** @var EloquentUserProvider $userProvider */
+        $userProvider = $auth->getProvider();
+
+        $userModel = $userProvider->getModel();
 
         $user = $userModel::create([
             'name' => $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']),
@@ -29,7 +35,7 @@ class MakeUserCommand extends Command
         $loginUrl = route('filament.auth.login');
         $this->info("Success! {$user->email} may now log in at {$loginUrl}.");
 
-        if ($auth->getProvider()->getModel()::count() === 1 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
+        if ($userProvider->getModel()::count() === 1 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
             if (PHP_OS_FAMILY === 'Darwin') {
                 exec('open https://github.com/laravel-filament/filament');
             }

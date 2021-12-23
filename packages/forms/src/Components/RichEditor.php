@@ -2,6 +2,8 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
+
 class RichEditor extends Field implements Contracts\HasFileAttachments
 {
     use Concerns\HasExtraAlpineAttributes;
@@ -11,7 +13,7 @@ class RichEditor extends Field implements Contracts\HasFileAttachments
 
     protected string $view = 'forms::components.rich-editor';
 
-    protected $toolbarButtons = [
+    protected array | Closure $toolbarButtons = [
         'attachFiles',
         'blockquote',
         'bold',

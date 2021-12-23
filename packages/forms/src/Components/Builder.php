@@ -2,6 +2,9 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
+use function Filament\Forms\array_move_after;
+use function Filament\Forms\array_move_before;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Builder\Block;
 use Illuminate\Support\Arr;
@@ -13,11 +16,11 @@ class Builder extends Field
 
     protected string $view = 'forms::components.builder';
 
-    protected $createItemBetweenButtonLabel = null;
+    protected string | Closure | null $createItemBetweenButtonLabel = null;
 
-    protected $createItemButtonLabel = null;
+    protected string | Closure | null $createItemButtonLabel = null;
 
-    protected $isItemMovementDisabled = false;
+    protected bool | Closure $isItemMovementDisabled = false;
 
     protected function setUp(): void
     {
@@ -93,7 +96,7 @@ class Builder extends Field
                         return;
                     }
 
-                    $items = Arr::moveElementAfter($component->getNormalisedState(), $uuidToMoveDown);
+                    $items = array_move_after($component->getNormalisedState(), $uuidToMoveDown);
 
                     $livewire = $component->getLivewire();
                     data_set($livewire, $statePath, $items);
@@ -113,7 +116,7 @@ class Builder extends Field
                         return;
                     }
 
-                    $items = Arr::moveElementBefore($component->getNormalisedState(), $uuidToMoveUp);
+                    $items = array_move_before($component->getNormalisedState(), $uuidToMoveUp);
 
                     $livewire = $component->getLivewire();
                     data_set($livewire, $statePath, $items);
@@ -137,21 +140,21 @@ class Builder extends Field
         return $this;
     }
 
-    public function createItemBetweenButtonLabel(string | callable $label): static
+    public function createItemBetweenButtonLabel(string | Closure | null $label): static
     {
         $this->createItemBetweenButtonLabel = $label;
 
         return $this;
     }
 
-    public function createItemButtonLabel(string | callable $label): static
+    public function createItemButtonLabel(string | Closure | null $label): static
     {
         $this->createItemButtonLabel = $label;
 
         return $this;
     }
 
-    public function disableItemMovement(bool | callable $condition = true): static
+    public function disableItemMovement(bool | Closure $condition = true): static
     {
         $this->isItemMovementDisabled = $condition;
 

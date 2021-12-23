@@ -5,6 +5,7 @@ namespace Filament\Resources;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -250,7 +251,7 @@ class Resource
         return function () {
             $slug = static::getSlug();
 
-            Route::name("{$slug}.")->prefix($slug)->group(function () use ($slug) {
+            Route::name("{$slug}.")->prefix($slug)->group(function () {
                 foreach (static::getPages() as $name => $page) {
                     Route::get($page['route'], $page['class'])->name($name);
                 }
@@ -284,7 +285,10 @@ class Resource
 
     protected static function applyGlobalSearchAttributeConstraint(Builder $query, array $searchAttributes, string $searchQuery, bool &$isFirst): Builder
     {
-        $searchOperator = match ($query->getConnection()->getDriverName()) {
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        $searchOperator = match ($databaseConnection->getDriverName()) {
             'pgsql' => 'ilike',
             default => 'like',
         };

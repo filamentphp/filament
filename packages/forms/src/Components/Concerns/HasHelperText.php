@@ -2,11 +2,13 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
+
 trait HasHelperText
 {
-    protected $helperText = null;
+    protected string | Closure | null $helperText = null;
 
-    public function helperText(string | callable $text): static
+    public function helperText(string | Closure | null $text): static
     {
         $this->helperText = $text;
 

@@ -2,23 +2,25 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 class BelongsToManyMultiSelect extends MultiSelect
 {
-    protected $displayColumnName = null;
+    protected string | Closure | null $displayColumnName = null;
 
-    protected $isPreloaded = false;
+    protected bool | Closure $isPreloaded = false;
 
-    protected $relationship = null;
+    protected string | Closure | null $relationship = null;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->afterStateHydrated(function (BelongsToManyMultiSelect $component): void {
-            if (count($this->getState() ?? [])) {
+            if (count($component->getState())) {
                 return;
             }
 
@@ -39,14 +41,14 @@ class BelongsToManyMultiSelect extends MultiSelect
         $this->dehydrated(false);
     }
 
-    public function preload(bool | callable $condition = true): static
+    public function preload(bool | Closure $condition = true): static
     {
         $this->isPreloaded = $condition;
 
         return $this;
     }
 
-    public function relationship(string | callable $relationshipName, string | callable $displayColumnName, ?callable $callback = null): static
+    public function relationship(string | Closure $relationshipName, string | Closure $displayColumnName, ?Closure $callback = null): static
     {
         $this->displayColumnName = $displayColumnName;
         $this->relationship = $relationshipName;
@@ -55,7 +57,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             $relationship = $component->getRelationship();
             $relatedKeyName = $relationship->getRelatedKeyName();
 
-            return $relationship->getRelated()
+            return $relationship->getRelated()->query()
                 ->whereIn($relatedKeyName, $values)
                 ->pluck($component->getDisplayColumnName(), $relatedKeyName)
                 ->toArray();
@@ -64,7 +66,7 @@ class BelongsToManyMultiSelect extends MultiSelect
         $this->getSearchResultsUsing(function (BelongsToManyMultiSelect $component, ?string $query) use ($callback): array {
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->orderBy($component->getDisplayColumnName());
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
                 $relationshipQuery = $this->evaluate($callback, [
@@ -73,7 +75,11 @@ class BelongsToManyMultiSelect extends MultiSelect
             }
 
             $query = strtolower($query);
-            $searchOperator = match ($relationshipQuery->getConnection()->getDriverName()) {
+
+            /** @var Connection $databaseConnection */
+            $databaseConnection = $relationshipQuery->getConnection();
+
+            $searchOperator = match ($databaseConnection->getDriverName()) {
                 'pgsql' => 'ilike',
                 default => 'like',
             };
@@ -91,7 +97,7 @@ class BelongsToManyMultiSelect extends MultiSelect
 
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->orderBy($component->getDisplayColumnName());
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
                 $relationshipQuery = $this->evaluate($callback, [

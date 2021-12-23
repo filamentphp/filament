@@ -5,6 +5,7 @@ namespace Filament\Http\Livewire\Auth;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Facades\Filament;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -12,6 +13,9 @@ use Filament\Forms\Contracts\HasForms;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
+/**
+ * @property ComponentContainer $form
+ */
 class Login extends Component implements HasForms
 {
     use InteractsWithForms;
@@ -76,9 +80,17 @@ class Login extends Component implements HasForms
 
     public function render(): View
     {
-        return view('filament::login')
-            ->layout('filament::components.layouts.base', [
-                'title' => __('filament::login.title'),
-            ]);
+        $view = view('filament::login');
+
+        /*
+         * Livewire uses a macro for the `layout()` method.
+         *
+         * @phpstan-ignore-next-line
+         */
+        $view->layout('filament::components.layouts.base', [
+            'title' => __('filament::login.title'),
+        ]);
+
+        return $view;
     }
 }

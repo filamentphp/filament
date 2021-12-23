@@ -2,41 +2,42 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
 use Filament\Forms\Components\Component;
 
 trait HasState
 {
-    protected $afterStateHydrated = null;
+    protected ?Closure $afterStateHydrated = null;
 
-    protected $afterStateUpdated = null;
+    protected ?Closure $afterStateUpdated = null;
 
-    protected $beforeStateDehydrated = null;
+    protected ?Closure $beforeStateDehydrated = null;
 
     protected $defaultState = null;
 
-    protected $dehydrateStateUsing = null;
+    protected ?Closure $dehydrateStateUsing = null;
 
     protected bool $hasDefaultState = false;
 
-    protected $isDehydrated = true;
+    protected bool | Closure $isDehydrated = true;
 
     protected ?string $statePath = null;
 
-    public function afterStateHydrated(?callable $callback): static
+    public function afterStateHydrated(?Closure $callback): static
     {
         $this->afterStateHydrated = $callback;
 
         return $this;
     }
 
-    public function afterStateUpdated(?callable $callback): static
+    public function afterStateUpdated(?Closure $callback): static
     {
         $this->afterStateUpdated = $callback;
 
         return $this;
     }
 
-    public function beforeStateDehydrated(?callable $callback): static
+    public function beforeStateDehydrated(?Closure $callback): static
     {
         $this->beforeStateDehydrated = $callback;
 
@@ -78,7 +79,7 @@ trait HasState
         return $this;
     }
 
-    public function dehydrated(bool | callable $condition = true): static
+    public function dehydrated(bool | Closure $condition = true): static
     {
         $this->isDehydrated = $condition;
 
@@ -94,7 +95,7 @@ trait HasState
         return $this->getState();
     }
 
-    public function dehydrateStateUsing(?callable $callback): static
+    public function dehydrateStateUsing(?Closure $callback): static
     {
         $this->dehydrateStateUsing = $callback;
 
@@ -170,7 +171,7 @@ trait HasState
         return (bool) $this->evaluate($this->isDehydrated);
     }
 
-    protected function getGetCallback(): callable
+    protected function getGetCallback(): Closure
     {
         return function (Component | string $path, bool $isAbsolute = false) {
             if ($path instanceof Component) {
@@ -188,7 +189,7 @@ trait HasState
         };
     }
 
-    protected function getSetCallback(): callable
+    protected function getSetCallback(): Closure
     {
         return function (string | Component $path, $state, bool $isAbsolute = false) {
             if ($path instanceof Component) {

@@ -2,22 +2,23 @@
 
 namespace Filament\Tables\Actions\Concerns;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
 
 trait CanBeMounted
 {
-    protected $mountUsing = null;
+    protected ?Closure $mountUsing = null;
 
-    public function mountUsing(callable $callback): static
+    public function mountUsing(?Closure $callback): static
     {
         $this->mountUsing = $callback;
 
         return $this;
     }
 
-    public function getMountUsing(): callable
+    public function getMountUsing(): Closure
     {
-        return $this->mountUsing ?? function ($action, ?ComponentContainer $form = null) {
+        return $this->mountUsing ?? function ($action, ?ComponentContainer $form = null): void {
             if (! $action->shouldOpenModal()) {
                 return;
             }

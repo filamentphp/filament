@@ -2,14 +2,15 @@
 
 namespace Filament\Tables\Concerns;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 trait HasRecords
 {
-    protected Collection | LengthAwarePaginator | null $records = null;
+    protected Collection | Paginator | null $records = null;
 
     protected function getFilteredTableQuery(): Builder
     {
@@ -22,7 +23,7 @@ trait HasRecords
         return $query;
     }
 
-    public function getTableRecords(): Collection | LengthAwarePaginator
+    public function getTableRecords(): Collection | Paginator
     {
         if ($this->records) {
             return $this->records;
@@ -37,14 +38,21 @@ trait HasRecords
         $this->applySortingToTableQuery($query);
 
         if ($this->isTablePaginationEnabled()) {
-            return $this->records = $query->paginate(
+            /** @var LengthAwarePaginator $records */
+            $records = $query->paginate(
                 $this->getTableRecordsPerPage(),
                 ['*'],
                 $this->getTablePaginationPageName(),
-            )->onEachSide(1);
+            );
+
+            $records->onEachSide(1);
+
+            $this->records = $records;
         } else {
-            return $this->records = $query->get();
+            $this->records = $query->get();
         }
+
+        return $this->records;
     }
 
     protected function resolveTableRecord(?string $key): ?Model

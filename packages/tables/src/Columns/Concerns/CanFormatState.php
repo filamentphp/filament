@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 trait CanFormatState
 {
-    protected $formatStateUsing = null;
+    protected ?Closure $formatStateUsing = null;
 
     public function date(string $format = 'M j, Y'): static
     {
@@ -39,7 +39,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function formatStateUsing(callable $callback): static
+    public function formatStateUsing(?Closure $callback): static
     {
         $this->formatStateUsing = $callback;
 

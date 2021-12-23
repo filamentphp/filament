@@ -3,9 +3,13 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Forms;
+use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
 use Illuminate\Support\Str;
 
+/**
+ * @property ComponentContainer $form
+ */
 class ViewRecord extends Page implements Forms\Contracts\HasForms
 {
     use Concerns\HasRecordBreadcrumb;

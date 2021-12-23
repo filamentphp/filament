@@ -2,13 +2,14 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
 use Illuminate\View\ComponentAttributeBag;
 
 trait HasExtraAlpineAttributes
 {
-    protected $extraAlpineAttributes = [];
+    protected array | Closure $extraAlpineAttributes = [];
 
-    public function extraAlpineAttributes(array | callable $attributes): static
+    public function extraAlpineAttributes(array | Closure $attributes): static
     {
         $this->extraAlpineAttributes = $attributes;
 

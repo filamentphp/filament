@@ -2,14 +2,17 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
+use Illuminate\Filesystem\FilesystemAdapter;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\MediaCollections\FileAdder;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use SplFileInfo;
 
 class SpatieMediaLibraryFileUpload extends FileUpload
 {
-    protected $collection = null;
+    protected string | Closure | null $collection = null;
 
     protected function setUp(): void
     {
@@ -28,7 +31,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         $this->dehydrated(false);
     }
 
-    public function collection(string | callable $collection): static
+    public function collection(string | Closure | null $collection): static
     {
         $this->collection = $collection;
 
@@ -88,16 +91,24 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     protected function handleUpload($file)
     {
-        if (! ($model = $this->getModel())) {
+        $model = $this->getModel();
+
+        if (! $model) {
             return $file;
         }
 
-        $media = $model
-            ->addMediaFromString($file->get())
+        if (! method_exists($model, 'addMediaFromString')) {
+            return $file;
+        }
+
+        /** @var FileAdder $mediaAdder */
+        $mediaAdder = $model->addMediaFromString($file->get());
+
+        $media = $mediaAdder
             ->usingFileName($file->getFilename())
             ->toMediaCollection($this->getCollection());
 
-        return $media->uuid;
+        return $media->getAttributeValue('uuid');
     }
 
     protected function handleUploadedFileDeletion($file): void
@@ -118,7 +129,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     protected function handleUploadedFileUrlRetrieval($file): ?string
     {
+        /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
+
+        /** @var \League\Flysystem\Filesystem $storageDriver */
+        $storageDriver = $storage->getDriver();
 
         if (! $this->getModel()) {
             return null;
@@ -128,13 +143,16 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             return null;
         }
 
+        /** @var ?Media $media */
+        $media = Media::findByUuid($file);
+
         if (
-            $storage->getDriver()->getAdapter() instanceof AwsS3Adapter &&
+            $storageDriver->getAdapter() instanceof AwsS3Adapter &&
             $this->getVisibility() === 'private'
         ) {
-            return Media::findByUuid($file)?->getTemporaryUrl(now()->addMinutes(5));
+            return $media?->getTemporaryUrl(now()->addMinutes(5));
         }
 
-        return Media::findByUuid($file)?->getUrl();
+        return $media?->getUrl();
     }
 }

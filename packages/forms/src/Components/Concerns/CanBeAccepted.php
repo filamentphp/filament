@@ -2,9 +2,11 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
+
 trait CanBeAccepted
 {
-    public function accepted(bool | callable $condition = true): static
+    public function accepted(bool | Closure $condition = true): static
     {
         $this->rule('accepted', $condition);
 

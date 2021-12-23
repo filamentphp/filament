@@ -11,6 +11,9 @@ class HasManyThroughRelationManager extends HasManyRelationManager
     {
         $query = parent::getTableQuery();
 
-        return $query->select($query->getModel()->getTable().'.*');
+        /** @var Builder $query */
+        $query->select($query->getModel()->getTable().'.*');
+
+        return $query;
     }
 }
