@@ -43,8 +43,8 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             $resource = static::getResource();
 
             $table->actions(array_merge(
-                ($resource::hasPage('view') ? [$this->getViewLinkTableAction()] : []),
-                ($resource::hasPage('edit') ? [$this->getEditLinkTableAction()] : []),
+                ($resource::hasPage('view') ? [$this->getViewTableAction()] : []),
+                ($resource::hasPage('edit') ? [$this->getEditTableAction()] : []),
             ));
 
             if ($resource::canDeleteAny()) {
@@ -57,23 +57,25 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return $this->resourceTable;
     }
 
-    protected function getViewLinkTableAction(): Tables\Actions\LinkAction
+    protected function getViewTableAction(): Tables\Actions\Action
     {
         $resource = static::getResource();
 
-        return Tables\Actions\LinkAction::make('view')
+        return config('filament.layout.tables.actions.type')::make('view')
             ->label(__('filament::resources/pages/list-records.table.actions.view.label'))
             ->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]))
+            ->icon('heroicon-o-eye')
             ->hidden(fn (Model $record): bool => ! $resource::canView($record));
     }
 
-    protected function getEditLinkTableAction(): Tables\Actions\LinkAction
+    protected function getEditTableAction(): Tables\Actions\Action
     {
         $resource = static::getResource();
 
-        return Tables\Actions\LinkAction::make('edit')
+        return config('filament.layout.tables.actions.type')::make('edit')
             ->label(__('filament::resources/pages/list-records.table.actions.edit.label'))
             ->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]))
+            ->icon('heroicon-o-pencil')
             ->hidden(fn (Model $record): bool => ! $resource::canEdit($record));
     }
 

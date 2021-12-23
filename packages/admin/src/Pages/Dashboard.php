@@ -13,6 +13,11 @@ class Dashboard extends Page
 
     protected static string $view = 'filament::pages.dashboard';
 
+    protected static function getNavigationLabel(): string
+    {
+        return static::$navigationLabel ?? static::$title ?? __('filament::pages/dashboard.title');
+    }
+
     public static function getRoutes(): Closure
     {
         return function () {
