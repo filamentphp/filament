@@ -222,11 +222,10 @@ Then, define the `getFilters()` method to return an array of values and labels f
 protected function getFilters(): ?array
 {
     return [
-            'today' =>  'Today',
-            '7days' =>  'Last 7 Days',
-            '30days' => 'Last 30 Days',
-            '6months' => 'Last 6 Months',
-            'year' => 'This Year',
+        'today' => 'Today',
+        'week' => 'Last week',
+        'month' => 'Last month',
+        'year' => 'This year',
     ];
 }
 ```
@@ -236,7 +235,7 @@ You can use the active filter value within your `getData()` method:
 ```php
 protected function getData(): array
 {
-    $this->filter;
+    $activeFilter = $this->filter;
     
     // ...
 }
