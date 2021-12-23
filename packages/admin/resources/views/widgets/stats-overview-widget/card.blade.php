@@ -4,4 +4,5 @@
     :description-icon="$getDescriptionIcon()"
     :label="$getLabel()"
     :value="$getValue()"
+    :chart="$getChart()"
 />

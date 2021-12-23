@@ -14,6 +14,8 @@ class Card extends Component implements Htmlable
 
     protected ?string $descriptionColor = null;
 
+    protected ?array $chart = null;
+
     protected string $label;
 
     protected $value;
@@ -50,6 +52,13 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
+    public function chart(?array $chart): static
+    {
+        $this->chart = $chart;
+
+        return $this;
+    }
+
     public function label(string $label): static
     {
         $this->label = $label;
@@ -77,6 +86,11 @@ class Card extends Component implements Htmlable
     public function getDescriptionIcon(): ?string
     {
         return $this->descriptionIcon;
+    }
+
+    public function getChart(): ?array
+    {
+        return $this->chart;
     }
 
     public function getLabel(): string
