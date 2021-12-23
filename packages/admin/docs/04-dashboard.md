@@ -55,7 +55,7 @@ class StatsOverviewWidget extends BaseWidget
 
 Now, check out your widget in the dashboard.
 
-You may add a `description()` to each card to provide additional information. Each description may also have a `descriptionColor()` (`primary`, `success`, `warning` or `danger`) and a `descriptionIcon()`:
+You may add a `description()` to provide additional information, along with a `descriptionIcon()`:
 
 ```php
 protected function getCards(): array
@@ -63,71 +63,53 @@ protected function getCards(): array
     return [
         Card::make('Unique views', '192.1k')
             ->description('32k increase')
-            ->descriptionColor('success')
             ->descriptionIcon('heroicon-s-trending-up'),
         Card::make('Bounce rate', '21%')
             ->description('7% increase')
-            ->descriptionColor('danger')
             ->descriptionIcon('heroicon-s-trending-down'),
         Card::make('Average time on page', '3:12')
             ->description('3% increase')
-            ->descriptionColor('success')
             ->descriptionIcon('heroicon-s-trending-up'),
     ];
 }
 ```
-You may also add or chain a `chart()` to each card to provide more context. The `chart()` is used to return an array of datasets and labels. This structure is identical with the [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/line) library's `line` chart, which you could consult to fully understand all the possibilities.
+
+You may also give cards a `color()` (`primary`, `success`, `warning` or `danger`):
 
 ```php
 protected function getCards(): array
 {
     return [
         Card::make('Unique views', '192.1k')
-            ->chart( //inline
-                [
-                    'labels' => ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
-                    'datasets' => [
-                        [
-                            'backgroundColor' => 'rgb(29, 164, 76, 0.1)',
-                            'borderColor' => 'rgb(29, 164, 76, 0.8)',
-                            'borderWidth' => 2,
-                            'data' => [7, 2, 10, 3, 15, 4, 17],
-                            'fill' => 'start',
-                            'tension' => 0.5
-                        ]
-                    ]
-                ]
-            ),
+            ->description('32k increase')
+            ->descriptionIcon('heroicon-s-trending-up')
+            ->color('success'),
         Card::make('Bounce rate', '21%')
             ->description('7% increase')
-            ->descriptionColor('danger')
             ->descriptionIcon('heroicon-s-trending-down')
-            ->chart($this->bounceRateChartData()), //extracted to method
+            ->color('danger'),
         Card::make('Average time on page', '3:12')
             ->description('3% increase')
-            ->descriptionColor('success')
-            ->descriptionIcon('heroicon-s-trending-up'),
-    ];
-}
-
-protected function bounceRateChartData(): array
-{
-    return [
-        'labels' => [5, 1, 3, 7, 2, 4, 6],
-        'datasets' => [
-            [
-                'backgroundColor' => 'rgb(229, 47, 83, 0.04)',
-                'borderColor' => 'rgb(229, 47, 83, 0.8)',
-                'borderWidth' => 2,
-                'data' => [5, 1, 3, 7, 2, 4, 6],
-                'fill' => 'start',
-                'tension' => 0.5
-            ]
-        ]
+            ->descriptionIcon('heroicon-s-trending-up')
+            ->color('success'),
     ];
 }
 ```
-You could return the `line` chart data structure inline or extract it to a method to keep your code clean, readable and maintainable.
+
+You may also add or chain a `chart()` to each card to provide historical data. The `chart()` method accepts an array of data points to plot:
+
+```php
+protected function getCards(): array
+{
+    return [
+        Card::make('Unique views', '192.1k')
+            ->description('32k increase')
+            ->descriptionIcon('heroicon-s-trending-up')
+            ->chart([7, 2, 10, 3, 15, 4, 17])
+            ->color('success'),
+        // ...
+    ];
+}
 
 ## Chart widgets
 
