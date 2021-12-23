@@ -15,6 +15,7 @@ class BulkAction
     use Concerns\CanDeselectRecordsAfterCompletion;
     use Concerns\CanOpenModal;
     use Concerns\CanRequireConfirmation;
+    use Concerns\EvaluatesClosures;
     use Concerns\HasAction;
     use Concerns\HasColor;
     use Concerns\HasFormSchema;

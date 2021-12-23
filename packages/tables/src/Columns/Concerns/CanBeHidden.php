@@ -2,15 +2,17 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use Closure;
+
 trait CanBeHidden
 {
     protected ?string $hiddenFrom = null;
 
-    protected bool $isHidden = false;
+    protected bool | Closure $isHidden = false;
 
     protected ?string $visibleFrom = null;
 
-    public function hidden(bool $condition = true): static
+    public function hidden(bool | Closure $condition = true): static
     {
         $this->isHidden = $condition;
 
@@ -43,6 +45,6 @@ trait CanBeHidden
 
     public function isHidden(): bool
     {
-        return $this->isHidden;
+        return $this->evaluate($this->isHidden);
     }
 }

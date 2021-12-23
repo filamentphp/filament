@@ -11,6 +11,7 @@ class Filter
     use Concerns\BelongsToTable;
     use Concerns\CanBeDefault;
     use Concerns\CanBeHidden;
+    use Concerns\EvaluatesClosures;
     use Concerns\HasFormSchema;
     use Concerns\HasLabel;
     use Concerns\HasName;
