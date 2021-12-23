@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Filament\Forms\Components\TextInput\Mask;
 use Illuminate\Contracts\Support\Arrayable;
 
@@ -15,49 +16,49 @@ class TextInput extends Field
 
     protected string $view = 'forms::components.text-input';
 
-    protected $configureMaskUsing = null;
+    protected ?Closure $configureMaskUsing = null;
 
-    protected $datalistOptions = null;
+    protected array | Arrayable | Closure | null $datalistOptions = null;
 
-    protected $inputMode = null;
+    protected string | Closure | null $inputMode = null;
 
-    protected $isEmail = false;
+    protected bool | Closure $isEmail = false;
 
-    protected $isNumeric = false;
+    protected bool | Closure $isNumeric = false;
 
-    protected $isPassword = false;
+    protected bool | Closure $isPassword = false;
 
-    protected $isTel = false;
+    protected bool | Closure $isTel = false;
 
-    protected $isUrl = false;
+    protected bool | Closure $isUrl = false;
 
     protected $maxValue = null;
 
     protected $minValue = null;
 
-    protected $step = null;
+    protected int | float | string | Closure | null $step = null;
 
-    protected $postfixLabel = null;
+    protected string | Closure | null $postfixLabel = null;
 
-    protected $prefixLabel = null;
+    protected string | Closure | null $prefixLabel = null;
 
-    protected $type = null;
+    protected string | Closure | null $type = null;
 
-    public function currentPassword(bool | callable $condition = true): static
+    public function currentPassword(bool | Closure $condition = true): static
     {
         $this->rule('current_password', $condition);
 
         return $this;
     }
 
-    public function datalist(array | Arrayable | callable $options): static
+    public function datalist(array | Arrayable | Closure | null $options): static
     {
         $this->datalistOptions = $options;
 
         return $this;
     }
 
-    public function email(bool | callable $condition = true): static
+    public function email(bool | Closure $condition = true): static
     {
         $this->isEmail = $condition;
 
@@ -66,14 +67,14 @@ class TextInput extends Field
         return $this;
     }
 
-    public function inputMode(string | callable $mode): static
+    public function inputMode(string | Closure | null $mode): static
     {
         $this->inputMode = $mode;
 
         return $this;
     }
 
-    public function integer(bool | callable $condition = true): static
+    public function integer(bool | Closure $condition = true): static
     {
         $this->numeric($condition);
         $this->inputMode(fn (): ?string => $condition ? 'numeric' : null);
@@ -82,7 +83,7 @@ class TextInput extends Field
         return $this;
     }
 
-    public function mask(?callable $configuration): static
+    public function mask(?Closure $configuration): static
     {
         $this->configureMaskUsing = $configuration;
 
@@ -115,7 +116,7 @@ class TextInput extends Field
         return $this;
     }
 
-    public function numeric(bool | callable $condition = true): static
+    public function numeric(bool | Closure $condition = true): static
     {
         $this->isNumeric = $condition;
 
@@ -126,49 +127,49 @@ class TextInput extends Field
         return $this;
     }
 
-    public function password(bool | callable $condition = true): static
+    public function password(bool | Closure $condition = true): static
     {
         $this->isPassword = $condition;
 
         return $this;
     }
 
-    public function prefix(string | callable $label): static
+    public function prefix(string | Closure | null $label): static
     {
         $this->prefixLabel = $label;
 
         return $this;
     }
 
-    public function postfix(string | callable $label): static
+    public function postfix(string | Closure | null $label): static
     {
         $this->postfixLabel = $label;
 
         return $this;
     }
 
-    public function step(int | float | string | callable $interval): static
+    public function step(int | float | string | Closure | null $interval): static
     {
         $this->step = $interval;
 
         return $this;
     }
 
-    public function tel(bool | callable $condition = true): static
+    public function tel(bool | Closure $condition = true): static
     {
         $this->isTel = $condition;
 
         return $this;
     }
 
-    public function type(string | callable $type): static
+    public function type(string | Closure | null $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    public function url(bool | callable $condition = true): static
+    public function url(bool | Closure $condition = true): static
     {
         $this->isUrl = $condition;
 

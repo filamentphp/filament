@@ -2,17 +2,18 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class BelongsToSelect extends Select
 {
-    protected $displayColumnName = null;
+    protected string | Closure | null $displayColumnName = null;
 
-    protected $isPreloaded = false;
+    protected bool | Closure $isPreloaded = false;
 
-    protected $relationship = null;
+    protected string | Closure | null $relationship = null;
 
     protected function setUp(): void
     {
@@ -38,14 +39,14 @@ class BelongsToSelect extends Select
         });
     }
 
-    public function preload(bool | callable $condition = true): static
+    public function preload(bool | Closure $condition = true): static
     {
         $this->isPreloaded = $condition;
 
         return $this;
     }
 
-    public function relationship(string | callable $relationshipName, string | callable $displayColumnName, ?callable $callback = null): static
+    public function relationship(string | Closure $relationshipName, string | Closure $displayColumnName, ?Closure $callback = null): static
     {
         $this->displayColumnName = $displayColumnName;
         $this->relationship = $relationshipName;

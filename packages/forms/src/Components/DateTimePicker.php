@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Carbon\CarbonInterface;
+use Closure;
 use DateTime;
 use Illuminate\View\ComponentAttributeBag;
 
@@ -13,29 +14,29 @@ class DateTimePicker extends Field
 
     protected string $view = 'forms::components.date-time-picker';
 
-    protected $displayFormat = null;
+    protected string | Closure | null $displayFormat = null;
 
-    protected $extraTriggerAttributes = [];
+    protected array | Closure $extraTriggerAttributes = [];
 
-    protected $firstDayOfWeek = null;
+    protected int | null $firstDayOfWeek = null;
 
-    protected $format = null;
+    protected string | Closure | null $format = null;
 
-    protected $isWithoutDate = false;
+    protected bool | Closure $isWithoutDate = false;
 
-    protected $isWithoutSeconds = false;
+    protected bool | Closure $isWithoutSeconds = false;
 
-    protected $isWithoutTime = false;
+    protected bool | Closure $isWithoutTime = false;
 
-    protected $maxDate = null;
+    protected DateTime | string | Closure | null $maxDate = null;
 
-    protected $minDate = null;
+    protected DateTime | string | Closure | null $minDate = null;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (DateTimePicker $component, callable $set, $state): void {
+        $this->afterStateHydrated(function (DateTimePicker $component, Closure $set, $state): void {
             if (! $state instanceof CarbonInterface) {
                 return;
             }
@@ -45,29 +46,27 @@ class DateTimePicker extends Field
             $set($component, $state);
         });
 
-        $this->resetFirstDayOfWeek();
-
         $this->rule('date', $this->hasDate());
     }
 
-    public function displayFormat(string | callable $format): static
+    public function displayFormat(string | Closure | null $format): static
     {
         $this->displayFormat = $format;
 
         return $this;
     }
 
-    public function extraTriggerAttributes(array | callable $attributes): static
+    public function extraTriggerAttributes(array | Closure $attributes): static
     {
         $this->extraTriggerAttributes = $attributes;
 
         return $this;
     }
 
-    public function firstDayOfWeek(int | callable $day): static
+    public function firstDayOfWeek(int | null $day): static
     {
         if ($day < 0 || $day > 7) {
-            $day = $this->getDefaultFirstDayOfWeek();
+            $day = null;
         }
 
         $this->firstDayOfWeek = $day;
@@ -75,14 +74,14 @@ class DateTimePicker extends Field
         return $this;
     }
 
-    public function format(string | callable $format): static
+    public function format(string | Closure | null $format): static
     {
         $this->format = $format;
 
         return $this;
     }
 
-    public function maxDate(DateTime | string | callable $date): static
+    public function maxDate(DateTime | string | Closure | null $date): static
     {
         $this->maxDate = $date;
 
@@ -99,7 +98,7 @@ class DateTimePicker extends Field
         return $this;
     }
 
-    public function minDate(DateTime | string | callable $date): static
+    public function minDate(DateTime | string | Closure | null $date): static
     {
         $this->minDate = $date;
 
@@ -118,7 +117,7 @@ class DateTimePicker extends Field
 
     public function resetFirstDayOfWeek(): static
     {
-        $this->firstDayOfWeek($this->getDefaultFirstDayOfWeek());
+        $this->firstDayOfWeek(null);
 
         return $this;
     }
@@ -137,21 +136,21 @@ class DateTimePicker extends Field
         return $this;
     }
 
-    public function withoutDate(bool | callable $condition = true): static
+    public function withoutDate(bool | Closure $condition = true): static
     {
         $this->isWithoutDate = $condition;
 
         return $this;
     }
 
-    public function withoutSeconds(bool | callable $condition = true): static
+    public function withoutSeconds(bool | Closure $condition = true): static
     {
         $this->isWithoutSeconds = $condition;
 
         return $this;
     }
 
-    public function withoutTime(bool | callable $condition = true): static
+    public function withoutTime(bool | Closure $condition = true): static
     {
         $this->isWithoutTime = $condition;
 
@@ -193,7 +192,7 @@ class DateTimePicker extends Field
 
     public function getFirstDayOfWeek(): int
     {
-        return $this->evaluate($this->firstDayOfWeek);
+        return $this->firstDayOfWeek ?? $this->getDefaultFirstDayOfWeek();
     }
 
     public function getFormat(): string

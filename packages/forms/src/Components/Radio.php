@@ -2,17 +2,18 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 
 class Radio extends Field
 {
     protected string $view = 'forms::components.radio';
 
-    protected $options = [];
+    protected array | Arrayable | Closure $options = [];
 
-    protected $descriptions = [];
+    protected array | Arrayable | Closure $descriptions = [];
 
-    protected $isOptionDisabled = null;
+    protected bool | Closure | null $isOptionDisabled = null;
 
     protected function setUp(): void
     {
@@ -29,21 +30,21 @@ class Radio extends Field
         return $this;
     }
 
-    public function disableOptionWhen(bool | callable $callback): static
+    public function disableOptionWhen(bool | Closure $callback): static
     {
         $this->isOptionDisabled = $callback;
 
         return $this;
     }
 
-    public function options(array | Arrayable | callable $options): static
+    public function options(array | Arrayable | Closure $options): static
     {
         $this->options = $options;
 
         return $this;
     }
 
-    public function descriptions(array | Arrayable | callable $descriptions): static
+    public function descriptions(array | Arrayable | Closure $descriptions): static
     {
         $this->descriptions = $descriptions;
 

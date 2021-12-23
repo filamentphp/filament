@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 use Filament\Forms\ComponentContainer;
@@ -13,11 +14,9 @@ class Repeater extends Field
 
     protected string $view = 'forms::components.repeater';
 
-    protected $createItemButtonLabel = null;
+    protected string | Closure | null $createItemButtonLabel = null;
 
-    protected $defaultItems = 1;
-
-    protected $isItemMovementDisabled = false;
+    protected bool | Closure $isItemMovementDisabled = false;
 
     protected function setUp(): void
     {
@@ -109,14 +108,14 @@ class Repeater extends Field
         });
     }
 
-    public function createItemButtonLabel(string | callable $label): static
+    public function createItemButtonLabel(string | Closure | null $label): static
     {
         $this->createItemButtonLabel = $label;
 
         return $this;
     }
 
-    public function defaultItems(int | callable $count): static
+    public function defaultItems(int | Closure $count): static
     {
         $this->default(function (Repeater $component) use ($count): array {
             $items = [];
@@ -131,7 +130,7 @@ class Repeater extends Field
         return $this;
     }
 
-    public function disableItemMovement(bool | callable $condition = true): static
+    public function disableItemMovement(bool | Closure $condition = true): static
     {
         $this->isItemMovementDisabled = $condition;
 

@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,7 +10,7 @@ use Illuminate\Support\Str;
 
 class HasManyRepeater extends Repeater
 {
-    protected $relationship = null;
+    protected string | Closure | null $relationship = null;
 
     protected function setUp(): void
     {
@@ -39,7 +40,7 @@ class HasManyRepeater extends Repeater
         $this->disableItemMovement();
     }
 
-    public function relationship(string | callable $name): static
+    public function relationship(string | Closure $name): static
     {
         $this->relationship = $name;
 

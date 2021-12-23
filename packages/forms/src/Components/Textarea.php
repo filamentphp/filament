@@ -2,6 +2,8 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
+
 class Textarea extends Field
 {
     use Concerns\CanBeAutocapitalized;
@@ -12,27 +14,27 @@ class Textarea extends Field
 
     protected string $view = 'forms::components.textarea';
 
-    protected $cols = null;
+    protected int | Closure | null $cols = null;
 
-    protected $rows = null;
+    protected int | Closure | null $rows = null;
 
-    protected $shouldAutosize = false;
+    protected bool | Closure $shouldAutosize = false;
 
-    public function autosize(bool | callable $condition = true): static
+    public function autosize(bool | Closure $condition = true): static
     {
         $this->shouldAutosize = $condition;
 
         return $this;
     }
 
-    public function cols(int | callable $cols): static
+    public function cols(int | Closure | null $cols): static
     {
         $this->cols = $cols;
 
         return $this;
     }
 
-    public function rows(int | callable $rows): static
+    public function rows(int | Closure | null $rows): static
     {
         $this->rows = $rows;
 

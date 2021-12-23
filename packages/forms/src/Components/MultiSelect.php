@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 
 class MultiSelect extends Field
@@ -11,15 +12,15 @@ class MultiSelect extends Field
 
     protected string $view = 'forms::components.multi-select';
 
-    protected $getOptionLabelsUsing = null;
+    protected ?Closure $getOptionLabelsUsing = null;
 
-    protected $getSearchResultsUsing = null;
+    protected ?Closure $getSearchResultsUsing = null;
 
-    protected $options = [];
+    protected array | Closure $options = [];
 
-    protected $noSearchResultsMessage = null;
+    protected string | Closure | null $noSearchResultsMessage = null;
 
-    protected $searchPrompt = null;
+    protected string | Closure | null $searchPrompt = null;
 
     protected function setUp(): void
     {
@@ -40,35 +41,35 @@ class MultiSelect extends Field
         $this->searchPrompt(__('forms::components.multi_select.search_prompt'));
     }
 
-    public function getOptionLabelsUsing(callable $callback): static
+    public function getOptionLabelsUsing(?Closure $callback): static
     {
         $this->getOptionLabelsUsing = $callback;
 
         return $this;
     }
 
-    public function getSearchResultsUsing(callable $callback): static
+    public function getSearchResultsUsing(?Closure $callback): static
     {
         $this->getSearchResultsUsing = $callback;
 
         return $this;
     }
 
-    public function options(array | Arrayable | callable $options): static
+    public function options(array | Arrayable | Closure $options): static
     {
         $this->options = $options;
 
         return $this;
     }
 
-    public function noSearchResultsMessage(string | callable $message): static
+    public function noSearchResultsMessage(string | Closure | null $message): static
     {
         $this->noSearchResultsMessage = $message;
 
         return $this;
     }
 
-    public function searchPrompt(string | callable $message): static
+    public function searchPrompt(string | Closure | null $message): static
     {
         $this->searchPrompt = $message;
 
