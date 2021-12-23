@@ -160,14 +160,16 @@
 
                             $wire.upload(`componentFileAttachments.{{ $getStatePath() }}`, attachment.file, () => {
                                 $wire.getComponentFileAttachmentUrl('{{ $getStatePath() }}').then((url) => {
-                                    if (! url) return
+                                    if (! url) {
+                                        return
+                                    }
 
                                     $refs.imageTrigger.click()
 
                                     const urlStart = $refs.textarea.selectionStart + 2
                                     const urlEnd = urlStart + 3
 
-                                    $refs.textarea.value = [
+                                    state = [
                                         $refs.textarea.value.substring(0, urlStart),
                                         url,
                                         $refs.textarea.value.substring(urlEnd)
@@ -176,7 +178,7 @@
                                     $refs.textarea.selectionStart = urlStart - 2
                                     $refs.textarea.selectionEnd = urlStart - 2
 
-                                    resize()
+                                    render()
                                 })
                             })
                         "
