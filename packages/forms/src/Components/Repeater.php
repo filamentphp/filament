@@ -2,11 +2,10 @@
 
 namespace Filament\Forms\Components;
 
-use Filament\Forms\ComponentContainer;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
+use Filament\Forms\ComponentContainer;
+use Illuminate\Support\Str;
 
 class Repeater extends Field
 {

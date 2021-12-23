@@ -3,11 +3,9 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\FilesystemAdapter;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use SplFileInfo;

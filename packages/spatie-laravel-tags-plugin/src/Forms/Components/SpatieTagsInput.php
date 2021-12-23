@@ -5,7 +5,6 @@ namespace Filament\Forms\Components;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Tags\HasTags;
 use Spatie\Tags\Tag;
 
 class SpatieTagsInput extends TagsInput

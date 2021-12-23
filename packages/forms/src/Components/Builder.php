@@ -2,12 +2,12 @@
 
 namespace Filament\Forms\Components;
 
+use function Filament\Forms\array_move_after;
+use function Filament\Forms\array_move_before;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Builder\Block;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use function Filament\Forms\array_move_after;
-use function Filament\Forms\array_move_before;
 
 class Builder extends Field
 {
