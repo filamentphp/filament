@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => '创建 :label',
+
     'breadcrumb' => '创建',
 
     'form' => [
