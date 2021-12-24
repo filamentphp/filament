@@ -30,6 +30,7 @@
                 ]) }}" />
             @endif
         @endforeach
+        @stack('scripts')
     </head>
 
     <body>
@@ -56,6 +57,6 @@
             @endif
         @endforeach
 
-        @stack('scripts')
+
     </body>
 </html>

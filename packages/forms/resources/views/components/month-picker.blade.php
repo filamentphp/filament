@@ -1,13 +1,14 @@
 @once
     @push('scripts')
-        <script src="//unpkg.com/dayjs@1.10.4/dayjs.min.js"></script>
-        <script src="//unpkg.com/dayjs@1.10.4/plugin/localeData.js"></script>
+        <script src="//unpkg.com/dayjs@1.10.7/dayjs.min.js"></script>
+        <script src="//unpkg.com/dayjs@1.10.7/plugin/localeData.js"></script>
+        <script src="//unpkg.com/dayjs@1.10.7/locale/{{ strtolower(str_replace('_', '-', app()->getLocale())) }}.js"></script>
         <script>
             dayjs.extend(window.dayjs_plugin_localeData)
-
-            window.dayjs_locale = dayjs.locale()
+            window.dayjs_locale = dayjs.locale("{{ strtolower(str_replace('_', '-', app()->getLocale())) }}")
+            var pickerMonth = dayjs.months();
         </script>
-        <script src="//unpkg.com/dayjs@1.10.4/locale/{{ strtolower(str_replace('_', '-', app()->getLocale())) }}.js"></script>
+        
     @endpush
 @endonce
 
@@ -21,7 +22,7 @@
     :state-path="$getStatePath()"
 >
     <div
-        x-data="dateTimePickerFormComponent({
+        x-data="MonthPickerFormComponent({
             displayFormat: '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
             format: '{{ convert_date_format($getFormat())->to('day.js') }}',
@@ -84,52 +85,54 @@
                 x-cloak
                 @class([
                     'absolute z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-sm',
-                    'p-4 w-64' => $hasDate(),
+                    'p-4 w-auto' => $hasDate(),
                 ])
             >
                 <div class="space-y-3">
                     @if ($hasDate())
                         <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
-                            <select
-                                x-model="focusedMonth"
-                                class="grow p-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none"
-                            >
-                                <template x-for="(month, index) in dayjs.months()">
-                                    <option x-bind:value="index" x-text="month"></option>
-                                </template>
-                            </select>
-
+                            <button type="button" @click="focusedYear = focusedYear-1"
+                                class="text-center font-medium h-8 px-4 leading-none border border-gray-800 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+            
                             <input
-                                type="number"
-                                x-model.debounce="focusedYear"
-                                class="w-20 p-0 text-lg text-right border-0 focus:ring-0 focus:outline-none"
+                                    type="number"
+                                    x-model.debounce="focusedYear"
+                                    class="w-20 p-0 font-medium  text-lg text-right border-0 focus:ring-0 focus:outline-none"
                             />
+                            <button type="button" @click="focusedYear = focusedYear+1"
+                                class="text-center font-medium h-8 px-4 leading-none border border-gray-800 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+
                         </div>
 
                     
 
-                        <div role="grid" class="grid grid-cols-7 gap-1">
-                            <template x-for="day in emptyDaysInFocusedMonth" x-bind:key="day">
-                                <div class="text-sm text-center border border-transparent"></div>
-                            </template>
-
-                            <template x-for="(month, index) in dayjs.months()" x-bind:key="month">
+                        <div role="grid" class="grid grid-cols-3 gap-3">
+                       
+                            <template x-for="(month, index) in pickerMonth" x-bind:key="month">
                                 <div
                                     x-text="month"
                                     x-on:click="monthIsDisabled(index) || selectDate(index)"
                                     x-on:mouseenter="setFocusedMonth(index)"
                                     role="option"
-                                    x-bind:aria-selected="focusedDate.date() === month"
+                                    x-bind:aria-selected="focusedDate.month() === index"
                                     x-bind:class="{
                                         'text-gray-700': ! monthIsSelected(index),
                                         'cursor-pointer': ! monthIsDisabled(index),
-                                        'bg-primary-50': monthIsThisMonth(index) && ! monthIsSelected(index) && focusedDate.date() !== index && ! monthIsDisabled(index),
-                                        'bg-primary-200': focusedDate.date() === index && ! monthIsSelected(index),
+                                        'bg-primary-50': monthIsThisMonth(index) && ! monthIsSelected(index) && focusedDate.month() !== index && ! monthIsDisabled(index),
+                                        'bg-primary-200': focusedDate.month() === index && ! monthIsSelected(index),
                                         'bg-primary-500 text-white': monthIsSelected(index),
                                         'cursor-not-allowed': monthIsDisabled(index),
-                                        'opacity-50': focusedDate.date() !== index && monthIsDisabled(index),
+                                        'opacity-50': focusedDate.month() !== index && monthIsDisabled(index),
                                     }"
-                                    class="text-sm leading-none leading-loose text-center transition duration-100 ease-in-out rounded-full"
+                                    class="text-sm leading-none leading-loose text-center transition duration-100 ease-in-out rounded-lg  px-3 py-2"
                                 ></div>
                             </template>
                         </div>
