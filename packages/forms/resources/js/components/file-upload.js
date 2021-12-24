@@ -41,6 +41,8 @@ export default (Alpine) => {
         uploadUsing,
     }) => {
         return {
+            cachedFileKeys: {},
+
             files: [],
 
             pond: null,
@@ -65,6 +67,8 @@ export default (Alpine) => {
                             type: 'local',
                         },
                     })
+
+                    this.cachedFileKeys[uploadedFileUrl] = fileKey
                 }
 
                 this.pond = FilePond.create(this.$refs.input, {
@@ -95,9 +99,11 @@ export default (Alpine) => {
                             await uploadUsing(file, load, error, progress)
                         },
                         remove: async (source, load) => {
-                            const files = this.state
-                            const fileKey = Object.keys(files).find(key => files[key] === source)
-                            console.log(files, fileKey)
+                            let fileKey = this.cachedFileKeys[source] ?? null
+
+                            if (! fileKey) {
+                                return
+                            }
 
                             await removeUploadedFileUsing(fileKey)
 
@@ -118,13 +124,13 @@ export default (Alpine) => {
                         return
                     }
 
+                    if (Object.values(this.state).filter((file) => file.startsWith('livewire-file:')).length) {
+                        return
+                    }
+
                     this.pond.files = []
 
-                    for (const [fileKey, file] of Object.entries(this.state)) {
-                        if (file.startsWith('livewire-file:')) {
-                            continue;
-                        }
-
+                    for (let fileKey of Object.keys(this.state)) {
                         let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey)
 
                         if (! uploadedFileUrl) {
@@ -137,6 +143,8 @@ export default (Alpine) => {
                                 type: 'local',
                             },
                         })
+
+                        this.cachedFileKeys[uploadedFileUrl] = fileKey
                     }
                 })
             }

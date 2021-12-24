@@ -59,11 +59,13 @@ class BaseFileUpload extends Field
         });
 
         $this->dehydrateStateUsing(function (BaseFileUpload $component, array $state): string | array | null {
+            $files = array_values($state);
+
             if ($component->isMultiple()) {
-                return array_values($state);
+                return $files;
             }
 
-            return $state[0] ?? null;
+            return $files[0] ?? null;
         });
     }
 
@@ -235,11 +237,16 @@ class BaseFileUpload extends Field
 
     public function removeUploadedFile(string $fileKey): static
     {
-        $file = $this->getState()[$fileKey] ?? null;
+        $files = $this->getState();
+        $file = $files[$fileKey] ?? null;
 
         if (! $file) {
             return $this;
         }
+
+        unset($files[$fileKey]);
+
+        $this->state($files);
 
         if ($callback = $this->removeUploadedFileUsing) {
             $this->evaluate($callback, [

@@ -15836,6 +15836,7 @@ var file_upload_default = (Alpine) => {
     uploadUsing
   }) => {
     return {
+      cachedFileKeys: {},
       files: [],
       pond: null,
       state: state2,
@@ -15854,6 +15855,7 @@ var file_upload_default = (Alpine) => {
               type: "local"
             }
           });
+          this.cachedFileKeys[uploadedFileUrl] = fileKey;
         }
         this.pond = create$f(this.$refs.input, {
           acceptedFileTypes,
@@ -15882,9 +15884,10 @@ var file_upload_default = (Alpine) => {
               await uploadUsing(file2, load, error2, progress);
             },
             remove: async (source, load) => {
-              const files = this.state;
-              const fileKey = Object.keys(files).find((key) => files[key] === source);
-              console.log(files, fileKey);
+              let fileKey = this.cachedFileKeys[source] ?? null;
+              if (!fileKey) {
+                return;
+              }
               await removeUploadedFileUsing(fileKey);
               load();
             },
@@ -15899,11 +15902,11 @@ var file_upload_default = (Alpine) => {
             this.pond.removeFiles();
             return;
           }
+          if (Object.values(this.state).filter((file2) => file2.startsWith("livewire-file:")).length) {
+            return;
+          }
           this.pond.files = [];
-          for (const [fileKey, file2] of Object.entries(this.state)) {
-            if (file2.startsWith("livewire-file:")) {
-              continue;
-            }
+          for (let fileKey of Object.keys(this.state)) {
             let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey);
             if (!uploadedFileUrl) {
               continue;
@@ -15914,6 +15917,7 @@ var file_upload_default = (Alpine) => {
                 type: "local"
               }
             });
+            this.cachedFileKeys[uploadedFileUrl] = fileKey;
           }
         });
       }
