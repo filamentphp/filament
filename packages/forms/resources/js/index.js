@@ -1,4 +1,5 @@
 import DateTimePickerFormComponentAlpinePlugin from './components/date-time-picker'
+import MonthPickerFormComponentAlpinePlugin from './components/month-picker'
 import FileUploadFormComponentAlpinePlugin from './components/file-upload'
 import KeyValueFormComponentAlpinePlugin from './components/key-value'
 import MarkdownEditorFormComponentAlpinePlugin from './components/markdown-editor'
@@ -11,6 +12,7 @@ import TextareaFormComponentAlpinePlugin from './components/textarea'
 
 export default (Alpine) => {
     Alpine.plugin(DateTimePickerFormComponentAlpinePlugin)
+    Alpine.plugin(MonthPickerFormComponentAlpinePlugin)
     Alpine.plugin(FileUploadFormComponentAlpinePlugin)
     Alpine.plugin(KeyValueFormComponentAlpinePlugin)
     Alpine.plugin(MarkdownEditorFormComponentAlpinePlugin)
@@ -24,6 +26,7 @@ export default (Alpine) => {
 
 export {
     DateTimePickerFormComponentAlpinePlugin,
+    MonthPickerFormComponentAlpinePlugin,
     FileUploadFormComponentAlpinePlugin,
     KeyValueFormComponentAlpinePlugin,
     MarkdownEditorFormComponentAlpinePlugin,

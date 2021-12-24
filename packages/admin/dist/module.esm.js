@@ -5783,7 +5783,7 @@ Utils.l = parseLocale;
 Utils.i = isDayjs;
 Utils.w = wrapper;
 var parseDate = function parseDate2(cfg) {
-  var date = cfg.date, utc2 = cfg.utc;
+  var date = cfg.date, utc3 = cfg.utc;
   if (date === null)
     return new Date(NaN);
   if (Utils.u(date))
@@ -5795,7 +5795,7 @@ var parseDate = function parseDate2(cfg) {
     if (d) {
       var m = d[2] - 1 || 0;
       var ms = (d[7] || "0").substring(0, 3);
-      if (utc2) {
+      if (utc3) {
         return new Date(Date.UTC(d[1], m, d[3] || 1, d[4] || 0, d[5] || 0, d[6] || 0, ms));
       }
       return new Date(d[1], m, d[3] || 1, d[4] || 0, d[5] || 0, d[6] || 0, ms);
@@ -6080,7 +6080,7 @@ var date_time_picker_default = (Alpine) => {
     minDate,
     state: state2
   }) => {
-    const timezone2 = esm_default.tz.guess();
+    const timezone3 = esm_default.tz.guess();
     esm_default.locale(window.dayjs_locale);
     return {
       daysInFocusedMonth: [],
@@ -6097,7 +6097,7 @@ var date_time_picker_default = (Alpine) => {
       second: null,
       state: state2,
       init: function() {
-        this.focusedDate = esm_default().tz(timezone2);
+        this.focusedDate = esm_default().tz(timezone3);
         this.maxDate = esm_default(this.maxDate);
         if (!this.maxDate.isValid()) {
           this.maxDate = null;
@@ -6106,7 +6106,7 @@ var date_time_picker_default = (Alpine) => {
         if (!this.minDate.isValid()) {
           this.minDate = null;
         }
-        let date = this.getSelectedDate() ?? esm_default().tz(timezone2).hour(0).minute(0).second(0);
+        let date = this.getSelectedDate() ?? esm_default().tz(timezone3).hour(0).minute(0).second(0);
         if (this.maxDate !== null && date.isAfter(this.maxDate)) {
           date = null;
         }
@@ -6133,7 +6133,7 @@ var date_time_picker_default = (Alpine) => {
           }
           let year = +this.focusedYear;
           if (!Number.isInteger(year)) {
-            year = esm_default().tz(timezone2).year();
+            year = esm_default().tz(timezone3).year();
             this.focusedYear = year;
           }
           if (this.focusedDate.year() === year) {
@@ -6228,7 +6228,7 @@ var date_time_picker_default = (Alpine) => {
         return false;
       },
       dayIsDisabled: function(day) {
-        this.focusedDate ??= esm_default().tz(timezone2);
+        this.focusedDate ??= esm_default().tz(timezone3);
         return this.dateIsDisabled(this.focusedDate.date(day));
       },
       dayIsSelected: function(day) {
@@ -6236,11 +6236,11 @@ var date_time_picker_default = (Alpine) => {
         if (selectedDate === null) {
           return false;
         }
-        this.focusedDate ??= esm_default().tz(timezone2);
+        this.focusedDate ??= esm_default().tz(timezone3);
         return selectedDate.date() === day && selectedDate.month() === this.focusedDate.month() && selectedDate.year() === this.focusedDate.year();
       },
       dayIsToday: function(day) {
-        let date = esm_default().tz(timezone2);
+        let date = esm_default().tz(timezone3);
         this.focusedDate ??= date;
         return date.date() === day && date.month() === this.focusedDate.month() && date.year() === this.focusedDate.year();
       },
@@ -6258,19 +6258,19 @@ var date_time_picker_default = (Alpine) => {
         this.$refs.picker.style.bottom = `${this.$refs.button.offsetHeight}px`;
       },
       focusPreviousDay: function() {
-        this.focusedDate ??= esm_default().tz(timezone2);
+        this.focusedDate ??= esm_default().tz(timezone3);
         this.focusedDate = this.focusedDate.subtract(1, "day");
       },
       focusPreviousWeek: function() {
-        this.focusedDate ??= esm_default().tz(timezone2);
+        this.focusedDate ??= esm_default().tz(timezone3);
         this.focusedDate = this.focusedDate.subtract(1, "week");
       },
       focusNextDay: function() {
-        this.focusedDate ??= esm_default().tz(timezone2);
+        this.focusedDate ??= esm_default().tz(timezone3);
         this.focusedDate = this.focusedDate.add(1, "day");
       },
       focusNextWeek: function() {
-        this.focusedDate ??= esm_default().tz(timezone2);
+        this.focusedDate ??= esm_default().tz(timezone3);
         this.focusedDate = this.focusedDate.add(1, "week");
       },
       getDayLabels: function() {
@@ -6291,7 +6291,7 @@ var date_time_picker_default = (Alpine) => {
         return date;
       },
       openPicker: function() {
-        this.focusedDate = this.getSelectedDate() ?? esm_default().tz(timezone2);
+        this.focusedDate = this.getSelectedDate() ?? esm_default().tz(timezone3);
         this.setupDaysGrid();
         this.open = true;
         this.$nextTick(() => {
@@ -6302,14 +6302,14 @@ var date_time_picker_default = (Alpine) => {
         if (day) {
           this.setFocusedDay(day);
         }
-        this.focusedDate ??= esm_default().tz(timezone2);
+        this.focusedDate ??= esm_default().tz(timezone3);
         this.setState(this.focusedDate);
       },
       setDisplayText: function() {
         this.displayText = this.getSelectedDate() ? this.getSelectedDate().format(displayFormat) : "";
       },
       setupDaysGrid: function() {
-        this.focusedDate ??= esm_default().tz(timezone2);
+        this.focusedDate ??= esm_default().tz(timezone3);
         this.emptyDaysInFocusedMonth = Array.from({
           length: this.focusedDate.date(8 - firstDayOfWeek).day()
         }, (_, i) => i + 1);
@@ -6318,7 +6318,212 @@ var date_time_picker_default = (Alpine) => {
         }, (_, i) => i + 1);
       },
       setFocusedDay: function(day) {
-        this.focusedDate = (this.focusedDate ?? esm_default().tz(timezone2)).date(day);
+        this.focusedDate = (this.focusedDate ?? esm_default().tz(timezone3)).date(day);
+      },
+      setState: function(date) {
+        if (date === null) {
+          this.state = null;
+          this.setDisplayText();
+          return;
+        } else {
+          if (this.dateIsDisabled(date)) {
+            return;
+          }
+        }
+        this.state = date.hour(this.hour ?? 0).minute(this.minute ?? 0).second(this.second ?? 0).format(format3);
+        this.setDisplayText();
+      },
+      togglePickerVisibility: function() {
+        if (this.open) {
+          this.closePicker();
+          return;
+        }
+        this.openPicker();
+      }
+    };
+  });
+};
+
+// packages/forms/resources/js/components/month-picker.js
+var import_customParseFormat2 = __toModule(require_customParseFormat());
+var import_localeData2 = __toModule(require_localeData());
+var import_timezone2 = __toModule(require_timezone());
+var import_utc2 = __toModule(require_utc());
+esm_default.extend(import_customParseFormat2.default);
+esm_default.extend(import_localeData2.default);
+esm_default.extend(import_timezone2.default);
+esm_default.extend(import_utc2.default);
+window.dayjs = esm_default;
+var month_picker_default = (Alpine) => {
+  Alpine.data("MonthPickerFormComponent", ({
+    displayFormat,
+    firstDayOfWeek,
+    format: format3,
+    isAutofocused,
+    maxDate,
+    minDate,
+    state: state2
+  }) => {
+    const timezone3 = esm_default.tz.guess();
+    esm_default.locale(window.dayjs_locale);
+    return {
+      daysInFocusedMonth: [],
+      displayText: "",
+      emptyDaysInFocusedMonth: [],
+      focusedDate: null,
+      focusedMonth: null,
+      focusedYear: null,
+      hour: null,
+      maxDate,
+      minDate,
+      minute: null,
+      open: false,
+      second: null,
+      state: state2,
+      init: function() {
+        this.focusedDate = esm_default().tz(timezone3);
+        this.maxDate = esm_default(this.maxDate);
+        if (!this.maxDate.isValid()) {
+          this.maxDate = null;
+        }
+        this.minDate = esm_default(this.minDate);
+        if (!this.minDate.isValid()) {
+          this.minDate = null;
+        }
+        let date = this.getSelectedDate() ?? esm_default().tz(timezone3).hour(0).minute(0).second(0);
+        if (this.maxDate !== null && date.isAfter(this.maxDate)) {
+          date = null;
+        }
+        if (this.minDate !== null && date.isBefore(this.minDate)) {
+          date = null;
+        }
+        this.hour = date?.hour() ?? 0;
+        this.minute = date?.minute() ?? 0;
+        this.second = date?.second() ?? 0;
+        this.setDisplayText();
+        if (isAutofocused) {
+          this.openPicker();
+        }
+        this.$watch("focusedMonth", () => {
+          this.focusedMonth = +this.focusedMonth;
+          if (this.focusedDate.month() === this.focusedMonth) {
+            return;
+          }
+          this.focusedDate = this.focusedDate.month(this.focusedMonth);
+        });
+        this.$watch("focusedYear", () => {
+          if (!this.focusedYear) {
+            return;
+          }
+          let year = +this.focusedYear;
+          if (!Number.isInteger(year)) {
+            year = esm_default().tz(timezone3).year();
+            this.focusedYear = year;
+          }
+          if (this.focusedDate.year() === year) {
+            return;
+          }
+          this.focusedDate = this.focusedDate.year(year);
+        });
+        this.$watch("focusedDate", () => {
+          let month = this.focusedDate.month();
+          let year = this.focusedDate.year();
+          if (this.focusedMonth !== month) {
+            this.focusedMonth = month;
+          }
+          if (this.focusedYear !== year) {
+            this.focusedYear = year;
+          }
+          this.setupMonthsGrid();
+          this.$nextTick(() => {
+          });
+        });
+        this.$watch("state", () => {
+          let date2 = this.getSelectedDate();
+          if (this.maxDate !== null && date2.isAfter(this.maxDate)) {
+            date2 = null;
+          }
+          if (this.minDate !== null && date2.isBefore(this.minDate)) {
+            date2 = null;
+          }
+          this.hour = date2?.hour() ?? 0;
+          this.minute = date2?.minute() ?? 0;
+          this.second = date2?.second() ?? 0;
+          this.setDisplayText();
+        });
+      },
+      clearState: function() {
+        this.setState(null);
+        this.closePicker();
+      },
+      closePicker: function() {
+        this.open = false;
+      },
+      dateIsDisabled: function(date) {
+        if (this.maxDate && date.isAfter(this.maxDate)) {
+          return true;
+        }
+        if (this.minDate && date.isBefore(this.minDate)) {
+          return true;
+        }
+        return false;
+      },
+      monthIsDisabled: function(month) {
+        this.focusedDate ??= esm_default().tz(timezone3);
+        return this.dateIsDisabled(this.focusedDate.date(month));
+      },
+      monthIsSelected: function(month) {
+        let selectedDate = this.getSelectedDate();
+        if (selectedDate === null) {
+          return false;
+        }
+        this.focusedDate ??= esm_default().tz(timezone3);
+        return selectedDate.month() === month && selectedDate.year() === this.focusedDate.year();
+      },
+      monthIsThisMonth: function(month) {
+        let date = esm_default().tz(timezone3);
+        this.focusedDate ??= date;
+        return date.month() === month && date.year() === this.focusedDate.year();
+      },
+      getDayLabels: function() {
+        const labels = esm_default.weekdaysShort();
+        if (firstDayOfWeek === 0) {
+          return labels;
+        }
+        return [
+          ...labels.slice(firstDayOfWeek),
+          ...labels.slice(0, firstDayOfWeek)
+        ];
+      },
+      getSelectedDate: function() {
+        let date = esm_default(this.state, format3);
+        if (!date.isValid()) {
+          return null;
+        }
+        return date;
+      },
+      openPicker: function() {
+        this.focusedDate = this.getSelectedDate() ?? esm_default().tz(timezone3);
+        this.setupMonthsGrid();
+        this.open = true;
+        this.$nextTick(() => {
+        });
+      },
+      selectDate: function(month = null) {
+        if (month) {
+          this.setFocusedMonth(month);
+        }
+        this.focusedDate ??= esm_default().tz(timezone3);
+        this.setState(this.focusedDate);
+      },
+      setDisplayText: function() {
+        this.displayText = this.getSelectedDate() ? this.getSelectedDate().format(displayFormat) : "";
+      },
+      setupMonthsGrid: function() {
+        this.focusedDate ??= esm_default().tz(timezone3);
+      },
+      setFocusedMonth: function(month) {
+        this.focusedDate = (this.focusedDate ?? esm_default().tz(timezone3)).month(month);
       },
       setState: function(date) {
         if (date === null) {
@@ -22286,6 +22491,7 @@ var textarea_default = (Alpine) => {
 // packages/forms/resources/js/index.js
 var js_default = (Alpine) => {
   Alpine.plugin(date_time_picker_default);
+  Alpine.plugin(month_picker_default);
   Alpine.plugin(file_upload_default);
   Alpine.plugin(key_value_default);
   Alpine.plugin(markdown_editor_default);
@@ -22301,6 +22507,7 @@ export {
   file_upload_default as FileUploadFormComponentAlpinePlugin,
   key_value_default as KeyValueFormComponentAlpinePlugin,
   markdown_editor_default as MarkdownEditorFormComponentAlpinePlugin,
+  month_picker_default as MonthPickerFormComponentAlpinePlugin,
   multi_select_default as MultiSelectFormComponentAlpinePlugin,
   rich_editor_default as RichEditorFormComponentAlpinePlugin,
   select_default as SelectFormComponentAlpinePlugin,
