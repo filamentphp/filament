@@ -94,10 +94,10 @@ trait InteractsWithForms
         return [];
     }
 
-    public function getUploadedFileUrl(string $statePath): ?string
+    public function getUploadedFileUrl(string $statePath, string $fileKey): ?string
     {
         foreach ($this->getCachedForms() as $form) {
-            if ($url = $form->getUploadedFileUrl($statePath)) {
+            if ($url = $form->getUploadedFileUrl($statePath, $fileKey)) {
                 return $url;
             }
         }
@@ -105,10 +105,10 @@ trait InteractsWithForms
         return null;
     }
 
-    public function removeUploadedFile(string $statePath): void
+    public function removeUploadedFile(string $statePath, string $fileKey): void
     {
         foreach ($this->getCachedForms() as $form) {
-            $form->removeUploadedFile($statePath);
+            $form->removeUploadedFile($statePath, $fileKey);
         }
     }
 

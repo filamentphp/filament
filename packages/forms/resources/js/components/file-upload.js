@@ -48,15 +48,23 @@ export default (Alpine) => {
             state,
 
             init: async function () {
-                let uploadedFileUrl = await getUploadedFileUrlUsing()
+                for (const [fileKey, file] of Object.entries(this.state)) {
+                    if (file.startsWith('livewire-file:')) {
+                        continue;
+                    }
 
-                if (uploadedFileUrl) {
-                    this.files = [{
+                    let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey)
+
+                    if (! uploadedFileUrl) {
+                        continue
+                    }
+
+                    this.files.push({
                         source: uploadedFileUrl,
                         options: {
                             type: 'local',
                         },
-                    }]
+                    })
                 }
 
                 this.pond = FilePond.create(this.$refs.input, {
@@ -87,7 +95,11 @@ export default (Alpine) => {
                             await uploadUsing(file, load, error, progress)
                         },
                         remove: async (source, load) => {
-                            await removeUploadedFileUsing()
+                            const files = this.state
+                            const fileKey = Object.keys(files).find(key => files[key] === source)
+                            console.log(files, fileKey)
+
+                            await removeUploadedFileUsing(fileKey)
 
                             load()
                         },
@@ -100,27 +112,31 @@ export default (Alpine) => {
                 })
 
                 this.$watch('state', async () => {
-                    if (! this.state) {
+                    if (this.state.length === 0) {
                         this.pond.removeFiles()
 
                         return
                     }
 
-                    if (this.state.startsWith('livewire-file:')) {
-                        return
-                    }
+                    this.pond.files = []
 
-                    let uploadedFileUrl = await getUploadedFileUrlUsing()
+                    for (const [fileKey, file] of Object.entries(this.state)) {
+                        if (file.startsWith('livewire-file:')) {
+                            continue;
+                        }
 
-                    if (uploadedFileUrl) {
-                        this.pond.files = [{
+                        let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey)
+
+                        if (! uploadedFileUrl) {
+                            continue
+                        }
+
+                        this.pond.files.push({
                             source: uploadedFileUrl,
                             options: {
                                 type: 'local',
                             },
-                        }]
-                    } else {
-                        this.pond.files = []
+                        })
                     }
                 })
             }

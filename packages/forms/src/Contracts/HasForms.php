@@ -20,9 +20,9 @@ interface HasForms
 
     public function getSelectSearchResults(string $statePath, string $query): array;
 
-    public function getUploadedFileUrl(string $statePath): ?string;
+    public function getUploadedFileUrl(string $statePath, string $fileKey): ?string;
 
-    public function removeUploadedFile(string $statePath): void;
+    public function removeUploadedFile(string $statePath, string $fileKey): void;
 
     public function validate(?array $rules = null, array $messages = [], array $attributes = []);
 }

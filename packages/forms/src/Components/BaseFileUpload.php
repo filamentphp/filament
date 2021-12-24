@@ -6,7 +6,9 @@ use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use SplFileInfo;
 
@@ -17,6 +19,8 @@ class BaseFileUpload extends Field
     protected string | Closure | null $directory = null;
 
     protected string | Closure | null $diskName = null;
+
+    protected bool | Closure $isMultiple = false;
 
     protected int | Closure | null $maxSize = null;
 
@@ -36,26 +40,31 @@ class BaseFileUpload extends Field
     {
         parent::setUp();
 
-        $this->beforeStateDehydrated(function (BaseFileUpload $component): void {
-            $component->saveUploadedFile();
-        });
-
-        $this->afterStateUpdated(function (BaseFileUpload $component, $state): void {
-            if (! $component->isMultiple()) {
-                return;
-            }
-
+        $this->afterStateHydrated(function (BaseFileUpload $component, Closure $set, string | array | null $state): void {
             if (blank($state)) {
+                $component->state([]);
+
                 return;
             }
 
-            /** @var MultipleFileUpload $parentComponent */
-            $parentComponent = $component->getContainer()->getParentComponent();
+            $files = collect(Arr::wrap($state))
+                ->mapWithKeys(fn (string $file): array => [(string) Str::uuid() => $file])
+                ->toArray();
 
-            $parentComponent->appendNewUploadField();
+            $component->state($files);
         });
 
-        $this->dehydrated(fn (BaseFileUpload $component): bool => ! $component->isMultiple());
+        $this->beforeStateDehydrated(function (BaseFileUpload $component): void {
+            $component->saveUploadedFiles();
+        });
+
+        $this->dehydrateStateUsing(function (BaseFileUpload $component, array $state): string | array | null {
+            if ($component->isMultiple()) {
+                return array_values($state);
+            }
+
+            return $state[0] ?? null;
+        });
     }
 
     public function acceptedFileTypes(array | Arrayable | Closure $types): static
@@ -113,6 +122,13 @@ class BaseFileUpload extends Field
         }, function () {
             return $this->hasFileObjectState();
         });
+
+        return $this;
+    }
+
+    public function multiple(bool | Closure $condition = true): static
+    {
+        $this->isMultiple = $condition;
 
         return $this;
     }
@@ -198,10 +214,12 @@ class BaseFileUpload extends Field
         return $this->getState() instanceof SplFileInfo;
     }
 
-    public function deleteUploadedFile($file = null): static
+    public function deleteUploadedFile(string $fileKey): static
     {
+        $file = $this->getState()[$fileKey] ?? null;
+
         if (! $file) {
-            $file = $this->getState();
+            return $this;
         }
 
         if ($callback = $this->deleteUploadedFileUsing) {
@@ -215,9 +233,30 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function getUploadedFileUrl(): ?string
+    public function removeUploadedFile(string $fileKey): static
     {
-        $file = $this->getState();
+        $file = $this->getState()[$fileKey] ?? null;
+
+        if (! $file) {
+            return $this;
+        }
+
+        if ($callback = $this->removeUploadedFileUsing) {
+            $this->evaluate($callback, [
+                'file' => $file,
+            ]);
+        } else {
+            $this->handleUploadedFileRemoval($file);
+        }
+
+        return $this;
+    }
+
+    public function getUploadedFileUrl(string $fileKey): ?string
+    {
+        $files = $this->getState();
+
+        $file = $files[$fileKey] ?? null;
 
         if (! $file) {
             return null;
@@ -253,27 +292,23 @@ class BaseFileUpload extends Field
         return $storage->url($file);
     }
 
-    public function saveUploadedFile(): void
+    public function saveUploadedFiles(): void
     {
-        if (! $this->hasFileObjectState()) {
-            return;
-        }
+        $state = array_map(function (SplFileInfo | string $file) {
+            if (! $file instanceof SplFileInfo) {
+                return $file;
+            }
 
-        $file = $this->getState();
+            if ($callback = $this->saveUploadedFileUsing) {
+                return $this->evaluate($callback, [
+                    'file' => $file,
+                ]);
+            }
 
-        if (! $file) {
-            return;
-        }
+            return $this->handleUpload($file);
+        }, $this->getState());
 
-        if ($callback = $this->saveUploadedFileUsing) {
-            $file = $this->evaluate($callback, [
-                'file' => $file,
-            ]);
-        } else {
-            $file = $this->handleUpload($file);
-        }
-
-        $this->state($file);
+        $this->state($state);
     }
 
     protected function handleUpload($file)
@@ -285,41 +320,14 @@ class BaseFileUpload extends Field
 
     public function isMultiple(): bool
     {
-        return $this->getContainer()->getParentComponent() instanceof MultipleFileUpload;
+        return $this->evaluate($this->isMultiple);
     }
 
     protected function handleUploadedFileRemoval($file): void
     {
-        $this->state(null);
     }
 
     protected function handleUploadedFileDeletion($file): void
     {
-    }
-
-    public function removeUploadedFile(): static
-    {
-        $file = $this->getState();
-
-        if ($callback = $this->removeUploadedFileUsing) {
-            $this->evaluate($callback, [
-                'file' => $file,
-            ]);
-        } else {
-            $this->handleUploadedFileRemoval($file);
-        }
-
-        if ($this->isMultiple()) {
-            $container = $this->getContainer();
-
-            /** @var MultipleFileUpload $parentComponent */
-            $parentComponent = $container->getParentComponent();
-
-            $parentComponent->removeUploadedFile(
-                $container->getStatePath(isAbsolute: false),
-            );
-        }
-
-        return $this;
     }
 }

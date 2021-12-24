@@ -15840,14 +15840,20 @@ var file_upload_default = (Alpine) => {
       pond: null,
       state: state2,
       init: async function() {
-        let uploadedFileUrl = await getUploadedFileUrlUsing();
-        if (uploadedFileUrl) {
-          this.files = [{
+        for (const [fileKey, file2] of Object.entries(this.state)) {
+          if (file2.startsWith("livewire-file:")) {
+            continue;
+          }
+          let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey);
+          if (!uploadedFileUrl) {
+            continue;
+          }
+          this.files.push({
             source: uploadedFileUrl,
             options: {
               type: "local"
             }
-          }];
+          });
         }
         this.pond = create$f(this.$refs.input, {
           acceptedFileTypes,
@@ -15876,7 +15882,10 @@ var file_upload_default = (Alpine) => {
               await uploadUsing(file2, load, error2, progress);
             },
             remove: async (source, load) => {
-              await removeUploadedFileUsing();
+              const files = this.state;
+              const fileKey = Object.keys(files).find((key) => files[key] === source);
+              console.log(files, fileKey);
+              await removeUploadedFileUsing(fileKey);
               load();
             },
             revert: async (uniqueFileId, load) => {
@@ -15886,23 +15895,25 @@ var file_upload_default = (Alpine) => {
           }
         });
         this.$watch("state", async () => {
-          if (!this.state) {
+          if (this.state.length === 0) {
             this.pond.removeFiles();
             return;
           }
-          if (this.state.startsWith("livewire-file:")) {
-            return;
-          }
-          let uploadedFileUrl2 = await getUploadedFileUrlUsing();
-          if (uploadedFileUrl2) {
-            this.pond.files = [{
-              source: uploadedFileUrl2,
+          this.pond.files = [];
+          for (const [fileKey, file2] of Object.entries(this.state)) {
+            if (file2.startsWith("livewire-file:")) {
+              continue;
+            }
+            let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey);
+            if (!uploadedFileUrl) {
+              continue;
+            }
+            this.pond.files.push({
+              source: uploadedFileUrl,
               options: {
                 type: "local"
               }
-            }];
-          } else {
-            this.pond.files = [];
+            });
           }
         });
       }

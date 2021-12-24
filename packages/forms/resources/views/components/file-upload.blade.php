@@ -10,8 +10,8 @@
     <div
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
-            getUploadedFileUrlUsing: async () => {
-                return await $wire.getUploadedFileUrl('{{ $getStatePath() }}')
+            getUploadedFileUrlUsing: async (fileKey) => {
+                return await $wire.getUploadedFileUrl('{{ $getStatePath() }}', fileKey)
             },
             imageCropAspectRatio: {{ ($aspectRatio = $getImageCropAspectRatio()) ? "'{$aspectRatio}'" : 'null' }},
             imagePreviewHeight: {{ ($height = $getImagePreviewHeight()) ? "'{$height}'" : 'null' }},
@@ -23,15 +23,17 @@
             placeholder: {{ ($placeholder = $getPlaceholder()) ? "'{$placeholder}'" : 'null' }},
             maxSize: {{ ($size = $getMaxSize()) ? "'{$size} KB'" : 'null' }},
             minSize: {{ ($size = $getMinSize()) ? "'{$size} KB'" : 'null' }},
-            removeUploadedFileUsing: async (file = null) => {
-                return await $wire.removeUploadedFile('{{ $getStatePath() }}', file)
+            removeUploadedFileUsing: async (fileKey) => {
+                return await $wire.removeUploadedFile('{{ $getStatePath() }}', fileKey)
             },
             removeUploadedFileButtonPosition: '{{ $getRemoveUploadedFileButtonPosition() }}',
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
             uploadButtonPosition: '{{ $getUploadButtonPosition() }}',
             uploadProgressIndicatorPosition: '{{ $getUploadProgressIndicatorPosition() }}',
             uploadUsing: async (file, load, error, progress) => {
-                return await $wire.upload('{{ $getStatePath() }}', file, load, error, progress)
+                let fileKey = `f${Math.floor(Math.random() * 999999)}`
+
+                await $wire.upload(`{{ $getStatePath() }}.${fileKey}`, file, load, error, progress)
             },
         })"
         wire:ignore
@@ -43,6 +45,7 @@
         <input
             x-ref="input"
             {{ $isDisabled() ? 'disabled' : '' }}
+            {{ $isMultiple() ? 'multiple' : '' }}
             {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
             type="file"
         />

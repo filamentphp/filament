@@ -36,14 +36,14 @@ class DateTimePicker extends Field
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (DateTimePicker $component, Closure $set, $state): void {
+        $this->afterStateHydrated(function (DateTimePicker $component, $state): void {
             if (! $state instanceof CarbonInterface) {
                 return;
             }
 
             $state = $state->format($component->getFormat());
 
-            $set($component, $state);
+            $component->state($state);
         });
 
         $this->rule('date', $this->hasDate());
