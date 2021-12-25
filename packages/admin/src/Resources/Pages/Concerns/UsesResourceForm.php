@@ -11,13 +11,14 @@ trait UsesResourceForm
     protected function getResourceForm(): Form
     {
         if (! $this->resourceForm) {
-            if (method_exists(static::class, 'customForm')) {
-                $this->resourceForm = static::customForm(Form::make()->columns(2));
-            } else {
-                $this->resourceForm = static::getResource()::form(Form::make()->columns(2));
-            }
+            $this->resourceForm = $this->form(Form::make()->columns(2));
         }
 
         return $this->resourceForm;
+    }
+
+    protected function form(Form $form): Form
+    {
+        return static::getResource()::form($form);
     }
 }

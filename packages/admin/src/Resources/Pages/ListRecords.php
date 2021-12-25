@@ -51,10 +51,15 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                 $table->bulkActions([$this->getDeleteTableBulkAction()]);
             }
 
-            $this->resourceTable = static::getResource()::table($table);
+            $this->resourceTable = $this->table($table);
         }
 
         return $this->resourceTable;
+    }
+
+    protected function table(Table $table): Table
+    {
+        return static::getResource()::table($table);
     }
 
     protected function getViewTableAction(): Tables\Actions\Action
