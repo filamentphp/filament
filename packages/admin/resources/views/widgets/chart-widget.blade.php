@@ -7,7 +7,7 @@
         @if ($filters = $this->getFilters())
             <select
                 wire:model="filter"
-                class="text-gray-900 border-gray-300 block h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600"
+                class="text-gray-900 border-gray-300 block h-10 duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600"
             >
                 @foreach ($filters as $value => $label)
                     <option value="{{ $value }}">

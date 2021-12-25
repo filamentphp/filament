@@ -32,10 +32,10 @@
 
     <div
         x-show="isOpen"
-        x-transition:enter="transition ease duration-300"
+        x-transition:enter="ease duration-300"
         x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease duration-300"
+        x-transition:leave="ease duration-300"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         x-cloak
@@ -52,10 +52,10 @@
             x-show="isOpen"
             x-trap="isOpen"
             x-on:keydown.window.escape="isOpen = false"
-            x-transition:enter="transition ease duration-300"
+            x-transition:enter="ease duration-300"
             x-transition:enter-start="translate-y-8"
             x-transition:enter-end="translate-y-0"
-            x-transition:leave="transition ease duration-300"
+            x-transition:leave="ease duration-300"
             x-transition:leave-start="translate-y-0"
             x-transition:leave-end="translate-y-8"
             x-cloak
