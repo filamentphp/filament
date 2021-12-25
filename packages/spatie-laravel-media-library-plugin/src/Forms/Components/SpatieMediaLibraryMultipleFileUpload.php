@@ -33,6 +33,7 @@ class SpatieMediaLibraryMultipleFileUpload extends MultipleFileUpload
 
     public function getUploadComponent(): Component
     {
+        /** @var SpatieMediaLibraryFileUpload $component */
         $component = parent::getUploadComponent();
 
         return $component->collection($this->getCollection());
