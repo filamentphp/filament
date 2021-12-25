@@ -96,7 +96,11 @@ export default (Alpine) => {
                             load(blob)
                         },
                         process: async (fieldName, file, metadata, load, error, progress) => {
-                            await uploadUsing(file, load, error, progress)
+                            let fileKey = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                            )
+
+                            await uploadUsing(fileKey, file, load, error, progress)
                         },
                         remove: async (source, load) => {
                             let fileKey = this.cachedFileKeys[source] ?? null
@@ -110,6 +114,8 @@ export default (Alpine) => {
                             load()
                         },
                         revert: async (uniqueFileId, load) => {
+                            console.log(uniqueFileId)
+
                             await removeUploadedFileUsing(uniqueFileId)
 
                             load()

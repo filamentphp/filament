@@ -3,7 +3,11 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
@@ -18,12 +22,26 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (SpatieMediaLibraryFileUpload $component) {
-            if ($component->isMultiple()) {
+        $this->afterStateHydrated(function (SpatieMediaLibraryFileUpload $component, ?HasMedia $record): void {
+            if (! $record) {
+                $component->state([]);
+
                 return;
             }
 
-            $component->state($component->getUploadedFile());
+            $files = $record->getMedia($component->getCollection())
+                ->when(
+                    ! $component->isMultiple(),
+                    fn (Collection $files): Collection => $files->take(1),
+                )
+                ->mapWithKeys(function (Media $file): array {
+                    $uuid = $file->getAttributeValue('uuid');
+
+                    return [$uuid => $uuid];
+                })
+                ->toArray();
+
+            $component->state($files);
         });
 
         $this->beforeStateDehydrated(null);
@@ -38,31 +56,6 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
-    public function getUploadedFile()
-    {
-        $state = $this->getState();
-
-        if ($state) {
-            return $state;
-        }
-
-        $model = $this->getModel();
-
-        if (! $model instanceof HasMedia) {
-            return null;
-        }
-
-        $media = $model
-            ->getMedia($this->getCollection())
-            ->first();
-
-        if (! $media) {
-            return null;
-        }
-
-        return $media->uuid;
-    }
-
     public function saveRelationships(): void
     {
         if ($this->saveRelationshipsUsing) {
@@ -71,10 +64,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             return;
         }
 
-        $this->saveUploadedFile();
+        $this->saveUploadedFiles();
     }
 
-    public function getCollection(): ?string
+    public function getCollection(): string
     {
         if ($collection = $this->evaluate($this->collection)) {
             return $collection;
@@ -118,13 +111,6 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         }
 
         Media::findByUuid($file)?->delete();
-    }
-
-    protected function handleUploadedFileRemoval($file): void
-    {
-        $this->deleteUploadedFile();
-
-        $this->state(null);
     }
 
     protected function handleUploadedFileUrlRetrieval($file): ?string

@@ -30,10 +30,10 @@
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
             uploadButtonPosition: '{{ $getUploadButtonPosition() }}',
             uploadProgressIndicatorPosition: '{{ $getUploadProgressIndicatorPosition() }}',
-            uploadUsing: async (file, load, error, progress) => {
-                let fileKey = `f${Math.floor(Math.random() * 999999)}`
+            uploadUsing: async (fileKey, file, load, error, progress) => {
+                await $wire.upload(`{{ $getStatePath() }}.${fileKey}`, file, () => {}, error, progress)
 
-                await $wire.upload(`{{ $getStatePath() }}.${fileKey}`, file, load, error, progress)
+                load(fileKey)
             },
         })"
         wire:ignore

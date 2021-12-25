@@ -40,7 +40,7 @@ class BaseFileUpload extends Field
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (BaseFileUpload $component, Closure $set, string | array | null $state): void {
+        $this->afterStateHydrated(function (BaseFileUpload $component, string | array | null $state): void {
             if (blank($state)) {
                 $component->state([]);
 

@@ -6,6 +6,9 @@ use Closure;
 use Filament\Forms\ComponentContainer;
 use Illuminate\Support\Str;
 
+/**
+ * @deprecated Use `\Filament\Forms\Components\FileUpload` instead, with the `multiple()` method.
+ */
 class MultipleFileUpload extends Field
 {
     use Concerns\CanLimitItemsLength;
