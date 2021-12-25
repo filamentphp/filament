@@ -69,17 +69,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     public function getCollection(): string
     {
-        if ($collection = $this->evaluate($this->collection)) {
-            return $collection;
-        }
-
-        $containerParentComponent = $this->getContainer()->getParentComponent();
-
-        if (! $containerParentComponent instanceof SpatieMediaLibraryMultipleFileUpload) {
-            return 'default';
-        }
-
-        return $containerParentComponent->getCollection();
+        return $this->evaluate($this->collection) ?? 'default';
     }
 
     protected function handleUpload($file)
