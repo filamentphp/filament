@@ -3,9 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Forms\ComponentContainer;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 /**
  * @deprecated Use `\Filament\Forms\Components\FileUpload` instead, with the `multiple()` method.
