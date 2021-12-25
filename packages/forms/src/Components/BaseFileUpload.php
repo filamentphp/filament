@@ -14,6 +14,8 @@ use SplFileInfo;
 
 class BaseFileUpload extends Field
 {
+    use Concerns\CanLimitItemsLength;
+
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
     protected string | Closure | null $directory = null;
@@ -124,6 +126,20 @@ class BaseFileUpload extends Field
         }, function () {
             return $this->hasFileObjectState();
         });
+
+        return $this;
+    }
+
+    public function maxFiles(int | Closure | null $count): static
+    {
+        $this->maxItems($count);
+
+        return $this;
+    }
+
+    public function minFiles(int | Closure | null $count): static
+    {
+        $this->minItems($count);
 
         return $this;
     }
