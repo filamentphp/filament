@@ -8,14 +8,13 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use SplFileInfo;
 
 class BaseFileUpload extends Field
 {
-    use Concerns\CanLimitItemsLength;
-
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
     protected string | Closure | null $directory = null;
@@ -27,6 +26,10 @@ class BaseFileUpload extends Field
     protected int | Closure | null $maxSize = null;
 
     protected int | Closure | null $minSize = null;
+
+    protected int | Closure | null $maxFiles = null;
+
+    protected int | Closure | null $minFiles = null;
 
     protected string | Closure $visibility = 'public';
 
@@ -79,8 +82,6 @@ class BaseFileUpload extends Field
             $types = implode(',', ($this->getAcceptedFileTypes() ?? []));
 
             return "mimetypes:{$types}";
-        }, function () {
-            return $this->hasFileObjectState() && count($this->getAcceptedFileTypes() ?? []);
         });
 
         return $this;
@@ -108,8 +109,6 @@ class BaseFileUpload extends Field
             $size = $this->getMaxSize();
 
             return "max:{$size}";
-        }, function () {
-            return $this->hasFileObjectState();
         });
 
         return $this;
@@ -120,11 +119,9 @@ class BaseFileUpload extends Field
         $this->minSize = $size;
 
         $this->rule(function (): string {
-            $size = $this->getMaxSize();
+            $size = $this->getMinSize();
 
             return "min:{$size}";
-        }, function () {
-            return $this->hasFileObjectState();
         });
 
         return $this;
@@ -132,14 +129,14 @@ class BaseFileUpload extends Field
 
     public function maxFiles(int | Closure | null $count): static
     {
-        $this->maxItems($count);
+        $this->maxFiles = $count;
 
         return $this;
     }
 
     public function minFiles(int | Closure | null $count): static
     {
-        $this->minItems($count);
+        $this->minFiles = $count;
 
         return $this;
     }
@@ -227,9 +224,42 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->visibility);
     }
 
-    public function hasFileObjectState(): bool
+    public function getValidationRules(): array
     {
-        return $this->getState() instanceof SplFileInfo;
+        $rules = [
+            $this->getRequiredValidationRule(),
+            'array',
+        ];
+
+        if (filled($count = $this->maxFiles)) {
+            $rules[] = "max:{$count}";
+        } elseif (! $this->isMultiple()) {
+            $rules[] = 'max:1';
+        }
+
+        if (filled($count = $this->minFiles)) {
+            $rules[] = "min:{$count}";
+        }
+
+        $rules[] = function (string $attribute, array $value, Closure $fail): void {
+            $files = array_filter($value, fn (SplFileInfo | string $file): bool => $file instanceof SplFileInfo);
+
+            $name = $this->getName();
+
+            $validator = Validator::make(
+                data: [$name => $files],
+                rules: ["{$name}.*" => array_merge(['file'], parent::getValidationRules())],
+                customAttributes: ["{$name}.*" => $this->getValidationAttribute()],
+            );
+
+            if (! $validator->fails()) {
+                return;
+            }
+
+            $fail($validator->errors()->first());
+        };
+
+        return $rules;
     }
 
     public function deleteUploadedFile(string $fileKey): static
