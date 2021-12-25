@@ -33,7 +33,7 @@
                 {{ $getExtraAlpineAttributeBag() }}
             >
                 <span
-                    class="pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200 translate-x-0"
+                    class="pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 ease-in-out duration-200 translate-x-0"
                     :class="{
                         'translate-x-5': state,
                         'translate-x-0': ! state,

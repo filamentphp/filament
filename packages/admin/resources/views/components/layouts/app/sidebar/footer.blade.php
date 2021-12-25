@@ -13,7 +13,7 @@
             {{ \Filament\Facades\Filament::getUserName($user) }}
         </p>
 
-        <p class="text-xs text-gray-500 transition hover:text-gray-700 focus:text-gray-700">
+        <p class="text-xs text-gray-500 hover:text-gray-700 focus:text-gray-700">
             <a href="{{ route('filament.auth.logout') }}">
                 {{ __('filament::layout.buttons.logout.label') }}
             </a>

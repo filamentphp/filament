@@ -27,7 +27,7 @@
                     '-rotate-180': ! isCollapsed,
                 }"
                 type="button"
-                class="flex items-center justify-center w-10 h-10 text-primary-500 transform transition rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none"
+                class="flex items-center justify-center w-10 h-10 text-primary-500 transform rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none"
             >
                 <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
