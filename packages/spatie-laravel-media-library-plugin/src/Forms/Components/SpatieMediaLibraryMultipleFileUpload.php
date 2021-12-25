@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Spatie\MediaLibrary\HasMedia;
 
 /**
  * @deprecated Use `\Filament\Forms\Components\SpatieMediaLibraryFileUpload` instead, with the `multiple()` method.
