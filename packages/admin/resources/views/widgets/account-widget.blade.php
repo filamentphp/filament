@@ -15,7 +15,7 @@
             </h2>
 
             <p class="text-sm">
-                <a href="{{ route('filament.auth.logout') }}" class="text-gray-600 hover:text-primary-500 transition focus:outline-none focus:underline">
+                <a href="{{ route('filament.auth.logout') }}" class="text-gray-600 hover:text-primary-500 focus:outline-none focus:underline">
                     {{ __('filament::widgets/account-widget.buttons.logout.label') }}
                 </a>
             </p>

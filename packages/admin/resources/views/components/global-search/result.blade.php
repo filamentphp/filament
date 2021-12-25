@@ -5,7 +5,7 @@
 ])
 
 <li {{ $attributes }}>
-    <a href="{{ $url }}" class="relative block px-6 py-4 transition focus:bg-gray-500/5 hover:bg-gray-500/5 focus:ring-1 focus:ring-gray-300">
+    <a href="{{ $url }}" class="relative block px-6 py-4 focus:bg-gray-500/5 hover:bg-gray-500/5 focus:ring-1 focus:ring-gray-300">
         <p class="font-medium">{{ $title }}</p>
 
         <p class="text-sm space-x-2 font-medium text-gray-500">
