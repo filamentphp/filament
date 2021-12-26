@@ -21,18 +21,7 @@ class HasManyRepeater extends Repeater
                 return;
             }
 
-            $relationship = $component->getRelationship();
-            $relatedModels = $relationship->getResults();
-
-            if (! $relatedModels) {
-                return;
-            }
-
-            $component->state(
-                $relatedModels->keyBy(
-                    $relationship->getLocalKeyName(),
-                )->toArray(),
-            );
+            $component->fillFromRelationship();
         });
 
         $this->dehydrated(false);
@@ -45,6 +34,22 @@ class HasManyRepeater extends Repeater
         $this->relationship = $name;
 
         return $this;
+    }
+
+    public function fillFromRelationship(): void
+    {
+        $relationship = $this->getRelationship();
+        $relatedModels = $relationship->getResults();
+
+        if (! $relatedModels) {
+            return;
+        }
+
+        $this->state(
+            $relatedModels->keyBy(
+                $relationship->getLocalKeyName(),
+            )->toArray(),
+        );
     }
 
     public function saveRelationships(): void
@@ -78,6 +83,8 @@ class HasManyRepeater extends Repeater
             $record = $relationship->create($itemData);
             $childComponentContainers[$itemKey]->model($record)->saveRelationships();
         }
+
+        $this->fillFromRelationship();
     }
 
     public function getChildComponentContainers(): array
