@@ -129,7 +129,7 @@ trait HasState
         return $this;
     }
 
-    public function statePath(string $path): static
+    public function statePath(?string $path): static
     {
         $this->statePath = $path;
 
@@ -154,7 +154,7 @@ trait HasState
             $pathComponents[] = $containerStatePath;
         }
 
-        if (($statePath = $this->statePath) !== null) {
+        if (filled($statePath = $this->statePath)) {
             $pathComponents[] = $statePath;
         }
 

@@ -15817,6 +15817,7 @@ registerPlugin(filepond_plugin_image_transform_esm_default);
 var file_upload_default = (Alpine) => {
   Alpine.data("fileUploadFormComponent", ({
     acceptedFileTypes,
+    deleteUploadedFileUsing,
     getUploadedFileUrlUsing,
     imageCropAspectRatio,
     imagePreviewHeight,
@@ -15836,18 +15837,26 @@ var file_upload_default = (Alpine) => {
     uploadUsing
   }) => {
     return {
+      cachedFileKeys: {},
       files: [],
       pond: null,
       state: state2,
       init: async function() {
-        let uploadedFileUrl = await getUploadedFileUrlUsing();
-        if (uploadedFileUrl) {
-          this.files = [{
+        for (const [fileKey, file2] of Object.entries(this.state)) {
+          if (file2.startsWith("livewire-file:")) {
+            continue;
+          }
+          let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey);
+          if (!uploadedFileUrl) {
+            continue;
+          }
+          this.files.push({
             source: uploadedFileUrl,
             options: {
               type: "local"
             }
-          }];
+          });
+          this.cachedFileKeys[uploadedFileUrl] = fileKey;
         }
         this.pond = create$f(this.$refs.input, {
           acceptedFileTypes,
@@ -15873,10 +15882,15 @@ var file_upload_default = (Alpine) => {
               load(blob2);
             },
             process: async (fieldName, file2, metadata, load, error2, progress) => {
-              await uploadUsing(file2, load, error2, progress);
+              let fileKey = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c2) => (c2 ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c2 / 4).toString(16));
+              await uploadUsing(fileKey, file2, load, error2, progress);
             },
             remove: async (source, load) => {
-              await removeUploadedFileUsing();
+              let fileKey = this.cachedFileKeys[source] ?? null;
+              if (!fileKey) {
+                return;
+              }
+              await deleteUploadedFileUsing(fileKey);
               load();
             },
             revert: async (uniqueFileId, load) => {
@@ -15886,24 +15900,24 @@ var file_upload_default = (Alpine) => {
           }
         });
         this.$watch("state", async () => {
-          if (!this.state) {
-            this.pond.removeFiles();
+          if (Object.values(this.state).filter((file2) => file2.startsWith("livewire-file:")).length) {
             return;
           }
-          if (this.state.startsWith("livewire-file:")) {
-            return;
-          }
-          let uploadedFileUrl2 = await getUploadedFileUrlUsing();
-          if (uploadedFileUrl2) {
-            this.pond.files = [{
-              source: uploadedFileUrl2,
+          let files = [];
+          for (let fileKey of Object.keys(this.state)) {
+            let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey);
+            if (!uploadedFileUrl) {
+              continue;
+            }
+            files.push({
+              source: uploadedFileUrl,
               options: {
                 type: "local"
               }
-            }];
-          } else {
-            this.pond.files = [];
+            });
+            this.cachedFileKeys[uploadedFileUrl] = fileKey;
           }
+          this.pond.files = files;
         });
       }
     };
@@ -18966,7 +18980,6 @@ var multi_select_default = (Alpine) => {
         if (!this.state) {
           this.state = [];
         }
-        this.state = this.state.map((value) => value.toString());
         this.labels = await getOptionLabelsUsing();
         this.$watch("search", async () => {
           if (!this.isOpen || this.search === "" || this.search === null) {
@@ -19136,9 +19149,6 @@ var select_default = (Alpine) => {
           this.openListbox();
         }
         this.label = await getOptionLabelUsing();
-        if (this.state !== null) {
-          this.state = this.state.toString();
-        }
         this.$watch("search", async () => {
           if (!this.isOpen || this.search === "" || this.search === null) {
             this.options = options;

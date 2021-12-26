@@ -2,9 +2,9 @@
 
 namespace Filament\Forms\Components\Contracts;
 
-use SplFileInfo;
+use Livewire\TemporaryUploadedFile;
 
 interface HasFileAttachments
 {
-    public function saveUploadedFileAttachment(SplFileInfo $attachment): ?string;
+    public function saveUploadedFileAttachment(TemporaryUploadedFile $attachment): ?string;
 }

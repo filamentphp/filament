@@ -11,7 +11,7 @@ trait CanLimitItemsLength
 
     protected int | Closure | null $minItems = null;
 
-    public function maxItems(int | Closure $count): static
+    public function maxItems(int | Closure | null $count): static
     {
         $this->maxItems = $count;
 
@@ -27,7 +27,7 @@ trait CanLimitItemsLength
         return $this;
     }
 
-    public function minItems(int | Closure $count): static
+    public function minItems(int | Closure | null $count): static
     {
         $this->minItems = $count;
 

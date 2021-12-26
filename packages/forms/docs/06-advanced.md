@@ -163,8 +163,8 @@ use Closure;
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')
-    ->afterStateHydrated(function (TextInput $component, Closure $set, $state) {
-        $set($component, ucwords($state));
+    ->afterStateHydrated(function (TextInput $component, $state) {
+        $component->state(ucwords($state));
     })
 ```
 

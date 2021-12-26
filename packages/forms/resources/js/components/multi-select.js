@@ -30,8 +30,6 @@ export default (Alpine) => {
                     this.state = []
                 }
 
-                this.state = this.state.map((value) => value.toString())
-
                 this.labels = await getOptionLabelsUsing()
 
                 this.$watch('search', async () => {

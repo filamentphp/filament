@@ -6,9 +6,12 @@ use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
-use SplFileInfo;
+use Livewire\TemporaryUploadedFile;
 
 class BaseFileUpload extends Field
 {
@@ -18,9 +21,15 @@ class BaseFileUpload extends Field
 
     protected string | Closure | null $diskName = null;
 
+    protected bool | Closure $isMultiple = false;
+
     protected int | Closure | null $maxSize = null;
 
     protected int | Closure | null $minSize = null;
+
+    protected int | Closure | null $maxFiles = null;
+
+    protected int | Closure | null $minFiles = null;
 
     protected string | Closure $visibility = 'public';
 
@@ -28,34 +37,65 @@ class BaseFileUpload extends Field
 
     protected ?Closure $getUploadedFileUrlUsing = null;
 
-    protected ?Closure $removeUploadedFileUsing = null;
-
     protected ?Closure $saveUploadedFileUsing = null;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->beforeStateDehydrated(function (BaseFileUpload $component): void {
-            $component->saveUploadedFile();
-        });
-
-        $this->afterStateUpdated(function (BaseFileUpload $component, $state): void {
-            if (! $component->isMultiple()) {
-                return;
-            }
-
+        $this->afterStateHydrated(function (BaseFileUpload $component, string | array | null $state): void {
             if (blank($state)) {
+                $component->state([]);
+
                 return;
             }
 
-            /** @var MultipleFileUpload $parentComponent */
-            $parentComponent = $component->getContainer()->getParentComponent();
+            $files = collect(Arr::wrap($state))
+                ->mapWithKeys(fn (string $file): array => [(string) Str::uuid() => $file])
+                ->toArray();
 
-            $parentComponent->appendNewUploadField();
+            $component->state($files);
         });
 
-        $this->dehydrated(fn (BaseFileUpload $component): bool => ! $component->isMultiple());
+        $this->beforeStateDehydrated(function (BaseFileUpload $component): void {
+            $component->saveUploadedFiles();
+        });
+
+        $this->dehydrateStateUsing(function (BaseFileUpload $component, array $state): string | array | null {
+            $files = array_values($state);
+
+            if ($component->isMultiple()) {
+                return $files;
+            }
+
+            return $files[0] ?? null;
+        });
+
+        $this->getUploadedFileUrlUsing(function (BaseFileUpload $component, string $file): string {
+            /** @var FilesystemAdapter $storage */
+            $storage = $component->getDisk();
+
+            /** @var \League\Flysystem\Filesystem $storageDriver */
+            $storageDriver = $storage->getDriver();
+
+            if (
+                $storageDriver->getAdapter() instanceof AwsS3Adapter &&
+                $storage->getVisibility($file) === 'private'
+            ) {
+                return $storage->temporaryUrl(
+                    $file,
+                    now()->addMinutes(5),
+                );
+            }
+
+            return $storage->url($file);
+        });
+
+        $this->saveUploadedFileUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file): string {
+            $storeMethod = $component->getVisibility() === 'public' ? 'storePublicly' : 'store';
+
+            return $file->{$storeMethod}($this->getDirectory(), $this->getDiskName());
+        });
     }
 
     public function acceptedFileTypes(array | Arrayable | Closure $types): static
@@ -66,8 +106,6 @@ class BaseFileUpload extends Field
             $types = implode(',', ($this->getAcceptedFileTypes() ?? []));
 
             return "mimetypes:{$types}";
-        }, function () {
-            return $this->hasFileObjectState() && count($this->getAcceptedFileTypes() ?? []);
         });
 
         return $this;
@@ -95,8 +133,6 @@ class BaseFileUpload extends Field
             $size = $this->getMaxSize();
 
             return "max:{$size}";
-        }, function () {
-            return $this->hasFileObjectState();
         });
 
         return $this;
@@ -107,12 +143,31 @@ class BaseFileUpload extends Field
         $this->minSize = $size;
 
         $this->rule(function (): string {
-            $size = $this->getMaxSize();
+            $size = $this->getMinSize();
 
             return "min:{$size}";
-        }, function () {
-            return $this->hasFileObjectState();
         });
+
+        return $this;
+    }
+
+    public function maxFiles(int | Closure | null $count): static
+    {
+        $this->maxFiles = $count;
+
+        return $this;
+    }
+
+    public function minFiles(int | Closure | null $count): static
+    {
+        $this->minFiles = $count;
+
+        return $this;
+    }
+
+    public function multiple(bool | Closure $condition = true): static
+    {
+        $this->isMultiple = $condition;
 
         return $this;
     }
@@ -134,13 +189,6 @@ class BaseFileUpload extends Field
     public function getUploadedFileUrlUsing(?Closure $callback): static
     {
         $this->getUploadedFileUrlUsing = $callback;
-
-        return $this;
-    }
-
-    public function removeUploadedFileUsing(?Closure $callback): static
-    {
-        $this->removeUploadedFileUsing = $callback;
 
         return $this;
     }
@@ -193,133 +241,125 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->visibility);
     }
 
-    public function hasFileObjectState(): bool
+    public function getValidationRules(): array
     {
-        return $this->getState() instanceof SplFileInfo;
+        $rules = [
+            $this->getRequiredValidationRule(),
+            'array',
+        ];
+
+        if (filled($count = $this->maxFiles)) {
+            $rules[] = "max:{$count}";
+        } elseif (! $this->isMultiple()) {
+            $rules[] = 'max:1';
+        }
+
+        if (filled($count = $this->minFiles)) {
+            $rules[] = "min:{$count}";
+        }
+
+        $rules[] = function (string $attribute, array $value, Closure $fail): void {
+            $files = array_filter($value, fn (TemporaryUploadedFile | string $file): bool => $file instanceof TemporaryUploadedFile);
+
+            $name = $this->getName();
+
+            $validator = Validator::make(
+                data: [$name => $files],
+                rules: ["{$name}.*" => array_merge(['file'], parent::getValidationRules())],
+                customAttributes: ["{$name}.*" => $this->getValidationAttribute()],
+            );
+
+            if (! $validator->fails()) {
+                return;
+            }
+
+            $fail($validator->errors()->first());
+        };
+
+        return $rules;
     }
 
-    public function deleteUploadedFile($file = null): static
+    public function deleteUploadedFile(string $fileKey): static
     {
-        if (! $file) {
-            $file = $this->getState();
+        $file = $this->removeUploadedFile($fileKey);
+
+        if (blank($file)) {
+            return $this;
         }
 
-        if ($callback = $this->deleteUploadedFileUsing) {
-            $this->evaluate($callback, [
-                'file' => $file,
-            ]);
-        } else {
-            $this->handleUploadedFileDeletion($file);
+        $callback = $this->deleteUploadedFileUsing;
+
+        if (! $callback) {
+            return $this;
         }
+
+        $this->evaluate($callback, [
+            'file' => $file,
+        ]);
 
         return $this;
     }
 
-    public function getUploadedFileUrl(): ?string
+    public function removeUploadedFile(string $fileKey): string | TemporaryUploadedFile | null
     {
-        $file = $this->getState();
+        $files = $this->getState();
+        $file = $files[$fileKey] ?? null;
 
         if (! $file) {
             return null;
         }
 
-        if ($callback = $this->getUploadedFileUrlUsing) {
+        unset($files[$fileKey]);
+
+        $this->state($files);
+
+        return $file;
+    }
+
+    public function getUploadedFileUrl(string $fileKey): ?string
+    {
+        $files = $this->getState();
+
+        $file = $files[$fileKey] ?? null;
+
+        if (! $file) {
+            return null;
+        }
+
+        $callback = $this->getUploadedFileUrlUsing;
+
+        if (! $callback) {
+            return null;
+        }
+
+        return $this->evaluate($callback, [
+            'file' => $file,
+        ]);
+    }
+
+    public function saveUploadedFiles(): void
+    {
+        $state = array_map(function (TemporaryUploadedFile | string $file) {
+            if (! $file instanceof TemporaryUploadedFile) {
+                return $file;
+            }
+
+            $callback = $this->saveUploadedFileUsing;
+
+            if (! $callback) {
+                return $file;
+            }
+
             return $this->evaluate($callback, [
                 'file' => $file,
             ]);
-        }
+        }, $this->getState());
 
-        return $this->handleUploadedFileUrlRetrieval($file);
-    }
-
-    protected function handleUploadedFileUrlRetrieval($file): ?string
-    {
-        /** @var FilesystemAdapter $storage */
-        $storage = $this->getDisk();
-
-        /** @var \League\Flysystem\Filesystem $storageDriver */
-        $storageDriver = $storage->getDriver();
-
-        if (
-            $storageDriver->getAdapter() instanceof AwsS3Adapter &&
-            $storage->getVisibility($file) === 'private'
-        ) {
-            return $storage->temporaryUrl(
-                $file,
-                now()->addMinutes(5),
-            );
-        }
-
-        return $storage->url($file);
-    }
-
-    public function saveUploadedFile(): void
-    {
-        if (! $this->hasFileObjectState()) {
-            return;
-        }
-
-        $file = $this->getState();
-
-        if (! $file) {
-            return;
-        }
-
-        if ($callback = $this->saveUploadedFileUsing) {
-            $file = $this->evaluate($callback, [
-                'file' => $file,
-            ]);
-        } else {
-            $file = $this->handleUpload($file);
-        }
-
-        $this->state($file);
-    }
-
-    protected function handleUpload($file)
-    {
-        $storeMethod = $this->getVisibility() === 'public' ? 'storePublicly' : 'store';
-
-        return $file->{$storeMethod}($this->getDirectory(), $this->getDiskName());
+        $this->state($state);
     }
 
     public function isMultiple(): bool
     {
-        return $this->getContainer()->getParentComponent() instanceof MultipleFileUpload;
-    }
-
-    protected function handleUploadedFileRemoval($file): void
-    {
-        $this->state(null);
-    }
-
-    protected function handleUploadedFileDeletion($file): void
-    {
-    }
-
-    public function removeUploadedFile(): static
-    {
-        $file = $this->getState();
-
-        if ($callback = $this->removeUploadedFileUsing) {
-            $this->evaluate($callback, [
-                'file' => $file,
-            ]);
-        } else {
-            $this->handleUploadedFileRemoval($file);
-        }
-
-        if ($this->isMultiple()) {
-            $container = $this->getContainer();
-
-            /** @var MultipleFileUpload $parentComponent */
-            $parentComponent = $container->getParentComponent();
-
-            $parentComponent->removeUploadedFile(
-                $container->getStatePath(isAbsolute: false),
-            );
-        }
-
-        return $this;
+        return $this->evaluate($this->isMultiple);
     }
 }
