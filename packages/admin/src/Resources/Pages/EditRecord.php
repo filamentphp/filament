@@ -51,9 +51,18 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
     {
         $this->callHook('beforeFill');
 
-        $this->form->fill($this->record->toArray());
+        $data = $this->record->toArray();
+
+        $data = $this->mutateRecordDataBeforeFill($data);
+
+        $this->form->fill($data);
 
         $this->callHook('afterFill');
+    }
+
+    protected function mutateRecordDataBeforeFill(array $data): array
+    {
+        return $data;
     }
 
     public function save(bool $shouldRedirect = true): void
