@@ -8,7 +8,6 @@ use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use Livewire\TemporaryUploadedFile;
-use SplFileInfo;
 
 trait HasFileAttachments
 {
