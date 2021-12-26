@@ -2,13 +2,14 @@
 
 namespace Filament\Forms\Contracts;
 
+use Livewire\TemporaryUploadedFile;
 use SplFileInfo;
 
 interface HasForms
 {
     public function dispatchFormEvent(...$args): void;
 
-    public function getComponentFileAttachment(string $statePath): ?SplFileInfo;
+    public function getComponentFileAttachment(string $statePath): ?TemporaryUploadedFile;
 
     public function getComponentFileAttachmentUrl(string $statePath): ?string;
 

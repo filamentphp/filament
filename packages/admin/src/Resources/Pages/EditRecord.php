@@ -51,6 +51,7 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
     {
         $this->callHook('beforeFill');
 
+        $this->form->fill();
         $this->form->fill($this->record->toArray());
 
         $this->callHook('afterFill');

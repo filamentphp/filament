@@ -22,6 +22,7 @@ FilePond.registerPlugin(FilePondPluginImageTransform)
 export default (Alpine) => {
     Alpine.data('fileUploadFormComponent', ({
         acceptedFileTypes,
+        deleteUploadedFileUsing,
         getUploadedFileUrlUsing,
         imageCropAspectRatio,
         imagePreviewHeight,
@@ -109,13 +110,11 @@ export default (Alpine) => {
                                 return
                             }
 
-                            await removeUploadedFileUsing(fileKey)
+                            await deleteUploadedFileUsing(fileKey)
 
                             load()
                         },
                         revert: async (uniqueFileId, load) => {
-                            console.log(uniqueFileId)
-
                             await removeUploadedFileUsing(uniqueFileId)
 
                             load()
@@ -124,17 +123,11 @@ export default (Alpine) => {
                 })
 
                 this.$watch('state', async () => {
-                    if (this.state.length === 0) {
-                        this.pond.removeFiles()
-
-                        return
-                    }
-
                     if (Object.values(this.state).filter((file) => file.startsWith('livewire-file:')).length) {
                         return
                     }
 
-                    this.pond.files = []
+                    let files = []
 
                     for (let fileKey of Object.keys(this.state)) {
                         let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey)
@@ -143,7 +136,7 @@ export default (Alpine) => {
                             continue
                         }
 
-                        this.pond.files.push({
+                        files.push({
                             source: uploadedFileUrl,
                             options: {
                                 type: 'local',
@@ -152,6 +145,8 @@ export default (Alpine) => {
 
                         this.cachedFileKeys[uploadedFileUrl] = fileKey
                     }
+
+                    this.pond.files = files
                 })
             }
         }

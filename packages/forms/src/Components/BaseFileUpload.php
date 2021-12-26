@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
+use Livewire\TemporaryUploadedFile;
 use SplFileInfo;
 
 class BaseFileUpload extends Field
@@ -36,8 +37,6 @@ class BaseFileUpload extends Field
     protected ?Closure $deleteUploadedFileUsing = null;
 
     protected ?Closure $getUploadedFileUrlUsing = null;
-
-    protected ?Closure $removeUploadedFileUsing = null;
 
     protected ?Closure $saveUploadedFileUsing = null;
 
@@ -71,6 +70,32 @@ class BaseFileUpload extends Field
             }
 
             return $files[0] ?? null;
+        });
+
+        $this->getUploadedFileUrlUsing(function (BaseFileUpload $component, string $file): string {
+            /** @var FilesystemAdapter $storage */
+            $storage = $component->getDisk();
+
+            /** @var \League\Flysystem\Filesystem $storageDriver */
+            $storageDriver = $storage->getDriver();
+
+            if (
+                $storageDriver->getAdapter() instanceof AwsS3Adapter &&
+                $storage->getVisibility($file) === 'private'
+            ) {
+                return $storage->temporaryUrl(
+                    $file,
+                    now()->addMinutes(5),
+                );
+            }
+
+            return $storage->url($file);
+        });
+
+        $this->saveUploadedFileUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file): string {
+            $storeMethod = $component->getVisibility() === 'public' ? 'storePublicly' : 'store';
+
+            return $file->{$storeMethod}($this->getDirectory(), $this->getDiskName());
         });
     }
 
@@ -169,13 +194,6 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function removeUploadedFileUsing(?Closure $callback): static
-    {
-        $this->removeUploadedFileUsing = $callback;
-
-        return $this;
-    }
-
     public function saveUploadedFileUsing(?Closure $callback): static
     {
         $this->saveUploadedFileUsing = $callback;
@@ -242,7 +260,7 @@ class BaseFileUpload extends Field
         }
 
         $rules[] = function (string $attribute, array $value, Closure $fail): void {
-            $files = array_filter($value, fn (SplFileInfo | string $file): bool => $file instanceof SplFileInfo);
+            $files = array_filter($value, fn (TemporaryUploadedFile | string $file): bool => $file instanceof TemporaryUploadedFile);
 
             $name = $this->getName();
 
@@ -264,45 +282,39 @@ class BaseFileUpload extends Field
 
     public function deleteUploadedFile(string $fileKey): static
     {
-        $file = $this->getState()[$fileKey] ?? null;
+        $file = $this->removeUploadedFile($fileKey);
 
-        if (! $file) {
+        if (blank($file)) {
             return $this;
         }
 
-        if ($callback = $this->deleteUploadedFileUsing) {
-            $this->evaluate($callback, [
-                'file' => $file,
-            ]);
-        } else {
-            $this->handleUploadedFileDeletion($file);
+        $callback = $this->deleteUploadedFileUsing;
+
+        if (! $callback) {
+            return $this;
         }
+
+        $this->evaluate($callback, [
+            'file' => $file,
+        ]);
 
         return $this;
     }
 
-    public function removeUploadedFile(string $fileKey): static
+    public function removeUploadedFile(string $fileKey): string | TemporaryUploadedFile | null
     {
         $files = $this->getState();
         $file = $files[$fileKey] ?? null;
 
         if (! $file) {
-            return $this;
+            return null;
         }
 
         unset($files[$fileKey]);
 
         $this->state($files);
 
-        if ($callback = $this->removeUploadedFileUsing) {
-            $this->evaluate($callback, [
-                'file' => $file,
-            ]);
-        } else {
-            $this->handleUploadedFileRemoval($file);
-        }
-
-        return $this;
+        return $file;
     }
 
     public function getUploadedFileUrl(string $fileKey): ?string
@@ -315,72 +327,40 @@ class BaseFileUpload extends Field
             return null;
         }
 
-        if ($callback = $this->getUploadedFileUrlUsing) {
-            return $this->evaluate($callback, [
-                'file' => $file,
-            ]);
+        $callback = $this->getUploadedFileUrlUsing;
+
+        if (! $callback) {
+            return null;
         }
 
-        return $this->handleUploadedFileUrlRetrieval($file);
-    }
-
-    protected function handleUploadedFileUrlRetrieval($file): ?string
-    {
-        /** @var FilesystemAdapter $storage */
-        $storage = $this->getDisk();
-
-        /** @var \League\Flysystem\Filesystem $storageDriver */
-        $storageDriver = $storage->getDriver();
-
-        if (
-            $storageDriver->getAdapter() instanceof AwsS3Adapter &&
-            $storage->getVisibility($file) === 'private'
-        ) {
-            return $storage->temporaryUrl(
-                $file,
-                now()->addMinutes(5),
-            );
-        }
-
-        return $storage->url($file);
+        return $this->evaluate($callback, [
+            'file' => $file,
+        ]);
     }
 
     public function saveUploadedFiles(): void
     {
-        $state = array_map(function (SplFileInfo | string $file) {
-            if (! $file instanceof SplFileInfo) {
+        $state = array_map(function (TemporaryUploadedFile | string $file) {
+            if (! $file instanceof TemporaryUploadedFile) {
                 return $file;
             }
 
-            if ($callback = $this->saveUploadedFileUsing) {
-                return $this->evaluate($callback, [
-                    'file' => $file,
-                ]);
+            $callback = $this->saveUploadedFileUsing;
+
+            if (! $callback) {
+                return $file;
             }
 
-            return $this->handleUpload($file);
+            return $this->evaluate($callback, [
+                'file' => $file,
+            ]);
         }, $this->getState());
 
         $this->state($state);
     }
 
-    protected function handleUpload($file)
-    {
-        $storeMethod = $this->getVisibility() === 'public' ? 'storePublicly' : 'store';
-
-        return $file->{$storeMethod}($this->getDirectory(), $this->getDiskName());
-    }
-
     public function isMultiple(): bool
     {
         return $this->evaluate($this->isMultiple);
-    }
-
-    protected function handleUploadedFileRemoval($file): void
-    {
-    }
-
-    protected function handleUploadedFileDeletion($file): void
-    {
     }
 }

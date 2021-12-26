@@ -15817,6 +15817,7 @@ registerPlugin(filepond_plugin_image_transform_esm_default);
 var file_upload_default = (Alpine) => {
   Alpine.data("fileUploadFormComponent", ({
     acceptedFileTypes,
+    deleteUploadedFileUsing,
     getUploadedFileUrlUsing,
     imageCropAspectRatio,
     imagePreviewHeight,
@@ -15889,31 +15890,26 @@ var file_upload_default = (Alpine) => {
               if (!fileKey) {
                 return;
               }
-              await removeUploadedFileUsing(fileKey);
+              await deleteUploadedFileUsing(fileKey);
               load();
             },
             revert: async (uniqueFileId, load) => {
-              console.log(uniqueFileId);
               await removeUploadedFileUsing(uniqueFileId);
               load();
             }
           }
         });
         this.$watch("state", async () => {
-          if (this.state.length === 0) {
-            this.pond.removeFiles();
-            return;
-          }
           if (Object.values(this.state).filter((file2) => file2.startsWith("livewire-file:")).length) {
             return;
           }
-          this.pond.files = [];
+          let files = [];
           for (let fileKey of Object.keys(this.state)) {
             let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey);
             if (!uploadedFileUrl) {
               continue;
             }
-            this.pond.files.push({
+            files.push({
               source: uploadedFileUrl,
               options: {
                 type: "local"
@@ -15921,6 +15917,7 @@ var file_upload_default = (Alpine) => {
             });
             this.cachedFileKeys[uploadedFileUrl] = fileKey;
           }
+          this.pond.files = files;
         });
       }
     };
@@ -18983,7 +18980,6 @@ var multi_select_default = (Alpine) => {
         if (!this.state) {
           this.state = [];
         }
-        this.state = this.state.map((value) => value.toString());
         this.labels = await getOptionLabelsUsing();
         this.$watch("search", async () => {
           if (!this.isOpen || this.search === "" || this.search === null) {
@@ -19153,9 +19149,6 @@ var select_default = (Alpine) => {
           this.openListbox();
         }
         this.label = await getOptionLabelUsing();
-        if (this.state !== null) {
-          this.state = this.state.toString();
-        }
         this.$watch("search", async () => {
           if (!this.isOpen || this.search === "" || this.search === null) {
             this.options = options;

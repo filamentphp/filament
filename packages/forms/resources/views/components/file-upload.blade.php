@@ -1,7 +1,7 @@
 <x-forms::field-wrapper
     :id="$getId()"
     :label="$getLabel()"
-    :label-sr-only="$isAvatar() || $isMultiple() || $isLabelHidden()"
+    :label-sr-only="$isAvatar() || $isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
     :required="$isRequired()"
@@ -10,6 +10,9 @@
     <div
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
+            deleteUploadedFileUsing: async (fileKey) => {
+                return await $wire.deleteUploadedFile('{{ $getStatePath() }}', fileKey)
+            },
             getUploadedFileUrlUsing: async (fileKey) => {
                 return await $wire.getUploadedFileUrl('{{ $getStatePath() }}', fileKey)
             },
