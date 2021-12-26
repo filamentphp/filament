@@ -65,9 +65,13 @@ trait HasComponents
             return $component;
         }, $this->evaluate($this->components));
 
+        if ($withHidden) {
+            return $components;
+        }
+
         return array_filter(
             $components,
-            fn (Component $component) => $withHidden ?: ! $component->isHidden(),
+            fn (Component $component) => ! $component->isHidden(),
         );
     }
 }

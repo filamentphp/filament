@@ -20,6 +20,8 @@ class TagsInput extends Field
     {
         parent::setUp();
 
+        $this->default([]);
+
         $this->afterStateHydrated(function (TagsInput $component, $state): void {
             if (is_array($state)) {
                 return;

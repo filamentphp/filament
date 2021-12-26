@@ -26,6 +26,16 @@ class Builder extends Field
     {
         parent::setUp();
 
+        $this->default([]);
+
+        $this->afterStateHydrated(function (Builder $component, array $state): void {
+            $items = collect($state)
+                ->mapWithKeys(fn ($itemData) => [(string) Str::uuid() => $itemData])
+                ->toArray();
+
+            $component->state($items);
+        });
+
         $this->registerListeners([
             'builder::createItem' => [
                 function (Builder $component, string $statePath, string $block, ?string $afterUuid = null): void {
@@ -48,7 +58,7 @@ class Builder extends Field
                     if ($afterUuid) {
                         $newItems = [];
 
-                        foreach ($component->getNormalisedState() as $uuid => $item) {
+                        foreach ($component->getState() as $uuid => $item) {
                             $newItems[$uuid] = $item;
 
                             if ($uuid === $afterUuid) {
@@ -74,7 +84,7 @@ class Builder extends Field
                         return;
                     }
 
-                    $items = $component->getNormalisedState();
+                    $items = $component->getState();
 
                     unset($items[$uuidToDelete]);
 
@@ -96,7 +106,7 @@ class Builder extends Field
                         return;
                     }
 
-                    $items = array_move_after($component->getNormalisedState(), $uuidToMoveDown);
+                    $items = array_move_after($component->getState(), $uuidToMoveDown);
 
                     $livewire = $component->getLivewire();
                     data_set($livewire, $statePath, $items);
@@ -116,7 +126,7 @@ class Builder extends Field
                         return;
                     }
 
-                    $items = array_move_before($component->getNormalisedState(), $uuidToMoveUp);
+                    $items = array_move_before($component->getState(), $uuidToMoveUp);
 
                     $livewire = $component->getLivewire();
                     data_set($livewire, $statePath, $items);
@@ -130,6 +140,10 @@ class Builder extends Field
             return __('forms::components.builder.buttons.create_item.label', [
                 'label' => lcfirst($component->getLabel()),
             ]);
+        });
+
+        $this->mutateDehydratedStateUsing(function (array $state): array {
+            return array_values($state);
         });
     }
 
@@ -181,7 +195,7 @@ class Builder extends Field
 
     public function getChildComponentContainers(): array
     {
-        return collect($this->getNormalisedState())
+        return collect($this->getState())
             ->map(function ($itemData, $itemIndex): ComponentContainer {
                 return $this->getBlock($itemData['type'])
                     ->getChildComponentContainer()
@@ -198,18 +212,6 @@ class Builder extends Field
     public function getCreateItemButtonLabel(): string
     {
         return $this->evaluate($this->createItemButtonLabel);
-    }
-
-    public function getNormalisedState(): array
-    {
-        if (! is_array($state = $this->getState())) {
-            return [];
-        }
-
-        return array_filter(
-            $state,
-            fn ($item) => is_array($item) && $this->hasBlock($item['type'] ?? null),
-        );
     }
 
     public function hasBlock($name): bool

@@ -26,6 +26,8 @@ class MultiSelect extends Field
     {
         parent::setUp();
 
+        $this->default([]);
+
         $this->getOptionLabelsUsing(function (MultiSelect $component, array $values): array {
             $options = $component->getOptions();
 

@@ -22,6 +22,16 @@ class Repeater extends Field
     {
         parent::setUp();
 
+        $this->defaultItems(1);
+
+        $this->afterStateHydrated(function (Repeater $component, array $state): void {
+            $items = collect($state)
+                ->mapWithKeys(fn ($itemData) => [(string) Str::uuid() => $itemData])
+                ->toArray();
+
+            $component->state($items);
+        });
+
         $this->registerListeners([
             'repeater::createItem' => [
                 function (Repeater $component, string $statePath): void {
@@ -51,7 +61,7 @@ class Repeater extends Field
                         return;
                     }
 
-                    $items = $component->getNormalisedState();
+                    $items = $component->getState();
 
                     unset($items[$uuidToDelete]);
 
@@ -73,7 +83,7 @@ class Repeater extends Field
                         return;
                     }
 
-                    $items = array_move_after($component->getNormalisedState(), $uuidToMoveDown);
+                    $items = array_move_after($component->getState(), $uuidToMoveDown);
 
                     $livewire = $component->getLivewire();
                     data_set($livewire, $statePath, $items);
@@ -93,7 +103,7 @@ class Repeater extends Field
                         return;
                     }
 
-                    $items = array_move_before($component->getNormalisedState(), $uuidToMoveUp);
+                    $items = array_move_before($component->getState(), $uuidToMoveUp);
 
                     $livewire = $component->getLivewire();
                     data_set($livewire, $statePath, $items);
@@ -105,6 +115,10 @@ class Repeater extends Field
             return __('forms::components.repeater.buttons.create_item.label', [
                 'label' => lcfirst($component->getLabel()),
             ]);
+        });
+
+        $this->mutateDehydratedStateUsing(function (array $state): array {
+            return array_values($state);
         });
     }
 
@@ -144,7 +158,7 @@ class Repeater extends Field
 
     public function getChildComponentContainers(): array
     {
-        return collect($this->getNormalisedState())
+        return collect($this->getState())
             ->map(function ($itemData, $itemIndex): ComponentContainer {
                 return $this
                     ->getChildComponentContainer()
@@ -156,15 +170,6 @@ class Repeater extends Field
     public function getCreateItemButtonLabel(): string
     {
         return $this->evaluate($this->createItemButtonLabel);
-    }
-
-    public function getNormalisedState(): array
-    {
-        if (! is_array($state = $this->getState())) {
-            return [];
-        }
-
-        return array_filter($state, fn ($item) => is_array($item));
     }
 
     public function isItemMovementDisabled(): bool

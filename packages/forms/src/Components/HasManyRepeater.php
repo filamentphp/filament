@@ -89,7 +89,7 @@ class HasManyRepeater extends Repeater
 
     public function getChildComponentContainers(): array
     {
-        return collect($this->getNormalisedState())
+        return collect($this->getState())
             ->map(function ($itemData, $itemKey): ComponentContainer {
                 return $this
                     ->getChildComponentContainer()

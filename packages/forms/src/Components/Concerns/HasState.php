@@ -17,6 +17,8 @@ trait HasState
 
     protected ?Closure $dehydrateStateUsing = null;
 
+    protected ?Closure $mutateDehydratedStateUsing = null;
+
     protected bool $hasDefaultState = false;
 
     protected bool | Closure $isDehydrated = true;
@@ -116,6 +118,26 @@ trait HasState
     public function hydrateNullState(): static
     {
         $this->state(null);
+
+        return $this;
+    }
+
+    public function mutateDehydratedState($state)
+    {
+        return $this->evaluate(
+            $this->mutateDehydratedStateUsing,
+            ['state' => $state],
+        );
+    }
+
+    public function mutatesDehydratedState(): bool
+    {
+        return $this->mutateDehydratedStateUsing instanceof Closure;
+    }
+
+    public function mutateDehydratedStateUsing(?Closure $callback): static
+    {
+        $this->mutateDehydratedStateUsing = $callback;
 
         return $this;
     }
