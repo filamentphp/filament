@@ -3,7 +3,6 @@
 namespace Filament\Forms\Contracts;
 
 use Livewire\TemporaryUploadedFile;
-use SplFileInfo;
 
 interface HasForms
 {

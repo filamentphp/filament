@@ -11,7 +11,6 @@ use Livewire\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use SplFileInfo;
 
 class SpatieMediaLibraryFileUpload extends FileUpload
 {
