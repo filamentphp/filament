@@ -5,8 +5,8 @@ namespace Filament\Forms\Concerns;
 use Filament\Forms\ComponentContainer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
+use Livewire\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
-use SplFileInfo;
 
 trait InteractsWithForms
 {
@@ -34,7 +34,7 @@ trait InteractsWithForms
         }
     }
 
-    public function getComponentFileAttachment(string $statePath): ?SplFileInfo
+    public function getComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
     {
         return data_get($this->componentFileAttachments, $statePath);
     }
@@ -94,10 +94,17 @@ trait InteractsWithForms
         return [];
     }
 
-    public function getUploadedFileUrl(string $statePath): ?string
+    public function deleteUploadedFile(string $statePath, string $fileKey): void
     {
         foreach ($this->getCachedForms() as $form) {
-            if ($url = $form->getUploadedFileUrl($statePath)) {
+            $form->deleteUploadedFile($statePath, $fileKey);
+        }
+    }
+
+    public function getUploadedFileUrl(string $statePath, string $fileKey): ?string
+    {
+        foreach ($this->getCachedForms() as $form) {
+            if ($url = $form->getUploadedFileUrl($statePath, $fileKey)) {
                 return $url;
             }
         }
@@ -105,10 +112,10 @@ trait InteractsWithForms
         return null;
     }
 
-    public function removeUploadedFile(string $statePath): void
+    public function removeUploadedFile(string $statePath, string $fileKey): void
     {
         foreach ($this->getCachedForms() as $form) {
-            $form->removeUploadedFile($statePath);
+            $form->removeUploadedFile($statePath, $fileKey);
         }
     }
 

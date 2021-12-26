@@ -3,8 +3,10 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Spatie\MediaLibrary\HasMedia;
 
+/**
+ * @deprecated Use `\Filament\Forms\Components\SpatieMediaLibraryFileUpload` instead, with the `multiple()` method.
+ */
 class SpatieMediaLibraryMultipleFileUpload extends MultipleFileUpload
 {
     protected string | Closure | null $collection = null;
@@ -13,34 +15,7 @@ class SpatieMediaLibraryMultipleFileUpload extends MultipleFileUpload
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (SpatieMediaLibraryMultipleFileUpload $component) {
-            $component->state($component->getUploadedFiles());
-            $component->appendNewUploadField();
-        });
-
         $this->dehydrated(false);
-    }
-
-    public function getUploadedFiles(): array
-    {
-        $collection = $this->getCollection();
-        $model = $this->getModel();
-
-        if (! $model instanceof HasMedia) {
-            return [];
-        }
-
-        $files = [];
-
-        foreach ($model->getMedia($collection) as $file) {
-            $uuid = $file->uuid;
-
-            $files[$uuid] = [
-                'file' => $uuid,
-            ];
-        }
-
-        return $files;
     }
 
     public function collection(string | Closure | null $collection): static
@@ -55,8 +30,16 @@ class SpatieMediaLibraryMultipleFileUpload extends MultipleFileUpload
         return $this->evaluate($this->collection) ?? 'default';
     }
 
-    protected function getDefaultUploadComponent(): Component
+    public function getUploadComponent(): Component
     {
-        return SpatieMediaLibraryFileUpload::make('file');
+        /** @var SpatieMediaLibraryFileUpload $component */
+        $component = parent::getUploadComponent();
+
+        return $component->collection($this->getCollection());
+    }
+
+    protected function getDefaultUploadComponent(): BaseFileUpload
+    {
+        return SpatieMediaLibraryFileUpload::make('files');
     }
 }

@@ -32,6 +32,9 @@ Route::domain(config('filament.domain'))
             Route::get('/logout', function (): RedirectResponse {
                 Filament::auth()->logout();
 
+                session()->invalidate();
+                session()->regenerateToken();
+
                 return redirect()->route('filament.auth.login');
             })->name('auth.logout');
         });

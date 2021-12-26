@@ -21,11 +21,3 @@ SpatieMediaLibraryFileUpload::make('avatar')->collection('avatars'),
 ```
 
 The media library file upload supports all the customization options of the [original file upload component](/docs/forms/fields#file-upload).
-
-You may also upload multiple files:
-
-```php
-use Filament\Forms\Components\SpatieMediaLibraryMultipleFileUpload;
-
-SpatieMediaLibraryMultipleFileUpload::make('documents')->collection('documents'),
-```

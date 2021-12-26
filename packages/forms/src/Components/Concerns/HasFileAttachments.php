@@ -7,7 +7,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
-use SplFileInfo;
+use Livewire\TemporaryUploadedFile;
 
 trait HasFileAttachments
 {
@@ -35,7 +35,7 @@ trait HasFileAttachments
         return $this;
     }
 
-    public function saveUploadedFileAttachment(SplFileInfo $attachment): ?string
+    public function saveUploadedFileAttachment(TemporaryUploadedFile $attachment): ?string
     {
         if ($callback = $this->saveUploadedFileAttachmentsUsing) {
             $file = $this->evaluate($callback, [

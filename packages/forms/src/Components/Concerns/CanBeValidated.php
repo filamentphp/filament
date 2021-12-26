@@ -169,9 +169,9 @@ trait CanBeValidated
 
     public function getValidationRules(): array
     {
-        $rules = [];
-
-        $rules[] = $this->getRequiredValidationRule();
+        $rules = [
+            $this->getRequiredValidationRule(),
+        ];
 
         foreach ($this->rules as [$rule, $condition]) {
             if (is_numeric($rule)) {

@@ -22,6 +22,7 @@ FilePond.registerPlugin(FilePondPluginImageTransform)
 export default (Alpine) => {
     Alpine.data('fileUploadFormComponent', ({
         acceptedFileTypes,
+        deleteUploadedFileUsing,
         getUploadedFileUrlUsing,
         imageCropAspectRatio,
         imagePreviewHeight,
@@ -41,6 +42,8 @@ export default (Alpine) => {
         uploadUsing,
     }) => {
         return {
+            cachedFileKeys: {},
+
             files: [],
 
             pond: null,
@@ -48,15 +51,25 @@ export default (Alpine) => {
             state,
 
             init: async function () {
-                let uploadedFileUrl = await getUploadedFileUrlUsing()
+                for (const [fileKey, file] of Object.entries(this.state)) {
+                    if (file.startsWith('livewire-file:')) {
+                        continue;
+                    }
 
-                if (uploadedFileUrl) {
-                    this.files = [{
+                    let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey)
+
+                    if (! uploadedFileUrl) {
+                        continue
+                    }
+
+                    this.files.push({
                         source: uploadedFileUrl,
                         options: {
                             type: 'local',
                         },
-                    }]
+                    })
+
+                    this.cachedFileKeys[uploadedFileUrl] = fileKey
                 }
 
                 this.pond = FilePond.create(this.$refs.input, {
@@ -84,10 +97,20 @@ export default (Alpine) => {
                             load(blob)
                         },
                         process: async (fieldName, file, metadata, load, error, progress) => {
-                            await uploadUsing(file, load, error, progress)
+                            let fileKey = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                            )
+
+                            await uploadUsing(fileKey, file, load, error, progress)
                         },
                         remove: async (source, load) => {
-                            await removeUploadedFileUsing()
+                            let fileKey = this.cachedFileKeys[source] ?? null
+
+                            if (! fileKey) {
+                                return
+                            }
+
+                            await deleteUploadedFileUsing(fileKey)
 
                             load()
                         },
@@ -100,28 +123,30 @@ export default (Alpine) => {
                 })
 
                 this.$watch('state', async () => {
-                    if (! this.state) {
-                        this.pond.removeFiles()
-
+                    if (Object.values(this.state).filter((file) => file.startsWith('livewire-file:')).length) {
                         return
                     }
 
-                    if (this.state.startsWith('livewire-file:')) {
-                        return
-                    }
+                    let files = []
 
-                    let uploadedFileUrl = await getUploadedFileUrlUsing()
+                    for (let fileKey of Object.keys(this.state)) {
+                        let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey)
 
-                    if (uploadedFileUrl) {
-                        this.pond.files = [{
+                        if (! uploadedFileUrl) {
+                            continue
+                        }
+
+                        files.push({
                             source: uploadedFileUrl,
                             options: {
                                 type: 'local',
                             },
-                        }]
-                    } else {
-                        this.pond.files = []
+                        })
+
+                        this.cachedFileKeys[uploadedFileUrl] = fileKey
                     }
+
+                    this.pond.files = files
                 })
             }
         }
