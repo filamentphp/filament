@@ -556,6 +556,19 @@ protected function mutateFormDataBeforeSave(array $data): array
 }
 ```
 
+### Customizing data before filling the form
+
+On edit pages, you may define a `mutateFormDataBeforeFill()` method to modify the record data before it is filled into the form:
+
+```php
+protected function mutateFormDataBeforeFill(array $data): array
+{
+    $data['user_id'] = auth()->id();
+
+    return $data;
+}
+```
+
 ### Lifecycle hooks
 
 Hooks may be used to execute methods at various points within a page's lifecycle, like before a form is saved. To set up a hook, create a protected method on the page class with the name of the hook:

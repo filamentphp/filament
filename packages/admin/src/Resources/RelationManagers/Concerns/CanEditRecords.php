@@ -22,12 +22,19 @@ trait CanEditRecords
         $this->callHook('beforeFill');
         $this->callHook('beforeEditFill');
 
-        $this->getMountedTableActionForm()->fill(
-            $this->getMountedTableActionRecord()->toArray(),
-        );
+        $data = $this->getMountedTableActionRecord()->toArray();
+
+        $data = $this->mutateFormDataBeforeFill($data);
+
+        $this->getMountedTableActionForm()->fill($data);
 
         $this->callHook('afterFill');
         $this->callHook('afterEditFill');
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        return $data;
     }
 
     public function save(): void
