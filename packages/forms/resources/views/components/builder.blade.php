@@ -18,6 +18,7 @@
                         wire:key="{{ $item->getStatePath() }}"
                     >
                         <div class="flex">
+                            @unless ($isItemMovementDisabled() && $isItemDeletionDisabled())
                             <div class="w-8">
                                 <div class="bg-white divide-y shadow-sm rounded-l-lg border-b border-l border-t border-gray-300 overflow-hidden">
                                     @unless ($loop->first || $isItemMovementDisabled())
@@ -63,6 +64,7 @@
                                     @endunless
                                 </div>
                             </div>
+                            @endunless
 
                             <div class="flex-1 p-6 bg-white shadow-sm rounded-r-lg rounded-b-lg border border-gray-300">
                                 {{ $item }}
@@ -124,7 +126,7 @@
             </ul>
         @endif
 
-        @if (blank($getMaxItems()) || ($getMaxItems() > $getItemsCount()) || $isItemCreationDisabled())
+        @if ((blank($getMaxItems()) || ($getMaxItems() > $getItemsCount())) && !$isItemCreationDisabled())
             <div x-data="{ isCreateButtonDropdownOpen: false }" class="relative flex justify-center">
                 <button
                     x-on:click="isCreateButtonDropdownOpen = true"

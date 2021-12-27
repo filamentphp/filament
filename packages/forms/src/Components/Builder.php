@@ -193,13 +193,13 @@ class Builder extends Field
 
         return $this;
     }
-    
+
     public function disableItemDeletion(bool | Closure $condition = true): static
     {
         $this->isItemDeletionDisabled = $condition;
 
         return $this;
-    }    
+    }
 
     public function hydrateDefaultItemState(string $uuid): void
     {
