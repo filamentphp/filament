@@ -2,10 +2,107 @@
 
 return [
 
+    'builder' => [
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => 'إضافة إلى :label',
+            ],
+
+            'create_item_between' => [
+                'label' => 'إضافة في المنتصف',
+            ],
+
+            'delete_item' => [
+                'label' => 'حذف',
+            ],
+
+            'move_item_down' => [
+                'label' => 'تحريك لأسفل',
+            ],
+
+            'move_item_up' => [
+                'label' => 'تحريك لأعلى',
+            ],
+
+        ],
+
+    ],
+
+    'key_value' => [
+
+        'buttons' => [
+
+            'add' => [
+                'label' => 'إضافة صف',
+            ],
+
+            'delete' => [
+                'label' => 'حذف صف',
+            ],
+
+        ],
+
+        'fields' => [
+
+            'key' => [
+                'label' => 'المفتاح',
+            ],
+
+            'value' => [
+                'label' => 'القيمة',
+            ],
+
+        ],
+
+    ],
+
+    'markdown_editor' => [
+
+        'toolbar_buttons' => [
+            'attach_files' => 'إضافة ملفات',
+            'bold' => 'عريض',
+            'bullet_list' => 'قائمة نقطية',
+            'code_block' => 'نص برمجي',
+            'edit' => 'تحرير',
+            'italic' => 'مائل',
+            'link' => 'رابط تشعبي',
+            'ordered_list' => 'قائمة رقمية',
+            'preview' => 'استعراض',
+            'strike' => 'خط في المنتصف',
+        ],
+
+    ],
+
     'multi_select' => [
         'no_search_results_message' => 'لا توجد عناصر تطابق بحثك.',
         'placeholder' => 'إختر عنصرا',
-        'search_prompt' => 'لا توجد عناصر للاختيار من بينها.',
+        'search_prompt' => 'أبدأ الكتابة للبحث...',
+    ],
+
+    'repeater' => [
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => 'Add to :label',
+            ],
+
+            'delete_item' => [
+                'label' => 'Delete',
+            ],
+
+            'move_item_down' => [
+                'label' => 'Move down',
+            ],
+
+            'move_item_up' => [
+                'label' => 'Move up',
+            ],
+
+        ],
+
     ],
 
     'rich_editor' => [
@@ -29,18 +126,18 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'إرفاق ملفات',
-            'blockquote' => 'اقتباس',
+            'blockquote' => 'إقتباس',
             'bold' => 'عريض',
-            'bullet_list' => 'نقاط',
-            'code_block' => 'كود',
+            'bullet_list' => 'قائمة نقطية',
+            'code_block' => 'نص برمجي',
             'h1' => 'عنوان',
-            'h2' => 'عنوان',
+            'h2' => 'عنوان رئيسي',
             'h3' => 'عنوان فرعي',
             'italic' => 'مائل',
-            'link' => 'رابط',
-            'ordered_list' => 'أرقام',
+            'link' => 'رابط تشعبي',
+            'ordered_list' => 'قائمة رقمية',
             'redo' => 'إعادة',
-            'strike' => 'يتوسطه خط',
+            'strike' => 'خط في المنتصف',
             'undo' => 'تراجع',
         ],
 
@@ -49,7 +146,7 @@ return [
     'select' => [
         'no_search_results_message' => 'لا توجد عناصر تطابق بحثك.',
         'placeholder' => 'إختر عنصرا',
-        'search_prompt' => 'إبدأ الكتابة للبحث ...',
+        'search_prompt' => 'أبدأ الكتابة للبحث ...',
     ],
 
     'tags_input' => [

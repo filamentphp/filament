@@ -49,7 +49,7 @@ return [
             'buttons' => [
 
                 'cancel' => [
-                    'label' => 'الغاء',
+                    'label' => 'إلغاء',
                 ],
 
                 'delete' => [

@@ -24,8 +24,8 @@ class Repeater extends Field
 
         $this->defaultItems(1);
 
-        $this->afterStateHydrated(function (Repeater $component, array $state): void {
-            $items = collect($state)
+        $this->afterStateHydrated(function (Repeater $component, ?array $state): void {
+            $items = collect($state ?? [])
                 ->mapWithKeys(fn ($itemData) => [(string) Str::uuid() => $itemData])
                 ->toArray();
 
