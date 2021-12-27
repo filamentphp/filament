@@ -2,24 +2,24 @@
 
 return [
 
-    'title' => 'اضافة :label',
+    'title' => 'إضافة :label',
 
-    'breadcrumb' => 'اضافة',
+    'breadcrumb' => 'إضافة',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'الغاء',
+                'label' => 'إلغاء',
             ],
 
             'create' => [
-                'label' => 'اضافة',
+                'label' => 'إضافة',
             ],
 
             'create_and_create_another' => [
-                'label' => 'اضافة & اضافة آخر',
+                'label' => 'إضافة وبدء إضافة أخرى',
             ],
 
         ],
@@ -27,7 +27,7 @@ return [
     ],
 
     'messages' => [
-        'created' => 'تمت الاضافة',
+        'created' => 'تمت الإضافة',
     ],
 
 ];
