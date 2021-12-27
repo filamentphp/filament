@@ -309,6 +309,10 @@ class BaseFileUpload extends Field
             return null;
         }
 
+        if ($file instanceof TemporaryUploadedFile) {
+            $file->delete();
+        }
+
         unset($files[$fileKey]);
 
         $this->state($files);
@@ -347,12 +351,18 @@ class BaseFileUpload extends Field
             $callback = $this->saveUploadedFileUsing;
 
             if (! $callback) {
+                $file->delete();
+
                 return $file;
             }
 
-            return $this->evaluate($callback, [
+            $storedFile = $this->evaluate($callback, [
                 'file' => $file,
             ]);
+
+            $file->delete();
+
+            return $storedFile;
         }, $this->getState());
 
         $this->state($state);
