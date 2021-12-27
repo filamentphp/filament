@@ -128,15 +128,4 @@ class MultiSelect extends Field
 
         return $results;
     }
-
-    public function getState(): array
-    {
-        $state = parent::getState();
-
-        if (! is_array($state)) {
-            return [];
-        }
-
-        return $state;
-    }
 }

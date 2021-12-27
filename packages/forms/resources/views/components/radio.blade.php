@@ -9,7 +9,7 @@
 >
     <div {{ $attributes->merge($getExtraAttributes())->class(['space-y-2']) }}>
         @foreach ($getOptions() as $value => $label)
-            <div class="relative flex items-start">
+            <div class="relative flex items-start space-x-3">
                 <div class="flex items-center h-5">
                     <input
                         name="{{ $getId() }}"
@@ -26,7 +26,7 @@
                     />
                 </div>
 
-                <div class="ml-3 rtl:mr-3 text-sm">
+                <div class="text-sm">
                     <label for="{{ $getId() }}-{{ $value }}" @class([
                         'font-medium',
                         'text-gray-700' => ! $errors->has($getStatePath()),
