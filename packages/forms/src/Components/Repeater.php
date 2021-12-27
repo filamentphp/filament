@@ -134,7 +134,13 @@ class Repeater extends Field
         $this->default(function (Repeater $component) use ($count): array {
             $items = [];
 
-            foreach (range(1, $component->evaluate($count)) as $index) {
+            $count = $component->evaluate($count);
+
+            if (! $count) {
+                return $items;
+            }
+
+            foreach (range(1, $count) as $index) {
                 $items[(string) Str::uuid()] = [];
             }
 
