@@ -356,13 +356,13 @@ class BaseFileUpload extends Field
                 return $file;
             }
 
-            $newFile = $this->evaluate($callback, [
+            $storedFile = $this->evaluate($callback, [
                 'file' => $file,
             ]);
 
             $file->delete();
 
-            return $newFile;
+            return $storedFile;
         }, $this->getState());
 
         $this->state($state);
