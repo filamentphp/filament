@@ -48,17 +48,19 @@
                                         </button>
                                     @endunless
 
-                                    <button
-                                        wire:click="dispatchFormEvent('builder::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
-                                        type="button"
-                                        class="w-full flex items-center justify-center h-8 text-danger-600 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-danger-600 focus:bg-primary-50 focus:border-primary-600"
-                                    >
-                                        <span class="sr-only">
-                                            {{ __('forms::components.builder.buttons.delete_item.label') }}
-                                        </span>
+                                    @unless($isItemDeletionDisabled())
+                                        <button
+                                            wire:click="dispatchFormEvent('builder::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                            type="button"
+                                            class="w-full flex items-center justify-center h-8 text-danger-600 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-danger-600 focus:bg-primary-50 focus:border-primary-600"
+                                        >
+                                            <span class="sr-only">
+                                                {{ __('forms::components.builder.buttons.delete_item.label') }}
+                                            </span>
 
-                                        <x-heroicon-s-trash class="w-5 h-5" />
-                                    </button>
+                                            <x-heroicon-s-trash class="w-5 h-5" />
+                                        </button>
+                                    @endunless
                                 </div>
                             </div>
 
@@ -122,7 +124,7 @@
             </ul>
         @endif
 
-        @if (blank($getMaxItems()) || ($getMaxItems() > $getItemsCount()))
+        @if (blank($getMaxItems()) || ($getMaxItems() > $getItemsCount()) || $isItemCreationDisabled())
             <div x-data="{ isCreateButtonDropdownOpen: false }" class="relative flex justify-center">
                 <button
                     x-on:click="isCreateButtonDropdownOpen = true"
