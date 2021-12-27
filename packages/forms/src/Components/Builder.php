@@ -28,8 +28,8 @@ class Builder extends Field
 
         $this->default([]);
 
-        $this->afterStateHydrated(function (Builder $component, array $state): void {
-            $items = collect($state)
+        $this->afterStateHydrated(function (Builder $component, ?array $state): void {
+            $items = collect($state ?? [])
                 ->mapWithKeys(fn ($itemData) => [(string) Str::uuid() => $itemData])
                 ->toArray();
 
