@@ -15,7 +15,7 @@ return [
 
         'label' => 'التنقل بين الصفحات',
 
-        'overview' => 'عرض :first إلي :last من :total النتائج',
+        'overview' => 'عرض :first إلى :last من :total النتائج',
 
         'fields' => [
 
@@ -59,7 +59,7 @@ return [
 
         'modal' => [
 
-            'requires_confirmation_subheading' => 'هل إنت متأكد من القيام بهذا؟',
+            'requires_confirmation_subheading' => 'هل أنت متأكد من القيام بهذا؟',
 
             'buttons' => [
 
@@ -87,10 +87,16 @@ return [
 
     'selection_indicator' => [
 
+        'selected_count' => 'تم تحديد سجل واحد.|:count سجل/سجلات تم تحديدها.',
+
         'buttons' => [
 
             'select_all' => [
                 'label' => 'تحديد كل السجلات :count',
+            ],
+
+            'deselect_all' => [
+                'label' => 'إلغاء تحديد الكل',
             ],
 
         ],

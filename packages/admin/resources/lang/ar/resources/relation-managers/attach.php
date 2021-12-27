@@ -4,11 +4,11 @@ return [
 
     'action' => [
 
-        'label' => 'ارفاق',
+        'label' => 'إرفاق',
 
         'modal' => [
 
-            'heading' => 'ارفاق :label',
+            'heading' => 'إرفاق :label',
 
             'fields' => [
 
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'ارفاق',
+                    'label' => 'إرفاق',
                 ],
 
                 'attach_and_attach_another' => [
-                    'label' => 'ارفاق & ارفاق المزيد',
+                    'label' => 'إرفاق وبدء إرفاق المزيد',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'تم الارفاق',
+            'attached' => 'تم الإرفاق',
         ],
 
     ],
