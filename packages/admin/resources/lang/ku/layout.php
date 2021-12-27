@@ -2,7 +2,7 @@
 
 return [
 
-    'direction' => 'ltr',
+    'direction' => 'rtl',
 
     'buttons' => [
         'logout' => [
