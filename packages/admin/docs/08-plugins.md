@@ -199,3 +199,24 @@ You may now access this data in your scripts:
     console.log(window.filamentData.userId)
 </script>
 ```
+
+## Commands
+
+To register commands for your plugin, return them from the `getCommands()` method in your service provider:
+
+```php
+use Filament\PluginServiceProvider;
+use Vendor\Package\Commands;
+
+class ExampleServiceProvider extends PluginServiceProvider
+{
+    public static string $name = 'example';
+    
+    protected function getCommands(): array
+    {
+        return [
+            Commands\CustomCommand::class,
+        ];
+    }
+}
+```
