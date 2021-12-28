@@ -355,7 +355,7 @@ class BaseFileUpload extends Field
 
     public function reorderFiles(array $fileKeys): void
     {
-        if (!$this->allowReorder) {
+        if (! $this->allowReorder) {
             return;
         }
 
@@ -421,7 +421,7 @@ class BaseFileUpload extends Field
 
         $callback = $this->reorderFilesUsing;
 
-        if (!$this->allowReorder || !$callback) {
+        if (! $this->allowReorder || ! $callback) {
             $this->state($state);
 
             return;
