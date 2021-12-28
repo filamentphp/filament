@@ -51,6 +51,7 @@
             {{ $isMultiple() ? 'multiple' : '' }}
             {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
             type="file"
+            {{ $getExtraInputAttributeBag() }}
         />
     </div>
 </x-forms::field-wrapper>

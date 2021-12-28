@@ -24,6 +24,7 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     {
         $package
             ->name(static::$name)
+            ->hasCommands($this->getCommands())
             ->hasTranslations()
             ->hasCommands($this->getCommands())
             ->hasViews();
@@ -70,6 +71,11 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         foreach ($this->getWidgets() as $widget) {
             Livewire::component($widget::getName(), $widget);
         }
+    }
+
+    protected function getCommands(): array
+    {
+        return [];
     }
 
     protected function getPages(): array

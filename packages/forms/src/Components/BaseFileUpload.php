@@ -343,6 +343,12 @@ class BaseFileUpload extends Field
 
     public function saveUploadedFiles(): void
     {
+        if (blank($this->getState())) {
+            $this->state([]);
+
+            return;
+        }
+
         $state = array_map(function (TemporaryUploadedFile | string $file) {
             if (! $file instanceof TemporaryUploadedFile) {
                 return $file;

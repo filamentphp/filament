@@ -22,6 +22,10 @@ class Builder extends Field
 
     protected bool | Closure $isItemMovementDisabled = false;
 
+    protected bool | Closure $isItemCreationDisabled = false;
+
+    protected bool | Closure $isItemDeletionDisabled = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -40,6 +44,10 @@ class Builder extends Field
             'builder::createItem' => [
                 function (Builder $component, string $statePath, string $block, ?string $afterUuid = null): void {
                     if ($component->isDisabled()) {
+                        return;
+                    }
+
+                    if ($component->isItemCreationDisabled()) {
                         return;
                     }
 
@@ -77,6 +85,10 @@ class Builder extends Field
             'builder::deleteItem' => [
                 function (Builder $component, string $statePath, string $uuidToDelete): void {
                     if ($component->isDisabled()) {
+                        return;
+                    }
+
+                    if ($component->isItemDeletionDisabled()) {
                         return;
                     }
 
@@ -175,6 +187,20 @@ class Builder extends Field
         return $this;
     }
 
+    public function disableItemCreation(bool | Closure $condition = true): static
+    {
+        $this->isItemCreationDisabled = $condition;
+
+        return $this;
+    }
+
+    public function disableItemDeletion(bool | Closure $condition = true): static
+    {
+        $this->isItemDeletionDisabled = $condition;
+
+        return $this;
+    }
+
     public function hydrateDefaultItemState(string $uuid): void
     {
         $this->getChildComponentContainers()[$uuid]->hydrateDefaultState();
@@ -222,5 +248,15 @@ class Builder extends Field
     public function isItemMovementDisabled(): bool
     {
         return $this->evaluate($this->isItemMovementDisabled);
+    }
+
+    public function isItemCreationDisabled(): bool
+    {
+        return $this->evaluate($this->isItemCreationDisabled);
+    }
+
+    public function isItemDeletionDisabled(): bool
+    {
+        return $this->evaluate($this->isItemDeletionDisabled);
     }
 }
