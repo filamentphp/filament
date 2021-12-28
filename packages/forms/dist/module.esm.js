@@ -6109,8 +6109,7 @@ var date_time_picker_default = (Alpine) => {
         let date = this.getSelectedDate() ?? esm_default().tz(timezone2).hour(0).minute(0).second(0);
         if (this.maxDate !== null && date.isAfter(this.maxDate)) {
           date = null;
-        }
-        if (this.minDate !== null && date.isBefore(this.minDate)) {
+        } else if (this.minDate !== null && date.isBefore(this.minDate)) {
           date = null;
         }
         this.hour = date?.hour() ?? 0;

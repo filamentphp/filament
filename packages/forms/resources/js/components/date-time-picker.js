@@ -72,9 +72,7 @@ export default (Alpine) => {
 
                 if (this.maxDate !== null && date.isAfter(this.maxDate)) {
                     date = null
-                }
-
-                if (this.minDate !== null && date.isBefore(this.minDate)) {
+                } else if (this.minDate !== null && date.isBefore(this.minDate)) {
                     date = null
                 }
 
