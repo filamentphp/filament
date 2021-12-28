@@ -15816,6 +15816,8 @@ registerPlugin(filepond_plugin_image_transform_esm_default);
 var file_upload_default = (Alpine) => {
   Alpine.data("fileUploadFormComponent", ({
     acceptedFileTypes,
+    allowReorder,
+    appendFiles,
     deleteUploadedFileUsing,
     getUploadedFileUrlUsing,
     imageCropAspectRatio,
@@ -15830,6 +15832,7 @@ var file_upload_default = (Alpine) => {
     minSize,
     removeUploadedFileButtonPosition,
     removeUploadedFileUsing,
+    reorderFiles,
     state: state2,
     uploadButtonPosition,
     uploadProgressIndicatorPosition,
@@ -15860,12 +15863,14 @@ var file_upload_default = (Alpine) => {
         }
         this.pond = create$f(this.$refs.input, {
           acceptedFileTypes,
+          allowReorder,
           credits: false,
-          files: this.files,
+          files: appendFiles ? this.files : this.files.reverse(),
           imageCropAspectRatio,
           imagePreviewHeight,
           imageResizeTargetHeight,
           imageResizeTargetWidth,
+          itemInsertLocation: appendFiles ? "after" : "before",
           ...placeholder && {labelIdle: placeholder},
           maxFileSize: maxSize,
           minFileSize: minSize,
@@ -15924,7 +15929,11 @@ var file_upload_default = (Alpine) => {
             });
             this.cachedFileKeys[uploadedFileUrl] = fileKey;
           }
-          this.pond.files = files;
+          this.pond.files = appendFiles ? files : files.reverse();
+        });
+        this.pond.on("reorderfiles", async (files) => {
+          const orderedFileKeys = files.map((file2) => file2.source instanceof File ? file2.serverId : this.cachedFileKeys[file2.source] ?? null).filter((fileKey) => fileKey);
+          await reorderFiles(orderedFileKeys);
         });
       }
     };
