@@ -17,7 +17,7 @@
                         type="radio"
                         value="{{ $value }}"
                         {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
-                        {{ $attributes->merge($getExtraAttributes())->class([
+                        {{ $getExtraInputAttributeBag()->class([
                             'focus:ring-primary-500 h-4 w-4 text-primary-600',
                             'border-gray-300' => ! $errors->has($getStatePath()),
                             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
