@@ -102,29 +102,6 @@ class ExampleServiceProvider extends PluginServiceProvider
 
 Filament will automatically register your `Page` and ensure that Livewire can discover it.
 
-## Commands
-
-To register a custom command, add the fully qualified class name to the `getCommands()` method in your service provider.
-
-```php
-use Filament\PluginServiceProvider;
-use Vendor\Package\Commands\CustomCommand;
-
-class ExampleServiceProvider extends PluginServiceProvider
-{
-    public static string $name = 'example';
-    
-    protected function getPages(): array
-    {
-        return [
-            CustomCommand::class,
-        ];
-    }
-}
-```
-
-Filament will automatically register your `Command`.
-
 ## Widgets
 
 To register a custom widget, add the fully qualified class name to the `getWidgets()` method in your service provider.
@@ -221,4 +198,25 @@ You may now access this data in your scripts:
 <script>
     console.log(window.filamentData.userId)
 </script>
+```
+
+## Commands
+
+To register commands for your plugin, return them from the `getCommands()` method in your service provider:
+
+```php
+use Filament\PluginServiceProvider;
+use Vendor\Package\Commands;
+
+class ExampleServiceProvider extends PluginServiceProvider
+{
+    public static string $name = 'example';
+    
+    protected function getCommands(): array
+    {
+        return [
+            Commands\CustomCommand::class,
+        ];
+    }
+}
 ```
