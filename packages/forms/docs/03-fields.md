@@ -391,7 +391,7 @@ The `getOptionLabelUsing()` method accepts a callback that transforms the select
 ```php
 Select::make('authorId')
     ->searchable()
-    ->getSearchResultsUsing(fn (string $query) => User::where('name', 'like', "%{$query}%")->pluck('name', 'id'))
+    ->getSearchResultsUsing(fn (string $query) => User::where('name', 'like', "%{$query}%")->limit(50)->pluck('name', 'id'))
     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
 ```
 

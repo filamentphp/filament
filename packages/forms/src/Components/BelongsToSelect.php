@@ -82,6 +82,7 @@ class BelongsToSelect extends Select
 
             return $relationshipQuery
                 ->where($component->getDisplayColumnName(), $searchOperator, "%{$query}%")
+                ->limit(50)
                 ->pluck($component->getDisplayColumnName(), $relationship->getOwnerKeyName())
                 ->toArray();
         });
