@@ -10,6 +10,17 @@ use Illuminate\Support\Str;
 
 trait InteractsWithTableQuery
 {
+    public function applyRelationshipCount(Builder $query): Builder
+    {
+        $relationship = $this->getRelationshipToCount();
+
+        if (filled($relationship)) {
+            return $query->withCount([$relationship]);
+        }
+
+        return $query;
+    }
+
     public function applyEagreLoading(Builder $query): Builder
     {
         if ($this->isHidden()) {

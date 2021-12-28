@@ -33,6 +33,7 @@ trait HasRecords
 
         foreach ($this->getCachedTableColumns() as $column) {
             $column->applyEagreLoading($query);
+            $column->applyRelationshipCount($query);
         }
 
         $this->applySortingToTableQuery($query);
