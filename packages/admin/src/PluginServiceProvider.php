@@ -25,6 +25,7 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         $package
             ->name(static::$name)
             ->hasTranslations()
+            ->hasCommands($this->getCommands())
             ->hasViews();
     }
 
@@ -99,5 +100,10 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     protected function getWidgets(): array
     {
         return $this->widgets;
+    }
+
+    protected function getCommands(): array
+    {
+        return [];
     }
 }
