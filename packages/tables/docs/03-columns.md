@@ -133,6 +133,18 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('slug')->visibleFrom('md')
 ```
 
+### Counting relationships
+
+If you wish to count the number of related records in a column, you may use the `counts()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('users_count')->counts('users')
+```
+
+In this example, `users` is the name of the relationship to count from. The name of the column must be `users_count`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#counting-related-models) for storing the result.
+
 ### Custom attributes
 
 The HTML of columns can be customized, by passing an array of `extraAttributes()`:
