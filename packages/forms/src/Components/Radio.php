@@ -7,6 +7,8 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class Radio extends Field
 {
+    use Concerns\HasExtraInputAttributes;
+
     protected string $view = 'forms::components.radio';
 
     protected array | Arrayable | Closure $options = [];

@@ -7,6 +7,7 @@ use Closure;
 class FileUpload extends BaseFileUpload
 {
     use Concerns\HasExtraAlpineAttributes;
+    use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
 
     protected string $view = 'forms::components.file-upload';

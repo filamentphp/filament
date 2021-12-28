@@ -36,7 +36,7 @@
                         x-on:keydown.,.stop.prevent="createTag()"
                         x-on:blur="createTag()"
                         x-model="newTag"
-                        class="block w-full border-0"
+                        {{ $getExtraInputAttributeBag()->class(['block w-full border-0']) }}
                     />
 
                     <datalist id="{{ $getId() }}-suggestions">

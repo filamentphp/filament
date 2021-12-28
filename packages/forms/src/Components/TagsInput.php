@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\Arrayable;
 class TagsInput extends Field
 {
     use Concerns\HasExtraAlpineAttributes;
+    use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
 
     protected string $view = 'forms::components.tags-input';
