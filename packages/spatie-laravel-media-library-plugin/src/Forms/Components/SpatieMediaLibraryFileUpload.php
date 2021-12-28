@@ -96,6 +96,12 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             Media::findByUuid($file)?->delete();
         });
+
+        $this->reorderFilesUsing(function (SpatieMediaLibraryFileUpload $component, array $state): array {
+            Media::setNewOrder(collect($state)->values()->map(fn ($file) => Media::findByUuid($file))->filter()->pluck('id')->toArray());
+
+            return $state;
+        });
     }
 
     public function collection(string | Closure | null $collection): static

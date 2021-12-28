@@ -22,6 +22,8 @@ FilePond.registerPlugin(FilePondPluginImageTransform)
 export default (Alpine) => {
     Alpine.data('fileUploadFormComponent', ({
         acceptedFileTypes,
+        allowReorder,
+        appendFiles,
         deleteUploadedFileUsing,
         getUploadedFileUrlUsing,
         imageCropAspectRatio,
@@ -36,6 +38,7 @@ export default (Alpine) => {
         minSize,
         removeUploadedFileButtonPosition,
         removeUploadedFileUsing,
+        reorderFiles,
         state,
         uploadButtonPosition,
         uploadProgressIndicatorPosition,
@@ -76,12 +79,14 @@ export default (Alpine) => {
 
                 this.pond = FilePond.create(this.$refs.input, {
                     acceptedFileTypes,
+                    allowReorder,
                     credits: false,
-                    files: this.files,
+                    files: appendFiles ? this.files : this.files.reverse(),
                     imageCropAspectRatio,
                     imagePreviewHeight,
                     imageResizeTargetHeight,
                     imageResizeTargetWidth,
+                    itemInsertLocation: appendFiles ? 'after' : 'before',
                     ...(placeholder && {labelIdle: placeholder}),
                     maxFileSize: maxSize,
                     minFileSize: minSize,
@@ -159,9 +164,17 @@ export default (Alpine) => {
                         this.cachedFileKeys[uploadedFileUrl] = fileKey
                     }
 
-                    this.pond.files = files
+                    this.pond.files = appendFiles ? files : files.reverse()
                 })
-            }
+
+                this.pond.on('reorderfiles', async (files) => {
+                    const orderedFileKeys = files
+                        .map(file => file.source instanceof File ? file.serverId : this.cachedFileKeys[file.source] ?? null) // file.serverId is null for a file that is not yet uploaded
+                        .filter(fileKey => fileKey)
+
+                    await reorderFiles(orderedFileKeys)
+                })
+            },
         }
     })
 }

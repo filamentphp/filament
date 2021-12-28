@@ -24,5 +24,7 @@ interface HasForms
 
     public function removeUploadedFile(string $statePath, string $fileKey): void;
 
+    public function reorderFiles(string $statePath, array $fileKeys): void;
+
     public function validate(?array $rules = null, array $messages = [], array $attributes = []);
 }

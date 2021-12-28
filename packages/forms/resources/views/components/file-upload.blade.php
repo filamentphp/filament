@@ -10,6 +10,8 @@
     <div
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
+            allowReorder: {{ $getAllowReorder() ? 'true' : 'false' }},
+            appendFiles: {{ $getAppendFiles() ? 'true' : 'false' }},
             deleteUploadedFileUsing: async (fileKey) => {
                 return await $wire.deleteUploadedFile('{{ $getStatePath() }}', fileKey)
             },
@@ -30,6 +32,9 @@
                 return await $wire.removeUploadedFile('{{ $getStatePath() }}', fileKey)
             },
             removeUploadedFileButtonPosition: '{{ $getRemoveUploadedFileButtonPosition() }}',
+            reorderFiles: async (files) => {
+                return await $wire.reorderFiles('{{ $getStatePath() }}', files)
+            },
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
             uploadButtonPosition: '{{ $getUploadButtonPosition() }}',
             uploadProgressIndicatorPosition: '{{ $getUploadProgressIndicatorPosition() }}',
