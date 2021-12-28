@@ -21,9 +21,9 @@ class Builder extends Field
     protected string | Closure | null $createItemButtonLabel = null;
 
     protected bool | Closure $isItemMovementDisabled = false;
-    
+
     protected bool | Closure $isItemCreationDisabled = false;
-    
+
     protected bool | Closure $isItemDeletionDisabled = false;
 
     protected function setUp(): void
@@ -50,7 +50,7 @@ class Builder extends Field
                     if ($component->isItemCreationDisabled()) {
                         return;
                     }
-                    
+
                     if ($statePath !== $component->getStatePath()) {
                         return;
                     }
@@ -87,7 +87,7 @@ class Builder extends Field
                     if ($component->isDisabled()) {
                         return;
                     }
-                    
+
                     if ($component->isItemDeletionDisabled()) {
                         return;
                     }
@@ -249,7 +249,7 @@ class Builder extends Field
     {
         return $this->evaluate($this->isItemMovementDisabled);
     }
-    
+
     public function isItemCreationDisabled(): bool
     {
         return $this->evaluate($this->isItemCreationDisabled);
