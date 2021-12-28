@@ -28,7 +28,7 @@ php artisan make:filament-user
 
 Visit your admin panel at `/admin` to sign in, and you're now ready to start [building resources](resources)!
 
-[<img src="https://user-images.githubusercontent.com/41773797/147614615-bbebaa0d-dcee-4222-b1c5-38749b634549.png">](https://demo.filamentadmin.com)
+<img src="https://user-images.githubusercontent.com/41773797/147614615-bbebaa0d-dcee-4222-b1c5-38749b634549.png">
 
 ## Deploying to production
 
