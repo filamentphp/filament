@@ -15899,7 +15899,7 @@ var file_upload_default = (Alpine) => {
           }
         });
         this.$watch("state", async () => {
-          if (Object.values(this.state).filter((file2) => file2.startsWith("livewire-file:")).length) {
+          if (Object.values(this.pond.getFiles()).filter((file2) => file2.origin === FileOrigin$1.INPUT).length) {
             return;
           }
           let files = [];

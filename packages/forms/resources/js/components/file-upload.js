@@ -123,7 +123,7 @@ export default (Alpine) => {
                 })
 
                 this.$watch('state', async () => {
-                    if (Object.values(this.state).filter((file) => file.startsWith('livewire-file:')).length) {
+                    if (Object.values(this.pond.getFiles()).filter((file) => file.origin === FilePond.FileOrigin.INPUT).length) {
                         return
                     }
 
