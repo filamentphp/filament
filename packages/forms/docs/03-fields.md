@@ -659,6 +659,15 @@ Radio::make('feedback')
 
 <img src="https://user-images.githubusercontent.com/41773797/147613274-04745624-3ddd-46bb-b25c-1e756d6f4958.png">
 
+You may wish to display the options `inline()` with the label:
+
+```php
+Radio::make('feedback')
+    ->label('Do you like this post?')
+    ->boolean()
+    ->inline()
+```
+
 ## Date-time picker
 
 The date-time picker provides an interactive interface for selecting a date and a time.
