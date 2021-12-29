@@ -21,12 +21,12 @@
 
         <link rel="stylesheet" href="{{ \Filament\Facades\Filament::getThemeUrl() }}" />
 
-        @foreach (\Filament\Facades\Filament::getStyles() as $path)
+        @foreach (\Filament\Facades\Filament::getStyles() as $name => $path)
             @if (Str::of($path)->startsWith(['http://', 'https://']))
                 <link rel="stylesheet" href="{{ $path }}" />
             @else
                 <link rel="stylesheet" href="{{ route('filament.asset', [
-                    'path' => $path,
+                    'file' => "{$name}.css",
                 ]) }}" />
             @endif
         @endforeach
@@ -43,15 +43,15 @@
 
         <script src="{{ route('filament.asset', [
             'id' => Filament\get_asset_id('app.js'),
-            'path' => 'app.js',
+            'file' => 'app.js',
         ]) }}"></script>
 
-        @foreach (\Filament\Facades\Filament::getScripts() as $path)
+        @foreach (\Filament\Facades\Filament::getScripts() as $name => $path)
             @if (Str::of($path)->startsWith(['http://', 'https://']))
                 <script src="{{ $path }}"></script>
             @else
                 <script src="{{ route('filament.asset', [
-                    'path' => $path,
+                    'file' => "{$name}.js",
                 ]) }}"></script>
             @endif
         @endforeach

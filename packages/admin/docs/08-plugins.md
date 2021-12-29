@@ -143,7 +143,7 @@ class ExampleServiceProvider extends PluginServiceProvider
     protected function getStyles(): array
     {
         return [
-            'my-package-styles' => '/vendor/my-package/css/app.css',
+            'my-package-styles' => __DIR__ . '/../dist/app.css',
         ],
     }
 }
@@ -163,7 +163,7 @@ class ExampleServiceProvider extends PluginServiceProvider
     protected function getScripts(): array
     {
         return [
-            'my-package-scripts' => '/vendor/my-package/js/app.js',
+            'my-package-scripts' => __DIR__ . '/../dist/app.js',
         ];
     };
 }
