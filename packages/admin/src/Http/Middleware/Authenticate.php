@@ -22,8 +22,8 @@ class Authenticate extends Middleware
 
         $user = $guard->user();
 
-        if ($user instanceof FilamentUser && (! $user->canAccessFilament())) {
-            abort(404);
+        if ($user instanceof FilamentUser && $user->canAccessFilament()) {
+            return;
         }
 
         if (config('app.env') === 'local') {
