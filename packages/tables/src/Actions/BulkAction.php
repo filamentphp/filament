@@ -52,7 +52,7 @@ class BulkAction
 
         $action = $this->getAction();
 
-        if (! $action instanceof Closure) {
+        if (! $action) {
             return;
         }
 
