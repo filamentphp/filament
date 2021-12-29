@@ -1,28 +1,21 @@
 export default (Alpine) => {
     Alpine.data('keyValueFormComponent', ({
-        canAddRows,
-        canDeleteRows,
         state,
     }) => ({
-        canAddRows,
-
-        canDeleteRows,
-
         state,
 
         rows: [],
 
         init: function () {
-            for (let [key, value] of Object.entries(this.state ?? {})) {
-                this.rows.push({
-                    key,
-                    value,
-                })
-            }
+            this.updateRows()
 
             if (this.rows.length <= 0) {
                 this.addRow()
             }
+
+            this.$watch('state', () => {
+                this.updateRows()
+            })
         },
 
         addRow: function () {
@@ -39,6 +32,19 @@ export default (Alpine) => {
             }
 
             this.updateState()
+        },
+
+        updateRows: function () {
+            let rows = []
+
+            for (let [key, value] of Object.entries(this.state ?? {})) {
+                rows.push({
+                    key,
+                    value,
+                })
+            }
+
+            this.rows = rows
         },
 
         updateState: function () {
