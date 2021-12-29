@@ -668,7 +668,7 @@ Radio::make('feedback')
     ->inline()
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147709770-7fe872e4-3166-48dd-96c5-d6ad4de6b9ad.png">
+<img src="https://user-images.githubusercontent.com/41773797/147709853-198d54fb-1bb1-4e82-87d0-3034b9152f0e.png">
 
 ## Date-time picker
 
