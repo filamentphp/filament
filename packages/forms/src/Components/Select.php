@@ -26,6 +26,8 @@ class Select extends Field
 
     protected string | Closure | null $searchPrompt = null;
 
+    protected bool | Closure | null $visiblePlaceholder = true;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -171,5 +173,17 @@ class Select extends Field
     public function isSearchable(): bool
     {
         return (bool) $this->evaluate($this->isSearchable);
+    }
+
+    public function noPlaceholder(bool | Closure $condition = true): static
+    {
+        $this->visiblePlaceholder = !$condition;
+
+        return $this;
+    }
+
+    public function isVisiblePlaceholder(): bool
+    {
+        return (bool) $this->evaluate($this->visiblePlaceholder);
     }
 }
