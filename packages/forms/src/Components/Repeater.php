@@ -52,6 +52,8 @@ class Repeater extends Field
                     $livewire = $component->getLivewire();
                     data_set($livewire, "{$statePath}.{$newUuid}", []);
 
+                    $this->getChildComponentContainers()[$newUuid]->fill();
+
                     $component->hydrateDefaultItemState($newUuid);
                 },
             ],
