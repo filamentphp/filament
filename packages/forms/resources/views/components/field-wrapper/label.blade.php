@@ -2,6 +2,7 @@
     'error' => false,
     'prefix' => null,
     'required' => false,
+    'suffix' => null,
 ])
 
 <label {{ $attributes->class(['inline-flex items-center space-x-3 rtl:space-x-reverse']) }}>
@@ -18,4 +19,6 @@
             <sup class="font-medium text-danger-700">*</sup>
         @endif
     </span>
+
+    {{ $suffix }}
 </label>

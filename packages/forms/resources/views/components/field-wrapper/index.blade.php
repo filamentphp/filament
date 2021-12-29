@@ -3,6 +3,7 @@
     'label' => null,
     'labelPrefix' => null,
     'labelSrOnly' => false,
+    'labelSuffix' => null,
     'helperText' => null,
     'hint' => null,
     'required' => false,
@@ -25,6 +26,7 @@
                         :error="$errors->has($statePath)"
                         :prefix="$labelPrefix"
                         :required="$required"
+                        :suffix="$labelSuffix"
                     >
                         {{ $label }}
                     </x-forms::field-wrapper.label>
