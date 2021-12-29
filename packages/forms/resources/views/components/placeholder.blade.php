@@ -7,6 +7,10 @@
     :state-path="$getStatePath()"
 >
     <div {{ $attributes->merge($getExtraAttributes()) }}>
-        {{ $getContent() }}
+        @if($getAsHtml())
+            {!! $getContent() !!}
+        @else
+            {{ $getContent() }}
+        @endif
     </div>
 </x-forms::field-wrapper>

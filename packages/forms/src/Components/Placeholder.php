@@ -13,6 +13,7 @@ class Placeholder extends Component
     protected string $view = 'forms::components.placeholder';
 
     protected $content = null;
+    protected $asHtml = false;
 
     final public function __construct(string $name)
     {
@@ -63,5 +64,17 @@ class Placeholder extends Component
     public function getContent()
     {
         return $this->evaluate($this->content);
+    }
+
+    public function asHtml(bool $renderAsHtml = true): static
+    {
+        $this->asHtml = $renderAsHtml;
+
+        return $this;
+    }
+
+    public function getAsHtml()
+    {
+        return $this->evaluate($this->asHtml);
     }
 }

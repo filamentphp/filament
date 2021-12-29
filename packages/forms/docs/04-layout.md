@@ -239,6 +239,13 @@ use Filament\Forms\Components\Placeholder;
 Placeholder::make('Label')->content('Content, displayed underneath the label')
 ```
 
+If you need to render the state content as HTML then you can use the method asHtml(), eg:
+
+```php
+use Filament\Forms\Components\Placeholder;
+
+Placeholder::make('Label')->content('<h2>Heading<h2>This is rendered as <span class="font-bold">HTML</span>')->asHtml()
+```
 ## Card
 
 The card component may be used to render the form components inside a card:
@@ -302,7 +309,7 @@ use Filament\Forms\Components\Component;
 class Wizard extends Component
 {
     protected string $view = 'filament.forms.components.wizard';
-    
+
     public static function make(): static
     {
         return new static();
