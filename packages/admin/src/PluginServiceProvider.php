@@ -24,9 +24,15 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     {
         $package
             ->name(static::$name)
-            ->hasCommands($this->getCommands())
-            ->hasTranslations()
-            ->hasViews();
+            ->hasCommands($this->getCommands());
+
+        if (file_exists($this->package->basePath('/../resources/lang'))) {
+            $package->hasTranslations();
+        }
+
+        if (file_exists($this->package->basePath('/../resources/views'))) {
+            $package->hasViews();
+        }
     }
 
     public function packageRegistered(): void
