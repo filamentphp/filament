@@ -668,6 +668,8 @@ Radio::make('feedback')
     ->inline()
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147709770-7fe872e4-3166-48dd-96c5-d6ad4de6b9ad.png">
+
 ## Date-time picker
 
 The date-time picker provides an interactive interface for selecting a date and a time.
