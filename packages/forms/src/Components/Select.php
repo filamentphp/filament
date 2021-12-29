@@ -18,6 +18,8 @@ class Select extends Field
 
     protected bool | Closure | null $isOptionDisabled = null;
 
+    protected bool | Closure | null $isPlaceholderSelectionDisabled = false;
+
     protected bool | Closure $isSearchable = false;
 
     protected array | Arrayable | Closure $options = [];
@@ -25,8 +27,6 @@ class Select extends Field
     protected string | Closure | null $noSearchResultsMessage = null;
 
     protected string | Closure | null $searchPrompt = null;
-
-    protected bool | Closure | null $visiblePlaceholder = true;
 
     protected function setUp(): void
     {
@@ -60,6 +60,13 @@ class Select extends Field
     public function disableOptionWhen(bool | Closure $callback): static
     {
         $this->isOptionDisabled = $callback;
+
+        return $this;
+    }
+
+    public function disablePlaceholderSelection(bool | Closure $condition = true): static
+    {
+        $this->isPlaceholderSelectionDisabled = $condition;
 
         return $this;
     }
@@ -170,20 +177,13 @@ class Select extends Field
         ]);
     }
 
+    public function isPlaceholderSelectionDisabled(): bool
+    {
+        return (bool) $this->evaluate($this->isPlaceholderSelectionDisabled);
+    }
+
     public function isSearchable(): bool
     {
         return (bool) $this->evaluate($this->isSearchable);
-    }
-
-    public function noPlaceholder(bool | Closure $condition = true): static
-    {
-        $this->visiblePlaceholder = !$condition;
-
-        return $this;
-    }
-
-    public function isVisiblePlaceholder(): bool
-    {
-        return (bool) $this->evaluate($this->visiblePlaceholder);
     }
 }

@@ -20,7 +20,7 @@
                 'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
             ]) }}
         >
-            @if($isVisiblePlaceholder())
+            @unless ($isPlaceholderSelectionDisabled())
                 <option value="">{{ $getPlaceholder() }}</option>
             @endif
 

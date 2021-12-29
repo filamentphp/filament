@@ -368,22 +368,6 @@ Select::make('status')
 
 <img src="https://user-images.githubusercontent.com/41773797/147612885-888dfd64-6256-482d-b4bc-840191306d2d.png">
 
-You can hide the placeholder (Select an option) with the `noPlaceholder()` method:
-
-```php
-use App\Models\User;
-use Filament\Forms\Components\Select;
-
-Select::make('forced')
-    ->label('You are forced to select one of these:')
-    ->noPlaceholder()
-    ->options([
-        'draft' => 'Draft', // if no option selected this will be when stored
-        'review' => 'In review',
-        'published' => 'Published',
-    ])
-```
-
 You may enable a search input to allow easier access to many options, using the `searchable()` method:
 
 ```php
@@ -409,6 +393,21 @@ Select::make('authorId')
     ->searchable()
     ->getSearchResultsUsing(fn (string $query) => User::where('name', 'like', "%{$query}%")->limit(50)->pluck('name', 'id'))
     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
+```
+
+You can prevent the placeholder from being selected using the `disablePlaceholderSelection()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'review' => 'In review',
+        'published' => 'Published',
+    ])
+    ->default('draft')
+    ->disablePlaceholderSelection()
 ```
 
 ### Dependant selects
