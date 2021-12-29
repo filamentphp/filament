@@ -9,8 +9,6 @@
 >
     <div
         x-data="keyValueFormComponent({
-            canAddRows: {{ json_encode($canAddRows()) }},
-            canDeleteRows: {{ json_encode($canDeleteRows()) }},
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
         {{ $attributes->merge($getExtraAttributes()) }}
@@ -43,10 +41,7 @@
                     class="divide-y whitespace-nowrap"
                 >
                     <template x-for="(row, index) in rows" x-bind:key="index" x-ref="rowTemplate">
-                        <tr
-                            x-bind:class="{ 'bg-gray-50': index % 2 }"
-                            class="divide-x"
-                        >
+                        <tr class="divide-x">
                             <td>
                                 <input
                                     type="text"
@@ -89,19 +84,17 @@
             </table>
 
             @if ($canAddRows() && $canEditKeys())
-                <div>
-                    <button
-                        x-on:click="addRow"
-                        type="button"
-                        class="px-4 py-2 flex items-center space-x-1"
-                    >
-                        <x-heroicon-s-plus class="w-5 h-5" />
+                <button
+                    x-on:click="addRow"
+                    type="button"
+                    class="w-full px-4 py-2 flex items-center space-x-1 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:bg-gray-50"
+                >
+                    <x-heroicon-s-plus class="w-4 h-4" />
 
-                        <span>
-                            {{ $getAddButtonLabel() }}
-                        </span>
-                    </button>
-                </div>
+                    <span>
+                        {{ $getAddButtonLabel() }}
+                    </span>
+                </button>
             @endif
         </div>
     </div>

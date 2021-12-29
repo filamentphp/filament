@@ -15926,24 +15926,18 @@ var file_upload_default = (Alpine) => {
 // packages/forms/resources/js/components/key-value.js
 var key_value_default = (Alpine) => {
   Alpine.data("keyValueFormComponent", ({
-    canAddRows,
-    canDeleteRows,
     state: state2
   }) => ({
-    canAddRows,
-    canDeleteRows,
     state: state2,
     rows: [],
     init: function() {
-      for (let [key, value] of Object.entries(this.state ?? {})) {
-        this.rows.push({
-          key,
-          value
-        });
-      }
+      this.updateRows();
       if (this.rows.length <= 0) {
         this.addRow();
       }
+      this.$watch("state", () => {
+        this.updateRows();
+      });
     },
     addRow: function() {
       this.rows.push({key: "", value: ""});
@@ -15955,6 +15949,16 @@ var key_value_default = (Alpine) => {
         this.addRow();
       }
       this.updateState();
+    },
+    updateRows: function() {
+      let rows = [];
+      for (let [key, value] of Object.entries(this.state ?? {})) {
+        rows.push({
+          key,
+          value
+        });
+      }
+      this.rows = rows;
     },
     updateState: function() {
       let state3 = {};
