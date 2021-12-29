@@ -9,11 +9,7 @@
 <td {{ $attributes }}>
     @if ($action)
         <button
-            @if (is_string($action))
-                wire:click="{{ $action }}('{{ $record->getKey() }}')"
-            @elseif ($action instanceof \Closure)
-                wire:click="callTableColumnAction('{{ $name }}', '{{ $record->getKey() }}')"
-            @endif
+            wire:click="callTableColumnAction('{{ $name }}', '{{ $record->getKey() }}')"
             type="button"
             class="block text-left"
         >

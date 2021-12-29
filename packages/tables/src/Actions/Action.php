@@ -57,7 +57,7 @@ class Action extends Component implements Htmlable
 
         $action = $this->getAction();
 
-        if (! $action instanceof Closure) {
+        if (! $action) {
             return;
         }
 

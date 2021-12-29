@@ -7,9 +7,9 @@ use Illuminate\Support\Str;
 
 class AssetController
 {
-    public function __invoke($path)
+    public function __invoke(string $file)
     {
-        switch ($path) {
+        switch ($file) {
             case 'app.css':
                 return $this->pretendResponseIsFile(__DIR__ . '/../../../dist/app.css', 'text/css; charset=utf-8');
             case 'app.css.map':
@@ -20,35 +20,42 @@ class AssetController
                 return $this->pretendResponseIsFile(__DIR__ . '/../../../dist/app.js.map', 'application/json; charset=utf-8');
         }
 
-        if (Str::endsWith($path, '.js')) {
+        if (Str::endsWith($file, '.js')) {
+            $name = Str::beforeLast($file, '.js');
+
             abort_unless(
-                in_array($path, Filament::getScripts()),
-                404
+                array_key_exists($name, Filament::getScripts()),
+                404,
             );
 
-            return $this->pretendResponseIsFile($path, 'application/javascript; charset=utf-8');
+            return $this->pretendResponseIsFile($name, 'application/javascript; charset=utf-8');
         }
 
-        if (Str::endsWith($path, '.css')) {
+        if (Str::endsWith($file, '.css')) {
+            $name = Str::beforeLast($file, '.css');
+
             abort_unless(
-                in_array($path, Filament::getStyles()),
-                404
+                array_key_exists($name, Filament::getStyles()),
+                404,
             );
 
-            return $this->pretendResponseIsFile($path, 'text/css; charset=utf-8');
+            return $this->pretendResponseIsFile(Filament::getStyles()[$name], 'text/css; charset=utf-8');
         }
 
         abort(404);
     }
 
-    protected function getHttpDate($timestamp)
+    protected function getHttpDate(int $timestamp)
     {
         return sprintf('%s GMT', gmdate('D, d M Y H:i:s', $timestamp));
     }
 
-    protected function pretendResponseIsFile($path, $contentType)
+    protected function pretendResponseIsFile(string $path, string $contentType)
     {
-        abort_if(! file_exists($path), 404);
+        abort_unless(
+            file_exists($path) || file_exists($path = base_path($path)),
+            404,
+        );
 
         $cacheControl = 'public, max-age=31536000';
         $expires = strtotime('+1 year');
