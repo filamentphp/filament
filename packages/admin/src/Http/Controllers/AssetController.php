@@ -52,7 +52,10 @@ class AssetController
 
     protected function pretendResponseIsFile(string $path, string $contentType)
     {
-        abort_if(! file_exists($path), 404);
+        abort_unless(
+            file_exists($path) || file_exists($path = base_path($path)),
+            404,
+        );
 
         $cacheControl = 'public, max-age=31536000';
         $expires = strtotime('+1 year');
