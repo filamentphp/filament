@@ -262,8 +262,6 @@ class BaseFileUpload extends Field
 
         if (filled($count = $this->maxFiles)) {
             $rules[] = "max:{$count}";
-        } elseif (! $this->isMultiple()) {
-            $rules[] = 'max:1';
         }
 
         if (filled($count = $this->minFiles)) {
