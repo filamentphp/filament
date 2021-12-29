@@ -20,7 +20,9 @@
                 'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
             ]) }}
         >
-            <option value="">{{ $getPlaceholder() }}</option>
+            @unless ($isPlaceholderSelectionDisabled())
+                <option value="">{{ $getPlaceholder() }}</option>
+            @endif
 
             @foreach ($getOptions() as $value => $label)
                 <option

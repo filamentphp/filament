@@ -395,6 +395,21 @@ Select::make('authorId')
     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
 ```
 
+You can prevent the placeholder from being selected using the `disablePlaceholderSelection()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'review' => 'In review',
+        'published' => 'Published',
+    ])
+    ->default('draft')
+    ->disablePlaceholderSelection()
+```
+
 ### Dependant selects
 
 Commonly, you may desire "dependant" select inputs, which populate their options based on the state of another.
