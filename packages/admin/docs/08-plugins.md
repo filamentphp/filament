@@ -144,7 +144,7 @@ class ExampleServiceProvider extends PluginServiceProvider
     {
         return [
             'my-package-styles' => __DIR__ . '/../dist/app.css',
-        ],
+        ];
     }
 }
 ```
