@@ -19,8 +19,8 @@ class BelongsToManyMultiSelect extends MultiSelect
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (BelongsToManyMultiSelect $component): void {
-            if (count($component->getState())) {
+        $this->afterStateHydrated(function (BelongsToManyMultiSelect $component, $state): void {
+            if (count($state)) {
                 return;
             }
 
