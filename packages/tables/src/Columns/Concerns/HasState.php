@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use BackedEnum;
 use Closure;
 use Illuminate\Support\Arr;
 
@@ -41,8 +42,16 @@ trait HasState
             $state = Arr::get($this->getRecord(), $this->getName());
         }
 
+        if (
+            interface_exists(BackedEnum::class) &&
+            ($state instanceof BackedEnum) &&
+            property_exists($state, 'value')
+        ) {
+            $state = $state->value;
+        }
+
         if ($state === null) {
-            return value($this->getDefaultState());
+            $state = value($this->getDefaultState());
         }
 
         return $state;
