@@ -2,20 +2,12 @@
     $action = $getAction();
     $record = $getRecord();
 
-    $clickAction = null;
-
-    if (is_string($action)) {
-        if ($record) {
-            $clickAction = "{$action}('{$record->getKey()}')";
-        } else {
-            $clickAction = $action;
-        }
-    } elseif ($action instanceof \Closure) {
-        if ($record) {
-            $clickAction = "mountTableAction('{$getName()}', '{$record->getKey()}')";
-        } else {
-            $clickAction = "mountTableAction('{$getName()}')";
-        }
+    if (! $action) {
+        $clickAction = null;
+    } elseif ($record) {
+        $clickAction = "mountTableAction('{$getName()}', '{$record->getKey()}')";
+    } else {
+        $clickAction = "mountTableAction('{$getName()}')";
     }
 @endphp
 

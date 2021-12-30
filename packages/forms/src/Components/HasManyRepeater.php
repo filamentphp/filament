@@ -24,6 +24,33 @@ class HasManyRepeater extends Repeater
             $component->fillFromRelationship();
         });
 
+        $this->saveRelationshipsUsing(function (HasManyRepeater $component, array $state) {
+            $relationship = $component->getRelationship();
+
+            foreach ($relationship->pluck($relationship->getLocalKeyName()) as $keyToCheckForDeletion) {
+                if (array_key_exists($keyToCheckForDeletion, $state)) {
+                    continue;
+                }
+
+                $relationship->find($keyToCheckForDeletion)?->delete();
+            }
+
+            $childComponentContainers = $component->getChildComponentContainers();
+
+            foreach ($state as $itemKey => $itemData) {
+                if ($record = $component->getRecordForItemKey($itemKey)) {
+                    $record->update($itemData);
+
+                    continue;
+                }
+
+                $record = $relationship->create($itemData);
+                $childComponentContainers[$itemKey]->model($record)->saveRelationships();
+            }
+
+            $component->fillFromRelationship();
+        });
+
         $this->dehydrated(false);
 
         $this->disableItemMovement();
@@ -50,41 +77,6 @@ class HasManyRepeater extends Repeater
                 $relationship->getLocalKeyName(),
             )->toArray(),
         );
-    }
-
-    public function saveRelationships(): void
-    {
-        if ($this->saveRelationshipsUsing) {
-            parent::saveRelationships();
-
-            return;
-        }
-
-        $relationship = $this->getRelationship();
-        $state = $this->getState();
-
-        foreach ($relationship->pluck($relationship->getLocalKeyName()) as $keyToCheckForDeletion) {
-            if (array_key_exists($keyToCheckForDeletion, $state)) {
-                continue;
-            }
-
-            $relationship->find($keyToCheckForDeletion)?->delete();
-        }
-
-        $childComponentContainers = $this->getChildComponentContainers();
-
-        foreach ($state as $itemKey => $itemData) {
-            if ($record = $this->getRecordForItemKey($itemKey)) {
-                $record->update($itemData);
-
-                continue;
-            }
-
-            $record = $relationship->create($itemData);
-            $childComponentContainers[$itemKey]->model($record)->saveRelationships();
-        }
-
-        $this->fillFromRelationship();
     }
 
     public function getChildComponentContainers(): array

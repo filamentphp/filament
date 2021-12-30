@@ -170,6 +170,8 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147612753-1d4514ea-dba9-4f5c-9efc-08f09608e90d.png">
+
 You may set the type of string using a set of methods. Some, such as `email()`, also provide validation:
 
 ```php
@@ -201,6 +203,8 @@ TextInput::make('domain')
     ->prefix('https://')
     ->postfix('.com')
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png">
 
 You may limit the length of the string by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
 
@@ -343,6 +347,8 @@ TextInput::make('manufacturer')
     ])
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147612844-f46e113f-82b3-4675-9097-4d64a4315082.png">
+
 Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking for strictly predefined options, check out [select fields](#select).
 
 ## Select
@@ -360,6 +366,8 @@ Select::make('status')
     ])
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147612885-888dfd64-6256-482d-b4bc-840191306d2d.png">
+
 You may enable a search input to allow easier access to many options, using the `searchable()` method:
 
 ```php
@@ -367,9 +375,12 @@ use App\Models\User;
 use Filament\Forms\Components\Select;
 
 Select::make('authorId')
+    ->label('Author')
     ->options(User::all()->pluck('name', 'id'))
     ->searchable()
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147613023-cb7d1907-e4d3-4a33-aa86-1c25d780c861.png">
 
 If you have lots of options and want to populate them based on a database search or other external data source, you can use the `getSearchResultsUsing()` and `getOptionLabelUsing()` methods instead of `options()`.
 
@@ -380,8 +391,23 @@ The `getOptionLabelUsing()` method accepts a callback that transforms the select
 ```php
 Select::make('authorId')
     ->searchable()
-    ->getSearchResultsUsing(fn (string $query) => User::where('name', 'like', "%{$query}%")->pluck('name', 'id'))
+    ->getSearchResultsUsing(fn (string $query) => User::where('name', 'like', "%{$query}%")->limit(50)->pluck('name', 'id'))
     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
+```
+
+You can prevent the placeholder from being selected using the `disablePlaceholderSelection()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'review' => 'In review',
+        'published' => 'Published',
+    ])
+    ->default('draft')
+    ->disablePlaceholderSelection()
 ```
 
 ### Dependant selects
@@ -433,6 +459,8 @@ MultiSelect::make('technologies')
     ])
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147613070-cd82703a-fa05-4f29-b0ac-3eb03b542077.png">
+
 These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
 ```php
@@ -479,8 +507,10 @@ The checkbox component, similar to a [toggle](#toggle), allows you to interact a
 ```php
 use Filament\Forms\Components\Checkbox;
 
-Checkbox::make('is_admin'),
+Checkbox::make('is_admin')
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147613098-db8d3571-1835-4714-b422-619755c0b722.png">
 
 Checkbox fields have two layout modes, inline and stacked. By default, they are inline.
 
@@ -492,6 +522,8 @@ use Filament\Forms\Components\Checkbox;
 Checkbox::make('is_admin')->inline()
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147613098-db8d3571-1835-4714-b422-619755c0b722.png">
+
 When the checkbox is stacked, its label is above it:
 
 ```php
@@ -499,6 +531,8 @@ use Filament\Forms\Components\Checkbox;
 
 Checkbox::make('is_admin')->inline(false)
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147613119-0bc731dd-fcdd-4c1a-9a26-cce2b0f589d2.png">
 
 If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
 
@@ -525,6 +559,8 @@ use Filament\Forms\Components\Toggle;
 Toggle::make('is_admin')
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147613146-f5ebde21-f72d-44dd-b5c0-5d229fcd91ef.png">
+
 Toggle fields have two layout modes, inline and stacked. By default, they are inline.
 
 When the toggle is inline, its label is adjacent to it:
@@ -535,6 +571,8 @@ use Filament\Forms\Components\Toggle;
 Toggle::make('is_admin')->inline()
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147613146-f5ebde21-f72d-44dd-b5c0-5d229fcd91ef.png">
+
 When the toggle is stacked, its label is above it:
 
 ```php
@@ -542,6 +580,8 @@ use Filament\Forms\Components\Toggle;
 
 Toggle::make('is_admin')->inline(false)
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147613161-43bfa094-0916-4e01-b86d-dbcf8ee63a17.png">
 
 Toggles may also use an "on icon" and an "off icon". These are displayed on its handle and could provide a greater indication to what your field represents. The parameter to each method must contain the name of a Blade icon component:
 
@@ -552,6 +592,8 @@ Toggle::make('is_admin')
     ->onIcon('heroicon-s-lightning-bolt')
     ->offIcon('heroicon-s-user')
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147613184-9086c102-ad71-4c4e-9170-9a4201a80c66.png">
 
 If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
 
@@ -583,6 +625,8 @@ Radio::make('status')
     ])
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147613206-644bd6a4-4814-4a99-b398-d03625179bfa.png">
+
 You can optionally provide descriptions to each option using the `descriptions()` method:
 
 ```php
@@ -601,6 +645,8 @@ Radio::make('status')
     ])
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147613223-0114ad7e-091c-43cf-b156-67cd0aaf5c0c.png">
+
 Be sure to use the same `key` in the descriptions array as the `key` in the options array so the right description matches the right option.
 
 If you want a simple boolean radio button group, with "Yes" and "No" options, you can use the `boolean()` method:
@@ -608,8 +654,21 @@ If you want a simple boolean radio button group, with "Yes" and "No" options, yo
 ```php
 Radio::make('feedback')
     ->label('Do you like this post?')
-    ->boolean();
+    ->boolean()
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147613274-04745624-3ddd-46bb-b25c-1e756d6f4958.png">
+
+You may wish to display the options `inline()` with the label:
+
+```php
+Radio::make('feedback')
+    ->label('Do you like this post?')
+    ->boolean()
+    ->inline()
+```
+
+<img src="https://user-images.githubusercontent.com/41773797/147709853-198d54fb-1bb1-4e82-87d0-3034b9152f0e.png">
 
 ## Date-time picker
 
@@ -625,6 +684,8 @@ DatePicker::make('date_of_birth')
 TimePicker::make('alarm_at')
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147613326-004b09c8-c224-4676-a70f-cf6b7e3f0306.png">
+
 You may restrict the minimum and maximum date that can be selected with the picker. The `minDate()` and `maxDate()` methods accept a `DateTime` instance (e.g. Carbon), or a string:
 
 ```php
@@ -634,6 +695,8 @@ DatePicker::make('date_of_birth')
     ->minDate(now()->subYears(150))
     ->maxDate(now())
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147613432-41e22381-af01-4f5e-8d0d-0ba535d1e444.png">
 
 You may customize the format of the field when it is saved in your database, using the `format()` method. This accepts a string date format, using [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
 
@@ -651,6 +714,8 @@ use Filament\Forms\Components\DatePicker;
 DatePicker::make('date_of_birth')->displayFormat('d/m/Y')
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147613473-51ffe805-2a7f-47e5-af8b-e7871e9c5a85.png">
+
 When using the time picker, you may disable the seconds input using the `withoutSeconds()` method:
 
 ```php
@@ -659,6 +724,8 @@ use Filament\Forms\Components\DateTimePicker;
 DateTimePicker::make('published_at')->withoutSeconds()
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147613511-30d7b2d8-227a-42ff-a6c7-e080d22305ad.png">
+
 In some countries, the first day of the week is not Monday. To customize the first day of the week in the date picker, use the `forms.components.date_time_picker.first_day_of_week` config option, or the `firstDayOfWeek()` method on the component. 0 to 7 are accepted values, with Monday as 1 and Sunday as 7 or 0:
 
 ```php
@@ -666,6 +733,8 @@ use Filament\Forms\Components\DateTimePicker;
 
 DateTimePicker::make('published_at')->firstDayOfWeek(7)
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147613536-6c2bdc63-03f8-4dd9-92eb-9a0aca5e7263.png">
 
 There are additionally convenient helper methods to set the first day of the week more semantically:
 
@@ -683,8 +752,10 @@ The file upload field is based on [Filepond](https://pqina.nl/filepond).
 ```php
 use Filament\Forms\Components\FileUpload;
 
-FileUpload::make('attachment'),
+FileUpload::make('attachment')
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147613556-62c62153-4d21-4801-8a71-040d528d5757.png">
 
 By default, files will be uploaded publicly to your default storage disk.
 
@@ -749,6 +820,8 @@ FileUpload::make('attachment')
     ->uploadProgressIndicatorPosition('left')
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147613590-9ee07ce7-a43e-46a0-bb40-7a21a3692aea.png">
+
 You may also upload multiple files. This stores URLs in JSON:
 
 ```php
@@ -779,6 +852,8 @@ use Filament\Forms\Components\RichEditor;
 
 RichEditor::make('content')
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147613608-b1236c72-d5cf-40d5-aa73-70c37a5c7e4d.png">
 
 You may enable / disable toolbar buttons using a range of convenient methods:
 
@@ -836,6 +911,8 @@ use Filament\Forms\Components\MarkdownEditor;
 
 MarkdownEditor::make('content')
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147613631-0f9254aa-0abb-4a2e-b9d7-bda1a01b8d57.png">
 
 You may enable / disable toolbar buttons using a range of convenient methods:
 
@@ -913,7 +990,10 @@ Repeater::make('members')
             ])
             ->required(),
     ])
+    ->columns(2)
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147613690-9c36779b-f3dc-4710-bdba-dc5c81ddd3cd.png">
 
 We recommend that you store repeater data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
 
@@ -941,7 +1021,7 @@ Repeater::make('members')
     ->schema([
         // ...
     ])
-    ->defaultItems(1)
+    ->defaultItems(3)
 ```
 
 You may set a label to customize the text that should be displayed in the button for adding a repeater item:
@@ -955,6 +1035,8 @@ Repeater::make('members')
     ])
     ->createItemButtonLabel('Add member')
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147613748-6fdf2eff-de09-4ba0-8d01-68888802b152.png">
 
 You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
 
@@ -1003,7 +1085,9 @@ Builder::make('content')
     ->blocks([
         Builder\Block::make('heading')
             ->schema([
-                TextInput::make('content')->required(),
+                TextInput::make('content')
+                    ->label('Heading')
+                    ->required(),
                 Select::make('level')
                     ->options([
                         'h1' => 'Heading 1',
@@ -1017,11 +1101,14 @@ Builder::make('content')
             ]),
         Builder\Block::make('paragraph')
             ->schema([
-                MarkdownEditor::make('content')->required(),
+                MarkdownEditor::make('content')
+                    ->label('Paragraph')
+                    ->required(),
             ]),
         Builder\Block::make('image')
             ->schema([
                 FileUpload::make('url')
+                    ->label('Image')
                     ->image()
                     ->required(),
                 TextInput::make('alt')
@@ -1030,6 +1117,8 @@ Builder::make('content')
             ]),
     ])
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147613850-8693abe9-78c9-4f01-b40e-9cd9a567e168.png">
 
 We recommend that you store builder data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
 
@@ -1063,8 +1152,10 @@ Blocks may also have an icon, which is displayed next to the label. The `icon()`
 ```php
 use Filament\Forms\Components\Builder;
 
-Builder\Block::make('heading')->icon('heroicon-o-archive')
+Builder\Block::make('heading')->icon('heroicon-o-bookmark')
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147614039-d9aa43dd-acfe-43b6-9cd1-1fc322aa4526.png">
 
 You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
 
@@ -1091,6 +1182,8 @@ use Filament\Forms\Components\TagsInput;
 
 TagsInput::make('tags')
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147614098-14d6eecb-2674-49b6-a5ee-e963c4d88a6e.png">
 
 If you're saving the JSON tags using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -1129,6 +1222,8 @@ TagsInput::make('tags')
     ])
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147614115-7570a6cb-dd91-4912-8adf-e54a51f1c567.png">
+
 > Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](/docs/spatie-laravel-tags-plugin) for more information.
 
 ## Textarea
@@ -1140,6 +1235,8 @@ use Filament\Forms\Components\Textarea;
 
 Textarea::make('description')
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147614131-e3db8d23-5045-4e0e-8de4-30823a4af362.png">
 
 You may change the size of the textarea by defining the `rows()` and `cols()` methods:
 
@@ -1171,6 +1268,8 @@ use Filament\Forms\Components\KeyValue;
 KeyValue::make('meta')
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147614182-52756a59-a9c4-4371-ac61-cd77c977808e.png">
+
 You may customize the labels for the key and value fields using the `keyLabel()` and `valueLabel()` methods:
 
 ```php
@@ -1180,6 +1279,8 @@ KeyValue::make('meta')
     ->keyLabel('Property name')
     ->valueLabel('Property value')
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147614196-27341757-b50e-45c2-8b40-728cb985d2cd.png">
 
 You may also prevent the user from adding rows, deleting rows, or editing keys:
 
@@ -1201,6 +1302,8 @@ KeyValue::make('meta')
     ->keyPlaceholder('Property name')
     ->valuePlaceholder('Property value')
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147614208-936fa7ee-f719-466f-b7de-56ecc2558c0a.png">
 
 ## View
 

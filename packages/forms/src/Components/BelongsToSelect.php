@@ -37,6 +37,11 @@ class BelongsToSelect extends Select
                 ),
             );
         });
+
+        $this->saveRelationshipsUsing(function (BelongsToSelect $component, $state) {
+            $component->getRelationship()->associate($state);
+            $component->getModel()->save();
+        });
     }
 
     public function preload(bool | Closure $condition = true): static
@@ -82,6 +87,7 @@ class BelongsToSelect extends Select
 
             return $relationshipQuery
                 ->where($component->getDisplayColumnName(), $searchOperator, "%{$query}%")
+                ->limit(50)
                 ->pluck($component->getDisplayColumnName(), $relationship->getOwnerKeyName())
                 ->toArray();
         });
@@ -112,18 +118,6 @@ class BelongsToSelect extends Select
         );
 
         return $this;
-    }
-
-    public function saveRelationships(): void
-    {
-        if ($this->saveRelationshipsUsing) {
-            parent::saveRelationships();
-
-            return;
-        }
-
-        $this->getRelationship()->associate($this->getState());
-        $this->getModel()->save();
     }
 
     public function getDisplayColumnName(): string

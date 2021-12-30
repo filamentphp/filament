@@ -28,6 +28,8 @@ php artisan make:filament-user
 
 Visit your admin panel at `/admin` to sign in, and you're now ready to start [building resources](resources)!
 
+[<img src="https://user-images.githubusercontent.com/41773797/147615302-daec5d1c-e3ac-428a-98c2-c3fb40d945b5.png">](https://demo.filamentadmin.com)
+
 ## Deploying to production
 
 By default, all `App\Models\User`s can access Filament locally. To allow them to access Filament in production, you must take a few extra steps to ensure that only the correct users have access to the admin panel.

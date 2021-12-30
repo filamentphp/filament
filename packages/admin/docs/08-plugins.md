@@ -143,8 +143,8 @@ class ExampleServiceProvider extends PluginServiceProvider
     protected function getStyles(): array
     {
         return [
-            'my-package-styles' => '/vendor/my-package/css/app.css',
-        ],
+            'my-package-styles' => __DIR__ . '/../dist/app.css',
+        ];
     }
 }
 ```
@@ -163,7 +163,7 @@ class ExampleServiceProvider extends PluginServiceProvider
     protected function getScripts(): array
     {
         return [
-            'my-package-scripts' => '/vendor/my-package/js/app.js',
+            'my-package-scripts' => __DIR__ . '/../dist/app.js',
         ];
     };
 }
@@ -198,4 +198,25 @@ You may now access this data in your scripts:
 <script>
     console.log(window.filamentData.userId)
 </script>
+```
+
+## Commands
+
+To register commands for your plugin, return them from the `getCommands()` method in your service provider:
+
+```php
+use Filament\PluginServiceProvider;
+use Vendor\Package\Commands;
+
+class ExampleServiceProvider extends PluginServiceProvider
+{
+    public static string $name = 'example';
+    
+    protected function getCommands(): array
+    {
+        return [
+            Commands\CustomCommand::class,
+        ];
+    }
+}
 ```

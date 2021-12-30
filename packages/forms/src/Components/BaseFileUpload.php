@@ -57,6 +57,18 @@ class BaseFileUpload extends Field
             $component->state($files);
         });
 
+        $this->afterStateUpdated(function (BaseFileUpload $component, $state) {
+            if (blank($state)) {
+                return;
+            }
+
+            if (is_array($state)) {
+                return;
+            }
+
+            $component->state([(string) Str::uuid() => $state]);
+        });
+
         $this->beforeStateDehydrated(function (BaseFileUpload $component): void {
             $component->saveUploadedFiles();
         });
@@ -250,8 +262,6 @@ class BaseFileUpload extends Field
 
         if (filled($count = $this->maxFiles)) {
             $rules[] = "max:{$count}";
-        } elseif (! $this->isMultiple()) {
-            $rules[] = 'max:1';
         }
 
         if (filled($count = $this->minFiles)) {
@@ -309,6 +319,10 @@ class BaseFileUpload extends Field
             return null;
         }
 
+        if ($file instanceof TemporaryUploadedFile) {
+            $file->delete();
+        }
+
         unset($files[$fileKey]);
 
         $this->state($files);
@@ -339,6 +353,12 @@ class BaseFileUpload extends Field
 
     public function saveUploadedFiles(): void
     {
+        if (blank($this->getState())) {
+            $this->state([]);
+
+            return;
+        }
+
         $state = array_map(function (TemporaryUploadedFile | string $file) {
             if (! $file instanceof TemporaryUploadedFile) {
                 return $file;
@@ -347,12 +367,18 @@ class BaseFileUpload extends Field
             $callback = $this->saveUploadedFileUsing;
 
             if (! $callback) {
+                $file->delete();
+
                 return $file;
             }
 
-            return $this->evaluate($callback, [
+            $storedFile = $this->evaluate($callback, [
                 'file' => $file,
             ]);
+
+            $file->delete();
+
+            return $storedFile;
         }, $this->getState());
 
         $this->state($state);

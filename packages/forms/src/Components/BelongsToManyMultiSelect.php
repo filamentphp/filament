@@ -19,8 +19,8 @@ class BelongsToManyMultiSelect extends MultiSelect
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (BelongsToManyMultiSelect $component): void {
-            if (count($component->getState())) {
+        $this->afterStateHydrated(function (BelongsToManyMultiSelect $component, ?array $state): void {
+            if (count($state ?? [])) {
                 return;
             }
 
@@ -28,6 +28,8 @@ class BelongsToManyMultiSelect extends MultiSelect
             $relatedModels = $relationship->getResults();
 
             if (! $relatedModels) {
+                $component->state([]);
+
                 return;
             }
 
@@ -36,6 +38,10 @@ class BelongsToManyMultiSelect extends MultiSelect
                     $relationship->getRelatedKeyName(),
                 )->toArray(),
             );
+        });
+
+        $this->saveRelationshipsUsing(function (BelongsToManyMultiSelect $component, array $state) {
+            $component->getRelationship()->sync($state);
         });
 
         $this->dehydrated(false);
@@ -86,6 +92,7 @@ class BelongsToManyMultiSelect extends MultiSelect
 
             return $relationshipQuery
                 ->where($component->getDisplayColumnName(), $searchOperator, "%{$query}%")
+                ->limit(50)
                 ->pluck($component->getDisplayColumnName(), $relationship->getRelatedKeyName())
                 ->toArray();
         });
@@ -111,17 +118,6 @@ class BelongsToManyMultiSelect extends MultiSelect
         });
 
         return $this;
-    }
-
-    public function saveRelationships(): void
-    {
-        if ($this->saveRelationshipsUsing) {
-            parent::saveRelationships();
-
-            return;
-        }
-
-        $this->getRelationship()->sync($this->getState());
     }
 
     public function getDisplayColumnName(): string

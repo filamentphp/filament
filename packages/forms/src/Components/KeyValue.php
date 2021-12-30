@@ -32,6 +32,15 @@ class KeyValue extends Field
     {
         parent::setUp();
 
+        $this->default([]);
+
+        $this->dehydrateStateUsing(function ($state) {
+            return collect($state)
+                ->filter(fn (?string $value, ?string $key): bool => filled($key))
+                ->map(fn (?string $value): ?string => filled($value) ? $value : null)
+                ->toArray();
+        });
+
         $this->addButtonLabel(__('forms::components.key_value.buttons.add.label'));
 
         $this->deleteButtonLabel(__('forms::components.key_value.buttons.delete.label'));

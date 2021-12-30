@@ -91,6 +91,8 @@ class EditPost extends Component implements Forms\Contracts\HasForms
 
 Visit your Livewire component in the browser, and you should see the form components from `getFormSchema()`.
 
+<img src="https://user-images.githubusercontent.com/41773797/147614478-5b40c645-107e-40ac-ba41-f0feb99dd480.png">
+
 ## Filling forms with data
 
 Often, you will need to prefill your form fields with data. In normal Livewire components, this is often done in the `mount()` method, as this is only run once, immediately after the component is instantiated.

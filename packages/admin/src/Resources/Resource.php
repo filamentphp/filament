@@ -187,6 +187,7 @@ class Resource
         }
 
         return $query
+            ->limit(50)
             ->get()
             ->map(fn (Model $record): array => [
                 'details' => static::getGlobalSearchResultDetails($record),

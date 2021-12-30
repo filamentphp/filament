@@ -7,7 +7,11 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class Radio extends Field
 {
+    use Concerns\HasExtraInputAttributes;
+
     protected string $view = 'forms::components.radio';
+
+    protected bool | Closure $isInline = false;
 
     protected array | Arrayable | Closure $options = [];
 
@@ -33,6 +37,13 @@ class Radio extends Field
     public function disableOptionWhen(bool | Closure $callback): static
     {
         $this->isOptionDisabled = $callback;
+
+        return $this;
+    }
+
+    public function inline(bool | Closure $condition = true): static
+    {
+        $this->isInline = $condition;
 
         return $this;
     }
@@ -81,6 +92,11 @@ class Radio extends Field
         }
 
         return $options;
+    }
+
+    public function isInline(): bool
+    {
+        return (bool) $this->evaluate($this->isInline);
     }
 
     public function isOptionDisabled($value, string $label): bool

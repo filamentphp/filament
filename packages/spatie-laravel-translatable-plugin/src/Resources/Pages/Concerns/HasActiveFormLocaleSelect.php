@@ -20,4 +20,13 @@ trait HasActiveFormLocaleSelect
                     ->toArray(),
             );
     }
+
+    protected function getRecordTitle(): ?string
+    {
+        if ($this->activeFormLocale) {
+            $this->record->setLocale($this->activeFormLocale);
+        }
+
+        return parent::getRecordTitle();
+    }
 }

@@ -16,6 +16,10 @@ class Repeater extends Field
 
     protected string | Closure | null $createItemButtonLabel = null;
 
+    protected bool | Closure $isItemCreationDisabled = false;
+
+    protected bool | Closure $isItemDeletionDisabled = false;
+
     protected bool | Closure $isItemMovementDisabled = false;
 
     protected function setUp(): void
@@ -47,6 +51,8 @@ class Repeater extends Field
 
                     $livewire = $component->getLivewire();
                     data_set($livewire, "{$statePath}.{$newUuid}", []);
+
+                    $this->getChildComponentContainers()[$newUuid]->fill();
 
                     $component->hydrateDefaultItemState($newUuid);
                 },
@@ -134,12 +140,32 @@ class Repeater extends Field
         $this->default(function (Repeater $component) use ($count): array {
             $items = [];
 
-            foreach (range(1, $component->evaluate($count)) as $index) {
+            $count = $component->evaluate($count);
+
+            if (! $count) {
+                return $items;
+            }
+
+            foreach (range(1, $count) as $index) {
                 $items[(string) Str::uuid()] = [];
             }
 
             return $items;
         });
+
+        return $this;
+    }
+
+    public function disableItemCreation(bool | Closure $condition = true): static
+    {
+        $this->isItemCreationDisabled = $condition;
+
+        return $this;
+    }
+
+    public function disableItemDeletion(bool | Closure $condition = true): static
+    {
+        $this->isItemDeletionDisabled = $condition;
 
         return $this;
     }
@@ -170,6 +196,16 @@ class Repeater extends Field
     public function getCreateItemButtonLabel(): string
     {
         return $this->evaluate($this->createItemButtonLabel);
+    }
+
+    public function isItemCreationDisabled(): bool
+    {
+        return $this->evaluate($this->isItemCreationDisabled);
+    }
+
+    public function isItemDeletionDisabled(): bool
+    {
+        return $this->evaluate($this->isItemDeletionDisabled);
     }
 
     public function isItemMovementDisabled(): bool

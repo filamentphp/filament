@@ -15,48 +15,40 @@ class SpatieTagsInput extends TagsInput
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (SpatieTagsInput $component, Model|string|null $model): void {
-            if (! $model || is_string($model)) {
+        $this->afterStateHydrated(function (SpatieTagsInput $component, ?Model $record): void {
+            if (! $record) {
                 $component->state([]);
 
                 return;
             }
 
-            if (! method_exists($model, 'tagsWithType')) {
+            if (! method_exists($record, 'tagsWithType')) {
                 return;
             }
 
             $type = $component->getType();
-            $tags = $model->tagsWithType($type);
+            $tags = $record->tagsWithType($type);
 
             $component->state($tags->pluck('name'));
         });
 
+        $this->saveRelationshipsUsing(function (SpatieTagsInput $component, array $state) {
+            $model = $component->getModel();
+
+            if (! (method_exists($model, 'syncTagsWithType') && method_exists($model, 'syncTags'))) {
+                return;
+            }
+
+            if ($type = $component->getType()) {
+                $model->syncTagsWithType($state, $type);
+
+                return;
+            }
+
+            $model->syncTags($state);
+        });
+
         $this->dehydrated(false);
-    }
-
-    public function saveRelationships(): void
-    {
-        if ($this->saveRelationshipsUsing) {
-            parent::saveRelationships();
-
-            return;
-        }
-
-        $model = $this->getModel();
-        $tags = $this->getState();
-
-        if (! (method_exists($model, 'syncTagsWithType') && method_exists($model, 'syncTags'))) {
-            return;
-        }
-
-        if ($type = $this->getType()) {
-            $model->syncTagsWithType($tags, $type);
-
-            return;
-        }
-
-        $model->syncTags($tags);
     }
 
     public function type(string | Closure | null $type): static

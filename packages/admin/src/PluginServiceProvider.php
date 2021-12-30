@@ -24,8 +24,15 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     {
         $package
             ->name(static::$name)
-            ->hasTranslations()
-            ->hasViews();
+            ->hasCommands($this->getCommands());
+
+        if (file_exists($this->package->basePath('/../resources/lang'))) {
+            $package->hasTranslations();
+        }
+
+        if (file_exists($this->package->basePath('/../resources/views'))) {
+            $package->hasViews();
+        }
     }
 
     public function packageRegistered(): void
@@ -69,6 +76,11 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         foreach ($this->getWidgets() as $widget) {
             Livewire::component($widget::getName(), $widget);
         }
+    }
+
+    protected function getCommands(): array
+    {
+        return [];
     }
 
     protected function getPages(): array
