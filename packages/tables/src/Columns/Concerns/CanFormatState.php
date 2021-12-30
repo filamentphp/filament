@@ -67,11 +67,14 @@ trait CanFormatState
     {
         $state = $this->getState();
 
+        phpinfo();
+        die();
+
         if ($this->formatStateUsing instanceof Closure) {
             $state = app()->call($this->formatStateUsing, [
                 'livewire' => $this->getLivewire(),
                 'record' => $this->getRecord(),
-                'state' => $state,
+                'state' => (interface_exists(\BackedEnum::class) && $state instanceof \BackedEnum) ? $state->value : $state,
             ]);
         }
 
