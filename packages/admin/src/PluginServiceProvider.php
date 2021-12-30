@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -11,6 +12,8 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     public static string $name;
 
     protected array $pages = [];
+
+    protected array $relationManagers = [];
 
     protected array $resources = [];
 
@@ -25,6 +28,12 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         $package
             ->name(static::$name)
             ->hasCommands($this->getCommands());
+
+        $configFileName = $package->shortName();
+
+        if (file_exists($this->package->basePath("/../config/{$configFileName}.php"))) {
+            $package->hasConfigFile();
+        }
 
         if (file_exists($this->package->basePath('/../resources/lang'))) {
             $package->hasTranslations();
@@ -59,6 +68,10 @@ abstract class PluginServiceProvider extends PackageServiceProvider
             Livewire::component($page::getName(), $page);
         }
 
+        foreach ($this->getRelationManagers() as $manager) {
+            Livewire::component($manager::getName(), $manager);
+        }
+
         foreach ($this->getResources() as $resource) {
             foreach ($resource::getPages() as $page) {
                 Livewire::component($page['class']::getName(), $page['class']);
@@ -86,6 +99,11 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     protected function getPages(): array
     {
         return $this->pages;
+    }
+
+    protected function getRelationManagers(): array
+    {
+        return $this->relationManagers;
     }
 
     protected function getResources(): array
