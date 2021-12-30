@@ -4470,6 +4470,11 @@ select{
     line-height: 1.75rem;
   }
 
+  [dir="rtl"] .rtl\:lg\:-translate-x-0{
+    --tw-translate-x: -0px;
+    transform: var(--tw-transform);
+  }
+
   [dir="rtl"] .rtl\:lg\:pl-0{
     padding-left: 0px;
   }
