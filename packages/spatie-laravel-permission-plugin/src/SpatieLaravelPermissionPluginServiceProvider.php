@@ -16,7 +16,6 @@ class SpatieLaravelPermissionPluginServiceProvider extends ServiceProvider
         });
 
         $this->mergeConfigFrom(__DIR__ . '/../config/filament-spatie-laravel-permission-plugin.php', 'filament-spatie-laravel-permission-plugin');
-        Facades\Filament::registerResources($this->getResources());
     }
 
     public function boot(): void
@@ -88,13 +87,5 @@ class SpatieLaravelPermissionPluginServiceProvider extends ServiceProvider
         }
 
         return array_merge($commands, $aliases);
-    }
-
-    public function getResources()
-    {
-        return [
-            \Filament\Resources\RoleResource::class,
-            \Filament\Resources\PermissionResource::class,
-        ];
     }
 }

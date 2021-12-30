@@ -34,6 +34,12 @@ class MakePermissionCommand extends MakeResourceCommand
             ->studly()
             ->replace('/', '\\');
 
+        $choice = $this->choice('What would you like to Generate for the Resource?',[
+            'Permissions & Policy',
+            'Only Permissions',
+            'Just the Resource, Thanks!'
+        ], 2, null, false);
+        
         $confirmation = $this->option('permissions') ?: $this->confirm('Generate Permissions for '.$model.'Resource ?');
 
         if ($confirmation) {

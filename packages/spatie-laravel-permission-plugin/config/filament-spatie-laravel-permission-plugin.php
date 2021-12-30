@@ -16,21 +16,21 @@ return [
     'default_roles' => [
         'super_admin' => [
             'enabled' => true,
-            'name' => 'super_admin'
+            'role_name' => 'super_admin'
         ],
         'filament_user' => [
             'enabled' => true,
-            'name' => 'filament_user'
+            'role_name' => 'filament_user'
         ],
     ],
 
     'default_permission_prefixes' => [
-        'view_any_',
-        'view_',
-        'create_',
-        'update_',
-        'delete_',
-        'delete_any_',
+        'view',
+        'view_any',
+        'create',
+        'delete',
+        'delete_any',
+        'update',
     ]
 
 ];

@@ -15,11 +15,11 @@ class SpatieLaravelPermissionPlugin
         collect(config('filament-spatie-laravel-permission-plugin.default_permission_prefixes'))
             ->unique()
             ->each(function($prefix) use($model, $permissions){
-                $permissions->push(Permission::create(['name' => $prefix.$model]));
+                $permissions->push(Permission::create(['name' => $prefix.'_'.$model]));
             });
 
         if (static::superAdminIsEnabled()) {
-            $superAdmin = Role::firstOrCreate(['name' => config('filament-spatie-laravel-permission-plugin.default_roles.super_admin.name')]);
+            $superAdmin = Role::firstOrCreate(['name' => config('filament-spatie-laravel-permission-plugin.default_roles.super_admin.role_name')]);
             $superAdmin->givePermissionTo($permissions);
         }
     }
