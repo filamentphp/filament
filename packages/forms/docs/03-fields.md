@@ -610,6 +610,78 @@ class User extends Model
 }
 ```
 
+## Checkbox list
+
+The checkbox list component allows you to select multiple values from a list of predefined options:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        'tailwind' => 'TailwindCSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+```
+
+These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class App extends Model
+{
+    protected $casts = [
+        'technologies' => 'array',
+    ];
+
+    // ...
+}
+```
+
+You may organize options into columns by using the `columns()` method:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        'tailwind' => 'TailwindCSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+    ->columns(2)
+```
+
+This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of columns at various breakpoints.
+
+### Populating automatically from a `belongsToMany` relationship
+
+You may employ the `relationship()` method of the `BelongsToManyCheckboxList` to configure a relationship to automatically retrieve and save options from:
+
+```php
+use App\Models\App;
+use Filament\Forms\Components\BelongsToManyCheckboxList;
+
+BelongsToManyCheckboxList::make('technologies')
+    ->relationship('technologies', 'name')
+```
+
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
+
+You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
+
+```php
+use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Illuminate\Database\Eloquent\Builder;
+
+BelongsToManyCheckboxList::make('technologies')
+    ->relationship('technologies', 'name', fn (Builder $query) => $query->withTrashed())
+```
+
 ## Radio
 
 The radio input provides a radio button group for selecting a single value from a list of predefined options:
