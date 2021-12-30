@@ -2,7 +2,6 @@
 
 namespace Filament;
 
-use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
