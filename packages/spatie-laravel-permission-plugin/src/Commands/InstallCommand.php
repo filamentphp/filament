@@ -2,12 +2,12 @@
 
 namespace Filament\Commands;
 
-use Illuminate\Support\Str;
 use Filament\Facades\Filament;
+use Filament\SpatieLaravelPermissionPlugin;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Schema;
-use Filament\SpatieLaravelPermissionPlugin;
+use Illuminate\Support\Str;
 
 class InstallCommand extends Command
 {
@@ -19,14 +19,15 @@ class InstallCommand extends Command
 
     public function __invoke(): int
     {
-        if (!Schema::hasTable('permissions')) {
+        if (! Schema::hasTable('permissions')) {
             $this->error('Seems, you have not run Spatie Laravel Permission migrations!');
+
             return static::INVALID;
         }
 
         $filesystem = new Filesystem();
 
-        $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\')->replace('\\', '/'),);
+        $baseResourcePath = app_path((string) Str::of('Filament\\Resources\\')->replace('\\', '/'), );
 
         $filesystem->ensureDirectoryExists($baseResourcePath);
         $filesystem->copyDirectory(__DIR__.'/../../stubs/resources', $baseResourcePath);
@@ -35,8 +36,9 @@ class InstallCommand extends Command
 
         $entities = collect(Filament::getResources())
             ->reduce(function ($options, $resource) {
-                $option = Str::before(Str::afterLast($resource,'\\'),'Resource');
+                $option = Str::before(Str::afterLast($resource, '\\'), 'Resource');
                 $options[$option] = $option;
+
                 return $options;
             }, collect())
             ->values()

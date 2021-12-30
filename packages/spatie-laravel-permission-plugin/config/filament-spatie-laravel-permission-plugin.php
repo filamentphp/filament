@@ -16,11 +16,11 @@ return [
     'default_roles' => [
         'super_admin' => [
             'enabled' => true,
-            'role_name' => 'super_admin'
+            'role_name' => 'super_admin',
         ],
         'filament_user' => [
             'enabled' => true,
-            'role_name' => 'filament_user'
+            'role_name' => 'filament_user',
         ],
     ],
 

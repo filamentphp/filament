@@ -2,9 +2,9 @@
 
 namespace Filament\Commands;
 
-use Illuminate\Support\Str;
-use Illuminate\Filesystem\Filesystem;
 use Filament\SpatieLaravelPermissionPlugin;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 
 class ExtendsMakeResourceCommand extends MakeResourceCommand
 {
@@ -32,7 +32,7 @@ class ExtendsMakeResourceCommand extends MakeResourceCommand
             ->studly()
             ->replace('/', '\\');
 
-        $choice = $this->option('permissions')?:$this->choice('What would you like to Generate for the Resource?',[
+        $choice = $this->option('permissions') ?: $this->choice('What would you like to Generate for the Resource?', [
             "With Permissions & Policy",
             "Only Permissions & Policy",
             "With Permissions",
@@ -53,7 +53,7 @@ class ExtendsMakeResourceCommand extends MakeResourceCommand
             parent::handle();
 
             if ($this->checkForCollision([$policyPath])) {
-                    return static::INVALID;
+                return static::INVALID;
             }
 
             $this->copyStubToApp('DefaultPolicy', $policyPath, [
@@ -71,12 +71,10 @@ class ExtendsMakeResourceCommand extends MakeResourceCommand
             SpatieLaravelPermissionPlugin::generateFor(Str::lower($model));
 
             $this->info("Successfully generated Permissions for ".$model."Resource");
-
-        }
-        else if ($choice === "Only Permissions & Policy") { // generate Permissions + Policy in case Resource already exists
+        } elseif ($choice === "Only Permissions & Policy") { // generate Permissions + Policy in case Resource already exists
 
             if ($this->checkForCollision([$policyPath])) {
-                    return static::INVALID;
+                return static::INVALID;
             }
 
             $this->copyStubToApp('DefaultPolicy', $policyPath, [
@@ -94,15 +92,13 @@ class ExtendsMakeResourceCommand extends MakeResourceCommand
             SpatieLaravelPermissionPlugin::generateFor(Str::lower($model));
 
             $this->info("Successfully generated Permissions for ".$model."Resource");
-        }
-        else if ($choice === "With Permissions") { // generate Resouce + Permissions in case Policy already exists
+        } elseif ($choice === "With Permissions") { // generate Resouce + Permissions in case Policy already exists
             parent::handle();
 
             SpatieLaravelPermissionPlugin::generateFor(Str::lower($model));
 
             $this->info("Successfully generated Permissions for ".$model."Resource");
-        }
-        else if ($choice === "Only Permissions") { // generate only permissions in case Resource & Policy already exists
+        } elseif ($choice === "Only Permissions") { // generate only permissions in case Resource & Policy already exists
 
             SpatieLaravelPermissionPlugin::generateFor(Str::lower($model));
 

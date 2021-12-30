@@ -2,8 +2,8 @@
 
 namespace Filament;
 
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class SpatieLaravelPermissionPlugin
 {
@@ -12,15 +12,15 @@ class SpatieLaravelPermissionPlugin
         $permissions = collect();
         cache()->forget('spatie.permission.cache');
         collect(config('filament-spatie-laravel-permission-plugin.default_permission_prefixes'))
-            ->each(function($prefix) use($model, $permissions){
+            ->each(function ($prefix) use ($model, $permissions) {
                 $permissions->push(Permission::firstOrCreate([
-                    'name' => $prefix.'_'.$model
+                    'name' => $prefix.'_'.$model,
                 ]));
             });
 
         if (static::superAdminIsEnabled()) {
             $superAdmin = Role::firstOrCreate([
-                'name' => config('filament-spatie-laravel-permission-plugin.default_roles.super_admin.role_name')
+                'name' => config('filament-spatie-laravel-permission-plugin.default_roles.super_admin.role_name'),
             ]);
             $superAdmin->givePermissionTo($permissions);
         }

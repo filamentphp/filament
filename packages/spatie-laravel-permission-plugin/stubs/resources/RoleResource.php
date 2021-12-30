@@ -2,16 +2,16 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\RoleResource\Pages;
 use Closure;
 use Filament\Forms;
+use Filament\Resources\Form;
+use Filament\Resources\Resource;
+use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Support\Str;
-use Filament\Resources\Form;
-use Filament\Resources\Table;
-use Filament\Resources\Resource;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-use App\Filament\Resources\RoleResource\Pages;
+use Spatie\Permission\Models\Role;
 
 class RoleResource extends Resource
 {
@@ -39,14 +39,12 @@ class RoleResource extends Resource
                                 ->afterStateUpdated(function (Closure $set, $state) {
                                     foreach (static::getEntities() as $entity) {
                                         $set($entity, $state);
-                                        foreach(config('filament-spatie-laravel-permission-plugin.default_permission_prefixes') as $perm)
-                                        {
+                                        foreach (config('filament-spatie-laravel-permission-plugin.default_permission_prefixes') as $perm) {
                                             $set($perm.$entity, $state);
                                         }
                                     }
-
                                 })
-                                ->dehydrated(fn($state):bool => $state?:false)
+                                ->dehydrated(fn ($state): bool => $state ?: false),
                         ]),
                 ]),
                 Forms\Components\Grid::make([
@@ -56,8 +54,8 @@ class RoleResource extends Resource
                 ->schema(static::getEntitySchema())
                 ->columns([
                     'sm' => 2,
-                    'lg' => 3
-                ])
+                    'lg' => 3,
+                ]),
             ]);
     }
 
@@ -97,40 +95,40 @@ class RoleResource extends Resource
         return Permission::pluck('name')
             ->reduce(function ($roles, $permission) {
                 $roles->push(Str::afterLast($permission, '_'));
+
                 return $roles->unique();
-            },collect())
+            }, collect())
             ->toArray();
     }
 
     public static function getEntitySchema()
     {
-        return collect(static::getEntities())->reduce(function($entities,$entity) {
-                $entities[] = Forms\Components\Card::make()
+        return collect(static::getEntities())->reduce(function ($entities, $entity) {
+            $entities[] = Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\Toggle::make($entity)
                             ->onIcon('heroicon-s-lock-open')
                             ->offIcon('heroicon-s-lock-closed')
                             ->reactive()
-                            ->afterStateUpdated(function (Closure $set,Closure $get, $state) use($entity) {
-
-                                collect(config('filament-spatie-laravel-permission-plugin.default_permission_prefixes'))->each(function ($permission) use($set, $entity, $state) {
-                                        $set($permission.'_'.$entity, $state);
+                            ->afterStateUpdated(function (Closure $set, Closure $get, $state) use ($entity) {
+                                collect(config('filament-spatie-laravel-permission-plugin.default_permission_prefixes'))->each(function ($permission) use ($set, $entity, $state) {
+                                    $set($permission.'_'.$entity, $state);
                                 });
 
                                 if (! $state) {
-                                    $set('select_all',false);
+                                    $set('select_all', false);
                                 }
 
                                 $entityStates = [];
-                                foreach(static::getEntities() as $ent) {
+                                foreach (static::getEntities() as $ent) {
                                     $entityStates [] = $get($ent);
                                 }
 
-                                if (in_array(false,$entityStates, true) === false) {
+                                if (in_array(false, $entityStates, true) === false) {
                                     $set('select_all', true); // if all toggles on => turn select_all on
                                 }
 
-                                if (in_array(true,$entityStates, true) === false) {
+                                if (in_array(true, $entityStates, true) === false) {
                                     $set('select_all', false); // if even one toggle off => turn select_all off
                                 }
                             })
@@ -140,14 +138,15 @@ class RoleResource extends Resource
                         ->extraAttributes(['class' => 'text-primary-600','style' => 'border-color:var(--primary)'])
                         ->columns([
                             'default' => 2,
-                            'xl' => 3
+                            'xl' => 3,
                         ])
-                        ->schema(static::getPermissionsSchema($entity))
+                        ->schema(static::getPermissionsSchema($entity)),
                     ])
                     ->columns(2)
                     ->columnSpan(1);
-                return $entities;
-        },[]);
+
+            return $entities;
+        }, []);
     }
 
     public static function getPermissionsSchema($entity)
@@ -156,38 +155,42 @@ class RoleResource extends Resource
             $permissions[] = Forms\Components\Checkbox::make($permission.'_'.$entity)
                                 ->label(Str::studly($permission))
                                 ->extraAttributes(['class' => 'text-primary-600'])
-                                ->afterStateHydrated(function (Closure $set, Closure $get, $record) use($entity, $permission) {
-                                    if (is_null($record)) return;
+                                ->afterStateHydrated(function (Closure $set, Closure $get, $record) use ($entity, $permission) {
+                                    if (is_null($record)) {
+                                        return;
+                                    }
 
                                     // sit the state for the existing permissions
-                                    $existingPermissions = $record->permissions->pluck('name')->reduce(function ($permissions, $permission){
+                                    $existingPermissions = $record->permissions->pluck('name')->reduce(function ($permissions, $permission) {
                                         $permissions[$permission] = true;
-                                        return $permissions;
-                                    },[]);
 
-                                    $set($permission.'_'.$entity, in_array($permission.'_'.$entity,array_keys($existingPermissions)) && $existingPermissions[$permission.'_'.$entity] ? true : false);
+                                        return $permissions;
+                                    }, []);
+
+                                    $set($permission.'_'.$entity, in_array($permission.'_'.$entity, array_keys($existingPermissions)) && $existingPermissions[$permission.'_'.$entity] ? true : false);
                                     // check if any entites' one or all are true
                                     $entities = $record->permissions->pluck('name')
-                                        ->reduce(function ($roles, $role){
+                                        ->reduce(function ($roles, $role) {
                                             $roles[$role] = Str::afterLast($role, '_');
+
                                             return $roles;
-                                        },collect())
+                                        }, collect())
                                         ->values()
                                         ->groupBy(function ($item) {
                                             return $item;
                                         })->map->count()
-                                        ->reduce(function ($counts,$role,$key) {
+                                        ->reduce(function ($counts, $role, $key) {
                                             if ($role === 6) {
                                                 $counts[$key] = true;
-                                            }else {
+                                            } else {
                                                 $counts[$key] = false;
                                             }
+
                                             return $counts;
-                                        },[]);
+                                        }, []);
 
                                     // set entity's state if one are all permissions are true
-                                    if (in_array($entity,array_keys($entities)) && $entities[$entity])
-                                    {
+                                    if (in_array($entity, array_keys($entities)) && $entities[$entity]) {
                                         $set($entity, true);
                                     } else {
                                         $set($entity, false);
@@ -195,54 +198,54 @@ class RoleResource extends Resource
                                     }
 
                                     $entityStates = [];
-                                    foreach(static::getEntities() as $ent) {
+                                    foreach (static::getEntities() as $ent) {
                                         $entityStates [] = $get($ent);
                                     }
 
-                                    if (in_array(false,$entityStates, true) === false) {
+                                    if (in_array(false, $entityStates, true) === false) {
                                         $set('select_all', true); // if all toggles on => turn select_all on
                                     }
 
-                                    if (in_array(true,$entityStates, true) === false) {
+                                    if (in_array(true, $entityStates, true) === false) {
                                         $set('select_all', false); // if even one toggle off => turn select_all off
                                     }
                                 })
                                 ->reactive()
-                                ->afterStateUpdated(function (Closure $set, Closure $get, $state) use($entity){
-
+                                ->afterStateUpdated(function (Closure $set, Closure $get, $state) use ($entity) {
                                     $permissionStates = [];
-                                    foreach(config('filament-spatie-laravel-permission-plugin.default_permission_prefixes') as $perm) {
+                                    foreach (config('filament-spatie-laravel-permission-plugin.default_permission_prefixes') as $perm) {
                                         $permissionStates [] = $get($perm.$entity);
                                     }
 
-                                    if (in_array(false,$permissionStates, true) === false) {
+                                    if (in_array(false, $permissionStates, true) === false) {
                                         $set($entity, true); // if all permissions true => turn toggle on
                                     }
 
-                                    if (in_array(true,$permissionStates, true) === false) {
+                                    if (in_array(true, $permissionStates, true) === false) {
                                         $set($entity, false); // if even one false => turn toggle off
                                     }
 
-                                    if(!$state) {
-                                        $set($entity,false);
-                                        $set('select_all',false);
+                                    if (! $state) {
+                                        $set($entity, false);
+                                        $set('select_all', false);
                                     }
 
                                     $entityStates = [];
-                                    foreach(static::getEntities() as $ent) {
+                                    foreach (static::getEntities() as $ent) {
                                         $entityStates [] = $get($ent);
                                     }
 
-                                    if (in_array(false,$entityStates, true) === false) {
+                                    if (in_array(false, $entityStates, true) === false) {
                                         $set('select_all', true); // if all toggles on => turn select_all on
                                     }
 
-                                    if (in_array(true,$entityStates, true) === false) {
+                                    if (in_array(true, $entityStates, true) === false) {
                                         $set('select_all', false); // if even one toggle off => turn select_all off
                                     }
                                 })
-                                ->dehydrated(fn($state): bool => $state?:false);
+                                ->dehydrated(fn ($state): bool => $state ?: false);
+
             return $permissions;
-        },[]);
+        }, []);
     }
 }

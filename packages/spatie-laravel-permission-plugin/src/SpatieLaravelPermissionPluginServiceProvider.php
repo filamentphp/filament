@@ -8,8 +8,8 @@ class SpatieLaravelPermissionPluginServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton('command.make:filament-resource', function(){
-            return new Commands\ExtendsMakeResourceCommand;
+        $this->app->singleton('command.make:filament-resource', function () {
+            return new Commands\ExtendsMakeResourceCommand();
         });
     }
 
