@@ -2,9 +2,7 @@
 
 namespace Filament;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
-use Filament\Resources\RoleResource;
 
 class SpatieLaravelPermissionPluginServiceProvider extends ServiceProvider
 {
@@ -35,6 +33,7 @@ class SpatieLaravelPermissionPluginServiceProvider extends ServiceProvider
     {
         $commands = [
             Commands\ExtendsMakeResourceCommand::class,
+            Commands\InstallCommand::class,
         ];
 
         $aliases = [];
