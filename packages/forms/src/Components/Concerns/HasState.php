@@ -165,7 +165,17 @@ trait HasState
 
     public function getState()
     {
-        return data_get($this->getLivewire(), $this->getStatePath());
+        $state = data_get($this->getLivewire(), $this->getStatePath());
+
+        if (is_array($state)) {
+            return $state;
+        }
+
+        if (blank($state)) {
+            return null;
+        }
+
+        return $state;
     }
 
     public function getStatePath(bool $isAbsolute = true): string

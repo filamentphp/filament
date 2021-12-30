@@ -7,7 +7,7 @@ return [
     'actions' => [
 
         'create' => [
-            'label' => 'لیستی :label نوێ',
+            'label' => 'نوێ',
         ],
 
     ],

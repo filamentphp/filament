@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'دروستکردنی :label',
+    'title' => 'دروستکردن',
 
     'breadcrumb' => 'دروستکردن',
 

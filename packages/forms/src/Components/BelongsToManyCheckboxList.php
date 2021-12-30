@@ -3,15 +3,12 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
-class BelongsToManyMultiSelect extends MultiSelect
+class BelongsToManyCheckboxList extends CheckboxList
 {
     protected string | Closure | null $displayColumnName = null;
-
-    protected bool | Closure $isPreloaded = false;
 
     protected string | Closure | null $relationship = null;
 
@@ -19,7 +16,7 @@ class BelongsToManyMultiSelect extends MultiSelect
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (BelongsToManyMultiSelect $component, ?array $state): void {
+        $this->afterStateHydrated(function (BelongsToManyCheckboxList $component, ?array $state): void {
             if (count($state ?? [])) {
                 return;
             }
@@ -40,18 +37,11 @@ class BelongsToManyMultiSelect extends MultiSelect
             );
         });
 
-        $this->saveRelationshipsUsing(function (BelongsToManyMultiSelect $component, array $state) {
+        $this->saveRelationshipsUsing(function (BelongsToManyCheckboxList $component, array $state) {
             $component->getRelationship()->sync($state);
         });
 
         $this->dehydrated(false);
-    }
-
-    public function preload(bool | Closure $condition = true): static
-    {
-        $this->isPreloaded = $condition;
-
-        return $this;
     }
 
     public function relationship(string | Closure $relationshipName, string | Closure $displayColumnName, ?Closure $callback = null): static
@@ -59,49 +49,7 @@ class BelongsToManyMultiSelect extends MultiSelect
         $this->displayColumnName = $displayColumnName;
         $this->relationship = $relationshipName;
 
-        $this->getOptionLabelsUsing(function (BelongsToManyMultiSelect $component, array $values): array {
-            $relationship = $component->getRelationship();
-            $relatedKeyName = $relationship->getRelatedKeyName();
-
-            return $relationship->getRelated()->query()
-                ->whereIn($relatedKeyName, $values)
-                ->pluck($component->getDisplayColumnName(), $relatedKeyName)
-                ->toArray();
-        });
-
-        $this->getSearchResultsUsing(function (BelongsToManyMultiSelect $component, ?string $query) use ($callback): array {
-            $relationship = $component->getRelationship();
-
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
-
-            if ($callback) {
-                $relationshipQuery = $this->evaluate($callback, [
-                    'query' => $relationshipQuery,
-                ]);
-            }
-
-            $query = strtolower($query);
-
-            /** @var Connection $databaseConnection */
-            $databaseConnection = $relationshipQuery->getConnection();
-
-            $searchOperator = match ($databaseConnection->getDriverName()) {
-                'pgsql' => 'ilike',
-                default => 'like',
-            };
-
-            return $relationshipQuery
-                ->where($component->getDisplayColumnName(), $searchOperator, "%{$query}%")
-                ->limit(50)
-                ->pluck($component->getDisplayColumnName(), $relationship->getRelatedKeyName())
-                ->toArray();
-        });
-
-        $this->options(function (BelongsToManyMultiSelect $component) use ($callback): array {
-            if (! $component->isPreloaded()) {
-                return [];
-            }
-
+        $this->options(function (BelongsToManyCheckboxList $component) use ($callback): array {
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
@@ -152,10 +100,5 @@ class BelongsToManyMultiSelect extends MultiSelect
     public function getRelationshipName(): string
     {
         return $this->evaluate($this->relationship);
-    }
-
-    public function isPreloaded(): bool
-    {
-        return $this->evaluate($this->isPreloaded);
     }
 }

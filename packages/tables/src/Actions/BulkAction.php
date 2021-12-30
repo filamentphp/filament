@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Actions;
 
-use Closure;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
@@ -52,7 +51,7 @@ class BulkAction
 
         $action = $this->getAction();
 
-        if (! $action instanceof Closure) {
+        if (! $action) {
             return;
         }
 

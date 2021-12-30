@@ -45,6 +45,8 @@ class Mask implements Jsonable
 
     protected bool $shouldNormalizeZeros = true;
 
+    protected bool $shouldOverwrite = false;
+
     protected bool $shouldPadFractionalZeros = false;
 
     protected ?string $thousandsSeparator = null;
@@ -165,6 +167,13 @@ class Mask implements Jsonable
     public function normalizeZeros(bool $condition = true): static
     {
         $this->shouldNormalizeZeros = $condition;
+
+        return $this;
+    }
+
+    public function overwrite(bool $condition = true): static
+    {
+        $this->shouldOverwrite = $condition;
 
         return $this;
     }
@@ -295,6 +304,10 @@ class Mask implements Jsonable
 
         if (! $this->shouldNormalizeZeros) {
             $configuration['normalizeZeros'] = false;
+        }
+
+        if (! $this->shouldOverwrite) {
+            $configuration['overwrite'] = false;
         }
 
         if ($this->shouldPadFractionalZeros) {

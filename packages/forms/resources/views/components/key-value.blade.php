@@ -9,8 +9,6 @@
 >
     <div
         x-data="keyValueFormComponent({
-            canAddRows: {{ json_encode($canAddRows()) }},
-            canDeleteRows: {{ json_encode($canDeleteRows()) }},
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
         {{ $attributes->merge($getExtraAttributes()) }}
@@ -28,7 +26,7 @@
                             {{ $getValueLabel() }}
                         </th>
 
-                        @if ($canDeleteRows() && $getDeleteButtonLabel())
+                        @if ($canDeleteRows() && $getDeleteButtonLabel() && (! $isDisabled()))
                             <th class="w-12" scope="col" x-show="rows.length > 1">
                                 <span class="sr-only">
                                     {{ $getDeleteButtonLabel() }}
@@ -43,19 +41,16 @@
                     class="divide-y whitespace-nowrap"
                 >
                     <template x-for="(row, index) in rows" x-bind:key="index" x-ref="rowTemplate">
-                        <tr
-                            x-bind:class="{ 'bg-gray-50': index % 2 }"
-                            class="divide-x"
-                        >
+                        <tr class="divide-x">
                             <td>
                                 <input
                                     type="text"
                                     x-model="row.key"
                                     x-on:input="updateState"
                                     {!! ($placeholder = $getKeyPlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
-                                    @unless ($canEditKeys())
+                                    @if ((! $canEditKeys()) || $isDisabled())
                                         disabled
-                                    @endunless
+                                    @endif
                                     class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
                                 >
                             </td>
@@ -66,11 +61,14 @@
                                     x-model="row.value"
                                     x-on:input="updateState"
                                     {!! ($placeholder = $getValuePlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
+                                    @if ((! $canEditKeys()) || $isDisabled())
+                                        disabled
+                                    @endif
                                     class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
                                 >
                             </td>
 
-                            @if ($canDeleteRows())
+                            @if ($canDeleteRows() && (! $isDisabled()))
                                 <td x-show="rows.length > 1" class="whitespace-nowrap">
                                     <div class="flex items-center justify-center">
                                         <button
@@ -88,20 +86,18 @@
                 </tbody>
             </table>
 
-            @if ($canAddRows() && $canEditKeys())
-                <div>
-                    <button
-                        x-on:click="addRow"
-                        type="button"
-                        class="px-4 py-2 flex items-center space-x-1"
-                    >
-                        <x-heroicon-s-plus class="w-5 h-5" />
+            @if ($canAddRows() && $canEditKeys() && (! $isDisabled()))
+                <button
+                    x-on:click="addRow"
+                    type="button"
+                    class="w-full px-4 py-2 flex items-center space-x-1 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:bg-gray-50"
+                >
+                    <x-heroicon-s-plus class="w-4 h-4" />
 
-                        <span>
-                            {{ $getAddButtonLabel() }}
-                        </span>
-                    </button>
-                </div>
+                    <span>
+                        {{ $getAddButtonLabel() }}
+                    </span>
+                </button>
             @endif
         </div>
     </div>

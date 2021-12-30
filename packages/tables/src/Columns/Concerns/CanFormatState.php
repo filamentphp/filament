@@ -48,7 +48,11 @@ trait CanFormatState
 
     public function money(string $currency = 'usd', bool $shouldConvert = false): static
     {
-        $this->formatStateUsing(function ($state) use ($currency, $shouldConvert): string {
+        $this->formatStateUsing(function ($state) use ($currency, $shouldConvert): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
             return (new Money\Money(
                 $state,
                 (new Money\Currency(strtoupper($currency))),

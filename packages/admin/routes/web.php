@@ -14,7 +14,7 @@ Route::domain(config('filament.domain'))
             Route::get('/login', $loginPage)->name('auth.login');
         }
 
-        Route::get('/core/assets/{path}', AssetController::class)->where('path', '.*')->name('asset');
+        Route::get('/core/assets/{file}', AssetController::class)->where('file', '.*')->name('asset');
 
         Route::middleware(config('filament.middleware.auth'))->group(function (): void {
             Route::name('pages.')->group(function (): void {

@@ -173,7 +173,7 @@ class FilamentManager
     {
         return $this->themeUrl ?? route('filament.asset', [
             'id' => get_asset_id('app.css'),
-            'path' => 'app.css',
+            'file' => 'app.css',
         ]);
     }
 

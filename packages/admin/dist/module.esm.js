@@ -6109,8 +6109,7 @@ var date_time_picker_default = (Alpine) => {
         let date = this.getSelectedDate() ?? esm_default().tz(timezone2).hour(0).minute(0).second(0);
         if (this.maxDate !== null && date.isAfter(this.maxDate)) {
           date = null;
-        }
-        if (this.minDate !== null && date.isBefore(this.minDate)) {
+        } else if (this.minDate !== null && date.isBefore(this.minDate)) {
           date = null;
         }
         this.hour = date?.hour() ?? 0;
@@ -15900,6 +15899,9 @@ var file_upload_default = (Alpine) => {
           }
         });
         this.$watch("state", async () => {
+          if (!Object.values(this.state).length && Object.values(this.pond.getFiles()).filter((file2) => file2.origin === FileOrigin$1.INPUT).length) {
+            return;
+          }
           if (Object.values(this.state).filter((file2) => file2.startsWith("livewire-file:")).length) {
             return;
           }
@@ -15927,24 +15929,18 @@ var file_upload_default = (Alpine) => {
 // packages/forms/resources/js/components/key-value.js
 var key_value_default = (Alpine) => {
   Alpine.data("keyValueFormComponent", ({
-    canAddRows,
-    canDeleteRows,
     state: state2
   }) => ({
-    canAddRows,
-    canDeleteRows,
     state: state2,
     rows: [],
     init: function() {
-      for (let [key, value] of Object.entries(this.state ?? {})) {
-        this.rows.push({
-          key,
-          value
-        });
-      }
+      this.updateRows();
       if (this.rows.length <= 0) {
         this.addRow();
       }
+      this.$watch("state", () => {
+        this.updateRows();
+      });
     },
     addRow: function() {
       this.rows.push({key: "", value: ""});
@@ -15956,6 +15952,16 @@ var key_value_default = (Alpine) => {
         this.addRow();
       }
       this.updateState();
+    },
+    updateRows: function() {
+      let rows = [];
+      for (let [key, value] of Object.entries(this.state ?? {})) {
+        rows.push({
+          key,
+          value
+        });
+      }
+      this.rows = rows;
     },
     updateState: function() {
       let state3 = {};

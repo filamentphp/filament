@@ -236,7 +236,18 @@ Placeholders can be used to render text-only "fields" within your forms. Each pl
 ```php
 use Filament\Forms\Components\Placeholder;
 
-Placeholder::make('Label')->content('Content, displayed underneath the label')
+Placeholder::make('Label')
+    ->content('Content, displayed underneath the label')
+```
+
+You may even render custom HTML within placeholder content:
+
+```php
+use Filament\Forms\Components\Placeholder;
+use Illuminate\Support\HtmlString;
+
+Placeholder::make('Documentation')
+    ->content(new HtmlString('<a href="https://filamentadmin.com/docs">filamentadmin.com</a>'))
 ```
 
 ## Card

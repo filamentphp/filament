@@ -70,6 +70,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             return $media?->getUrl();
         });
 
+        $this->saveRelationshipsUsing(function (SpatieMediaLibraryFileUpload $component) {
+            $component->saveUploadedFiles();
+        });
+
         $this->saveUploadedFileUsing(function (SpatieMediaLibraryFileUpload $component, TemporaryUploadedFile $file, ?Model $record): string {
             if (! method_exists($record, 'addMediaFromString')) {
                 return $file;
@@ -99,17 +103,6 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         $this->collection = $collection;
 
         return $this;
-    }
-
-    public function saveRelationships(): void
-    {
-        if ($this->saveRelationshipsUsing) {
-            parent::saveRelationships();
-
-            return;
-        }
-
-        $this->saveUploadedFiles();
     }
 
     public function getCollection(): string

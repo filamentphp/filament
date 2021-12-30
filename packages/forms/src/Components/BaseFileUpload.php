@@ -57,6 +57,18 @@ class BaseFileUpload extends Field
             $component->state($files);
         });
 
+        $this->afterStateUpdated(function (BaseFileUpload $component, $state) {
+            if (blank($state)) {
+                return;
+            }
+
+            if (is_array($state)) {
+                return;
+            }
+
+            $component->state([(string) Str::uuid() => $state]);
+        });
+
         $this->beforeStateDehydrated(function (BaseFileUpload $component): void {
             $component->saveUploadedFiles();
         });
@@ -250,8 +262,6 @@ class BaseFileUpload extends Field
 
         if (filled($count = $this->maxFiles)) {
             $rules[] = "max:{$count}";
-        } elseif (! $this->isMultiple()) {
-            $rules[] = 'max:1';
         }
 
         if (filled($count = $this->minFiles)) {
