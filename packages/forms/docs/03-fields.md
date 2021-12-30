@@ -626,6 +626,8 @@ CheckboxList::make('technologies')
     ])
 ```
 
+<img src="https://user-images.githubusercontent.com/41773797/147761423-bd6e99ec-104d-40c2-875a-fed1d638f2c3.png">
+
 These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
 ```php
@@ -655,6 +657,8 @@ CheckboxList::make('technologies')
     ])
     ->columns(2)
 ```
+
+<img src="https://user-images.githubusercontent.com/41773797/147761438-558a9dcc-b81a-4fbe-a922-a6771407d928.png">
 
 This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of columns at various breakpoints.
 
