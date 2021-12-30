@@ -1,0 +1,25 @@
+- Maybe ask for Super admin during install command
+    - if only more than one user is presetn in DB.
+- inverse of InstallCommand to clean up afterward.
+    - Remove Policies and Truncate Permissions
+- Bootable trait to add default filament_user on create
+    - taking care of production should user opt in
+- Clean up & refactor before release
+
+Current
+
+- Extends Filament:resource command and offers below options:
+    - with permissions & policy
+    - only permissions & policy
+    - with permissions
+    - only permissions
+    - default resource generation
+
+- RoleResource(Name Should be changed to something else)
+    - doesn't register
+    - just copies it over so more control to the user
+    - generates permissions and policies
+    - only one check now, for permissions table.
+
+- Super Admin
+    - automatically gets assigned each permission generated
