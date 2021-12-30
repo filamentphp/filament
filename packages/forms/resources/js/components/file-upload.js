@@ -123,7 +123,15 @@ export default (Alpine) => {
                 })
 
                 this.$watch('state', async () => {
-                    if (Object.values(this.pond.getFiles()).filter((file) => file.origin === FilePond.FileOrigin.INPUT).length) {
+                    // Sometimes, Livewire will randomly send back an empty array of files by accident, which causes the input to be reset.
+                    // To prevent this, we'll check if the state is an empty array and that there are still pending files to save.
+                    // If so, we'll just ignore the state change.
+                    if ((! Object.values(this.state).length) && Object.values(this.pond.getFiles()).filter((file) => file.origin === FilePond.FileOrigin.INPUT).length) {
+                        return
+                    }
+
+                    // We don't want to overwrite the files that are already in the input, if they haven't been saved yet.
+                    if (Object.values(this.state).filter((file) => file.startsWith('livewire-file:')).length) {
                         return
                     }
 
