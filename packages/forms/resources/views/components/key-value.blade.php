@@ -26,7 +26,7 @@
                             {{ $getValueLabel() }}
                         </th>
 
-                        @if ($canDeleteRows() && $getDeleteButtonLabel())
+                        @if ($canDeleteRows() && $getDeleteButtonLabel() && (! $isDisabled()))
                             <th class="w-12" scope="col" x-show="rows.length > 1">
                                 <span class="sr-only">
                                     {{ $getDeleteButtonLabel() }}
@@ -48,9 +48,9 @@
                                     x-model="row.key"
                                     x-on:input="updateState"
                                     {!! ($placeholder = $getKeyPlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
-                                    @unless ($canEditKeys())
+                                    @if ((! $canEditKeys()) || $isDisabled())
                                         disabled
-                                    @endunless
+                                    @endif
                                     class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
                                 >
                             </td>
@@ -61,11 +61,14 @@
                                     x-model="row.value"
                                     x-on:input="updateState"
                                     {!! ($placeholder = $getValuePlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
+                                    @if ((! $canEditKeys()) || $isDisabled())
+                                        disabled
+                                    @endif
                                     class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
                                 >
                             </td>
 
-                            @if ($canDeleteRows())
+                            @if ($canDeleteRows() && (! $isDisabled()))
                                 <td x-show="rows.length > 1" class="whitespace-nowrap">
                                     <div class="flex items-center justify-center">
                                         <button
@@ -83,7 +86,7 @@
                 </tbody>
             </table>
 
-            @if ($canAddRows() && $canEditKeys())
+            @if ($canAddRows() && $canEditKeys() && (! $isDisabled()))
                 <button
                     x-on:click="addRow"
                     type="button"
