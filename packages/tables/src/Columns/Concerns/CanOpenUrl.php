@@ -36,7 +36,7 @@ trait CanOpenUrl
             ]);
         }
 
-        return $this->url ?? $this->getTable()->getRecordUrl($record);
+        return $this->url;
     }
 
     public function shouldOpenUrlInNewTab(): bool

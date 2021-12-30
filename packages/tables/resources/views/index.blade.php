@@ -135,6 +135,10 @@
                     @endif
 
                     @foreach ($records as $record)
+                        @php
+                            $recordUrl = $getRecordUrl($record);
+                        @endphp
+
                         <x-tables::row wire:key="{{ $record->getKey() }}">
                             @if ($isSelectionEnabled())
                                 <x-tables::checkbox-cell
@@ -153,7 +157,7 @@
                                     :name="$column->getName()"
                                     :record="$record"
                                     :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
-                                    :url="$column->getUrl()"
+                                    :url="$column->getUrl() ?? $recordUrl"
                                     :class="$getHiddenClasses($column)"
                                 >
                                     {{ $column }}
