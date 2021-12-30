@@ -16,15 +16,19 @@ class HasManyRepeater extends Repeater
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (HasManyRepeater $component): void {
-            if (count($this->getState() ?? [])) {
+        $this->afterStateHydrated(function (HasManyRepeater $component, ?array $state): void {
+            if (count($state ?? [])) {
                 return;
             }
 
             $component->fillFromRelationship();
         });
 
-        $this->saveRelationshipsUsing(function (HasManyRepeater $component, array $state) {
+        $this->saveRelationshipsUsing(function (HasManyRepeater $component, ?array $state) {
+            if (! is_array($state)) {
+                $state = [];
+            }
+
             $relationship = $component->getRelationship();
 
             foreach ($relationship->pluck($relationship->getLocalKeyName()) as $keyToCheckForDeletion) {

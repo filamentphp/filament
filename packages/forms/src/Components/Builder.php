@@ -156,8 +156,8 @@ class Builder extends Field
             ]);
         });
 
-        $this->mutateDehydratedStateUsing(function (array $state): array {
-            return array_values($state);
+        $this->mutateDehydratedStateUsing(function (?array $state): array {
+            return array_values($state ?? []);
         });
     }
 

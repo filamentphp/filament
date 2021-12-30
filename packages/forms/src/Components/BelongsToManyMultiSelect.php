@@ -40,8 +40,8 @@ class BelongsToManyMultiSelect extends MultiSelect
             );
         });
 
-        $this->saveRelationshipsUsing(function (BelongsToManyMultiSelect $component, array $state) {
-            $component->getRelationship()->sync($state);
+        $this->saveRelationshipsUsing(function (BelongsToManyMultiSelect $component, ?array $state) {
+            $component->getRelationship()->sync($state ?? []);
         });
 
         $this->dehydrated(false);

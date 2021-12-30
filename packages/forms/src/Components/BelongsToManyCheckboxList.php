@@ -37,8 +37,8 @@ class BelongsToManyCheckboxList extends CheckboxList
             );
         });
 
-        $this->saveRelationshipsUsing(function (BelongsToManyCheckboxList $component, array $state) {
-            $component->getRelationship()->sync($state);
+        $this->saveRelationshipsUsing(function (BelongsToManyCheckboxList $component, ?array $state) {
+            $component->getRelationship()->sync($state ?? []);
         });
 
         $this->dehydrated(false);

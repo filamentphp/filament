@@ -34,8 +34,8 @@ class KeyValue extends Field
 
         $this->default([]);
 
-        $this->dehydrateStateUsing(function ($state) {
-            return collect($state)
+        $this->dehydrateStateUsing(function (?array $state) {
+            return collect($state ?? [])
                 ->filter(fn (?string $value, ?string $key): bool => filled($key))
                 ->map(fn (?string $value): ?string => filled($value) ? $value : null)
                 ->toArray();

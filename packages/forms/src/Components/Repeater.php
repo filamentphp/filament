@@ -123,8 +123,8 @@ class Repeater extends Field
             ]);
         });
 
-        $this->mutateDehydratedStateUsing(function (array $state): array {
-            return array_values($state);
+        $this->mutateDehydratedStateUsing(function (?array $state): array {
+            return array_values($state ?? []);
         });
     }
 
@@ -147,7 +147,7 @@ class Repeater extends Field
             }
 
             foreach (range(1, $count) as $index) {
-                $items[(string) Str::uuid()] = [];
+                $items[] = [];
             }
 
             return $items;
