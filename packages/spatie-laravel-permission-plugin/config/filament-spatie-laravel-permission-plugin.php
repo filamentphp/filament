@@ -31,6 +31,5 @@ return [
         'delete',
         'delete_any',
         'update',
-    ]
-
+    ],
 ];

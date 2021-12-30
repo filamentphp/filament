@@ -6,17 +6,15 @@ use Illuminate\Support\Str;
 use Illuminate\Filesystem\Filesystem;
 use Filament\SpatieLaravelPermissionPlugin;
 
-class MakePermissionCommand extends MakeResourceCommand
+class ExtendsMakeResourceCommand extends MakeResourceCommand
 {
     use Concerns\CanManipulateFiles;
     use Concerns\CanValidateInput;
 
-    protected $description = 'Creates Permissions for the given Resource';
-
     public function __construct()
     {
         $this->signature .= "
-            {--P|permissions : Generate Permissions for the given Resource.}
+            {--P|permissions : Generate Permissions & Policy for Resource}
         ";
         parent::__construct();
     }
@@ -34,17 +32,15 @@ class MakePermissionCommand extends MakeResourceCommand
             ->studly()
             ->replace('/', '\\');
 
-        $choice = $this->choice('What would you like to Generate for the Resource?',[
+        $choice = $this->option('permissions')?:$this->choice('What would you like to Generate for the Resource?',[
             'Permissions & Policy',
             'Only Permissions',
             'Just the Resource, Thanks!'
-        ], 2, null, false);
+        ], 1, null, false);
         
-        $confirmation = $this->option('permissions') ?: $this->confirm('Generate Permissions for '.$model.'Resource ?');
+        if ($this->option('permissions') || $choice === 'Permissions & Policy') {
 
-        if ($confirmation) {
-
-            // parent::handle();
+            parent::handle();
 
             $basePolicyPath = app_path(
             (string) Str::of($model)
@@ -54,22 +50,37 @@ class MakePermissionCommand extends MakeResourceCommand
 
             $policyPath = "{$basePolicyPath}Policy.php";
 
+            if ($this->checkForCollision([$policyPath])) {
+                    return static::INVALID;
+            }
+
             $this->copyStubToApp('DefaultPolicy', $policyPath, [
                 'modelPolicy' => "{$model}Policy",
-                'viewAny' => Str::of($prefixes[0].Str::lower($model)),
-                'view' => Str::of($prefixes[1].Str::lower($model)),
-                'create' => Str::of($prefixes[2].Str::lower($model)),
-                'update' => Str::of($prefixes[3].Str::lower($model)),
-                'delete' => Str::of($prefixes[4].Str::lower($model)),
-                'deleteAny' => Str::of($prefixes[5].Str::lower($model)),
+                'viewAny' => Str::of($prefixes[0].'_'.Str::lower($model)),
+                'view' => Str::of($prefixes[1].'_'.Str::lower($model)),
+                'create' => Str::of($prefixes[2].'_'.Str::lower($model)),
+                'update' => Str::of($prefixes[3].'_'.Str::lower($model)),
+                'delete' => Str::of($prefixes[4].'_'.Str::lower($model)),
+                'deleteAny' => Str::of($prefixes[5].'_'.Str::lower($model)),
             ]);
 
-            // $output = $this->call('permission:cache-reset');
+            $this->info("Successfully generated {$model}Policy for {$model}Resource");
+            
             SpatieLaravelPermissionPlugin::generateFor(Str::lower($model));
-            $this->info("Successfully created permissions for ".$model."Resource");
+            
+            $this->info("Successfully generated Permissions for ".$model."Resource");
 
         }
-            parent::handle(); //uncomment to run the actual command after the extra added stuff is taken care of.
+        else if($choice === 'Only Permissions') {
+            
+            parent::handle();
+            
+            SpatieLaravelPermissionPlugin::generateFor(Str::lower($model));
+            
+            $this->info("Successfully generated Permissions for ".$model."Resource");
+        } else {
+            parent::handle();
+        }
 
         return static::SUCCESS;
     }

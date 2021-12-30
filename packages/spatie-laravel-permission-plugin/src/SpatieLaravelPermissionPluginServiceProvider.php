@@ -4,7 +4,6 @@ namespace Filament;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
-use Filament\Commands\MakePermissionCommand;
 use Filament\Resources\RoleResource;
 
 class SpatieLaravelPermissionPluginServiceProvider extends ServiceProvider
@@ -12,10 +11,8 @@ class SpatieLaravelPermissionPluginServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton('command.make:filament-resource', function(){
-            return new MakePermissionCommand;
+            return new Commands\ExtendsMakeResourceCommand;
         });
-
-        $this->mergeConfigFrom(__DIR__ . '/../config/filament-spatie-laravel-permission-plugin.php', 'filament-spatie-laravel-permission-plugin');
     }
 
     public function boot(): void
@@ -34,44 +31,10 @@ class SpatieLaravelPermissionPluginServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'filament-spatie-laravel-permission-plugin');
     }
 
-    protected function mergeConfig(array $original, array $merging): array
-    {
-        $array = array_merge($original, $merging);
-
-        foreach ($original as $key => $value) {
-            if (! is_array($value)) {
-                continue;
-            }
-
-            if (! Arr::exists($merging, $key)) {
-                continue;
-            }
-
-            if (is_numeric($key)) {
-                continue;
-            }
-
-            if ($key === 'middleware' || $key === 'register') {
-                continue;
-            }
-
-            $array[$key] = $this->mergeConfig($value, $merging[$key]);
-        }
-
-        return $array;
-    }
-
-    protected function mergeConfigFrom($path, $key): void
-    {
-        $config = $this->app['config']->get($key, []);
-
-        $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
-    }
-
     protected function getCommands(): array
     {
         $commands = [
-            Commands\MakePermissionCommand::class,
+            Commands\ExtendsMakeResourceCommand::class,
         ];
 
         $aliases = [];
