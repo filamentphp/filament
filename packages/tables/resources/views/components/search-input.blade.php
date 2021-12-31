@@ -9,7 +9,7 @@
         </span>
 
         <input
-            wire:model="tableSearchQuery"
+            wire:model.debounce.1s="tableSearchQuery"
             id="tableSearchQueryInput"
             placeholder="{{ __('tables::table.fields.search_query.placeholder') }}"
             type="search"
