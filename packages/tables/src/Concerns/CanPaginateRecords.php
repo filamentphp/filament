@@ -2,6 +2,9 @@
 
 namespace Filament\Tables\Concerns;
 
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\WithPagination;
 
 trait CanPaginateRecords
@@ -19,6 +22,18 @@ trait CanPaginateRecords
         ]);
 
         $this->resetPage();
+    }
+
+    protected function paginateTableQuery(Builder $query): Paginator
+    {
+        /** @var LengthAwarePaginator $records */
+        $records = $query->paginate(
+            $this->getTableRecordsPerPage(),
+            ['*'],
+            $this->getTablePaginationPageName(),
+        );
+
+        return $records->onEachSide(1);
     }
 
     protected function getTableRecordsPerPage(): int
