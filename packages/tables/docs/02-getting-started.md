@@ -245,6 +245,52 @@ protected function getTableQueryStringIdentifier(): string
 }
 ```
 
+### Simple pagination
+
+You may use simple pagination by overriding `paginateTableQuery()` method on your Livewire component:
+
+```php
+
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
+
+protected function paginateTableQuery(Builder $query): Paginator
+{
+    return $query->simplePaginate($this->getTableRecordsPerPage());
+}
+```
+
+## Searching records with Laravel Scout
+
+While Filament doesn't provide a direct integration with [Laravel Scout](https://laravel.com/docs/scout), you may override methods to integrate it with your Livewire component.
+
+First, you must ensure that the table search input is visible:
+
+```php
+public function isTableSearchable(): bool
+{
+    return true
+}
+```
+
+Now, use a `whereIn()` clause to filter the query for Scout results:
+
+```php
+use App\Models\Post;
+use Illuminate\Database\Eloquent\Builder;
+
+protected function applySearchToTableQuery(Builder $query): Builder
+{
+    if (filled($searchQuery = $this->getTableSearchQuery())) {
+        $query->whereIn('id', Post::search($searchQuery)->keys());
+    }
+
+    return $query;
+}
+```
+
+Scout uses this `whereIn()` method to retrieve results internally, so there is no performance penalty for using it.
+
 ## Record URLs (clickable rows)
 
 You may allow table rows to be completely clickable by overriding the `getTableRecordUrlUsing()` method on your Livewire component:
