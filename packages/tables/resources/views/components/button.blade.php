@@ -1,5 +1,6 @@
 @props([
     'color' => 'primary',
+    'disabled' => false,
     'icon' => null,
     'iconPosition' => 'before',
     'tag' => 'button',
@@ -17,6 +18,7 @@
         'text-gray-800 bg-white border border-gray-300 hover:bg-gray-50 focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600' => $color === 'secondary',
         'bg-success-600 hover:bg-success-500 focus:bg-success-700 focus:ring-offset-success-700' => $color === 'success',
         'bg-warning-600 hover:bg-warning-500 focus:bg-warning-700 focus:ring-offset-warning-700' => $color === 'warning',
+        'opacity-75 cursor-not-allowed' => $disabled,
         'h-8 px-3 text-sm' => $size === 'sm',
         'h-11 px-6 text-xl' => $size === 'lg',
     ];

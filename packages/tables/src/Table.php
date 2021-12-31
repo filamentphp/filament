@@ -7,7 +7,7 @@ use Filament\Forms\ComponentContainer;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
@@ -266,7 +266,7 @@ class Table extends ViewComponent implements Htmlable
         return $this->getLivewire()->getMountedTableBulkActionForm();
     }
 
-    public function getRecords(): Collection | LengthAwarePaginator
+    public function getRecords(): Collection | Paginator
     {
         return $this->getLivewire()->getTableRecords();
     }
