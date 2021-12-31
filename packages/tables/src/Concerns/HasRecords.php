@@ -6,7 +6,6 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 trait HasRecords
 {
@@ -38,20 +37,9 @@ trait HasRecords
 
         $this->applySortingToTableQuery($query);
 
-        if ($this->isTablePaginationEnabled()) {
-            /** @var LengthAwarePaginator $records */
-            $records = $query->paginate(
-                $this->getTableRecordsPerPage(),
-                ['*'],
-                $this->getTablePaginationPageName(),
-            );
-
-            $records->onEachSide(1);
-
-            $this->records = $records;
-        } else {
-            $this->records = $query->get();
-        }
+        $this->records = $this->isTablePaginationEnabled() ?
+            $this->paginateTableQuery($query) :
+            $query->get();
 
         return $this->records;
     }
