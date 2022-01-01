@@ -28,7 +28,7 @@ class AssetController
                 404,
             );
 
-            return $this->pretendResponseIsFile($name, 'application/javascript; charset=utf-8');
+            return $this->pretendResponseIsFile(Filament::getScripts()[$name], 'application/javascript; charset=utf-8');
         }
 
         if (Str::endsWith($file, '.css')) {
