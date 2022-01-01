@@ -94,7 +94,7 @@
         @endif
 
         <div @class([
-            'overflow-y-auto',
+            'overflow-y-auto relative',
             'rounded-t-xl' => ! $hasTableHeader,
             'border-t' => $hasTableHeader,
         ])>
