@@ -108,6 +108,14 @@ trait HasState
                 continue;
             }
 
+            foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
+                $container->mutateDehydratedState($state);
+            }
+
             if ($component->getStatePath(isAbsolute: false)) {
                 if (! $component->mutatesDehydratedState()) {
                     continue;
@@ -122,14 +130,6 @@ trait HasState
                         data_get($state, $componentStatePath),
                     ),
                 );
-            }
-
-            foreach ($component->getChildComponentContainers() as $container) {
-                if ($container->isHidden()) {
-                    continue;
-                }
-
-                $container->mutateDehydratedState($state);
             }
         }
 
