@@ -32,7 +32,7 @@ protected function getActions(): array
 
 public function openSettingsModal(): void
 {
-    $this->emitBrowserEvent('open-settings-modal');
+    $this->dispatchBrowserEvent('open-settings-modal');
 }
 ```
 
