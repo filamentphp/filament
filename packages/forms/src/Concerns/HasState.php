@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Concerns;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 trait HasState

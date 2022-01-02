@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Illuminate\Database\Eloquent\Model;
 
 trait EvaluatesClosures
 {
