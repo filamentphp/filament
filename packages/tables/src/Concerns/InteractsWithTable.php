@@ -40,7 +40,6 @@ trait InteractsWithTable
         $this->cacheTableColumns();
 
         $this->cacheTableFilters();
-
         $this->getTableFiltersForm()->fill($this->tableFilters);
     }
 
@@ -50,8 +49,8 @@ trait InteractsWithTable
             $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
         }
 
-        $this->tableSortColumn = $this->getDefaultTableSortColumn();
-        $this->tableSortDirection = $this->getDefaultTableSortDirection();
+        $this->tableSortColumn ??= $this->getDefaultTableSortColumn();
+        $this->tableSortDirection ??= $this->getDefaultTableSortDirection();
     }
 
     protected function getCachedTable(): Table
