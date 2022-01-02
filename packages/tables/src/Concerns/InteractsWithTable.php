@@ -41,9 +41,7 @@ trait InteractsWithTable
 
         $this->cacheTableFilters();
 
-        if ($this->tableFilters === null) {
-            $this->getTableFiltersForm()->fill();
-        }
+        $this->getTableFiltersForm()->fill($this->tableFilters);
     }
 
     public function mountInteractsWithTable(): void
