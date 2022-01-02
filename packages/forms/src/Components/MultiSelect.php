@@ -28,6 +28,14 @@ class MultiSelect extends Field
 
         $this->default([]);
 
+        $this->afterStateHydrated(function (MultiSelect $component, $state) {
+            if (is_array($state)) {
+                return;
+            }
+
+            $component->state([]);
+        });
+
         $this->getOptionLabelsUsing(function (MultiSelect $component, array $values): array {
             $options = $component->getOptions();
 
