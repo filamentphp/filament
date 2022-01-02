@@ -59,7 +59,7 @@ return [
 
         'modal' => [
 
-            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
+            'requires_confirmation_subheading' => 'Вы уверены, что хотите это сделать?',
 
             'buttons' => [
 
@@ -68,11 +68,11 @@ return [
                 ],
 
                 'confirm' => [
-                    'label' => 'Confirm',
+                    'label' => 'Подтвердить',
                 ],
 
                 'submit' => [
-                    'label' => 'Submit',
+                    'label' => 'Отправить',
                 ],
 
             ],
@@ -85,12 +85,30 @@ return [
         'heading' => 'не найдено записей',
     ],
 
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Сбросить фильтры',
+            ],
+
+        ],
+
+    ],
+
     'selection_indicator' => [
+
+        'selected_count' => 'Выбрана 1 запись.|Выбрано :count записей.',
 
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Select all :count',
+                'label' => 'Выбрать все :count',
+            ],
+
+            'deselect_all' => [
+                'label' => 'Убрать выделение со всех',
             ],
 
         ],
