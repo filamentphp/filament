@@ -1,5 +1,6 @@
 @props([
     'modals' => null,
+    'widgetRecord' => null,
 ])
 
 <div {{ $attributes }}>
@@ -17,7 +18,7 @@
         @if ($headerWidgets = $this->getHeaderWidgets())
             <x-filament::widgets>
                 @foreach ($headerWidgets as $widget)
-                    @livewire(\Livewire\Livewire::getAlias($widget))
+                    @livewire(\Livewire\Livewire::getAlias($widget), ['record' => $widgetRecord])
                 @endforeach
             </x-filament::widgets>
         @endif
@@ -27,7 +28,7 @@
         @if ($footerWidgets = $this->getFooterWidgets())
             <x-filament::widgets>
                 @foreach ($footerWidgets as $widget)
-                    @livewire(\Livewire\Livewire::getAlias($widget))
+                    @livewire(\Livewire\Livewire::getAlias($widget), ['record' => $widgetRecord])
                 @endforeach
             </x-filament::widgets>
         @endif

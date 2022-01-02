@@ -194,7 +194,7 @@ test('dehydrated state can be mutated', function () {
         ->fill();
 
     expect($container)
-        ->dehydrateState()->toBe([
+        ->mutateDehydratedState($container->dehydrateState())->toBe([
             'data' => [$statePath => strrev($state)],
         ]);
 });

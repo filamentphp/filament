@@ -813,6 +813,14 @@ class ListCustomers extends ListRecords
 }
 ```
 
+If you're using a widget on an Edit or View page, you may access the current record by defining a `$record` property on the widget class:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+public ?Model $record = null;
+```
+
 ## Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The following methods are used:

@@ -1,4 +1,4 @@
-<x-filament::page>
+<x-filament::page :widget-record="$record">
     {{ $this->form }}
 
     @if (count($relationManagers = $this->getRelationManagers()))
