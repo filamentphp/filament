@@ -16,6 +16,14 @@ class CheckboxList extends Field
         parent::setUp();
 
         $this->default([]);
+
+        $this->afterStateHydrated(function (CheckboxList $component, $state) {
+            if (is_array($state)) {
+                return;
+            }
+
+            $component->state([]);
+        });
     }
 
     public function options(array | Arrayable | Closure $options): static
