@@ -36,8 +36,19 @@
             },
         ])
     >
-        <div class="px-6 py-4 bg-white shadow-xl rounded-xl">
+        <div class="px-6 py-4 bg-white space-y-6 shadow-xl rounded-xl">
             {{ $form }}
+
+            <div class="text-right">
+                <x-tables::link
+                    wire:click="resetTableFiltersForm"
+                    color="danger"
+                    tag="button"
+                    class="text-sm"
+                >
+                    {{ __('tables::table.filters.buttons.reset.label') }}
+                </x-tables::link>
+            </div>
         </div>
     </div>
 </div>

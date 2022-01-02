@@ -50,6 +50,11 @@ trait HasFilters
         $this->resetPage();
     }
 
+    public function resetTableFiltersForm(): void
+    {
+        $this->getTableFiltersForm()->fill();
+    }
+
     protected function applyFiltersToTableQuery(Builder $query): Builder
     {
         $data = $this->getTableFiltersForm()->getState();
