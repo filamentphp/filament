@@ -906,6 +906,21 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('attachments')->multiple()
 ```
 
+If you're saving the file URLs using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class Message extends Model
+{
+    protected $casts = [
+        'attachments' => 'array',
+    ];
+
+    // ...
+}
+```
+
 You may customise the number of files that may be uploaded, using the `minFiles()` and `maxFiles()` methods:
 
 ```php
