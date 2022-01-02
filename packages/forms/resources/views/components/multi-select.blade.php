@@ -49,7 +49,8 @@
                 >
                     <input
                         x-ref="search"
-                        x-model.debounce.500="search"
+                        x-model.debounce.500ms="search"
+                        x-on:keydown="if (! isOpen) openListbox()"
                         x-on:keydown.enter.stop.prevent="selectOption()"
                         x-on:keydown.arrow-up.stop.prevent="focusPreviousOption()"
                         x-on:keydown.arrow-down.stop.prevent="focusNextOption()"
