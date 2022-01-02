@@ -388,12 +388,13 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
 
 Livewire ships with a feature to store data in the URL's query string, to access across requests.
 
-With Filament, this allows you to store your table's sort, search and pagination state in the URL.
+With Filament, this allows you to store your table's filters, sort, searchm and pagination state in the URL.
 
-To store the sort and search state of your table in the query string:
+To store the filters, sorting, and search state of your table in the query string:
 
 ```php
 protected $queryString = [
+    'tableFilters',
     'tableSortColumn',
     'tableSortDirection',
     'tableSearchQuery' => ['except' => ''],
