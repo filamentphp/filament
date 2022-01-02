@@ -48,9 +48,7 @@ trait HasState
 
             $component->callBeforeStateDehydrated();
 
-            $componentModel = $component->getModel();
-
-            if ($componentModel instanceof Model && $componentModel->exists) {
+            if ($component->getRecord()?->exists) {
                 $component->saveRelationships();
             }
 

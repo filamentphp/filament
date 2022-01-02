@@ -93,13 +93,7 @@ class BelongsToManyCheckboxList extends CheckboxList
 
     public function getRelationship(): BelongsToMany
     {
-        $model = $this->getModel();
-
-        if (is_string($model)) {
-            $model = new $model();
-        }
-
-        return $model->{$this->getRelationshipName()}();
+        return $this->getModelInstance()->{$this->getRelationshipName()}();
     }
 
     public function getRelationshipName(): string

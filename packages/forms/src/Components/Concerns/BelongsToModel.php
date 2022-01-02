@@ -36,27 +36,44 @@ trait BelongsToModel
         return $this;
     }
 
-    public function getModel(): Model | string | null
+    public function getModel(): ?string
     {
-        if ($model = $this->evaluate($this->model)) {
+        $model = $this->evaluate($this->model);
+
+        if ($model instanceof Model) {
+            return $model::class;
+        }
+
+        if (filled($model)) {
             return $model;
         }
 
         return $this->getContainer()->getModel();
     }
 
-    public function getModelClass(): string | null
+    public function getRecord(): ?Model
     {
+        $model = $this->evaluate($this->model);
+
+        if ($model instanceof Model) {
+            return $model;
+        }
+
+        return $this->getContainer()->getRecord();
+    }
+
+    public function getModelInstance(): ?Model
+    {
+        if ($record = $this->getRecord()) {
+            return $record;
+        }
+
         $model = $this->getModel();
 
         if (! $model) {
             return null;
         }
 
-        if (is_string($model)) {
-            return $model;
-        }
-
-        return $model::class;
+        return new $model();
     }
 }

@@ -64,17 +64,7 @@ function (Livewire $livewire) {
 }
 ```
 
-If you have defined a form or component Eloquent model, define a `$model` parameter:
-
-```php
-use Illuminate\Database\Eloquent\Model;
-
-function (Model | string $model) {
-    // ...
-}
-```
-
-If you'd only like to receive model instances, define a `$record` parameter instead:
+If you have defined a form or component Eloquent model instance, define a `$record` parameter:
 
 ```php
 use Illuminate\Database\Eloquent\Model;

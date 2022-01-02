@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
@@ -38,9 +39,9 @@ class BelongsToSelect extends Select
             );
         });
 
-        $this->saveRelationshipsUsing(function (BelongsToSelect $component, $state) {
+        $this->saveRelationshipsUsing(function (BelongsToSelect $component, Model $record, $state) {
             $component->getRelationship()->associate($state);
-            $component->getModel()->save();
+            $record->save();
         });
     }
 
@@ -140,17 +141,7 @@ class BelongsToSelect extends Select
 
     public function getRelationship(): ?BelongsTo
     {
-        $model = $this->getModel();
-
-        if (! $model) {
-            return null;
-        }
-
-        if (is_string($model)) {
-            $model = new $model();
-        }
-
-        return $model->{$this->getRelationshipName()}();
+        return $this->getModelInstance()->{$this->getRelationshipName()}();
     }
 
     public function getRelationshipName(): string

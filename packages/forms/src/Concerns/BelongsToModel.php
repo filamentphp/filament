@@ -18,7 +18,7 @@ trait BelongsToModel
     public function saveRelationships(): void
     {
         foreach ($this->getComponents() as $component) {
-            if ($component->getModel()) {
+            if ($component->getRecord()) {
                 $component->saveRelationships();
             }
 
@@ -32,12 +32,44 @@ trait BelongsToModel
         }
     }
 
-    public function getModel(): Model | string | null
+    public function getModel(): ?string
     {
-        if ($model = $this->model) {
+        $model = $this->model;
+
+        if ($model instanceof Model) {
+            return $model::class;
+        }
+
+        if (filled($model)) {
             return $model;
         }
 
         return $this->getParentComponent()?->getModel();
+    }
+
+    public function getRecord(): ?Model
+    {
+        $model = $this->model;
+
+        if ($model instanceof Model) {
+            return $model;
+        }
+
+        return $this->getParentComponent()?->getRecord();
+    }
+
+    public function getModelInstance(): ?Model
+    {
+        if ($record = $this->getRecord()) {
+            return $record;
+        }
+
+        $model = $this->getModel();
+
+        if (! $model) {
+            return null;
+        }
+
+        return new $model();
     }
 }

@@ -22,7 +22,7 @@ class Toggle extends Field
 
         $this->default(false);
 
-        $this->afterStateHydrated(function (Checkbox $component, $state): void {
+        $this->afterStateHydrated(function (Toggle $component, $state): void {
             $component->state((bool) $state);
         });
 

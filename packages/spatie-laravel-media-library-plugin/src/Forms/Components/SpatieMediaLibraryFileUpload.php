@@ -53,7 +53,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             /** @var \League\Flysystem\Filesystem $storageDriver */
             $storageDriver = $storage->getDriver();
 
-            if (! $component->getModel()) {
+            if (! $component->getRecord()) {
                 return null;
             }
 

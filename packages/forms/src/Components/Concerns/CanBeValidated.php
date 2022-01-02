@@ -18,8 +18,8 @@ trait CanBeValidated
 
     public function exists(string | Closure | null $table = null, string | Closure | null $column = null, ?Closure $callback = null): static
     {
-        $this->rule(function (Field $component) use ($callback, $column, $table) {
-            $table = $component->evaluate($table) ?? $component->getModelClass();
+        $this->rule(function (Field $component, ?string $model) use ($callback, $column, $table) {
+            $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
 
             $rule = Rule::exists($table, $column);
@@ -31,7 +31,7 @@ trait CanBeValidated
             }
 
             return $rule;
-        }, fn (Field $component): bool => (bool) ($component->evaluate($table) ?? $component->getModelClass()));
+        }, fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($table) ?? $model));
 
         return $this;
     }
@@ -124,8 +124,8 @@ trait CanBeValidated
 
     public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure $ignorable = null, ?Closure $callback = null): static
     {
-        $this->rule(function (Field $component) use ($callback, $column, $ignorable, $table) {
-            $table = $component->evaluate($table) ?? $component->getModelClass();
+        $this->rule(function (Field $component, ?string $model) use ($callback, $column, $ignorable, $table) {
+            $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
             $ignorable = $component->evaluate($ignorable);
 
@@ -145,7 +145,7 @@ trait CanBeValidated
             }
 
             return $rule;
-        }, fn (Field $component): bool => (bool) ($component->evaluate($table) ?? $component->getModelClass()));
+        }, fn (Field $component, ?String $model): bool => (bool) ($component->evaluate($table) ?? $model));
 
         return $this;
     }

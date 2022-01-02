@@ -21,14 +21,12 @@ trait EvaluatesClosures
 
     protected function getDefaultEvaluationParameters(): array
     {
-        $model = $this->getModel();
-
         return [
             'component' => $this,
             'get' => $this->getGetCallback(),
             'livewire' => $this->getLivewire(),
-            'model' => $model,
-            'record' => $model instanceof Model ? $model : null,
+            'model' => $this->getModel(),
+            'record' => $this->getRecord(),
             'set' => $this->getSetCallback(),
             'state' => $this->shouldEvaluateWithState() ? $this->getState() : null,
         ];
