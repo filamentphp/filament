@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 class EditRecord extends Page implements Forms\Contracts\HasForms
 {
     use Concerns\HasRecordBreadcrumb;
+    use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
     use Concerns\UsesResourceForm;
     use Forms\Concerns\InteractsWithForms;
@@ -22,8 +23,6 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
     public $record;
 
     public $data;
-
-    public $activeRelationManager = null;
 
     protected $queryString = [
         'activeRelationManager',
@@ -44,7 +43,7 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
         $this->fillForm();
 
-        $this->activeRelationManager ??= ($this->getResource()::getRelations()[0] ?? null);
+        $this->activeRelationManager ??= $this->getRelationManagers()[0] ?? null;
     }
 
     protected function fillForm(): void

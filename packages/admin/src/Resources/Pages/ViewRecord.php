@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 class ViewRecord extends Page implements Forms\Contracts\HasForms
 {
     use Concerns\HasRecordBreadcrumb;
+    use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
     use Concerns\UsesResourceForm;
     use Forms\Concerns\InteractsWithForms;
@@ -37,6 +38,8 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
         abort_unless(static::getResource()::canView($this->record), 403);
 
         $this->fillForm();
+
+        $this->activeRelationManager ??= $this->getRelationManagers()[0] ?? null;
     }
 
     protected function fillForm(): void
