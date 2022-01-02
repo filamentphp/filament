@@ -6,6 +6,8 @@ export default (Alpine) => {
 
         rows: [],
 
+        shouldUpdateRows: true,
+
         init: function () {
             this.updateRows()
 
@@ -14,6 +16,12 @@ export default (Alpine) => {
             }
 
             this.$watch('state', () => {
+                if (! this.shouldUpdateRows) {
+                    this.shouldUpdateRows = true
+
+                    return
+                }
+
                 this.updateRows()
             })
         },
@@ -32,6 +40,8 @@ export default (Alpine) => {
             }
 
             this.updateState()
+
+            this.shouldUpdateRows = true
         },
 
         updateRows: function () {
@@ -51,8 +61,19 @@ export default (Alpine) => {
             let state = {}
 
             this.rows.forEach((row) => {
+                if (row.key === '' || row.key === null) {
+                    return
+                }
+
                 state[row.key] = row.value
             })
+
+            // This is a hack to prevent the component from updating rows again
+            // after a state update, which would otherwise be done by the `state`
+            // watcher. If rows are updated again, duplicate keys are removed.
+            //
+            // https://github.com/laravel-filament/filament/issues/1107
+            this.shouldUpdateRows = false
 
             this.state = state
         },

@@ -15933,12 +15933,17 @@ var key_value_default = (Alpine) => {
   }) => ({
     state: state2,
     rows: [],
+    shouldUpdateRows: true,
     init: function() {
       this.updateRows();
       if (this.rows.length <= 0) {
         this.addRow();
       }
       this.$watch("state", () => {
+        if (!this.shouldUpdateRows) {
+          this.shouldUpdateRows = true;
+          return;
+        }
         this.updateRows();
       });
     },
@@ -15952,6 +15957,7 @@ var key_value_default = (Alpine) => {
         this.addRow();
       }
       this.updateState();
+      this.shouldUpdateRows = true;
     },
     updateRows: function() {
       let rows = [];
@@ -15966,8 +15972,12 @@ var key_value_default = (Alpine) => {
     updateState: function() {
       let state3 = {};
       this.rows.forEach((row) => {
+        if (row.key === "" || row.key === null) {
+          return;
+        }
         state3[row.key] = row.value;
       });
+      this.shouldUpdateRows = false;
       this.state = state3;
     }
   }));
