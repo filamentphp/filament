@@ -4,20 +4,20 @@ return [
 
     'action' => [
 
-        'label' => 'Anlegen',
+        'label' => 'Erstellen',
 
         'modal' => [
 
-            'heading' => ':label anlegen',
+            'heading' => ':label erstellen',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'Anlegen',
+                    'label' => 'Erstellen',
                 ],
 
                 'create_and_create_another' => [
-                    'label' => 'Anlegen & weiteren Datensatz anlegen',
+                    'label' => 'Erstellen & weiterer Eintrag',
                 ],
 
             ],
@@ -25,7 +25,7 @@ return [
         ],
 
         'messages' => [
-            'created' => 'Angelegt',
+            'created' => 'Erstellt',
         ],
 
     ],

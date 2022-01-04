@@ -4,7 +4,7 @@ return [
 
     'title' => 'Anmelden',
 
-    'heading' => 'Melden Sie sich mit Ihrem Konto an.',
+    'heading' => 'Melden Sie sich an.',
 
     'buttons' => [
 

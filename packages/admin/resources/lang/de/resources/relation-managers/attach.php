@@ -4,16 +4,16 @@ return [
 
     'action' => [
 
-        'label' => 'Anhängen',
+        'label' => 'Verknüpfen',
 
         'modal' => [
 
-            'heading' => ':label anhängen',
+            'heading' => ':label verknüpfen',
 
             'fields' => [
 
                 'record_ids' => [
-                    'label' => 'Datensätze',
+                    'label' => 'Einträge',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'Anhängen',
+                    'label' => 'Verknüpfen',
                 ],
 
                 'attach_and_attach_another' => [
-                    'label' => 'Anhängen & weiteren Datensatz anhängen',
+                    'label' => 'Verknüpfen & weiterer Eintrag',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Angehängt',
+            'attached' => 'Verknüpft',
         ],
 
     ],
