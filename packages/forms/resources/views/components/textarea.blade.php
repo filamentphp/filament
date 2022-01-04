@@ -25,7 +25,7 @@
                 ->merge($getExtraAttributes())
                 ->merge($getExtraInputAttributeBag()->getAttributes())
                 ->class([
-                    'block w-full duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600',
+                    'block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600',
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                 ])

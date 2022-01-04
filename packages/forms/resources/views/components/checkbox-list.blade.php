@@ -90,7 +90,7 @@
                     value="{{ $optionValue }}"
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                     {{ $attributes->merge($getExtraAttributes())->class([
-                        'text-primary-600 duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500',
+                        'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500',
                         'border-gray-300' => ! $errors->has($getStatePath()),
                         'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
                     ]) }}
