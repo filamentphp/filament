@@ -61,7 +61,7 @@ class Resource
             NavigationItem::make()
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
-                ->isActiveWhen(fn () => request()->routeIs("{$routeBaseName}*"))
+                ->isActiveWhen(fn () => request()->routeIs("{$routeBaseName}.*"))
                 ->label(static::getNavigationLabel())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
