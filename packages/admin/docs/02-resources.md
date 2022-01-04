@@ -821,6 +821,22 @@ use Illuminate\Database\Eloquent\Model;
 public ?Model $record = null;
 ```
 
+### Deleting pages
+
+If you'd like to delete a page from your resource, you can just delete the page file from the `Pages` directory of your resource, and its entry in the `getPages()` method.
+
+For example, you may have a resource with records that may not be created by anyone. Delete the `Create` page, and then remove it from `getPages()`:
+
+```php
+public static function getPages(): array
+{
+    return [
+        'index' => Pages\ListCustomers::route('/'),
+        'edit' => Pages\EditCustomer::route('/{record}/edit'),
+    ];
+}
+```
+
 ## Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The following methods are used:
