@@ -24,20 +24,32 @@
         <canvas
             x-data="{
                 chart: null,
-
+                renderChart: function (data = null) {
+                    this.chart = new Chart($el,{
+                        type: '{{ $this->getType() }}',
+                        data: data != null ? data : {{ json_encode($this->getData()) }},
+                        options: {{ json_encode($this->getOptions()) ?? '{}' }},
+                    })
+                },
                 init: function () {
-                    chart = new Chart(
-                        $el,
-                        {
+                    if ({!! count($filters) !!}) {
+                        this.renderChart()
+                    } else {
+                        chart = new Chart($el,{
                             type: '{{ $this->getType() }}',
                             data: {{ json_encode($this->getData()) }},
                             options: {{ json_encode($this->getOptions()) ?? '{}' }},
-                        },
-                    )
+                        })
+                    }
 
                     $wire.on('updateChartData', async ({ data }) => {
                         chart.data = data
                         chart.update('resize')
+                    })
+
+                    $wire.on('filteredChartData', async ({ data }) => {
+                        this.chart.destroy()
+                        this.renderChart(data)
                     })
                 },
             }"

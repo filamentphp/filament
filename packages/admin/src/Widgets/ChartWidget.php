@@ -58,9 +58,15 @@ class ChartWidget extends Widget
         if ($newDataChecksum !== $this->dataChecksum) {
             $this->dataChecksum = $newDataChecksum;
 
-            $this->emitSelf('updateChartData', [
-                'data' => $this->getData(),
-            ]);
+            if ($this->filter) {
+                $this->emitSelf('filteredChartData', [
+                    'data' => $this->getData(),
+                ]);
+            } else {
+                $this->emitSelf('updateChartData', [
+                    'data' => $this->getData(),
+                ]);
+            }
         }
     }
 
