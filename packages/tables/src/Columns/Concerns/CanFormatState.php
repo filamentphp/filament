@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns\Concerns;
 
 use Akaunting\Money;
 use Closure;
+use Filament\Tables\Columns\Column;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
@@ -50,16 +51,16 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string $currency = 'usd', bool $shouldConvert = false): static
+    public function money(string | Closure $currency = 'usd', bool $shouldConvert = false): static
     {
-        $this->formatStateUsing(function ($state) use ($currency, $shouldConvert): ?string {
+        $this->formatStateUsing(function (Column $column, $state) use ($currency, $shouldConvert): ?string {
             if (blank($state)) {
                 return null;
             }
 
             return (new Money\Money(
                 $state,
-                (new Money\Currency(strtoupper($currency))),
+                (new Money\Currency(strtoupper($column->evaluate($currency)))),
                 $shouldConvert,
             ))->format();
         });
