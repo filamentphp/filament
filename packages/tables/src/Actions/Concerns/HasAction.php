@@ -13,8 +13,12 @@ trait HasAction
     public function action(string | Closure | null $action): static
     {
         if (is_string($action)) {
-            $action = function (HasTable $livewire, Model $record) use ($action) {
-                return $livewire->{$action}($record);
+            $action = function (HasTable $livewire, ?Model $record) use ($action) {
+                if ($record) {
+                    return $livewire->{$action}($record);
+                }
+
+                return $livewire->{$action}();
             };
         }
 
