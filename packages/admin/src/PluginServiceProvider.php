@@ -24,6 +24,8 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     public function configurePackage(Package $package): void
     {
+        $this->packageConfiguring($package);
+
         $package
             ->name(static::$name)
             ->hasCommands($this->getCommands());
@@ -41,6 +43,16 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         if (file_exists($this->package->basePath('/../resources/views'))) {
             $package->hasViews();
         }
+
+        $this->packageConfigured($package);
+    }
+
+    public function packageConfiguring(Package $package): void
+    {
+    }
+
+    public function packageConfigured(Package $package): void
+    {
     }
 
     public function packageRegistered(): void
