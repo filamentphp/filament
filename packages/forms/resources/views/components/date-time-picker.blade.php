@@ -136,7 +136,7 @@
                                         'cursor-not-allowed': dayIsDisabled(day),
                                         'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                     }"
-                                    class="text-sm leading-none leading-loose text-center duration-100 ease-in-out rounded-full"
+                                    class="text-sm leading-none leading-loose text-center transition duration-100 ease-in-out rounded-full"
                                 ></div>
                             </template>
                         </div>

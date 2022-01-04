@@ -185,7 +185,7 @@
                         x-ref="textarea"
                         style="caret-color: black; color: transparent"
                         @class([
-                            'tracking-normal whitespace-pre-wrap overflow-y-hidden font-mono block absolute bg-transparent top-0 text-sm left-0 block z-1 w-full h-full min-h-full resize-none duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600',
+                            'tracking-normal whitespace-pre-wrap overflow-y-hidden font-mono block absolute bg-transparent top-0 text-sm left-0 block z-1 w-full h-full min-h-full resize-none transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600',
                             'border-gray-300' => ! $errors->has($getStatePath()),
                             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                         ])

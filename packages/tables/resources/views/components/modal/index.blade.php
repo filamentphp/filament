@@ -39,7 +39,7 @@
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         x-cloak
-        class="fixed inset-0 z-40 flex items-center min-h-screen p-4 overflow-y-auto"
+        class="fixed inset-0 z-40 flex items-center min-h-screen p-4 overflow-y-auto transition"
     >
         <button
             x-on:click="isOpen = false"
