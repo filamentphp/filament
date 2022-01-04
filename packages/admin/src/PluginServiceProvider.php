@@ -22,19 +22,9 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     protected array $widgets = [];
 
-    public function configuringPackage(Package $package)
-    {
-        //
-    }
-
-    public function configuredPackage(Package $package)
-    {
-        //
-    }
-
     public function configurePackage(Package $package): void
     {
-        $this->configuringPackage($package);
+        $this->packageConfiguring($package);
 
         $package
             ->name(static::$name)
@@ -54,7 +44,15 @@ abstract class PluginServiceProvider extends PackageServiceProvider
             $package->hasViews();
         }
 
-        $this->configuredPackage($package);
+        $this->packageConfigured($package);
+    }
+
+    public function packageConfiguring(Package $package): void
+    {
+    }
+
+    public function packageConfigured(Package $package): void
+    {
     }
 
     public function packageRegistered(): void
