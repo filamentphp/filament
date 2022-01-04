@@ -2,11 +2,13 @@
 
 namespace Filament\Tables\Actions\Concerns;
 
+use Closure;
+
 trait HasFormSchema
 {
-    protected array $formSchema = [];
+    protected array | Closure $formSchema = [];
 
-    public function form(array $schema): static
+    public function form(array | Closure $schema): static
     {
         $this->formSchema = $schema;
 
@@ -15,7 +17,7 @@ trait HasFormSchema
 
     public function getFormSchema(): array
     {
-        return $this->formSchema;
+        return $this->evaluate($this->formSchema);
     }
 
     public function hasFormSchema(): bool

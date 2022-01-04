@@ -2,11 +2,13 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use Closure;
+
 trait CanCountRelatedModels
 {
-    protected ?string $relationshipToCount = null;
+    protected string | Closure | null $relationshipToCount = null;
 
-    public function counts(?string $relationship): static
+    public function counts(string | Closure | null $relationship): static
     {
         $this->relationshipToCount = $relationship;
 
@@ -15,6 +17,6 @@ trait CanCountRelatedModels
 
     public function getRelationshipToCount(): ?string
     {
-        return $this->relationshipToCount;
+        return $this->evaluate($this->relationshipToCount);
     }
 }

@@ -6,11 +6,11 @@ use Closure;
 
 trait CanBeHidden
 {
-    protected ?string $hiddenFrom = null;
+    protected string | Closure | null $hiddenFrom = null;
 
     protected bool | Closure $isHidden = false;
 
-    protected ?string $visibleFrom = null;
+    protected string | Closure | null $visibleFrom = null;
 
     public function hidden(bool | Closure $condition = true): static
     {
@@ -19,14 +19,14 @@ trait CanBeHidden
         return $this;
     }
 
-    public function hiddenFrom(string $breakpoint): static
+    public function hiddenFrom(string | Closure | null $breakpoint): static
     {
         $this->hiddenFrom = $breakpoint;
 
         return $this;
     }
 
-    public function visibleFrom(string $breakpoint): static
+    public function visibleFrom(string | Closure | null $breakpoint): static
     {
         $this->visibleFrom = $breakpoint;
 
@@ -35,12 +35,12 @@ trait CanBeHidden
 
     public function getHiddenFrom(): ?string
     {
-        return $this->hiddenFrom;
+        return $this->evaluate($this->hiddenFrom);
     }
 
     public function getVisibleFrom(): ?string
     {
-        return $this->visibleFrom;
+        return $this->evaluate($this->visibleFrom);
     }
 
     public function isHidden(): bool

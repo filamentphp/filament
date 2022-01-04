@@ -28,16 +28,13 @@ trait HasState
 
     public function getDefaultState()
     {
-        return $this->defaultState;
+        return $this->evaluate($this->defaultState);
     }
 
     public function getState()
     {
-        if ($this->getStateUsing instanceof Closure) {
-            $state = app()->call($this->getStateUsing, [
-                'livewire' => $this->getLivewire(),
-                'record' => $this->getRecord(),
-            ]);
+        if ($this->getStateUsing) {
+            $state = $this->evaluate($this->getStateUsing);
         } else {
             $state = Arr::get($this->getRecord(), $this->getName());
         }

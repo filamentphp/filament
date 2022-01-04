@@ -2,13 +2,14 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use Closure;
 use Illuminate\Support\Str;
 
 trait HasLabel
 {
-    protected ?string $label = null;
+    protected string | Closure | null $label = null;
 
-    public function label(string $label): static
+    public function label(string | Closure | null $label): static
     {
         $this->label = $label;
 
@@ -17,10 +18,10 @@ trait HasLabel
 
     public function getLabel(): string
     {
-        return $this->label ?? (string) Str::of($this->getName())
-                ->before('.')
-                ->kebab()
-                ->replace(['-', '_'], ' ')
-                ->ucfirst();
+        return $this->evaluate($this->label) ?? (string) Str::of($this->getName())
+            ->before('.')
+            ->kebab()
+            ->replace(['-', '_'], ' ')
+            ->ucfirst();
     }
 }

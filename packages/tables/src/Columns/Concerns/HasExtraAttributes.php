@@ -2,11 +2,13 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use Closure;
+
 trait HasExtraAttributes
 {
-    protected array $extraAttributes = [];
+    protected array | Closure $extraAttributes = [];
 
-    public function extraAttributes(array $attributes): static
+    public function extraAttributes(array | Closure $attributes): static
     {
         $this->extraAttributes = $attributes;
 
@@ -15,6 +17,6 @@ trait HasExtraAttributes
 
     public function getExtraAttributes(): array
     {
-        return $this->extraAttributes;
+        return $this->evaluate($this->extraAttributes);
     }
 }

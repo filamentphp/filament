@@ -21,7 +21,7 @@ trait EvaluatesClosures
     protected function getDefaultEvaluationParameters(): array
     {
         return [
-            'columns' => $this,
+            'column' => $this,
             'livewire' => $this->getLivewire(),
             'record' => $this->getRecord(),
         ];

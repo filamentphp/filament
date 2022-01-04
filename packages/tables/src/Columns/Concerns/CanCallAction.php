@@ -29,16 +29,7 @@ trait CanCallAction
 
     public function callAction()
     {
-        $action = $this->getAction();
-
-        if (! $action) {
-            return;
-        }
-
-        return app()->call($action, [
-            'livewire' => $this->getLivewire(),
-            'record' => $this->getRecord(),
-        ]);
+        return $this->evaluate($this->getAction());
     }
 
     public function getAction(): ?Closure

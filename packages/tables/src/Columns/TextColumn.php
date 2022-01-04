@@ -2,15 +2,17 @@
 
 namespace Filament\Tables\Columns;
 
+use Closure;
+
 class TextColumn extends Column
 {
     use Concerns\CanFormatState;
 
     protected string $view = 'tables::columns.text-column';
 
-    protected bool $canWrap = false;
+    protected bool | Closure $canWrap = false;
 
-    public function wrap(bool $condition = true): static
+    public function wrap(bool | Closure $condition = true): static
     {
         $this->canWrap = $condition;
 
@@ -19,6 +21,6 @@ class TextColumn extends Column
 
     public function canWrap(): bool
     {
-        return $this->canWrap;
+        return $this->evaluate($this->canWrap);
     }
 }

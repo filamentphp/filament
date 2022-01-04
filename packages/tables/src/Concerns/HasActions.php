@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\Column;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -27,7 +28,6 @@ trait HasActions
 
                 return [$action->getName() => $action];
             })
-            ->filter(fn (Action $action): bool => ! $action->isHidden())
             ->toArray();
     }
 
@@ -105,7 +105,10 @@ trait HasActions
 
     protected function getCachedTableAction(string $name): ?Action
     {
-        return $this->getCachedTableActions()[$name] ?? null;
+        $action = $this->getCachedTableActions()[$name] ?? null;
+        $action?->record($this->getMountedTableActionRecord());
+
+        return $action;
     }
 
     protected function getTableActions(): array

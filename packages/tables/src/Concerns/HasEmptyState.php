@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\Column;
 use Illuminate\Contracts\View\View;
 
 trait HasEmptyState
@@ -17,13 +18,14 @@ trait HasEmptyState
 
                 return [$action->getName() => $action];
             })
-            ->filter(fn (Action $action): bool => ! $action->isHidden())
             ->toArray();
     }
 
     public function getCachedTableEmptyStateActions(): array
     {
-        return $this->cachedTableEmptyStateActions;
+        return collect($this->cachedTableEmptyStateActions)
+            ->filter(fn (Action $action): bool => ! $action->isHidden())
+            ->toArray();
     }
 
     protected function getCachedTableEmptyStateAction(string $name): ?Action

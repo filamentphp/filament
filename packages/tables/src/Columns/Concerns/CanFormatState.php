@@ -71,10 +71,8 @@ trait CanFormatState
     {
         $state = $this->getState();
 
-        if ($this->formatStateUsing instanceof Closure) {
-            $state = app()->call($this->formatStateUsing, [
-                'livewire' => $this->getLivewire(),
-                'record' => $this->getRecord(),
+        if ($this->formatStateUsing) {
+            $state = $this->evaluate($this->formatStateUsing, [
                 'state' => $state,
             ]);
         }

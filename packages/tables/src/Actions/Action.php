@@ -13,6 +13,7 @@ use Illuminate\View\Component;
 class Action extends Component implements Htmlable
 {
     use Concerns\BelongsToTable;
+    use Concerns\CanBeHidden;
     use Concerns\CanBeMounted;
     use Concerns\CanOpenModal;
     use Concerns\CanOpenUrl;
@@ -29,8 +30,6 @@ class Action extends Component implements Htmlable
     use Conditionable;
     use Macroable;
     use Tappable;
-
-    protected bool | Closure $isHidden = false;
 
     final public function __construct(string $name)
     {
@@ -55,39 +54,8 @@ class Action extends Component implements Htmlable
             return;
         }
 
-        $action = $this->getAction();
-
-        if (! $action) {
-            return;
-        }
-
-        return app()->call($action, [
+        return $this->evaluate($this->getAction(), [
             'data' => $data,
-            'livewire' => $this->getLivewire(),
-            'record' => $this->getRecord(),
-        ]);
-    }
-
-    public function hidden(bool | Closure $condition = true): static
-    {
-        $this->isHidden = $condition;
-
-        return $this;
-    }
-
-    public function isHidden(): bool
-    {
-        if (! $this->isHidden instanceof Closure) {
-            return $this->isHidden;
-        }
-
-        if (! $this->getRecord()) {
-            return false;
-        }
-
-        return app()->call($this->isHidden, [
-            'livewire' => $this->getLivewire(),
-            'record' => $this->getRecord(),
         ]);
     }
 
