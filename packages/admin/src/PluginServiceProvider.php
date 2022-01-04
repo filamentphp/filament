@@ -22,8 +22,20 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     protected array $widgets = [];
 
+    public function configuringPackage(Package $package)
+    {
+        //
+    }
+
+    public function configuredPackage(Package $package)
+    {
+        //
+    }
+
     public function configurePackage(Package $package): void
     {
+        $this->configuringPackage($package);
+
         $package
             ->name(static::$name)
             ->hasCommands($this->getCommands());
@@ -41,6 +53,8 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         if (file_exists($this->package->basePath('/../resources/views'))) {
             $package->hasViews();
         }
+
+        $this->configuredPackage($package);
     }
 
     public function packageRegistered(): void
