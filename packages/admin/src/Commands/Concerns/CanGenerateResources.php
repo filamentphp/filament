@@ -73,6 +73,7 @@ trait CanGenerateResources
 
         foreach ($components as $componentName => $componentData) {
             // Constructor
+            $output .= PHP_EOL;
             $output .= (string) Str::of($componentData['type'])->after('Filament\\');
             $output .= '::make(\'';
             $output .= $componentName;
@@ -152,6 +153,7 @@ trait CanGenerateResources
 
         foreach ($columns as $columnName => $columnData) {
             // Constructor
+            $output .= PHP_EOL;
             $output .= (string) Str::of($columnData['type'])->after('Filament\\');
             $output .= '::make(\'';
             $output .= $columnName;
