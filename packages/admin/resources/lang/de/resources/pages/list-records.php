@@ -7,7 +7,7 @@ return [
     'actions' => [
 
         'create' => [
-            'label' => ':label anlegen',
+            'label' => ':label erstellen',
         ],
 
     ],

@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => ':label anlegen',
+    'title' => ':label erstellen',
 
-    'breadcrumb' => 'Anlegen',
+    'breadcrumb' => 'Erstellen',
 
     'form' => [
 
@@ -15,11 +15,11 @@ return [
             ],
 
             'create' => [
-                'label' => 'Anlegen',
+                'label' => 'Erstellen',
             ],
 
             'create_and_create_another' => [
-                'label' => 'Anlegen & weiteren Datensatz anlegen',
+                'label' => 'Erstellen & weiterer Eintrag',
             ],
 
         ],
@@ -27,7 +27,7 @@ return [
     ],
 
     'messages' => [
-        'created' => 'Angelegt',
+        'created' => 'Erstellt',
     ],
 
 ];
