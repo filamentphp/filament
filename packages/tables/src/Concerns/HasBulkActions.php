@@ -24,7 +24,6 @@ trait HasBulkActions
 
                 return [$action->getName() => $action];
             })
-            ->filter(fn (BulkAction $action): bool => ! $action->isHidden())
             ->toArray();
     }
 
@@ -76,7 +75,9 @@ trait HasBulkActions
 
     public function getCachedTableBulkActions(): array
     {
-        return $this->cachedTableBulkActions;
+        return collect($this->cachedTableBulkActions)
+            ->filter(fn (BulkAction $action): bool => ! $action->isHidden())
+            ->toArray();
     }
 
     public function getMountedTableBulkAction(): ?BulkAction

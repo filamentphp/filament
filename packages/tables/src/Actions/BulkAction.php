@@ -56,10 +56,8 @@ class BulkAction
         }
 
         try {
-            return app()->call($action, [
+            return $this->evaluate($action, [
                 'data' => $data,
-                'livewire' => $this->getLivewire(),
-                'records' => $this->getRecords(),
             ]);
         } finally {
             if ($this->shouldDeselectRecordsAfterCompletion()) {

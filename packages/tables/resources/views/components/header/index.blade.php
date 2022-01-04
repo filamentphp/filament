@@ -20,8 +20,6 @@
             @endif
         </div>
 
-        @if (count($actions))
-            <x-tables::actions :actions="$actions" class="shrink-0" />
-        @endif
+        <x-tables::actions :actions="$actions" class="shrink-0" />
     </div>
 </div>

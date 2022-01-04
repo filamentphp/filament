@@ -2,11 +2,13 @@
 
 namespace Filament\Tables\Actions\Concerns;
 
+use Closure;
+
 trait CanDeselectRecordsAfterCompletion
 {
-    protected bool $shouldDeselectRecordsAfterCompletion = false;
+    protected bool | Closure $shouldDeselectRecordsAfterCompletion = false;
 
-    public function deselectRecordsAfterCompletion(bool $condition = true): static
+    public function deselectRecordsAfterCompletion(bool | Closure $condition = true): static
     {
         $this->shouldDeselectRecordsAfterCompletion = $condition;
 
@@ -15,6 +17,6 @@ trait CanDeselectRecordsAfterCompletion
 
     public function shouldDeselectRecordsAfterCompletion(): bool
     {
-        return $this->shouldDeselectRecordsAfterCompletion;
+        return $this->evaluate($this->shouldDeselectRecordsAfterCompletion);
     }
 }

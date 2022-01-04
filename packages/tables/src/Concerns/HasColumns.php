@@ -16,7 +16,6 @@ trait HasColumns
 
                 return [$column->getName() => $column];
             })
-            ->filter(fn (Column $column): bool => ! $column->isHidden())
             ->toArray();
     }
 
@@ -39,7 +38,9 @@ trait HasColumns
 
     public function getCachedTableColumns(): array
     {
-        return $this->cachedTableColumns;
+        return collect($this->cachedTableColumns)
+            ->filter(fn (Column $column): bool => ! $column->isHidden())
+            ->toArray();
     }
 
     protected function getCachedTableColumn(string $name): ?Column

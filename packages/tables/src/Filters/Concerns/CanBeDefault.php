@@ -2,11 +2,13 @@
 
 namespace Filament\Tables\Filters\Concerns;
 
+use Closure;
+
 trait CanBeDefault
 {
-    protected bool $isDefault = false;
+    protected bool | Closure $isDefault = false;
 
-    public function default(bool $condition = true): static
+    public function default(bool | Closure $condition = true): static
     {
         $this->isDefault = $condition;
 
@@ -15,6 +17,6 @@ trait CanBeDefault
 
     public function isDefault(): bool
     {
-        return $this->isDefault;
+        return $this->evaluate($this->isDefault);
     }
 }

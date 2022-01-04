@@ -2,11 +2,13 @@
 
 namespace Filament\Tables\Actions\Concerns;
 
+use Closure;
+
 trait CanRequireConfirmation
 {
-    protected bool $isConfirmationRequired = false;
+    protected bool | Closure $isConfirmationRequired = false;
 
-    public function requiresConfirmation(bool $condition = true): static
+    public function requiresConfirmation(bool | Closure $condition = true): static
     {
         $this->isConfirmationRequired = $condition;
 
@@ -15,6 +17,6 @@ trait CanRequireConfirmation
 
     public function isConfirmationRequired(): bool
     {
-        return $this->isConfirmationRequired;
+        return $this->evaluate($this->isConfirmationRequired);
     }
 }
