@@ -34,9 +34,14 @@ class BelongsToManyMultiSelect extends MultiSelect
             }
 
             $component->state(
-                $relatedModels->pluck(
-                    $relationship->getRelatedKeyName(),
-                )->toArray(),
+                // Cast the related keys to a string, otherwise JavaScript does not
+                // know how to handle deselection.
+                //
+                // https://github.com/laravel-filament/filament/issues/1111
+                $relatedModels
+                    ->pluck($relationship->getRelatedKeyName())
+                    ->map(fn ($key): string => strval($key))
+                    ->toArray(),
             );
         });
 
