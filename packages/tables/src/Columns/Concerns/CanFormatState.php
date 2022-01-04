@@ -11,15 +11,19 @@ trait CanFormatState
 {
     protected ?Closure $formatStateUsing = null;
 
-    public function date(string $format = 'M j, Y'): static
+    public function date(?string $format = null): static
     {
+        $format ??= config('tables.date_format');
+
         $this->formatStateUsing(fn ($state): ?string => $state ? Carbon::parse($state)->translatedFormat($format) : null);
 
         return $this;
     }
 
-    public function dateTime(string $format = 'M j, Y H:i:s'): static
+    public function dateTime(?string $format = null): static
     {
+        $format ??= config('tables.date_time_format');
+
         $this->date($format);
 
         return $this;
