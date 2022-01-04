@@ -418,11 +418,14 @@ public static function attachForm(Form $form): Form
 {
     return $form
         ->schema([
+            static::getAttachFormRecordSelect(),
             Forms\Components\TextInput::make('role')->required(),
             // ...
         ]);
 }
 ```
+
+As included in the above example, you may use `getAttachFormRecordSelect()` to create a select field for the record to attach.
 
 ## Global search
 
