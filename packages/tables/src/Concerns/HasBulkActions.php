@@ -4,7 +4,6 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Columns\Column;
 
 /**
  * @property ComponentContainer $mountedTableBulkActionForm

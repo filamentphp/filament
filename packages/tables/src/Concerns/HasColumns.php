@@ -3,7 +3,6 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Columns\Column;
-use Filament\Tables\Filters\Filter;
 
 trait HasColumns
 {

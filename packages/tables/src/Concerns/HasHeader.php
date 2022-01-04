@@ -4,7 +4,6 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\Column;
 use Illuminate\Contracts\View\View;
 
 trait HasHeader
