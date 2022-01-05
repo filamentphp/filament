@@ -16,25 +16,13 @@
         @endif
 
         @if ($headerWidgets = $this->getHeaderWidgets())
-            <x-filament::widgets>
-                @foreach ($headerWidgets as $widget)
-                    @if ($widget::canView())
-                        @livewire(\Livewire\Livewire::getAlias($widget), ['record' => $widgetRecord])
-                    @endif
-                @endforeach
-            </x-filament::widgets>
+            <x-filament::widgets :widgets="$headerWidgets" :data="['record' => $widgetRecord]" />
         @endif
 
         {{ $slot }}
 
         @if ($footerWidgets = $this->getFooterWidgets())
-            <x-filament::widgets>
-                @foreach ($footerWidgets as $widget)
-                    @if ($widget::canView())
-                        @livewire(\Livewire\Livewire::getAlias($widget), ['record' => $widgetRecord])
-                    @endif
-                @endforeach
-            </x-filament::widgets>
+            <x-filament::widgets :widgets="$footerWidgets" :data="['record' => $widgetRecord]" />
         @endif
 
         @if ($footer = $this->getFooter())
