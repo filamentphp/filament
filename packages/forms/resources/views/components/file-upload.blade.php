@@ -35,7 +35,7 @@
             uploadProgressIndicatorPosition: '{{ $getUploadProgressIndicatorPosition() }}',
             uploadUsing: async (fileKey, file, success, error, progress) => {
                 $wire.upload(`{{ $getStatePath() }}.${fileKey}`, file, () => {
-                    success()
+                    success(fileKey)
                 }, error, progress)
             },
         })"
