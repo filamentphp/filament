@@ -74,9 +74,7 @@ class BulkAction
         $action = $this->action;
 
         if (is_string($action)) {
-            $action = function (HasTable $livewire, Collection $records) use ($action) {
-                return $livewire->{$action}($records);
-            };
+            $action = fn (...$args) => $this->getLivewire()->{$action}(...$args);
         }
 
         return $action;
