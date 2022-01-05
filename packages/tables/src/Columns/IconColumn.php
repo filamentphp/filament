@@ -11,9 +11,9 @@ class IconColumn extends Column
 
     protected string $view = 'tables::columns.icon-column';
 
-    protected array | Arrayable $options = [];
+    protected array | Arrayable | Closure $options = [];
 
-    public function options(array | Arrayable $options): static
+    public function options(array | Arrayable | Closure $options): static
     {
         $this->options = $options;
 
@@ -40,7 +40,7 @@ class IconColumn extends Column
 
     public function getOptions(): array
     {
-        $options = $this->options;
+        $options = $this->evaluate($this->options);
 
         if ($options instanceof Arrayable) {
             $options = $options->toArray();

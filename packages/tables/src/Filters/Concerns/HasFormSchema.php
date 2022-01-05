@@ -2,13 +2,14 @@
 
 namespace Filament\Tables\Filters\Concerns;
 
+use Closure;
 use Filament\Forms\Components\Checkbox;
 
 trait HasFormSchema
 {
-    protected ?array $formSchema = null;
+    protected array | Closure | null $formSchema = null;
 
-    public function form(array $schema): static
+    public function form(array | Closure | null $schema): static
     {
         $this->formSchema = $schema;
 
@@ -17,7 +18,7 @@ trait HasFormSchema
 
     public function getFormSchema(): array
     {
-        return $this->formSchema ?? [
+        return $this->evaluate($this->formSchema) ?? [
             Checkbox::make('isActive')
                 ->label($this->getLabel())
                 ->default($this->isDefault()),

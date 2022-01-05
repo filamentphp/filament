@@ -204,6 +204,14 @@ TextColumn::make('status')
     ->formatStateUsing(fn (string $state): string => __("statuses.{$state}"))
 ```
 
+If you'd like your column's content to wrap if it's too long, you may use the `wrap()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('description')->wrap()
+```
+
 ## Boolean column
 
 Boolean columns render a check or cross icon representing their state:

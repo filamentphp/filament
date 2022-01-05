@@ -2,58 +2,59 @@
 
 namespace Filament\Tables\Actions\Concerns;
 
+use Closure;
 use Filament\Tables\Actions\Modal\Actions\ButtonAction;
 
 trait CanOpenModal
 {
-    protected ?bool $isModalCentered = null;
+    protected bool | Closure | null $isModalCentered = null;
 
-    protected ?array $modalActions = null;
+    protected array | Closure | null $modalActions = null;
 
-    protected ?string $modalButtonLabel = null;
+    protected string | Closure | null $modalButtonLabel = null;
 
-    protected ?string $modalHeading = null;
+    protected string | Closure | null $modalHeading = null;
 
-    protected ?string $modalSubheading = null;
+    protected string | Closure | null $modalSubheading = null;
 
-    protected ?string $modalWidth = null;
+    protected string | Closure | null $modalWidth = null;
 
-    public function centerModal(?bool $condition = true): static
+    public function centerModal(bool | Closure | null $condition = true): static
     {
         $this->isModalCentered = $condition;
 
         return $this;
     }
 
-    public function modalActions(?array $actions = null): static
+    public function modalActions(array | Closure | null $actions = null): static
     {
         $this->modalActions = $actions;
 
         return $this;
     }
 
-    public function modalButton(?string $label = null): static
+    public function modalButton(string | Closure | null $label = null): static
     {
         $this->modalButtonLabel = $label;
 
         return $this;
     }
 
-    public function modalHeading(?string $heading = null): static
+    public function modalHeading(string | Closure | null $heading = null): static
     {
         $this->modalHeading = $heading;
 
         return $this;
     }
 
-    public function modalSubheading(?string $subheading = null): static
+    public function modalSubheading(string | Closure | null $subheading = null): static
     {
         $this->modalSubheading = $subheading;
 
         return $this;
     }
 
-    public function modalWidth(?string $width = null): static
+    public function modalWidth(string | Closure | null $width = null): static
     {
         $this->modalWidth = $width;
 
@@ -63,7 +64,7 @@ trait CanOpenModal
     public function getModalActions(): array
     {
         if ($this->modalActions !== null) {
-            return $this->modalActions;
+            return $this->evaluate($this->modalActions);
         }
 
         $color = $this->getColor();
@@ -88,8 +89,8 @@ trait CanOpenModal
 
     public function getModalButtonLabel(): string
     {
-        if ($this->modalButtonLabel) {
-            return $this->modalButtonLabel;
+        if (filled($this->modalButtonLabel)) {
+            return $this->evaluate($this->modalButtonLabel);
         }
 
         if ($this->isConfirmationRequired()) {
@@ -101,13 +102,13 @@ trait CanOpenModal
 
     public function getModalHeading(): string
     {
-        return $this->modalHeading ?? $this->getLabel();
+        return $this->evaluate($this->modalHeading) ?? $this->getLabel();
     }
 
     public function getModalSubheading(): ?string
     {
-        if ($this->modalSubheading) {
-            return $this->modalSubheading;
+        if (filled($this->modalSubheading)) {
+            return $this->evaluate($this->modalSubheading);
         }
 
         if ($this->isConfirmationRequired()) {
@@ -119,8 +120,8 @@ trait CanOpenModal
 
     public function getModalWidth(): string
     {
-        if ($this->modalWidth) {
-            return $this->modalWidth;
+        if (filled($this->modalWidth)) {
+            return $this->evaluate($this->modalWidth);
         }
 
         if ($this->isConfirmationRequired()) {
@@ -133,7 +134,7 @@ trait CanOpenModal
     public function isModalCentered(): bool
     {
         if ($this->isModalCentered !== null) {
-            return $this->isModalCentered;
+            return $this->evaluate($this->isModalCentered);
         }
 
         if (in_array($this->getModalWidth(), ['xs', 'sm'])) {

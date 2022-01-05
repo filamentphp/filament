@@ -6,9 +6,9 @@ use Closure;
 
 trait HasColors
 {
-    protected array $colors = [];
+    protected array | Closure $colors = [];
 
-    public function colors(array $colors): static
+    public function colors(array | Closure $colors): static
     {
         $this->colors = $colors;
 
@@ -35,6 +35,6 @@ trait HasColors
 
     public function getColors(): array
     {
-        return $this->colors;
+        return $this->evaluate($this->colors);
     }
 }

@@ -17,13 +17,14 @@ trait HasEmptyState
 
                 return [$action->getName() => $action];
             })
-            ->filter(fn (Action $action): bool => ! $action->isHidden())
             ->toArray();
     }
 
     public function getCachedTableEmptyStateActions(): array
     {
-        return $this->cachedTableEmptyStateActions;
+        return collect($this->cachedTableEmptyStateActions)
+            ->filter(fn (Action $action): bool => ! $action->isHidden())
+            ->toArray();
     }
 
     protected function getCachedTableEmptyStateAction(string $name): ?Action

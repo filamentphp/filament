@@ -418,11 +418,14 @@ public static function attachForm(Form $form): Form
 {
     return $form
         ->schema([
+            static::getAttachFormRecordSelect(),
             Forms\Components\TextInput::make('role')->required(),
             // ...
         ]);
 }
 ```
+
+As included in the above example, you may use `getAttachFormRecordSelect()` to create a select field for the record to attach.
 
 ## Global search
 
@@ -819,6 +822,22 @@ If you're using a widget on an Edit or View page, you may access the current rec
 use Illuminate\Database\Eloquent\Model;
 
 public ?Model $record = null;
+```
+
+### Deleting pages
+
+If you'd like to delete a page from your resource, you can just delete the page file from the `Pages` directory of your resource, and its entry in the `getPages()` method.
+
+For example, you may have a resource with records that may not be created by anyone. Delete the `Create` page, and then remove it from `getPages()`:
+
+```php
+public static function getPages(): array
+{
+    return [
+        'index' => Pages\ListCustomers::route('/'),
+        'edit' => Pages\EditCustomer::route('/{record}/edit'),
+    ];
+}
 ```
 
 ## Authorization

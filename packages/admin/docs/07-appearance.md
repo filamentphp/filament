@@ -2,6 +2,16 @@
 title: Appearance
 ---
 
+## Changing the brand logo
+
+By default, Filament will use your app's name as a brand logo in the admin panel.
+
+You may create a `resources/views/vendor/filament/components/brand.blade.php` file to provide a custom logo:
+
+```blade
+<img src="{{ asset('/images/logo.svg') }}" alt="Logo" class="h-10">
+```
+
 ## Building themes
 
 Filament allows you to change the fonts and color scheme used in the UI, by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".

@@ -40,10 +40,7 @@ class Page extends Component
             NavigationItem::make()
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
-                ->isActiveWhen(fn (): bool => request()->routeIs([
-                    $routeName = static::getRouteName(),
-                    "{$routeName}*",
-                ]))
+                ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName()))
                 ->label(static::getNavigationLabel())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),

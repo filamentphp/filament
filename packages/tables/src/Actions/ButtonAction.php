@@ -2,13 +2,15 @@
 
 namespace Filament\Tables\Actions;
 
+use Closure;
+
 class ButtonAction extends Action
 {
     protected string $view = 'tables::actions.button-action';
 
-    protected ?string $iconPosition = null;
+    protected string | Closure | null $iconPosition = null;
 
-    public function iconPosition(string $position): static
+    public function iconPosition(string | Closure | null $position): static
     {
         $this->iconPosition = $position;
 
@@ -17,6 +19,6 @@ class ButtonAction extends Action
 
     public function getIconPosition(): ?string
     {
-        return $this->iconPosition;
+        return $this->evaluate($this->iconPosition);
     }
 }

@@ -2,11 +2,13 @@
 
 namespace Filament\Tables\Columns;
 
+use Closure;
+
 class TagsColumn extends Column
 {
     protected string $view = 'tables::columns.tags-column';
 
-    protected ?string $separator = null;
+    protected string | Closure | null $separator = null;
 
     public function getTags(): array
     {
@@ -29,7 +31,7 @@ class TagsColumn extends Column
         return $tags;
     }
 
-    public function separator(?string $separator = ','): static
+    public function separator(string | Closure | null $separator = ','): static
     {
         $this->separator = $separator;
 
@@ -38,6 +40,6 @@ class TagsColumn extends Column
 
     public function getSeparator(): ?string
     {
-        return $this->separator;
+        return $this->evaluate($this->separator);
     }
 }

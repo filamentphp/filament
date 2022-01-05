@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Filters;
 
+use Closure;
 use Filament\Forms\Components\MultiSelect;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,15 +12,15 @@ use Illuminate\Support\Str;
 
 class MultiSelectFilter extends Filter
 {
-    protected ?string $column = null;
+    protected string | Closure | null $column = null;
 
-    protected bool $isStatic = false;
+    protected bool | Closure $isStatic = false;
 
-    protected array | Arrayable | null $options = null;
+    protected array | Arrayable | Closure | null $options = null;
 
     public function apply(Builder $query, array $data = []): Builder
     {
-        if ($this->isStatic) {
+        if ($this->evaluate($this->isStatic)) {
             return $query;
         }
 
@@ -50,14 +51,14 @@ class MultiSelectFilter extends Filter
         return $query;
     }
 
-    public function column(string $name): static
+    public function column(string | Closure | null $name): static
     {
         $this->column = $name;
 
         return $this;
     }
 
-    public function options(array | Arrayable | null $options): static
+    public function options(array | Arrayable | Closure | null $options): static
     {
         $this->options = $options;
 
@@ -71,7 +72,7 @@ class MultiSelectFilter extends Filter
         return $this;
     }
 
-    public function static(bool $condition = true): static
+    public function static(bool | Closure $condition = true): static
     {
         $this->isStatic = $condition;
 
@@ -80,12 +81,12 @@ class MultiSelectFilter extends Filter
 
     public function getColumn(): string
     {
-        return $this->column ?? $this->getName();
+        return $this->evaluate($this->column) ?? $this->getName();
     }
 
     public function getOptions(): array
     {
-        $options = $this->options;
+        $options = $this->evaluate($this->options);
 
         if ($options === null) {
             $options = $this->queriesRelationships() ? $this->getRelationshipOptions() : [];

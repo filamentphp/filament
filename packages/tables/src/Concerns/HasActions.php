@@ -27,7 +27,6 @@ trait HasActions
 
                 return [$action->getName() => $action];
             })
-            ->filter(fn (Action $action): bool => ! $action->isHidden())
             ->toArray();
     }
 
@@ -105,7 +104,10 @@ trait HasActions
 
     protected function getCachedTableAction(string $name): ?Action
     {
-        return $this->getCachedTableActions()[$name] ?? null;
+        $action = $this->getCachedTableActions()[$name] ?? null;
+        $action?->record($this->getMountedTableActionRecord());
+
+        return $action;
     }
 
     protected function getTableActions(): array

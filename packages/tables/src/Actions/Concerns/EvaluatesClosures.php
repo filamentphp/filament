@@ -3,6 +3,8 @@
 namespace Filament\Tables\Actions\Concerns;
 
 use Closure;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkAction;
 
 trait EvaluatesClosures
 {
@@ -20,9 +22,13 @@ trait EvaluatesClosures
 
     protected function getDefaultEvaluationParameters(): array
     {
-        return [
-            'action' => $this,
-            'livewire' => $this->getLivewire(),
-        ];
+        return array_merge(
+            [
+                'action' => $this,
+                'livewire' => $this->getLivewire(),
+            ],
+            ($this instanceof Action ? ['record' => $this->getRecord()] : []),
+            ($this instanceof BulkAction ? ['records' => $this->getRecords()] : []),
+        );
     }
 }

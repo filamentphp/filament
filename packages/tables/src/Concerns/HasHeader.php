@@ -18,13 +18,14 @@ trait HasHeader
 
                 return [$action->getName() => $action];
             })
-            ->filter(fn (Action $action): bool => ! $action->isHidden())
             ->toArray();
     }
 
     public function getCachedTableHeaderActions(): array
     {
-        return $this->cachedTableHeaderActions;
+        return collect($this->cachedTableHeaderActions)
+            ->filter(fn (Action $action): bool => ! $action->isHidden())
+            ->toArray();
     }
 
     protected function getCachedTableHeaderAction(string $name): ?Action
