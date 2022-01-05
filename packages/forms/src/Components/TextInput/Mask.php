@@ -149,6 +149,7 @@ class Mask implements Jsonable
                     ->numeric()
                     ->thousandsSeparator($thousandsSeparator)
                     ->decimalPlaces($decimalPlaces)
+                    ->padFractionalZeros()
                     ->normalizeZeros(false),
             ])
             ->pattern("{$prefix}money")
