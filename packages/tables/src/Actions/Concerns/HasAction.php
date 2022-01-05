@@ -22,13 +22,7 @@ trait HasAction
         $action = $this->action;
 
         if (is_string($action)) {
-            $action = function (HasTable $livewire, ?Model $record) use ($action) {
-                if ($record) {
-                    return $livewire->{$action}($record);
-                }
-
-                return $livewire->{$action}();
-            };
+            $action = fn (...$args) => $this->getLivewire()->{$action}(...$args);
         }
 
         return $action;
