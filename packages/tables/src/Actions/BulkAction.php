@@ -74,7 +74,7 @@ class BulkAction
         $action = $this->action;
 
         if (is_string($action)) {
-            $action = fn (...$args) => $this->getLivewire()->{$action}(...$args);
+            $action = Closure::fromCallable([$this->getLivewire(), $action]);
         }
 
         return $action;
