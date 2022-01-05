@@ -5,7 +5,6 @@ namespace Filament\Tables\Actions;
 use Closure;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
