@@ -18,7 +18,9 @@
         @if ($headerWidgets = $this->getHeaderWidgets())
             <x-filament::widgets>
                 @foreach ($headerWidgets as $widget)
-                    @livewire(\Livewire\Livewire::getAlias($widget), ['record' => $widgetRecord])
+                    @if ($widget::canView())
+                        @livewire(\Livewire\Livewire::getAlias($widget), ['record' => $widgetRecord])
+                    @endif
                 @endforeach
             </x-filament::widgets>
         @endif
@@ -28,7 +30,9 @@
         @if ($footerWidgets = $this->getFooterWidgets())
             <x-filament::widgets>
                 @foreach ($footerWidgets as $widget)
-                    @livewire(\Livewire\Livewire::getAlias($widget), ['record' => $widgetRecord])
+                    @if ($widget::canView())
+                        @livewire(\Livewire\Livewire::getAlias($widget), ['record' => $widgetRecord])
+                    @endif
                 @endforeach
             </x-filament::widgets>
         @endif

@@ -18,6 +18,25 @@ Widgets are pure [Livewire](https://laravel-livewire.com) components, so may use
 
 Widgets may also used on [resource pages](resources#building-widgets) or other [custom pages](pages#building-widgets).
 
+## Sorting widgets
+
+Each widget class contains a `$sort` property that may be used to change its order on the page, relative to other widgets:
+
+```php
+protected static ?int $sort = 2;
+```
+
+## Conditionally hiding widgets
+
+You may override the static `canView()` method on widgets to conditionally hide them:
+
+```php
+public static function canView(): bool
+{
+    return auth()->user()->isAdmin();
+}
+```
+
 ## Stats overview widgets
 
 Filament comes with a "stats overview" widget template, which you can use to display a number of different stats in a single widget, without needing to write a custom view.
