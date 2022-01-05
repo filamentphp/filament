@@ -11,6 +11,11 @@ class Widget extends Component
 
     protected static string $view;
 
+    public static function canView(): bool
+    {
+        return true;
+    }
+
     public static function getSort(): int
     {
         return static::$sort ?? -1;

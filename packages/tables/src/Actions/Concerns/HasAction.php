@@ -8,10 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 
 trait HasAction
 {
-    protected ?Closure $action = null;
+    protected Closure | string | null $action = null;
 
-    public function action(string | Closure | null $action): static
+    public function action(Closure | string | null $action): static
     {
+        $this->action = $action;
+
+        return $this;
+    }
+
+    public function getAction(): ?Closure
+    {
+        $action = $this->action;
+
         if (is_string($action)) {
             $action = function (HasTable $livewire, ?Model $record) use ($action) {
                 if ($record) {
@@ -22,13 +31,6 @@ trait HasAction
             };
         }
 
-        $this->action = $action;
-
-        return $this;
-    }
-
-    public function getAction(): ?Closure
-    {
-        return $this->action;
+        return $action;
     }
 }

@@ -15839,6 +15839,7 @@ var file_upload_default = (Alpine) => {
       cachedFileKeys: {},
       files: [],
       pond: null,
+      shouldUpdateState: true,
       state: state2,
       init: async function() {
         for (const [fileKey, file2] of Object.entries(this.state)) {
@@ -15880,9 +15881,13 @@ var file_upload_default = (Alpine) => {
               let blob2 = await response.blob();
               load(blob2);
             },
-            process: async (fieldName, file2, metadata, load, error2, progress) => {
+            process: (fieldName, file2, metadata, load, error2, progress) => {
+              this.shouldUpdateState = false;
               let fileKey = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c2) => (c2 ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c2 / 4).toString(16));
-              await uploadUsing(fileKey, file2, load, error2, progress);
+              uploadUsing(fileKey, file2, (fileKey2) => {
+                this.shouldUpdateState = true;
+                load(fileKey2);
+              }, error2, progress);
             },
             remove: async (source, load) => {
               let fileKey = this.cachedFileKeys[source] ?? null;
@@ -15899,7 +15904,7 @@ var file_upload_default = (Alpine) => {
           }
         });
         this.$watch("state", async () => {
-          if (!Object.values(this.state).length && Object.values(this.pond.getFiles()).filter((file2) => file2.origin === FileOrigin$1.INPUT).length) {
+          if (!this.shouldUpdateState) {
             return;
           }
           if (Object.values(this.state).filter((file2) => file2.startsWith("livewire-file:")).length) {
