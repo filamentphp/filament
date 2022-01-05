@@ -66,6 +66,14 @@ class ChartWidget extends Widget
 
     public function updatedFilter(): void
     {
-        $this->updateChartData();
+        $newDataChecksum = $this->generateDataChecksum();
+
+        if ($newDataChecksum !== $this->dataChecksum) {
+            $this->dataChecksum = $newDataChecksum;
+
+            $this->emitSelf('filterChartData', [
+                'data' => $this->getData(),
+            ]);
+        }
     }
 }
