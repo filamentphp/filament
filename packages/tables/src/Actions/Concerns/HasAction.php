@@ -3,8 +3,6 @@
 namespace Filament\Tables\Actions\Concerns;
 
 use Closure;
-use Filament\Tables\Contracts\HasTable;
-use Illuminate\Database\Eloquent\Model;
 
 trait HasAction
 {
