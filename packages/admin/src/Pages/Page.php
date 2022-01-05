@@ -3,6 +3,7 @@
 namespace Filament\Pages;
 
 use Closure;
+use Filament\Concerns\CanNotify;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Contracts\View\View;
@@ -12,6 +13,8 @@ use Livewire\Component;
 
 class Page extends Component
 {
+    use CanNotify;
+
     protected static string $layout = 'filament::components.layouts.app';
 
     protected static ?string $navigationGroup = null;
@@ -29,6 +32,8 @@ class Page extends Component
     protected static ?string $title = null;
 
     protected static string $view;
+
+    protected ?array $notification = null;
 
     public static function registerNavigationItems(): void
     {
@@ -73,14 +78,6 @@ class Page extends Component
         return route(static::getRouteName(), $parameters, $absolute);
     }
 
-    protected function notify(string $status, string $message): void
-    {
-        session()->flash('notification', [
-            'message' => $message,
-            'status' => $status,
-        ]);
-    }
-
     public function render(): View
     {
         $view = view(static::$view, $this->getViewData());
@@ -93,6 +90,19 @@ class Page extends Component
         $view->layout(static::$layout, $this->getLayoutData());
 
         return $view;
+    }
+
+    public function setNotification($data): void
+    {
+        $this->notification = $data;
+    }
+
+    protected function getListeners(): array
+    {
+        return array_merge(
+            ['setNotification'],
+            $this->listeners,
+        );
     }
 
     protected function getBreadcrumbs(): array

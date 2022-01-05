@@ -32,7 +32,7 @@
 
     {{ $modals }}
 
-    @if ($notification = session()->get('notification'))
-        <x-filament::notification :message="$notification['message']" :status="$notification['status']" />
+    @if ($this->notification)
+        <x-filament::notification :message="$this->notification['message']" :status="$this->notification['status']" />
     @endif
 </div>
