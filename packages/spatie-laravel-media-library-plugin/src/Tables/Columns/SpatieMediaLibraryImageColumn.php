@@ -51,7 +51,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         return $record->getFirstMediaUrl($this->getCollection(), $this->getConversion());
     }
 
-    public function applyEagreLoading(Builder $query): Builder
+    public function applyEagerLoading(Builder $query): Builder
     {
         if ($this->isHidden()) {
             return $query;
