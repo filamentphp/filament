@@ -130,6 +130,27 @@ Grid::make([
     ])
 ```
 
+Additionally, you can specify a string classname which will append to the component's parent div. Adding the `hidden` class would hide this column.
+
+```php
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TextInput;
+
+Grid::make([
+    'default' => 1,
+    'sm' => 3
+])
+    ->schema([
+        TextInput::make('name')
+            ->columnSpan(2),
+        TextInput::make('email')
+            ->columnSpan(1),
+        Hidden::make('secret')
+            ->columnSpan('hidden'),
+        // ...
+    ])
+```
+
 ## Fieldset
 
 You may want to group fields into a Fieldset. Each fieldset has a label, a border, and a two-column grid by default:
