@@ -130,6 +130,24 @@ Grid::make([
     ])
 ```
 
+Additionally, you can use custom HTML classes, e.g. `hidden` to hide the column altogether:
+
+```php
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TextInput;
+
+Grid::make([
+    'default' => 1,
+    'sm' => 3
+])
+    ->schema([
+        TextInput::make('name')->columnSpan(2),
+        TextInput::make('email'),
+        Hidden::make('secret')->columnSpan('hidden'),
+        // ...
+    ])
+```
+
 ## Fieldset
 
 You may want to group fields into a Fieldset. Each fieldset has a label, a border, and a two-column grid by default:
