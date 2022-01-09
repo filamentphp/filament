@@ -25,7 +25,7 @@ class MultiSelectFilter extends Filter
     {
         parent::setUp();
 
-        $this->placeholder(__('tables::filters.multi_select.placeholder'));
+        $this->placeholder(__('tables::table.filters.multi_select.placeholder'));
     }
 
     public function apply(Builder $query, array $data = []): Builder

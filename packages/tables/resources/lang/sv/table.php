@@ -100,7 +100,7 @@ return [
         ],
 
         'multi_select' => [
-            'placeholder' => 'Alla'
+            'placeholder' => 'Välj en eller flera'
         ],
 
     ],

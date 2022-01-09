@@ -100,7 +100,7 @@ return [
         ],
 
         'multi_select' => [
-            'placeholder' => 'All'
+            'placeholder' => 'Select one or more'
         ],
 
     ],

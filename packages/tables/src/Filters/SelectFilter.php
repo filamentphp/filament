@@ -25,7 +25,7 @@ class SelectFilter extends Filter
     {
         parent::setUp();
 
-        $this->placeholder(__('tables::filters.select.placeholder'));
+        $this->placeholder(__('tables::table.filters.select.placeholder'));
     }
 
     public function apply(Builder $query, array $data = []): Builder
