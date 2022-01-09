@@ -106,15 +106,11 @@ class BaseFileUpload extends Field
         });
 
         $this->saveUploadedFileUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file): string {
-            if ($this->getKeepFilename()) {
-                $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
+            $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
 
-                return $file->{$storeMethod}($component->getDirectory(), $file->getClientOriginalName(), $component->getDiskName());
-            }
+            $filename = $component->getKeepFilename() ? $file->getClientOriginalName() : $file->getFilename();
 
-            $storeMethod = $component->getVisibility() === 'public' ? 'storePublicly' : 'store';
-
-            return $file->{$storeMethod}($component->getDirectory(), $component->getDiskName());
+            return $file->{$storeMethod}($component->getDirectory(), $filename, $component->getDiskName());
         });
     }
 
