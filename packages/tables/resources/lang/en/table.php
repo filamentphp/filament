@@ -95,6 +95,14 @@ return [
 
         ],
 
+        'select' => [
+            'placeholder' => 'All'
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'All'
+        ],
+
     ],
 
     'selection_indicator' => [

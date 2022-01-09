@@ -85,6 +85,26 @@ return [
         'heading' => 'Finns inga rader',
     ],
 
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Återställ filter',
+            ],
+
+        ],
+
+        'select' => [
+            'placeholder' => 'Alla'
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Alla'
+        ],
+
+    ],
+
     'selection_indicator' => [
 
         'buttons' => [
