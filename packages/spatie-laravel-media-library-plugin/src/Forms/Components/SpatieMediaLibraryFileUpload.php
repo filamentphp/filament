@@ -75,7 +75,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         });
 
         $this->saveUploadedFileUsing(function (SpatieMediaLibraryFileUpload $component, TemporaryUploadedFile $file, ?Model $record): string {
-            if (!method_exists($record, 'addMediaFromString')) {
+            if (! method_exists($record, 'addMediaFromString')) {
                 return $file;
             }
 
