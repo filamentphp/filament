@@ -130,7 +130,7 @@ Grid::make([
     ])
 ```
 
-Additionally, you can specify a string classname which will append to the component's parent div. Adding the `hidden` class would hide this column.
+Additionally, you can use custom HTML classes, e.g. `hidden` to hide the column altogether:
 
 ```php
 use Filament\Forms\Components\Grid;
@@ -141,12 +141,9 @@ Grid::make([
     'sm' => 3
 ])
     ->schema([
-        TextInput::make('name')
-            ->columnSpan(2),
-        TextInput::make('email')
-            ->columnSpan(1),
-        Hidden::make('secret')
-            ->columnSpan('hidden'),
+        TextInput::make('name')->columnSpan(2),
+        TextInput::make('email'),
+        Hidden::make('secret')->columnSpan('hidden'),
         // ...
     ])
 ```
