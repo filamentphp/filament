@@ -23,7 +23,7 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $isMultiple = false;
 
-    protected bool | Closure $keepFilename = false;
+    protected bool | Closure $preserveFilename = false;
 
     protected int | Closure | null $maxSize = null;
 
@@ -108,7 +108,7 @@ class BaseFileUpload extends Field
         $this->saveUploadedFileUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file): string {
             $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
 
-            $filename = $component->getKeepFilename() ? $file->getClientOriginalName() : $file->getFilename();
+            $filename = $component->getPreserveFilename() ? $file->getClientOriginalName() : $file->getFilename();
 
             return $file->{$storeMethod}($component->getDirectory(), $filename, $component->getDiskName());
         });
@@ -141,9 +141,9 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function keepFilename(bool | Closure $keepFilename = true): static
+    public function preserveFilename(bool | Closure $preserveFilename = true): static
     {
-        $this->keepFilename = $keepFilename;
+        $this->preserveFilename = $preserveFilename;
 
         return $this;
     }
@@ -249,9 +249,9 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->diskName) ?? config('forms.default_filesystem_disk');
     }
 
-    public function getKeepFilename(): bool
+    public function getPreserveFilename(): bool
     {
-        return $this->evaluate($this->keepFilename);
+        return $this->evaluate($this->preserveFilename);
     }
 
     public function getMaxSize(): ?int
