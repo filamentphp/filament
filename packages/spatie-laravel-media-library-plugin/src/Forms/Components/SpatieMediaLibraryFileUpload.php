@@ -75,14 +75,14 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         });
 
         $this->saveUploadedFileUsing(function (SpatieMediaLibraryFileUpload $component, TemporaryUploadedFile $file, ?Model $record): string {
-            if (! method_exists($record, 'addMediaFromString')) {
+            if (!method_exists($record, 'addMediaFromString')) {
                 return $file;
             }
 
             /** @var FileAdder $mediaAdder */
             $mediaAdder = $record->addMediaFromString($file->get());
 
-            $filename = $this->getKeepFilename() ? $file->getClientOriginalName() : $file->getFilename();
+            $filename = $component->getKeepFilename() ? $file->getClientOriginalName() : $file->getFilename();
 
             $media = $mediaAdder
                 ->usingFileName($filename)

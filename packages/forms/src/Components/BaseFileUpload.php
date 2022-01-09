@@ -109,12 +109,12 @@ class BaseFileUpload extends Field
             if ($this->getKeepFilename()) {
                 $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
 
-                return $file->{$storeMethod}($this->getDirectory(), $file->getClientOriginalName(), $this->getDiskName());
+                return $file->{$storeMethod}($component->getDirectory(), $file->getClientOriginalName(), $component->getDiskName());
             }
 
             $storeMethod = $component->getVisibility() === 'public' ? 'storePublicly' : 'store';
 
-            return $file->{$storeMethod}($this->getDirectory(), $this->getDiskName());
+            return $file->{$storeMethod}($component->getDirectory(), $component->getDiskName());
         });
     }
 
