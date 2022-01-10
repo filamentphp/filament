@@ -3,8 +3,6 @@
 namespace Filament\Tables\Actions\Concerns;
 
 use Closure;
-use Filament\Tables\Contracts\HasTable;
-use Illuminate\Database\Eloquent\Model;
 
 trait HasAction
 {
@@ -22,13 +20,7 @@ trait HasAction
         $action = $this->action;
 
         if (is_string($action)) {
-            $action = function (HasTable $livewire, ?Model $record) use ($action) {
-                if ($record) {
-                    return $livewire->{$action}($record);
-                }
-
-                return $livewire->{$action}();
-            };
+            $action = Closure::fromCallable([$this->getLivewire(), $action]);
         }
 
         return $action;

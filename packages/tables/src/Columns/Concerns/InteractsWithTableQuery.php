@@ -21,7 +21,7 @@ trait InteractsWithTableQuery
         return $query;
     }
 
-    public function applyEagreLoading(Builder $query): Builder
+    public function applyEagerLoading(Builder $query): Builder
     {
         if ($this->isHidden()) {
             return $query;

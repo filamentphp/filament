@@ -26,18 +26,24 @@
                 chart: null,
 
                 init: function () {
-                    chart = new Chart(
-                        $el,
-                        {
-                            type: '{{ $this->getType() }}',
-                            data: {{ json_encode($this->getData()) }},
-                            options: {{ json_encode($this->getOptions()) ?? '{}' }},
-                        },
-                    )
+                    let chart = this.initChart()
 
                     $wire.on('updateChartData', async ({ data }) => {
                         chart.data = data
                         chart.update('resize')
+                    })
+
+                    $wire.on('filterChartData', async ({ data }) => {
+                        chart.destroy()
+                        chart = this.initChart(data)
+                    })
+                },
+
+                initChart: function (data = null) {
+                    return this.chart = new Chart($el, {
+                        type: '{{ $this->getType() }}',
+                        data: data ?? {{ json_encode($this->getData()) }},
+                        options: {{ json_encode($this->getOptions()) }} ?? {},
                     })
                 },
             }"

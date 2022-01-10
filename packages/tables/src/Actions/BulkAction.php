@@ -3,8 +3,6 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
-use Filament\Tables\Contracts\HasTable;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
@@ -74,9 +72,7 @@ class BulkAction
         $action = $this->action;
 
         if (is_string($action)) {
-            $action = function (HasTable $livewire, Collection $records) use ($action) {
-                return $livewire->{$action}($records);
-            };
+            $action = Closure::fromCallable([$this->getLivewire(), $action]);
         }
 
         return $action;
