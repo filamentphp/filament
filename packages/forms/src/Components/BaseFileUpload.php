@@ -31,6 +31,8 @@ class BaseFileUpload extends Field
 
     protected int | Closure | null $minFiles = null;
 
+    protected bool | Closure $shouldPreserveFilenames = false;
+
     protected string | Closure $visibility = 'public';
 
     protected ?Closure $deleteUploadedFileUsing = null;
@@ -104,9 +106,11 @@ class BaseFileUpload extends Field
         });
 
         $this->saveUploadedFileUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file): string {
-            $storeMethod = $component->getVisibility() === 'public' ? 'storePublicly' : 'store';
+            $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
 
-            return $file->{$storeMethod}($this->getDirectory(), $this->getDiskName());
+            $filename = $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
+
+            return $file->{$storeMethod}($component->getDirectory(), $filename, $component->getDiskName());
         });
     }
 
@@ -133,6 +137,13 @@ class BaseFileUpload extends Field
     public function disk($name): static
     {
         $this->diskName = $name;
+
+        return $this;
+    }
+
+    public function preserveFilenames(bool | Closure $condition = true): static
+    {
+        $this->shouldPreserveFilenames = $condition;
 
         return $this;
     }
@@ -251,6 +262,11 @@ class BaseFileUpload extends Field
     public function getVisibility(): string
     {
         return $this->evaluate($this->visibility);
+    }
+
+    public function shouldPreserveFilenames(): bool
+    {
+        return $this->evaluate($this->shouldPreserveFilenames);
     }
 
     public function getValidationRules(): array
