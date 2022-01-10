@@ -23,8 +23,6 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $isMultiple = false;
 
-    protected bool | Closure $preserveFilename = false;
-
     protected int | Closure | null $maxSize = null;
 
     protected int | Closure | null $minSize = null;
@@ -32,6 +30,8 @@ class BaseFileUpload extends Field
     protected int | Closure | null $maxFiles = null;
 
     protected int | Closure | null $minFiles = null;
+
+    protected bool | Closure $shouldPreserveFilenames = false;
 
     protected string | Closure $visibility = 'public';
 
@@ -108,7 +108,7 @@ class BaseFileUpload extends Field
         $this->saveUploadedFileUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file): string {
             $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
 
-            $filename = $component->getPreserveFilename() ? $file->getClientOriginalName() : $file->getFilename();
+            $filename = $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
 
             return $file->{$storeMethod}($component->getDirectory(), $filename, $component->getDiskName());
         });
@@ -141,9 +141,9 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function preserveFilename(bool | Closure $preserveFilename = true): static
+    public function preserveFilenames(bool | Closure $condition = true): static
     {
-        $this->preserveFilename = $preserveFilename;
+        $this->shouldPreserveFilenames = $condition;
 
         return $this;
     }
@@ -249,11 +249,6 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->diskName) ?? config('forms.default_filesystem_disk');
     }
 
-    public function getPreserveFilename(): bool
-    {
-        return $this->evaluate($this->preserveFilename);
-    }
-
     public function getMaxSize(): ?int
     {
         return $this->evaluate($this->maxSize);
@@ -267,6 +262,11 @@ class BaseFileUpload extends Field
     public function getVisibility(): string
     {
         return $this->evaluate($this->visibility);
+    }
+
+    public function shouldPreserveFilenames(): bool
+    {
+        return $this->evaluate($this->shouldPreserveFilenames);
     }
 
     public function getValidationRules(): array
