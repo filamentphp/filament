@@ -37,13 +37,6 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     protected static string $view;
 
-    public function mount(): void
-    {
-        if (! $this->canViewAny()) {
-            $this->skipRender();
-        }
-    }
-
     protected function getTableQueryStringIdentifier(): ?string
     {
         return lcfirst(class_basename(static::class));
@@ -78,9 +71,18 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return Gate::check($action, $record ?? $model);
     }
 
-    protected function canViewAny(): bool
+    public static function canViewForRecord(Model $ownerRecord): bool
     {
-        return $this->can('viewAny');
+        $model = $ownerRecord->{static::getRelationshipName()}()->getQuery()->getModel()::class;
+
+        $policy = Gate::getPolicyFor($model);
+        $action = 'viewAny';
+
+        if ($policy === null || (! method_exists($policy, $action))) {
+            return true;
+        }
+
+        return Gate::check($action, $model);
     }
 
     public static function form(Form $form): Form
