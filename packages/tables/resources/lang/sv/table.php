@@ -95,12 +95,12 @@ return [
 
         ],
 
-        'select' => [
-            'placeholder' => 'Alla'
+        'multi_select' => [
+            'placeholder' => 'Alla',
         ],
 
-        'multi_select' => [
-            'placeholder' => 'Välj en eller flera'
+        'select' => [
+            'placeholder' => 'Alla',
         ],
 
     ],

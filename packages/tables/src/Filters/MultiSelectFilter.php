@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 
 class MultiSelectFilter extends Filter
 {
-    use HasPlaceholder;
+    use Concerns\HasPlaceholder;
 
     protected string | Closure | null $column = null;
 
