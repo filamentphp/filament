@@ -47,6 +47,9 @@ trait Translatable
         $this->callHook('afterCreate');
 
         if ($another) {
+            // Ensure that the form record is anonymized so that relationships aren't loaded.
+            $this->form->model($this->record::class);
+
             $this->fillForm();
 
             $this->notify('success', __('filament::resources/pages/create-record.messages.created'));

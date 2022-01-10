@@ -52,6 +52,9 @@ trait CanCreateRecords
         $this->callHook('afterCreate');
 
         if ($another) {
+            // Ensure that the form record is anonymized so that relationships aren't loaded.
+            $form->model($record::class);
+
             $form->fill();
         }
     }
