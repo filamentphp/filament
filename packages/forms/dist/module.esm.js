@@ -15832,7 +15832,7 @@ var file_upload_default = (Alpine) => {
     minSize,
     removeUploadedFileButtonPosition,
     removeUploadedFileUsing,
-    reorderFiles,
+    reorderUploadedFilesUsing,
     state: state2,
     uploadButtonPosition,
     uploadProgressIndicatorPosition,
@@ -15933,7 +15933,7 @@ var file_upload_default = (Alpine) => {
         });
         this.pond.on("reorderfiles", async (files) => {
           const orderedFileKeys = files.map((file2) => file2.source instanceof File ? file2.serverId : this.cachedFileKeys[file2.source] ?? null).filter((fileKey) => fileKey);
-          await reorderFiles(orderedFileKeys);
+          await reorderUploadedFilesUsing(orderedFileKeys);
         });
       }
     };

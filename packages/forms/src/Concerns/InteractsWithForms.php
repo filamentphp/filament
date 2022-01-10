@@ -119,10 +119,10 @@ trait InteractsWithForms
         }
     }
 
-    public function reorderFiles(string $statePath, array $fileKeys): void
+    public function reorderUploadedFiles(string $statePath, array $fileKeys): void
     {
         foreach ($this->getCachedForms() as $form) {
-            $form->reorderFiles($statePath, $fileKeys);
+            $form->reorderUploadedFiles($statePath, $fileKeys);
         }
     }
 

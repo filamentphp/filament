@@ -39,7 +39,7 @@ class BaseFileUpload extends Field
 
     protected ?Closure $getUploadedFileUrlUsing = null;
 
-    protected ?Closure $reorderFilesUsing = null;
+    protected ?Closure $reorderUploadedFilesUsing = null;
 
     protected ?Closure $saveUploadedFileUsing = null;
 
@@ -216,9 +216,9 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function reorderFilesUsing(?Closure $callback): static
+    public function reorderUploadedFilesUsing(?Closure $callback): static
     {
-        $this->reorderFilesUsing = $callback;
+        $this->reorderUploadedFilesUsing = $callback;
 
         return $this;
     }
@@ -353,7 +353,7 @@ class BaseFileUpload extends Field
         return $file;
     }
 
-    public function reorderFiles(array $fileKeys): void
+    public function reorderUploadedFiles(array $fileKeys): void
     {
         if (! $this->allowReorder) {
             return;
@@ -419,7 +419,7 @@ class BaseFileUpload extends Field
             return $storedFile;
         }, $this->getState());
 
-        $callback = $this->reorderFilesUsing;
+        $callback = $this->reorderUploadedFilesUsing;
 
         if (! $this->allowReorder || ! $callback) {
             $this->state($state);

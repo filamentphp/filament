@@ -38,7 +38,7 @@ export default (Alpine) => {
         minSize,
         removeUploadedFileButtonPosition,
         removeUploadedFileUsing,
-        reorderFiles,
+        reorderUploadedFilesUsing,
         state,
         uploadButtonPosition,
         uploadProgressIndicatorPosition,
@@ -172,7 +172,7 @@ export default (Alpine) => {
                         .map(file => file.source instanceof File ? file.serverId : this.cachedFileKeys[file.source] ?? null) // file.serverId is null for a file that is not yet uploaded
                         .filter(fileKey => fileKey)
 
-                    await reorderFiles(orderedFileKeys)
+                    await reorderUploadedFilesUsing(orderedFileKeys)
                 })
             },
         }

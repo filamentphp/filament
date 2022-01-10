@@ -73,11 +73,11 @@ trait SupportsFileUploadFields
         return false;
     }
 
-    public function reorderFiles(string $statePath, array $fileKeys): bool
+    public function reorderUploadedFiles(string $statePath, array $fileKeys): bool
     {
         foreach ($this->getComponents() as $component) {
             if ($component instanceof BaseFileUpload && $component->getStatePath() === $statePath) {
-                $component->reorderFiles($fileKeys);
+                $component->reorderUploadedFiles($fileKeys);
 
                 return true;
             }
@@ -87,7 +87,7 @@ trait SupportsFileUploadFields
                     continue;
                 }
 
-                if ($container->reorderFiles($statePath, $fileKeys)) {
+                if ($container->reorderUploadedFiles($statePath, $fileKeys)) {
                     return true;
                 }
             }

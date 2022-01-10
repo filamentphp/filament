@@ -32,8 +32,8 @@
                 return await $wire.removeUploadedFile('{{ $getStatePath() }}', fileKey)
             },
             removeUploadedFileButtonPosition: '{{ $getRemoveUploadedFileButtonPosition() }}',
-            reorderFiles: async (files) => {
-                return await $wire.reorderFiles('{{ $getStatePath() }}', files)
+            reorderUploadedFilesUsing: async (files) => {
+                return await $wire.reorderUploadedFiles('{{ $getStatePath() }}', files)
             },
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
             uploadButtonPosition: '{{ $getUploadButtonPosition() }}',
