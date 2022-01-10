@@ -2,8 +2,6 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
-use Illuminate\Support\Facades\Gate;
-
 trait HasRelationManagers
 {
     public $activeRelationManager = null;
