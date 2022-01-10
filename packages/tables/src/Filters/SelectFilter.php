@@ -4,6 +4,7 @@ namespace Filament\Tables\Filters;
 
 use Closure;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,11 +13,20 @@ use Illuminate\Support\Str;
 
 class SelectFilter extends Filter
 {
+    use Concerns\HasPlaceholder;
+
     protected string | Closure | null $column = null;
 
     protected bool | Closure $isStatic = false;
 
     protected array | Arrayable | Closure | null $options = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->placeholder(__('tables::table.filters.select.placeholder'));
+    }
 
     public function apply(Builder $query, array $data = []): Builder
     {
@@ -113,7 +123,8 @@ class SelectFilter extends Filter
         return $this->formSchema ?? [
             Select::make('value')
                 ->label($this->getLabel())
-                ->options($this->getOptions()),
+                ->options($this->getOptions())
+                ->placeholder($this->getPlaceholder()),
         ];
     }
 
