@@ -39,7 +39,13 @@ trait CanFormatState
 
     public function limit(int $length = 100, string $end = '...'): static
     {
-        $this->formatStateUsing(fn ($state): string => Str::limit($state, $length, $end));
+        $this->formatStateUsing(function ($state) use ($length, $end): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Str::limit($state, $length, $end);
+        });
 
         return $this;
     }
