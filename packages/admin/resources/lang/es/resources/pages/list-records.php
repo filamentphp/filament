@@ -11,7 +11,7 @@ return [
         ],
 
     ],
-    'table'   => [
+    'table' => [
 
         'actions' => [
 
