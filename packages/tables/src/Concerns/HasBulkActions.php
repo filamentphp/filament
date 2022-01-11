@@ -35,10 +35,14 @@ trait HasBulkActions
             return;
         }
 
+        if ($action->isHidden()) {
+            return;
+        }
+
         $data = $this->getMountedTableBulkActionForm()->getState();
 
         try {
-            return $action->records($this->getSelectedTableRecords())->call($data);
+            return $action->call($data);
         } finally {
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => static::class . '-bulk-action',
@@ -53,6 +57,10 @@ trait HasBulkActions
         $action = $this->getMountedTableBulkAction();
 
         if (! $action) {
+            return;
+        }
+
+        if ($action->isHidden()) {
             return;
         }
 
@@ -96,7 +104,10 @@ trait HasBulkActions
 
     protected function getCachedTableBulkAction(string $name): ?BulkAction
     {
-        return $this->getCachedTableBulkActions()[$name] ?? null;
+        $action = $this->getCachedTableBulkActions()[$name] ?? null;
+        $action?->records($this->getSelectedTableRecords());
+
+        return $action;
     }
 
     protected function getTableBulkActions(): array

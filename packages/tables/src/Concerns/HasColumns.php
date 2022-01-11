@@ -33,6 +33,10 @@ trait HasColumns
             return;
         }
 
+        if ($column->isHidden()) {
+            return;
+        }
+
         return $column->record($record)->callAction();
     }
 
