@@ -15836,17 +15836,18 @@ var file_upload_default = (Alpine) => {
     uploadUsing
   }) => {
     return {
-      cachedFileKeys: {},
+      fileKeyIndex: {},
       files: [],
       pond: null,
       shouldUpdateState: true,
       state: state2,
+      uploadedFileUrlIndex: {},
       init: async function() {
         for (const [fileKey, file2] of Object.entries(this.state)) {
           if (file2.startsWith("livewire-file:")) {
             continue;
           }
-          let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey);
+          let uploadedFileUrl = this.fileKeyIndex[fileKey] ?? await getUploadedFileUrlUsing(fileKey);
           if (!uploadedFileUrl) {
             continue;
           }
@@ -15856,7 +15857,8 @@ var file_upload_default = (Alpine) => {
               type: "local"
             }
           });
-          this.cachedFileKeys[uploadedFileUrl] = fileKey;
+          this.uploadedFileUrlIndex[uploadedFileUrl] = fileKey;
+          this.fileKeyIndex[fileKey] = uploadedFileUrl;
         }
         this.pond = create$f(this.$refs.input, {
           acceptedFileTypes,
@@ -15890,7 +15892,7 @@ var file_upload_default = (Alpine) => {
               }, error2, progress);
             },
             remove: async (source, load) => {
-              let fileKey = this.cachedFileKeys[source] ?? null;
+              let fileKey = this.uploadedFileUrlIndex[source] ?? null;
               if (!fileKey) {
                 return;
               }
@@ -15912,7 +15914,7 @@ var file_upload_default = (Alpine) => {
           }
           let files = [];
           for (let fileKey of Object.keys(this.state)) {
-            let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey);
+            let uploadedFileUrl = this.fileKeyIndex[fileKey] ?? await getUploadedFileUrlUsing(fileKey);
             if (!uploadedFileUrl) {
               continue;
             }
@@ -15922,7 +15924,8 @@ var file_upload_default = (Alpine) => {
                 type: "local"
               }
             });
-            this.cachedFileKeys[uploadedFileUrl] = fileKey;
+            this.uploadedFileUrlIndex[uploadedFileUrl] = fileKey;
+            this.fileKeyIndex[fileKey] = uploadedFileUrl;
           }
           this.pond.files = files;
         });
