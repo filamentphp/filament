@@ -41,7 +41,10 @@ module.exports = {
                 primary: colors.blue,
                 success: colors.green,
                 warning: colors.yellow,
-            }, // [tl! focus:end]
+            }, 
+            fontFamily: {
+                filament: ['DM Sans', ...defaultTheme.fontFamily.sans],
+            }// [tl! focus:end]
         },
     },
     plugins: [
@@ -51,7 +54,7 @@ module.exports = {
 }
 ```
 
-You may specify your own colors, which will be used throughout the admin panel.
+You may specify your own colors and font, which will be used throughout the admin panel.
 
 In your `webpack.mix.js` file, Register Tailwind CSS as a PostCSS plugin :
 

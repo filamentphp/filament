@@ -15,7 +15,7 @@ module.exports = {
                 warning: colors.amber,
             },
             fontFamily: {
-                sans: ['DM Sans', ...defaultTheme.fontFamily.sans],
+                filament: ['DM Sans', ...defaultTheme.fontFamily.sans],
             },
         },
     },
