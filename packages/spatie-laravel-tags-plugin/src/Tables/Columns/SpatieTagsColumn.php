@@ -31,4 +31,14 @@ class SpatieTagsColumn extends TagsColumn
     {
         return $this->type;
     }
+
+
+    public function applyEagerLoading(Builder $query): Builder
+    {
+        if ($this->isHidden()) {
+            return $query;
+        }
+
+        return $query->with(['tags']);
+    }
 }
