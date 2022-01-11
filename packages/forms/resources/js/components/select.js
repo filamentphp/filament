@@ -9,6 +9,8 @@ export default (Alpine) => {
         return {
             focusedOptionIndex: null,
 
+            index: {},
+
             isLoading: false,
 
             isOpen: false,
@@ -26,7 +28,9 @@ export default (Alpine) => {
                     this.openListbox()
                 }
 
-                this.label = await getOptionLabelUsing()
+                this.addOptionsToIndex(this.options)
+
+                this.label = await this.getOptionLabel()
 
                 this.$watch('search', async () => {
                     if (! this.isOpen || this.search === '' || this.search === null) {
@@ -51,14 +55,26 @@ export default (Alpine) => {
                     } else {
                         this.isLoading = true
                         this.options = await getSearchResultsUsing(this.search)
+                        this.addOptionsToIndex(this.options)
                         this.focusedOptionIndex = 0
                         this.isLoading = false
                     }
                 })
 
                 this.$watch('state', async () => {
-                    this.label = await getOptionLabelUsing()
+                    this.label = await this.getOptionLabel()
                 })
+            },
+
+            addOptionToIndex: function (key, label) {
+                this.index[key] = label
+            },
+
+            addOptionsToIndex: function (options) {
+                this.index = {
+                    ...this.index,
+                    ...options,
+                }
             },
 
             clearState: function () {
@@ -173,6 +189,20 @@ export default (Alpine) => {
                 }
 
                 this.openListbox()
+            },
+
+            getOptionLabel: async function () {
+                let label = this.index[this.state] ?? null
+
+                if (label !== null) {
+                    return label
+                }
+
+                label = await getOptionLabelUsing(this.state)
+
+                this.addOptionToIndex(this.state, label)
+
+                return label
             },
         }
     })

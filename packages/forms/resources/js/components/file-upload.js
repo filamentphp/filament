@@ -60,7 +60,7 @@ export default (Alpine) => {
                         continue;
                     }
 
-                    let uploadedFileUrl = this.fileKeyIndex[fileKey] ?? await getUploadedFileUrlUsing(fileKey)
+                    let uploadedFileUrl = await this.getUploadedFileUrl(fileKey)
 
                     if (! uploadedFileUrl) {
                         continue
@@ -72,9 +72,6 @@ export default (Alpine) => {
                             type: 'local',
                         },
                     })
-
-                    this.uploadedFileUrlIndex[uploadedFileUrl] = fileKey
-                    this.fileKeyIndex[fileKey] = uploadedFileUrl
                 }
 
                 this.pond = FilePond.create(this.$refs.input, {
@@ -146,7 +143,7 @@ export default (Alpine) => {
                     let files = []
 
                     for (let fileKey of Object.keys(this.state)) {
-                        let uploadedFileUrl = this.fileKeyIndex[fileKey] ?? await getUploadedFileUrlUsing(fileKey)
+                        let uploadedFileUrl = await this.getUploadedFileUrl(fileKey)
 
                         if (! uploadedFileUrl) {
                             continue
@@ -158,14 +155,24 @@ export default (Alpine) => {
                                 type: 'local',
                             },
                         })
-
-                        this.uploadedFileUrlIndex[uploadedFileUrl] = fileKey
-                        this.fileKeyIndex[fileKey] = uploadedFileUrl
                     }
 
                     this.pond.files = files
                 })
-            }
+            },
+
+            getUploadedFileUrl: async function (fileKey) {
+                let uploadedFileUrl = this.fileKeyIndex[fileKey] ?? null
+
+                if (uploadedFileUrl !== null) {
+                    return uploadedFileUrl
+                }
+
+                uploadedFileUrl = await getUploadedFileUrlUsing(fileKey)
+
+                this.uploadedFileUrlIndex[uploadedFileUrl] = fileKey
+                this.fileKeyIndex[fileKey] = uploadedFileUrl
+            },
         }
     })
 }

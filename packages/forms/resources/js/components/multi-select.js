@@ -9,6 +9,8 @@ export default (Alpine) => {
         return {
             focusedOptionIndex: null,
 
+            index: {},
+
             isLoading: false,
 
             isOpen: false,
@@ -30,7 +32,9 @@ export default (Alpine) => {
                     this.state = []
                 }
 
-                this.labels = await getOptionLabelsUsing()
+                this.addOptionsToIndex(this.options)
+
+                this.labels = await this.getOptionLabels()
 
                 this.$watch('search', async () => {
                     if (! this.isOpen || this.search === '' || this.search === null) {
@@ -55,14 +59,22 @@ export default (Alpine) => {
                     } else {
                         this.isLoading = true
                         this.options = await getSearchResultsUsing(this.search)
+                        this.addOptionsToIndex(this.options)
                         this.focusedOptionIndex = 0
                         this.isLoading = false
                     }
                 })
 
                 this.$watch('state', async () => {
-                    this.labels = await getOptionLabelsUsing()
+                    this.labels = await this.getOptionLabels()
                 })
+            },
+
+            addOptionsToIndex: function (options) {
+                this.index = {
+                    ...this.index,
+                    ...options,
+                }
             },
 
             clearState: function () {
@@ -182,6 +194,33 @@ export default (Alpine) => {
                 }
 
                 this.openListbox()
+            },
+
+            getOptionLabels: async function () {
+                let labels = {}
+                let areAllLabelsIndexed = true
+
+                for (let key of this.state) {
+                    let label = this.index[key]
+
+                    if (label === null) {
+                        areAllLabelsIndexed = false
+
+                        break
+                    }
+
+                    labels[key] = label
+                }
+
+                if (areAllLabelsIndexed) {
+                    return labels
+                }
+
+                labels = await getOptionLabelsUsing()
+
+                this.addOptionsToIndex(labels)
+
+                return labels
             },
         }
     })
