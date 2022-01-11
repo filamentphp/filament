@@ -4,6 +4,7 @@ namespace Filament\Widgets\StatsOverviewWidget;
 
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Str;
 use Illuminate\View\Component;
 
 class Card extends Component implements Htmlable
@@ -19,6 +20,8 @@ class Card extends Component implements Htmlable
     protected ?string $descriptionIcon = null;
 
     protected ?string $descriptionColor = null;
+
+    protected ?string $id = null;
 
     protected string $label;
 
@@ -84,6 +87,13 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
+    public function id(string $id): static
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function value($value): static
     {
         $this->value = $value;
@@ -124,6 +134,11 @@ class Card extends Component implements Htmlable
     public function getLabel(): string
     {
         return $this->label;
+    }
+
+    public function getId(): string
+    {
+        return $this->id ?? Str::slug($this->getLabel());
     }
 
     public function getValue()
