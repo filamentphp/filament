@@ -12,6 +12,8 @@ use Livewire\Component;
 
 class Page extends Component
 {
+    protected $listeners = ['notify'];
+    
     protected static string $layout = 'filament::components.layouts.app';
 
     protected static ?string $navigationGroup = null;
@@ -73,7 +75,7 @@ class Page extends Component
         return route(static::getRouteName(), $parameters, $absolute);
     }
 
-    protected function notify(string $status, string $message): void
+    public function notify(string $status, string $message): void
     {
         session()->flash('notification', [
             'message' => $message,
