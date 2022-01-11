@@ -286,3 +286,11 @@ By default, two widgets are displayed on the dashboard. These widgets can be dis
     'register' => [],
 ],
 ```
+
+## Sending flash notifications from widgets
+
+Similar to sending flash notifications within the Page class, you must send the `notify()` call up to the parent component when it's within a widget using Livewire's `$this->emit` or `$this->emitUp` methods:
+
+```php
+$this->emitUp("notify", "success", "Successfully saved!");
+```
