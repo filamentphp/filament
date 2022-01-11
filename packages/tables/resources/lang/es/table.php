@@ -85,12 +85,38 @@ return [
         'heading' => 'No se encontraron registros',
     ],
 
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Resetea los filtros',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Todos',
+        ],
+
+        'select' => [
+            'placeholder' => 'Todos',
+        ],
+
+    ],
+
     'selection_indicator' => [
+
+        'selected_count' => '1 registro seleccionado.|:count registros seleccionados.',
 
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Seleccione los :count',
+                'label' => 'Selecciona los :count',
+            ],
+
+            'deselect_all' => [
+                'label' => 'Deselecciona todos',
             ],
 
         ],
