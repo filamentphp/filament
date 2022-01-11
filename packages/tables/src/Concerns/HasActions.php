@@ -38,10 +38,14 @@ trait HasActions
             return;
         }
 
+        if ($action->isHidden()) {
+            return;
+        }
+
         $data = $this->getMountedTableActionForm()->getState();
 
         try {
-            return $action->record($this->getMountedTableActionRecord())->call($data);
+            return $action->call($data);
         } finally {
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => static::class . '-action',
@@ -56,6 +60,10 @@ trait HasActions
         $action = $this->getMountedTableAction();
 
         if (! $action) {
+            return;
+        }
+
+        if ($action->isHidden()) {
             return;
         }
 
