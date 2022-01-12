@@ -88,6 +88,16 @@ trait HasState
         return $this;
     }
 
+    /**
+     * Alias for dehydrated(false)
+     */
+    public function ignored(): static
+    {
+        $this->isDehydrated = false;
+
+        return $this;
+    }
+
     public function dehydrateState()
     {
         if ($callback = $this->dehydrateStateUsing) {
@@ -102,6 +112,14 @@ trait HasState
         $this->dehydrateStateUsing = $callback;
 
         return $this;
+    }
+
+    /**
+     * Alias for dehydrateStateUsing()
+     */
+    public function saveAs(?Closure $callback): static
+    {
+        return $this->dehydrateStateUsing($callback);
     }
 
     public function hydrateDefaultState(): static
