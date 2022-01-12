@@ -56,6 +56,7 @@ trait HasActions
     public function mountTableAction(string $name, ?string $record = null)
     {
         $this->mountedTableAction = $name;
+        $this->mountedTableActionRecord = $record;
 
         $action = $this->getMountedTableAction();
 
@@ -66,8 +67,6 @@ trait HasActions
         if ($action->isHidden()) {
             return;
         }
-
-        $this->mountedTableActionRecord = $record;
 
         $this->cacheForm('mountedTableActionForm');
 
