@@ -55,43 +55,38 @@ composer require filament/spatie-laravel-tags-plugin
 composer require filament/spatie-laravel-translatable-plugin
 ```
 
-## Setup Filament in local repository
-If you want to contribute to Filament you might want to to test it in a real Laravel project.
+## Contributing
 
-* Fork the filament repository
-* Create your own branch, example `patch-2.x`
-* Create a Laravel app
-* Clone the filament repository into the root of your Laravel app
-* Checkout your `patch-2.x` branch
+If you want to contribute to Filament packages, you may want to test it in a real Laravel project:
+
+- Fork this repository to your GitHub account.
+- Create a Laravel app locally.
+- Clone this repository into the `/filament` directory of your Laravel app.
+- In the `/filament` repository, create a branch for your fix, e.g. `fix/error-message`
 
 ```
-|-Laravel app
+|-laravel
    |-app/
    |-filament/
 ```
 
-In `composer.json`
+Install the packages in your app's `composer.json`
+
 ```json
+"require": {
+    "filament/filament": "fix/error-message as 2.x-dev",
+    "filament/forms": "fix/error-message as 2.x-dev",
+    "filament/tables": "fix/error-message as 2.x-dev",
+},
 "repositories": [
     {
         "type": "path",
-        "url": "filament/packages/*",
-        "options": {
-            "symlink": true
-        }
+        "url": "filament/packages/*"
     }
-],
-"require": {
-    "filament/filament": "patch-2.x as 2.x-dev",
-    "filament/forms": "patch-2.x as 2.x-dev",
-    "filament/tables": "patch-2.x as 2.x-dev",
-}
+]
 ```
 
-```
-composer update
-```
-
+Now, run `composer update`.
 
 ## Need Help?
 
