@@ -1,7 +1,7 @@
 {
     "name": "filament",
     "scripts": {
-        "build": "node bin/build && mix --production",
+        "build": "rtlcss packages/admin/dist/app.css packages/admin/dist/app-rtl.css && node bin/build && mix --production",
         "watch": "node bin/build && mix watch"
     },
     "devDependencies": {
@@ -29,6 +29,7 @@
         "marked": "^3.0.0",
         "mdhl": "^0.0.6",
         "postcss": "^8.4.4",
+        "rtlcss": "^3.5.0",
         "tailwindcss": "^3.0.0",
         "trix": "^1.3.1"
     }
