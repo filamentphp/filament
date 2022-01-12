@@ -57,7 +57,9 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
         $this->callHook('beforeCreate');
 
-        $this->record = $this->handleRecordCreation($data);
+        $this->handleRecordCreation($data);
+
+        $this->form->model($this->record)->saveRelationships();
 
         $this->callHook('afterCreate');
 
@@ -77,13 +79,9 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
         }
     }
 
-    protected function handleRecordCreation(array $data): Model | string | null
+    protected function handleRecordCreation(array $data): void
     {
-        $record = static::getModel()::create($data);
-
-        $this->form->model($record)->saveRelationships();
-
-        return $record;
+        $this->record = static::getModel()::create($data);
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array

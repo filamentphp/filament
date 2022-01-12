@@ -24,42 +24,13 @@ trait Translatable
         $this->activeFormLocale = static::getResource()::getDefaultTranslatableLocale();
     }
 
-    public function create(bool $another = false): void
+    protected function handleRecordCreation(array $data): void
     {
-        $this->callHook('beforeValidate');
-
-        $data = $this->form->getState();
-
-        $this->callHook('afterValidate');
-
-        $data = $this->mutateFormDataBeforeCreate($data);
-
-        $this->callHook('beforeCreate');
-
         $this->record = static::getModel()::usingLocale(
             $this->activeFormLocale,
         )->fill($data);
 
         $this->record->save();
-
-        $this->form->model($this->record)->saveRelationships();
-
-        $this->callHook('afterCreate');
-
-        if ($another) {
-            // Ensure that the form record is anonymized so that relationships aren't loaded.
-            $this->form->model($this->record::class);
-
-            $this->fillForm();
-
-            $this->notify('success', __('filament::resources/pages/create-record.messages.created'));
-
-            return;
-        }
-
-        if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl);
-        }
     }
 
     protected function getActions(): array

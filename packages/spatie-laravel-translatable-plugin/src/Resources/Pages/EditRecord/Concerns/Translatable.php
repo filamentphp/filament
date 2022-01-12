@@ -41,27 +41,9 @@ trait Translatable
         $this->record->setLocale($this->activeFormLocale);
     }
 
-    public function save(bool $shouldRedirect = true): void
+    protected function handleRecordUpdate(array $data): void
     {
-        $this->callHook('beforeValidate');
-
-        $data = $this->form->getState();
-
-        $this->callHook('afterValidate');
-
-        $data = $this->mutateFormDataBeforeSave($data);
-
-        $this->callHook('beforeSave');
-
         $this->record->setLocale($this->activeFormLocale)->fill($data)->save();
-
-        $this->callHook('afterSave');
-
-        if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
-            $this->redirect($redirectUrl);
-        } else {
-            $this->notify('success', __('filament::resources/pages/edit-record.messages.saved'));
-        }
     }
 
     public function updatedActiveFormLocale(): void
