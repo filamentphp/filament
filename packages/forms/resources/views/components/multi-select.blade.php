@@ -21,7 +21,7 @@
         })"
         {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
         {{ $attributes->merge($getExtraAttributes())->class([
-            'block w-full transition duration-75 divide-y rounded-lg shadow-sm border focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600',
+            'block w-full duration-75 divide-y rounded shadow-sm border focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600',
             'border-gray-300' => ! $errors->has($getStatePath()),
             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
         ]) }}
@@ -45,7 +45,7 @@
                     x-bind:aria-expanded="isOpen"
                     aria-haspopup="listbox"
                     tabindex="1"
-                    class="relative rounded-lg overflow-hidden"
+                    class="relative rounded overflow-hidden"
                 >
                     <input
                         x-ref="search"
@@ -83,7 +83,7 @@
                     x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $getStatePath() }}' + 'Option' + focusedOptionIndex : null"
                     tabindex="-1"
                     x-cloak
-                    class="absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none transition"
+                    class="absolute z-10 w-full my-1 bg-white border border-gray-300 rounded shadow-sm focus:outline-none"
                 >
                     <ul
                         x-ref="listboxOptionsList"

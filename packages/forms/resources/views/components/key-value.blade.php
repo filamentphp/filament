@@ -14,7 +14,7 @@
         {{ $attributes->merge($getExtraAttributes()) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
-        <div class="border border-gray-300 divide-y shadow-sm bg-white rounded-xl overflow-hidden">
+        <div class="border border-gray-300 divide-y shadow-sm bg-white rounded overflow-hidden">
             <table class="w-full text-left divide-y table-auto">
                 <thead>
                     <tr class="bg-gray-50">

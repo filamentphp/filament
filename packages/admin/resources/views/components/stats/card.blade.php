@@ -11,7 +11,7 @@
 ])
 
 <div {{ $attributes->class([
-    'relative p-6 rounded-2xl',
+    'relative p-6 rounded',
     'bg-white shadow' => ! $flat,
     'border' => $flat,
 ]) }}>
@@ -47,7 +47,7 @@
     </div>
 
     @if ($chart)
-        <div class="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden">
+        <div class="absolute bottom-0 inset-x-0 rounded-b overflow-hidden">
             <canvas
                 x-data="{
                     chart: null,

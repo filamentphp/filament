@@ -9,8 +9,9 @@
     $isSearchVisible = $isSearchable();
     $isFiltersDropdownVisible = $isFilterable();
 
-    $columnsCount = count($columns) + 1;
+    $columnsCount = count($columns);
     if ($isSelectionEnabled()) $columnsCount++;
+    if (count($actions) > 0) $columnsCount++;
 
     $getHiddenClasses = function (\Filament\Tables\Columns\Column $column): ?string {
         if ($breakpoint = $column->getHiddenFrom()) {
@@ -94,7 +95,7 @@
 
         <div @class([
             'overflow-y-auto relative',
-            'rounded-t-xl' => ! $hasTableHeader,
+            'rounded' => ! $hasTableHeader,
             'border-t' => $hasTableHeader,
         ])>
             @if (($records = $getRecords())->count())
@@ -119,7 +120,9 @@
                             </x-tables::header-cell>
                         @endforeach
 
-                        <th class="w-5"></th>
+                        @if (count($actions))
+                            <th class="w-5"></th>
+                        @endif
                     </x-slot>
 
                     @if ($isSelectionEnabled() && $getSelectedRecordsCount() > 0)
@@ -161,7 +164,9 @@
                                 </x-tables::cell>
                             @endforeach
 
-                            <x-tables::actions-cell :actions="$actions" :record="$record" />
+                            @if (count($actions))
+                                <x-tables::actions-cell :actions="$actions" :record="$record" />
+                            @endif
                         </x-tables::row>
                     @endforeach
 

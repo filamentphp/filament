@@ -13,12 +13,12 @@
                 @foreach ($containers as $uuid => $item)
                     <li
                         wire:key="{{ $item->getStatePath() }}"
-                        class="relative p-6 bg-white shadow-sm rounded-lg border border-gray-300"
+                        class="relative p-6 bg-white shadow-sm rounded border border-gray-300"
                     >
                         {{ $item }}
 
                         @unless ($isItemDeletionDisabled() && ($isItemMovementDisabled() && ($loop->count <= 1)))
-                            <div class="absolute top-0 right-0 h-6 flex divide-x rounded-bl-lg rounded-tr-lg border-gray-300 border-b border-l overflow-hidden">
+                            <div class="absolute top-0 right-0 h-6 flex divide-x rounded-bl rounded-tr border-gray-300 border-b border-l overflow-hidden">
                                 @unless ($loop->first || $isItemMovementDisabled())
                                     <button
                                         wire:click="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
@@ -71,7 +71,7 @@
             <button
                 wire:click="dispatchFormEvent('repeater::createItem', '{{ $getStatePath() }}')"
                 type="button"
-                class="w-full h-9 px-4 inline-flex space-x-1 items-center justify-center font-medium tracking-tight rounded-lg text-gray-800 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600"
+                class="w-full h-9 px-4 inline-flex space-x-1 items-center justify-center font-medium tracking-tight rounded text-gray-800 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600"
             >
                 <x-heroicon-s-plus class="w-5 h-5" />
 

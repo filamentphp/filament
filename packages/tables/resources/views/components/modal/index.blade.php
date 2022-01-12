@@ -39,7 +39,7 @@
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         x-cloak
-        class="fixed inset-0 z-40 flex items-center min-h-screen p-4 overflow-y-auto transition"
+        class="fixed inset-0 z-40 flex items-center min-h-screen p-4 overflow-y-auto"
     >
         <button
             x-on:click="isOpen = false"
@@ -63,7 +63,7 @@
         >
             <div
                 @class([
-                    'w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default',
+                    'w-full mx-auto p-2 space-y-2 bg-white rounded cursor-default',
                     'max-w-xs' => $width === 'xs',
                     'max-w-sm' => $width === 'sm',
                     'max-w-md' => $width === 'md',

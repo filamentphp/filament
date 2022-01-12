@@ -15,7 +15,7 @@
             {!! $isRequired() ? 'required' : null !!}
             {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
             {{ $attributes->merge($getExtraAttributes())->class([
-                'text-gray-900 block w-full h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600',
+                'text-gray-900 block w-full h-10 duration-75 rounded shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600',
                 'border-gray-300' => ! $errors->has($getStatePath()),
                 'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
             ]) }}
@@ -67,7 +67,7 @@
                     tabindex="1"
                 @endunless
                 @class([
-                    'relative flex items-center h-10 pl-3 pr-10 border bg-white overflow-hidden duration-75 rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600 focus:outline-none',
+                    'relative flex items-center h-10 pl-3 pr-10 border bg-white overflow-hidden duration-75 rounded shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600 focus:outline-none',
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                 ])
@@ -116,7 +116,7 @@
                     x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $getStatePath() }}' + 'Option' + focusedOptionIndex : null"
                     tabindex="-1"
                     x-cloak
-                    class="absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none"
+                    class="absolute z-10 w-full my-1 bg-white border border-gray-300 rounded shadow-sm focus:outline-none"
                 >
                     <ul
                         x-ref="listboxOptionsList"

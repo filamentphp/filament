@@ -20,7 +20,7 @@
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 translate-y-2"
         @class([
-            'absolute right-0 rtl:right-auto rtl:left-0 z-10 w-screen pl-12 rtl:pr-12 mt-2 top-full transition',
+            'absolute right-0 rtl:right-auto rtl:left-0 z-10 w-screen pl-12 rtl:pr-12 mt-2 top-full',
             match ($width) {
                 'xs' => 'max-w-xs',
                 'md' => 'max-w-md',
@@ -36,7 +36,7 @@
             },
         ])
     >
-        <div class="px-6 py-4 bg-white space-y-6 shadow-xl rounded-xl">
+        <div class="px-6 py-4 bg-white space-y-6 shadow-md rounded">
             {{ $form }}
 
             <div class="text-right">

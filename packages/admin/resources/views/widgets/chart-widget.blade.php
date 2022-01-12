@@ -7,7 +7,7 @@
         @if ($filters = $this->getFilters())
             <select
                 wire:model="filter"
-                class="text-gray-900 border-gray-300 block h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600"
+                class="text-gray-900 border-gray-300 block h-10 duration-75 rounded shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600"
             >
                 @foreach ($filters as $value => $label)
                     <option value="{{ $value }}">
@@ -26,24 +26,18 @@
                 chart: null,
 
                 init: function () {
-                    let chart = this.initChart()
+                    chart = new Chart(
+                        $el,
+                        {
+                            type: '{{ $this->getType() }}',
+                            data: {{ json_encode($this->getData()) }},
+                            options: {{ json_encode($this->getOptions()) ?? '{}' }},
+                        },
+                    )
 
                     $wire.on('updateChartData', async ({ data }) => {
                         chart.data = data
                         chart.update('resize')
-                    })
-
-                    $wire.on('filterChartData', async ({ data }) => {
-                        chart.destroy()
-                        chart = this.initChart(data)
-                    })
-                },
-
-                initChart: function (data = null) {
-                    return this.chart = new Chart($el, {
-                        type: '{{ $this->getType() }}',
-                        data: data ?? {{ json_encode($this->getData()) }},
-                        options: {{ json_encode($this->getOptions()) }} ?? {},
                     })
                 },
             }"

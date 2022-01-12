@@ -53,7 +53,7 @@
             @endunless
             type="button"
             {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full border pl-3 pr-10 py-2 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600',
+                'bg-white relative w-full border pl-3 pr-10 py-2 text-left cursor-default rounded shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600',
                 'border-gray-300' => ! $errors->has($getStatePath()),
                 'border-danger-600 motion-safe:animate-shake' => $errors->has($getStatePath()),
                 'text-gray-500' => $isDisabled(),
@@ -83,7 +83,7 @@
                 role="dialog"
                 x-cloak
                 @class([
-                    'absolute z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-sm',
+                    'absolute z-10 my-1 bg-white border border-gray-300 rounded shadow-sm',
                     'p-4 w-64' => $hasDate(),
                 ])
             >
@@ -136,7 +136,7 @@
                                         'cursor-not-allowed': dayIsDisabled(day),
                                         'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                     }"
-                                    class="text-sm leading-none leading-loose text-center transition duration-100 ease-in-out rounded-full"
+                                    class="text-sm leading-none leading-loose text-center duration-100 ease-in-out rounded-full"
                                 ></div>
                             </template>
                         </div>
@@ -145,7 +145,7 @@
                     @if ($hasTime())
                         <div
                             @class([
-                                'flex items-center justify-center py-2 rounded-lg',
+                                'flex items-center justify-center py-2 rounded',
                                 'bg-gray-50' => $hasDate(),
                             ])
                         >

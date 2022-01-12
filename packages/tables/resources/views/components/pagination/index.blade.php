@@ -83,7 +83,7 @@
                 </x-tables::button>
             @else
                 @if ($paginator->hasPages())
-                    <div class="py-3 border rounded-lg">
+                    <div class="py-3 border rounded">
                         <ol class="flex items-center text-sm text-gray-500 divide-x divide-gray-300">
                             <x-tables::pagination.item
                                 :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
