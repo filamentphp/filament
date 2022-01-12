@@ -6,6 +6,7 @@ use Filament\Forms;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property ComponentContainer $form
@@ -56,7 +57,7 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
         $this->callHook('beforeCreate');
 
-        $this->record = static::getModel()::create($data);
+        $this->record = $this->handleRecordCreation($data);
 
         $this->form->model($this->record)->saveRelationships();
 
@@ -76,6 +77,11 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
         if ($redirectUrl = $this->getRedirectUrl()) {
             $this->redirect($redirectUrl);
         }
+    }
+
+    protected function handleRecordCreation(array $data): Model | string | null
+    {
+        return static::getModel()::create($data);
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
