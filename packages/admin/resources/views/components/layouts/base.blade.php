@@ -11,6 +11,9 @@
 
         <title>{{ $title ? "{$title} - " : null }} {{ config('app.name') }}</title>
 
+        <!-- Fonts -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
+
         <style>[x-cloak] { display: none !important; }</style>
 
         @livewireStyles
