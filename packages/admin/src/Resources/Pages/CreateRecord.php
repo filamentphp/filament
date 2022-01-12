@@ -59,8 +59,6 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
         $this->record = $this->handleRecordCreation($data);
 
-        $this->form->model($this->record)->saveRelationships();
-
         $this->callHook('afterCreate');
 
         if ($another) {
@@ -81,7 +79,11 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
     protected function handleRecordCreation(array $data): Model | string | null
     {
-        return static::getModel()::create($data);
+        $record = static::getModel()::create($data);
+
+        $this->form->model($record)->saveRelationships();
+
+        return $record;
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
