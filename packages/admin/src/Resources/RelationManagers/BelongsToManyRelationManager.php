@@ -65,7 +65,10 @@ class BelongsToManyRelationManager extends RelationManager
 
         $record = $relationship->getQuery()->create($data);
         $this->getMountedTableActionForm()->model($record)->saveRelationships();
-        $relationship->attach($record, $pivotData);
+        
+        if (!empty($pivotColumns)) {
+            $relationship->attach($record, $pivotData);
+        }
 
         $this->callHook('afterCreate');
     }
@@ -91,7 +94,10 @@ class BelongsToManyRelationManager extends RelationManager
 
         $record = $this->getMountedTableActionRecord();
         $record->update($data);
-        $relationship->updateExistingPivot($record, $pivotData);
+        
+        if (!empty($pivotColumns)) {
+            $relationship->updateExistingPivot($record, $pivotData);
+        }
 
         $this->callHook('afterSave');
     }
