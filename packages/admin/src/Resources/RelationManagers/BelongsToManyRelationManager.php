@@ -91,7 +91,10 @@ class BelongsToManyRelationManager extends RelationManager
 
         $record = $this->getMountedTableActionRecord();
         $record->update($data);
-        $relationship->updateExistingPivot($record, $pivotData);
+        
+        if (count($pivotColumns)) {
+            $relationship->updateExistingPivot($record, $pivotData);
+        }
 
         $this->callHook('afterSave');
     }
