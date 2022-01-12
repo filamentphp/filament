@@ -62,15 +62,9 @@ If you want to contribute to Filament packages, you may want to test it in a rea
 - Fork this repository to your GitHub account.
 - Create a Laravel app locally.
 - Clone this repository into the `/filament` directory of your Laravel app.
-- In the `/filament` repository, create a branch for your fix, e.g. `fix/error-message`
+- In the `/filament` repository, create a branch for your fix, e.g. `fix/error-message`.
 
-```
-|-laravel
-   |-app/
-   |-filament/
-```
-
-Install the packages in your app's `composer.json`
+Install the packages in your app's `composer.json`:
 
 ```json
 "require": {
@@ -86,7 +80,7 @@ Install the packages in your app's `composer.json`
 ]
 ```
 
-Now, run `composer update`.
+Now, run `composer update` to symlink the installed local packages into your Laravel app.
 
 ## Need Help?
 
