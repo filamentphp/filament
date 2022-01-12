@@ -84,13 +84,13 @@ class Resource
 
     public static function can(string $action, ?Model $record = null): bool
     {
-        $policy = Gate::forUser(Filament::auth()->user())->getPolicyFor($model = static::getModel());
+        $policy = Gate::getPolicyFor($model = static::getModel());
 
         if ($policy === null || (! method_exists($policy, $action))) {
             return true;
         }
 
-        return Gate::check($action, $record ?? $model);
+        return Gate::forUser(Filament::auth()->user())->check($action, $record ?? $model);
     }
 
     public static function canViewAny(): bool
