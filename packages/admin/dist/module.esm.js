@@ -15934,6 +15934,7 @@ var file_upload_default = (Alpine) => {
         uploadedFileUrl = await getUploadedFileUrlUsing(fileKey);
         this.uploadedFileUrlIndex[uploadedFileUrl] = fileKey;
         this.fileKeyIndex[fileKey] = uploadedFileUrl;
+        return uploadedFileUrl;
       }
     };
   });

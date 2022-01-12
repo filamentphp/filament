@@ -172,6 +172,8 @@ export default (Alpine) => {
 
                 this.uploadedFileUrlIndex[uploadedFileUrl] = fileKey
                 this.fileKeyIndex[fileKey] = uploadedFileUrl
+
+                return uploadedFileUrl
             },
         }
     })
