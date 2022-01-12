@@ -4,7 +4,6 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms;
 use Filament\Forms\ComponentContainer;
-use Illuminate\Database\Eloquent\Model;
 use Filament\Pages\Actions\ButtonAction;
 use Illuminate\Support\Str;
 

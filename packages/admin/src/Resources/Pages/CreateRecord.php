@@ -6,7 +6,6 @@ use Filament\Forms;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
 use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property ComponentContainer $form
