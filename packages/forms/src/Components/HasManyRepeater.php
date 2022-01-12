@@ -99,7 +99,8 @@ class HasManyRepeater extends Repeater
                     ->getClone()
                     ->statePath($itemKey)
                     ->model($this->getRecordForItemKey($itemKey) ?? $this->getRelatedModel());
-            })->toArray();
+            })
+            ->toArray();
     }
 
     public function getLabel(): string
