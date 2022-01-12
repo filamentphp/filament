@@ -61,8 +61,8 @@ If you want to contribute to Filament packages, you may want to test it in a rea
 
 - Fork this repository to your GitHub account.
 - Create a Laravel app locally.
-- Clone this repository into the `/filament` directory of your Laravel app.
-- In the `/filament` repository, create a branch for your fix, e.g. `fix/error-message`.
+- Clone this repository into your Laravel app root directory.
+- In the `/filament` directory, create a branch for your fix, e.g. `fix/error-message`.
 
 Install the packages in your app's `composer.json`:
 
