@@ -229,7 +229,8 @@ class Builder extends Field
                     ->getChildComponentContainer()
                     ->getClone()
                     ->statePath("{$itemIndex}.data");
-            })->toArray();
+            })
+            ->toArray();
     }
 
     public function getCreateItemBetweenButtonLabel(): string

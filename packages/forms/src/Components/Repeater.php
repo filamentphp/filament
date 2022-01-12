@@ -190,7 +190,8 @@ class Repeater extends Field
                     ->getChildComponentContainer()
                     ->getClone()
                     ->statePath($itemIndex);
-            })->toArray();
+            })
+            ->toArray();
     }
 
     public function getCreateItemButtonLabel(): string
