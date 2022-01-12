@@ -80,7 +80,7 @@ Install the packages in your app's `composer.json`:
 ]
 ```
 
-Now, run `composer update` to symlink the installed local packages into your Laravel app.
+Now, run `composer update`.
 
 ## Need Help?
 
