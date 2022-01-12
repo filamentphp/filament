@@ -68,7 +68,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
             return true;
         }
 
-        return Gate::check($action, $record ?? $model);
+        return Gate::forUser(Filament::auth()->user())->check($action, $record ?? $model);
     }
 
     public static function canViewForRecord(Model $ownerRecord): bool
@@ -82,7 +82,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
             return true;
         }
 
-        return Gate::check($action, $model);
+        return Gate::forUser(Filament::auth()->user())->check($action, $model);
     }
 
     public static function form(Form $form): Form
