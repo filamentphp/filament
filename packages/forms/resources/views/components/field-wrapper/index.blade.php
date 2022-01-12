@@ -19,7 +19,7 @@
 
     <div class="space-y-2">
         @if (($label && ! $labelSrOnly) || $hint)
-            <div class="flex items-center justify-between space-x-2 rtl:space-x-reverse">
+            <div class="flex items-center justify-between space-x-2">
                 @if ($label && ! $labelSrOnly)
                     <x-forms::field-wrapper.label
                         :for="$id"

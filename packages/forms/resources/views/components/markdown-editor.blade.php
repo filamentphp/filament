@@ -23,10 +23,10 @@
                     <markdown-toolbar
                         for="{{ $getId() }}"
                         x-bind:class="{ 'pointer-events-none opacity-75': tab === 'preview' }"
-                        class="flex items-stretch space-x-4 rtl:space-x-reverse focus:outline-none"
+                        class="flex items-stretch space-x-4 focus:outline-none"
                     >
                         @if ($hasToolbarButton(['bold', 'italic', 'strike']))
-                            <div class="flex items-stretch space-x-1 rtl:space-x-reverse">
+                            <div class="flex items-stretch space-x-1">
                                 @if ($hasToolbarButton('bold'))
                                     <x-forms::markdown-editor.toolbar-button
                                         title="{{ __('forms::components.markdown_editor.toolbar_buttons.bold') }}"
@@ -60,7 +60,7 @@
                         @endif
 
                         @if ($hasToolbarButton(['link', 'attachFiles', 'codeBlock']))
-                            <div class="flex items-stretch space-x-1 rtl:space-x-reverse">
+                            <div class="flex items-stretch space-x-1">
                                 @if ($hasToolbarButton('link'))
                                     <x-forms::markdown-editor.toolbar-button
                                         title="{{ __('forms::components.markdown_editor.toolbar_buttons.link') }}"
@@ -94,7 +94,7 @@
                         @endif
 
                         @if ($hasToolbarButton(['bulletList', 'orderedList']))
-                            <div class="flex items-stretch space-x-1 rtl:space-x-reverse">
+                            <div class="flex items-stretch space-x-1">
                                 @if ($hasToolbarButton('bulletList'))
                                     <x-forms::markdown-editor.toolbar-button
                                         title="{{ __('forms::components.markdown_editor.toolbar_buttons.bullet_list') }}"
@@ -119,7 +119,7 @@
                     </markdown-toolbar>
 
                     @if ($hasToolbarButton(['edit', 'preview']) && ! $isDisabled())
-                        <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                        <div class="flex items-center space-x-4">
                             @if ($hasToolbarButton('edit'))
                                 <button
                                     x-on:click.prevent="tab = 'edit'"

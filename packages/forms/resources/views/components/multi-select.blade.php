@@ -60,7 +60,7 @@
                         class="block w-full border-0"
                     />
 
-                    <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center pr-2 rtl:pr-0 rtl:pl-2 pointer-events-none">
+                    <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                         <svg x-show="! isLoading" x-cloak class="w-5 h-5"xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                             <path stroke="#6B7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4" />
                         </svg>
@@ -141,7 +141,7 @@
 
         <div
             x-show="state.length"
-            class="overflow-hidden rtl:space-x-reverse relative w-full px-1 py-1"
+            class="overflow-hidden relative w-full px-1 py-1"
         >
             <div class="flex flex-wrap gap-1">
                 <template class="inline" x-for="option in state" x-bind:key="option">
@@ -151,7 +151,7 @@
                         @endunless
                         type="button"
                         @class([
-                            'inline-flex items-center justify-center h-6 px-2 my-1 text-sm font-medium tracking-tight text-primary-700 rounded-full bg-primary-500/10 space-x-1 rtl:space-x-reverse',
+                            'inline-flex items-center justify-center h-6 px-2 my-1 text-sm font-medium tracking-tight text-primary-700 rounded-full bg-primary-500/10 space-x-1',
                             'cursor-default' => $isDisabled(),
                         ])
                     >
