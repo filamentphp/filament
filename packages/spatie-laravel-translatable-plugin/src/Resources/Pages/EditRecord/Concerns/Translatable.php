@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages\EditRecord\Concerns;
 
 use Filament\Resources\Pages\Concerns\HasActiveFormLocaleSelect;
+use Illuminate\Database\Eloquent\Model;
 
 trait Translatable
 {
@@ -41,9 +42,11 @@ trait Translatable
         $this->record->setLocale($this->activeFormLocale);
     }
 
-    protected function handleRecordUpdate(array $data): void
+    protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $this->record->setLocale($this->activeFormLocale)->fill($data)->save();
+        $record->setLocale($this->activeFormLocale)->fill($data)->save();
+
+        return $record;
     }
 
     public function updatedActiveFormLocale(): void

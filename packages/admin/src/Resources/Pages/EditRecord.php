@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages;
 use Filament\Forms;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
@@ -76,7 +77,7 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
         $this->callHook('beforeSave');
 
-        $this->handleRecordUpdate($data);
+        $this->handleRecordUpdate($this->record, $data);
 
         $this->callHook('afterSave');
 
@@ -87,9 +88,11 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
         }
     }
 
-    protected function handleRecordUpdate(array $data): void
+    protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $this->record->update($data);
+        $record->update($data);
+
+        return $record;
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
