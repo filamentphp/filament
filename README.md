@@ -55,6 +55,33 @@ composer require filament/spatie-laravel-tags-plugin
 composer require filament/spatie-laravel-translatable-plugin
 ```
 
+## Contributing
+
+If you want to contribute to Filament packages, you may want to test it in a real Laravel project:
+
+- Fork this repository to your GitHub account.
+- Create a Laravel app locally.
+- Clone this repository into the `/filament` directory of your Laravel app.
+- In the `/filament` repository, create a branch for your fix, e.g. `fix/error-message`.
+
+Install the packages in your app's `composer.json`:
+
+```json
+"require": {
+    "filament/filament": "fix/error-message as 2.x-dev",
+    "filament/forms": "fix/error-message as 2.x-dev",
+    "filament/tables": "fix/error-message as 2.x-dev",
+},
+"repositories": [
+    {
+        "type": "path",
+        "url": "filament/packages/*"
+    }
+]
+```
+
+Now, run `composer update`.
+
 ## Need Help?
 
 🐞 If you spot a bug, please [submit a detailed issue](https://github.com/laravel-filament/filament/issues/new), and wait for assistance.
