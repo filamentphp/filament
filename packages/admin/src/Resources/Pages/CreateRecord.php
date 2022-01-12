@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages;
 use Filament\Forms;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
@@ -56,7 +57,7 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
         $this->callHook('beforeCreate');
 
-        $this->handleRecordCreation($data);
+        $this->record = $this->handleRecordCreation($data);
 
         $this->form->model($this->record)->saveRelationships();
 
@@ -78,9 +79,9 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
         }
     }
 
-    protected function handleRecordCreation(array $data): void
+    protected function handleRecordCreation(array $data): Model
     {
-        $this->record = static::getModel()::create($data);
+        return static::getModel()::create($data);
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array

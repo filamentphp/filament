@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages\CreateRecord\Concerns;
 
 use Filament\Resources\Pages\Concerns\HasActiveFormLocaleSelect;
+use Illuminate\Database\Eloquent\Model;
 
 trait Translatable
 {
@@ -24,13 +25,14 @@ trait Translatable
         $this->activeFormLocale = static::getResource()::getDefaultTranslatableLocale();
     }
 
-    protected function handleRecordCreation(array $data): void
+    protected function handleRecordCreation(array $data): Model
     {
-        $this->record = static::getModel()::usingLocale(
+        $record = static::getModel()::usingLocale(
             $this->activeFormLocale,
         )->fill($data);
+        $record->save();
 
-        $this->record->save();
+        return $record;
     }
 
     protected function getActions(): array
