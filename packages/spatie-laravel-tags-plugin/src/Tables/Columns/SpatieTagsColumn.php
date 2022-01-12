@@ -2,6 +2,8 @@
 
 namespace Filament\Tables\Columns;
 
+use Illuminate\Database\Eloquent\Builder;
+
 class SpatieTagsColumn extends TagsColumn
 {
     protected ?string $type = null;
