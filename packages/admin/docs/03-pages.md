@@ -83,6 +83,23 @@ protected function getActions(): array
     ];
 }
 ```
+### Conditionally hiding pages in navigation
+
+You can prevent pages from appearing in the menu by overriding the shouldRegisterNavigation() function in your Page class. This is useful if you want, for example, only certain user roles to see the page.
+
+```php
+use Filament\Pages\Page;
+
+class MyPage extends Page
+{
+    protected static function shouldRegisterNavigation(): bool
+    {
+        // Insert your logic here and return true if 
+        // the user is allowed to see the page, 
+        // otherwise false.
+    }
+}
+```
 
 ### Building widgets
 
