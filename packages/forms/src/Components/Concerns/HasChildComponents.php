@@ -46,6 +46,14 @@ trait HasChildComponents
 
     public function hasChildComponentContainer(bool $withHidden = false): bool
     {
-        return $withHidden ?: ! $this->isHidden() && $this->getChildComponents() !== [];
+        if ($this->isHidden() && ! $withHidden) {
+            return false;
+        }
+
+        if ($this->getChildComponents() === []) {
+            return false;
+        }
+
+        return true;
     }
 }
