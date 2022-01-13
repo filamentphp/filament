@@ -182,7 +182,7 @@ class Repeater extends Field
         $this->getChildComponentContainers()[$uuid]->hydrateDefaultState();
     }
 
-    public function getChildComponentContainers(): array
+    public function getChildComponentContainers(bool $withHidden = false): array
     {
         return collect($this->getState())
             ->map(function ($itemData, $itemIndex): ComponentContainer {

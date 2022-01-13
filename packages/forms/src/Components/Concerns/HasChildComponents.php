@@ -35,17 +35,25 @@ trait HasChildComponents
             ->components($this->getChildComponents());
     }
 
-    public function getChildComponentContainers(): array
+    public function getChildComponentContainers(bool $withHidden = false): array
     {
-        if (! $this->hasChildComponentContainer()) {
+        if (! $this->hasChildComponentContainer($withHidden)) {
             return [];
         }
 
         return [$this->getChildComponentContainer()];
     }
 
-    public function hasChildComponentContainer(): bool
+    public function hasChildComponentContainer(bool $withHidden = false): bool
     {
-        return ! $this->isHidden() && $this->getChildComponents() !== [];
+        if ((! $withHidden) && $this->isHidden()) {
+            return false;
+        }
+
+        if ($this->getChildComponents() === []) {
+            return false;
+        }
+
+        return true;
     }
 }
