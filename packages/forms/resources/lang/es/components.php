@@ -2,6 +2,34 @@
 
 return [
 
+    'builder' => [
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => 'Añadir a :label',
+            ],
+
+            'create_item_between' => [
+                'label' => 'Añadir entre',
+            ],
+
+            'delete_item' => [
+                'label' => 'Borrar',
+            ],
+
+            'move_item_down' => [
+                'label' => 'Bajar',
+            ],
+
+            'move_item_up' => [
+                'label' => 'Subir',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -53,6 +81,30 @@ return [
         'search_prompt' => 'No hay opciones para elegir.',
     ],
 
+    'repeater' => [
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => 'Añadir a :label',
+            ],
+
+            'delete_item' => [
+                'label' => 'Borrar',
+            ],
+
+            'move_item_down' => [
+                'label' => 'Bajar',
+            ],
+
+            'move_item_up' => [
+                'label' => 'Subir',
+            ],
+
+        ],
+
+    ],
+
     'rich_editor' => [
 
         'dialogs' => [
@@ -61,7 +113,7 @@ return [
 
                 'buttons' => [
                     'link' => 'Link',
-                    'unlink' => 'Unlink',
+                    'unlink' => 'Quitar link',
                 ],
 
                 'label' => 'URL',

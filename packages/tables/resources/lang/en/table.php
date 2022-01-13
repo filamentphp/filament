@@ -95,12 +95,12 @@ return [
 
         ],
 
-        'select' => [
-            'placeholder' => 'All'
+        'multi_select' => [
+            'placeholder' => 'All',
         ],
 
-        'multi_select' => [
-            'placeholder' => 'Select one or more'
+        'select' => [
+            'placeholder' => 'All',
         ],
 
     ],

@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages;
 use Filament\Forms;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
@@ -56,13 +57,16 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
         $this->callHook('beforeCreate');
 
-        $this->record = static::getModel()::create($data);
+        $this->record = $this->handleRecordCreation($data);
 
         $this->form->model($this->record)->saveRelationships();
 
         $this->callHook('afterCreate');
 
         if ($another) {
+            // Ensure that the form record is anonymized so that relationships aren't loaded.
+            $this->form->model($this->record::class);
+
             $this->fillForm();
 
             $this->notify('success', __('filament::resources/pages/create-record.messages.created'));
@@ -73,6 +77,11 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
         if ($redirectUrl = $this->getRedirectUrl()) {
             $this->redirect($redirectUrl);
         }
+    }
+
+    protected function handleRecordCreation(array $data): Model
+    {
+        return static::getModel()::create($data);
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array

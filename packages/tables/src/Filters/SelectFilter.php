@@ -4,7 +4,6 @@ namespace Filament\Tables\Filters;
 
 use Closure;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +12,7 @@ use Illuminate\Support\Str;
 
 class SelectFilter extends Filter
 {
-    use HasPlaceholder;
+    use Concerns\HasPlaceholder;
 
     protected string | Closure | null $column = null;
 

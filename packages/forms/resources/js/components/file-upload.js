@@ -42,7 +42,7 @@ export default (Alpine) => {
         uploadUsing,
     }) => {
         return {
-            cachedFileKeys: {},
+            fileKeyIndex: {},
 
             files: [],
 
@@ -52,13 +52,15 @@ export default (Alpine) => {
 
             state,
 
+            uploadedFileUrlIndex: {},
+
             init: async function () {
                 for (const [fileKey, file] of Object.entries(this.state)) {
                     if (file.startsWith('livewire-file:')) {
                         continue;
                     }
 
-                    let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey)
+                    let uploadedFileUrl = await this.getUploadedFileUrl(fileKey)
 
                     if (! uploadedFileUrl) {
                         continue
@@ -70,8 +72,6 @@ export default (Alpine) => {
                             type: 'local',
                         },
                     })
-
-                    this.cachedFileKeys[uploadedFileUrl] = fileKey
                 }
 
                 this.pond = FilePond.create(this.$refs.input, {
@@ -107,12 +107,12 @@ export default (Alpine) => {
 
                             uploadUsing(fileKey, file, (fileKey) => {
                                 this.shouldUpdateState = true
-                                
+
                                 load(fileKey)
                             }, error, progress)
                         },
                         remove: async (source, load) => {
-                            let fileKey = this.cachedFileKeys[source] ?? null
+                            let fileKey = this.uploadedFileUrlIndex[source] ?? null
 
                             if (! fileKey) {
                                 return
@@ -143,7 +143,7 @@ export default (Alpine) => {
                     let files = []
 
                     for (let fileKey of Object.keys(this.state)) {
-                        let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey)
+                        let uploadedFileUrl = await this.getUploadedFileUrl(fileKey)
 
                         if (! uploadedFileUrl) {
                             continue
@@ -155,13 +155,26 @@ export default (Alpine) => {
                                 type: 'local',
                             },
                         })
-
-                        this.cachedFileKeys[uploadedFileUrl] = fileKey
                     }
 
                     this.pond.files = files
                 })
-            }
+            },
+
+            getUploadedFileUrl: async function (fileKey) {
+                let uploadedFileUrl = this.fileKeyIndex[fileKey] ?? null
+
+                if (uploadedFileUrl !== null) {
+                    return uploadedFileUrl
+                }
+
+                uploadedFileUrl = await getUploadedFileUrlUsing(fileKey)
+
+                this.uploadedFileUrlIndex[uploadedFileUrl] = fileKey
+                this.fileKeyIndex[fileKey] = uploadedFileUrl
+
+                return uploadedFileUrl
+            },
         }
     })
 }

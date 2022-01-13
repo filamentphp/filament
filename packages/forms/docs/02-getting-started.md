@@ -145,7 +145,7 @@ class EditPost extends Component implements Forms\Contracts\HasForms
 
 ### Default data
 
-Fields can use a `default()` configuration method, which allows you to specify a default values to fill your form with.
+Fields can use a `default()` configuration method, which allows you to specify default values to fill your form with.
 
 To fill a form with default values, call the `fill()` method on your form without any parameters:
 

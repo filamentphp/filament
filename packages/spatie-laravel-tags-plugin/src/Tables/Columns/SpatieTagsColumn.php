@@ -2,6 +2,8 @@
 
 namespace Filament\Tables\Columns;
 
+use Illuminate\Database\Eloquent\Builder;
+
 class SpatieTagsColumn extends TagsColumn
 {
     protected ?string $type = null;
@@ -30,5 +32,14 @@ class SpatieTagsColumn extends TagsColumn
     public function getType(): ?string
     {
         return $this->type;
+    }
+
+    public function applyEagerLoading(Builder $query): Builder
+    {
+        if ($this->isHidden()) {
+            return $query;
+        }
+
+        return $query->with(['tags']);
     }
 }

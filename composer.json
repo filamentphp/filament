@@ -41,7 +41,11 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "pestphp/pest-plugin": true
+        }
     },
     "scripts": {
         "test": "./vendor/bin/pest --parallel && ./vendor/bin/phpstan analyse"

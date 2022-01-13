@@ -8,14 +8,20 @@ To create a new plugin, extend the `Filament\PluginServiceProvider` class provid
 
 ```php
 use Filament\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'example';
+    public function configurePackage(Package $package): void
+    {
+        $package->name('your-package-name');
+    }
     
     // ...
 }
 ```
+
+The `PluginServiceProvider` extends the service provider from [Laravel Package Tools](https://github.com/spatie/laravel-package-tools), so all `configurePackage()` options available there are available here as well.
 
 Plugins must have a unique name property.
 
@@ -62,11 +68,15 @@ To register a custom resource, add the fully qualified class name to the `getRes
 
 ```php
 use Filament\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
 use Vendor\Package\Resources\CustomResource;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'example';
+    public function configurePackage(Package $package): void
+    {
+        $package->name('your-package-name');
+    }
     
     protected function getResources(): array
     {
@@ -85,11 +95,15 @@ To register a custom page, add the fully qualified class name to the `getPages()
 
 ```php
 use Filament\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
 use Vendor\Package\Pages\CustomPage;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'example';
+    public function configurePackage(Package $package): void
+    {
+        $package->name('your-package-name');
+    }
     
     protected function getPages(): array
     {
@@ -108,11 +122,15 @@ To register a custom widget, add the fully qualified class name to the `getWidge
 
 ```php
 use Filament\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
 use Vendor\Package\Widgers\CustomWidget;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'example';
+    public function configurePackage(Package $package): void
+    {
+        $package->name('your-package-name');
+    }
     
     protected function getWidgets(): array
     {
@@ -135,10 +153,14 @@ To include a custom stylesheet, add it to the `getStyles()` method in your servi
 
 ```php
 use Filament\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'example';
+    public function configurePackage(Package $package): void
+    {
+        $package->name('your-package-name');
+    }
     
     protected function getStyles(): array
     {
@@ -155,10 +177,14 @@ To include a custom script, add it to the `getScripts()` method in your service 
 
 ```php
 use Filament\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'example';
+    public function configurePackage(Package $package): void
+    {
+        $package->name('your-package-name');
+    }
     
     protected function getScripts(): array
     {
@@ -178,10 +204,14 @@ To do this, use the `getScriptData()` method on your service provider and return
 ```php
 use Filament\PluginServiceProvider;
 use Illuminate\Support\Facades\Auth;
+use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'example';
+    public function configurePackage(Package $package): void
+    {
+        $package->name('your-package-name');
+    }
     
     protected function getScriptData(): array
     {
@@ -200,23 +230,6 @@ You may now access this data in your scripts:
 </script>
 ```
 
-## Commands
+## Commands, views, translations, migrations and more
 
-To register commands for your plugin, return them from the `getCommands()` method in your service provider:
-
-```php
-use Filament\PluginServiceProvider;
-use Vendor\Package\Commands;
-
-class ExampleServiceProvider extends PluginServiceProvider
-{
-    public static string $name = 'example';
-    
-    protected function getCommands(): array
-    {
-        return [
-            Commands\CustomCommand::class,
-        ];
-    }
-}
-```
+Since the `PluginServiceProvider` extends the service provider from [Laravel Package Tools](https://github.com/spatie/laravel-package-tools), you can use the [`configurePackage` method](https://github.com/spatie/laravel-package-tools#usage) to register [commands](https://github.com/spatie/laravel-package-tools#registering-commands), [views](https://github.com/spatie/laravel-package-tools#working-with-views), [translations](https://github.com/spatie/laravel-package-tools#working-with-translations), [migrations](https://github.com/spatie/laravel-package-tools#working-with-migrations) and more.
