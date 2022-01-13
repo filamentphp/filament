@@ -83,25 +83,28 @@ protected function getActions(): array
     ];
 }
 ```
-### Conditionally hiding pages in navigation
 
-You can prevent pages from appearing in the menu by overriding the shouldRegisterNavigation() function in your Page class. This is useful if you want, for example, only certain user roles to see the page.
+## Conditionally hiding pages in navigation
+
+You can prevent pages from appearing in the menu by overriding the `shouldRegisterNavigation()` method in your Page class. This is useful if you want to control which users can see the page in the sidebar.
 
 ```php
-use Filament\Pages\Page;
-
-class MyPage extends Page
+protected static function shouldRegisterNavigation(): bool
 {
-    protected static function shouldRegisterNavigation(): bool
-    {
-        // Insert your logic here and return true if 
-        // the user is allowed to see the page, 
-        // otherwise false.
-    }
+    return auth()->user()->canManageSettings();
 }
 ```
 
-### Building widgets
+Please be aware that all users will still be able to visit this page through its direct URL, so to fully limit access you must also also check in the `mount()` method of the page:
+
+```php
+public function mount(): void
+{
+    abort_unless(auth()->user()->canManageSettings(), 403);
+}
+```
+
+## Building widgets
 
 Filament allows you to display widgets inside pages, below the header and above the footer.
 
