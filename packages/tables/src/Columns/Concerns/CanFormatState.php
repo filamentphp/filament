@@ -76,10 +76,12 @@ trait CanFormatState
 
     public function getFormattedState()
     {
+        $state = $this->getState();
+
         if ($this->formatStateUsing) {
-            $state = $this->evaluate($this->formatStateUsing);
-        } else {
-            $state = $this->getState();
+            $state = $this->evaluate($this->formatStateUsing, [
+                'state' => $state,
+            ]);
         }
 
         return $state;
