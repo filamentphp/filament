@@ -44,7 +44,7 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
         $this->fillForm();
 
-        $this->activeRelationManager ??= $this->getRelationManagers()[0] ?? null;
+        $this->activeRelationManager ??= $this->getRelationManagers()[1] ?? null;
     }
 
     protected function fillForm(): void
