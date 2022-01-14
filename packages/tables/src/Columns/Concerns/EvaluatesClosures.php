@@ -24,6 +24,7 @@ trait EvaluatesClosures
             'column' => $this,
             'livewire' => $this->getLivewire(),
             'record' => $this->getRecord(),
+            'state' => $this->getState(),
         ];
     }
 }

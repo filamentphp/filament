@@ -23,4 +23,9 @@ class TextColumn extends Column
     {
         return $this->evaluate($this->canWrap);
     }
+
+    protected function mutateArrayState(array $state): string
+    {
+        return implode(', ', $state);
+    }
 }
