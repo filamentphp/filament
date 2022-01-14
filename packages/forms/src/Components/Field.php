@@ -10,6 +10,7 @@ class Field extends Component implements Contracts\HasValidationRules
     use Concerns\CanBeValidated;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
+    use Concerns\HasIcon;
     use Concerns\HasName;
 
     final public function __construct(string $name)

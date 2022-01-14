@@ -32,11 +32,17 @@
                     </x-forms::field-wrapper.label>
                 @endif
 
-                @if ($hint)
-                    <x-forms::field-wrapper.hint>
-                        {!! \Illuminate\Support\Str::markdown($hint) !!}
-                    </x-forms::field-wrapper.hint>
-                @endif
+                <div class="flex items-center">
+                    @if ($hint)
+                        <x-forms::field-wrapper.hint>
+                            {!! \Illuminate\Support\Str::markdown($hint) !!}
+                        </x-forms::field-wrapper.hint>
+                    @endif
+
+                    @if ($icon)
+                        <x-dynamic-component :component="$icon" class="h-5 w-5 ml-2 rtl:mr-2 text-gray-500" />
+                    @endif
+                </div>
             </div>
         @endif
 
