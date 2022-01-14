@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages\EditRecord\Concerns;
 
 use Filament\Resources\Pages\Concerns\HasActiveFormLocaleSelect;
+use Illuminate\Database\Eloquent\Model;
 
 trait Translatable
 {
@@ -41,27 +42,11 @@ trait Translatable
         $this->record->setLocale($this->activeFormLocale);
     }
 
-    public function save(bool $shouldRedirect = true): void
+    protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $this->callHook('beforeValidate');
+        $record->setLocale($this->activeFormLocale)->fill($data)->save();
 
-        $data = $this->form->getState();
-
-        $this->callHook('afterValidate');
-
-        $data = $this->mutateFormDataBeforeSave($data);
-
-        $this->callHook('beforeSave');
-
-        $this->record->setLocale($this->activeFormLocale)->fill($data)->save();
-
-        $this->callHook('afterSave');
-
-        if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
-            $this->redirect($redirectUrl);
-        } else {
-            $this->notify('success', __('filament::resources/pages/edit-record.messages.saved'));
-        }
+        return $record;
     }
 
     public function updatedActiveFormLocale(): void

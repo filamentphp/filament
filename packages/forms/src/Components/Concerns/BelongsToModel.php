@@ -64,14 +64,14 @@ trait BelongsToModel
 
     public function getModelInstance(): ?Model
     {
-        if ($record = $this->getRecord()) {
-            return $record;
+        $model = $this->evaluate($this->model);
+
+        if ($model === null) {
+            return $this->getContainer()->getModelInstance();
         }
 
-        $model = $this->getModel();
-
-        if (! $model) {
-            return null;
+        if ($model instanceof Model) {
+            return $model;
         }
 
         return new $model();

@@ -11,7 +11,7 @@ use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-    
+
 DatePicker::make('date_of_birth')
     ->displayFormat(function () {
         if (auth()->user()->country_id === 'us') {
@@ -132,7 +132,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('newPassword')
     ->password()
     ->reactive()
-    
+
 TextInput::make('newPasswordConfirmation')
     ->password()
     ->hidden(fn (Closure $get) => $get('newPassword') !== null)
@@ -160,7 +160,7 @@ TextInput::make('name')
 
 ### Updates
 
-You may use the `afterStateHydrated()` method to customize what happens after a field is updated.
+You may use the `afterStateUpdated()` method to customize what happens after a field is updated.
 
 In this example, the `slug` field is updated with the slug version of the `title` field automatically:
 
@@ -179,7 +179,7 @@ TextInput::make('slug')
 
 ### Dehydration
 
-Hydration is the process which gets data from fields, and transforms it. It runs when you call the [form's `getState()` method](getting-started#getting-data-from-forms). You may customize how the state is dehydrated from the form by returning the transformed state from the `afterStateHydrated()` callback.
+Dehydration is the process which gets data from fields, and transforms it. It runs when you call the [form's `getState()` method](getting-started#getting-data-from-forms). You may customize how the state is dehydrated from the form by returning the transformed state from the `dehydrateStateUsing()` callback.
 
 In this example, the `name` field will always be dehydrated with the correctly capitalized name:
 
@@ -273,7 +273,7 @@ protected function setUp(): void
                 if ($statePath !== $component->getStatePath()) {
                     return;
                 }
-                
+
                 // ...
             },
         ],
@@ -300,7 +300,7 @@ protected function setUp(): void
                 if ($statePath !== $component->getStatePath()) {
                     return;
                 }
-                
+
                 // Delete item with UUID `$uuidToDelete`
             },
         ],

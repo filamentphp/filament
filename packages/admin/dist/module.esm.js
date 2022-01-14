@@ -15839,17 +15839,18 @@ var file_upload_default = (Alpine) => {
     uploadUsing
   }) => {
     return {
-      cachedFileKeys: {},
+      fileKeyIndex: {},
       files: [],
       pond: null,
       shouldUpdateState: true,
       state: state2,
+      uploadedFileUrlIndex: {},
       init: async function() {
         for (const [fileKey, file2] of Object.entries(this.state)) {
           if (file2.startsWith("livewire-file:")) {
             continue;
           }
-          let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey);
+          let uploadedFileUrl = await this.getUploadedFileUrl(fileKey);
           if (!uploadedFileUrl) {
             continue;
           }
@@ -15859,7 +15860,6 @@ var file_upload_default = (Alpine) => {
               type: "local"
             }
           });
-          this.cachedFileKeys[uploadedFileUrl] = fileKey;
         }
         this.pond = create$f(this.$refs.input, {
           acceptedFileTypes,
@@ -15895,7 +15895,7 @@ var file_upload_default = (Alpine) => {
               }, error2, progress);
             },
             remove: async (source, load) => {
-              let fileKey = this.cachedFileKeys[source] ?? null;
+              let fileKey = this.uploadedFileUrlIndex[source] ?? null;
               if (!fileKey) {
                 return;
               }
@@ -15917,7 +15917,7 @@ var file_upload_default = (Alpine) => {
           }
           let files = [];
           for (let fileKey of Object.keys(this.state)) {
-            let uploadedFileUrl = await getUploadedFileUrlUsing(fileKey);
+            let uploadedFileUrl = await this.getUploadedFileUrl(fileKey);
             if (!uploadedFileUrl) {
               continue;
             }
@@ -15927,14 +15927,23 @@ var file_upload_default = (Alpine) => {
                 type: "local"
               }
             });
-            this.cachedFileKeys[uploadedFileUrl] = fileKey;
           }
           this.pond.files = appendFiles ? files : files.reverse();
         });
         this.pond.on("reorderfiles", async (files) => {
-          const orderedFileKeys = files.map((file2) => file2.source instanceof File ? file2.serverId : this.cachedFileKeys[file2.source] ?? null).filter((fileKey) => fileKey);
+          const orderedFileKeys = files.map((file2) => file2.source instanceof File ? file2.serverId : this.uploadedFileUrlIndex[file2.source] ?? null).filter((fileKey) => fileKey);
           await reorderUploadedFilesUsing(orderedFileKeys);
         });
+      },
+      getUploadedFileUrl: async function(fileKey) {
+        let uploadedFileUrl = this.fileKeyIndex[fileKey] ?? null;
+        if (uploadedFileUrl !== null) {
+          return uploadedFileUrl;
+        }
+        uploadedFileUrl = await getUploadedFileUrlUsing(fileKey);
+        this.uploadedFileUrlIndex[uploadedFileUrl] = fileKey;
+        this.fileKeyIndex[fileKey] = uploadedFileUrl;
+        return uploadedFileUrl;
       }
     };
   });
@@ -18997,6 +19006,7 @@ var multi_select_default = (Alpine) => {
   }) => {
     return {
       focusedOptionIndex: null,
+      index: {},
       isLoading: false,
       isOpen: false,
       labels: [],
@@ -19010,7 +19020,8 @@ var multi_select_default = (Alpine) => {
         if (!this.state) {
           this.state = [];
         }
-        this.labels = await getOptionLabelsUsing();
+        this.addOptionsToIndex(this.options);
+        this.labels = await this.getOptionLabels();
         this.$watch("search", async () => {
           if (!this.isOpen || this.search === "" || this.search === null) {
             this.options = options;
@@ -19029,13 +19040,20 @@ var multi_select_default = (Alpine) => {
           } else {
             this.isLoading = true;
             this.options = await getSearchResultsUsing(this.search);
+            this.addOptionsToIndex(this.options);
             this.focusedOptionIndex = 0;
             this.isLoading = false;
           }
         });
         this.$watch("state", async () => {
-          this.labels = await getOptionLabelsUsing();
+          this.labels = await this.getOptionLabels();
         });
+      },
+      addOptionsToIndex: function(options2) {
+        this.index = {
+          ...this.index,
+          ...options2
+        };
       },
       clearState: function() {
         this.state = [];
@@ -19119,6 +19137,24 @@ var multi_select_default = (Alpine) => {
           return;
         }
         this.openListbox();
+      },
+      getOptionLabels: async function() {
+        let labels = {};
+        let areAllLabelsIndexed = true;
+        for (let key of this.state) {
+          let label = this.index[key] ?? null;
+          if (label === null) {
+            areAllLabelsIndexed = false;
+            break;
+          }
+          labels[key] = label;
+        }
+        if (areAllLabelsIndexed) {
+          return labels;
+        }
+        labels = await getOptionLabelsUsing();
+        this.addOptionsToIndex(labels);
+        return labels;
       }
     };
   });
@@ -19168,6 +19204,7 @@ var select_default = (Alpine) => {
   }) => {
     return {
       focusedOptionIndex: null,
+      index: {},
       isLoading: false,
       isOpen: false,
       label: null,
@@ -19178,7 +19215,8 @@ var select_default = (Alpine) => {
         if (isAutofocused) {
           this.openListbox();
         }
-        this.label = await getOptionLabelUsing();
+        this.addOptionsToIndex(this.options);
+        this.label = await this.getOptionLabel();
         this.$watch("search", async () => {
           if (!this.isOpen || this.search === "" || this.search === null) {
             this.options = options;
@@ -19197,13 +19235,23 @@ var select_default = (Alpine) => {
           } else {
             this.isLoading = true;
             this.options = await getSearchResultsUsing(this.search);
+            this.addOptionsToIndex(this.options);
             this.focusedOptionIndex = 0;
             this.isLoading = false;
           }
         });
         this.$watch("state", async () => {
-          this.label = await getOptionLabelUsing();
+          this.label = await this.getOptionLabel();
         });
+      },
+      addOptionToIndex: function(key, label) {
+        this.index[key] = label;
+      },
+      addOptionsToIndex: function(options2) {
+        this.index = {
+          ...this.index,
+          ...options2
+        };
       },
       clearState: function() {
         this.state = null;
@@ -19283,6 +19331,15 @@ var select_default = (Alpine) => {
           return;
         }
         this.openListbox();
+      },
+      getOptionLabel: async function() {
+        let label = this.index[this.state] ?? null;
+        if (label !== null) {
+          return label;
+        }
+        label = await getOptionLabelUsing(this.state);
+        this.addOptionToIndex(this.state, label);
+        return label;
       }
     };
   });

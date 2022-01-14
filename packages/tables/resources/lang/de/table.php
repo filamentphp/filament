@@ -85,12 +85,38 @@ return [
         'heading' => 'Keine Datensätze gefunden',
     ],
 
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Filter zurücksetzen',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Alle',
+        ],
+
+        'select' => [
+            'placeholder' => 'Alle',
+        ],
+
+    ],
+
     'selection_indicator' => [
+
+        'selected_count' => '1 Datensatz ausgewählt ausgewählt.|:count Datensätze ausgewählt.',
 
         'buttons' => [
 
             'select_all' => [
                 'label' => 'Alle :count Datensätze auswählen',
+            ],
+
+            'deselect_all' => [
+                'label' => 'Auswahl aufheben',
             ],
 
         ],

@@ -62,7 +62,7 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Přidat soubory',
-            'bold' => 'Tučné',
+            'bold' => 'Tučně',
             'bullet_list' => 'Seznam s odrážkami',
             'code_block' => 'Blok kódu',
             'edit' => 'Upravit',
@@ -76,7 +76,7 @@ return [
     ],
 
     'multi_select' => [
-        'no_search_results_message' => 'Vašemu hledání neodpovídají žádné možnosti.',
+        'no_search_results_message' => 'Vašemu hledání neodpovídají žádné výsledky.',
         'placeholder' => 'Zvolte některou z možností',
         'search_prompt' => 'Začněte psát pro začátek vyhledávání...',
     ],
@@ -127,7 +127,7 @@ return [
         'toolbar_buttons' => [
             'attach_files' => 'Přidat soubory',
             'blockquote' => 'Bloková citace',
-            'bold' => 'Tučné',
+            'bold' => 'Tučně',
             'bullet_list' => 'List s odrážkami',
             'code_block' => 'Blok kódu',
             'h1' => 'Nadpis 1',
@@ -144,8 +144,8 @@ return [
     ],
 
     'select' => [
-        'no_search_results_message' => 'Vašemu hledání neodpodívají žádné možnosti.',
-        'placeholder' => 'Zvolte některou s možností',
+        'no_search_results_message' => 'Vašemu hledání neodpovídají žádné výsledky.',
+        'placeholder' => 'Zvolte některou z možností',
         'search_prompt' => 'Začněte psát pro začátek vyhledávání...',
     ],
 

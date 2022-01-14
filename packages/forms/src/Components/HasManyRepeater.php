@@ -90,7 +90,7 @@ class HasManyRepeater extends Repeater
         );
     }
 
-    public function getChildComponentContainers(): array
+    public function getChildComponentContainers(bool $withHidden = false): array
     {
         return collect($this->getState())
             ->map(function ($itemData, $itemKey): ComponentContainer {
@@ -99,7 +99,8 @@ class HasManyRepeater extends Repeater
                     ->getClone()
                     ->statePath($itemKey)
                     ->model($this->getRecordForItemKey($itemKey) ?? $this->getRelatedModel());
-            })->toArray();
+            })
+            ->toArray();
     }
 
     public function getLabel(): string

@@ -51,9 +51,16 @@ trait CanEditRecords
 
         $this->callHook('beforeSave');
 
-        $this->getMountedTableActionRecord()->update($data);
+        $this->handleRecordUpdate($this->getMountedTableActionRecord(), $data);
 
         $this->callHook('afterSave');
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        $record->update($data);
+
+        return $record;
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
