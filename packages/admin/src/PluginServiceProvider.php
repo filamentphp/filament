@@ -100,6 +100,8 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         foreach ($this->getWidgets() as $widget) {
             Livewire::component($widget::getName(), $widget);
         }
+        
+        $this->registerMacros();
     }
 
     protected function getCommands(): array
@@ -141,4 +143,6 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     {
         return $this->widgets;
     }
+    
+    protected function registerMacros(): void {}
 }
