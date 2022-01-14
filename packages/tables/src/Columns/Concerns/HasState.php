@@ -85,7 +85,7 @@ trait HasState
 
         $state = $relationship->pluck($this->getRelationshipDisplayColumnName());
 
-        if (! count($state ?? [])) {
+        if (! count($state)) {
             return null;
         }
 
