@@ -59,7 +59,7 @@ return [
 
         'modal' => [
 
-            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
+            'requires_confirmation_subheading' => 'Apakah Anda yakin ingin melakukan ini?',
 
             'buttons' => [
 
@@ -68,11 +68,11 @@ return [
                 ],
 
                 'confirm' => [
-                    'label' => 'Confirm',
+                    'label' => 'Konfirmasi',
                 ],
 
                 'submit' => [
-                    'label' => 'Submit',
+                    'label' => 'Kirim',
                 ],
 
             ],
@@ -85,12 +85,38 @@ return [
         'heading' => 'Data tidak ditemukan',
     ],
 
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Atur ulang filter',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Semua',
+        ],
+
+        'select' => [
+            'placeholder' => 'Semua',
+        ],
+
+    ],
+
     'selection_indicator' => [
+
+        'selected_count' => ':count dipilih.',
 
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Select all :count',
+                'label' => 'Pilih semua :count',
+            ],
+
+            'deselect_all' => [
+                'label' => 'Batalkan semua pilihan',
             ],
 
         ],
