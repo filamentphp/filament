@@ -8,7 +8,7 @@ trait HasHint
 {
     protected string | Closure | null $hint = null;
 
-    protected ?string $hintIcon = null;
+    protected string | Closure | null $hintIcon = null;
 
     public function hint(string | Closure | null $hint): static
     {
@@ -22,7 +22,7 @@ trait HasHint
         return $this->evaluate($this->hint);
     }
 
-    public function hintIcon(string $hintIcon): static
+    public function hintIcon(string | Closure | null $hintIcon): static
     {
         $this->hintIcon = $hintIcon;
 
@@ -31,6 +31,6 @@ trait HasHint
 
     public function getHintIcon(): ?string
     {
-        return $this->hintIcon;
+        return $this->evaluate($this->hintIcon);
     }
 }
