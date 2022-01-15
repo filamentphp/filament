@@ -41,7 +41,7 @@
                     @endif
 
                     @if ($hintIcon)
-                        <x-dynamic-component :component="$hintIcon" class="h-5 w-5 ml-2 rtl:mr-2 text-gray-500" />
+                        <x-dynamic-component :component="$hintIcon" class="h-4 w-4 ml-2 rtl:mr-2 text-gray-500" />
                     @endif
                 </div>
             </div>
