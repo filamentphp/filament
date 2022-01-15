@@ -6,6 +6,7 @@
     'labelSuffix' => null,
     'helperText' => null,
     'hint' => null,
+    'hintIcon' => null,
     'required' => false,
     'statePath',
 ])
@@ -39,8 +40,8 @@
                         </x-forms::field-wrapper.hint>
                     @endif
 
-                    @if ($icon)
-                        <x-dynamic-component :component="$icon" class="h-5 w-5 ml-2 rtl:mr-2 text-gray-500" />
+                    @if ($hintIcon)
+                        <x-dynamic-component :component="$hintIcon" class="h-5 w-5 ml-2 rtl:mr-2 text-gray-500" />
                     @endif
                 </div>
             </div>
