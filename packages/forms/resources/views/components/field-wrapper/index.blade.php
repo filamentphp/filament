@@ -28,22 +28,21 @@
                         :prefix="$labelPrefix"
                         :required="$required"
                         :suffix="$labelSuffix"
+                        class="flex-1"
                     >
                         {{ $label }}
                     </x-forms::field-wrapper.label>
                 @endif
 
-                <div class="flex items-center">
-                    @if ($hint)
-                        <x-forms::field-wrapper.hint>
-                            {!! \Illuminate\Support\Str::markdown($hint) !!}
-                        </x-forms::field-wrapper.hint>
-                    @endif
+                @if ($hint)
+                    <x-forms::field-wrapper.hint>
+                        {!! \Illuminate\Support\Str::markdown($hint) !!}
+                    </x-forms::field-wrapper.hint>
+                @endif
 
-                    @if ($hintIcon)
-                        <x-dynamic-component :component="$hintIcon" class="h-4 w-4 ml-2 rtl:mr-2 text-gray-500" />
-                    @endif
-                </div>
+                @if ($hintIcon)
+                    <x-dynamic-component :component="$hintIcon" class="h-4 w-4 ml-2 rtl:mr-2 text-gray-500" />
+                @endif
             </div>
         @endif
 

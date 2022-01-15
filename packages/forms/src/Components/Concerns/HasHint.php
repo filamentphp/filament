@@ -17,16 +17,16 @@ trait HasHint
         return $this;
     }
 
-    public function getHint(): ?string
-    {
-        return $this->evaluate($this->hint);
-    }
-
     public function hintIcon(string | Closure | null $hintIcon): static
     {
         $this->hintIcon = $hintIcon;
 
         return $this;
+    }
+
+    public function getHint(): ?string
+    {
+        return $this->evaluate($this->hint);
     }
 
     public function getHintIcon(): ?string
