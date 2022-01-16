@@ -1427,6 +1427,7 @@ The `$getStatePath()` closure may be used by the view to retrieve the Livewire p
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
@@ -1470,6 +1471,7 @@ The `$getStatePath()` closure may be used by the view to retrieve the Livewire p
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
