@@ -4,6 +4,7 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-icon="$getHintIcon()"
     :state-path="$getStatePath()"
 >
     <div {{ $attributes->merge($getExtraAttributes()) }}>
