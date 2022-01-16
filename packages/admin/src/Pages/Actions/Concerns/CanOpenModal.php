@@ -2,7 +2,7 @@
 
 namespace Filament\Pages\Actions\Concerns;
 
-use Filament\Tables\Actions\Modal\Actions\ButtonAction;
+use Filament\Pages\Actions\Modal\Actions\ButtonAction;
 
 trait CanOpenModal
 {

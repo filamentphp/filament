@@ -1,13 +1,12 @@
 <?php
 
-namespace Filament\Pages\Actions;
+namespace Filament\Pages\Actions\Modal\Actions;
 
 class ButtonAction extends Action
 {
-    use Concerns\CanSubmitForm;
     use Concerns\HasIcon;
 
-    protected string $view = 'filament::pages.actions.button-action';
+    protected string $view = 'filament::pages.actions.modal.actions.button-action';
 
     protected ?string $iconPosition = null;
 
