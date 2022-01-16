@@ -4,7 +4,6 @@ namespace Filament\Pages\Concerns;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property ComponentContainer $mountedActionForm
