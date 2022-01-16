@@ -20,6 +20,7 @@ class Column extends Component implements Htmlable
     use Concerns\CanOpenUrl;
     use Concerns\EvaluatesClosures;
     use Concerns\HasExtraAttributes;
+    use Concerns\HasExtraHeaderAttributes;
     use Concerns\HasLabel;
     use Concerns\HasName;
     use Concerns\HasRecord;

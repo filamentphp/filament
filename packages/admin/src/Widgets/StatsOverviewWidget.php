@@ -4,6 +4,8 @@ namespace Filament\Widgets;
 
 class StatsOverviewWidget extends Widget
 {
+    protected int | string | array $columnSpan = 'full';
+
     protected static string $view = 'filament::widgets.stats-overview-widget';
 
     protected function getColumns(): int

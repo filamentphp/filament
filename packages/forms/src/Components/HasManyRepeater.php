@@ -4,12 +4,14 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class HasManyRepeater extends Repeater
 {
+    protected ?Collection $cachedExistingRecords = null;
+
     protected string | Closure | null $relationship = null;
 
     protected function setUp(): void
@@ -30,11 +32,13 @@ class HasManyRepeater extends Repeater
             }
 
             $relationship = $component->getRelationship();
-
-            $recordsToDelete = [];
             $localKeyName = $relationship->getLocalKeyName();
 
-            foreach ($relationship->pluck($localKeyName) as $keyToCheckForDeletion) {
+            $existingRecords = $this->getCachedExistingRecords();
+
+            $recordsToDelete = [];
+
+            foreach ($existingRecords->pluck($localKeyName) as $keyToCheckForDeletion) {
                 if (array_key_exists($keyToCheckForDeletion, $state)) {
                     continue;
                 }
@@ -49,7 +53,7 @@ class HasManyRepeater extends Repeater
             foreach ($childComponentContainers as $itemKey => $item) {
                 $itemData = $item->getState();
 
-                if ($record = $component->getRecordForItemKey($itemKey)) {
+                if ($record = ($existingRecords[$itemKey] ?? null)) {
                     $record->update($itemData);
 
                     continue;
@@ -76,29 +80,22 @@ class HasManyRepeater extends Repeater
 
     public function fillFromRelationship(): void
     {
-        $relationship = $this->getRelationship();
-        $relatedModels = $relationship->getResults();
+        $records = $this->getCachedExistingRecords();
 
-        if (! $relatedModels) {
-            return;
-        }
-
-        $this->state(
-            $relatedModels->keyBy(
-                $relationship->getLocalKeyName(),
-            )->toArray(),
-        );
+        $this->state($records->toArray());
     }
 
     public function getChildComponentContainers(bool $withHidden = false): array
     {
+        $records = $this->getCachedExistingRecords();
+
         return collect($this->getState())
-            ->map(function ($itemData, $itemKey): ComponentContainer {
+            ->map(function ($itemData, $itemKey) use ($records): ComponentContainer {
                 return $this
                     ->getChildComponentContainer()
                     ->getClone()
                     ->statePath($itemKey)
-                    ->model($this->getRecordForItemKey($itemKey) ?? $this->getRelatedModel());
+                    ->model($records[$itemKey] ?? $this->getRelatedModel());
             })
             ->toArray();
     }
@@ -126,9 +123,17 @@ class HasManyRepeater extends Repeater
         return $this->evaluate($this->relationship);
     }
 
-    protected function getRecordForItemKey($key): ?Model
+    protected function getCachedExistingRecords(): Collection
     {
-        return $this->getRelationship()->find($key);
+        if ($this->cachedExistingRecords) {
+            return $this->cachedExistingRecords;
+        }
+
+        $relationship = $this->getRelationship();
+
+        return $this->cachedExistingRecords = $relationship->getResults()->keyBy(
+            $relationship->getLocalKeyName(),
+        );
     }
 
     protected function getRelatedModel(): string

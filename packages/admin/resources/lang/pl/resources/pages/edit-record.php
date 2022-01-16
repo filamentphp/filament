@@ -9,7 +9,25 @@ return [
     'actions' => [
 
         'delete' => [
+
             'label' => 'Usuń',
+
+            'modal' => [
+
+                'heading' => 'Usuń :label',
+
+                'subheading' => 'Czy na pewno chcesz to zrobić?',
+
+                'buttons' => [
+
+                    'delete' => [
+                        'label' => 'Usuń',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'view' => [
@@ -36,30 +54,6 @@ return [
 
     'messages' => [
         'saved' => 'Zapisano',
-    ],
-
-    'modals' => [
-
-        'delete' => [
-
-            'heading' => 'Usuń :label',
-
-            'subheading' => 'Czy na pewno chcesz to zrobić?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Anuluj',
-                ],
-
-                'delete' => [
-                    'label' => 'Usuń',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];

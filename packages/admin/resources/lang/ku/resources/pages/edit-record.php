@@ -9,7 +9,25 @@ return [
     'actions' => [
 
         'delete' => [
+
             'label' => 'بیسڕەوە',
+
+            'modal' => [
+
+                'heading' => 'سڕینەوەی :label',
+
+                'subheading' => 'دڵنیایت دەتەوێت ئەم کارە بکەیت؟',
+
+                'buttons' => [
+
+                    'delete' => [
+                        'label' => 'بیسڕەوە',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'view' => [
@@ -36,30 +54,6 @@ return [
 
     'messages' => [
         'saved' => 'هەڵگیرا',
-    ],
-
-    'modals' => [
-
-        'delete' => [
-
-            'heading' => 'سڕینەوەی :label',
-
-            'subheading' => 'دڵنیایت دەتەوێت ئەم کارە بکەیت؟',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'ڕەتکردنەوە',
-                ],
-
-                'delete' => [
-                    'label' => 'بیسڕەوە',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];

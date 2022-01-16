@@ -9,7 +9,25 @@ return [
     'actions' => [
 
         'delete' => [
+
             'label' => 'Excluir',
+
+            'modal' => [
+
+                'heading' => 'Excluir :label',
+
+                'subheading' => 'Você tem certeza que gostaria de fazer isso?',
+
+                'buttons' => [
+
+                    'delete' => [
+                        'label' => 'Excluir',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'view' => [
@@ -36,30 +54,6 @@ return [
 
     'messages' => [
         'saved' => 'Salvo!',
-    ],
-
-    'modals' => [
-
-        'delete' => [
-
-            'heading' => 'Excluir :label',
-
-            'subheading' => 'Você tem certeza que gostaria de fazer isso?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Cancelar',
-                ],
-
-                'delete' => [
-                    'label' => 'Excluir',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];

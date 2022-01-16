@@ -9,7 +9,25 @@ return [
     'actions' => [
 
         'delete' => [
+
             'label' => 'Smazat',
+
+            'modal' => [
+
+                'heading' => 'Smazat :label',
+
+                'subheading' => 'Opravdu chcete akci provést?',
+
+                'buttons' => [
+
+                    'delete' => [
+                        'label' => 'Smazat',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'view' => [
@@ -36,30 +54,6 @@ return [
 
     'messages' => [
         'saved' => 'Uloženo',
-    ],
-
-    'modals' => [
-
-        'delete' => [
-
-            'heading' => 'Smazat :label',
-
-            'subheading' => 'Opravdu chcete akci provést?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Zrušit',
-                ],
-
-                'delete' => [
-                    'label' => 'Smazat',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];

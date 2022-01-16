@@ -2,18 +2,20 @@
 
 namespace Filament\Pages\Actions\Concerns;
 
+use Closure;
+
 trait HasAction
 {
-    protected ?string $action = null;
+    protected Closure | string | null $action = null;
 
-    public function action(string | null $action): static
+    public function action(Closure | string | null $action): static
     {
         $this->action = $action;
 
         return $this;
     }
 
-    public function getAction(): string | null
+    public function getAction(): Closure | string | null
     {
         return $this->action;
     }
