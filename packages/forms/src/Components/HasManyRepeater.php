@@ -82,10 +82,6 @@ class HasManyRepeater extends Repeater
     {
         $records = $this->getCachedExistingRecords();
 
-        if (! $records) {
-            return;
-        }
-
         $this->state($records->toArray());
     }
 
