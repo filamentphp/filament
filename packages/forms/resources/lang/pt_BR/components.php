@@ -35,7 +35,7 @@ return [
         'buttons' => [
 
             'add' => [
-                'label' => 'Adcionar linha',
+                'label' => 'Adicionar linha',
             ],
 
             'delete' => [
@@ -62,14 +62,14 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Anexar arquivo',
-            'bold' => 'negrito',
+            'bold' => 'Negrito',
             'bullet_list' => 'Lista',
             'code_block' => 'Bloco de código',
             'edit' => 'Editar',
-            'italic' => 'Italico',
+            'italic' => 'Itálico',
             'link' => 'Link',
-            'ordered_list' => 'Lista numerada',
-            'preview' => 'Visualisar',
+            'ordered_list' => 'Lista ordenada',
+            'preview' => 'Visualizar',
             'strike' => 'Tachado',
         ],
 
@@ -78,7 +78,7 @@ return [
     'multi_select' => [
         'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
         'placeholder' => 'Selecione uma opção',
-        'search_prompt' => 'Digite para iniciar sua pesquisa...',
+        'search_prompt' => 'Digite para pesquisar...',
     ],
 
     'repeater' => [

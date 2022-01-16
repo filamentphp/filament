@@ -116,7 +116,7 @@ return [
             ],
 
             'deselect_all' => [
-                'label' => 'Deselecionar todos',
+                'label' => 'Desselecionar todos',
             ],
 
         ],
