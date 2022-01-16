@@ -9,7 +9,25 @@ return [
     'actions' => [
 
         'delete' => [
+
             'label' => 'Löschen',
+
+            'modal' => [
+
+                'heading' => ':label löschen',
+
+                'subheading' => 'Sind Sie sicher, dass Sie das tun wollen?',
+
+                'buttons' => [
+
+                    'delete' => [
+                        'label' => 'Löschen',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'view' => [
@@ -36,30 +54,6 @@ return [
 
     'messages' => [
         'saved' => 'Gespeichert',
-    ],
-
-    'modals' => [
-
-        'delete' => [
-
-            'heading' => ':label löschen',
-
-            'subheading' => 'Sind Sie sicher, dass Sie das tun wollen?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Abbrechen',
-                ],
-
-                'delete' => [
-                    'label' => 'Löschen',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];

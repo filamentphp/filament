@@ -9,7 +9,25 @@ return [
     'actions' => [
 
         'delete' => [
+
             'label' => 'Ta bort',
+
+            'modal' => [
+
+                'heading' => 'Ta bort :label',
+
+                'subheading' => 'Är du säker på att du vill göra det här?',
+
+                'buttons' => [
+
+                    'delete' => [
+                        'label' => 'Ta bort',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'view' => [
@@ -36,30 +54,6 @@ return [
 
     'messages' => [
         'saved' => 'Sparad',
-    ],
-
-    'modals' => [
-
-        'delete' => [
-
-            'heading' => 'Ta bort :label',
-
-            'subheading' => 'Är du säker på att du vill göra det här?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Avbryt',
-                ],
-
-                'delete' => [
-                    'label' => 'Ta bort',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];

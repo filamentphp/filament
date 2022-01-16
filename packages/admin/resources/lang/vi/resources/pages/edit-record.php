@@ -9,7 +9,25 @@ return [
     'actions' => [
 
         'delete' => [
+
             'label' => 'Xóa',
+
+            'modal' => [
+
+                'heading' => 'Xóa :label',
+
+                'subheading' => 'Bạn có chắc muốn thực hiện hành động này?',
+
+                'buttons' => [
+
+                    'delete' => [
+                        'label' => 'Xóa',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'view' => [
@@ -36,30 +54,6 @@ return [
 
     'messages' => [
         'saved' => 'Đã lưu',
-    ],
-
-    'modals' => [
-
-        'delete' => [
-
-            'heading' => 'Xóa :label',
-
-            'subheading' => 'Bạn có chắc muốn thực hiện hành động này?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Hủy',
-                ],
-
-                'delete' => [
-                    'label' => 'Xóa',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];
