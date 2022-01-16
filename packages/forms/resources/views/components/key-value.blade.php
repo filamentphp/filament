@@ -62,7 +62,7 @@
                                     x-model="row.value"
                                     x-on:input="updateState"
                                     {!! ($placeholder = $getValuePlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
-                                    @if ((! $canEditKeys()) || $isDisabled())
+                                    @if ((! $canEditValues()) || $isDisabled())
                                         disabled
                                     @endif
                                     class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
@@ -87,7 +87,7 @@
                 </tbody>
             </table>
 
-            @if ($canAddRows() && $canEditKeys() && (! $isDisabled()))
+            @if ($canAddRows() && (! $isDisabled()))
                 <button
                     x-on:click="addRow"
                     type="button"
