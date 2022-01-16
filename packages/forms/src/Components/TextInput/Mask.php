@@ -270,7 +270,7 @@ class Mask implements Jsonable
 
         if ($this->patternBlocks !== []) {
             $configuration['blocks'] = array_map(
-                fn (Closure $configuration): array => $configuration(new static())->getArrayableConfiguration(),
+                fn (Closure $configuration): array => $configuration(app(static::class))->getArrayableConfiguration(),
                 $this->patternBlocks,
             );
         }

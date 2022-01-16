@@ -22,7 +22,7 @@ class Placeholder extends Component
 
     public static function make(string $name): static
     {
-        $static = new static($name);
+        $static = app(static::class, ['name' => $name]);
         $static->setUp();
 
         return $static;

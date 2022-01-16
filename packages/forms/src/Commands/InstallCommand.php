@@ -16,7 +16,7 @@ class InstallCommand extends Command
     {
         static::updateNpmPackages();
 
-        $filesystem = new Filesystem();
+        $filesystem = app(Filesystem::class);
         $filesystem->delete(resource_path('js/bootstrap.js'));
         $filesystem->copyDirectory(__DIR__ . '/../../stubs/scaffolding', base_path());
 

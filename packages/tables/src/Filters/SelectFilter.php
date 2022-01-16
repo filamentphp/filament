@@ -134,7 +134,7 @@ class SelectFilter extends Filter
 
     protected function getRelationship(): Relation
     {
-        $model = new ($this->getTable()->getModel())();
+        $model = app($this->getTable()->getModel());
 
         return $model->{$this->getRelationshipName()}();
     }

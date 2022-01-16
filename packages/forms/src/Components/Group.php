@@ -13,7 +13,7 @@ class Group extends Component
 
     public static function make(array $schema = []): static
     {
-        $static = new static($schema);
+        $static = app(static::class, ['schema' => $schema]);
         $static->setUp();
 
         return $static;

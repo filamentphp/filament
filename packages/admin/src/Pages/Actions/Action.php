@@ -35,7 +35,7 @@ class Action extends Component implements Htmlable
 
     public static function make(string $name): static
     {
-        $static = new static($name);
+        $static = app(static::class, ['name' => $name]);
         $static->setUp();
 
         return $static;

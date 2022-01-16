@@ -17,7 +17,7 @@ trait Translatable
             throw new Exception("Model [{$model}] must use trait [Spatie\Translatable\HasTranslations].");
         }
 
-        $attributes = (new $model())->getTranslatableAttributes();
+        $attributes = app($model)->getTranslatableAttributes();
 
         if (! count($attributes)) {
             throw new Exception("Model [{$model}] must have [\$translatable] properties defined.");

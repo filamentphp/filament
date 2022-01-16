@@ -13,7 +13,7 @@ class Grid extends Component
 
     public static function make(array | int | null $columns = 2): static
     {
-        $static = new static($columns);
+        $static = app(static::class, ['columns' => $columns]);
         $static->setUp();
 
         return $static;
