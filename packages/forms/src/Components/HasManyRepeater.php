@@ -30,11 +30,12 @@ class HasManyRepeater extends Repeater
             }
 
             $relationship = $component->getRelationship();
+            $existingRecords = $relationship->get();
 
             $recordsToDelete = [];
             $localKeyName = $relationship->getLocalKeyName();
 
-            foreach ($relationship->pluck($localKeyName) as $keyToCheckForDeletion) {
+            foreach ($existingRecords->pluck($localKeyName) as $keyToCheckForDeletion) {
                 if (array_key_exists($keyToCheckForDeletion, $state)) {
                     continue;
                 }
@@ -49,7 +50,7 @@ class HasManyRepeater extends Repeater
             foreach ($childComponentContainers as $itemKey => $item) {
                 $itemData = $item->getState();
 
-                if ($record = $component->getRecordForItemKey($itemKey)) {
+                if ($record = ($existingRecords[$itemKey] ?? null)) {
                     $record->update($itemData);
 
                     continue;
@@ -92,13 +93,15 @@ class HasManyRepeater extends Repeater
 
     public function getChildComponentContainers(bool $withHidden = false): array
     {
+        $records = $this->getRelationship()->get();
+
         return collect($this->getState())
-            ->map(function ($itemData, $itemKey): ComponentContainer {
+            ->map(function ($itemData, $itemKey) use ($records): ComponentContainer {
                 return $this
                     ->getChildComponentContainer()
                     ->getClone()
                     ->statePath($itemKey)
-                    ->model($this->getRecordForItemKey($itemKey) ?? $this->getRelatedModel());
+                    ->model($records[$itemKey] ?? $this->getRelatedModel());
             })
             ->toArray();
     }
@@ -124,11 +127,6 @@ class HasManyRepeater extends Repeater
     public function getRelationshipName(): string
     {
         return $this->evaluate($this->relationship);
-    }
-
-    protected function getRecordForItemKey($key): ?Model
-    {
-        return $this->getRelationship()->find($key);
     }
 
     protected function getRelatedModel(): string
