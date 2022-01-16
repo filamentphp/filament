@@ -11,10 +11,9 @@ use Illuminate\Support\Str;
 /**
  * @property ComponentContainer $form
  */
-class CreateRecord extends Page implements Forms\Contracts\HasForms
+class CreateRecord extends Page
 {
     use Concerns\UsesResourceForm;
-    use Forms\Concerns\InteractsWithForms;
 
     protected static string $view = 'filament::resources.pages.create-record';
 

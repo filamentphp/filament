@@ -97,7 +97,7 @@ trait HasActions
             return null;
         }
 
-        return $this->getCachedAction($this->mountedAction) ?? $this->getCachedTableEmptyStateAction($this->mountedAction) ?? $this->getCachedTableHeaderAction($this->mountedAction);
+        return $this->getCachedAction($this->mountedAction);
     }
 
     public function getMountedActionForm(): ComponentContainer

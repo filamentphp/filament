@@ -9,10 +9,8 @@ use Filament\Pages\Actions\ButtonAction;
 /**
  * @property ComponentContainer $form
  */
-class SettingsPage extends Page implements Forms\Contracts\HasForms
+class SettingsPage extends Page
 {
-    use Forms\Concerns\InteractsWithForms;
-
     protected static string $settings;
 
     protected static string $view = 'filament-spatie-laravel-settings-plugin::pages.settings-page';

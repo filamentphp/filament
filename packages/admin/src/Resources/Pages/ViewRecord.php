@@ -10,13 +10,12 @@ use Illuminate\Support\Str;
 /**
  * @property ComponentContainer $form
  */
-class ViewRecord extends Page implements Forms\Contracts\HasForms
+class ViewRecord extends Page
 {
     use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
     use Concerns\UsesResourceForm;
-    use Forms\Concerns\InteractsWithForms;
 
     protected static string $view = 'filament::resources.pages.view-record';
 

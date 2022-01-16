@@ -11,13 +11,12 @@ use Illuminate\Support\Str;
 /**
  * @property ComponentContainer $form
  */
-class EditRecord extends Page implements Forms\Contracts\HasForms
+class EditRecord extends Page
 {
     use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
     use Concerns\UsesResourceForm;
-    use Forms\Concerns\InteractsWithForms;
 
     protected static string $view = 'filament::resources.pages.edit-record';
 
