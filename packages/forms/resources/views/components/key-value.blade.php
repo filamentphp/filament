@@ -48,7 +48,7 @@
                                     x-model="row.key"
                                     x-on:input="updateState"
                                     {!! ($placeholder = $getKeyPlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
-                                    @if ((! $canEditRows()) || (! $canEditKeys()) || $isDisabled())
+                                    @if ((! $canEditKeys()) || $isDisabled())
                                         disabled
                                     @endif
                                     class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
@@ -61,7 +61,7 @@
                                     x-model="row.value"
                                     x-on:input="updateState"
                                     {!! ($placeholder = $getValuePlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
-                                    @if ((! $canEditRows()) || (! $canEditValues()) || $isDisabled())
+                                    @if ((! $canEditValues()) || $isDisabled())
                                         disabled
                                     @endif
                                     class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
@@ -86,7 +86,7 @@
                 </tbody>
             </table>
 
-            @if ($canAddRows() && $canEditRows() && (! $isDisabled()))
+            @if ($canAddRows() && (! $isDisabled()))
                 <button
                     x-on:click="addRow"
                     type="button"

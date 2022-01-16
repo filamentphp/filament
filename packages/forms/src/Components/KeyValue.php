@@ -14,8 +14,6 @@ class KeyValue extends Field
 
     protected bool | Closure $shouldDisableAddingRows = false;
 
-    protected bool | Closure $shouldDisableEditingRows = false;
-
     protected bool | Closure $shouldDisableDeletingRows = false;
 
     protected bool | Closure $shouldDisableEditingKeys = false;
@@ -75,13 +73,6 @@ class KeyValue extends Field
         return $this;
     }
 
-    public function disableEditingRows(bool | Closure $condition = true): static
-    {
-        $this->shouldDisableEditingRows = $condition;
-
-        return $this;
-    }
-
     public function disableDeletingRows(bool | Closure $condition = true): static
     {
         $this->shouldDisableDeletingRows = $condition;
@@ -134,11 +125,6 @@ class KeyValue extends Field
     public function canAddRows(): bool
     {
         return ! $this->evaluate($this->shouldDisableAddingRows);
-    }
-
-    public function canEditRows(): bool
-    {
-        return ! $this->evaluate($this->shouldDisableEditingRows);
     }
 
     public function canDeleteRows(): bool
