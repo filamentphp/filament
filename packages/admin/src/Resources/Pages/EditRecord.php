@@ -43,8 +43,6 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
         abort_unless(static::getResource()::canEdit($this->record), 403);
 
         $this->fillForm();
-
-        $this->activeRelationManager ??= $this->getRelationManagers()[0] ?? null;
     }
 
     protected function fillForm(): void

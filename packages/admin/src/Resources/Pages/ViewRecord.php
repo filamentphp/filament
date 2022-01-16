@@ -24,6 +24,10 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
 
     public $data;
 
+    protected $queryString = [
+        'activeRelationManager',
+    ];
+
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? __('filament::resources/pages/view-record.breadcrumb');
@@ -38,8 +42,6 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
         abort_unless(static::getResource()::canView($this->record), 403);
 
         $this->fillForm();
-
-        $this->activeRelationManager ??= $this->getRelationManagers()[0] ?? null;
     }
 
     protected function fillForm(): void
