@@ -4,12 +4,15 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class HasManyRepeater extends Repeater
 {
+    protected ?Collection $cachedExistingRecords = null;
+
     protected string | Closure | null $relationship = null;
 
     protected function setUp(): void
@@ -30,10 +33,11 @@ class HasManyRepeater extends Repeater
             }
 
             $relationship = $component->getRelationship();
-            $existingRecords = $relationship->get();
+            $localKeyName = $relationship->getLocalKeyName();
+
+            $existingRecords = $this->getCachedExistingRecords();
 
             $recordsToDelete = [];
-            $localKeyName = $relationship->getLocalKeyName();
 
             foreach ($existingRecords->pluck($localKeyName) as $keyToCheckForDeletion) {
                 if (array_key_exists($keyToCheckForDeletion, $state)) {
@@ -77,23 +81,18 @@ class HasManyRepeater extends Repeater
 
     public function fillFromRelationship(): void
     {
-        $relationship = $this->getRelationship();
-        $relatedModels = $relationship->getResults();
+        $records = $this->getCachedExistingRecords();
 
-        if (! $relatedModels) {
+        if (! $records) {
             return;
         }
 
-        $this->state(
-            $relatedModels->keyBy(
-                $relationship->getLocalKeyName(),
-            )->toArray(),
-        );
+        $this->state($records->toArray());
     }
 
     public function getChildComponentContainers(bool $withHidden = false): array
     {
-        $records = $this->getRelationship()->get();
+        $records = $this->getCachedExistingRecords();
 
         return collect($this->getState())
             ->map(function ($itemData, $itemKey) use ($records): ComponentContainer {
@@ -127,6 +126,19 @@ class HasManyRepeater extends Repeater
     public function getRelationshipName(): string
     {
         return $this->evaluate($this->relationship);
+    }
+
+    protected function getCachedExistingRecords(): Collection
+    {
+        if ($this->cachedExistingRecords) {
+            return $this->cachedExistingRecords;
+        }
+
+        $relationship = $this->getRelationship();
+
+        return $this->cachedExistingRecords = $relationship->getResults()->keyBy(
+            $relationship->getLocalKeyName(),
+        );
     }
 
     protected function getRelatedModel(): string
