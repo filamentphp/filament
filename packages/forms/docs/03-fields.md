@@ -85,6 +85,16 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('password')->hint('[Forgotten your password?](forgotten-password)')
 ```
 
+Hints may also have an icon rendered next to them:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->hint('Translatable')
+    ->hintIcon('heroicon-s-translate')
+```
+
 ### Custom attributes
 
 The HTML of fields can be customized even further, by passing an array of `extraAttributes()`:
