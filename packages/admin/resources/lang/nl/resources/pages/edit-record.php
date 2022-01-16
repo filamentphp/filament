@@ -9,7 +9,25 @@ return [
     'actions' => [
 
         'delete' => [
+
             'label' => 'Verwijderen',
+
+            'modal' => [
+
+                'heading' => 'Verwijder :label',
+
+                'subheading' => 'Weet je zeker dat je dit wilt doen?',
+
+                'buttons' => [
+
+                    'delete' => [
+                        'label' => 'Verwijderen',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'view' => [
@@ -36,30 +54,6 @@ return [
 
     'messages' => [
         'saved' => 'Opgeslagen',
-    ],
-
-    'modals' => [
-
-        'delete' => [
-
-            'heading' => 'Verwijder :label',
-
-            'subheading' => 'Weet je zeker dat je dit wilt doen?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Annuleren',
-                ],
-
-                'delete' => [
-                    'label' => 'Verwijderen',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];

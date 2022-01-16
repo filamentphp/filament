@@ -86,12 +86,12 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
 
     protected function getForms(): array
     {
-        return [
+        return array_merge(parent::getForms(), [
             'form' => $this->makeForm()
                 ->disabled()
                 ->model($this->record)
                 ->schema($this->getResourceForm()->getSchema())
                 ->statePath('data'),
-        ];
+        ]);
     }
 }

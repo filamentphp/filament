@@ -4,14 +4,18 @@ namespace Filament\Pages;
 
 use Closure;
 use Filament\Facades\Filament;
+use Filament\Forms;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class Page extends Component
+class Page extends Component implements Forms\Contracts\HasForms
 {
+    use Concerns\HasActions;
+    use Forms\Concerns\InteractsWithForms;
+
     protected static string $layout = 'filament::components.layouts.app';
 
     protected static ?string $navigationGroup = null;
@@ -182,5 +186,14 @@ class Page extends Component
     protected static function shouldRegisterNavigation(): bool
     {
         return static::$shouldRegisterNavigation;
+    }
+
+    protected function getForms(): array
+    {
+        return [
+            'mountedActionForm' => $this->makeForm()
+                ->schema(($action = $this->getMountedAction()) ? $action->getFormSchema() : [])
+                ->statePath('mountedActionData'),
+        ];
     }
 }

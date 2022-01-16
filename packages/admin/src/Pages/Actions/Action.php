@@ -11,8 +11,8 @@ use Illuminate\View\Component;
 
 class Action extends Component implements Htmlable
 {
+    use Concerns\BelongsToLivewire;
     use Concerns\CanBeHidden;
-    use Concerns\CanSubmitForm;
     use Concerns\HasLabel;
     use Concerns\HasName;
     use Concerns\HasView;

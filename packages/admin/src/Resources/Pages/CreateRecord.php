@@ -134,12 +134,12 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
     protected function getForms(): array
     {
-        return [
+        return array_merge(parent::getForms(), [
             'form' => $this->makeForm()
                 ->model(static::getModel())
                 ->schema($this->getResourceForm()->getSchema())
                 ->statePath('data'),
-        ];
+        ]);
     }
 
     protected function getRedirectUrl(): ?string

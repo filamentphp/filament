@@ -79,12 +79,12 @@ class SettingsPage extends Page implements Forms\Contracts\HasForms
 
     protected function getForms(): array
     {
-        return [
+        return array_merge(parent::getForms(), [
             'form' => $this->makeForm()
                 ->schema($this->getFormSchema())
                 ->statePath('data')
                 ->columns(2),
-        ];
+        ]);
     }
 
     protected function getRedirectUrl(): ?string
