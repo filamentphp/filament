@@ -2,8 +2,6 @@
 
 namespace Filament\Pages\Actions;
 
-use Closure;
-
 class ButtonAction extends Action
 {
     use Concerns\CanSubmitForm;
