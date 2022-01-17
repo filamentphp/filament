@@ -59,7 +59,7 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     {
         $this->app->singletonIf(
             'filament',
-            fn (): FilamentManager => new FilamentManager()
+            fn (): FilamentManager => app(FilamentManager::class),
         );
 
         Facades\Filament::registerPages($this->getPages());
@@ -100,6 +100,8 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         foreach ($this->getWidgets() as $widget) {
             Livewire::component($widget::getName(), $widget);
         }
+
+        $this->registerMacros();
     }
 
     protected function getCommands(): array
@@ -140,5 +142,9 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     protected function getWidgets(): array
     {
         return $this->widgets;
+    }
+
+    protected function registerMacros(): void
+    {
     }
 }

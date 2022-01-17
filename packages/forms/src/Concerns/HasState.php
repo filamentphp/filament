@@ -13,7 +13,7 @@ trait HasState
         foreach ($this->getComponents(withHidden: true) as $component) {
             $component->callAfterStateHydrated();
 
-            foreach ($component->getChildComponentContainers() as $container) {
+            foreach ($component->getChildComponentContainers(withHidden: true) as $container) {
                 $container->callAfterStateHydrated();
             }
         }
@@ -160,7 +160,7 @@ trait HasState
             $component->hydrateDefaultState();
             $component->callAfterStateHydrated();
 
-            foreach ($component->getChildComponentContainers() as $container) {
+            foreach ($component->getChildComponentContainers(withHidden: true) as $container) {
                 $container->hydrateDefaultState();
             }
         }

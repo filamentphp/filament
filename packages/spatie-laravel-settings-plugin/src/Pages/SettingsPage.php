@@ -2,17 +2,14 @@
 
 namespace Filament\Pages;
 
-use Filament\Forms;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
 
 /**
  * @property ComponentContainer $form
  */
-class SettingsPage extends Page implements Forms\Contracts\HasForms
+class SettingsPage extends Page
 {
-    use Forms\Concerns\InteractsWithForms;
-
     protected static string $settings;
 
     protected static string $view = 'filament-spatie-laravel-settings-plugin::pages.settings-page';
@@ -79,12 +76,12 @@ class SettingsPage extends Page implements Forms\Contracts\HasForms
 
     protected function getForms(): array
     {
-        return [
+        return array_merge(parent::getForms(), [
             'form' => $this->makeForm()
                 ->schema($this->getFormSchema())
                 ->statePath('data')
                 ->columns(2),
-        ];
+        ]);
     }
 
     protected function getRedirectUrl(): ?string

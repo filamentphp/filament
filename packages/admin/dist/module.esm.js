@@ -19133,7 +19133,7 @@ var multi_select_default = (Alpine) => {
         let labels = {};
         let areAllLabelsIndexed = true;
         for (let key of this.state) {
-          let label = this.index[key];
+          let label = this.index[key] ?? null;
           if (label === null) {
             areAllLabelsIndexed = false;
             break;

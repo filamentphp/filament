@@ -221,7 +221,7 @@ class Builder extends Field
         return $this->getChildComponentContainer()->getComponents();
     }
 
-    public function getChildComponentContainers(): array
+    public function getChildComponentContainers(bool $withHidden = false): array
     {
         return collect($this->getState())
             ->map(function ($itemData, $itemIndex): ComponentContainer {

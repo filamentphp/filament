@@ -100,7 +100,7 @@ trait CanAttachRecords
         $this->callHook('afterValidate');
         $this->callHook('afterCreateValidate');
 
-        $this->callHook('beforeCreate');
+        $this->callHook('beforeAttach');
 
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
@@ -110,7 +110,7 @@ trait CanAttachRecords
         $record = $relationship->getRelated()->query()->find($data['recordId']);
         $relationship->attach($record, Arr::only($data, $pivotColumns));
 
-        $this->callHook('afterCreate');
+        $this->callHook('afterAttach');
 
         if ($another) {
             $form->fill();

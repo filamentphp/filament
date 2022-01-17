@@ -26,7 +26,7 @@ class Section extends Component implements Contracts\CanConcealComponents
 
     public static function make(string | Closure $heading): static
     {
-        $static = new static($heading);
+        $static = app(static::class, ['heading' => $heading]);
         $static->setUp();
 
         return $static;

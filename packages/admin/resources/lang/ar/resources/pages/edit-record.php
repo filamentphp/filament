@@ -9,7 +9,25 @@ return [
     'actions' => [
 
         'delete' => [
+
             'label' => 'حذف',
+
+            'modal' => [
+
+                'heading' => 'حذف :label',
+
+                'subheading' => 'هل أنت متأكد من القيام بهذا؟',
+
+                'buttons' => [
+
+                    'delete' => [
+                        'label' => 'حذف',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'view' => [
@@ -36,30 +54,6 @@ return [
 
     'messages' => [
         'saved' => 'تم الحفظ',
-    ],
-
-    'modals' => [
-
-        'delete' => [
-
-            'heading' => 'حذف :label',
-
-            'subheading' => 'هل أنت متأكد من القيام بهذا؟',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'إلغاء',
-                ],
-
-                'delete' => [
-                    'label' => 'حذف',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];

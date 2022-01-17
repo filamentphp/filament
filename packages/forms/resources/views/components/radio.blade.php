@@ -4,6 +4,7 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
@@ -11,7 +12,7 @@
         <x-slot name="labelSuffix">
     @endif
             <div {{ $attributes->merge($getExtraAttributes())->class([
-                'gap-2',
+                'gap-2 space-y-2',
                 'flex flex-wrap gap-3' => $isInline(),
             ]) }}>
                 @foreach ($getOptions() as $value => $label)

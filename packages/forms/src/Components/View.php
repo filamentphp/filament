@@ -11,6 +11,6 @@ class View extends Component
 
     public static function make(string $view): static
     {
-        return new static($view);
+        return app(static::class, ['view' => $view]);
     }
 }

@@ -4,6 +4,7 @@ namespace Filament\Resources\RelationManagers;
 
 use Filament\Resources\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
 
@@ -44,18 +45,8 @@ class BelongsToManyRelationManager extends RelationManager
         return $this->resourceTable;
     }
 
-    protected function create(): void
+    protected function handleRecordCreation(array $data): Model
     {
-        $this->callHook('beforeValidate');
-        $this->callHook('beforeCreateValidate');
-
-        $data = $this->getMountedTableActionForm()->getState();
-
-        $this->callHook('afterValidate');
-        $this->callHook('afterCreateValidate');
-
-        $this->callHook('beforeCreate');
-
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
@@ -67,21 +58,11 @@ class BelongsToManyRelationManager extends RelationManager
         $this->getMountedTableActionForm()->model($record)->saveRelationships();
         $relationship->attach($record, $pivotData);
 
-        $this->callHook('afterCreate');
+        return $record;
     }
 
-    protected function save(): void
+    protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $this->callHook('beforeValidate');
-        $this->callHook('beforeEditValidate');
-
-        $data = $this->getMountedTableActionForm()->getState();
-
-        $this->callHook('afterValidate');
-        $this->callHook('afterEditValidate');
-
-        $this->callHook('beforeSave');
-
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
@@ -89,11 +70,13 @@ class BelongsToManyRelationManager extends RelationManager
         $pivotData = Arr::only($data, $pivotColumns);
         $data = Arr::except($data, $pivotColumns);
 
-        $record = $this->getMountedTableActionRecord();
         $record->update($data);
-        $relationship->updateExistingPivot($record, $pivotData);
 
-        $this->callHook('afterSave');
+        if (count($pivotColumns)) {
+            $relationship->updateExistingPivot($record, $pivotData);
+        }
+
+        return $record;
     }
 
     // https://github.com/laravel/framework/issues/4962

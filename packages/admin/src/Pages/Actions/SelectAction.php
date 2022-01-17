@@ -8,7 +8,7 @@ class SelectAction extends Action
 {
     use Concerns\HasId;
 
-    protected string $view = 'filament::components.actions.select-action';
+    protected string $view = 'filament::pages.actions.select-action';
 
     protected array | Arrayable $options = [];
 

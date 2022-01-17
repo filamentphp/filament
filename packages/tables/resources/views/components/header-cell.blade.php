@@ -1,11 +1,12 @@
 @props([
+    'extraAttributes' => [],
     'isSortColumn' => false,
     'name',
     'sortable' => false,
     'sortDirection',
 ])
 
-<th {{ $attributes->class(['px-4 py-2']) }}>
+<th {{ $attributes->merge($extraAttributes)->class(['px-4 py-2']) }}>
     <button
         @if ($sortable)
             wire:click="sortTable('{{ $name }}')"

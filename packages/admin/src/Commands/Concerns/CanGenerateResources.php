@@ -186,7 +186,7 @@ trait CanGenerateResources
             return null;
         }
 
-        $model = new $model();
+        $model = app($model);
 
         if (! ($model instanceof Model)) {
             return null;

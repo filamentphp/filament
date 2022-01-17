@@ -202,7 +202,7 @@ class TextInput extends Field
         }
 
         return $this->evaluate($this->configureMaskUsing, [
-            'mask' => new TextInput\Mask(),
+            'mask' => app(TextInput\Mask::class),
         ]);
     }
 

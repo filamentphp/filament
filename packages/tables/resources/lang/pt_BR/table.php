@@ -85,12 +85,38 @@ return [
         'heading' => 'Sem registros',
     ],
 
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Limpar filtros',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Todos',
+        ],
+
+        'select' => [
+            'placeholder' => 'Todos',
+        ],
+
+    ],
+
     'selection_indicator' => [
+
+        'selected_count' => '1 registro selecionado.|:count registros selecionados.',
 
         'buttons' => [
 
             'select_all' => [
                 'label' => 'Selecione todos os :count',
+            ],
+
+            'deselect_all' => [
+                'label' => 'Desselecionar todos',
             ],
 
         ],

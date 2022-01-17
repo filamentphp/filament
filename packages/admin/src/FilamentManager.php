@@ -204,7 +204,7 @@ class FilamentManager
 
         $provider = config('filament.default_avatar_provider');
 
-        return (new $provider())->get($user);
+        return app($provider)->get($user);
     }
 
     public function getUserName(Model $user): string

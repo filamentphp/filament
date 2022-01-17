@@ -110,6 +110,11 @@ trait InteractsWithTableQuery
         return Str::of($this->getName())->contains('.');
     }
 
+    protected function getRelationshipDisplayColumnName(): string
+    {
+        return (string) Str::of($this->getName())->afterLast('.');
+    }
+
     protected function getRelatedModel(Builder $query): Model
     {
         return $this->getRelationship($query)->getModel();

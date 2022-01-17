@@ -20,6 +20,7 @@ class Column extends Component implements Htmlable
     use Concerns\CanOpenUrl;
     use Concerns\EvaluatesClosures;
     use Concerns\HasExtraAttributes;
+    use Concerns\HasExtraHeaderAttributes;
     use Concerns\HasLabel;
     use Concerns\HasName;
     use Concerns\HasRecord;
@@ -37,7 +38,7 @@ class Column extends Component implements Htmlable
 
     public static function make(string $name): static
     {
-        $static = new static($name);
+        $static = app(static::class, ['name' => $name]);
         $static->setUp();
 
         return $static;

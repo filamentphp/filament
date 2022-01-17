@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages\CreateRecord\Concerns;
 
 use Filament\Resources\Pages\Concerns\HasActiveFormLocaleSelect;
+use Illuminate\Database\Eloquent\Model;
 
 trait Translatable
 {
@@ -24,42 +25,14 @@ trait Translatable
         $this->activeFormLocale = static::getResource()::getDefaultTranslatableLocale();
     }
 
-    public function create(bool $another = false): void
+    protected function handleRecordCreation(array $data): Model
     {
-        $this->callHook('beforeValidate');
-
-        $data = $this->form->getState();
-
-        $this->callHook('afterValidate');
-
-        $data = $this->mutateFormDataBeforeCreate($data);
-
-        $this->callHook('beforeCreate');
-
-        $this->record = static::getModel()::usingLocale(
+        $record = static::getModel()::usingLocale(
             $this->activeFormLocale,
         )->fill($data);
+        $record->save();
 
-        $this->record->save();
-
-        $this->form->model($this->record)->saveRelationships();
-
-        $this->callHook('afterCreate');
-
-        if ($another) {
-            // Ensure that the form record is anonymized so that relationships aren't loaded.
-            $this->form->model($this->record::class);
-
-            $this->fillForm();
-
-            $this->notify('success', __('filament::resources/pages/create-record.messages.created'));
-
-            return;
-        }
-
-        if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl);
-        }
+        return $record;
     }
 
     protected function getActions(): array

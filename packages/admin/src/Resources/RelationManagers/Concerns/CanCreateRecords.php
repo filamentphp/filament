@@ -4,6 +4,7 @@ namespace Filament\Resources\RelationManagers\Concerns;
 
 use Filament\Tables;
 use Filament\Tables\Actions\Modal\Actions\ButtonAction;
+use Illuminate\Database\Eloquent\Model;
 
 trait CanCreateRecords
 {
@@ -44,7 +45,8 @@ trait CanCreateRecords
 
         $this->callHook('beforeCreate');
 
-        $record = $this->getRelationship()->create($data);
+        $record = $this->handleRecordCreation($data);
+
         $form->model($record)->saveRelationships();
 
         $this->mountedTableActionRecord = $record->getKey();
@@ -57,6 +59,11 @@ trait CanCreateRecords
 
             $form->fill();
         }
+    }
+
+    protected function handleRecordCreation(array $data): Model
+    {
+        return $this->getRelationship()->create($data);
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array

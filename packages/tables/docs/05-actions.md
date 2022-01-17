@@ -181,3 +181,18 @@ BulkAction::make('delete')
     ->modalSubheading('Are you sure you\'d like to delete these posts? This cannot be undone.')
     ->modalButton('Yes, delete them')
 ```
+
+## Authorization
+
+You may conditionally hide actions and bulk actions for certain users using the `hidden()` method, passing a closure:
+
+```php
+use App\Models\Post;
+use Filament\Tables\Actions\LinkAction;
+
+LinkAction::make('edit')
+    ->url(fn (Post $record): string => route('posts.edit', $record))
+    ->hidden(fn (Post $record): bool => auth()->user()->can('update', $record))
+```
+
+This is useful for authorization of certain actions to only users who have permission.

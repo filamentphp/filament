@@ -17,7 +17,7 @@ class Tabs extends Component
 
     public static function make(string $label): static
     {
-        $static = new static($label);
+        $static = app(static::class, ['label' => $label]);
         $static->setUp();
 
         return $static;

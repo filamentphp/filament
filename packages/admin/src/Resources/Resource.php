@@ -78,7 +78,7 @@ class Resource
         $model = static::getModel();
 
         return static::getEloquentQuery()
-            ->where((new $model())->getRouteKeyName(), $key)
+            ->where(app($model)->getRouteKeyName(), $key)
             ->first();
     }
 
@@ -90,7 +90,7 @@ class Resource
             return true;
         }
 
-        return Gate::check($action, $record ?? $model);
+        return Gate::forUser(Filament::auth()->user())->check($action, $record ?? $model);
     }
 
     public static function canViewAny(): bool

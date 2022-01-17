@@ -2,7 +2,7 @@
     'actions',
 ])
 
-<x-filament::actions
+<x-filament::pages.actions
     :actions="$actions"
     :align="config('filament.layout.forms.actions.alignment')"
 />

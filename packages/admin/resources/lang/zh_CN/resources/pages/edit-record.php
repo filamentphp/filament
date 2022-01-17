@@ -9,7 +9,25 @@ return [
     'actions' => [
 
         'delete' => [
+
             'label' => '删除',
+
+            'modal' => [
+
+                'heading' => '删除 :label',
+
+                'subheading' => '您确定要这样做吗？',
+
+                'buttons' => [
+
+                    'delete' => [
+                        'label' => '删除',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'view' => [
@@ -36,30 +54,6 @@ return [
 
     'messages' => [
         'saved' => '已保存',
-    ],
-
-    'modals' => [
-
-        'delete' => [
-
-            'heading' => '删除 :label',
-
-            'subheading' => '您确定要这样做吗？',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => '取消',
-                ],
-
-                'delete' => [
-                    'label' => '删除',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];
