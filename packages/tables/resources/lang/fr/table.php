@@ -85,6 +85,26 @@ return [
         'heading' => 'Aucun élément trouvé',
     ],
 
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Réinitialiser',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Tout',
+        ],
+
+        'select' => [
+            'placeholder' => 'Tout',
+        ],
+
+    ],
+
     'selection_indicator' => [
 
         'selected_count' => '1 élément sélectionné.|:count éléments sélectionnés.',
