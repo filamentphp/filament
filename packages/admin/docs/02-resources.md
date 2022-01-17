@@ -572,6 +572,19 @@ protected function mutateFormDataBeforeFill(array $data): array
 }
 ```
 
+### Customizing form redirects
+
+You may specify a custom redirect URL for the Create and Edit pages by overriding the `getRedirectUrl()` method.
+
+For example, the Create form can redirect back to the List page when it is submitted:
+
+```php
+protected function getRedirectUrl(): ?string
+{
+    return $this->getResource()::generateUrl('index');
+}
+```
+
 ### Lifecycle hooks
 
 Hooks may be used to execute methods at various points within a page's lifecycle, like before a form is saved. To set up a hook, create a protected method on the page class with the name of the hook:
