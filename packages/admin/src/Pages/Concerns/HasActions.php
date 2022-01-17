@@ -14,23 +14,7 @@ trait HasActions
 
     public $mountedActionData = [];
 
-    protected array $cachedActions;
-
-    public function bootedHasActions(): void
-    {
-        $this->cacheActions();
-    }
-
-    public function cacheActions(): void
-    {
-        $this->cachedActions = collect($this->getActions())
-            ->mapWithKeys(function (Action $action): array {
-                $action->livewire($this);
-
-                return [$action->getName() => $action];
-            })
-            ->toArray();
-    }
+    protected ?array $cachedActions = null;
 
     public function callMountedAction()
     {
@@ -85,9 +69,24 @@ trait HasActions
         ]);
     }
 
-    public function getCachedActions(): array
+    protected function getCachedActions(): array
     {
+        if ($this->cachedActions === null) {
+            $this->cacheActions();
+        }
+
         return $this->cachedActions;
+    }
+
+    protected function cacheActions(): void
+    {
+        $this->cachedActions = collect($this->getActions())
+            ->mapWithKeys(function (Action $action): array {
+                $action->livewire($this);
+
+                return [$action->getName() => $action];
+            })
+            ->toArray();
     }
 
     public function getMountedAction(): ?Action
