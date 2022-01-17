@@ -35,7 +35,7 @@
             $action = $this->getMountedAction();
         @endphp
 
-        <x-tables::modal :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-action'" :width="$action?->getModalWidth()" display-classes="block">
+        <x-filament::modal id="page-action" :width="$action?->getModalWidth()" display-classes="block">
             @if ($action)
                 @if ($action->isModalCentered())
                     <x-slot name="heading">
@@ -49,9 +49,9 @@
                     @endif
                 @else
                     <x-slot name="header">
-                        <x-tables::modal.heading>
+                        <x-filament::modal.heading>
                             {{ $action->getModalHeading() }}
-                        </x-tables::modal.heading>
+                        </x-filament::modal.heading>
                     </x-slot>
                 @endif
 
@@ -60,14 +60,14 @@
                 @endif
 
                 <x-slot name="footer">
-                    <x-tables::modal.actions :full-width="$action->isModalCentered()">
+                    <x-filament::modal.actions :full-width="$action->isModalCentered()">
                         @foreach ($action->getModalActions() as $modalAction)
                             {{ $modalAction }}
                         @endforeach
-                    </x-tables::modal.actions>
+                    </x-filament::modal.actions>
                 </x-slot>
             @endif
-        </x-tables::modal>
+        </x-filament::modal>
     </form>
 
     {{ $modals }}

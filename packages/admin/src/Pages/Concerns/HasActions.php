@@ -50,7 +50,7 @@ trait HasActions
             return $action->call($data);
         } finally {
             $this->dispatchBrowserEvent('close-modal', [
-                'id' => static::class . '-action',
+                'id' => 'page-action',
             ]);
         }
     }
@@ -81,7 +81,7 @@ trait HasActions
         }
 
         $this->dispatchBrowserEvent('open-modal', [
-            'id' => static::class . '-action',
+            'id' => 'page-action',
         ]);
     }
 
