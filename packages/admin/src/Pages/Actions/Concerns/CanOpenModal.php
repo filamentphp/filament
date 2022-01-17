@@ -93,10 +93,10 @@ trait CanOpenModal
         }
 
         if ($this->isConfirmationRequired()) {
-            return __('filament::pages.actions.modal.buttons.confirm.label');
+            return __('filament::pages/actions.modal.buttons.confirm.label');
         }
 
-        return __('filament::pages.actions.modal.buttons.submit.label');
+        return __('filament::pages/actions.modal.buttons.submit.label');
     }
 
     public function getModalHeading(): string
@@ -111,7 +111,7 @@ trait CanOpenModal
         }
 
         if ($this->isConfirmationRequired()) {
-            return __('filament::pages.actions.modal.requires_confirmation_subheading');
+            return __('filament::pages/actions.modal.requires_confirmation_subheading');
         }
 
         return null;
