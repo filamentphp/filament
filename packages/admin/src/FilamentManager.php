@@ -218,10 +218,10 @@ class FilamentManager
 
     public function getWidgets(): array
     {
-        $widgets = collect($this->widgets)
+        $widgets = array_unique($this->widgets);
+
+        return collect($widgets)
             ->sortBy(fn (string $widget): int => $widget::getSort())
             ->toArray();
-
-        return array_unique($widgets);
     }
 }
