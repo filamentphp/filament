@@ -36,6 +36,7 @@ trait Translatable
         $defaultLocale = $resource::getDefaultTranslatableLocale();
 
         $this->activeFormLocale = in_array($defaultLocale, $availableLocales) ? $defaultLocale : array_intersect($availableLocales, $resourceLocales)[0] ?? $defaultLocale;
+        $this->record->setLocale($this->activeFormLocale);
     }
 
     public function updatedActiveFormLocale(): void
