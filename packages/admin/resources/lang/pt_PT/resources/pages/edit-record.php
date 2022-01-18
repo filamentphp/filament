@@ -2,58 +2,58 @@
 
 return [
 
-	'title' => 'Editar :label',
+    'title' => 'Editar :label',
 
-	'breadcrumb' => 'Editar',
+    'breadcrumb' => 'Editar',
 
-	'actions' => [
+    'actions' => [
 
-		'delete' => [
+        'delete' => [
 
-			'label' => 'Remover',
+            'label' => 'Remover',
 
-			'modal' => [
+            'modal' => [
 
-				'heading' => 'Remover :label',
+                'heading' => 'Remover :label',
 
-				'subheading' => 'Tem certeza que pretende fazer isso?',
+                'subheading' => 'Tem certeza que pretende fazer isso?',
 
-				'buttons' => [
+                'buttons' => [
 
-					'delete' => [
-						'label' => 'Remover',
-					],
+                    'delete' => [
+                        'label' => 'Remover',
+                    ],
 
-				],
+                ],
 
-			],
+            ],
 
-		],
+        ],
 
-		'view' => [
-			'label' => 'Mostrar',
-		],
+        'view' => [
+            'label' => 'Mostrar',
+        ],
 
-	],
+    ],
 
-	'form' => [
+    'form' => [
 
-		'actions' => [
+        'actions' => [
 
-			'cancel' => [
-				'label' => 'Cancelar',
-			],
+            'cancel' => [
+                'label' => 'Cancelar',
+            ],
 
-			'save' => [
-				'label' => 'Guardar',
-			],
+            'save' => [
+                'label' => 'Guardar',
+            ],
 
-		],
+        ],
 
-	],
+    ],
 
-	'messages' => [
-		'saved' => 'Guardado!',
-	],
+    'messages' => [
+        'saved' => 'Guardado!',
+    ],
 
 ];

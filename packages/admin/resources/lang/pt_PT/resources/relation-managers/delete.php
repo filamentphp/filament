@@ -2,32 +2,32 @@
 
 return [
 
-	'action' => [
+    'action' => [
 
-		'label' => 'Remover',
+        'label' => 'Remover',
 
-		'modal' => [
-			'heading' => 'Remover :label',
-		],
+        'modal' => [
+            'heading' => 'Remover :label',
+        ],
 
-		'messages' => [
-			'deleted' => 'Excluído',
-		],
+        'messages' => [
+            'deleted' => 'Excluído',
+        ],
 
-	],
+    ],
 
-	'bulk_action' => [
+    'bulk_action' => [
 
-		'label' => 'Remover selecionado',
+        'label' => 'Remover selecionado',
 
-		'modal' => [
-			'heading' => 'Remover selecionado :label',
-		],
+        'modal' => [
+            'heading' => 'Remover selecionado :label',
+        ],
 
-		'messages' => [
-			'deleted' => 'Removido!',
-		],
+        'messages' => [
+            'deleted' => 'Removido!',
+        ],
 
-	],
+    ],
 
 ];

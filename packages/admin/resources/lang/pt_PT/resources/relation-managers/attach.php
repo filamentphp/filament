@@ -2,40 +2,40 @@
 
 return [
 
-	'action' => [
+    'action' => [
 
-		'label' => 'Vincular',
+        'label' => 'Vincular',
 
-		'modal' => [
+        'modal' => [
 
-			'heading' => 'Vincular :label',
+            'heading' => 'Vincular :label',
 
-			'fields' => [
+            'fields' => [
 
-				'record_ids' => [
-					'label' => 'Registos',
-				],
+                'record_ids' => [
+                    'label' => 'Registos',
+                ],
 
-			],
+            ],
 
-			'actions' => [
+            'actions' => [
 
-				'attach' => [
-					'label' => 'Vincular',
-				],
+                'attach' => [
+                    'label' => 'Vincular',
+                ],
 
-				'attach_and_attach_another' => [
-					'label' => 'Vincular e Vincular outro',
-				],
+                'attach_and_attach_another' => [
+                    'label' => 'Vincular e Vincular outro',
+                ],
 
-			],
+            ],
 
-		],
+        ],
 
-		'messages' => [
-			'attached' => 'Vinculado!',
-		],
+        'messages' => [
+            'attached' => 'Vinculado!',
+        ],
 
-	],
+    ],
 
 ];

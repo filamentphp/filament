@@ -2,12 +2,12 @@
 
 return [
 
-	'direction' => 'ltr',
+    'direction' => 'ltr',
 
-	'buttons' => [
-		'logout' => [
-			'label' => 'Terminar Sessão',
-		],
-	],
+    'buttons' => [
+        'logout' => [
+            'label' => 'Terminar Sessão',
+        ],
+    ],
 
 ];

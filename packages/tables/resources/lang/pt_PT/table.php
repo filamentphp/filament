@@ -2,125 +2,125 @@
 
 return [
 
-	'fields' => [
+    'fields' => [
 
-		'search_query' => [
-			'label' => 'Procurar',
-			'placeholder' => 'Procurar',
-		],
+        'search_query' => [
+            'label' => 'Procurar',
+            'placeholder' => 'Procurar',
+        ],
 
-	],
+    ],
 
-	'pagination' => [
+    'pagination' => [
 
-		'label' => 'Paginação',
+        'label' => 'Paginação',
 
-		'overview' => 'A mostrar :first a :last de :total resultados',
+        'overview' => 'A mostrar :first a :last de :total resultados',
 
-		'fields' => [
+        'fields' => [
 
-			'records_per_page' => [
-				'label' => 'por página',
-			],
+            'records_per_page' => [
+                'label' => 'por página',
+            ],
 
-		],
+        ],
 
-		'buttons' => [
+        'buttons' => [
 
-			'go_to_page' => [
-				'label' => 'Ir para página :page',
-			],
+            'go_to_page' => [
+                'label' => 'Ir para página :page',
+            ],
 
-			'next' => [
-				'label' => 'Próximo',
-			],
+            'next' => [
+                'label' => 'Próximo',
+            ],
 
-			'previous' => [
-				'label' => 'Anterior',
-			],
+            'previous' => [
+                'label' => 'Anterior',
+            ],
 
-		],
+        ],
 
-	],
+    ],
 
-	'buttons' => [
+    'buttons' => [
 
-		'filter' => [
-			'label' => 'Filtrar',
-		],
+        'filter' => [
+            'label' => 'Filtrar',
+        ],
 
-		'open_actions' => [
-			'label' => 'Ações abertas',
-		],
+        'open_actions' => [
+            'label' => 'Ações abertas',
+        ],
 
-	],
+    ],
 
-	'actions' => [
+    'actions' => [
 
-		'modal' => [
+        'modal' => [
 
-			'requires_confirmation_subheading' => 'Tem certeza que pretende fazer isso?',
+            'requires_confirmation_subheading' => 'Tem certeza que pretende fazer isso?',
 
-			'buttons' => [
+            'buttons' => [
 
-				'cancel' => [
-					'label' => 'Cancelar',
-				],
+                'cancel' => [
+                    'label' => 'Cancelar',
+                ],
 
-				'confirm' => [
-					'label' => 'Confirmar',
-				],
+                'confirm' => [
+                    'label' => 'Confirmar',
+                ],
 
-				'submit' => [
-					'label' => 'Enviar para',
-				],
+                'submit' => [
+                    'label' => 'Enviar para',
+                ],
 
-			],
+            ],
 
-		],
+        ],
 
-	],
+    ],
 
-	'empty' => [
-		'heading' => 'Sem registos',
-	],
+    'empty' => [
+        'heading' => 'Sem registos',
+    ],
 
-	'filters' => [
+    'filters' => [
 
-		'buttons' => [
+        'buttons' => [
 
-			'reset' => [
-				'label' => 'Limpar filtros',
-			],
+            'reset' => [
+                'label' => 'Limpar filtros',
+            ],
 
-		],
+        ],
 
-		'multi_select' => [
-			'placeholder' => 'Todos',
-		],
+        'multi_select' => [
+            'placeholder' => 'Todos',
+        ],
 
-		'select' => [
-			'placeholder' => 'Todos',
-		],
+        'select' => [
+            'placeholder' => 'Todos',
+        ],
 
-	],
+    ],
 
-	'selection_indicator' => [
+    'selection_indicator' => [
 
-		'selected_count' => '1 registo selecionado.|:count registos selecionados.',
+        'selected_count' => '1 registo selecionado.|:count registos selecionados.',
 
-		'buttons' => [
+        'buttons' => [
 
-			'select_all' => [
-				'label' => 'Selecionar todos :count',
-			],
+            'select_all' => [
+                'label' => 'Selecionar todos :count',
+            ],
 
-			'deselect_all' => [
-				'label' => 'Desmarcar todos',
-			],
+            'deselect_all' => [
+                'label' => 'Desmarcar todos',
+            ],
 
-		],
+        ],
 
-	],
+    ],
 
 ];

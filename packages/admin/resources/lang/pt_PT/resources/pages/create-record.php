@@ -2,32 +2,32 @@
 
 return [
 
-	'title' => 'Criar :label',
+    'title' => 'Criar :label',
 
-	'breadcrumb' => 'Criar',
+    'breadcrumb' => 'Criar',
 
-	'form' => [
+    'form' => [
 
-		'actions' => [
+        'actions' => [
 
-			'cancel' => [
-				'label' => 'Cancelar',
-			],
+            'cancel' => [
+                'label' => 'Cancelar',
+            ],
 
-			'create' => [
-				'label' => 'Criar',
-			],
+            'create' => [
+                'label' => 'Criar',
+            ],
 
-			'create_and_create_another' => [
-				'label' => 'Criar e criar novo',
-			],
+            'create_and_create_another' => [
+                'label' => 'Criar e criar novo',
+            ],
 
-		],
+        ],
 
-	],
+    ],
 
-	'messages' => [
-		'created' => 'Guardado!',
-	],
+    'messages' => [
+        'created' => 'Guardado!',
+    ],
 
 ];

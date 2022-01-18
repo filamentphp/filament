@@ -2,37 +2,37 @@
 
 return [
 
-	'title' => 'Login',
+    'title' => 'Login',
 
-	'heading' => 'Iniciar sessão',
+    'heading' => 'Iniciar sessão',
 
-	'buttons' => [
+    'buttons' => [
 
-		'submit' => [
-			'label' => 'Login',
-		],
+        'submit' => [
+            'label' => 'Login',
+        ],
 
-	],
+    ],
 
-	'fields' => [
+    'fields' => [
 
-		'email' => [
-			'label' => 'E-mail',
-		],
+        'email' => [
+            'label' => 'E-mail',
+        ],
 
-		'password' => [
-			'label' => 'Senha',
-		],
+        'password' => [
+            'label' => 'Senha',
+        ],
 
-		'remember' => [
-			'label' => 'Manter sessão',
-		],
+        'remember' => [
+            'label' => 'Manter sessão',
+        ],
 
-	],
+    ],
 
-	'messages' => [
-		'failed' => 'As credênciais não correspondem aos nossos registos.',
-		'throttled' => 'Muitas tentativas de login. Por favor, aguarde :seconds segundos para tentar novamente.',
-	],
+    'messages' => [
+        'failed' => 'As credênciais não correspondem aos nossos registos.',
+        'throttled' => 'Muitas tentativas de login. Por favor, aguarde :seconds segundos para tentar novamente.',
+    ],
 
 ];

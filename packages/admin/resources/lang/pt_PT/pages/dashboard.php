@@ -2,6 +2,6 @@
 
 return [
 
-	'title' => 'Painel de Controlo',
+    'title' => 'Painel de Controlo',
 
 ];

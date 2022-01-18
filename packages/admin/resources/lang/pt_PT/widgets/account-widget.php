@@ -2,14 +2,14 @@
 
 return [
 
-	'buttons' => [
+    'buttons' => [
 
-		'logout' => [
-			'label' => 'Terminar Sessão',
-		],
+        'logout' => [
+            'label' => 'Terminar Sessão',
+        ],
 
-	],
+    ],
 
-	'welcome' => 'Bem-vindo, :user',
+    'welcome' => 'Bem-vindo, :user',
 
 ];

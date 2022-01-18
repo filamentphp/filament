@@ -2,38 +2,38 @@
 
 return [
 
-	'breadcrumb' => 'Listar',
+    'breadcrumb' => 'Listar',
 
-	'actions' => [
+    'actions' => [
 
-		'create' => [
-			'label' => 'Novo :label',
-		],
+        'create' => [
+            'label' => 'Novo :label',
+        ],
 
-	],
+    ],
 
-	'table' => [
+    'table' => [
 
-		'actions' => [
+        'actions' => [
 
-			'edit' => [
-				'label' => 'Editar',
-			],
+            'edit' => [
+                'label' => 'Editar',
+            ],
 
-			'view' => [
-				'label' => 'Mostrar',
-			],
+            'view' => [
+                'label' => 'Mostrar',
+            ],
 
-		],
+        ],
 
-		'bulk_actions' => [
+        'bulk_actions' => [
 
-			'delete' => [
-				'label' => 'Remover selecionados',
-			],
+            'delete' => [
+                'label' => 'Remover selecionados',
+            ],
 
-		],
+        ],
 
-	],
+    ],
 
 ];

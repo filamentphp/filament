@@ -2,28 +2,28 @@
 
 return [
 
-	'action' => [
+    'action' => [
 
-		'label' => 'Editar',
+        'label' => 'Editar',
 
-		'modal' => [
+        'modal' => [
 
-			'heading' => 'Editar :label',
+            'heading' => 'Editar :label',
 
-			'actions' => [
+            'actions' => [
 
-				'save' => [
-					'label' => 'Guardar',
-				],
+                'save' => [
+                    'label' => 'Guardar',
+                ],
 
-			],
+            ],
 
-		],
+        ],
 
-		'messages' => [
-			'saved' => 'Guardado!',
-		],
+        'messages' => [
+            'saved' => 'Guardado!',
+        ],
 
-	],
+    ],
 
 ];
