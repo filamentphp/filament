@@ -28,7 +28,6 @@
                         :prefix="$labelPrefix"
                         :required="$required"
                         :suffix="$labelSuffix"
-                        class="flex-1"
                     >
                         {{ $label }}
                     </x-forms::field-wrapper.label>
