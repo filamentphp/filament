@@ -37,7 +37,7 @@
     };
 @endphp
 
-<div>
+<div class="filament-tables-component">
     <x-tables::container>
         @if ($hasTableHeader = ($header || $heading || $headerActions || $isBulkActionsDropdownVisible || $isSearchVisible || $isFiltersDropdownVisible))
             @if ($header)

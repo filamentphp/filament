@@ -5,6 +5,8 @@
     :color="$getColor()"
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
+    class="filament-tables-actions-modal-button-action"
+
 >
     {{ $getLabel() }}
 </x-tables::button>

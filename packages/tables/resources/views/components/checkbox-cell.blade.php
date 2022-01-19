@@ -3,7 +3,7 @@
     'onClick',
 ])
 
-<th {{ $attributes->class(['w-4 px-4 whitespace-nowrap']) }}>
+<th {{ $attributes->class(['w-4 px-4 whitespace-nowrap', 'filament-tables-components-checkbox-cell']) }}>
     <input
         {{ $checked ? 'checked' : null }}
         wire:click="{{ $onClick }}"

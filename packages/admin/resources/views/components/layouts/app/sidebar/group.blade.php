@@ -2,7 +2,7 @@
     'label' => null,
 ])
 
-<li>
+<li class="filament-components-layouts-app-sidebar-group">
     @if ($label)
         <p class="font-bold uppercase text-gray-600 text-xs tracking-wider">
             {{ $label }}

@@ -1,5 +1,5 @@
 <x-filament::layouts.base :title="$title">
-    <div class="flex min-h-screen w-full bg-gray-50 text-gray-900">
+    <div class="flex min-h-screen w-full bg-gray-50 text-gray-900 filament-components-layouts-app">
         <div
             x-data="{}"
             x-cloak

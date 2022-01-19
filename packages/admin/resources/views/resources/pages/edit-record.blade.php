@@ -1,4 +1,4 @@
-<x-filament::page :widget-record="$record">
+<x-filament::page :widget-record="$record" class="filament-resources-pages-edit-record">
     <x-filament::form wire:submit.prevent="save">
         {{ $this->form }}
 

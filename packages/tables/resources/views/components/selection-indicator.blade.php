@@ -5,7 +5,7 @@
     'selectedRecordsCount',
 ])
 
-<tr {{ $attributes->class(['bg-primary-500/10']) }}>
+<tr {{ $attributes->class(['bg-primary-500/10', 'filament-tables-components-selection-indicator']) }}>
     <td class="px-4 py-2 whitespace-nowrap text-sm" colspan="{{ $colspan }}">
         <div>
             <span>

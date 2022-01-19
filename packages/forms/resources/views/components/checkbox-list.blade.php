@@ -82,6 +82,7 @@
         '2xl:grid-cols-10' => $getColumns('2xl') === 10,
         '2xl:grid-cols-11' => $getColumns('2xl') === 11,
         '2xl:grid-cols-12' => $getColumns('2xl') === 12,
+        'filament-forms-components-checkbox-list',
     ])>
         @foreach ($getOptions() as $optionValue => $optionLabel)
             <label class="flex items-center space-x-3">

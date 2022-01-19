@@ -7,7 +7,7 @@
     :hint-icon="$getHintIcon()"
     :state-path="$getStatePath()"
 >
-    <div {{ $attributes->merge($getExtraAttributes()) }}>
+    <div {{ $attributes->merge($getExtraAttributes())->class('filament-forms-components-') }}>
         {{ $getContent() }}
     </div>
 </x-forms::field-wrapper>

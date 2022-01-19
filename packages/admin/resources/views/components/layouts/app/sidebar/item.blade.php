@@ -4,7 +4,7 @@
     'url',
 ])
 
-<li>
+<li class="filament-components-layouts-app-sidebar-item">
     <a
         href="{{ $url }}"
         @class([

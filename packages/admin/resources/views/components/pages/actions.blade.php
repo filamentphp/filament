@@ -22,6 +22,7 @@
                     'right' => 'justify-end',
                     default => 'justify-start',
                 },
+                'filament-components-pages-actions',
             ]) }}
         >
             @foreach ($actions as $action)
