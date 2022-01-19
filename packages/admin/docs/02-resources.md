@@ -581,7 +581,7 @@ For example, the Create form can redirect back to the List page when it is submi
 ```php
 protected function getRedirectUrl(): ?string
 {
-    return $this->getResource()::generateUrl('index');
+    return $this->getResource()::getUrl('index');
 }
 ```
 

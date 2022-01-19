@@ -85,6 +85,26 @@ return [
         'heading' => 'لا توجد سجلات',
     ],
 
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'إعادة ضبط الفلترة',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'الكل',
+        ],
+
+        'select' => [
+            'placeholder' => 'الكل',
+        ],
+
+    ],
+
     'selection_indicator' => [
 
         'selected_count' => 'تم تحديد سجل واحد.|:count سجل/سجلات تم تحديدها.',
