@@ -4,31 +4,31 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c7aafc9a0aeee38c9ebf1114c2cbf0cf",
+    "content-hash": "63c716e9efaf6a89e91b463795e6d484",
     "packages": [],
     "packages-dev": [
         {
             "name": "akaunting/laravel-money",
-            "version": "1.2.3",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/akaunting/laravel-money.git",
-                "reference": "e97cbb9735540fac995e5e0b17395ef4ba33ac38"
+                "reference": "28bc67ac2c8eaab228ca15ce3e827202e4224196"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/akaunting/laravel-money/zipball/e97cbb9735540fac995e5e0b17395ef4ba33ac38",
-                "reference": "e97cbb9735540fac995e5e0b17395ef4ba33ac38",
+                "url": "https://api.github.com/repos/akaunting/laravel-money/zipball/28bc67ac2c8eaab228ca15ce3e827202e4224196",
+                "reference": "28bc67ac2c8eaab228ca15ce3e827202e4224196",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": ">=5.4",
-                "illuminate/view": ">=5.4",
-                "php": ">=5.6.4"
+                "illuminate/support": ">=8.0",
+                "illuminate/view": ">=8.0",
+                "php": ">=8.0"
             },
             "require-dev": {
-                "mockery/mockery": ">=1.0",
-                "phpunit/phpunit": ">=5.7"
+                "mockery/mockery": ">=1.4",
+                "phpunit/phpunit": ">=9.0"
             },
             "type": "library",
             "extra": {
@@ -68,9 +68,9 @@
             ],
             "support": {
                 "issues": "https://github.com/akaunting/laravel-money/issues",
-                "source": "https://github.com/akaunting/laravel-money/tree/1.2.3"
+                "source": "https://github.com/akaunting/laravel-money/tree/2.0.0"
             },
-            "time": "2021-09-28T06:19:54+00:00"
+            "time": "2022-01-18T22:24:58+00:00"
         },
         {
             "name": "aws/aws-crt-php",
