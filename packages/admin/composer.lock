@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2e60d61ffe4fe043cbbc0c1e25f5d372",
+    "content-hash": "d5b15c32d49f8d60dc5a7fa48a45239b",
     "packages": [
         {
             "name": "akaunting/laravel-money",
@@ -334,25 +334,25 @@
         },
         {
             "name": "danharrin/livewire-rate-limiting",
-            "version": "v0.3.0",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danharrin/livewire-rate-limiting.git",
-                "reference": "c97041cd4f94168d5077d4463062e681d057e00a"
+                "reference": "b99facf5b607fb0cde92a6f254f437295339f7de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danharrin/livewire-rate-limiting/zipball/c97041cd4f94168d5077d4463062e681d057e00a",
-                "reference": "c97041cd4f94168d5077d4463062e681d057e00a",
+                "url": "https://api.github.com/repos/danharrin/livewire-rate-limiting/zipball/b99facf5b607fb0cde92a6f254f437295339f7de",
+                "reference": "b99facf5b607fb0cde92a6f254f437295339f7de",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "^8.0",
-                "php": "^7.2|^8.0"
+                "illuminate/support": "^8.0|^9.0",
+                "php": "^8.0"
             },
             "require-dev": {
                 "livewire/livewire": "^2.3",
-                "orchestra/testbench": "^6.2",
+                "orchestra/testbench": "^6.2|^7.0",
                 "phpunit/phpunit": "^9.4",
                 "symplify/monorepo-builder": "^9.0"
             },
@@ -384,7 +384,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-05-17T08:01:19+00:00"
+            "time": "2022-01-21T11:26:58+00:00"
         },
         {
             "name": "doctrine/inflector",
