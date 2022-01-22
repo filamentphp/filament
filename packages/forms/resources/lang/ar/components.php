@@ -86,7 +86,7 @@ return [
         'buttons' => [
 
             'create_item' => [
-                'label' => 'اضافة :label',
+                'label' => 'اضافة الي :label',
             ],
 
             'delete_item' => [
