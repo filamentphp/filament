@@ -84,15 +84,7 @@ class BelongsToSelect extends Select
 
             $query = strtolower($query);
 
-            /** @var Connection $databaseConnection */
-            $databaseConnection = $relationshipQuery->getConnection();
-
-            $searchOperator = match ($databaseConnection->getDriverName()) {
-                'pgsql' => 'ilike',
-                default => 'like',
-            };
-
-            return $this->applySearchConstraint($relationshipQuery,$query)
+            return $this->applySearchConstraint($relationshipQuery, $query)
                 ->limit(50)
                 ->pluck($component->getDisplayColumnName(), $relationship->getOwnerKeyName())
                 ->toArray();
@@ -126,16 +118,8 @@ class BelongsToSelect extends Select
         return $this;
     }
 
-    public function applySearchConstraint(Builder $query, string $searchQuery, bool &$isFirst = true): Builder
+    protected function applySearchConstraint(Builder $query, string $searchQuery): Builder
     {
-        if ($this->isHidden()) {
-            return $query;
-        }
-
-        if (! $this->isSearchable()) {
-            return $query;
-        }
-
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
 
@@ -148,10 +132,9 @@ class BelongsToSelect extends Select
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
             $query->{$whereClause}(
-                    $searchColumnName,
-                    $searchOperator,
-                    "%{$searchQuery}%",
-
+                $searchColumnName,
+                $searchOperator,
+                "%{$searchQuery}%",
             );
 
             $isFirst = false;

@@ -22,7 +22,7 @@ class Select extends Field
 
     protected bool | Closure $isSearchable = false;
 
-    protected ?array $searchColumns = [];
+    protected ?array $searchColumns = null;
 
     protected array | Arrayable | Closure $options = [];
 
@@ -94,7 +94,7 @@ class Select extends Field
         return $this;
     }
 
-    public function searchable(bool | array $condition = true): static
+    public function searchable(bool | array | Closure $condition = true): static
     {
         if (is_array($condition)) {
             $this->isSearchable = true;
