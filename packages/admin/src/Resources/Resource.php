@@ -78,7 +78,7 @@ class Resource
         $model = static::getModel();
 
         return static::getEloquentQuery()
-            ->where((new $model())->getRouteKeyName(), $key)
+            ->where(app($model)->getRouteKeyName(), $key)
             ->first();
     }
 

@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Forms;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Model;
@@ -11,13 +10,12 @@ use Illuminate\Support\Str;
 /**
  * @property ComponentContainer $form
  */
-class EditRecord extends Page implements Forms\Contracts\HasForms
+class EditRecord extends Page
 {
     use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
     use Concerns\UsesResourceForm;
-    use Forms\Concerns\InteractsWithForms;
 
     protected static string $view = 'filament::resources.pages.edit-record';
 
@@ -43,8 +41,6 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
         abort_unless(static::getResource()::canEdit($this->record), 403);
 
         $this->fillForm();
-
-        $this->activeRelationManager ??= $this->getRelationManagers()[0] ?? null;
     }
 
     protected function fillForm(): void
@@ -142,7 +138,11 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
     {
         return ButtonAction::make('delete')
             ->label(__('filament::resources/pages/edit-record.actions.delete.label'))
-            ->action('openDeleteModal')
+            ->requiresConfirmation()
+            ->modalHeading(__('filament::resources/pages/edit-record.actions.delete.modal.heading', ['label' => $this->getRecordTitle() ?? static::getResource()::getLabel()]))
+            ->modalSubheading(__('filament::resources/pages/edit-record.actions.delete.modal.subheading'))
+            ->modalButton(__('filament::resources/pages/edit-record.actions.delete.modal.buttons.delete.label'))
+            ->action('delete')
             ->color('danger');
     }
 
@@ -188,12 +188,12 @@ class EditRecord extends Page implements Forms\Contracts\HasForms
 
     protected function getForms(): array
     {
-        return [
+        return array_merge(parent::getForms(), [
             'form' => $this->makeForm()
                 ->model($this->record)
                 ->schema($this->getResourceForm()->getSchema())
                 ->statePath('data'),
-        ];
+        ]);
     }
 
     protected function getRedirectUrl(): ?string

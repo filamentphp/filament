@@ -18,7 +18,7 @@ class Form
 
     public static function make(): static
     {
-        return new static();
+        return app(static::class);
     }
 
     public function columns(array | int | null $columns): static

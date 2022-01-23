@@ -18,6 +18,8 @@ class KeyValue extends Field
 
     protected bool | Closure $shouldDisableEditingKeys = false;
 
+    protected bool | Closure $shouldDisableEditingValues = false;
+
     protected string | Closure | null $deleteButtonLabel = null;
 
     protected string | Closure | null $keyLabel = null;
@@ -85,6 +87,13 @@ class KeyValue extends Field
         return $this;
     }
 
+    public function disableEditingValues(bool | Closure $condition = true): static
+    {
+        $this->shouldDisableEditingValues = $condition;
+
+        return $this;
+    }
+
     public function keyLabel(string | Closure | null $label): static
     {
         $this->keyLabel = $label;
@@ -126,6 +135,11 @@ class KeyValue extends Field
     public function canEditKeys(): bool
     {
         return ! $this->evaluate($this->shouldDisableEditingKeys);
+    }
+
+    public function canEditValues(): bool
+    {
+        return ! $this->evaluate($this->shouldDisableEditingValues);
     }
 
     public function getAddButtonLabel(): string

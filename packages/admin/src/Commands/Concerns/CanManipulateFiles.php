@@ -22,7 +22,7 @@ trait CanManipulateFiles
 
     protected function copyStubToApp(string $stub, string $targetPath, array $replacements = []): void
     {
-        $filesystem = new Filesystem();
+        $filesystem = app(Filesystem::class);
 
         if (! $this->fileExists($stubPath = base_path("stubs/filament/{$stub}.stub"))) {
             $stubPath = __DIR__ . "/../../../stubs/{$stub}.stub";
@@ -41,14 +41,14 @@ trait CanManipulateFiles
 
     protected function fileExists(string $path): bool
     {
-        $filesystem = new Filesystem();
+        $filesystem = app(Filesystem::class);
 
         return $filesystem->exists($path);
     }
 
     protected function writeFile(string $path, string $contents): void
     {
-        $filesystem = new Filesystem();
+        $filesystem = app(Filesystem::class);
 
         $filesystem->ensureDirectoryExists(
             (string) Str::of($path)

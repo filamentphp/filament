@@ -2,10 +2,107 @@
 
 return [
 
+    'builder' => [
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => 'Adicionar em :label',
+            ],
+
+            'create_item_between' => [
+                'label' => 'Adicionar entre',
+            ],
+
+            'delete_item' => [
+                'label' => 'Excluír',
+            ],
+
+            'move_item_down' => [
+                'label' => 'Mover para baixo',
+            ],
+
+            'move_item_up' => [
+                'label' => 'Mover para cima',
+            ],
+
+        ],
+
+    ],
+
+    'key_value' => [
+
+        'buttons' => [
+
+            'add' => [
+                'label' => 'Adicionar linha',
+            ],
+
+            'delete' => [
+                'label' => 'Excluír linha',
+            ],
+
+        ],
+
+        'fields' => [
+
+            'key' => [
+                'label' => 'Chave',
+            ],
+
+            'value' => [
+                'label' => 'Valor',
+            ],
+
+        ],
+
+    ],
+
+    'markdown_editor' => [
+
+        'toolbar_buttons' => [
+            'attach_files' => 'Anexar arquivo',
+            'bold' => 'Negrito',
+            'bullet_list' => 'Lista',
+            'code_block' => 'Bloco de código',
+            'edit' => 'Editar',
+            'italic' => 'Itálico',
+            'link' => 'Link',
+            'ordered_list' => 'Lista ordenada',
+            'preview' => 'Visualizar',
+            'strike' => 'Tachado',
+        ],
+
+    ],
+
     'multi_select' => [
         'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
         'placeholder' => 'Selecione uma opção',
-        'search_prompt' => 'Sem opções disponívels.',
+        'search_prompt' => 'Digite para pesquisar...',
+    ],
+
+    'repeater' => [
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => 'Adicionar em :label',
+            ],
+
+            'delete_item' => [
+                'label' => 'Excluír',
+            ],
+
+            'move_item_down' => [
+                'label' => 'Mover para baixo',
+            ],
+
+            'move_item_up' => [
+                'label' => 'Mover para cima',
+            ],
+
+        ],
+
     ],
 
     'rich_editor' => [

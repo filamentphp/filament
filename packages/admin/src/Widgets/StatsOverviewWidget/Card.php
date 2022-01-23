@@ -35,7 +35,7 @@ class Card extends Component implements Htmlable
 
     public static function make(string $label, $value): static
     {
-        return new static($label, $value);
+        return app(static::class, ['label' => $label, 'value' => $value]);
     }
 
     public function chartColor(?string $color): static

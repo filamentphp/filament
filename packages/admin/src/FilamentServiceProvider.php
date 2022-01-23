@@ -66,7 +66,7 @@ class FilamentServiceProvider extends PackageServiceProvider
     public function packageRegistered(): void
     {
         $this->app->singleton('filament', function (): FilamentManager {
-            return new FilamentManager();
+            return app(FilamentManager::class);
         });
 
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
@@ -94,7 +94,7 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     protected function discoverPages(): void
     {
-        $filesystem = new Filesystem();
+        $filesystem = app(Filesystem::class);
 
         Filament::registerPages(config('filament.pages.register', []));
 
@@ -114,7 +114,7 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     protected function discoverResources(): void
     {
-        $filesystem = new Filesystem();
+        $filesystem = app(Filesystem::class);
 
         Filament::registerResources(config('filament.resources.register', []));
 
@@ -134,7 +134,7 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     protected function discoverWidgets(): void
     {
-        $filesystem = new Filesystem();
+        $filesystem = app(Filesystem::class);
 
         Filament::registerWidgets(config('filament.widgets.register', []));
 
@@ -188,7 +188,7 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     protected function registerLivewireComponentDirectory(string $directory, string $namespace, string $aliasPrefix = ''): void
     {
-        $filesystem = new Filesystem();
+        $filesystem = app(Filesystem::class);
 
         if (! $filesystem->isDirectory($directory)) {
             return;

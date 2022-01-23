@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Forms;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Model;
@@ -11,10 +10,9 @@ use Illuminate\Support\Str;
 /**
  * @property ComponentContainer $form
  */
-class CreateRecord extends Page implements Forms\Contracts\HasForms
+class CreateRecord extends Page
 {
     use Concerns\UsesResourceForm;
-    use Forms\Concerns\InteractsWithForms;
 
     protected static string $view = 'filament::resources.pages.create-record';
 
@@ -66,6 +64,7 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
         if ($another) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
             $this->form->model($this->record::class);
+            $this->record = null;
 
             $this->fillForm();
 
@@ -134,12 +133,12 @@ class CreateRecord extends Page implements Forms\Contracts\HasForms
 
     protected function getForms(): array
     {
-        return [
+        return array_merge(parent::getForms(), [
             'form' => $this->makeForm()
                 ->model(static::getModel())
                 ->schema($this->getResourceForm()->getSchema())
                 ->statePath('data'),
-        ];
+        ]);
     }
 
     protected function getRedirectUrl(): ?string

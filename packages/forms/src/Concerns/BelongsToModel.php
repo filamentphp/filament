@@ -70,6 +70,6 @@ trait BelongsToModel
             return $model;
         }
 
-        return new $model();
+        return app($model);
     }
 }

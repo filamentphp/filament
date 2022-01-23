@@ -40,7 +40,7 @@ class ComponentContainer extends ViewComponent implements Htmlable
 
     public static function make(HasForms $livewire): static
     {
-        return new static($livewire);
+        return app(static::class, ['livewire' => $livewire]);
     }
 
     public function toHtml(): string

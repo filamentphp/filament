@@ -20,7 +20,7 @@ class Field extends Component implements Contracts\HasValidationRules
 
     public static function make(string $name): static
     {
-        $static = new static($name);
+        $static = app(static::class, ['name' => $name]);
         $static->setUp();
 
         return $static;

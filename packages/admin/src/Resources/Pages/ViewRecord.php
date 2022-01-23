@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Forms;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
 use Illuminate\Support\Str;
@@ -10,19 +9,22 @@ use Illuminate\Support\Str;
 /**
  * @property ComponentContainer $form
  */
-class ViewRecord extends Page implements Forms\Contracts\HasForms
+class ViewRecord extends Page
 {
     use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
     use Concerns\UsesResourceForm;
-    use Forms\Concerns\InteractsWithForms;
 
     protected static string $view = 'filament::resources.pages.view-record';
 
     public $record;
 
     public $data;
+
+    protected $queryString = [
+        'activeRelationManager',
+    ];
 
     public function getBreadcrumb(): string
     {
@@ -38,8 +40,6 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
         abort_unless(static::getResource()::canView($this->record), 403);
 
         $this->fillForm();
-
-        $this->activeRelationManager ??= $this->getRelationManagers()[0] ?? null;
     }
 
     protected function fillForm(): void
@@ -84,12 +84,12 @@ class ViewRecord extends Page implements Forms\Contracts\HasForms
 
     protected function getForms(): array
     {
-        return [
+        return array_merge(parent::getForms(), [
             'form' => $this->makeForm()
                 ->disabled()
                 ->model($this->record)
                 ->schema($this->getResourceForm()->getSchema())
                 ->statePath('data'),
-        ];
+        ]);
     }
 }

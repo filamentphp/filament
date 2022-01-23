@@ -8,7 +8,7 @@
         @if ($header = $this->getHeader())
             {{ $header }}
         @elseif ($heading = $this->getHeading())
-            <x-filament::header :actions="$this->getActions()">
+            <x-filament::header :actions="$this->getCachedActions()">
                 <x-slot name="heading">
                     {{ $heading }}
                 </x-slot>
@@ -29,6 +29,46 @@
             {{ $footer }}
         @endif
     </div>
+
+    <form wire:submit.prevent="callMountedAction">
+        @php
+            $action = $this->getMountedAction();
+        @endphp
+
+        <x-filament::modal id="page-action" :width="$action?->getModalWidth()" display-classes="block">
+            @if ($action)
+                @if ($action->isModalCentered())
+                    <x-slot name="heading">
+                        {{ $action->getModalHeading() }}
+                    </x-slot>
+
+                    @if ($subheading = $action->getModalSubheading())
+                        <x-slot name="subheading">
+                            {{ $subheading }}
+                        </x-slot>
+                    @endif
+                @else
+                    <x-slot name="header">
+                        <x-filament::modal.heading>
+                            {{ $action->getModalHeading() }}
+                        </x-filament::modal.heading>
+                    </x-slot>
+                @endif
+
+                @if ($action->hasFormSchema())
+                    {{ $this->getMountedActionForm() }}
+                @endif
+
+                <x-slot name="footer">
+                    <x-filament::modal.actions :full-width="$action->isModalCentered()">
+                        @foreach ($action->getModalActions() as $modalAction)
+                            {{ $modalAction }}
+                        @endforeach
+                    </x-filament::modal.actions>
+                </x-slot>
+            @endif
+        </x-filament::modal>
+    </form>
 
     {{ $modals }}
 

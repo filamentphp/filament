@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns\Concerns;
 
 use BackedEnum;
 use Closure;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 
 trait HasState
@@ -33,11 +34,9 @@ trait HasState
 
     public function getState()
     {
-        if ($this->getStateUsing) {
-            $state = $this->evaluate($this->getStateUsing);
-        } else {
-            $state = Arr::get($this->getRecord(), $this->getName());
-        }
+        $state = $this->getStateUsing ?
+            $this->evaluate($this->getStateUsing) :
+            $this->getStateFromRecord();
 
         if (
             interface_exists(BackedEnum::class) &&
@@ -51,6 +50,50 @@ trait HasState
             $state = value($this->getDefaultState());
         }
 
+        if (is_array($state)) {
+            $state = $this->mutateArrayState($state);
+        }
+
+        return $state;
+    }
+
+    protected function getStateFromRecord()
+    {
+        $record = $this->getRecord();
+
+        $state = Arr::get($record, $this->getName());
+
+        if ($state !== null) {
+            return $state;
+        }
+
+        if (! $this->queriesRelationships()) {
+            return null;
+        }
+
+        $relationshipName = $this->getRelationshipName();
+
+        if (! method_exists($record, $relationshipName)) {
+            return null;
+        }
+
+        $relationship = $record->{$relationshipName}();
+
+        if (! $relationship instanceof Relation) {
+            return null;
+        }
+
+        $state = $relationship->pluck($this->getRelationshipDisplayColumnName());
+
+        if (! count($state)) {
+            return null;
+        }
+
+        return $state->toArray();
+    }
+
+    protected function mutateArrayState(array $state)
+    {
         return $state;
     }
 }

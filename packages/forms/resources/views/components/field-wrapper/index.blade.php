@@ -6,6 +6,7 @@
     'labelSuffix' => null,
     'helperText' => null,
     'hint' => null,
+    'hintIcon' => null,
     'required' => false,
     'statePath',
 ])
@@ -32,9 +33,9 @@
                     </x-forms::field-wrapper.label>
                 @endif
 
-                @if ($hint)
-                    <x-forms::field-wrapper.hint>
-                        {!! \Illuminate\Support\Str::markdown($hint) !!}
+                @if ($hint || $hintIcon)
+                    <x-forms::field-wrapper.hint :icon="$hintIcon">
+                        {!! filled($hint) ? \Illuminate\Support\Str::markdown($hint) : null !!}
                     </x-forms::field-wrapper.hint>
                 @endif
             </div>

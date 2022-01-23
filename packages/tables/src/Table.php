@@ -57,7 +57,7 @@ class Table extends ViewComponent implements Htmlable
 
     public static function make(HasTable $livewire): static
     {
-        return new static($livewire);
+        return app(static::class, ['livewire' => $livewire]);
     }
 
     public function description(?string $description): static

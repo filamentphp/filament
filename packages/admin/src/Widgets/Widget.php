@@ -11,6 +11,8 @@ class Widget extends Component
 
     protected static string $view;
 
+    protected int | string | array $columnSpan = 1;
+
     public static function canView(): bool
     {
         return true;
@@ -19,6 +21,11 @@ class Widget extends Component
     public static function getSort(): int
     {
         return static::$sort ?? -1;
+    }
+
+    protected function getColumnSpan(): int | string | array
+    {
+        return $this->columnSpan;
     }
 
     protected function getViewData(): array

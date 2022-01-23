@@ -84,6 +84,64 @@ protected function getActions(): array
 }
 ```
 
+### Modals
+
+Actions may require additional confirmation or form information before they run. You may open a modal before an action is executed to do this.
+
+#### Confirmation modals
+
+You may require confirmation before an action is run using the `requiresConfirmation()` method. This is useful for particularly destructive actions, such as those that delete records.
+
+```php
+use Filament\Pages\Actions\ButtonAction;
+
+ButtonAction::make('delete')
+    ->action(fn () => $this->record->delete())
+    ->requiresConfirmation()
+```
+
+> Note: The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` callback.
+
+#### Custom forms
+
+You may also render a form in this modal to collect extra information from the user before the action runs.
+
+You may use components from the [Form Builder](/docs/forms/fields) to create custom action modal forms. The data from the form is available in the `$data` array of the `action()` callback:
+
+```php
+use App\Modals\User;
+use Filament\Forms;
+use Filament\Pages\Actions\ButtonAction;
+
+ButtonAction::make('updateAuthor')
+    ->action(function (array $data): void {
+        $this->record->author()->associate($data['authorId']);
+        $this->record->save();
+    })
+    ->form([
+        Forms\Components\Select::make('authorId')
+            ->label('Author')
+            ->options(User::query()->pluck('name', 'id'))
+            ->required(),
+    ])
+```
+
+#### Setting a modal heading, subheading, and button label
+
+You may customize the heading, subheading and button label of the modal:
+
+```php
+use Filament\Pages\Actions\ButtonAction;
+
+ButtonAction::make('delete')
+    ->action(fn () => $this->record->delete())
+    ->requiresConfirmation()
+    ->modalHeading('Delete posts')
+    ->modalSubheading('Are you sure you\'d like to delete these posts? This cannot be undone.')
+    ->modalButton('Yes, delete them')
+```
+
+
 ## Conditionally hiding pages in navigation
 
 You can prevent pages from appearing in the menu by overriding the `shouldRegisterNavigation()` method in your Page class. This is useful if you want to control which users can see the page in the sidebar.

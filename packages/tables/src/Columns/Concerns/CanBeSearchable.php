@@ -8,7 +8,7 @@ trait CanBeSearchable
 {
     protected bool $isSearchable = false;
 
-    protected ?array $searchColumns = [];
+    protected ?array $searchColumns = null;
 
     public function searchable(bool | array $condition = true): static
     {

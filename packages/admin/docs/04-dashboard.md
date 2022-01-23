@@ -286,3 +286,11 @@ By default, two widgets are displayed on the dashboard. These widgets can be dis
     'register' => [],
 ],
 ```
+
+## Customizing widget width
+
+You may customize the width of a widget using the `$columnSpan` property. You may use a number between 1 and 12 to indicate how many columns the widget should span, or `full` for all of them:
+
+```php
+protected int | string | array $columnSpan = 'full';
+```
