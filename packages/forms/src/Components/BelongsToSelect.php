@@ -128,6 +128,8 @@ class BelongsToSelect extends Select
             default => 'like',
         };
 
+        $isFirst = true;
+
         foreach ($this->getSearchColumns() as $searchColumnName) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
