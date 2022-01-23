@@ -23,6 +23,8 @@ class FilamentManager
 
     protected array $resources = [];
 
+    protected array $beforeScripts = [];
+
     protected array $scripts = [];
 
     protected array $scriptData = [];
@@ -71,9 +73,13 @@ class FilamentManager
         $this->resources = array_merge($this->resources, $resources);
     }
 
-    public function registerScripts(array $scripts): void
+    public function registerScripts(array $scripts, bool $before = false): void
     {
-        $this->scripts = array_merge($this->scripts, $scripts);
+        if ($before) {
+            $this->beforeScripts = array_merge($this->beforeScripts, $scripts);
+        } else {
+            $this->scripts = array_merge($this->scripts, $scripts);
+        }
     }
 
     public function registerScriptData(array $data): void
@@ -103,18 +109,24 @@ class FilamentManager
 
     public function getNavigation(): array
     {
-        if (! $this->isNavigationMounted) {
+        if (!$this->isNavigationMounted) {
             $this->mountNavigation();
         }
 
         $groupedItems = collect($this->navigationItems)
-            ->sortBy(fn (Navigation\NavigationItem $item): int => $item->getSort())
-            ->groupBy(fn (Navigation\NavigationItem $item): ?string => $item->getGroup());
+            ->sortBy(
+                fn(Navigation\NavigationItem $item): int => $item->getSort()
+            )
+            ->groupBy(
+                fn(
+                    Navigation\NavigationItem $item
+                ): ?string => $item->getGroup()
+            );
 
         $sortedGroups = $groupedItems
             ->keys()
             ->sortBy(function (?string $group): int {
-                if (! $group) {
+                if (!$group) {
                     return -1;
                 }
 
@@ -159,6 +171,11 @@ class FilamentManager
         return $this->scripts;
     }
 
+    public function getBeforeScripts(): array
+    {
+        return $this->beforeScripts;
+    }
+
     public function getScriptData(): array
     {
         return $this->scriptData;
@@ -171,10 +188,11 @@ class FilamentManager
 
     public function getThemeUrl(): string
     {
-        return $this->themeUrl ?? route('filament.asset', [
-            'id' => get_asset_id('app.css'),
-            'file' => 'app.css',
-        ]);
+        return $this->themeUrl ??
+            route('filament.asset', [
+                'id' => get_asset_id('app.css'),
+                'file' => 'app.css',
+            ]);
     }
 
     public function getUrl(): ?string
@@ -183,7 +201,7 @@ class FilamentManager
 
         $firstItem = $flatNavigation[0] ?? null;
 
-        if (! $firstItem) {
+        if (!$firstItem) {
             return null;
         }
 
@@ -220,7 +238,7 @@ class FilamentManager
     {
         return collect($this->widgets)
             ->unique()
-            ->sortBy(fn (string $widget): int => $widget::getSort())
+            ->sortBy(fn(string $widget): int => $widget::getSort())
             ->toArray();
     }
 }

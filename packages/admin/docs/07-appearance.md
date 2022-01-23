@@ -36,7 +36,8 @@ module.exports = {
     ],
     theme: {
         extend: {
-            colors: { // [tl! focus:start]
+            colors: {
+                // [tl! focus:start]
                 danger: colors.rose,
                 primary: colors.blue,
                 success: colors.green,
@@ -98,3 +99,26 @@ In `config/filament.php`, set the `layouts.max_content_width` to any value betwe
 ```
 
 The default is `7xl`.
+
+## Including frontend assets
+
+You may register your own scripts and styles by including the following in the `AppServiceProvider`'s `boot()` method:
+
+```php
+use Filament\Facades\Filament;
+
+Filament::registerStyles([
+    'https://unpkg.com/tippy.js@6/dist/tippy.css',
+    asset('css/my-styles.css'),
+]);
+
+Filament::registerScripts([asset('js/my-script.js')]);
+
+// Pass a boolean parameter to load a script before Filament's core javascript. This is useful for registering Alpine plugins from a CDN.
+Filament::registerScripts(
+    [
+        'https://cdn.jsdelivr.net/npm/@ryangjchandler/alpine-tooltip@0.x.x/dist/cdn.min.js',
+    ],
+    true
+);
+```
