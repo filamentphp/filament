@@ -8,6 +8,8 @@ class Hidden extends Field
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->columnSpan('hidden');
     }
 }
