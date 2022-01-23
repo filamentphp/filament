@@ -18,7 +18,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected static string $view = 'filament::resources.pages.list-records';
 
     protected static ?string $createButtonLabel = null;
-    
+
     protected ?Table $resourceTable = null;
 
     protected $queryString = [
@@ -118,7 +118,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         $resource = static::getResource();
         $label = $resource::getLabel();
 
-       return ButtonAction::make('create')
+        return ButtonAction::make('create')
             ->label(static::$createButtonLabel ?? __('filament::resources/pages/list-records.actions.create.label', [
                     'label' => $label,
                 ]))
