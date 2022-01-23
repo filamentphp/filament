@@ -41,16 +41,17 @@
     <div class="hidden flex-1 items-center lg:grid grid-cols-3">
         <div class="flex items-center">
             @if ($isSimple)
-                <x-tables::button
-                    :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
-                    icon="heroicon-s-chevron-left"
-                    :disabled="$paginator->onFirstPage()"
-                    rel="prev"
-                    size="sm"
-                    color="secondary"
-                >
-                    {{ __('tables::table.pagination.buttons.previous.label') }}
-                </x-tables::button>
+                @if (! $paginator->onFirstPage())
+                    <x-tables::button
+                        :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
+                        icon="heroicon-s-chevron-left"
+                        rel="prev"
+                        size="sm"
+                        color="secondary"
+                    >
+                        {{ __('tables::table.pagination.buttons.previous.label') }}
+                    </x-tables::button>
+                @endif
             @else
                 <div class="pl-2 text-sm font-medium">
                     @if ($paginator->total() > 1)
@@ -70,28 +71,30 @@
 
         <div class="flex items-center justify-end">
             @if ($isSimple)
-                <x-tables::button
-                    :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
-                    icon="heroicon-s-chevron-right"
-                    icon-position="after"
-                    :disabled="! $paginator->hasMorePages()"
-                    rel="next"
-                    size="sm"
-                    color="secondary"
-                >
-                    {{ __('tables::table.pagination.buttons.next.label') }}
-                </x-tables::button>
+                @if ($paginator->hasMorePages())
+                    <x-tables::button
+                        :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
+                        icon="heroicon-s-chevron-right"
+                        icon-position="after"
+                        rel="next"
+                        size="sm"
+                        color="secondary"
+                    >
+                        {{ __('tables::table.pagination.buttons.next.label') }}
+                    </x-tables::button>
+                @endif
             @else
                 @if ($paginator->hasPages())
                     <div class="py-3 border rounded-lg">
                         <ol class="flex items-center text-sm text-gray-500 divide-x divide-gray-300">
-                            <x-tables::pagination.item
-                                :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
-                                icon="heroicon-s-chevron-left"
-                                aria-label="{{ __('tables::table.pagination.buttons.previous.label') }}"
-                                :disabled="$paginator->onFirstPage()"
-                                rel="prev"
-                            />
+                            @if (! $paginator->onFirstPage())
+                                <x-tables::pagination.item
+                                    :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
+                                    icon="heroicon-s-chevron-left"
+                                    aria-label="{{ __('tables::table.pagination.buttons.previous.label') }}"
+                                    rel="prev"
+                                />
+                            @endif
 
                             @foreach ($paginator->render()->offsetGet('elements') as $element)
                                 @if (is_string($element))
@@ -111,13 +114,14 @@
                                 @endif
                             @endforeach
 
-                            <x-tables::pagination.item
-                                :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
-                                icon="heroicon-s-chevron-right"
-                                aria-label="{{ __('tables::table.pagination.buttons.next.label') }}"
-                                :disabled="! $paginator->hasMorePages()"
-                                rel="next"
-                            />
+                            @if ($paginator->hasMorePages())
+                                <x-tables::pagination.item
+                                    :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
+                                    icon="heroicon-s-chevron-right"
+                                    aria-label="{{ __('tables::table.pagination.buttons.next.label') }}"
+                                    rel="next"
+                                />
+                            @endif
                         </ol>
                     </div>
                 @endif
