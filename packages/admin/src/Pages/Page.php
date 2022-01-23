@@ -77,7 +77,7 @@ class Page extends Component implements Forms\Contracts\HasForms
         return route(static::getRouteName(), $parameters, $absolute);
     }
 
-    protected function notify(string $status, string $message): void
+    public function notify(string $status, string $message): void
     {
         session()->flash('notification', [
             'message' => $message,
