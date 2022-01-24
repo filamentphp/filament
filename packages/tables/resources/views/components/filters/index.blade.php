@@ -44,7 +44,7 @@
                     wire:click="resetTableFiltersForm"
                     color="danger"
                     tag="button"
-                    class="text-sm"
+                    class="text-sm font-medium"
                 >
                     {{ __('tables::table.filters.buttons.reset.label') }}
                 </x-tables::link>

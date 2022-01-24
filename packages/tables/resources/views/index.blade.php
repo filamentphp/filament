@@ -5,7 +5,6 @@
     $header = $getHeader();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
-    $isBulkActionsDropdownVisible = $isSelectionEnabled() && $getSelectedRecordsCount();
     $isSearchVisible = $isSearchable();
     $isFiltersDropdownVisible = $isFilterable();
 
@@ -37,37 +36,110 @@
     };
 @endphp
 
-<div>
+<div x-data="{
+    hasHeader: true,
+
+    isLoading: false,
+
+    selectedRecords: [],
+
+    init: function () {
+        $wire.on('deselectAllTableRecords', () => this.deselectAllRecords())
+    },
+
+    toggleSelectRecordsOnPage: function () {
+        let keys = this.getRecordsOnPage()
+
+        if (this.areRecordsSelected(keys)) {
+            this.deselectRecords(keys)
+
+            return
+        }
+
+        this.selectRecords(keys)
+    },
+
+    getRecordsOnPage: function () {
+        let keys = []
+
+        for (checkbox of $el.getElementsByClassName('table-row-checkbox')) {
+            keys.push(checkbox.value)
+        }
+
+        return keys
+    },
+
+    selectRecords: function (keys) {
+        for (key of keys) {
+            if (this.isRecordSelected(key)) {
+                continue
+            }
+
+            this.selectedRecords.push(key)
+        }
+    },
+
+    deselectRecords: function (keys) {
+        for (key of keys) {
+            let index = this.selectedRecords.indexOf(key)
+
+            if (index === -1) {
+                continue
+            }
+
+            this.selectedRecords.splice(index, 1)
+        }
+    },
+
+    selectAllRecords: async function () {
+        this.isLoading = true
+
+        this.selectedRecords = (await $wire.getAllTableRecordKeys()).map((key) => key.toString())
+
+        this.isLoading = false
+    },
+
+    deselectAllRecords: function () {
+        this.selectedRecords = []
+    },
+
+    isRecordSelected: function (key) {
+        return this.selectedRecords.includes(key)
+    },
+
+    areRecordsSelected: function (keys) {
+        return keys.every(key => this.isRecordSelected(key))
+    },
+}">
     <x-tables::container>
-        @if ($hasTableHeader = ($header || $heading || $headerActions || $isBulkActionsDropdownVisible || $isSearchVisible || $isFiltersDropdownVisible))
-            @if ($header)
-                {{ $header }}
-            @elseif ($heading || $headerActions)
-                <div class="px-2 pt-2 space-y-2">
-                    <x-tables::header :actions="$headerActions">
-                        <x-slot name="heading">
-                            {{ $heading }}
-                        </x-slot>
+        <template x-if="hasHeader = ({{ $header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible }} || selectedRecords.count)">
+            <div>
+                @if ($header)
+                    {{ $header }}
+                @elseif ($heading || $headerActions)
+                    <div class="px-2 pt-2 space-y-2">
+                        <x-tables::header :actions="$headerActions">
+                            <x-slot name="heading">
+                                {{ $heading }}
+                            </x-slot>
 
-                        <x-slot name="description">
-                            {{ $getDescription() }}
-                        </x-slot>
-                    </x-tables::header>
+                            <x-slot name="description">
+                                {{ $getDescription() }}
+                            </x-slot>
+                        </x-tables::header>
 
-                    <x-tables::hr />
-                </div>
-            @endif
+                        <x-tables::hr />
+                    </div>
+                @endif
 
-            <div class="divide-y">
-                @if ($isBulkActionsDropdownVisible || $isSearchVisible || $isFiltersDropdownVisible)
+                <template x-if="{{ $isSearchVisible || $isFiltersDropdownVisible }} || selectedRecords.count">
                     <div class="flex items-center justify-between p-2 h-14">
                         <div>
-                            @if ($isBulkActionsDropdownVisible)
-                                <x-tables::bulk-actions
-                                    :actions="$getBulkActions()"
-                                    class="mr-2"
-                                />
-                            @endif
+                            <x-tables::bulk-actions
+                                x-show="selectedRecords.length"
+                                :actions="$getBulkActions()"
+                                class="mr-2"
+                            />
                         </div>
 
                         @if ($isSearchVisible || $isFiltersDropdownVisible)
@@ -88,23 +160,38 @@
                             </div>
                         @endif
                     </div>
-                @endif
+                </template>
             </div>
-        @endif
+        </template>
 
-        <div @class([
-            'overflow-y-auto relative',
-            'rounded-t-xl' => ! $hasTableHeader,
-            'border-t' => $hasTableHeader,
-        ])>
+        <div
+            class="overflow-y-auto relative"
+            x-bind:class="{
+                'rounded-t-xl': ! hasHeader,
+                'border-t': hasHeader,
+            }"
+        >
             @if (($records = $getRecords())->count())
                 <x-tables::table>
                     <x-slot name="header">
                         @if ($isSelectionEnabled())
-                            <x-tables::checkbox-cell
-                                :checked="$areAllRecordsOnCurrentPageSelected()"
-                                :on-click="$isPaginationEnabled() ? 'toggleSelectTableRecordsOnPage' : 'toggleSelectAllTableRecords'"
-                            />
+                            <x-tables::checkbox-cell>
+                                <x-slot
+                                    name="checkbox"
+                                    x-on:click="toggleSelectRecordsOnPage"
+                                    x-bind:checked="
+                                        if (areRecordsSelected(getRecordsOnPage())) {
+                                            $el.checked = true
+
+                                            return 'checked'
+                                        }
+
+                                        $el.checked = false
+
+                                        return null
+                                    "
+                                ></x-slot>
+                            </x-tables::checkbox-cell>
                         @endif
 
                         @foreach ($columns as $column)
@@ -123,13 +210,17 @@
                         <th class="w-5"></th>
                     </x-slot>
 
-                    @if ($isSelectionEnabled() && $getSelectedRecordsCount() > 0)
-                        <x-tables::selection-indicator
-                            :all-records-count="$getAllRecordsCount()"
-                            :are-all-records-on-current-page-selected="$areAllRecordsOnCurrentPageSelected()"
-                            :colspan="$columnsCount"
-                            :selected-records-count="$getSelectedRecordsCount()"
-                        />
+                    @if ($isSelectionEnabled())
+                        <template x-if="selectedRecords.length">
+                            <x-tables::selection-indicator
+                                :all-records-count="$getAllRecordsCount()"
+                                :colspan="$columnsCount"
+                            >
+                                <x-slot name="selectedRecordsCount">
+                                    <span x-text="selectedRecords.length"></span>
+                                </x-slot>
+                            </x-tables::selection-indicator>
+                        </template>
                     @endif
 
                     @foreach ($records as $record)
@@ -139,10 +230,14 @@
 
                         <x-tables::row wire:key="{{ $record->getKey() }}">
                             @if ($isSelectionEnabled())
-                                <x-tables::checkbox-cell
-                                    :checked="$isRecordSelected($record->getKey())"
-                                    :on-click="'toggleSelectTableRecord(\'' . $record->getKey() . '\')'"
-                                />
+                                <x-tables::checkbox-cell>
+                                    <x-slot
+                                        name="checkbox"
+                                        x-model="selectedRecords"
+                                        :value="$record->getKey()"
+                                        class="table-row-checkbox"
+                                    ></x-slot>
+                                </x-tables::checkbox-cell>
                             @endif
 
                             @foreach ($columns as $column)
