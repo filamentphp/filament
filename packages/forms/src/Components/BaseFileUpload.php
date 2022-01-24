@@ -144,7 +144,7 @@ class BaseFileUpload extends Field
 
         return $this;
     }
-    
+
     public function enableReordering(bool | Closure $condition = true): static
     {
         $this->canReorder = $condition;
@@ -371,7 +371,7 @@ class BaseFileUpload extends Field
 
     public function reorderUploadedFiles(array $fileKeys): void
     {
-        if (!$this->canReorder) {
+        if (! $this->canReorder) {
             return;
         }
 
@@ -437,7 +437,7 @@ class BaseFileUpload extends Field
 
         $callback = $this->reorderUploadedFilesUsing;
 
-        if (!$this->canReorder || !$callback) {
+        if (! $this->canReorder || ! $callback) {
             $this->state($state);
 
             return;
