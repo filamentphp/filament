@@ -67,7 +67,7 @@ trait CanBeValidated
         if (is_string($rules)) {
             $rules = explode('|', $rules);
         }
-        
+
         $this->rules = array_merge(
             $this->rules,
             array_map(fn (string | object $rule) => [$rule, $condition], $rules),
