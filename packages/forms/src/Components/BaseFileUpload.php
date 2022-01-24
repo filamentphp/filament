@@ -130,13 +130,6 @@ class BaseFileUpload extends Field
 
         return $this;
     }
-    
-    public function enableReordering(bool | Closure $condition = true): static
-    {
-        $this->canReorder = $condition;
-
-        return $this;
-    }
 
     public function directory(string | Closure | null $directory): static
     {
@@ -148,6 +141,13 @@ class BaseFileUpload extends Field
     public function disk($name): static
     {
         $this->diskName = $name;
+
+        return $this;
+    }
+    
+    public function enableReordering(bool | Closure $condition = true): static
+    {
+        $this->canReorder = $condition;
 
         return $this;
     }

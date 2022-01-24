@@ -15816,8 +15816,7 @@ registerPlugin(filepond_plugin_image_transform_esm_default);
 var file_upload_default = (Alpine) => {
   Alpine.data("fileUploadFormComponent", ({
     acceptedFileTypes,
-    allowReorder,
-    appendFiles,
+    canReorder,
     deleteUploadedFileUsing,
     getUploadedFileUrlUsing,
     imageCropAspectRatio,
@@ -15833,6 +15832,7 @@ var file_upload_default = (Alpine) => {
     removeUploadedFileButtonPosition,
     removeUploadedFileUsing,
     reorderUploadedFilesUsing,
+    shouldAppendFiles,
     state: state2,
     uploadButtonPosition,
     uploadProgressIndicatorPosition,
@@ -15863,14 +15863,14 @@ var file_upload_default = (Alpine) => {
         }
         this.pond = create$f(this.$refs.input, {
           acceptedFileTypes,
-          allowReorder,
+          canReorder,
           credits: false,
-          files: appendFiles ? this.files : this.files.reverse(),
+          files: shouldAppendFiles ? this.files : this.files.reverse(),
           imageCropAspectRatio,
           imagePreviewHeight,
           imageResizeTargetHeight,
           imageResizeTargetWidth,
-          itemInsertLocation: appendFiles ? "after" : "before",
+          itemInsertLocation: shouldAppendFiles ? "after" : "before",
           ...placeholder && {labelIdle: placeholder},
           maxFileSize: maxSize,
           minFileSize: minSize,
@@ -15928,7 +15928,7 @@ var file_upload_default = (Alpine) => {
               }
             });
           }
-          this.pond.files = appendFiles ? files : files.reverse();
+          this.pond.files = shouldAppendFiles ? files : files.reverse();
         });
         this.pond.on("reorderfiles", async (files) => {
           const orderedFileKeys = files.map((file2) => file2.source instanceof File ? file2.serverId : this.uploadedFileUrlIndex[file2.source] ?? null).filter((fileKey) => fileKey);
