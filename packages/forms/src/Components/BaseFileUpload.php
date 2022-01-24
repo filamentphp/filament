@@ -17,7 +17,7 @@ class BaseFileUpload extends Field
 {
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
-    protected bool | Closure $allowReorder = false;
+    protected bool | Closure $canReorder = false;
 
     protected string | Closure | null $directory = null;
 
@@ -130,10 +130,10 @@ class BaseFileUpload extends Field
 
         return $this;
     }
-
-    public function allowReorder(bool | Closure $allowReorder = true): static
+    
+    public function enableReordering(bool | Closure $condition = true): static
     {
-        $this->allowReorder = $allowReorder;
+        $this->canReorder = $condition;
 
         return $this;
     }
@@ -241,6 +241,11 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function canReorder(): bool
+    {
+        return $this->evaluate($this->canReorder);
+    }
+
     public function getAcceptedFileTypes(): ?array
     {
         $types = $this->evaluate($this->acceptedFileTypes);
@@ -250,11 +255,6 @@ class BaseFileUpload extends Field
         }
 
         return $types;
-    }
-
-    public function getAllowReorder(): bool
-    {
-        return $this->evaluate($this->allowReorder);
     }
 
     public function getDirectory(): ?string
@@ -371,7 +371,7 @@ class BaseFileUpload extends Field
 
     public function reorderUploadedFiles(array $fileKeys): void
     {
-        if (! $this->allowReorder) {
+        if (!$this->canReorder) {
             return;
         }
 
@@ -437,7 +437,7 @@ class BaseFileUpload extends Field
 
         $callback = $this->reorderUploadedFilesUsing;
 
-        if (! $this->allowReorder || ! $callback) {
+        if (!$this->canReorder || !$callback) {
             $this->state($state);
 
             return;

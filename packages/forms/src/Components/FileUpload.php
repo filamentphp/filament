@@ -12,8 +12,6 @@ class FileUpload extends BaseFileUpload
 
     protected string $view = 'forms::components.file-upload';
 
-    protected bool | Closure $appendFiles = false;
-
     protected string | Closure | null $imageCropAspectRatio = null;
 
     protected string | Closure | null $imagePreviewHeight = null;
@@ -32,13 +30,15 @@ class FileUpload extends BaseFileUpload
 
     protected string | Closure $removeUploadedFileButtonPosition = 'left';
 
+    protected bool | Closure $shouldAppendFiles = false;
+
     protected string | Closure $uploadButtonPosition = 'right';
 
     protected string | Closure $uploadProgressIndicatorPosition = 'right';
 
-    public function appendFiles(bool | Closure $appendFiles = true): static
+    public function appendFiles(bool | Closure $condition = true): static
     {
-        $this->appendFiles = $appendFiles;
+        $this->shouldAppendFiles = $condition;
 
         return $this;
     }
@@ -146,11 +146,6 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function getAppendFiles(): bool
-    {
-        return $this->evaluate($this->appendFiles);
-    }
-
     public function getImageCropAspectRatio(): ?string
     {
         return $this->evaluate($this->imageCropAspectRatio);
@@ -204,5 +199,10 @@ class FileUpload extends BaseFileUpload
     public function isAvatar(): bool
     {
         return (bool) $this->evaluate($this->isAvatar);
+    }
+
+    public function shouldAppendFiles(): bool
+    {
+        return $this->evaluate($this->shouldAppendFiles);
     }
 }

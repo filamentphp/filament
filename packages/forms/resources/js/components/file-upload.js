@@ -22,8 +22,7 @@ FilePond.registerPlugin(FilePondPluginImageTransform)
 export default (Alpine) => {
     Alpine.data('fileUploadFormComponent', ({
         acceptedFileTypes,
-        allowReorder,
-        appendFiles,
+        canReorder,
         deleteUploadedFileUsing,
         getUploadedFileUrlUsing,
         imageCropAspectRatio,
@@ -39,6 +38,7 @@ export default (Alpine) => {
         removeUploadedFileButtonPosition,
         removeUploadedFileUsing,
         reorderUploadedFilesUsing,
+        shouldAppendFiles,
         state,
         uploadButtonPosition,
         uploadProgressIndicatorPosition,
@@ -79,14 +79,14 @@ export default (Alpine) => {
 
                 this.pond = FilePond.create(this.$refs.input, {
                     acceptedFileTypes,
-                    allowReorder,
+                    canReorder,
                     credits: false,
-                    files: appendFiles ? this.files : this.files.reverse(),
+                    files: shouldAppendFiles ? this.files : this.files.reverse(),
                     imageCropAspectRatio,
                     imagePreviewHeight,
                     imageResizeTargetHeight,
                     imageResizeTargetWidth,
-                    itemInsertLocation: appendFiles ? 'after' : 'before',
+                    itemInsertLocation: shouldAppendFiles ? 'after' : 'before',
                     ...(placeholder && {labelIdle: placeholder}),
                     maxFileSize: maxSize,
                     minFileSize: minSize,
@@ -162,7 +162,7 @@ export default (Alpine) => {
                         })
                     }
 
-                    this.pond.files = appendFiles ? files : files.reverse()
+                    this.pond.files = shouldAppendFiles ? files : files.reverse()
                 })
                 
                 this.pond.on('reorderfiles', async (files) => {
