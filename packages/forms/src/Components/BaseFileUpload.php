@@ -378,8 +378,8 @@ class BaseFileUpload extends Field
         $fileKeys = array_flip($fileKeys);
 
         $state = collect($this->getState())
-            ->sortBy(fn ($file, $fileKey) => $fileKeys[$fileKey])
-            ->toArray();
+        ->sortBy(fn ($file, $fileKey) => $fileKeys[$fileKey] ?? null) // $fileKey may not be present in $fileKeys if it was added to the state during the reorder call
+        ->toArray();
 
         $this->state($state);
     }
