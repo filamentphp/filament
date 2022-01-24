@@ -170,7 +170,7 @@ export default (Alpine) => {
                         .map(file => file.source instanceof File ? file.serverId : this.uploadedFileUrlIndex[file.source] ?? null) // file.serverId is null for a file that is not yet uploaded
                         .filter(fileKey => fileKey)
 
-                    await reorderUploadedFilesUsing(orderedFileKeys)
+                    await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse())
                 })
             },
 

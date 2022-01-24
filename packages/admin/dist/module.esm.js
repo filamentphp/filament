@@ -15932,7 +15932,7 @@ var file_upload_default = (Alpine) => {
         });
         this.pond.on("reorderfiles", async (files) => {
           const orderedFileKeys = files.map((file2) => file2.source instanceof File ? file2.serverId : this.uploadedFileUrlIndex[file2.source] ?? null).filter((fileKey) => fileKey);
-          await reorderUploadedFilesUsing(orderedFileKeys);
+          await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse());
         });
       },
       getUploadedFileUrl: async function(fileKey) {
