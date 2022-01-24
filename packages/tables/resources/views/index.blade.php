@@ -47,6 +47,10 @@
         $wire.on('deselectAllTableRecords', () => this.deselectAllRecords())
     },
 
+    mountBulkAction: function (name) {
+        $wire.mountTableBulkAction(name, this.selectedRecords)
+    },
+
     toggleSelectRecordsOnPage: function () {
         let keys = this.getRecordsOnPage()
 
@@ -112,57 +116,60 @@
     },
 }">
     <x-tables::container>
-        <template x-if="hasHeader = ({{ $header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible }} || selectedRecords.count)">
-            <div>
-                @if ($header)
-                    {{ $header }}
-                @elseif ($heading || $headerActions)
-                    <div class="px-2 pt-2 space-y-2">
-                        <x-tables::header :actions="$headerActions">
-                            <x-slot name="heading">
-                                {{ $heading }}
-                            </x-slot>
+        <div
+            x-show="hasHeader = ({{ ($header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible) ? 'true' : 'false' }} || selectedRecords.length)"
+            x-cloak
+        >
+            @if ($header)
+                {{ $header }}
+            @elseif ($heading || $headerActions)
+                <div class="px-2 pt-2 space-y-2">
+                    <x-tables::header :actions="$headerActions">
+                        <x-slot name="heading">
+                            {{ $heading }}
+                        </x-slot>
 
-                            <x-slot name="description">
-                                {{ $getDescription() }}
-                            </x-slot>
-                        </x-tables::header>
+                        <x-slot name="description">
+                            {{ $getDescription() }}
+                        </x-slot>
+                    </x-tables::header>
 
-                        <x-tables::hr />
-                    </div>
-                @endif
+                    <x-tables::hr x-show="{{ ($isSearchVisible || $isFiltersDropdownVisible) ? 'true' : 'false' }} || selectedRecords.length" />
+                </div>
+            @endif
 
-                <template x-if="{{ $isSearchVisible || $isFiltersDropdownVisible }} || selectedRecords.count">
-                    <div class="flex items-center justify-between p-2 h-14">
-                        <div>
-                            <x-tables::bulk-actions
-                                x-show="selectedRecords.length"
-                                :actions="$getBulkActions()"
-                                class="mr-2"
-                            />
-                        </div>
+            <div
+                x-show="{{ ($isSearchVisible || $isFiltersDropdownVisible) ? 'true' : 'false' }} || selectedRecords.length"
+                x-cloak
+                class="flex items-center justify-between p-2 h-14"
+            >
+                <div>
+                    <x-tables::bulk-actions
+                        x-show="selectedRecords.length"
+                        :actions="$getBulkActions()"
+                        class="mr-2"
+                    />
+                </div>
 
-                        @if ($isSearchVisible || $isFiltersDropdownVisible)
-                            <div class="w-full md:w-auto flex items-center gap-2 md:max-w-md">
-                                @if ($isSearchVisible)
-                                    <div class="flex-1">
-                                        <x-tables::search-input />
-                                    </div>
-                                @endif
-
-                                @if ($isFiltersDropdownVisible)
-                                    <x-tables::filters
-                                        :form="$getFiltersForm()"
-                                        :width="$getFiltersFormWidth()"
-                                        class="shrink-0"
-                                    />
-                                @endif
+                @if ($isSearchVisible || $isFiltersDropdownVisible)
+                    <div class="w-full md:w-auto flex items-center gap-2 md:max-w-md">
+                        @if ($isSearchVisible)
+                            <div class="flex-1">
+                                <x-tables::search-input />
                             </div>
                         @endif
+
+                        @if ($isFiltersDropdownVisible)
+                            <x-tables::filters
+                                :form="$getFiltersForm()"
+                                :width="$getFiltersFormWidth()"
+                                class="shrink-0"
+                            />
+                        @endif
                     </div>
-                </template>
+                @endif
             </div>
-        </template>
+        </div>
 
         <div
             class="overflow-y-auto relative"
@@ -211,16 +218,15 @@
                     </x-slot>
 
                     @if ($isSelectionEnabled())
-                        <template x-if="selectedRecords.length">
-                            <x-tables::selection-indicator
-                                :all-records-count="$getAllRecordsCount()"
-                                :colspan="$columnsCount"
-                            >
-                                <x-slot name="selectedRecordsCount">
-                                    <span x-text="selectedRecords.length"></span>
-                                </x-slot>
-                            </x-tables::selection-indicator>
-                        </template>
+                        <x-tables::selection-indicator
+                            :all-records-count="$getAllRecordsCount()"
+                            :colspan="$columnsCount"
+                            x-show="selectedRecords.length"
+                        >
+                            <x-slot name="selectedRecordsCount">
+                                <span x-text="selectedRecords.length"></span>
+                            </x-slot>
+                        </x-tables::selection-indicator>
                     @endif
 
                     @foreach ($records as $record)
