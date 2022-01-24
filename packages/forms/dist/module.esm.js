@@ -15863,7 +15863,7 @@ var file_upload_default = (Alpine) => {
         }
         this.pond = create$f(this.$refs.input, {
           acceptedFileTypes,
-          canReorder,
+          allowReorder: canReorder,
           credits: false,
           files: shouldAppendFiles ? this.files : this.files.reverse(),
           imageCropAspectRatio,
