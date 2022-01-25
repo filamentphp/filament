@@ -4,14 +4,14 @@
             <div class="w-full flex justify-center">
                 <x-filament::brand />
             </div>
-        
+
             <h2 class="font-bold tracking-tight text-center text-2xl">
                 {{ __('filament::login.heading') }}
             </h2>
 
             {{ $this->form }}
 
-            <x-filament::button type="submit" class="w-full">
+            <x-filament::button type="submit" form="authenticate" class="w-full">
                 {{ __('filament::login.buttons.submit.label') }}
             </x-filament::button>
         </form>
