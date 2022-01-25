@@ -44,15 +44,18 @@ trait HasBulkActions
         try {
             return $action->call($data);
         } finally {
+            $this->selectedTableRecords = [];
+
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => static::class . '-bulk-action',
             ]);
         }
     }
 
-    public function mountTableBulkAction(string $name)
+    public function mountTableBulkAction(string $name, array $selectedRecords)
     {
         $this->mountedTableBulkAction = $name;
+        $this->selectedTableRecords = $selectedRecords;
 
         $action = $this->getMountedTableBulkAction();
 

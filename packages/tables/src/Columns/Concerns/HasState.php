@@ -4,7 +4,9 @@ namespace Filament\Tables\Columns\Concerns;
 
 use BackedEnum;
 use Closure;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Arr;
 
 trait HasState
@@ -79,7 +81,11 @@ trait HasState
 
         $relationship = $record->{$relationshipName}();
 
-        if (! $relationship instanceof Relation) {
+        if (! (
+            $relationship instanceof HasMany ||
+            $relationship instanceof BelongsToMany ||
+            $relationship instanceof MorphMany
+        )) {
             return null;
         }
 
