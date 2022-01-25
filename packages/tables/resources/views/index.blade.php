@@ -129,8 +129,6 @@
         return keys.every(key => this.isRecordSelected(key))
     },
 }">
-    <div x-text="selectedRecords"></div>
-
     <x-tables::container>
         <div
             x-show="hasHeader = ({{ ($header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible) ? 'true' : 'false' }} || selectedRecords.length)"
