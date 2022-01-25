@@ -36,7 +36,7 @@
         'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm'),
     ]);
 
-    $hasLoadingIndicator = filled($attributes->get('wire:click')) || filled($form);
+    $hasLoadingIndicator = filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
 
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:click', $form), ENT_QUOTES);
