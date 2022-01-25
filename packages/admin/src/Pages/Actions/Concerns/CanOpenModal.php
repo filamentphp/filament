@@ -71,7 +71,7 @@ trait CanOpenModal
         $actions = [
             ButtonAction::make('submit')
                 ->label($this->getModalButtonLabel())
-                ->submit()
+                ->submit('callMountedAction')
                 ->color($color !== 'secondary' ? $color : null),
             ButtonAction::make('cancel')
                 ->label(__('filament::pages/actions.modal.buttons.cancel.label'))

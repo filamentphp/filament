@@ -78,6 +78,11 @@ class CreateRecord extends Page
         }
     }
 
+    public function createAndCreateAnother(): void
+    {
+        $this->create(another: true);
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         return static::getModel()::create($data);
@@ -101,14 +106,14 @@ class CreateRecord extends Page
     {
         return ButtonAction::make('create')
             ->label(__('filament::resources/pages/create-record.form.actions.create.label'))
-            ->submit();
+            ->submit('create');
     }
 
     protected function getCreateAndCreateAnotherButtonFormAction(): ButtonAction
     {
         return ButtonAction::make('createAnother')
             ->label(__('filament::resources/pages/create-record.form.actions.create_and_create_another.label'))
-            ->action('create(true)')
+            ->action('createAndCreateAnother')
             ->color('secondary');
     }
 

@@ -1,4 +1,5 @@
-<x-tables::button
+<x-filament::button
+    :form="$getForm()"
     :type="$canSubmitForm() ? 'submit' : 'button'"
     :wire:click="$getAction()"
     :x-on:click="$canCancelAction() ? 'isOpen = false' : null"
@@ -7,4 +8,4 @@
     :icon-position="$getIconPosition()"
 >
     {{ $getLabel() }}
-</x-tables::button>
+</x-filament::button>

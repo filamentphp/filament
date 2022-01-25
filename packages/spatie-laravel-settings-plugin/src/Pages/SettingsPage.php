@@ -70,7 +70,7 @@ class SettingsPage extends Page
         return [
             ButtonAction::make('save')
                 ->label('Save')
-                ->submit(),
+                ->submit('save'),
         ];
     }
 

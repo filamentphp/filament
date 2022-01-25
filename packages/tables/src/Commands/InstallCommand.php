@@ -53,7 +53,7 @@ class InstallCommand extends Command
     {
         return array_merge(
             [
-                '@alpinejs/trap' => '^3.4',
+                '@alpinejs/focus' => '^3.4',
                 '@tailwindcss/forms' => '^0.4',
                 '@tailwindcss/typography' => '^0.5',
                 'alpinejs' => '^3.4',

@@ -36,10 +36,10 @@
         'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm'),
     ]);
 
-    $hasLoadingIndicator = $tag === 'button';
+    $hasLoadingIndicator = filled($attributes->get('wire:click')) || filled($form);
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = $attributes->get('wire:click', $form);
+        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:click', $form), ENT_QUOTES);
     }
 @endphp
 
@@ -54,7 +54,7 @@
         @elseif ($hasLoadingIndicator)
             <svg
                 wire:loading
-                {{ $loadingIndicatorTarget ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' }}
+                {{ $loadingIndicatorTarget ? "wire:target={$loadingIndicatorTarget}" : '' }}
                 @class([$iconClasses, 'animate-spin'])
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"

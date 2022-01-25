@@ -3,10 +3,10 @@ import '../css/app.css'
 import Alpine from 'alpinejs'
 import Chart from 'chart.js/auto'
 import FormsAlpinePlugin from '../../../forms/dist/module.esm'
-import Trap from '@alpinejs/trap'
+import Focus from '@alpinejs/focus'
 
 Alpine.plugin(FormsAlpinePlugin)
-Alpine.plugin(Trap)
+Alpine.plugin(Focus)
 
 Alpine.store('sidebar', {
     isOpen: false,
