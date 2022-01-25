@@ -97,12 +97,20 @@ RichEditor::make('content')
 
 ### Custom attributes
 
-The HTML of fields can be customized even further, by passing an array of `extraAttributes()`:
+The HTML attributes of the wrapper encompassing a field can be customized by passing an array of `extraAttributes()`:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('name')->extraAttributes(['step' => 10])
+TextInput::make('name')->extraAttributes(['title' => 'My TextInput'])
+```
+
+To add additional HTML attributes to the field itself, use `extraInputAttributes()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')->extraInputAttributes(['autocomplete' => 'off'])
 ```
 
 ### Disabling
