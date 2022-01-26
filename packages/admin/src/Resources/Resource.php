@@ -55,9 +55,14 @@ class Resource
             return;
         }
 
+        Filament::registerNavigationItems(static::getNavigationItems());
+    }
+
+    public static function getNavigationItems(): array
+    {
         $routeBaseName = static::getRouteBaseName();
 
-        Filament::registerNavigationItems([
+        return [
             NavigationItem::make()
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
@@ -65,7 +70,7 @@ class Resource
                 ->label(static::getNavigationLabel())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
-        ]);
+        ];
     }
 
     public static function table(Table $table): Table
