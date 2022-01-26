@@ -34,7 +34,7 @@ class FilamentManager
 
     protected array $widgets = [];
 
-    protected ?Closure $navigationBuilder;
+    protected ?Closure $navigationBuilder = null;
 
     public function auth(): Guard
     {

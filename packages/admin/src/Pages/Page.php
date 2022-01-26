@@ -40,7 +40,12 @@ class Page extends Component implements Forms\Contracts\HasForms
             return;
         }
 
-        Filament::registerNavigationItems([
+        Filament::registerNavigationItems(static::getNavigationItems());
+    }
+
+    public static function getNavigationItems(): array
+    {
+        return [
             NavigationItem::make()
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
@@ -48,7 +53,7 @@ class Page extends Component implements Forms\Contracts\HasForms
                 ->label(static::getNavigationLabel())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
-        ]);
+        ];
     }
 
     public static function getRouteName(): string
