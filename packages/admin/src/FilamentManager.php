@@ -50,7 +50,7 @@ class FilamentManager
     {
         /** @var \Filament\Navigation\NavigationBuilder $builder */
         $builder = app()->call($this->navigationBuilder, [
-            'builder' => new NavigationBuilder
+            'builder' => new NavigationBuilder(),
         ]);
 
         return collect($builder->getGroups())
