@@ -33,18 +33,35 @@ class FilamentManager
 
     protected array $widgets = [];
 
+    protected ?Closure $navigationBuilder = null;
+
     public function auth(): Guard
     {
         return auth()->guard(config('filament.auth.guard'));
     }
 
+    public function navigation(Closure $builder): void
+    {
+        $this->navigationBuilder = $builder;
+    }
+
+    public function buildNavigation(): array
+    {
+        /** @var \Filament\Navigation\NavigationBuilder $builder */
+        $builder = app()->call($this->navigationBuilder);
+
+        return collect($builder->getGroups())
+            ->merge([null => $builder->getItems()])
+            ->toArray();
+    }
+
     public function mountNavigation(): void
     {
-        foreach (static::getPages() as $page) {
+        foreach ($this->getPages() as $page) {
             $page::registerNavigationItems();
         }
 
-        foreach (static::getResources() as $resource) {
+        foreach ($this->getResources() as $resource) {
             $resource::registerNavigationItems();
         }
 
@@ -103,6 +120,10 @@ class FilamentManager
 
     public function getNavigation(): array
     {
+        if ($this->navigationBuilder !== null) {
+            return $this->buildNavigation();
+        }
+
         if (! $this->isNavigationMounted) {
             $this->mountNavigation();
         }
