@@ -17,7 +17,7 @@
         </button>
     @endif
 
-    <ul x-show="! $store.sidebar.groupIsCollapsed(label)" @class([
+    <ul x-show="! $store.sidebar.groupIsCollapsed(label)" x-collapse.duration.200ms @class([
         'text-sm space-y-1 -mx-3',
         'mt-2' => $label,
     ])>

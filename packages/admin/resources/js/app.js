@@ -5,10 +5,12 @@ import Chart from 'chart.js/auto'
 import FormsAlpinePlugin from '../../../forms/dist/module.esm'
 import Focus from '@alpinejs/focus'
 import Persist from '@alpinejs/persist'
+import Collapse from '@alpinejs/collapse'
 
 Alpine.plugin(FormsAlpinePlugin)
 Alpine.plugin(Focus)
 Alpine.plugin(Persist)
+Alpine.plugin(Collapse)
 
 Alpine.store('sidebar', {
     isOpen: false,
