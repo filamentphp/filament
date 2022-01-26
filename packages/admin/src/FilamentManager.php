@@ -6,6 +6,7 @@ use Closure;
 use Filament\Events\ServingFilament;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
+use Filament\Navigation\NavigationBuilder;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -33,18 +34,37 @@ class FilamentManager
 
     protected array $widgets = [];
 
+    protected ?Closure $navigationBuilder;
+
     public function auth(): Guard
     {
         return auth()->guard(config('filament.auth.guard'));
     }
 
+    public function navigation(Closure $builder): void
+    {
+        $this->navigationBuilder = $builder;
+    }
+
+    public function buildNavigation(): array
+    {
+        /** @var \Filament\Navigation\NavigationBuilder $builder */
+        $builder = app()->call($this->navigationBuilder, [
+            'builder' => new NavigationBuilder
+        ]);
+
+        return collect($builder->getGroups())
+            ->merge([null => $builder->getItems()])
+            ->toArray();
+    }
+
     public function mountNavigation(): void
     {
-        foreach (static::getPages() as $page) {
+        foreach ($this->getPages() as $page) {
             $page::registerNavigationItems();
         }
 
-        foreach (static::getResources() as $resource) {
+        foreach ($this->getResources() as $resource) {
             $resource::registerNavigationItems();
         }
 
@@ -103,6 +123,10 @@ class FilamentManager
 
     public function getNavigation(): array
     {
+        if ($this->navigationBuilder !== null) {
+            return $this->buildNavigation();
+        }
+
         if (! $this->isNavigationMounted) {
             $this->mountNavigation();
         }
