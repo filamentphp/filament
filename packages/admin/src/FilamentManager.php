@@ -49,9 +49,7 @@ class FilamentManager
     public function buildNavigation(): array
     {
         /** @var \Filament\Navigation\NavigationBuilder $builder */
-        $builder = app()->call($this->navigationBuilder, [
-            'builder' => new NavigationBuilder(),
-        ]);
+        $builder = app()->call($this->navigationBuilder);
 
         return collect($builder->getGroups())
             ->merge([null => $builder->getItems()])
