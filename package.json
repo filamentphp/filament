@@ -5,7 +5,7 @@
         "watch": "node bin/build && mix watch"
     },
     "devDependencies": {
-        "@alpinejs/trap": "^3.5.0",
+        "@alpinejs/focus": "^3.8.1",
         "@babel/runtime": "^7.15.3",
         "@github/file-attachment-element": "^2.0.1",
         "@github/markdown-toolbar-element": "^1.5.1",

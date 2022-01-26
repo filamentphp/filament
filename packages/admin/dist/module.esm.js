@@ -5809,7 +5809,7 @@ var Dayjs = /* @__PURE__ */ function() {
     this.parse(cfg);
   }
   var _proto = Dayjs2.prototype;
-  _proto.parse = function parse5(cfg) {
+  _proto.parse = function parse4(cfg) {
     this.$d = parseDate(cfg);
     this.$x = cfg.x || {};
     this.init();
@@ -7344,25 +7344,25 @@ var createOption = (defaultValue, valueType) => {
     }
   };
 };
-var createOptions = (options) => {
+var createOptions = (options2) => {
   const obj = {};
-  forin(options, (prop) => {
-    const optionDefinition = options[prop];
+  forin(options2, (prop) => {
+    const optionDefinition = options2[prop];
     obj[prop] = createOption(optionDefinition[0], optionDefinition[1]);
   });
   return createObject(obj);
 };
-var createInitialState = (options) => ({
+var createInitialState = (options2) => ({
   items: [],
   listUpdateTimeout: null,
   itemUpdateTimeout: null,
   processingQueue: [],
-  options: createOptions(options)
+  options: createOptions(options2)
 });
 var fromCamels = (string, separator = "-") => string.split(/(?=[A-Z])/).map((part) => part.toLowerCase()).join(separator);
-var createOptionAPI = (store, options) => {
+var createOptionAPI = (store, options2) => {
   const obj = {};
-  forin(options, (key) => {
+  forin(options2, (key) => {
     obj[key] = {
       get: () => store.getState().options[key],
       set: (value) => {
@@ -7374,9 +7374,9 @@ var createOptionAPI = (store, options) => {
   });
   return obj;
 };
-var createOptionActions = (options) => (dispatch2, query, state2) => {
+var createOptionActions = (options2) => (dispatch2, query, state2) => {
   const obj = {};
-  forin(options, (key) => {
+  forin(options2, (key) => {
     const name2 = fromCamels(key, "_").toUpperCase();
     obj[`SET_${name2}`] = (action) => {
       try {
@@ -7388,9 +7388,9 @@ var createOptionActions = (options) => (dispatch2, query, state2) => {
   });
   return obj;
 };
-var createOptionQueries = (options) => (state2) => {
+var createOptionQueries = (options2) => (state2) => {
   const obj = {};
-  forin(options, (key) => {
+  forin(options2, (key) => {
     obj[`GET_${fromCamels(key, "_").toUpperCase()}`] = (action) => state2.options[key];
   });
   return obj;
@@ -8015,7 +8015,7 @@ var createFileLoader = (fetchFn) => {
   return api;
 };
 var isGet = (method) => /GET|HEAD/.test(method);
-var sendRequest = (data3, url, options) => {
+var sendRequest = (data3, url, options2) => {
   const api = {
     onheaders: () => {
     },
@@ -8036,18 +8036,18 @@ var sendRequest = (data3, url, options) => {
   };
   let aborted = false;
   let headersReceived = false;
-  options = {
+  options2 = {
     method: "POST",
     headers: {},
     withCredentials: false,
-    ...options
+    ...options2
   };
   url = encodeURI(url);
-  if (isGet(options.method) && data3) {
+  if (isGet(options2.method) && data3) {
     url = `${url}${encodeURIComponent(typeof data3 === "string" ? data3 : JSON.stringify(data3))}`;
   }
   const xhr = new XMLHttpRequest();
-  const process = isGet(options.method) ? xhr : xhr.upload;
+  const process = isGet(options2.method) ? xhr : xhr.upload;
   process.onprogress = (e2) => {
     if (aborted) {
       return;
@@ -8080,18 +8080,18 @@ var sendRequest = (data3, url, options) => {
     api.onabort();
   };
   xhr.ontimeout = () => api.ontimeout(xhr);
-  xhr.open(options.method, url, true);
-  if (isInt(options.timeout)) {
-    xhr.timeout = options.timeout;
+  xhr.open(options2.method, url, true);
+  if (isInt(options2.timeout)) {
+    xhr.timeout = options2.timeout;
   }
-  Object.keys(options.headers).forEach((key) => {
-    const value = unescape(encodeURIComponent(options.headers[key]));
+  Object.keys(options2.headers).forEach((key) => {
+    const value = unescape(encodeURIComponent(options2.headers[key]));
     xhr.setRequestHeader(key, value);
   });
-  if (options.responseType) {
-    xhr.responseType = options.responseType;
+  if (options2.responseType) {
+    xhr.responseType = options2.responseType;
   }
-  if (options.withCredentials) {
+  if (options2.withCredentials) {
     xhr.withCredentials = true;
   }
   xhr.send(data3);
@@ -8152,9 +8152,9 @@ var ChunkStatus = {
   ERROR: 3,
   WAITING: 4
 };
-var processFileChunked = (apiUrl, action, name2, file2, metadata, load, error2, progress, abort, transfer, options) => {
+var processFileChunked = (apiUrl, action, name2, file2, metadata, load, error2, progress, abort, transfer, options2) => {
   const chunks = [];
-  const {chunkTransferId, chunkServer, chunkSize, chunkRetryDelays} = options;
+  const {chunkTransferId, chunkServer, chunkSize, chunkRetryDelays} = options2;
   const state2 = {
     serverId: chunkTransferId,
     aborted: false
@@ -8330,14 +8330,14 @@ var processFileChunked = (apiUrl, action, name2, file2, metadata, load, error2, 
     }
   };
 };
-var createFileProcessorFunction = (apiUrl, action, name2, options) => (file2, metadata, load, error2, progress, abort, transfer) => {
+var createFileProcessorFunction = (apiUrl, action, name2, options2) => (file2, metadata, load, error2, progress, abort, transfer) => {
   if (!file2)
     return;
-  const canChunkUpload = options.chunkUploads;
-  const shouldChunkUpload = canChunkUpload && file2.size > options.chunkSize;
-  const willChunkUpload = canChunkUpload && (shouldChunkUpload || options.chunkForce);
+  const canChunkUpload = options2.chunkUploads;
+  const shouldChunkUpload = canChunkUpload && file2.size > options2.chunkSize;
+  const willChunkUpload = canChunkUpload && (shouldChunkUpload || options2.chunkForce);
   if (file2 instanceof Blob && willChunkUpload)
-    return processFileChunked(apiUrl, action, name2, file2, metadata, load, error2, progress, abort, transfer, options);
+    return processFileChunked(apiUrl, action, name2, file2, metadata, load, error2, progress, abort, transfer, options2);
   const ondata = action.ondata || ((fd) => fd);
   const onload = action.onload || ((res2) => res2);
   const onerror = action.onerror || ((res2) => null);
@@ -8367,12 +8367,12 @@ var createFileProcessorFunction = (apiUrl, action, name2, options) => (file2, me
   request.onabort = abort;
   return request;
 };
-var createProcessorFunction = (apiUrl = "", action, name2, options) => {
+var createProcessorFunction = (apiUrl = "", action, name2, options2) => {
   if (typeof action === "function")
-    return (...params) => action(name2, ...params, options);
+    return (...params) => action(name2, ...params, options2);
   if (!action || !isString(action.url))
     return null;
-  return createFileProcessorFunction(apiUrl, action, name2, options);
+  return createFileProcessorFunction(apiUrl, action, name2, options2);
 };
 var createRevertFunction = (apiUrl = "", action) => {
   if (typeof action === "function") {
@@ -8421,7 +8421,7 @@ var createPerceivedPerformanceUpdater = (cb, duration = 1e3, offset = 0, tickMin
     }
   };
 };
-var createFileProcessor = (processFn, options) => {
+var createFileProcessor = (processFn, options2) => {
   const state2 = {
     complete: false,
     perceivedProgress: 0,
@@ -8433,7 +8433,7 @@ var createFileProcessor = (processFn, options) => {
     request: null,
     response: null
   };
-  const {allowMinimumUploadDuration} = options;
+  const {allowMinimumUploadDuration} = options2;
   const process = (file2, metadata) => {
     const progressFn = () => {
       if (state2.duration === 0 || state2.progress === null)
@@ -8880,7 +8880,7 @@ var getItemByQueryFromState = (state2, itemHandler) => ({
   },
   failure = () => {
   },
-  ...options
+  ...options2
 } = {}) => {
   const item2 = getItemByQuery(state2.items, query);
   if (!item2) {
@@ -8890,7 +8890,7 @@ var getItemByQueryFromState = (state2, itemHandler) => ({
     });
     return;
   }
-  itemHandler(item2, success, failure, options || {});
+  itemHandler(item2, success, failure, options2 || {});
 };
 var actions = (dispatch2, query, state2) => ({
   ABORT_ALL: () => {
@@ -9030,7 +9030,7 @@ var actions = (dispatch2, query, state2) => ({
     },
     failure = () => {
     },
-    options = {}
+    options: options2 = {}
   }) => {
     if (isEmpty(source)) {
       failure({
@@ -9064,7 +9064,7 @@ var actions = (dispatch2, query, state2) => ({
             interactionMethod,
             success,
             failure,
-            options
+            options: options2
           });
         }).catch(() => {
         });
@@ -9073,10 +9073,10 @@ var actions = (dispatch2, query, state2) => ({
       }
       dispatch2("REMOVE_ITEM", {query: item3.id});
     }
-    const origin = options.type === "local" ? FileOrigin.LOCAL : options.type === "limbo" ? FileOrigin.LIMBO : FileOrigin.INPUT;
-    const item2 = createItem(origin, origin === FileOrigin.INPUT ? null : source, options.file);
-    Object.keys(options.metadata || {}).forEach((key) => {
-      item2.setMetadata(key, options.metadata[key]);
+    const origin = options2.type === "local" ? FileOrigin.LOCAL : options2.type === "limbo" ? FileOrigin.LIMBO : FileOrigin.INPUT;
+    const item2 = createItem(origin, origin === FileOrigin.INPUT ? null : source, options2.file);
+    Object.keys(options2.metadata || {}).forEach((key) => {
+      item2.setMetadata(key, options2.metadata[key]);
     });
     applyFilters("DID_CREATE_ITEM", item2, {query, dispatch: dispatch2});
     const itemInsertLocation = query("GET_ITEM_INSERT_LOCATION");
@@ -9373,14 +9373,14 @@ var actions = (dispatch2, query, state2) => ({
       failure({error: error2, file: createItemAPI(item2)});
       processNext();
     });
-    const options = state2.options;
-    item2.process(createFileProcessor(createProcessorFunction(options.server.url, options.server.process, options.name, {
+    const options2 = state2.options;
+    item2.process(createFileProcessor(createProcessorFunction(options2.server.url, options2.server.process, options2.name, {
       chunkTransferId: item2.transferId,
-      chunkServer: options.server.patch,
-      chunkUploads: options.chunkUploads,
-      chunkForce: options.chunkForce,
-      chunkSize: options.chunkSize,
-      chunkRetryDelays: options.chunkRetryDelays
+      chunkServer: options2.server.patch,
+      chunkUploads: options2.chunkUploads,
+      chunkForce: options2.chunkForce,
+      chunkSize: options2.chunkSize,
+      chunkRetryDelays: options2.chunkRetryDelays
     }), {
       allowMinimumUploadDuration: query("GET_ALLOW_MINIMUM_UPLOAD_DURATION")
     }), (file2, success2, error2) => {
@@ -9404,7 +9404,7 @@ var actions = (dispatch2, query, state2) => ({
   RELEASE_ITEM: getItemByQueryFromState(state2, (item2) => {
     item2.release();
   }),
-  REMOVE_ITEM: getItemByQueryFromState(state2, (item2, success, failure, options) => {
+  REMOVE_ITEM: getItemByQueryFromState(state2, (item2, success, failure, options2) => {
     const removeFromView = () => {
       const id = item2.id;
       getItemById(state2.items, id).archive();
@@ -9413,7 +9413,7 @@ var actions = (dispatch2, query, state2) => ({
       success(createItemAPI(item2));
     };
     const server = state2.options.server;
-    if (item2.origin === FileOrigin.LOCAL && server && isFunction(server.remove) && options.remove !== false) {
+    if (item2.origin === FileOrigin.LOCAL && server && isFunction(server.remove) && options2.remove !== false) {
       dispatch2("DID_START_ITEM_REMOVE", {id: item2.id});
       server.remove(item2.source, () => removeFromView(), (status) => {
         dispatch2("DID_THROW_ITEM_REMOVE_ERROR", {
@@ -9426,7 +9426,7 @@ var actions = (dispatch2, query, state2) => ({
         });
       });
     } else {
-      if (options.revert && item2.origin !== FileOrigin.LOCAL && item2.serverId !== null || state2.options.chunkUploads && item2.file.size > state2.options.chunkSize || state2.options.chunkUploads && state2.options.chunkForce) {
+      if (options2.revert && item2.origin !== FileOrigin.LOCAL && item2.serverId !== null || state2.options.chunkUploads && item2.file.size > state2.options.chunkSize || state2.options.chunkUploads && state2.options.chunkForce) {
         item2.revert(createRevertFunction(state2.options.server.url, state2.options.server.revert), query("GET_FORCE_REVERT"));
       }
       removeFromView();
@@ -9481,16 +9481,16 @@ var actions = (dispatch2, query, state2) => ({
     }).catch(() => {
     });
   }),
-  SET_OPTIONS: ({options}) => {
-    const optionKeys = Object.keys(options);
+  SET_OPTIONS: ({options: options2}) => {
+    const optionKeys = Object.keys(options2);
     const prioritizedOptionKeys = PrioritizedOptions.filter((key) => optionKeys.includes(key));
     const orderedOptionKeys = [
       ...prioritizedOptionKeys,
-      ...Object.keys(options).filter((key) => !prioritizedOptionKeys.includes(key))
+      ...Object.keys(options2).filter((key) => !prioritizedOptionKeys.includes(key))
     ];
     orderedOptionKeys.forEach((key) => {
       dispatch2(`SET_${fromCamels(key, "_").toUpperCase()}`, {
-        value: options[key]
+        value: options2[key]
       });
     });
   }
@@ -9627,13 +9627,13 @@ var fileActionButton = createView({
   create: create$1,
   write: write$1
 });
-var toNaturalFileSize = (bytes, decimalSeparator = ".", base = 1e3, options = {}) => {
+var toNaturalFileSize = (bytes, decimalSeparator = ".", base = 1e3, options2 = {}) => {
   const {
     labelBytes = "bytes",
     labelKilobytes = "KB",
     labelMegabytes = "MB",
     labelGigabytes = "GB"
-  } = options;
+  } = options2;
   bytes = Math.round(Math.abs(bytes));
   const KB = base;
   const MB = base * base;
@@ -11409,9 +11409,9 @@ var dragleave = (root2, clients) => (e2) => {
     onexit(eventPosition(e2));
   });
 };
-var createHopper = (scope, validateItems, options) => {
+var createHopper = (scope, validateItems, options2) => {
   scope.classList.add("filepond--hopper");
-  const {catchesDropsOnPage, requiresDropOnElement, filterItems = (items) => items} = options;
+  const {catchesDropsOnPage, requiresDropOnElement, filterItems = (items) => items} = options2;
   const client = createDragNDropClient(scope, catchesDropsOnPage ? document.documentElement : scope, requiresDropOnElement);
   let lastState = "";
   let currentState = "";
@@ -12182,7 +12182,7 @@ var createApp = (initialOptions = {}) => {
       });
     });
   };
-  const setOptions2 = (options) => store.dispatch("SET_OPTIONS", {options});
+  const setOptions3 = (options2) => store.dispatch("SET_OPTIONS", {options: options2});
   const getFile2 = (query) => store.query("GET_ACTIVE_ITEM", query);
   const prepareFile = (query) => new Promise((resolve, reject) => {
     store.dispatch("REQUEST_ITEM_PREPARE", {
@@ -12195,34 +12195,34 @@ var createApp = (initialOptions = {}) => {
       }
     });
   });
-  const addFile = (source, options = {}) => new Promise((resolve, reject) => {
-    addFiles([{source, options}], {index: options.index}).then((items) => resolve(items && items[0])).catch(reject);
+  const addFile = (source, options2 = {}) => new Promise((resolve, reject) => {
+    addFiles([{source, options: options2}], {index: options2.index}).then((items) => resolve(items && items[0])).catch(reject);
   });
   const isFilePondFile = (obj) => obj.file && obj.id;
-  const removeFile = (query, options) => {
-    if (typeof query === "object" && !isFilePondFile(query) && !options) {
-      options = query;
+  const removeFile = (query, options2) => {
+    if (typeof query === "object" && !isFilePondFile(query) && !options2) {
+      options2 = query;
       query = void 0;
     }
-    store.dispatch("REMOVE_ITEM", {...options, query});
+    store.dispatch("REMOVE_ITEM", {...options2, query});
     return store.query("GET_ACTIVE_ITEM", query) === null;
   };
   const addFiles = (...args) => new Promise((resolve, reject) => {
     const sources = [];
-    const options = {};
+    const options2 = {};
     if (isArray(args[0])) {
       sources.push.apply(sources, args[0]);
-      Object.assign(options, args[1] || {});
+      Object.assign(options2, args[1] || {});
     } else {
       const lastArgument = args[args.length - 1];
       if (typeof lastArgument === "object" && !(lastArgument instanceof Blob)) {
-        Object.assign(options, args.pop());
+        Object.assign(options2, args.pop());
       }
       sources.push(...args);
     }
     store.dispatch("ADD_ITEMS", {
       items: sources,
-      index: options.index,
+      index: options2.index,
       interactionMethod: InteractionMethod.API,
       success: resolve,
       failure: reject
@@ -12255,23 +12255,23 @@ var createApp = (initialOptions = {}) => {
   };
   const removeFiles = (...args) => {
     const queries2 = Array.isArray(args[0]) ? args[0] : args;
-    let options;
+    let options2;
     if (typeof queries2[queries2.length - 1] === "object") {
-      options = queries2.pop();
+      options2 = queries2.pop();
     } else if (Array.isArray(args[0])) {
-      options = args[1];
+      options2 = args[1];
     }
     const files = getFiles2();
     if (!queries2.length)
-      return Promise.all(files.map((file2) => removeFile(file2, options)));
+      return Promise.all(files.map((file2) => removeFile(file2, options2)));
     const mappedQueries = queries2.map((query) => isNumber(query) ? files[query] ? files[query].id : null : query).filter((query) => query);
-    return mappedQueries.map((q) => removeFile(q, options));
+    return mappedQueries.map((q) => removeFile(q, options2));
   };
   const exports = {
     ...on(),
     ...readWriteApi,
     ...createOptionAPI(store, defaultOptions2),
-    setOptions: setOptions2,
+    setOptions: setOptions3,
     addFile,
     addFiles,
     getFile: getFile2,
@@ -12378,7 +12378,7 @@ var getAttributesAsObject = (node, attributeMapping = {}) => {
   mapObject(output, attributeMapping);
   return output;
 };
-var createAppAtElement = (element, options = {}) => {
+var createAppAtElement = (element, options2 = {}) => {
   const attributeMapping = {
     "^class$": "className",
     "^multiple$": "allowMultiple",
@@ -12409,7 +12409,7 @@ var createAppAtElement = (element, options = {}) => {
   };
   applyFilters("SET_ATTRIBUTE_TO_OPTION_MAP", attributeMapping);
   const mergedOptions = {
-    ...options
+    ...options2
   };
   const attributeOptions = getAttributesAsObject(element.nodeName === "FIELDSET" ? element.querySelector("input[type=file]") : element, attributeMapping);
   Object.keys(attributeOptions).forEach((key) => {
@@ -12422,7 +12422,7 @@ var createAppAtElement = (element, options = {}) => {
       mergedOptions[key] = attributeOptions[key];
     }
   });
-  mergedOptions.files = (options.files || []).concat(Array.from(element.querySelectorAll("input:not([type=file])")).map((input) => ({
+  mergedOptions.files = (options2.files || []).concat(Array.from(element.querySelectorAll("input:not([type=file])")).map((input) => ({
     source: input.value,
     options: {
       type: input.dataset.type
@@ -14568,8 +14568,8 @@ var getBitmap = (image, orientation, flip) => {
   ctx.drawImage(image, 0, 0, width, height);
   return canvas;
 };
-var imageToImageData = (imageElement, orientation, crop = {}, options = {}) => {
-  const {canvasMemoryLimit, background = null} = options;
+var imageToImageData = (imageElement, orientation, crop = {}, options2 = {}) => {
+  const {canvasMemoryLimit, background = null} = options2;
   const zoom = crop.zoom || 1;
   const bitmap = getBitmap(imageElement, orientation, crop.flip);
   const imageSize = {
@@ -14640,10 +14640,10 @@ if (IS_BROWSER3) {
     });
   }
 }
-var canvasToBlob = (canvas, options, beforeCreateBlob = null) => new Promise((resolve) => {
+var canvasToBlob = (canvas, options2, beforeCreateBlob = null) => new Promise((resolve) => {
   const promisedImage = beforeCreateBlob ? beforeCreateBlob(canvas) : canvas;
   Promise.resolve(promisedImage).then((canvas2) => {
-    canvas2.toBlob(resolve, options.type, options.quality);
+    canvas2.toBlob(resolve, options2.type, options2.quality);
   });
 });
 var vectorMultiply2 = (v, amount) => createVector$12(v.x * amount, v.y * amount);
@@ -14919,8 +14919,8 @@ var sortMarkupByZIndex2 = (a2, b) => {
   }
   return 0;
 };
-var cropSVG = (blob2, crop = {}, markup, options) => new Promise((resolve) => {
-  const {background = null} = options;
+var cropSVG = (blob2, crop = {}, markup, options2) => new Promise((resolve) => {
+  const {background = null} = options2;
   const fr = new FileReader();
   fr.onloadend = () => {
     const text2 = fr.result;
@@ -15519,10 +15519,10 @@ var imageDataToCanvas = (imageData) => {
   ctx.putImageData(imageData, 0, 0);
   return image;
 };
-var transformImage = (file2, instructions, options = {}) => new Promise((resolve, reject) => {
+var transformImage = (file2, instructions, options2 = {}) => new Promise((resolve, reject) => {
   if (!file2 || !isImage$1(file2))
     return reject({status: "not an image file", file: file2});
-  const {stripImageHead, beforeCreateBlob, afterCreateBlob, canvasMemoryLimit} = options;
+  const {stripImageHead, beforeCreateBlob, afterCreateBlob, canvasMemoryLimit} = options2;
   const {crop, size, filter, markup, output} = instructions;
   const orientation = instructions.image && instructions.image.orientation ? Math.max(1, Math.min(8, instructions.image.orientation)) : null;
   const qualityAsPercentage = output && output.quality;
@@ -15540,11 +15540,11 @@ var transformImage = (file2, instructions, options = {}) => new Promise((resolve
     const promisedBlob = afterCreateBlob ? afterCreateBlob(blob2) : blob2;
     Promise.resolve(promisedBlob).then(resolve);
   };
-  const toBlob = (imageData, options2) => {
+  const toBlob = (imageData, options3) => {
     const canvas = imageDataToCanvas(imageData);
     const promisedCanvas = markup.length ? canvasApplyMarkup(canvas, markup) : canvas;
     Promise.resolve(promisedCanvas).then((canvas2) => {
-      canvasToBlob(canvas2, options2, beforeCreateBlob).then((blob2) => {
+      canvasToBlob(canvas2, options3, beforeCreateBlob).then((blob2) => {
         canvasRelease(canvas2);
         if (stripImageHead)
           return resolveWithBlob(blob2);
@@ -15762,13 +15762,13 @@ var plugin7 = ({addFilter: addFilter2, utils}) => {
           if (!willModifyImageData)
             return resolve2(file3);
         }
-        const options = {
+        const options2 = {
           beforeCreateBlob: query("GET_IMAGE_TRANSFORM_BEFORE_CREATE_BLOB"),
           afterCreateBlob: query("GET_IMAGE_TRANSFORM_AFTER_CREATE_BLOB"),
           canvasMemoryLimit: query("GET_IMAGE_TRANSFORM_CANVAS_MEMORY_LIMIT"),
           stripImageHead: query("GET_IMAGE_TRANSFORM_OUTPUT_STRIP_IMAGE_HEAD")
         };
-        transformImage(file3, instructions, options).then((blob2) => {
+        transformImage(file3, instructions, options2).then((blob2) => {
           const out = getFileFromBlob2(blob2, renameFileToMatchMimeType(file3.name, getValidOutputMimeType(blob2.type)));
           resolve2(out);
         }).catch(reject);
@@ -16843,9 +16843,7 @@ function applyStyle(button, stylesToApply) {
 }
 
 // node_modules/marked/lib/marked.esm.js
-var esmEntry$1 = {exports: {}};
-var defaults$5 = {exports: {}};
-function getDefaults$1() {
+function getDefaults() {
   return {
     baseUrl: null,
     breaks: false,
@@ -16868,14 +16866,10 @@ function getDefaults$1() {
     xhtml: false
   };
 }
-function changeDefaults$1(newDefaults) {
-  defaults$5.exports.defaults = newDefaults;
+var defaults2 = getDefaults();
+function changeDefaults(newDefaults) {
+  defaults2 = newDefaults;
 }
-defaults$5.exports = {
-  defaults: getDefaults$1(),
-  getDefaults: getDefaults$1,
-  changeDefaults: changeDefaults$1
-};
 var escapeTest = /[&<>"']/;
 var escapeReplace = /[&<>"']/g;
 var escapeTestNoEncode = /[<>"']|&(?!#?\w+;)/;
@@ -16888,7 +16882,7 @@ var escapeReplacements = {
   "'": "&#39;"
 };
 var getEscapeReplacement = (ch) => escapeReplacements[ch];
-function escape$3(html, encode) {
+function escape(html, encode) {
   if (encode) {
     if (escapeTest.test(html)) {
       return html.replace(escapeReplace, getEscapeReplacement);
@@ -16901,7 +16895,7 @@ function escape$3(html, encode) {
   return html;
 }
 var unescapeTest = /&(#(?:\d+)|(?:#x[0-9A-Fa-f]+)|(?:\w+));?/ig;
-function unescape$1(html) {
+function unescape2(html) {
   return html.replace(unescapeTest, (_, n2) => {
     n2 = n2.toLowerCase();
     if (n2 === "colon")
@@ -16913,7 +16907,7 @@ function unescape$1(html) {
   });
 }
 var caret = /(^|[^\[])\^/g;
-function edit$1(regex, opt) {
+function edit(regex, opt) {
   regex = regex.source || regex;
   opt = opt || "";
   const obj = {
@@ -16931,11 +16925,11 @@ function edit$1(regex, opt) {
 }
 var nonWordAndColonTest = /[^\w:]/g;
 var originIndependentUrl = /^$|^[a-z][a-z0-9+.-]*:|^[?#]/i;
-function cleanUrl$1(sanitize, base, href) {
+function cleanUrl(sanitize, base, href) {
   if (sanitize) {
     let prot;
     try {
-      prot = decodeURIComponent(unescape$1(href)).replace(nonWordAndColonTest, "").toLowerCase();
+      prot = decodeURIComponent(unescape2(href)).replace(nonWordAndColonTest, "").toLowerCase();
     } catch (e2) {
       return null;
     }
@@ -16962,7 +16956,7 @@ function resolveUrl(base, href) {
     if (justDomain.test(base)) {
       baseUrls[" " + base] = base + "/";
     } else {
-      baseUrls[" " + base] = rtrim$1(base, "/", true);
+      baseUrls[" " + base] = rtrim(base, "/", true);
     }
   }
   base = baseUrls[" " + base];
@@ -16981,9 +16975,9 @@ function resolveUrl(base, href) {
     return base + href;
   }
 }
-var noopTest$1 = {exec: function noopTest() {
+var noopTest = {exec: function noopTest2() {
 }};
-function merge$2(obj) {
+function merge(obj) {
   let i = 1, target, key;
   for (; i < arguments.length; i++) {
     target = arguments[i];
@@ -16995,7 +16989,7 @@ function merge$2(obj) {
   }
   return obj;
 }
-function splitCells$1(tableRow, count) {
+function splitCells(tableRow, count) {
   const row = tableRow.replace(/\|/g, (match, offset, str) => {
     let escaped = false, curr = offset;
     while (--curr >= 0 && str[curr] === "\\")
@@ -17024,7 +17018,7 @@ function splitCells$1(tableRow, count) {
   }
   return cells;
 }
-function rtrim$1(str, c2, invert) {
+function rtrim(str, c2, invert) {
   const l = str.length;
   if (l === 0) {
     return "";
@@ -17042,7 +17036,7 @@ function rtrim$1(str, c2, invert) {
   }
   return str.substr(0, l - suffLen);
 }
-function findClosingBracket$1(str, b) {
+function findClosingBracket(str, b) {
   if (str.indexOf(b[1]) === -1) {
     return -1;
   }
@@ -17062,12 +17056,12 @@ function findClosingBracket$1(str, b) {
   }
   return -1;
 }
-function checkSanitizeDeprecation$1(opt) {
+function checkSanitizeDeprecation(opt) {
   if (opt && opt.sanitize && !opt.silent) {
     console.warn("marked(): sanitize and sanitizer parameters are deprecated since version 0.7.0, should not be used and will be removed in the future. Read more here: https://marked.js.org/#/USING_ADVANCED.md#options");
   }
 }
-function repeatString$1(pattern, count) {
+function repeatString(pattern, count) {
   if (count < 1) {
     return "";
   }
@@ -17081,30 +17075,9 @@ function repeatString$1(pattern, count) {
   }
   return result + pattern;
 }
-var helpers = {
-  escape: escape$3,
-  unescape: unescape$1,
-  edit: edit$1,
-  cleanUrl: cleanUrl$1,
-  resolveUrl,
-  noopTest: noopTest$1,
-  merge: merge$2,
-  splitCells: splitCells$1,
-  rtrim: rtrim$1,
-  findClosingBracket: findClosingBracket$1,
-  checkSanitizeDeprecation: checkSanitizeDeprecation$1,
-  repeatString: repeatString$1
-};
-var {defaults: defaults$4} = defaults$5.exports;
-var {
-  rtrim,
-  splitCells,
-  escape: escape$2,
-  findClosingBracket
-} = helpers;
 function outputLink(cap, link, raw, lexer2) {
   const href = link.href;
-  const title = link.title ? escape$2(link.title) : null;
+  const title = link.title ? escape(link.title) : null;
   const text2 = cap[1].replace(/\\([\[\]])/g, "$1");
   if (cap[0].charAt(0) !== "!") {
     lexer2.state.inLink = true;
@@ -17124,7 +17097,7 @@ function outputLink(cap, link, raw, lexer2) {
       raw,
       href,
       title,
-      text: escape$2(text2)
+      text: escape(text2)
     };
   }
 }
@@ -17146,20 +17119,17 @@ function indentCodeCompensation(raw, text2) {
     return node;
   }).join("\n");
 }
-var Tokenizer_1$1 = class Tokenizer {
-  constructor(options) {
-    this.options = options || defaults$4;
+var Tokenizer = class {
+  constructor(options2) {
+    this.options = options2 || defaults2;
   }
   space(src) {
     const cap = this.rules.block.newline.exec(src);
-    if (cap) {
-      if (cap[0].length > 1) {
-        return {
-          type: "space",
-          raw: cap[0]
-        };
-      }
-      return {raw: "\n"};
+    if (cap && cap[0].length > 0) {
+      return {
+        type: "space",
+        raw: cap[0]
+      };
     }
   }
   code(src) {
@@ -17234,7 +17204,7 @@ var Tokenizer_1$1 = class Tokenizer {
   list(src) {
     let cap = this.rules.block.list.exec(src);
     if (cap) {
-      let raw, istask, ischecked, indent, i, blankLine, endsWithBlankLine, line, lines, itemContents;
+      let raw, istask, ischecked, indent, i, blankLine, endsWithBlankLine, line, nextLine, rawLine, itemContents, endEarly;
       let bull = cap[1].trim();
       const isordered = bull.length > 1;
       const list2 = {
@@ -17249,57 +17219,57 @@ var Tokenizer_1$1 = class Tokenizer {
       if (this.options.pedantic) {
         bull = isordered ? bull : "[*+-]";
       }
-      const itemRegex = new RegExp(`^( {0,3}${bull})((?: [^\\n]*| *)(?:\\n[^\\n]*)*(?:\\n|$))`);
+      const itemRegex = new RegExp(`^( {0,3}${bull})((?: [^\\n]*)?(?:\\n|$))`);
       while (src) {
-        if (this.rules.block.hr.test(src)) {
-          break;
-        }
+        endEarly = false;
         if (!(cap = itemRegex.exec(src))) {
           break;
         }
-        lines = cap[2].split("\n");
+        if (this.rules.block.hr.test(src)) {
+          break;
+        }
+        raw = cap[0];
+        src = src.substring(raw.length);
+        line = cap[2].split("\n", 1)[0];
+        nextLine = src.split("\n", 1)[0];
         if (this.options.pedantic) {
           indent = 2;
-          itemContents = lines[0].trimLeft();
+          itemContents = line.trimLeft();
         } else {
           indent = cap[2].search(/[^ ]/);
-          indent = cap[1].length + (indent > 4 ? 1 : indent);
-          itemContents = lines[0].slice(indent - cap[1].length);
+          indent = indent > 4 ? 1 : indent;
+          itemContents = line.slice(indent);
+          indent += cap[1].length;
         }
         blankLine = false;
-        raw = cap[0];
-        if (!lines[0] && /^ *$/.test(lines[1])) {
-          raw = cap[1] + lines.slice(0, 2).join("\n") + "\n";
-          list2.loose = true;
-          lines = [];
+        if (!line && /^ *$/.test(nextLine)) {
+          raw += nextLine + "\n";
+          src = src.substring(nextLine.length + 1);
+          endEarly = true;
         }
-        const nextBulletRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}(?:[*+-]|\\d{1,9}[.)])`);
-        for (i = 1; i < lines.length; i++) {
-          line = lines[i];
-          if (this.options.pedantic) {
-            line = line.replace(/^ {1,4}(?=( {4})*[^ ])/g, "  ");
-          }
-          if (nextBulletRegex.test(line)) {
-            raw = cap[1] + lines.slice(0, i).join("\n") + "\n";
-            break;
-          }
-          if (!blankLine) {
-            if (!line.trim()) {
+        if (!endEarly) {
+          const nextBulletRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}(?:[*+-]|\\d{1,9}[.)])`);
+          while (src) {
+            rawLine = src.split("\n", 1)[0];
+            line = rawLine;
+            if (this.options.pedantic) {
+              line = line.replace(/^ {1,4}(?=( {4})*[^ ])/g, "  ");
+            }
+            if (nextBulletRegex.test(line)) {
+              break;
+            }
+            if (line.search(/[^ ]/) >= indent || !line.trim()) {
+              itemContents += "\n" + line.slice(indent);
+            } else if (!blankLine) {
+              itemContents += "\n" + line;
+            } else {
+              break;
+            }
+            if (!blankLine && !line.trim()) {
               blankLine = true;
             }
-            if (line.search(/[^ ]/) >= indent) {
-              itemContents += "\n" + line.slice(indent);
-            } else {
-              itemContents += "\n" + line;
-            }
-            continue;
-          }
-          if (line.search(/[^ ]/) >= indent || !line.trim()) {
-            itemContents += "\n" + line.slice(indent);
-            continue;
-          } else {
-            raw = cap[1] + lines.slice(0, i).join("\n") + "\n";
-            break;
+            raw += rawLine + "\n";
+            src = src.substring(rawLine.length + 1);
           }
         }
         if (!list2.loose) {
@@ -17325,7 +17295,6 @@ var Tokenizer_1$1 = class Tokenizer {
           text: itemContents
         });
         list2.raw += raw;
-        src = src.slice(raw.length);
       }
       list2.items[list2.items.length - 1].raw = raw.trimRight();
       list2.items[list2.items.length - 1].text = itemContents.trimRight();
@@ -17334,7 +17303,21 @@ var Tokenizer_1$1 = class Tokenizer {
       for (i = 0; i < l; i++) {
         this.lexer.state.top = false;
         list2.items[i].tokens = this.lexer.blockTokens(list2.items[i].text, []);
-        if (list2.items[i].tokens.some((t2) => t2.type === "space")) {
+        const spacers = list2.items[i].tokens.filter((t2) => t2.type === "space");
+        const hasMultipleLineBreaks = spacers.every((t2) => {
+          const chars = t2.raw.split("");
+          let lineBreaks = 0;
+          for (const char of chars) {
+            if (char === "\n") {
+              lineBreaks += 1;
+            }
+            if (lineBreaks > 1) {
+              return true;
+            }
+          }
+          return false;
+        });
+        if (!list2.loose && spacers.length && hasMultipleLineBreaks) {
           list2.loose = true;
           list2.items[i].loose = true;
         }
@@ -17353,7 +17336,7 @@ var Tokenizer_1$1 = class Tokenizer {
       };
       if (this.options.sanitize) {
         token.type = "paragraph";
-        token.text = this.options.sanitizer ? this.options.sanitizer(cap[0]) : escape$2(cap[0]);
+        token.text = this.options.sanitizer ? this.options.sanitizer(cap[0]) : escape(cap[0]);
         token.tokens = [];
         this.lexer.inline(token.text, token.tokens);
       }
@@ -17384,7 +17367,7 @@ var Tokenizer_1$1 = class Tokenizer {
           return {text: c2};
         }),
         align: cap[2].replace(/^ *|\| *$/g, "").split(/ *\| */),
-        rows: cap[3] ? cap[3].replace(/\n$/, "").split("\n") : []
+        rows: cap[3] ? cap[3].replace(/\n[ \t]*$/, "").split("\n") : []
       };
       if (item2.header.length === item2.align.length) {
         item2.raw = cap[0];
@@ -17470,7 +17453,7 @@ var Tokenizer_1$1 = class Tokenizer {
       return {
         type: "escape",
         raw: cap[0],
-        text: escape$2(cap[1])
+        text: escape(cap[1])
       };
     }
   }
@@ -17492,7 +17475,7 @@ var Tokenizer_1$1 = class Tokenizer {
         raw: cap[0],
         inLink: this.lexer.state.inLink,
         inRawBlock: this.lexer.state.inRawBlock,
-        text: this.options.sanitize ? this.options.sanitizer ? this.options.sanitizer(cap[0]) : escape$2(cap[0]) : cap[0]
+        text: this.options.sanitize ? this.options.sanitizer ? this.options.sanitizer(cap[0]) : escape(cap[0]) : cap[0]
       };
     }
   }
@@ -17618,7 +17601,7 @@ var Tokenizer_1$1 = class Tokenizer {
       if (hasNonSpaceChars && hasSpaceCharsOnBothEnds) {
         text2 = text2.substring(1, text2.length - 1);
       }
-      text2 = escape$2(text2, true);
+      text2 = escape(text2, true);
       return {
         type: "codespan",
         raw: cap[0],
@@ -17651,10 +17634,10 @@ var Tokenizer_1$1 = class Tokenizer {
     if (cap) {
       let text2, href;
       if (cap[2] === "@") {
-        text2 = escape$2(this.options.mangle ? mangle2(cap[1]) : cap[1]);
+        text2 = escape(this.options.mangle ? mangle2(cap[1]) : cap[1]);
         href = "mailto:" + text2;
       } else {
-        text2 = escape$2(cap[1]);
+        text2 = escape(cap[1]);
         href = text2;
       }
       return {
@@ -17677,7 +17660,7 @@ var Tokenizer_1$1 = class Tokenizer {
     if (cap = this.rules.inline.url.exec(src)) {
       let text2, href;
       if (cap[2] === "@") {
-        text2 = escape$2(this.options.mangle ? mangle2(cap[0]) : cap[0]);
+        text2 = escape(this.options.mangle ? mangle2(cap[0]) : cap[0]);
         href = "mailto:" + text2;
       } else {
         let prevCapZero;
@@ -17685,7 +17668,7 @@ var Tokenizer_1$1 = class Tokenizer {
           prevCapZero = cap[0];
           cap[0] = this.rules.inline._backpedal.exec(cap[0])[0];
         } while (prevCapZero !== cap[0]);
-        text2 = escape$2(cap[0]);
+        text2 = escape(cap[0]);
         if (cap[1] === "www.") {
           href = "http://" + text2;
         } else {
@@ -17712,9 +17695,9 @@ var Tokenizer_1$1 = class Tokenizer {
     if (cap) {
       let text2;
       if (this.lexer.state.inRawBlock) {
-        text2 = this.options.sanitize ? this.options.sanitizer ? this.options.sanitizer(cap[0]) : escape$2(cap[0]) : cap[0];
+        text2 = this.options.sanitize ? this.options.sanitizer ? this.options.sanitizer(cap[0]) : escape(cap[0]) : cap[0];
       } else {
-        text2 = escape$2(this.options.smartypants ? smartypants2(cap[0]) : cap[0]);
+        text2 = escape(this.options.smartypants ? smartypants2(cap[0]) : cap[0]);
       }
       return {
         type: "text",
@@ -17724,12 +17707,7 @@ var Tokenizer_1$1 = class Tokenizer {
     }
   }
 };
-var {
-  noopTest: noopTest2,
-  edit,
-  merge: merge$1
-} = helpers;
-var block$1 = {
+var block = {
   newline: /^(?: *(?:\n|$))+/,
   code: /^( {4}[^\n]+(?:\n(?: *(?:\n|$))*)?)+/,
   fences: /^ {0,3}(`{3,}(?=[^`\n]*\n)|~{3,})([^\n]*)\n(?:|([\s\S]*?)\n)(?: {0,3}\1[~`]* *(?=\n|$)|$)/,
@@ -17738,43 +17716,44 @@ var block$1 = {
   blockquote: /^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/,
   list: /^( {0,3}bull)( [^\n]+?)?(?:\n|$)/,
   html: "^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>\\n*|$)|<![A-Z][\\s\\S]*?(?:>\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n *)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$))",
-  def: /^ {0,3}\[(label)\]: *\n? *<?([^\s>]+)>?(?:(?: +\n? *| *\n *)(title))? *(?:\n+|$)/,
-  table: noopTest2,
+  def: /^ {0,3}\[(label)\]: *(?:\n *)?<?([^\s>]+)>?(?:(?: +(?:\n *)?| *\n *)(title))? *(?:\n+|$)/,
+  table: noopTest,
   lheading: /^([^\n]+)\n {0,3}(=+|-+) *(?:\n+|$)/,
-  _paragraph: /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html| +\n)[^\n]+)*)/,
+  _paragraph: /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/,
   text: /^[^\n]+/
 };
-block$1._label = /(?!\s*\])(?:\\[\[\]]|[^\[\]])+/;
-block$1._title = /(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/;
-block$1.def = edit(block$1.def).replace("label", block$1._label).replace("title", block$1._title).getRegex();
-block$1.bullet = /(?:[*+-]|\d{1,9}[.)])/;
-block$1.listItemStart = edit(/^( *)(bull) */).replace("bull", block$1.bullet).getRegex();
-block$1.list = edit(block$1.list).replace(/bull/g, block$1.bullet).replace("hr", "\\n+(?=\\1?(?:(?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$))").replace("def", "\\n+(?=" + block$1.def.source + ")").getRegex();
-block$1._tag = "address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|section|source|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul";
-block$1._comment = /<!--(?!-?>)[\s\S]*?(?:-->|$)/;
-block$1.html = edit(block$1.html, "i").replace("comment", block$1._comment).replace("tag", block$1._tag).replace("attribute", / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex();
-block$1.paragraph = edit(block$1._paragraph).replace("hr", block$1.hr).replace("heading", " {0,3}#{1,6} ").replace("|lheading", "").replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)]) ").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", block$1._tag).getRegex();
-block$1.blockquote = edit(block$1.blockquote).replace("paragraph", block$1.paragraph).getRegex();
-block$1.normal = merge$1({}, block$1);
-block$1.gfm = merge$1({}, block$1.normal, {
+block._label = /(?!\s*\])(?:\\.|[^\[\]\\])+/;
+block._title = /(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/;
+block.def = edit(block.def).replace("label", block._label).replace("title", block._title).getRegex();
+block.bullet = /(?:[*+-]|\d{1,9}[.)])/;
+block.listItemStart = edit(/^( *)(bull) */).replace("bull", block.bullet).getRegex();
+block.list = edit(block.list).replace(/bull/g, block.bullet).replace("hr", "\\n+(?=\\1?(?:(?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$))").replace("def", "\\n+(?=" + block.def.source + ")").getRegex();
+block._tag = "address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|section|source|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul";
+block._comment = /<!--(?!-?>)[\s\S]*?(?:-->|$)/;
+block.html = edit(block.html, "i").replace("comment", block._comment).replace("tag", block._tag).replace("attribute", / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex();
+block.paragraph = edit(block._paragraph).replace("hr", block.hr).replace("heading", " {0,3}#{1,6} ").replace("|lheading", "").replace("|table", "").replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)]) ").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", block._tag).getRegex();
+block.blockquote = edit(block.blockquote).replace("paragraph", block.paragraph).getRegex();
+block.normal = merge({}, block);
+block.gfm = merge({}, block.normal, {
   table: "^ *([^\\n ].*\\|.*)\\n {0,3}(?:\\| *)?(:?-+:? *(?:\\| *:?-+:? *)*)(?:\\| *)?(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)"
 });
-block$1.gfm.table = edit(block$1.gfm.table).replace("hr", block$1.hr).replace("heading", " {0,3}#{1,6} ").replace("blockquote", " {0,3}>").replace("code", " {4}[^\\n]").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)]) ").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", block$1._tag).getRegex();
-block$1.pedantic = merge$1({}, block$1.normal, {
-  html: edit(`^ *(?:comment *(?:\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)|<tag(?:"[^"]*"|'[^']*'|\\s[^'"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))`).replace("comment", block$1._comment).replace(/tag/g, "(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(),
+block.gfm.table = edit(block.gfm.table).replace("hr", block.hr).replace("heading", " {0,3}#{1,6} ").replace("blockquote", " {0,3}>").replace("code", " {4}[^\\n]").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)]) ").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", block._tag).getRegex();
+block.gfm.paragraph = edit(block._paragraph).replace("hr", block.hr).replace("heading", " {0,3}#{1,6} ").replace("|lheading", "").replace("table", block.gfm.table).replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)]) ").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", block._tag).getRegex();
+block.pedantic = merge({}, block.normal, {
+  html: edit(`^ *(?:comment *(?:\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)|<tag(?:"[^"]*"|'[^']*'|\\s[^'"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))`).replace("comment", block._comment).replace(/tag/g, "(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(),
   def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,
   heading: /^(#{1,6})(.*)(?:\n+|$)/,
-  fences: noopTest2,
-  paragraph: edit(block$1.normal._paragraph).replace("hr", block$1.hr).replace("heading", " *#{1,6} *[^\n]").replace("lheading", block$1.lheading).replace("blockquote", " {0,3}>").replace("|fences", "").replace("|list", "").replace("|html", "").getRegex()
+  fences: noopTest,
+  paragraph: edit(block.normal._paragraph).replace("hr", block.hr).replace("heading", " *#{1,6} *[^\n]").replace("lheading", block.lheading).replace("blockquote", " {0,3}>").replace("|fences", "").replace("|list", "").replace("|html", "").getRegex()
 });
-var inline$1 = {
+var inline = {
   escape: /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,
   autolink: /^<(scheme:[^\s\x00-\x1f<>]*|email)>/,
-  url: noopTest2,
+  url: noopTest,
   tag: "^comment|^</[a-zA-Z][\\w:-]*\\s*>|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>|^<\\?[\\s\\S]*?\\?>|^<![a-zA-Z]+\\s[\\s\\S]*?>|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>",
   link: /^!?\[(label)\]\(\s*(href)(?:\s+(title))?\s*\)/,
-  reflink: /^!?\[(label)\]\[(?!\s*\])((?:\\[\[\]]?|[^\[\]\\])+)\]/,
-  nolink: /^!?\[(?!\s*\])((?:\[[^\[\]]*\]|\\[\[\]]|[^\[\]])*)\](?:\[\])?/,
+  reflink: /^!?\[(label)\]\[(ref)\]/,
+  nolink: /^!?\[(ref)\](?:\[\])?/,
   reflinkSearch: "reflink|nolink(?!\\()",
   emStrong: {
     lDelim: /^(?:\*+(?:([punct_])|[^\s*]))|^_+(?:([punct*])|([^\s_]))/,
@@ -17783,32 +17762,33 @@ var inline$1 = {
   },
   code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
   br: /^( {2,}|\\)\n(?!\s*$)/,
-  del: noopTest2,
+  del: noopTest,
   text: /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/,
   punctuation: /^([\spunctuation])/
 };
-inline$1._punctuation = "!\"#$%&'()+\\-.,/:;<=>?@\\[\\]`^{|}~";
-inline$1.punctuation = edit(inline$1.punctuation).replace(/punctuation/g, inline$1._punctuation).getRegex();
-inline$1.blockSkip = /\[[^\]]*?\]\([^\)]*?\)|`[^`]*?`|<[^>]*?>/g;
-inline$1.escapedEmSt = /\\\*|\\_/g;
-inline$1._comment = edit(block$1._comment).replace("(?:-->|$)", "-->").getRegex();
-inline$1.emStrong.lDelim = edit(inline$1.emStrong.lDelim).replace(/punct/g, inline$1._punctuation).getRegex();
-inline$1.emStrong.rDelimAst = edit(inline$1.emStrong.rDelimAst, "g").replace(/punct/g, inline$1._punctuation).getRegex();
-inline$1.emStrong.rDelimUnd = edit(inline$1.emStrong.rDelimUnd, "g").replace(/punct/g, inline$1._punctuation).getRegex();
-inline$1._escapes = /\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/g;
-inline$1._scheme = /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/;
-inline$1._email = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/;
-inline$1.autolink = edit(inline$1.autolink).replace("scheme", inline$1._scheme).replace("email", inline$1._email).getRegex();
-inline$1._attribute = /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/;
-inline$1.tag = edit(inline$1.tag).replace("comment", inline$1._comment).replace("attribute", inline$1._attribute).getRegex();
-inline$1._label = /(?:\[(?:\\.|[^\[\]\\])*\]|\\.|`[^`]*`|[^\[\]\\`])*?/;
-inline$1._href = /<(?:\\.|[^\n<>\\])+>|[^\s\x00-\x1f]*/;
-inline$1._title = /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/;
-inline$1.link = edit(inline$1.link).replace("label", inline$1._label).replace("href", inline$1._href).replace("title", inline$1._title).getRegex();
-inline$1.reflink = edit(inline$1.reflink).replace("label", inline$1._label).getRegex();
-inline$1.reflinkSearch = edit(inline$1.reflinkSearch, "g").replace("reflink", inline$1.reflink).replace("nolink", inline$1.nolink).getRegex();
-inline$1.normal = merge$1({}, inline$1);
-inline$1.pedantic = merge$1({}, inline$1.normal, {
+inline._punctuation = "!\"#$%&'()+\\-.,/:;<=>?@\\[\\]`^{|}~";
+inline.punctuation = edit(inline.punctuation).replace(/punctuation/g, inline._punctuation).getRegex();
+inline.blockSkip = /\[[^\]]*?\]\([^\)]*?\)|`[^`]*?`|<[^>]*?>/g;
+inline.escapedEmSt = /\\\*|\\_/g;
+inline._comment = edit(block._comment).replace("(?:-->|$)", "-->").getRegex();
+inline.emStrong.lDelim = edit(inline.emStrong.lDelim).replace(/punct/g, inline._punctuation).getRegex();
+inline.emStrong.rDelimAst = edit(inline.emStrong.rDelimAst, "g").replace(/punct/g, inline._punctuation).getRegex();
+inline.emStrong.rDelimUnd = edit(inline.emStrong.rDelimUnd, "g").replace(/punct/g, inline._punctuation).getRegex();
+inline._escapes = /\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/g;
+inline._scheme = /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/;
+inline._email = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/;
+inline.autolink = edit(inline.autolink).replace("scheme", inline._scheme).replace("email", inline._email).getRegex();
+inline._attribute = /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/;
+inline.tag = edit(inline.tag).replace("comment", inline._comment).replace("attribute", inline._attribute).getRegex();
+inline._label = /(?:\[(?:\\.|[^\[\]\\])*\]|\\.|`[^`]*`|[^\[\]\\`])*?/;
+inline._href = /<(?:\\.|[^\n<>\\])+>|[^\s\x00-\x1f]*/;
+inline._title = /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/;
+inline.link = edit(inline.link).replace("label", inline._label).replace("href", inline._href).replace("title", inline._title).getRegex();
+inline.reflink = edit(inline.reflink).replace("label", inline._label).replace("ref", block._label).getRegex();
+inline.nolink = edit(inline.nolink).replace("ref", block._label).getRegex();
+inline.reflinkSearch = edit(inline.reflinkSearch, "g").replace("reflink", inline.reflink).replace("nolink", inline.nolink).getRegex();
+inline.normal = merge({}, inline);
+inline.pedantic = merge({}, inline.normal, {
   strong: {
     start: /^__|\*\*/,
     middle: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,
@@ -17821,30 +17801,22 @@ inline$1.pedantic = merge$1({}, inline$1.normal, {
     endAst: /\*(?!\*)/g,
     endUnd: /_(?!_)/g
   },
-  link: edit(/^!?\[(label)\]\((.*?)\)/).replace("label", inline$1._label).getRegex(),
-  reflink: edit(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label", inline$1._label).getRegex()
+  link: edit(/^!?\[(label)\]\((.*?)\)/).replace("label", inline._label).getRegex(),
+  reflink: edit(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label", inline._label).getRegex()
 });
-inline$1.gfm = merge$1({}, inline$1.normal, {
-  escape: edit(inline$1.escape).replace("])", "~|])").getRegex(),
+inline.gfm = merge({}, inline.normal, {
+  escape: edit(inline.escape).replace("])", "~|])").getRegex(),
   _extended_email: /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/,
   url: /^((?:ftp|https?):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/,
   _backpedal: /(?:[^?!.,:;*_~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_~)]+(?!$))+/,
   del: /^(~~?)(?=[^\s~])([\s\S]*?[^\s~])\1(?=[^~]|$)/,
   text: /^([`~]+|[^`~])(?:(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|https?:\/\/|ftp:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)))/
 });
-inline$1.gfm.url = edit(inline$1.gfm.url, "i").replace("email", inline$1.gfm._extended_email).getRegex();
-inline$1.breaks = merge$1({}, inline$1.gfm, {
-  br: edit(inline$1.br).replace("{2,}", "*").getRegex(),
-  text: edit(inline$1.gfm.text).replace("\\b_", "\\b_| {2,}\\n").replace(/\{2,\}/g, "*").getRegex()
+inline.gfm.url = edit(inline.gfm.url, "i").replace("email", inline.gfm._extended_email).getRegex();
+inline.breaks = merge({}, inline.gfm, {
+  br: edit(inline.br).replace("{2,}", "*").getRegex(),
+  text: edit(inline.gfm.text).replace("\\b_", "\\b_| {2,}\\n").replace(/\{2,\}/g, "*").getRegex()
 });
-var rules = {
-  block: block$1,
-  inline: inline$1
-};
-var Tokenizer$2 = Tokenizer_1$1;
-var {defaults: defaults$3} = defaults$5.exports;
-var {block, inline} = rules;
-var {repeatString} = helpers;
 function smartypants(text2) {
   return text2.replace(/---/g, "\u2014").replace(/--/g, "\u2013").replace(/(^|[-\u2014/(\[{"\s])'/g, "$1\u2018").replace(/'/g, "\u2019").replace(/(^|[-\u2014/(\[{\u2018\s])"/g, "$1\u201C").replace(/"/g, "\u201D").replace(/\.{3}/g, "\u2026");
 }
@@ -17860,12 +17832,12 @@ function mangle(text2) {
   }
   return out;
 }
-var Lexer_1$1 = class Lexer {
-  constructor(options) {
+var Lexer = class {
+  constructor(options2) {
     this.tokens = [];
     this.tokens.links = Object.create(null);
-    this.options = options || defaults$3;
-    this.options.tokenizer = this.options.tokenizer || new Tokenizer$2();
+    this.options = options2 || defaults2;
+    this.options.tokenizer = this.options.tokenizer || new Tokenizer();
     this.tokenizer = this.options.tokenizer;
     this.tokenizer.options = this.options;
     this.tokenizer.lexer = this;
@@ -17875,22 +17847,22 @@ var Lexer_1$1 = class Lexer {
       inRawBlock: false,
       top: true
     };
-    const rules2 = {
+    const rules = {
       block: block.normal,
       inline: inline.normal
     };
     if (this.options.pedantic) {
-      rules2.block = block.pedantic;
-      rules2.inline = inline.pedantic;
+      rules.block = block.pedantic;
+      rules.inline = inline.pedantic;
     } else if (this.options.gfm) {
-      rules2.block = block.gfm;
+      rules.block = block.gfm;
       if (this.options.breaks) {
-        rules2.inline = inline.breaks;
+        rules.inline = inline.breaks;
       } else {
-        rules2.inline = inline.gfm;
+        rules.inline = inline.gfm;
       }
     }
-    this.tokenizer.rules = rules2;
+    this.tokenizer.rules = rules;
   }
   static get rules() {
     return {
@@ -17898,12 +17870,12 @@ var Lexer_1$1 = class Lexer {
       inline
     };
   }
-  static lex(src, options) {
-    const lexer2 = new Lexer(options);
+  static lex(src, options2) {
+    const lexer2 = new Lexer(options2);
     return lexer2.lex(src);
   }
-  static lexInline(src, options) {
-    const lexer2 = new Lexer(options);
+  static lexInline(src, options2) {
+    const lexer2 = new Lexer(options2);
     return lexer2.inlineTokens(src);
   }
   lex(src) {
@@ -17933,7 +17905,9 @@ var Lexer_1$1 = class Lexer {
       }
       if (token = this.tokenizer.space(src)) {
         src = src.substring(token.raw.length);
-        if (token.type) {
+        if (token.raw.length === 1 && tokens.length > 0) {
+          tokens[tokens.length - 1].raw += "\n";
+        } else {
           tokens.push(token);
         }
         continue;
@@ -18204,14 +18178,9 @@ var Lexer_1$1 = class Lexer {
     return tokens;
   }
 };
-var {defaults: defaults$2} = defaults$5.exports;
-var {
-  cleanUrl,
-  escape: escape$1
-} = helpers;
-var Renderer_1$1 = class Renderer {
-  constructor(options) {
-    this.options = options || defaults$2;
+var Renderer = class {
+  constructor(options2) {
+    this.options = options2 || defaults2;
   }
   code(code, infostring, escaped) {
     const lang = (infostring || "").match(/\S*/)[0];
@@ -18224,9 +18193,9 @@ var Renderer_1$1 = class Renderer {
     }
     code = code.replace(/\n$/, "") + "\n";
     if (!lang) {
-      return "<pre><code>" + (escaped ? code : escape$1(code, true)) + "</code></pre>\n";
+      return "<pre><code>" + (escaped ? code : escape(code, true)) + "</code></pre>\n";
     }
-    return '<pre><code class="' + this.options.langPrefix + escape$1(lang, true) + '">' + (escaped ? code : escape$1(code, true)) + "</code></pre>\n";
+    return '<pre><code class="' + this.options.langPrefix + escape(lang, true) + '">' + (escaped ? code : escape(code, true)) + "</code></pre>\n";
   }
   blockquote(quote) {
     return "<blockquote>\n" + quote + "</blockquote>\n";
@@ -18289,7 +18258,7 @@ var Renderer_1$1 = class Renderer {
     if (href === null) {
       return text2;
     }
-    let out = '<a href="' + escape$1(href) + '"';
+    let out = '<a href="' + escape(href) + '"';
     if (title) {
       out += ' title="' + title + '"';
     }
@@ -18312,7 +18281,7 @@ var Renderer_1$1 = class Renderer {
     return text2;
   }
 };
-var TextRenderer_1$1 = class TextRenderer {
+var TextRenderer = class {
   strong(text2) {
     return text2;
   }
@@ -18341,7 +18310,7 @@ var TextRenderer_1$1 = class TextRenderer {
     return "";
   }
 };
-var Slugger_1$1 = class Slugger {
+var Slugger = class {
   constructor() {
     this.seen = {};
   }
@@ -18364,33 +18333,26 @@ var Slugger_1$1 = class Slugger {
     }
     return slug;
   }
-  slug(value, options = {}) {
+  slug(value, options2 = {}) {
     const slug = this.serialize(value);
-    return this.getNextSafeSlug(slug, options.dryrun);
+    return this.getNextSafeSlug(slug, options2.dryrun);
   }
 };
-var Renderer$2 = Renderer_1$1;
-var TextRenderer$2 = TextRenderer_1$1;
-var Slugger$2 = Slugger_1$1;
-var {defaults: defaults$1} = defaults$5.exports;
-var {
-  unescape: unescape2
-} = helpers;
-var Parser_1$1 = class Parser {
-  constructor(options) {
-    this.options = options || defaults$1;
-    this.options.renderer = this.options.renderer || new Renderer$2();
+var Parser = class {
+  constructor(options2) {
+    this.options = options2 || defaults2;
+    this.options.renderer = this.options.renderer || new Renderer();
     this.renderer = this.options.renderer;
     this.renderer.options = this.options;
-    this.textRenderer = new TextRenderer$2();
-    this.slugger = new Slugger$2();
+    this.textRenderer = new TextRenderer();
+    this.slugger = new Slugger();
   }
-  static parse(tokens, options) {
-    const parser2 = new Parser(options);
+  static parse(tokens, options2) {
+    const parser2 = new Parser(options2);
     return parser2.parse(tokens);
   }
-  static parseInline(tokens, options) {
-    const parser2 = new Parser(options);
+  static parseInline(tokens, options2) {
+    const parser2 = new Parser(options2);
     return parser2.parseInline(tokens);
   }
   parse(tokens, top = true) {
@@ -18581,23 +18543,7 @@ var Parser_1$1 = class Parser {
     return out;
   }
 };
-var Lexer$1 = Lexer_1$1;
-var Parser$1 = Parser_1$1;
-var Tokenizer$1 = Tokenizer_1$1;
-var Renderer$1 = Renderer_1$1;
-var TextRenderer$1 = TextRenderer_1$1;
-var Slugger$1 = Slugger_1$1;
-var {
-  merge,
-  checkSanitizeDeprecation,
-  escape
-} = helpers;
-var {
-  getDefaults,
-  changeDefaults,
-  defaults: defaults2
-} = defaults$5.exports;
-function marked$1(src, opt, callback) {
+function marked(src, opt, callback) {
   if (typeof src === "undefined" || src === null) {
     throw new Error("marked(): input parameter is undefined or null");
   }
@@ -18608,13 +18554,13 @@ function marked$1(src, opt, callback) {
     callback = opt;
     opt = null;
   }
-  opt = merge({}, marked$1.defaults, opt || {});
+  opt = merge({}, marked.defaults, opt || {});
   checkSanitizeDeprecation(opt);
   if (callback) {
     const highlight = opt.highlight;
     let tokens;
     try {
-      tokens = Lexer$1.lex(src, opt);
+      tokens = Lexer.lex(src, opt);
     } catch (e2) {
       return callback(e2);
     }
@@ -18623,9 +18569,9 @@ function marked$1(src, opt, callback) {
       if (!err) {
         try {
           if (opt.walkTokens) {
-            marked$1.walkTokens(tokens, opt.walkTokens);
+            marked.walkTokens(tokens, opt.walkTokens);
           }
-          out = Parser$1.parse(tokens, opt);
+          out = Parser.parse(tokens, opt);
         } catch (e2) {
           err = e2;
         }
@@ -18640,7 +18586,7 @@ function marked$1(src, opt, callback) {
     if (!tokens.length)
       return done();
     let pending = 0;
-    marked$1.walkTokens(tokens, function(token) {
+    marked.walkTokens(tokens, function(token) {
       if (token.type === "code") {
         pending++;
         setTimeout(() => {
@@ -18666,11 +18612,11 @@ function marked$1(src, opt, callback) {
     return;
   }
   try {
-    const tokens = Lexer$1.lex(src, opt);
+    const tokens = Lexer.lex(src, opt);
     if (opt.walkTokens) {
-      marked$1.walkTokens(tokens, opt.walkTokens);
+      marked.walkTokens(tokens, opt.walkTokens);
     }
-    return Parser$1.parse(tokens, opt);
+    return Parser.parse(tokens, opt);
   } catch (e2) {
     e2.message += "\nPlease report this to https://github.com/markedjs/marked.";
     if (opt.silent) {
@@ -18679,16 +18625,16 @@ function marked$1(src, opt, callback) {
     throw e2;
   }
 }
-marked$1.options = marked$1.setOptions = function(opt) {
-  merge(marked$1.defaults, opt);
-  changeDefaults(marked$1.defaults);
-  return marked$1;
+marked.options = marked.setOptions = function(opt) {
+  merge(marked.defaults, opt);
+  changeDefaults(marked.defaults);
+  return marked;
 };
-marked$1.getDefaults = getDefaults;
-marked$1.defaults = defaults2;
-marked$1.use = function(...args) {
+marked.getDefaults = getDefaults;
+marked.defaults = defaults2;
+marked.use = function(...args) {
   const opts = merge({}, ...args);
-  const extensions = marked$1.defaults.extensions || {renderers: {}, childTokens: {}};
+  const extensions = marked.defaults.extensions || {renderers: {}, childTokens: {}};
   let hasExtensions;
   args.forEach((pack) => {
     if (pack.extensions) {
@@ -18742,7 +18688,7 @@ marked$1.use = function(...args) {
       });
     }
     if (pack.renderer) {
-      const renderer = marked$1.defaults.renderer || new Renderer$1();
+      const renderer = marked.defaults.renderer || new Renderer();
       for (const prop in pack.renderer) {
         const prevRenderer = renderer[prop];
         renderer[prop] = (...args2) => {
@@ -18756,7 +18702,7 @@ marked$1.use = function(...args) {
       opts.renderer = renderer;
     }
     if (pack.tokenizer) {
-      const tokenizer = marked$1.defaults.tokenizer || new Tokenizer$1();
+      const tokenizer = marked.defaults.tokenizer || new Tokenizer();
       for (const prop in pack.tokenizer) {
         const prevTokenizer = tokenizer[prop];
         tokenizer[prop] = (...args2) => {
@@ -18770,66 +18716,66 @@ marked$1.use = function(...args) {
       opts.tokenizer = tokenizer;
     }
     if (pack.walkTokens) {
-      const walkTokens = marked$1.defaults.walkTokens;
+      const walkTokens2 = marked.defaults.walkTokens;
       opts.walkTokens = function(token) {
         pack.walkTokens.call(this, token);
-        if (walkTokens) {
-          walkTokens.call(this, token);
+        if (walkTokens2) {
+          walkTokens2.call(this, token);
         }
       };
     }
     if (hasExtensions) {
       opts.extensions = extensions;
     }
-    marked$1.setOptions(opts);
+    marked.setOptions(opts);
   });
 };
-marked$1.walkTokens = function(tokens, callback) {
+marked.walkTokens = function(tokens, callback) {
   for (const token of tokens) {
-    callback.call(marked$1, token);
+    callback.call(marked, token);
     switch (token.type) {
       case "table": {
         for (const cell of token.header) {
-          marked$1.walkTokens(cell.tokens, callback);
+          marked.walkTokens(cell.tokens, callback);
         }
         for (const row of token.rows) {
           for (const cell of row) {
-            marked$1.walkTokens(cell.tokens, callback);
+            marked.walkTokens(cell.tokens, callback);
           }
         }
         break;
       }
       case "list": {
-        marked$1.walkTokens(token.items, callback);
+        marked.walkTokens(token.items, callback);
         break;
       }
       default: {
-        if (marked$1.defaults.extensions && marked$1.defaults.extensions.childTokens && marked$1.defaults.extensions.childTokens[token.type]) {
-          marked$1.defaults.extensions.childTokens[token.type].forEach(function(childTokens) {
-            marked$1.walkTokens(token[childTokens], callback);
+        if (marked.defaults.extensions && marked.defaults.extensions.childTokens && marked.defaults.extensions.childTokens[token.type]) {
+          marked.defaults.extensions.childTokens[token.type].forEach(function(childTokens) {
+            marked.walkTokens(token[childTokens], callback);
           });
         } else if (token.tokens) {
-          marked$1.walkTokens(token.tokens, callback);
+          marked.walkTokens(token.tokens, callback);
         }
       }
     }
   }
 };
-marked$1.parseInline = function(src, opt) {
+marked.parseInline = function(src, opt) {
   if (typeof src === "undefined" || src === null) {
     throw new Error("marked.parseInline(): input parameter is undefined or null");
   }
   if (typeof src !== "string") {
     throw new Error("marked.parseInline(): input parameter is of type " + Object.prototype.toString.call(src) + ", string expected");
   }
-  opt = merge({}, marked$1.defaults, opt || {});
+  opt = merge({}, marked.defaults, opt || {});
   checkSanitizeDeprecation(opt);
   try {
-    const tokens = Lexer$1.lexInline(src, opt);
+    const tokens = Lexer.lexInline(src, opt);
     if (opt.walkTokens) {
-      marked$1.walkTokens(tokens, opt.walkTokens);
+      marked.walkTokens(tokens, opt.walkTokens);
     }
-    return Parser$1.parseInline(tokens, opt);
+    return Parser.parseInline(tokens, opt);
   } catch (e2) {
     e2.message += "\nPlease report this to https://github.com/markedjs/marked.";
     if (opt.silent) {
@@ -18838,34 +18784,22 @@ marked$1.parseInline = function(src, opt) {
     throw e2;
   }
 };
-marked$1.Parser = Parser$1;
-marked$1.parser = Parser$1.parse;
-marked$1.Renderer = Renderer$1;
-marked$1.TextRenderer = TextRenderer$1;
-marked$1.Lexer = Lexer$1;
-marked$1.lexer = Lexer$1.lex;
-marked$1.Tokenizer = Tokenizer$1;
-marked$1.Slugger = Slugger$1;
-marked$1.parse = marked$1;
-var marked_1 = marked$1;
-var marked = marked_1;
-var Lexer2 = Lexer_1$1;
-var Parser2 = Parser_1$1;
-var Tokenizer2 = Tokenizer_1$1;
-var Renderer2 = Renderer_1$1;
-var TextRenderer2 = TextRenderer_1$1;
-var Slugger2 = Slugger_1$1;
-esmEntry$1.exports = marked;
-var parse2 = esmEntry$1.exports.parse = marked;
-var Parser_1 = esmEntry$1.exports.Parser = Parser2;
-var parser = esmEntry$1.exports.parser = Parser2.parse;
-var Renderer_1 = esmEntry$1.exports.Renderer = Renderer2;
-var TextRenderer_1 = esmEntry$1.exports.TextRenderer = TextRenderer2;
-var Lexer_1 = esmEntry$1.exports.Lexer = Lexer2;
-var lexer = esmEntry$1.exports.lexer = Lexer2.lex;
-var Tokenizer_1 = esmEntry$1.exports.Tokenizer = Tokenizer2;
-var Slugger_1 = esmEntry$1.exports.Slugger = Slugger2;
-var esmEntry = esmEntry$1.exports;
+marked.Parser = Parser;
+marked.parser = Parser.parse;
+marked.Renderer = Renderer;
+marked.TextRenderer = TextRenderer;
+marked.Lexer = Lexer;
+marked.lexer = Lexer.lex;
+marked.Tokenizer = Tokenizer;
+marked.Slugger = Slugger;
+marked.parse = marked;
+var options = marked.options;
+var setOptions2 = marked.setOptions;
+var use = marked.use;
+var walkTokens = marked.walkTokens;
+var parseInline = marked.parseInline;
+var parser = Parser.parse;
+var lexer = Lexer.lex;
 
 // node_modules/mdhl/dist/mdhl.esm.js
 function e(e2) {
@@ -18949,7 +18883,7 @@ var markdown_editor_default = (Alpine) => {
         this.overlay = null;
         this.overlay = a(this.state);
         this.preview = null;
-        this.preview = esmEntry(this.state);
+        this.preview = marked(this.state);
       },
       checkForAutoInsertion($event) {
         const lines = this.$refs.textarea.value.split("\n");
@@ -18992,7 +18926,7 @@ var multi_select_default = (Alpine) => {
     getOptionLabelsUsing,
     getSearchResultsUsing,
     isAutofocused,
-    options,
+    options: options2,
     state: state2
   }) => {
     return {
@@ -19001,7 +18935,7 @@ var multi_select_default = (Alpine) => {
       isLoading: false,
       isOpen: false,
       labels: [],
-      options,
+      options: options2,
       search: "",
       state: state2,
       init: async function() {
@@ -19015,16 +18949,16 @@ var multi_select_default = (Alpine) => {
         this.labels = await this.getOptionLabels();
         this.$watch("search", async () => {
           if (!this.isOpen || this.search === "" || this.search === null) {
-            this.options = options;
+            this.options = options2;
             this.focusedOptionIndex = 0;
             return;
           }
-          if (Object.keys(options).length) {
+          if (Object.keys(options2).length) {
             this.options = {};
             let search = this.search.trim().toLowerCase();
-            for (let key in options) {
-              if (options[key].trim().toLowerCase().includes(search)) {
-                this.options[key] = options[key];
+            for (let key in options2) {
+              if (options2[key].trim().toLowerCase().includes(search)) {
+                this.options[key] = options2[key];
               }
             }
             this.focusedOptionIndex = 0;
@@ -19040,10 +18974,10 @@ var multi_select_default = (Alpine) => {
           this.labels = await this.getOptionLabels();
         });
       },
-      addOptionsToIndex: function(options2) {
+      addOptionsToIndex: function(options3) {
         this.index = {
           ...this.index,
-          ...options2
+          ...options3
         };
       },
       clearState: function() {
@@ -19190,7 +19124,7 @@ var select_default = (Alpine) => {
     getOptionLabelUsing,
     getSearchResultsUsing,
     isAutofocused,
-    options,
+    options: options2,
     state: state2
   }) => {
     return {
@@ -19199,7 +19133,7 @@ var select_default = (Alpine) => {
       isLoading: false,
       isOpen: false,
       label: null,
-      options,
+      options: options2,
       search: "",
       state: state2,
       init: async function() {
@@ -19210,16 +19144,16 @@ var select_default = (Alpine) => {
         this.label = await this.getOptionLabel();
         this.$watch("search", async () => {
           if (!this.isOpen || this.search === "" || this.search === null) {
-            this.options = options;
+            this.options = options2;
             this.focusedOptionIndex = 0;
             return;
           }
-          if (Object.keys(options).length) {
+          if (Object.keys(options2).length) {
             this.options = {};
             let search = this.search.trim().toLowerCase();
-            for (let key in options) {
-              if (options[key].trim().toLowerCase().includes(search)) {
-                this.options[key] = options[key];
+            for (let key in options2) {
+              if (options2[key].trim().toLowerCase().includes(search)) {
+                this.options[key] = options2[key];
               }
             }
             this.focusedOptionIndex = 0;
@@ -19238,10 +19172,10 @@ var select_default = (Alpine) => {
       addOptionToIndex: function(key, label) {
         this.index[key] = label;
       },
-      addOptionsToIndex: function(options2) {
+      addOptionsToIndex: function(options3) {
         this.index = {
           ...this.index,
-          ...options2
+          ...options3
         };
       },
       clearState: function() {
@@ -20109,7 +20043,7 @@ Masked.DEFAULTS = {
   format: function format(v) {
     return v;
   },
-  parse: function parse3(v) {
+  parse: function parse2(v) {
     return v;
   }
 };
@@ -21234,7 +21168,7 @@ MaskedDate.DEFAULTS = {
     var year = date.getFullYear();
     return [day, month, year].join(".");
   },
-  parse: function parse4(str) {
+  parse: function parse3(str) {
     var _str$split = str.split("."), _str$split2 = _slicedToArray(_str$split, 3), day = _str$split2[0], month = _str$split2[1], year = _str$split2[2];
     return new Date(year, month - 1, day);
   }

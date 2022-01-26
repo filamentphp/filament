@@ -146,12 +146,12 @@ class FilamentManager
 
     public function getPages(): array
     {
-        return $this->pages;
+        return array_unique($this->pages);
     }
 
     public function getResources(): array
     {
-        return $this->resources;
+        return array_unique($this->resources);
     }
 
     public function getScripts(): array
@@ -219,6 +219,7 @@ class FilamentManager
     public function getWidgets(): array
     {
         return collect($this->widgets)
+            ->unique()
             ->sortBy(fn (string $widget): int => $widget::getSort())
             ->toArray();
     }

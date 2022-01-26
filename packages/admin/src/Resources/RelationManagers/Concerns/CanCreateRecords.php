@@ -56,9 +56,15 @@ trait CanCreateRecords
         if ($another) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
             $form->model($record::class);
+            $this->mountedTableActionRecord = null;
 
             $form->fill();
         }
+    }
+
+    public function createAndCreateAnother(): void
+    {
+        $this->create(another: true);
     }
 
     protected function handleRecordCreation(array $data): Model
@@ -80,11 +86,11 @@ trait CanCreateRecords
             ->modalActions([
                 ButtonAction::make('submit')
                     ->label(__('filament::resources/relation-managers/create.action.modal.actions.create.label'))
-                    ->submit()
+                    ->submit('callMountedTableAction')
                     ->color('primary'),
                 ButtonAction::make('submit')
                     ->label(__('filament::resources/relation-managers/create.action.modal.actions.create_and_create_another.label'))
-                    ->action('create(true)')
+                    ->action('createAndCreateAnother')
                     ->color('secondary'),
                 ButtonAction::make('cancel')
                     ->label(__('tables::table.actions.modal.buttons.cancel.label'))

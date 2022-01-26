@@ -4,11 +4,11 @@ return [
 
     'action' => [
 
-        'label' => 'تحرير',
+        'label' => 'تعديل',
 
         'modal' => [
 
-            'heading' => 'تحرير :label',
+            'heading' => 'تعديل :label',
 
             'actions' => [
 

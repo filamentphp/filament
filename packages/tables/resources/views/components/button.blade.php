@@ -1,6 +1,7 @@
 @props([
     'color' => 'primary',
     'disabled' => false,
+    'form' => null,
     'icon' => null,
     'iconPosition' => 'before',
     'tag' => 'button',
@@ -34,15 +35,33 @@
         'ml-2 -mr-3 rtl:mr-2 rtl:-ml-3' => ($iconPosition === 'after') && ($size === 'lg'),
         'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm'),
     ]);
+
+    $hasLoadingIndicator = filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
+
+    if ($hasLoadingIndicator) {
+        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:click', $form), ENT_QUOTES);
+    }
 @endphp
 
 @if ($tag === 'button')
     <button
         type="{{ $type }}"
+        wire:loading.attr="disabled"
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
             <x-dynamic-component :component="$icon" :class="$iconClasses"/>
+        @elseif ($hasLoadingIndicator)
+            <svg
+                wire:loading
+                {{ $loadingIndicatorTarget ? "wire:target={$loadingIndicatorTarget}" : '' }}
+                @class([$iconClasses, 'animate-spin'])
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+            >
+                <path d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z" />
+            </svg>
         @endif
 
         <span>{{ $slot }}</span>
@@ -52,9 +71,23 @@
         @endif
     </button>
 @elseif ($tag === 'a')
-    <a {{ $attributes->class($buttonClasses) }}>
+    <a
+        wire:loading.attr="disabled"
+        {{ $attributes->class($buttonClasses) }}
+    >
         @if ($icon && $iconPosition === 'before')
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
+        @elseif ($hasLoadingIndicator)
+            <svg
+                wire:loading
+                {{ $loadingIndicatorTarget ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' }}
+                @class([$iconClasses, 'animate-spin'])
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+            >
+                <path d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z" />
+            </svg>
         @endif
 
         <span>{{ $slot }}</span>

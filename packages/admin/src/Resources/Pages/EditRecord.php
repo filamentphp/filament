@@ -175,7 +175,7 @@ class EditRecord extends Page
     {
         return ButtonAction::make('save')
             ->label(__('filament::resources/pages/edit-record.form.actions.save.label'))
-            ->submit();
+            ->submit('save');
     }
 
     protected function getCancelButtonFormAction(): ButtonAction

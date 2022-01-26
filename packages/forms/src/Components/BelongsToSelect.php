@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -52,6 +53,11 @@ class BelongsToSelect extends Select
         return $this;
     }
 
+    public function getSearchColumns(): array
+    {
+        return $this->searchColumns ?? [$this->getDisplayColumnName()];
+    }
+
     public function relationship(string | Closure $relationshipName, string | Closure $displayColumnName, ?Closure $callback = null): static
     {
         $this->displayColumnName = $displayColumnName;
@@ -78,16 +84,7 @@ class BelongsToSelect extends Select
 
             $query = strtolower($query);
 
-            /** @var Connection $databaseConnection */
-            $databaseConnection = $relationshipQuery->getConnection();
-
-            $searchOperator = match ($databaseConnection->getDriverName()) {
-                'pgsql' => 'ilike',
-                default => 'like',
-            };
-
-            return $relationshipQuery
-                ->where($component->getDisplayColumnName(), $searchOperator, "%{$query}%")
+            return $this->applySearchConstraint($relationshipQuery, $query)
                 ->limit(50)
                 ->pluck($component->getDisplayColumnName(), $relationship->getOwnerKeyName())
                 ->toArray();
@@ -119,6 +116,33 @@ class BelongsToSelect extends Select
         );
 
         return $this;
+    }
+
+    protected function applySearchConstraint(Builder $query, string $searchQuery): Builder
+    {
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        $searchOperator = match ($databaseConnection->getDriverName()) {
+            'pgsql' => 'ilike',
+            default => 'like',
+        };
+
+        $isFirst = true;
+
+        foreach ($this->getSearchColumns() as $searchColumnName) {
+            $whereClause = $isFirst ? 'where' : 'orWhere';
+
+            $query->{$whereClause}(
+                $searchColumnName,
+                $searchOperator,
+                "%{$searchQuery}%",
+            );
+
+            $isFirst = false;
+        }
+
+        return $query;
     }
 
     public function getDisplayColumnName(): string
