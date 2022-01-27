@@ -13,10 +13,11 @@
     }
 }
 
-.trix-button {
-    @apply dark:bg-dark-700 dark:border-dark-600 dark:fill-dark-200
+.dark .trix-button {
+    @apply bg-dark-700 border-dark-600 text-dark-200
 }
 
-.trix-button-group {
-    @apply dark:text-dark-200
+.dark .trix-button-group {
+    @apply border-dark-600
 }
+
