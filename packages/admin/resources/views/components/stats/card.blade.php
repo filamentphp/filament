@@ -12,13 +12,13 @@
 
 <div {{ $attributes->class([
     'relative p-6 rounded-2xl',
-    'bg-white shadow' => ! $flat,
-    'border' => $flat,
+    'bg-white shadow dark:bg-dark-800' => ! $flat,
+    'border dark:border-dark-700' => $flat,
 ]) }}>
     <div @class([
         'space-y-2',
     ])>
-        <div class="text-sm font-medium text-gray-500">
+        <div class="text-sm font-medium text-gray-500 dark:text-dark-200">
             {{ $label }}
         </div>
 
@@ -103,11 +103,11 @@
                     x-ref="backgroundColorElement"
                     @class([
                         match ($chartColor) {
-                            'danger' => 'text-danger-50',
-                            'primary' => 'text-primary-50',
-                            'success' => 'text-success-50',
-                            'warning' => 'text-warning-50',
-                            default => 'text-gray-50',
+                            'danger' => 'text-danger-50 dark:text-danger-700',
+                            'primary' => 'text-primary-50 dark:text-primary-700',
+                            'success' => 'text-success-50 dark:text-success-700',
+                            'warning' => 'text-warning-50 dark:text-warning-700',
+                            default => 'text-gray-50 dark:text-dark-700',
                         },
                     ])
                 ></span>
@@ -120,7 +120,7 @@
                             'primary' => 'text-primary-400',
                             'success' => 'text-success-400',
                             'warning' => 'text-warning-400',
-                            default => 'text-gray-400',
+                            default => 'text-gray-400 dark:text-dark-400',
                         },
                     ])
                 ></span>

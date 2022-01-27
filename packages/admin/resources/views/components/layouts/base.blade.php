@@ -3,7 +3,7 @@
 ])
 
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ __('filament::layout.direction') ?? 'ltr' }}" class="antialiased js-focus-visible">
+<html @if(config('filament.layout.darkmode')) x-data='darkmode' :class="{'dark': theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)}" @endif lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ __('filament::layout.direction') ?? 'ltr' }}" class="antialiased js-focus-visible">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -57,15 +57,5 @@
         @endforeach
 
         @stack('scripts')
-
-        @if(config('filament.layout.darkmode'))
-        <script>
-            if (localStorage.theme === 'dark' || (localStorage.theme === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark')
-            } else {
-                document.documentElement.classList.remove('dark')
-            }
-        </script>
-        @endif
     </body>
 </html>
