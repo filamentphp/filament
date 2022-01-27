@@ -1,3 +1,5 @@
-<div class="text-xl font-bold tracking-tight">
-    {{ config('filament.brand') }}
-</div>
+@if($brand = config('filament.brand'))
+    <div class="text-xl font-bold tracking-tight">
+        {{ $brand }}
+    </div>
+@endif
