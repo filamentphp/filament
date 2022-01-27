@@ -8,7 +8,7 @@
     <button
         type="button"
         @class([
-            'flex items-center w-full h-8 px-3 text-sm font-medium focus:outline-none hover:text-white focus:text-white group',
+            'flex items-center w-full h-8 px-3 text-sm font-medium focus:outline-none hover:text-white focus:text-white group dark:text-white',
             'hover:bg-primary-600 focus:bg-primary-700' => $color === 'primary',
             'hover:bg-danger-600 focus:bg-danger-700' => $color === 'danger',
             'hover:bg-success-600 focus:bg-success-700' => $color === 'success',

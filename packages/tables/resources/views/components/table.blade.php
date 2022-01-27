@@ -3,7 +3,7 @@
     'header' => null,
 ])
 
-<table {{ $attributes->class(['w-full text-left rtl:text-right divide-y table-auto']) }}>
+<table {{ $attributes->class(['w-full text-left rtl:text-right divide-y dark:divide-dark-700 table-auto']) }}>
     @if ($header)
         <thead>
             <tr class="bg-gray-50">
@@ -12,7 +12,7 @@
         </thead>
     @endif
 
-    <tbody class="divide-y whitespace-nowrap">
+    <tbody class="divide-y dark:divide-dark-700 whitespace-nowrap">
         {{ $slot }}
     </tbody>
 

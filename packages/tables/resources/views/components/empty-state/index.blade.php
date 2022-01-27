@@ -5,8 +5,8 @@
     'icon',
 ])
 
-<div {{ $attributes->class(['flex flex-1 flex-col items-center justify-center p-6 mx-auto space-y-6 text-center bg-white']) }}>
-    <div class="flex items-center justify-center w-16 h-16 text-primary-500 rounded-full bg-primary-50">
+<div {{ $attributes->class(['flex flex-1 flex-col items-center justify-center p-6 mx-auto space-y-6 text-center bg-white dark:bg-dark-800']) }}>
+    <div class="flex items-center justify-center w-16 h-16 text-primary-500 rounded-full bg-primary-50 dark:bg-dark-700">
         <x-dynamic-component :component="$icon" class="w-6 h-6" />
     </div>
 

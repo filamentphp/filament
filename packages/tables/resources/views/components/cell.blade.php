@@ -6,7 +6,7 @@
     'url' => null,
 ])
 
-<td {{ $attributes }}>
+<td {{ $attributes->class(['dark:text-white']) }}>
     @if ($action)
         <button
             wire:click="callTableColumnAction('{{ $name }}', '{{ $record->getKey() }}')"

@@ -2,7 +2,7 @@
     'icon' => null,
 ])
 
-<div {{ $attributes->class(['flex space-x-2 text-gray-500']) }}>
+<div {{ $attributes->class(['flex space-x-2 text-gray-500 dark:text-dark-300']) }}>
     @if ($slot->isNotEmpty())
         <span class="text-xs leading-tight">
             {{ $slot }}

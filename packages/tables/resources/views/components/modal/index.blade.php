@@ -63,7 +63,7 @@
         >
             <div
                 @class([
-                    'w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default',
+                    'w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default dark:bg-dark-800',
                     'max-w-xs' => $width === 'xs',
                     'max-w-sm' => $width === 'sm',
                     'max-w-md' => $width === 'md',
@@ -89,7 +89,7 @@
 
                 <div class="space-y-2">
                     @if ($heading || $subheading)
-                        <div class="p-4 space-y-2 text-center">
+                        <div class="p-4 space-y-2 text-center dark:text-white">
                             @if ($heading)
                                 <x-tables::modal.heading :id="$id . '.heading'">
                                     {{ $heading }}

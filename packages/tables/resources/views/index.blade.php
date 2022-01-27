@@ -186,7 +186,7 @@
         </div>
 
         <div
-            class="overflow-y-auto relative"
+            class="overflow-y-auto relative dark:border-dark-700"
             x-bind:class="{
                 'rounded-t-xl': ! hasHeader,
                 'border-t': hasHeader,
@@ -228,7 +228,7 @@
                             </x-tables::header-cell>
                         @endforeach
 
-                        <th class="w-5"></th>
+                        <th class="w-5 dark:bg-dark-800"></th>
                     </x-slot>
 
                     @if ($isSelectionEnabled())
@@ -308,7 +308,7 @@
         </div>
 
         @if ($isPaginationEnabled())
-            <div class="p-2 border-t">
+            <div class="p-2 border-t dark:border-dark-700">
                 <x-tables::pagination
                     :paginator="$records"
                     :records-per-page-select-options="$getRecordsPerPageSelectOptions()"

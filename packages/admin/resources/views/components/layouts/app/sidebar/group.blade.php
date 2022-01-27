@@ -8,12 +8,12 @@
             x-on:click.prevent="$store.sidebar.toggleCollapsedGroup(label)"
             class="flex items-center justify-between w-full"
         >
-            <p class="font-bold uppercase text-gray-600 text-xs tracking-wider">
+            <p class="font-bold uppercase text-gray-600 text-xs tracking-wider dark:text-dark-300">
                 {{ $label }}
             </p>
 
-            <x-heroicon-o-chevron-down class="w-3 h-3 text-gray-600" x-show="$store.sidebar.groupIsCollapsed(label)" />
-            <x-heroicon-o-chevron-up class="w-3 h-3 text-gray-600" x-show="! $store.sidebar.groupIsCollapsed(label)" />
+            <x-heroicon-o-chevron-down class="w-3 h-3 text-gray-600 dark:text-dark-300" x-show="$store.sidebar.groupIsCollapsed(label)" />
+            <x-heroicon-o-chevron-up class="w-3 h-3 text-gray-600 dark:text-dark-300" x-show="! $store.sidebar.groupIsCollapsed(label)" />
         </button>
     @endif
 

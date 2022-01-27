@@ -9,7 +9,7 @@
         href="{{ $url }}"
         @class([
             'flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition',
-            'hover:bg-gray-500/5 focus:bg-gray-500/5' => ! $active,
+            'hover:bg-gray-500/5 focus:bg-gray-500/5 dark:text-slate-300 dark:hover:bg-slate-700' => ! $active,
             'bg-primary-500 text-white' => $active,
         ])
     >

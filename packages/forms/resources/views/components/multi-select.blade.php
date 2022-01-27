@@ -22,8 +22,8 @@
         })"
         {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
         {{ $attributes->merge($getExtraAttributes())->class([
-            'block w-full transition duration-75 divide-y rounded-lg shadow-sm border focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600',
-            'border-gray-300' => ! $errors->has($getStatePath()),
+            'block w-full transition duration-75 divide-y rounded-lg shadow-sm border focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600 dark:bg-dark-700 dark:divide-dark-600',
+            'border-gray-300 dark:border-dark-600' => ! $errors->has($getStatePath()),
             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
         ]) }}
         {{ $getExtraAlpineAttributeBag() }}
@@ -58,7 +58,7 @@
                         placeholder="{{ $getPlaceholder() }}"
                         type="text"
                         autocomplete="off"
-                        class="block w-full border-0"
+                        class="block w-full border-0 dark:bg-dark-700 dark:placeholder-dark-400"
                     />
 
                     <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center pr-2 rtl:pr-0 rtl:pl-2 pointer-events-none">
@@ -82,7 +82,7 @@
                     x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $getStatePath() }}' + 'Option' + focusedOptionIndex : null"
                     tabindex="-1"
                     x-cloak
-                    class="absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none transition"
+                    class="absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none transition dark:bg-dark-700 dark:border-dark-600"
                 >
                     <ul
                         x-ref="listboxOptionsList"
@@ -98,7 +98,7 @@
                                 x-bind:aria-selected="focusedOptionIndex === index"
                                 x-bind:class="{
                                     'text-white bg-primary-500': index === focusedOptionIndex,
-                                    'text-gray-900': index !== focusedOptionIndex,
+                                    'text-gray-900 dark:text-slate-200': index !== focusedOptionIndex,
                                 }"
                                 class="relative py-2 pl-3 h-10 flex items-center text-gray-900 cursor-default select-none pr-9"
                             >
@@ -150,7 +150,7 @@
                         @endunless
                         type="button"
                         @class([
-                            'inline-flex items-center justify-center h-6 px-2 my-1 text-sm font-medium tracking-tight text-primary-700 rounded-full bg-primary-500/10 space-x-1 rtl:space-x-reverse',
+                            'inline-flex items-center justify-center h-6 px-2 my-1 text-sm font-medium tracking-tight text-primary-700 rounded-full bg-primary-500/10 space-x-1 rtl:space-x-reverse dark:text-primary-500',
                             'cursor-default' => $isDisabled(),
                         ])
                     >

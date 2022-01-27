@@ -29,8 +29,8 @@
                                 value="{{ $value }}"
                                 {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                                 {{ $getExtraInputAttributeBag()->class([
-                                    'focus:ring-primary-500 h-4 w-4 text-primary-600',
-                                    'border-gray-300' => ! $errors->has($getStatePath()),
+                                    'focus:ring-primary-500 h-4 w-4 text-primary-600 dark:bg-dark-700 dark:checked:bg-primary-500',
+                                    'border-gray-300 dark:border-dark-500' => ! $errors->has($getStatePath()),
                                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                                 ]) }}
                                 {!! $isOptionDisabled($value, $label) ? 'disabled' : null !!}
@@ -40,14 +40,14 @@
                         <div class="text-sm">
                             <label for="{{ $getId() }}-{{ $value }}" @class([
                                 'font-medium',
-                                'text-gray-700' => ! $errors->has($getStatePath()),
+                                'text-gray-700 dark:text-slate-200' => ! $errors->has($getStatePath()),
                                 'text-danger-600' => $errors->has($getStatePath()),
                             ])>
                                 {{ $label }}
                             </label>
 
                             @if ($hasDescription($value))
-                                <p class="text-gray-500">
+                                <p class="text-gray-500 dark:text-dark-400">
                                     {{ $getDescription($value) }}
                                 </p>
                             @endif

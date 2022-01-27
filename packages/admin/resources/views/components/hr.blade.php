@@ -1,1 +1,1 @@
-<div aria-hidden="true" {{ $attributes->class(['border-t']) }}></div>
+<div aria-hidden="true" {{ $attributes->class(['border-t dark:border-dark-700']) }}></div>

@@ -164,6 +164,7 @@ return [
                 'type' => \Filament\Tables\Actions\LinkAction::class,
             ],
         ],
+        'darkmode' => true,
     ],
 
     /*

@@ -12,3 +12,11 @@
         padding-right: 0.75rem;
     }
 }
+
+.trix-button {
+    @apply dark:bg-dark-700 dark:border-dark-600 dark:fill-dark-200
+}
+
+.trix-button-group {
+    @apply dark:text-dark-200
+}

@@ -54,8 +54,8 @@
             @endunless
             type="button"
             {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full border pl-3 pr-10 py-2 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600',
-                'border-gray-300' => ! $errors->has($getStatePath()),
+                'bg-white relative w-full border pl-3 pr-10 py-2 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600 dark:bg-dark-700',
+                'border-gray-300 dark:border-dark-600' => ! $errors->has($getStatePath()),
                 'border-danger-600 motion-safe:animate-shake' => $errors->has($getStatePath()),
                 'text-gray-500' => $isDisabled(),
             ]) }}
@@ -65,7 +65,7 @@
                 placeholder="{{ $getPlaceholder() }}"
                 x-model="displayText"
                 {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
-                class="w-full h-full p-0 placeholder-gray-400 border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none"
+                class="w-full h-full p-0 placeholder-gray-400 border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none dark:bg-dark-700"
             />
 
             <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center pr-2 rtl:pl-2 pointer-events-none">
@@ -84,7 +84,7 @@
                 role="dialog"
                 x-cloak
                 @class([
-                    'absolute z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-sm',
+                    'absolute z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-sm dark:bg-dark-700 dark:border-dark-600',
                     'p-4 w-64' => $hasDate(),
                 ])
             >
@@ -93,7 +93,7 @@
                         <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
                             <select
                                 x-model="focusedMonth"
-                                class="grow p-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none"
+                                class="grow p-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none dark:bg-dark-700 dark:text-dark-200"
                             >
                                 <template x-for="(month, index) in dayjs.months()">
                                     <option x-bind:value="index" x-text="month"></option>
@@ -103,7 +103,7 @@
                             <input
                                 type="number"
                                 x-model.debounce="focusedYear"
-                                class="w-20 p-0 text-lg text-right border-0 focus:ring-0 focus:outline-none"
+                                class="w-20 p-0 text-lg text-right border-0 focus:ring-0 focus:outline-none dark:bg-dark-700 dark:text-dark-200"
                             />
                         </div>
 
@@ -111,7 +111,7 @@
                             <template x-for="(day, index) in getDayLabels()" :key="index">
                                 <div
                                     x-text="day"
-                                    class="text-xs font-medium text-center text-gray-800"
+                                    class="text-xs font-medium text-center text-gray-800 dark:text-dark-200"
                                 ></div>
                             </template>
                         </div>
@@ -129,10 +129,10 @@
                                     role="option"
                                     x-bind:aria-selected="focusedDate.date() === day"
                                     x-bind:class="{
-                                        'text-gray-700': ! dayIsSelected(day),
+                                        'text-gray-700 dark:text-slate-300': ! dayIsSelected(day),
                                         'cursor-pointer': ! dayIsDisabled(day),
-                                        'bg-primary-50': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
-                                        'bg-primary-200': focusedDate.date() === day && ! dayIsSelected(day),
+                                        'bg-primary-50 dark:bg-primary-100 dark:text-dark-600': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
+                                        'bg-primary-200 dark:text-dark-600': focusedDate.date() === day && ! dayIsSelected(day),
                                         'bg-primary-500 text-white': dayIsSelected(day),
                                         'cursor-not-allowed': dayIsDisabled(day),
                                         'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
@@ -147,7 +147,7 @@
                         <div
                             @class([
                                 'flex items-center justify-center py-2 rounded-lg',
-                                'bg-gray-50' => $hasDate(),
+                                'bg-gray-50 dark:bg-dark-800' => $hasDate(),
                             ])
                         >
                             <input
@@ -157,15 +157,15 @@
                                 inputmode="numeric"
                                 x-model.debounce="hour"
                                 @class([
-                                    'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
-                                    'bg-gray-50' => $hasDate(),
+                                    'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none dark:text-dark-200',
+                                    'bg-gray-50 dark:bg-dark-800' => $hasDate(),
                                 ])
                             />
 
                             <span
                                 @class([
-                                    'text-xl font-medium text-gray-700',
-                                    'bg-gray-50' => $hasDate(),
+                                    'text-xl font-medium text-gray-700 dark:text-dark-200',
+                                    'bg-gray-50 dark:bg-dark-800' => $hasDate(),
                                 ])
                             >:</span>
 
@@ -176,16 +176,16 @@
                                 inputmode="numeric"
                                 x-model.debounce="minute"
                                 @class([
-                                    'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
-                                    'bg-gray-50' => $hasDate(),
+                                    'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none dark:text-dark-200',
+                                    'bg-gray-50 dark:bg-dark-800' => $hasDate(),
                                 ])
                             />
 
                             @if ($hasSeconds())
                                 <span
                                     @class([
-                                        'text-xl font-medium text-gray-700',
-                                        'bg-gray-50' => $hasDate(),
+                                        'text-xl font-medium text-gray-700 dark:text-dark-200',
+                                        'bg-gray-50 dark:bg-dark-800' => $hasDate(),
                                     ])
                                 >:</span>
 
@@ -196,8 +196,8 @@
                                     inputmode="numeric"
                                     x-model.debounce="second"
                                     @class([
-                                        'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
-                                        'bg-gray-50' => $hasDate(),
+                                        'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none dark:text-dark-200',
+                                        'bg-gray-50 dark:bg-dark-800' => $hasDate(),
                                     ])
                                 />
                             @endif

@@ -1,4 +1,4 @@
-<footer class="border-t px-6 py-3 flex shrink-0 items-center gap-3">
+<footer class="border-t px-6 py-3 flex shrink-0 items-center gap-3 dark:border-dark-700">
     @php
         $user = \Filament\Facades\Filament::auth()->user();
     @endphp
@@ -13,7 +13,7 @@
             {{ \Filament\Facades\Filament::getUserName($user) }}
         </p>
 
-        <p class="text-xs text-gray-500 hover:text-gray-700 focus:text-gray-700">
+        <p class="text-xs text-gray-500 hover:text-gray-700 focus:text-gray-700 dark:text-dark-300 dark:hover:text-dark-200">
             <a href="{{ route('filament.auth.logout') }}">
                 {{ __('filament::layout.buttons.logout.label') }}
             </a>
