@@ -21,3 +21,10 @@
     @apply border-dark-600
 }
 
+.dark .filepond--drop-label {
+    @apply bg-dark-700 text-dark-200 rounded-md
+}
+
+.dark .filepond--panel-root {
+    @apply bg-dark-700
+}
