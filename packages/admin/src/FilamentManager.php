@@ -114,19 +114,13 @@ class FilamentManager
         }
 
         $groupedItems = collect($this->navigationItems)
-            ->sortBy(
-                fn(Navigation\NavigationItem $item): int => $item->getSort()
-            )
-            ->groupBy(
-                fn(
-                    Navigation\NavigationItem $item
-                ): ?string => $item->getGroup()
-            );
+            ->sortBy(fn (Navigation\NavigationItem $item): int => $item->getSort())
+            ->groupBy(fn (Navigation\NavigationItem $item): ?string => $item->getGroup());
 
         $sortedGroups = $groupedItems
             ->keys()
             ->sortBy(function (?string $group): int {
-                if (!$group) {
+                if (! $group) {
                     return -1;
                 }
 
@@ -188,11 +182,10 @@ class FilamentManager
 
     public function getThemeUrl(): string
     {
-        return $this->themeUrl ??
-            route('filament.asset', [
-                'id' => get_asset_id('app.css'),
-                'file' => 'app.css',
-            ]);
+        return $this->themeUrl ?? route('filament.asset', [
+            'id' => get_asset_id('app.css'),
+            'file' => 'app.css',
+        ]);
     }
 
     public function getUrl(): ?string
@@ -201,7 +194,7 @@ class FilamentManager
 
         $firstItem = $flatNavigation[0] ?? null;
 
-        if (!$firstItem) {
+        if (! $firstItem) {
             return null;
         }
 
@@ -238,7 +231,7 @@ class FilamentManager
     {
         return collect($this->widgets)
             ->unique()
-            ->sortBy(fn(string $widget): int => $widget::getSort())
+            ->sortBy(fn (string $widget): int => $widget::getSort())
             ->toArray();
     }
 }
