@@ -3,7 +3,7 @@
 ])
 
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ __('filament::layout.direction') ?? 'ltr' }}" class="antialiased bg-gray-100 js-focus-visible">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ __('filament::layout.direction') ?? 'ltr' }}" class="filament antialiased bg-gray-100 js-focus-visible">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,7 +32,7 @@
         <link rel="stylesheet" href="{{ \Filament\Facades\Filament::getThemeUrl() }}" />
     </head>
 
-    <body>
+    <body class="filament-body">
         {{ $slot }}
 
         @livewireScripts

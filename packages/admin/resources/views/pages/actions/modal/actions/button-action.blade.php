@@ -6,6 +6,7 @@
     :color="$getColor()"
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
+    class="filament-page-modal-button-action"
 >
     {{ $getLabel() }}
 </x-filament::button>

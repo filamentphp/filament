@@ -8,7 +8,7 @@
     x-show="isCreateButtonDropdownOpen"
     x-on:click.away="isCreateButtonDropdownOpen = false"
     x-transition
-    {{ $attributes->class(['absolute z-10 mt-10 shadow-xl border overflow-hidden rounded-xl w-52']) }}
+    {{ $attributes->class(['absolute z-10 mt-10 shadow-xl border overflow-hidden rounded-xl w-52', 'filament-forms-builder-component-block-picker']) }}
 >
     <ul class="py-1 space-y-1 bg-white shadow rounded-xl">
         @foreach ($blocks as $block)

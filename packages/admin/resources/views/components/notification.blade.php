@@ -11,7 +11,7 @@
         setTimeout(() => $el.remove(), 6000)
     }"
     x-cloak
-    class="fixed inset-x-0 top-0 z-10 p-3 pointer-events-none"
+    class="fixed inset-x-0 top-0 z-10 p-3 pointer-events-none filament-notification"
 >
     <div class="flex flex-col h-auto sm:max-w-xs max-w-screen mx-auto space-y-2 pointer-events-auto">
         <div

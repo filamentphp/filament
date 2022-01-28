@@ -25,6 +25,7 @@
             'block w-full transition duration-75 divide-y rounded-lg shadow-sm border focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600',
             'border-gray-300' => ! $errors->has($getStatePath()),
             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+            'filament-forms-multi-select-component',
         ]) }}
         {{ $getExtraAlpineAttributeBag() }}
     >

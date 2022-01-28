@@ -11,7 +11,7 @@
     'statePath',
 ])
 
-<div {{ $attributes }}>
+<div {{ $attributes->class(['filament-forms-field-wrapper']) }}>
     @if ($label && $labelSrOnly)
         <label for="{{ $id }}" class="sr-only">
             {{ $label }}

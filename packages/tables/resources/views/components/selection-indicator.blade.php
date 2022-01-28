@@ -4,7 +4,7 @@
     'selectedRecordsCount',
 ])
 
-<tr x-cloak {{ $attributes->class(['bg-primary-500/10']) }}>
+<tr x-cloak {{ $attributes->class(['bg-primary-500/10', 'filament-tables-selection-indicator']) }}>
     <td class="px-4 py-2 whitespace-nowrap text-sm" colspan="{{ $colspan }}">
         <div>
             <span x-show="isLoading">
