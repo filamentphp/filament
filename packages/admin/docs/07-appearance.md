@@ -101,23 +101,25 @@ The default is `7xl`.
 
 ## Including frontend assets
 
-You may register your own scripts and styles by including the following in the `AppServiceProvider`'s `boot()` method:
+You may register your own scripts and styles using the `registerScripts()` and `registerStyles()` methods in a service provider's `boot()` method:
 
 ```php
 use Filament\Facades\Filament;
+
+Filament::registerScripts([
+    asset('js/my-script.js'),
+]);
 
 Filament::registerStyles([
     'https://unpkg.com/tippy.js@6/dist/tippy.css',
     asset('css/my-styles.css'),
 ]);
+```
 
-Filament::registerScripts([asset('js/my-script.js')]);
+You may pass `true` as a parameter to `registerScripts()` to load it before Filament's core JavaScript. This is useful for registering Alpine.js plugins from a CDN:
 
-// Pass a boolean parameter to load a script before Filament's core javascript. This is useful for registering Alpine plugins from a CDN.
-Filament::registerScripts(
-    [
-        'https://cdn.jsdelivr.net/npm/@ryangjchandler/alpine-tooltip@0.x.x/dist/cdn.min.js',
-    ],
-    true
-);
+```php
+Filament::registerScripts([
+    'https://cdn.jsdelivr.net/npm/@ryangjchandler/alpine-tooltip@0.x.x/dist/cdn.min.js',
+], true);
 ```
