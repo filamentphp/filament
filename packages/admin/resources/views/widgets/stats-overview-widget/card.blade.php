@@ -7,5 +7,5 @@
     :description-icon="$getDescriptionIcon()"
     :label="$getLabel()"
     :value="$getValue()"
-    class="filament-widgets-stats-overview-widget-card"
+    class="filament-stats-overview-widget-card"
 />
