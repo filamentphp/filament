@@ -7,7 +7,7 @@
         isOpen: false,
     }"
     x-cloak
-    {{ $attributes->class(['relative', 'filament-tables-components-bulk-actions']) }}
+    {{ $attributes->class(['relative', 'filament-tables-bulk-actions']) }}
 >
     <x-tables::bulk-actions.trigger />
 

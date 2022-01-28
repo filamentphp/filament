@@ -19,7 +19,7 @@
             'focus:underline bg-primary-500/10 ring-2 ring-primary-500' => $active,
             'cursor-not-allowed opacity-75' => $disabled,
             'cursor-default' => $separator,
-            'filament-tables-components-pagination-item'
+            'filament-tables-pagination-item'
         ]) }}
     >
         @if ($icon)

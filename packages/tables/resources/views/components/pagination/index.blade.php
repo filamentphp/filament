@@ -10,7 +10,7 @@
 <nav
     role="navigation"
     aria-label="{{ __('tables::table.pagination.label') }}"
-    class="flex items-center justify-between filament-tables-components-pagination"
+    class="flex items-center justify-between filament-tables-pagination"
 >
     <div class="flex justify-between items-center flex-1 lg:hidden">
         <div class="w-10">

@@ -1,3 +1,3 @@
-<div class="filament-resources-relation-managers-belongs-to-many-relation-manager">
+<div class="filament-resources-belongs-to-many-relation-manager">
     {{ $this->table }}
 </div>

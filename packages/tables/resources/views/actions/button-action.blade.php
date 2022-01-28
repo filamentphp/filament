@@ -20,7 +20,7 @@
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
     size="sm"
-    class="filament-tables-actions-button-action"
+    class="filament-tables-button-action"
 >
     {{ $getLabel() }}
 </x-tables::button>

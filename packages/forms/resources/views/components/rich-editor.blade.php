@@ -29,7 +29,7 @@
         "
         x-cloak
         wire:ignore
-        {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-components-rich-editor']) }}
+        {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-rich-editor-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
         @unless ($isDisabled())

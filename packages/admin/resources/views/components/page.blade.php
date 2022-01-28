@@ -3,7 +3,7 @@
     'widgetRecord' => null,
 ])
 
-<div {{ $attributes->class(['filament-components-page']) }}>
+<div {{ $attributes->class(['filament-page']) }}>
     <div class="space-y-6">
         @if ($header = $this->getHeader())
             {{ $header }}

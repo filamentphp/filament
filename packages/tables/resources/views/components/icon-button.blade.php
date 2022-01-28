@@ -14,10 +14,10 @@
         'text-gray-500 focus:bg-gray-500/10' => $color === 'secondary',
         'text-success-500 focus:bg-success-500/10' => $color === 'success',
         'text-warning-500 focus:bg-warning-500/10' => $color === 'warning',
-        'filament-tables-components-icon-button',
+        'filament-tables-icon-button',
     ];
 
-    $iconClasses = 'w-5 h-5 filament-tables-components-icon-button-icon';
+    $iconClasses = 'w-5 h-5 filament-tables-icon-button-icon';
 @endphp
 
 @if ($tag === 'button')

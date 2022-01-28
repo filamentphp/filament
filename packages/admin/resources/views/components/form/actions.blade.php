@@ -5,5 +5,5 @@
 <x-filament::pages.actions
     :actions="$actions"
     :align="config('filament.layout.forms.actions.alignment')"
-    class="filament-components-form-actions"
+    class="filament-form-actions"
 />

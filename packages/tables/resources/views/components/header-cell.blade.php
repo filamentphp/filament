@@ -6,7 +6,7 @@
     'sortDirection',
 ])
 
-<th {{ $attributes->merge($extraAttributes)->class(['px-4 py-2', 'filament-tables-components-header-cell']) }}>
+<th {{ $attributes->merge($extraAttributes)->class(['px-4 py-2', 'filament-tables-header-cell']) }}>
     <button
         @if ($sortable)
             wire:click="sortTable('{{ $name }}')"

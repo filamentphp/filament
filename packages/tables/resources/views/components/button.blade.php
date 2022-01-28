@@ -22,7 +22,7 @@
         'opacity-75 cursor-not-allowed' => $disabled,
         'h-8 px-3 text-sm' => $size === 'sm',
         'h-11 px-6 text-xl' => $size === 'lg',
-        'filament-tables-components-button',
+        'filament-tables-button',
     ];
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -35,7 +35,7 @@
         'ml-1 -mr-2 rtl:mr-1 rtl:-ml-2' => ($iconPosition === 'after') && ($size === 'md'),
         'ml-2 -mr-3 rtl:mr-2 rtl:-ml-3' => ($iconPosition === 'after') && ($size === 'lg'),
         'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm'),
-        'filament-tables-components-button-icon',
+        'filament-tables-button-icon',
     ]);
 
     $hasLoadingIndicator = filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));

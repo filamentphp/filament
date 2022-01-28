@@ -12,7 +12,7 @@
         'text-gray-600 hover:text-gray-500' => $color === 'secondary',
         'text-success-600 hover:text-success-500' => $color === 'success',
         'text-warning-600 hover:text-warning-500' => $color === 'warning',
-        'filament-tables-components-link',
+        'filament-tables-link',
     ];
 @endphp
 

@@ -1,3 +1,3 @@
-<tr {{ $attributes->class(['filament-tables-components-row']) }}>
+<tr {{ $attributes->class(['filament-tables-row']) }}>
     {{ $slot }}
 </tr>

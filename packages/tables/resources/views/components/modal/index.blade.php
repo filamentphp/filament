@@ -26,7 +26,7 @@
     @endif
     role="dialog"
     aria-modal="true"
-    class="{{ $displayClasses }} filament-tables-components-modal"
+    class="{{ $displayClasses }} filament-tables-modal"
 >
     {{ $trigger }}
 

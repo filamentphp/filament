@@ -4,7 +4,7 @@
     'heading',
 ])
 
-<div {{ $attributes->class(['px-4 py-2'])->class(['filament-tables-components-header']) }}>
+<div {{ $attributes->class(['px-4 py-2'])->class(['filament-tables-header']) }}>
     <div class="flex flex-col gap-4 md:justify-between md:items-start md:flex-row md:-mr-2">
         <div>
             @if ($heading)

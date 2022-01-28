@@ -1,4 +1,4 @@
-<div {{ $attributes->class(['filament-tables-components-search-input']) }}>
+<div {{ $attributes->class(['filament-tables-search-input']) }}>
     <label for="tableSearchQueryInput" class="sr-only">
         {{ __('tables::table.fields.search_query.label') }}
     </label>

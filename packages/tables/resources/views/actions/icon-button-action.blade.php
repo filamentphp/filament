@@ -19,5 +19,5 @@
     :color="$getColor()"
     :label="$getLabel()"
     :icon="$getIcon()"
-    class="-my-2 filament-tables-actions-icon-button-action"
+    class="-my-2 filament-tables-icon-button-action"
 />

@@ -1,3 +1,3 @@
-<x-filament::page class="filament-resources-pages-list-records">
+<x-filament::page class="filament-resources-list-records-page">
     {{ $this->table }}
 </x-filament::page>
