@@ -14,6 +14,7 @@
             <div {{ $attributes->merge($getExtraAttributes())->class([
                 'gap-2 space-y-2',
                 'flex flex-wrap gap-3' => $isInline(),
+                'filament-forms-radio-component',
             ]) }}>
                 @foreach ($getOptions() as $value => $label)
                     <div @class([

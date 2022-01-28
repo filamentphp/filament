@@ -2,7 +2,7 @@
     'label' => null,
 ])
 
-<li x-data="{ label: {{ json_encode($label) }} }">
+<li x-data="{ label: {{ json_encode($label) }} }" class="filament-sidebar-group">
     @if ($label)
         <button
             x-on:click.prevent="$store.sidebar.toggleCollapsedGroup(label)"

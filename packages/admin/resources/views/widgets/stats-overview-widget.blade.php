@@ -1,4 +1,4 @@
-<x-filament::widget>
+<x-filament::widget class="filament-stats-overview-widget">
     <x-filament::stats :columns="$this->getColumns()">
         @foreach ($this->getCards() as $card)
             {{ $card }}

@@ -1,4 +1,4 @@
-<div {{ $attributes }}>
+<div {{ $attributes->class(['filament-global-search-input']) }}>
     <label for="globalSearchQueryInput" class="sr-only">
         {{ __('filament::global-search.field.label') }}
     </label>

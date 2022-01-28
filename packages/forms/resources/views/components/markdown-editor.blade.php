@@ -15,7 +15,7 @@
         })"
         x-cloak
         wire:ignore
-        {{ $attributes->merge($getExtraAttributes()) }}
+        {{ $attributes->merge($getExtraAttributes())->class('filament-forms-markdown-editor-component') }}
         {{ $getExtraAlpineAttributeBag() }}
     >
         <div class="space-y-2">

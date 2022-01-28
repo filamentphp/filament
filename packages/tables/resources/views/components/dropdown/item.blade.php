@@ -13,6 +13,7 @@
             'hover:bg-danger-600 focus:bg-danger-700' => $color === 'danger',
             'hover:bg-success-600 focus:bg-success-700' => $color === 'success',
             'hover:bg-warning-600 focus:bg-warning-700' => $color === 'warning',
+            'filament-tables-dropdown-item'
         ])
     >
         @if ($icon)

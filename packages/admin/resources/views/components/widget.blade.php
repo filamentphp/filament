@@ -14,6 +14,7 @@
         'full' => 'col-span-full',
         1 => 'col-span-1',
     },
+    'filament-widget',
 ]) }}>
     {{ $slot }}
 </div>

@@ -6,7 +6,7 @@
     'url' => null,
 ])
 
-<td {{ $attributes->class(['dark:text-white']) }}>
+<td {{ $attributes->class(['dark:text-white', 'filament-tables-cell']) }}>
     @if ($action)
         <button
             wire:click="callTableColumnAction('{{ $name }}', '{{ $record->getKey() }}')"

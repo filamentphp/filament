@@ -4,7 +4,7 @@
         x-on:expand-concealing-component.window="if ($event.detail.id === $el.id) isCollapsed = false"
     @endif
     id="{{ $getId() }}"
-    {{ $attributes->merge($getExtraAttributes())->class(['p-6 space-y-6 rounded-xl shadow-sm border border-gray-300 dark:border-dark-600']) }}
+    {{ $attributes->merge($getExtraAttributes())->class(['p-6 space-y-6 rounded-xl shadow-sm border border-gray-300 dark:border-dark-600', 'filament-forms-section-component']) }}
     {{ $getExtraAlpineAttributeBag() }}
 >
     <div class="flex space-x-3">

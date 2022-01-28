@@ -2,7 +2,9 @@
 /build
 /coverage
 /node_modules
+/node_modules.nosync
 /vendor
+/vendor.nosync
 /.vscode
 .DS_Store
 .php-cs-fixer.cache

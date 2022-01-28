@@ -36,99 +36,102 @@
     };
 @endphp
 
-<div x-data="{
-    hasHeader: true,
+<div
+    x-data="{
+        hasHeader: true,
 
-    isLoading: false,
+        isLoading: false,
 
-    selectedRecords: [],
+        selectedRecords: [],
 
-    shouldCheckUniqueSelection: true,
+        shouldCheckUniqueSelection: true,
 
-    init: function () {
-        $wire.on('deselectAllTableRecords', () => this.deselectAllRecords())
+        init: function () {
+            $wire.on('deselectAllTableRecords', () => this.deselectAllRecords())
 
-        $watch('selectedRecords', () => {
-            if (! this.shouldCheckUniqueSelection) {
-                this.shouldCheckUniqueSelection = true
+            $watch('selectedRecords', () => {
+                if (! this.shouldCheckUniqueSelection) {
+                    this.shouldCheckUniqueSelection = true
+
+                    return
+                }
+
+                this.selectedRecords = [...new Set(this.selectedRecords)]
+
+                this.shouldCheckUniqueSelection = false
+            })
+        },
+
+        mountBulkAction: function (name) {
+            $wire.mountTableBulkAction(name, this.selectedRecords)
+        },
+
+        toggleSelectRecordsOnPage: function () {
+            let keys = this.getRecordsOnPage()
+
+            if (this.areRecordsSelected(keys)) {
+                this.deselectRecords(keys)
 
                 return
             }
 
-            this.selectedRecords = [...new Set(this.selectedRecords)]
+            this.selectRecords(keys)
+        },
 
-            this.shouldCheckUniqueSelection = false
-        })
-    },
+        getRecordsOnPage: function () {
+            let keys = []
 
-    mountBulkAction: function (name) {
-        $wire.mountTableBulkAction(name, this.selectedRecords)
-    },
-
-    toggleSelectRecordsOnPage: function () {
-        let keys = this.getRecordsOnPage()
-
-        if (this.areRecordsSelected(keys)) {
-            this.deselectRecords(keys)
-
-            return
-        }
-
-        this.selectRecords(keys)
-    },
-
-    getRecordsOnPage: function () {
-        let keys = []
-
-        for (checkbox of $el.getElementsByClassName('table-row-checkbox')) {
-            keys.push(checkbox.value)
-        }
-
-        return keys
-    },
-
-    selectRecords: function (keys) {
-        for (key of keys) {
-            if (this.isRecordSelected(key)) {
-                continue
+            for (checkbox of $el.getElementsByClassName('table-row-checkbox')) {
+                keys.push(checkbox.value)
             }
 
-            this.selectedRecords.push(key)
-        }
-    },
+            return keys
+        },
 
-    deselectRecords: function (keys) {
-        for (key of keys) {
-            let index = this.selectedRecords.indexOf(key)
+        selectRecords: function (keys) {
+            for (key of keys) {
+                if (this.isRecordSelected(key)) {
+                    continue
+                }
 
-            if (index === -1) {
-                continue
+                this.selectedRecords.push(key)
             }
+        },
 
-            this.selectedRecords.splice(index, 1)
-        }
-    },
+        deselectRecords: function (keys) {
+            for (key of keys) {
+                let index = this.selectedRecords.indexOf(key)
 
-    selectAllRecords: async function () {
-        this.isLoading = true
+                if (index === -1) {
+                    continue
+                }
 
-        this.selectedRecords = (await $wire.getAllTableRecordKeys()).map((key) => key.toString())
+                this.selectedRecords.splice(index, 1)
+            }
+        },
 
-        this.isLoading = false
-    },
+        selectAllRecords: async function () {
+            this.isLoading = true
 
-    deselectAllRecords: function () {
-        this.selectedRecords = []
-    },
+            this.selectedRecords = (await $wire.getAllTableRecordKeys()).map((key) => key.toString())
 
-    isRecordSelected: function (key) {
-        return this.selectedRecords.includes(key)
-    },
+            this.isLoading = false
+        },
 
-    areRecordsSelected: function (keys) {
-        return keys.every(key => this.isRecordSelected(key))
-    },
-}">
+        deselectAllRecords: function () {
+            this.selectedRecords = []
+        },
+
+        isRecordSelected: function (key) {
+            return this.selectedRecords.includes(key)
+        },
+
+        areRecordsSelected: function (keys) {
+            return keys.every(key => this.isRecordSelected(key))
+        },
+    }"
+    class="filament-tables-component"
+>
     <x-tables::container>
         <div
             x-show="hasHeader = ({{ ($header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible) ? 'true' : 'false' }} || selectedRecords.length)"

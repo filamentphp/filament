@@ -14,6 +14,7 @@
     'relative p-6 rounded-2xl',
     'bg-white shadow dark:bg-dark-800' => ! $flat,
     'border dark:border-dark-700' => $flat,
+    'filament-stats-card',
 ]) }}>
     <div @class([
         'space-y-2',

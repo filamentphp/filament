@@ -3,7 +3,12 @@
 ])
 
 <!DOCTYPE html>
-<html @if(config('filament.layout.darkmode')) x-data='darkmode' :class="{'dark': theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)}" @endif lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ __('filament::layout.direction') ?? 'ltr' }}" class="antialiased js-focus-visible">
+<html
+    lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
+    @if (config('filament.layout.darkmode')) x-data='darkmode' :class="{'dark': theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)}" @endif
+    class="filament antialiased bg-gray-100 js-focus-visible"
+>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,7 +37,7 @@
         <link rel="stylesheet" href="{{ \Filament\Facades\Filament::getThemeUrl() }}" />
     </head>
 
-    <body class="bg-gray-100 text-gray-900 dark:text-dark-100 dark:bg-dark-900">
+    <body class="bg-gray-100 text-gray-900 filament-body dark:text-dark-100 dark:bg-dark-900">
         {{ $slot }}
 
         @livewireScripts
@@ -40,6 +45,16 @@
         <script>
             window.filamentData = @json(\Filament\Facades\Filament::getScriptData());
         </script>
+
+        @foreach (\Filament\Facades\Filament::getBeforeCoreScripts() as $name => $path)
+            @if (Str::of($path)->startsWith(['http://', 'https://']))
+                <script src="{{ $path }}"></script>
+            @else
+                <script src="{{ route('filament.asset', [
+                    'file' => "{$name}.js",
+                ]) }}"></script>
+            @endif
+        @endforeach
 
         <script src="{{ route('filament.asset', [
             'id' => Filament\get_asset_id('app.js'),
