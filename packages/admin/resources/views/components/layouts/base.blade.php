@@ -41,6 +41,16 @@
             window.filamentData = @json(\Filament\Facades\Filament::getScriptData());
         </script>
 
+        @foreach (\Filament\Facades\Filament::getBeforeCoreScripts() as $name => $path)
+            @if (Str::of($path)->startsWith(['http://', 'https://']))
+                <script src="{{ $path }}"></script>
+            @else
+                <script src="{{ route('filament.asset', [
+                    'file' => "{$name}.js",
+                ]) }}"></script>
+            @endif
+        @endforeach
+
         <script src="{{ route('filament.asset', [
             'id' => Filament\get_asset_id('app.js'),
             'file' => 'app.js',

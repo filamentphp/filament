@@ -93,11 +93,54 @@ Visit your Livewire component in the browser, and you should see the form compon
 
 <img src="https://user-images.githubusercontent.com/41773797/147614478-5b40c645-107e-40ac-ba41-f0feb99dd480.png">
 
-## Filling forms with data
+## Initializing forms
 
-Often, you will need to prefill your form fields with data. In normal Livewire components, this is often done in the `mount()` method, as this is only run once, immediately after the component is instantiated.
+You must initialize forms when the Livewire component is first loaded. This is done with the `fill()` form method, often called in the `mount()` method of the Livewire component.
 
 For your fields to hold data, they should have a corresponding property on your Livewire component, just as in Livewire normally.
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Forms;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
+
+class CreatePost extends Component implements Forms\Contracts\HasForms
+{
+    use Forms\Concerns\InteractsWithForms;
+    
+    public $title = '';
+    public $content = '';
+    
+    public function mount(): void // [tl! focus:start]
+    {
+        $this->form->fill();
+    } // [tl! focus:end]
+    
+    protected function getFormSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('title')
+                ->default('Status Update') // [tl! focus]
+                ->required(),
+            Forms\Components\MarkdownEditor::make('content'),
+        ];
+    }
+    
+    public function render(): View
+    {
+        return view('create-post');
+    }
+}
+```
+
+You may customize what happens after fields are filled [using the `afterStateHydrated()` method](advanced#hydration).
+
+## Filling forms with data
 
 To fill a form with data, call the `fill()` method on your form, and pass an array of data to fill it with:
 
@@ -142,53 +185,6 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     }
 }
 ```
-
-### Default data
-
-Fields can use a `default()` configuration method, which allows you to specify default values to fill your form with.
-
-To fill a form with default values, call the `fill()` method on your form without any parameters:
-
-```php
-<?php
-
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Forms;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class CreatePost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public $title = '';
-    public $content = '';
-    
-    public function mount(): void // [tl! focus:start]
-    {
-        $this->form->fill();
-    } // [tl! focus:end]
-    
-    protected function getFormSchema(): array
-    {
-        return [
-            Forms\Components\TextInput::make('title')
-                ->default('Status Update') // [tl! focus]
-                ->required(),
-            Forms\Components\MarkdownEditor::make('content'),
-        ];
-    }
-    
-    public function render(): View
-    {
-        return view('create-post');
-    }
-}
-```
-
-> You may customize what happens after fields are hydrated [using the `afterStateHydrated()` method](advanced#hydration).
 
 ## Getting data from forms
 

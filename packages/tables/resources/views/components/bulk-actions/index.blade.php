@@ -25,7 +25,7 @@
         <ul class="py-1 space-y-1 overflow-hidden bg-white shadow rounded-xl">
             @foreach ($actions as $action)
                 <x-tables::dropdown.item
-                    :wire:click="'mountTableBulkAction(\'' . $action->getName() . '\')'"
+                    :x-on:click="'mountBulkAction(\'' . $action->getName() . '\')'"
                     :icon="$action->getIcon()"
                     :color="$action->getColor()"
                 >

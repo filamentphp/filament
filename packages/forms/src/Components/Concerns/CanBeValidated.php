@@ -62,8 +62,12 @@ trait CanBeValidated
         return $this;
     }
 
-    public function rules(array $rules, bool | Closure $condition = true): static
+    public function rules(string | array $rules, bool | Closure $condition = true): static
     {
+        if (is_string($rules)) {
+            $rules = explode('|', $rules);
+        }
+
         $this->rules = array_merge(
             $this->rules,
             array_map(fn (string | object $rule) => [$rule, $condition], $rules),

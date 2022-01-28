@@ -151,11 +151,6 @@ class Table extends ViewComponent implements Htmlable
         return $this;
     }
 
-    public function areAllRecordsOnCurrentPageSelected(): bool
-    {
-        return $this->getLivewire()->areAllTableRecordsOnCurrentPageSelected();
-    }
-
     public function getActions(): array
     {
         return $this->getLivewire()->getCachedTableActions();
@@ -287,11 +282,6 @@ class Table extends ViewComponent implements Htmlable
         return $callback($record);
     }
 
-    public function getSelectedRecordsCount(): int
-    {
-        return $this->getLivewire()->getSelectedTableRecordsCount();
-    }
-
     public function getSortColumn(): ?string
     {
         return $this->getLivewire()->getTableSortColumn();
@@ -310,11 +300,6 @@ class Table extends ViewComponent implements Htmlable
     public function isPaginationEnabled(): bool
     {
         return $this->isPaginationEnabled;
-    }
-
-    public function isRecordSelected(string $record): bool
-    {
-        return $this->getLivewire()->isTableRecordSelected($record);
     }
 
     public function isSelectionEnabled(): bool

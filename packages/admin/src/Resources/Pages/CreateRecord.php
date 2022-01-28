@@ -64,6 +64,7 @@ class CreateRecord extends Page
         if ($another) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
             $this->form->model($this->record::class);
+            $this->record = null;
 
             $this->fillForm();
 
@@ -75,6 +76,11 @@ class CreateRecord extends Page
         if ($redirectUrl = $this->getRedirectUrl()) {
             $this->redirect($redirectUrl);
         }
+    }
+
+    public function createAndCreateAnother(): void
+    {
+        $this->create(another: true);
     }
 
     protected function handleRecordCreation(array $data): Model
@@ -100,14 +106,14 @@ class CreateRecord extends Page
     {
         return ButtonAction::make('create')
             ->label(__('filament::resources/pages/create-record.form.actions.create.label'))
-            ->submit();
+            ->submit('create');
     }
 
     protected function getCreateAndCreateAnotherButtonFormAction(): ButtonAction
     {
         return ButtonAction::make('createAnother')
             ->label(__('filament::resources/pages/create-record.form.actions.create_and_create_another.label'))
-            ->action('create(true)')
+            ->action('createAndCreateAnother')
             ->color('secondary');
     }
 

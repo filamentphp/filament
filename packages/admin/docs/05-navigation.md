@@ -49,14 +49,14 @@ class AppServiceProvider extends ServiceProvider
 
 ## Registering custom navigation items
 
-Alternatively, you may completely override the static `registerNavigationItems()` method on the class and register as many custom navigation items as you require:
+Alternatively, you may completely override the static `getNavigationItems()` method on the class and register as many custom navigation items as you require:
 
 ```php
 use Filament\Navigation\NavigationItem;
 
-public static function registerNavigationItems(): void
+public static function getNavigationItems(): array
 {
-    Filament::registerNavigationItems([
+    return [
         NavigationItem::make()
             ->group($group)
             ->icon($icon)
@@ -64,7 +64,7 @@ public static function registerNavigationItems(): void
             ->label($label)
             ->sort($sort)
             ->url($url),
-    ]);
+    ];
 }
 ```
 
@@ -74,4 +74,63 @@ To prevent resources or pages from showing up in navigation, you may use:
 
 ```php
 protected static bool $shouldRegisterNavigation = false;
+```
+
+## Advanced navigation customization
+
+The `Filament::navigation()` method which can be called from the `boot` method of a `ServiceProvider`:
+
+```php
+use Filament\Facades\Filament;
+use Filament\Navigation\NavigationBuilder;
+
+Filament::navigation(function (NavigationBuilder $builder): void {
+    // ...
+});
+```
+
+Once you add this callback function, Filament's default automatic navigation will be disabled and your sidebar will be empty. This is done on purpose, since this API is designed to give you complete control over the navigation.
+
+If you want to register a new group, you can call the `NavigationBuilder::group` method.
+
+```php
+use Filament\Facades\Filament;
+use Filament\Navigation\NavigationBuilder;
+
+Filament::navigation(function (NavigationBuilder $builder): void {
+    $builder->group('Settings', [
+        // An array of `NavigationItem` objects.
+    ]);
+});
+```
+
+You provide the name of the group and an array of `NavigationItem` objects to be rendered. If you've got a `Resource` or `Page` you'd like to register in this group, you can use the following syntax:
+
+```php
+use Filament\Facades\Filament;
+use Filament\Navigation\NavigationBuilder;
+
+Filament::navigation(function (NavigationBuilder $builder): void {
+    $builder->group('Content', [
+        ...PageResource::getNavigationItems(),
+        ...CategoryResource::getNavigationItems(),
+    ]);
+});
+```
+
+You can also register ungrouped items using the `NavigationBuilder::item()` method:
+
+```php
+use Filament\Facades\Filament;
+use Filament\Navigation\NavigationBuilder;
+
+Filament::navigation(function (NavigationBuilder $builder): void {
+    $builder->item(
+        NavigationItem::make()
+            ->label('Dashboard')
+            ->icon('heroicon-o-home')
+            ->isActiveWhen(fn (): bool => request()->routeIs('filament.dashboard'))
+            ->url(route('filament.dashboard')),
+    );
+});
 ```

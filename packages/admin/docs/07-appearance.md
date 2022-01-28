@@ -98,3 +98,28 @@ In `config/filament.php`, set the `layouts.max_content_width` to any value betwe
 ```
 
 The default is `7xl`.
+
+## Including frontend assets
+
+You may register your own scripts and styles using the `registerScripts()` and `registerStyles()` methods in a service provider's `boot()` method:
+
+```php
+use Filament\Facades\Filament;
+
+Filament::registerScripts([
+    asset('js/my-script.js'),
+]);
+
+Filament::registerStyles([
+    'https://unpkg.com/tippy.js@6/dist/tippy.css',
+    asset('css/my-styles.css'),
+]);
+```
+
+You may pass `true` as a parameter to `registerScripts()` to load it before Filament's core JavaScript. This is useful for registering Alpine.js plugins from a CDN:
+
+```php
+Filament::registerScripts([
+    'https://cdn.jsdelivr.net/npm/@ryangjchandler/alpine-tooltip@0.x.x/dist/cdn.min.js',
+], true);
+```

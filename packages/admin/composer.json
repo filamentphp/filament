@@ -9,7 +9,7 @@
     },
     "require": {
         "php": "^8.0",
-        "danharrin/livewire-rate-limiting": "^0.3.0",
+        "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "filament/forms": "self.version",
         "filament/tables": "self.version",
         "illuminate/auth": "^8.6|^9.0",

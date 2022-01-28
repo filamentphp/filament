@@ -46,7 +46,7 @@
                 <div class="flex items-center justify-between font-medium">
                     <p
                         @class([
-                            'text-sm leading-6 truncate',
+                            'text-sm leading-6',
                             match ($status) {
                                 'danger' => 'text-danger-900',
                                 'success' => 'text-success-900',

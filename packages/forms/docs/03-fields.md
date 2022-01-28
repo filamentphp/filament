@@ -97,12 +97,22 @@ RichEditor::make('content')
 
 ### Custom attributes
 
-The HTML of fields can be customized even further, by passing an array of `extraAttributes()`:
+The HTML attributes of the field's wrapper can be customized by passing an array of `extraAttributes()`:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('name')->extraAttributes(['step' => 10])
+TextInput::make('name')->extraAttributes(['title' => 'Text input'])
+```
+
+To add additional HTML attributes to the input itself, use `extraInputAttributes()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('points')
+    ->numeric()
+    ->extraInputAttributes(['step' => '10'])
 ```
 
 ### Disabling
@@ -428,7 +438,7 @@ Commonly, you may desire "dependant" select inputs, which populate their options
 
 Some of the techniques described in the [advanced forms](advanced) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customisation possibilities.
 
-### Populating automatically from a `belongsTo` relationship
+### Populating automatically from a `BelongsTo` relationship
 
 You may employ the `relationship()` method of the `BelongsToSelect` to configure a relationship to automatically retrieve and save options from:
 
@@ -486,7 +496,7 @@ class App extends Model
 }
 ```
 
-### Populating automatically from a `belongsToMany` relationship
+### Populating automatically from a `BelongsToMany` relationship
 
 You may employ the `relationship()` method of the `BelongsToManyMultiSelect` to configure a relationship to automatically retrieve and save options from:
 
@@ -672,7 +682,7 @@ CheckboxList::make('technologies')
 
 This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of columns at various breakpoints.
 
-### Populating automatically from a `belongsToMany` relationship
+### Populating automatically from a `BelongsToMany` relationship
 
 You may employ the `relationship()` method of the `BelongsToManyCheckboxList` to configure a relationship to automatically retrieve and save options from:
 
@@ -1162,7 +1172,7 @@ Repeater::make('members')
     ->maxItems(10)
 ```
 
-### Populating automatically from a `hasMany` relationship
+### Populating automatically from a `HasMany` relationship
 
 You may employ the `relationship()` method of the `HasManyRepeater` to configure a relationship to automatically retrieve and save repeater items:
 
@@ -1171,6 +1181,23 @@ use App\Models\App;
 use Filament\Forms\Components\HasManyRepeater;
 
 HasManyRepeater::make('qualifications')
+    ->relationship('qualifications')
+    ->schema([
+        // ...
+    ])
+```
+
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
+
+### Populating automatically from a `MorphMany` relationship
+
+You may employ the `relationship()` method of the `MorphManyRepeater` to configure a relationship to automatically retrieve and save repeater items:
+
+```php
+use App\Models\App;
+use Filament\Forms\Components\MorphManyRepeater;
+
+MorphManyRepeater::make('qualifications')
     ->relationship('qualifications')
     ->schema([
         // ...

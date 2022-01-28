@@ -1,13 +1,6 @@
-@props([
-    'checked' => false,
-    'onClick',
-])
-
-<th {{ $attributes->class(['w-4 px-4 whitespace-nowrap', 'filament-tables-components-checkbox-cell']) }}>
+<th {{ $attributes->class(['w-4 px-4 whitespace-nowrap', 'filament-tables-checkbox-cell']) }}>
     <input
-        {{ $checked ? 'checked' : null }}
-        wire:click="{{ $onClick }}"
+        {{ $checkbox->attributes->class(['border-gray-300 rounded shadow-sm text-primary-600 focus:border-primary-600 focus:ring focus:ring-primary-200 focus:ring-opacity-50']) }}
         type="checkbox"
-        class="border-gray-300 rounded shadow-sm text-primary-600 focus:border-primary-600 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
     />
 </th>

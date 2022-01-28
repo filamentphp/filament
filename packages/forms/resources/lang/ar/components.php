@@ -86,19 +86,19 @@ return [
         'buttons' => [
 
             'create_item' => [
-                'label' => 'Add to :label',
+                'label' => 'اضافة الي :label',
             ],
 
             'delete_item' => [
-                'label' => 'Delete',
+                'label' => 'حذف',
             ],
 
             'move_item_down' => [
-                'label' => 'Move down',
+                'label' => 'تحريك لأسفل',
             ],
 
             'move_item_up' => [
-                'label' => 'Move up',
+                'label' => 'تحريك لأعلى',
             ],
 
         ],

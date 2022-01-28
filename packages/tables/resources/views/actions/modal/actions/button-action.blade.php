@@ -1,4 +1,5 @@
 <x-tables::button
+    :form="$getForm()"
     :type="$canSubmitForm() ? 'submit' : 'button'"
     :wire:click="$getAction()"
     :x-on:click="$canCancelAction() ? 'isOpen = false' : null"

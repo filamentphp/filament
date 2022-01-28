@@ -11,11 +11,11 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface HasTable extends HasForms
 {
-    public function areAllTableRecordsOnCurrentPageSelected(): bool;
-
     public function callTableColumnAction(string $columnName, string $recordKey);
 
     public function deselectAllTableRecords(): void;
+
+    public function getAllTableRecordKeys(): array;
 
     public function getAllTableRecordsCount(): int;
 
@@ -39,8 +39,6 @@ interface HasTable extends HasForms
 
     public function getMountedTableBulkActionForm(): ComponentContainer;
 
-    public function getSelectedTableRecordsCount(): int;
-
     public function getTableFiltersForm(): ComponentContainer;
 
     public function getTableRecords(): Collection | Paginator;
@@ -50,8 +48,6 @@ interface HasTable extends HasForms
     public function getTableSortDirection(): ?string;
 
     public function isTableFilterable(): bool;
-
-    public function isTableRecordSelected(string $record): bool;
 
     public function isTableSearchable(): bool;
 

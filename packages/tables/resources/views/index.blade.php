@@ -5,7 +5,6 @@
     $header = $getHeader();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
-    $isBulkActionsDropdownVisible = $isSelectionEnabled() && $getSelectedRecordsCount();
     $isSearchVisible = $isSearchable();
     $isFiltersDropdownVisible = $isFilterable();
 
@@ -37,9 +36,107 @@
     };
 @endphp
 
-<div class="filament-tables-component">
+<div
+    x-data="{
+        hasHeader: true,
+
+        isLoading: false,
+
+        selectedRecords: [],
+
+        shouldCheckUniqueSelection: true,
+
+        init: function () {
+            $wire.on('deselectAllTableRecords', () => this.deselectAllRecords())
+
+            $watch('selectedRecords', () => {
+                if (! this.shouldCheckUniqueSelection) {
+                    this.shouldCheckUniqueSelection = true
+
+                    return
+                }
+
+                this.selectedRecords = [...new Set(this.selectedRecords)]
+
+                this.shouldCheckUniqueSelection = false
+            })
+        },
+
+        mountBulkAction: function (name) {
+            $wire.mountTableBulkAction(name, this.selectedRecords)
+        },
+
+        toggleSelectRecordsOnPage: function () {
+            let keys = this.getRecordsOnPage()
+
+            if (this.areRecordsSelected(keys)) {
+                this.deselectRecords(keys)
+
+                return
+            }
+
+            this.selectRecords(keys)
+        },
+
+        getRecordsOnPage: function () {
+            let keys = []
+
+            for (checkbox of $el.getElementsByClassName('table-row-checkbox')) {
+                keys.push(checkbox.value)
+            }
+
+            return keys
+        },
+
+        selectRecords: function (keys) {
+            for (key of keys) {
+                if (this.isRecordSelected(key)) {
+                    continue
+                }
+
+                this.selectedRecords.push(key)
+            }
+        },
+
+        deselectRecords: function (keys) {
+            for (key of keys) {
+                let index = this.selectedRecords.indexOf(key)
+
+                if (index === -1) {
+                    continue
+                }
+
+                this.selectedRecords.splice(index, 1)
+            }
+        },
+
+        selectAllRecords: async function () {
+            this.isLoading = true
+
+            this.selectedRecords = (await $wire.getAllTableRecordKeys()).map((key) => key.toString())
+
+            this.isLoading = false
+        },
+
+        deselectAllRecords: function () {
+            this.selectedRecords = []
+        },
+
+        isRecordSelected: function (key) {
+            return this.selectedRecords.includes(key)
+        },
+
+        areRecordsSelected: function (keys) {
+            return keys.every(key => this.isRecordSelected(key))
+        },
+    }"
+    class="filament-tables-component"
+>
     <x-tables::container>
-        @if ($hasTableHeader = ($header || $heading || $headerActions || $isBulkActionsDropdownVisible || $isSearchVisible || $isFiltersDropdownVisible))
+        <div
+            x-show="hasHeader = ({{ ($header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible) ? 'true' : 'false' }} || selectedRecords.length)"
+            x-cloak
+        >
             @if ($header)
                 {{ $header }}
             @elseif ($heading || $headerActions)
@@ -54,57 +151,71 @@
                         </x-slot>
                     </x-tables::header>
 
-                    <x-tables::hr />
+                    <x-tables::hr x-show="{{ ($isSearchVisible || $isFiltersDropdownVisible) ? 'true' : 'false' }} || selectedRecords.length" />
                 </div>
             @endif
 
-            <div class="divide-y">
-                @if ($isBulkActionsDropdownVisible || $isSearchVisible || $isFiltersDropdownVisible)
-                    <div class="flex items-center justify-between p-2 h-14">
-                        <div>
-                            @if ($isBulkActionsDropdownVisible)
-                                <x-tables::bulk-actions
-                                    :actions="$getBulkActions()"
-                                    class="mr-2"
-                                />
-                            @endif
-                        </div>
+            <div
+                x-show="{{ ($isSearchVisible || $isFiltersDropdownVisible) ? 'true' : 'false' }} || selectedRecords.length"
+                x-cloak
+                class="flex items-center justify-between p-2 h-14"
+            >
+                <div>
+                    <x-tables::bulk-actions
+                        x-show="selectedRecords.length"
+                        :actions="$getBulkActions()"
+                        class="mr-2"
+                    />
+                </div>
 
-                        @if ($isSearchVisible || $isFiltersDropdownVisible)
-                            <div class="w-full md:w-auto flex items-center gap-2 md:max-w-md">
-                                @if ($isSearchVisible)
-                                    <div class="flex-1">
-                                        <x-tables::search-input />
-                                    </div>
-                                @endif
-
-                                @if ($isFiltersDropdownVisible)
-                                    <x-tables::filters
-                                        :form="$getFiltersForm()"
-                                        :width="$getFiltersFormWidth()"
-                                        class="shrink-0"
-                                    />
-                                @endif
+                @if ($isSearchVisible || $isFiltersDropdownVisible)
+                    <div class="w-full md:w-auto flex items-center gap-2 md:max-w-md">
+                        @if ($isSearchVisible)
+                            <div class="flex-1">
+                                <x-tables::search-input />
                             </div>
+                        @endif
+
+                        @if ($isFiltersDropdownVisible)
+                            <x-tables::filters
+                                :form="$getFiltersForm()"
+                                :width="$getFiltersFormWidth()"
+                                class="shrink-0"
+                            />
                         @endif
                     </div>
                 @endif
             </div>
-        @endif
+        </div>
 
-        <div @class([
-            'overflow-y-auto relative',
-            'rounded-t-xl' => ! $hasTableHeader,
-            'border-t' => $hasTableHeader,
-        ])>
+        <div
+            class="overflow-y-auto relative"
+            x-bind:class="{
+                'rounded-t-xl': ! hasHeader,
+                'border-t': hasHeader,
+            }"
+        >
             @if (($records = $getRecords())->count())
                 <x-tables::table>
                     <x-slot name="header">
                         @if ($isSelectionEnabled())
-                            <x-tables::checkbox-cell
-                                :checked="$areAllRecordsOnCurrentPageSelected()"
-                                :on-click="$isPaginationEnabled() ? 'toggleSelectTableRecordsOnPage' : 'toggleSelectAllTableRecords'"
-                            />
+                            <x-tables::checkbox-cell>
+                                <x-slot
+                                    name="checkbox"
+                                    x-on:click="toggleSelectRecordsOnPage"
+                                    x-bind:checked="
+                                        if (areRecordsSelected(getRecordsOnPage())) {
+                                            $el.checked = true
+
+                                            return 'checked'
+                                        }
+
+                                        $el.checked = false
+
+                                        return null
+                                    "
+                                ></x-slot>
+                            </x-tables::checkbox-cell>
                         @endif
 
                         @foreach ($columns as $column)
@@ -123,13 +234,16 @@
                         <th class="w-5"></th>
                     </x-slot>
 
-                    @if ($isSelectionEnabled() && $getSelectedRecordsCount() > 0)
+                    @if ($isSelectionEnabled())
                         <x-tables::selection-indicator
                             :all-records-count="$getAllRecordsCount()"
-                            :are-all-records-on-current-page-selected="$areAllRecordsOnCurrentPageSelected()"
                             :colspan="$columnsCount"
-                            :selected-records-count="$getSelectedRecordsCount()"
-                        />
+                            x-show="selectedRecords.length"
+                        >
+                            <x-slot name="selectedRecordsCount">
+                                <span x-text="selectedRecords.length"></span>
+                            </x-slot>
+                        </x-tables::selection-indicator>
                     @endif
 
                     @foreach ($records as $record)
@@ -139,10 +253,14 @@
 
                         <x-tables::row wire:key="{{ $record->getKey() }}">
                             @if ($isSelectionEnabled())
-                                <x-tables::checkbox-cell
-                                    :checked="$isRecordSelected($record->getKey())"
-                                    :on-click="'toggleSelectTableRecord(\'' . $record->getKey() . '\')'"
-                                />
+                                <x-tables::checkbox-cell>
+                                    <x-slot
+                                        name="checkbox"
+                                        x-model="selectedRecords"
+                                        :value="$record->getKey()"
+                                        class="table-row-checkbox"
+                                    ></x-slot>
+                                </x-tables::checkbox-cell>
                             @endif
 
                             @foreach ($columns as $column)
