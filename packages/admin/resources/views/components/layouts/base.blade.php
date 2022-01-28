@@ -41,7 +41,7 @@
             window.filamentData = @json(\Filament\Facades\Filament::getScriptData());
         </script>
 
-        @foreach (\Filament\Facades\Filament::getBeforeScripts() as $name => $path)
+        @foreach (\Filament\Facades\Filament::getBeforeCoreScripts() as $name => $path)
             @if (Str::of($path)->startsWith(['http://', 'https://']))
                 <script src="{{ $path }}"></script>
             @else
