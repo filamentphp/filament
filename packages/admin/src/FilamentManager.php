@@ -23,7 +23,7 @@ class FilamentManager
 
     protected array $resources = [];
 
-    protected array $beforeScripts = [];
+    protected array $beforeCoreScripts = [];
 
     protected array $scripts = [];
 
@@ -73,10 +73,10 @@ class FilamentManager
         $this->resources = array_merge($this->resources, $resources);
     }
 
-    public function registerScripts(array $scripts, bool $before = false): void
+    public function registerScripts(array $scripts, bool $shouldBeLoadedBeforeCoreScripts = false): void
     {
-        if ($before) {
-            $this->beforeScripts = array_merge($this->beforeScripts, $scripts);
+        if ($shouldBeLoadedBeforeCoreScripts) {
+            $this->beforeCoreScripts = array_merge($this->beforeCoreScripts, $scripts);
         } else {
             $this->scripts = array_merge($this->scripts, $scripts);
         }
@@ -171,9 +171,9 @@ class FilamentManager
         return $this->scripts;
     }
 
-    public function getBeforeScripts(): array
+    public function getBeforeCoreScripts(): array
     {
-        return $this->beforeScripts;
+        return $this->beforeCoreScripts;
     }
 
     public function getScriptData(): array
