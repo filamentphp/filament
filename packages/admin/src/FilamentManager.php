@@ -109,7 +109,7 @@ class FilamentManager
 
     public function getNavigation(): array
     {
-        if (!$this->isNavigationMounted) {
+        if (! $this->isNavigationMounted) {
             $this->mountNavigation();
         }
 
