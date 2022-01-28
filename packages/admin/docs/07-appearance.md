@@ -36,8 +36,7 @@ module.exports = {
     ],
     theme: {
         extend: {
-            colors: {
-                // [tl! focus:start]
+            colors: { // [tl! focus:start]
                 danger: colors.rose,
                 primary: colors.blue,
                 success: colors.green,
