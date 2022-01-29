@@ -34,6 +34,15 @@ class FileUpload extends BaseFileUpload
 
     protected string | Closure $uploadProgressIndicatorPosition = 'right';
 
+    protected string | Closure | null $downloadButtonLabel = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->downloadButtonLabel(__('forms::components.file_upload.download_file'));
+    }
+
     public function avatar(): static
     {
         $this->isAvatar = true;
@@ -137,6 +146,13 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function downloadButtonLabel(string | Closure | null $label): static
+    {
+        $this->downloadButtonLabel = $label;
+
+        return $this;
+    }
+
     public function getImageCropAspectRatio(): ?string
     {
         return $this->evaluate($this->imageCropAspectRatio);
@@ -190,5 +206,10 @@ class FileUpload extends BaseFileUpload
     public function isAvatar(): bool
     {
         return (bool) $this->evaluate($this->isAvatar);
+    }
+
+    public function getDownloadButtonLabel(): string
+    {
+        return $this->evaluate($this->downloadButtonLabel);
     }
 }

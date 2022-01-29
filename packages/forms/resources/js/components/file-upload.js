@@ -6,9 +6,11 @@ import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orien
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform'
+import FilePondPluginGetFile from 'filepond-plugin-get-file';
 
 import 'filepond/dist/filepond.min.css'
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
+import 'filepond-plugin-get-file/dist/filepond-plugin-get-file.min.css';
 import '../../css/components/file-upload.css'
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
@@ -18,6 +20,7 @@ FilePond.registerPlugin(FilePondPluginImageExifOrientation)
 FilePond.registerPlugin(FilePondPluginImagePreview)
 FilePond.registerPlugin(FilePondPluginImageResize)
 FilePond.registerPlugin(FilePondPluginImageTransform)
+FilePond.registerPlugin(FilePondPluginGetFile)
 
 export default (Alpine) => {
     Alpine.data('fileUploadFormComponent', ({
@@ -40,6 +43,7 @@ export default (Alpine) => {
         uploadButtonPosition,
         uploadProgressIndicatorPosition,
         uploadUsing,
+        downloadButtonLabel,
     }) => {
         return {
             fileKeyIndex: {},
@@ -62,7 +66,7 @@ export default (Alpine) => {
 
                     let uploadedFileUrl = await this.getUploadedFileUrl(fileKey)
 
-                    if (! uploadedFileUrl) {
+                    if (!uploadedFileUrl) {
                         continue
                     }
 
@@ -82,7 +86,7 @@ export default (Alpine) => {
                     imagePreviewHeight,
                     imageResizeTargetHeight,
                     imageResizeTargetWidth,
-                    ...(placeholder && {labelIdle: placeholder}),
+                    ...(placeholder && { labelIdle: placeholder }),
                     maxFileSize: maxSize,
                     minFileSize: minSize,
                     styleButtonProcessItemPosition: uploadButtonPosition,
@@ -91,6 +95,7 @@ export default (Alpine) => {
                     stylePanelAspectRatio: panelAspectRatio,
                     stylePanelLayout: panelLayout,
                     styleProgressIndicatorPosition: uploadProgressIndicatorPosition,
+                    labelButtonDownloadItem: downloadButtonLabel,
                     server: {
                         load: async (source, load) => {
                             let response = await fetch(source)
@@ -101,7 +106,7 @@ export default (Alpine) => {
                         process: (fieldName, file, metadata, load, error, progress) => {
                             this.shouldUpdateState = false
 
-                            let fileKey = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                            let fileKey = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
                                 (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
                             )
 
@@ -114,7 +119,7 @@ export default (Alpine) => {
                         remove: async (source, load) => {
                             let fileKey = this.uploadedFileUrlIndex[source] ?? null
 
-                            if (! fileKey) {
+                            if (!fileKey) {
                                 return
                             }
 
@@ -131,7 +136,7 @@ export default (Alpine) => {
                 })
 
                 this.$watch('state', async () => {
-                    if (! this.shouldUpdateState) {
+                    if (!this.shouldUpdateState) {
                         return;
                     }
 
@@ -145,7 +150,7 @@ export default (Alpine) => {
                     for (let fileKey of Object.keys(this.state)) {
                         let uploadedFileUrl = await this.getUploadedFileUrl(fileKey)
 
-                        if (! uploadedFileUrl) {
+                        if (!uploadedFileUrl) {
                             continue
                         }
 

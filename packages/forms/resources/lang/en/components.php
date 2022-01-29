@@ -153,4 +153,8 @@ return [
         'placeholder' => 'New tag',
     ],
 
+    'file_upload' => [
+        'download_file' => 'Download file',
+    ],
+
 ];

@@ -20,6 +20,7 @@
         "filepond": "^4.28.2",
         "filepond-plugin-file-validate-size": "^2.2.4",
         "filepond-plugin-file-validate-type": "^1.2.6",
+        "filepond-plugin-get-file": "^1.0.7",
         "filepond-plugin-image-crop": "^2.0.6",
         "filepond-plugin-image-exif-orientation": "^1.0.11",
         "filepond-plugin-image-preview": "^4.6.7",

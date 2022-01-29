@@ -6043,10 +6043,10 @@ dayjs.prototype = proto;
     return this.$g(input, g[0], g[1]);
   };
 });
-dayjs.extend = function(plugin8, option2) {
-  if (!plugin8.$i) {
-    plugin8(option2, Dayjs, dayjs);
-    plugin8.$i = true;
+dayjs.extend = function(plugin9, option2) {
+  if (!plugin9.$i) {
+    plugin9(option2, Dayjs, dayjs);
+    plugin9.$i = true;
   }
   return dayjs;
 };
@@ -12490,12 +12490,12 @@ var renameFile = (file2, name2) => {
 };
 var copyFile = (file2) => renameFile(file2, file2.name);
 var registeredPlugins = [];
-var createAppPlugin = (plugin8) => {
-  if (registeredPlugins.includes(plugin8)) {
+var createAppPlugin = (plugin9) => {
+  if (registeredPlugins.includes(plugin9)) {
     return;
   }
-  registeredPlugins.push(plugin8);
-  const pluginOutline = plugin8({
+  registeredPlugins.push(plugin9);
+  const pluginOutline = plugin9({
     addFilter,
     utils: {
       Type,
@@ -15805,6 +15805,78 @@ if (isBrowser8) {
 }
 var filepond_plugin_image_transform_esm_default = plugin7;
 
+// node_modules/filepond-plugin-get-file/dist/filepond-plugin-get-file.esm.js
+/*!
+ * FilePondPluginGetFile 1.0.7
+ * Licensed under MIT, https://opensource.org/licenses/MIT/
+ * Please visit undefined for details.
+ */
+var registerDownloadComponent = (item2, el, labelButtonDownload, allowDownloadByUrl) => {
+  const info = el.querySelector(".filepond--file-info-main"), downloadIcon = getDownloadIcon(labelButtonDownload);
+  info.prepend(downloadIcon);
+  downloadIcon.addEventListener("click", () => downloadFile(item2, allowDownloadByUrl));
+};
+var getDownloadIcon = (labelButtonDownload) => {
+  let icon = document.createElement("span");
+  icon.className = "filepond--download-icon";
+  icon.title = labelButtonDownload;
+  return icon;
+};
+var downloadFile = (item2, allowDownloadByUrl) => {
+  if (allowDownloadByUrl && item2.getMetadata("url")) {
+    location.href = item2.getMetadata("url");
+  } else {
+    const a2 = document.createElement("a");
+    const url = window.URL.createObjectURL(item2.file);
+    document.body.appendChild(a2);
+    a2.style.display = "none";
+    a2.href = url;
+    a2.download = item2.file.name;
+    a2.click();
+    window.URL.revokeObjectURL(url);
+    a2.remove();
+  }
+};
+var plugin8 = (fpAPI) => {
+  const {addFilter: addFilter2, utils} = fpAPI;
+  const {Type: Type2, createRoute: createRoute2} = utils;
+  addFilter2("CREATE_VIEW", (viewAPI) => {
+    const {is, view, query} = viewAPI;
+    if (!is("file")) {
+      return;
+    }
+    const didLoadItem2 = ({root: root2, props}) => {
+      const {id} = props;
+      const item2 = query("GET_ITEM", id);
+      if (!item2 || item2.archived) {
+        return;
+      }
+      const labelButtonDownload = root2.query("GET_LABEL_BUTTON_DOWNLOAD_ITEM");
+      const allowDownloadByUrl = root2.query("GET_ALLOW_DOWNLOAD_BY_URL");
+      registerDownloadComponent(item2, root2.element, labelButtonDownload, allowDownloadByUrl);
+    };
+    view.registerWriter(createRoute2({
+      DID_LOAD_ITEM: didLoadItem2
+    }, ({root: root2, props}) => {
+      const {id} = props;
+      const item2 = query("GET_ITEM", id);
+      if (root2.rect.element.hidden)
+        return;
+    }));
+  });
+  return {
+    options: {
+      labelButtonDownloadItem: ["Download file", Type2.STRING],
+      allowDownloadByUrl: [false, Type2.BOOLEAN]
+    }
+  };
+};
+var isBrowser9 = typeof window !== "undefined" && typeof window.document !== "undefined";
+if (isBrowser9) {
+  document.dispatchEvent(new CustomEvent("FilePond:pluginloaded", {detail: plugin8}));
+}
+var filepond_plugin_get_file_esm_default = plugin8;
+
 // packages/forms/resources/js/components/file-upload.js
 registerPlugin(filepond_plugin_file_validate_size_esm_default);
 registerPlugin(filepond_plugin_file_validate_type_esm_default);
@@ -15813,6 +15885,7 @@ registerPlugin(filepond_plugin_image_exif_orientation_esm_default);
 registerPlugin(filepond_plugin_image_preview_esm_default);
 registerPlugin(filepond_plugin_image_resize_esm_default);
 registerPlugin(filepond_plugin_image_transform_esm_default);
+registerPlugin(filepond_plugin_get_file_esm_default);
 var file_upload_default = (Alpine) => {
   Alpine.data("fileUploadFormComponent", ({
     acceptedFileTypes,
@@ -15833,7 +15906,8 @@ var file_upload_default = (Alpine) => {
     state: state2,
     uploadButtonPosition,
     uploadProgressIndicatorPosition,
-    uploadUsing
+    uploadUsing,
+    downloadButtonLabel
   }) => {
     return {
       fileKeyIndex: {},
@@ -15875,6 +15949,7 @@ var file_upload_default = (Alpine) => {
           stylePanelAspectRatio: panelAspectRatio,
           stylePanelLayout: panelLayout,
           styleProgressIndicatorPosition: uploadProgressIndicatorPosition,
+          labelButtonDownloadItem: downloadButtonLabel,
           server: {
             load: async (source, load) => {
               let response = await fetch(source);

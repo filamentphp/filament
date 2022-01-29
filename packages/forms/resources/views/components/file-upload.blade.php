@@ -39,6 +39,7 @@
                     success(fileKey)
                 }, error, progress)
             },
+            downloadButtonLabel: '{{ $getDownloadButtonLabel() }}',
         })"
         wire:ignore
         {{ $attributes->merge($getExtraAttributes())->class([
