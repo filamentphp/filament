@@ -1,3 +1,3 @@
-<tr {{ $attributes->class(['odd:bg-white even:bg-gray-100']) }}>
+<tr {{ $attributes->class(['filament-tables-row']) }}>
     {{ $slot }}
 </tr>

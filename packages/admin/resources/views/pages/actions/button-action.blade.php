@@ -21,6 +21,7 @@
     :color="$getColor()"
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
+    class="filament-page-button-action"
 >
     {{ $getLabel() }}
 </x-filament::button>

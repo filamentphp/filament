@@ -34,7 +34,7 @@
         x-on:click.away="closePicker()"
         x-on:keydown.escape.stop="closePicker()"
         x-on:blur="closePicker()"
-        {{ $attributes->merge($getExtraAttributes())->class(['relative']) }}
+        {{ $attributes->merge($getExtraAttributes())->class(['relative', 'filament-forms-date-time-picker-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
         <button

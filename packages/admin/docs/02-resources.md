@@ -901,5 +901,5 @@ protected static string $label = 'customer';
 The plural version is generated based on the singular `$label`, which you may also override:
 
 ```php
-protected static string $pluralLabel = 'customers';
+protected static ?string $pluralLabel = 'customers';
 ```

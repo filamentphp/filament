@@ -4,7 +4,7 @@
     'ownerRecord',
 ])
 
-<div class="space-y-2">
+<div class="space-y-2 filament-resources-relation-managers-container">
     @if (count($managers) > 1)
         <div class="flex justify-center">
             <x-filament::tabs>

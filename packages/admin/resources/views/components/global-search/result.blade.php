@@ -4,7 +4,7 @@
     'url',
 ])
 
-<li {{ $attributes }}>
+<li {{ $attributes->class(['filament-global-search-result']) }}>
     <a href="{{ $url }}" class="relative block px-6 py-4 focus:bg-gray-500/5 hover:bg-gray-500/5 focus:ring-1 focus:ring-gray-300">
         <p class="font-medium">{{ $title }}</p>
 

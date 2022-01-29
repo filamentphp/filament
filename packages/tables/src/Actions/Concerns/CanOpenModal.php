@@ -72,7 +72,7 @@ trait CanOpenModal
         $actions = [
             ButtonAction::make('submit')
                 ->label($this->getModalButtonLabel())
-                ->submit('callMountedTableAction')
+                ->submit('callMountedTableBulkAction')
                 ->color($color !== 'secondary' ? $color : null),
             ButtonAction::make('cancel')
                 ->label(__('tables::table.actions.modal.buttons.cancel.label'))

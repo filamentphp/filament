@@ -1,4 +1,4 @@
-<div>
+<div class="filament-page-select-action">
     <label for="{{ $getId() }}" class="sr-only">
         {{ $getLabel() }}
     </label>

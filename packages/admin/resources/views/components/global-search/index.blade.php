@@ -1,4 +1,4 @@
-<div class="flex items-center">
+<div class="flex items-center filament-global-search">
     <x-filament::global-search.start />
 
     @if ($this->isEnabled())

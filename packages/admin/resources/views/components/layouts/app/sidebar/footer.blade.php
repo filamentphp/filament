@@ -1,4 +1,4 @@
-<footer class="border-t px-6 py-3 flex shrink-0 items-center gap-3">
+<footer class="border-t px-6 py-3 flex shrink-0 items-center gap-3 filament-sidebar-footer">
     @php
         $user = \Filament\Facades\Filament::auth()->user();
     @endphp

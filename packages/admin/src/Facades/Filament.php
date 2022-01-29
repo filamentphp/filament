@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static StatefulGuard auth()
+ * @method static array getBeforeCoreScripts()
  * @method static array getPages()
  * @method static array getNavigation()
  * @method static array getNavigationGroups()

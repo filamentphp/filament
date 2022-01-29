@@ -13,7 +13,7 @@
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
         id="{{ $getId() }}"
-        {{ $attributes->merge($getExtraAttributes()) }}
+        {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-tags-input-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
         <div

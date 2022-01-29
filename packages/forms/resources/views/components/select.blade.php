@@ -19,6 +19,7 @@
                 'text-gray-900 block w-full h-10 duration-75 rounded shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600',
                 'border-gray-300' => ! $errors->has($getStatePath()),
                 'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+                'filament-forms-select-component',
             ]) }}
         >
             @unless ($isPlaceholderSelectionDisabled())

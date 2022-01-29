@@ -72,6 +72,7 @@
     '2xl:grid-cols-10' => $getColumns('2xl') === 10,
     '2xl:grid-cols-11' => $getColumns('2xl') === 11,
     '2xl:grid-cols-12' => $getColumns('2xl') === 12,
+    'filament-forms-component-container'
 ])>
     @foreach ($getComponents() as $formComponent)
         <div @class([
