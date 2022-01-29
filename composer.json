@@ -3,8 +3,17 @@
     "description": "The elegant TALL stack admin panel for Laravel artisans.",
     "license": "MIT",
     "require": {
-        "php": "^8.0"
+        "php": "^8.0",
+        "filament/filament": "fix/error-message as 2.x-dev",
+        "filament/forms": "fix/error-message as 2.x-dev",
+        "filament/tables": "fix/error-message as 2.x-dev"
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "filament/packages/*"
+        }
+    ],
     "require-dev": {
         "akaunting/laravel-money": "^1.2|^2.0",
         "blade-ui-kit/blade-heroicons": "^1.2",
