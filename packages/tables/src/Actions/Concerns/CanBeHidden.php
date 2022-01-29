@@ -3,7 +3,6 @@
 namespace Filament\Tables\Actions\Concerns;
 
 use Closure;
-use Illuminate\Support\Arr;
 
 trait CanBeHidden
 {
