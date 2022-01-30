@@ -42,7 +42,7 @@ trait CanAttachRecords
         return Select::make('recordId')
             ->label(__('filament::resources/relation-managers/attach.action.modal.fields.record_id.label'))
             ->searchable()
-            ->getSearchResultsUsing(function (RelationManager $livewire, string $query): array {
+            ->getSearchResultsUsing(function (Select $component, RelationManager $livewire, string $query): array {
                 $relationship = $livewire->getRelationship();
 
                 $displayColumnName = static::getRecordTitleAttribute();
@@ -60,8 +60,22 @@ trait CanAttachRecords
                     default => 'like',
                 };
 
+                $searchColumns = $component->getSearchColumns() ?? [$displayColumnName];
+                $isFirst = true;
+
+                foreach ($searchColumns as $searchColumnName) {
+                    $whereClause = $isFirst ? 'where' : 'orWhere';
+
+                    $relationshipQuery->{$whereClause}(
+                        $searchColumnName,
+                        $searchOperator,
+                        "%{$query}%",
+                    );
+
+                    $isFirst = false;
+                }
+
                 return $relationshipQuery
-                    ->where($displayColumnName, $searchOperator, "%{$query}%")
                     ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
                         $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
                     })

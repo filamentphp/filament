@@ -144,6 +144,11 @@ class Select extends Field
         return $this->evaluate($this->noSearchResultsMessage);
     }
 
+    public function getSearchColumns(): ?array
+    {
+        return $this->searchColumns;
+    }
+
     public function getSearchPrompt(): string
     {
         return $this->evaluate($this->searchPrompt);
