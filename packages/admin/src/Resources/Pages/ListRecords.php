@@ -177,4 +177,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         return static::getResource()::getEloquentQuery();
     }
+
+    protected function getForms(): array
+    {
+        return array_merge(parent::getForms(), $this->getTableForms());
+    }
 }
