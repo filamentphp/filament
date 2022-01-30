@@ -19,6 +19,11 @@ trait HasRecords
 
         $this->applySearchToTableQuery($query);
 
+        foreach ($this->getCachedTableColumns() as $column) {
+            $column->applyEagerLoading($query);
+            $column->applyRelationshipCount($query);
+        }
+
         return $query;
     }
 
@@ -29,11 +34,6 @@ trait HasRecords
         }
 
         $query = $this->getFilteredTableQuery();
-
-        foreach ($this->getCachedTableColumns() as $column) {
-            $column->applyEagerLoading($query);
-            $column->applyRelationshipCount($query);
-        }
 
         $this->applySortingToTableQuery($query);
 
