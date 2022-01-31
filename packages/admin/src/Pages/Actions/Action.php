@@ -18,7 +18,6 @@ class Action extends Component implements Htmlable
     use Concerns\CanOpenModal;
     use Concerns\CanOpenUrl;
     use Concerns\CanRequireConfirmation;
-    use Concerns\EvaluatesClosures;
     use Concerns\HasAction;
     use Concerns\HasColor;
     use Concerns\HasFormSchema;
