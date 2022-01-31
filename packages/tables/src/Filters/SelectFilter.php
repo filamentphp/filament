@@ -69,6 +69,17 @@ class SelectFilter extends Filter
         return $this;
     }
 
+    public function enum(string $enumClass): static
+    {
+        $this->options = collect($enumClass::cases())
+            ->mapWithKeys(function ($eachEnumInstance) {
+                return [$eachEnumInstance?->value ?? $eachEnumInstance->name => $eachEnumInstance->name];
+            })
+            ->toArray();
+
+        return $this;
+    }
+
     public function relationship(string $relationshipName, string $displayColumnName): static
     {
         $this->column("{$relationshipName}.{$displayColumnName}");
