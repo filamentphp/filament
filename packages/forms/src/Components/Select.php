@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\Arrayable;
 class Select extends Field
 {
     use Concerns\HasExtraAlpineAttributes;
+    use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
 
     protected string $view = 'forms::components.select';
@@ -23,8 +24,6 @@ class Select extends Field
     protected bool | Closure $isSearchable = false;
 
     protected ?array $searchColumns = null;
-
-    protected array | Arrayable | Closure $options = [];
 
     protected string | Closure | null $noSearchResultsMessage = null;
 
@@ -87,13 +86,6 @@ class Select extends Field
         return $this;
     }
 
-    public function options(array | Arrayable | Closure $options): static
-    {
-        $this->options = $options;
-
-        return $this;
-    }
-
     public function searchable(bool | array | Closure $condition = true): static
     {
         if (is_array($condition)) {
@@ -126,17 +118,6 @@ class Select extends Field
         return $this->evaluate($this->getOptionLabelUsing, [
             'value' => $this->getState(),
         ]);
-    }
-
-    public function getOptions(): array
-    {
-        $options = $this->evaluate($this->options);
-
-        if ($options instanceof Arrayable) {
-            $options = $options->toArray();
-        }
-
-        return $options;
     }
 
     public function getNoSearchResultsMessage(): string
