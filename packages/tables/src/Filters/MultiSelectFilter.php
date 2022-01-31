@@ -67,7 +67,7 @@ class MultiSelectFilter extends Filter
         return $this;
     }
 
-    public function options(array | Arrayable | Closure | null $options): static
+    public function options(string | array | Arrayable | Closure | null $options): static
     {
         $this->options = $options;
 
@@ -99,6 +99,14 @@ class MultiSelectFilter extends Filter
 
         if ($options === null) {
             $options = $this->queriesRelationships() ? $this->getRelationshipOptions() : [];
+        }
+
+        if (is_string($options)) {
+            $options = collect($options::cases())
+                ->mapWithKeys(function ($eachEnumInstance) {
+                    return [$eachEnumInstance?->value ?? $eachEnumInstance->name => $eachEnumInstance->name];
+                })
+                ->toArray();
         }
 
         if ($options instanceof Arrayable) {
