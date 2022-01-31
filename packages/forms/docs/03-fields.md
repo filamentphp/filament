@@ -496,6 +496,20 @@ class App extends Model
 }
 ```
 
+If you have lots of options and want to populate them based on a database search or other external data source, you can use the `getSearchResultsUsing()` and `getOptionLabelsUsing()` methods instead of `options()`.
+
+The `getSearchResultsUsing()` method accepts a callback that returns search results in `$key => $value` format.
+
+The `getOptionLabelsUsing()` method accepts a callback that transforms the selected options' `$value`s into labels.
+
+```php
+use Filament\Forms\Components\MultiSelect;
+
+MultiSelect::make('technologies')
+    ->getSearchResultsUsing(fn (string $query) => Technology::where('name', 'like', "%{$query}%")->limit(50)->pluck('name', 'id'))
+    ->getOptionLabelsUsing(fn (array $values) => Technology::find($values)->pluck('name')),
+```
+
 ### Populating automatically from a `BelongsToMany` relationship
 
 You may employ the `relationship()` method of the `BelongsToManyMultiSelect` to configure a relationship to automatically retrieve and save options from:
