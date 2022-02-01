@@ -3,7 +3,7 @@
         <script src="//unpkg.com/dayjs@1.10.4/dayjs.min.js"></script>
         <script src="//unpkg.com/dayjs@1.10.4/locale/{{ strtolower(str_replace('_', '-', app()->getLocale())) }}.js"></script>
         <script>
-            window.dayjs_locale = window.dayjs_locale_{{strtolower(app()->getLocale())}};
+            window.dayjs_locale = window.dayjs_locale_{{ strtolower(app()->getLocale()) }};
         </script>
     @endpush
 @endonce
