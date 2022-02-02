@@ -143,7 +143,7 @@
             x-show="state.length"
             class="overflow-hidden rtl:space-x-reverse relative w-full p-2"
         >
-            <div class="flex flex-wrap gap-x-1 gap-y-2">
+            <div class="flex flex-wrap gap-1">
                 <template class="inline" x-for="(option, index) in state" x-bind:key="option">
                     <button
                         @unless ($isDisabled())
