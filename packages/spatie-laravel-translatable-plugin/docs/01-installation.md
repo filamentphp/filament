@@ -17,7 +17,7 @@ This plugin is compatible with other Filament v2.x packages.
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-translatable-plugin:^2.0
+composer require filament/spatie-laravel-translatable-plugin:"^2.0"
 ```
 
 You're now ready to start [translating resources](getting-started)!

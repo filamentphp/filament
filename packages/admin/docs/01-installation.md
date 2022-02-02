@@ -17,7 +17,7 @@ This package is compatible with other Filament v2.x products. The [form builder]
 To get started with the admin panel, you can install it using the command:
 
 ```bash
-composer require filament/filament:^2.0
+composer require filament/filament:"^2.0"
 ```
 
 If you don't have one, you may create a new user account using:
