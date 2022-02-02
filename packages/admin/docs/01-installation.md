@@ -6,9 +6,9 @@ title: Installation
 
 Filament has a few requirements to run:
 
--   PHP 8.0+
--   Laravel v8.0+
--   Livewire v2.0+
+- PHP 8.0+
+- Laravel v8.0+
+- Livewire v2.0+
 
 This package is compatible with other Filament v2.x products. The [form builder](/docs/forms) and [table builder](/docs/tables) come pre-installed with the package, and no other installation steps are required to use them within the admin panel.
 
