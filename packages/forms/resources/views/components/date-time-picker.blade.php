@@ -62,7 +62,7 @@
                 placeholder="{{ $getPlaceholder() }}"
                 x-model="displayText"
                 {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
-                class="w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none"
+                class="w-full h-full px-0 py-2 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none"
             />
 
             <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center pr-2 rtl:pl-2 pointer-events-none">
