@@ -51,8 +51,21 @@
                                 @endforeach
                             </ul>
                         </div>
-
-                        @livewire('filament.core.global-search')
+                        @if(count($lwComponents = (array)config('filament.layout.navbar.livewire-components', [])) + count($includedViews = (array)config('filament.layout.navbar.included-views', [])) > 0)
+                            <div class="flex items-center gap-2 sm:gap-4">
+                                @livewire('filament.core.global-search')
+                                <div class="flex items-center gap-2 sm:gap-4">
+                                    @foreach($lwComponents as $lwComponent)
+                                        @livewire($lwComponent)
+                                    @endforeach
+                                    @foreach($includedViews as $includedView)
+                                        @include($includedView)
+                                    @endforeach
+                                </div>
+                            </div>
+                        @else
+                            @livewire('filament.core.global-search')
+                        @endif
                     </div>
                 </div>
             </header>
