@@ -19,7 +19,7 @@ The form builder comes pre-installed inside the [admin panel 2.x](/docs/admin/2.
 To get started with the form builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [TailwindCSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with these commands:
 
 ```bash
-composer require filament/forms:^2.0
+composer require filament/forms:"^2.0"
 php artisan forms:install
 npm install
 npm run dev
@@ -36,7 +36,7 @@ You're now ready to start [building forms](getting-started)!
 You may download the form builder using Composer:
 
 ```bash
-composer require filament/forms:^2.0
+composer require filament/forms:"^2.0"
 ```
 
 The package uses [Alpine.js](https://alpinejs.dev), [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin. You may install these through NPM:
