@@ -175,6 +175,10 @@ return [
                 'type' => \Filament\Tables\Actions\LinkAction::class,
             ],
         ],
+        'navbar' => [
+            'livewire-components' => [],
+            'included-views' => [],
+        ],
     ],
 
     /*
