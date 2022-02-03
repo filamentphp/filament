@@ -1,11 +1,15 @@
-@php($locale = strtolower(str_replace('_', '-', app()->getLocale())))
-
 @once
     @push('scripts')
-        <script async defer
+        @php
+            $locale = strtolower(str_replace('_', '-', app()->getLocale()));
+        @endphp
+        
+        <script
             src="//unpkg.com/dayjs@1.10.4/locale/{{ $locale }}.js"
-            onload="dayjs.updateLocale('{{ $locale }}')">
-        </script>
+            onload="dayjs.updateLocale('{{ $locale }}')"
+            async
+            defer
+        ></script>
     @endpush
 @endonce
 
