@@ -231,7 +231,9 @@
                             </x-tables::header-cell>
                         @endforeach
 
-                        <th class="w-5"></th>
+                        @if ($actions)
+                            <th class="w-5"></th>
+                        @endif
                     </x-slot>
 
                     @if ($isSelectionEnabled())
@@ -280,7 +282,9 @@
                                 </x-tables::cell>
                             @endforeach
 
-                            <x-tables::actions-cell :actions="$actions" :record="$record" />
+                            @if ($actions)
+                                <x-tables::actions-cell :actions="$actions" :record="$record" />
+                            @endif
                         </x-tables::row>
                     @endforeach
 
