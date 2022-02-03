@@ -1,10 +1,15 @@
 @once
     @push('scripts')
-        <script src="//unpkg.com/dayjs@1.10.4/dayjs.min.js"></script>
-        <script src="//unpkg.com/dayjs@1.10.4/locale/{{ strtolower(str_replace('_', '-', app()->getLocale())) }}.js"></script>
-        <script>
-            window.dayjs_locale = window.dayjs_locale_{{ strtolower(app()->getLocale()) }};
-        </script>
+        @php
+            $locale = strtolower(str_replace('_', '-', app()->getLocale()));
+        @endphp
+        
+        <script
+            src="//unpkg.com/dayjs@1.10.4/locale/{{ $locale }}.js"
+            onload="dayjs.updateLocale('{{ $locale }}')"
+            async
+            defer
+        ></script>
     @endpush
 @endonce
 
@@ -90,7 +95,7 @@
                         <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
                             <select
                                 x-model="focusedMonth"
-                                class="grow p-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none"
+                                class="grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none"
                             >
                                 <template x-for="(month, index) in dayjs.months()">
                                     <option x-bind:value="index" x-text="month"></option>
@@ -134,7 +139,7 @@
                                         'cursor-not-allowed': dayIsDisabled(day),
                                         'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                     }"
-                                    class="text-sm leading-none leading-loose text-center transition duration-100 ease-in-out rounded-full"
+                                    class="text-sm leading-loose text-center transition duration-100 ease-in-out rounded-full"
                                 ></div>
                             </template>
                         </div>

@@ -2,12 +2,23 @@ import dayjs from 'dayjs/esm'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import localeData from 'dayjs/plugin/localeData'
 import timezone from 'dayjs/plugin/timezone'
+import updateLocale from 'dayjs/plugin/updateLocale'
 import utc from 'dayjs/plugin/utc'
 
 dayjs.extend(customParseFormat)
+dayjs.extend(updateLocale)
 dayjs.extend(localeData)
 dayjs.extend(timezone)
 dayjs.extend(utc)
+dayjs.extend((option, Dayjs, dayjs) => {    
+    dayjs.onLocaleUpdated = () => {},
+    dayjs.updateLocale = (locale) => {
+        dayjs.locale(locale)
+
+        // Emit the `localeUpdated` event that we can bind to later
+        dayjs.onLocaleUpdated()
+    }
+})
 
 window.dayjs = dayjs
 
@@ -22,8 +33,6 @@ export default (Alpine) => {
         state,
     }) => {
         const timezone = dayjs.tz.guess()
-
-        dayjs.locale(window.dayjs_locale)
 
         return {
             daysInFocusedMonth: [],
@@ -85,6 +94,8 @@ export default (Alpine) => {
                 if (isAutofocused) {
                     this.openPicker()
                 }
+
+                dayjs.onLocaleUpdated = () => this.setDisplayText()
 
                 this.$watch('focusedMonth', () => {
                     this.focusedMonth = +this.focusedMonth

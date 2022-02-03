@@ -303,6 +303,24 @@ var require_timezone = __commonJS((exports, module) => {
   });
 });
 
+// node_modules/dayjs/plugin/updateLocale.js
+var require_updateLocale = __commonJS((exports, module) => {
+  !function(e2, n2) {
+    typeof exports == "object" && typeof module != "undefined" ? module.exports = n2() : typeof define == "function" && define.amd ? define(n2) : (e2 = typeof globalThis != "undefined" ? globalThis : e2 || self).dayjs_plugin_updateLocale = n2();
+  }(exports, function() {
+    "use strict";
+    return function(e2, n2, t2) {
+      t2.updateLocale = function(e3, n3) {
+        var o2 = t2.Ls[e3];
+        if (o2)
+          return (n3 ? Object.keys(n3) : []).forEach(function(e4) {
+            o2[e4] = n3[e4];
+          }), o2;
+      };
+    };
+  });
+});
+
 // node_modules/dayjs/plugin/utc.js
 var require_utc = __commonJS((exports, module) => {
   !function(t2, i) {
@@ -6064,11 +6082,20 @@ var esm_default = dayjs;
 var import_customParseFormat = __toModule(require_customParseFormat());
 var import_localeData = __toModule(require_localeData());
 var import_timezone = __toModule(require_timezone());
+var import_updateLocale = __toModule(require_updateLocale());
 var import_utc = __toModule(require_utc());
 esm_default.extend(import_customParseFormat.default);
+esm_default.extend(import_updateLocale.default);
 esm_default.extend(import_localeData.default);
 esm_default.extend(import_timezone.default);
 esm_default.extend(import_utc.default);
+esm_default.extend((option2, Dayjs2, dayjs3) => {
+  dayjs3.onLocaleUpdated = function() {
+  }, dayjs3.updateLocale = function(locale) {
+    dayjs3.locale(locale);
+    dayjs3.onLocaleUpdated();
+  };
+});
 window.dayjs = esm_default;
 var date_time_picker_default = (Alpine) => {
   Alpine.data("dateTimePickerFormComponent", ({
@@ -6081,7 +6108,6 @@ var date_time_picker_default = (Alpine) => {
     state: state2
   }) => {
     const timezone2 = esm_default.tz.guess();
-    esm_default.locale(window.dayjs_locale);
     return {
       daysInFocusedMonth: [],
       displayText: "",
@@ -6119,6 +6145,7 @@ var date_time_picker_default = (Alpine) => {
         if (isAutofocused) {
           this.openPicker();
         }
+        esm_default.onLocaleUpdated = () => this.setDisplayText();
         this.$watch("focusedMonth", () => {
           this.focusedMonth = +this.focusedMonth;
           if (this.focusedDate.month() === this.focusedMonth) {
