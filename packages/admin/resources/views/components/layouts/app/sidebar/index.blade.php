@@ -1,6 +1,6 @@
 <aside
     x-data="{}"
-    x-cloak
+    x-cloak="-lg"
     x-bind:class="$store.sidebar.isOpen ? 'translate-x-0' : '-translate-x-full rtl:lg:-translate-x-0 rtl:translate-x-full'"
     class="fixed inset-y-0 left-0 rtl:left-auto rtl:right-0 z-20 flex flex-col h-screen overflow-hidden shadow-2xl transition duration-300 bg-white lg:border-r w-80 lg:z-0 lg:translate-x-0 filament-sidebar"
 >
