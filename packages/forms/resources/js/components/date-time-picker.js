@@ -11,15 +11,11 @@ dayjs.extend(localeData)
 dayjs.extend(timezone)
 dayjs.extend(utc)
 dayjs.extend((option, Dayjs, dayjs) => {    
-    dayjs.onLocaleUpdated = function () {},
-    dayjs.updateLocale = function (locale) {
-        /* Updates the locale */
+    dayjs.onLocaleUpdated = () => {},
+    dayjs.updateLocale = (locale) => {
         dayjs.locale(locale)
 
-        /*
-            Emits the 'localeUpdated' event, then we can bind to it inside
-            the Alpine.js component, to do wathever we want to do after the locale has been updated.
-        */
+        // Emit the `localeUpdated` event that we can bind to later
         dayjs.onLocaleUpdated()
     }
 })
