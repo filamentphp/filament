@@ -68,9 +68,9 @@ Install the packages in your app's `composer.json`:
 
 ```json
 "require": {
-    "filament/filament": "fix/error-message as 2.x-dev",
-    "filament/forms": "fix/error-message as 2.x-dev",
-    "filament/tables": "fix/error-message as 2.x-dev",
+    "filament/filament": "dev-fix/error-message as 2.x-dev",
+    "filament/forms": "dev-fix/error-message as 2.x-dev",
+    "filament/tables": "dev-fix/error-message as 2.x-dev",
 },
 "repositories": [
     {
