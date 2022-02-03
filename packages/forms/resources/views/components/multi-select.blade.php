@@ -144,7 +144,7 @@
             class="overflow-hidden rtl:space-x-reverse relative w-full p-2"
         >
             <div class="flex flex-wrap gap-1">
-                <template class="inline" x-for="(option, index) in state" x-bind:key="option">
+                <template class="hidden" x-for="option in state" x-bind:key="option">
                     <button
                         @unless ($isDisabled())
                             x-on:click.stop="deselectOption(option)"
@@ -154,9 +154,6 @@
                             'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-xl bg-primary-500/10 space-x-1 rtl:space-x-reverse',
                             'cursor-default' => $isDisabled(),
                         ])
-                        x-bind:class="{
-                            '-ml-1': index === 0
-                        }"
                     >
                         <span class="text-left" x-text="labels[option]"></span>
 
