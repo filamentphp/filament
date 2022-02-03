@@ -141,24 +141,24 @@
 
         <div
             x-show="state.length"
-            class="overflow-hidden rtl:space-x-reverse relative w-full px-1 py-1"
+            class="overflow-hidden rtl:space-x-reverse relative w-full p-2"
         >
             <div class="flex flex-wrap gap-1">
-                <template class="inline" x-for="option in state" x-bind:key="option">
+                <template class="hidden" x-for="option in state" x-bind:key="option">
                     <button
                         @unless ($isDisabled())
                             x-on:click.stop="deselectOption(option)"
                         @endunless
                         type="button"
                         @class([
-                            'inline-flex items-center justify-center h-6 px-2 my-1 text-sm font-medium tracking-tight text-primary-700 rounded-full bg-primary-500/10 space-x-1 rtl:space-x-reverse',
+                            'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-xl bg-primary-500/10 space-x-1 rtl:space-x-reverse',
                             'cursor-default' => $isDisabled(),
                         ])
                     >
-                        <span x-text="labels[option]"></span>
+                        <span class="text-left" x-text="labels[option]"></span>
 
                         @unless ($isDisabled())
-                            <x-heroicon-s-x class="w-3 h-3" />
+                            <x-heroicon-s-x class="w-3 h-3 shrink-0" />
                         @endunless
                     </button>
                 </template>
