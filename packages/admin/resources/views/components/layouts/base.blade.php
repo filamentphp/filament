@@ -13,7 +13,7 @@
 
         <style>
             [x-cloak=""] { display: none !important; }
-            @media (max-width: 1024px) { [x-cloak="-lg"] { display: none !important; } }
+            @media (max-width: 1023px) { [x-cloak="-lg"] { display: none !important; } }
             @media (min-width: 1024px) { [x-cloak="lg"] { display: none !important; } }
         </style>
 
