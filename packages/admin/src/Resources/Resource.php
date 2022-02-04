@@ -267,7 +267,8 @@ class Resource
 
     public static function getSlug(): string
     {
-        return static::$slug ?? (string)Str::of(str_replace('Resource', '', class_basename(new static)))
+        return static::$slug ?? (string)Str::of(class_basename(new static))
+                ->replace('Resource', '')
                 ->plural()
                 ->kebab();
     }
