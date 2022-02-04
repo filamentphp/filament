@@ -13,7 +13,7 @@ it('can retrieve Eloquent query for model', function () {
         ->getModel()->toBeInstanceOf(Post::class);
 });
 
-it('can generate a slug based on the model name', function () {
+it('can generate a slug based on the resource name', function () {
     expect(PostResource::getSlug())
         ->toBe('posts');
 });
