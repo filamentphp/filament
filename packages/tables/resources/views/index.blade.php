@@ -8,7 +8,8 @@
     $isSearchVisible = $isSearchable();
     $isFiltersDropdownVisible = $isFilterable();
 
-    $columnsCount = count($columns) + 1;
+    $columnsCount = count($columns);
+    if (count($actions)) $columnsCount++;
     if ($isSelectionEnabled()) $columnsCount++;
 
     $getHiddenClasses = function (\Filament\Tables\Columns\Column $column): ?string {
@@ -231,7 +232,7 @@
                             </x-tables::header-cell>
                         @endforeach
 
-                        @if ($actions)
+                        @if (count($actions))
                             <th class="w-5"></th>
                         @endif
                     </x-slot>
@@ -282,7 +283,7 @@
                                 </x-tables::cell>
                             @endforeach
 
-                            @if ($actions)
+                            @if (count($actions))
                                 <x-tables::actions-cell :actions="$actions" :record="$record" />
                             @endif
                         </x-tables::row>
