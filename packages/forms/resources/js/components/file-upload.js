@@ -129,7 +129,7 @@ export default (Alpine) => {
                             load()
                         },
                     },
-                    fileValidateTypeDetectType: (source, type) =>
+                    fileValidateTypeDetectType: (source, type) => {
                         new Promise((resolve, reject) => {
                             // Detect valid file extensions and return an accepted type if matching
                             let fileName = source.name
@@ -138,7 +138,8 @@ export default (Alpine) => {
 
                             let isValid = acceptedExtensions.indexOf(extension) >= 0
                             resolve(isValid ? acceptedFileTypes[0] : '')
-                        }),
+                        })
+                    },
                 })
 
                 this.$watch('state', async () => {
