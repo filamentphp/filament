@@ -1,0 +1,33 @@
+<?php
+
+namespace Filament\Forms\Components\Concerns;
+
+use Closure;
+use Illuminate\Contracts\Support\Arrayable;
+
+trait HasOptions
+{
+    protected array | Arrayable | string | Closure $options = [];
+
+    public function options(array | Arrayable | string | Closure $options): static
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    public function getOptions(): array
+    {
+        $options = $this->evaluate($this->options);
+
+        if (is_string($options) && class_exists($options)) {
+            $options = collect($options::cases())->mapWithKeys(fn ($case) => [($case?->value ?? $case->name) => $case->name]);
+        }
+
+        if ($options instanceof Arrayable) {
+            $options = $options->toArray();
+        }
+
+        return $options;
+    }
+}

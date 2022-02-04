@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\Arrayable;
 class MultiSelect extends Field
 {
     use Concerns\HasExtraAlpineAttributes;
+    use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
 
     protected string $view = 'forms::components.multi-select';
@@ -15,8 +16,6 @@ class MultiSelect extends Field
     protected ?Closure $getOptionLabelsUsing = null;
 
     protected ?Closure $getSearchResultsUsing = null;
-
-    protected array | Closure $options = [];
 
     protected string | Closure | null $noSearchResultsMessage = null;
 
@@ -65,13 +64,6 @@ class MultiSelect extends Field
         return $this;
     }
 
-    public function options(array | Arrayable | Closure $options): static
-    {
-        $this->options = $options;
-
-        return $this;
-    }
-
     public function noSearchResultsMessage(string | Closure | null $message): static
     {
         $this->noSearchResultsMessage = $message;
@@ -97,17 +89,6 @@ class MultiSelect extends Field
         }
 
         return $labels;
-    }
-
-    public function getOptions(): array
-    {
-        $options = $this->evaluate($this->options);
-
-        if ($options instanceof Arrayable) {
-            $options = $options->toArray();
-        }
-
-        return $options;
     }
 
     public function getNoSearchResultsMessage(): string
