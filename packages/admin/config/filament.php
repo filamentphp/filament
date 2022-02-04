@@ -161,6 +161,7 @@ return [
     */
 
     'layout' => [
+        'dark_mode' => true,
         'forms' => [
             'actions' => [
                 'alignment' => 'left',
@@ -175,7 +176,6 @@ return [
                 'type' => \Filament\Tables\Actions\LinkAction::class,
             ],
         ],
-        'darkmode' => true,
     ],
 
     /*

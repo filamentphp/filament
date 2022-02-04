@@ -6,14 +6,15 @@ import FormsAlpinePlugin from '../../../forms/dist/module.esm'
 import Focus from '@alpinejs/focus'
 import Persist from '@alpinejs/persist'
 import Collapse from '@alpinejs/collapse'
-import darkmode from "./components/darkmode";
 
 Alpine.plugin(FormsAlpinePlugin)
 Alpine.plugin(Focus)
 Alpine.plugin(Persist)
 Alpine.plugin(Collapse)
 
-Alpine.data('darkmode', darkmode)
+Alpine.store('darkMode', {
+    isEnabled: Alpine.$persist(null).as('darkMode'),
+})
 
 Alpine.store('sidebar', {
     isOpen: false,

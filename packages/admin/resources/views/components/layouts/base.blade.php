@@ -6,7 +6,12 @@
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
-    @if (config('filament.layout.darkmode')) x-data='darkmode' :class="{'dark': theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)}" @endif
+    @if (config('filament.layout.dark_mode'))
+        x-data="{}"
+        x-bind:class="{
+            'dark': $store.darkMode.isEnabled || ($store.darkMode.isEnabled === null && window.matchMedia('(prefers-color-scheme: dark)').matches),
+        }"
+    @endif
     class="filament antialiased bg-gray-100 js-focus-visible"
 >
     <head>

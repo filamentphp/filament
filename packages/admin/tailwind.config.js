@@ -14,7 +14,6 @@ module.exports = {
                 primary: colors.yellow,
                 success: colors.green,
                 warning: colors.amber,
-                dark: colors.slate,
             },
             fontFamily: {
                 sans: ['DM Sans', ...defaultTheme.fontFamily.sans],

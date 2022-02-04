@@ -53,7 +53,7 @@
                         </div>
 
                         <div class='flex space-x-2'>
-                            <x-filament::darkmode />
+                            <x-filament::dark-mode-toggle />
                             @livewire('filament.core.global-search')
                         </div>
                     </div>
