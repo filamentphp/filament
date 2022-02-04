@@ -6,12 +6,6 @@
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
-    @if (config('filament.layout.dark_mode'))
-        x-data="{}"
-        x-bind:class="{
-            'dark': $store.darkMode.isEnabled || ($store.darkMode.isEnabled === null && window.matchMedia('(prefers-color-scheme: dark)').matches),
-        }"
-    @endif
     class="filament antialiased bg-gray-100 js-focus-visible"
 >
     <head>
@@ -44,9 +38,19 @@
         @endforeach
 
         <link rel="stylesheet" href="{{ \Filament\Facades\Filament::getThemeUrl() }}" />
+
+        @if (config('filament.layout.dark_mode'))
+            <script>
+                const theme = localStorage.getItem('theme')
+
+                if ((theme === 'dark') || (! theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark')
+                }
+            </script>
+        @endif
     </head>
 
-    <body class="bg-gray-100 text-gray-900 filament-body dark:text-dark-100 dark:bg-dark-900">
+    <body class="bg-gray-100 text-gray-900 filament-body dark:text-gray-100 dark:bg-gray-900">
         {{ $slot }}
 
         @livewireScripts

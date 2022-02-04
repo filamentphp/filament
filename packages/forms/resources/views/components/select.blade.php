@@ -16,8 +16,8 @@
             {!! $isRequired() ? 'required' : null !!}
             {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
             {{ $attributes->merge($getExtraAttributes())->class([
-                'text-gray-900 block w-full h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70 dark:bg-dark-700 dark:text-white',
-                'border-gray-300 dark:border-dark-600' => ! $errors->has($getStatePath()),
+                'text-gray-900 block w-full h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70 dark:bg-gray-700 dark:text-white',
+                'border-gray-300 dark:border-gray-600' => ! $errors->has($getStatePath()),
                 'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                 'filament-forms-select-component',
             ]) }}
@@ -116,7 +116,7 @@
                     x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $getStatePath() }}' + 'Option' + focusedOptionIndex : null"
                     tabindex="-1"
                     x-cloak
-                    class="absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none dark:bg-dark-700 dark:border-dark-600"
+                    class="absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none dark:bg-gray-700 dark:border-gray-600"
                 >
                     <ul
                         x-ref="listboxOptionsList"
@@ -131,8 +131,8 @@
                                 role="option"
                                 x-bind:aria-selected="focusedOptionIndex === index"
                                 x-bind:class="{
-                                    'text-white bg-primary-500 dark:text-dark-300 dark:bg-dark-600': index === focusedOptionIndex,
-                                    'text-gray-900 dark:text-dark-300': index !== focusedOptionIndex,
+                                    'text-white bg-primary-500 dark:text-gray-300 dark:bg-gray-600': index === focusedOptionIndex,
+                                    'text-gray-900 dark:text-gray-300': index !== focusedOptionIndex,
                                 }"
                                 class="relative py-2 pl-3 h-10 flex items-center text-gray-900 cursor-default select-none pr-9"
                             >
@@ -165,7 +165,7 @@
                         <div
                             x-show="! Object.keys(options).length"
                             x-text="! search || isLoading ? '{{ $getSearchPrompt() }}' : '{{ $getNoSearchResultsMessage() }}'"
-                            class="px-3 py-2 text-sm text-gray-700 dark:text-dark-300 cursor-default select-none dark:text-dark-200"
+                            class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 cursor-default select-none dark:text-gray-200"
                         ></div>
                     </ul>
                 </div>

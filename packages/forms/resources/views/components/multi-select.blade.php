@@ -22,8 +22,8 @@
         })"
         {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
         {{ $attributes->merge($getExtraAttributes())->class([
-            'block w-full transition duration-75 divide-y rounded-lg shadow-sm border focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600 dark:bg-dark-700 dark:divide-dark-600',
-            'border-gray-300 dark:border-dark-600' => ! $errors->has($getStatePath()),
+            'block w-full transition duration-75 divide-y rounded-lg shadow-sm border focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600 dark:bg-gray-700 dark:divide-gray-600',
+            'border-gray-300 dark:border-gray-600' => ! $errors->has($getStatePath()),
             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
             'filament-forms-multi-select-component',
         ]) }}
@@ -59,7 +59,7 @@
                         placeholder="{{ $getPlaceholder() }}"
                         type="text"
                         autocomplete="off"
-                        class="block w-full border-0 dark:bg-dark-700 dark:placeholder-dark-400"
+                        class="block w-full border-0 dark:bg-gray-700 dark:placeholder-gray-400"
                     />
 
                     <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center pr-2 rtl:pr-0 rtl:pl-2 pointer-events-none">
@@ -83,7 +83,7 @@
                     x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $getStatePath() }}' + 'Option' + focusedOptionIndex : null"
                     tabindex="-1"
                     x-cloak
-                    class="absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none transition dark:bg-dark-700 dark:border-dark-600"
+                    class="absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none transition dark:bg-gray-700 dark:border-gray-600"
                 >
                     <ul
                         x-ref="listboxOptionsList"
@@ -132,7 +132,7 @@
                         <div
                             x-show="! Object.keys(options).length"
                             x-text="! search || isLoading ? '{{ $getSearchPrompt() }}' : '{{ $getNoSearchResultsMessage() }}'"
-                            class="px-3 py-2 text-sm text-gray-700 cursor-default select-none dark:text-dark-200"
+                            class="px-3 py-2 text-sm text-gray-700 cursor-default select-none dark:text-gray-200"
                         ></div>
                     </ul>
                 </div>

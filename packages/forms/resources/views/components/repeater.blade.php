@@ -14,17 +14,17 @@
                 @foreach ($containers as $uuid => $item)
                     <li
                         wire:key="{{ $item->getStatePath() }}"
-                        class="relative p-6 bg-white shadow-sm rounded-lg border border-gray-300 dark:bg-dark-700 dark:border-dark-600"
+                        class="relative p-6 bg-white shadow-sm rounded-lg border border-gray-300 dark:bg-gray-700 dark:border-gray-600"
                     >
                         {{ $item }}
 
                         @unless ($isItemDeletionDisabled() && ($isItemMovementDisabled() && ($loop->count <= 1)))
-                            <div class="absolute top-0 right-0 h-6 flex divide-x rounded-bl-lg rounded-tr-lg border-gray-300 border-b border-l overflow-hidden dark:border-dark-600 dark:divide-dark-600">
+                            <div class="absolute top-0 right-0 h-6 flex divide-x rounded-bl-lg rounded-tr-lg border-gray-300 border-b border-l overflow-hidden dark:border-gray-600 dark:divide-gray-600">
                                 @unless ($loop->first || $isItemMovementDisabled())
                                     <button
                                         wire:click="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
-                                        class="flex items-center justify-center w-6 text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600 dark:text-dark-200 dark:hover:bg-dark-600"
+                                        class="flex items-center justify-center w-6 text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600 dark:text-gray-200 dark:hover:bg-gray-600"
                                     >
                                         <span class="sr-only">
                                             {{ __('forms::components.repeater.buttons.move_item_up.label') }}
@@ -38,7 +38,7 @@
                                     <button
                                         wire:click="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
-                                        class="flex items-center justify-center w-6 text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600 dark:text-dark-200 dark:hover:bg-dark-600"
+                                        class="flex items-center justify-center w-6 text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600 dark:text-gray-200 dark:hover:bg-gray-600"
                                     >
                                         <span class="sr-only">
                                             {{ __('forms::components.repeater.buttons.move_item_down.label') }}
@@ -52,7 +52,7 @@
                                     <button
                                         wire:click="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
-                                        class="flex items-center justify-center w-6 text-danger-600 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-danger-600 focus:bg-primary-50 focus:border-primary-600 dark:hover:bg-dark-600"
+                                        class="flex items-center justify-center w-6 text-danger-600 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-danger-600 focus:bg-primary-50 focus:border-primary-600 dark:hover:bg-gray-600"
                                     >
                                         <span class="sr-only">
                                             {{ __('forms::components.repeater.buttons.delete_item.label') }}
@@ -72,7 +72,7 @@
             <button
                 wire:click="dispatchFormEvent('repeater::createItem', '{{ $getStatePath() }}')"
                 type="button"
-                class="w-full h-9 px-4 inline-flex space-x-1 items-center justify-center font-medium tracking-tight rounded-lg text-gray-800 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600 dark:bg-dark-800 dark:border-dark-600 dark:hover:border-dark-500 dark:text-dark-200 dark:focus:text-primary-400 dark:focus:border-primary-400 dark:focus:bg-dark-800 dark:focus:ring-offset-0"
+                class="w-full h-9 px-4 inline-flex space-x-1 items-center justify-center font-medium tracking-tight rounded-lg text-gray-800 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600 dark:bg-gray-800 dark:border-gray-600 dark:hover:border-gray-500 dark:text-gray-200 dark:focus:text-primary-400 dark:focus:border-primary-400 dark:focus:bg-gray-800 dark:focus:ring-offset-0"
             >
                 <x-heroicon-s-plus class="w-5 h-5" />
 

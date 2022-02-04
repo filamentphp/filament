@@ -12,10 +12,6 @@ Alpine.plugin(Focus)
 Alpine.plugin(Persist)
 Alpine.plugin(Collapse)
 
-Alpine.store('darkMode', {
-    isEnabled: Alpine.$persist(null).as('darkMode'),
-})
-
 Alpine.store('sidebar', {
     isOpen: false,
 

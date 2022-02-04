@@ -85,8 +85,8 @@
                 @endif
             @else
                 @if ($paginator->hasPages())
-                    <div class="py-3 border rounded-lg dark:border-dark-600">
-                        <ol class="flex items-center text-sm text-gray-500 dark:text-dark-400 divide-x divide-gray-300">
+                    <div class="py-3 border rounded-lg dark:border-gray-600">
+                        <ol class="flex items-center text-sm text-gray-500 dark:text-gray-400 divide-x divide-gray-300">
                             @if (! $paginator->onFirstPage())
                                 <x-tables::pagination.item
                                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"

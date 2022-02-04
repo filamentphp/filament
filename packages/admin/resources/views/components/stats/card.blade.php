@@ -12,14 +12,14 @@
 
 <div {{ $attributes->class([
     'relative p-6 rounded-2xl',
-    'bg-white shadow dark:bg-dark-800' => ! $flat,
-    'border dark:border-dark-700' => $flat,
+    'bg-white shadow dark:bg-gray-800' => ! $flat,
+    'border dark:border-gray-700' => $flat,
     'filament-stats-card',
 ]) }}>
     <div @class([
         'space-y-2',
     ])>
-        <div class="text-sm font-medium text-gray-500 dark:text-dark-200">
+        <div class="text-sm font-medium text-gray-500 dark:text-gray-200">
             {{ $label }}
         </div>
 
@@ -108,7 +108,7 @@
                             'primary' => 'text-primary-50 dark:text-primary-700',
                             'success' => 'text-success-50 dark:text-success-700',
                             'warning' => 'text-warning-50 dark:text-warning-700',
-                            default => 'text-gray-50 dark:text-dark-700',
+                            default => 'text-gray-50 dark:text-gray-700',
                         },
                     ])
                 ></span>
@@ -121,7 +121,7 @@
                             'primary' => 'text-primary-400',
                             'success' => 'text-success-400',
                             'warning' => 'text-warning-400',
-                            default => 'text-gray-400 dark:text-dark-400',
+                            default => 'text-gray-400 dark:text-gray-400',
                         },
                     ])
                 ></span>

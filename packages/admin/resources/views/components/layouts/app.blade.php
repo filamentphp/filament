@@ -12,7 +12,7 @@
         <x-filament::layouts.app.sidebar />
 
         <div class="w-screen space-y-6 flex-1 flex flex-col lg:pl-80 rtl:lg:pl-0 rtl:lg:pr-80">
-            <header class="h-[4rem] shrink-0 w-full border-b flex items-center dark:bg-dark-800 dark:border-dark-700 filament-main-topbar">
+            <header class="h-[4rem] shrink-0 w-full border-b flex items-center dark:bg-gray-800 dark:border-gray-700 filament-main-topbar">
                 <div @class([
                     'flex items-center w-full px-2 mx-auto sm:px-4 md:px-6 lg:px-8',
                     match (config('filament.layout.max_content_width')) {
@@ -30,32 +30,12 @@
                         <x-heroicon-o-menu class="w-6 h-6" />
                     </button>
 
-                    <div class="flex-1 flex items-center justify-between">
-                        <div class="filament-breadcrumbs">
-                            <ul class="hidden gap-4 items-center font-medium text-sm lg:flex dark:text-white">
-                                @foreach ($breadcrumbs as $url => $label)
-                                    <li>
-                                        <a
-                                            href="{{ is_int($url) ? '#' : $url }}"
-                                            @class([
-                                                'text-gray-500 dark:text-dark-400' => $loop->last,
-                                            ])
-                                        >
-                                            {{ $label }}
-                                        </a>
-                                    </li>
+                    <div class="flex-1 flex gap-4 items-center justify-between">
+                        <x-filament::layouts.app.topbar.breadcrumbs :breadcrumbs="$breadcrumbs" />
 
-                                    @if (! $loop->last)
-                                        <li class="h-6 border-r border-gray-300 -skew-x-12 dark:border-dark-500"></li>
-                                    @endif
-                                @endforeach
-                            </ul>
-                        </div>
+                        @livewire('filament.core.global-search')
 
-                        <div class='flex space-x-2'>
-                            <x-filament::dark-mode-toggle />
-                            @livewire('filament.core.global-search')
-                        </div>
+                        <x-filament::layouts.app.topbar.user />
                     </div>
                 </div>
             </header>

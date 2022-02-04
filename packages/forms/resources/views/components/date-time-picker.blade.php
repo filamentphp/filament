@@ -51,8 +51,8 @@
             @endunless
             type="button"
             {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full h-10 border pl-3 pr-10 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600 dark:bg-dark-700',
-                'border-gray-300 dark:border-dark-600' => ! $errors->has($getStatePath()),
+                'bg-white relative w-full h-10 border pl-3 pr-10 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600 dark:bg-gray-700',
+                'border-gray-300 dark:border-gray-600' => ! $errors->has($getStatePath()),
                 'border-danger-600 motion-safe:animate-shake' => $errors->has($getStatePath()),
                 'text-gray-500' => $isDisabled(),
             ]) }}
@@ -62,11 +62,11 @@
                 placeholder="{{ $getPlaceholder() }}"
                 x-model="displayText"
                 {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
-                class="w-full h-full px-0 py-2 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none dark:bg-dark-700 dark:placeholder-dark-400"
+                class="w-full h-full px-0 py-2 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none dark:bg-gray-700 dark:placeholder-gray-400"
             />
 
             <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center pr-2 rtl:pl-2 pointer-events-none">
-                <svg class="w-5 h-5 text-gray-400 dark:text-dark-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg class="w-5 h-5 text-gray-400 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
             </span>
@@ -81,7 +81,7 @@
                 role="dialog"
                 x-cloak
                 @class([
-                    'absolute z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-sm dark:bg-dark-700 dark:border-dark-600',
+                    'absolute z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-sm dark:bg-gray-700 dark:border-gray-600',
                     'p-4 w-64' => $hasDate(),
                 ])
             >
@@ -90,7 +90,7 @@
                         <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
                             <select
                                 x-model="focusedMonth"
-                                class="grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none dark:bg-dark-700 dark:text-dark-200"
+                                class="grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none dark:bg-gray-700 dark:text-gray-200"
                                 <template x-for="(month, index) in months">
                                     <option x-bind:value="index" x-text="month"></option>
                                 </template>
@@ -99,7 +99,7 @@
                             <input
                                 type="number"
                                 x-model.debounce="focusedYear"
-                                class="w-20 p-0 text-lg text-right border-0 focus:ring-0 focus:outline-none dark:bg-dark-700 dark:text-dark-200"
+                                class="w-20 p-0 text-lg text-right border-0 focus:ring-0 focus:outline-none dark:bg-gray-700 dark:text-gray-200"
                             />
                         </div>
 
@@ -107,7 +107,7 @@
                             <template x-for="(day, index) in dayLabels" :key="index">
                                 <div
                                     x-text="day"
-                                    class="text-xs font-medium text-center text-gray-800 dark:text-dark-200"
+                                    class="text-xs font-medium text-center text-gray-800 dark:text-gray-200"
                                 ></div>
                             </template>
                         </div>
@@ -127,8 +127,8 @@
                                     x-bind:class="{
                                         'text-gray-700 dark:text-slate-300': ! dayIsSelected(day),
                                         'cursor-pointer': ! dayIsDisabled(day),
-                                        'bg-primary-50 dark:bg-primary-100 dark:text-dark-600': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
-                                        'bg-primary-200 dark:text-dark-600': focusedDate.date() === day && ! dayIsSelected(day),
+                                        'bg-primary-50 dark:bg-primary-100 dark:text-gray-600': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
+                                        'bg-primary-200 dark:text-gray-600': focusedDate.date() === day && ! dayIsSelected(day),
                                         'bg-primary-500 text-white': dayIsSelected(day),
                                         'cursor-not-allowed': dayIsDisabled(day),
                                         'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
@@ -143,7 +143,7 @@
                         <div
                             @class([
                                 'flex items-center justify-center py-2 rounded-lg',
-                                'bg-gray-50 dark:bg-dark-800' => $hasDate(),
+                                'bg-gray-50 dark:bg-gray-800' => $hasDate(),
                             ])
                         >
                             <input
@@ -153,15 +153,15 @@
                                 inputmode="numeric"
                                 x-model.debounce="hour"
                                 @class([
-                                    'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none dark:text-dark-200',
-                                    'bg-gray-50 dark:bg-dark-800' => $hasDate(),
+                                    'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none dark:text-gray-200',
+                                    'bg-gray-50 dark:bg-gray-800' => $hasDate(),
                                 ])
                             />
 
                             <span
                                 @class([
-                                    'text-xl font-medium text-gray-700 dark:text-dark-200',
-                                    'bg-gray-50 dark:bg-dark-800' => $hasDate(),
+                                    'text-xl font-medium text-gray-700 dark:text-gray-200',
+                                    'bg-gray-50 dark:bg-gray-800' => $hasDate(),
                                 ])
                             >:</span>
 
@@ -172,16 +172,16 @@
                                 inputmode="numeric"
                                 x-model.debounce="minute"
                                 @class([
-                                    'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none dark:text-dark-200',
-                                    'bg-gray-50 dark:bg-dark-800' => $hasDate(),
+                                    'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none dark:text-gray-200',
+                                    'bg-gray-50 dark:bg-gray-800' => $hasDate(),
                                 ])
                             />
 
                             @if ($hasSeconds())
                                 <span
                                     @class([
-                                        'text-xl font-medium text-gray-700 dark:text-dark-200',
-                                        'bg-gray-50 dark:bg-dark-800' => $hasDate(),
+                                        'text-xl font-medium text-gray-700 dark:text-gray-200',
+                                        'bg-gray-50 dark:bg-gray-800' => $hasDate(),
                                     ])
                                 >:</span>
 
@@ -192,8 +192,8 @@
                                     inputmode="numeric"
                                     x-model.debounce="second"
                                     @class([
-                                        'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none dark:text-dark-200',
-                                        'bg-gray-50 dark:bg-dark-800' => $hasDate(),
+                                        'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none dark:text-gray-200',
+                                        'bg-gray-50 dark:bg-gray-800' => $hasDate(),
                                     ])
                                 />
                             @endif

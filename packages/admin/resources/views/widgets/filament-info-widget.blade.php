@@ -22,7 +22,7 @@
                     href="https://filamentadmin.com/docs"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-gray-600 hover:text-primary-500 focus:outline-none focus:underline dark:text-dark-300 dark:hover:text-primary-500"
+                    class="text-gray-600 hover:text-primary-500 focus:outline-none focus:underline dark:text-gray-300 dark:hover:text-primary-500"
                 >
                     {{ __('filament::widgets/filament-info-widget.buttons.visit_documentation.label') }}
                 </a>
@@ -35,7 +35,7 @@
                     href="https://github.com/laravel-filament/filament"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-gray-600 hover:text-primary-500 focus:outline-none focus:underline dark:text-dark-300 dark:hover:text-primary-500"
+                    class="text-gray-600 hover:text-primary-500 focus:outline-none focus:underline dark:text-gray-300 dark:hover:text-primary-500"
                 >
                     {{ __('filament::widgets/filament-info-widget.buttons.visit_github.label') }}
                 </a>

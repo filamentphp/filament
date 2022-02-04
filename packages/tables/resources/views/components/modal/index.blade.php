@@ -63,7 +63,7 @@
         >
             <div
                 @class([
-                    'w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default dark:bg-dark-800',
+                    'w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default dark:bg-gray-800',
                     'max-w-xs' => $width === 'xs',
                     'max-w-sm' => $width === 'sm',
                     'max-w-md' => $width === 'md',

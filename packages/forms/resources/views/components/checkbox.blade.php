@@ -23,8 +23,8 @@
                         ->merge($getExtraAttributes())
                         ->merge($getExtraInputAttributeBag()->getAttributes())
                         ->class([
-                            'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 dark:bg-dark-700 dark:checked:bg-primary-500',
-                            'border-gray-300 dark:border-dark-600' => ! $errors->has($getStatePath()),
+                            'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:checked:bg-primary-500',
+                            'border-gray-300 dark:border-gray-600' => ! $errors->has($getStatePath()),
                             'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
                             'filament-forms-checkbox-component',
                         ])

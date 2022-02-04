@@ -19,8 +19,8 @@
         <div
             x-show="state.length || {{ $isDisabled() ? 'false' : 'true' }}"
             @class([
-                'block w-full transition duration-75 divide-y rounded-lg shadow-sm border overflow-hidden focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600 dark:divide-dark-600',
-                'border-gray-300 dark:border-dark-600' => ! $errors->has($getStatePath()),
+                'block w-full transition duration-75 divide-y rounded-lg shadow-sm border overflow-hidden focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600 dark:divide-gray-600',
+                'border-gray-300 dark:border-gray-600' => ! $errors->has($getStatePath()),
                 'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
             ])
         >
@@ -37,7 +37,7 @@
                         x-on:keydown.,.stop.prevent="createTag()"
                         x-on:blur="createTag()"
                         x-model="newTag"
-                        {{ $getExtraInputAttributeBag()->class(['block w-full border-0 dark:bg-dark-700 dark:text-dark-200 dark:placeholder-dark-400']) }}
+                        {{ $getExtraInputAttributeBag()->class(['block w-full border-0 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400']) }}
                     />
 
                     <datalist id="{{ $getId() }}-suggestions">

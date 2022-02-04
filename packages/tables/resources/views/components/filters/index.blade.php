@@ -36,7 +36,7 @@
             },
         ])
     >
-        <div class="px-6 py-4 bg-white space-y-6 shadow-xl rounded-xl dark:bg-dark-700">
+        <div class="px-6 py-4 bg-white space-y-6 shadow-xl rounded-xl dark:bg-gray-700">
             {{ $form }}
 
             <div class="text-right">

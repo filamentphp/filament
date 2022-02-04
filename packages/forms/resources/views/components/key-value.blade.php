@@ -15,10 +15,10 @@
         {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-key-value-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
-        <div class="border border-gray-300 divide-y shadow-sm bg-white rounded-xl overflow-hidden dark:bg-dark-700 dark:border-dark-600 dark:divide-dark-600">
-            <table class="w-full text-left divide-y table-auto dark:divide-dark-700">
+        <div class="border border-gray-300 divide-y shadow-sm bg-white rounded-xl overflow-hidden dark:bg-gray-700 dark:border-gray-600 dark:divide-gray-600">
+            <table class="w-full text-left divide-y table-auto dark:divide-gray-700">
                 <thead>
-                    <tr class="bg-gray-50 dark:bg-dark-800/60">
+                    <tr class="bg-gray-50 dark:bg-gray-800/60">
                         <th class="px-4 py-2 whitespace-nowrap font-medium text-sm text-gray-600 dark:text-slate-300" scope="col">
                             {{ $getKeyLabel() }}
                         </th>
@@ -39,10 +39,10 @@
 
                 <tbody
                     x-ref="tableBody"
-                    class="divide-y whitespace-nowrap dark:divide-dark-600"
+                    class="divide-y whitespace-nowrap dark:divide-gray-600"
                 >
                     <template x-for="(row, index) in rows" x-bind:key="index" x-ref="rowTemplate">
-                        <tr class="divide-x dark:divide-dark-600">
+                        <tr class="divide-x dark:divide-gray-600">
                             <td>
                                 <input
                                     type="text"
@@ -91,7 +91,7 @@
                 <button
                     x-on:click="addRow"
                     type="button"
-                    class="w-full px-4 py-2 flex items-center space-x-1 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:bg-gray-50 dark:text-white dark:bg-dark-800/60 dark:hover:bg-dark-800/30"
+                    class="w-full px-4 py-2 flex items-center space-x-1 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:bg-gray-50 dark:text-white dark:bg-gray-800/60 dark:hover:bg-gray-800/30"
                 >
                     <x-heroicon-s-plus class="w-4 h-4" />
 

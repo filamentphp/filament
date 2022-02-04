@@ -10,7 +10,7 @@
 
     <span @class([
         'text-sm font-medium leading-4',
-        'text-gray-700 dark:text-dark-300' => ! $error,
+        'text-gray-700 dark:text-gray-300' => ! $error,
         'text-danger-700' => $error,
     ])>
         {{ $slot }}

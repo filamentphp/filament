@@ -14,17 +14,17 @@
 }
 
 .dark .trix-button {
-    @apply bg-dark-700 border-dark-600 text-dark-200
+    @apply bg-gray-700 border-gray-600 text-gray-200
 }
 
 .dark .trix-button-group {
-    @apply border-dark-600
+    @apply border-gray-600
 }
 
 .dark .filepond--drop-label {
-    @apply bg-dark-700 text-dark-200 rounded-md
+    @apply bg-gray-700 text-gray-200 rounded-md
 }
 
 .dark .filepond--panel-root {
-    @apply bg-dark-700
+    @apply bg-gray-700
 }

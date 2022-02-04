@@ -197,11 +197,11 @@
                     x-ref="overlay"
                     x-html="overlay"
                     style="min-height: 150px;"
-                    class="w-full h-full rounded-lg px-3 py-2 border border-transparent font-mono tracking-normal bg-white text-sm text-gray-900 break-words whitespace-pre-wrap dark:bg-dark-700 dark:border-dark-600 dark:text-white"
+                    class="w-full h-full rounded-lg px-3 py-2 border border-transparent font-mono tracking-normal bg-white text-sm text-gray-900 break-words whitespace-pre-wrap dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 ></div>
             </div>
 
-            <div class="block w-full h-full min-h-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-primary-300 dark:bg-slate-700 dark:border-dark-600" x-show="tab === 'preview'" style="min-height: 150px;">
+            <div class="block w-full h-full min-h-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-primary-300 dark:bg-slate-700 dark:border-gray-600" x-show="tab === 'preview'" style="min-height: 150px;">
                 <div class="prose dark:prose-invert" x-html="preview"></div>
             </div>
         </div>
