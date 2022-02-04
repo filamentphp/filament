@@ -54,7 +54,7 @@
                 {!! ($interval = $getStep()) ? "step=\"{$interval}\"" : null !!}
                 {!! $isRequired() ? 'required' : null !!}
                 {{ $getExtraInputAttributeBag()->class([
-                    'block w-full h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 dark:bg-dark-700 dark:text-white',
+                    'block w-full h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70 dark:bg-dark-700 dark:text-white',
                     'border-gray-300 dark:border-dark-600' => ! $errors->has($getStatePath()),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                 ]) }}

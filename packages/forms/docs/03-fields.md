@@ -496,6 +496,20 @@ class App extends Model
 }
 ```
 
+If you have lots of options and want to populate them based on a database search or other external data source, you can use the `getSearchResultsUsing()` and `getOptionLabelsUsing()` methods instead of `options()`.
+
+The `getSearchResultsUsing()` method accepts a callback that returns search results in `$key => $value` format.
+
+The `getOptionLabelsUsing()` method accepts a callback that transforms the selected options' `$value`s into labels.
+
+```php
+use Filament\Forms\Components\MultiSelect;
+
+MultiSelect::make('technologies')
+    ->getSearchResultsUsing(fn (string $query) => Technology::where('name', 'like', "%{$query}%")->limit(50)->pluck('name', 'id'))
+    ->getOptionLabelsUsing(fn (array $values) => Technology::find($values)->pluck('name')),
+```
+
 ### Populating automatically from a `BelongsToMany` relationship
 
 You may employ the `relationship()` method of the `BelongsToManyMultiSelect` to configure a relationship to automatically retrieve and save options from:
@@ -878,12 +892,14 @@ FileUpload::make('attachment')->preserveFilenames()
 
 > Please note, it is the responsibility of the developer to ensure that uploaded file names are unique when using this option.
 
-You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types. You may also use the `image()` method as shorthand to allow all image MIME types.
+You may restrict the types and extensions of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types and/or extensions. You may also use the `image()` method as shorthand to allow all image MIME types.
+
+> Please note, apparently Chromium based browsers might swap file extensions with their MIME type. For instance `.txt` will allow all plain text files including `.php, .js, .css` and similar.
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
-FileUpload::make('document')->acceptedFileTypes(['application/pdf'])
+FileUpload::make('document')->acceptedFileTypes(['application/pdf', '.docx'])
 FileUpload::make('image')->image()
 ```
 

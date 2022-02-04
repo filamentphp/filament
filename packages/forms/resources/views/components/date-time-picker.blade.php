@@ -1,13 +1,10 @@
 @once
     @push('scripts')
-        <script src="//unpkg.com/dayjs@1.10.4/dayjs.min.js"></script>
-        <script src="//unpkg.com/dayjs@1.10.4/plugin/localeData.js"></script>
-        <script>
-            dayjs.extend(window.dayjs_plugin_localeData)
+        @php
+            $locale = strtolower(str_replace('_', '-', app()->getLocale()));
+        @endphp
 
-            window.dayjs_locale = dayjs.locale()
-        </script>
-        <script src="//unpkg.com/dayjs@1.10.4/locale/{{ strtolower(str_replace('_', '-', app()->getLocale())) }}.js"></script>
+        <script src="//unpkg.com/dayjs@1.10.4/locale/{{ $locale }}.js" onload="dayjs.updateLocale('{{ $locale }}')"></script>
     @endpush
 @endonce
 
@@ -54,7 +51,7 @@
             @endunless
             type="button"
             {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full border pl-3 pr-10 py-2 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600 dark:bg-dark-700',
+                'bg-white relative w-full h-10 border pl-3 pr-10 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600 dark:bg-dark-700',
                 'border-gray-300 dark:border-dark-600' => ! $errors->has($getStatePath()),
                 'border-danger-600 motion-safe:animate-shake' => $errors->has($getStatePath()),
                 'text-gray-500' => $isDisabled(),
@@ -65,7 +62,7 @@
                 placeholder="{{ $getPlaceholder() }}"
                 x-model="displayText"
                 {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
-                class="w-full h-full p-0 placeholder-gray-400 border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none dark:bg-dark-700 dark:placeholder-dark-400"
+                class="w-full h-full px-0 py-2 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none dark:bg-dark-700 dark:placeholder-dark-400"
             />
 
             <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center pr-2 rtl:pl-2 pointer-events-none">
@@ -93,9 +90,8 @@
                         <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
                             <select
                                 x-model="focusedMonth"
-                                class="grow p-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none dark:bg-dark-700 dark:text-dark-200"
-                            >
-                                <template x-for="(month, index) in dayjs.months()">
+                                class="grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none dark:bg-dark-700 dark:text-dark-200"
+                                <template x-for="(month, index) in months">
                                     <option x-bind:value="index" x-text="month"></option>
                                 </template>
                             </select>
@@ -108,7 +104,7 @@
                         </div>
 
                         <div class="grid grid-cols-7 gap-1">
-                            <template x-for="(day, index) in getDayLabels()" :key="index">
+                            <template x-for="(day, index) in dayLabels" :key="index">
                                 <div
                                     x-text="day"
                                     class="text-xs font-medium text-center text-gray-800 dark:text-dark-200"
@@ -137,7 +133,7 @@
                                         'cursor-not-allowed': dayIsDisabled(day),
                                         'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                     }"
-                                    class="text-sm leading-none leading-loose text-center transition duration-100 ease-in-out rounded-full"
+                                    class="text-sm leading-loose text-center transition duration-100 ease-in-out rounded-full"
                                 ></div>
                             </template>
                         </div>

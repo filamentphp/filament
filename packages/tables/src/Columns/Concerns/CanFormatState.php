@@ -86,4 +86,13 @@ trait CanFormatState
 
         return $state;
     }
+
+    public function time(?string $format = null): static
+    {
+        $format ??= config('tables.time_format');
+
+        $this->date($format);
+
+        return $this;
+    }
 }

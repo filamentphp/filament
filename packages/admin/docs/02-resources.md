@@ -730,12 +730,12 @@ class EditUser extends EditRecord
 
     protected function getFormActions(): array
     {
-        return array_merge(parent::getActions(), [
+        return array_merge(parent::getFormActions(), [
             ButtonAction::make('close')->action('saveAndClose'),
         ]);
     }
 
-    public function close(): void
+    public function saveAndClose(): void
     {
         // ...
     }
@@ -895,7 +895,7 @@ More information may be found in the [Laravel documentation](https://laravel.com
 A label for this resource is generated based on the name of the resource's model. You may customize it using the static `$label` property:
 
 ```php
-protected static string $label = 'customer';
+protected static ?string $label = 'customer';
 ```
 
 The plural version is generated based on the singular `$label`, which you may also override:
