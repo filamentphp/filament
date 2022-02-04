@@ -22,6 +22,7 @@ FilePond.registerPlugin(FilePondPluginImageTransform)
 export default (Alpine) => {
     Alpine.data('fileUploadFormComponent', ({
         acceptedFileTypes,
+        acceptedFileExtensions,
         deleteUploadedFileUsing,
         getUploadedFileUrlUsing,
         imageCropAspectRatio,
@@ -127,6 +128,17 @@ export default (Alpine) => {
 
                             load()
                         },
+                    },
+                    fileValidateTypeDetectType: (source, type) => {
+                        return new Promise((resolve, reject) => {
+                            // Detect valid file extensions and return an accepted type if matching
+                            let fileName = source.name
+                            let acceptedExtensions = acceptedFileTypes.filter((type) => type.startsWith('.'))
+                            let extension = fileName.substr(fileName.lastIndexOf('.'))
+
+                            let isValid = acceptedExtensions.indexOf(extension) >= 0
+                            resolve(isValid ? acceptedFileTypes[0] : '')
+                        })
                     },
                 })
 
