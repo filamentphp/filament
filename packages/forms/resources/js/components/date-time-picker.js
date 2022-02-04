@@ -59,6 +59,10 @@ export default (Alpine) => {
 
             state,
 
+            dayLabels: [],
+
+            months: [],
+
             init: function () {
                 this.focusedDate = dayjs().tz(timezone)
 
@@ -88,12 +92,18 @@ export default (Alpine) => {
                 this.second = date?.second() ?? 0
 
                 this.setDisplayText()
+                this.setMonths()
+                this.setDayLabels()
 
                 if (isAutofocused) {
                     this.openPicker()
                 }
 
-                dayjs.onLocaleUpdated = () => this.setDisplayText()
+                dayjs.onLocaleUpdated = () => {
+                    this.setDisplayText()
+                    this.setMonths()
+                    this.setDayLabels()
+                }
 
                 this.$watch('focusedMonth', () => {
                     this.focusedMonth = +this.focusedMonth
@@ -357,6 +367,14 @@ export default (Alpine) => {
 
             setDisplayText: function () {
                 this.displayText = this.getSelectedDate() ? this.getSelectedDate().format(displayFormat) : ''
+            },
+
+            setMonths: function () {
+                this.months = dayjs.months()
+            },
+
+            setDayLabels: function () {
+                this.dayLabels = this.getDayLabels()
             },
 
             setupDaysGrid: function () {

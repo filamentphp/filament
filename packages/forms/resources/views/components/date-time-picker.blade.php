@@ -4,12 +4,7 @@
             $locale = strtolower(str_replace('_', '-', app()->getLocale()));
         @endphp
         
-        <script
-            src="//unpkg.com/dayjs@1.10.4/locale/{{ $locale }}.js"
-            onload="dayjs.updateLocale('{{ $locale }}')"
-            async
-            defer
-        ></script>
+        <script src="//unpkg.com/dayjs@1.10.4/locale/{{ $locale }}.js" onload="dayjs.updateLocale('{{ $locale }}')"></script>
     @endpush
 @endonce
 
@@ -97,7 +92,7 @@
                                 x-model="focusedMonth"
                                 class="grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none"
                             >
-                                <template x-for="(month, index) in dayjs.months()">
+                                <template x-for="(month, index) in months">
                                     <option x-bind:value="index" x-text="month"></option>
                                 </template>
                             </select>
@@ -110,7 +105,7 @@
                         </div>
 
                         <div class="grid grid-cols-7 gap-1">
-                            <template x-for="(day, index) in getDayLabels()" :key="index">
+                            <template x-for="(day, index) in dayLabels" :key="index">
                                 <div
                                     x-text="day"
                                     class="text-xs font-medium text-center text-gray-800"
