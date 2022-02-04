@@ -35,7 +35,7 @@
 
                         @livewire('filament.core.global-search')
 
-                        <x-filament::layouts.app.topbar.user />
+                        <x-filament::layouts.app.topbar.user-menu />
                     </div>
                 </div>
             </header>

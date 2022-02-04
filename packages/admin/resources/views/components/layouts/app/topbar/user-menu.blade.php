@@ -62,17 +62,24 @@
         x-transition:leave="transition"
         x-transition:leave-start="translate-y-0 opacity-100"
         x-transition:leave-end="-translate-y-1 opacity-0"
+        x-cloak
         class="absolute z-10 right-0 mt-2 shadow-xl rounded-xl w-52 top-full"
     >
         <ul class="py-1 space-y-1 overflow-hidden bg-white shadow rounded-xl dark:border-gray-600 dark:bg-gray-700">
+            <li class="flex items-center w-full h-8 px-3 text-sm font-medium">
+                <x-heroicon-s-user-circle class="mr-2 -ml-1 rtl:ml-2 rtl:-mr-1 w-6 h-6 text-gray-500" />
+
+                {{ \Filament\Facades\Filament::getUserName($user) }}
+            </li>
+
             <div>
                 @if (config('filament.layout.dark_mode'))
                     <x-filament::dropdown.item icon="heroicon-s-moon" x-show="theme === 'dark'" x-on:click="mode = 'manual'; theme = 'light'">
-                        Dark mode
+                        {{ __('filament::layout.buttons.light_mode.label') }}
                     </x-filament::dropdown.item>
 
                     <x-filament::dropdown.item icon="heroicon-s-sun" x-show="theme === 'light'" x-on:click="mode = 'manual'; theme = 'dark'">
-                        Light mode
+                        {{ __('filament::layout.buttons.dark_mode.label') }}
                     </x-filament::dropdown.item>
                 @endif
             </div>
