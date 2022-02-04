@@ -12,7 +12,7 @@
         <x-filament::layouts.app.sidebar />
 
         <div class="w-screen space-y-6 flex-1 flex flex-col lg:pl-80 rtl:lg:pl-0 rtl:lg:pr-80 filament-main">
-            <header class="h-[4rem] shrink-0 w-full border-b flex items-center filament-main-header">
+            <header class="h-[4rem] shrink-0 w-full border-b flex items-center filament-main-topbar">
                 <div @class([
                     'flex items-center w-full px-2 mx-auto sm:px-4 md:px-6 lg:px-8',
                     match (config('filament.layout.max_content_width')) {
@@ -26,7 +26,7 @@
                         default => 'max-w-7xl',
                     },
                 ])>
-                    <button x-data="{}" x-on:click="$store.sidebar.open()" class="shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none lg:hidden filament-sidebar-open">
+                    <button x-data="{}" x-on:click="$store.sidebar.open()" class="shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none lg:hidden filament-sidebar-open-button">
                         <x-heroicon-o-menu class="w-6 h-6" />
                     </button>
 
