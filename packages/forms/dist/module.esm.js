@@ -6102,6 +6102,8 @@ var date_time_picker_default = (Alpine) => {
       open: false,
       second: null,
       state: state2,
+      dayLabels: [],
+      months: [],
       init: function() {
         this.focusedDate = esm_default().tz(timezone2);
         this.maxDate = esm_default(this.maxDate);
@@ -6122,10 +6124,16 @@ var date_time_picker_default = (Alpine) => {
         this.minute = date?.minute() ?? 0;
         this.second = date?.second() ?? 0;
         this.setDisplayText();
+        this.setMonths();
+        this.setDayLabels();
         if (isAutofocused) {
           this.openPicker();
         }
-        esm_default.onLocaleUpdated = () => this.setDisplayText();
+        esm_default.onLocaleUpdated = () => {
+          this.setDisplayText();
+          this.setMonths();
+          this.setDayLabels();
+        };
         this.$watch("focusedMonth", () => {
           this.focusedMonth = +this.focusedMonth;
           if (this.focusedDate.month() === this.focusedMonth) {
@@ -6313,6 +6321,12 @@ var date_time_picker_default = (Alpine) => {
       },
       setDisplayText: function() {
         this.displayText = this.getSelectedDate() ? this.getSelectedDate().format(displayFormat) : "";
+      },
+      setMonths: function() {
+        this.months = esm_default.months();
+      },
+      setDayLabels: function() {
+        this.dayLabels = this.getDayLabels();
       },
       setupDaysGrid: function() {
         this.focusedDate ??= esm_default().tz(timezone2);
