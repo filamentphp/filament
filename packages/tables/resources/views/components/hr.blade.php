@@ -1,1 +1,1 @@
-<div aria-hidden="true" {{ $attributes->class(['border-t', 'filament-tables-h2']) }}></div>
+<div aria-hidden="true" {{ $attributes->class(['border-t dark:border-gray-700', 'filament-tables-hr']) }}></div>

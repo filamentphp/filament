@@ -13,7 +13,7 @@
                 </svg>
             </span>
 
-            <span x-text="
+            <span class="dark:text-white" x-text="
                 singularText = '{{ trans_choice('tables::table.selection_indicator.selected_count', 1, ['count' => 1]) }}'
                 pluralText = '{{ trans_choice('tables::table.selection_indicator.selected_count', 2, ['count' => 2]) }}'
 

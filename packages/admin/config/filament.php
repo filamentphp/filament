@@ -161,6 +161,7 @@ return [
     */
 
     'layout' => [
+        'dark_mode' => false,
         'forms' => [
             'actions' => [
                 'alignment' => 'left',
