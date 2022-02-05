@@ -23,10 +23,9 @@ class AssetController
         if (Str::endsWith($file, '.js')) {
             $name = Str::beforeLast($file, '.js');
 
-            if(array_key_exists($name, Filament::getScripts())) {
+            if (array_key_exists($name, Filament::getScripts())) {
                 return $this->pretendResponseIsFile(Filament::getScripts()[$name], 'application/javascript; charset=utf-8');
-            }
-            elseif(array_key_exists($name, Filament::getBeforeCoreScripts())) {
+            } elseif (array_key_exists($name, Filament::getBeforeCoreScripts())) {
                 return $this->pretendResponseIsFile(Filament::getBeforeCoreScripts()[$name], 'application/javascript; charset=utf-8');
             } else {
                 abort(404);
