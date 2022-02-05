@@ -173,7 +173,7 @@ class ExampleServiceProvider extends PluginServiceProvider
 
 ### Scripts
 
-To include a custom script, add it to the `getScripts()` method in your service provider. You should use a unique name as the key and the URL to the script as the value.
+To include a custom script, add it to the `getScripts()` method in your service provider. You should use a unique name as the key and the URL to the script as the value. These scripts will be added after the core Filament script.
 
 ```php
 use Filament\PluginServiceProvider;
@@ -187,6 +187,28 @@ class ExampleServiceProvider extends PluginServiceProvider
     }
     
     protected function getScripts(): array
+    {
+        return [
+            'my-package-scripts' => __DIR__ . '/../dist/app.js',
+        ];
+    };
+}
+```
+
+To add scripts before the core filament script, use the `getBeforeCoreScripts()` method. This is useful if you want to hook into an Alpine event.
+
+```php
+use Filament\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
+
+class ExampleServiceProvider extends PluginServiceProvider
+{
+    public function configurePackage(Package $package): void
+    {
+        $package->name('your-package-name');
+    }
+    
+    protected function getBeforeCoreScripts(): array
     {
         return [
             'my-package-scripts' => __DIR__ . '/../dist/app.js',
