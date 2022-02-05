@@ -8,7 +8,7 @@
 
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'flex items-center w-full h-8 px-3 text-sm font-medium focus:outline-none hover:text-white focus:text-white group',
+        'flex items-center w-full h-8 px-3 text-sm font-medium focus:outline-none hover:text-white focus:text-white group whitespace-nowrap',
         'hover:bg-primary-600 focus:bg-primary-700' => $color === 'primary',
         'hover:bg-danger-600 focus:bg-danger-700' => $color === 'danger',
         'hover:bg-success-600 focus:bg-success-700' => $color === 'success',
@@ -24,7 +24,7 @@
     ]);
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'mr-2 -ml-1 rtl:ml-2 rtl:-mr-1 group-hover:text-white group-focus:text-white w-6 h-6',
+        'mr-2 -ml-1 rtl:ml-2 rtl:-mr-1 group-hover:text-white group-focus:text-white w-6 h-6 min-w-6',
         'text-primary-500' => $color === 'primary',
         'text-danger-500' => $color === 'danger',
         'text-success-500' => $color === 'success',
@@ -42,7 +42,7 @@
                 <x-dynamic-component :component="$icon" :class="$iconClasses" />
             @endif
 
-            <span>{{ $slot }}</span>
+            <span class="truncate">{{ $slot }}</span>
 
             @if ($detail)
                 <span class="{{ $detailClasses }}">
@@ -56,7 +56,7 @@
                 <x-dynamic-component :component="$icon" :class="$iconClasses" />
             @endif
 
-            <span>{{ $slot }}</span>
+            <span class="truncate">{{ $slot }}</span>
 
             @if ($detail)
                 <span class="{{ $detailClasses }}">
