@@ -19,8 +19,10 @@
         <div
             x-show="state.length || {{ $isDisabled() ? 'false' : 'true' }}"
             @class([
-                'block w-full transition duration-75 divide-y rounded-lg shadow-sm border overflow-hidden focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600 dark:divide-gray-600',
-                'border-gray-300 dark:border-gray-600' => ! $errors->has($getStatePath()),
+                'block w-full transition duration-75 divide-y rounded-lg shadow-sm border overflow-hidden focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600',
+                'dark:divide-gray-600' => config('forms.dark_mode'),
+                'border-gray-300' => ! $errors->has($getStatePath()),
+                'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                 'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
             ])
         >
@@ -37,7 +39,10 @@
                         x-on:keydown.,.stop.prevent="createTag()"
                         x-on:blur="createTag()"
                         x-model="newTag"
-                        {{ $getExtraInputAttributeBag()->class(['block w-full border-0 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400']) }}
+                        {{ $getExtraInputAttributeBag()->class([
+                            'block w-full border-0',
+                            'dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400' => config('forms.dark_mode'),
+                        ]) }}
                     />
 
                     <datalist id="{{ $getId() }}-suggestions">
@@ -62,7 +67,8 @@
                             @endunless
                             type="button"
                             @class([
-                                'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-xl bg-primary-500/10 space-x-1 dark:text-primary-500',
+                                'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-xl bg-primary-500/10 space-x-1',
+                                'dark:text-primary-500' => config('forms.dark_mode'),
                                 'cursor-default' => $isDisabled(),
                             ])
                         >

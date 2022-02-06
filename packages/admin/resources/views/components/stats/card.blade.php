@@ -11,12 +11,11 @@
 ])
 
 <div {{ $attributes->class([
-    'relative p-6 rounded-2xl',
+    'relative p-6 rounded-2xl filament-stats-card',
     'bg-white shadow' => ! $flat,
     'dark:bg-gray-800' => (! $flat) && config('filament.dark_mode'),
     'border' => $flat,
     'dark:border-gray-700' => $flat && config('filament.dark_mode'),
-    'filament-stats-card',
 ]) }}>
     <div @class([
         'space-y-2',

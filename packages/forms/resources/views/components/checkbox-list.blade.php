@@ -9,7 +9,7 @@
     :state-path="$getStatePath()"
 >
     <div @class([
-        'grid gap-1',
+        'grid gap-1 filament-forms-checkbox-list-component',
         'grid-cols-1' => $getColumns('default') === 1,
         'grid-cols-2' => $getColumns('default') === 2,
         'grid-cols-3' => $getColumns('default') === 3,
@@ -82,7 +82,6 @@
         '2xl:grid-cols-10' => $getColumns('2xl') === 10,
         '2xl:grid-cols-11' => $getColumns('2xl') === 11,
         '2xl:grid-cols-12' => $getColumns('2xl') === 12,
-        'filament-forms-checkbox-list-component',
     ])>
         @foreach ($getOptions() as $optionValue => $optionLabel)
             <label class="flex items-center space-x-3">
@@ -92,13 +91,18 @@
                     value="{{ $optionValue }}"
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                     {{ $attributes->merge($getExtraAttributes())->class([
-                        'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:checked:bg-primary-500',
-                        'border-gray-300 dark:border-gray-600' => ! $errors->has($getStatePath()),
+                        'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500',
+                        'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
+                        'border-gray-300' => ! $errors->has($getStatePath()),
+                        'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                         'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
                     ]) }}
                 />
 
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-200">
+                <span @class([
+                    'text-sm font-medium text-gray-700',
+                    'dark:text-gray-200' => config('forms.dark_mode'),
+                ])>
                     {{ $optionLabel }}
                 </span>
             </label>

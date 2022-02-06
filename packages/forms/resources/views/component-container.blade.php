@@ -1,5 +1,5 @@
 <div @class([
-    'grid gap-6',
+    'grid gap-6 filament-forms-component-container',
     'grid-cols-1' => $getColumns('default') === 1,
     'grid-cols-2' => $getColumns('default') === 2,
     'grid-cols-3' => $getColumns('default') === 3,
@@ -72,7 +72,6 @@
     '2xl:grid-cols-10' => $getColumns('2xl') === 10,
     '2xl:grid-cols-11' => $getColumns('2xl') === 11,
     '2xl:grid-cols-12' => $getColumns('2xl') === 12,
-    'filament-forms-component-container'
 ])>
     @foreach ($getComponents() as $formComponent)
         <div @class([

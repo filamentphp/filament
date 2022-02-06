@@ -42,8 +42,8 @@
         })"
         wire:ignore
         {{ $attributes->merge($getExtraAttributes())->class([
+            'filament-forms-file-upload-component',
             'w-32 mx-auto' => $isAvatar(),
-            'filament-forms-file-upload-component'
         ]) }}
         {{ $getExtraAlpineAttributeBag() }}
     >

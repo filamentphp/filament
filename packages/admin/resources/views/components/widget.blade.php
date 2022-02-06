@@ -1,4 +1,5 @@
 <div {{ $attributes->class([
+    'filament-widget',
     match ($this->getColumnSpan()) {
         2 => 'col-span-2',
         3 => 'col-span-3',
@@ -14,7 +15,6 @@
         'full' => 'col-span-full',
         1 => 'col-span-1',
     },
-    'filament-widget',
 ]) }}>
     {{ $slot }}
 </div>

@@ -22,10 +22,11 @@
         })"
         {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
         {{ $attributes->merge($getExtraAttributes())->class([
-            'block w-full transition duration-75 divide-y rounded-lg shadow-sm border focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600 dark:bg-gray-700 dark:divide-gray-600',
-            'border-gray-300 dark:border-gray-600' => ! $errors->has($getStatePath()),
+            'block w-full transition duration-75 divide-y rounded-lg shadow-sm border focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600 filament-forms-multi-select-component',
+            'dark:bg-gray-700 dark:divide-gray-600' => config('forms.dark_mode'),
+            'border-gray-300' => ! $errors->has($getStatePath()),
+            'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
-            'filament-forms-multi-select-component',
         ]) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
@@ -59,7 +60,10 @@
                         placeholder="{{ $getPlaceholder() }}"
                         type="text"
                         autocomplete="off"
-                        class="block w-full border-0 dark:bg-gray-700 dark:placeholder-gray-400"
+                        @class([
+                            'block w-full border-0',
+                            'dark:bg-gray-700 dark:placeholder-gray-400' => config('forms.dark_mode'),
+                        ])
                     />
 
                     <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center pr-2 rtl:pr-0 rtl:pl-2 pointer-events-none">
@@ -83,7 +87,10 @@
                     x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $getStatePath() }}' + 'Option' + focusedOptionIndex : null"
                     tabindex="-1"
                     x-cloak
-                    class="absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none transition dark:bg-gray-700 dark:border-gray-600"
+                    @class([
+                        'absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none transition',
+                        'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
+                    ])
                 >
                     <ul
                         x-ref="listboxOptionsList"
@@ -99,7 +106,7 @@
                                 x-bind:aria-selected="focusedOptionIndex === index"
                                 x-bind:class="{
                                     'text-white bg-primary-500': index === focusedOptionIndex,
-                                    'text-gray-900 dark:text-slate-200': index !== focusedOptionIndex,
+                                    'text-gray-900 @if (config('forms.dark_mode')) dark:text-gray-200 @endif': index !== focusedOptionIndex,
                                 }"
                                 class="relative py-2 pl-3 h-10 flex items-center text-gray-900 cursor-default select-none pr-9"
                             >
@@ -132,7 +139,10 @@
                         <div
                             x-show="! Object.keys(options).length"
                             x-text="! search || isLoading ? '{{ $getSearchPrompt() }}' : '{{ $getNoSearchResultsMessage() }}'"
-                            class="px-3 py-2 text-sm text-gray-700 cursor-default select-none dark:text-gray-200"
+                            @class([
+                                'px-3 py-2 text-sm text-gray-700 cursor-default select-none',
+                                'dark:text-gray-200' => config('forms.dark_mode'),
+                            ])
                         ></div>
                     </ul>
                 </div>
@@ -151,7 +161,8 @@
                         @endunless
                         type="button"
                         @class([
-                            'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-xl bg-primary-500/10 space-x-1 rtl:space-x-reverse dark:text-primary-500',
+                            'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-xl bg-primary-500/10 space-x-1 rtl:space-x-reverse',
+                            'dark:text-primary-500' => config('forms.dark_mode'),
                             'cursor-default' => $isDisabled(),
                         ])
                     >

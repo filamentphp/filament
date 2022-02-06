@@ -11,7 +11,7 @@
 
 @php
     $buttonClasses = [
-        'inline-flex items-center justify-center font-medium tracking-tight rounded-lg focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset',
+        'inline-flex items-center justify-center font-medium tracking-tight rounded-lg focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset filament-button',
         'dark:focus:ring-offset-0' => config('filament.dark_mode'),
         'bg-primary-600 hover:bg-primary-500 focus:bg-primary-700 focus:ring-offset-primary-700' => $color === 'primary',
         'h-9 px-4' => $size === 'md',
@@ -24,10 +24,10 @@
         'opacity-75 cursor-not-allowed' => $disabled,
         'h-8 px-3 text-sm' => $size === 'sm',
         'h-11 px-6 text-xl' => $size === 'lg',
-        'filament-button',
     ];
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
+        'filament-button-icon',
         'w-6 h-6' => $size === 'md',
         'w-7 h-7' => $size === 'lg',
         'w-5 h-5' => $size === 'sm',
@@ -37,7 +37,6 @@
         'ml-1 -mr-2 rtl:mr-1 rtl:-ml-2' => ($iconPosition === 'after') && ($size === 'md'),
         'ml-2 -mr-3 rtl:mr-2 rtl:-ml-3' => ($iconPosition === 'after') && ($size === 'lg'),
         'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm'),
-        'filament-button-icon',
     ]);
 
     $hasLoadingIndicator = filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));

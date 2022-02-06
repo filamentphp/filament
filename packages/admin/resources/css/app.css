@@ -12,19 +12,3 @@
         padding-right: 0.75rem;
     }
 }
-
-.dark .trix-button {
-    @apply bg-gray-700 border-gray-600 text-gray-200
-}
-
-.dark .trix-button-group {
-    @apply border-gray-600
-}
-
-.dark .filepond--drop-label {
-    @apply bg-gray-700 text-gray-200 rounded-md
-}
-
-.dark .filepond--panel-root {
-    @apply bg-gray-700
-}

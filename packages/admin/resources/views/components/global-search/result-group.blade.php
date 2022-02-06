@@ -4,8 +4,7 @@
 ])
 
 <ul {{ $attributes->class([
-    'divide-y',
-    'filament-global-search-result-group',
+    'divide-y filament-global-search-result-group',
     'dark:divide-gray-700' => config('filament.dark_mode'),
 ]) }}>
     <li class="sticky top-0 z-10">

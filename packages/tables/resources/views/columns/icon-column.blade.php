@@ -8,7 +8,7 @@
     };
 @endphp
 
-<div {{ $attributes->merge($getExtraAttributes())->class(['px-4 py-3', 'filament-tables-icon-column']) }}>
+<div {{ $attributes->merge($getExtraAttributes())->class(['px-4 py-3 filament-tables-icon-column']) }}>
     @if ($getStateIcon())
         <x-dynamic-component
             :component="$getStateIcon()"
