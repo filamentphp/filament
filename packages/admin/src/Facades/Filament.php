@@ -5,12 +5,14 @@ namespace Filament\Facades;
 use Closure;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static StatefulGuard auth()
  * @method static array getBeforeCoreScripts()
  * @method static array getPages()
+ * @method static string | null getModelResource(string | Model $model)
  * @method static array getNavigation()
  * @method static array getNavigationGroups()
  * @method static array getNavigationItems()

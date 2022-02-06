@@ -6,6 +6,7 @@ use Closure;
 use Filament\Events\ServingFilament;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
+use Filament\Resources\Resource;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -179,6 +180,23 @@ class FilamentManager
     public function getResources(): array
     {
         return array_unique($this->resources);
+    }
+
+    public function getModelResource(string | Model $model): ?string
+    {
+        if ($model instanceof Model) {
+            $model = $model::class;
+        }
+
+        foreach ($this->getResources() as $resource) {
+            if ($model !== $resource::getModel()) {
+                continue;
+            }
+
+            return $resource;
+        }
+
+        return null;
     }
 
     public function getScripts(): array
