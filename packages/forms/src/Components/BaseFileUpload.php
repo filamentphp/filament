@@ -378,8 +378,8 @@ class BaseFileUpload extends Field
         $fileKeys = array_flip($fileKeys);
 
         $state = collect($this->getState())
-        ->sortBy(fn ($file, $fileKey) => $fileKeys[$fileKey] ?? null) // $fileKey may not be present in $fileKeys if it was added to the state during the reorder call
-        ->toArray();
+            ->sortBy(fn ($file, $fileKey) => $fileKeys[$fileKey] ?? null) // $fileKey may not be present in $fileKeys if it was added to the state during the reorder call
+            ->toArray();
 
         $this->state($state);
     }
@@ -435,17 +435,11 @@ class BaseFileUpload extends Field
             return $storedFile;
         }, $this->getState());
 
-        $callback = $this->reorderUploadedFilesUsing;
-
-        if (! $this->canReorder || ! $callback) {
-            $this->state($state);
-
-            return;
+        if ($this->canReorder && ($callback = $this->reorderUploadedFilesUsing)) {
+            $state = $this->evaluate($callback, [
+                'state' => $state,
+            ]);
         }
-
-        $state = $this->evaluate($callback, [
-            'state' => $state,
-        ]);
 
         $this->state($state);
     }

@@ -1448,7 +1448,7 @@ trix-editor .attachment__metadata .attachment__size {
   @apply mb-0;
 }
 .filepond--panel-root {
-  @apply bg-white border border-gray-300;
+  @apply bg-white border border-gray-300 rounded-lg shadow-sm;
 }
 .dark .filepond--drop-label {
   @apply bg-gray-700 text-gray-200 rounded-md;

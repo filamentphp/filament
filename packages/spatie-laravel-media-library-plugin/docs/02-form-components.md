@@ -21,3 +21,19 @@ SpatieMediaLibraryFileUpload::make('avatar')->collection('avatars'),
 ```
 
 The media library file upload supports all the customization options of the [original file upload component](/docs/forms/fields#file-upload).
+
+### Reordering files
+
+In addition to the behaviour of the normal file upload, Spatie's Media Library also allows users to reorder files.
+
+To enable this behaviour, use the `enableReordering()` method:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+
+SpatieMediaLibraryFileUpload::make('attachments')
+    ->multiple()
+    ->enableReordering(),
+```
+
+You may now drag and drop files into order.

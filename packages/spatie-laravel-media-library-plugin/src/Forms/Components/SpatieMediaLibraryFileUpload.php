@@ -104,7 +104,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         });
 
         $this->reorderUploadedFilesUsing(function (SpatieMediaLibraryFileUpload $component, array $state): array {
-            Media::setNewOrder(collect($state)->values()->map(fn ($file) => Media::findByUuid($file))->filter()->pluck('id')->toArray());
+            $uuids = array_filter(array_values($state));
+            $mappedIds = Media::query()->whereIn('uuid', $uuids)->pluck('id', 'uuid')->toArray();
+
+            Media::setNewOrder(array_merge(array_flip($uuids), $mappedIds));
 
             return $state;
         });

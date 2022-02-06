@@ -3,7 +3,7 @@
 }
 
 .filepond--panel-root {
-    @apply bg-white border border-gray-300;
+    @apply bg-white border border-gray-300 rounded-lg shadow-sm;
 }
 
 .dark .filepond--drop-label {
