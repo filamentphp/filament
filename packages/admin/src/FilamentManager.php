@@ -182,20 +182,16 @@ class FilamentManager
         return array_unique($this->resources);
     }
 
-    public function getResource(Model | string $model): ?Resource
+    public function getResource(Model | string $model): ?string
     {
         $modelFqcn = ($model instanceof Model)
             ? $model::class
             : $model;
 
-        foreach ($this->getResources() as $resourceClass) {
-            /**
-             * @var Resource $instance
-             */
-            $instance = new $resourceClass();
+        foreach ($this->getResources() as $resourceFqcn) {
 
-            if ($modelFqcn === $instance::getModel()) {
-                return $instance;
+            if ($modelFqcn === $resourceFqcn::getModel()) {
+                return $resourceFqcn;
             }
         }
 
