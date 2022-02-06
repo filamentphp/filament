@@ -37,7 +37,7 @@ Alpine.store('sidebar', {
 })
 
 Chart.defaults.font.family = `'DM Sans', sans-serif`
-Chart.defaults.color = '#9ca3af'
+Chart.defaults.color = '#6b7280'
 
 window.Alpine = Alpine
 window.Chart = Chart

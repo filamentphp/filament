@@ -5,6 +5,8 @@ namespace Filament;
 use Filament\Facades\Filament;
 use Filament\Http\Livewire\Auth\Login;
 use Filament\Http\Livewire\GlobalSearch;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Http\Middleware\MirrorConfigToSubpackages;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
@@ -83,6 +85,11 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     protected function bootLivewireComponents(): void
     {
+        Livewire::addPersistentMiddleware([
+            DispatchServingFilamentEvent::class,
+            MirrorConfigToSubpackages::class,
+        ]);
+
         Livewire::component('filament.core.auth.login', Login::class);
         Livewire::component('filament.core.global-search', GlobalSearch::class);
         Livewire::component('filament.core.pages.dashboard', Dashboard::class);
