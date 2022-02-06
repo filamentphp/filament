@@ -16,6 +16,8 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     protected array $resources = [];
 
+    protected array $beforeCoreScripts = [];
+
     protected array $scripts = [];
 
     protected array $styles = [];
@@ -67,6 +69,7 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         Facades\Filament::registerWidgets($this->getWidgets());
 
         Facades\Filament::serving(function () {
+            Facades\Filament::registerScripts($this->getBeforeCoreScripts(), true);
             Facades\Filament::registerScripts($this->getScripts());
             Facades\Filament::registerStyles($this->getStyles());
             Facades\Filament::registerScriptData($this->getScriptData());
@@ -127,6 +130,11 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     protected function getScriptData(): array
     {
         return [];
+    }
+
+    protected function getBeforeCoreScripts(): array
+    {
+        return $this->beforeCoreScripts;
     }
 
     protected function getScripts(): array

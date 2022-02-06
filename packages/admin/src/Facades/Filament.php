@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerNavigationItems(array $items)
  * @method static void registerPages(array $pages)
  * @method static void registerResources(array $resources)
+ * @method static void registerBeforeCoreScripts(array $scripts)
  * @method static void registerScripts(array $scripts)
  * @method static void registerScriptData(array $data)
  * @method static void registerStyles(array $styles)

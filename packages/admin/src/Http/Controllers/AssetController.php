@@ -23,12 +23,13 @@ class AssetController
         if (Str::endsWith($file, '.js')) {
             $name = Str::beforeLast($file, '.js');
 
-            abort_unless(
-                array_key_exists($name, Filament::getScripts()),
-                404,
-            );
-
-            return $this->pretendResponseIsFile(Filament::getScripts()[$name], 'application/javascript; charset=utf-8');
+            if (array_key_exists($name, Filament::getScripts())) {
+                return $this->pretendResponseIsFile(Filament::getScripts()[$name], 'application/javascript; charset=utf-8');
+            } elseif (array_key_exists($name, Filament::getBeforeCoreScripts())) {
+                return $this->pretendResponseIsFile(Filament::getBeforeCoreScripts()[$name], 'application/javascript; charset=utf-8');
+            } else {
+                abort(404);
+            }
         }
 
         if (Str::endsWith($file, '.css')) {
