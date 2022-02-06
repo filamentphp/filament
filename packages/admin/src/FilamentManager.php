@@ -182,7 +182,7 @@ class FilamentManager
         return array_unique($this->resources);
     }
 
-    public function getResource(string | Model $model): ?string
+    public function getModelResource(string | Model $model): ?string
     {
         if ($model instanceof Model) {
             $model = $model::class;
@@ -192,7 +192,7 @@ class FilamentManager
             if ($model !== $resource::getModel()) {
                 continue;
             }
-            
+
             return $resource;
         }
 
