@@ -132,10 +132,14 @@ export default (Alpine) => {
                     fileValidateTypeDetectType: (source, type) => {
                         return new Promise((resolve, reject) => {
                             // Detect valid file extensions and return any accepted type if matching
-                            let filename = source.name
-                            let extension = filename.substr(filename.lastIndexOf('.'))
+                            let fileName = source.name
+                            let extension = fileName.substr(fileName.lastIndexOf('.'))
 
-                            if( acceptedFileTypes.includes(extension) ) resolve(acceptedFileTypes[0])
+                            if (acceptedFileTypes.includes(extension)) {
+                                resolve(acceptedFileTypes[0])
+                                
+                                return
+                            }
 
                             resolve(type)
                         })
