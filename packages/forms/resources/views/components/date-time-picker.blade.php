@@ -91,6 +91,7 @@
                             <select
                                 x-model="focusedMonth"
                                 class="grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none dark:bg-gray-700 dark:text-gray-200"
+                            >
                                 <template x-for="(month, index) in months">
                                     <option x-bind:value="index" x-text="month"></option>
                                 </template>
