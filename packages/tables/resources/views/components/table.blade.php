@@ -3,7 +3,10 @@
     'header' => null,
 ])
 
-<table {{ $attributes->class(['w-full text-left rtl:text-right divide-y table-auto']) }}>
+<table {{ $attributes->class([
+    'w-full text-left rtl:text-right divide-y table-auto filament-tables-table',
+    'dark:divide-gray-700' => config('tables.dark_mode'),
+]) }}>
     @if ($header)
         <thead>
             <tr class="bg-gray-50">
@@ -12,7 +15,10 @@
         </thead>
     @endif
 
-    <tbody class="divide-y whitespace-nowrap">
+    <tbody @class([
+        'divide-y whitespace-nowrap',
+        'dark:divide-gray-700' => config('tables.dark_mode'),
+    ])>
         {{ $slot }}
     </tbody>
 

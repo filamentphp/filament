@@ -16,8 +16,10 @@
             {!! $isRequired() ? 'required' : null !!}
             {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
             {{ $attributes->merge($getExtraAttributes())->class([
-                'text-gray-900 block w-full h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600',
+                'text-gray-900 block w-full h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70 filament-forms-select-component',
+                'dark:bg-gray-700 dark:text-white' => config('forms.dark_mode'),
                 'border-gray-300' => ! $errors->has($getStatePath()),
+                'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                 'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
             ]) }}
         >
@@ -69,14 +71,19 @@
                 @endunless
                 @class([
                     'relative flex items-center h-10 pl-3 pr-10 border bg-white overflow-hidden duration-75 rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600 focus:outline-none',
+                    'dark:bg-gray-700' => config('forms.dark_mode'),
                     'border-gray-300' => ! $errors->has($getStatePath()),
+                    'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                 ])
             >
                 <span
                     x-show="! isOpen"
                     x-text="label ?? '{{ addslashes($getPlaceholder()) }}'"
-                    class="absolute w-full bg-white"
+                    @class([
+                        'absolute w-full bg-white',
+                        'dark:bg-gray-700' => config('forms.dark_mode'),
+                    ])
                 ></span>
 
                 @unless ($isDisabled())
@@ -89,18 +96,19 @@
                         x-on:keydown.arrow-down.stop.prevent="focusNextOption()"
                         type="text"
                         autocomplete="off"
-                        class="w-full my-1 p-0 border-0 focus:ring-0 focus:outline-none"
+                        @class([
+                            'w-full my-1 p-0 border-0 focus:ring-0 focus:outline-none',
+                            'dark:bg-gray-700' => config('forms.dark_mode'),
+                        ])
                     />
 
                     <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                        <svg x-show="! isLoading" x-cloak class="w-5 h-5"xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <svg x-show="! isLoading" x-cloak class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                             <path stroke="#6B7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4" />
                         </svg>
 
-                        <svg x-show="isLoading" class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" fill="currentColor">
-                            <path d="M6.306 28.014c1.72 10.174 11.362 17.027 21.536 15.307C38.016 41.6 44.87 31.958 43.15 21.784l-4.011.678c1.345 7.958-4.015 15.502-11.974 16.847-7.959 1.346-15.501-4.014-16.847-11.973l-4.011.678z" />
-
-                            <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur=".7s" repeatCount="indefinite" /></path>
+                        <svg x-show="isLoading" class="animate-spin w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z" />
                         </svg>
                     </span>
                 @endunless
@@ -117,7 +125,10 @@
                     x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $getStatePath() }}' + 'Option' + focusedOptionIndex : null"
                     tabindex="-1"
                     x-cloak
-                    class="absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none"
+                    @class([
+                        'absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none',
+                        'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
+                    ])
                 >
                     <ul
                         x-ref="listboxOptionsList"
@@ -132,8 +143,8 @@
                                 role="option"
                                 x-bind:aria-selected="focusedOptionIndex === index"
                                 x-bind:class="{
-                                    'text-white bg-primary-500': index === focusedOptionIndex,
-                                    'text-gray-900': index !== focusedOptionIndex,
+                                    'text-white bg-primary-500 @if (config('forms.dark_mode')) dark:text-gray-300 dark:bg-gray-600 @endif': index === focusedOptionIndex,
+                                    'text-gray-900 @if (config('forms.dark_mode')) dark:text-gray-300 @endif': index !== focusedOptionIndex,
                                 }"
                                 class="relative py-2 pl-3 h-10 flex items-center text-gray-900 cursor-default select-none pr-9"
                             >
@@ -166,7 +177,10 @@
                         <div
                             x-show="! Object.keys(options).length"
                             x-text="! search || isLoading ? '{{ $getSearchPrompt() }}' : '{{ $getNoSearchResultsMessage() }}'"
-                            class="px-3 py-2 text-sm text-gray-700 cursor-default select-none"
+                            @class([
+                                'px-3 py-2 text-sm text-gray-700 cursor-default select-none',
+                                'dark:text-gray-300 dark:text-gray-200' => config('forms.dark_mode'),
+                            ])
                         ></div>
                     </ul>
                 </div>

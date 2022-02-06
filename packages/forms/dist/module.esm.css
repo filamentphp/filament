@@ -1445,5 +1445,22 @@ trix-editor .attachment__metadata .attachment__size {
 
 /* packages/forms/resources/css/components/file-upload.css */
 .filepond--root {
-  margin-bottom: 0;
+  @apply mb-0;
+}
+.filepond--panel-root {
+  @apply bg-white border border-gray-300;
+}
+.dark .filepond--drop-label {
+  @apply bg-gray-700 text-gray-200 rounded-md;
+}
+.dark .filepond--panel-root {
+  @apply border-gray-600 text-white bg-gray-700;
+}
+
+/* packages/forms/resources/css/components/rich-editor.css */
+.dark .trix-button {
+  @apply bg-gray-700 border-gray-600 text-gray-200;
+}
+.dark .trix-button-group {
+  @apply border-gray-600;
 }

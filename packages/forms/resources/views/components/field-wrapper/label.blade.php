@@ -5,12 +5,13 @@
     'suffix' => null,
 ])
 
-<label {{ $attributes->class(['inline-flex items-center space-x-3 rtl:space-x-reverse']) }}>
+<label {{ $attributes->class(['inline-flex items-center space-x-3 rtl:space-x-reverse filament-forms-field-wrapper-label']) }}>
     {{ $prefix }}
 
     <span @class([
         'text-sm font-medium leading-4',
         'text-gray-700' => ! $error,
+        'dark:text-gray-300' => (! $error) && config('forms.dark_mode'),
         'text-danger-700' => $error,
     ])>
         {{ $slot }}

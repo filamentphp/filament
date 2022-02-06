@@ -10,7 +10,7 @@
 <nav
     role="navigation"
     aria-label="{{ __('tables::table.pagination.label') }}"
-    class="flex items-center justify-between"
+    class="flex items-center justify-between filament-tables-pagination"
 >
     <div class="flex justify-between items-center flex-1 lg:hidden">
         <div class="w-10">
@@ -53,7 +53,10 @@
                     </x-tables::button>
                 @endif
             @else
-                <div class="pl-2 text-sm font-medium">
+                <div @class([
+                    'pl-2 text-sm font-medium',
+                    'dark:text-white' => config('tables.dark_mode'),
+                ])>
                     @if ($paginator->total() > 1)
                         {{ __('tables::table.pagination.overview', [
                             'first' => $paginator->firstItem(),
@@ -85,8 +88,14 @@
                 @endif
             @else
                 @if ($paginator->hasPages())
-                    <div class="py-3 border rounded-lg">
-                        <ol class="flex items-center text-sm text-gray-500 divide-x divide-gray-300">
+                    <div @class([
+                        'py-3 border rounded-lg',
+                        'dark:border-gray-600' => config('tables.dark_mode'),
+                    ])>
+                        <ol @class([
+                            'flex items-center text-sm text-gray-500 divide-x divide-gray-300',
+                            'dark:text-gray-400' => config('tables.dark_mode'),
+                        ])>
                             @if (! $paginator->onFirstPage())
                                 <x-tables::pagination.item
                                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"

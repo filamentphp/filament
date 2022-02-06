@@ -12,6 +12,7 @@
 @endphp
 
 <x-filament::button
+    :form="$getForm()"
     :tag="((! $action) && $url) ? 'a' : 'button'"
     :wire:click="$clickAction"
     :href="$url"
@@ -20,6 +21,7 @@
     :color="$getColor()"
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
+    class="filament-page-button-action"
 >
     {{ $getLabel() }}
 </x-filament::button>

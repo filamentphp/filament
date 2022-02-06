@@ -113,7 +113,7 @@ class EditRecord extends Page
 
         $this->callHook('afterDelete');
 
-        $this->redirect(static::getResource()::getUrl('index'));
+        $this->redirect($this->getDeleteRedirectUrl());
     }
 
     protected function getActions(): array
@@ -175,7 +175,7 @@ class EditRecord extends Page
     {
         return ButtonAction::make('save')
             ->label(__('filament::resources/pages/edit-record.form.actions.save.label'))
-            ->submit();
+            ->submit('save');
     }
 
     protected function getCancelButtonFormAction(): ButtonAction
@@ -199,5 +199,10 @@ class EditRecord extends Page
     protected function getRedirectUrl(): ?string
     {
         return null;
+    }
+
+    protected function getDeleteRedirectUrl(): ?string
+    {
+        return static::getResource()::getUrl('index');
     }
 }

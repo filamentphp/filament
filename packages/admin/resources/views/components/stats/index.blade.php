@@ -7,7 +7,7 @@
 @endphp
 
 <div {{ $attributes->class([
-    'grid gap-6',
+    'grid gap-6 filament-stats',
     'md:grid-cols-3' => $columns === 3,
     'md:grid-cols-1' => $columns === 1,
     'md:grid-cols-2' => $columns === 2,

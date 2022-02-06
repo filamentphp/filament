@@ -6,7 +6,7 @@
 <div
     x-data="{ isOpen: false }"
     x-cloak
-    {{ $attributes->class(['relative inline-block']) }}
+    {{ $attributes->class(['relative inline-block filament-tables-filters']) }}
 >
     <x-tables::filters.trigger />
 
@@ -36,7 +36,10 @@
             },
         ])
     >
-        <div class="px-6 py-4 bg-white space-y-6 shadow-xl rounded-xl">
+        <div @class([
+            'px-6 py-4 bg-white space-y-6 shadow-xl rounded-xl',
+            'dark:bg-gray-700' => config('tables.dark_mode'),
+        ])>
             {{ $form }}
 
             <div class="text-right">
@@ -44,7 +47,7 @@
                     wire:click="resetTableFiltersForm"
                     color="danger"
                     tag="button"
-                    class="text-sm"
+                    class="text-sm font-medium"
                 >
                     {{ __('tables::table.filters.buttons.reset.label') }}
                 </x-tables::link>

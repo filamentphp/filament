@@ -5,11 +5,11 @@ module.exports = {
     content: [
         './packages/**/*.blade.php',
     ],
+    darkMode: 'class',
     theme: {
         extend: {
             colors: {
                 danger: colors.rose,
-                gray: colors.stone,
                 primary: colors.yellow,
                 success: colors.green,
                 warning: colors.amber,

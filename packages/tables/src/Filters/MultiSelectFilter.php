@@ -4,7 +4,6 @@ namespace Filament\Tables\Filters;
 
 use Closure;
 use Filament\Forms\Components\MultiSelect;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -12,13 +11,12 @@ use Illuminate\Support\Str;
 
 class MultiSelectFilter extends Filter
 {
+    use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
 
     protected string | Closure | null $column = null;
 
     protected bool | Closure $isStatic = false;
-
-    protected array | Arrayable | Closure | null $options = null;
 
     protected function setUp(): void
     {
@@ -67,13 +65,6 @@ class MultiSelectFilter extends Filter
         return $this;
     }
 
-    public function options(array | Arrayable | Closure | null $options): static
-    {
-        $this->options = $options;
-
-        return $this;
-    }
-
     public function relationship(string $relationshipName, string $displayColumnName): static
     {
         $this->column("{$relationshipName}.{$displayColumnName}");
@@ -91,21 +82,6 @@ class MultiSelectFilter extends Filter
     public function getColumn(): string
     {
         return $this->evaluate($this->column) ?? $this->getName();
-    }
-
-    public function getOptions(): array
-    {
-        $options = $this->evaluate($this->options);
-
-        if ($options === null) {
-            $options = $this->queriesRelationships() ? $this->getRelationshipOptions() : [];
-        }
-
-        if ($options instanceof Arrayable) {
-            $options = $options->toArray();
-        }
-
-        return $options;
     }
 
     protected function getRelationshipOptions(): array

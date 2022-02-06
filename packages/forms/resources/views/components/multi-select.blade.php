@@ -22,8 +22,10 @@
         })"
         {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
         {{ $attributes->merge($getExtraAttributes())->class([
-            'block w-full transition duration-75 divide-y rounded-lg shadow-sm border focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600',
+            'block w-full transition duration-75 divide-y rounded-lg shadow-sm border focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600 filament-forms-multi-select-component',
+            'dark:bg-gray-700 dark:divide-gray-600' => config('forms.dark_mode'),
             'border-gray-300' => ! $errors->has($getStatePath()),
+            'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
         ]) }}
         {{ $getExtraAlpineAttributeBag() }}
@@ -58,18 +60,19 @@
                         placeholder="{{ $getPlaceholder() }}"
                         type="text"
                         autocomplete="off"
-                        class="block w-full border-0"
+                        @class([
+                            'block w-full border-0',
+                            'dark:bg-gray-700 dark:placeholder-gray-400' => config('forms.dark_mode'),
+                        ])
                     />
 
                     <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center pr-2 rtl:pr-0 rtl:pl-2 pointer-events-none">
-                        <svg x-show="! isLoading" x-cloak class="w-5 h-5"xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <svg x-show="! isLoading" x-cloak class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                             <path stroke="#6B7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4" />
                         </svg>
 
-                        <svg x-show="isLoading" class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" fill="currentColor">
-                            <path d="M6.306 28.014c1.72 10.174 11.362 17.027 21.536 15.307C38.016 41.6 44.87 31.958 43.15 21.784l-4.011.678c1.345 7.958-4.015 15.502-11.974 16.847-7.959 1.346-15.501-4.014-16.847-11.973l-4.011.678z" />
-
-                            <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur=".7s" repeatCount="indefinite" /></path>
+                        <svg x-show="isLoading" class="animate-spin w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z" />>
                         </svg>
                     </span>
                 </div>
@@ -84,7 +87,10 @@
                     x-bind:aria-activedescendant="focusedOptionIndex ? '{{ $getStatePath() }}' + 'Option' + focusedOptionIndex : null"
                     tabindex="-1"
                     x-cloak
-                    class="absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none transition"
+                    @class([
+                        'absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none transition',
+                        'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
+                    ])
                 >
                     <ul
                         x-ref="listboxOptionsList"
@@ -100,7 +106,7 @@
                                 x-bind:aria-selected="focusedOptionIndex === index"
                                 x-bind:class="{
                                     'text-white bg-primary-500': index === focusedOptionIndex,
-                                    'text-gray-900': index !== focusedOptionIndex,
+                                    'text-gray-900 @if (config('forms.dark_mode')) dark:text-gray-200 @endif': index !== focusedOptionIndex,
                                 }"
                                 class="relative py-2 pl-3 h-10 flex items-center text-gray-900 cursor-default select-none pr-9"
                             >
@@ -133,7 +139,10 @@
                         <div
                             x-show="! Object.keys(options).length"
                             x-text="! search || isLoading ? '{{ $getSearchPrompt() }}' : '{{ $getNoSearchResultsMessage() }}'"
-                            class="px-3 py-2 text-sm text-gray-700 cursor-default select-none"
+                            @class([
+                                'px-3 py-2 text-sm text-gray-700 cursor-default select-none',
+                                'dark:text-gray-200' => config('forms.dark_mode'),
+                            ])
                         ></div>
                     </ul>
                 </div>
@@ -142,24 +151,25 @@
 
         <div
             x-show="state.length"
-            class="overflow-hidden rtl:space-x-reverse relative w-full px-1 py-1"
+            class="overflow-hidden rtl:space-x-reverse relative w-full p-2"
         >
             <div class="flex flex-wrap gap-1">
-                <template class="inline" x-for="option in state" x-bind:key="option">
+                <template class="hidden" x-for="option in state" x-bind:key="option">
                     <button
                         @unless ($isDisabled())
                             x-on:click.stop="deselectOption(option)"
                         @endunless
                         type="button"
                         @class([
-                            'inline-flex items-center justify-center h-6 px-2 my-1 text-sm font-medium tracking-tight text-primary-700 rounded-full bg-primary-500/10 space-x-1 rtl:space-x-reverse',
+                            'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-xl bg-primary-500/10 space-x-1 rtl:space-x-reverse',
+                            'dark:text-primary-500' => config('forms.dark_mode'),
                             'cursor-default' => $isDisabled(),
                         ])
                     >
-                        <span x-text="labels[option]"></span>
+                        <span class="text-left" x-text="labels[option]"></span>
 
                         @unless ($isDisabled())
-                            <x-heroicon-s-x class="w-3 h-3" />
+                            <x-heroicon-s-x class="w-3 h-3 shrink-0" />
                         @endunless
                     </button>
                 </template>

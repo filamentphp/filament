@@ -62,6 +62,11 @@ trait CanCreateRecords
         }
     }
 
+    public function createAndCreateAnother(): void
+    {
+        $this->create(another: true);
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         return $this->getRelationship()->create($data);
@@ -81,11 +86,11 @@ trait CanCreateRecords
             ->modalActions([
                 ButtonAction::make('submit')
                     ->label(__('filament::resources/relation-managers/create.action.modal.actions.create.label'))
-                    ->submit()
+                    ->submit('callMountedTableAction')
                     ->color('primary'),
                 ButtonAction::make('submit')
                     ->label(__('filament::resources/relation-managers/create.action.modal.actions.create_and_create_another.label'))
-                    ->action('create(true)')
+                    ->action('createAndCreateAnother')
                     ->color('secondary'),
                 ButtonAction::make('cancel')
                     ->label(__('tables::table.actions.modal.buttons.cancel.label'))

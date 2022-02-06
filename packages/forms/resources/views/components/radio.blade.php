@@ -12,7 +12,8 @@
         <x-slot name="labelSuffix">
     @endif
             <div {{ $attributes->merge($getExtraAttributes())->class([
-                'gap-2 space-y-2',
+                'gap-2 filament-forms-radio-component',
+                'space-y-2' => ! $isInline(),
                 'flex flex-wrap gap-3' => $isInline(),
             ]) }}>
                 @foreach ($getOptions() as $value => $label)
@@ -30,7 +31,9 @@
                                 {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                                 {{ $getExtraInputAttributeBag()->class([
                                     'focus:ring-primary-500 h-4 w-4 text-primary-600',
+                                    'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
                                     'border-gray-300' => ! $errors->has($getStatePath()),
+                                    'dark:border-gray-500' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                                 ]) }}
                                 {!! $isOptionDisabled($value, $label) ? 'disabled' : null !!}
@@ -41,13 +44,17 @@
                             <label for="{{ $getId() }}-{{ $value }}" @class([
                                 'font-medium',
                                 'text-gray-700' => ! $errors->has($getStatePath()),
+                                'dark:text-gray-200' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                                 'text-danger-600' => $errors->has($getStatePath()),
                             ])>
                                 {{ $label }}
                             </label>
 
                             @if ($hasDescription($value))
-                                <p class="text-gray-500">
+                                <p @class([
+                                    'text-gray-500',
+                                    'dark:text-gray-400' => config('forms.dark_mode'),
+                                ])>
                                     {{ $getDescription($value) }}
                                 </p>
                             @endif

@@ -42,7 +42,7 @@ trait CanAttachRecords
         return Select::make('recordId')
             ->label(__('filament::resources/relation-managers/attach.action.modal.fields.record_id.label'))
             ->searchable()
-            ->getSearchResultsUsing(function (RelationManager $livewire, string $query): array {
+            ->getSearchResultsUsing(function (Select $component, RelationManager $livewire, string $query): array {
                 $relationship = $livewire->getRelationship();
 
                 $displayColumnName = static::getRecordTitleAttribute();
@@ -60,8 +60,22 @@ trait CanAttachRecords
                     default => 'like',
                 };
 
+                $searchColumns = $component->getSearchColumns() ?? [$displayColumnName];
+                $isFirst = true;
+
+                foreach ($searchColumns as $searchColumnName) {
+                    $whereClause = $isFirst ? 'where' : 'orWhere';
+
+                    $relationshipQuery->{$whereClause}(
+                        $searchColumnName,
+                        $searchOperator,
+                        "%{$query}%",
+                    );
+
+                    $isFirst = false;
+                }
+
                 return $relationshipQuery
-                    ->where($displayColumnName, $searchOperator, "%{$query}%")
                     ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
                         $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
                     })
@@ -117,6 +131,11 @@ trait CanAttachRecords
         }
     }
 
+    public function attachAndAttachAnother(): void
+    {
+        $this->attach(another: true);
+    }
+
     protected function getAttachButtonTableHeaderAction(): Tables\Actions\ButtonAction
     {
         return Tables\Actions\ButtonAction::make('attach')
@@ -126,11 +145,11 @@ trait CanAttachRecords
             ->modalActions([
                 ButtonAction::make('submit')
                     ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach.label'))
-                    ->submit()
+                    ->submit('callMountedTableAction')
                     ->color('primary'),
                 ButtonAction::make('submit')
                     ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach_and_attach_another.label'))
-                    ->action('attach(true)')
+                    ->action('attachAndAttachAnother')
                     ->color('secondary'),
                 ButtonAction::make('cancel')
                     ->label(__('tables::table.actions.modal.buttons.cancel.label'))

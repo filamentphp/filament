@@ -6,7 +6,7 @@
 
 @php
     $linkClasses = [
-        'hover:underline focus:outline-none focus:underline',
+        'hover:underline focus:outline-none focus:underline filament-tables-link',
         'text-primary-600 hover:text-primary-500' => $color === 'primary',
         'text-danger-600 hover:text-danger-500' => $color === 'danger',
         'text-gray-600 hover:text-gray-500' => $color === 'secondary',

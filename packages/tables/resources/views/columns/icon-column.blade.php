@@ -4,11 +4,11 @@
         'primary' => 'text-primary-500',
         'success' => 'text-success-500',
         'warning' => 'text-warning-500',
-        default => 'text-gray-700',
+        default => \Illuminate\Support\Arr::toCssClasses(['text-gray-700', 'dark:text-gray-200' => config('tables.dark_mode'),]),
     };
 @endphp
 
-<div {{ $attributes->merge($getExtraAttributes())->class(['px-4 py-3']) }}>
+<div {{ $attributes->merge($getExtraAttributes())->class(['px-4 py-3 filament-tables-icon-column']) }}>
     @if ($getStateIcon())
         <x-dynamic-component
             :component="$getStateIcon()"

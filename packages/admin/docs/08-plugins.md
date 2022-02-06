@@ -64,7 +64,7 @@ This will ensure your service provider is automatically loaded by Laravel when t
 
 ## Resources
 
-To register a custom resource, add the fully qualified class name to the `getResources()` method in your service provider.
+To register a custom resource, add the fully qualified class name to the `$resources` property in your service provider.
 
 ```php
 use Filament\PluginServiceProvider;
@@ -73,16 +73,13 @@ use Vendor\Package\Resources\CustomResource;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    protected array $resources = [
+        CustomResource::class,
+    ];
+
     public function configurePackage(Package $package): void
     {
         $package->name('your-package-name');
-    }
-    
-    protected function getResources(): array
-    {
-        return [
-            CustomResource::class,
-        ];
     }
 }
 ```
@@ -91,7 +88,7 @@ Filament will automatically register your `Resource` and ensure that Livewire ca
 
 ## Pages
 
-To register a custom page, add the fully qualified class name to the `getPages()` method in your service provider.
+To register a custom page, add the fully qualified class name to the `$pages` property in your service provider.
 
 ```php
 use Filament\PluginServiceProvider;
@@ -100,16 +97,13 @@ use Vendor\Package\Pages\CustomPage;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    protected array $pages = [
+        CustomPage::class,
+    ];
+    
     public function configurePackage(Package $package): void
     {
         $package->name('your-package-name');
-    }
-    
-    protected function getPages(): array
-    {
-        return [
-            CustomPage::class,
-        ];
     }
 }
 ```
@@ -118,7 +112,7 @@ Filament will automatically register your `Page` and ensure that Livewire can di
 
 ## Widgets
 
-To register a custom widget, add the fully qualified class name to the `getWidgets()` method in your service provider.
+To register a custom widget, add the fully qualified class name to the `$wigdets` property in your service provider.
 
 ```php
 use Filament\PluginServiceProvider;
@@ -127,16 +121,13 @@ use Vendor\Package\Widgers\CustomWidget;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    protected array $widgets = [
+        CustomWidget::class,
+    ];
+
     public function configurePackage(Package $package): void
     {
         $package->name('your-package-name');
-    }
-    
-    protected function getWidgets(): array
-    {
-        return [
-            CustomWidget::class,
-        ];
     }
 }
 ```
@@ -149,7 +140,7 @@ Filament plugins can also register their own frontend assets. These assets will 
 
 ### Stylesheets
 
-To include a custom stylesheet, add it to the `getStyles()` method in your service provider. You should use a unique name as the key and the URL to the stylesheet as the value.
+To include a custom stylesheet, add it to the `$styles` property in your service provider. You should use a unique name as the key and the URL to the stylesheet as the value.
 
 ```php
 use Filament\PluginServiceProvider;
@@ -157,23 +148,20 @@ use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    protected array $styles = [
+        'my-package-styles' => __DIR__ . '/../dist/app.css',
+    ];
+
     public function configurePackage(Package $package): void
     {
         $package->name('your-package-name');
-    }
-    
-    protected function getStyles(): array
-    {
-        return [
-            'my-package-styles' => __DIR__ . '/../dist/app.css',
-        ];
     }
 }
 ```
 
 ### Scripts
 
-To include a custom script, add it to the `getScripts()` method in your service provider. You should use a unique name as the key and the URL to the script as the value.
+To include a custom script, add it to the `$scripts` property in your service provider. You should use a unique name as the key and the URL to the script as the value. These scripts will be added after the core Filament script.
 
 ```php
 use Filament\PluginServiceProvider;
@@ -181,17 +169,33 @@ use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    protected array $scripts = [
+        'my-package-scripts' => __DIR__ . '/../dist/app.js',
+    ];
+
     public function configurePackage(Package $package): void
     {
         $package->name('your-package-name');
     }
+}
+```
+
+To add scripts before the core Filament script, use the `$beforeCoreScripts` property. This is useful if you want to hook into an Alpine event.
+
+```php
+use Filament\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
+
+class ExampleServiceProvider extends PluginServiceProvider
+{
+    protected array $beforeCoreScripts = [
+        'my-package-scripts' => __DIR__ . '/../dist/app.js',
+    ];
     
-    protected function getScripts(): array
+    public function configurePackage(Package $package): void
     {
-        return [
-            'my-package-scripts' => __DIR__ . '/../dist/app.js',
-        ];
-    };
+        $package->name('your-package-name');
+    }
 }
 ```
 

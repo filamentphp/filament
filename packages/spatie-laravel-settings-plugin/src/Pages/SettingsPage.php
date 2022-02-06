@@ -4,6 +4,7 @@ namespace Filament\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
+use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
@@ -25,7 +26,7 @@ class SettingsPage extends Page
     {
         $this->callHook('beforeFill');
 
-        $settings = app(static::$settings);
+        $settings = app(static::getSettings());
 
         $this->form->fill($settings->toArray());
 
@@ -42,7 +43,7 @@ class SettingsPage extends Page
 
         $this->callHook('beforeSave');
 
-        $settings = app(static::$settings);
+        $settings = app(static::getSettings());
 
         $settings->fill($data);
         $settings->save();
@@ -65,12 +66,20 @@ class SettingsPage extends Page
         $this->{$hook}();
     }
 
+    public static function getSettings(): string
+    {
+        return static::$settings ?? (string) Str::of(class_basename(static::class))
+                ->beforeLast('Settings')
+                ->prepend('App\\Settings\\')
+                ->append('Settings');
+    }
+
     protected function getFormActions(): array
     {
         return [
             ButtonAction::make('save')
                 ->label('Save')
-                ->submit(),
+                ->submit('save'),
         ];
     }
 

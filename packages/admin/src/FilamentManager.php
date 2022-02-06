@@ -23,6 +23,8 @@ class FilamentManager
 
     protected array $resources = [];
 
+    protected array $beforeCoreScripts = [];
+
     protected array $scripts = [];
 
     protected array $scriptData = [];
@@ -33,18 +35,35 @@ class FilamentManager
 
     protected array $widgets = [];
 
+    protected ?Closure $navigationBuilder = null;
+
     public function auth(): Guard
     {
         return auth()->guard(config('filament.auth.guard'));
     }
 
+    public function navigation(Closure $builder): void
+    {
+        $this->navigationBuilder = $builder;
+    }
+
+    public function buildNavigation(): array
+    {
+        /** @var \Filament\Navigation\NavigationBuilder $builder */
+        $builder = app()->call($this->navigationBuilder);
+
+        return collect($builder->getGroups())
+            ->merge([null => $builder->getItems()])
+            ->toArray();
+    }
+
     public function mountNavigation(): void
     {
-        foreach (static::getPages() as $page) {
+        foreach ($this->getPages() as $page) {
             $page::registerNavigationItems();
         }
 
-        foreach (static::getResources() as $resource) {
+        foreach ($this->getResources() as $resource) {
             $resource::registerNavigationItems();
         }
 
@@ -71,9 +90,13 @@ class FilamentManager
         $this->resources = array_merge($this->resources, $resources);
     }
 
-    public function registerScripts(array $scripts): void
+    public function registerScripts(array $scripts, bool $shouldBeLoadedBeforeCoreScripts = false): void
     {
-        $this->scripts = array_merge($this->scripts, $scripts);
+        if ($shouldBeLoadedBeforeCoreScripts) {
+            $this->beforeCoreScripts = array_merge($this->beforeCoreScripts, $scripts);
+        } else {
+            $this->scripts = array_merge($this->scripts, $scripts);
+        }
     }
 
     public function registerScriptData(array $data): void
@@ -103,6 +126,10 @@ class FilamentManager
 
     public function getNavigation(): array
     {
+        if ($this->navigationBuilder !== null) {
+            return $this->buildNavigation();
+        }
+
         if (! $this->isNavigationMounted) {
             $this->mountNavigation();
         }
@@ -154,9 +181,31 @@ class FilamentManager
         return array_unique($this->resources);
     }
 
+    public function getModelResource(string | Model $model): ?string
+    {
+        if ($model instanceof Model) {
+            $model = $model::class;
+        }
+
+        foreach ($this->getResources() as $resource) {
+            if ($model !== $resource::getModel()) {
+                continue;
+            }
+
+            return $resource;
+        }
+
+        return null;
+    }
+
     public function getScripts(): array
     {
         return $this->scripts;
+    }
+
+    public function getBeforeCoreScripts(): array
+    {
+        return $this->beforeCoreScripts;
     }
 
     public function getScriptData(): array

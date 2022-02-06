@@ -11,14 +11,19 @@
 ])
 
 <div {{ $attributes->class([
-    'relative p-6 rounded-2xl',
+    'relative p-6 rounded-2xl filament-stats-card',
     'bg-white shadow' => ! $flat,
+    'dark:bg-gray-800' => (! $flat) && config('filament.dark_mode'),
     'border' => $flat,
+    'dark:border-gray-700' => $flat && config('filament.dark_mode'),
 ]) }}>
     <div @class([
         'space-y-2',
     ])>
-        <div class="text-sm font-medium text-gray-500">
+        <div @class([
+            'text-sm font-medium text-gray-500',
+            'dark:text-gray-200' => config('filament.dark_mode'),
+        ])>
             {{ $label }}
         </div>
 
@@ -103,11 +108,11 @@
                     x-ref="backgroundColorElement"
                     @class([
                         match ($chartColor) {
-                            'danger' => 'text-danger-50',
-                            'primary' => 'text-primary-50',
-                            'success' => 'text-success-50',
-                            'warning' => 'text-warning-50',
-                            default => 'text-gray-50',
+                            'danger' => \Illuminate\Support\Arr::toCssClasses(['text-danger-50', 'dark:text-danger-700' => config('filament.dark_mode')]),
+                            'primary' => \Illuminate\Support\Arr::toCssClasses(['text-primary-50', 'dark:text-primary-700' => config('filament.dark_mode')]),
+                            'success' => \Illuminate\Support\Arr::toCssClasses(['text-success-50', 'dark:text-success-700' => config('filament.dark_mode')]),
+                            'warning' => \Illuminate\Support\Arr::toCssClasses(['text-warning-50', 'dark:text-warning-700' => config('filament.dark_mode')]),
+                            default => \Illuminate\Support\Arr::toCssClasses(['text-gray-50', 'dark:text-gray-700' => config('filament.dark_mode')]),
                         },
                     ])
                 ></span>

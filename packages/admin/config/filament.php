@@ -54,6 +54,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Brand Name
+    |--------------------------------------------------------------------------
+    |
+    | This will be displayed on the login page and in the sidebar's header.
+    |
+    */
+
+    'brand' => env('APP_NAME'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Auth
     |--------------------------------------------------------------------------
     |
@@ -139,10 +150,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Dark mode
+    |--------------------------------------------------------------------------
+    |
+    | By enabling this feature, your users are able to select between a light
+    | and dark appearance for the admin panel, or let their system decide.
+    |
+    */
+
+    'dark_mode' => false,
+
+    /*
+    |--------------------------------------------------------------------------
     | Layout
     |--------------------------------------------------------------------------
     |
-    | This is the configuration for the general appearance of the admin panel.
+    | This is the configuration for the general layout of the admin panel.
     |
     | You may configure the max content width from `xl` to `7xl`, or `full`
     | for no max width.

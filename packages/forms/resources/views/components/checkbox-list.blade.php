@@ -9,7 +9,7 @@
     :state-path="$getStatePath()"
 >
     <div @class([
-        'grid gap-1',
+        'grid gap-1 filament-forms-checkbox-list-component',
         'grid-cols-1' => $getColumns('default') === 1,
         'grid-cols-2' => $getColumns('default') === 2,
         'grid-cols-3' => $getColumns('default') === 3,
@@ -92,12 +92,17 @@
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                     {{ $attributes->merge($getExtraAttributes())->class([
                         'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500',
+                        'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
                         'border-gray-300' => ! $errors->has($getStatePath()),
+                        'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                         'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
                     ]) }}
                 />
 
-                <span class="text-sm font-medium text-gray-700">
+                <span @class([
+                    'text-sm font-medium text-gray-700',
+                    'dark:text-gray-200' => config('forms.dark_mode'),
+                ])>
                     {{ $optionLabel }}
                 </span>
             </label>

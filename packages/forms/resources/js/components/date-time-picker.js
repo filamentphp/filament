@@ -8,6 +8,15 @@ dayjs.extend(customParseFormat)
 dayjs.extend(localeData)
 dayjs.extend(timezone)
 dayjs.extend(utc)
+dayjs.extend((option, Dayjs, dayjs) => {    
+    dayjs.onLocaleUpdated = () => {},
+    dayjs.updateLocale = (locale) => {
+        dayjs.locale(locale)
+
+        // Emit the `localeUpdated` event that we can bind to later
+        dayjs.onLocaleUpdated()
+    }
+})
 
 window.dayjs = dayjs
 
@@ -22,8 +31,6 @@ export default (Alpine) => {
         state,
     }) => {
         const timezone = dayjs.tz.guess()
-
-        dayjs.locale(window.dayjs_locale)
 
         return {
             daysInFocusedMonth: [],
@@ -51,6 +58,10 @@ export default (Alpine) => {
             second: null,
 
             state,
+
+            dayLabels: [],
+
+            months: [],
 
             init: function () {
                 this.focusedDate = dayjs().tz(timezone)
@@ -81,9 +92,17 @@ export default (Alpine) => {
                 this.second = date?.second() ?? 0
 
                 this.setDisplayText()
+                this.setMonths()
+                this.setDayLabels()
 
                 if (isAutofocused) {
                     this.openPicker()
+                }
+
+                dayjs.onLocaleUpdated = () => {
+                    this.setDisplayText()
+                    this.setMonths()
+                    this.setDayLabels()
                 }
 
                 this.$watch('focusedMonth', () => {
@@ -348,6 +367,14 @@ export default (Alpine) => {
 
             setDisplayText: function () {
                 this.displayText = this.getSelectedDate() ? this.getSelectedDate().format(displayFormat) : ''
+            },
+
+            setMonths: function () {
+                this.months = dayjs.months()
+            },
+
+            setDayLabels: function () {
+                this.dayLabels = this.getDayLabels()
             },
 
             setupDaysGrid: function () {

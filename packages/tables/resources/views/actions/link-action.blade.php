@@ -17,7 +17,7 @@
     :href="$getUrl()"
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
     :color="$getColor()"
-    class="text-sm font-medium"
+    class="text-sm font-medium filament-tables-link-action"
 >
     {{ $getLabel() }}
 </x-tables::link>

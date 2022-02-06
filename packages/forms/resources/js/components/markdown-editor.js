@@ -1,6 +1,6 @@
 import '@github/file-attachment-element'
 import '@github/markdown-toolbar-element'
-import marked from 'marked'
+import { marked } from 'marked'
 import { highlight } from 'mdhl'
 
 export default (Alpine) => {

@@ -1,13 +1,10 @@
 @once
     @push('scripts')
-        <script src="//unpkg.com/dayjs@1.10.4/dayjs.min.js"></script>
-        <script src="//unpkg.com/dayjs@1.10.4/plugin/localeData.js"></script>
-        <script>
-            dayjs.extend(window.dayjs_plugin_localeData)
+        @php
+            $locale = strtolower(str_replace('_', '-', app()->getLocale()));
+        @endphp
 
-            window.dayjs_locale = dayjs.locale()
-        </script>
-        <script src="//unpkg.com/dayjs@1.10.4/locale/{{ strtolower(str_replace('_', '-', app()->getLocale())) }}.js"></script>
+        <script src="//unpkg.com/dayjs@1.10.4/locale/{{ $locale }}.js" onload="dayjs.updateLocale('{{ $locale }}')"></script>
     @endpush
 @endonce
 
@@ -34,7 +31,7 @@
         x-on:click.away="closePicker()"
         x-on:keydown.escape.stop="closePicker()"
         x-on:blur="closePicker()"
-        {{ $attributes->merge($getExtraAttributes())->class(['relative']) }}
+        {{ $attributes->merge($getExtraAttributes())->class(['relative filament-forms-date-time-picker-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
         <button
@@ -54,9 +51,11 @@
             @endunless
             type="button"
             {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full border pl-3 pr-10 py-2 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600',
+                'bg-white relative w-full h-10 border pl-3 pr-10 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600',
+                'dark:bg-gray-700' => config('forms.dark_mode'),
                 'border-gray-300' => ! $errors->has($getStatePath()),
-                'border-danger-600 motion-safe:animate-shake' => $errors->has($getStatePath()),
+                'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
+                'border-danger-600' => $errors->has($getStatePath()),
                 'text-gray-500' => $isDisabled(),
             ]) }}
         >
@@ -65,11 +64,17 @@
                 placeholder="{{ $getPlaceholder() }}"
                 x-model="displayText"
                 {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
-                class="w-full h-full p-0 placeholder-gray-400 border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none"
+                @class([
+                    'w-full h-full px-0 py-2 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none',
+                    'dark:bg-gray-700 dark:placeholder-gray-400' => config('forms.dark_mode'),
+                ])
             />
 
             <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center pr-2 rtl:pl-2 pointer-events-none">
-                <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg @class([
+                    'w-5 h-5 text-gray-400',
+                    'dark:text-gray-400' => config('forms.dark_mode'),
+                ]) xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
             </span>
@@ -85,6 +90,7 @@
                 x-cloak
                 @class([
                     'absolute z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-sm',
+                    'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
                     'p-4 w-64' => $hasDate(),
                 ])
             >
@@ -93,9 +99,12 @@
                         <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
                             <select
                                 x-model="focusedMonth"
-                                class="grow p-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none"
+                                @class([
+                                    'grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none',
+                                    'dark:bg-gray-700 dark:text-gray-200' => config('forms.dark_mode'),
+                                ])
                             >
-                                <template x-for="(month, index) in dayjs.months()">
+                                <template x-for="(month, index) in months">
                                     <option x-bind:value="index" x-text="month"></option>
                                 </template>
                             </select>
@@ -103,15 +112,21 @@
                             <input
                                 type="number"
                                 x-model.debounce="focusedYear"
-                                class="w-20 p-0 text-lg text-right border-0 focus:ring-0 focus:outline-none"
+                                @class([
+                                    'w-20 p-0 text-lg text-right border-0 focus:ring-0 focus:outline-none',
+                                    'dark:bg-gray-700 dark:text-gray-200' => config('forms.dark_mode'),
+                                ])
                             />
                         </div>
 
                         <div class="grid grid-cols-7 gap-1">
-                            <template x-for="(day, index) in getDayLabels()" :key="index">
+                            <template x-for="(day, index) in dayLabels" :key="index">
                                 <div
                                     x-text="day"
-                                    class="text-xs font-medium text-center text-gray-800"
+                                    @class([
+                                        'text-xs font-medium text-center text-gray-800',
+                                        'dark:text-gray-200' => config('forms.dark_mode'),
+                                    ])
                                 ></div>
                             </template>
                         </div>
@@ -129,15 +144,15 @@
                                     role="option"
                                     x-bind:aria-selected="focusedDate.date() === day"
                                     x-bind:class="{
-                                        'text-gray-700': ! dayIsSelected(day),
+                                        'text-gray-700 @if (config('forms.dark_mode')) dark:text-gray-300 @endif': ! dayIsSelected(day),
                                         'cursor-pointer': ! dayIsDisabled(day),
-                                        'bg-primary-50': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
-                                        'bg-primary-200': focusedDate.date() === day && ! dayIsSelected(day),
+                                        'bg-primary-50 @if (config('forms.dark_mode')) dark:bg-primary-100 dark:text-gray-600 @endif': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
+                                        'bg-primary-200 @if (config('forms.dark_mode')) dark:text-gray-600 @endif': focusedDate.date() === day && ! dayIsSelected(day),
                                         'bg-primary-500 text-white': dayIsSelected(day),
                                         'cursor-not-allowed': dayIsDisabled(day),
                                         'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                     }"
-                                    class="text-sm leading-none leading-loose text-center transition duration-100 ease-in-out rounded-full"
+                                    class="text-sm leading-loose text-center transition duration-100 ease-in-out rounded-full"
                                 ></div>
                             </template>
                         </div>
@@ -148,6 +163,7 @@
                             @class([
                                 'flex items-center justify-center py-2 rounded-lg',
                                 'bg-gray-50' => $hasDate(),
+                                'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
                             ])
                         >
                             <input
@@ -158,14 +174,18 @@
                                 x-model.debounce="hour"
                                 @class([
                                     'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
+                                    'dark:text-gray-200' => config('forms.dark_mode'),
                                     'bg-gray-50' => $hasDate(),
+                                    'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
                                 ])
                             />
 
                             <span
                                 @class([
                                     'text-xl font-medium text-gray-700',
+                                    'dark:text-gray-200' => config('forms.dark_mode'),
                                     'bg-gray-50' => $hasDate(),
+                                    'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
                                 ])
                             >:</span>
 
@@ -177,15 +197,16 @@
                                 x-model.debounce="minute"
                                 @class([
                                     'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
-                                    'bg-gray-50' => $hasDate(),
+                                    'dark:text-gray-200' => config('forms.dark_mode'),
+                                    'bg-gray-50 dark:bg-gray-800' => $hasDate(),
                                 ])
                             />
 
                             @if ($hasSeconds())
                                 <span
                                     @class([
-                                        'text-xl font-medium text-gray-700',
-                                        'bg-gray-50' => $hasDate(),
+                                        'text-xl font-medium text-gray-700 dark:text-gray-200',
+                                        'bg-gray-50 dark:bg-gray-800' => $hasDate(),
                                     ])
                                 >:</span>
 
@@ -196,8 +217,8 @@
                                     inputmode="numeric"
                                     x-model.debounce="second"
                                     @class([
-                                        'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
-                                        'bg-gray-50' => $hasDate(),
+                                        'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none dark:text-gray-200',
+                                        'bg-gray-50 dark:bg-gray-800' => $hasDate(),
                                     ])
                                 />
                             @endif

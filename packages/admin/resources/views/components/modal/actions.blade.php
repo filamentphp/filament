@@ -4,6 +4,7 @@
 ])
 
 <div {{ $attributes->class([
+    'filament-modal-actions',
     'flex items-center space-x-4' => ! $fullWidth,
     'justify-end' => (! $fullWidth) && ($align === 'right'),
     'justify-center' => (! $fullWidth) && ($align === 'center'),

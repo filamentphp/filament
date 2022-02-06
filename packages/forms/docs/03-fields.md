@@ -97,12 +97,22 @@ RichEditor::make('content')
 
 ### Custom attributes
 
-The HTML of fields can be customized even further, by passing an array of `extraAttributes()`:
+The HTML attributes of the field's wrapper can be customized by passing an array of `extraAttributes()`:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('name')->extraAttributes(['step' => 10])
+TextInput::make('name')->extraAttributes(['title' => 'Text input'])
+```
+
+To add additional HTML attributes to the input itself, use `extraInputAttributes()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('points')
+    ->numeric()
+    ->extraInputAttributes(['step' => '10'])
 ```
 
 ### Disabling
@@ -287,8 +297,8 @@ TextInput::make('number')
         ->decimalSeparator(',') // Add a separator for decimal numbers.
         ->integer() // Disallow decimal numbers.
         ->mapToDecimalSeparator([',']) // Map additional characters to the decimal separator.
-        ->minValue(1) // Set a minimum and maximum value that the number can be.
-        ->minValue(100) // Set a minimum and maximum value that the number can be.
+        ->minValue(1) // Set the minimum value that the number can be.
+        ->maxValue(100) // Set the maximum value that the number can be.
         ->normalizeZeros() // Append or remove zeros at the end of the number.
         ->padFractionalZeros() // Pad zeros at the end of the number to always maintain the maximum number of decimal places.
         ->thousandsSeparator(','), // Add a separator for thousands.
@@ -484,6 +494,20 @@ class App extends Model
 
     // ...
 }
+```
+
+If you have lots of options and want to populate them based on a database search or other external data source, you can use the `getSearchResultsUsing()` and `getOptionLabelsUsing()` methods instead of `options()`.
+
+The `getSearchResultsUsing()` method accepts a callback that returns search results in `$key => $value` format.
+
+The `getOptionLabelsUsing()` method accepts a callback that transforms the selected options' `$value`s into labels.
+
+```php
+use Filament\Forms\Components\MultiSelect;
+
+MultiSelect::make('technologies')
+    ->getSearchResultsUsing(fn (string $query) => Technology::where('name', 'like', "%{$query}%")->limit(50)->pluck('name', 'id'))
+    ->getOptionLabelsUsing(fn (array $values) => Technology::find($values)->pluck('name')),
 ```
 
 ### Populating automatically from a `BelongsToMany` relationship

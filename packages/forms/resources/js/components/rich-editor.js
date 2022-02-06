@@ -1,6 +1,7 @@
 import Trix from 'trix/dist/trix'
 
 import 'trix/dist/trix.css'
+import '../../css/components/rich-editor.css'
 
 Trix.config.blockAttributes.heading = {
     tagName: "h2",

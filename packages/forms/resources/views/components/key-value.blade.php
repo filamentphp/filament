@@ -12,18 +12,33 @@
         x-data="keyValueFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
-        {{ $attributes->merge($getExtraAttributes()) }}
+        {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-key-value-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
-        <div class="border border-gray-300 divide-y shadow-sm bg-white rounded-xl overflow-hidden">
-            <table class="w-full text-left divide-y table-auto">
+        <div @class([
+            'border border-gray-300 divide-y shadow-sm bg-white rounded-xl overflow-hidden',
+            'dark:bg-gray-700 dark:border-gray-600 dark:divide-gray-600' => config('forms.dark_mode'),
+        ])>
+            <table @class([
+                'w-full text-left divide-y table-auto',
+                'dark:divide-gray-700' => config('forms.dark_mode'),
+            ])>
                 <thead>
-                    <tr class="bg-gray-50">
-                        <th class="px-4 py-2 whitespace-nowrap font-medium text-sm text-gray-600" scope="col">
+                    <tr @class([
+                        'bg-gray-50',
+                        'dark:bg-gray-800/60' => config('forms.dark_mode'),
+                    ])>
+                        <th @class([
+                            'px-4 py-2 whitespace-nowrap font-medium text-sm text-gray-600',
+                            'dark:text-gray-300' => config('forms.dark_mode'),
+                        ]) scope="col">
                             {{ $getKeyLabel() }}
                         </th>
 
-                        <th class="px-4 py-2 whitespace-nowrap font-medium text-sm text-gray-600" scope="col">
+                        <th @class([
+                            'px-4 py-2 whitespace-nowrap font-medium text-sm text-gray-600',
+                            'dark:text-gray-300' => config('forms.dark_mode'),
+                        ]) scope="col">
                             {{ $getValueLabel() }}
                         </th>
 
@@ -39,10 +54,16 @@
 
                 <tbody
                     x-ref="tableBody"
-                    class="divide-y whitespace-nowrap"
+                    @class([
+                        'divide-y whitespace-nowrap',
+                        'dark:divide-gray-600' => config('forms.dark_mode'),
+                    ])
                 >
                     <template x-for="(row, index) in rows" x-bind:key="index" x-ref="rowTemplate">
-                        <tr class="divide-x">
+                        <tr @class([
+                            'divide-x',
+                            'dark:divide-gray-600' => config('forms.dark_mode'),
+                        ])>
                             <td>
                                 <input
                                     type="text"
@@ -91,7 +112,10 @@
                 <button
                     x-on:click="addRow"
                     type="button"
-                    class="w-full px-4 py-2 flex items-center space-x-1 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:bg-gray-50"
+                    @class([
+                        'w-full px-4 py-2 flex items-center space-x-1 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:bg-gray-50',
+                        'dark:text-white dark:bg-gray-800/60 dark:hover:bg-gray-800/30' => config('forms.dark_mode'),
+                    ])
                 >
                     <x-heroicon-s-plus class="w-4 h-4" />
 
