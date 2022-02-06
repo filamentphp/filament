@@ -195,7 +195,7 @@ class ExampleServiceProvider extends PluginServiceProvider
 }
 ```
 
-To add scripts before the core filament script, use the `getBeforeCoreScripts()` method. This is useful if you want to hook into an Alpine event.
+To add scripts before the core Filament script, use the `getBeforeCoreScripts()` method. This is useful if you want to hook into an Alpine event.
 
 ```php
 use Filament\PluginServiceProvider;
