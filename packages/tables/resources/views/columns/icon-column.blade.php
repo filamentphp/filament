@@ -4,7 +4,7 @@
         'primary' => 'text-primary-500',
         'success' => 'text-success-500',
         'warning' => 'text-warning-500',
-        default => 'text-gray-700 dark:text-gray-200',
+        default => \Illuminate\Support\Arr::toCssClasses(['text-gray-700', 'dark:text-gray-200' => config('tables.dark_mode'),]),
     };
 @endphp
 

@@ -190,7 +190,10 @@
         </div>
 
         <div
-            class="overflow-y-auto relative dark:border-gray-700"
+            @class([
+                'overflow-y-auto relative',
+                'dark:border-gray-700' => config('tables.dark_mode'),
+            ])
             x-bind:class="{
                 'rounded-t-xl': ! hasHeader,
                 'border-t': hasHeader,
@@ -233,7 +236,10 @@
                         @endforeach
 
                         @if (count($actions))
-                            <th class="w-5 dark:bg-gray-800"></th>
+                            <th @class([
+                                'w-5',
+                                'dark:bg-gray-800' => config('tables.dark_mode'),
+                            ])></th>
                         @endif
                     </x-slot>
 
@@ -316,7 +322,10 @@
         </div>
 
         @if ($isPaginationEnabled())
-            <div class="p-2 border-t dark:border-gray-700">
+            <div @class([
+                'p-2 border-t',
+                'dark:border-gray-700' => config('tables.dark_mode'),
+            ])>
                 <x-tables::pagination
                     :paginator="$records"
                     :records-per-page-select-options="$getRecordsPerPageSelectOptions()"

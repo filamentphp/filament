@@ -16,7 +16,10 @@
                 </h2>
 
                 <p class="text-sm">
-                    <a href="{{ route('filament.auth.logout') }}" class="text-gray-600 hover:text-primary-500 focus:outline-none focus:underline dark:text-gray-300 dark:hover:text-primary-500">
+                    <a href="{{ route('filament.auth.logout') }}" @class([
+                        'text-gray-600 hover:text-primary-500 focus:outline-none focus:underline',
+                        'dark:text-gray-300 dark:hover:text-primary-500' => config('filament.dark_mode'),
+                    ])>
                         {{ __('filament::widgets/account-widget.buttons.logout.label') }}
                     </a>
                 </p>

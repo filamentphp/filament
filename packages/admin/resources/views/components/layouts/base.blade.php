@@ -39,7 +39,7 @@
 
         <link rel="stylesheet" href="{{ \Filament\Facades\Filament::getThemeUrl() }}" />
 
-        @if (config('filament.layout.dark_mode'))
+        @if (config('filament.dark_mode'))
             <script>
                 const theme = localStorage.getItem('theme')
 
@@ -50,7 +50,10 @@
         @endif
     </head>
 
-    <body class="bg-gray-100 text-gray-900 filament-body dark:text-gray-100 dark:bg-gray-900">
+    <body @class([
+        'bg-gray-100 text-gray-900 filament-body',
+        'dark:text-gray-100 dark:bg-gray-900' => config('filament.dark_mode'),
+    ])>
         {{ $slot }}
 
         @livewireScripts

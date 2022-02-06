@@ -49,7 +49,10 @@
 >
     <div
         x-on:click="isOpen = ! isOpen"
-        class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-200 bg-cover bg-center dark:bg-gray-900"
+        @class([
+            'flex-shrink-0 w-10 h-10 rounded-full bg-gray-200 bg-cover bg-center',
+            'dark:bg-gray-900' => config('filament.dark_mode'),
+        ])
         style="background-image: url('{{ \Filament\Facades\Filament::getUserAvatarUrl($user) }}')"
     ></div>
 
@@ -65,7 +68,10 @@
         x-cloak
         class="absolute z-10 right-0 mt-2 shadow-xl rounded-xl w-52 top-full"
     >
-        <ul class="py-1 space-y-1 overflow-hidden bg-white shadow rounded-xl dark:border-gray-600 dark:bg-gray-700">
+        <ul @class([
+            'py-1 space-y-1 overflow-hidden bg-white shadow rounded-xl',
+            'dark:border-gray-600 dark:bg-gray-700' => config('filament.dark_mode'),
+        ])>
             <li class="flex items-center w-full h-8 px-3 text-sm font-medium">
                 <x-heroicon-s-user-circle class="mr-2 -ml-1 rtl:ml-2 rtl:-mr-1 w-6 h-6 text-gray-500" />
 
@@ -73,7 +79,7 @@
             </li>
 
             <div>
-                @if (config('filament.layout.dark_mode'))
+                @if (config('filament.dark_mode'))
                     <x-filament::dropdown.item icon="heroicon-s-moon" x-show="theme === 'dark'" x-on:click="mode = 'manual'; theme = 'light'">
                         {{ __('filament::layout.buttons.light_mode.label') }}
                     </x-filament::dropdown.item>

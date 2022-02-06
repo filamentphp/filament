@@ -11,8 +11,13 @@ class MirrorConfigToSubpackages
     {
         $config = app()->config;
 
-        $config->set('forms.default_filesystem_disk', $config->get('filament.default_filesystem_disk'));
-        $config->set('tables.default_filesystem_disk', $config->get('filament.default_filesystem_disk'));
+        $darkMode = $config->get('filament.dark_mode');
+        $config->set('forms.dark_mode', $darkMode);
+        $config->set('tables.dark_mode', $darkMode);
+
+        $defaultFilesystemDisk = $config->get('filament.default_filesystem_disk');
+        $config->set('forms.default_filesystem_disk', $defaultFilesystemDisk);
+        $config->set('tables.default_filesystem_disk', $defaultFilesystemDisk);
 
         return $next($request);
     }

@@ -2,10 +2,10 @@ const colors = require('tailwindcss/colors')
 const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
-    darkMode: 'class',
     content: [
         './packages/**/*.blade.php',
     ],
+    darkMode: 'class',
     theme: {
         extend: {
             colors: {

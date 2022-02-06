@@ -5,7 +5,10 @@
     'heading' => null,
 ])
 
-<div {{ $attributes->class(['p-2 space-y-2 bg-white shadow rounded-xl dark:bg-gray-800']) }}>
+<div {{ $attributes->class([
+    'p-2 space-y-2 bg-white shadow rounded-xl',
+    'dark:bg-gray-800' => config('filament.dark_mode'),
+]) }}>
     @if ($actions || $header || $heading)
         <div class="px-4 py-2">
             @if ($header)

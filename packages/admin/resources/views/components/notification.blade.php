@@ -23,7 +23,10 @@
                     'danger' => 'bg-danger-50 ring-danger-200',
                     'success' => 'bg-success-50 ring-success-200',
                     'warning' => 'bg-warning-50 ring-warning-200',
-                    default => 'bg-white ring-gray-200 dark:bg-gray-700 dark:ring-gray-600',
+                    default => \Illuminate\Support\Arr::toCssClasses([
+                        'bg-white ring-gray-200',
+                        'dark:bg-gray-700 dark:ring-gray-600' => config('filament.dark_mode'),
+                    ]),
                 },
             ])
         >
@@ -51,7 +54,10 @@
                                 'danger' => 'text-danger-900',
                                 'success' => 'text-success-900',
                                 'warning' => 'text-warning-900',
-                                default => 'text-gray-900 dark:text-gray-200',
+                                default => \Illuminate\Support\Arr::toCssClasses([
+                                    'text-gray-900',
+                                    'dark:text-gray-200' => config('filament.dark_mode'),
+                                ]),
                             },
                         ])
                     >
