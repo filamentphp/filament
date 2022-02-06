@@ -298,7 +298,7 @@ TextInput::make('number')
         ->integer() // Disallow decimal numbers.
         ->mapToDecimalSeparator([',']) // Map additional characters to the decimal separator.
         ->minValue(1) // Set a minimum and maximum value that the number can be.
-        ->minValue(100) // Set a minimum and maximum value that the number can be.
+        ->maxValue(100) // Set a minimum and maximum value that the number can be.
         ->normalizeZeros() // Append or remove zeros at the end of the number.
         ->padFractionalZeros() // Pad zeros at the end of the number to always maintain the maximum number of decimal places.
         ->thousandsSeparator(','), // Add a separator for thousands.
