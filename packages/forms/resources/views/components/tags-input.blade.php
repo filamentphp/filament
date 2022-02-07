@@ -57,6 +57,7 @@
 
             <div
                 x-show="state.length"
+                x-cloak
                 class="overflow-hidden rtl:space-x-reverse relative w-full p-2"
             >
                 <div class="flex flex-wrap gap-1">
