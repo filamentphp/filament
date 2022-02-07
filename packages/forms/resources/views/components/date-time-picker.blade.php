@@ -70,7 +70,7 @@
                 ])
             />
 
-            <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center pr-2 rtl:pl-2 pointer-events-none">
+            <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2">
                 <svg @class([
                     'w-5 h-5 text-gray-400',
                     'dark:text-gray-400' => config('forms.dark_mode'),
@@ -198,17 +198,21 @@
                                 @class([
                                     'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
                                     'dark:text-gray-200' => config('forms.dark_mode'),
-                                    'bg-gray-50 dark:bg-gray-800' => $hasDate(),
+                                    'bg-gray-50' => $hasDate(),
+                                    'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
                                 ])
                             />
 
                             @if ($hasSeconds())
                                 <span
                                     @class([
-                                        'text-xl font-medium text-gray-700 dark:text-gray-200',
-                                        'bg-gray-50 dark:bg-gray-800' => $hasDate(),
+                                        'text-xl font-medium text-gray-700',
+                                        'dark:text-gray-200' => config('forms.dark_mode'),
+                                        'bg-gray-50' => $hasDate(),
+                                        'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
                                     ])
                                 >:</span>
+
 
                                 <input
                                     max="59"
@@ -217,8 +221,10 @@
                                     inputmode="numeric"
                                     x-model.debounce="second"
                                     @class([
-                                        'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none dark:text-gray-200',
-                                        'bg-gray-50 dark:bg-gray-800' => $hasDate(),
+                                        'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
+                                        'dark:text-gray-200' => config('forms.dark_mode'),
+                                        'bg-gray-50' => $hasDate(),
+                                        'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
                                     ])
                                 />
                             @endif
