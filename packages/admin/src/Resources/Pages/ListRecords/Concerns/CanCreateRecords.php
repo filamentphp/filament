@@ -1,9 +1,10 @@
 <?php
 
-namespace Filament\Resources\Pages\Concerns;
+namespace Filament\Resources\Pages\ListRecords\Concerns;
 
 use Filament\Pages\Actions\ButtonAction;
 use Filament\Pages\Actions\Modal;
+use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 

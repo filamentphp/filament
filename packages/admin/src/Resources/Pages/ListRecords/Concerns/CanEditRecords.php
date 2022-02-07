@@ -1,13 +1,16 @@
 <?php
 
-namespace Filament\Resources\Pages\Concerns;
+namespace Filament\Resources\Pages\ListRecords\Concerns;
 
+use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 trait CanEditRecords
 {
+    use UsesResourceForm;
+
     protected function hasEditAction(): bool
     {
         return true;

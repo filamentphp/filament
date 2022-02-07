@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Resources\Pages\Concerns;
+namespace Filament\Resources\Pages\ListRecords\Concerns;
 
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Collection;
