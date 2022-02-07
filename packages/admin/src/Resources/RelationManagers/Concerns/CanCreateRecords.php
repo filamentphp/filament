@@ -84,11 +84,11 @@ trait CanCreateRecords
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
             ->modalActions([
-                ButtonAction::make('submit')
+                ButtonAction::make('create')
                     ->label(__('filament::resources/relation-managers/create.action.modal.actions.create.label'))
                     ->submit('callMountedTableAction')
                     ->color('primary'),
-                ButtonAction::make('submit')
+                ButtonAction::make('createAndCreateAnother')
                     ->label(__('filament::resources/relation-managers/create.action.modal.actions.create_and_create_another.label'))
                     ->action('createAndCreateAnother')
                     ->color('secondary'),

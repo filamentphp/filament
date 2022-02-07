@@ -24,11 +24,11 @@ trait CanCreateRecords
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
             ->modalActions([
-                Modal\Actions\ButtonAction::make('submit')
+                Modal\Actions\ButtonAction::make('create')
                     ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create.label'))
                     ->submit('callMountedAction')
                     ->color('primary'),
-                Modal\Actions\ButtonAction::make('submit')
+                Modal\Actions\ButtonAction::make('createAndCreateAnother')
                     ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create_and_create_another.label'))
                     ->action('createAndCreateAnother')
                     ->color('secondary'),
