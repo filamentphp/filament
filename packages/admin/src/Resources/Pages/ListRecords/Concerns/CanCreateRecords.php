@@ -14,11 +14,7 @@ trait CanCreateRecords
 
     protected function hasCreateAction(): bool
     {
-        if (! static::getResource()::canCreate()) {
-            return false;
-        }
-
-        return true;
+        return static::getResource()::canCreate();
     }
 
     protected function getCreateAction(): ButtonAction
