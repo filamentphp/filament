@@ -171,7 +171,7 @@ trait HasState
     public function hydrateNullState(): static
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->getChildComponentContainers()) {
+            if ($component->hasChildComponentContainer()) {
                 foreach ($component->getChildComponentContainers() as $container) {
                     $container->hydrateNullState();
                 }
