@@ -4,9 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Collection;
-use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use Livewire\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
