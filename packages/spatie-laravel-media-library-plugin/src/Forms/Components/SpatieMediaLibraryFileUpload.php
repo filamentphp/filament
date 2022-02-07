@@ -47,12 +47,6 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         $this->dehydrated(false);
 
         $this->getUploadedFileUrlUsing(function (SpatieMediaLibraryFileUpload $component, string $file): ?string {
-            /** @var FilesystemAdapter $storage */
-            $storage = $component->getDisk();
-
-            /** @var \League\Flysystem\Filesystem $storageDriver */
-            $storageDriver = $storage->getDriver();
-
             if (! $component->getRecord()) {
                 return null;
             }
@@ -62,10 +56,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             /** @var ?Media $media */
             $media = $mediaClass::findByUuid($file);
 
-            if (
-                $storageDriver->getAdapter() instanceof AwsS3Adapter &&
-                $this->getVisibility() === 'private'
-            ) {
+            if ($this->getVisibility() === 'private') {
                 return $media?->getTemporaryUrl(now()->addMinutes(5));
             }
 

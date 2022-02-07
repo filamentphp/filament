@@ -101,13 +101,7 @@ class ImageColumn extends Column
         /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
 
-        /** @var \League\Flysystem\Filesystem $storageDriver */
-        $storageDriver = $storage->getDriver();
-
-        if (
-            $storageDriver->getAdapter() instanceof AwsS3Adapter &&
-            $storage->getVisibility($state) === 'private'
-        ) {
+        if ($storage->getVisibility($state) === 'private') {
             return $storage->temporaryUrl(
                 $state,
                 now()->addMinutes(5),

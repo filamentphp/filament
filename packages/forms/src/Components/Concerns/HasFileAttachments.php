@@ -107,13 +107,7 @@ trait HasFileAttachments
         /** @var FilesystemAdapter $storage */
         $storage = $this->getFileAttachmentsDisk();
 
-        /** @var \League\Flysystem\Filesystem $storageDriver */
-        $storageDriver = $storage->getDriver();
-
-        if (
-            $storageDriver->getAdapter() instanceof AwsS3Adapter &&
-            $storage->getVisibility($file) === 'private'
-        ) {
+        if ($storage->getVisibility($file) === 'private') {
             return $storage->temporaryUrl(
                 $file,
                 now()->addMinutes(5),
