@@ -1,12 +1,34 @@
 <?php
 
-namespace Filament\Resources\RelationManagers\Concerns;
+namespace Filament\Resources\Pages\ListRecords\Concerns;
 
+use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 trait CanEditRecords
 {
+    use UsesResourceForm;
+
+    protected function hasEditAction(): bool
+    {
+        return true;
+    }
+
+    protected function getEditAction(): Tables\Actions\Action
+    {
+        $resource = static::getResource();
+
+        return parent::getEditAction()
+            ->url(null)
+            ->form($this->getEditFormSchema())
+            ->mountUsing(fn () => $this->fillEditForm())
+            ->modalButton(__('filament::resources/pages/list-records.table.actions.edit.modal.actions.save.label'))
+            ->modalHeading(fn (Model $record) => __('filament::resources/pages/list-records.table.actions.edit.modal.heading', ['label' => $resource::hasRecordTitle() ? $resource::getRecordTitle($record) : Str::title($resource::getLabel())]))
+            ->action(fn () => $this->save());
+    }
+
     protected function canEdit(Model $record): bool
     {
         return $this->can('update', $record);
@@ -66,18 +88,5 @@ trait CanEditRecords
     protected function mutateFormDataBeforeSave(array $data): array
     {
         return $data;
-    }
-
-    protected function getEditAction(): Tables\Actions\Action
-    {
-        return config('filament.layout.tables.actions.type')::make('edit')
-            ->label(__('filament::resources/relation-managers/edit.action.label'))
-            ->form($this->getEditFormSchema())
-            ->mountUsing(fn () => $this->fillEditForm())
-            ->modalButton(__('filament::resources/relation-managers/edit.action.modal.actions.save.label'))
-            ->modalHeading(__('filament::resources/relation-managers/edit.action.modal.heading', ['label' => static::getRecordLabel()]))
-            ->action(fn () => $this->save())
-            ->icon('heroicon-o-pencil')
-            ->hidden(fn (Model $record): bool => ! static::canEdit($record));
     }
 }

@@ -27,7 +27,7 @@ trait CanDeleteRecords
         $this->callHook('afterDelete');
     }
 
-    protected function getDeleteTableAction(): Tables\Actions\Action
+    protected function getDeleteAction(): Tables\Actions\Action
     {
         return config('filament.layout.tables.actions.type')::make('delete')
             ->label(__('filament::resources/relation-managers/delete.action.label'))
@@ -39,7 +39,7 @@ trait CanDeleteRecords
             ->hidden(fn (Model $record): bool => ! static::canDelete($record));
     }
 
-    protected function getDeleteTableBulkAction(): Tables\Actions\BulkAction
+    protected function getDeleteBulkAction(): Tables\Actions\BulkAction
     {
         return Tables\Actions\BulkAction::make('delete')
             ->label(__('filament::resources/relation-managers/delete.bulk_action.label'))

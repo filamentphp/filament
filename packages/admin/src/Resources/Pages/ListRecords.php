@@ -43,12 +43,13 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             $resource = static::getResource();
 
             $table->actions(array_merge(
-                ($resource::hasPage('view') ? [$this->getViewTableAction()] : []),
-                ($resource::hasPage('edit') ? [$this->getEditTableAction()] : []),
+                ($this->hasViewAction() ? [$this->getViewAction()] : []),
+                ($this->hasEditAction() ? [$this->getEditAction()] : []),
+                ($this->hasDeleteAction() ? [$this->getDeleteAction()] : []),
             ));
 
             if ($resource::canDeleteAny()) {
-                $table->bulkActions([$this->getDeleteTableBulkAction()]);
+                $table->bulkActions([$this->getDeleteBulkAction()]);
             }
 
             $this->resourceTable = $this->table($table);
@@ -57,12 +58,27 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return $this->resourceTable;
     }
 
+    protected function hasDeleteAction(): bool
+    {
+        return $this->getDeleteAction() !== null;
+    }
+
+    protected function hasEditAction(): bool
+    {
+        return static::getResource()::hasPage('edit');
+    }
+
+    protected function hasViewAction(): bool
+    {
+        return static::getResource()::hasPage('view');
+    }
+
     protected function table(Table $table): Table
     {
         return static::getResource()::table($table);
     }
 
-    protected function getViewTableAction(): Tables\Actions\Action
+    protected function getViewAction(): Tables\Actions\Action
     {
         $resource = static::getResource();
 
@@ -73,7 +89,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->hidden(fn (Model $record): bool => ! $resource::canView($record));
     }
 
-    protected function getEditTableAction(): Tables\Actions\Action
+    protected function getEditAction(): Tables\Actions\Action
     {
         $resource = static::getResource();
 
@@ -84,15 +100,34 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->hidden(fn (Model $record): bool => ! $resource::canEdit($record));
     }
 
-    protected function getDeleteTableBulkAction(): Tables\Actions\BulkAction
+    protected function getDeleteAction(): ?Tables\Actions\Action
+    {
+        return null;
+    }
+
+    protected function getDeleteBulkAction(): Tables\Actions\BulkAction
     {
         return Tables\Actions\BulkAction::make('delete')
             ->label(__('filament::resources/pages/list-records.table.bulk_actions.delete.label'))
-            ->action(fn (Collection $records) => $records->each(fn (Model $record) => $record->delete()))
+            ->action(fn () => $this->bulkDelete())
             ->requiresConfirmation()
             ->deselectRecordsAfterCompletion()
             ->color('danger')
             ->icon('heroicon-o-trash');
+    }
+
+    public function bulkDelete(): void
+    {
+        $this->callHook('beforeBulkDelete');
+
+        $this->handleRecordBulkDeletion($this->getSelectedTableRecords());
+
+        $this->callHook('afterBulkDelete');
+    }
+
+    protected function handleRecordBulkDeletion(Collection $records): void
+    {
+        $records->each(fn (Model $record) => $record->delete());
     }
 
     protected function getTitle(): string
@@ -102,16 +137,27 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function getActions(): array
     {
-        $resource = static::getResource();
-
-        if (! $resource::canCreate()) {
+        if (! $this->hasCreateAction()) {
             return [];
         }
 
-        return [$this->getCreateButtonAction()];
+        return [$this->getCreateAction()];
     }
 
-    protected function getCreateButtonAction(): ButtonAction
+    protected function hasCreateAction(): bool
+    {
+        if (! static::getResource()::hasPage('create')) {
+            return false;
+        }
+
+        if (! static::getResource()::canCreate()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function getCreateAction(): ButtonAction
     {
         $resource = static::getResource();
         $label = $resource::getLabel();
@@ -161,11 +207,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return function (Model $record): ?string {
             $resource = static::getResource();
 
-            if ($resource::canEdit($record)) {
+            if ($resource::hasPage('edit') && $resource::canEdit($record)) {
                 return $resource::getUrl('edit', ['record' => $record]);
             }
 
-            if ($resource::canView($record)) {
+            if ($resource::hasPage('view') && $resource::canView($record)) {
                 return $resource::getUrl('view', ['record' => $record]);
             }
 
@@ -181,5 +227,10 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function getForms(): array
     {
         return array_merge(parent::getForms(), $this->getTableForms());
+    }
+
+    protected function getMountedActionFormModel(): string
+    {
+        return static::getModel();
     }
 }

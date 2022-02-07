@@ -31,7 +31,7 @@ trait CanDetachRecords
         $this->callHook('afterDetach');
     }
 
-    protected function getDetachTableAction(): Tables\Actions\Action
+    protected function getDetachAction(): Tables\Actions\Action
     {
         return config('filament.layout.tables.actions.type')::make('detach')
             ->label(__('filament::resources/relation-managers/detach.action.label'))
@@ -43,7 +43,7 @@ trait CanDetachRecords
             ->hidden(fn (Model $record): bool => ! static::canDetach($record));
     }
 
-    protected function getDetachTableBulkAction(): Tables\Actions\BulkAction
+    protected function getDetachBulkAction(): Tables\Actions\BulkAction
     {
         return Tables\Actions\BulkAction::make('detach')
             ->label(__('filament::resources/relation-managers/detach.bulk_action.label'))

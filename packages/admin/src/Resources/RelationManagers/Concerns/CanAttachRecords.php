@@ -136,18 +136,18 @@ trait CanAttachRecords
         $this->attach(another: true);
     }
 
-    protected function getAttachButtonTableHeaderAction(): Tables\Actions\ButtonAction
+    protected function getAttachAction(): Tables\Actions\ButtonAction
     {
         return Tables\Actions\ButtonAction::make('attach')
             ->label(__('filament::resources/relation-managers/attach.action.label'))
             ->form($this->getAttachFormSchema())
             ->mountUsing(fn () => $this->fillAttachForm())
             ->modalActions([
-                ButtonAction::make('submit')
+                ButtonAction::make('attach')
                     ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach.label'))
                     ->submit('callMountedTableAction')
                     ->color('primary'),
-                ButtonAction::make('submit')
+                ButtonAction::make('attachAndAttachAnother')
                     ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach_and_attach_another.label'))
                     ->action('attachAndAttachAnother')
                     ->color('secondary'),

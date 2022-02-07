@@ -198,7 +198,8 @@ class Page extends Component implements Forms\Contracts\HasForms
         return [
             'mountedActionForm' => $this->makeForm()
                 ->schema(($action = $this->getMountedAction()) ? $action->getFormSchema() : [])
-                ->statePath('mountedActionData'),
+                ->statePath('mountedActionData')
+                ->model($this->getMountedActionFormModel()),
         ];
     }
 }

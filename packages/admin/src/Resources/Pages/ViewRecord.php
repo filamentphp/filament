@@ -4,6 +4,7 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
@@ -55,14 +56,18 @@ class ViewRecord extends Page
     {
         $resource = static::getResource();
 
+        if (! $resource::hasPage('view')) {
+            return [];
+        }
+
         if (! $resource::canEdit($this->record)) {
             return [];
         }
 
-        return [$this->getEditButtonAction()];
+        return [$this->getEditAction()];
     }
 
-    protected function getEditButtonAction(): ButtonAction
+    protected function getEditAction(): ButtonAction
     {
         return ButtonAction::make('edit')
             ->label(__('filament::resources/pages/view-record.actions.edit.label'))
@@ -91,5 +96,10 @@ class ViewRecord extends Page
                 ->schema($this->getResourceForm()->getSchema())
                 ->statePath('data'),
         ]);
+    }
+
+    protected function getMountedActionFormModel(): Model
+    {
+        return $this->record;
     }
 }

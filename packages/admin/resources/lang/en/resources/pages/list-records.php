@@ -7,7 +7,27 @@ return [
     'actions' => [
 
         'create' => [
+
             'label' => 'New :label',
+
+            'modal' => [
+
+                'heading' => 'Create :label',
+
+                'actions' => [
+
+                    'create' => [
+                        'label' => 'Create',
+                    ],
+
+                    'create_and_create_another' => [
+                        'label' => 'Create & create another',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -16,8 +36,28 @@ return [
 
         'actions' => [
 
+            'delete' => [
+                'label' => 'Delete',
+            ],
+
             'edit' => [
+
                 'label' => 'Edit',
+
+                'modal' => [
+
+                    'heading' => 'Edit :label',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Save',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'view' => [

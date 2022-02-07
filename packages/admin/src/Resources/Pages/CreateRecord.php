@@ -96,20 +96,20 @@ class CreateRecord extends Page
     protected function getFormActions(): array
     {
         return [
-            $this->getCreateButtonFormAction(),
-            $this->getCreateAndCreateAnotherButtonFormAction(),
-            $this->getCancelButtonFormAction(),
+            $this->getCreateFormAction(),
+            $this->getCreateAndCreateAnotherFormAction(),
+            $this->getCancelFormAction(),
         ];
     }
 
-    protected function getCreateButtonFormAction(): ButtonAction
+    protected function getCreateFormAction(): ButtonAction
     {
         return ButtonAction::make('create')
             ->label(__('filament::resources/pages/create-record.form.actions.create.label'))
             ->submit('create');
     }
 
-    protected function getCreateAndCreateAnotherButtonFormAction(): ButtonAction
+    protected function getCreateAndCreateAnotherFormAction(): ButtonAction
     {
         return ButtonAction::make('createAnother')
             ->label(__('filament::resources/pages/create-record.form.actions.create_and_create_another.label'))
@@ -117,7 +117,7 @@ class CreateRecord extends Page
             ->color('secondary');
     }
 
-    protected function getCancelButtonFormAction(): ButtonAction
+    protected function getCancelFormAction(): ButtonAction
     {
         return ButtonAction::make('cancel')
             ->label(__('filament::resources/pages/create-record.form.actions.cancel.label'))
@@ -150,14 +150,19 @@ class CreateRecord extends Page
     {
         $resource = static::getResource();
 
-        if ($resource::canEdit($this->record)) {
+        if ($resource::hasPage('edit') && $resource::canEdit($this->record)) {
             return $resource::getUrl('edit', ['record' => $this->record]);
         }
 
-        if ($resource::canView($this->record)) {
+        if ($resource::hasPage('view') && $resource::canView($this->record)) {
             return $resource::getUrl('view', ['record' => $this->record]);
         }
 
         return null;
+    }
+
+    protected function getMountedActionFormModel(): string
+    {
+        return static::getModel();
     }
 }
