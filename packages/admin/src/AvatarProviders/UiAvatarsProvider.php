@@ -3,7 +3,6 @@
 namespace Filament\AvatarProviders;
 
 use Filament\Facades\Filament;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
 class UiAvatarsProvider implements Contracts\AvatarProvider
