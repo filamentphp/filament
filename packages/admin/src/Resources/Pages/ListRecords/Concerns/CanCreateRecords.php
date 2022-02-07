@@ -41,11 +41,6 @@ trait CanCreateRecords
             ->action(fn () => $this->create());
     }
 
-    protected function canCreate(): bool
-    {
-        return $this->can('create');
-    }
-
     protected function getCreateFormSchema(): array
     {
         return $this->getResourceForm()->getSchema();

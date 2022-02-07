@@ -9,7 +9,7 @@ class MirrorConfigToSubpackages
 {
     public function handle(Request $request, Closure $next)
     {
-        $config = app()->config;
+        $config = config();
 
         $darkMode = $config->get('filament.dark_mode');
         $config->set('forms.dark_mode', $darkMode);

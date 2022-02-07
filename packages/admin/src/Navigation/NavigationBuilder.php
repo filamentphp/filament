@@ -12,8 +12,8 @@ class NavigationBuilder
 
     public function group(string $name, array $items = []): static
     {
-        $this->groups[$name] = collect($items)->each(
-            fn (NavigationItem $item, $i) => $item->group($name)->sort($i)
+        $this->groups[$name] = collect($items)->map(
+            fn (NavigationItem $item, int $index) => $item->group($name)->sort($index),
         )->toArray();
 
         return $this;

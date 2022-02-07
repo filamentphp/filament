@@ -27,12 +27,6 @@ class BelongsToManyMultiSelect extends MultiSelect
             $relationship = $component->getRelationship();
             $relatedModels = $relationship->getResults();
 
-            if (! $relatedModels) {
-                $component->state([]);
-
-                return;
-            }
-
             $component->state(
                 // Cast the related keys to a string, otherwise JavaScript does not
                 // know how to handle deselection.

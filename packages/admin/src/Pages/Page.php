@@ -92,16 +92,8 @@ class Page extends Component implements Forms\Contracts\HasForms
 
     public function render(): View
     {
-        $view = view(static::$view, $this->getViewData());
-
-        /*
-         * Livewire uses a macro for the `layout()` method.
-         *
-         * @phpstan-ignore-next-line
-         */
-        $view->layout(static::$layout, $this->getLayoutData());
-
-        return $view;
+        return view(static::$view, $this->getViewData())
+            ->layout(static::$layout, $this->getLayoutData());
     }
 
     protected function getBreadcrumbs(): array

@@ -80,17 +80,9 @@ class Login extends Component implements HasForms
 
     public function render(): View
     {
-        $view = view('filament::login');
-
-        /*
-         * Livewire uses a macro for the `layout()` method.
-         *
-         * @phpstan-ignore-next-line
-         */
-        $view->layout('filament::components.layouts.base', [
-            'title' => __('filament::login.title'),
-        ]);
-
-        return $view;
+        return view('filament::login')
+            ->layout('filament::components.layouts.base', [
+                'title' => __('filament::login.title'),
+            ]);
     }
 }

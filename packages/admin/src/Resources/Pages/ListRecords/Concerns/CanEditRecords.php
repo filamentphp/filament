@@ -29,11 +29,6 @@ trait CanEditRecords
             ->action(fn () => $this->save());
     }
 
-    protected function canEdit(Model $record): bool
-    {
-        return $this->can('update', $record);
-    }
-
     protected function getEditFormSchema(): array
     {
         return $this->getResourceForm()->getSchema();

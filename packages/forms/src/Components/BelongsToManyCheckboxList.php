@@ -24,12 +24,6 @@ class BelongsToManyCheckboxList extends CheckboxList
             $relationship = $component->getRelationship();
             $relatedModels = $relationship->getResults();
 
-            if (! $relatedModels) {
-                $component->state([]);
-
-                return;
-            }
-
             $component->state(
                 // Cast the related keys to a string, otherwise Livewire does not
                 // know how to handle deselection.
