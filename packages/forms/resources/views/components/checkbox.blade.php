@@ -12,6 +12,7 @@
         <x-slot name="labelPrefix">
     @endif
             <input
+                {!! $getState() ? 'checked' : null !!}
                 {!! $isAutofocused() ? 'autofocus' : null !!}
                 {!! $isDisabled() ? 'disabled' : null !!}
                 id="{{ $getId() }}"

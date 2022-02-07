@@ -30,6 +30,7 @@
             @foreach ($getOptions() as $value => $label)
                 <option
                     value="{{ $value }}"
+                    {!! $value === $getState() ? 'selected' : null !!}
                     {!! $isOptionDisabled($value, $label) ? 'disabled' : null !!}
                 >
                     {{ $label }}
