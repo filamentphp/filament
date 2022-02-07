@@ -135,8 +135,8 @@
 >
     <x-tables::container>
         <div
-            x-show="hasHeader = ({{ ($header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible) ? 'true' : 'false' }} || selectedRecords.length)"
-            x-cloak
+            x-show="hasHeader = ({{ ($renderHeader = ($header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible)) ? 'true' : 'false' }} || selectedRecords.length)"
+            {!! ! $renderHeader ? 'x-cloak' : null !!}
         >
             @if ($header)
                 {{ $header }}
@@ -157,8 +157,8 @@
             @endif
 
             <div
-                x-show="{{ ($isSearchVisible || $isFiltersDropdownVisible) ? 'true' : 'false' }} || selectedRecords.length"
-                x-cloak
+                x-show="{{ ($renderHeaderDiv = ($isSearchVisible || $isFiltersDropdownVisible)) ? 'true' : 'false' }} || selectedRecords.length"
+                {!! ! $renderHeaderDiv ? 'x-cloak' : null !!}
                 class="flex items-center justify-between p-2 h-14"
             >
                 <div>
@@ -193,6 +193,8 @@
             @class([
                 'overflow-y-auto relative',
                 'dark:border-gray-700' => config('tables.dark_mode'),
+                'rounded-t-xl' => ! $renderHeader,
+                'border-t' => $renderHeader,
             ])
             x-bind:class="{
                 'rounded-t-xl': ! hasHeader,
