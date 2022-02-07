@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
-use League\Flysystem\AwsS3v3\AwsS3Adapter;
 
 class ImageColumn extends Column
 {
@@ -101,13 +100,7 @@ class ImageColumn extends Column
         /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
 
-        /** @var \League\Flysystem\Filesystem $storageDriver */
-        $storageDriver = $storage->getDriver();
-
-        if (
-            $storageDriver->getAdapter() instanceof AwsS3Adapter &&
-            $storage->getVisibility($state) === 'private'
-        ) {
+        if ($storage->getVisibility($state) === 'private') {
             return $storage->temporaryUrl(
                 $state,
                 now()->addMinutes(5),

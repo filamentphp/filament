@@ -10,7 +10,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use Livewire\TemporaryUploadedFile;
 
 class BaseFileUpload extends Field
@@ -93,13 +92,7 @@ class BaseFileUpload extends Field
             /** @var FilesystemAdapter $storage */
             $storage = $component->getDisk();
 
-            /** @var \League\Flysystem\Filesystem $storageDriver */
-            $storageDriver = $storage->getDriver();
-
-            if (
-                $storageDriver->getAdapter() instanceof AwsS3Adapter &&
-                $storage->getVisibility($file) === 'private'
-            ) {
+            if ($storage->getVisibility($file) === 'private') {
                 return $storage->temporaryUrl(
                     $file,
                     now()->addMinutes(5),
