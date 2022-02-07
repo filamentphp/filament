@@ -4,6 +4,7 @@ namespace Filament\Pages\Concerns;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property ComponentContainer $mountedActionForm
@@ -101,6 +102,11 @@ trait HasActions
     public function getMountedActionForm(): ComponentContainer
     {
         return $this->mountedActionForm;
+    }
+
+    protected function getMountedActionFormModel(): Model | string | null
+    {
+        return null;
     }
 
     protected function getCachedAction(string $name): ?Action

@@ -105,12 +105,12 @@ class Resource
 
     public static function canCreate(): bool
     {
-        return static::hasPage('create') && static::can('create');
+        return static::can('create');
     }
 
     public static function canEdit(Model $record): bool
     {
-        return static::hasPage('edit') && static::can('update', $record);
+        return static::can('update', $record);
     }
 
     public static function canDelete(Model $record): bool
@@ -130,7 +130,7 @@ class Resource
 
     public static function canView(Model $record): bool
     {
-        return static::hasPage('view') && static::can('view', $record);
+        return static::can('view', $record);
     }
 
     public static function getBreadcrumb(): string

@@ -24,19 +24,19 @@ class BelongsToManyRelationManager extends RelationManager
             $table = Table::make();
 
             $table->actions([
-                $this->getEditTableAction(),
-                $this->getDetachTableAction(),
-                $this->getDeleteTableAction(),
+                $this->getEditAction(),
+                $this->getDetachAction(),
+                $this->getDeleteAction(),
             ]);
 
             $table->bulkActions(array_merge(
-                ($this->canDeleteAny() ? [$this->getDeleteTableBulkAction()] : []),
-                ($this->canDetachAny() ? [$this->getDetachTableBulkAction()] : []),
+                ($this->canDeleteAny() ? [$this->getDeleteBulkAction()] : []),
+                ($this->canDetachAny() ? [$this->getDetachBulkAction()] : []),
             ));
 
             $table->headerActions(array_merge(
-                ($this->canCreate() ? [$this->getCreateButtonTableHeaderAction()] : []),
-                ($this->canAttach() ? [$this->getAttachButtonTableHeaderAction()] : []),
+                ($this->canCreate() ? [$this->getCreateAction()] : []),
+                ($this->canAttach() ? [$this->getAttachAction()] : []),
             ));
 
             $this->resourceTable = static::table($table);

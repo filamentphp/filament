@@ -136,7 +136,7 @@ trait CanAttachRecords
         $this->attach(another: true);
     }
 
-    protected function getAttachButtonTableHeaderAction(): Tables\Actions\ButtonAction
+    protected function getAttachAction(): Tables\Actions\ButtonAction
     {
         return Tables\Actions\ButtonAction::make('attach')
             ->label(__('filament::resources/relation-managers/attach.action.label'))

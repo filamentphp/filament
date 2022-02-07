@@ -13,11 +13,11 @@ trait HasRecordBreadcrumb
         ];
 
         if ($resource::hasRecordTitle()) {
-            if ($resource::canEdit($this->record)) {
+            if ($resource::hasPage('edit') && $resource::canEdit($this->record)) {
                 $breadcrumbs[
                     $resource::getUrl('edit', ['record' => $this->record])
                 ] = $this->getRecordTitle();
-            } elseif ($resource::canView($this->record)) {
+            } elseif ($resource::hasPage('view') && $resource::canView($this->record)) {
                 $breadcrumbs[
                     $resource::getUrl('view', ['record' => $this->record])
                 ] = $this->getRecordTitle();

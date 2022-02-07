@@ -77,7 +77,7 @@ trait CanCreateRecords
         return $data;
     }
 
-    protected function getCreateButtonTableHeaderAction(): Tables\Actions\ButtonAction
+    protected function getCreateAction(): Tables\Actions\ButtonAction
     {
         return Tables\Actions\ButtonAction::make('create')
             ->label(__('filament::resources/relation-managers/create.action.label'))

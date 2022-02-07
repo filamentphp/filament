@@ -18,16 +18,16 @@ class HasManyRelationManager extends RelationManager
             $table = Table::make();
 
             $table->actions([
-                $this->getEditTableAction(),
-                $this->getDeleteTableAction(),
+                $this->getEditAction(),
+                $this->getDeleteAction(),
             ]);
 
             if ($this->canDeleteAny()) {
-                $table->bulkActions([$this->getDeleteTableBulkAction()]);
+                $table->bulkActions([$this->getDeleteBulkAction()]);
             }
 
             if ($this->canCreate()) {
-                $table->headerActions([$this->getCreateButtonTableHeaderAction()]);
+                $table->headerActions([$this->getCreateAction()]);
             }
 
             $this->resourceTable = static::table($table);

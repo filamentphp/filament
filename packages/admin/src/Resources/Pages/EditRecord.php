@@ -121,12 +121,12 @@ class EditRecord extends Page
         $resource = static::getResource();
 
         return array_merge(
-            ($resource::canView($this->record) ? [$this->getViewButtonAction()] : []),
-            ($resource::canDelete($this->record) ? [$this->getDeleteButtonAction()] : []),
+            (($resource::hasPage('view') && $resource::canView($this->record)) ? [$this->getViewAction()] : []),
+            ($resource::canDelete($this->record) ? [$this->getDeleteAction()] : []),
         );
     }
 
-    protected function getViewButtonAction(): ButtonAction
+    protected function getViewAction(): ButtonAction
     {
         return ButtonAction::make('view')
             ->label(__('filament::resources/pages/edit-record.actions.view.label'))
@@ -134,7 +134,7 @@ class EditRecord extends Page
             ->color('secondary');
     }
 
-    protected function getDeleteButtonAction(): ButtonAction
+    protected function getDeleteAction(): ButtonAction
     {
         return ButtonAction::make('delete')
             ->label(__('filament::resources/pages/edit-record.actions.delete.label'))
@@ -166,19 +166,19 @@ class EditRecord extends Page
     protected function getFormActions(): array
     {
         return [
-            $this->getSaveButtonFormAction(),
-            $this->getCancelButtonFormAction(),
+            $this->getSaveFormAction(),
+            $this->getCancelFormAction(),
         ];
     }
 
-    protected function getSaveButtonFormAction(): ButtonAction
+    protected function getSaveFormAction(): ButtonAction
     {
         return ButtonAction::make('save')
             ->label(__('filament::resources/pages/edit-record.form.actions.save.label'))
             ->submit('save');
     }
 
-    protected function getCancelButtonFormAction(): ButtonAction
+    protected function getCancelFormAction(): ButtonAction
     {
         return ButtonAction::make('cancel')
             ->label(__('filament::resources/pages/edit-record.form.actions.cancel.label'))
@@ -204,5 +204,10 @@ class EditRecord extends Page
     protected function getDeleteRedirectUrl(): ?string
     {
         return static::getResource()::getUrl('index');
+    }
+
+    protected function getMountedActionFormModel(): Model
+    {
+        return $this->record;
     }
 }
