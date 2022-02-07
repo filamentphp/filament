@@ -13,43 +13,43 @@ Filament is a collection of tools for rapidly building beautiful TALL stack inte
 
 ## Packages
 
-### Admin Panel • [Documentation](https://filamentadmin.com/docs/admin) • [Demo](https://demo.filamentadmin.com)
+### Admin Panel • [Documentation](https://filamentphp.com/docs/admin) • [Demo](https://demo.filamentphp.com)
 
 ```bash
 composer require filament/filament
 ```
 
-### Form Builder • [Documentation](https://filamentadmin.com/docs/forms)
+### Form Builder • [Documentation](https://filamentphp.com/docs/forms)
 
 ```bash
 composer require filament/forms
 ```
 
-### Table Builder • [Documentation](https://filamentadmin.com/docs/tables)
+### Table Builder • [Documentation](https://filamentphp.com/docs/tables)
 
 ```bash
 composer require filament/tables
 ```
 
-### spatie/laravel-medialibrary Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-media-library-plugin)
+### spatie/laravel-medialibrary Plugin • [Documentation](https://filamentphp.com/docs/spatie-laravel-media-library-plugin)
 
 ```bash
 composer require filament/spatie-laravel-media-library-plugin
 ```
 
-### spatie/laravel-settings Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-settings-plugin)
+### spatie/laravel-settings Plugin • [Documentation](https://filamentphp.com/docs/spatie-laravel-settings-plugin)
 
 ```bash
 composer require filament/spatie-laravel-settings-plugin
 ```
 
-### spatie/laravel-tags Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-tags-plugin)
+### spatie/laravel-tags Plugin • [Documentation](https://filamentphp.com/docs/spatie-laravel-tags-plugin)
 
 ```bash
 composer require filament/spatie-laravel-tags-plugin
 ```
 
-### spatie/laravel-translatable Plugin • [Documentation](https://filamentadmin.com/docs/spatie-laravel-translatable-plugin)
+### spatie/laravel-translatable Plugin • [Documentation](https://filamentphp.com/docs/spatie-laravel-translatable-plugin)
 
 ```bash
 composer require filament/spatie-laravel-translatable-plugin

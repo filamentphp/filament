@@ -247,7 +247,7 @@ use Filament\Forms\Components\Placeholder;
 use Illuminate\Support\HtmlString;
 
 Placeholder::make('Documentation')
-    ->content(new HtmlString('<a href="https://filamentadmin.com/docs">filamentadmin.com</a>'))
+    ->content(new HtmlString('<a href="https://filamentphp.com/docs">filamentphp.com</a>'))
 ```
 
 ## Card

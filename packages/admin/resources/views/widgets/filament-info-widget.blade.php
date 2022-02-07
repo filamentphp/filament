@@ -3,7 +3,7 @@
         <div class="relative h-12 flex flex-col justify-center items-center space-y-2 rtl:space-x-reverse">
             <div class="space-y-1">
                 <a
-                    href="https://filamentadmin.com"
+                    href="https://filamentphp.com"
                     target="_blank"
                     rel="noopener noreferrer"
                     @class([
@@ -22,7 +22,7 @@
 
             <div class="text-sm flex space-x-2">
                 <a
-                    href="https://filamentadmin.com/docs"
+                    href="https://filamentphp.com/docs"
                     target="_blank"
                     rel="noopener noreferrer"
                     @class([
