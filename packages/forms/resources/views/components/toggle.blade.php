@@ -21,7 +21,6 @@
                     'bg-primary-600': state,
                     'bg-gray-200 @if (config('forms.dark_mode')) dark:bg-gray-700 @endif': ! state,
                 }"
-                x-cloak
                 {!! $isAutofocused() ? 'autofocus' : null !!}
                 {!! $isDisabled() ? 'disabled' : null !!}
                 id="{{ $getId() }}"
