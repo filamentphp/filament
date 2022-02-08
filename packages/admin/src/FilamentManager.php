@@ -37,6 +37,8 @@ class FilamentManager
 
     protected ?Closure $navigationBuilder = null;
 
+    public static $darkMode = false;
+
     public function auth(): Guard
     {
         return auth()->guard(config('filament.auth.guard'));
@@ -271,5 +273,16 @@ class FilamentManager
             ->unique()
             ->sortBy(fn (string $widget): int => $widget::getSort())
             ->toArray();
+    }
+
+    public static function darkMode(bool|null $darkMode = null): bool | FilamentManager
+    {
+        if (is_null($darkMode)) {
+            return static::$darkMode;
+        }
+        static::$darkMode = $darkMode;
+        config(['filament.dark_mode' => static::$darkMode]);
+
+        return new static;
     }
 }
