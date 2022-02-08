@@ -8,6 +8,21 @@ return [
 
         'create' => [
             'label' => 'Nouveau :label',
+            'modal' => [
+
+                'heading' => 'Nouveau :label',
+
+                'actions' => [
+
+                    'create' => [
+                        'label' => 'Nouveau',
+                    ],
+
+                    'create_and_create_another' => [
+                        'label' => 'Créer & Ajouter un autre',
+                    ],
+
+                ],
         ],
 
     ],
