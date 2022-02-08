@@ -44,7 +44,11 @@ trait Translatable
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $record->setLocale($this->activeFormLocale)->fill($data)->save();
+        $jsonValues = collect($data)->filter(fn($value, $key) => $record->isTranslatableAttribute($key) && is_array($value));
+        $jsonValues->each(fn($value, $key) => $record->setTranslation($key, $this->activeFormLocale, $value));
+
+        $values = collect($data)->except($jsonValues->keys()->toArray())->toArray();
+        $record->setLocale($this->activeFormLocale)->fill($values)->save();
 
         return $record;
     }

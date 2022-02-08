@@ -27,9 +27,14 @@ trait Translatable
 
     protected function handleRecordCreation(array $data): Model
     {
-        $record = static::getModel()::usingLocale(
-            $this->activeFormLocale,
-        )->fill($data);
+        $model = static::getModel()::newModelInstance();
+        $jsonValues = collect($data)->filter(fn($value, $key) => $model->isTranslatableAttribute($key) && is_array($value));
+
+        $values = collect($data)->except($jsonValues->keys()->toArray())->toArray();
+        $record = $model->setLocale($this->activeFormLocale)->fill($values);
+
+        $jsonValues->each(fn($value, $key) => $record->setTranslation($key, $this->activeFormLocale, $value));
+
         $record->save();
 
         return $record;
