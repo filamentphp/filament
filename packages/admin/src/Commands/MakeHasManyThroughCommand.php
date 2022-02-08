@@ -12,7 +12,7 @@ class MakeHasManyThroughCommand extends Command
 
     protected $description = 'Creates a Filament HasManyThrough relation manager class for a resource.';
 
-    protected $signature = 'make:filament-has-many-through {resource?} {relationship?} {recordTitleAttribute?}';
+    protected $signature = 'make:filament-has-many-through {resource?} {relationship?} {recordTitleAttribute?} {--F|force}';
 
     public function handle(): int
     {
@@ -43,7 +43,7 @@ class MakeHasManyThroughCommand extends Command
                 ->append('.php'),
         );
 
-        if ($this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $path,
         ])) {
             return static::INVALID;

@@ -12,7 +12,7 @@ class MakeHasManyCommand extends Command
 
     protected $description = 'Creates a Filament HasMany relation manager class for a resource.';
 
-    protected $signature = 'make:filament-has-many {resource?} {relationship?} {recordTitleAttribute?}';
+    protected $signature = 'make:filament-has-many {resource?} {relationship?} {recordTitleAttribute?} {--F|force}';
 
     public function handle(): int
     {
@@ -43,7 +43,7 @@ class MakeHasManyCommand extends Command
                 ->append('.php'),
         );
 
-        if ($this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $path,
         ])) {
             return static::INVALID;

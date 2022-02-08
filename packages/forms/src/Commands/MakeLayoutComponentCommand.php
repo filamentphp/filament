@@ -12,7 +12,7 @@ class MakeLayoutComponentCommand extends Command
 
     protected $description = 'Creates a form layout component class and view.';
 
-    protected $signature = 'make:form-layout {name?}';
+    protected $signature = 'make:form-layout {name?} {--F|force}';
 
     public function handle(): int
     {
@@ -45,7 +45,7 @@ class MakeLayoutComponentCommand extends Command
                 ->append('.blade.php'),
         );
 
-        if ($this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $path,
         ])) {
             return static::INVALID;

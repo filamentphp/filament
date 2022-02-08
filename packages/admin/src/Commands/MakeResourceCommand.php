@@ -13,7 +13,7 @@ class MakeResourceCommand extends Command
 
     protected $description = 'Creates a Filament resource class and default page classes.';
 
-    protected $signature = 'make:filament-resource {name?} {--G|generate} {--S|simple}';
+    protected $signature = 'make:filament-resource {name?} {--G|generate} {--S|simple} {--F|force}';
 
     public function handle(): int
     {
@@ -51,7 +51,7 @@ class MakeResourceCommand extends Command
         $createResourcePagePath = "{$resourcePagesDirectory}/{$createResourcePageClass}.php";
         $editResourcePagePath = "{$resourcePagesDirectory}/{$editResourcePageClass}.php";
 
-        if ($this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $resourcePath,
             $listResourcePagePath,
             $manageResourcePagePath,

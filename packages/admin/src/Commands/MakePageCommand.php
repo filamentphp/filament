@@ -12,7 +12,7 @@ class MakePageCommand extends Command
 
     protected $description = 'Creates a Filament page class and view.';
 
-    protected $signature = 'make:filament-page {name?} {--R|resource=}';
+    protected $signature = 'make:filament-page {name?} {--R|resource=} {--F|force}';
 
     public function handle(): int
     {
@@ -66,7 +66,7 @@ class MakePageCommand extends Command
                 ->append('.blade.php'),
         );
 
-        if ($this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $path,
             $viewPath,
         ])) {
