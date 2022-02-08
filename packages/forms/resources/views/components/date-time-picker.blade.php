@@ -51,7 +51,7 @@
             @endunless
             type="button"
             {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full h-10 border pl-3 pr-10 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600',
+                'bg-white relative w-full border py-2 pl-3 pr-10 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600',
                 'dark:bg-gray-700' => config('forms.dark_mode'),
                 'border-gray-300' => ! $errors->has($getStatePath()),
                 'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
@@ -65,7 +65,7 @@
                 x-model="displayText"
                 {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
                 @class([
-                    'w-full h-full px-0 py-2 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none',
+                    'w-full h-full placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none',
                     'dark:bg-gray-700 dark:placeholder-gray-400' => config('forms.dark_mode'),
                 ])
             />
