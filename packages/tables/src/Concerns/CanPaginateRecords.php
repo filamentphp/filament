@@ -46,9 +46,14 @@ trait CanPaginateRecords
         return [5, 10, 25, 50];
     }
 
+    protected function getInitialTableRecordsPerPageSelectOption(): int
+    {
+        return 10;
+    }
+
     protected function getDefaultTableRecordsPerPageSelectOption(): int
     {
-        $perPage = session()->get($this->getTablePerPageSessionKey(), 10);
+        $perPage = session()->get($this->getTablePerPageSessionKey(), $this->getInitialTableRecordsPerPageSelectOption());
 
         if (in_array($perPage, $this->getTableRecordsPerPageSelectOptions())) {
             return $perPage;
@@ -73,7 +78,7 @@ trait CanPaginateRecords
     {
         $table = class_basename($this::class);
 
-        return $table . '_per_page';
+        return $table.'_per_page';
     }
 
     public function resetPage(?string $pageName = null): void
