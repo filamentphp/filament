@@ -75,7 +75,7 @@ trait CanPaginateRecords
     {
         $table = class_basename($this::class);
 
-        return $table.'_per_page';
+        return $table . '_per_page';
     }
 
     public function resetPage(?string $pageName = null): void
