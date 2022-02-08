@@ -22586,7 +22586,7 @@ var textarea_default = (Alpine) => {
     render: function() {
       if (this.$el.scrollHeight > 0) {
         this.$el.style.height = "150px";
-        this.$el.style.height = this.$el.scrollHeight + "px";
+        this.$el.style.height = this.$el.scrollHeight + 2 + "px";
       }
     }
   }));
