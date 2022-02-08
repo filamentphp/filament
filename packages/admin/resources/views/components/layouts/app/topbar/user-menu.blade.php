@@ -50,7 +50,7 @@
     <div
         x-on:click="isOpen = ! isOpen"
         @class([
-            'flex-shrink-0 w-10 h-10 rounded-full bg-gray-200 bg-cover bg-center',
+            'cursor-pointer flex-shrink-0 w-10 h-10 rounded-full bg-gray-200 bg-cover bg-center',
             'dark:bg-gray-900' => config('filament.dark_mode'),
         ])
         style="background-image: url('{{ \Filament\Facades\Filament::getUserAvatarUrl($user) }}')"
