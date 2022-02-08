@@ -50,7 +50,7 @@
     <div
         x-on:click="isOpen = ! isOpen"
         @class([
-            'flex-shrink-0 w-10 h-10 rounded-full bg-gray-200 bg-cover bg-center',
+            'cursor-pointer flex-shrink-0 w-10 h-10 rounded-full bg-gray-200 bg-cover bg-center',
             'dark:bg-gray-900' => config('filament.dark_mode'),
         ])
         style="background-image: url('{{ \Filament\Facades\Filament::getUserAvatarUrl($user) }}')"
@@ -73,7 +73,7 @@
             'dark:border-gray-600 dark:bg-gray-700' => config('filament.dark_mode'),
         ])>
             <li class="flex items-center w-full h-8 px-3 text-sm font-medium">
-                <x-heroicon-s-user-circle class="mr-2 -ml-1 rtl:ml-2 rtl:-mr-1 w-6 h-6 text-gray-500" />
+                <x-heroicon-s-user-circle class="mr-2 -ml-1 rtl:ml-2 rtl:-mr-1 w-6 h-6 text-gray-500"/>
 
                 {{ \Filament\Facades\Filament::getUserName($user) }}
             </li>
