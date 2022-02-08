@@ -12,6 +12,18 @@ You may create a `resources/views/vendor/filament/components/brand.blade.php` fi
 <img src="{{ asset('/images/logo.svg') }}" alt="Logo" class="h-10">
 ```
 
+## Dark mode
+
+By default, Filament only includes a light theme. However, you may allow the user to switch to dark mode if they wish, using the `dark_mode` setting of the [configuration file](installation#publishing-the-configuration):
+
+```php
+'dark_mode' => true,
+```
+
+When dark mode is enabled, the admin panel will automatically obey your system's dark / light mode preference. You may switch to dark / light mode permanently through the button in the user dropdown menu.
+
+> Please note: before enabling dark mode in production, please thoroughly test your admin panel - especially third party plugins, which may not be properly tested with dark mode.
+
 ## Building themes
 
 Filament allows you to change the fonts and color scheme used in the UI, by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".
