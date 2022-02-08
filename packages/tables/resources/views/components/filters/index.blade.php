@@ -5,13 +5,13 @@
 
 <div
     x-data="{ isOpen: false }"
-    x-cloak
     {{ $attributes->class(['relative inline-block filament-tables-filters']) }}
 >
     <x-tables::filters.trigger />
 
     <div
         x-show="isOpen"
+        x-cloak
         x-on:click.away="isOpen = false"
         x-transition:enter="ease duration-300"
         x-transition:enter-start="opacity-0 -translate-y-2"

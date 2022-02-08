@@ -35,7 +35,8 @@
         @if ($shouldAutosize())
             x-data="textareaFormComponent()"
             x-on:input="render()"
+            style="height: 150px"
             {{ $getExtraAlpineAttributeBag() }}
         @endif
-    ></textarea>
+    >{{ $getState() }}</textarea>
 </x-forms::field-wrapper>

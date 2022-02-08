@@ -67,11 +67,11 @@
                     />
 
                     <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center pr-2 rtl:pr-0 rtl:pl-2 pointer-events-none">
-                        <svg x-show="! isLoading" x-cloak class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <svg x-show="! isLoading" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                             <path stroke="#6B7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4" />
                         </svg>
 
-                        <svg x-show="isLoading" class="animate-spin w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <svg x-show="isLoading" x-cloak class="animate-spin w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z" />>
                         </svg>
                     </span>
@@ -151,6 +151,7 @@
 
         <div
             x-show="state.length"
+            x-cloak
             class="overflow-hidden rtl:space-x-reverse relative w-full p-2"
         >
             <div class="flex flex-wrap gap-1">

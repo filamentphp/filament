@@ -18,7 +18,7 @@
             <x-heroicon-o-chevron-down :class="\Illuminate\Support\Arr::toCssClasses([
                 'w-3 h-3 text-gray-600',
                 'dark:text-gray-300' => config('filament.dark_mode'),
-            ])" x-show="$store.sidebar.groupIsCollapsed(label)" />
+            ])" x-show="$store.sidebar.groupIsCollapsed(label)" x-cloak />
 
             <x-heroicon-o-chevron-up :class="\Illuminate\Support\Arr::toCssClasses([
                 'w-3 h-3 text-gray-600',

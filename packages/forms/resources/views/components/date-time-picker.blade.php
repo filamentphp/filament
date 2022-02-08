@@ -60,6 +60,9 @@
             ]) }}
         >
             <input
+                @if (filled($getState()))
+                    value="{{ (new DateTime($getState()))->format($getDisplayFormat()) }}"
+                @endif
                 readonly
                 placeholder="{{ $getPlaceholder() }}"
                 x-model="displayText"

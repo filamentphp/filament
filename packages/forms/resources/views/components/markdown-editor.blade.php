@@ -13,7 +13,6 @@
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
             tab: '{{ $isDisabled() ? 'preview' : 'edit' }}',
         })"
-        x-cloak
         wire:ignore
         {{ $attributes->merge($getExtraAttributes())->class('filament-forms-markdown-editor-component') }}
         {{ $getExtraAlpineAttributeBag() }}
@@ -159,7 +158,10 @@
                                 <button
                                     x-on:click.prevent="tab = 'preview'"
                                     x-bind:class="{ 'text-gray-400 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': tab !== 'preview' }"
-                                    class="text-sm hover:underline"
+                                    @class([
+                                        'text-sm hover:underline',
+                                        'text-gray-400' . (config('forms.dark_mode') ? ' dark:text-gray-400' : null),
+                                    ])
                                 >
                                     {{ __('forms::components.markdown_editor.toolbar_buttons.preview') }}
                                 </button>
@@ -208,7 +210,6 @@
                             })
                         "
                         x-ref="textarea"
-                        style="color: transparent"
                         @class([
                             'tracking-normal whitespace-pre-wrap overflow-y-hidden font-mono block absolute bg-transparent top-0 text-sm left-0 block z-1 w-full h-full min-h-full resize-none transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600 caret-black',
                             'dark:caret-white' => config('forms.dark_mode'),
@@ -216,7 +217,7 @@
                             'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                         ])
-                    ></textarea>
+                    >{{ $getState() }}</textarea>
                 </file-attachment>
 
                 <div
@@ -233,7 +234,7 @@
             <div @class([
                 'block w-full h-full min-h-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-primary-300',
                 'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
-            ]) x-show="tab === 'preview'" style="min-height: 150px;">
+            ]) x-show="tab === 'preview'" x-cloak style="min-height: 150px;">
                 <div @class([
                     'prose',
                     'dark:prose-invert' => config('forms.dark_mode'),

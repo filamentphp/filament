@@ -21,22 +21,25 @@
                     'bg-primary-600': state,
                     'bg-gray-200 @if (config('forms.dark_mode')) dark:bg-gray-700 @endif': ! state,
                 }"
-                x-cloak
                 {!! $isAutofocused() ? 'autofocus' : null !!}
                 {!! $isDisabled() ? 'disabled' : null !!}
                 id="{{ $getId() }}"
                 type="button"
                 {{ $attributes->merge($getExtraAttributes())->class([
-                    'relative inline-flex shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500 bg-gray-200 filament-forms-toggle-component',
+                    'relative inline-flex shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500 filament-forms-toggle-component',
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
+                    'bg-primary-600' => $getState(),
+                    'bg-gray-200' . (config('forms.dark_mode') ? ' dark:bg-gray-700' : null) => ! $getState(),
                 ]) }}
                 {{ $getExtraAlpineAttributeBag() }}
             >
                 <span
                     @class([
-                        'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 ease-in-out transition duration-200 translate-x-0',
+                        'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 ease-in-out transition duration-200',
                         'dark:bg-gray-800' => config('forms.dark_mode'),
+                        'translate-x-5 rtl:-translate-x-5' => $getState(),
+                        'translate-x-0' => ! $getState(),
                     ])
                     :class="{
                         'translate-x-5 rtl:-translate-x-5': state,
@@ -44,7 +47,11 @@
                     }"
                 >
                     <span
-                        class="absolute inset-0 h-full w-full flex items-center justify-center transition-opacity opacity-100 ease-in duration-200"
+                        @class([
+                            'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity',
+                            'opacity-0 ease-out duration-100' => $getState(),
+                            'opacity-100 ease-in duration-200' => ! $getState(),
+                        ])
                         aria-hidden="true"
                         :class="{
                             'opacity-0 ease-out duration-100': state,
@@ -57,7 +64,11 @@
                     </span>
 
                     <span
-                        class="absolute inset-0 h-full w-full flex items-center justify-center transition-opacity opacity-0 ease-out duration-100"
+                        @class([
+                            'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity',
+                            'opacity-100 ease-in duration-200' => $getState(),
+                            'opacity-0 ease-out duration-100' => ! $getState(),
+                        ])
                         aria-hidden="true"
                         :class="{
                             'opacity-100 ease-in duration-200': state,
