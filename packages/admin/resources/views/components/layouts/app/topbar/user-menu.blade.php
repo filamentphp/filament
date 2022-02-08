@@ -73,7 +73,7 @@
             'dark:border-gray-600 dark:bg-gray-700' => config('filament.dark_mode'),
         ])>
             <li class="flex items-center w-full h-8 px-3 text-sm font-medium">
-                <x-heroicon-s-user-circle class="mr-2 -ml-1 rtl:ml-2 rtl:-mr-1 w-6 h-6 text-gray-500"/>
+                <x-heroicon-s-user-circle class="mr-2 -ml-1 rtl:ml-2 rtl:-mr-1 w-6 h-6 text-gray-500" />
 
                 {{ \Filament\Facades\Filament::getUserName($user) }}
             </li>
