@@ -12,7 +12,7 @@ class MakeWidgetCommand extends Command
 
     protected $description = 'Creates a Filament widget class.';
 
-    protected $signature = 'make:filament-widget {name?} {--R|resource=}';
+    protected $signature = 'make:filament-widget {name?} {--R|resource=} {--F|force}';
 
     public function handle(): int
     {
@@ -66,7 +66,7 @@ class MakeWidgetCommand extends Command
                 ->append('.blade.php'),
         );
 
-        if ($this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $path,
             $viewPath,
         ])) {

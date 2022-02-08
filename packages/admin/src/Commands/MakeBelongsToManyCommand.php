@@ -12,7 +12,7 @@ class MakeBelongsToManyCommand extends Command
 
     protected $description = 'Creates a Filament BelongsToMany relation manager class for a resource.';
 
-    protected $signature = 'make:filament-belongs-to-many {resource?} {relationship?} {recordTitleAttribute?}';
+    protected $signature = 'make:filament-belongs-to-many {resource?} {relationship?} {recordTitleAttribute?} {--F|force}';
 
     public function handle(): int
     {
@@ -43,7 +43,7 @@ class MakeBelongsToManyCommand extends Command
                 ->append('.php'),
         );
 
-        if ($this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $path,
         ])) {
             return static::INVALID;

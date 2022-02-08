@@ -8,5 +8,5 @@ class MakeFieldCommand extends Commands\MakeFieldCommand
 {
     protected $hidden = true;
 
-    protected $signature = 'forms:field {name}';
+    protected $signature = 'forms:field {name} {--F|force}';
 }

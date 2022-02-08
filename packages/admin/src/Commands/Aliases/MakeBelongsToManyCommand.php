@@ -8,5 +8,5 @@ class MakeBelongsToManyCommand extends Commands\MakeHasManyCommand
 {
     protected $hidden = true;
 
-    protected $signature = 'filament:belongs-to-many {resource?} {relationship?} {recordTitleAttribute?}';
+    protected $signature = 'filament:belongs-to-many {resource?} {relationship?} {recordTitleAttribute?} {--F|force}';
 }

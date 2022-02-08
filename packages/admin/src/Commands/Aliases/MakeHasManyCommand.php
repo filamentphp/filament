@@ -8,5 +8,5 @@ class MakeHasManyCommand extends Commands\MakeHasManyCommand
 {
     protected $hidden = true;
 
-    protected $signature = 'filament:has-many {resource?} {relationship?} {recordTitleAttribute?}';
+    protected $signature = 'filament:has-many {resource?} {relationship?} {recordTitleAttribute?} {--F|force}';
 }
