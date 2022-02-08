@@ -15,6 +15,8 @@ trait CanPaginateRecords
 
     public $tableRecordsPerPage;
 
+    protected int $defaultTableRecordsPerPageSelectOption = 10;
+
     public function updatedTableRecordsPerPage(): void
     {
         session()->put([
@@ -48,7 +50,7 @@ trait CanPaginateRecords
 
     protected function getDefaultTableRecordsPerPageSelectOption(): int
     {
-        $perPage = session()->get($this->getTablePerPageSessionKey(), 10);
+        $perPage = session()->get($this->getTablePerPageSessionKey(), $this->defaultTableRecordsPerPageSelectOption);
 
         if (in_array($perPage, $this->getTableRecordsPerPageSelectOptions())) {
             return $perPage;
