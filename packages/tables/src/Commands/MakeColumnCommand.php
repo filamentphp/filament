@@ -12,7 +12,7 @@ class MakeColumnCommand extends Command
 
     protected $description = 'Creates a table column class and cell view.';
 
-    protected $signature = 'make:table-column {name?}';
+    protected $signature = 'make:table-column {name?} {--F|force}';
 
     public function handle(): int
     {
@@ -45,7 +45,7 @@ class MakeColumnCommand extends Command
                 ->append('.blade.php'),
         );
 
-        if ($this->checkForCollision([
+        if (!$this->option('force') && $this->checkForCollision([
             $path,
         ])) {
             return static::INVALID;
