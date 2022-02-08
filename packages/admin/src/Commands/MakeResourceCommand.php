@@ -13,11 +13,11 @@ class MakeResourceCommand extends Command
 
     protected $description = 'Creates a Filament resource class and default page classes.';
 
-    protected $signature = 'make:filament-resource {name?} {--G|generate} {--S|simple}';
+    protected $signature = 'make:filament-resource {model?} {--N|name=} {--G|generate} {--S|simple}';
 
     public function handle(): int
     {
-        $model = (string) Str::of($this->argument('name') ?? $this->askRequired('Model (e.g. `BlogPost`)', 'name'))
+        $model = (string) Str::of($this->argument('model') ?? $this->askRequired('Model (e.g. `BlogPost`)', 'model'))
             ->studly()
             ->beforeLast('Resource')
             ->trim('/')
@@ -31,13 +31,23 @@ class MakeResourceCommand extends Command
             '';
         $pluralModelClass = (string) Str::of($modelClass)->pluralStudly();
 
-        $resource = "{$model}Resource";
-        $resourceClass = "{$modelClass}Resource";
+        $resourceName = (string) Str::of($this->option('name') ?? $model)
+            ->studly()
+            ->beforeLast('Resource')
+            ->trim('/')
+            ->trim('\\')
+            ->trim(' ')
+            ->studly()
+            ->replace('/', '\\');
+        $pluralResourceName = (string) Str::of($resourceName)->pluralStudly();
+
+        $resource = "{$resourceName}Resource";
+        $resourceClass = "{$resourceName}Resource";
         $resourceNamespace = $modelNamespace;
-        $listResourcePageClass = "List{$pluralModelClass}";
-        $manageResourcePageClass = "Manage{$pluralModelClass}";
-        $createResourcePageClass = "Create{$modelClass}";
-        $editResourcePageClass = "Edit{$modelClass}";
+        $listResourcePageClass = "List{$pluralResourceName}";
+        $manageResourcePageClass = "Manage{$pluralResourceName}";
+        $createResourcePageClass = "Create{$resourceName}";
+        $editResourcePageClass = "Edit{$resourceName}";
 
         $baseResourcePath = app_path(
             (string) Str::of($resource)
@@ -50,6 +60,16 @@ class MakeResourceCommand extends Command
         $manageResourcePagePath = "{$resourcePagesDirectory}/{$manageResourcePageClass}.php";
         $createResourcePagePath = "{$resourcePagesDirectory}/{$createResourcePageClass}.php";
         $editResourcePagePath = "{$resourcePagesDirectory}/{$editResourcePageClass}.php";
+
+        $resourceNameParts = $this->option('name') ? <<<RNP
+
+    protected static ?string \$slug = '$resourceName';
+
+    protected static ?string \$label = '$resourceName';
+
+    protected static ?string \$pluralLabel = '$pluralResourceName';
+
+RNP : '';
 
         if ($this->checkForCollision([
             $resourcePath,
@@ -72,6 +92,7 @@ class MakeResourceCommand extends Command
             'resource' => $resource,
             'resourceClass' => $resourceClass,
             'tableColumns' => $this->option('generate') ? $this->getResourceTableColumns("App\Models\\{$model}") : $this->indentString('//'),
+            'resourceNameParts' => $resourceNameParts,
         ]);
 
         if ($this->option('simple')) {
