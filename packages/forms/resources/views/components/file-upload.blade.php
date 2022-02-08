@@ -46,6 +46,7 @@
             },
         })"
         wire:ignore
+        style="min-height: 76px"
         {{ $attributes->merge($getExtraAttributes())->class([
             'filament-forms-file-upload-component',
             'w-32 mx-auto' => $isAvatar(),
