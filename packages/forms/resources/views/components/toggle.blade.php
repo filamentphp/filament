@@ -30,7 +30,7 @@
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
                     'bg-primary-600' => $getState(),
-                    'bg-gray-200' . (config('forms.dark_mode') ? 'dark:bg-gray-700' : null) => ! $getState(),
+                    'bg-gray-200' . (config('forms.dark_mode') ? ' dark:bg-gray-700' : null) => ! $getState(),
                 ]) }}
                 {{ $getExtraAlpineAttributeBag() }}
             >
