@@ -43,7 +43,7 @@ class MakeMorphManyCommand extends Command
                 ->append('.php'),
         );
 
-        if (!$this->option('force') && $this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $path,
         ])) {
             return static::INVALID;

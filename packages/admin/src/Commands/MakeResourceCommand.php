@@ -51,7 +51,7 @@ class MakeResourceCommand extends Command
         $createResourcePagePath = "{$resourcePagesDirectory}/{$createResourcePageClass}.php";
         $editResourcePagePath = "{$resourcePagesDirectory}/{$editResourcePageClass}.php";
 
-        if (!$this->option('force') && $this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $resourcePath,
             $listResourcePagePath,
             $manageResourcePagePath,
