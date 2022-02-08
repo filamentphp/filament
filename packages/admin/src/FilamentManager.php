@@ -283,6 +283,6 @@ class FilamentManager
         static::$darkMode = $darkMode;
         config(['filament.dark_mode' => static::$darkMode]);
 
-        return new static;
+        return new static();
     }
 }
