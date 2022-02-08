@@ -10,7 +10,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use Livewire\TemporaryUploadedFile;
 
 class BaseFileUpload extends Field
