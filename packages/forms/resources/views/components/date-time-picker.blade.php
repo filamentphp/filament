@@ -60,8 +60,10 @@
             ]) }}
         >
             <input
+                @if (filled($getState()))
+                    value="{{ DateTime::createFromFormat($getFormat(), $getState())->format($getDisplayFormat()) }}"
+                @endif
                 readonly
-                value="{{ $getState() ? DateTime::createFromFormat($getFormat(), $getState())->format($getDisplayFormat()) : null }}"
                 placeholder="{{ $getPlaceholder() }}"
                 x-model="displayText"
                 {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
