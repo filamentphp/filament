@@ -27,7 +27,6 @@
                 })
             })
         "
-        x-cloak
         wire:ignore
         {{ $attributes->merge($getExtraAttributes())->class(['space-y-2 filament-forms-rich-editor-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
@@ -241,7 +240,7 @@
                     @endif
                 </div>
 
-                <div data-trix-dialogs class="trix-dialogs">
+                <div data-trix-dialogs class="trix-dialogs" x-cloak>
                     <div
                         data-trix-dialog="href"
                         data-trix-dialog-attribute="href"
@@ -290,7 +289,7 @@
                     'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                 ])
-            />
+            >{{ $getState() }}</trix-editor>
         @else
             <div x-html="state" @class([
                 'p-3 prose border border-gray-300 rounded-lg shadow-sm',

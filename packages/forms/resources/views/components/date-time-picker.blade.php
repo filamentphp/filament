@@ -61,7 +61,7 @@
         >
             <input
                 @if (filled($getState()))
-                    value="{{ DateTime::createFromFormat($getFormat(), $getState())->format($getDisplayFormat()) }}"
+                    value="{{ (new DateTime($getState()))->format($getDisplayFormat()) }}"
                 @endif
                 readonly
                 placeholder="{{ $getPlaceholder() }}"
