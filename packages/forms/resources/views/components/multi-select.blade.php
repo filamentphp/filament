@@ -108,7 +108,7 @@
                                     'text-white bg-primary-500': index === focusedOptionIndex,
                                     'text-gray-900 @if (config('forms.dark_mode')) dark:text-gray-200 @endif': index !== focusedOptionIndex,
                                 }"
-                                class="relative py-2 pl-3 h-10 flex items-center text-gray-900 cursor-default select-none pr-9"
+                                class="relative py-2 pl-3 flex items-center text-gray-900 cursor-default select-none pr-9"
                             >
                                 <span
                                     x-text="Object.values(options)[index]"
