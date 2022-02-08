@@ -100,7 +100,11 @@ class ImageColumn extends Column
         /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
 
-        if ($storage->getVisibility($state) === 'private') {
+        // An ugly mess as we need to support both Flysystem v1 and v3.
+        $storageAdapter = method_exists($storage, 'getAdapter') ? $storage->getAdapter() : (method_exists($storage->getDriver(), 'getAdapter') ? $storage->getDriver()->getAdapter() : null);
+        $supportsTemporaryUrls = method_exists($storageAdapter, 'getTemporaryUrl');
+
+        if ($storage->getVisibility($state) === 'private' && $supportsTemporaryUrls) {
             return $storage->temporaryUrl(
                 $state,
                 now()->addMinutes(5),
