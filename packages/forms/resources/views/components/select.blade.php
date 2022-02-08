@@ -70,7 +70,7 @@
                     tabindex="1"
                 @endunless
                 @class([
-                    'relative flex items-center py-1 pl-3 pr-10 border bg-white overflow-hidden duration-75 rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600 focus:outline-none',
+                    'relative flex items-center py-2 pl-3 pr-10 border bg-white overflow-hidden duration-75 rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600 focus:outline-none',
                     'dark:bg-gray-700' => config('forms.dark_mode'),
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
@@ -97,7 +97,7 @@
                         type="text"
                         autocomplete="off"
                         @class([
-                            'w-full my-1 p-0 border-0 focus:ring-0 focus:outline-none',
+                            'w-full p-0 border-0 focus:ring-0 focus:outline-none',
                             'dark:bg-gray-700' => config('forms.dark_mode'),
                         ])
                     />
