@@ -46,7 +46,9 @@ class RelationshipRepeater extends Repeater
                 $recordsToDelete[] = $keyToCheckForDeletion;
             }
 
-            $relationship->whereIn($localKeyName, $recordsToDelete)->delete();
+            $relationship->whereIn($localKeyName, $recordsToDelete)->get()->each(function ($record) {
+                $record->delete();
+            });
 
             $childComponentContainers = $component->getChildComponentContainers();
 
