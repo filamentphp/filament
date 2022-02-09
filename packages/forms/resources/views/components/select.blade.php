@@ -84,7 +84,7 @@
                         'absolute w-full bg-white',
                         'dark:bg-gray-700' => config('forms.dark_mode'),
                     ])
-                >{{ $getOptionLabel() }}</span>
+                ></span>
 
                 @unless ($isDisabled())
                     <input
