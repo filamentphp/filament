@@ -15,8 +15,8 @@
         {!! ($cols = $getCols()) ? "cols=\"{$cols}\"" : null !!}
         {!! $isDisabled() ? 'disabled' : null !!}
         id="{{ $getId() }}"
-        {!! ($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
-        {!! ($length = $getMinLength()) ? "minlength=\"{$length}\"" : null !!}
+        {!! filled($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
+        {!! filled($length = $getMinLength()) ? "minlength=\"{$length}\"" : null !!}
         {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
         {!! $isRequired() ? 'required' : null !!}
         {!! ($rows = $getRows()) ? "rows=\"{$rows}\"" : null !!}
