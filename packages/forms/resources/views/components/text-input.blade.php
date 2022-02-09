@@ -46,10 +46,10 @@
                 id="{{ $getId() }}"
                 {!! ($inputMode = $getInputMode()) ? "inputmode=\"{$inputMode}\"" : null !!}
                 {!! $datalistOptions ? "list=\"{$getId()}-list\"" : null !!}
-                {!! ($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
-                {!! ($value = $getMaxValue()) ? "max=\"{$value}\"" : null !!}
-                {!! ($length = $getMinLength()) ? "minlength=\"{$length}\"" : null !!}
-                {!! ($value = $getMinValue()) ? "min=\"{$value}\"" : null !!}
+                {!! filled($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
+                {!! filled($value = $getMaxValue()) ? "max=\"{$value}\"" : null !!}
+                {!! filled($length = $getMinLength()) ? "minlength=\"{$length}\"" : null !!}
+                {!! filled($value = $getMinValue()) ? "min=\"{$value}\"" : null !!}
                 {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
                 {!! ($interval = $getStep()) ? "step=\"{$interval}\"" : null !!}
                 {!! $isRequired() ? 'required' : null !!}
