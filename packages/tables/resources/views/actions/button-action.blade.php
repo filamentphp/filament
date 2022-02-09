@@ -21,6 +21,7 @@
     :icon-position="$getIconPosition()"
     size="sm"
     class="filament-tables-button-action"
+    :onlyIcon="$isOnlyIcon"
 >
     {{ $getLabel() }}
 </x-tables::button>
