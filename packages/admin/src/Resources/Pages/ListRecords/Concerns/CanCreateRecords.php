@@ -6,7 +6,7 @@ use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Filament\Pages\Actions\Modal\Actions\ButtonAction as ModalButtonActions;
+use Filament\Pages\Actions\Modal;
 
 trait CanCreateRecords
 {
@@ -37,25 +37,25 @@ trait CanCreateRecords
         ];
     }
 
-    protected function getCreateModalAction(): ModalButtonActions
+    protected function getCreateModalAction(): Modal\Actions\ButtonAction
     {
-        return ModalButtonActions::make('create')
+        return Modal\Actions\ButtonAction::make('create')
         ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create.label'))
         ->submit('callMountedAction')
         ->color('primary');
     }
 
-    protected function getCreateAndCreateAnotherModalAction(): ModalButtonActions
+    protected function getCreateAndCreateAnotherModalAction(): Modal\Actions\ButtonAction
     {
-        return ModalButtonActions::make('createAndCreateAnother')
+        return Modal\Actions\ButtonAction::make('createAndCreateAnother')
         ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create_and_create_another.label'))
         ->action('createAndCreateAnother')
         ->color('secondary');
     }
 
-    protected function getCancelModalAction(): ModalButtonActions
+    protected function getCancelModalAction(): Modal\Actions\ButtonAction
     {
-        return ModalButtonActions::make('cancel')
+        return Modal\Actions\ButtonAction::make('cancel')
         ->label(__('tables::table.actions.modal.buttons.cancel.label'))
         ->cancel()
         ->color('secondary');
