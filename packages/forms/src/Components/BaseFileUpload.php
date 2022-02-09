@@ -409,7 +409,11 @@ class BaseFileUpload extends Field
 
             return;
         }
-
+        
+        if (!is_array($this->getState())) {
+            $this->state([$this->getState()]);
+        }
+        
         $state = array_map(function (TemporaryUploadedFile | string $file) {
             if (! $file instanceof TemporaryUploadedFile) {
                 return $file;
