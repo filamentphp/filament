@@ -24,7 +24,7 @@ export default (Alpine) => {
                 })
 
                 this.$watch('state', () => {
-                    this.mask.unmaskedValue = this.state?.valueOf()
+                    this.mask.unmaskedValue = this.state?.valueOf() ?? ''
                 })
             }
         }

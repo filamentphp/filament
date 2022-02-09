@@ -22570,7 +22570,7 @@ var text_input_default = (Alpine) => {
           this.state = this.mask.unmaskedValue;
         });
         this.$watch("state", () => {
-          this.mask.unmaskedValue = this.state?.valueOf();
+          this.mask.unmaskedValue = this.state?.valueOf() ?? "";
         });
       }
     };
