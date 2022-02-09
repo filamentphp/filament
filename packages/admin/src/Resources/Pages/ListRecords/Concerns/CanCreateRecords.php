@@ -3,10 +3,10 @@
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
 use Filament\Pages\Actions\ButtonAction;
-use Filament\Pages\Actions\Modal;
 use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Filament\Pages\Actions\Modal\Actions\ButtonAction as ModalButtonActions;
 
 trait CanCreateRecords
 {
@@ -23,22 +23,42 @@ trait CanCreateRecords
             ->url(null)
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
-            ->modalActions([
-                Modal\Actions\ButtonAction::make('create')
-                    ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create.label'))
-                    ->submit('callMountedAction')
-                    ->color('primary'),
-                Modal\Actions\ButtonAction::make('createAndCreateAnother')
-                    ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create_and_create_another.label'))
-                    ->action('createAndCreateAnother')
-                    ->color('secondary'),
-                Modal\Actions\ButtonAction::make('cancel')
-                    ->label(__('tables::table.actions.modal.buttons.cancel.label'))
-                    ->cancel()
-                    ->color('secondary'),
-            ])
+            ->modalActions($this->getCreateActionModalActions())
             ->modalHeading(__('filament::resources/pages/list-records.actions.create.modal.heading', ['label' => Str::title(static::getResource()::getLabel())]))
             ->action(fn () => $this->create());
+    }
+
+    protected function getCreateActionModalActions(): array
+    {
+        return [
+            $this->getCreateModalAction(),
+            $this->getCreateAndCreateAnotherModalAction(),
+            $this->getCancelModalAction(),
+        ];
+    }
+
+    protected function getCreateModalAction(): ModalButtonActions
+    {
+        return ModalButtonActions::make('create')
+        ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create.label'))
+        ->submit('callMountedAction')
+        ->color('primary');
+    }
+
+    protected function getCreateAndCreateAnotherModalAction(): ModalButtonActions
+    {
+        return ModalButtonActions::make('createAndCreateAnother')
+        ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create_and_create_another.label'))
+        ->action('createAndCreateAnother')
+        ->color('secondary');
+    }
+
+    protected function getCancelModalAction(): ModalButtonActions
+    {
+        return ModalButtonActions::make('cancel')
+        ->label(__('tables::table.actions.modal.buttons.cancel.label'))
+        ->cancel()
+        ->color('secondary');
     }
 
     protected function getCreateFormSchema(): array

@@ -83,21 +83,41 @@ trait CanCreateRecords
             ->label(__('filament::resources/relation-managers/create.action.label'))
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
-            ->modalActions([
-                ButtonAction::make('create')
-                    ->label(__('filament::resources/relation-managers/create.action.modal.actions.create.label'))
-                    ->submit('callMountedTableAction')
-                    ->color('primary'),
-                ButtonAction::make('createAndCreateAnother')
-                    ->label(__('filament::resources/relation-managers/create.action.modal.actions.create_and_create_another.label'))
-                    ->action('createAndCreateAnother')
-                    ->color('secondary'),
-                ButtonAction::make('cancel')
-                    ->label(__('tables::table.actions.modal.buttons.cancel.label'))
-                    ->cancel()
-                    ->color('secondary'),
-            ])
+            ->modalActions($this->getCreateActionModalActions())
             ->modalHeading(__('filament::resources/relation-managers/create.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->create());
+    }
+
+    protected function getCreateActionModalActions(): array
+    {
+        return [
+            $this->getCreateModalAction(),
+            $this->getCreateAndCreateAnotherModalAction(),
+            $this->getCancelModalAction(),
+        ];
+    }
+
+    protected function getCreateModalAction(): ButtonAction
+    {
+        return ButtonAction::make('create')
+        ->label(__('filament::resources/relation-managers/create.action.modal.actions.create.label'))
+        ->submit('callMountedTableAction')
+        ->color('primary');
+    }
+
+    protected function getCreateAndCreateAnotherModalAction(): ButtonAction
+    {
+        return ButtonAction::make('createAndCreateAnother')
+        ->label(__('filament::resources/relation-managers/create.action.modal.actions.create_and_create_another.label'))
+        ->action('createAndCreateAnother')
+        ->color('secondary');
+    }
+
+    protected function getCancelModalAction(): ButtonAction
+    {
+        return ButtonAction::make('cancel')
+        ->label(__('tables::table.actions.modal.buttons.cancel.label'))
+        ->cancel()
+            ->color('secondary');
     }
 }
