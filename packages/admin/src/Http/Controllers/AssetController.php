@@ -13,7 +13,7 @@ class AssetController
         // and not the parameter named 'file'. This means that the original $file parameter will
         // not be the correct parameter in cases where people use the admin panel with a custom
         // path like "/admin/{userUUID}/".
-//        $file = request()->file ?? $file;
+        $file = request()->file ?? $file;
 
         switch ($file) {
             case 'app.css':
