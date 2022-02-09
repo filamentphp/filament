@@ -4,7 +4,6 @@ namespace Filament\Pages;
 
 use Closure;
 use Filament\Facades\Filament;
-use Filament\FilamentManager;
 use Filament\Forms;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Contracts\View\View;
