@@ -289,7 +289,7 @@
                     'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                 ])
-            >{{ $getState() }}</trix-editor>
+            ></trix-editor>
         @else
             <div x-html="state" @class([
                 'p-3 prose border border-gray-300 rounded-lg shadow-sm',

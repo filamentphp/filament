@@ -38,5 +38,5 @@
             style="height: 150px"
             {{ $getExtraAlpineAttributeBag() }}
         @endif
-    >{{ $getState() }}</textarea>
+    ></textarea>
 </x-forms::field-wrapper>

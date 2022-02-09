@@ -38,8 +38,6 @@
                     @class([
                         'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 ease-in-out transition duration-200',
                         'dark:bg-gray-800' => config('forms.dark_mode'),
-                        'translate-x-5 rtl:-translate-x-5' => $getState(),
-                        'translate-x-0' => ! $getState(),
                     ])
                     :class="{
                         'translate-x-5 rtl:-translate-x-5': state,
@@ -64,11 +62,7 @@
                     </span>
 
                     <span
-                        @class([
-                            'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity',
-                            'opacity-100 ease-in duration-200' => $getState(),
-                            'opacity-0 ease-out duration-100' => ! $getState(),
-                        ])
+                        class="absolute inset-0 h-full w-full flex items-center justify-center transition-opacity"
                         aria-hidden="true"
                         :class="{
                             'opacity-100 ease-in duration-200': state,
