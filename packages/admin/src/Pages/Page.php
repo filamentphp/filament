@@ -84,10 +84,7 @@ class Page extends Component implements Forms\Contracts\HasForms
 
     public function notify(string $status, string $message): void
     {
-        session()->flash('notification', [
-            'message' => $message,
-            'status' => $status,
-        ]);
+        Filament::notify($status, $message);
     }
 
     public function render(): View

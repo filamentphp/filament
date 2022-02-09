@@ -72,7 +72,5 @@
 
     {{ $modals }}
 
-    @if ($notification = session()->get('notification'))
-        <x-filament::notification :message="$notification['message']" :status="$notification['status']" />
-    @endif
+    @livewire('filament.core.pages.notification-manager')
 </div>

@@ -124,6 +124,14 @@ class FilamentManager
         Event::listen(ServingFilament::class, $callback);
     }
 
+    public function notify(string $status, string $message): void
+    {
+        session()->push('notifications', [
+            'message' => $message,
+            'status' => $status,
+        ]);
+    }
+
     public function getNavigation(): array
     {
         if ($this->navigationBuilder !== null) {
