@@ -410,7 +410,7 @@ class BaseFileUpload extends Field
             return;
         }
         
-        if (!is_array($this->getState())) {
+        if (! is_array($this->getState())) {
             $this->state([$this->getState()]);
         }
         
