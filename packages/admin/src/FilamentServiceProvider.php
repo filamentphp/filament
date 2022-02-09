@@ -5,6 +5,7 @@ namespace Filament;
 use Filament\Facades\Filament;
 use Filament\Http\Livewire\Auth\Login;
 use Filament\Http\Livewire\GlobalSearch;
+use Filament\Http\Livewire\NotificationManager;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
 use Filament\Pages\Dashboard;
@@ -90,11 +91,16 @@ class FilamentServiceProvider extends PackageServiceProvider
             MirrorConfigToSubpackages::class,
         ]);
 
+        Livewire::listen('component.hydrate', function ($component) {
+            $this->app->singleton(Component::class, fn () => $component);
+        });
+
         Livewire::component('filament.core.auth.login', Login::class);
         Livewire::component('filament.core.global-search', GlobalSearch::class);
         Livewire::component('filament.core.pages.dashboard', Dashboard::class);
         Livewire::component('filament.core.widgets.account-widget', AccountWidget::class);
         Livewire::component('filament.core.widgets.filament-info-widget', FilamentInfoWidget::class);
+        Livewire::component('filament.core.pages.notification-manager', NotificationManager::class);
 
         $this->registerLivewireComponentDirectory(config('filament.livewire.path'), config('filament.livewire.namespace'), 'filament.');
     }
