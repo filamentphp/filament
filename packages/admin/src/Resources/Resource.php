@@ -31,7 +31,7 @@ class Resource
     protected static ?string $navigationLabel = null;
 
     protected static ?int $navigationSort = null;
-    
+
     protected static ?string $recordRouteKeyName = null;
 
     protected static bool $shouldRegisterNavigation = true;
