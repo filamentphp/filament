@@ -217,7 +217,7 @@
                             'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                         ])
-                    >{{ $getState() }}</textarea>
+                    ></textarea>
                 </file-attachment>
 
                 <div
