@@ -33,7 +33,7 @@
                 @if ($isSortColumn && $sortDirection === 'asc')
                     <x-heroicon-s-chevron-up class="w-3 h-3" />
                 @else
-                    <x-heroicon-s-chevron-down class="\Illuminate\Support\Arr::toCssClasses(['w-3 h-3', 'opacity-50' => ! $isSortColumn])" />
+                    <x-heroicon-s-chevron-down :class="\Illuminate\Support\Arr::toCssClasses(['w-3 h-3', 'opacity-50' => ! $isSortColumn])" />
                 @endif
 
             </span>
