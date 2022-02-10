@@ -21,7 +21,7 @@ return [
         'label' => 'Seçiliyi sil',
 
         'modal' => [
-            'heading' => 'Seçili sil :label',
+            'heading' => 'Seçiliyi sil: :label',
         ],
 
         'messages' => [
