@@ -28,6 +28,20 @@ return [
 
     'path' => env('FILAMENT_PATH', 'admin'),
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Filament Asset Path
+    |--------------------------------------------------------------------------
+    |
+    | This is the path which Filament will use to load it's assets. Default is
+    | `_filament`, but you may change it if it conflicts with your other routes.
+    |
+    */
+
+    'asset_path' => env('FILAMENT_PATH', '_filament'),
+
+
     /*
     |--------------------------------------------------------------------------
     | Filament Domain
