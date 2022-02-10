@@ -11,7 +11,7 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Ayrıldıı',
+            'detached' => 'Ayrıldı',
         ],
 
     ],

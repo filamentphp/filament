@@ -3,7 +3,7 @@
 return [
 
     'field' => [
-        'label' => 'Genele arama',
+        'label' => 'Genel arama',
         'placeholder' => 'Ara',
     ],
 
