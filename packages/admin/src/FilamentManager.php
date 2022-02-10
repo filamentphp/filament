@@ -126,16 +126,20 @@ class FilamentManager
         Event::listen(ServingFilament::class, $callback);
     }
 
-    public function notify(string $status, string $message): void
+    public function notify(string $status, string $message, bool $afterRedirect = false): void
     {
+        if ($afterRedirect) {
+            session()->push('notifications', ['status' => $status, 'message' => $message]);
+
+            return;
+        }
+
         try {
             /** @var \Livewire\Component $component */
             $component = app(Component::class);
         } catch (BindingResolutionException $e) {
             return;
         }
-
-        session()->push('notifications', ['status' => $status, 'message' => $message]);
 
         $component->dispatchBrowserEvent('notify', ['status' => $status, 'message' => $message]);
     }

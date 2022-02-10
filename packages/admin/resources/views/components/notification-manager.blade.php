@@ -7,8 +7,6 @@
                 status: e.detail.status,
                 message: e.detail.message,
             })
-
-            this.$wire.dropNotificationsFromSession()
         },
         remove: function (notification) {
             this.notifications = this.notifications.filter(i => i.id !== notification.id)

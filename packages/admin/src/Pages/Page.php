@@ -82,9 +82,9 @@ class Page extends Component implements Forms\Contracts\HasForms
         return route(static::getRouteName(), $parameters, $absolute);
     }
 
-    public function notify(string $status, string $message): void
+    public function notify(string $status, string $message, bool $afterRedirect = false): void
     {
-        Filament::notify($status, $message);
+        Filament::notify($status, $message, $afterRedirect);
     }
 
     public function render(): View
