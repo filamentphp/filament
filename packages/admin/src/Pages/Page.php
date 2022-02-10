@@ -4,8 +4,8 @@ namespace Filament\Pages;
 
 use Closure;
 use Filament\Facades\Filament;
-use Filament\Http\Livewire\Concerns\CanNotify;
 use Filament\Forms;
+use Filament\Http\Livewire\Concerns\CanNotify;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
