@@ -6,8 +6,8 @@ use Filament\Facades\Filament;
 
 trait CanNotify
 {
-    public function notify(string $status, string $message, bool $afterRedirect = false): void
+    public function notify(string $status, string $message, bool $isAfterRedirect = false): void
     {
-        Filament::notify($status, $message, $afterRedirect);
+        Filament::notify($status, $message, $isAfterRedirect);
     }
 }

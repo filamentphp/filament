@@ -61,6 +61,12 @@ class CreateRecord extends Page
 
         $this->callHook('afterCreate');
 
+        $this->notify(
+            'success',
+            __('filament::resources/pages/create-record.messages.created'),
+            isAfterRedirect: ! $another,
+        );
+
         if ($another) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
             $this->form->model($this->record::class);
@@ -68,14 +74,10 @@ class CreateRecord extends Page
 
             $this->fillForm();
 
-            $this->notify('success', __('filament::resources/pages/create-record.messages.created'));
-
             return;
         }
 
-        if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl);
-        }
+        $this->redirect($this->getRedirectUrl());
     }
 
     public function createAndCreateAnother(): void
@@ -146,7 +148,7 @@ class CreateRecord extends Page
         ]);
     }
 
-    protected function getRedirectUrl(): ?string
+    protected function getRedirectUrl(): string
     {
         $resource = static::getResource();
 

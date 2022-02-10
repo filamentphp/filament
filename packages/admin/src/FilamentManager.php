@@ -126,9 +126,9 @@ class FilamentManager
         Event::listen(ServingFilament::class, $callback);
     }
 
-    public function notify(string $status, string $message, bool $afterRedirect = false): void
+    public function notify(string $status, string $message, bool $isAfterRedirect = false): void
     {
-        if ($afterRedirect) {
+        if ($isAfterRedirect) {
             session()->push('notifications', ['status' => $status, 'message' => $message]);
 
             return;
@@ -137,7 +137,7 @@ class FilamentManager
         try {
             /** @var \Livewire\Component $component */
             $component = app(Component::class);
-        } catch (BindingResolutionException $e) {
+        } catch (BindingResolutionException $exception) {
             return;
         }
 
