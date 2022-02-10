@@ -27,17 +27,20 @@
 
         @if($sortable)
         <span @class([
-                'relative flex-col items-center',
+                'relative flex items-center',
                 'dark:text-gray-300' => config('tables.dark_mode'),
             ])>
 
+            @if($isSortColumn && $sortDirection === 'asc')
             <x-heroicon-s-chevron-up
-                class="w-3 h-3 {{ ($isSortColumn && $sortDirection === 'asc') ? null : 'text-gray-400' }}"
+                class="w-3 h-3"
             />
-
+            @else
             <x-heroicon-s-chevron-down
-                class="w-3 h-3 {{ ($isSortColumn && $sortDirection === 'desc') ? null : 'text-gray-400' }}"
+                class="w-3 h-3 {{ !($isSortColumn && $sortDirection === 'desc') ? 'opacity-50' : null }}"
             />
+            @endif
+
         </span>
         @endif
     </button>
