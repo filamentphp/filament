@@ -11,10 +11,20 @@ Route::domain(config('filament.domain'))
     ->group(function () {
         Route::get('/core/assets/{file}', AssetController::class)->where('file', '.*')->prefix(config('filament.asset_path'))->name('asset');
 
+        if ($loginPage = config('filament.auth.pages.login')) {
+            Route::get('/login', $loginPage)->name('auth.login');
+        }
+
+        Route::get('/logout', function (): RedirectResponse {
+            Filament::auth()->logout();
+
+            session()->invalidate();
+            session()->regenerateToken();
+
+            return redirect()->route('filament.auth.login');
+        })->name('auth.logout');
+
         Route::prefix(config('filament.path'))->group(function () {
-            if ($loginPage = config('filament.auth.pages.login')) {
-                Route::get('/login', $loginPage)->name('auth.login');
-            }
 
             Route::middleware(config('filament.middleware.auth'))->group(function (): void {
                 Route::name('pages.')->group(function (): void {
@@ -28,15 +38,6 @@ Route::domain(config('filament.domain'))
                         Route::group([], $resource::getRoutes());
                     }
                 });
-
-                Route::get('/logout', function (): RedirectResponse {
-                    Filament::auth()->logout();
-
-                    session()->invalidate();
-                    session()->regenerateToken();
-
-                    return redirect()->route('filament.auth.login');
-                })->name('auth.logout');
             });
         });
     });
