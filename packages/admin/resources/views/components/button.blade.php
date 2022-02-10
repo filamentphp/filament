@@ -7,7 +7,7 @@
     'tag' => 'button',
     'type' => 'button',
     'size' => 'md',
-    'outline' => false,
+    'outlined' => false,
 ])
 
 @php
@@ -18,7 +18,7 @@
         'h-9 px-4' => $size === 'md',
         'h-8 px-3 text-sm' => $size === 'sm',
         'h-11 px-6 text-xl' => $size === 'lg',
-    ], $outline ? [
+    ], $outlined ? [
         'focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset',
         'shadow focus:ring-white' => $color !== 'secondary',
         'text-primary-600 border-primary-600 hover:bg-primary-600/20 focus:bg-primary-700/20 focus:ring-offset-primary-700' => $color === 'primary',

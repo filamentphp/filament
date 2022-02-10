@@ -17,7 +17,7 @@
     :href="$getUrl()"
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
     :color="$getColor()"
-    :outline="$isOutline()"
+    :outlined="$isOutlined()"
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
     size="sm"

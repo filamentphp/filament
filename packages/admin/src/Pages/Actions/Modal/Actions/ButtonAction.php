@@ -4,7 +4,7 @@ namespace Filament\Pages\Actions\Modal\Actions;
 
 class ButtonAction extends Action
 {
-    use Concerns\CanBeOutline;
+    use Concerns\CanBeOutlined;
     use Concerns\HasIcon;
 
     protected string $view = 'filament::pages.actions.modal.actions.button-action';

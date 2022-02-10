@@ -6,7 +6,7 @@ use Closure;
 
 class ButtonAction extends Action
 {
-    use Concerns\CanBeOutline;
+    use Concerns\CanBeOutlined;
 
     protected string $view = 'tables::actions.button-action';
 

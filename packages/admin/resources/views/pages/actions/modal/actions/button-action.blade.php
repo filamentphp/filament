@@ -4,7 +4,7 @@
     :wire:click="$getAction()"
     :x-on:click="$canCancelAction() ? 'isOpen = false' : null"
     :color="$getColor()"
-    :outline="$isOutline()"
+    :outlined="$isOutlined()"
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
     class="filament-page-modal-button-action"
