@@ -85,7 +85,7 @@
                 @endif
 
                 @if ($header && ($actions || $heading || $slot->isNotEmpty() || $subheading))
-                    <x-tables::hr />
+                    <x-filament::hr />
                 @endif
 
                 <div class="space-y-2 filament-modal-content">
