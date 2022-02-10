@@ -16,12 +16,13 @@ trait HasActions
     public $mountedActionData = [];
 
     protected ?array $cachedActions = null;
+    protected ?array $cachedFormActions = null;
 
     public function callMountedAction()
     {
         $action = $this->getMountedAction();
 
-        if (! $action) {
+        if (!$action) {
             return;
         }
 
@@ -46,7 +47,7 @@ trait HasActions
 
         $action = $this->getMountedAction();
 
-        if (! $action) {
+        if (!$action) {
             return;
         }
 
@@ -61,13 +62,18 @@ trait HasActions
             'form' => $this->getMountedActionForm(),
         ]);
 
-        if (! $action->shouldOpenModal()) {
+        if (!$action->shouldOpenModal()) {
             return $this->callMountedAction();
         }
 
         $this->dispatchBrowserEvent('open-modal', [
             'id' => 'page-action',
         ]);
+    }
+
+    protected function getAllCachedActions(): array
+    {
+        return array_merge($this->getCachedActions(), $this->getCachedFormActions());
     }
 
     protected function getCachedActions(): array
@@ -77,6 +83,15 @@ trait HasActions
         }
 
         return $this->cachedActions;
+    }
+
+    protected function getCachedFormActions(): array
+    {
+        if ($this->cachedFormActions === null) {
+            $this->cacheFormActions();
+        }
+
+        return $this->cachedFormActions;
     }
 
     protected function cacheActions(): void
@@ -90,9 +105,20 @@ trait HasActions
             ->toArray();
     }
 
+    protected function cacheFormActions(): void
+    {
+        $this->cachedFormActions = collect($this->getFormActions())
+            ->mapWithKeys(function (Action $action): array {
+                $action->livewire($this);
+
+                return [$action->getName() => $action];
+            })
+            ->toArray();
+    }
+
     public function getMountedAction(): ?Action
     {
-        if (! $this->mountedAction) {
+        if (!$this->mountedAction) {
             return null;
         }
 
@@ -111,12 +137,17 @@ trait HasActions
 
     protected function getCachedAction(string $name): ?Action
     {
-        $action = $this->getCachedActions()[$name] ?? null;
+        $action = $this->getAllCachedActions()[$name] ?? null;
 
         return $action;
     }
 
     protected function getActions(): array
+    {
+        return [];
+    }
+
+    protected function getFormActions(): array
     {
         return [];
     }
