@@ -4,7 +4,7 @@
             $locale = strtolower(str_replace('_', '-', app()->getLocale()));
         @endphp
 
-        <script src="//unpkg.com/dayjs@1.10.4/locale/{{ $locale }}.js" onload="dayjs.updateLocale('{{ $locale }}')"></script>
+        <script defer src="//unpkg.com/dayjs@1.10.4/locale/{{ $locale }}.js" onload="dayjs.updateLocale('{{ $locale }}')"></script>
     @endpush
 @endonce
 

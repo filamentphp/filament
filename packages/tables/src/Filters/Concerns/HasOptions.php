@@ -7,9 +7,9 @@ use Illuminate\Contracts\Support\Arrayable;
 
 trait HasOptions
 {
-    protected array | Arrayable | string | Closure $options = [];
+    protected array | Arrayable | string | Closure | null $options = null;
 
-    public function options(array | Arrayable | string | Closure $options): static
+    public function options(array | Arrayable | string | Closure | null $options): static
     {
         $this->options = $options;
 
