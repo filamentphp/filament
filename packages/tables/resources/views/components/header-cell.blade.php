@@ -25,23 +25,18 @@
             {{ $slot }}
         </span>
 
-        @if($sortable)
-        <span @class([
+        @if ($sortable)
+            <span @class([
                 'relative flex items-center',
                 'dark:text-gray-300' => config('tables.dark_mode'),
             ])>
+                @if ($isSortColumn && $sortDirection === 'asc')
+                    <x-heroicon-s-chevron-up class="w-3 h-3" />
+                @else
+                    <x-heroicon-s-chevron-down class="\Illuminate\Support\Arr::toCssClasses(['w-3 h-3', 'opacity-50' => ! $isSortColumn])" />
+                @endif
 
-            @if($isSortColumn && $sortDirection === 'asc')
-            <x-heroicon-s-chevron-up
-                class="w-3 h-3"
-            />
-            @else
-            <x-heroicon-s-chevron-down
-                class="w-3 h-3 {{ !($isSortColumn && $sortDirection === 'desc') ? 'opacity-50' : null }}"
-            />
-            @endif
-
-        </span>
+            </span>
         @endif
     </button>
 </th>
