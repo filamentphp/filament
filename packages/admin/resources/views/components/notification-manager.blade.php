@@ -1,11 +1,11 @@
 <div
     x-data="{
         notifications: {{ json_encode(session()->pull('notifications', [])) }},
-        add: function (e) {
+        add: function (event) {
             this.notifications.push({
-                id: e.timeStamp,
-                status: e.detail.status,
-                message: e.detail.message,
+                id: event.timeStamp,
+                status: event.detail.status,
+                message: event.detail.message,
             })
         },
         remove: function (notification) {

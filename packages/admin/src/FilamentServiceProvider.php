@@ -100,7 +100,6 @@ class FilamentServiceProvider extends PackageServiceProvider
         Livewire::component('filament.core.pages.dashboard', Dashboard::class);
         Livewire::component('filament.core.widgets.account-widget', AccountWidget::class);
         Livewire::component('filament.core.widgets.filament-info-widget', FilamentInfoWidget::class);
-        Livewire::component('filament.core.pages.notification-manager', NotificationManager::class);
 
         $this->registerLivewireComponentDirectory(config('filament.livewire.path'), config('filament.livewire.namespace'), 'filament.');
     }

@@ -72,5 +72,5 @@
 
     {{ $modals }}
 
-    @livewire('filament.core.pages.notification-manager')
+    <x-filament::notification-manager />
 </div>

@@ -17034,7 +17034,7 @@ function splitCells(tableRow, count) {
   if (!cells[0].trim()) {
     cells.shift();
   }
-  if (!cells[cells.length - 1].trim()) {
+  if (cells.length > 0 && !cells[cells.length - 1].trim()) {
     cells.pop();
   }
   if (cells.length > count) {
@@ -17397,7 +17397,7 @@ var Tokenizer = class {
           return {text: c2};
         }),
         align: cap[2].replace(/^ *|\| *$/g, "").split(/ *\| */),
-        rows: cap[3] ? cap[3].replace(/\n[ \t]*$/, "").split("\n") : []
+        rows: cap[3] && cap[3].trim() ? cap[3].replace(/\n[ \t]*$/, "").split("\n") : []
       };
       if (item2.header.length === item2.align.length) {
         item2.raw = cap[0];
@@ -19327,19 +19327,14 @@ var tags_input_default = (Alpine) => {
   });
 };
 
-// node_modules/imask/esm/_rollupPluginBabelHelpers-a0b34764.js
+// node_modules/imask/esm/_rollupPluginBabelHelpers-b054ecd2.js
 function _typeof(obj) {
   "@babel/helpers - typeof";
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function(obj2) {
-      return typeof obj2;
-    };
-  } else {
-    _typeof = function(obj2) {
-      return obj2 && typeof Symbol === "function" && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
-    };
-  }
-  return _typeof(obj);
+  return _typeof = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(obj2) {
+    return typeof obj2;
+  } : function(obj2) {
+    return obj2 && typeof Symbol == "function" && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+  }, _typeof(obj);
 }
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -19361,6 +19356,9 @@ function _createClass(Constructor, protoProps, staticProps) {
     _defineProperties(Constructor.prototype, protoProps);
   if (staticProps)
     _defineProperties(Constructor, staticProps);
+  Object.defineProperty(Constructor, "prototype", {
+    writable: false
+  });
   return Constructor;
 }
 function _defineProperty(obj, key, value) {
@@ -19386,6 +19384,9 @@ function _inherits(subClass, superClass) {
       writable: true,
       configurable: true
     }
+  });
+  Object.defineProperty(subClass, "prototype", {
+    writable: false
   });
   if (superClass)
     _setPrototypeOf(subClass, superClass);
@@ -19485,22 +19486,22 @@ function _superPropBase(object, property) {
   }
   return object;
 }
-function _get(target, property, receiver) {
+function _get() {
   if (typeof Reflect !== "undefined" && Reflect.get) {
     _get = Reflect.get;
   } else {
-    _get = function _get2(target2, property2, receiver2) {
-      var base = _superPropBase(target2, property2);
+    _get = function _get2(target, property, receiver) {
+      var base = _superPropBase(target, property);
       if (!base)
         return;
-      var desc = Object.getOwnPropertyDescriptor(base, property2);
+      var desc = Object.getOwnPropertyDescriptor(base, property);
       if (desc.get) {
-        return desc.get.call(receiver2);
+        return desc.get.call(arguments.length < 3 ? target : receiver);
       }
       return desc.value;
     };
   }
-  return _get(target, property, receiver || target);
+  return _get.apply(this, arguments);
 }
 function set(target, property, value, receiver) {
   if (typeof Reflect !== "undefined" && Reflect.set) {
@@ -19599,6 +19600,35 @@ function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
+// node_modules/imask/esm/core/change-details.js
+var ChangeDetails = /* @__PURE__ */ function() {
+  function ChangeDetails2(details) {
+    _classCallCheck(this, ChangeDetails2);
+    Object.assign(this, {
+      inserted: "",
+      rawInserted: "",
+      skip: false,
+      tailShift: 0
+    }, details);
+  }
+  _createClass(ChangeDetails2, [{
+    key: "aggregate",
+    value: function aggregate(details) {
+      this.rawInserted += details.rawInserted;
+      this.skip = this.skip || details.skip;
+      this.inserted += details.inserted;
+      this.tailShift += details.tailShift;
+      return this;
+    }
+  }, {
+    key: "offset",
+    get: function get() {
+      return this.tailShift + this.inserted.length;
+    }
+  }]);
+  return ChangeDetails2;
+}();
+
 // node_modules/imask/esm/core/utils.js
 function isString2(str) {
   return typeof str === "string" || str instanceof String;
@@ -19622,6 +19652,9 @@ function forceDirection(direction) {
 }
 function escapeRegExp(str) {
   return str.replace(/([.*+?^=!:${}()|[\]\/\\])/g, "\\$1");
+}
+function normalizePrepare(prep) {
+  return Array.isArray(prep) ? prep : [prep, new ChangeDetails()];
 }
 function objectIncludes(b, a2) {
   if (a2 === b)
@@ -19717,39 +19750,10 @@ var ActionDetails = /* @__PURE__ */ function() {
     get: function get() {
       if (!this.removedCount || this.insertedCount)
         return DIRECTION.NONE;
-      return this.oldSelection.end === this.cursorPos || this.oldSelection.start === this.cursorPos ? DIRECTION.RIGHT : DIRECTION.LEFT;
+      return (this.oldSelection.end === this.cursorPos || this.oldSelection.start === this.cursorPos) && this.oldSelection.end === this.oldSelection.start ? DIRECTION.RIGHT : DIRECTION.LEFT;
     }
   }]);
   return ActionDetails2;
-}();
-
-// node_modules/imask/esm/core/change-details.js
-var ChangeDetails = /* @__PURE__ */ function() {
-  function ChangeDetails2(details) {
-    _classCallCheck(this, ChangeDetails2);
-    Object.assign(this, {
-      inserted: "",
-      rawInserted: "",
-      skip: false,
-      tailShift: 0
-    }, details);
-  }
-  _createClass(ChangeDetails2, [{
-    key: "aggregate",
-    value: function aggregate(details) {
-      this.rawInserted += details.rawInserted;
-      this.skip = this.skip || details.skip;
-      this.inserted += details.inserted;
-      this.tailShift += details.tailShift;
-      return this;
-    }
-  }, {
-    key: "offset",
-    get: function get() {
-      return this.tailShift + this.inserted.length;
-    }
-  }]);
-  return ChangeDetails2;
 }();
 
 // node_modules/imask/esm/core/continuous-tail-details.js
@@ -19793,12 +19797,21 @@ var ContinuousTailDetails = /* @__PURE__ */ function() {
       Object.assign(this, state2);
     }
   }, {
-    key: "shiftBefore",
-    value: function shiftBefore(pos) {
-      if (this.from >= pos || !this.value.length)
+    key: "unshift",
+    value: function unshift(beforePos) {
+      if (!this.value.length || beforePos != null && this.from >= beforePos)
         return "";
       var shiftChar = this.value[0];
       this.value = this.value.slice(1);
+      return shiftChar;
+    }
+  }, {
+    key: "shift",
+    value: function shift() {
+      if (!this.value.length)
+        return "";
+      var shiftChar = this.value[this.value.length - 1];
+      this.value = this.value.slice(0, -1);
       return shiftChar;
     }
   }]);
@@ -19902,6 +19915,11 @@ var Masked = /* @__PURE__ */ function() {
       return true;
     }
   }, {
+    key: "isFilled",
+    get: function get() {
+      return this.isComplete;
+    }
+  }, {
     key: "nearestInputPos",
     value: function nearestInputPos(cursorPos, direction) {
       return cursorPos;
@@ -19944,18 +19962,30 @@ var Masked = /* @__PURE__ */ function() {
       var flags = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
       var checkTail = arguments.length > 2 ? arguments[2] : void 0;
       var consistentState = this.state;
-      var details = this._appendCharRaw(this.doPrepare(ch, flags), flags);
+      var details;
+      var _normalizePrepare = normalizePrepare(this.doPrepare(ch, flags));
+      var _normalizePrepare2 = _slicedToArray(_normalizePrepare, 2);
+      ch = _normalizePrepare2[0];
+      details = _normalizePrepare2[1];
+      details = details.aggregate(this._appendCharRaw(ch, flags));
       if (details.inserted) {
         var consistentTail;
         var appended = this.doValidate(flags) !== false;
         if (appended && checkTail != null) {
           var beforeTailState = this.state;
-          if (this.overwrite) {
+          if (this.overwrite === true) {
             consistentTail = checkTail.state;
-            checkTail.shiftBefore(this.value.length);
+            checkTail.unshift(this.value.length);
           }
           var tailDetails = this.appendTail(checkTail);
           appended = tailDetails.rawInserted === checkTail.toString();
+          if (!(appended && tailDetails.inserted) && this.overwrite === "shift") {
+            this.state = beforeTailState;
+            consistentTail = checkTail.state;
+            checkTail.shift();
+            tailDetails = this.appendTail(checkTail);
+            appended = tailDetails.rawInserted === checkTail.toString();
+          }
           if (appended && tailDetails.inserted)
             this.state = beforeTailState;
         }
@@ -19974,6 +20004,11 @@ var Masked = /* @__PURE__ */ function() {
       return new ChangeDetails();
     }
   }, {
+    key: "_appendEager",
+    value: function _appendEager() {
+      return new ChangeDetails();
+    }
+  }, {
     key: "append",
     value: function append(str, flags, tail) {
       if (!isString2(str))
@@ -19987,6 +20022,9 @@ var Masked = /* @__PURE__ */ function() {
       }
       if (checkTail != null) {
         details.tailShift += this.appendTail(checkTail).tailShift;
+      }
+      if (this.eager && flags !== null && flags !== void 0 && flags.input && str) {
+        details.aggregate(this._appendEager());
       }
       return details;
     }
@@ -20058,13 +20096,37 @@ var Masked = /* @__PURE__ */ function() {
     value: function splice(start, deleteCount, inserted, removeDirection) {
       var tailPos = start + deleteCount;
       var tail = this.extractTail(tailPos);
-      var startChangePos = this.nearestInputPos(start, removeDirection);
-      var changeDetails = new ChangeDetails({
+      var oldRawValue;
+      if (this.eager) {
+        removeDirection = forceDirection(removeDirection);
+        oldRawValue = this.extractInput(0, tailPos, {
+          raw: true
+        });
+      }
+      var startChangePos = this.nearestInputPos(start, deleteCount > 1 && start !== 0 && !this.eager ? DIRECTION.NONE : removeDirection);
+      var details = new ChangeDetails({
         tailShift: startChangePos - start
-      }).aggregate(this.remove(startChangePos)).aggregate(this.append(inserted, {
+      }).aggregate(this.remove(startChangePos));
+      if (this.eager && removeDirection !== DIRECTION.NONE && oldRawValue === this.rawInputValue) {
+        if (removeDirection === DIRECTION.FORCE_LEFT) {
+          var valLength;
+          while (oldRawValue === this.rawInputValue && (valLength = this.value.length)) {
+            details.aggregate(new ChangeDetails({
+              tailShift: -1
+            })).aggregate(this.remove(valLength - 1));
+          }
+        } else if (removeDirection === DIRECTION.FORCE_RIGHT) {
+          tail.unshift();
+        }
+      }
+      return details.aggregate(this.append(inserted, {
         input: true
       }, tail));
-      return changeDetails;
+    }
+  }, {
+    key: "maskEquals",
+    value: function maskEquals(mask) {
+      return this.mask === mask;
     }
   }]);
   return Masked2;
@@ -20096,10 +20158,10 @@ function maskedClass(mask) {
     return IMask.MaskedDynamic;
   if (IMask.Masked && mask.prototype instanceof IMask.Masked)
     return mask;
-  if (mask instanceof Function)
-    return IMask.MaskedFunction;
   if (mask instanceof IMask.Masked)
     return mask.constructor;
+  if (mask instanceof Function)
+    return IMask.MaskedFunction;
   console.warn("Mask not found for mask", mask);
   return IMask.Masked;
 }
@@ -20136,7 +20198,7 @@ var PatternInputDefinition = /* @__PURE__ */ function() {
   _createClass(PatternInputDefinition2, [{
     key: "reset",
     value: function reset() {
-      this._isFilled = false;
+      this.isFilled = false;
       this.masked.reset();
     }
   }, {
@@ -20145,7 +20207,7 @@ var PatternInputDefinition = /* @__PURE__ */ function() {
       var fromPos = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : 0;
       var toPos = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : this.value.length;
       if (fromPos === 0 && toPos >= 1) {
-        this._isFilled = false;
+        this.isFilled = false;
         return this.masked.remove(fromPos, toPos);
       }
       return new ChangeDetails();
@@ -20153,7 +20215,7 @@ var PatternInputDefinition = /* @__PURE__ */ function() {
   }, {
     key: "value",
     get: function get() {
-      return this.masked.value || (this._isFilled && !this.isOptional ? this.placeholderChar : "");
+      return this.masked.value || (this.isFilled && !this.isOptional ? this.placeholderChar : "");
     }
   }, {
     key: "unmaskedValue",
@@ -20167,12 +20229,12 @@ var PatternInputDefinition = /* @__PURE__ */ function() {
     }
   }, {
     key: "_appendChar",
-    value: function _appendChar(str) {
+    value: function _appendChar(ch) {
       var flags = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
-      if (this._isFilled)
+      if (this.isFilled)
         return new ChangeDetails();
       var state2 = this.masked.state;
-      var details = this.masked._appendChar(str, flags);
+      var details = this.masked._appendChar(ch, flags);
       if (details.inserted && this.doValidate(flags) === false) {
         details.inserted = details.rawInserted = "";
         this.masked.state = state2;
@@ -20181,7 +20243,7 @@ var PatternInputDefinition = /* @__PURE__ */ function() {
         details.inserted = this.placeholderChar;
       }
       details.skip = !details.inserted && !this.isOptional;
-      this._isFilled = Boolean(details.inserted);
+      this.isFilled = Boolean(details.inserted);
       return details;
     }
   }, {
@@ -20194,11 +20256,16 @@ var PatternInputDefinition = /* @__PURE__ */ function() {
     key: "_appendPlaceholder",
     value: function _appendPlaceholder() {
       var details = new ChangeDetails();
-      if (this._isFilled || this.isOptional)
+      if (this.isFilled || this.isOptional)
         return details;
-      this._isFilled = true;
+      this.isFilled = true;
       details.inserted = this.placeholderChar;
       return details;
+    }
+  }, {
+    key: "_appendEager",
+    value: function _appendEager() {
+      return new ChangeDetails();
     }
   }, {
     key: "extractTail",
@@ -20255,12 +20322,12 @@ var PatternInputDefinition = /* @__PURE__ */ function() {
     get: function get() {
       return {
         masked: this.masked.state,
-        _isFilled: this._isFilled
+        isFilled: this.isFilled
       };
     },
     set: function set2(state2) {
       this.masked.state = state2.masked;
-      this._isFilled = state2._isFilled;
+      this.isFilled = state2.isFilled;
     }
   }]);
   return PatternInputDefinition2;
@@ -20272,6 +20339,7 @@ var PatternFixedDefinition = /* @__PURE__ */ function() {
     _classCallCheck(this, PatternFixedDefinition2);
     Object.assign(this, opts);
     this._value = "";
+    this.isFixed = true;
   }
   _createClass(PatternFixedDefinition2, [{
     key: "value",
@@ -20330,19 +20398,29 @@ var PatternFixedDefinition = /* @__PURE__ */ function() {
       return true;
     }
   }, {
+    key: "isFilled",
+    get: function get() {
+      return Boolean(this._value);
+    }
+  }, {
     key: "_appendChar",
-    value: function _appendChar(str) {
+    value: function _appendChar(ch) {
       var flags = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
       var details = new ChangeDetails();
       if (this._value)
         return details;
-      var appended = this.char === str[0];
-      var isResolved = appended && (this.isUnmasking || flags.input || flags.raw) && !flags.tail;
+      var appended = this.char === ch;
+      var isResolved = appended && (this.isUnmasking || flags.input || flags.raw) && !this.eager && !flags.tail;
       if (isResolved)
         details.rawInserted = this.char;
       this._value = details.inserted = this.char;
       this._isRawInput = isResolved && (flags.raw || flags.input);
       return details;
+    }
+  }, {
+    key: "_appendEager",
+    value: function _appendEager() {
+      return this._appendChar(this.char);
     }
   }, {
     key: "_appendPlaceholder",
@@ -20369,7 +20447,7 @@ var PatternFixedDefinition = /* @__PURE__ */ function() {
   }, {
     key: "append",
     value: function append(str, flags, tail) {
-      var details = this._appendChar(str, flags);
+      var details = this._appendChar(str[0], flags);
       if (tail != null) {
         details.tailShift += this.appendTail(tail).tailShift;
       }
@@ -20498,15 +20576,15 @@ var ChunksTailDetails = /* @__PURE__ */ function() {
       });
     }
   }, {
-    key: "shiftBefore",
-    value: function shiftBefore(pos) {
-      if (this.from >= pos || !this.chunks.length)
+    key: "unshift",
+    value: function unshift(beforePos) {
+      if (!this.chunks.length || beforePos != null && this.from >= beforePos)
         return "";
-      var chunkShiftPos = pos - this.from;
+      var chunkShiftPos = beforePos != null ? beforePos - this.from : beforePos;
       var ci = 0;
       while (ci < this.chunks.length) {
         var chunk = this.chunks[ci];
-        var shiftChar = chunk.shiftBefore(chunkShiftPos);
+        var shiftChar = chunk.unshift(chunkShiftPos);
         if (chunk.toString()) {
           if (!shiftChar)
             break;
@@ -20519,8 +20597,187 @@ var ChunksTailDetails = /* @__PURE__ */ function() {
       }
       return "";
     }
+  }, {
+    key: "shift",
+    value: function shift() {
+      if (!this.chunks.length)
+        return "";
+      var ci = this.chunks.length - 1;
+      while (0 <= ci) {
+        var chunk = this.chunks[ci];
+        var shiftChar = chunk.shift();
+        if (chunk.toString()) {
+          if (!shiftChar)
+            break;
+          --ci;
+        } else {
+          this.chunks.splice(ci, 1);
+        }
+        if (shiftChar)
+          return shiftChar;
+      }
+      return "";
+    }
   }]);
   return ChunksTailDetails2;
+}();
+
+// node_modules/imask/esm/masked/pattern/cursor.js
+var PatternCursor = /* @__PURE__ */ function() {
+  function PatternCursor2(masked, pos) {
+    _classCallCheck(this, PatternCursor2);
+    this.masked = masked;
+    this._log = [];
+    var _ref = masked._mapPosToBlock(pos) || (pos < 0 ? {
+      index: 0,
+      offset: 0
+    } : {
+      index: this.masked._blocks.length,
+      offset: 0
+    }), offset = _ref.offset, index = _ref.index;
+    this.offset = offset;
+    this.index = index;
+    this.ok = false;
+  }
+  _createClass(PatternCursor2, [{
+    key: "block",
+    get: function get() {
+      return this.masked._blocks[this.index];
+    }
+  }, {
+    key: "pos",
+    get: function get() {
+      return this.masked._blockStartPos(this.index) + this.offset;
+    }
+  }, {
+    key: "state",
+    get: function get() {
+      return {
+        index: this.index,
+        offset: this.offset,
+        ok: this.ok
+      };
+    },
+    set: function set2(s2) {
+      Object.assign(this, s2);
+    }
+  }, {
+    key: "pushState",
+    value: function pushState() {
+      this._log.push(this.state);
+    }
+  }, {
+    key: "popState",
+    value: function popState() {
+      var s2 = this._log.pop();
+      this.state = s2;
+      return s2;
+    }
+  }, {
+    key: "bindBlock",
+    value: function bindBlock() {
+      if (this.block)
+        return;
+      if (this.index < 0) {
+        this.index = 0;
+        this.offset = 0;
+      }
+      if (this.index >= this.masked._blocks.length) {
+        this.index = this.masked._blocks.length - 1;
+        this.offset = this.block.value.length;
+      }
+    }
+  }, {
+    key: "_pushLeft",
+    value: function _pushLeft(fn2) {
+      this.pushState();
+      for (this.bindBlock(); 0 <= this.index; --this.index, this.offset = ((_this$block = this.block) === null || _this$block === void 0 ? void 0 : _this$block.value.length) || 0) {
+        var _this$block;
+        if (fn2())
+          return this.ok = true;
+      }
+      return this.ok = false;
+    }
+  }, {
+    key: "_pushRight",
+    value: function _pushRight(fn2) {
+      this.pushState();
+      for (this.bindBlock(); this.index < this.masked._blocks.length; ++this.index, this.offset = 0) {
+        if (fn2())
+          return this.ok = true;
+      }
+      return this.ok = false;
+    }
+  }, {
+    key: "pushLeftBeforeFilled",
+    value: function pushLeftBeforeFilled() {
+      var _this = this;
+      return this._pushLeft(function() {
+        if (_this.block.isFixed || !_this.block.value)
+          return;
+        _this.offset = _this.block.nearestInputPos(_this.offset, DIRECTION.FORCE_LEFT);
+        if (_this.offset !== 0)
+          return true;
+      });
+    }
+  }, {
+    key: "pushLeftBeforeInput",
+    value: function pushLeftBeforeInput() {
+      var _this2 = this;
+      return this._pushLeft(function() {
+        if (_this2.block.isFixed)
+          return;
+        _this2.offset = _this2.block.nearestInputPos(_this2.offset, DIRECTION.LEFT);
+        return true;
+      });
+    }
+  }, {
+    key: "pushLeftBeforeRequired",
+    value: function pushLeftBeforeRequired() {
+      var _this3 = this;
+      return this._pushLeft(function() {
+        if (_this3.block.isFixed || _this3.block.isOptional && !_this3.block.value)
+          return;
+        _this3.offset = _this3.block.nearestInputPos(_this3.offset, DIRECTION.LEFT);
+        return true;
+      });
+    }
+  }, {
+    key: "pushRightBeforeFilled",
+    value: function pushRightBeforeFilled() {
+      var _this4 = this;
+      return this._pushRight(function() {
+        if (_this4.block.isFixed || !_this4.block.value)
+          return;
+        _this4.offset = _this4.block.nearestInputPos(_this4.offset, DIRECTION.FORCE_RIGHT);
+        if (_this4.offset !== _this4.block.value.length)
+          return true;
+      });
+    }
+  }, {
+    key: "pushRightBeforeInput",
+    value: function pushRightBeforeInput() {
+      var _this5 = this;
+      return this._pushRight(function() {
+        if (_this5.block.isFixed)
+          return;
+        _this5.offset = _this5.block.nearestInputPos(_this5.offset, DIRECTION.NONE);
+        return true;
+      });
+    }
+  }, {
+    key: "pushRightBeforeRequired",
+    value: function pushRightBeforeRequired() {
+      var _this6 = this;
+      return this._pushRight(function() {
+        if (_this6.block.isFixed || _this6.block.isOptional && !_this6.block.value)
+          return;
+        _this6.offset = _this6.block.nearestInputPos(_this6.offset, DIRECTION.NONE);
+        return true;
+      });
+    }
+  }]);
+  return PatternCursor2;
 }();
 
 // node_modules/imask/esm/masked/regexp.js
@@ -20592,6 +20849,7 @@ var MaskedPattern = /* @__PURE__ */ function(_Masked) {
               var maskedBlock = createMask(Object.assign({
                 parent: _this,
                 lazy: _this.lazy,
+                eager: _this.eager,
                 placeholderChar: _this.placeholderChar,
                 overwrite: _this.overwrite
               }, _this.blocks[bName]));
@@ -20609,7 +20867,7 @@ var MaskedPattern = /* @__PURE__ */ function(_Masked) {
             continue;
         }
         var char = pattern[i];
-        var _isInput = char in defs;
+        var isInput = char in defs;
         if (char === MaskedPattern2.STOP_CHAR) {
           this._stops.push(this._blocks.length);
           continue;
@@ -20627,16 +20885,18 @@ var MaskedPattern = /* @__PURE__ */ function(_Masked) {
           char = pattern[i];
           if (!char)
             break;
-          _isInput = false;
+          isInput = false;
         }
-        var def = _isInput ? new PatternInputDefinition({
+        var def = isInput ? new PatternInputDefinition({
           parent: this,
           lazy: this.lazy,
+          eager: this.eager,
           placeholderChar: this.placeholderChar,
           mask: defs[char],
           isOptional: optionalBlock
         }) : new PatternFixedDefinition({
           char,
+          eager: this.eager,
           isUnmasking: unmaskingBlock
         });
         this._blocks.push(def);
@@ -20674,6 +20934,27 @@ var MaskedPattern = /* @__PURE__ */ function(_Masked) {
       });
     }
   }, {
+    key: "isFilled",
+    get: function get() {
+      return this._blocks.every(function(b) {
+        return b.isFilled;
+      });
+    }
+  }, {
+    key: "isFixed",
+    get: function get() {
+      return this._blocks.every(function(b) {
+        return b.isFixed;
+      });
+    }
+  }, {
+    key: "isOptional",
+    get: function get() {
+      return this._blocks.every(function(b) {
+        return b.isOptional;
+      });
+    }
+  }, {
     key: "doCommit",
     value: function doCommit() {
       this._blocks.forEach(function(b) {
@@ -20707,6 +20988,24 @@ var MaskedPattern = /* @__PURE__ */ function(_Masked) {
       return _get(_getPrototypeOf(MaskedPattern2.prototype), "appendTail", this).call(this, tail).aggregate(this._appendPlaceholder());
     }
   }, {
+    key: "_appendEager",
+    value: function _appendEager() {
+      var _this$_mapPosToBlock;
+      var details = new ChangeDetails();
+      var startBlockIndex = (_this$_mapPosToBlock = this._mapPosToBlock(this.value.length)) === null || _this$_mapPosToBlock === void 0 ? void 0 : _this$_mapPosToBlock.index;
+      if (startBlockIndex == null)
+        return details;
+      if (this._blocks[startBlockIndex].isFilled)
+        ++startBlockIndex;
+      for (var bi = startBlockIndex; bi < this._blocks.length; ++bi) {
+        var d = this._blocks[bi]._appendEager();
+        if (!d.inserted)
+          break;
+        details.aggregate(d);
+      }
+      return details;
+    }
+  }, {
     key: "_appendCharRaw",
     value: function _appendCharRaw(ch) {
       var flags = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
@@ -20715,10 +21014,13 @@ var MaskedPattern = /* @__PURE__ */ function(_Masked) {
       if (!blockIter)
         return details;
       for (var bi = blockIter.index; ; ++bi) {
+        var _flags$_beforeTailSta;
         var _block = this._blocks[bi];
         if (!_block)
           break;
-        var blockDetails = _block._appendChar(ch, flags);
+        var blockDetails = _block._appendChar(ch, Object.assign({}, flags, {
+          _beforeTailState: (_flags$_beforeTailSta = flags._beforeTailState) === null || _flags$_beforeTailSta === void 0 ? void 0 : _flags$_beforeTailSta._blocks[bi]
+        }));
         var skip = blockDetails.skip;
         details.aggregate(blockDetails);
         if (skip || blockDetails.rawInserted)
@@ -20852,141 +21154,63 @@ var MaskedPattern = /* @__PURE__ */ function(_Masked) {
     key: "nearestInputPos",
     value: function nearestInputPos(cursorPos) {
       var direction = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : DIRECTION.NONE;
-      var beginBlockData = this._mapPosToBlock(cursorPos) || {
-        index: 0,
-        offset: 0
-      };
-      var beginBlockOffset = beginBlockData.offset, beginBlockIndex = beginBlockData.index;
-      var beginBlock = this._blocks[beginBlockIndex];
-      if (!beginBlock)
-        return cursorPos;
-      var beginBlockCursorPos = beginBlockOffset;
-      if (beginBlockCursorPos !== 0 && beginBlockCursorPos < beginBlock.value.length) {
-        beginBlockCursorPos = beginBlock.nearestInputPos(beginBlockOffset, forceDirection(direction));
-      }
-      var cursorAtRight = beginBlockCursorPos === beginBlock.value.length;
-      var cursorAtLeft = beginBlockCursorPos === 0;
-      if (!cursorAtLeft && !cursorAtRight)
-        return this._blockStartPos(beginBlockIndex) + beginBlockCursorPos;
-      var searchBlockIndex = cursorAtRight ? beginBlockIndex + 1 : beginBlockIndex;
+      if (!this._blocks.length)
+        return 0;
+      var cursor = new PatternCursor(this, cursorPos);
       if (direction === DIRECTION.NONE) {
-        if (searchBlockIndex > 0) {
-          var blockIndexAtLeft = searchBlockIndex - 1;
-          var blockAtLeft = this._blocks[blockIndexAtLeft];
-          var blockInputPos = blockAtLeft.nearestInputPos(0, DIRECTION.NONE);
-          if (!blockAtLeft.value.length || blockInputPos !== blockAtLeft.value.length) {
-            return this._blockStartPos(searchBlockIndex);
-          }
-        }
-        var firstInputAtRight = searchBlockIndex;
-        for (var bi = firstInputAtRight; bi < this._blocks.length; ++bi) {
-          var blockAtRight = this._blocks[bi];
-          var _blockInputPos = blockAtRight.nearestInputPos(0, DIRECTION.NONE);
-          if (!blockAtRight.value.length || _blockInputPos !== blockAtRight.value.length) {
-            return this._blockStartPos(bi) + _blockInputPos;
-          }
-        }
-        for (var _bi = searchBlockIndex - 1; _bi >= 0; --_bi) {
-          var _block3 = this._blocks[_bi];
-          var _blockInputPos2 = _block3.nearestInputPos(0, DIRECTION.NONE);
-          if (!_block3.value.length || _blockInputPos2 !== _block3.value.length) {
-            return this._blockStartPos(_bi) + _block3.value.length;
-          }
-        }
-        return cursorPos;
+        if (cursor.pushRightBeforeInput())
+          return cursor.pos;
+        cursor.popState();
+        if (cursor.pushLeftBeforeInput())
+          return cursor.pos;
+        return this.value.length;
       }
       if (direction === DIRECTION.LEFT || direction === DIRECTION.FORCE_LEFT) {
-        var firstFilledBlockIndexAtRight;
-        for (var _bi2 = searchBlockIndex; _bi2 < this._blocks.length; ++_bi2) {
-          if (this._blocks[_bi2].value) {
-            firstFilledBlockIndexAtRight = _bi2;
-            break;
-          }
-        }
-        if (firstFilledBlockIndexAtRight != null) {
-          var filledBlock = this._blocks[firstFilledBlockIndexAtRight];
-          var _blockInputPos3 = filledBlock.nearestInputPos(0, DIRECTION.RIGHT);
-          if (_blockInputPos3 === 0 && filledBlock.unmaskedValue.length) {
-            return this._blockStartPos(firstFilledBlockIndexAtRight) + _blockInputPos3;
-          }
-        }
-        var firstFilledInputBlockIndex = -1;
-        var firstEmptyInputBlockIndex;
-        for (var _bi3 = searchBlockIndex - 1; _bi3 >= 0; --_bi3) {
-          var _block4 = this._blocks[_bi3];
-          var _blockInputPos4 = _block4.nearestInputPos(_block4.value.length, DIRECTION.FORCE_LEFT);
-          if (!_block4.value || _blockInputPos4 !== 0)
-            firstEmptyInputBlockIndex = _bi3;
-          if (_blockInputPos4 !== 0) {
-            if (_blockInputPos4 !== _block4.value.length) {
-              return this._blockStartPos(_bi3) + _blockInputPos4;
-            } else {
-              firstFilledInputBlockIndex = _bi3;
-              break;
-            }
-          }
-        }
         if (direction === DIRECTION.LEFT) {
-          for (var _bi4 = firstFilledInputBlockIndex + 1; _bi4 <= Math.min(searchBlockIndex, this._blocks.length - 1); ++_bi4) {
-            var _block5 = this._blocks[_bi4];
-            var _blockInputPos5 = _block5.nearestInputPos(0, DIRECTION.NONE);
-            var blockAlignedPos = this._blockStartPos(_bi4) + _blockInputPos5;
-            if (blockAlignedPos > cursorPos)
-              break;
-            if (_blockInputPos5 !== _block5.value.length)
-              return blockAlignedPos;
-          }
+          cursor.pushRightBeforeFilled();
+          if (cursor.ok && cursor.pos === cursorPos)
+            return cursorPos;
+          cursor.popState();
         }
-        if (firstFilledInputBlockIndex >= 0) {
-          return this._blockStartPos(firstFilledInputBlockIndex) + this._blocks[firstFilledInputBlockIndex].value.length;
+        cursor.pushLeftBeforeInput();
+        cursor.pushLeftBeforeRequired();
+        cursor.pushLeftBeforeFilled();
+        if (direction === DIRECTION.LEFT) {
+          cursor.pushRightBeforeInput();
+          cursor.pushRightBeforeRequired();
+          if (cursor.ok && cursor.pos <= cursorPos)
+            return cursor.pos;
+          cursor.popState();
+          if (cursor.ok && cursor.pos <= cursorPos)
+            return cursor.pos;
+          cursor.popState();
         }
-        if (direction === DIRECTION.FORCE_LEFT || this.lazy && !this.extractInput() && !isInput(this._blocks[searchBlockIndex])) {
+        if (cursor.ok)
+          return cursor.pos;
+        if (direction === DIRECTION.FORCE_LEFT)
           return 0;
-        }
-        if (firstEmptyInputBlockIndex != null) {
-          return this._blockStartPos(firstEmptyInputBlockIndex);
-        }
-        for (var _bi5 = searchBlockIndex; _bi5 < this._blocks.length; ++_bi5) {
-          var _block6 = this._blocks[_bi5];
-          var _blockInputPos6 = _block6.nearestInputPos(0, DIRECTION.NONE);
-          if (!_block6.value.length || _blockInputPos6 !== _block6.value.length) {
-            return this._blockStartPos(_bi5) + _blockInputPos6;
-          }
-        }
+        cursor.popState();
+        if (cursor.ok)
+          return cursor.pos;
+        cursor.popState();
+        if (cursor.ok)
+          return cursor.pos;
         return 0;
       }
       if (direction === DIRECTION.RIGHT || direction === DIRECTION.FORCE_RIGHT) {
-        var firstInputBlockAlignedIndex;
-        var firstInputBlockAlignedPos;
-        for (var _bi6 = searchBlockIndex; _bi6 < this._blocks.length; ++_bi6) {
-          var _block7 = this._blocks[_bi6];
-          var _blockInputPos7 = _block7.nearestInputPos(0, DIRECTION.NONE);
-          if (_blockInputPos7 !== _block7.value.length) {
-            firstInputBlockAlignedPos = this._blockStartPos(_bi6) + _blockInputPos7;
-            firstInputBlockAlignedIndex = _bi6;
-            break;
-          }
-        }
-        if (firstInputBlockAlignedIndex != null && firstInputBlockAlignedPos != null) {
-          for (var _bi7 = firstInputBlockAlignedIndex; _bi7 < this._blocks.length; ++_bi7) {
-            var _block8 = this._blocks[_bi7];
-            var _blockInputPos8 = _block8.nearestInputPos(0, DIRECTION.FORCE_RIGHT);
-            if (_blockInputPos8 !== _block8.value.length) {
-              return this._blockStartPos(_bi7) + _blockInputPos8;
-            }
-          }
-          return direction === DIRECTION.FORCE_RIGHT ? this.value.length : firstInputBlockAlignedPos;
-        }
-        for (var _bi8 = Math.min(searchBlockIndex, this._blocks.length - 1); _bi8 >= 0; --_bi8) {
-          var _block9 = this._blocks[_bi8];
-          var _blockInputPos9 = _block9.nearestInputPos(_block9.value.length, DIRECTION.LEFT);
-          if (_blockInputPos9 !== 0) {
-            var alignedPos = this._blockStartPos(_bi8) + _blockInputPos9;
-            if (alignedPos >= cursorPos)
-              return alignedPos;
-            break;
-          }
-        }
+        cursor.pushRightBeforeInput();
+        cursor.pushRightBeforeRequired();
+        if (cursor.pushRightBeforeFilled())
+          return cursor.pos;
+        if (direction === DIRECTION.FORCE_RIGHT)
+          return this.value.length;
+        cursor.popState();
+        if (cursor.ok)
+          return cursor.pos;
+        cursor.popState();
+        if (cursor.ok)
+          return cursor.pos;
+        return this.nearestInputPos(cursorPos, DIRECTION.LEFT);
       }
       return cursorPos;
     }
@@ -21017,12 +21241,6 @@ MaskedPattern.STOP_CHAR = "`";
 MaskedPattern.ESCAPE_CHAR = "\\";
 MaskedPattern.InputDefinition = PatternInputDefinition;
 MaskedPattern.FixedDefinition = PatternFixedDefinition;
-function isInput(block2) {
-  if (!block2)
-    return false;
-  var value = block2.value;
-  return !value || block2.nearestInputPos(0, DIRECTION.NONE) !== value.length;
-}
 IMask.MaskedPattern = MaskedPattern;
 
 // node_modules/imask/esm/masked/range.js
@@ -21043,7 +21261,8 @@ var MaskedRange = /* @__PURE__ */ function(_MaskedPattern) {
     value: function _update(opts) {
       opts = Object.assign({
         to: this.to || 0,
-        from: this.from || 0
+        from: this.from || 0,
+        maxLength: this.maxLength || 0
       }, opts);
       var maxLength = String(opts.to).length;
       if (opts.maxLength != null)
@@ -21079,26 +21298,30 @@ var MaskedRange = /* @__PURE__ */ function(_MaskedPattern) {
     }
   }, {
     key: "doPrepare",
-    value: function doPrepare(str) {
+    value: function doPrepare(ch) {
       var flags = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
-      str = _get(_getPrototypeOf(MaskedRange2.prototype), "doPrepare", this).call(this, str, flags).replace(/\D/g, "");
-      if (!this.autofix)
-        return str;
+      var details;
+      var _normalizePrepare = normalizePrepare(_get(_getPrototypeOf(MaskedRange2.prototype), "doPrepare", this).call(this, ch.replace(/\D/g, ""), flags));
+      var _normalizePrepare2 = _slicedToArray(_normalizePrepare, 2);
+      ch = _normalizePrepare2[0];
+      details = _normalizePrepare2[1];
+      if (!this.autofix || !ch)
+        return ch;
       var fromStr = String(this.from).padStart(this.maxLength, "0");
       var toStr = String(this.to).padStart(this.maxLength, "0");
-      var val = this.value;
-      var prepStr = "";
-      for (var ci = 0; ci < str.length; ++ci) {
-        var nextVal = val + prepStr + str[ci];
-        var _this$boundaries = this.boundaries(nextVal), _this$boundaries2 = _slicedToArray(_this$boundaries, 2), minstr = _this$boundaries2[0], maxstr = _this$boundaries2[1];
-        if (Number(maxstr) < this.from)
-          prepStr += fromStr[nextVal.length - 1];
-        else if (Number(minstr) > this.to)
-          prepStr += toStr[nextVal.length - 1];
-        else
-          prepStr += str[ci];
+      var nextVal = this.value + ch;
+      if (nextVal.length > this.maxLength)
+        return "";
+      var _this$boundaries = this.boundaries(nextVal), _this$boundaries2 = _slicedToArray(_this$boundaries, 2), minstr = _this$boundaries2[0], maxstr = _this$boundaries2[1];
+      if (Number(maxstr) < this.from)
+        return fromStr[nextVal.length - 1];
+      if (Number(minstr) > this.to) {
+        if (this.autofix === "pad" && nextVal.length < this.maxLength) {
+          return ["", details.aggregate(this.append(fromStr[nextVal.length - 1] + ch, flags))];
+        }
+        return toStr[nextVal.length - 1];
       }
-      return prepStr;
+      return ch;
     }
   }, {
     key: "doValidate",
@@ -21148,10 +21371,10 @@ var MaskedDate = /* @__PURE__ */ function(_MaskedPattern) {
           opts.blocks.d.to = opts.max.getDate();
         }
       }
-      Object.assign(opts.blocks, blocks);
+      Object.assign(opts.blocks, this.blocks, blocks);
       Object.keys(opts.blocks).forEach(function(bk) {
         var b = opts.blocks[bk];
-        if (!("autofix" in b))
+        if (!("autofix" in b) && "autofix" in opts)
           b.autofix = opts.autofix;
       });
       _get(_getPrototypeOf(MaskedDate2.prototype), "_update", this).call(this, opts);
@@ -21187,12 +21410,19 @@ var MaskedDate = /* @__PURE__ */ function(_MaskedPattern) {
     set: function set2(value) {
       _set(_getPrototypeOf(MaskedDate2.prototype), "typedValue", value, this, true);
     }
+  }, {
+    key: "maskEquals",
+    value: function maskEquals(mask) {
+      return mask === Date || _get(_getPrototypeOf(MaskedDate2.prototype), "maskEquals", this).call(this, mask);
+    }
   }]);
   return MaskedDate2;
 }(MaskedPattern);
 MaskedDate.DEFAULTS = {
   pattern: "d{.}`m{.}`Y",
   format: function format2(date) {
+    if (!date)
+      return "";
     var day = String(date.getDate()).padStart(2, "0");
     var month = String(date.getMonth() + 1).padStart(2, "0");
     var year = date.getFullYear();
@@ -21298,7 +21528,8 @@ var HTMLMaskElement = /* @__PURE__ */ function(_MaskElement) {
   _createClass(HTMLMaskElement2, [{
     key: "rootElement",
     get: function get() {
-      return this.input.getRootNode ? this.input.getRootNode() : document;
+      var _this$input$getRootNo, _this$input$getRootNo2, _this$input;
+      return (_this$input$getRootNo = (_this$input$getRootNo2 = (_this$input = this.input).getRootNode) === null || _this$input$getRootNo2 === void 0 ? void 0 : _this$input$getRootNo2.call(_this$input)) !== null && _this$input$getRootNo !== void 0 ? _this$input$getRootNo : document;
     }
   }, {
     key: "isActive",
@@ -21382,14 +21613,24 @@ var HTMLContenteditableMaskElement = /* @__PURE__ */ function(_HTMLMaskElement) 
     get: function get() {
       var root2 = this.rootElement;
       var selection = root2.getSelection && root2.getSelection();
-      return selection && selection.anchorOffset;
+      var anchorOffset = selection && selection.anchorOffset;
+      var focusOffset = selection && selection.focusOffset;
+      if (focusOffset == null || anchorOffset == null || anchorOffset < focusOffset) {
+        return anchorOffset;
+      }
+      return focusOffset;
     }
   }, {
     key: "_unsafeSelectionEnd",
     get: function get() {
       var root2 = this.rootElement;
       var selection = root2.getSelection && root2.getSelection();
-      return selection && this._unsafeSelectionStart + String(selection).length;
+      var anchorOffset = selection && selection.anchorOffset;
+      var focusOffset = selection && selection.focusOffset;
+      if (focusOffset == null || anchorOffset == null || anchorOffset > focusOffset) {
+        return anchorOffset;
+      }
+      return focusOffset;
     }
   }, {
     key: "_unsafeSelect",
@@ -21464,7 +21705,8 @@ var InputMask = /* @__PURE__ */ function() {
   }, {
     key: "maskEquals",
     value: function maskEquals(mask) {
-      return mask == null || mask === this.masked.mask || mask === Date && this.masked instanceof MaskedDate;
+      var _this$masked;
+      return mask == null || ((_this$masked = this.masked) === null || _this$masked === void 0 ? void 0 : _this$masked.maskEquals(mask));
     }
   }, {
     key: "value",
@@ -21625,7 +21867,7 @@ var InputMask = /* @__PURE__ */ function() {
   }, {
     key: "alignCursor",
     value: function alignCursor() {
-      this.cursorPos = this.masked.nearestInputPos(this.cursorPos, DIRECTION.LEFT);
+      this.cursorPos = this.masked.nearestInputPos(this.masked.nearestInputPos(this.cursorPos, DIRECTION.LEFT));
     }
   }, {
     key: "alignCursorFriendly",
@@ -21668,6 +21910,8 @@ var InputMask = /* @__PURE__ */ function() {
       var offset = this.masked.splice(details.startChangePos, details.removed.length, details.inserted, details.removeDirection).offset;
       var removeDirection = oldRawValue === this.masked.rawInputValue ? details.removeDirection : DIRECTION.NONE;
       var cursorPos = this.masked.nearestInputPos(details.startChangePos + offset, removeDirection);
+      if (removeDirection !== DIRECTION.NONE)
+        cursorPos = this.masked.nearestInputPos(cursorPos, DIRECTION.NONE);
       this.updateControl();
       this.updateCursor(cursorPos);
       delete this._inputEvent;
@@ -21781,12 +22025,17 @@ var MaskedNumber = /* @__PURE__ */ function(_Masked) {
     }
   }, {
     key: "doPrepare",
-    value: function doPrepare(str) {
+    value: function doPrepare(ch) {
       var _get2;
+      ch = ch.replace(this._mapToRadixRegExp, this.radix);
+      var noSepCh = this._removeThousandsSeparators(ch);
       for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         args[_key - 1] = arguments[_key];
       }
-      return (_get2 = _get(_getPrototypeOf(MaskedNumber2.prototype), "doPrepare", this)).call.apply(_get2, [this, this._removeThousandsSeparators(str.replace(this._mapToRadixRegExp, this.radix))].concat(args));
+      var _normalizePrepare = normalizePrepare((_get2 = _get(_getPrototypeOf(MaskedNumber2.prototype), "doPrepare", this)).call.apply(_get2, [this, noSepCh].concat(args))), _normalizePrepare2 = _slicedToArray(_normalizePrepare, 2), prepCh = _normalizePrepare2[0], details = _normalizePrepare2[1];
+      if (ch && !noSepCh)
+        details.skip = true;
+      return [prepCh, details];
     }
   }, {
     key: "_separatorsCount",
@@ -21931,7 +22180,7 @@ var MaskedNumber = /* @__PURE__ */ function(_Masked) {
         var formatted = this.value;
         if (this.normalizeZeros)
           formatted = this._normalizeZeros(formatted);
-        if (this.padFractionalZeros)
+        if (this.padFractionalZeros && this.scale > 0)
           formatted = this._padFractionalZeros(formatted);
         this._value = formatted;
       }
@@ -22231,6 +22480,14 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
     },
     set: function set2(overwrite) {
       console.warn('"overwrite" option is not available in dynamic mask, use this option in siblings');
+    }
+  }, {
+    key: "maskEquals",
+    value: function maskEquals(mask) {
+      return Array.isArray(mask) && this.compiledMasks.every(function(m, mi) {
+        var _mask$mi;
+        return m.maskEquals((_mask$mi = mask[mi]) === null || _mask$mi === void 0 ? void 0 : _mask$mi.mask);
+      });
     }
   }]);
   return MaskedDynamic2;

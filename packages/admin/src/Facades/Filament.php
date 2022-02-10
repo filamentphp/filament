@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getUserName(Authenticatable $user)
  * @method static array getWidgets()
  * @method static void navigation(\Closure $builder)
+ * @method static void notify(string $status, string $message, bool $afterRedirect = false)
  * @method static void registerNavigationGroups(array $groups)
  * @method static void registerNavigationItems(array $items)
  * @method static void registerPages(array $pages)
@@ -37,7 +38,6 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerTheme(string $url)
  * @method static void registerWidgets(array $widgets)
  * @method static void serving(Closure $callback)
- * @method static void notify(string $status, string $message, bool $afterRedirect = false)
  *
  * @see \Filament\FilamentManager
  */

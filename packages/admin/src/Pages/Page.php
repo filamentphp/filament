@@ -4,6 +4,7 @@ namespace Filament\Pages;
 
 use Closure;
 use Filament\Facades\Filament;
+use Filament\Http\Livewire\Concerns\CanNotify;
 use Filament\Forms;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Contracts\View\View;
@@ -13,6 +14,7 @@ use Livewire\Component;
 
 class Page extends Component implements Forms\Contracts\HasForms
 {
+    use CanNotify;
     use Concerns\HasActions;
     use Forms\Concerns\InteractsWithForms;
 
@@ -80,11 +82,6 @@ class Page extends Component implements Forms\Contracts\HasForms
     public static function getUrl(array $parameters = [], bool $absolute = true): string
     {
         return route(static::getRouteName(), $parameters, $absolute);
-    }
-
-    public function notify(string $status, string $message, bool $afterRedirect = false): void
-    {
-        Filament::notify($status, $message, $afterRedirect);
     }
 
     public function render(): View
