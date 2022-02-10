@@ -129,6 +129,8 @@ trait CanAttachRecords
         if ($another) {
             $form->fill();
         }
+
+        $this->notify('success', __('filament::resources/relation-managers/attach.action.messages.attached'));
     }
 
     public function attachAndAttachAnother(): void

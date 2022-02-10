@@ -31,6 +31,8 @@ trait CanDeleteRecords
         $this->handleRecordDeletion($this->getMountedTableActionRecord());
 
         $this->callHook('afterDelete');
+
+        $this->notify('success', __('filament::resources/pages/list-records.table.actions.delete.messages.deleted'));
     }
 
     protected function handleRecordDeletion(Model $record): void

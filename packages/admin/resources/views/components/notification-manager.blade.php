@@ -13,7 +13,7 @@
         },
     }"
     @notify.window="add($event)"
-    class="fixed inset-x-0 top-0 z-10 p-3 pointer-events-none filament-notifications space-y-4"
+    class="fixed inset-x-0 top-0 z-50 p-3 pointer-events-none filament-notifications space-y-4"
     role="status"
     aria-live="polite"
     wire:ignore

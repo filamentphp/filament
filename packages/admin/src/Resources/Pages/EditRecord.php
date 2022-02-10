@@ -119,6 +119,12 @@ class EditRecord extends Page
 
         $this->callHook('afterDelete');
 
+        $this->notify(
+            'success',
+            __('filament::resources/pages/edit-record.actions.delete.messages.deleted'),
+            isAfterRedirect: true,
+        );
+
         $this->redirect($this->getDeleteRedirectUrl());
     }
 
