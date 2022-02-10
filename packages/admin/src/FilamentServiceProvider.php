@@ -90,6 +90,10 @@ class FilamentServiceProvider extends PackageServiceProvider
             MirrorConfigToSubpackages::class,
         ]);
 
+        Livewire::listen('component.hydrate', function ($component) {
+            $this->app->singleton(Component::class, fn () => $component);
+        });
+
         Livewire::component('filament.core.auth.login', Login::class);
         Livewire::component('filament.core.global-search', GlobalSearch::class);
         Livewire::component('filament.core.pages.dashboard', Dashboard::class);

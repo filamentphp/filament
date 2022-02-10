@@ -123,6 +123,8 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         $this->handleRecordBulkDeletion($this->getSelectedTableRecords());
 
         $this->callHook('afterBulkDelete');
+
+        $this->notify('success', __('filament::resources/pages/list-records.table.bulk_actions.delete.messages.deleted'));
     }
 
     protected function handleRecordBulkDeletion(Collection $records): void

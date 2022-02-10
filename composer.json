@@ -20,6 +20,7 @@
         "phpstan/extension-installer": "^1.1",
         "spatie/laravel-medialibrary": "^9.11|^10.0",
         "spatie/laravel-package-tools": "^1.9",
+        "spatie/laravel-ray": "^1.29",
         "spatie/laravel-tags": "^4.2",
         "symplify/monorepo-builder": "^10.0"
     },

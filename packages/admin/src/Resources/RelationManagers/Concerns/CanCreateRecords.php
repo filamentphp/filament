@@ -60,6 +60,8 @@ trait CanCreateRecords
 
             $form->fill();
         }
+
+        $this->notify('success', __('filament::resources/relation-managers/create.action.messages.created'));
     }
 
     public function createAndCreateAnother(): void
