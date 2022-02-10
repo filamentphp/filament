@@ -6,6 +6,8 @@ use Closure;
 
 class ButtonAction extends Action
 {
+    use Concerns\CanBeOutline;
+
     protected string $view = 'tables::actions.button-action';
 
     protected string | Closure | null $iconPosition = null;
