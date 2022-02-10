@@ -25,7 +25,6 @@ Route::domain(config('filament.domain'))
         })->name('auth.logout');
 
         Route::prefix(config('filament.path'))->group(function () {
-
             Route::middleware(config('filament.middleware.auth'))->group(function (): void {
                 Route::name('pages.')->group(function (): void {
                     foreach (Filament::getPages() as $page) {
