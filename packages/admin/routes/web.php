@@ -9,10 +9,9 @@ Route::domain(config('filament.domain'))
     ->middleware(config('filament.middleware.base'))
     ->name('filament.')
     ->group(function () {
-
         Route::get('/core/assets/{file}', AssetController::class)->where('file', '.*')->prefix(config('filament.asset_path'))->name('asset');
 
-        Route::prefix(config('filament.path'))->group(function() {
+        Route::prefix(config('filament.path'))->group(function () {
             if ($loginPage = config('filament.auth.pages.login')) {
                 Route::get('/login', $loginPage)->name('auth.login');
             }
