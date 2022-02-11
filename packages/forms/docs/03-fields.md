@@ -1173,7 +1173,7 @@ Repeater::make('members')
 
 <img src="https://user-images.githubusercontent.com/41773797/147613748-6fdf2eff-de09-4ba0-8d01-68888802b152.png">
 
-You may also prevent the user from adding items, deleting items, or moving items of repeater:
+You may also prevent the user from adding items, deleting items, or moving items inside the repeater:
 
 ```php
 use Filament\Forms\Components\Repeater;
