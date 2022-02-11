@@ -55,6 +55,10 @@ trait BelongsToModel
             return $model;
         }
 
+        if (is_string($model)) {
+            return null;
+        }
+
         return $this->getParentComponent()?->getRecord();
     }
 
