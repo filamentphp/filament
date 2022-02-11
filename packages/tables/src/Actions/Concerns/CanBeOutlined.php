@@ -8,7 +8,7 @@ trait CanBeOutlined
 {
     protected bool | Closure $isOutlined = false;
 
-    public function outlined(bool | Closure $condition): static
+    public function outlined(bool | Closure $condition = true): static
     {
         $this->isOutlined = $condition;
 
