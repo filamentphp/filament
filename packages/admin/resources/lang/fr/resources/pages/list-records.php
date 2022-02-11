@@ -51,7 +51,7 @@ return [
             ],
 
             'edit' => [
-                
+
                 'label' => 'Modifier',
 
                 'modal' => [
@@ -71,7 +71,7 @@ return [
                 'messages' => [
                     'saved' => 'Sauvegardé(e)',
                 ],
-                
+
             ],
 
             'view' => [
