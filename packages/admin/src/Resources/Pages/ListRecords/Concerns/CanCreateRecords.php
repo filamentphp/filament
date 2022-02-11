@@ -88,6 +88,8 @@ trait CanCreateRecords
 
             $form->fill();
         }
+
+        $this->notify('success', __('filament::resources/pages/list-records.actions.create.messages.created'));
     }
 
     public function createAndCreateAnother(): void

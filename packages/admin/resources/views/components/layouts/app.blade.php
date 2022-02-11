@@ -11,7 +11,7 @@
 
         <x-filament::layouts.app.sidebar />
 
-        <div class="w-screen space-y-6 flex-1 flex flex-col lg:pl-80 rtl:lg:pl-0 rtl:lg:pr-80">
+        <div class="w-screen space-y-6 flex-1 flex flex-col lg:pl-80 rtl:lg:pl-0 rtl:lg:pr-80 filament-main">
             <header @class([
                 'h-[4rem] shrink-0 w-full border-b flex items-center filament-main-topbar',
                 'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),

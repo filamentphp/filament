@@ -7,11 +7,11 @@ return [
     'buttons' => [
 
         'dark_mode' => [
-            'label' => 'Activer le mode nuit',
+            'label' => 'Activer le mode sombre',
         ],
 
         'light_mode' => [
-            'label' => 'Désactiver le mode nuit',
+            'label' => 'Désactiver le mode sombre',
         ],
 
         'logout' => [

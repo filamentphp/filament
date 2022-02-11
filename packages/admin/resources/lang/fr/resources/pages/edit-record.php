@@ -16,7 +16,7 @@ return [
 
                 'heading' => 'Supprimer :label',
 
-                'subheading' => 'Etes-vous sûr(e) de vouloir supprimer cette donnée ?',
+                'subheading' => 'Êtes-vous sûr(e) de vouloir supprimer cette donnée ?',
 
                 'buttons' => [
 
@@ -26,6 +26,10 @@ return [
 
                 ],
 
+            ],
+
+            'messages' => [
+                'deleted' => 'Supprimé(e)',
             ],
 
         ],

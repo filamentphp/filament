@@ -1,6 +1,6 @@
 {
     "name": "filament/filament",
-    "description": "The elegant TALL stack admin panel for Laravel artisans.",
+    "description": "A collection of tools for rapidly building beautiful TALL stack interfaces, designed for humans.",
     "license": "MIT",
     "require": {
         "php": "^8.0"
@@ -20,6 +20,7 @@
         "phpstan/extension-installer": "^1.1",
         "spatie/laravel-medialibrary": "^9.11|^10.0",
         "spatie/laravel-package-tools": "^1.9",
+        "spatie/laravel-ray": "^1.29",
         "spatie/laravel-tags": "^4.2",
         "symplify/monorepo-builder": "^10.0"
     },

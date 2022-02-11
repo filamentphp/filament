@@ -5,6 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Forms\ComponentContainer;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Str;
 
@@ -46,7 +47,7 @@ class RelationshipRepeater extends Repeater
                 $recordsToDelete[] = $keyToCheckForDeletion;
             }
 
-            $relationship->whereIn($localKeyName, $recordsToDelete)->delete();
+            $relationship->whereIn($localKeyName, $recordsToDelete)->get()->each(fn (Model $record) => $record->delete());
 
             $childComponentContainers = $component->getChildComponentContainers();
 

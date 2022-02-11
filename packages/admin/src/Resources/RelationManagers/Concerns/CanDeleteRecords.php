@@ -3,7 +3,6 @@
 namespace Filament\Resources\RelationManagers\Concerns;
 
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 trait CanDeleteRecords
@@ -25,6 +24,19 @@ trait CanDeleteRecords
         $this->getMountedTableActionRecord()->delete();
 
         $this->callHook('afterDelete');
+
+        $this->notify('success', __('filament::resources/relation-managers/delete.action.messages.deleted'));
+    }
+
+    public function bulkDelete(): void
+    {
+        $this->callHook('beforeBulkDelete');
+
+        $this->getSelectedTableRecords()->each(fn (Model $record) => $record->delete());
+
+        $this->callHook('afterBulkDelete');
+
+        $this->notify('success', __('filament::resources/relation-managers/delete.bulk_action.messages.deleted'));
     }
 
     protected function getDeleteAction(): Tables\Actions\Action
@@ -43,7 +55,7 @@ trait CanDeleteRecords
     {
         return Tables\Actions\BulkAction::make('delete')
             ->label(__('filament::resources/relation-managers/delete.bulk_action.label'))
-            ->action(fn (Collection $records) => $records->each(fn (Model $record) => $record->delete()))
+            ->action(fn () => $this->bulkDelete())
             ->requiresConfirmation()
             ->modalHeading(__('filament::resources/relation-managers/delete.bulk_action.modal.heading', ['label' => static::getPluralRecordLabel()]))
             ->deselectRecordsAfterCompletion()

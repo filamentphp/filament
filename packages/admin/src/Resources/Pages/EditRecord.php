@@ -77,10 +77,16 @@ class EditRecord extends Page
 
         $this->callHook('afterSave');
 
-        if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
+        $shouldRedirect = $shouldRedirect && ($redirectUrl = $this->getRedirectUrl());
+
+        $this->notify(
+            'success',
+            __('filament::resources/pages/edit-record.messages.saved'),
+            isAfterRedirect: $shouldRedirect,
+        );
+
+        if ($shouldRedirect) {
             $this->redirect($redirectUrl);
-        } else {
-            $this->notify('success', __('filament::resources/pages/edit-record.messages.saved'));
         }
     }
 
@@ -112,6 +118,12 @@ class EditRecord extends Page
         $this->record->delete();
 
         $this->callHook('afterDelete');
+
+        $this->notify(
+            'success',
+            __('filament::resources/pages/edit-record.actions.delete.messages.deleted'),
+            isAfterRedirect: true,
+        );
 
         $this->redirect($this->getDeleteRedirectUrl());
     }

@@ -84,7 +84,7 @@
         '2xl:grid-cols-12' => $getColumns('2xl') === 12,
     ])>
         @foreach ($getOptions() as $optionValue => $optionLabel)
-            <label class="flex items-center space-x-3">
+            <label class="flex items-center space-x-3 rtl:space-x-reverse">
                 <input
                     {!! $isDisabled() ? 'disabled' : null !!}
                     type="checkbox"
