@@ -20,7 +20,7 @@
             'dark:bg-gray-700 dark:border-gray-600 dark:divide-gray-600' => config('forms.dark_mode'),
         ])>
             <table @class([
-                'w-full text-left divide-y table-auto',
+                'w-full text-left rtl:text-right divide-y table-auto',
                 'dark:divide-gray-700' => config('forms.dark_mode'),
             ])>
                 <thead>
