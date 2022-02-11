@@ -976,7 +976,7 @@ FileUpload::make('attachments')
     ->maxFiles(5)
 ```
 
-You can also enable re-ordering of the files using the 'enableReordering()' method:
+You can also enable the re-ordering of uploaded files using the 'enableReordering()' method:
 
 ```php
 use Filament\Forms\Components\FileUpload;
