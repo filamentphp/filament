@@ -9,12 +9,6 @@ class AssetController
 {
     public function __invoke(string $file)
     {
-        // The first argument to __invoke will be the first parameter in the complete route,
-        // and not the parameter named 'file'. This means that the original $file parameter will
-        // not be the correct parameter in cases where people use the admin panel with a custom
-        // path like "/admin/{userUUID}/".
-        $file = request()->file ?? $file;
-
         switch ($file) {
             case 'app.css':
                 return $this->pretendResponseIsFile(__DIR__ . '/../../../dist/app.css', 'text/css; charset=utf-8');
