@@ -4,7 +4,7 @@ namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
 
-trait CanBeDefault
+trait HasDefaultState
 {
     protected $defaultState = null;
 
@@ -15,7 +15,7 @@ trait CanBeDefault
         return $this;
     }
 
-    public function getDefaultState(): bool
+    public function getDefaultState()
     {
         return $this->evaluate($this->defaultState);
     }
