@@ -6,17 +6,17 @@ use Closure;
 
 trait CanBeDefault
 {
-    protected bool | Closure $isDefault = false;
+    protected $defaultState = null;
 
-    public function default(bool | Closure $condition = true): static
+    public function default($state = true): static
     {
-        $this->isDefault = $condition;
+        $this->defaultState = $state;
 
         return $this;
     }
 
-    public function isDefault(): bool
+    public function getDefaultState(): bool
     {
-        return $this->evaluate($this->isDefault);
+        return $this->evaluate($this->defaultState);
     }
 }

@@ -104,7 +104,8 @@ class MultiSelectFilter extends Filter
             MultiSelect::make('values')
                 ->label($this->getLabel())
                 ->options($this->getOptions())
-                ->placeholder($this->getPlaceholder()),
+                ->placeholder($this->getPlaceholder())
+                ->default($this->getDefaultState()),
         ];
     }
 
