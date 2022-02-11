@@ -19,7 +19,9 @@ Route::domain(config('filament.domain'))
                 session()->invalidate();
                 session()->regenerateToken();
 
-                return redirect()->route('filament.auth.login');
+                return redirect()->to(
+                    config('filament.auth.pages.login') ? route('filament.auth.login') : config('filament.path')
+                );
             })->name('auth.logout');
         });
 
