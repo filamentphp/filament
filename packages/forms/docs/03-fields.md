@@ -1173,6 +1173,42 @@ Repeater::make('members')
 
 <img src="https://user-images.githubusercontent.com/41773797/147613748-6fdf2eff-de09-4ba0-8d01-68888802b152.png">
 
+You may disable the creation button of the repeater:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->disableItemCreation()
+```
+
+You may disable the repeater item deletion:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->disableItemDeletion()
+```
+
+You may disable the repeater item movement:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->disableItemMovement()
+```
+
 You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
 
 ```php
