@@ -976,6 +976,16 @@ FileUpload::make('attachments')
     ->maxFiles(5)
 ```
 
+You can also enable re-ordering of the files using the 'enableReordering()' method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multipe()
+    ->enableReordering()
+```
+
 > Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/docs/spatie-laravel-media-library-plugin) for more information.
 
 ## Rich editor
