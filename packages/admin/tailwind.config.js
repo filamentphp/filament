@@ -17,6 +17,9 @@ module.exports = {
             fontFamily: {
                 sans: ['DM Sans', ...defaultTheme.fontFamily.sans],
             },
+            scale: {
+                flip: '-1',
+            }
         },
     },
     plugins: [
