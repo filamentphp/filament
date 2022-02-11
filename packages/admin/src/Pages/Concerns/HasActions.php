@@ -22,7 +22,7 @@ trait HasActions
     {
         $action = $this->getMountedAction();
 
-        if (!$action) {
+        if (! $action) {
             return;
         }
 
@@ -47,7 +47,7 @@ trait HasActions
 
         $action = $this->getMountedAction();
 
-        if (!$action) {
+        if (! $action) {
             return;
         }
 
@@ -62,7 +62,7 @@ trait HasActions
             'form' => $this->getMountedActionForm(),
         ]);
 
-        if (!$action->shouldOpenModal()) {
+        if (! $action->shouldOpenModal()) {
             return $this->callMountedAction();
         }
 
@@ -118,7 +118,7 @@ trait HasActions
 
     public function getMountedAction(): ?Action
     {
-        if (!$this->mountedAction) {
+        if (! $this->mountedAction) {
             return null;
         }
 
