@@ -9,8 +9,7 @@ Route::domain(config('filament.domain'))
     ->middleware(config('filament.middleware.base'))
     ->name('filament.')
     ->group(function () {
-
-        Route::prefix(config('filament.asset_path'))->group(function() {
+        Route::prefix(config('filament.asset_path'))->group(function () {
             Route::get('/core/assets/{file}', AssetController::class)->where('file', '.*')->prefix(config('filament.asset_path'))->name('asset');
 
             Route::get('/logout', function (): RedirectResponse {
