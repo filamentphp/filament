@@ -83,7 +83,6 @@ trait CanCreateRecords
             ->label(__('filament::resources/relation-managers/create.action.label'))
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
-            ->outlined()
             ->modalActions([
                 ButtonAction::make('create')
                     ->label(__('filament::resources/relation-managers/create.action.modal.actions.create.label'))
