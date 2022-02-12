@@ -7,7 +7,15 @@
 'alignment' => null,
 ])
 
-<td {{ $attributes->class(['filament-tables-cell', 'dark:text-white' => config('tables.dark_mode'), "text-$alignment" => $alignment]) }}>
+@php
+    $alignmentClasses =  \Illuminate\Support\Arr::toCssClasses([
+        'text-left' => $alignment === 'left',
+        'text-center' => $alignment === 'center',
+        'text-right' => $alignment === 'right',
+    ]);
+@endphp
+
+<td {{ $attributes->class(['filament-tables-cell', 'dark:text-white' => config('tables.dark_mode'), $alignmentClasses]) }}>
     @if ($action)
         <button
             wire:click="callTableColumnAction('{{ $name }}', '{{ $record->getKey() }}')"
