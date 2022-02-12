@@ -15,6 +15,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 {
     protected string | Closure | null $collection = null;
 
+    protected string | Closure | null $usingName = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -85,6 +87,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             $media = $mediaAdder
                 ->usingFileName($filename)
+                ->usingName($component->getUsingName())
                 ->toMediaCollection($component->getCollection(), $component->getDiskName());
 
             return $media->getAttributeValue('uuid');
@@ -120,5 +123,17 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     public function getCollection(): string
     {
         return $this->evaluate($this->collection) ?? 'default';
+    }
+
+    public function usingName(string | Closure | null $usingName): static
+    {
+        $this->usingName = $usingName;
+
+        return $this;
+    }
+
+    public function getUsingName(): string
+    {
+        return $this->evaluate($this->usingName) ?? null;
     }
 }
