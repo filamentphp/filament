@@ -5,7 +5,7 @@ return [
     'buttons' => [
 
         'logout' => [
-            'label' => 'Đang xuất',
+            'label' => 'Đăng xuất',
         ],
 
     ],
