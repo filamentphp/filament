@@ -19129,6 +19129,20 @@ import_trix.default.config.blockAttributes.subHeading = {
   breakOnReturn: true,
   group: false
 };
+import_trix.default.config.blockAttributes.default.tagName = "p";
+import_trix.default.config.blockAttributes.default.breakOnReturn = true;
+import_trix.default.Block.prototype.breaksOnReturn = function() {
+  const attr2 = this.getLastAttribute();
+  const config = import_trix.default.getBlockConfig(attr2 ? attr2 : "default");
+  return config ? config.breakOnReturn : false;
+};
+import_trix.default.LineBreakInsertion.prototype.shouldInsertBlockBreak = function() {
+  if (this.block.hasAttributes() && this.block.isListItem() && !this.block.isEmpty()) {
+    return this.startLocation.offset > 0;
+  } else {
+    return !this.shouldBreakFormattedBlock() ? this.breaksOnReturn : false;
+  }
+};
 var rich_editor_default = (Alpine) => {
   Alpine.data("richEditorFormComponent", ({
     state: state2
