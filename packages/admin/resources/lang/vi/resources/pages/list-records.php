@@ -7,7 +7,31 @@ return [
     'actions' => [
 
         'create' => [
+
             'label' => 'Thêm :label',
+
+            'modal' => [
+
+                'heading' => 'Tạo :label',
+
+                'actions' => [
+
+                    'create' => [
+                        'label' => 'Tạo',
+                    ],
+
+                    'create_and_create_another' => [
+                        'label' => 'Tạo & tiếp tục tạo mới',
+                    ],
+
+                ],
+
+            ],
+
+            'messages' => [
+                'created' => 'Đã tạo',
+            ],
+
         ],
 
     ],
@@ -16,8 +40,38 @@ return [
 
         'actions' => [
 
+            'delete' => [
+
+                'label' => 'Xoá',
+
+                'messages' => [
+                    'deleted' => 'Đã xoá',
+                ],
+
+            ],
+
             'edit' => [
+
                 'label' => 'Sửa',
+
+                'modal' => [
+
+                    'heading' => 'Sửa :label',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Lưu',
+                        ],
+
+                    ],
+
+                ],
+
+                'messages' => [
+                    'saved' => 'Đã lưu',
+                ],
+
             ],
 
             'view' => [
@@ -29,7 +83,13 @@ return [
         'bulk_actions' => [
 
             'delete' => [
-                'label' => 'Đã xóa những mục đã chọn',
+
+                'label' => 'Xoá mục đã chọn',
+
+                'messages' => [
+                    'deleted' => 'Đã xoá',
+                ],
+
             ],
 
         ],
