@@ -35,8 +35,10 @@
 
                 if (this.theme === 'dark' && (! document.documentElement.classList.contains('dark'))) {
                     document.documentElement.classList.add('dark')
+                    $dispatch('dark-mode-changed', { mode: 'dark' })
                 } else if (this.theme === 'light' && document.documentElement.classList.contains('dark')) {
                     document.documentElement.classList.remove('dark')
+                    $dispatch('dark-mode-changed', { mode: 'light' })
                 }
             })
         },
