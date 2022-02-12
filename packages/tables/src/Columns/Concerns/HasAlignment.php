@@ -13,6 +13,21 @@ trait HasAlignment
         return $this;
     }
 
+    public function alignLeft(): static
+    {
+        return $this->alignment('left');
+    }
+
+    public function alignCenter(): static
+    {
+        return $this->alignment('center');
+    }
+
+    public function alignRight(): static
+    {
+        return $this->alignment('right');
+    }
+
     public function getAlignment(): ?string
     {
         return $this->alignment;
