@@ -1,12 +1,13 @@
 @props([
-    'action' => null,
-    'name',
-    'record',
-    'shouldOpenUrlInNewTab' => false,
-    'url' => null,
+'action' => null,
+'name',
+'record',
+'shouldOpenUrlInNewTab' => false,
+'url' => null,
+'alignment' => null,
 ])
 
-<td {{ $attributes->class(['filament-tables-cell', 'dark:text-white' => config('tables.dark_mode')]) }}>
+<td {{ $attributes->class(['filament-tables-cell', 'dark:text-white' => config('tables.dark_mode'), "text-$alignment" => $alignment]) }}>
     @if ($action)
         <button
             wire:click="callTableColumnAction('{{ $name }}', '{{ $record->getKey() }}')"
