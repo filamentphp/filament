@@ -53,7 +53,7 @@
                         }"
                     >
                         @if ($hasOffIcon())
-                            <x-dynamic-component :component="$getOffIcon()" class="bg-white h-3 w-3 text-gray-400" />
+                            <x-dynamic-component :component="$getOffIcon()" class="h-3 w-3 text-gray-400" />
                         @endif
                     </span>
 
@@ -66,7 +66,7 @@
                         }"
                     >
                         @if ($hasOnIcon())
-                            <x-dynamic-component :component="$getOnIcon()" class="bg-white h-3 w-3 text-primary-600" />
+                            <x-dynamic-component :component="$getOnIcon()" x-cloak class="h-3 w-3 text-primary-600" />
                         @endif
                     </span>
                 </span>
