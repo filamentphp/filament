@@ -38,6 +38,8 @@
                 } else if (this.theme === 'light' && document.documentElement.classList.contains('dark')) {
                     document.documentElement.classList.remove('dark')
                 }
+                
+                $dispatch('dark-mode-toggled', this.theme)
             })
         },
 

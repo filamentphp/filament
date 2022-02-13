@@ -26,6 +26,23 @@ If you're using a [custom theme](#building-themes), make sure that you have the 
 
 > Please note: before enabling dark mode in production, please thoroughly test your admin panel - especially third party plugins, which may not be properly tested with dark mode.
 
+When the user toggles between dark or light mode, a browser event called **dark-mode-toggled** is dispatched. You can listen to it:
+
+```html
+<div
+    x-data="{ mode: 'light' }"
+    x-on:dark-mode-toggled.window="mode = $event.detail"
+>
+    <span x-show="mode === 'light'">
+        Light mode
+    </span>
+
+    <span x-show="mode === 'dark'">
+        Dark mode
+    </span>
+</div>
+```
+
 ## Building themes
 
 Filament allows you to change the fonts and color scheme used in the UI, by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".

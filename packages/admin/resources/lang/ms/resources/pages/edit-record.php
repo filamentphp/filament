@@ -2,26 +2,26 @@
 
 return [
 
-    'title' => 'Editar :label',
+    'title' => 'Sunting :label',
 
-    'breadcrumb' => 'Editar',
+    'breadcrumb' => 'Sunting',
 
     'actions' => [
 
         'delete' => [
 
-            'label' => 'Excluir',
+            'label' => 'Padam',
 
             'modal' => [
 
-                'heading' => 'Excluir :label',
+                'heading' => 'Padam :label',
 
-                'subheading' => 'Você tem certeza que gostaria de fazer isso?',
+                'subheading' => 'Adakah anda pasti mahu melakukan ini?',
 
                 'buttons' => [
 
                     'delete' => [
-                        'label' => 'Excluir',
+                        'label' => 'Padam',
                     ],
 
                 ],
@@ -29,13 +29,13 @@ return [
             ],
 
             'messages' => [
-                'deleted' => 'Excluído!',
+                'deleted' => 'Dipadamkan',
             ],
 
         ],
 
         'view' => [
-            'label' => 'Mostrar',
+            'label' => 'Lihat',
         ],
 
     ],
@@ -45,11 +45,11 @@ return [
         'actions' => [
 
             'cancel' => [
-                'label' => 'Cancelar',
+                'label' => 'Batal',
             ],
 
             'save' => [
-                'label' => 'Salvar',
+                'label' => 'Simpan',
             ],
 
         ],
@@ -57,7 +57,7 @@ return [
     ],
 
     'messages' => [
-        'saved' => 'Salvo!',
+        'saved' => 'Disimpan',
     ],
 
 ];

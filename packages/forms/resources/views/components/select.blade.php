@@ -81,7 +81,7 @@
                     x-show="! isOpen"
                     x-text="label ?? '{{ addslashes($getPlaceholder()) }}'"
                     @class([
-                        'absolute w-full bg-white',
+                        'w-full bg-white',
                         'dark:bg-gray-700' => config('forms.dark_mode'),
                     ])
                 ></span>
@@ -107,7 +107,7 @@
                             <path stroke="#6B7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4" />
                         </svg>
 
-                        <svg x-show="isLoading" x-cloak class="animate-spin w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <svg x-show="isLoading" x-cloak class="w-5 h-5 text-gray-400 animate-spin" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z" />
                         </svg>
                     </span>
@@ -146,7 +146,7 @@
                                     'text-white bg-primary-500 @if (config('forms.dark_mode')) dark:text-gray-300 dark:bg-gray-600 @endif': index === focusedOptionIndex,
                                     'text-gray-900 @if (config('forms.dark_mode')) dark:text-gray-300 @endif': index !== focusedOptionIndex,
                                 }"
-                                class="relative py-2 pl-3 flex items-center text-gray-900 cursor-default select-none pr-9"
+                                class="relative flex items-center py-2 pl-3 text-gray-900 cursor-default select-none pr-9"
                             >
                                 <span
                                     x-text="Object.values(options)[index]"

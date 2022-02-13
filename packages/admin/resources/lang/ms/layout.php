@@ -7,15 +7,15 @@ return [
     'buttons' => [
 
         'dark_mode' => [
-            'label' => 'Mudar para modo escuro',
+            'label' => 'Tukar mod gelap',
         ],
 
         'light_mode' => [
-            'label' => 'Mudar para modo claro',
+            'label' => 'Tukar mod terang',
         ],
 
         'logout' => [
-            'label' => 'Logout',
+            'label' => 'Log keluar',
         ],
 
     ],
