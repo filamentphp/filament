@@ -17,20 +17,10 @@ class GlobalSearch extends Component
             return null;
         }
 
-        $results = [];
+        $results = Filament::getGlobalSearchProvider()->getResults($this->searchQuery);
 
-        foreach (Filament::getResources() as $resource) {
-            if (! $resource::canGloballySearch()) {
-                continue;
-            }
-
-            $resourceResults = $resource::getGlobalSearchResults($searchQuery);
-
-            if (! $resourceResults->count()) {
-                continue;
-            }
-
-            $results[$resource::getPluralLabel()] = $resourceResults;
+        if ($results === null) {
+            return $results;
         }
 
         $this->dispatchBrowserEvent('open-global-search-results');
