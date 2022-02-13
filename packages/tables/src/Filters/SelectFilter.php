@@ -99,7 +99,8 @@ class SelectFilter extends Filter
             Select::make('value')
                 ->label($this->getLabel())
                 ->options($this->getOptions())
-                ->placeholder($this->getPlaceholder()),
+                ->placeholder($this->getPlaceholder())
+                ->default($this->getDefaultState()),
         ];
     }
 

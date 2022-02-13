@@ -21,7 +21,7 @@ trait HasFormSchema
         return $this->evaluate($this->formSchema) ?? [
             Checkbox::make('isActive')
                 ->label($this->getLabel())
-                ->default($this->isDefault()),
+                ->default($this->getDefaultState()),
         ];
     }
 }
