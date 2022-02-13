@@ -19134,7 +19134,7 @@ import_trix.default.config.blockAttributes.subHeading = {
 import_trix.default.Block.prototype.breaksOnReturn = function() {
   const lastAttribute = this.getLastAttribute();
   const blockConfig = import_trix.default.getBlockConfig(lastAttribute ? lastAttribute : "default");
-  return blockConfig ? blockConfig.breakOnReturn : false;
+  return blockConfig?.breakOnReturn ?? false;
 };
 import_trix.default.LineBreakInsertion.prototype.shouldInsertBlockBreak = function() {
   if (this.block.hasAttributes() && this.block.isListItem() && !this.block.isEmpty()) {
