@@ -282,6 +282,7 @@
                                 <x-tables::cell
                                     :action="$column->getAction()"
                                     :name="$column->getName()"
+                                    :alignment="$column->getAlignment()"
                                     :record="$record"
                                     :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
                                     :url="$column->getUrl() ?? $recordUrl"
