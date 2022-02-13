@@ -21,6 +21,8 @@ Trix.config.blockAttributes.subHeading = {
     group: false
 }
 
+Trix.config.attachments.preview.caption = { name: false, size: false }
+
 Trix.Block.prototype.breaksOnReturn = function () {
     const lastAttribute = this.getLastAttribute()
     const blockConfig = Trix.getBlockConfig(lastAttribute ? lastAttribute : 'default')
