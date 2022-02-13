@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Component;
+use Illuminate\Support\Arr;
 
 trait HasState
 {
@@ -115,9 +116,11 @@ trait HasState
         return $this;
     }
 
-    public function hydrateNullState(): static
+    public function fillMissingStateWithNull(): static
     {
-        $this->state(null);
+        $livewire = $this->getLivewire();
+
+        data_fill($livewire, $this->getStatePath(), null);
 
         return $this;
     }
