@@ -19117,6 +19117,8 @@ var multi_select_default = (Alpine) => {
 
 // packages/forms/resources/js/components/rich-editor.js
 var import_trix = __toModule(require_trix());
+import_trix.default.config.blockAttributes.default.tagName = "p";
+import_trix.default.config.blockAttributes.default.breakOnReturn = true;
 import_trix.default.config.blockAttributes.heading = {
   tagName: "h2",
   terminal: true,
@@ -19129,12 +19131,10 @@ import_trix.default.config.blockAttributes.subHeading = {
   breakOnReturn: true,
   group: false
 };
-import_trix.default.config.blockAttributes.default.tagName = "p";
-import_trix.default.config.blockAttributes.default.breakOnReturn = true;
 import_trix.default.Block.prototype.breaksOnReturn = function() {
-  const attr2 = this.getLastAttribute();
-  const config = import_trix.default.getBlockConfig(attr2 ? attr2 : "default");
-  return config ? config.breakOnReturn : false;
+  const lastAttribute = this.getLastAttribute();
+  const blockConfig = import_trix.default.getBlockConfig(lastAttribute ? lastAttribute : "default");
+  return blockConfig ? blockConfig.breakOnReturn : false;
 };
 import_trix.default.LineBreakInsertion.prototype.shouldInsertBlockBreak = function() {
   if (this.block.hasAttributes() && this.block.isListItem() && !this.block.isEmpty()) {
