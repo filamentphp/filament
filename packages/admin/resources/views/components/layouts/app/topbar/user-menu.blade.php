@@ -39,7 +39,7 @@
                     document.documentElement.classList.remove('dark')
                 }
                 
-                $dispatch('theme-changed', { theme: this.theme })
+                $dispatch('dark-mode-toggled', this.theme)
             })
         },
 
