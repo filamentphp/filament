@@ -6,6 +6,9 @@ use Filament\Resources\Form;
 
 trait UsesResourceForm
 {
+
+    use HasFormActions;
+    
     protected ?Form $resourceForm = null;
 
     protected function getResourceForm(): Form

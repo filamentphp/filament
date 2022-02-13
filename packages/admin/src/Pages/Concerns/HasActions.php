@@ -16,7 +16,6 @@ trait HasActions
     public $mountedActionData = [];
 
     protected ?array $cachedActions = null;
-    protected ?array $cachedFormActions = null;
 
     public function callMountedAction()
     {
@@ -73,7 +72,7 @@ trait HasActions
 
     protected function getAllCachedActions(): array
     {
-        return array_merge($this->getCachedActions(), $this->getCachedFormActions());
+        return $this->getCachedActions();
     }
 
     protected function getCachedActions(): array
@@ -83,15 +82,6 @@ trait HasActions
         }
 
         return $this->cachedActions;
-    }
-
-    protected function getCachedFormActions(): array
-    {
-        if ($this->cachedFormActions === null) {
-            $this->cacheFormActions();
-        }
-
-        return $this->cachedFormActions;
     }
 
     protected function cacheActions(): void
@@ -105,16 +95,6 @@ trait HasActions
             ->toArray();
     }
 
-    protected function cacheFormActions(): void
-    {
-        $this->cachedFormActions = collect($this->getFormActions())
-            ->mapWithKeys(function (Action $action): array {
-                $action->livewire($this);
-
-                return [$action->getName() => $action];
-            })
-            ->toArray();
-    }
 
     public function getMountedAction(): ?Action
     {
@@ -147,8 +127,4 @@ trait HasActions
         return [];
     }
 
-    protected function getFormActions(): array
-    {
-        return [];
-    }
 }
