@@ -1,21 +1,22 @@
 @props([
-'action' => null,
-'name',
-'record',
-'shouldOpenUrlInNewTab' => false,
-'url' => null,
-'alignment' => null,
+    'action' => null,
+    'alignment' => null,
+    'name',
+    'record',
+    'shouldOpenUrlInNewTab' => false,
+    'url' => null,
 ])
 
-@php
-    $alignmentClasses =  \Illuminate\Support\Arr::toCssClasses([
-        'text-left' => $alignment === 'left',
-        'text-center' => $alignment === 'center',
-        'text-right' => $alignment === 'right',
-    ]);
-@endphp
-
-<td {{ $attributes->class(['filament-tables-cell', 'dark:text-white' => config('tables.dark_mode'), $alignmentClasses]) }}>
+<td {{ $attributes->class([
+    'filament-tables-cell',
+    'dark:text-white' => config('tables.dark_mode'),
+    match ($alignment) {
+        'left' => 'text-left',
+        'center' => 'text-center',
+        'right' => 'text-right',
+        default => null,
+    },
+]) }}>
     @if ($action)
         <button
             wire:click="callTableColumnAction('{{ $name }}', '{{ $record->getKey() }}')"

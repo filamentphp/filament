@@ -2,34 +2,36 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use Closure;
+
 trait HasAlignment
 {
-    protected ?string $alignment = null;
+    protected string | Closure | null $alignment = null;
 
-    public function alignment(?string $alignment): static
+    public function alignment(string | Closure | null $alignment): static
     {
         $this->alignment = $alignment;
 
         return $this;
     }
 
-    public function alignLeft(): static
+    public function alignLeft(bool | Closure $condition = true): static
     {
-        return $this->alignment('left');
+        return $this->alignment(fn (): ?string => $condition ? 'left' : null);
     }
 
-    public function alignCenter(): static
+    public function alignCenter(bool | Closure $condition = true): static
     {
-        return $this->alignment('center');
+        return $this->alignment(fn (): ?string => $condition ? 'center' : null);
     }
 
-    public function alignRight(): static
+    public function alignRight(bool | Closure $condition = true): static
     {
-        return $this->alignment('right');
+        return $this->alignment(fn (): ?string => $condition ? 'right' : null);
     }
 
     public function getAlignment(): ?string
     {
-        return $this->alignment;
+        return $this->evaluate($this->alignment);
     }
 }

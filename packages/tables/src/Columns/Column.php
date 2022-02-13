@@ -19,6 +19,7 @@ class Column extends Component implements Htmlable
     use Concerns\CanCountRelatedModels;
     use Concerns\CanOpenUrl;
     use Concerns\EvaluatesClosures;
+    use Concerns\HasAlignment;
     use Concerns\HasExtraAttributes;
     use Concerns\HasExtraHeaderAttributes;
     use Concerns\HasLabel;
@@ -26,7 +27,6 @@ class Column extends Component implements Htmlable
     use Concerns\HasRecord;
     use Concerns\HasState;
     use Concerns\HasView;
-    use Concerns\HasAlignment;
     use Concerns\InteractsWithTableQuery;
     use Conditionable;
     use Macroable;
