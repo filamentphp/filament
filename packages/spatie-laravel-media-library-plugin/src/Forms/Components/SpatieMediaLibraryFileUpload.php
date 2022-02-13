@@ -61,8 +61,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $storage = $component->getDisk();
 
             // An ugly mess as we need to support both Flysystem v1 and v3.
-            $storageAdapter = method_exists($storage, 'getAdapter') ? $storage->getAdapter() : (method_exists($storage->getDriver(), 'getAdapter') ? $storage->getDriver()->getAdapter() : null);
-            $supportsTemporaryUrls = method_exists($storageAdapter, 'getTemporaryUrl');
+            $storageAdapter = method_exists($storage, 'getAdapter') ? $storage->getAdapter() : (method_exists($storageDriver = $storage->getDriver(), 'getAdapter') ? $storageDriver->getAdapter() : null);
+            $supportsTemporaryUrls = method_exists($storageAdapter, 'temporaryUrl') || method_exists($storageAdapter, 'getTemporaryUrl');
 
             if ($component->getVisibility() === 'private' && $supportsTemporaryUrls) {
                 return $media?->getTemporaryUrl(now()->addMinutes(5));
