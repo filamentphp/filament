@@ -56,7 +56,7 @@ class ViewRecord extends Page
     {
         $resource = static::getResource();
 
-        if (! $resource::hasPage('view')) {
+        if (! $resource::hasPage('edit')) {
             return [];
         }
 
