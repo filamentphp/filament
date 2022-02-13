@@ -26,7 +26,7 @@ If you're using a [custom theme](#building-themes), make sure that you have the 
 
 > Please note: before enabling dark mode in production, please thoroughly test your admin panel - especially third party plugins, which may not be properly tested with dark mode.
 
-When the user toggles between dark or light mode, a browser event called **theme-changed** is dispatched. You can listen to it:
+When the user toggles between dark or light mode, a browser event called **dark-mode-toggled** is dispatched. You can listen to it:
 
 ```html
 <div
@@ -36,7 +36,7 @@ When the user toggles between dark or light mode, a browser event called **theme
     <span x-show="mode === 'light'">
         Light mode
     </span>
-    
+
     <span x-show="mode === 'dark'">
         Dark mode
     </span>
