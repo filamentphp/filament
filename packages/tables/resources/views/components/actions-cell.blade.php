@@ -4,7 +4,7 @@
 ])
 
 <td {{ $attributes->class(['px-4 py-3 whitespace-nowrap filament-tables-actions-cell']) }}>
-    <div class="flex items-center justify-center gap-4">
+    <div class="flex items-center justify-center gap-1">
         @foreach ($actions as $action)
             @if (! $action->record($record)->isHidden())
                 {{ $action }}
