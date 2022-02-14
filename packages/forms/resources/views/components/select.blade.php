@@ -84,7 +84,7 @@
                     @class([
                         'absolute bg-white' => !$isDisabled(),
                         'select-none opacity-75' => $isDisabled(),
-                        'w-10/12 bg-white pr-2',
+                        'w-10/12',
                         'dark:bg-gray-700' => config('forms.dark_mode'),
                     ])
                 ></span>
@@ -105,7 +105,7 @@
                         ])
                     />
 
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-1 pointer-events-none">
+                    <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                         <svg x-show="! isLoading" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                             <path stroke="#6B7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4" />
                         </svg>
