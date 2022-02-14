@@ -30,6 +30,8 @@ class Select extends Field
 
     protected string | Closure | null $searchPrompt = null;
 
+    protected string | Closure | null $url = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -114,6 +116,13 @@ class Select extends Field
         return $this;
     }
 
+    public function url(string | Closure | null $url): static
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
     public function getOptionLabel(): ?string
     {
         return $this->evaluate($this->getOptionLabelUsing, [
@@ -151,6 +160,11 @@ class Select extends Field
         }
 
         return $results;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->evaluate($this->url);
     }
 
     public function isOptionDisabled($value, string $label): bool
