@@ -229,6 +229,7 @@
                                 :extra-attributes="$column->getExtraHeaderAttributes()"
                                 :is-sort-column="$getSortColumn() === $column->getName()"
                                 :name="$column->getName()"
+                                :alignment="$column->getAlignment()"
                                 :sortable="$column->isSortable()"
                                 :sort-direction="$getSortDirection()"
                                 :class="$getHiddenClasses($column)"

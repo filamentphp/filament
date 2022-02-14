@@ -4,6 +4,7 @@
     'name',
     'sortable' => false,
     'sortDirection',
+    'alignment' => null,
 ])
 
 <th {{ $attributes->merge($extraAttributes)->class([
@@ -16,9 +17,15 @@
         @endif
         type="button"
         @class([
-            'flex items-center whitespace-nowrap space-x-1 rtl:space-x-reverse font-medium text-sm text-gray-600',
+            'flex items-center w-full whitespace-nowrap space-x-1 rtl:space-x-reverse font-medium text-sm text-gray-600',
             'dark:text-gray-300' => config('tables.dark_mode'),
             'cursor-default' => ! $sortable,
+            match ($alignment) {
+                'left' => 'justify-start',
+                'center' => 'justify-center',
+                'right' => 'justify-end',
+                default => null,
+            },
         ])
     >
         <span>
