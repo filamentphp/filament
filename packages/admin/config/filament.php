@@ -173,6 +173,7 @@ return [
     */
 
     'layout' => [
+        'favicon' => null,
         'forms' => [
             'actions' => [
                 'alignment' => 'left',
