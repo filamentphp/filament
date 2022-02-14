@@ -29,12 +29,12 @@ trait HasAffixes
         return $this->postfix($label);
     }
 
-    public function getPrefixLabel(): ?string
+    public function getPrefixLabel()
     {
         return $this->evaluate($this->prefixLabel);
     }
 
-    public function getPostfixLabel(): ?string
+    public function getPostfixLabel()
     {
         return $this->evaluate($this->postfixLabel);
     }
