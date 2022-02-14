@@ -10,6 +10,7 @@ class Select extends Field
     use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
+    use Concerns\HasAffixes;
 
     protected string $view = 'forms::components.select';
 
