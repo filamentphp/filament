@@ -212,7 +212,10 @@
         @endif
 
         @if ($url = $getUrl())
-            <a href="{{ $url }}">
+            <a 
+                href="{{ $url }}"
+                {{ $shouldOpenUrlInNewTab() ? 'target="_blank"' : null }}
+            >
                 <x-heroicon-o-link class="shrink-0 w-5 h-5 text-gray-400 hover:text-primary-500" />
             </a>
         @endif
