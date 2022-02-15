@@ -16,7 +16,7 @@ return [
 
                 'heading' => 'Borrar :label',
 
-                'subheading' => '¿Estas seguro?',
+                'subheading' => '¿Estás seguro?',
 
                 'buttons' => [
 
@@ -27,6 +27,9 @@ return [
                 ],
 
             ],
+            'messages' => [
+                'deleted' => 'Borrado',
+            ],            
 
         ],
 
