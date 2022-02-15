@@ -46,7 +46,7 @@
             },
         })"
         wire:ignore
-        style="min-height: 76px"
+        style="min-height: {{ $layout === 'compact' ? '2.625em' : '4.75em' }}"
         {{ $attributes->merge($getExtraAttributes())->class([
             'filament-forms-file-upload-component',
             'w-32 mx-auto' => $isAvatar(),
