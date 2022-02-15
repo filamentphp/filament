@@ -18,6 +18,8 @@ class SelectFilter extends Filter
 
     protected bool | Closure $isStatic = false;
 
+    protected bool | Closure $isSearchable = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -74,6 +76,13 @@ class SelectFilter extends Filter
         return $this;
     }
 
+    public function searchable(bool | Closure $condition = true): static
+    {
+        $this->isSearchable = $condition;
+
+        return $this;
+    }
+
     public function getColumn(): string
     {
         return $this->evaluate($this->column) ?? $this->getName();
@@ -100,8 +109,14 @@ class SelectFilter extends Filter
                 ->label($this->getLabel())
                 ->options($this->getOptions())
                 ->placeholder($this->getPlaceholder())
-                ->default($this->getDefaultState()),
+                ->default($this->getDefaultState())
+                ->searchable($this->isSearchable()),
         ];
+    }
+
+    public function isSearchable(): bool
+    {
+        return (bool) $this->evaluate($this->isSearchable);
     }
 
     public function queriesRelationships(): bool
