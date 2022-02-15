@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => 'Logowanie',
+
     'buttons' => [
 
         'submit' => [
