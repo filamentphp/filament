@@ -23,6 +23,7 @@ export default (Alpine) => {
     Alpine.data('fileUploadFormComponent', ({
         acceptedFileTypes,
         canReorder,
+        canPreview,
         deleteUploadedFileUsing,
         getUploadedFileUrlUsing,
         imageCropAspectRatio,
@@ -80,6 +81,7 @@ export default (Alpine) => {
                 this.pond = FilePond.create(this.$refs.input, {
                     acceptedFileTypes,
                     allowReorder: canReorder,
+                    allowImagePreview: canPreview,
                     credits: false,
                     files: shouldAppendFiles ? this.files : this.files.reverse(),
                     imageCropAspectRatio,

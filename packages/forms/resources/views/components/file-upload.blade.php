@@ -12,6 +12,7 @@
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
             canReorder: {{ $canReorder() ? 'true' : 'false' }},
+            canPreview: {{ $canPreview() ? 'true' : 'false' }},
             deleteUploadedFileUsing: async (fileKey) => {
                 return await $wire.deleteUploadedFile('{{ $getStatePath() }}', fileKey)
             },
