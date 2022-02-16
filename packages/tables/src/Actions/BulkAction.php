@@ -77,4 +77,9 @@ class BulkAction
 
         return $action;
     }
+
+    protected function getLivewireSubmitActionName(): string
+    {
+        return 'callMountedTableBulkAction';
+    }
 }

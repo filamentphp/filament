@@ -14,7 +14,7 @@
     $buttonClasses = array_merge([
         'inline-flex items-center justify-center font-medium tracking-tight rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset filament-button',
         'dark:focus:ring-offset-0' => config('filament.dark_mode'),
-        'opacity-75 cursor-not-allowed' => $disabled,
+        'opacity-70 cursor-not-allowed' => $disabled,
         'h-9 px-4' => $size === 'md',
         'h-8 px-3 text-sm' => $size === 'sm',
         'h-11 px-6 text-xl' => $size === 'lg',
@@ -67,6 +67,8 @@
     <button
         type="{{ $type }}"
         wire:loading.attr="disabled"
+        {!! $hasLoadingIndicator ? 'wire:loading.class="opacity-70 cursor-wait"' : '' !!}
+        {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
@@ -74,7 +76,7 @@
         @elseif ($hasLoadingIndicator)
             <svg
                 wire:loading
-                {{ $loadingIndicatorTarget ? "wire:target={$loadingIndicatorTarget}" : '' }}
+                {!! $loadingIndicatorTarget ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
                 @class([$iconClasses, 'animate-spin'])
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -93,6 +95,8 @@
 @elseif ($tag === 'a')
     <a
         wire:loading.attr="disabled"
+        {!! $hasLoadingIndicator ? 'wire:loading.class="opacity-70 cursor-wait"' : '' !!}
+        {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
@@ -100,7 +104,7 @@
         @elseif ($hasLoadingIndicator)
             <svg
                 wire:loading
-                {{ $loadingIndicatorTarget ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' }}
+                {!! $loadingIndicatorTarget ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
                 @class([$iconClasses, 'animate-spin'])
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"

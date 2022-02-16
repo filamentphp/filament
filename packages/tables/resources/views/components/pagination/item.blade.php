@@ -18,7 +18,7 @@
             'transition' => ((! $active) && (! $disabled) && (! $separator)) || $active,
             'text-primary-600' => ((! $active) && (! $disabled) && $icon && (! $separator)) || $active,
             'focus:underline bg-primary-500/10 ring-2 ring-primary-500' => $active,
-            'cursor-not-allowed opacity-75' => $disabled,
+            'cursor-not-allowed opacity-70' => $disabled,
             'cursor-default' => $separator,
         ]) }}
     >
