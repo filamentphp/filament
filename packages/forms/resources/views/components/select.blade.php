@@ -82,9 +82,9 @@
                     x-show="! isOpen"
                     x-text="label ?? '{{ addslashes($getPlaceholder()) }}'"
                     @class([
-                        'absolute' => !$isDisabled(),
-                        'w-10/12',
+                        'whitespace-nowrap truncate w-10/12',
                         'dark:bg-gray-700' => config('forms.dark_mode'),
+                        'absolute' => ! $isDisabled(),
                     ])
                 ></span>
 
