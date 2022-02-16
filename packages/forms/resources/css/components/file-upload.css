@@ -14,6 +14,10 @@
     @apply border-gray-600 text-white bg-gray-700;
 }
 
+.filepond--root[data-style-panel-layout="compact"] .filepond--drop-label label {
+    @apply text-sm;
+}
+
 .filepond--root[data-style-panel-layout="compact"] .filepond--drop-label {
     min-height: 2.625em;
 }
