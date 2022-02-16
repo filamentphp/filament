@@ -18,7 +18,7 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div {{ $attributes->merge($getExtraAttributes())->class(['flex items-center space-x-1 group filament-forms-text-input-component']) }}>
+    <div {{ $attributes->merge($getExtraAttributes())->class(['flex items-center space-x-1 rtl:space-x-reverse group filament-forms-text-input-component']) }}>
         @if ($label = $getPrefixLabel())
             <span @class($sideLabelClasses)>
                 {{ $label }}
