@@ -7,7 +7,7 @@
 }
 
 .dark .filepond--drop-label {
-    @apply bg-gray-700 text-gray-200 rounded-md;
+    @apply text-gray-200;
 }
 
 .dark .filepond--panel-root {
