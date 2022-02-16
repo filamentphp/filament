@@ -14,6 +14,12 @@
     @apply border-gray-600 text-white bg-gray-700;
 }
 
+/* compact only styles, excludes compact circle (avatar) */
+
+.filepond--root[data-style-panel-layout="compact"] .filepond--item {
+    @apply mt-0.5;
+}
+
 .filepond--root[data-style-panel-layout="compact"] .filepond--drop-label label {
     @apply text-sm;
 }
