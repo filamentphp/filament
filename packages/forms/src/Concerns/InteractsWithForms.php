@@ -231,6 +231,10 @@ trait InteractsWithForms
                 ->schema($this->getFormSchema())
                 ->model($this->getFormModel())
                 ->statePath($this->getFormStatePath()),
+            'mountedActionForm' => $this->makeForm()
+                ->schema(($action = $this->getMountedAction()) ? $action->getFormSchema() : [])
+                ->statePath('mountedActionData')
+                ->model($this->getMountedActionFormModel()),
         ];
     }
 
