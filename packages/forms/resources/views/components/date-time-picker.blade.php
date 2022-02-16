@@ -111,6 +111,7 @@
 
                             <input
                                 type="number"
+                                inputmode="numeric"
                                 x-model.debounce="focusedYear"
                                 @class([
                                     'w-20 p-0 text-lg text-right border-0 focus:ring-0 focus:outline-none',
