@@ -12,9 +12,9 @@
         <x-slot name="labelSuffix">
     @endif
             <div {{ $attributes->merge($getExtraAttributes())->class([
-                'gap-2 filament-forms-radio-component',
+                'filament-forms-radio-component',
                 'flex flex-wrap gap-3' => $isInline(),
-                'grid' => ! $isInline(),
+                'grid gap-2' => ! $isInline(),
                 'grid-cols-1' => $getColumns('default') === 1,
                 'grid-cols-2' => $getColumns('default') === 2,
                 'grid-cols-3' => $getColumns('default') === 3,
