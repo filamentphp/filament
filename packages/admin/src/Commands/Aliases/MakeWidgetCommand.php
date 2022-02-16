@@ -8,5 +8,5 @@ class MakeWidgetCommand extends Commands\MakeWidgetCommand
 {
     protected $hidden = true;
 
-    protected $signature = 'filament:widget {name?} {--R|resource=} {--F|force}';
+    protected $signature = 'filament:widget {name?} {--R|resource=} {--F|force} {--C|chart-widget} {--S|stats-widget}';
 }
