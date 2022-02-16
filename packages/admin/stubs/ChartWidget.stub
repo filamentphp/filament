@@ -1,0 +1,20 @@
+<?php
+
+namespace {{ namespace }};
+
+use Filament\Widgets\{{ chart }}Widget;
+
+class {{ class }} extends {{ chart }}Widget
+{
+    protected function getHeading(): string
+    {
+        return '';
+    }
+
+    protected function getData(): array
+    {
+        return [
+            //
+        ];
+    }
+}

@@ -2,8 +2,9 @@
 
 namespace Filament\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 
 class MakeWidgetCommand extends Command
 {
@@ -12,7 +13,7 @@ class MakeWidgetCommand extends Command
 
     protected $description = 'Creates a Filament widget class.';
 
-    protected $signature = 'make:filament-widget {name?} {--R|resource=} {--F|force}';
+    protected $signature = 'make:filament-widget {name?} {--R|resource=} {--F|force} {--C|chart-widget} {--S|stats-widget}';
 
     public function handle(): int
     {
@@ -59,6 +60,7 @@ class MakeWidgetCommand extends Command
                 ->replace('\\', '/')
                 ->append('.php'),
         );
+
         $viewPath = resource_path(
             (string) Str::of($view)
                 ->replace('.', '/')
@@ -68,18 +70,37 @@ class MakeWidgetCommand extends Command
 
         if (! $this->option('force') && $this->checkForCollision([
             $path,
-            $viewPath,
+            $this->option('stats-widget') || $this->option('chart-widget') ? : $viewPath,
         ])) {
             return static::INVALID;
         }
 
-        $this->copyStubToApp('Widget', $path, [
-            'class' => $widgetClass,
-            'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
-            'view' => $view,
-        ]);
+        if ($this->option('stats-widget')) {
+            $this->copyStubToApp('StatsOverviewWidget', $path, [
+                'class' => $widgetClass,
+                'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
+            ]);
+        }
+        else if ($this->option('chart-widget')) {
+            $chart = $this->choice('Select Widget Chart type ?',
+                $this->listChartTypes()->toArray()
+            , 0);
+            $this->copyStubToApp('ChartWidget', $path, [
+                'class' => $widgetClass,
+                'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
+                'chart' => Str::replace(' ', '', $chart)
+            ]);
+        }
+        else {
+            $this->copyStubToApp('Widget', $path, [
+                'class' => $widgetClass,
+                'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
+                'view' => $view,
+            ]);
 
-        $this->copyStubToApp('WidgetView', $viewPath);
+            $this->copyStubToApp('WidgetView', $viewPath);
+        }
+
 
         $this->info("Successfully created {$widget}!");
 
@@ -88,5 +109,19 @@ class MakeWidgetCommand extends Command
         }
 
         return static::SUCCESS;
+    }
+
+    protected function listChartTypes(): Collection
+    {
+        return collect([
+            'BarChartWidget',
+            'BubbleChartWidget',
+            'DoughnutChartWidget',
+            'LineChartWidget',
+            'PieChartWidget',
+            'PolarAreaChartWidget',
+            'RadarChartWidget',
+            'ScatterChartWidget'
+        ])->map(fn ($chart) => Str::of($chart)->replace('Widget','')->headline());
     }
 }
