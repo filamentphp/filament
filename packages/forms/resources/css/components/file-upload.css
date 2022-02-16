@@ -16,7 +16,7 @@
 
 /* compact only styles, excludes compact circle (avatar) */
 
-.filepond--root[data-style-panel-layout="compact"] .filepond--item {
+.filepond--root[data-style-panel-layout="compact"] .filepond--item + .filepond--item {
     @apply mt-0.5;
 }
 
