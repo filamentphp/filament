@@ -188,6 +188,10 @@ class Page extends Component implements Forms\Contracts\HasForms
     protected function getForms(): array
     {
         return [
+            'form' => $this->makeForm()
+                ->schema($this->getFormSchema())
+                ->model($this->getFormModel())
+                ->statePath($this->getFormStatePath()),
             'mountedActionForm' => $this->makeForm()
                 ->schema(($action = $this->getMountedAction()) ? $action->getFormSchema() : [])
                 ->statePath('mountedActionData')
