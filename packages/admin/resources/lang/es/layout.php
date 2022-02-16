@@ -13,7 +13,7 @@ return [
         'light_mode' => [
             'label' => 'Modo claro',
         ],
-        
+
         'logout' => [
             'label' => 'Salir',
         ],

@@ -29,7 +29,7 @@ return [
             ],
             'messages' => [
                 'deleted' => 'Borrado',
-            ],            
+            ],
 
         ],
 

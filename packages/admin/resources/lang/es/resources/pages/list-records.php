@@ -22,13 +22,13 @@ return [
                         'label' => 'Guardar & crear otro',
                     ],
 
-                ],            
+                ],
         ],
             'messages' => [
                 'created' => 'Registro creado',
             ],
 
-        ],            
+        ],
 
     ],
     'table' => [
@@ -55,7 +55,7 @@ return [
                             'label' => 'Guardar',
                         ],
 
-                    ],       
+                    ],
                 ],
                 'messages' => [
                     'saved' => 'Registro actualizado',
