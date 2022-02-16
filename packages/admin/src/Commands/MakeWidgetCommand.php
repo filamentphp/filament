@@ -2,9 +2,9 @@
 
 namespace Filament\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class MakeWidgetCommand extends Command
 {
@@ -70,7 +70,7 @@ class MakeWidgetCommand extends Command
 
         if (! $this->option('force') && $this->checkForCollision([
             $path,
-            $this->option('stats-widget') || $this->option('chart-widget') ? : $viewPath,
+            $this->option('stats-widget') || $this->option('chart-widget') ?: $viewPath,
         ])) {
             return static::INVALID;
         }
@@ -80,18 +80,18 @@ class MakeWidgetCommand extends Command
                 'class' => $widgetClass,
                 'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
             ]);
-        }
-        else if ($this->option('chart-widget')) {
-            $chart = $this->choice('Select Widget Chart type ?',
-                $this->listChartTypes()->toArray()
-            , 0);
+        } elseif ($this->option('chart-widget')) {
+            $chart = $this->choice(
+                'Select Widget Chart type ?',
+                $this->listChartTypes()->toArray(),
+                0
+            );
             $this->copyStubToApp('ChartWidget', $path, [
                 'class' => $widgetClass,
                 'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
-                'chart' => Str::replace(' ', '', $chart)
+                'chart' => Str::replace(' ', '', $chart),
             ]);
-        }
-        else {
+        } else {
             $this->copyStubToApp('Widget', $path, [
                 'class' => $widgetClass,
                 'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
@@ -121,7 +121,7 @@ class MakeWidgetCommand extends Command
             'PieChartWidget',
             'PolarAreaChartWidget',
             'RadarChartWidget',
-            'ScatterChartWidget'
-        ])->map(fn ($chart) => Str::of($chart)->replace('Widget','')->headline());
+            'ScatterChartWidget',
+        ])->map(fn ($chart) => Str::of($chart)->replace('Widget', '')->headline());
     }
 }
