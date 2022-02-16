@@ -7,7 +7,31 @@ return [
     'actions' => [
 
         'create' => [
+
             'label' => 'Utwórz :label',
+
+            'modal' => [
+
+                'heading' => 'Utwórz :label',
+
+                'actions' => [
+
+                    'create' => [
+                        'label' => 'Utwórz',
+                    ],
+
+                    'create_and_create_another' => [
+                        'label' => 'Utwórz i dodaj kolejną',
+                    ],
+
+                ],
+
+            ],
+
+            'messages' => [
+                'created' => 'Created',
+            ],
+
         ],
 
     ],
@@ -16,8 +40,38 @@ return [
 
         'actions' => [
 
+            'delete' => [
+
+                'label' => 'Usuń',
+
+                'messages' => [
+                    'deleted' => 'Usunięto',
+                ],
+
+            ],
+
             'edit' => [
-                'label' => 'Edycja',
+
+                'label' => 'Edytuj',
+
+                'modal' => [
+
+                    'heading' => 'Edycja :label',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Zapisz',
+                        ],
+
+                    ],
+
+                ],
+
+                'messages' => [
+                    'saved' => 'Zapisano',
+                ],
+
             ],
 
             'view' => [
@@ -29,7 +83,13 @@ return [
         'bulk_actions' => [
 
             'delete' => [
+
                 'label' => 'Usuń zaznaczone',
+
+                'messages' => [
+                    'deleted' => 'Usunięto',
+                ],
+
             ],
 
         ],
