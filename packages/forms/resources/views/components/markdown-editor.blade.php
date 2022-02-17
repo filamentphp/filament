@@ -22,7 +22,7 @@
                 <div class="flex justify-between space-x-4 overflow-x-auto items-stretch overflow-y-hidden">
                     <markdown-toolbar
                         for="{{ $getId() }}"
-                        x-bind:class="{ 'pointer-events-none opacity-75': tab === 'preview' }"
+                        x-bind:class="{ 'pointer-events-none opacity-70': tab === 'preview' }"
                         class="flex items-stretch space-x-4 rtl:space-x-reverse focus:outline-none"
                     >
                         @if ($hasToolbarButton(['bold', 'italic', 'strike', 'link']))

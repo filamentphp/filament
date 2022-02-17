@@ -7,7 +7,31 @@ return [
     'actions' => [
 
         'create' => [
-            'label' => 'Nieuwe :label',
+
+            'label' => ':Label aanmaken',
+
+            'modal' => [
+
+                'heading' => ':Label aanmaken',
+
+                'actions' => [
+
+                    'create' => [
+                        'label' => 'Aanmaken',
+                    ],
+
+                    'create_and_create_another' => [
+                        'label' => 'Aanmaken & nog een aanmaken',
+                    ],
+
+                ],
+
+            ],
+
+            'messages' => [
+                'created' => 'Aangemaakt',
+            ],
+
         ],
 
     ],
@@ -16,8 +40,38 @@ return [
 
         'actions' => [
 
+            'delete' => [
+
+                'label' => 'Verwijderen',
+
+                'messages' => [
+                    'deleted' => 'Verwijderd',
+                ],
+
+            ],
+
             'edit' => [
+
                 'label' => 'Bewerken',
+
+                'modal' => [
+
+                    'heading' => ':Label bewerken',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Opslaan',
+                        ],
+
+                    ],
+
+                ],
+
+                'messages' => [
+                    'saved' => 'Opgeslagen',
+                ],
+
             ],
 
             'view' => [
@@ -29,7 +83,13 @@ return [
         'bulk_actions' => [
 
             'delete' => [
+
                 'label' => 'Verwijder geselecteerde',
+
+                'messages' => [
+                    'deleted' => 'Verwijderd',
+                ],
+
             ],
 
         ],

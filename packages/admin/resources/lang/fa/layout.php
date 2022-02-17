@@ -2,20 +2,20 @@
 
 return [
 
-    'direction' => 'ltr',
+    'direction' => 'rtl',
 
     'buttons' => [
 
         'dark_mode' => [
-            'label' => 'Tryb ciemny',
+            'label' => 'حالت تیره',
         ],
 
         'light_mode' => [
-            'label' => 'Tryb jasny',
+            'label' => 'حالت روشن',
         ],
 
         'logout' => [
-            'label' => 'Wyloguj się',
+            'label' => 'خروج',
         ],
 
     ],

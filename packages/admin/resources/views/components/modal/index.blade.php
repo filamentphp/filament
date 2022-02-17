@@ -64,7 +64,7 @@
             <div
                 @class([
                     'w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default filament-modal-window',
-                    'dark:bg-gray-800' => config('tables.dark_mode'),
+                    'dark:bg-gray-800' => config('filament.dark_mode'),
                     'max-w-xs' => $width === 'xs',
                     'max-w-sm' => $width === 'sm',
                     'max-w-md' => $width === 'md',
@@ -92,7 +92,7 @@
                     @if ($heading || $subheading)
                         <div @class([
                             'p-4 space-y-2 text-center',
-                            'dark:text-white' => config('tables.dark_mode'),
+                            'dark:text-white' => config('filament.dark_mode'),
                         ])>
                             @if ($heading)
                                 <x-filament::modal.heading :id="$id . '.heading'">
