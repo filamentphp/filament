@@ -6,12 +6,20 @@
     @apply bg-white border border-gray-300 rounded-lg shadow-sm;
 }
 
+.filepond--drip-blob {
+    @apply bg-gray-900;
+}
+
 .dark .filepond--drop-label {
     @apply text-gray-200;
 }
 
 .dark .filepond--panel-root {
     @apply border-gray-600 text-white bg-gray-700;
+}
+
+.dark .filepond--drip-blob {
+    @apply bg-gray-100;
 }
 
 /* compact only styles, excludes compact circle (avatar) */
