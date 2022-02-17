@@ -236,6 +236,8 @@ TextInput::make('name')
     ->maxLength(255)
 ```
 
+> Beware that the backend validation for `minLength()`/`maxLength()` will not validate the length but the value when combined with `numeric()` as it translates to the `min`/`max` validation rule.
+
 In addition, you may validate the minimum and maximum value of the input by setting the `minValue()` and `maxValue()` methods:
 
 ```php
