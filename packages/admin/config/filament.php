@@ -28,6 +28,20 @@ return [
 
     'path' => env('FILAMENT_PATH', 'admin'),
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Filament Core Path
+    |--------------------------------------------------------------------------
+    |
+    | This is the path which Filament will use to load it's core routes and assets.
+    | You may change it if it conflicts with your other routes.
+    |
+    */
+
+    'core_path' => env('FILAMENT_CORE_PATH', 'filament'),
+
+
     /*
     |--------------------------------------------------------------------------
     | Filament Domain
