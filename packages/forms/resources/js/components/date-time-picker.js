@@ -8,7 +8,7 @@ dayjs.extend(customParseFormat)
 dayjs.extend(localeData)
 dayjs.extend(timezone)
 dayjs.extend(utc)
-dayjs.extend((option, Dayjs, dayjs) => {    
+dayjs.extend((option, Dayjs, dayjs) => {
     dayjs.onLocaleUpdated = () => {},
     dayjs.updateLocale = (locale) => {
         dayjs.locale(locale)
@@ -116,7 +116,11 @@ export default (Alpine) => {
                 })
 
                 this.$watch('focusedYear', () => {
-                    if (! this.focusedYear) {
+                    if (this.focusedYear.length > 4) {
+                        this.focusedYear = this.focusedYear.substring(0, 4)
+                    }
+
+                    if ((! this.focusedYear) || (this.focusedYear.length !== 4)) {
                         return
                     }
 
