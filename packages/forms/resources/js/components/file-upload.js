@@ -85,6 +85,8 @@ export default (Alpine) => {
                     acceptedFileTypes,
                     allowReorder: canReorder,
                     allowImagePreview: canPreview,
+                    allowVideoPreview: canPreview,
+                    allowAudioPreview: canPreview,
                     credits: false,
                     files: shouldAppendFiles ? this.files : this.files.reverse(),
                     imageCropAspectRatio,
