@@ -2,6 +2,10 @@
 
 return [
 
+    'title' => 'Inloggen',
+
+    'heading' => 'Inloggen met je account',
+
     'buttons' => [
 
         'submit' => [
@@ -30,7 +34,5 @@ return [
         'failed' => 'Onjuiste inloggegevens.',
         'throttled' => 'Teveel inlogpogingen. Probeer opnieuw over :seconds seconden.',
     ],
-
-    'heading' => 'Inloggen met je account',
 
 ];

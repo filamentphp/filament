@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => ':Label aanmaken',
+
     'breadcrumb' => 'Aanmaken',
 
     'form' => [
