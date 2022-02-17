@@ -4,6 +4,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
 use Filament\Pages;
+use Filament\Resources;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -30,15 +31,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Filament Asset Path
+    | Filament Core Path
     |--------------------------------------------------------------------------
     |
-    | This is the path which Filament will use to load it's assets. Default is
-    | `filament`, but you may change it if it conflicts with your other routes.
+    | This is the path which Filament will use to load it's core routes and assets.
+    | You may change it if it conflicts with your other routes.
     |
     */
 
-    'asset_path' => env('FILAMENT_ASSET_PATH', 'filament'),
+    'core_path' => env('FILAMENT_CORE_PATH', 'filament'),
 
 
     /*
