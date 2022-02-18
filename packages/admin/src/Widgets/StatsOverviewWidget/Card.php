@@ -2,14 +2,19 @@
 
 namespace Filament\Widgets\StatsOverviewWidget;
 
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 use Illuminate\View\Component;
+use Illuminate\Contracts\View\View;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Tables\Actions\Modal\Actions\Concerns\HasAction;
 
 class Card extends Component implements Htmlable
 {
+    use HasAction;
+
     protected ?array $chart = null;
+
+    protected ?array $filters = null;
 
     protected ?string $chartColor = null;
 
@@ -35,7 +40,7 @@ class Card extends Component implements Htmlable
 
     public static function make(string $label, $value): static
     {
-        return app(static::class, ['label' => $label, 'value' => $value]);
+        return new static($label, $value);
     }
 
     public function chartColor(?string $color): static
@@ -80,6 +85,13 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
+    public function filters(?array $filters): static
+    {
+        $this->filters = $filters;
+
+        return $this;
+    }
+
     public function label(string $label): static
     {
         $this->label = $label;
@@ -104,6 +116,11 @@ class Card extends Component implements Htmlable
     public function getChart(): ?array
     {
         return $this->chart;
+    }
+
+    public function getFilters(): ?array
+    {
+        return $this->filters;
     }
 
     public function getChartColor(): ?string

@@ -8,6 +8,8 @@
     'flat' => false,
     'label' => null,
     'value' => null,
+    'filters' => null,
+    'action' => null,
 ])
 
 <div {{ $attributes->class([
@@ -20,13 +22,36 @@
     <div @class([
         'space-y-2',
     ])>
-        <div @class([
-            'text-sm font-medium text-gray-500',
-            'dark:text-gray-200' => config('filament.dark_mode'),
-        ])>
-            {{ $label }}
-        </div>
+        <div @class(['flex flex-wrap justify-between items-center space-y-1' => $filters ]) >
+            <div @class([
+                'text-sm font-medium text-gray-500',
+                'dark:text-gray-200' => config('filament.dark_mode'),
+            ])>
+                {{ $label }}
+            </div>
+            @if($filters)
+                <div
+                    x-data="{
+                        filter: null,
 
+                        init: function () {
+                            $watch('filter', (value) => {
+                                $wire.call('{{ $action }}', value)
+                            })
+                        }
+                    }"
+                    x-id="['stats-widget-filter']"
+                >
+                    <select :id="$id('stats-widget-filter')" :name="$id('stats-widget-filter')" x-model="filter" class="text-sm font-medium text-gray-500 block transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70 filament-forms-select-component dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600" style="padding-block: 4px">
+                        @foreach($filters as $val => $title)
+                            <option value="{{ $val }}">
+                                {{ $title }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+        </div>
         <div class="text-3xl">
             {{ $value }}
         </div>
