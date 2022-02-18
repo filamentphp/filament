@@ -15,6 +15,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 {
     protected string | Closure | null $collection = null;
 
+    protected string | Closure | null $conversion = null;
+
     protected string | Closure | null $mediaName = null;
 
     protected function setUp(): void
@@ -66,6 +68,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             if ($component->getVisibility() === 'private' && $supportsTemporaryUrls) {
                 return $media?->getTemporaryUrl(now()->addMinutes(5));
+            }
+
+            if ($component->getConversion() && $media->hasGeneratedConversion($component->getConversion())) {
+                return $media?->getUrl($component->getConversion());
             }
 
             return $media?->getUrl();
@@ -123,6 +129,18 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     public function getCollection(): string
     {
         return $this->evaluate($this->collection) ?? 'default';
+    }
+
+    public function conversion(string | Closure | null $conversion): static
+    {
+        $this->conversion = $conversion;
+
+        return $this;
+    }
+
+    public function getConversion(): string
+    {
+        return $this->evaluate($this->conversion) ?? '';
     }
 
     public function mediaName(string | Closure | null $name): static
