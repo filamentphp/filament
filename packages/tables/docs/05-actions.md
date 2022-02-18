@@ -29,6 +29,19 @@ LinkAction::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
 ```
 
+Alignment of the action icons can be configured in the `layout` section of the package config:
+
+````'layout' => [
+    // ...
+    'tables' => [
+        'actions' => [
+            'alignment' => 'right',  // Or 'left', 'center'
+            // ...
+
+        ],
+    ],
+],```
+
 ### Bulk actions
 
 Bulk actions may be registered in the `getTableBulkActions()` method. Bulk action buttons are visible when the user selects at least one record.
@@ -40,7 +53,7 @@ protected function getTableBulkActions(): array
         // ...
     ];
 }
-```
+````
 
 Bulk actions may be created using the static `make()` method, passing its name. The name of the action should be unique. You should then pass a callback to `action()` which executes the task:
 

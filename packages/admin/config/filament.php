@@ -185,6 +185,7 @@ return [
         'tables' => [
             'actions' => [
                 'type' => \Filament\Tables\Actions\LinkAction::class,
+                'alignment' => 'right'
             ],
         ],
     ],
