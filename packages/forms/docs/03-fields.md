@@ -465,6 +465,21 @@ BelongsToSelect::make('authorId')
     ->relationship('author', 'name', fn (Builder $query) => $query->withTrashed())
 ```
 
+You may provide a callback to `getOptionLabelFromRecordUsing()` to customise the option label. All properties used in the callback must be declared via `searchable()`.
+
+```php
+use App\Models\App;
+use Filament\Forms\Components\BelongsToSelect;
+use Illuminate\Database\Eloquent\Model;
+
+BelongsToSelect::make('authorId')
+    ->relationship('author', 'last_name')
+    ->searchable(['first_name', 'last_name'])
+    ->getOptionLabelFromRecordUsing(fn (?Model $record) => $record->first_name . ' ' . $record->last_name)
+```
+
+
+
 ## Multi-select
 
 The multi-select component allows you to select multiple values from a list of predefined options:
