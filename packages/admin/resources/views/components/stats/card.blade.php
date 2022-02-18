@@ -33,10 +33,12 @@
                 <div
                     x-data="{
                         filter: null,
-
                         init: function () {
                             $watch('filter', (value) => {
                                 $wire.call('{{ $action }}', value)
+                                if (@js($chart)) {
+                                    $dispatch('updateStatsChartData', { data: @js($chart) })
+                                }
                             })
                         }
                     }"
@@ -83,48 +85,56 @@
                     chart: null,
 
                     init: function () {
-                        chart = new Chart(
-                            $el,
-                            {
-                                type: 'line',
-                                data: {
-                                    labels: {{ json_encode(array_keys($chart)) }},
-                                    datasets: [{
-                                        data: {{ json_encode(array_values($chart)) }},
-                                        backgroundColor: getComputedStyle($refs.backgroundColorElement).color,
-                                        borderColor: getComputedStyle($refs.borderColorElement).color,
-                                        borderWidth: 2,
-                                        fill: 'start',
-                                        tension: 0.5,
-                                    }],
-                                },
-                                options: {
-                                    elements: {
-                                        point: {
-                                            radius: 0,
-                                        },
-                                    },
-                                    maintainAspectRatio: false,
-                                    plugins: {
-                                        legend: {
-                                            display: false,
-                                        },
-                                    },
-                                    scales: {
-                                        x:  {
-                                            display: false,
-                                        },
-                                        y:  {
-                                            display: false,
-                                        },
-                                    },
-                                    tooltips: {
-                                        enabled: false,
-                                    },
-                                },
-                            }
-                        )
+                        let chart = this.initChart()
+
+                        window.addEventListener('updateStatsChartData', (event) => {
+                            chart.destroy()
+                            chart = this.initChart(event.detail.data)
+                        })
                     },
+
+                    initChart: function (data = null) {
+                        data = data ?? @js($chart)
+
+                        return this.chart = new Chart($el, {
+                            type: 'line',
+                            data: {
+                                labels: @js($chart),
+                                datasets: [{
+                                    data: data,
+                                    backgroundColor: getComputedStyle($refs.backgroundColorElement).color,
+                                    borderColor: getComputedStyle($refs.borderColorElement).color,
+                                    borderWidth: 2,
+                                    fill: 'start',
+                                    tension: 0.5,
+                                }],
+                            },
+                            options: {
+                                elements: {
+                                    point: {
+                                        radius: 0,
+                                    },
+                                },
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        display: false,
+                                    },
+                                },
+                                scales: {
+                                    x:  {
+                                        display: false,
+                                    },
+                                    y:  {
+                                        display: false,
+                                    },
+                                },
+                                tooltips: {
+                                    enabled: false,
+                                },
+                            },
+                        })
+                    }
                 }"
                 wire:ignore
                 class="h-6"
