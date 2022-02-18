@@ -13,6 +13,8 @@ class BelongsToSelect extends Select
 {
     protected string | Closure | null $displayColumnName = null;
 
+    protected ?Closure $getOptionLabelFromRecordUsing = null;
+
     protected bool | Closure $isPreloaded = false;
 
     protected string | Closure | null $relationship = null;
@@ -63,12 +65,16 @@ class BelongsToSelect extends Select
         $this->displayColumnName = $displayColumnName;
         $this->relationship = $relationshipName;
 
+        $this->getOptionLabelFromRecordUsing(function (?Model $record) {
+            return $record?->getAttributeValue($this->getDisplayColumnName());
+        });
+
         $this->getOptionLabelUsing(function (BelongsToSelect $component, $value) {
             $relationship = $component->getRelationship();
 
             $record = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $value)->first();
 
-            return $record?->getAttributeValue($component->getDisplayColumnName());
+            return app()->call($this->getOptionLabelFromRecordUsing, ['record' => $record]);
         });
 
         $this->getSearchResultsUsing(function (BelongsToSelect $component, ?string $query) use ($callback): array {
@@ -86,7 +92,10 @@ class BelongsToSelect extends Select
 
             return $this->applySearchConstraint($relationshipQuery, $query)
                 ->limit(50)
-                ->pluck($component->getDisplayColumnName(), $relationship->getOwnerKeyName())
+                ->get($this->getSearchColumns())
+                ->mapWithKeys(fn (Model $record) => [
+                    $record->getKey() => app()->call($this->getOptionLabelFromRecordUsing, ['record' => $record])
+                ])
                 ->toArray();
         });
 
@@ -106,7 +115,10 @@ class BelongsToSelect extends Select
             }
 
             return $relationshipQuery
-                ->pluck($component->getDisplayColumnName(), $relationship->getOwnerKeyName())
+                ->get($this->getSearchColumns())
+                ->mapWithKeys(fn (Model $record) => [
+                    $record->getKey() => app()->call($this->getOptionLabelFromRecordUsing, ['record' => $record])
+                ])
                 ->toArray();
         });
 
@@ -143,6 +155,13 @@ class BelongsToSelect extends Select
         }
 
         return $query;
+    }
+
+    public function getOptionLabelFromRecordUsing(?Closure $callback): static
+    {
+        $this->getOptionLabelFromRecordUsing = $callback;
+
+        return $this;
     }
 
     public function getDisplayColumnName(): string
