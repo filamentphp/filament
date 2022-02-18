@@ -14,7 +14,7 @@
         </p>
 
         <p @class([
-            'text-sm space-x-2 font-medium text-gray-500',
+            'text-sm space-x-2 rtl:space-x-reverse font-medium text-gray-500',
             'dark:text-gray-400' => config('filament.dark_mode'),
         ])>
             @foreach ($details as $label => $value)

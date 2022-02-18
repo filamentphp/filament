@@ -10,7 +10,7 @@
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
 >
-    <div class="flex space-x-3">
+    <div class="flex space-x-3 rtl:space-x-reverse">
         <div class="flex-1 space-y-1">
             <h3 class="text-xl font-bold tracking-tight">
                 {{ $getHeading() }}
