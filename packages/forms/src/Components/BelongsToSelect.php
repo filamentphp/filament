@@ -94,7 +94,7 @@ class BelongsToSelect extends Select
                 ->limit(50)
                 ->get($this->getSearchColumns())
                 ->mapWithKeys(fn (Model $record) => [
-                    $record->getKey() => app()->call($this->getOptionLabelFromRecordUsing, ['record' => $record])
+                    $record->getKey() => app()->call($this->getOptionLabelFromRecordUsing, ['record' => $record]),
                 ])
                 ->toArray();
         });
@@ -117,7 +117,7 @@ class BelongsToSelect extends Select
             return $relationshipQuery
                 ->get($this->getSearchColumns())
                 ->mapWithKeys(fn (Model $record) => [
-                    $record->getKey() => app()->call($this->getOptionLabelFromRecordUsing, ['record' => $record])
+                    $record->getKey() => app()->call($this->getOptionLabelFromRecordUsing, ['record' => $record]),
                 ])
                 ->toArray();
         });
