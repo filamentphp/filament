@@ -26,7 +26,7 @@
     @endif
     role="dialog"
     aria-modal="true"
-    class="{{ $displayClasses }} filament-tables-modal"
+    class="{{ $displayClasses }} filament-modal"
 >
     {{ $trigger }}
 
@@ -45,7 +45,7 @@
             x-on:click="isOpen = false"
             type="button"
             aria-hidden="true"
-            class="fixed inset-0 w-full h-full bg-black/50 focus:outline-none"
+            class="fixed inset-0 w-full h-full bg-black/50 focus:outline-none filament-modal-close-overlay"
         ></button>
 
         <div
@@ -63,8 +63,8 @@
         >
             <div
                 @class([
-                    'w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default',
-                    'dark:bg-gray-800' => config('tables.dark_mode'),
+                    'w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default filament-modal-window',
+                    'dark:bg-gray-800' => config('filament.dark_mode'),
                     'max-w-xs' => $width === 'xs',
                     'max-w-sm' => $width === 'sm',
                     'max-w-md' => $width === 'md',
@@ -79,7 +79,7 @@
                 ])
             >
                 @if ($header)
-                    <div class="px-4 py-2">
+                    <div class="px-4 py-2 filament-modal-header">
                         {{ $header }}
                     </div>
                 @endif
@@ -88,11 +88,11 @@
                     <x-filament::hr />
                 @endif
 
-                <div class="space-y-2">
+                <div class="space-y-2 filament-modal-content">
                     @if ($heading || $subheading)
                         <div @class([
                             'p-4 space-y-2 text-center',
-                            'dark:text-white' => config('tables.dark_mode'),
+                            'dark:text-white' => config('filament.dark_mode'),
                         ])>
                             @if ($heading)
                                 <x-filament::modal.heading :id="$id . '.heading'">
@@ -122,7 +122,7 @@
                 @endif
 
                 @if ($footer)
-                    <div class="px-4 py-2">
+                    <div class="px-4 py-2 filament-modal-footer">
                         {{ $footer }}
                     </div>
                 @endif

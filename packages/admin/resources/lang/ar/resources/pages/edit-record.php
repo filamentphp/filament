@@ -28,6 +28,10 @@ return [
 
             ],
 
+            'messages' => [
+                'deleted' => 'تم الحذف',
+            ],
+
         ],
 
         'view' => [

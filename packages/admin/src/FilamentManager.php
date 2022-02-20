@@ -7,9 +7,11 @@ use Filament\Events\ServingFilament;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
+use Livewire\Component;
 
 class FilamentManager
 {
@@ -122,6 +124,24 @@ class FilamentManager
     public function serving(Closure $callback): void
     {
         Event::listen(ServingFilament::class, $callback);
+    }
+
+    public function notify(string $status, string $message, bool $isAfterRedirect = false): void
+    {
+        if ($isAfterRedirect) {
+            session()->push('notifications', ['status' => $status, 'message' => $message]);
+
+            return;
+        }
+
+        try {
+            /** @var \Livewire\Component $component */
+            $component = app(Component::class);
+        } catch (BindingResolutionException $exception) {
+            return;
+        }
+
+        $component->dispatchBrowserEvent('notify', ['status' => $status, 'message' => $message]);
     }
 
     public function getNavigation(): array

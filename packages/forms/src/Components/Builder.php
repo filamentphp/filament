@@ -79,7 +79,7 @@ class Builder extends Field
                         data_set($livewire, "{$statePath}.{$newUuid}", $newItem);
                     }
 
-                    $this->getChildComponentContainers()[$newUuid]->fill();
+                    $component->getChildComponentContainers()[$newUuid]->fill();
 
                     $component->hydrateDefaultItemState($newUuid);
                 },

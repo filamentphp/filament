@@ -18,7 +18,7 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div {{ $attributes->merge($getExtraAttributes())->class(['flex items-center space-x-1 group filament-forms-text-input-component']) }}>
+    <div {{ $attributes->merge($getExtraAttributes())->class(['flex items-center space-x-1 rtl:space-x-reverse group filament-forms-text-input-component']) }}>
         @if ($label = $getPrefixLabel())
             <span @class($sideLabelClasses)>
                 {{ $label }}
@@ -46,10 +46,10 @@
                 id="{{ $getId() }}"
                 {!! ($inputMode = $getInputMode()) ? "inputmode=\"{$inputMode}\"" : null !!}
                 {!! $datalistOptions ? "list=\"{$getId()}-list\"" : null !!}
-                {!! ($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
-                {!! ($value = $getMaxValue()) ? "max=\"{$value}\"" : null !!}
-                {!! ($length = $getMinLength()) ? "minlength=\"{$length}\"" : null !!}
-                {!! ($value = $getMinValue()) ? "min=\"{$value}\"" : null !!}
+                {!! filled($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
+                {!! filled($value = $getMaxValue()) ? "max=\"{$value}\"" : null !!}
+                {!! filled($length = $getMinLength()) ? "minlength=\"{$length}\"" : null !!}
+                {!! filled($value = $getMinValue()) ? "min=\"{$value}\"" : null !!}
                 {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
                 {!! ($interval = $getStep()) ? "step=\"{$interval}\"" : null !!}
                 {!! $isRequired() ? 'required' : null !!}

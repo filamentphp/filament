@@ -32,6 +32,8 @@ class Resource
 
     protected static ?int $navigationSort = null;
 
+    protected static ?string $recordRouteKeyName = null;
+
     protected static bool $shouldRegisterNavigation = true;
 
     protected static ?string $pluralLabel = null;
@@ -80,10 +82,8 @@ class Resource
 
     public static function resolveRecordRouteBinding($key): ?Model
     {
-        $model = static::getModel();
-
         return static::getEloquentQuery()
-            ->where(app($model)->getRouteKeyName(), $key)
+            ->where(static::getRecordRouteKeyName(), $key)
             ->first();
     }
 
@@ -250,6 +250,11 @@ class Resource
         $slug = static::getSlug();
 
         return "filament.resources.{$slug}";
+    }
+
+    public static function getRecordRouteKeyName(): string
+    {
+        return static::$recordRouteKeyName ?? app(static::getModel())->getRouteKeyName();
     }
 
     public static function getRoutes(): Closure

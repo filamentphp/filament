@@ -19,6 +19,7 @@
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
     :type="$canSubmitForm() ? 'submit' : 'button'"
     :color="$getColor()"
+    :outlined="$isOutlined()"
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
     class="filament-page-button-action"

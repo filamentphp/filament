@@ -3,6 +3,7 @@
 namespace Filament\Resources\RelationManagers;
 
 use Filament\Facades\Filament;
+use Filament\Http\Livewire\Concerns\CanNotify;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Tables;
@@ -16,6 +17,7 @@ use Livewire\Component;
 
 class RelationManager extends Component implements Tables\Contracts\HasTable
 {
+    use CanNotify;
     use Tables\Concerns\InteractsWithTable;
 
     public Model $ownerRecord;

@@ -9,7 +9,7 @@ use Illuminate\Support\Traits\Tappable;
 class Filter
 {
     use Concerns\BelongsToTable;
-    use Concerns\CanBeDefault;
+    use Concerns\HasDefaultState;
     use Concerns\CanBeHidden;
     use Concerns\EvaluatesClosures;
     use Concerns\HasFormSchema;

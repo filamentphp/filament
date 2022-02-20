@@ -54,6 +54,8 @@ trait CanEditRecords
         $this->handleRecordUpdate($this->getMountedTableActionRecord(), $data);
 
         $this->callHook('afterSave');
+
+        $this->notify('success', __('filament::resources/relation-managers/edit.action.messages.saved'));
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model

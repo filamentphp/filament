@@ -28,6 +28,10 @@ return [
 
             ],
 
+            'messages' => [
+                'created' => 'Created',
+            ],
+
         ],
 
     ],
@@ -37,7 +41,13 @@ return [
         'actions' => [
 
             'delete' => [
+
                 'label' => 'Delete',
+
+                'messages' => [
+                    'deleted' => 'Deleted',
+                ],
+
             ],
 
             'edit' => [
@@ -58,6 +68,10 @@ return [
 
                 ],
 
+                'messages' => [
+                    'saved' => 'Saved',
+                ],
+
             ],
 
             'view' => [
@@ -69,7 +83,13 @@ return [
         'bulk_actions' => [
 
             'delete' => [
+
                 'label' => 'Delete selected',
+
+                'messages' => [
+                    'deleted' => 'Deleted',
+                ],
+
             ],
 
         ],
