@@ -10,6 +10,7 @@
 >
     <div
         x-data="richEditorFormComponent({
+            shouldDisableFileAttachmentCaptions: {{ $shouldDisableFileAttachmentCaptions() ? 'true' : 'false' }},
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
         x-on:trix-change="state = $event.target.value"

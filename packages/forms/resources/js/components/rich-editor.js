@@ -21,8 +21,6 @@ Trix.config.blockAttributes.subHeading = {
     group: false
 }
 
-Trix.config.attachments.preview.caption = { name: false, size: false }
-
 Trix.Block.prototype.breaksOnReturn = function () {
     const lastAttribute = this.getLastAttribute()
     const blockConfig = Trix.getBlockConfig(lastAttribute ? lastAttribute : 'default')
@@ -40,12 +38,17 @@ Trix.LineBreakInsertion.prototype.shouldInsertBlockBreak = function () {
 
 export default (Alpine) => {
     Alpine.data('richEditorFormComponent', ({
+        shouldDisableFileAttachmentCaptions,
         state,
     }) => {
         return {
             state,
 
             init: function () {
+                if (shouldDisableFileAttachmentCaptions) {
+                    Trix.config.attachments.preview.caption = { name: false, size: false }
+                }
+
                 this.$refs.trix?.editor?.loadHTML(this.state)
 
                 this.$watch('state', () => {

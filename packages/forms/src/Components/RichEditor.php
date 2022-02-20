@@ -11,6 +11,8 @@ class RichEditor extends Field implements Contracts\HasFileAttachments
     use Concerns\HasPlaceholder;
     use Concerns\InteractsWithToolbarButtons;
 
+    protected Closure | bool $shouldDisableFileAttachmentCaptions = false;
+
     protected string $view = 'forms::components.rich-editor';
 
     protected array | Closure $toolbarButtons = [
@@ -28,4 +30,16 @@ class RichEditor extends Field implements Contracts\HasFileAttachments
         'strike',
         'undo',
     ];
+
+    public function disableFileAttachmentCaptions(bool | Closure $condition = true): static
+    {
+        $this->shouldDisableFileAttachmentCaptions = $condition;
+
+        return $this;
+    }
+
+    public function shouldDisableFileAttachmentCaptions(): bool
+    {
+        return $this->evaluate($this->shouldDisableFileAttachmentCaptions);
+    }
 }

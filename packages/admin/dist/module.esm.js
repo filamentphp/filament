@@ -19134,7 +19134,7 @@ import_trix.default.config.blockAttributes.subHeading = {
 import_trix.default.Block.prototype.breaksOnReturn = function() {
   const lastAttribute = this.getLastAttribute();
   const blockConfig = import_trix.default.getBlockConfig(lastAttribute ? lastAttribute : "default");
-  return blockConfig ? blockConfig.breakOnReturn : false;
+  return blockConfig?.breakOnReturn ?? false;
 };
 import_trix.default.LineBreakInsertion.prototype.shouldInsertBlockBreak = function() {
   if (this.block.hasAttributes() && this.block.isListItem() && !this.block.isEmpty()) {
@@ -19145,11 +19145,15 @@ import_trix.default.LineBreakInsertion.prototype.shouldInsertBlockBreak = functi
 };
 var rich_editor_default = (Alpine) => {
   Alpine.data("richEditorFormComponent", ({
+    shouldDisableFileAttachmentCaptions,
     state: state2
   }) => {
     return {
       state: state2,
       init: function() {
+        if (shouldDisableFileAttachmentCaptions) {
+          import_trix.default.config.attachments.preview.caption = {name: false, size: false};
+        }
         this.$refs.trix?.editor?.loadHTML(this.state);
         this.$watch("state", () => {
           if (document.activeElement === this.$refs.trix) {
