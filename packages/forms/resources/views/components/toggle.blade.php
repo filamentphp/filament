@@ -19,7 +19,7 @@
                 x-on:click="state = ! state"
                 x-bind:class="{
                     'bg-primary-600': state,
-                    'bg-gray-200 @if (config('forms.dark_mode')) dark:bg-gray-700 @endif': ! state,
+                    'bg-gray-200 @if (config('forms.dark_mode')) dark:bg-white/10 @endif': ! state,
                 }"
                 {!! $isAutofocused() ? 'autofocus' : null !!}
                 {!! $isDisabled() ? 'disabled' : null !!}
@@ -35,7 +35,6 @@
                 <span
                     @class([
                         'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 ease-in-out transition duration-200',
-                        'dark:bg-gray-800' => config('forms.dark_mode'),
                     ])
                     :class="{
                         'translate-x-5 rtl:-translate-x-5': state,
