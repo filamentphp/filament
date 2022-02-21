@@ -101,7 +101,7 @@ class CreateRecord extends Page
     protected function getFormActions(): array
     {
         $canCreateAnother = static::$canCreateAnother ?? Filament::disableCreateResourceCreateAnother();
-        
+
         return [
             $this->getCreateFormAction(),
             $canCreateAnother ? $this->getCreateAndCreateAnotherFormAction() : null,
