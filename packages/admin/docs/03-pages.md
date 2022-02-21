@@ -194,7 +194,7 @@ There are four types of notifications available, each with a different color and
  - `success` - for success messages.
  - `warning` - for reporting non-critical issues.
 
-By default, notifications will be sent to the user immediately. If you'd like to until a redirect is complete, you can use the `isAfterRedirect` argument:
+By default, notifications will be sent to the user immediately. If you'd like to wait until a redirect is complete, you can use the `isAfterRedirect` argument:
 
 ```php
 $this->notify('success', 'Created', isAfterRedirect: true);
