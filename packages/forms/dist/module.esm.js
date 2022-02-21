@@ -6142,7 +6142,10 @@ var date_time_picker_default = (Alpine) => {
           this.focusedDate = this.focusedDate.month(this.focusedMonth);
         });
         this.$watch("focusedYear", () => {
-          if (!this.focusedYear) {
+          if (this.focusedYear.length > 4) {
+            this.focusedYear = this.focusedYear.substring(0, 4);
+          }
+          if (!this.focusedYear || this.focusedYear.length !== 4) {
             return;
           }
           let year = +this.focusedYear;
