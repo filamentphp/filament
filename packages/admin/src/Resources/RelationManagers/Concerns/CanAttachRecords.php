@@ -155,7 +155,7 @@ trait CanAttachRecords
     {
         return [
             $this->getAttachActionAttachModalAction(),
-            $this->getAttachActionAttachAndAttachAnotherModalAction(),
+            static::$canAttachAnother ? $this->getAttachActionAttachAndAttachAnotherModalAction() : '',
             $this->getAttachActionCancelModalAction(),
         ];
     }

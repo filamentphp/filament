@@ -427,6 +427,36 @@ public static function attachForm(Form $form): Form
 
 As included in the above example, you may use `getAttachFormRecordSelect()` to create a select field for the record to attach.
 
+By default Relation managers include `Create & create another` and `Attach & attach another` buttons.
+You can disable it per resource by setting:
+
+```php
+protected static bool $canCreateAnother = false;
+
+protected static bool $canAttachAnother = false;
+```
+
+To disable it globally, you may use use `RelationManager::disableCreateAnother()`, `RelationManager::disableAttachAnother()` in service provider:
+
+```php
+use Filament\Resources\RelationManagers\RelationManager;
+// ...
+    public function boot(){
+        
+        RelationManager::disableCreateAnother();
+
+        RelationManager::disableAttachAnother();
+        // ...
+    }
+```
+After disabled globally, you still able to enable for individual relation manager:
+
+```php
+protected static bool $canCreateAnother = true;
+
+protected static bool $canAttachAnother = true;
+```
+
 ## Global search
 
 "Global search" is a feature that allows you to search across all of your resources.

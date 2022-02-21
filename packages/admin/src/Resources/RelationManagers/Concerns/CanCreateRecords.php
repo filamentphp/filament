@@ -94,7 +94,7 @@ trait CanCreateRecords
     {
         return [
             $this->getCreateActionCreateModalAction(),
-            $this->getCreateActionCreateAndCreateAnotherModalAction(),
+            static::$canCreateAnother ? $this->getCreateActionCreateAndCreateAnotherModalAction() : '',
             $this->getCreateActionCancelModalAction(),
         ];
     }

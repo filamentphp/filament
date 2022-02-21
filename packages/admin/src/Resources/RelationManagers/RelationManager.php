@@ -40,6 +40,10 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     protected static string $view;
 
+    protected static bool $canCreateAnother = true;
+
+    protected static bool $canAttachAnother = true;
+
     protected function getTableQueryStringIdentifier(): ?string
     {
         return lcfirst(class_basename(static::class));
@@ -210,5 +214,15 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     protected function getViewData(): array
     {
         return [];
+    }
+
+    public static function disableCreateAnother(): void
+    {
+        static::$canCreateAnother = false;
+    }
+
+    public static function disableAttachAnother(): void
+    {
+        static::$canAttachAnother = false;
     }
 }

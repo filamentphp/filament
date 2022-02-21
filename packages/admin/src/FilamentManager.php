@@ -39,6 +39,8 @@ class FilamentManager
 
     protected ?Closure $navigationBuilder = null;
 
+    public static bool $canCreateAnother = true;
+
     public function auth(): Guard
     {
         return auth()->guard(config('filament.auth.guard'));
@@ -291,5 +293,12 @@ class FilamentManager
             ->unique()
             ->sortBy(fn (string $widget): int => $widget::getSort())
             ->toArray();
+    }
+
+    public static function disableCreateAnother(null | bool $disableCreateAnother = null): bool
+    {
+        if ($disableCreateAnother === null) return static::$canCreateAnother;
+
+        return static::$canCreateAnother = !$disableCreateAnother;
     }
 }
