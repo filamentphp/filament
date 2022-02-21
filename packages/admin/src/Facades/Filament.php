@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerTheme(string $url)
  * @method static void registerWidgets(array $widgets)
  * @method static void serving(Closure $callback)
+ * @method static bool disableCreateAnother(null | bool $disableCreateAnother = true)
  *
  * @see \Filament\FilamentManager
  */

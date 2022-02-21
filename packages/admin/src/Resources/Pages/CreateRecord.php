@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\Pages;
 
+use Filament\Facades\Filament;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +20,8 @@ class CreateRecord extends Page
     public $record;
 
     public $data;
+
+    protected static ?bool $canCreateAnother = null;
 
     public function getBreadcrumb(): string
     {
@@ -97,9 +100,11 @@ class CreateRecord extends Page
 
     protected function getFormActions(): array
     {
+        $canCreateAnother = static::$canCreateAnother ?? Filament::disableCreateAnother();
+        
         return [
             $this->getCreateFormAction(),
-            $this->getCreateAndCreateAnotherFormAction(),
+            $canCreateAnother ? $this->getCreateAndCreateAnotherFormAction() : null,
             $this->getCancelFormAction(),
         ];
     }
