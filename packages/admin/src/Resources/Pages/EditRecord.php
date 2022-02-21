@@ -79,15 +79,20 @@ class EditRecord extends Page
 
         $shouldRedirect = $shouldRedirect && ($redirectUrl = $this->getRedirectUrl());
 
-        $this->notify(
-            'success',
-            __('filament::resources/pages/edit-record.messages.saved'),
-            isAfterRedirect: $shouldRedirect,
-        );
+        $this->getUpdatedNotification();
 
         if ($shouldRedirect) {
             $this->redirect($redirectUrl);
         }
+    }
+
+    public function getUpdatedNotification(): void
+    {
+        $this->notify(
+            'success',
+            __('filament::resources/pages/edit-record.messages.saved'),
+            isAfterRedirect: true,
+        );
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
