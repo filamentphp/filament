@@ -104,6 +104,29 @@ Forms\Components\TextInput::make('password')
 
 For more information about closure customization, see the [form builder documentation](/docs/forms/advanced#using-closure-customisation).
 
+### Form Actions
+By default forms include `Create & create another` button. You can disable it per resource by setting:
+
+```php
+protected static ?bool $canCreateAnother = false;
+```
+
+To disable it globally, you may use use `Filament::disableCreateResourceCreateAnother(true)` in service provider:
+
+```php
+use Filament\Facades\Filament;
+// ...
+    public function boot(){
+        
+        Filament::disableCreateResourceCreateAnother(true);
+        // ...
+    }
+```
+After disabled globally, you may enable for individual relation manager:
+
+```php
+protected static ?bool $canCreateAnother = true;
+```
 ## Tables
 
 Resource classes contain a static `table()` method that is used to build the table on the list page:
@@ -427,8 +450,8 @@ public static function attachForm(Form $form): Form
 
 As included in the above example, you may use `getAttachFormRecordSelect()` to create a select field for the record to attach.
 
-By default Relation managers include `Create & create another` and `Attach & attach another` buttons.
-You can disable it per resource by setting:
+### Relation Manager Actions
+By default Relation managers include `Create & create another` and `Attach & attach another` buttons. You can disable it per resource by setting:
 
 ```php
 protected static bool $canCreateAnother = false;
@@ -449,7 +472,7 @@ use Filament\Resources\RelationManagers\RelationManager;
         // ...
     }
 ```
-After disabled globally, you still able to enable for individual relation manager:
+After disabled globally, you may enable for individual relation manager:
 
 ```php
 protected static bool $canCreateAnother = true;

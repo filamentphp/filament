@@ -295,7 +295,7 @@ class FilamentManager
             ->toArray();
     }
 
-    public static function disableCreateAnother(null | bool $disableCreateAnother = null): bool
+    public static function disableCreateResourceCreateAnother(null | bool $disableCreateAnother = null): bool
     {
         if ($disableCreateAnother === null) return static::$canCreateAnother;
 
