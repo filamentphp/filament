@@ -297,8 +297,10 @@ class FilamentManager
 
     public static function disableCreateAnother(null | bool $disableCreateAnother = null): bool
     {
-        if ($disableCreateAnother === null) return static::$canCreateAnother;
+        if ($disableCreateAnother === null) {
+            return static::$canCreateAnother;
+        }
 
-        return static::$canCreateAnother = !$disableCreateAnother;
+        return static::$canCreateAnother = ! $disableCreateAnother;
     }
 }
