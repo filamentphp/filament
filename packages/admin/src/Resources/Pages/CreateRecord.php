@@ -61,7 +61,7 @@ class CreateRecord extends Page
 
         $this->callHook('afterCreate');
 
-        $this->getCreatedNotification(another: $another);
+        $this->getCreatedNotification();
         
         if ($another) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
