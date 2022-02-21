@@ -85,12 +85,38 @@ return [
         'heading' => 'Nie znaleziono wyników',
     ],
 
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Zresetuj filtry',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Wszystkie',
+        ],
+
+        'select' => [
+            'placeholder' => 'Wszystkie',
+        ],
+
+    ],
+
     'selection_indicator' => [
+
+        'selected_count' => '{1} 1 rekord zaznaczony.|[2,4]:count rekordy zaznaczone.|[5,*]:count rekordów zaznaczonych.',
 
         'buttons' => [
 
             'select_all' => [
                 'label' => 'Zaznacz wszystkie :count',
+            ],
+
+            'deselect_all' => [
+                'label' => 'Odznacz wszystkie',
             ],
 
         ],

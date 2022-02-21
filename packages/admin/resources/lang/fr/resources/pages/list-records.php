@@ -7,7 +7,9 @@ return [
     'actions' => [
 
         'create' => [
+
             'label' => 'Nouveau :label',
+
             'modal' => [
 
                 'heading' => 'Nouveau :label',
@@ -23,7 +25,13 @@ return [
                     ],
 
                 ],
+
             ],
+
+            'messages' => [
+                'created' => 'Crée(e)',
+            ],
+
         ],
 
     ],
@@ -32,8 +40,38 @@ return [
 
         'actions' => [
 
+            'delete' => [
+
+                'label' => 'Supprimer',
+
+                'messages' => [
+                    'deleted' => 'Supprimé(e)',
+                ],
+
+            ],
+
             'edit' => [
+
                 'label' => 'Modifier',
+
+                'modal' => [
+
+                    'heading' => 'Modifier :label',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Sauvegarder',
+                        ],
+
+                    ],
+
+                ],
+
+                'messages' => [
+                    'saved' => 'Sauvegardé(e)',
+                ],
+
             ],
 
             'view' => [
@@ -45,7 +83,13 @@ return [
         'bulk_actions' => [
 
             'delete' => [
+
                 'label' => 'Supprimer la sélection',
+
+                'messages' => [
+                    'deleted' => 'Supprimé(e)s',
+                ],
+
             ],
 
         ],

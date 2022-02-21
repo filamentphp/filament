@@ -589,7 +589,7 @@ You may specify a custom redirect URL for the Create and Edit pages by overridin
 For example, the Create form can redirect back to the List page when it is submitted:
 
 ```php
-protected function getRedirectUrl(): ?string
+protected function getRedirectUrl(): string
 {
     return $this->getResource()::getUrl('index');
 }

@@ -58,6 +58,11 @@ class Action extends Component implements Htmlable
         ]);
     }
 
+    protected function getLivewireSubmitActionName(): string
+    {
+        return 'callMountedTableAction';
+    }
+
     public function toHtml(): string
     {
         return $this->render()->render();

@@ -20,7 +20,7 @@
             'dark:bg-gray-700 dark:border-gray-600 dark:divide-gray-600' => config('forms.dark_mode'),
         ])>
             <table @class([
-                'w-full text-left divide-y table-auto',
+                'w-full text-left rtl:text-right divide-y table-auto',
                 'dark:divide-gray-700' => config('forms.dark_mode'),
             ])>
                 <thead>
@@ -113,7 +113,7 @@
                     x-on:click="addRow"
                     type="button"
                     @class([
-                        'w-full px-4 py-2 flex items-center space-x-1 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:bg-gray-50',
+                        'w-full px-4 py-2 flex items-center space-x-1 rtl:space-x-reverse text-sm font-medium text-gray-800 hover:bg-gray-50 focus:bg-gray-50',
                         'dark:text-white dark:bg-gray-800/60 dark:hover:bg-gray-800/30' => config('forms.dark_mode'),
                     ])
                 >

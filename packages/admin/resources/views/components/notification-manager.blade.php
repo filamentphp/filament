@@ -12,7 +12,7 @@
             this.notifications = this.notifications.filter(i => i.id !== notification.id)
         },
     }"
-    @notify.window="add($event)"
+    x-on:notify.window="add($event)"
     class="fixed inset-x-0 top-0 z-50 p-3 pointer-events-none filament-notifications space-y-4"
     role="status"
     aria-live="polite"

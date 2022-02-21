@@ -4,10 +4,11 @@
     'name',
     'sortable' => false,
     'sortDirection',
+    'alignment' => null,
 ])
 
 <th {{ $attributes->merge($extraAttributes)->class([
-    'px-4 py-2 filament-tables-header-cell',
+    'p-0 filament-tables-header-cell',
     'dark:bg-gray-800' => config('tables.dark_mode'),
 ]) }}>
     <button
@@ -16,9 +17,15 @@
         @endif
         type="button"
         @class([
-            'flex items-center whitespace-nowrap space-x-1 rtl:space-x-reverse font-medium text-sm text-gray-600',
+            'flex items-center w-full px-4 py-2 whitespace-nowrap space-x-1 rtl:space-x-reverse font-medium text-sm text-gray-600',
             'dark:text-gray-300' => config('tables.dark_mode'),
             'cursor-default' => ! $sortable,
+            match ($alignment) {
+                'left' => 'justify-start',
+                'center' => 'justify-center',
+                'right' => 'justify-end',
+                default => null,
+            },
         ])
     >
         <span>

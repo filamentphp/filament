@@ -75,14 +75,16 @@
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+                    'select-none opacity-70' => $isDisabled(),
                 ])
             >
                 <span
                     x-show="! isOpen"
                     x-text="label ?? '{{ addslashes($getPlaceholder()) }}'"
                     @class([
-                        'absolute w-full bg-white',
+                        'whitespace-nowrap truncate w-10/12',
                         'dark:bg-gray-700' => config('forms.dark_mode'),
+                        'absolute' => ! $isDisabled(),
                     ])
                 ></span>
 
@@ -101,17 +103,17 @@
                             'dark:bg-gray-700' => config('forms.dark_mode'),
                         ])
                     />
-
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                        <svg x-show="! isLoading" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="#6B7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4" />
-                        </svg>
-
-                        <svg x-show="isLoading" x-cloak class="animate-spin w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z" />
-                        </svg>
-                    </span>
                 @endunless
+
+                <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                    <svg x-show="! isLoading" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="#6B7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4" />
+                    </svg>
+
+                    <svg x-show="isLoading" x-cloak class="w-5 h-5 text-gray-400 animate-spin" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z" />
+                    </svg>
+                </span>
             </div>
 
             @unless($isDisabled())
@@ -146,7 +148,7 @@
                                     'text-white bg-primary-500 @if (config('forms.dark_mode')) dark:text-gray-300 dark:bg-gray-600 @endif': index === focusedOptionIndex,
                                     'text-gray-900 @if (config('forms.dark_mode')) dark:text-gray-300 @endif': index !== focusedOptionIndex,
                                 }"
-                                class="relative py-2 pl-3 flex items-center text-gray-900 cursor-default select-none pr-9"
+                                class="relative flex items-center py-2 pl-3 text-gray-900 cursor-default select-none pr-9"
                             >
                                 <span
                                     x-text="Object.values(options)[index]"

@@ -134,8 +134,6 @@ trait HasState
     public function fill(?array $state = null): static
     {
         if ($state !== null) {
-            $this->hydrateNullState();
-
             $livewire = $this->getLivewire();
 
             if ($statePath = $this->getStatePath()) {
@@ -145,6 +143,8 @@ trait HasState
                     data_set($livewire, $key, $value);
                 }
             }
+
+            $this->fillMissingComponentStateWithNull();
 
             $this->callAfterStateHydrated();
         } else {
@@ -168,15 +168,15 @@ trait HasState
         return $this;
     }
 
-    public function hydrateNullState(): static
+    public function fillMissingComponentStateWithNull(): static
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
             if ($component->hasChildComponentContainer()) {
                 foreach ($component->getChildComponentContainers() as $container) {
-                    $container->hydrateNullState();
+                    $container->fillMissingComponentStateWithNull();
                 }
             } else {
-                $component->hydrateNullState();
+                $component->fillMissingStateWithNull();
             }
         }
 

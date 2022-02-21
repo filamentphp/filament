@@ -15,6 +15,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 {
     protected string | Closure | null $collection = null;
 
+    protected string | Closure | null $mediaName = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -59,8 +61,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $storage = $component->getDisk();
 
             // An ugly mess as we need to support both Flysystem v1 and v3.
-            $storageAdapter = method_exists($storage, 'getAdapter') ? $storage->getAdapter() : (method_exists($storage->getDriver(), 'getAdapter') ? $storage->getDriver()->getAdapter() : null);
-            $supportsTemporaryUrls = method_exists($storageAdapter, 'getTemporaryUrl');
+            $storageAdapter = method_exists($storage, 'getAdapter') ? $storage->getAdapter() : (method_exists($storageDriver = $storage->getDriver(), 'getAdapter') ? $storageDriver->getAdapter() : null);
+            $supportsTemporaryUrls = method_exists($storageAdapter, 'temporaryUrl') || method_exists($storageAdapter, 'getTemporaryUrl');
 
             if ($component->getVisibility() === 'private' && $supportsTemporaryUrls) {
                 return $media?->getTemporaryUrl(now()->addMinutes(5));
@@ -85,6 +87,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             $media = $mediaAdder
                 ->usingFileName($filename)
+                ->usingName($component->getMediaName() ?? '')
                 ->toMediaCollection($component->getCollection(), $component->getDiskName());
 
             return $media->getAttributeValue('uuid');
@@ -120,5 +123,17 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     public function getCollection(): string
     {
         return $this->evaluate($this->collection) ?? 'default';
+    }
+
+    public function mediaName(string | Closure | null $name): static
+    {
+        $this->mediaName = $name;
+
+        return $this;
+    }
+
+    public function getMediaName(): ?string
+    {
+        return $this->evaluate($this->mediaName);
     }
 }

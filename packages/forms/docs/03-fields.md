@@ -236,6 +236,8 @@ TextInput::make('name')
     ->maxLength(255)
 ```
 
+> When using `minLength()` or `maxLength()` with `numeric()`, be aware that the validation will apply to the value of the input instead of its length. This is in line with the behaviour of Laravel's `min` and `max` validation rules.
+
 In addition, you may validate the minimum and maximum value of the input by setting the `minValue()` and `maxValue()` methods:
 
 ```php
@@ -976,6 +978,16 @@ FileUpload::make('attachments')
     ->maxFiles(5)
 ```
 
+You can also enable the re-ordering of uploaded files using the 'enableReordering()' method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multipe()
+    ->enableReordering()
+```
+
 > Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/docs/spatie-laravel-media-library-plugin) for more information.
 
 ## Rich editor
@@ -1172,6 +1184,20 @@ Repeater::make('members')
 ```
 
 <img src="https://user-images.githubusercontent.com/41773797/147613748-6fdf2eff-de09-4ba0-8d01-68888802b152.png">
+
+You may also prevent the user from adding items, deleting items, or moving items inside the repeater:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->disableItemCreation()
+    ->disableItemDeletion()
+    ->disableItemMovement()
+```
 
 You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
 

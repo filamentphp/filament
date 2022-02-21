@@ -115,9 +115,11 @@ trait HasState
         return $this;
     }
 
-    public function hydrateNullState(): static
+    public function fillMissingStateWithNull(): static
     {
-        $this->state(null);
+        $livewire = $this->getLivewire();
+
+        data_fill($livewire, $this->getStatePath(), null);
 
         return $this;
     }

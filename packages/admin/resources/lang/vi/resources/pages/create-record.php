@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => 'Tạo :label',
+
     'breadcrumb' => 'Tạo',
 
     'form' => [

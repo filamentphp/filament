@@ -20,7 +20,7 @@
                     </x-filament::card.heading>
 
                     @if ($actions)
-                        <div class="flex items-center space-x-2">
+                        <div class="flex items-center space-x-2 rtl:space-x-reverse">
                             {{ $actions }}
                         </div>
                     @endif

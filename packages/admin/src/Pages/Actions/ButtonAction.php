@@ -4,6 +4,7 @@ namespace Filament\Pages\Actions;
 
 class ButtonAction extends Action
 {
+    use Concerns\CanBeOutlined;
     use Concerns\CanSubmitForm;
     use Concerns\HasIcon;
 

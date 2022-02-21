@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Bewerk :label',
+    'title' => ':Label bewerken',
 
     'breadcrumb' => 'Bewerken',
 
@@ -26,6 +26,10 @@ return [
 
                 ],
 
+            ],
+
+            'messages' => [
+                'deleted' => 'Verwijderd',
             ],
 
         ],

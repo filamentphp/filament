@@ -229,6 +229,7 @@
                                 :extra-attributes="$column->getExtraHeaderAttributes()"
                                 :is-sort-column="$getSortColumn() === $column->getName()"
                                 :name="$column->getName()"
+                                :alignment="$column->getAlignment()"
                                 :sortable="$column->isSortable()"
                                 :sort-direction="$getSortDirection()"
                                 :class="$getHiddenClasses($column)"
@@ -282,6 +283,7 @@
                                 <x-tables::cell
                                     :action="$column->getAction()"
                                     :name="$column->getName()"
+                                    :alignment="$column->getAlignment()"
                                     :record="$record"
                                     :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
                                     :url="$column->getUrl() ?? $recordUrl"

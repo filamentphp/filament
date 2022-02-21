@@ -6142,7 +6142,10 @@ var date_time_picker_default = (Alpine) => {
           this.focusedDate = this.focusedDate.month(this.focusedMonth);
         });
         this.$watch("focusedYear", () => {
-          if (!this.focusedYear) {
+          if (this.focusedYear.length > 4) {
+            this.focusedYear = this.focusedYear.substring(0, 4);
+          }
+          if (!this.focusedYear || this.focusedYear.length !== 4) {
             return;
           }
           let year = +this.focusedYear;
@@ -19117,6 +19120,8 @@ var multi_select_default = (Alpine) => {
 
 // packages/forms/resources/js/components/rich-editor.js
 var import_trix = __toModule(require_trix());
+import_trix.default.config.blockAttributes.default.tagName = "p";
+import_trix.default.config.blockAttributes.default.breakOnReturn = true;
 import_trix.default.config.blockAttributes.heading = {
   tagName: "h2",
   terminal: true,
@@ -19128,6 +19133,18 @@ import_trix.default.config.blockAttributes.subHeading = {
   terminal: true,
   breakOnReturn: true,
   group: false
+};
+import_trix.default.Block.prototype.breaksOnReturn = function() {
+  const lastAttribute = this.getLastAttribute();
+  const blockConfig = import_trix.default.getBlockConfig(lastAttribute ? lastAttribute : "default");
+  return blockConfig?.breakOnReturn ?? false;
+};
+import_trix.default.LineBreakInsertion.prototype.shouldInsertBlockBreak = function() {
+  if (this.block.hasAttributes() && this.block.isListItem() && !this.block.isEmpty()) {
+    return this.startLocation.offset > 0;
+  } else {
+    return !this.shouldBreakFormattedBlock() ? this.breaksOnReturn : false;
+  }
 };
 var rich_editor_default = (Alpine) => {
   Alpine.data("richEditorFormComponent", ({
