@@ -31,13 +31,13 @@ trait CanCreateRecords
     protected function getCreateActionModalActions(): array
     {
         return [
-            $this->getCreateModalAction(),
-            $this->getCreateAndCreateAnotherModalAction(),
-            $this->getCancelModalAction(),
+            $this->getCreateActionCreateModalAction(),
+            $this->getCreateActionCreateAndCreateAnotherModalAction(),
+            $this->getCreateActionCancelModalAction(),
         ];
     }
 
-    protected function getCreateModalAction(): Modal\Actions\ButtonAction
+    protected function getCreateActionCreateModalAction(): Modal\Actions\ButtonAction
     {
         return Modal\Actions\ButtonAction::make('create')
         ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create.label'))
@@ -45,7 +45,7 @@ trait CanCreateRecords
         ->color('primary');
     }
 
-    protected function getCreateAndCreateAnotherModalAction(): Modal\Actions\ButtonAction
+    protected function getCreateActionCreateAndCreateAnotherModalAction(): Modal\Actions\ButtonAction
     {
         return Modal\Actions\ButtonAction::make('createAndCreateAnother')
         ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create_and_create_another.label'))
@@ -53,7 +53,7 @@ trait CanCreateRecords
         ->color('secondary');
     }
 
-    protected function getCancelModalAction(): Modal\Actions\ButtonAction
+    protected function getCreateActionCancelModalAction(): Modal\Actions\ButtonAction
     {
         return Modal\Actions\ButtonAction::make('cancel')
         ->label(__('tables::table.actions.modal.buttons.cancel.label'))

@@ -93,13 +93,13 @@ trait CanCreateRecords
     protected function getCreateActionModalActions(): array
     {
         return [
-            $this->getCreateModalAction(),
-            $this->getCreateAndCreateAnotherModalAction(),
-            $this->getCancelModalAction(),
+            $this->getCreateActionCreateModalAction(),
+            $this->getCreateActionCreateAndCreateAnotherModalAction(),
+            $this->getCreateActionCancelModalAction(),
         ];
     }
 
-    protected function getCreateModalAction(): ButtonAction
+    protected function getCreateActionCreateModalAction(): ButtonAction
     {
         return ButtonAction::make('create')
         ->label(__('filament::resources/relation-managers/create.action.modal.actions.create.label'))
@@ -107,7 +107,7 @@ trait CanCreateRecords
         ->color('primary');
     }
 
-    protected function getCreateAndCreateAnotherModalAction(): ButtonAction
+    protected function getCreateActionCreateAndCreateAnotherModalAction(): ButtonAction
     {
         return ButtonAction::make('createAndCreateAnother')
         ->label(__('filament::resources/relation-managers/create.action.modal.actions.create_and_create_another.label'))
@@ -115,7 +115,7 @@ trait CanCreateRecords
         ->color('secondary');
     }
 
-    protected function getCancelModalAction(): ButtonAction
+    protected function getCreateActionCancelModalAction(): ButtonAction
     {
         return ButtonAction::make('cancel')
         ->label(__('tables::table.actions.modal.buttons.cancel.label'))
