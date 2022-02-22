@@ -13,7 +13,7 @@ class MakeWidgetCommand extends Command
 
     protected $description = 'Creates a Filament widget class.';
 
-    protected $signature = 'make:filament-widget {name?} {--R|resource=} {--F|force} {--C|chart-widget} {--S|stats-widget}';
+    protected $signature = 'make:filament-widget {name?} {--R|resource=} {--C|chart} {--S|stats-overview} {--F|force}';
 
     public function handle(): int
     {
@@ -70,26 +70,36 @@ class MakeWidgetCommand extends Command
 
         if (! $this->option('force') && $this->checkForCollision([
             $path,
-            $this->option('stats-widget') || $this->option('chart-widget') ?: $viewPath,
+            ($this->option('stats-overview') || $this->option('chart')) ?: $viewPath,
         ])) {
             return static::INVALID;
         }
 
-        if ($this->option('stats-widget')) {
-            $this->copyStubToApp('StatsOverviewWidget', $path, [
-                'class' => $widgetClass,
-                'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
-            ]);
-        } elseif ($this->option('chart-widget')) {
+        if ($this->option('chart')) {
             $chart = $this->choice(
-                'Select Widget Chart type ?',
-                $this->listChartTypes()->toArray(),
-                0
+                'Chart type',
+                [
+                    'Bar chart',
+                    'Bubble chart',
+                    'Doughnut chart',
+                    'Line chart',
+                    'Pie chart',
+                    'Polar area chart',
+                    'Radar chart',
+                    'Scatter chart',
+                ],
+                0,
             );
+
             $this->copyStubToApp('ChartWidget', $path, [
                 'class' => $widgetClass,
                 'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
-                'chart' => Str::replace(' ', '', $chart),
+                'chart' => Str::studly($chart),
+            ]);
+        } elseif ($this->option('stats-overview')) {
+            $this->copyStubToApp('StatsOverviewWidget', $path, [
+                'class' => $widgetClass,
+                'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
             ]);
         } else {
             $this->copyStubToApp('Widget', $path, [
@@ -101,7 +111,6 @@ class MakeWidgetCommand extends Command
             $this->copyStubToApp('WidgetView', $viewPath);
         }
 
-
         $this->info("Successfully created {$widget}!");
 
         if ($resource !== null) {
@@ -109,19 +118,5 @@ class MakeWidgetCommand extends Command
         }
 
         return static::SUCCESS;
-    }
-
-    protected function listChartTypes(): Collection
-    {
-        return collect([
-            'BarChartWidget',
-            'BubbleChartWidget',
-            'DoughnutChartWidget',
-            'LineChartWidget',
-            'PieChartWidget',
-            'PolarAreaChartWidget',
-            'RadarChartWidget',
-            'ScatterChartWidget',
-        ])->map(fn ($chart) => Str::of($chart)->replace('Widget', '')->headline());
     }
 }

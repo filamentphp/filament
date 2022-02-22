@@ -10,7 +10,7 @@ class {{ class }} extends BaseWidget
     protected function getCards(): array
     {
         return [
-            //...
+            //
         ];
     }
 }

@@ -6,10 +6,7 @@ use Filament\Widgets\{{ chart }}Widget;
 
 class {{ class }} extends {{ chart }}Widget
 {
-    protected function getHeading(): string
-    {
-        return '';
-    }
+    protected static ?string $heading = 'Chart';
 
     protected function getData(): array
     {
