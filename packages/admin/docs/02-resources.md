@@ -79,7 +79,7 @@ We have many fields available for your forms, including:
 
 To view a full list of available form [fields](/docs/forms/fields) and [layout components](/docs/forms/layout), see the [Form Builder documentation](/docs/forms/fields).
 
-You may also build your own completely custom form [fields](/docs/forms/fields#building-custom-fields) and [layout components](/docs/forms/layout#building-custom-layout-components).
+You may also build your own completely [custom form fields](/docs/forms/fields#building-custom-fields) and [custom layout components](/docs/forms/layout#building-custom-layout-components).
 
 ### Automatically generating fields
 
@@ -157,7 +157,7 @@ We have many fields available for your forms, including:
 
 To view a full list of available table [columns](/docs/tables/columns), see the [Table Builder documentation](/docs/tables/columns).
 
-You may also build your own completely custom table [columns](/docs/tables/columns#building-custom-columns).
+You may also build your own completely [custom table columns](/docs/tables/columns#building-custom-columns).
 
 ### Filtering table data
 
