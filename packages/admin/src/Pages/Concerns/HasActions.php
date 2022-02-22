@@ -4,6 +4,7 @@ namespace Filament\Pages\Concerns;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
+use Filament\Pages\Contracts;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -70,11 +71,6 @@ trait HasActions
         ]);
     }
 
-    protected function getAllCachedActions(): array
-    {
-        return $this->getCachedActions();
-    }
-
     protected function getCachedActions(): array
     {
         if ($this->cachedActions === null) {
@@ -95,14 +91,23 @@ trait HasActions
             ->toArray();
     }
 
-
     public function getMountedAction(): ?Action
     {
         if (! $this->mountedAction) {
             return null;
         }
 
-        return $this->getCachedAction($this->mountedAction);
+        $action = $this->getCachedAction($this->mountedAction);
+
+        if ($action) {
+            return $action;
+        }
+
+        if (! $this instanceof Contracts\HasFormActions) {
+            return null;
+        }
+
+        return $this->getCachedFormAction($this->mountedAction);
     }
 
     public function getMountedActionForm(): ComponentContainer
@@ -117,14 +122,11 @@ trait HasActions
 
     protected function getCachedAction(string $name): ?Action
     {
-        $action = $this->getAllCachedActions()[$name] ?? null;
-
-        return $action;
+        return $this->getCachedActions()[$name] ?? null;
     }
 
     protected function getActions(): array
     {
         return [];
     }
-
 }

@@ -1,18 +1,12 @@
 <?php
 
-namespace Filament\Resources\Pages\Concerns;
+namespace Filament\Pages\Concerns;
 
 use Filament\Pages\Actions\Action;
 
 trait HasFormActions
 {
-
     protected ?array $cachedFormActions = null;
-
-    protected function getAllCachedActions(): array
-    {
-        return array_merge($this->getCachedActions(), $this->getCachedFormActions());
-    }
 
     protected function getCachedFormActions(): array
     {
@@ -34,9 +28,13 @@ trait HasFormActions
             ->toArray();
     }
 
+    public function getCachedFormAction(string $name): ?Action
+    {
+        return $this->getCachedFormActions()[$name] ?? null;
+    }
+
     protected function getFormActions(): array
     {
         return [];
     }
-
 }
