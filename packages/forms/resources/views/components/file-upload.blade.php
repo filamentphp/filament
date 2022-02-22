@@ -1,3 +1,19 @@
+@once
+    @push('scripts')
+        @php
+            $locale = strtolower(str_replace('_', '-', app()->getLocale()));
+            $defaultLocaleData = ($placeholder = $getPlaceholder()) ? "{labelIdle: '{$placeholder}'}" : '{}';
+            if (!str_contains($locale, '-')) {
+                $locale .= '-' . $locale;
+            }
+        @endphp
+        <script type="module">
+            import localeData from 'https://cdn.skypack.dev/filepond/locale/{{$locale}}.js';
+            window.dispatchEvent(new CustomEvent('filepond-locale-updated', {detail: {...localeData, ...{!! $defaultLocaleData !!} }}));
+        </script>
+    @endpush
+@endonce
+
 <x-forms::field-wrapper
     :id="$getId()"
     :label="$getLabel()"
@@ -45,6 +61,7 @@
                 }, error, progress)
             },
         })"
+        @filepond-locale-updated.window="pond.setOptions($event.detail)"
         wire:ignore
         style="min-height: 76px"
         {{ $attributes->merge($getExtraAttributes())->class([
