@@ -16,14 +16,22 @@ class ChartWidget extends Widget
 
     protected static string $view = 'filament::widgets.chart-widget';
 
+    protected array $cachedData = [];
+
     public function mount()
     {
+        $this->cachedData = $this->getData();
         $this->dataChecksum = $this->generateDataChecksum();
     }
 
     protected function generateDataChecksum(): string
     {
-        return md5(json_encode($this->getData()));
+        return md5(json_encode($this->getCachedData()));
+    }
+
+    protected function getCachedData(): array
+    {
+        return $this->cachedData;
     }
 
     protected function getData(): array
@@ -59,7 +67,7 @@ class ChartWidget extends Widget
             $this->dataChecksum = $newDataChecksum;
 
             $this->emitSelf('updateChartData', [
-                'data' => $this->getData(),
+                'data' => $this->getCachedData(),
             ]);
         }
     }
@@ -72,7 +80,7 @@ class ChartWidget extends Widget
             $this->dataChecksum = $newDataChecksum;
 
             $this->emitSelf('filterChartData', [
-                'data' => $this->getData(),
+                'data' => $this->getCachedData(),
             ]);
         }
     }
