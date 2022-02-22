@@ -18,10 +18,10 @@ return [
 
     'bulk_action' => [
 
-        'label' => '선택한 목록 삭제',
+        'label' => '선택한 항목 삭제',
 
         'modal' => [
-            'heading' => ':label 선택한 목록 삭제',
+            'heading' => ':label 선택한 항목 삭제',
         ],
 
         'messages' => [

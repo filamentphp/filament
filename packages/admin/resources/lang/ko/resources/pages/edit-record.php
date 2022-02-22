@@ -16,7 +16,7 @@ return [
 
                 'heading' => ':label 삭제',
 
-                'subheading' => '이 작업을 수행하시겠습니까?',
+                'subheading' => '이 항목을 삭제하시겠습니까?',
 
                 'buttons' => [
 

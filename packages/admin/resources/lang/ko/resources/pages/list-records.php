@@ -84,7 +84,7 @@ return [
 
             'delete' => [
 
-                'label' => '선택한 목록 삭제',
+                'label' => '선택한 항목 삭제',
 
                 'messages' => [
                     'deleted' => '삭제 완료',

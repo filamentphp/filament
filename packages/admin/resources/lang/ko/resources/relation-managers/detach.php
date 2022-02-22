@@ -18,10 +18,10 @@ return [
 
     'bulk_action' => [
 
-        'label' => '선택한 목록 분리',
+        'label' => '선택한 항목 분리',
 
         'modal' => [
-            'heading' => ':label 선택한 목록 분리',
+            'heading' => ':label 선택한 항목 분리',
         ],
 
         'messages' => [
