@@ -4,6 +4,8 @@ namespace Filament\Widgets;
 
 class ChartWidget extends Widget
 {
+    protected ?array $cachedData = null;
+
     public string $dataChecksum;
 
     public ?string $filter = null;
@@ -16,11 +18,8 @@ class ChartWidget extends Widget
 
     protected static string $view = 'filament::widgets.chart-widget';
 
-    protected array $cachedData = [];
-
     public function mount()
     {
-        $this->cachedData = $this->getData();
         $this->dataChecksum = $this->generateDataChecksum();
     }
 
@@ -31,7 +30,7 @@ class ChartWidget extends Widget
 
     protected function getCachedData(): array
     {
-        return $this->cachedData;
+        return $this->cachedData ??= $this->getData();
     }
 
     protected function getData(): array
