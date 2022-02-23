@@ -53,7 +53,7 @@ class SettingsPage extends Page
         if ($redirectUrl = $this->getRedirectUrl()) {
             $this->redirect($redirectUrl);
         } else {
-            $this->notify('success', 'Saved!');
+            $this->notify('success', __('filament-spatie-laravel-settings-plugin::pages.messages.saved'));
         }
     }
 
@@ -78,7 +78,7 @@ class SettingsPage extends Page
     {
         return [
             ButtonAction::make('save')
-                ->label('Save')
+                ->label(__('filament-spatie-laravel-settings-plugin::pages.actions.save.label'))
                 ->submit('save'),
         ];
     }
