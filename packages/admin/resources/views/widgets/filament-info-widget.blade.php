@@ -1,13 +1,13 @@
 <x-filament::widget class="filament-filament-info-widget">
     <x-filament::card class="relative">
-        <div class="relative h-12 flex flex-col justify-center items-center space-y-2 rtl:space-x-reverse">
+        <div class="relative h-12 flex flex-col justify-center items-center space-y-2">
             <div class="space-y-1">
                 <a
                     href="https://filamentphp.com"
                     target="_blank"
                     rel="noopener noreferrer"
                     @class([
-                        'flex items-end space-x-2 text-gray-800 hover:text-primary-500 transition',
+                        'flex items-end space-x-2 rtl:space-x-reverse text-gray-800 hover:text-primary-500 transition',
                         'dark:text-primary-500 dark:hover:text-primary-400' => config('filament.dark_mode'),
                     ])
                 >
@@ -20,7 +20,7 @@
                 </a>
             </div>
 
-            <div class="text-sm flex space-x-2">
+            <div class="text-sm flex space-x-2 rtl:space-x-reverse">
                 <a
                     href="https://filamentphp.com/docs"
                     target="_blank"

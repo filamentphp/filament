@@ -58,7 +58,7 @@
             <div
                 x-show="state.length"
                 x-cloak
-                class="overflow-hidden rtl:space-x-reverse relative w-full p-2"
+                class="overflow-hidden relative w-full p-2"
             >
                 <div class="flex flex-wrap gap-1">
                     <template class="hidden" x-for="tag in state" x-bind:key="tag">
@@ -68,7 +68,7 @@
                             @endunless
                             type="button"
                             @class([
-                                'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-xl bg-primary-500/10 space-x-1',
+                                'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-xl bg-primary-500/10 space-x-1 rtl:space-x-reverse',
                                 'dark:text-primary-500' => config('forms.dark_mode'),
                                 'cursor-default' => $isDisabled(),
                             ])
