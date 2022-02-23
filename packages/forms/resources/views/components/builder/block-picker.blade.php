@@ -9,7 +9,7 @@
     x-on:click.away="isCreateButtonDropdownOpen = false"
     x-transition
     {{ $attributes->class([
-        'absolute z-10 mt-10 shadow-xl border overflow-hidden rounded-xl w-52 filament-forms-builder-component-block-picker',
+        'absolute z-20 mt-10 shadow-xl border overflow-hidden rounded-xl w-52 filament-forms-builder-component-block-picker',
         'dark:border-gray-600' => config('forms.dark_mode'),
     ]) }}
 >
