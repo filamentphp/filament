@@ -200,7 +200,7 @@
                                     <span x-show="(! search) || isLoading">
                                         {{ $getSearchPrompt() }}
                                     </span>
-                                    
+
                                     <span x-show="search">
                                         <span x-show="! isLoading">
                                             {{ $getNoSearchResultsMessage() }}
