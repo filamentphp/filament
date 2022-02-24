@@ -37,7 +37,7 @@ trait CanSpanColumns
         }
 
         return array_map(
-            [$this, 'evaluate'],
+            fn (array | int | string | Closure | null $value): array | int | string | null => $this->evaluate($value),
             $span
         );
     }
