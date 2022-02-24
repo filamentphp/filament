@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\HtmlString;
 
 class MultiSelect extends Field
 {
@@ -17,9 +18,9 @@ class MultiSelect extends Field
 
     protected ?Closure $getSearchResultsUsing = null;
 
-    protected string | Closure | null $noSearchResultsMessage = null;
+    protected string | HtmlString | Closure | null $noSearchResultsMessage = null;
 
-    protected string | Closure | null $searchPrompt = null;
+    protected string | HtmlString | Closure | null $searchPrompt = null;
 
     protected function setUp(): void
     {
@@ -64,14 +65,14 @@ class MultiSelect extends Field
         return $this;
     }
 
-    public function noSearchResultsMessage(string | Closure | null $message): static
+    public function noSearchResultsMessage(string | HtmlString | Closure | null $message): static
     {
         $this->noSearchResultsMessage = $message;
 
         return $this;
     }
 
-    public function searchPrompt(string | Closure | null $message): static
+    public function searchPrompt(string | HtmlString | Closure | null $message): static
     {
         $this->searchPrompt = $message;
 
@@ -91,12 +92,12 @@ class MultiSelect extends Field
         return $labels;
     }
 
-    public function getNoSearchResultsMessage(): string
+    public function getNoSearchResultsMessage(): string | HtmlString
     {
         return $this->evaluate($this->noSearchResultsMessage);
     }
 
-    public function getSearchPrompt(): string
+    public function getSearchPrompt(): string | HtmlString
     {
         return $this->evaluate($this->searchPrompt);
     }

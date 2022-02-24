@@ -2,20 +2,22 @@
 
 namespace Filament\Pages\Actions\Concerns;
 
+use Closure;
+
 trait CanBeHidden
 {
-    protected bool $isHidden = false;
+    protected bool | Closure $isHidden = false;
 
-    protected bool $isVisible = true;
+    protected bool | Closure $isVisible = true;
 
-    public function hidden(bool $condition = true): static
+    public function hidden(bool | Closure $condition = true): static
     {
         $this->isHidden = $condition;
 
         return $this;
     }
 
-    public function visible(bool $condition = true): static
+    public function visible(bool | Closure $condition = true): static
     {
         $this->isVisible = $condition;
 
@@ -24,10 +26,10 @@ trait CanBeHidden
 
     public function isHidden(): bool
     {
-        if ($this->isHidden) {
+        if (value($this->isHidden)) {
             return true;
         }
 
-        return ! $this->isVisible;
+        return ! value($this->isVisible);
     }
 }

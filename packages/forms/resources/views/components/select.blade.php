@@ -178,12 +178,21 @@
 
                         <div
                             x-show="! Object.keys(options).length"
-                            x-text="! search || isLoading ? '{{ $getSearchPrompt() }}' : '{{ $getNoSearchResultsMessage() }}'"
                             @class([
                                 'px-3 py-2 text-sm text-gray-700 cursor-default select-none',
                                 'dark:text-gray-300 dark:text-gray-200' => config('forms.dark_mode'),
                             ])
-                        ></div>
+                        >
+                            <span x-show="(! search) || isLoading">
+                                {{ $getSearchPrompt() }}
+                            </span>
+
+                            <span x-show="search">
+                                <span x-show="! isLoading">
+                                    {{ $getNoSearchResultsMessage() }}
+                                </span>
+                            </span>
+                        </div>
                     </ul>
                 </div>
             @endunless
