@@ -3,15 +3,19 @@
 return [
 
     'form' => [
+
         'actions' => [
+
             'save' => [
-                'label' => 'Save',
+                'label' => 'حفظ',
             ],
+
         ],
+
     ],
 
     'messages' => [
-        'saved' => 'Saved',
+        'saved' => 'تم الحفظ',
     ],
 
 ];
