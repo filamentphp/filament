@@ -13,7 +13,7 @@
         <script type="module">
             import localeData from 'https://cdn.skypack.dev/filepond/locale/{{$locale}}.js'
             
-            window.dispatchEvent(new CustomEvent('filepond-locale-updated', { detail: {...localeData, ...{!! $defaultLocaleData !!} } }))
+            window.dispatchEvent(new CustomEvent('filepond-locale-updated', { detail: { ...localeData, ...{!! $defaultLocaleData !!} } }))
         </script>
     @endpush
 @endonce
