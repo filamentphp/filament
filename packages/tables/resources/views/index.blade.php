@@ -133,7 +133,12 @@
     }"
     class="filament-tables-component"
 >
-    <x-tables::container>
+   <div wire:loading.delay wire:loading.class="w-full">
+        <div class="flex justify-center items-center">
+            <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500"></div>
+        </div>
+    </div>
+    <x-tables::container wire:loading.remove>
         <div
             x-show="hasHeader = ({{ ($renderHeader = ($header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible)) ? 'true' : 'false' }} || selectedRecords.length)"
             {!! ! $renderHeader ? 'x-cloak' : null !!}
