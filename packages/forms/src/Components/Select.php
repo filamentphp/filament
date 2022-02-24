@@ -8,6 +8,7 @@ use Illuminate\Support\HtmlString;
 
 class Select extends Field
 {
+    use Concerns\HasAffixes;
     use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
