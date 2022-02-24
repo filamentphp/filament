@@ -13,4 +13,9 @@ trait ManipulatesResourceRecord
     {
         return parent::requiredWith("record.{$field}");
     }
+
+    public function same($field)
+    {
+        return parent::same("record.{$field}");
+    }
 }

@@ -20,7 +20,7 @@ trait CanBeCompared
     public function same($field)
     {
         $this->configure(function () use ($field) {
-            $this->addRules([$this->getName() => ["same:record.{$field}"]]);
+            $this->addRules([$this->getName() => ["same:{$field}"]]);
         });
 
         return $this;
