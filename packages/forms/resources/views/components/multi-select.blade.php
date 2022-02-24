@@ -48,7 +48,7 @@
                     x-bind:aria-expanded="isOpen"
                     aria-haspopup="listbox"
                     tabindex="1"
-                    class="relative rounded-lg overflow-hidden"
+                    class="relative overflow-hidden rounded-lg"
                 >
                     <input
                         x-ref="search"
@@ -66,12 +66,12 @@
                         ])
                     />
 
-                    <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 flex items-center pr-2 rtl:pr-0 rtl:pl-2 pointer-events-none">
+                    <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pr-0 rtl:pl-2">
                         <svg x-show="! isLoading" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                             <path stroke="#6B7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4" />
                         </svg>
 
-                        <svg x-show="isLoading" x-cloak class="animate-spin w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <svg x-show="isLoading" x-cloak class="w-5 h-5 text-gray-400 animate-spin" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z" />>
                         </svg>
                     </span>
@@ -88,7 +88,7 @@
                     tabindex="-1"
                     x-cloak
                     @class([
-                        'absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none transition',
+                        'absolute z-30 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none transition',
                         'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
                     ])
                 >
@@ -108,7 +108,7 @@
                                     'text-white bg-primary-500': index === focusedOptionIndex,
                                     'text-gray-900 @if (config('forms.dark_mode')) dark:text-gray-200 @endif': index !== focusedOptionIndex,
                                 }"
-                                class="relative py-2 pl-3 flex items-center text-gray-900 cursor-default select-none pr-9"
+                                class="relative flex items-center py-2 pl-3 text-gray-900 cursor-default select-none pr-9"
                             >
                                 <span
                                     x-text="Object.values(options)[index]"
@@ -161,7 +161,7 @@
         <div
             x-show="state.length"
             x-cloak
-            class="overflow-hidden rtl:space-x-reverse relative w-full p-2"
+            class="relative w-full p-2 overflow-hidden rtl:space-x-reverse"
         >
             <div class="flex flex-wrap gap-1">
                 <template class="hidden" x-for="option in state" x-bind:key="option">

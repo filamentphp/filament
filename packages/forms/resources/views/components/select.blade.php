@@ -128,7 +128,7 @@
                     tabindex="-1"
                     x-cloak
                     @class([
-                        'absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none',
+                        'absolute z-30 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none',
                         'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
                     ])
                 >
