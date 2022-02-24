@@ -6043,10 +6043,10 @@ dayjs.prototype = proto;
     return this.$g(input, g[0], g[1]);
   };
 });
-dayjs.extend = function(plugin8, option2) {
-  if (!plugin8.$i) {
-    plugin8(option2, Dayjs, dayjs);
-    plugin8.$i = true;
+dayjs.extend = function(plugin9, option2) {
+  if (!plugin9.$i) {
+    plugin9(option2, Dayjs, dayjs);
+    plugin9.$i = true;
   }
   return dayjs;
 };
@@ -12514,12 +12514,12 @@ var renameFile = (file2, name2) => {
 };
 var copyFile = (file2) => renameFile(file2, file2.name);
 var registeredPlugins = [];
-var createAppPlugin = (plugin8) => {
-  if (registeredPlugins.includes(plugin8)) {
+var createAppPlugin = (plugin9) => {
+  if (registeredPlugins.includes(plugin9)) {
     return;
   }
-  registeredPlugins.push(plugin8);
-  const pluginOutline = plugin8({
+  registeredPlugins.push(plugin9);
+  const pluginOutline = plugin9({
     addFilter,
     utils: {
       Type,
@@ -15829,6 +15829,207 @@ if (isBrowser8) {
 }
 var filepond_plugin_image_transform_esm_default = plugin7;
 
+// node_modules/filepond-plugin-media-preview/dist/filepond-plugin-media-preview.esm.js
+/*!
+ * FilePondPluginMediaPreview 1.0.11
+ * Licensed under MIT, https://opensource.org/licenses/MIT/
+ * Please visit undefined for details.
+ */
+var isPreviewableVideo = (file2) => /^video/.test(file2.type);
+var isPreviewableAudio = (file2) => /^audio/.test(file2.type);
+var AudioPlayer = class {
+  constructor(mediaEl, audioElems) {
+    this.mediaEl = mediaEl;
+    this.audioElems = audioElems;
+    this.onplayhead = false;
+    this.duration = 0;
+    this.timelineWidth = this.audioElems.timeline.offsetWidth - this.audioElems.playhead.offsetWidth;
+    this.moveplayheadFn = this.moveplayhead.bind(this);
+    this.registerListeners();
+  }
+  registerListeners() {
+    this.mediaEl.addEventListener("timeupdate", this.timeUpdate.bind(this), false);
+    this.mediaEl.addEventListener("canplaythrough", () => this.duration = this.mediaEl.duration, false);
+    this.audioElems.timeline.addEventListener("click", this.timelineClicked.bind(this), false);
+    this.audioElems.button.addEventListener("click", this.play.bind(this));
+    this.audioElems.playhead.addEventListener("mousedown", this.mouseDown.bind(this), false);
+    window.addEventListener("mouseup", this.mouseUp.bind(this), false);
+  }
+  play() {
+    if (this.mediaEl.paused) {
+      this.mediaEl.play();
+    } else {
+      this.mediaEl.pause();
+    }
+    this.audioElems.button.classList.toggle("play");
+    this.audioElems.button.classList.toggle("pause");
+  }
+  timeUpdate() {
+    let playPercent = this.mediaEl.currentTime / this.duration * 100;
+    this.audioElems.playhead.style.marginLeft = playPercent + "%";
+    if (this.mediaEl.currentTime === this.duration) {
+      this.audioElems.button.classList.toggle("play");
+      this.audioElems.button.classList.toggle("pause");
+    }
+  }
+  moveplayhead(event) {
+    let newMargLeft = event.clientX - this.getPosition(this.audioElems.timeline);
+    if (newMargLeft >= 0 && newMargLeft <= this.timelineWidth) {
+      this.audioElems.playhead.style.marginLeft = newMargLeft + "px";
+    }
+    if (newMargLeft < 0) {
+      this.audioElems.playhead.style.marginLeft = "0px";
+    }
+    if (newMargLeft > this.timelineWidth) {
+      this.audioElems.playhead.style.marginLeft = this.timelineWidth - 4 + "px";
+    }
+  }
+  timelineClicked(event) {
+    this.moveplayhead(event);
+    this.mediaEl.currentTime = this.duration * this.clickPercent(event);
+  }
+  mouseDown() {
+    this.onplayhead = true;
+    window.addEventListener("mousemove", this.moveplayheadFn, true);
+    this.mediaEl.removeEventListener("timeupdate", this.timeUpdate.bind(this), false);
+  }
+  mouseUp(event) {
+    window.removeEventListener("mousemove", this.moveplayheadFn, true);
+    if (this.onplayhead == true) {
+      this.moveplayhead(event);
+      this.mediaEl.currentTime = this.duration * this.clickPercent(event);
+      this.mediaEl.addEventListener("timeupdate", this.timeUpdate.bind(this), false);
+    }
+    this.onplayhead = false;
+  }
+  clickPercent(event) {
+    return (event.clientX - this.getPosition(this.audioElems.timeline)) / this.timelineWidth;
+  }
+  getPosition(el) {
+    return el.getBoundingClientRect().left;
+  }
+};
+var createMediaView = (_) => _.utils.createView({
+  name: "media-preview",
+  tag: "div",
+  ignoreRect: true,
+  create: ({root: root2, props}) => {
+    const {id} = props;
+    const item2 = root2.query("GET_ITEM", {id: props.id});
+    let tagName = isPreviewableAudio(item2.file) ? "audio" : "video";
+    root2.ref.media = document.createElement(tagName);
+    root2.ref.media.setAttribute("controls", true);
+    root2.element.appendChild(root2.ref.media);
+    if (isPreviewableAudio(item2.file)) {
+      let docfrag = document.createDocumentFragment();
+      root2.ref.audio = [];
+      root2.ref.audio.container = document.createElement("div"), root2.ref.audio.button = document.createElement("span"), root2.ref.audio.timeline = document.createElement("div"), root2.ref.audio.playhead = document.createElement("div");
+      root2.ref.audio.container.className = "audioplayer";
+      root2.ref.audio.button.className = "playpausebtn play";
+      root2.ref.audio.timeline.className = "timeline";
+      root2.ref.audio.playhead.className = "playhead";
+      root2.ref.audio.timeline.appendChild(root2.ref.audio.playhead);
+      root2.ref.audio.container.appendChild(root2.ref.audio.button);
+      root2.ref.audio.container.appendChild(root2.ref.audio.timeline);
+      docfrag.appendChild(root2.ref.audio.container);
+      root2.element.appendChild(docfrag);
+    }
+  },
+  write: _.utils.createRoute({
+    DID_MEDIA_PREVIEW_LOAD: ({root: root2, props}) => {
+      const {id} = props;
+      const item2 = root2.query("GET_ITEM", {id: props.id});
+      if (!item2)
+        return;
+      let URL2 = window.URL || window.webkitURL;
+      let blob2 = new Blob([item2.file], {type: item2.file.type});
+      root2.ref.media.type = item2.file.type;
+      root2.ref.media.src = item2.file.mock && item2.file.url || URL2.createObjectURL(blob2);
+      if (isPreviewableAudio(item2.file)) {
+        new AudioPlayer(root2.ref.media, root2.ref.audio);
+      }
+      root2.ref.media.addEventListener("loadeddata", () => {
+        let height = 75;
+        if (isPreviewableVideo(item2.file)) {
+          let containerWidth = root2.ref.media.offsetWidth;
+          let factor = root2.ref.media.videoWidth / containerWidth;
+          height = root2.ref.media.videoHeight / factor;
+        }
+        root2.dispatch("DID_UPDATE_PANEL_HEIGHT", {
+          id: props.id,
+          height
+        });
+      }, false);
+    }
+  })
+});
+var createMediaWrapperView = (_) => {
+  const didCreatePreviewContainer = ({root: root2, props}) => {
+    const {id} = props;
+    const item2 = root2.query("GET_ITEM", id);
+    if (!item2)
+      return;
+    root2.dispatch("DID_MEDIA_PREVIEW_LOAD", {
+      id
+    });
+  };
+  const create2 = ({root: root2, props}) => {
+    const media = createMediaView(_);
+    root2.ref.media = root2.appendChildView(root2.createChildView(media, {
+      id: props.id
+    }));
+  };
+  return _.utils.createView({
+    name: "media-preview-wrapper",
+    create: create2,
+    write: _.utils.createRoute({
+      DID_MEDIA_PREVIEW_CONTAINER_CREATE: didCreatePreviewContainer
+    })
+  });
+};
+var plugin8 = (fpAPI) => {
+  const {addFilter: addFilter2, utils} = fpAPI;
+  const {Type: Type2, createRoute: createRoute2} = utils;
+  const mediaWrapperView = createMediaWrapperView(fpAPI);
+  addFilter2("CREATE_VIEW", (viewAPI) => {
+    const {is, view, query} = viewAPI;
+    if (!is("file")) {
+      return;
+    }
+    const didLoadItem2 = ({root: root2, props}) => {
+      const {id} = props;
+      const item2 = query("GET_ITEM", id);
+      const allowVideoPreview = query("GET_ALLOW_VIDEO_PREVIEW");
+      const allowAudioPreview = query("GET_ALLOW_AUDIO_PREVIEW");
+      if (!item2 || item2.archived || (!isPreviewableVideo(item2.file) || !allowVideoPreview) && (!isPreviewableAudio(item2.file) || !allowAudioPreview)) {
+        return;
+      }
+      root2.ref.mediaPreview = view.appendChildView(view.createChildView(mediaWrapperView, {id}));
+      root2.dispatch("DID_MEDIA_PREVIEW_CONTAINER_CREATE", {id});
+    };
+    view.registerWriter(createRoute2({
+      DID_LOAD_ITEM: didLoadItem2
+    }, ({root: root2, props}) => {
+      const {id} = props;
+      const item2 = query("GET_ITEM", id);
+      const allowVideoPreview = root2.query("GET_ALLOW_VIDEO_PREVIEW");
+      const allowAudioPreview = root2.query("GET_ALLOW_AUDIO_PREVIEW");
+      if (!item2 || (!isPreviewableVideo(item2.file) || !allowVideoPreview) && (!isPreviewableAudio(item2.file) || !allowAudioPreview) || root2.rect.element.hidden)
+        return;
+    }));
+  });
+  return {
+    options: {
+      allowVideoPreview: [true, Type2.BOOLEAN],
+      allowAudioPreview: [true, Type2.BOOLEAN]
+    }
+  };
+};
+var isBrowser9 = typeof window !== "undefined" && typeof window.document !== "undefined";
+if (isBrowser9) {
+  document.dispatchEvent(new CustomEvent("FilePond:pluginloaded", {detail: plugin8}));
+}
+
 // packages/forms/resources/js/components/file-upload.js
 registerPlugin(filepond_plugin_file_validate_size_esm_default);
 registerPlugin(filepond_plugin_file_validate_type_esm_default);
@@ -15837,10 +16038,12 @@ registerPlugin(filepond_plugin_image_exif_orientation_esm_default);
 registerPlugin(filepond_plugin_image_preview_esm_default);
 registerPlugin(filepond_plugin_image_resize_esm_default);
 registerPlugin(filepond_plugin_image_transform_esm_default);
+registerPlugin(plugin8);
 var file_upload_default = (Alpine) => {
   Alpine.data("fileUploadFormComponent", ({
     acceptedFileTypes,
     canReorder,
+    canPreview,
     deleteUploadedFileUsing,
     getUploadedFileUrlUsing,
     imageCropAspectRatio,
@@ -15888,6 +16091,9 @@ var file_upload_default = (Alpine) => {
         this.pond = create$f(this.$refs.input, {
           acceptedFileTypes,
           allowReorder: canReorder,
+          allowImagePreview: canPreview,
+          allowVideoPreview: canPreview,
+          allowAudioPreview: canPreview,
           credits: false,
           files: shouldAppendFiles ? this.files : this.files.reverse(),
           imageCropAspectRatio,
@@ -22371,6 +22577,15 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
       return details;
     }
   }, {
+    key: "_appendEager",
+    value: function _appendEager() {
+      var details = this._applyDispatch.apply(this, arguments);
+      if (this.currentMask) {
+        details.aggregate(this.currentMask._appendEager());
+      }
+      return details;
+    }
+  }, {
     key: "doDispatch",
     value: function doDispatch(appended) {
       var flags = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
@@ -22388,8 +22603,8 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
   }, {
     key: "reset",
     value: function reset() {
-      if (this.currentMask)
-        this.currentMask.reset();
+      var _this$currentMask2;
+      (_this$currentMask2 = this.currentMask) === null || _this$currentMask2 === void 0 ? void 0 : _this$currentMask2.reset();
       this.compiledMasks.forEach(function(m) {
         return m.reset();
       });
@@ -22426,15 +22641,22 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
   }, {
     key: "isComplete",
     get: function get() {
-      return !!this.currentMask && this.currentMask.isComplete;
+      var _this$currentMask3;
+      return Boolean((_this$currentMask3 = this.currentMask) === null || _this$currentMask3 === void 0 ? void 0 : _this$currentMask3.isComplete);
+    }
+  }, {
+    key: "isFilled",
+    get: function get() {
+      var _this$currentMask4;
+      return Boolean((_this$currentMask4 = this.currentMask) === null || _this$currentMask4 === void 0 ? void 0 : _this$currentMask4.isFilled);
     }
   }, {
     key: "remove",
     value: function remove() {
       var details = new ChangeDetails();
       if (this.currentMask) {
-        var _this$currentMask2;
-        details.aggregate((_this$currentMask2 = this.currentMask).remove.apply(_this$currentMask2, arguments)).aggregate(this._applyDispatch());
+        var _this$currentMask5;
+        details.aggregate((_this$currentMask5 = this.currentMask).remove.apply(_this$currentMask5, arguments)).aggregate(this._applyDispatch());
       }
       return details;
     }
@@ -22464,17 +22686,17 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
   }, {
     key: "extractInput",
     value: function extractInput() {
-      var _this$currentMask3;
-      return this.currentMask ? (_this$currentMask3 = this.currentMask).extractInput.apply(_this$currentMask3, arguments) : "";
+      var _this$currentMask6;
+      return this.currentMask ? (_this$currentMask6 = this.currentMask).extractInput.apply(_this$currentMask6, arguments) : "";
     }
   }, {
     key: "extractTail",
     value: function extractTail() {
-      var _this$currentMask4, _get3;
+      var _this$currentMask7, _get3;
       for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
         args[_key2] = arguments[_key2];
       }
-      return this.currentMask ? (_this$currentMask4 = this.currentMask).extractTail.apply(_this$currentMask4, args) : (_get3 = _get(_getPrototypeOf(MaskedDynamic2.prototype), "extractTail", this)).call.apply(_get3, [this].concat(args));
+      return this.currentMask ? (_this$currentMask7 = this.currentMask).extractTail.apply(_this$currentMask7, args) : (_get3 = _get(_getPrototypeOf(MaskedDynamic2.prototype), "extractTail", this)).call.apply(_get3, [this].concat(args));
     }
   }, {
     key: "doCommit",
@@ -22486,11 +22708,11 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
   }, {
     key: "nearestInputPos",
     value: function nearestInputPos() {
-      var _this$currentMask5, _get4;
+      var _this$currentMask8, _get4;
       for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
         args[_key3] = arguments[_key3];
       }
-      return this.currentMask ? (_this$currentMask5 = this.currentMask).nearestInputPos.apply(_this$currentMask5, args) : (_get4 = _get(_getPrototypeOf(MaskedDynamic2.prototype), "nearestInputPos", this)).call.apply(_get4, [this].concat(args));
+      return this.currentMask ? (_this$currentMask8 = this.currentMask).nearestInputPos.apply(_this$currentMask8, args) : (_get4 = _get(_getPrototypeOf(MaskedDynamic2.prototype), "nearestInputPos", this)).call.apply(_get4, [this].concat(args));
     }
   }, {
     key: "overwrite",
@@ -22499,6 +22721,14 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
     },
     set: function set2(overwrite) {
       console.warn('"overwrite" option is not available in dynamic mask, use this option in siblings');
+    }
+  }, {
+    key: "eager",
+    get: function get() {
+      return this.currentMask ? this.currentMask.eager : _get(_getPrototypeOf(MaskedDynamic2.prototype), "eager", this);
+    },
+    set: function set2(eager) {
+      console.warn('"eager" option is not available in dynamic mask, use this option in siblings');
     }
   }, {
     key: "maskEquals",
