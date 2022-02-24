@@ -22,21 +22,21 @@
     @apply bg-gray-100;
 }
 
-/* compact only styles, excludes compact circle (avatar) */
+/* Compact-only styles, excluding compact circle layouts */
 
-.filepond--root[data-style-panel-layout="compact"] .filepond--item + .filepond--item {
+.filepond--root[data-style-panel-layout='compact'] .filepond--item + .filepond--item {
     @apply mt-0.5;
 }
 
-.filepond--root[data-style-panel-layout="compact"] .filepond--drop-label label {
+.filepond--root[data-style-panel-layout='compact'] .filepond--drop-label label {
     @apply text-sm;
 }
 
-.filepond--root[data-style-panel-layout="compact"] .filepond--drop-label {
+.filepond--root[data-style-panel-layout='compact'] .filepond--drop-label {
     min-height: 2.625em;
 }
 
-.filepond--root[data-style-panel-layout="compact"] .filepond--file {
+.filepond--root[data-style-panel-layout='compact'] .filepond--file {
     padding-top: 0.5em;
     padding-bottom: 0.5em;
 }
