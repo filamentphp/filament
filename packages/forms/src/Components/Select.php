@@ -7,11 +7,10 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class Select extends Field
 {
+    use Concerns\HasAffixes;
     use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
-    use Concerns\HasAffixes;
-    use Concerns\CanOpenUrl;
 
     protected string $view = 'forms::components.select';
 

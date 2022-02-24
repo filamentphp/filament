@@ -11,10 +11,10 @@ class TextInput extends Field
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
+    use Concerns\HasAffixes;
     use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
-    use Concerns\HasAffixes;
 
     protected string $view = 'forms::components.text-input';
 
