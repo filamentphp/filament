@@ -26,7 +26,7 @@ class FileUpload extends BaseFileUpload
 
     protected string | Closure | null $panelAspectRatio = null;
 
-    protected string | Closure | null $panelLayout = null;
+    protected string | Closure | null $panelLayout = 'compact';
 
     protected string | Closure $removeUploadedFileButtonPosition = 'left';
 

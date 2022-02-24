@@ -12,6 +12,7 @@
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
             canReorder: {{ $canReorder() ? 'true' : 'false' }},
+            canPreview: {{ $canPreview() ? 'true' : 'false' }},
             deleteUploadedFileUsing: async (fileKey) => {
                 return await $wire.deleteUploadedFile('{{ $getStatePath() }}', fileKey)
             },
@@ -46,7 +47,7 @@
             },
         })"
         wire:ignore
-        style="min-height: 76px"
+        style="min-height: {{ $isAvatar() ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }}"
         {{ $attributes->merge($getExtraAttributes())->class([
             'filament-forms-file-upload-component',
             'w-32 mx-auto' => $isAvatar(),
