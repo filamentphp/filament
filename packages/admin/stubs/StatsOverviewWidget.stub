@@ -1,0 +1,16 @@
+<?php
+
+namespace {{ namespace }};
+
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use Filament\Widgets\StatsOverviewWidget\Card;
+
+class {{ class }} extends BaseWidget
+{
+    protected function getCards(): array
+    {
+        return [
+            //
+        ];
+    }
+}

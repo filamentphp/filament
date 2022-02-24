@@ -65,7 +65,21 @@ public static function form(Form $form): Form
 
 The `schema()` method is used to define the structure of your form. It is an array of [fields](/docs/forms/fields), in the order they should appear in your form.
 
+We have many fields available for your forms, including:
+
+- [Text input](/docs/forms/fields#text-input)
+- [Select](/docs/forms/fields#select)
+- [Multi-select](/docs/forms/fields#multi-select)
+- [Checkbox](/docs/forms/fields#checkbox)
+- [Date-time picker](/docs/forms/fields#date-time-picker)
+- [File upload](/docs/forms/fields#file-upload)
+- [Rich editor](/docs/forms/fields#rich-editor)
+- [Markdown editor](/docs/forms/fields#markdown-editor)
+- [Repeater](/docs/forms/fields#repeater)
+
 To view a full list of available form [fields](/docs/forms/fields) and [layout components](/docs/forms/layout), see the [Form Builder documentation](/docs/forms/fields).
+
+You may also build your own completely [custom form fields](/docs/forms/fields#building-custom-fields) and [custom layout components](/docs/forms/layout#building-custom-layout-components).
 
 ### Automatically generating fields
 
@@ -133,7 +147,17 @@ public static function table(Table $table): Table
 
 The `columns()` method is used to define the [columns](/docs/tables/columns) in your table. It is an array of column objects, in the order they should appear in your table.
 
+We have many fields available for your forms, including:
+
+- [Text column](/docs/tables/columns#text-column)
+- [Boolean column](/docs/tables/columns#boolean-column)
+- [Image column](/docs/tables/columns#image-column)
+- [Icon column](/docs/tables/columns#icon-column)
+- [Badge column](/docs/tables/columns#badge-column)
+
 To view a full list of available table [columns](/docs/tables/columns), see the [Table Builder documentation](/docs/tables/columns).
+
+You may also build your own completely [custom table columns](/docs/tables/columns#building-custom-columns).
 
 ### Filtering table data
 
@@ -213,6 +237,27 @@ public static function table(Table $table): Table
 }
 ```
 
+To replace the default actions, use the `actions()` method:
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->actions([
+            Tables\Actions\LinkAction::make('delete')
+                ->action(fn (Post $record) => $record->delete())
+                ->requiresConfirmation()
+                ->color('danger'),
+        ]);
+}
+```
+
 ### Adding more bulk actions
 
 You may add more [bulk actions](/docs/tables/actions#bulk-actions) to the table.
@@ -254,6 +299,29 @@ public static function table(Table $table): Table
             // ...
         ])
         ->pushBulkActions([
+            Tables\Actions\BulkAction::make('activate')
+                ->action(fn (Collection $records) => $records->each->activate())
+                ->requiresConfirmation()
+                ->color('success')
+                ->icon('heroicon-o-check'),
+        ]);
+}
+```
+
+To replace the default actions, use the `bulkActions()` method:
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+use Illuminate\Database\Eloquent\Collection;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->bulkActions([
             Tables\Actions\BulkAction::make('activate')
                 ->action(fn (Collection $records) => $records->each->activate())
                 ->requiresConfirmation()

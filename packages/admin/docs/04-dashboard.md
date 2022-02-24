@@ -16,7 +16,7 @@ This command will create two files - a widget class in the `/Widgets` directory 
 
 Widgets are pure [Livewire](https://laravel-livewire.com) components, so may use any features of that package.
 
-Widgets may also used on [resource pages](resources#building-widgets) or other [custom pages](pages#building-widgets).
+Widgets may also be used on [resource pages](resources#building-widgets) or other [custom pages](pages#building-widgets).
 
 ## Sorting widgets
 

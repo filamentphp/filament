@@ -4,13 +4,14 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
+use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
  */
-class CreateRecord extends Page
+class CreateRecord extends Page implements HasFormActions
 {
     use Concerns\UsesResourceForm;
 
@@ -167,7 +168,7 @@ class CreateRecord extends Page
             return $resource::getUrl('view', ['record' => $this->record]);
         }
 
-        return null;
+        return $resource::getUrl('index');
     }
 
     protected function getMountedActionFormModel(): string

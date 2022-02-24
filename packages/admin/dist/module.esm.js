@@ -18902,7 +18902,9 @@ var markdown_editor_default = (Alpine) => {
       tab,
       init: function() {
         if (this.state !== null) {
-          this.render();
+          this.$nextTick(() => {
+            this.render();
+          });
         }
         this.$watch("state", () => {
           this.render();
@@ -22598,7 +22600,9 @@ var text_input_default = (Alpine) => {
 var textarea_default = (Alpine) => {
   Alpine.data("textareaFormComponent", () => ({
     init: function() {
-      this.render();
+      this.$nextTick(() => {
+        this.render();
+      });
     },
     render: function() {
       if (this.$el.scrollHeight > 0) {

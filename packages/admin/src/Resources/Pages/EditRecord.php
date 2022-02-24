@@ -4,13 +4,14 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
+use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
  */
-class EditRecord extends Page
+class EditRecord extends Page implements HasFormActions
 {
     use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;

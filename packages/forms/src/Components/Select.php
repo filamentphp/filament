@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\HtmlString;
 
 class Select extends Field
 {
@@ -25,9 +26,9 @@ class Select extends Field
 
     protected ?array $searchColumns = null;
 
-    protected string | Closure | null $noSearchResultsMessage = null;
+    protected string | HtmlString | Closure | null $noSearchResultsMessage = null;
 
-    protected string | Closure | null $searchPrompt = null;
+    protected string | HtmlString | Closure | null $searchPrompt = null;
 
     protected function setUp(): void
     {
@@ -99,16 +100,16 @@ class Select extends Field
         return $this;
     }
 
-    public function searchPrompt(string | Closure | null $message): static
+    public function noSearchResultsMessage(string | HtmlString | Closure | null $message): static
     {
-        $this->searchPrompt = $message;
+        $this->noSearchResultsMessage = $message;
 
         return $this;
     }
 
-    public function noSearchResultsMessage(string | Closure | null $message): static
+    public function searchPrompt(string | HtmlString | Closure | null $message): static
     {
-        $this->noSearchResultsMessage = $message;
+        $this->searchPrompt = $message;
 
         return $this;
     }
@@ -120,19 +121,19 @@ class Select extends Field
         ]);
     }
 
-    public function getNoSearchResultsMessage(): string
+    public function getNoSearchResultsMessage(): string | HtmlString
     {
         return $this->evaluate($this->noSearchResultsMessage);
+    }
+
+    public function getSearchPrompt(): string | HtmlString
+    {
+        return $this->evaluate($this->searchPrompt);
     }
 
     public function getSearchColumns(): ?array
     {
         return $this->searchColumns;
-    }
-
-    public function getSearchPrompt(): string
-    {
-        return $this->evaluate($this->searchPrompt);
     }
 
     public function getSearchResults(string $query): array

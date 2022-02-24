@@ -1,7 +1,9 @@
 export default (Alpine) => {
     Alpine.data('textareaFormComponent', () => ({
         init: function () {
-            this.render()
+            this.$nextTick(() => {
+                this.render()
+            })
         },
 
         render: function () {
