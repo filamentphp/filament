@@ -126,11 +126,6 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
-    public function getCollection(): string
-    {
-        return $this->evaluate($this->collection) ?? 'default';
-    }
-
     public function conversion(string | Closure | null $conversion): static
     {
         $this->conversion = $conversion;
@@ -138,9 +133,14 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
-    public function getConversion(): string
+    public function getCollection(): string
     {
-        return $this->evaluate($this->conversion) ?? '';
+        return $this->evaluate($this->collection) ?? 'default';
+    }
+
+    public function getConversion(): ?string
+    {
+        return $this->evaluate($this->conversion);
     }
 
     public function mediaName(string | Closure | null $name): static
