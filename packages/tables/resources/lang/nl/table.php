@@ -85,12 +85,43 @@ return [
         'heading' => 'Geen resultaten gevonden',
     ],
 
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Reset filters',
+            ],
+
+            'close' => [
+                'label' => 'Sluit',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Alles',
+        ],
+
+        'select' => [
+            'placeholder' => 'Alles',
+        ],
+
+    ],
+
     'selection_indicator' => [
+
+        'selected_count' => '1 rij geselecteerd.|:count rijen geselecteerd.',
+
 
         'buttons' => [
 
             'select_all' => [
                 'label' => 'Selecteer alle :count',
+            ],
+
+            'deselect_all' => [
+                'label' => 'Deselecteer alles',
             ],
 
         ],
