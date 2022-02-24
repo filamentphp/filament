@@ -32,7 +32,12 @@ trait CanDeleteRecords
 
         $this->callHook('afterDelete');
 
-        $this->notify('success', __('filament::resources/pages/list-records.table.actions.delete.messages.deleted'));
+        $this->notify('success', $this->getDeletedNotificationMessage());
+    }
+
+    protected function getDeletedNotificationMessage(): string
+    {
+        return __('filament::resources/pages/list-records.table.actions.delete.messages.deleted');
     }
 
     protected function handleRecordDeletion(Model $record): void

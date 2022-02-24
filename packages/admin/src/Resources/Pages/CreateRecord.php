@@ -62,8 +62,12 @@ class CreateRecord extends Page implements HasFormActions
 
         $this->callHook('afterCreate');
 
-        $this->getCreatedNotification(another: $another);
-        
+        $this->notify(
+            'success',
+            $this->getCreatedNotificationMessage(),
+            isAfterRedirect: ! $another,
+        );
+
         if ($another) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
             $this->form->model($this->record::class);
@@ -77,16 +81,10 @@ class CreateRecord extends Page implements HasFormActions
         $this->redirect($this->getRedirectUrl());
     }
 
-    public function getCreatedNotification(bool $another): void
+    protected function getCreatedNotificationMessage(): string
     {
-        $this->notify(
-            'success',
-            __('filament::resources/pages/create-record.messages.created'),
-            isAfterRedirect: !$another,
-        );
+        return __('filament::resources/pages/create-record.messages.created');
     }
-
-    
 
     public function createAndCreateAnother(): void
     {
