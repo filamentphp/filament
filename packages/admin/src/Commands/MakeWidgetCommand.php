@@ -87,7 +87,6 @@ class MakeWidgetCommand extends Command
                     'Radar chart',
                     'Scatter chart',
                 ],
-                0,
             );
 
             $this->copyStubToApp('ChartWidget', $path, [

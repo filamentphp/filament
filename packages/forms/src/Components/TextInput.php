@@ -11,6 +11,7 @@ class TextInput extends Field
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
+    use Concerns\HasAffixes;
     use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
@@ -38,10 +39,6 @@ class TextInput extends Field
     protected $minValue = null;
 
     protected int | float | string | Closure | null $step = null;
-
-    protected string | Closure | null $postfixLabel = null;
-
-    protected string | Closure | null $prefixLabel = null;
 
     protected string | Closure | null $type = null;
 
@@ -135,20 +132,6 @@ class TextInput extends Field
         return $this;
     }
 
-    public function prefix(string | Closure | null $label): static
-    {
-        $this->prefixLabel = $label;
-
-        return $this;
-    }
-
-    public function postfix(string | Closure | null $label): static
-    {
-        $this->postfixLabel = $label;
-
-        return $this;
-    }
-
     public function step(int | float | string | Closure | null $interval): static
     {
         $this->step = $interval;
@@ -219,16 +202,6 @@ class TextInput extends Field
     public function getMinValue()
     {
         return $this->evaluate($this->minValue);
-    }
-
-    public function getPrefixLabel(): ?string
-    {
-        return $this->evaluate($this->prefixLabel);
-    }
-
-    public function getPostfixLabel(): ?string
-    {
-        return $this->evaluate($this->postfixLabel);
     }
 
     public function getStep(): int | float | string | null

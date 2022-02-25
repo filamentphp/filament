@@ -132,6 +132,88 @@
   margin-left: 0.1875em;
 }
 
+/* node_modules/filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css */
+.filepond--media-preview audio {
+  display: none;
+}
+.filepond--media-preview .audioplayer {
+  width: calc(100% - 1.4em);
+  margin: 2.3em auto auto;
+}
+.filepond--media-preview .playpausebtn {
+  margin-top: 0.3em;
+  margin-right: 0.3em;
+  height: 25px;
+  width: 25px;
+  border-radius: 25px;
+  border: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  float: left;
+  outline: none;
+  cursor: pointer;
+}
+.filepond--media-preview .playpausebtn:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.filepond--media-preview .play {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAyElEQVQ4T9XUsWoCQRRG4XPaFL5SfIy8gKYKBCysrax8Ahs7qzQ2qVIFOwsrsbEWLEK6EBFGBrIQhN2d3dnGgalm+Jh7789Ix8uOPe4YDCH0gZ66atKW0pJDCE/AEngDXtRjCpwCRucbGANzNVTBqWBhfAJDdV+GNgWj8wtM41bPt3AbsDB2f69d/0dzwC0wUDe54A8wAWbqJbfkD+BZPeQO5QsYqYu6LKb0MIb7VT3VYfG8CnwEHtT3FKi4c8e/TZMyk3LYFrwCgMdHFbRDKS8AAAAASUVORK5CYII=);
+}
+.filepond--media-preview .pause {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAh0lEQVQ4T+2UsQkCURBE30PLMbAMMResQrAPsQ0TK9AqDKxGZeTLD74aGNwlhzfZssvADDMrPcOe+RggYZIJcG2s2KinMidZAvu6u6uzT8u+JCeZArfmcKUeK+EaONTdQy23bxgJX8aPHvIHsSnVuzTx36rn2pQFsGuqN//ZlK7vbIDvq6vkJ9yteBXzecYbAAAAAElFTkSuQmCC);
+}
+.filepond--media-preview .timeline {
+  width: calc(100% - 2.5em);
+  height: 3px;
+  margin-top: 1em;
+  float: left;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.3);
+}
+.filepond--media-preview .playhead {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  margin-top: -5px;
+  background: white;
+}
+.filepond--media-preview-wrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 100%;
+  margin: 0;
+  border-radius: 0.45em;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.01);
+  pointer-events: auto;
+}
+.filepond--media-preview-wrapper:before {
+  content: " ";
+  position: absolute;
+  width: 100%;
+  height: 2em;
+  background: linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#000000", endColorstr="#00000000", GradientType=0);
+  z-index: 3;
+}
+.filepond--media-preview {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  -webkit-transform-origin: center center;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+.filepond--media-preview video,
+.filepond--media-preview audio {
+  width: 100%;
+  will-change: transform;
+}
+
 /* node_modules/filepond/dist/filepond.min.css */
 .filepond--assistant {
   position: absolute;
@@ -1450,11 +1532,30 @@ trix-editor .attachment__metadata .attachment__size {
 .filepond--panel-root {
   @apply bg-white border border-gray-300 rounded-lg shadow-sm;
 }
+.filepond--drip-blob {
+  @apply bg-gray-900;
+}
 .dark .filepond--drop-label {
-  @apply bg-gray-700 text-gray-200 rounded-md;
+  @apply text-gray-200;
 }
 .dark .filepond--panel-root {
   @apply border-gray-600 text-white bg-gray-700;
+}
+.dark .filepond--drip-blob {
+  @apply bg-gray-100;
+}
+.filepond--root[data-style-panel-layout=compact] .filepond--item + .filepond--item {
+  @apply mt-0.5;
+}
+.filepond--root[data-style-panel-layout=compact] .filepond--drop-label label {
+  @apply text-sm;
+}
+.filepond--root[data-style-panel-layout=compact] .filepond--drop-label {
+  min-height: 2.625em;
+}
+.filepond--root[data-style-panel-layout=compact] .filepond--file {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
 }
 
 /* packages/forms/resources/css/components/rich-editor.css */

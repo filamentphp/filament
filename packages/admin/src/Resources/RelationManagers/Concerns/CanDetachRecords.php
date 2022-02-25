@@ -29,7 +29,12 @@ trait CanDetachRecords
 
         $this->callHook('afterDetach');
 
-        $this->notify('success', __('filament::resources/relation-managers/detach.action.messages.detached'));
+        $this->notify('success', $this->getDetachedNotificationMessage());
+    }
+
+    protected function getDetachedNotificationMessage(): string
+    {
+        return __('filament::resources/relation-managers/detach.action.messages.detached');
     }
 
     public function bulkDetach(): void
@@ -43,7 +48,12 @@ trait CanDetachRecords
 
         $this->callHook('afterBulkDetach');
 
-        $this->notify('success', __('filament::resources/relation-managers/detach.bulk_action.messages.detached'));
+        $this->notify('success', $this->getBulkDetachedNotificationMessage());
+    }
+
+    protected function getBulkDetachedNotificationMessage(): string
+    {
+        return __('filament::resources/relation-managers/detach.bulk_action.messages.detached');
     }
 
     protected function getDetachAction(): Tables\Actions\Action

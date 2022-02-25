@@ -64,7 +64,7 @@ class CreateRecord extends Page implements HasFormActions
 
         $this->notify(
             'success',
-            __('filament::resources/pages/create-record.messages.created'),
+            $this->getCreatedNotificationMessage(),
             isAfterRedirect: ! $another,
         );
 
@@ -79,6 +79,11 @@ class CreateRecord extends Page implements HasFormActions
         }
 
         $this->redirect($this->getRedirectUrl());
+    }
+
+    protected function getCreatedNotificationMessage(): string
+    {
+        return __('filament::resources/pages/create-record.messages.created');
     }
 
     public function createAndCreateAnother(): void

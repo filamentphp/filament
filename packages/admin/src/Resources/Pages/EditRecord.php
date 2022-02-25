@@ -82,13 +82,18 @@ class EditRecord extends Page implements HasFormActions
 
         $this->notify(
             'success',
-            __('filament::resources/pages/edit-record.messages.saved'),
+            $this->getSavedNotificationMessage(),
             isAfterRedirect: $shouldRedirect,
         );
 
         if ($shouldRedirect) {
             $this->redirect($redirectUrl);
         }
+    }
+
+    protected function getSavedNotificationMessage(): string
+    {
+        return __('filament::resources/pages/edit-record.messages.saved');
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
@@ -122,11 +127,16 @@ class EditRecord extends Page implements HasFormActions
 
         $this->notify(
             'success',
-            __('filament::resources/pages/edit-record.actions.delete.messages.deleted'),
+            $this->getDeletedNotificationMessage(),
             isAfterRedirect: true,
         );
 
         $this->redirect($this->getDeleteRedirectUrl());
+    }
+
+    protected function getDeletedNotificationMessage(): string
+    {
+        return __('filament::resources/pages/edit-record.actions.delete.messages.deleted');
     }
 
     protected function getActions(): array
