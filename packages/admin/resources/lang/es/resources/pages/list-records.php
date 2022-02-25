@@ -19,7 +19,7 @@ return [
                     ],
 
                     'create_and_create_another' => [
-                        'label' => 'Guardar & crear otro',
+                        'label' => 'Guardar y crear otro',
                     ],
 
                 ],
@@ -70,9 +70,9 @@ return [
 
         'bulk_actions' => [
             'delete' => [
-                'label' => 'Borrar seleccionado',
+                'label' => 'Borrar seleccionado(s)',
                 'messages' => [
-                    'deleted' => 'Registro(s) borrados',
+                    'deleted' => 'Registro(s) borrado(s)',
                 ],
             ],
 
