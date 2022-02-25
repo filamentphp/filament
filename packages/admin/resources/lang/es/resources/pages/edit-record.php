@@ -16,7 +16,7 @@ return [
 
                 'heading' => 'Borrar :label',
 
-                'subheading' => '¿Estás seguro?',
+                'subheading' => '¿Está segura/o de hacer esto?',
 
                 'buttons' => [
 
