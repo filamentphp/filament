@@ -89,7 +89,14 @@ trait CanCreateRecords
             $form->fill();
         }
 
-        $this->notify('success', __('filament::resources/pages/list-records.actions.create.messages.created'));
+        if (filled($this->getCreatedNotificationMessage())) {
+            $this->notify('success', $this->getCreatedNotificationMessage());
+        }
+    }
+
+    protected function getCreatedNotificationMessage(): ?string
+    {
+        return __('filament::resources/pages/list-records.actions.create.messages.created')
     }
 
     public function createAndCreateAnother(): void

@@ -25,10 +25,12 @@ trait CanDeleteRecords
 
         $this->callHook('afterDelete');
 
-        $this->notify('success', $this->getDeletedNotificationMessage());
+        if (filled($this->getDeletedNotificationMessage())) {
+            $this->notify('success', $this->getDeletedNotificationMessage());
+        }
     }
 
-    protected function getDeletedNotificationMessage(): string
+    protected function getDeletedNotificationMessage(): ?string
     {
         return __('filament::resources/relation-managers/delete.action.messages.deleted');
     }
@@ -41,10 +43,12 @@ trait CanDeleteRecords
 
         $this->callHook('afterBulkDelete');
 
-        $this->notify('success', $this->getBulkDeletedNotificationMessage());
+        if (filled($this->getBulkDeletedNotificationMessage())) {
+            $this->notify('success', $this->getBulkDeletedNotificationMessage());
+        }
     }
 
-    protected function getBulkDeletedNotificationMessage(): string
+    protected function getBulkDeletedNotificationMessage(): ?string
     {
         return __('filament::resources/relation-managers/delete.bulk_action.messages.deleted');
     }

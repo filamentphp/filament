@@ -80,7 +80,7 @@ class EditRecord extends Page implements HasFormActions
 
         $shouldRedirect = $shouldRedirect && ($redirectUrl = $this->getRedirectUrl());
 
-        if ( $this->getSavedNotificationMessage()) {
+        if (filled($this->getSavedNotificationMessage())) {
             $this->notify(
                 'success',
                 $this->getSavedNotificationMessage(),
@@ -127,16 +127,18 @@ class EditRecord extends Page implements HasFormActions
 
         $this->callHook('afterDelete');
 
-        $this->notify(
-            'success',
-            $this->getDeletedNotificationMessage(),
-            isAfterRedirect: true,
-        );
+        if (filled($this->getDeletedNotificationMessage())) {
+            $this->notify(
+                'success',
+                $this->getDeletedNotificationMessage(),
+                isAfterRedirect: true,
+            );
+        }
 
         $this->redirect($this->getDeleteRedirectUrl());
     }
 
-    protected function getDeletedNotificationMessage(): string
+    protected function getDeletedNotificationMessage(): ?string
     {
         return __('filament::resources/pages/edit-record.actions.delete.messages.deleted');
     }

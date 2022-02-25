@@ -72,10 +72,13 @@ trait CanEditRecords
 
         $this->callHook('afterSave');
 
-        $this->notify('success', $this->getSavedNotificationMessage());
+        if (filled($this->getSavedNotificationMessage())) {
+            $this->notify('success', $this->getSavedNotificationMessage());
+        }
+
     }
 
-    protected function getSavedNotificationMessage(): string
+    protected function getSavedNotificationMessage(): ?string
     {
         return __('filament::resources/pages/list-records.table.actions.edit.messages.saved');
     }

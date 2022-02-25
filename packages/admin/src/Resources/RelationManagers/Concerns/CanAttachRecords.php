@@ -130,10 +130,12 @@ trait CanAttachRecords
             $form->fill();
         }
 
-        $this->notify('success', $this->getAttachedNotificationMessage());
+        if (filled($this->getAttachedNotificationMessage())) {
+            $this->notify('success', $this->getAttachedNotificationMessage());
+        }
     }
 
-    protected function getAttachedNotificationMessage(): string
+    protected function getAttachedNotificationMessage(): ?string
     {
         return __('filament::resources/relation-managers/attach.action.messages.attached');
     }
