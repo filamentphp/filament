@@ -80,7 +80,7 @@ class EditRecord extends Page implements HasFormActions
 
         $shouldRedirect = $shouldRedirect && ($redirectUrl = $this->getRedirectUrl());
 
-        if($this->getSavedNotificationMessage()){
+        if( $this->getSavedNotificationMessage()) {
             $this->notify(
                 'success',
                 $this->getSavedNotificationMessage(),

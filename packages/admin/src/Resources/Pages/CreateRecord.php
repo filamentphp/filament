@@ -62,7 +62,7 @@ class CreateRecord extends Page implements HasFormActions
 
         $this->callHook('afterCreate');
 
-        if($this->getCreatedNotificationMessage()){
+        if( $this->getCreatedNotificationMessage()) {
             $this->notify(
                 'success',
                 $this->getCreatedNotificationMessage(),
