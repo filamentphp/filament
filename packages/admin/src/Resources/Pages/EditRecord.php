@@ -80,18 +80,20 @@ class EditRecord extends Page implements HasFormActions
 
         $shouldRedirect = $shouldRedirect && ($redirectUrl = $this->getRedirectUrl());
 
-        $this->notify(
-            'success',
-            $this->getSavedNotificationMessage(),
-            isAfterRedirect: $shouldRedirect,
-        );
+        if($this->getSavedNotificationMessage()){
+            $this->notify(
+                'success',
+                $this->getSavedNotificationMessage(),
+                isAfterRedirect: $shouldRedirect,
+            );
+        }
 
         if ($shouldRedirect) {
             $this->redirect($redirectUrl);
         }
     }
 
-    protected function getSavedNotificationMessage(): string
+    protected function getSavedNotificationMessage(): ?string
     {
         return __('filament::resources/pages/edit-record.messages.saved');
     }
