@@ -33,7 +33,7 @@
                 <div
                     x-id="['stats-widget-filter']"
                 >
-                    <select :id="$id('stats-widget-filter')" :name="$id('stats-widget-filter')" wire:model="defaultFilters.{{ $id }}" class="text-sm font-medium text-gray-500 block transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70 filament-forms-select-component dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600 padding-block[]" style="padding-block: 4px">
+                    <select :id="$id('stats-widget-filter')" :name="$id('stats-widget-filter')" wire:model="filters.{{ $id }}" class="text-sm font-medium text-gray-500 block transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70 filament-forms-select-component dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600" style="padding-block: 4px">
                         @foreach($filters as $val => $title)
                             <option value="{{ $val }}">
                                 {{ $title }}
