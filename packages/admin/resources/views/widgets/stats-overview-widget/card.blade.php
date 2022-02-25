@@ -8,6 +8,6 @@
     :label="$getLabel()"
     :value="$getValue()"
     :filters="$getFilters()"
-    :action="$getAction()"
+    :id="$getId()"
     class="filament-stats-overview-widget-card"
 />

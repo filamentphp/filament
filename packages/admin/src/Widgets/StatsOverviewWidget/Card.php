@@ -6,12 +6,9 @@ use Illuminate\Support\Str;
 use Illuminate\View\Component;
 use Illuminate\Contracts\View\View;
 use Illuminate\Contracts\Support\Htmlable;
-use Filament\Tables\Actions\Modal\Actions\Concerns\HasAction;
 
 class Card extends Component implements Htmlable
 {
-    use HasAction;
-
     protected ?array $chart = null;
 
     protected ?array $filters = null;
