@@ -2,6 +2,8 @@
 
 namespace Filament\Resources\Concerns;
 
+use Exception;
+
 trait Translatable
 {
     public static function getDefaultTranslatableLocale(): string
