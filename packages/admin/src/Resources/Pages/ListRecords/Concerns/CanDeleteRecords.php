@@ -21,7 +21,8 @@ trait CanDeleteRecords
             ->action(fn () => $this->delete())
             ->requiresConfirmation()
             ->color('danger')
-            ->icon('heroicon-o-trash');
+            ->icon('heroicon-o-trash')
+            ->hidden(fn (Model $record): bool => ! static::canDelete($record));
     }
 
     public function delete(): void
