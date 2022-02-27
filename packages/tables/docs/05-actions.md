@@ -29,18 +29,17 @@ LinkAction::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
 ```
 
-Alignment of the action icons can be configured in the `layout` section of the package config:
+By default, the actions in your table will be aligned to the right. The change the default alignment, update the configuration value inside of the package config:
 
-````'layout' => [
+```
+return [
+
     // ...
-    'tables' => [
-        'actions' => [
-            'alignment' => 'right',  // Or 'left', 'center'
-            // ...
 
-        ],
-    ],
-],```
+    'alignment' => 'right', // 'right', 'left' or 'center'
+
+];
+```
 
 ### Bulk actions
 
