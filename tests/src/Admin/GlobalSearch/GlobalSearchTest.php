@@ -2,6 +2,8 @@
 
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
+use Filament\GlobalSearch\GlobalSearchResult;
+use Filament\GlobalSearch\GlobalSearchResults;
 use Filament\Http\Livewire\GlobalSearch;
 use Filament\Tests\Admin\GlobalSearch\TestCase;
 use Filament\Tests\Models\Post;
@@ -34,14 +36,13 @@ it('can retrieve results via custom search provider', function () {
 
 class CustomSearchProvider implements GlobalSearchProvider
 {
-    public function getResults(string $query): ?array
+    public function getResults(string $query): ?GlobalSearchResults
     {
-        return [
-            'foobarbaz' => [
-                ['details' => [], 'title' => 'foo', 'url' => '#'],
-                ['details' => [], 'title' => 'bar', 'url' => '#'],
-                ['details' => [], 'title' => 'baz', 'url' => '#'],
-            ],
-        ];
+        return GlobalSearchResults::make()
+            ->category('foobarbaz', [
+                new GlobalSearchResult(title: 'foo', url: '#', details: []),
+                new GlobalSearchResult(title: 'bar', url: '#', details: []),
+                new GlobalSearchResult(title: 'baz', url: '#', details: []),
+            ]);
     }
 }

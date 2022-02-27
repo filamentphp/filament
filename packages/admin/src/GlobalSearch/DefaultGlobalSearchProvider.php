@@ -6,9 +6,9 @@ use Filament\Facades\Filament;
 
 class DefaultGlobalSearchProvider implements Contracts\GlobalSearchProvider
 {
-    public function getResults(string $query): ?array
+    public function getResults(string $query): ?GlobalSearchResults
     {
-        $results = [];
+        $builder = GlobalSearchResults::make();
 
         foreach (Filament::getResources() as $resource) {
             if (! $resource::canGloballySearch()) {
@@ -21,9 +21,9 @@ class DefaultGlobalSearchProvider implements Contracts\GlobalSearchProvider
                 continue;
             }
 
-            $results[$resource::getPluralLabel()] = $resourceResults;
+            $builder->category($resource::getPluralLabel(), $resourceResults);
         }
 
-        return $results;
+        return $builder;
     }
 }

@@ -25,7 +25,7 @@ class GlobalSearch extends Component
 
         $this->dispatchBrowserEvent('open-global-search-results');
 
-        return $results;
+        return $results->toArray();
     }
 
     protected function isEnabled(): bool
