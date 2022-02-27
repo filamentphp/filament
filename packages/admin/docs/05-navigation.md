@@ -84,8 +84,8 @@ The `Filament::navigation()` method which can be called from the `boot` method o
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
 
-Filament::navigation(function (NavigationBuilder $builder): void {
-    // ...
+Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
+    return $builder;
 });
 ```
 
@@ -97,8 +97,8 @@ If you want to register a new group, you can call the `NavigationBuilder::group`
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
 
-Filament::navigation(function (NavigationBuilder $builder): void {
-    $builder->group('Settings', [
+Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
+    return $builder->group('Settings', [
         // An array of `NavigationItem` objects.
     ]);
 });
@@ -110,8 +110,8 @@ You provide the name of the group and an array of `NavigationItem` objects to be
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
 
-Filament::navigation(function (NavigationBuilder $builder): void {
-    $builder->group('Content', [
+Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
+    return $builder->group('Content', [
         ...PageResource::getNavigationItems(),
         ...CategoryResource::getNavigationItems(),
     ]);
@@ -124,8 +124,8 @@ You can also register ungrouped items using the `NavigationBuilder::item()` meth
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
 
-Filament::navigation(function (NavigationBuilder $builder): void {
-    $builder->item(
+Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
+    return $builder->item(
         NavigationItem::make()
             ->label('Dashboard')
             ->icon('heroicon-o-home')
