@@ -1,13 +1,11 @@
 <?php
 
-use Livewire\Livewire;
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
-use Filament\Tests\Models\Post;
 use Filament\Http\Livewire\GlobalSearch;
 use Filament\Tests\Admin\GlobalSearch\TestCase;
-use Filament\Tests\Admin\Fixtures\Resources\PostResource;
-use Illuminate\Support\Arr;
+use Filament\Tests\Models\Post;
+use Livewire\Livewire;
 
 uses(TestCase::class);
 
