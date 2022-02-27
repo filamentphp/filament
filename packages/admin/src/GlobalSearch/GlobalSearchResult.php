@@ -10,7 +10,8 @@ class GlobalSearchResult implements Arrayable
         protected string $title,
         protected string $url,
         protected array $details = [],
-    ) {}
+    ) {
+    }
 
     public function toArray()
     {
