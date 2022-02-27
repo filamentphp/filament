@@ -33,9 +33,13 @@ When the user toggles between dark or light mode, a browser event called **dark-
     x-data="{ mode: 'light' }"
     x-on:dark-mode-toggled.window="mode = $event.detail"
 >
-    <span x-show="mode === 'light'"> Light mode </span>
+    <span x-show="mode === 'light'">
+        Light mode
+    </span>
 
-    <span x-show="mode === 'dark'"> Dark mode </span>
+    <span x-show="mode === 'dark'">
+        Dark mode
+    </span>
 </div>
 ```
 
@@ -64,8 +68,7 @@ module.exports = {
     darkMode: 'class',
     theme: {
         extend: {
-            colors: {
-                // [tl! focus:start]
+            colors: { // [tl! focus:start]
                 danger: colors.rose,
                 primary: colors.blue,
                 success: colors.green,
@@ -135,7 +138,9 @@ You may register your own scripts and styles using the `registerScripts()` and `
 ```php
 use Filament\Facades\Filament;
 
-Filament::registerScripts([asset('js/my-script.js')]);
+Filament::registerScripts([
+    asset('js/my-script.js'),
+]);
 
 Filament::registerStyles([
     'https://unpkg.com/tippy.js@6/dist/tippy.css',
@@ -146,16 +151,7 @@ Filament::registerStyles([
 You may pass `true` as a parameter to `registerScripts()` to load it before Filament's core JavaScript. This is useful for registering Alpine.js plugins from a CDN:
 
 ```php
-Filament::registerScripts(
-    [
-        'https://cdn.jsdelivr.net/npm/@ryangjchandler/alpine-tooltip@0.x.x/dist/cdn.min.js',
-    ],
-    true
-);
-```
-
-You can add custom tags to the header, such as `<meta>` and `<link>`, using the following:
-
-```php
-Filament::registerMeta(['<link rel="manifest" href="/site.webmanifest">']);
+Filament::registerScripts([
+    'https://cdn.jsdelivr.net/npm/@ryangjchandler/alpine-tooltip@0.x.x/dist/cdn.min.js',
+], true);
 ```

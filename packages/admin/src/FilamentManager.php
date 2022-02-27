@@ -33,8 +33,6 @@ class FilamentManager
 
     protected array $styles = [];
 
-    protected array $meta = [];
-
     protected ?string $themeUrl = null;
 
     protected array $widgets = [];
@@ -82,11 +80,6 @@ class FilamentManager
     public function registerNavigationItems(array $items): void
     {
         $this->navigationItems = array_merge($this->navigationItems, $items);
-    }
-
-    public function registerMeta(array $meta): void
-    {
-        $this->meta = array_merge($this->meta, $meta);
     }
 
     public function registerPages(array $pages): void
@@ -196,11 +189,6 @@ class FilamentManager
     public function getNavigationItems(): array
     {
         return $this->navigationItems;
-    }
-
-    public function getMeta(): array
-    {
-        return array_unique($this->meta);
     }
 
     public function getPages(): array
