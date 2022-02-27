@@ -4,21 +4,12 @@ namespace Filament\GlobalSearch;
 
 use Illuminate\Contracts\Support\Arrayable;
 
-class GlobalSearchResult implements Arrayable
+class GlobalSearchResult
 {
     public function __construct(
-        protected string $title,
-        protected string $url,
-        protected array $details = [],
+        public string $title,
+        public string $url,
+        public array $details = [],
     ) {
-    }
-
-    public function toArray()
-    {
-        return [
-            'title' => $this->title,
-            'url' => $this->url,
-            'details' => $this->details,
-        ];
     }
 }

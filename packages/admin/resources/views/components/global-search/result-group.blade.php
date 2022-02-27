@@ -23,9 +23,9 @@
 
     @foreach ($results as $result)
         <x-filament::global-search.result
-            :details="$result['details'] ?? []"
-            :title="$result['title']"
-            :url="$result['url']"
+            :details="$result->details"
+            :title="$result->title"
+            :url="$result->url"
         />
     @endforeach
 </ul>

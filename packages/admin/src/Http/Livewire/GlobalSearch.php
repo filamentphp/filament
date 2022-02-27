@@ -3,13 +3,14 @@
 namespace Filament\Http\Livewire;
 
 use Filament\Facades\Filament;
+use Filament\GlobalSearch\GlobalSearchResults;
 use Livewire\Component;
 
 class GlobalSearch extends Component
 {
     public $searchQuery = '';
 
-    public function getResults(): ?array
+    public function getResults(): ?GlobalSearchResults
     {
         $searchQuery = trim($this->searchQuery);
 
@@ -25,7 +26,7 @@ class GlobalSearch extends Component
 
         $this->dispatchBrowserEvent('open-global-search-results');
 
-        return $results->toArray();
+        return $results;
     }
 
     protected function isEnabled(): bool

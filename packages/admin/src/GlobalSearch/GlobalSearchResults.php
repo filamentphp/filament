@@ -5,7 +5,7 @@ namespace Filament\GlobalSearch;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 
-class GlobalSearchResults implements Arrayable
+class GlobalSearchResults
 {
     protected Collection $categories;
 
@@ -19,16 +19,15 @@ class GlobalSearchResults implements Arrayable
         return new self();
     }
 
-    /** @param \Filament\GlobalSearch\GlobalSearchResult[] $results */
     public function category(string $name, Arrayable | array $results = []): static
     {
-        $this->categories[$name] = Collection::make($results);
+        $this->categories[$name] = $results;
 
         return $this;
     }
 
-    public function toArray()
+    public function getCategories()
     {
-        return $this->categories->toArray();
+        return $this->categories;
     }
 }
