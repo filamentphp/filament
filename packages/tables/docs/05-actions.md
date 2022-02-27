@@ -52,7 +52,7 @@ protected function getTableBulkActions(): array
         // ...
     ];
 }
-````
+```
 
 Bulk actions may be created using the static `make()` method, passing its name. The name of the action should be unique. You should then pass a callback to `action()` which executes the task:
 

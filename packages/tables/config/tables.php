@@ -18,15 +18,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Content Alignment
+    | Action Alignment
     |--------------------------------------------------------------------------
     |
-    | This option is used to determine the default alignment of content
-    | inside of a table's cells.
+    | This option is used to determine the default alignment of actions in
+    | your table.
     |
     */
 
-    'alignment' => 'right',
+    'action_alignment' => 'right',
 
     /*
     |--------------------------------------------------------------------------

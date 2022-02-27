@@ -6,7 +6,7 @@
 <td {{ $attributes->class(['px-4 py-3 whitespace-nowrap filament-tables-actions-cell']) }}>
     <div {{ $attributes->class([
         'flex items-center gap-4',
-        match (config('tables.alignment')) {
+        match (config('tables.actions_alignment')) {
             'center' => 'justify-center',
             'right' => 'justify-end',
             default => 'justify-start',
