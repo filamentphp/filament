@@ -155,3 +155,10 @@ Filament::registerScripts([
     'https://cdn.jsdelivr.net/npm/@ryangjchandler/alpine-tooltip@0.x.x/dist/cdn.min.js',
 ], true);
 ```
+You can add custom tags to the header, such as `<meta>` and `<link>`, using the following:
+
+```php
+Filament::registerMeta([
+    '<link rel="manifest" href="/site.webmanifest">'
+]);
+```
