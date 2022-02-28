@@ -53,7 +53,7 @@ class SettingsPage extends Page
         if ($redirectUrl = $this->getRedirectUrl()) {
             $this->redirect($redirectUrl);
         }
-        
+
         if (filled($this->getSavedNotificationMessage())) {
             $this->notify('success', $this->getSavedNotificationMessage());
         }

@@ -76,7 +76,6 @@ trait CanEditRecords
         if (filled($this->getSavedNotificationMessage())) {
             $this->notify('success', $this->getSavedNotificationMessage());
         }
-
     }
 
     protected function getSavedNotificationMessage(): ?string
