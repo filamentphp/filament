@@ -52,12 +52,14 @@ class SettingsPage extends Page
 
         if ($redirectUrl = $this->getRedirectUrl()) {
             $this->redirect($redirectUrl);
-        } else {
+        }
+        
+        if (filled($this->getSavedNotificationMessage())) {
             $this->notify('success', $this->getSavedNotificationMessage());
         }
     }
 
-    protected function getSavedNotificationMessage(): string
+    protected function getSavedNotificationMessage(): ?string
     {
         return __('filament-spatie-laravel-settings-plugin::pages/settings-page.messages.saved');
     }
