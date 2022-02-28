@@ -29,12 +29,6 @@ LinkAction::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
 ```
 
-By default, the actions in your table will be aligned to the right. The change the default alignment, update the configuration value inside of the package config:
-
-```
-'action_alignment' => 'right', // `right`, `left` or `center`
-```
-
 ### Bulk actions
 
 Bulk actions may be registered in the `getTableBulkActions()` method. Bulk action buttons are visible when the user selects at least one record.
@@ -202,3 +196,11 @@ LinkAction::make('edit')
 ```
 
 This is useful for authorization of certain actions to only users who have permission.
+
+## Alignment
+
+By default, the row actions in your table will be aligned to the right in the final cell. To change the default alignment, update the configuration value inside of the package config:
+
+```
+'action_alignment' => 'right', // `right`, `left` or `center`
+```
