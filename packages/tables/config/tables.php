@@ -18,18 +18,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Action Alignment
-    |--------------------------------------------------------------------------
-    |
-    | This option is used to determine the default alignment of actions in
-    | your table.
-    |
-    */
-
-    'action_alignment' => 'right',
-
-    /*
-    |--------------------------------------------------------------------------
     | Default Filesystem Disk
     |--------------------------------------------------------------------------
     |
@@ -53,5 +41,21 @@ return [
     */
 
     'dark_mode' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Layout
+    |--------------------------------------------------------------------------
+    |
+    | This is the configuration for the general layout of tables.
+    |
+    | The alignment of row actions can be changed, so that they are in the
+    | `right`, `left` or `center` of the last cell.
+    |
+    */
+
+    'layout' => [
+        'action_alignment' => 'right',
+    ],
 
 ];
