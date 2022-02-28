@@ -6,10 +6,10 @@
 <td {{ $attributes->class(['px-4 py-3 whitespace-nowrap filament-tables-actions-cell']) }}>
     <div {{ $attributes->class([
         'flex items-center gap-4',
-        match (config('tables.actions_alignment')) {
+        match (config('tables.layout.action_alignment')) {
             'center' => 'justify-center',
-            'right' => 'justify-end',
-            default => 'justify-start',
+            'left' => 'justify-start',
+            default => 'justify-end',
         },
     ]) }}>
         @foreach ($actions as $action)
