@@ -18,6 +18,8 @@ trait CanEditRecords
 
     protected function getEditAction(): Tables\Actions\Action
     {
+        $resource = static::getResource();
+
         return parent::getEditAction()
             ->url(null)
             ->form($this->getEditFormSchema())
@@ -25,7 +27,7 @@ trait CanEditRecords
             ->modalButton(__('filament::resources/pages/list-records.table.actions.edit.modal.actions.save.label'))
             ->modalHeading(fn (Model $record) => __('filament::resources/pages/list-records.table.actions.edit.modal.heading', ['label' => $resource::hasRecordTitle() ? $resource::getRecordTitle($record) : Str::title($resource::getLabel())]))
             ->action(fn () => $this->save())
-            ->hidden(fn (Model $record) => ! static::getResource()::canEdit($record));
+            ->hidden(fn (Model $record) => ! $resource::canEdit($record));
     }
 
     protected function getEditFormSchema(): array
