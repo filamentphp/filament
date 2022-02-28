@@ -32,13 +32,7 @@ LinkAction::make('edit')
 By default, the actions in your table will be aligned to the right. The change the default alignment, update the configuration value inside of the package config:
 
 ```
-return [
-
-    // ...
-
-    'alignment' => 'right', // 'right', 'left' or 'center'
-
-];
+'action_alignment' => 'right', // `right`, `left` or `center`
 ```
 
 ### Bulk actions
