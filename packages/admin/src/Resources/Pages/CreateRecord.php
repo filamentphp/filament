@@ -66,9 +66,9 @@ class CreateRecord extends Page implements HasFormActions
             $this->notify(
                 'success',
                 $this->getCreatedNotificationMessage(),
-                isAfterRedirect: !$another,
+                isAfterRedirect: ! $another,
             );
-        }        
+        }
 
         if ($another) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
