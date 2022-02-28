@@ -14,19 +14,19 @@ class GlobalSearchResults
         $this->categories = Collection::make();
     }
 
-    public static function make(): self
+    public static function make(): static
     {
-        return new self();
+        return new static();
     }
 
-    public function category(string $name, Arrayable | array $results = []): static
+    public function category(string $name, array | Arrayable $results = []): static
     {
         $this->categories[$name] = $results;
 
         return $this;
     }
 
-    public function getCategories()
+    public function getCategories(): Collection
     {
         return $this->categories;
     }
