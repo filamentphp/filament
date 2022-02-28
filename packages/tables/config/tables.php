@@ -42,4 +42,20 @@ return [
 
     'dark_mode' => false,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Layout
+    |--------------------------------------------------------------------------
+    |
+    | This is the configuration for the general layout of tables.
+    |
+    | The alignment of row actions can be changed, so that they are in the
+    | `right`, `left` or `center` of the last cell.
+    |
+    */
+
+    'layout' => [
+        'action_alignment' => 'right',
+    ],
+
 ];

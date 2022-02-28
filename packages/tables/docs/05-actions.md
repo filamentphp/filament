@@ -242,3 +242,11 @@ LinkAction::make('edit')
 ```
 
 This is useful for authorization of certain actions to only users who have permission.
+
+## Alignment
+
+By default, the row actions in your table will be aligned to the right in the final cell. To change the default alignment, update the configuration value inside of the package config:
+
+```
+'action_alignment' => 'right', // `right`, `left` or `center`
+```
