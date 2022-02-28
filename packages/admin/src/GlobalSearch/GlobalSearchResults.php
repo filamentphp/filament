@@ -9,7 +9,7 @@ class GlobalSearchResults
 {
     protected Collection $categories;
 
-    public function __construct()
+    final public function __construct()
     {
         $this->categories = Collection::make();
     }
