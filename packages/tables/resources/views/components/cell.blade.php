@@ -3,6 +3,8 @@
     'alignment' => null,
     'name',
     'record',
+    'recordAction' => null,
+    'recordUrl' => null,
     'shouldOpenUrlInNewTab' => false,
     'url' => null,
 ])
@@ -19,10 +21,10 @@
         },
     ]) }}
 >
-    @if ($action)
+    @if ($action || ((! $url) && $recordAction))
         <button
-            wire:click="callTableColumnAction('{{ $name }}', '{{ $record->getKey() }}')"
-            wire:target="callTableColumnAction('{{ $name }}', '{{ $record->getKey() }}')"
+            wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $record->getKey() }}')"
+            wire:target="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $record->getKey() }}')"
             wire:loading.attr="disabled"
             wire:loading.class="opacity-70 cursor-wait"
             type="button"
@@ -30,9 +32,9 @@
         >
             {{ $slot }}
         </button>
-    @elseif ($url)
+    @elseif ($url || $recordUrl)
         <a
-            href="{{ $url }}"
+            href="{{ $url ?: $recordUrl }}"
             {{ $shouldOpenUrlInNewTab ? 'target="_blank"' : null }}
             class="block"
         >

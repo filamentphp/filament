@@ -2,11 +2,11 @@
 
 namespace Filament\Tables\Concerns;
 
-use Illuminate\Database\Eloquent\Model;
+use Closure;
 
 trait HasRecordAction
 {
-    protected function getRecordAction(Model $record): ?string
+    protected function getTableRecordAction(): ?string
     {
         return null;
     }
