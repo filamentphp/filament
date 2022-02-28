@@ -38,8 +38,7 @@ trait CanCreateRecords
                     ->color('secondary'),
             ])
             ->modalHeading(__('filament::resources/pages/list-records.actions.create.modal.heading', ['label' => Str::title(static::getResource()::getLabel())]))
-            ->action(fn () => $this->create())
-            ->hidden(fn (Model $record) => ! static::canCreate());
+            ->action(fn () => $this->create());
     }
 
     protected function getCreateFormSchema(): array
