@@ -14,7 +14,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         @foreach (\Filament\Facades\Filament::getMeta() as $tag)
-            {{ new \Illuminate\Support\HtmlString($tag) }}
+            {{ $tag }}
         @endforeach
 
         @if ($favicon = config('filament.favicon'))

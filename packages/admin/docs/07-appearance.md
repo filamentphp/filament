@@ -158,7 +158,8 @@ Filament::registerScripts([
 You can add custom tags to the header, such as `<meta>` and `<link>`, using the following:
 
 ```php
-Filament::registerMeta([
-    '<link rel="manifest" href="/site.webmanifest">'
+use Illuminate\Support\HtmlString;
+Filament::pushMeta([
+    new HtmlString('<link rel="manifest" href="/site.webmanifest">'),
 ]);
 ```

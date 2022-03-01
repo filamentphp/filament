@@ -33,6 +33,8 @@ class FilamentManager
 
     protected array $styles = [];
 
+    protected array $meta = [];
+
     protected ?string $themeUrl = null;
 
     protected array $widgets = [];
@@ -119,6 +121,11 @@ class FilamentManager
     public function registerWidgets(array $widgets): void
     {
         $this->widgets = array_merge($this->widgets, $widgets);
+    }
+
+    public function pushMeta(array $meta): void
+    {
+        $this->meta = array_merge($this->meta, $meta);
     }
 
     public function serving(Closure $callback): void
@@ -291,5 +298,10 @@ class FilamentManager
             ->unique()
             ->sortBy(fn (string $widget): int => $widget::getSort())
             ->toArray();
+    }
+
+    public function getMeta(): array
+    {
+        return array_unique($this->meta);
     }
 }
