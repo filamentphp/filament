@@ -4,7 +4,9 @@ namespace Filament\Resources\RelationManagers\Concerns;
 
 use Filament\Tables;
 use Filament\Tables\Actions\Modal\Actions\ButtonAction;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait CanCreateRecords
 {
