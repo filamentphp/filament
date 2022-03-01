@@ -4,6 +4,7 @@ namespace Filament\Resources;
 
 use Closure;
 use Filament\Facades\Filament;
+use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
@@ -41,6 +42,8 @@ class Resource
     protected static ?string $recordTitleAttribute = null;
 
     protected static ?string $slug = null;
+
+    protected static string | array $middlewares = [];
 
     public static function form(Form $form): Form
     {
@@ -194,11 +197,11 @@ class Resource
         return $query
             ->limit(50)
             ->get()
-            ->map(fn (Model $record): array => [
-                'details' => static::getGlobalSearchResultDetails($record),
-                'title' => static::getGlobalSearchResultTitle($record),
-                'url' => static::getGlobalSearchResultUrl($record),
-            ]);
+            ->map(fn (Model $record): GlobalSearchResult => new GlobalSearchResult(
+                title: static::getGlobalSearchResultTitle($record),
+                url: static::getGlobalSearchResultUrl($record),
+                details: static::getGlobalSearchResultDetails($record),
+            ));
     }
 
     public static function getLabel(): string
@@ -262,12 +265,20 @@ class Resource
         return function () {
             $slug = static::getSlug();
 
-            Route::name("{$slug}.")->prefix($slug)->group(function () {
-                foreach (static::getPages() as $name => $page) {
-                    Route::get($page['route'], $page['class'])->name($name);
-                }
-            });
+            Route::name("{$slug}.")
+                ->prefix($slug)
+                ->middleware(static::getMiddlewares())
+                ->group(function () {
+                    foreach (static::getPages() as $name => $page) {
+                        Route::get($page['route'], $page['class'])->name($name);
+                    }
+                });
         };
+    }
+
+    public static function getMiddlewares(): string | array
+    {
+        return static::$middlewares;
     }
 
     public static function getSlug(): string

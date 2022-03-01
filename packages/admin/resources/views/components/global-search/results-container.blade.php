@@ -14,7 +14,7 @@
         'overflow-y-scroll overflow-x-hidden max-h-96 bg-white shadow rounded-xl',
         'dark:bg-gray-800' => config('filament.dark_mode'),
     ])>
-        @forelse ($results as $group => $groupedResults)
+        @forelse ($results->getCategories() as $group => $groupedResults)
             <x-filament::global-search.result-group :label="$group" :results="$groupedResults" />
         @empty
             <x-filament::global-search.no-results-message />

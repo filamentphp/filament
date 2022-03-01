@@ -121,9 +121,15 @@ A great example to give a use case for this is when you wish to generate a slug 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/GNsk5z7-PEs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-## Conditionally hiding components
+## Dependant fields / components
 
-Sometimes, you may wish to conditionally hide any form component. You may do this with a `hidden()` method:
+You may use the techniques described in the [closure customization section](#using-closure-customisation) to build completely dependent fields and components, with full control over customization based on the values of other fields in your form.
+
+For example, you can build dependant [select](fields#select) inputs:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/W_eNyimRi3w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Sometimes, you may wish to conditionally hide any form component based on the value of a field. You may do this with a `hidden()` method:
 
 ```php
 use Closure;

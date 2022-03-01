@@ -33,7 +33,7 @@
 
         @if ($description)
             <div @class([
-                'flex items-center space-x-1 text-sm font-medium',
+                'flex items-center space-x-1 rtl:space-x-reverse text-sm font-medium',
                 match ($descriptionColor) {
                     'danger' => 'text-danger-600',
                     'primary' => 'text-primary-600',

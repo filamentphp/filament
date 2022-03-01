@@ -90,12 +90,14 @@ trait InteractsWithTableQuery
             $query->when(
                 $this->queriesRelationships(),
                 fn ($query) => $query->orderBy(
-                    $this->getRelationship($query)
+                    $this
+                        ->getRelationship($query)
                         ->getRelationExistenceQuery(
                             $this->getRelatedModel($query)->query(),
                             $query,
                             $sortColumnName,
-                        ),
+                        )
+                        ->getQuery(),
                     $direction,
                 ),
                 fn ($query) => $query->orderBy($sortColumnName, $direction),
@@ -120,7 +122,7 @@ trait InteractsWithTableQuery
         return $this->getRelationship($query)->getModel();
     }
 
-    protected function getRelationship(Builder $query): Relation
+    protected function getRelationship(Builder $query): Relation | Builder
     {
         return $this->getQueryModel($query)->{$this->getRelationshipName()}();
     }

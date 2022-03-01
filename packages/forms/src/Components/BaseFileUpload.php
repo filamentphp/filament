@@ -18,6 +18,8 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $canReorder = false;
 
+    protected bool | Closure $canPreview = true;
+
     protected string | Closure | null $directory = null;
 
     protected string | Closure | null $diskName = null;
@@ -149,6 +151,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function disablePreview(bool | Closure $condition = false): static
+    {
+        $this->canPreview = $condition;
+
+        return $this;
+    }
+
     public function preserveFilenames(bool | Closure $condition = true): static
     {
         $this->shouldPreserveFilenames = $condition;
@@ -241,6 +250,11 @@ class BaseFileUpload extends Field
     public function canReorder(): bool
     {
         return $this->evaluate($this->canReorder);
+    }
+
+    public function canPreview(): bool
+    {
+        return $this->evaluate($this->canPreview);
     }
 
     public function getAcceptedFileTypes(): ?array

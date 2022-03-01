@@ -143,7 +143,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return $this->getRelationship()->getQuery()->getModel()::class;
     }
 
-    protected function getRelationship(): Relation
+    protected function getRelationship(): Relation | Builder
     {
         return $this->ownerRecord->{static::getRelationshipName()}();
     }

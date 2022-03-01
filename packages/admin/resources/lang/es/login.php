@@ -4,7 +4,7 @@ return [
 
     'title' => 'Login',
 
-    'heading' => 'Entra a tu cuenta',
+    'heading' => 'Entre a su cuenta',
 
     'buttons' => [
 
@@ -17,7 +17,7 @@ return [
     'fields' => [
 
         'email' => [
-            'label' => 'Email',
+            'label' => 'Correo electrónico',
         ],
 
         'password' => [
@@ -32,7 +32,7 @@ return [
 
     'messages' => [
         'failed' => 'Estas credenciales no coinciden con nuestros registros.',
-        'throttled' => 'Demasiados intentos. Prueba de nuevo en :seconds segundos.',
+        'throttled' => 'Demasiados intentos. Intente de nuevo en :seconds segundos.',
     ],
 
 ];

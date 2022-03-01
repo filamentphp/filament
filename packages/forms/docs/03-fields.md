@@ -6,7 +6,9 @@ title: Fields
 
 Field classes can be found in the `Filament\Form\Components` namespace.
 
-They reside within the schema of your form, alongside any [layout components](layout):
+Fields reside within the schema of your form, alongside any [layout components](layout).
+
+If you're using the fields in a Livewire component, you can put them in the `getFormSchema()` method:
 
 ```php
 protected function getFormSchema(): array
@@ -14,6 +16,18 @@ protected function getFormSchema(): array
     return [
         // ...
     ];
+}
+```
+
+If you're using them in admin panel resources or relation managers, you must put them in the `$form->schema()` method:
+
+```php
+public static function form(Form $form): Form
+{
+    return $form
+        ->schema([
+            // ...
+        ]);
 }
 ```
 

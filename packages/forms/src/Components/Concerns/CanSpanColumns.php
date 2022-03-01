@@ -2,6 +2,8 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
+
 trait CanSpanColumns
 {
     protected array $columnSpan = [
@@ -13,7 +15,7 @@ trait CanSpanColumns
         '2xl' => null,
     ];
 
-    public function columnSpan(array | int | string | null $span): static
+    public function columnSpan(array | int | string | Closure | null $span): static
     {
         if (! is_array($span)) {
             $span = [
@@ -31,9 +33,12 @@ trait CanSpanColumns
         $span = $this->columnSpan;
 
         if ($breakpoint !== null) {
-            $span = $span[$breakpoint] ?? null;
+            return $this->evaluate($span[$breakpoint] ?? null);
         }
 
-        return $span;
+        return array_map(
+            fn (array | int | string | Closure | null $value): array | int | string | null => $this->evaluate($value),
+            $span
+        );
     }
 }

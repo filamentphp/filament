@@ -44,7 +44,7 @@
                     },
 
                     initChart: function (data = null) {
-                        data = data ?? {{ json_encode($this->getData()) }}
+                        data = data ?? {{ json_encode($this->getCachedData()) }}
 
                         return this.chart = new Chart($el, {
                             type: '{{ $this->getType() }}',

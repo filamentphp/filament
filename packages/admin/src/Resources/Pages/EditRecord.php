@@ -4,13 +4,14 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
+use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
  */
-class EditRecord extends Page
+class EditRecord extends Page implements HasFormActions
 {
     use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;
@@ -79,15 +80,22 @@ class EditRecord extends Page
 
         $shouldRedirect = $shouldRedirect && ($redirectUrl = $this->getRedirectUrl());
 
-        $this->notify(
-            'success',
-            __('filament::resources/pages/edit-record.messages.saved'),
-            isAfterRedirect: $shouldRedirect,
-        );
+        if (filled($this->getSavedNotificationMessage())) {
+            $this->notify(
+                'success',
+                $this->getSavedNotificationMessage(),
+                isAfterRedirect: $shouldRedirect,
+            );
+        }
 
         if ($shouldRedirect) {
             $this->redirect($redirectUrl);
         }
+    }
+
+    protected function getSavedNotificationMessage(): ?string
+    {
+        return __('filament::resources/pages/edit-record.messages.saved');
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
@@ -119,13 +127,20 @@ class EditRecord extends Page
 
         $this->callHook('afterDelete');
 
-        $this->notify(
-            'success',
-            __('filament::resources/pages/edit-record.actions.delete.messages.deleted'),
-            isAfterRedirect: true,
-        );
+        if (filled($this->getDeletedNotificationMessage())) {
+            $this->notify(
+                'success',
+                $this->getDeletedNotificationMessage(),
+                isAfterRedirect: true,
+            );
+        }
 
         $this->redirect($this->getDeleteRedirectUrl());
+    }
+
+    protected function getDeletedNotificationMessage(): ?string
+    {
+        return __('filament::resources/pages/edit-record.actions.delete.messages.deleted');
     }
 
     protected function getActions(): array

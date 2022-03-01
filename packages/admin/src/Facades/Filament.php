@@ -3,6 +3,8 @@
 namespace Filament\Facades;
 
 use Closure;
+use Filament\FilamentManager;
+use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +13,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static StatefulGuard auth()
  * @method static array getBeforeCoreScripts()
+ * @method static GlobalSearchProvider getGlobalSearchProvider()
  * @method static array getPages()
  * @method static string | null getModelResource(string | Model $model)
  * @method static array getNavigation()
@@ -25,6 +28,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getUserAvatarUrl(Authenticatable $user)
  * @method static string getUserName(Authenticatable $user)
  * @method static array getWidgets()
+ * @method static void globalSearchProvider(string $provider)
  * @method static void navigation(\Closure $builder)
  * @method static void notify(string $status, string $message, bool $isAfterRedirect = false)
  * @method static void registerNavigationGroups(array $groups)
@@ -39,7 +43,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerWidgets(array $widgets)
  * @method static void serving(Closure $callback)
  *
- * @see \Filament\FilamentManager
+ * @see FilamentManager
  */
 class Filament extends Facade
 {
