@@ -2,13 +2,10 @@
 
 namespace Filament\Forms\Components;
 
-use Closure;
-use Illuminate\Contracts\Support\Arrayable;
-
 class CheckboxList extends Field
 {
     use Concerns\HasOptions;
-    
+
     protected string $view = 'forms::components.checkbox-list';
 
     protected function setUp(): void
