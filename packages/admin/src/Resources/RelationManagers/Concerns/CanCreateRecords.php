@@ -61,10 +61,12 @@ trait CanCreateRecords
             $form->fill();
         }
 
-        $this->notify('success', $this->getCreatedNotificationMessage());
+        if (filled($this->getCreatedNotificationMessage())) {
+            $this->notify('success', $this->getCreatedNotificationMessage());
+        }
     }
 
-    protected function getCreatedNotificationMessage(): string
+    protected function getCreatedNotificationMessage(): ?string
     {
         return __('filament::resources/relation-managers/create.action.messages.created');
     }

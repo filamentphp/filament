@@ -26,7 +26,8 @@ trait CanEditRecords
             ->mountUsing(fn () => $this->fillEditForm())
             ->modalButton(__('filament::resources/pages/list-records.table.actions.edit.modal.actions.save.label'))
             ->modalHeading(fn (Model $record) => __('filament::resources/pages/list-records.table.actions.edit.modal.heading', ['label' => $resource::hasRecordTitle() ? $resource::getRecordTitle($record) : Str::title($resource::getLabel())]))
-            ->action(fn () => $this->save());
+            ->action(fn () => $this->save())
+            ->hidden(fn (Model $record) => ! $resource::canEdit($record));
     }
 
     protected function getEditFormSchema(): array
@@ -72,10 +73,12 @@ trait CanEditRecords
 
         $this->callHook('afterSave');
 
-        $this->notify('success', $this->getSavedNotificationMessage());
+        if (filled($this->getSavedNotificationMessage())) {
+            $this->notify('success', $this->getSavedNotificationMessage());
+        }
     }
 
-    protected function getSavedNotificationMessage(): string
+    protected function getSavedNotificationMessage(): ?string
     {
         return __('filament::resources/pages/list-records.table.actions.edit.messages.saved');
     }

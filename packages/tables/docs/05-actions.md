@@ -191,7 +191,7 @@ You may also render a form in this modal to collect extra information from the u
 You may use components from the [Form Builder](/docs/forms/fields) to create custom action modal forms. The data from the form is available in the `$data` array of the `action()` callback:
 
 ```php
-use App\Modals\User;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
@@ -242,3 +242,11 @@ LinkAction::make('edit')
 ```
 
 This is useful for authorization of certain actions to only users who have permission.
+
+## Alignment
+
+By default, the row actions in your table will be aligned to the right in the final cell. To change the default alignment, update the configuration value inside of the package config:
+
+```
+'action_alignment' => 'right', // `right`, `left` or `center`
+```

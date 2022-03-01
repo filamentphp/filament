@@ -259,10 +259,6 @@
                     @endif
 
                     @foreach ($records as $record)
-                        @php
-                            $recordUrl = $getRecordUrl($record);
-                        @endphp
-
                         <x-tables::row wire:key="{{ $record->getKey() }}">
                             @if ($isSelectionEnabled())
                                 <x-tables::checkbox-cell>
@@ -285,8 +281,10 @@
                                     :name="$column->getName()"
                                     :alignment="$column->getAlignment()"
                                     :record="$record"
+                                    :record-action="$getRecordAction()"
+                                    :record-url="$getRecordUrl($record)"
                                     :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
-                                    :url="$column->getUrl() ?? $recordUrl"
+                                    :url="$column->getUrl()"
                                     :class="$getHiddenClasses($column)"
                                 >
                                     {{ $column }}

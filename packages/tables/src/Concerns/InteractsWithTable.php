@@ -23,6 +23,7 @@ trait InteractsWithTable
     use HasFilters;
     use HasHeader;
     use HasRecords;
+    use HasRecordAction;
     use HasRecordUrl;
     use Forms\Concerns\InteractsWithForms;
 
@@ -69,6 +70,7 @@ trait InteractsWithTable
             ->emptyStateIcon($this->getTableEmptyStateIcon())
             ->enablePagination($this->isTablePaginationEnabled())
             ->filtersFormWidth($this->getTableFiltersFormWidth())
+            ->recordAction($this->getTableRecordAction())
             ->getRecordUrlUsing($this->getTableRecordUrlUsing())
             ->header($this->getTableHeader())
             ->heading($this->getTableHeading())

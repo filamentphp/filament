@@ -109,7 +109,7 @@ You may also render a form in this modal to collect extra information from the u
 You may use components from the [Form Builder](/docs/forms/fields) to create custom action modal forms. The data from the form is available in the `$data` array of the `action()` callback:
 
 ```php
-use App\Modals\User;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Pages\Actions\ButtonAction;
 

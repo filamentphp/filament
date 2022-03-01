@@ -4,6 +4,7 @@ namespace Filament\Resources;
 
 use Closure;
 use Filament\Facades\Filament;
+use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
@@ -194,11 +195,11 @@ class Resource
         return $query
             ->limit(50)
             ->get()
-            ->map(fn (Model $record): array => [
-                'details' => static::getGlobalSearchResultDetails($record),
-                'title' => static::getGlobalSearchResultTitle($record),
-                'url' => static::getGlobalSearchResultUrl($record),
-            ]);
+            ->map(fn (Model $record): GlobalSearchResult => new GlobalSearchResult(
+                title: static::getGlobalSearchResultTitle($record),
+                url: static::getGlobalSearchResultUrl($record),
+                details: static::getGlobalSearchResultDetails($record),
+            ));
     }
 
     public static function getLabel(): string

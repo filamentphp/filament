@@ -14,14 +14,13 @@ trait CanDeleteRecords
 
     protected function getDeleteAction(): Tables\Actions\Action
     {
-        $resource = static::getResource();
-
         return config('filament.layout.tables.actions.type')::make('delete')
             ->label(__('filament::resources/pages/list-records.table.actions.delete.label'))
             ->action(fn () => $this->delete())
             ->requiresConfirmation()
             ->color('danger')
-            ->icon('heroicon-o-trash');
+            ->icon('heroicon-o-trash')
+            ->hidden(fn (Model $record): bool => ! static::getResource()::canDelete($record));
     }
 
     public function delete(): void
@@ -32,10 +31,12 @@ trait CanDeleteRecords
 
         $this->callHook('afterDelete');
 
-        $this->notify('success', $this->getDeletedNotificationMessage());
+        if (filled($this->getDeletedNotificationMessage())) {
+            $this->notify('success', $this->getDeletedNotificationMessage());
+        }
     }
 
-    protected function getDeletedNotificationMessage(): string
+    protected function getDeletedNotificationMessage(): ?string
     {
         return __('filament::resources/pages/list-records.table.actions.delete.messages.deleted');
     }
