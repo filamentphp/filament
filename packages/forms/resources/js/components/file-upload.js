@@ -6,9 +6,11 @@ import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orien
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform'
+import FilePondPluginMediaPreview from 'filepond-plugin-media-preview'
 
 import 'filepond/dist/filepond.min.css'
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
+import 'filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css';
 import '../../css/components/file-upload.css'
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
@@ -18,11 +20,13 @@ FilePond.registerPlugin(FilePondPluginImageExifOrientation)
 FilePond.registerPlugin(FilePondPluginImagePreview)
 FilePond.registerPlugin(FilePondPluginImageResize)
 FilePond.registerPlugin(FilePondPluginImageTransform)
+FilePond.registerPlugin(FilePondPluginMediaPreview)
 
 export default (Alpine) => {
     Alpine.data('fileUploadFormComponent', ({
         acceptedFileTypes,
         canReorder,
+        canPreview,
         deleteUploadedFileUsing,
         getUploadedFileUrlUsing,
         imageCropAspectRatio,
@@ -80,6 +84,9 @@ export default (Alpine) => {
                 this.pond = FilePond.create(this.$refs.input, {
                     acceptedFileTypes,
                     allowReorder: canReorder,
+                    allowImagePreview: canPreview,
+                    allowVideoPreview: canPreview,
+                    allowAudioPreview: canPreview,
                     credits: false,
                     files: shouldAppendFiles ? this.files : this.files.reverse(),
                     imageCropAspectRatio,
@@ -164,7 +171,7 @@ export default (Alpine) => {
 
                     this.pond.files = shouldAppendFiles ? files : files.reverse()
                 })
-                
+
                 this.pond.on('reorderfiles', async (files) => {
                     const orderedFileKeys = files
                         .map(file => file.source instanceof File ? file.serverId : this.uploadedFileUrlIndex[file.source] ?? null) // file.serverId is null for a file that is not yet uploaded

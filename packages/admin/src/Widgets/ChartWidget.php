@@ -4,6 +4,8 @@ namespace Filament\Widgets;
 
 class ChartWidget extends Widget
 {
+    protected ?array $cachedData = null;
+
     public string $dataChecksum;
 
     public ?string $filter = null;
@@ -23,7 +25,12 @@ class ChartWidget extends Widget
 
     protected function generateDataChecksum(): string
     {
-        return md5(json_encode($this->getData()));
+        return md5(json_encode($this->getCachedData()));
+    }
+
+    protected function getCachedData(): array
+    {
+        return $this->cachedData ??= $this->getData();
     }
 
     protected function getData(): array
@@ -59,7 +66,7 @@ class ChartWidget extends Widget
             $this->dataChecksum = $newDataChecksum;
 
             $this->emitSelf('updateChartData', [
-                'data' => $this->getData(),
+                'data' => $this->getCachedData(),
             ]);
         }
     }
@@ -72,7 +79,7 @@ class ChartWidget extends Widget
             $this->dataChecksum = $newDataChecksum;
 
             $this->emitSelf('filterChartData', [
-                'data' => $this->getData(),
+                'data' => $this->getCachedData(),
             ]);
         }
     }

@@ -25,7 +25,7 @@ return [
                 ],
 
                 'attach_and_attach_another' => [
-                    'label' => 'Vincular & vincular otro',
+                    'label' => 'Vincular y vincular otro',
                 ],
 
             ],

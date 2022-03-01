@@ -8,12 +8,11 @@ use Illuminate\Contracts\Support\Arrayable;
 class Radio extends Field
 {
     use Concerns\HasExtraInputAttributes;
+    use Concerns\HasOptions;
 
     protected string $view = 'forms::components.radio';
 
     protected bool | Closure $isInline = false;
-
-    protected array | Arrayable | Closure $options = [];
 
     protected array | Arrayable | Closure $descriptions = [];
 
@@ -48,13 +47,6 @@ class Radio extends Field
         return $this;
     }
 
-    public function options(array | Arrayable | Closure $options): static
-    {
-        $this->options = $options;
-
-        return $this;
-    }
-
     public function descriptions(array | Arrayable | Closure $descriptions): static
     {
         $this->descriptions = $descriptions;
@@ -81,17 +73,6 @@ class Radio extends Field
         }
 
         return $descriptions;
-    }
-
-    public function getOptions(): array
-    {
-        $options = $this->evaluate($this->options);
-
-        if ($options instanceof Arrayable) {
-            $options = $options->toArray();
-        }
-
-        return $options;
     }
 
     public function isInline(): bool

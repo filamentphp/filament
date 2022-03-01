@@ -7,11 +7,11 @@ return [
     'buttons' => [
 
         'dark_mode' => [
-            'label' => 'Modo oscuro',
+            'label' => 'A modo oscuro',
         ],
 
         'light_mode' => [
-            'label' => 'Modo claro',
+            'label' => 'A modo claro',
         ],
 
         'logout' => [

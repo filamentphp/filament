@@ -109,7 +109,7 @@ You may also render a form in this modal to collect extra information from the u
 You may use components from the [Form Builder](/docs/forms/fields) to create custom action modal forms. The data from the form is available in the `$data` array of the `action()` callback:
 
 ```php
-use App\Modals\User;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Pages\Actions\ButtonAction;
 
@@ -194,7 +194,7 @@ There are four types of notifications available, each with a different color and
  - `success` - for success messages.
  - `warning` - for reporting non-critical issues.
 
-By default, notifications will be sent to the user immediately. If you'd like to until a redirect is complete, you can use the `isAfterRedirect` argument:
+By default, notifications will be sent to the user immediately. If you'd like to wait until a redirect is complete, you can use the `isAfterRedirect` argument:
 
 ```php
 $this->notify('success', 'Created', isAfterRedirect: true);

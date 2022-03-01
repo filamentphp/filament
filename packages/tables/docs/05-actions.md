@@ -6,7 +6,9 @@ title: Actions
 
 ### Single actions
 
-Single actions may be registered in the `getTableActions()` method. Single action buttons are rendered at the end of each table row.
+Single action buttons are rendered at the end of each table row.
+
+If you're using the actions in a Livewire component, you can put them in the `getTableActions()` method.
 
 ```php
 protected function getTableActions(): array
@@ -14,6 +16,27 @@ protected function getTableActions(): array
     return [
         // ...
     ];
+}
+```
+
+If you're using them in admin panel resources or relation managers, you must put them on the `$table`:
+
+```php
+public static function table(Table $table): Form
+{
+    return $table
+        // Add the actions before the default action/s (before Edit or View)
+        ->prependActions([
+            // ...
+        ])
+        // Add the actions after the default action/s (after Edit or View)
+        ->pushActions([
+            // ...
+        ])
+        // Override the default action/s (instead of Edit or View)
+        ->actions([
+            // ...
+        ]);
 }
 ```
 
@@ -31,7 +54,9 @@ LinkAction::make('edit')
 
 ### Bulk actions
 
-Bulk actions may be registered in the `getTableBulkActions()` method. Bulk action buttons are visible when the user selects at least one record.
+Bulk action buttons are visible when the user selects at least one record.
+
+If you're using the actions in a Livewire component, you can put them in the `getTableBulkActions()` method.
 
 ```php
 protected function getTableBulkActions(): array
@@ -39,6 +64,27 @@ protected function getTableBulkActions(): array
     return [
         // ...
     ];
+}
+```
+
+If you're using them in admin panel resources or relation managers, you must put them on the `$table`:
+
+```php
+public static function table(Table $table): Form
+{
+    return $table
+        // Add the actions before the default action (before Delete)
+        ->prependBulkActions([
+            // ...
+        ])
+        // Add the actions after the default action (after Delete)
+        ->pushBulkActions([
+            // ...
+        ])
+        // Override the default action (instead of Delete)
+        ->bulkActions([
+            // ...
+        ]);
 }
 ```
 
@@ -145,7 +191,7 @@ You may also render a form in this modal to collect extra information from the u
 You may use components from the [Form Builder](/docs/forms/fields) to create custom action modal forms. The data from the form is available in the `$data` array of the `action()` callback:
 
 ```php
-use App\Modals\User;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
@@ -196,3 +242,11 @@ LinkAction::make('edit')
 ```
 
 This is useful for authorization of certain actions to only users who have permission.
+
+## Alignment
+
+By default, the row actions in your table will be aligned to the right in the final cell. To change the default alignment, update the configuration value inside of the package config:
+
+```
+'action_alignment' => 'right', // `right`, `left` or `center`
+```

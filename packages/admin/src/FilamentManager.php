@@ -3,7 +3,10 @@
 namespace Filament;
 
 use Closure;
+use Exception;
 use Filament\Events\ServingFilament;
+use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
+use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Illuminate\Contracts\Auth\Guard;
@@ -15,6 +18,8 @@ use Livewire\Component;
 
 class FilamentManager
 {
+    protected string $globalSearchProvider = DefaultGlobalSearchProvider::class;
+
     protected bool $isNavigationMounted = false;
 
     protected array $navigationGroups = [];
@@ -32,6 +37,8 @@ class FilamentManager
     protected array $scriptData = [];
 
     protected array $styles = [];
+
+    protected array $meta = [];
 
     protected ?string $themeUrl = null;
 
@@ -59,6 +66,15 @@ class FilamentManager
         return collect($builder->getGroups())
             ->merge([null => $builder->getItems()])
             ->toArray();
+    }
+
+    public function globalSearchProvider(string $provider): void
+    {
+        if (! in_array(GlobalSearchProvider::class, class_implements($provider))) {
+            throw new Exception('Global search provider ' . $provider . ' does not implement the ' . GlobalSearchProvider::class . ' interface.');
+        }
+
+        $this->globalSearchProvider = $provider;
     }
 
     public function mountNavigation(): void
@@ -123,6 +139,11 @@ class FilamentManager
         $this->widgets = array_merge($this->widgets, $widgets);
     }
 
+    public function pushMeta(array $meta): void
+    {
+        $this->meta = array_merge($this->meta, $meta);
+    }
+
     public function serving(Closure $callback): void
     {
         Event::listen(ServingFilament::class, $callback);
@@ -144,6 +165,11 @@ class FilamentManager
         }
 
         $component->dispatchBrowserEvent('notify', ['status' => $status, 'message' => $message]);
+    }
+
+    public function getGlobalSearchProvider(): GlobalSearchProvider
+    {
+        return app($this->globalSearchProvider);
     }
 
     public function getNavigation(): array
@@ -302,5 +328,10 @@ class FilamentManager
         }
 
         return static::$canCreateAnother = ! $disableCreateAnother;
+    }
+
+    public function getMeta(): array
+    {
+        return array_unique($this->meta);
     }
 }

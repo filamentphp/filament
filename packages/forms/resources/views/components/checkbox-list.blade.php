@@ -83,10 +83,14 @@
         '2xl:grid-cols-11' => $getColumns('2xl') === 11,
         '2xl:grid-cols-12' => $getColumns('2xl') === 12,
     ])>
+        @php
+            $isDisabled = $isDisabled();
+        @endphp
+
         @foreach ($getOptions() as $optionValue => $optionLabel)
             <label class="flex items-center space-x-3 rtl:space-x-reverse">
                 <input
-                    {!! $isDisabled() ? 'disabled' : null !!}
+                    {!! $isDisabled ? 'disabled' : null !!}
                     type="checkbox"
                     value="{{ $optionValue }}"
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"

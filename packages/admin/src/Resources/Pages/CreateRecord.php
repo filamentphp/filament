@@ -5,13 +5,14 @@ namespace Filament\Resources\Pages;
 use Filament\Facades\Filament;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
+use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
  */
-class CreateRecord extends Page
+class CreateRecord extends Page implements HasFormActions
 {
     use Concerns\UsesResourceForm;
 
@@ -64,11 +65,13 @@ class CreateRecord extends Page
 
         $this->callHook('afterCreate');
 
-        $this->notify(
-            'success',
-            __('filament::resources/pages/create-record.messages.created'),
-            isAfterRedirect: ! $another,
-        );
+        if (filled($this->getCreatedNotificationMessage())) {
+            $this->notify(
+                'success',
+                $this->getCreatedNotificationMessage(),
+                isAfterRedirect: ! $another,
+            );
+        }
 
         if ($another) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
@@ -81,6 +84,11 @@ class CreateRecord extends Page
         }
 
         $this->redirect($this->getRedirectUrl());
+    }
+
+    protected function getCreatedNotificationMessage(): ?string
+    {
+        return __('filament::resources/pages/create-record.messages.created');
     }
 
     public function createAndCreateAnother(): void
@@ -165,7 +173,7 @@ class CreateRecord extends Page
             return $resource::getUrl('view', ['record' => $this->record]);
         }
 
-        return null;
+        return $resource::getUrl('index');
     }
 
     protected function getMountedActionFormModel(): string

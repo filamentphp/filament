@@ -36,6 +36,8 @@ class Table extends ViewComponent implements Htmlable
 
     protected ?string $filtersFormWidth = null;
 
+    protected ?string $recordAction = null;
+
     protected ?Closure $getRecordUrlUsing = null;
 
     protected ?View $header = null;
@@ -112,6 +114,13 @@ class Table extends ViewComponent implements Htmlable
     public function filtersFormWidth(?string $width): static
     {
         $this->filtersFormWidth = $width;
+
+        return $this;
+    }
+
+    public function recordAction(?string $action): static
+    {
+        $this->recordAction = $action;
 
         return $this;
     }
@@ -269,6 +278,11 @@ class Table extends ViewComponent implements Htmlable
     public function getRecordsPerPageSelectOptions(): array
     {
         return $this->recordsPerPageSelectOptions;
+    }
+
+    public function getRecordAction(): ?string
+    {
+        return $this->recordAction;
     }
 
     public function getRecordUrl(Model $record): ?string

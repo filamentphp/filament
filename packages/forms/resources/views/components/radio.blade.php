@@ -88,6 +88,10 @@
                 '2xl:grid-cols-11' => $getColumns('2xl') === 11,
                 '2xl:grid-cols-12' => $getColumns('2xl') === 12,
             ]) }}>
+                @php
+                    $isDisabled = $isDisabled();
+                @endphp
+
                 @foreach ($getOptions() as $value => $label)
                     <div @class([
                         'flex items-start',
@@ -108,7 +112,7 @@
                                     'dark:border-gray-500' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                                 ]) }}
-                                {!! $isOptionDisabled($value, $label) ? 'disabled' : null !!}
+                                {!! ($isDisabled || $isOptionDisabled($value, $label)) ? 'disabled' : null !!}
                             />
                         </div>
 

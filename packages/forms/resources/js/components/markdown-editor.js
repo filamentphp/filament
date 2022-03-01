@@ -21,7 +21,9 @@ export default (Alpine) => {
 
             init: function () {
                 if (this.state !== null) {
-                    this.render()
+                    this.$nextTick(() => { 
+                        this.render() 
+                    })
                 }
 
                 this.$watch('state', () => {

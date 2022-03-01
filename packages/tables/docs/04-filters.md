@@ -6,7 +6,7 @@ title: Filters
 
 Filters allow you to scope the Eloquent query as a way to reduce the number of records in a table.
 
-They reside within the `getTableFilters()` method of your Livewire component:
+If you're using the filters in a Livewire component, you can put them in the `getTableFilters()` method:
 
 ```php
 protected function getTableFilters(): array
@@ -14,6 +14,18 @@ protected function getTableFilters(): array
     return [
         // ...
     ];
+}
+```
+
+If you're using them in admin panel resources or relation managers, you must put them in the `$table->filters()` method:
+
+```php
+public static function table(Table $table): Form
+{
+    return $table
+        ->filters([
+            // ...
+        ]);
 }
 ```
 

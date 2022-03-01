@@ -6,10 +6,37 @@
     @apply bg-white border border-gray-300 rounded-lg shadow-sm;
 }
 
+.filepond--drip-blob {
+    @apply bg-gray-900;
+}
+
 .dark .filepond--drop-label {
-    @apply bg-gray-700 text-gray-200 rounded-md;
+    @apply text-gray-200;
 }
 
 .dark .filepond--panel-root {
     @apply border-gray-600 text-white bg-gray-700;
+}
+
+.dark .filepond--drip-blob {
+    @apply bg-gray-100;
+}
+
+/* Compact-only styles, excluding compact circle layouts */
+
+.filepond--root[data-style-panel-layout='compact'] .filepond--item + .filepond--item {
+    @apply mt-0.5;
+}
+
+.filepond--root[data-style-panel-layout='compact'] .filepond--drop-label label {
+    @apply text-sm;
+}
+
+.filepond--root[data-style-panel-layout='compact'] .filepond--drop-label {
+    min-height: 2.625em;
+}
+
+.filepond--root[data-style-panel-layout='compact'] .filepond--file {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }

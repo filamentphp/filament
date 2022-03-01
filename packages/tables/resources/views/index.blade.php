@@ -170,7 +170,7 @@
                 </div>
 
                 @if ($isSearchVisible || $isFiltersDropdownVisible)
-                    <div class="w-full md:w-auto flex items-center gap-2 md:max-w-md">
+                    <div class="w-full flex items-center justify-end gap-2 md:max-w-md">
                         @if ($isSearchVisible)
                             <div class="flex-1">
                                 <x-tables::search-input />
@@ -259,10 +259,6 @@
                     @endif
 
                     @foreach ($records as $record)
-                        @php
-                            $recordUrl = $getRecordUrl($record);
-                        @endphp
-
                         <x-tables::row wire:key="{{ $record->getKey() }}">
                             @if ($isSelectionEnabled())
                                 <x-tables::checkbox-cell>
@@ -285,8 +281,10 @@
                                     :name="$column->getName()"
                                     :alignment="$column->getAlignment()"
                                     :record="$record"
+                                    :record-action="$getRecordAction()"
+                                    :record-url="$getRecordUrl($record)"
                                     :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
-                                    :url="$column->getUrl() ?? $recordUrl"
+                                    :url="$column->getUrl()"
                                     :class="$getHiddenClasses($column)"
                                 >
                                     {{ $column }}

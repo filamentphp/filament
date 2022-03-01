@@ -6,7 +6,7 @@ title: Columns
 
 Column classes can be found in the `Filament\Tables\Columns` namespace.
 
-They reside within the `getTableColumns()` method of your Livewire component:
+If you're using the columns in a Livewire component, you can put them in the `getTableColumns()` method:
 
 ```php
 protected function getTableColumns(): array
@@ -14,6 +14,18 @@ protected function getTableColumns(): array
     return [
         // ...
     ];
+}
+```
+
+If you're using them in admin panel resources or relation managers, you must put them in the `$table->columns()` method:
+
+```php
+public static function table(Table $table): Form
+{
+    return $table
+        ->columns([
+            // ...
+        ]);
 }
 ```
 
