@@ -96,7 +96,7 @@ trait CanCreateRecords
 
     protected function getCreatedNotificationMessage(): ?string
     {
-        return __('filament::resources/pages/list-records.actions.create.messages.created')
+        return __('filament::resources/pages/list-records.actions.create.messages.created');
     }
 
     public function createAndCreateAnother(): void
