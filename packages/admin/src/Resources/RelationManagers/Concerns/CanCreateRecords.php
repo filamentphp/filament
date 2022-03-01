@@ -8,9 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
-/**
- * @method Relation&Builder getRelationship()
- */
 trait CanCreateRecords
 {
     protected function canCreate(): bool
