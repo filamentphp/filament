@@ -36,6 +36,8 @@ class Page extends Component implements Forms\Contracts\HasForms
 
     protected static string $view;
 
+    protected static string | array  $middlewares = [];
+
     public static function registerNavigationItems(): void
     {
         if (! static::shouldRegisterNavigation()) {
@@ -70,8 +72,15 @@ class Page extends Component implements Forms\Contracts\HasForms
         return function () {
             $slug = static::getSlug();
 
-            Route::get($slug, static::class)->name($slug);
+            Route::get($slug, static::class)
+                ->middleware(static::getMiddlewares())
+                ->name($slug);
         };
+    }
+
+    public static function getMiddlewares(): string | array
+    {
+        return static::$middlewares;
     }
 
     public static function getSlug(): string
