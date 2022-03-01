@@ -170,7 +170,7 @@
                 </div>
 
                 @if ($isSearchVisible || $isFiltersDropdownVisible)
-                    <div class="w-full md:w-auto flex items-center gap-2 md:max-w-md">
+                    <div class="w-full flex items-center justify-end gap-2 md:max-w-md">
                         @if ($isSearchVisible)
                             <div class="flex-1">
                                 <x-tables::search-input />
