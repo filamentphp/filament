@@ -8,9 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 
 trait CanCreateRecords
 {
+    protected static bool $canCreateAnother = true;
+
     protected function canCreate(): bool
     {
         return $this->can('create');
+    }
+
+    protected static function canCreateAnother(): bool
+    {
+        return static::$canCreateAnother;
+    }
+
+    public static function disableCreateAnother(): void
+    {
+        static::$canCreateAnother = false;
     }
 
     protected function getCreateFormSchema(): array
@@ -92,21 +104,41 @@ trait CanCreateRecords
             ->label(__('filament::resources/relation-managers/create.action.label'))
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
-            ->modalActions([
-                ButtonAction::make('create')
-                    ->label(__('filament::resources/relation-managers/create.action.modal.actions.create.label'))
-                    ->submit('callMountedTableAction')
-                    ->color('primary'),
-                ButtonAction::make('createAndCreateAnother')
-                    ->label(__('filament::resources/relation-managers/create.action.modal.actions.create_and_create_another.label'))
-                    ->action('createAndCreateAnother')
-                    ->color('secondary'),
-                ButtonAction::make('cancel')
-                    ->label(__('tables::table.actions.modal.buttons.cancel.label'))
-                    ->cancel()
-                    ->color('secondary'),
-            ])
+            ->modalActions($this->getCreateActionModalActions())
             ->modalHeading(__('filament::resources/relation-managers/create.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->create());
+    }
+
+    protected function getCreateActionModalActions(): array
+    {
+        return array_merge(
+            [$this->getCreateActionCreateModalAction()],
+            static::canCreateAnother() ? [$this->getCreateActionCreateAndCreateAnotherModalAction()] : [],
+            [$this->getCreateActionCancelModalAction()],
+        );
+    }
+
+    protected function getCreateActionCreateModalAction(): ButtonAction
+    {
+        return ButtonAction::make('create')
+            ->label(__('filament::resources/relation-managers/create.action.modal.actions.create.label'))
+            ->submit('callMountedTableAction')
+            ->color('primary');
+    }
+
+    protected function getCreateActionCreateAndCreateAnotherModalAction(): ButtonAction
+    {
+        return ButtonAction::make('createAndCreateAnother')
+            ->label(__('filament::resources/relation-managers/create.action.modal.actions.create_and_create_another.label'))
+            ->action('createAndCreateAnother')
+            ->color('secondary');
+    }
+
+    protected function getCreateActionCancelModalAction(): ButtonAction
+    {
+        return ButtonAction::make('cancel')
+            ->label(__('tables::table.actions.modal.buttons.cancel.label'))
+            ->cancel()
+            ->color('secondary');
     }
 }
