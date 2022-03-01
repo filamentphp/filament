@@ -4,6 +4,8 @@ namespace Filament\Widgets;
 
 class StatsOverviewWidget extends Widget
 {
+    public ?array $filters = null;
+
     protected ?array $cachedCards = null;
 
     protected int | string | array $columnSpan = 'full';

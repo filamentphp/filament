@@ -13,7 +13,7 @@
 ])
 
 <div
-    {{     $attributes->class(['relative p-6 rounded-2xl filament-stats-card', 'bg-white shadow' => !$flat, 'dark:bg-gray-800' => !$flat && config('filament.dark_mode'), 'border' => $flat, 'dark:border-gray-700' => $flat && config('filament.dark_mode')]) }}>
+    {{ $attributes->class(['relative p-6 rounded-2xl filament-stats-card','bg-white shadow' => !$flat,'dark:bg-gray-800' => !$flat && config('filament.dark_mode'),'border' => $flat,'dark:border-gray-700' => $flat && config('filament.dark_mode')]) }}>
     <div @class(['space-y-2'])>
         <div @class([
             'flex flex-wrap justify-between items-center space-y-1' => $filters,
@@ -27,12 +27,16 @@
             @if ($filters)
                 <div x-id="['stats-widget-filter']">
                     <select :id="$id('stats-widget-filter')" :name="$id('stats-widget-filter')"
-                        wire:model="filters.{{ $id }}"
-                        class="text-sm font-medium text-gray-500 block transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70 filament-forms-select-component dark:bg-gray-700 dark:text-white border-gray-300 dark:border-gray-600"
-                        style="padding-block: 4px">
-                        @foreach ($filters as $val => $title)
-                            <option value="{{ $val }}">
-                                {{ $title }}
+                        wire:model="filters.{{ $id }}" @class([
+                            'text-sm text-gray-900 border-gray-300 block h-8 transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 !py-0',
+                            'dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200' => config(
+                                'filament.dark_mode',
+                            ),
+                        ])
+                    >
+                        @foreach ($filters as $key => $filter)
+                            <option value="{{ $key }}">
+                                {{ $filter }}
                             </option>
                         @endforeach
                     </select>
@@ -71,10 +75,10 @@
                     init: function () {
                         let chart = this.initChart()
 
-                        window.addEventListener('updateStatsChartData', (event) => {
-                            if (@js($id) === event.detail.id) {
+                        $wire.on('updateStatsChartData', async ({data , id }) => {
+                            if (@js($id) === id && data) {
                                 chart.destroy()
-                                chart = this.initChart(event.detail.data)
+                                chart = this.initChart(data)
                             }
                         })
                     },
