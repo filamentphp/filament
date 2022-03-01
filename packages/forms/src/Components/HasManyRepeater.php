@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 
 class HasManyRepeater extends RelationshipRepeater
 {
-    public function getRelationship(): HasMany|HasOneOrMany
+    public function getRelationship(): HasMany | HasOneOrMany
     {
         return parent::getRelationship();
     }
