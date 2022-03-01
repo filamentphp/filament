@@ -20,7 +20,7 @@
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 translate-y-2"
         @class([
-            'absolute left-0 md:left-auto md:right-0 rtl:left-auto rtl:right-0 md:rtl:left-0 md:rtl:right-auto z-10 w-screen pr-12 md:pr-0 md:pl-12 rtl:pr-0 rtl:pl-12 md:rtl:pl-0 md:rtl:pr-12 mt-2 top-full transition',
+            'absolute right-0 rtl:right-auto rtl:left-0 z-10 w-screen pl-12 rtl:pr-12 mt-2 top-full transition',
             match ($width) {
                 'xs' => 'max-w-xs',
                 'md' => 'max-w-md',
