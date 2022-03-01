@@ -4,9 +4,14 @@ use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Livewire\LivewireServiceProvider;
+use Orchestra\Testbench\Concerns\CreatesApplication;
 use Orchestra\Testbench\Foundation\Application;
 
-$app = (new Application())
+$basePathLocator = new class {
+    use CreatesApplication;
+};
+
+$app = (new Application($basePathLocator::applicationBasePath()))
     ->configure([
         'enables_package_discoveries' => true,
     ])
