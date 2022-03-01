@@ -16,9 +16,21 @@ trait CanAttachRecords
 {
     protected ?Form $resourceAttachForm = null;
 
+    protected static bool $canAttachAnother = true;
+
     protected function canAttach(): bool
     {
         return $this->can('attach');
+    }
+
+    protected static function canAttachAnother(): bool
+    {
+        return static::$canAttachAnother;
+    }
+
+    public static function disableAttachAnother(): void
+    {
+        static::$canAttachAnother = false;
     }
 
     public static function attachForm(Form $form): Form
@@ -160,11 +172,11 @@ trait CanAttachRecords
 
     protected function getAttachActionModalActions(): array
     {
-        return [
-            $this->getAttachActionAttachModalAction(),
-            static::$canAttachAnother ? $this->getAttachActionAttachAndAttachAnotherModalAction() : '',
-            $this->getAttachActionCancelModalAction(),
-        ];
+        return array_merge(
+            [$this->getAttachActionAttachModalAction()],
+            static::canAttachAnother() ? [$this->getAttachActionAttachAndAttachAnotherModalAction()] : [],
+            [$this->getAttachActionCancelModalAction()],
+        );
     }
 
     protected function getAttachActionAttachModalAction(): ButtonAction
