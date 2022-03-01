@@ -120,7 +120,7 @@ trait InteractsWithTableQuery
         return $this->getRelationship($query)->getModel();
     }
 
-    protected function getRelationship(Builder $query): Relation
+    protected function getRelationship(Builder $query): Relation|Builder
     {
         return $this->getQueryModel($query)->{$this->getRelationshipName()}();
     }
