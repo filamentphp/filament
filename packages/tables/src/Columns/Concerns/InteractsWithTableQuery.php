@@ -95,7 +95,7 @@ trait InteractsWithTableQuery
                             $this->getRelatedModel($query)->query(),
                             $query,
                             $sortColumnName,
-                        ),
+                        )->getQuery(),
                     $direction,
                 ),
                 fn ($query) => $query->orderBy($sortColumnName, $direction),
