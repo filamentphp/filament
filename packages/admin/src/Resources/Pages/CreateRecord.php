@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Facades\Filament;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\ButtonAction;
 use Filament\Pages\Contracts\HasFormActions;
