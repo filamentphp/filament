@@ -22,7 +22,7 @@ class CreateRecord extends Page implements HasFormActions
 
     public $data;
 
-    protected static ?bool $canCreateAnother = null;
+    protected static bool $canCreateAnother = true;
 
     public function getBreadcrumb(): string
     {
@@ -108,13 +108,11 @@ class CreateRecord extends Page implements HasFormActions
 
     protected function getFormActions(): array
     {
-        $canCreateAnother = static::$canCreateAnother ?? Filament::disableCreateResourceCreateAnother();
-
-        return [
-            $this->getCreateFormAction(),
-            $canCreateAnother ? $this->getCreateAndCreateAnotherFormAction() : null,
-            $this->getCancelFormAction(),
-        ];
+        return array_merge(
+            [$this->getCreateFormAction()],
+            static::canCreateAnother() ? [$this->getCreateAndCreateAnotherFormAction()] : [],
+            [$this->getCancelFormAction()],
+        );
     }
 
     protected function getCreateFormAction(): ButtonAction
@@ -179,5 +177,15 @@ class CreateRecord extends Page implements HasFormActions
     protected function getMountedActionFormModel(): string
     {
         return static::getModel();
+    }
+
+    protected static function canCreateAnother(): bool
+    {
+        return static::$canCreateAnother;
+    }
+
+    public static function disableCreateAnother(): void
+    {
+        static::$canCreateAnother = false;
     }
 }

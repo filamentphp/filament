@@ -12,9 +12,21 @@ trait CanCreateRecords
 {
     use UsesResourceForm;
 
+    protected static bool $canCreateAnother = true;
+
     protected function hasCreateAction(): bool
     {
         return static::getResource()::canCreate();
+    }
+
+    protected static function canCreateAnother(): bool
+    {
+        return static::$canCreateAnother;
+    }
+
+    public static function disableCreateAnother(): void
+    {
+        static::$canCreateAnother = false;
     }
 
     protected function getCreateAction(): ButtonAction
@@ -30,35 +42,35 @@ trait CanCreateRecords
 
     protected function getCreateActionModalActions(): array
     {
-        return [
-            $this->getCreateActionCreateModalAction(),
-            static::$canCreateAnother ? $this->getCreateActionCreateAndCreateAnotherModalAction() : '',
-            $this->getCreateActionCancelModalAction(),
-        ];
+        return array_merge(
+            [$this->getCreateActionCreateModalAction()],
+            static::canCreateAnother() ? [$this->getCreateActionCreateAndCreateAnotherModalAction()] : [],
+            [$this->getCreateActionCancelModalAction()],
+        );
     }
 
     protected function getCreateActionCreateModalAction(): Modal\Actions\ButtonAction
     {
         return Modal\Actions\ButtonAction::make('create')
-        ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create.label'))
-        ->submit('callMountedAction')
-        ->color('primary');
+            ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create.label'))
+            ->submit('callMountedAction')
+            ->color('primary');
     }
 
     protected function getCreateActionCreateAndCreateAnotherModalAction(): Modal\Actions\ButtonAction
     {
         return Modal\Actions\ButtonAction::make('createAndCreateAnother')
-        ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create_and_create_another.label'))
-        ->action('createAndCreateAnother')
-        ->color('secondary');
+            ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create_and_create_another.label'))
+            ->action('createAndCreateAnother')
+            ->color('secondary');
     }
 
     protected function getCreateActionCancelModalAction(): Modal\Actions\ButtonAction
     {
         return Modal\Actions\ButtonAction::make('cancel')
-        ->label(__('tables::table.actions.modal.buttons.cancel.label'))
-        ->cancel()
-        ->color('secondary');
+            ->label(__('tables::table.actions.modal.buttons.cancel.label'))
+            ->cancel()
+            ->color('secondary');
     }
 
     protected function getCreateFormSchema(): array
