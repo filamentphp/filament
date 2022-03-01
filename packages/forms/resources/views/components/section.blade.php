@@ -5,7 +5,7 @@
     @endif
     id="{{ $getId() }}"
     {{ $attributes->merge($getExtraAttributes())->class([
-        'p-6 space-y-6 rounded-xl shadow-sm border border-gray-300 filament-forms-section-component',
+        'p-6 space-y-6 rounded-xl shadow-sm border border-gray-300 filament-forms-section-component bg-white',
         'dark:border-gray-600' => config('forms.dark_mode'),
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
