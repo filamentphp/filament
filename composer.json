@@ -19,7 +19,6 @@
         "pestphp/pest-plugin-livewire": "^1.0",
         "pestphp/pest-plugin-parallel": "^0.3",
         "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan": "^1.4",
         "spatie/laravel-medialibrary": "^9.11|^10.0",
         "spatie/laravel-package-tools": "^1.9",
         "spatie/laravel-ray": "^1.29",
