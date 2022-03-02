@@ -72,7 +72,9 @@ class Page extends Component implements Forms\Contracts\HasForms
         return function () {
             $slug = static::getSlug();
 
-            Route::get($slug, static::class)->name($slug);
+            Route::get($slug, static::class)
+                ->middleware(static::getMiddlewares())
+                ->name($slug);
         };
     }
 
