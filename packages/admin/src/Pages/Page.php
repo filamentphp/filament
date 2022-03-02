@@ -76,7 +76,7 @@ class Page extends Component implements Forms\Contracts\HasForms
 
     public static function getSlug(): string
     {
-        return static::$slug ?? Str::kebab(static::$title ?? class_basename(static::class));
+        return static::$slug ?? Str::slug(static::$title ?? class_basename(static::class));
     }
 
     public static function getUrl(array $parameters = [], bool $absolute = true): string
@@ -107,10 +107,7 @@ class Page extends Component implements Forms\Contracts\HasForms
 
     protected static function getNavigationLabel(): string
     {
-        return static::$navigationLabel ?? static::$title ?? Str::of(class_basename(static::class))
-            ->kebab()
-            ->replace('-', ' ')
-            ->title();
+        return static::$navigationLabel ?? static::getTitle();
     }
 
     protected static function getNavigationSort(): ?int
