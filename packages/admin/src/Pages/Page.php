@@ -72,9 +72,7 @@ class Page extends Component implements Forms\Contracts\HasForms
         return function () {
             $slug = static::getSlug();
 
-            Route::get($slug, static::class)
-                ->middleware(static::getMiddlewares())
-                ->name($slug);
+            Route::get($slug, static::class)->name($slug);
         };
     }
 
@@ -85,7 +83,9 @@ class Page extends Component implements Forms\Contracts\HasForms
 
     public static function getSlug(): string
     {
-        return static::$slug ?? Str::slug(static::$title ?? class_basename(static::class));
+        return static::$slug ?? Str::of(static::$title ?? class_basename(static::class))
+            ->kebab()
+            ->slug();
     }
 
     public static function getUrl(array $parameters = [], bool $absolute = true): string
@@ -116,7 +116,10 @@ class Page extends Component implements Forms\Contracts\HasForms
 
     protected static function getNavigationLabel(): string
     {
-        return static::$navigationLabel ?? static::getTitle();
+        return static::$navigationLabel ?? static::$title ?? Str::of(class_basename(static::class))
+            ->kebab()
+            ->replace('-', ' ')
+            ->title();
     }
 
     protected static function getNavigationSort(): ?int
