@@ -85,7 +85,9 @@ class Page extends Component implements Forms\Contracts\HasForms
 
     public static function getSlug(): string
     {
-        return static::$slug ?? Str::kebab(static::$title ?? class_basename(static::class));
+        return static::$slug ?? Str::of(static::$title ?? class_basename(static::class))
+            ->kebab()
+            ->slug();
     }
 
     public static function getUrl(array $parameters = [], bool $absolute = true): string

@@ -285,7 +285,8 @@ class Resource
     {
         return static::$slug ?? (string) Str::of(class_basename(static::getModel()))
             ->plural()
-            ->kebab();
+            ->kebab()
+            ->slug();
     }
 
     public static function getUrl($name = 'index', $params = []): string
