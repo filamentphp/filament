@@ -3,12 +3,15 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 class BelongsToManyCheckboxList extends CheckboxList
 {
     protected string | Closure | null $displayColumnName = null;
+
+    protected ?Closure $getOptionLabelFromRecordUsing = null;
 
     protected string | Closure | null $relationship = null;
 
@@ -59,12 +62,36 @@ class BelongsToManyCheckboxList extends CheckboxList
                 ]);
             }
 
+            if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                return $relationshipQuery
+                    ->get()
+                    ->map(fn (Model $record) => $component->getOptionLabelFromRecord($record))
+                    ->toArray();
+            }
+
             return $relationshipQuery
                 ->pluck($component->getDisplayColumnName(), $relationship->getRelatedKeyName())
                 ->toArray();
         });
 
         return $this;
+    }
+
+    public function getOptionLabelFromRecordUsing(?Closure $callback): static
+    {
+        $this->getOptionLabelFromRecordUsing = $callback;
+
+        return $this;
+    }
+
+    public function hasOptionLabelFromRecordUsingCallback(): bool
+    {
+        return $this->getOptionLabelFromRecordUsing !== null;
+    }
+
+    public function getOptionLabelFromRecord(Model $record): string
+    {
+        return $this->evaluate($this->getOptionLabelFromRecordUsing, ['record' => $record]);
     }
 
     public function getDisplayColumnName(): string
