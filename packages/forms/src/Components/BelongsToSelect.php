@@ -70,11 +70,15 @@ class BelongsToSelect extends Select
 
             $record = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $value)->first();
 
+            if (! $record) {
+                return null;
+            }
+
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $component->getOptionLabelFromRecord($record);
             }
 
-            return $record?->getAttributeValue($component->getDisplayColumnName());
+            return $record->getAttributeValue($component->getDisplayColumnName());
         });
 
         $this->getSearchResultsUsing(function (BelongsToSelect $component, ?string $query) use ($callback): array {
@@ -90,13 +94,17 @@ class BelongsToSelect extends Select
 
             $query = strtolower($query);
 
-            return $this->applySearchConstraint($relationshipQuery, $query)
-                ->limit(50)
-                ->when(
-                    $component->hasOptionLabelFromRecordUsingCallback(),
-                    fn (Builder $query) => $query->get()->map(fn (Model $record) => $component->getOptionLabelFromRecord($record)),
-                    fn (Builder $query) => $query->pluck($component->getDisplayColumnName(), $relationship->getOwnerKeyName()),
-                )
+            $relationshipQuery = $this->applySearchConstraint($relationshipQuery, $query)->limit(50);
+
+            if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                return $relationshipQuery
+                    ->get()
+                    ->map(fn (Model $record) => $component->getOptionLabelFromRecord($record))
+                    ->toArray();
+            }
+
+            return $relationshipQuery
+                ->pluck($component->getDisplayColumnName(), $relationship->getOwnerKeyName())
                 ->toArray();
         });
 
@@ -115,12 +123,15 @@ class BelongsToSelect extends Select
                 ]);
             }
 
+            if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                return $relationshipQuery
+                    ->get()
+                    ->map(fn (Model $record) => $component->getOptionLabelFromRecord($record))
+                    ->toArray();
+            }
+
             return $relationshipQuery
-                ->when(
-                    $component->hasOptionLabelFromRecordUsingCallback(),
-                    fn (Builder $query) => $query->get()->map(fn (Model $record) => $component->getOptionLabelFromRecord($record)),
-                    fn (Builder $query) => $query->pluck($component->getDisplayColumnName(), $relationship->getOwnerKeyName()),
-                )
+                ->pluck($component->getDisplayColumnName(), $relationship->getOwnerKeyName())
                 ->toArray();
         });
 
