@@ -10,6 +10,7 @@ class Select extends Field
 {
     use Concerns\HasAffixes;
     use Concerns\HasExtraAlpineAttributes;
+    use Concerns\HasExtraInputAttributes;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
 

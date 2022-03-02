@@ -43,6 +43,8 @@ class Resource
 
     protected static ?string $slug = null;
 
+    protected static string | array $middlewares = [];
+
     public static function form(Form $form): Form
     {
         return $form;
@@ -263,12 +265,20 @@ class Resource
         return function () {
             $slug = static::getSlug();
 
-            Route::name("{$slug}.")->prefix($slug)->group(function () {
-                foreach (static::getPages() as $name => $page) {
-                    Route::get($page['route'], $page['class'])->name($name);
-                }
-            });
+            Route::name("{$slug}.")
+                ->prefix($slug)
+                ->middleware(static::getMiddlewares())
+                ->group(function () {
+                    foreach (static::getPages() as $name => $page) {
+                        Route::get($page['route'], $page['class'])->name($name);
+                    }
+                });
         };
+    }
+
+    public static function getMiddlewares(): string | array
+    {
+        return static::$middlewares;
     }
 
     public static function getSlug(): string

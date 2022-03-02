@@ -459,7 +459,6 @@ Some of the techniques described in the [advanced forms](advanced) section are r
 You may employ the `relationship()` method of the `BelongsToSelect` to configure a relationship to automatically retrieve and save options from:
 
 ```php
-use App\Models\Post;
 use Filament\Forms\Components\BelongsToSelect;
 
 BelongsToSelect::make('authorId')
@@ -471,12 +470,35 @@ BelongsToSelect::make('authorId')
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
-use App\Models\App;
 use Filament\Forms\Components\BelongsToSelect;
 use Illuminate\Database\Eloquent\Builder;
 
 BelongsToSelect::make('authorId')
     ->relationship('author', 'name', fn (Builder $query) => $query->withTrashed())
+```
+
+If you'd like to customize the label of each option, maybe to be more descriptive, or to concatenate a first and last name, you should use a virtual column in your database migration:
+
+```php
+$table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
+```
+
+```php
+use Filament\Forms\Components\BelongsToSelect;
+
+BelongsToSelect::make('authorId')
+    ->relationship('author', 'full_name')
+```
+
+Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
+
+```php
+use Filament\Forms\Components\BelongsToSelect;
+use Illuminate\Database\Eloquent\Model;
+
+BelongsToSelect::make('authorId')
+    ->relationship('author', 'first_name')
+    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
 ## Multi-select
@@ -548,6 +570,30 @@ use Illuminate\Database\Eloquent\Builder;
 
 BelongsToManyMultiSelect::make('technologies')
     ->relationship('technologies', 'name', fn (Builder $query) => $query->withTrashed())
+```
+
+If you'd like to customize the label of each option, maybe to be more descriptive, or to concatenate a first and last name, you should use a virtual column in your database migration:
+
+```php
+$table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
+```
+
+```php
+use Filament\Forms\Components\BelongsToManyMultiSelect;
+
+BelongsToManyMultiSelect::make('participants')
+    ->relationship('participants', 'full_name')
+```
+
+Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
+
+```php
+use Filament\Forms\Components\BelongsToManyMultiSelect;
+use Illuminate\Database\Eloquent\Model;
+
+BelongsToManyMultiSelect::make('participants')
+    ->relationship('participants', 'first_name')
+    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
 ## Checkbox
@@ -734,6 +780,30 @@ use Illuminate\Database\Eloquent\Builder;
 
 BelongsToManyCheckboxList::make('technologies')
     ->relationship('technologies', 'name', fn (Builder $query) => $query->withTrashed())
+```
+
+If you'd like to customize the label of each option, maybe to be more descriptive, or to concatenate a first and last name, you should use a virtual column in your database migration:
+
+```php
+$table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
+```
+
+```php
+use Filament\Forms\Components\BelongsToManyCheckboxList;
+
+BelongsToManyCheckboxList::make('participants')
+    ->relationship('participants', 'full_name')
+```
+
+Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
+
+```php
+use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Illuminate\Database\Eloquent\Model;
+
+BelongsToManyCheckboxList::make('participants')
+    ->relationship('participants', 'first_name')
+    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
 ## Radio

@@ -21,6 +21,8 @@ class CreateRecord extends Page implements HasFormActions
 
     public $data;
 
+    protected static bool $canCreateAnother = true;
+
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? __('filament::resources/pages/create-record.breadcrumb');
@@ -105,11 +107,11 @@ class CreateRecord extends Page implements HasFormActions
 
     protected function getFormActions(): array
     {
-        return [
-            $this->getCreateFormAction(),
-            $this->getCreateAndCreateAnotherFormAction(),
-            $this->getCancelFormAction(),
-        ];
+        return array_merge(
+            [$this->getCreateFormAction()],
+            static::canCreateAnother() ? [$this->getCreateAndCreateAnotherFormAction()] : [],
+            [$this->getCancelFormAction()],
+        );
     }
 
     protected function getCreateFormAction(): ButtonAction
@@ -174,5 +176,15 @@ class CreateRecord extends Page implements HasFormActions
     protected function getMountedActionFormModel(): string
     {
         return static::getModel();
+    }
+
+    protected static function canCreateAnother(): bool
+    {
+        return static::$canCreateAnother;
+    }
+
+    public static function disableCreateAnother(): void
+    {
+        static::$canCreateAnother = false;
     }
 }

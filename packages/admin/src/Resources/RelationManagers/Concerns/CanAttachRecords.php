@@ -16,9 +16,21 @@ trait CanAttachRecords
 {
     protected ?Form $resourceAttachForm = null;
 
+    protected static bool $canAttachAnother = true;
+
     protected function canAttach(): bool
     {
         return $this->can('attach');
+    }
+
+    protected static function canAttachAnother(): bool
+    {
+        return static::$canAttachAnother;
+    }
+
+    public static function disableAttachAnother(): void
+    {
+        static::$canAttachAnother = false;
     }
 
     public static function attachForm(Form $form): Form
@@ -151,23 +163,43 @@ trait CanAttachRecords
             ->label(__('filament::resources/relation-managers/attach.action.label'))
             ->form($this->getAttachFormSchema())
             ->mountUsing(fn () => $this->fillAttachForm())
-            ->modalActions([
-                ButtonAction::make('attach')
-                    ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach.label'))
-                    ->submit('callMountedTableAction')
-                    ->color('primary'),
-                ButtonAction::make('attachAndAttachAnother')
-                    ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach_and_attach_another.label'))
-                    ->action('attachAndAttachAnother')
-                    ->color('secondary'),
-                ButtonAction::make('cancel')
-                    ->label(__('tables::table.actions.modal.buttons.cancel.label'))
-                    ->cancel()
-                    ->color('secondary'),
-            ])
+            ->modalActions($this->getAttachActionModalActions())
             ->modalHeading(__('filament::resources/relation-managers/attach.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->modalWidth('lg')
             ->action(fn () => $this->attach())
+            ->color('secondary');
+    }
+
+    protected function getAttachActionModalActions(): array
+    {
+        return array_merge(
+            [$this->getAttachActionAttachModalAction()],
+            static::canAttachAnother() ? [$this->getAttachActionAttachAndAttachAnotherModalAction()] : [],
+            [$this->getAttachActionCancelModalAction()],
+        );
+    }
+
+    protected function getAttachActionAttachModalAction(): ButtonAction
+    {
+        return ButtonAction::make('attach')
+            ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach.label'))
+            ->submit('callMountedTableAction')
+            ->color('primary');
+    }
+
+    protected function getAttachActionAttachAndAttachAnotherModalAction(): ButtonAction
+    {
+        return ButtonAction::make('attachAndAttachAnother')
+            ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach_and_attach_another.label'))
+            ->action('attachAndAttachAnother')
+            ->color('secondary');
+    }
+
+    protected function getAttachActionCancelModalAction(): ButtonAction
+    {
+        return ButtonAction::make('cancel')
+            ->label(__('tables::table.actions.modal.buttons.cancel.label'))
+            ->cancel()
             ->color('secondary');
     }
 }
