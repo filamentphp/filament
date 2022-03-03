@@ -92,7 +92,7 @@ trait InteractsWithTable
         return $property;
     }
 
-    protected function getForms(): array
+    protected function getInteractsWithTableForms(): array
     {
         return $this->getTableForms();
     }
@@ -100,9 +100,6 @@ trait InteractsWithTable
     protected function getTableForms(): array
     {
         return [
-            'form' => $this->makeForm()
-                ->schema($this->getFormSchema())
-                ->model($this->getFormModel()),
             'mountedTableActionForm' => $this->makeForm()
                 ->schema(($action = $this->getMountedTableAction()) ? $action->getFormSchema() : [])
                 ->model($this->getMountedTableActionRecord() ?? $this->getTableQuery()->getModel()::class)
