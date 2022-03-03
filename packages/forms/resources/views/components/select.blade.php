@@ -97,7 +97,7 @@
                             x-show="! isOpen"
                             x-text="label ?? '{{ addslashes($getPlaceholder()) }}'"
                             @class([
-                                'w-full bg-white whitespace-nowrap',
+                                'w-full bg-white whitespace-nowrap truncate',
                                 'dark:bg-gray-700' => config('forms.dark_mode'),
                             ])
                         ></span>
