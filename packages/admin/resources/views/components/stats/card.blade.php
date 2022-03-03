@@ -13,7 +13,7 @@
     'value' => null,
 ])
 
-<{{ $tag }} 
+<{!! $tag !!} 
     {!! ($tag === 'a') ? "href=\"{$href}\" target=\"{$target}\"" : null !!}
     {{ $attributes->class([
         'relative p-6 rounded-2xl filament-stats-card',
@@ -138,4 +138,4 @@
             </canvas>
         </div>
     @endif
-</{{ $tag }}>
+</{!! $tag !!}>
