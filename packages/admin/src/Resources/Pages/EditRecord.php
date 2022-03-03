@@ -215,12 +215,12 @@ class EditRecord extends Page implements HasFormActions
 
     protected function getForms(): array
     {
-        return array_merge(parent::getForms(), [
+        return [
             'form' => $this->makeForm()
                 ->model($this->record)
                 ->schema($this->getResourceForm()->getSchema())
                 ->statePath('data'),
-        ]);
+        ];
     }
 
     protected function getRedirectUrl(): ?string

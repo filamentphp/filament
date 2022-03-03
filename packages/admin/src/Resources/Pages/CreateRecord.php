@@ -150,12 +150,12 @@ class CreateRecord extends Page implements HasFormActions
 
     protected function getForms(): array
     {
-        return array_merge(parent::getForms(), [
+        return [
             'form' => $this->makeForm()
                 ->model(static::getModel())
                 ->schema($this->getResourceForm()->getSchema())
                 ->statePath('data'),
-        ]);
+        ];
     }
 
     protected function getRedirectUrl(): string

@@ -2,21 +2,33 @@
 
 namespace Filament\Pages\Concerns;
 
-use Filament\Forms\ComponentContainer;
+use Filament\Forms;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Contracts;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property ComponentContainer $mountedActionForm
+ * @property Forms\ComponentContainer $mountedActionForm
  */
 trait HasActions
 {
+    use Forms\Concerns\InteractsWithForms;
+
     public $mountedAction = null;
 
     public $mountedActionData = [];
 
     protected ?array $cachedActions = null;
+
+    protected function getHasActionsForms(): array
+    {
+        return [
+            'mountedActionForm' => $this->makeForm()
+                ->schema(($action = $this->getMountedAction()) ? $action->getFormSchema() : [])
+                ->statePath('mountedActionData')
+                ->model($this->getMountedActionFormModel()),
+        ];
+    }
 
     public function callMountedAction()
     {
@@ -110,7 +122,7 @@ trait HasActions
         return $this->getCachedFormAction($this->mountedAction);
     }
 
-    public function getMountedActionForm(): ComponentContainer
+    public function getMountedActionForm(): Forms\ComponentContainer
     {
         return $this->mountedActionForm;
     }

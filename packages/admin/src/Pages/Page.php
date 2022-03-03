@@ -16,7 +16,6 @@ class Page extends Component implements Forms\Contracts\HasForms
 {
     use CanNotify;
     use Concerns\HasActions;
-    use Forms\Concerns\InteractsWithForms;
 
     protected static string $layout = 'filament::components.layouts.app';
 
@@ -188,15 +187,5 @@ class Page extends Component implements Forms\Contracts\HasForms
     protected static function shouldRegisterNavigation(): bool
     {
         return static::$shouldRegisterNavigation;
-    }
-
-    protected function getForms(): array
-    {
-        return [
-            'mountedActionForm' => $this->makeForm()
-                ->schema(($action = $this->getMountedAction()) ? $action->getFormSchema() : [])
-                ->statePath('mountedActionData')
-                ->model($this->getMountedActionFormModel()),
-        ];
     }
 }

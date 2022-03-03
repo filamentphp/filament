@@ -89,13 +89,13 @@ class ViewRecord extends Page
 
     protected function getForms(): array
     {
-        return array_merge(parent::getForms(), [
+        return [
             'form' => $this->makeForm()
                 ->disabled()
                 ->model($this->record)
                 ->schema($this->getResourceForm()->getSchema())
                 ->statePath('data'),
-        ]);
+        ];
     }
 
     protected function getMountedActionFormModel(): Model

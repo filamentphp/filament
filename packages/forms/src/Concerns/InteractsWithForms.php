@@ -164,7 +164,7 @@ trait InteractsWithForms
         if ($this->cachedForms === null) {
             $this->cacheForms();
         } else {
-            $this->cachedForms[$name] = $this->getForms()[$name];
+            $this->cachedForms[$name] = $this->getUncachedForms()[$name];
         }
 
         $this->isCachingForms = false;
@@ -176,11 +176,29 @@ trait InteractsWithForms
     {
         $this->isCachingForms = true;
 
-        $this->cachedForms = $this->getForms();
+        $this->cachedForms = $this->getUncachedForms();
 
         $this->isCachingForms = false;
 
         return $this->cachedForms;
+    }
+
+    protected function getUncachedForms(): array
+    {
+        return array_merge($this->getTraitForms(), $this->getForms());
+    }
+
+    protected function getTraitForms(): array
+    {
+        $forms = [];
+
+        foreach (class_uses_recursive($class = static::class) as $trait) {
+            if (method_exists($class, $method = 'get' . class_basename($trait) . 'Forms')) {
+                $forms = array_merge($forms, $this->{$method}());
+            }
+        }
+
+        return $forms;
     }
 
     protected function focusConcealedComponents(array $statePaths): void
