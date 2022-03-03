@@ -4,6 +4,8 @@ namespace Filament\Widgets;
 
 class ChartWidget extends Widget
 {
+    use Concerns\CanPoll;
+
     protected ?array $cachedData = null;
 
     public string $dataChecksum;
@@ -13,8 +15,6 @@ class ChartWidget extends Widget
     protected static ?string $heading = null;
 
     protected static ?array $options = null;
-
-    protected static ?string $pollingInterval = '5s';
 
     protected static string $view = 'filament::widgets.chart-widget';
 
@@ -51,11 +51,6 @@ class ChartWidget extends Widget
     protected function getOptions(): ?array
     {
         return static::$options;
-    }
-
-    protected function getPollingInterval(): ?string
-    {
-        return static::$pollingInterval;
     }
 
     public function updateChartData()

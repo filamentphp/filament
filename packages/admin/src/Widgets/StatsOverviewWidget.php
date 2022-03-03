@@ -4,6 +4,8 @@ namespace Filament\Widgets;
 
 class StatsOverviewWidget extends Widget
 {
+    use Concerns\CanPoll;
+
     protected ?array $cachedCards = null;
 
     protected int | string | array $columnSpan = 'full';

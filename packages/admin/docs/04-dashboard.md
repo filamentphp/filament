@@ -131,6 +131,22 @@ protected function getCards(): array
 }
 ```
 
+### Live updating (polling)
+
+By default, stats overview widgets refresh their data every 5 seconds.
+
+To customize this, you may override the `$pollingInterval` property on the class to a new interval:
+
+```php
+protected static string $pollingInterval = '10s';
+```
+
+Alternatively, you may disable polling altogether:
+
+```php
+protected static ?string $pollingInterval = null;
+```
+
 ## Chart widgets
 
 Filament comes with many "chart" widget template, which you can use to display real-time, interactive charts.
