@@ -40,7 +40,7 @@ return [
     |
     */
 
-    'dark_mode' => false,
+    'dark_mode' => env('TABLES_DARK_MODE', env('FILAMENT_DARK_MODE', false)),
 
     /*
     |--------------------------------------------------------------------------
