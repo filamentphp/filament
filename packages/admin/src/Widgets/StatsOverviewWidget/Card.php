@@ -22,6 +22,10 @@ class Card extends Component implements Htmlable
 
     protected ?string $descriptionColor = null;
 
+    protected bool $shouldOpenUrlInNewTab = false;
+
+    protected ?string $url = null;
+
     protected ?string $id = null;
 
     protected string | HtmlString $label;
@@ -71,6 +75,21 @@ class Card extends Component implements Htmlable
     {
         $this->descriptionIcon = $icon;
 
+        return $this;
+    }
+
+    public function openUrlInNewTab(bool $condition = true): static
+    {
+        $this->shouldOpenUrlInNewTab = $condition;
+    
+        return $this;
+    }
+    
+    public function url(?string $url, bool $shouldOpenInNewTab = false): static
+    {
+        $this->shouldOpenUrlInNewTab = $shouldOpenInNewTab;
+        $this->url = $url;
+    
         return $this;
     }
 
@@ -130,6 +149,16 @@ class Card extends Component implements Htmlable
     public function getDescriptionIcon(): ?string
     {
         return $this->descriptionIcon;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+    
+    public function shouldOpenUrlInNewTab(): bool
+    {
+        return $this->shouldOpenUrlInNewTab;
     }
 
     public function getLabel(): string | HtmlString
