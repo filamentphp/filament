@@ -9,7 +9,10 @@
 ]) }}>
     @if ($header)
         <thead>
-            <tr class="bg-gray-50">
+            <tr @class([
+                'bg-gray-50',
+                'dark:bg-gray-500/10',
+            ])>
                 {{ $header }}
             </tr>
         </thead>
