@@ -36,7 +36,7 @@ By default, all `App\Models\User`s can access Filament locally. To allow them to
 
 Please see the [Users page](users#authorizing-access-to-the-admin-panel).
 
-If you don't complete these steps, there will be a 404 error when you try to access the admin panel in production.
+If you don't complete these steps, there will be a 403 error when you try to access the admin panel in production.
 
 ## Publishing the configuration
 
