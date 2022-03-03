@@ -1,20 +1,17 @@
 @props([
-    'tag' => 'div',
     'chart' => null,
     'chartColor' => null,
     'color' => null,
     'description' => null,
     'descriptionColor' => null,
     'descriptionIcon' => null,
-    'href' => null,
-    'target' => null,
     'flat' => false,
     'label' => null,
+    'tag' => 'div',
     'value' => null,
 ])
 
-<{!! $tag !!} 
-    {!! ($tag === 'a') ? "href=\"{$href}\" target=\"{$target}\"" : null !!}
+<{!! $tag !!}
     {{ $attributes->class([
         'relative p-6 rounded-2xl filament-stats-card',
         'bg-white shadow' => ! $flat,
