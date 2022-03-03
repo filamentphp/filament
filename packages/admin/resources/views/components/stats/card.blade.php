@@ -1,22 +1,28 @@
 @props([
+    'tag' => 'div',
     'chart' => null,
     'chartColor' => null,
     'color' => null,
     'description' => null,
     'descriptionColor' => null,
     'descriptionIcon' => null,
+    'href' => null,
+    'target' => null,
     'flat' => false,
     'label' => null,
     'value' => null,
 ])
 
-<div {{ $attributes->class([
-    'relative p-6 rounded-2xl filament-stats-card',
-    'bg-white shadow' => ! $flat,
-    'dark:bg-gray-800' => (! $flat) && config('filament.dark_mode'),
-    'border' => $flat,
-    'dark:border-gray-700' => $flat && config('filament.dark_mode'),
-]) }}>
+<{!! $tag !!} 
+    {!! ($tag === 'a') ? "href=\"{$href}\" target=\"{$target}\"" : null !!}
+    {{ $attributes->class([
+        'relative p-6 rounded-2xl filament-stats-card',
+        'bg-white shadow' => ! $flat,
+        'dark:bg-gray-800' => (! $flat) && config('filament.dark_mode'),
+        'border' => $flat,
+        'dark:border-gray-700' => $flat && config('filament.dark_mode'),
+    ]) }}
+>
     <div @class([
         'space-y-2',
     ])>
@@ -132,4 +138,4 @@
             </canvas>
         </div>
     @endif
-</div>
+</{!! $tag !!}>

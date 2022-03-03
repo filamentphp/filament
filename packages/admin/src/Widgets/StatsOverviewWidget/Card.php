@@ -4,6 +4,7 @@ namespace Filament\Widgets\StatsOverviewWidget;
 
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\View\Component;
 
@@ -15,15 +16,19 @@ class Card extends Component implements Htmlable
 
     protected ?string $color = null;
 
-    protected ?string $description = null;
+    protected string | HtmlString | null $description = null;
 
     protected ?string $descriptionIcon = null;
 
     protected ?string $descriptionColor = null;
 
+    protected bool $shouldOpenUrlInNewTab = false;
+
+    protected ?string $url = null;
+
     protected ?string $id = null;
 
-    protected string $label;
+    protected string | HtmlString $label;
 
     protected $value;
 
@@ -52,7 +57,7 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
-    public function description(?string $description): static
+    public function description(string | HtmlString | null $description): static
     {
         $this->description = $description;
 
@@ -73,6 +78,21 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
+    public function openUrlInNewTab(bool $condition = true): static
+    {
+        $this->shouldOpenUrlInNewTab = $condition;
+    
+        return $this;
+    }
+    
+    public function url(?string $url, bool $shouldOpenInNewTab = false): static
+    {
+        $this->shouldOpenUrlInNewTab = $shouldOpenInNewTab;
+        $this->url = $url;
+    
+        return $this;
+    }
+
     public function chart(?array $chart): static
     {
         $this->chart = $chart;
@@ -80,7 +100,7 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
-    public function label(string $label): static
+    public function label(string | HtmlString $label): static
     {
         $this->label = $label;
 
@@ -116,7 +136,7 @@ class Card extends Component implements Htmlable
         return $this->color;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string | HtmlString | null
     {
         return $this->description;
     }
@@ -131,7 +151,17 @@ class Card extends Component implements Htmlable
         return $this->descriptionIcon;
     }
 
-    public function getLabel(): string
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+    
+    public function shouldOpenUrlInNewTab(): bool
+    {
+        return $this->shouldOpenUrlInNewTab;
+    }
+
+    public function getLabel(): string | HtmlString
     {
         return $this->label;
     }
