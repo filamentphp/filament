@@ -92,12 +92,12 @@ class SettingsPage extends Page
 
     protected function getForms(): array
     {
-        return array_merge(parent::getForms(), [
+        return [
             'form' => $this->makeForm()
                 ->schema($this->getFormSchema())
                 ->statePath('data')
                 ->columns(2),
-        ]);
+        ];
     }
 
     protected function getRedirectUrl(): ?string
