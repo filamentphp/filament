@@ -35,11 +35,11 @@
     ]);
 @endphp
 
-<li {{ $attributes }}>
+<li {{ $attributes->only(['class']) }}>
     @if ($tag === 'button')
         <button
             type="{{ $type }}"
-            {{ $attributes->class([$buttonClasses]) }}
+            {{ $attributes->except(['class'])->class([$buttonClasses]) }}
         >
             @if ($icon)
                 <x-dynamic-component :component="$icon" :class="$iconClasses" />
@@ -56,7 +56,7 @@
             @endif
         </button>
     @elseif ($tag === 'a')
-        <a {{ $attributes->class([$buttonClasses]) }}>
+        <a {{ $attributes->except(['class'])->class([$buttonClasses]) }}>
             @if ($icon)
                 <x-dynamic-component :component="$icon" :class="$iconClasses" />
             @endif
