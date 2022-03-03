@@ -239,10 +239,7 @@
                         @endforeach
 
                         @if (count($actions))
-                            <th @class([
-                                'w-5',
-                                'dark:bg-gray-800' => config('tables.dark_mode'),
-                            ])></th>
+                            <th class="w-5"></th>
                         @endif
                     </x-slot>
 
@@ -259,7 +256,12 @@
                     @endif
 
                     @foreach ($records as $record)
-                        <x-tables::row wire:key="{{ $record->getKey() }}">
+                        <x-tables::row
+                            wire:key="{{ $record->getKey() }}"
+                            x-bind:class="{
+                                'bg-primary-500/10': isRecordSelected('{{ $record->getKey() }}'),
+                            }"
+                        >
                             @if ($isSelectionEnabled())
                                 <x-tables::checkbox-cell>
                                     <x-slot

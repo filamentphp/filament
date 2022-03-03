@@ -7,10 +7,7 @@
     'alignment' => null,
 ])
 
-<th {{ $attributes->merge($extraAttributes)->class([
-    'p-0 filament-tables-header-cell',
-    'dark:bg-gray-800' => config('tables.dark_mode'),
-]) }}>
+<th {{ $attributes->merge($extraAttributes)->class(['p-0 filament-tables-header-cell']) }}>
     <button
         @if ($sortable)
             wire:click="sortTable('{{ $name }}')"
