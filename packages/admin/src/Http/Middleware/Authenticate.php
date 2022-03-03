@@ -23,12 +23,12 @@ class Authenticate extends Middleware
         $user = $guard->user();
 
         if ($user instanceof FilamentUser) {
-            abort_if(! $user->canAccessFilament(), 404);
+            abort_if(! $user->canAccessFilament(), 403);
 
             return;
         }
 
-        abort_if(config('app.env') !== 'local', 404);
+        abort_if(config('app.env') !== 'local', 403);
     }
 
     protected function redirectTo($request): string
