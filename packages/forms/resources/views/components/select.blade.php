@@ -23,7 +23,7 @@
             </span>
         @endif
 
-        <div class="flex-1">
+        <div class="flex-1 min-w-0">
             @unless ($isSearchable())
                 <select
                     {!! $isAutofocused() ? 'autofocus' : null !!}
@@ -97,7 +97,7 @@
                             x-show="! isOpen"
                             x-text="label ?? '{{ addslashes($getPlaceholder()) }}'"
                             @class([
-                                'w-full bg-white whitespace-nowrap truncate',
+                                'w-full bg-white truncate cursor-text',
                                 'dark:bg-gray-700' => config('forms.dark_mode'),
                             ])
                         ></span>
@@ -113,7 +113,7 @@
                                 type="text"
                                 autocomplete="off"
                                 @class([
-                                    'w-full p-0 border-0 focus:ring-0 focus:outline-none',
+                                    'w-0 grow p-0 border-0 focus:ring-0 focus:outline-none',
                                     'dark:bg-gray-700' => config('forms.dark_mode'),
                                 ])
                             />
