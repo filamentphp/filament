@@ -81,15 +81,15 @@ class Card extends Component implements Htmlable
     public function openUrlInNewTab(bool $condition = true): static
     {
         $this->shouldOpenUrlInNewTab = $condition;
-    
+
         return $this;
     }
-    
+
     public function url(?string $url, bool $shouldOpenInNewTab = false): static
     {
         $this->shouldOpenUrlInNewTab = $shouldOpenInNewTab;
         $this->url = $url;
-    
+
         return $this;
     }
 
@@ -155,7 +155,7 @@ class Card extends Component implements Htmlable
     {
         return $this->url;
     }
-    
+
     public function shouldOpenUrlInNewTab(): bool
     {
         return $this->shouldOpenUrlInNewTab;
