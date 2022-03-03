@@ -50,7 +50,7 @@ export default (Alpine) => {
                         let search = this.search.trim().toLowerCase()
 
                         for (let key in options) {
-                            if (options[key].trim().toLowerCase().includes(search)) {
+                            if (options[key].toString().trim().toLowerCase().includes(search)) {
                                 this.options[key] = options[key]
                             }
                         }

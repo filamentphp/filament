@@ -19198,7 +19198,7 @@ var multi_select_default = (Alpine) => {
             this.options = {};
             let search = this.search.trim().toLowerCase();
             for (let key in options2) {
-              if (options2[key].trim().toLowerCase().includes(search)) {
+              if (options2[key].toString().trim().toLowerCase().includes(search)) {
                 this.options[key] = options2[key];
               }
             }
@@ -19407,7 +19407,7 @@ var select_default = (Alpine) => {
             this.options = {};
             let search = this.search.trim().toLowerCase();
             for (let key in options2) {
-              if (options2[key].trim().toLowerCase().includes(search)) {
+              if (options2[key].toString().trim().toLowerCase().includes(search)) {
                 this.options[key] = options2[key];
               }
             }
