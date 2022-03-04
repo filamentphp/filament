@@ -44,7 +44,7 @@
             <x-tables::icon-button
                 icon="heroicon-o-x"
                 x-on:click="isOpen = ! isOpen"
-                :label="__('tables::table.buttons.open_actions.label')"
+                :label=" __('tables::table.filters.buttons.close.label')"
                 {{ $attributes->class(['absolute top-3 right-3']) }}
             />
 
