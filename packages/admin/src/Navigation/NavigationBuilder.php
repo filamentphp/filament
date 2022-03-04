@@ -29,9 +29,7 @@ class NavigationBuilder
     /** @param \Filament\Navigation\NavigationItem[] $items */
     public function items(array $items): static
     {
-        foreach ($items as $item) {
-            $this->item($item);
-        }
+        $this->items = array_merge($this->items, $items);
 
         return $this;
     }
