@@ -129,8 +129,8 @@ Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
         NavigationItem::make()
             ->label('Dashboard')
             ->icon('heroicon-o-home')
-            ->isActiveWhen(fn (): bool => request()->routeIs('filament.dashboard'))
-            ->url(route('filament.dashboard')),
+            ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
+            ->url(route('filament.pages.dashboard')),
     );
 });
 ```
