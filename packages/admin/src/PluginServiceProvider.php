@@ -66,6 +66,7 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
         Facades\Filament::registerPages($this->getPages());
         Facades\Filament::registerResources($this->getResources());
+        Facades\Filament::registerUserMenuItems($this->getUserMenuItems());
         Facades\Filament::registerWidgets($this->getWidgets());
 
         Facades\Filament::serving(function () {
@@ -145,6 +146,11 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     protected function getStyles(): array
     {
         return $this->styles;
+    }
+
+    protected function getUserMenuItems(): array
+    {
+        return [];
     }
 
     protected function getWidgets(): array
