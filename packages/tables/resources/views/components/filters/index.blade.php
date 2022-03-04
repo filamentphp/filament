@@ -50,7 +50,7 @@
 
             {{ $form }}
 
-            <div class="text-right space-x-2">
+            <div class="text-right">
                 <x-tables::link
                     wire:click="resetTableFiltersForm"
                     color="danger"
