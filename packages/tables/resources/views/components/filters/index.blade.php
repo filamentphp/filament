@@ -40,6 +40,14 @@
             'px-6 py-4 bg-white space-y-6 shadow-xl rounded-xl',
             'dark:bg-gray-700' => config('tables.dark_mode'),
         ])>
+
+        <div @class([
+            'absolute top-3 right-3 w-6 h-6 text-gray-300 hover:bg-gray-200 hover:text-gray-400 rounded',
+            'dark:text-gray-400 dark:hover:bg-gray-600' => config('tables.dark_mode'),
+        ]) @click="isOpen = false">
+            <x-heroicon-o-x />
+        </div>
+
             {{ $form }}
 
             <div class="text-right space-x-2">
