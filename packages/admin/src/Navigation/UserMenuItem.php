@@ -63,11 +63,6 @@ class UserMenuItem
         return $this->color;
     }
 
-    public function getGroup(): ?string
-    {
-        return $this->group;
-    }
-
     public function getIcon(): ?string
     {
         return $this->icon;
