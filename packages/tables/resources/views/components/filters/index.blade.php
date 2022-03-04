@@ -45,6 +45,7 @@
                 icon="heroicon-o-x"
                 x-on:click="isOpen = ! isOpen"
                 :label=" __('tables::table.filters.buttons.close.label')"
+                color="secondary"
                 {{ $attributes->class(['absolute top-3 right-3']) }}
             />
 
