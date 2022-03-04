@@ -59,15 +59,6 @@
                 >
                     {{ __('tables::table.filters.buttons.reset.label') }}
                 </x-tables::link>
-
-                <x-tables::link
-                    @click="isOpen = false"
-                    color="success"
-                    tag="button"
-                    class="text-sm font-medium"
-                >
-                    {{ __('tables::table.filters.buttons.close.label') }}
-                </x-tables::link>
             </div>
         </div>
     </div>
