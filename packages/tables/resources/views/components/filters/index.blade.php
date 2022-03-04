@@ -41,12 +41,12 @@
             'dark:bg-gray-700' => config('tables.dark_mode'),
         ])>
 
-        <div @class([
-            'absolute top-3 right-3 w-6 h-6 text-gray-300 hover:bg-gray-200 hover:text-gray-400 rounded',
-            'dark:text-gray-400 dark:hover:bg-gray-600' => config('tables.dark_mode'),
-        ]) @click="isOpen = false">
-            <x-heroicon-o-x />
-        </div>
+            <x-tables::icon-button
+                icon="heroicon-o-x"
+                x-on:click="isOpen = ! isOpen"
+                :label="__('tables::table.buttons.open_actions.label')"
+                {{ $attributes->class(['absolute top-3 right-3']) }}
+            />
 
             {{ $form }}
 

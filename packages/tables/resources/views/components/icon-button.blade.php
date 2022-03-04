@@ -14,6 +14,7 @@
         'text-gray-500 focus:bg-gray-500/10' => $color === 'secondary',
         'text-success-500 focus:bg-success-500/10' => $color === 'success',
         'text-warning-500 focus:bg-warning-500/10' => $color === 'warning',
+        'hover:bg-gray-300/5' => config('filament.dark_mode'),
     ];
 
     $iconClasses = 'w-5 h-5 filament-tables-icon-button-icon';
