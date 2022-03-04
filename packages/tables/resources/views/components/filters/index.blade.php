@@ -40,6 +40,14 @@
             'px-6 py-4 bg-white space-y-6 shadow-xl rounded-xl',
             'dark:bg-gray-700' => config('tables.dark_mode'),
         ])>
+
+            <x-tables::icon-button
+                icon="heroicon-o-x"
+                x-on:click="isOpen = ! isOpen"
+                :label=" __('tables::table.filters.buttons.close.label')"
+                {{ $attributes->class(['absolute top-3 right-3']) }}
+            />
+
             {{ $form }}
 
             <div class="text-right">
