@@ -29,9 +29,9 @@ class Mask implements Jsonable
 
     protected ?int $maxLength = null;
 
-    protected ?int $maxValue = null;
+    protected ?float $maxValue = null;
 
-    protected ?int $minValue = null;
+    protected ?float $minValue = null;
 
     protected $pattern = null;
 
@@ -127,14 +127,14 @@ class Mask implements Jsonable
         return $this;
     }
 
-    public function maxValue(?int $value): static
+    public function maxValue(?float $value): static
     {
         $this->maxValue = $value;
 
         return $this;
     }
 
-    public function minValue(?int $value): static
+    public function minValue(?float $value): static
     {
         $this->minValue = $value;
 
