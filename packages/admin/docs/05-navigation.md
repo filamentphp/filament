@@ -134,3 +134,50 @@ Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
     );
 });
 ```
+
+## Customizing the user menu
+
+The user menu is featured in the top right corner of the admin layout. It's fully customizable.
+
+To register new items to the user menu, you should use a service provider:
+
+```php
+use Filament\Facades\Filament;
+use Filament\Navigation\UserMenuItem;
+
+Filament::registerUserMenuItems([
+    UserMenuItem::make()
+        ->label('Settings')
+        ->url(route('filament.pages.settings'))
+        ->icon('heroicon-s-cog'),
+    // ...
+]);
+```
+
+### Customizing the account link
+
+To customize the user account link at the start of the user menu, register a new item with the `account` array key:
+
+```php
+use Filament\Facades\Filament;
+use Filament\Navigation\UserMenuItem;
+
+Filament::registerUserMenuItems([
+    'account' => UserMenuItem::make()->url(route('filament.pages.account')),
+    // ...
+]);
+```
+
+### Customizing the logout link
+
+To customize the user account link at the end of the user menu, register a new item with the `logout` array key:
+
+```php
+use Filament\Facades\Filament;
+use Filament\Navigation\UserMenuItem;
+
+Filament::registerUserMenuItems([
+    // ...
+    'logout' => UserMenuItem::make()->label('Log out'),
+]);
+```

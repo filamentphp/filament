@@ -64,7 +64,7 @@ This will ensure your service provider is automatically loaded by Laravel when t
 
 ## Resources
 
-To register a custom resource, add the fully qualified class name to the `$resources` property in your service provider.
+To register a custom resource, add the fully qualified class name to the `$resources` property in your service provider:
 
 ```php
 use Filament\PluginServiceProvider;
@@ -88,7 +88,7 @@ Filament will automatically register your `Resource` and ensure that Livewire ca
 
 ## Pages
 
-To register a custom page, add the fully qualified class name to the `$pages` property in your service provider.
+To register a custom page, add the fully qualified class name to the `$pages` property in your service provider:
 
 ```php
 use Filament\PluginServiceProvider;
@@ -112,7 +112,7 @@ Filament will automatically register your `Page` and ensure that Livewire can di
 
 ## Widgets
 
-To register a custom widget, add the fully qualified class name to the `$wigdets` property in your service provider.
+To register a custom widget, add the fully qualified class name to the `$wigdets` property in your service provider:
 
 ```php
 use Filament\PluginServiceProvider;
@@ -233,6 +233,36 @@ You may now access this data in your scripts:
     console.log(window.filamentData.userId)
 </script>
 ```
+
+## User menu
+
+To register [user menu items](navigation#customizing-the-user-menu) from your plugin, return them from the `getUserMenuItems()` method in your service provider:
+
+```php
+use Filament\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
+use Vendor\Package\Pages\CustomPage;
+
+class ExampleServiceProvider extends PluginServiceProvider
+{
+    public function configurePackage(Package $package): void
+    {
+        $package->name('your-package-name');
+    }
+    
+    protected function getUserMenuItems(): array
+    {
+        return [
+            UserMenuItem::make()
+                ->label('Settings')
+                ->url(route('filament.pages.settings'))
+                ->icon('heroicon-s-cog'),
+        ];
+    }
+}
+```
+
+Filament will automatically register your `Page` and ensure that Livewire can discover it.
 
 ## Commands, views, translations, migrations and more
 

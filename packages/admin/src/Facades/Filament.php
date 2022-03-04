@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getThemeUrl()
  * @method static string | null getUrl()
  * @method static string | null getUserAvatarUrl(Authenticatable $user)
+ * @method static array getUserMenuItems()
  * @method static string getUserName(Authenticatable $user)
  * @method static array getWidgets()
  * @method static void globalSearchProvider(string $provider)
@@ -40,6 +41,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerScriptData(array $data)
  * @method static void registerStyles(array $styles)
  * @method static void registerTheme(string $url)
+ * @method static void registerUserMenuItems(array $items)
  * @method static void registerWidgets(array $widgets)
  * @method static void serving(Closure $callback)
  *

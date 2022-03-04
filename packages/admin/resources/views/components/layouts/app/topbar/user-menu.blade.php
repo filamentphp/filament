@@ -38,7 +38,7 @@
                 } else if (this.theme === 'light' && document.documentElement.classList.contains('dark')) {
                     document.documentElement.classList.remove('dark')
                 }
-                
+
                 $dispatch('dark-mode-toggled', this.theme)
             })
         },
@@ -74,11 +74,20 @@
             'py-1 space-y-1 overflow-hidden bg-white shadow rounded-xl',
             'dark:border-gray-600 dark:bg-gray-700' => config('filament.dark_mode'),
         ])>
-            <li class="flex items-center w-full h-8 px-3 text-sm font-medium">
-                <x-heroicon-s-user-circle class="mr-2 -ml-1 rtl:ml-2 rtl:-mr-1 w-6 h-6 text-gray-500" />
+            @php
+                $items = \Filament\Facades\Filament::getUserMenuItems();
+                $accountItem = $items['account'] ?? null;
+                $logoutItem = $items['logout'] ?? null;
+            @endphp
 
-                {{ \Filament\Facades\Filament::getUserName($user) }}
-            </li>
+            <x-filament::dropdown.item
+                :color="$accountItem?->getColor() ?? 'secondary'"
+                :icon="$accountItem?->getIcon() ?? 'heroicon-s-user-circle'"
+                :href="$accountItem?->getUrl()"
+                tag="a"
+            >
+                {{ $accountItem?->getLabel() ?? \Filament\Facades\Filament::getUserName($user) }}
+            </x-filament::dropdown.item>
 
             <div>
                 @if (config('filament.dark_mode'))
@@ -92,8 +101,26 @@
                 @endif
             </div>
 
-            <x-filament::dropdown.item icon="heroicon-s-logout" color="secondary" :href="route('filament.auth.logout')" tag="a">
-                {{ __('filament::layout.buttons.logout.label') }}
+            @foreach ($items as $key => $item)
+                @if ($key !== 'account' && $key !== 'logout')
+                    <x-filament::dropdown.item
+                        :color="$item->getColor() ?? 'secondary'"
+                        :icon="$item->getIcon()"
+                        :href="$item->getUrl()"
+                        tag="a"
+                    >
+                        {{ $item->getLabel() }}
+                    </x-filament::dropdown.item>
+                @endif
+            @endforeach
+
+            <x-filament::dropdown.item
+                :color="$logoutItem?->getColor() ?? 'secondary'"
+                :icon="$logoutItem?->getIcon() ?? 'heroicon-s-logout'"
+                :href="$logoutItem?->getUrl() ?? route('filament.auth.logout')"
+                tag="a"
+            >
+                {{ $logoutItem?->getLabel() ?? __('filament::layout.buttons.logout.label') }}
             </x-filament::dropdown.item>
         </ul>
     </div>
