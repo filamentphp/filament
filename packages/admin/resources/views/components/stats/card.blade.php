@@ -13,11 +13,8 @@
 
 <{!! $tag !!}
     {{ $attributes->class([
-        'relative p-6 rounded-2xl filament-stats-card',
-        'bg-white shadow' => ! $flat,
-        'dark:bg-gray-800' => (! $flat) && config('filament.dark_mode'),
-        'border' => $flat,
-        'dark:border-gray-700' => $flat && config('filament.dark_mode'),
+        'relative p-6 rounded-2xl bg-white shadow filament-stats-card',
+        'dark:bg-gray-800' => config('filament.dark_mode'),
     ]) }}
 >
     <div @class([
