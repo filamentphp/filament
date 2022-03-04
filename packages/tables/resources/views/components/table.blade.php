@@ -11,7 +11,7 @@
         <thead>
             <tr @class([
                 'bg-gray-50',
-                'dark:bg-gray-500/10',
+                'dark:bg-gray-500/10' => config('tables.dark_mode'),
             ])>
                 {{ $header }}
             </tr>
