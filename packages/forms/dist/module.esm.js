@@ -12,6 +12,10 @@ var __commonJS = (callback, module) => () => {
   }
   return module.exports;
 };
+var __export = (target, all) => {
+  for (var name2 in all)
+    __defProp(target, name2, {get: all[name2], enumerable: true});
+};
 var __exportStar = (target, module, desc) => {
   if (module && typeof module === "object" || typeof module === "function") {
     for (let key of __getOwnPropNames(module))
@@ -6368,6 +6372,21 @@ var date_time_picker_default = (Alpine) => {
 };
 
 // node_modules/filepond/dist/filepond.esm.js
+var filepond_esm_exports = {};
+__export(filepond_esm_exports, {
+  FileOrigin: () => FileOrigin$1,
+  FileStatus: () => FileStatus,
+  OptionTypes: () => OptionTypes,
+  Status: () => Status$1,
+  create: () => create$f,
+  destroy: () => destroy,
+  find: () => find,
+  getOptions: () => getOptions$1,
+  parse: () => parse,
+  registerPlugin: () => registerPlugin,
+  setOptions: () => setOptions$1,
+  supported: () => supported
+});
 /*!
  * FilePond 4.30.3
  * Licensed under MIT, https://opensource.org/licenses/MIT/
@@ -16039,6 +16058,7 @@ registerPlugin(filepond_plugin_image_preview_esm_default);
 registerPlugin(filepond_plugin_image_resize_esm_default);
 registerPlugin(filepond_plugin_image_transform_esm_default);
 registerPlugin(plugin8);
+window.FilePond = filepond_esm_exports;
 var file_upload_default = (Alpine) => {
   Alpine.data("fileUploadFormComponent", ({
     acceptedFileTypes,
