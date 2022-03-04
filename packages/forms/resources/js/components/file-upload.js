@@ -22,6 +22,8 @@ FilePond.registerPlugin(FilePondPluginImageResize)
 FilePond.registerPlugin(FilePondPluginImageTransform)
 FilePond.registerPlugin(FilePondPluginMediaPreview)
 
+window.FilePond = FilePond;
+
 export default (Alpine) => {
     Alpine.data('fileUploadFormComponent', ({
         acceptedFileTypes,

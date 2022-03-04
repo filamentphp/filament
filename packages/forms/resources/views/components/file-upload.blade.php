@@ -2,18 +2,18 @@
     @push('scripts')
         @php
             $locale = strtolower(str_replace('_', '-', app()->getLocale()));
-            
+
             $defaultLocaleData = ($placeholder = $getPlaceholder()) ? "{ labelIdle: '{$placeholder}' }" : '{}';
-            
+
             if (! str_contains($locale, '-')) {
                 $locale .= '-' . $locale;
             }
         @endphp
-        
+
         <script type="module">
             import localeData from 'https://cdn.skypack.dev/filepond/locale/{{$locale}}.js'
-            
-            window.dispatchEvent(new CustomEvent('filepond-locale-updated', { detail: { ...localeData, ...{!! $defaultLocaleData !!} } }))
+
+            window.FilePond && window.FilePond.setOptions({ ...localeData, ...{!! $defaultLocaleData !!} })
         </script>
     @endpush
 @endonce
@@ -66,7 +66,6 @@
                 }, error, progress)
             },
         })"
-        x-on:filepond-locale-updated.window="pond.setOptions($event.detail)"
         wire:ignore
         style="min-height: {{ $isAvatar() ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }}"
         {{ $attributes->merge($getExtraAttributes())->class([
