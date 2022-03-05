@@ -36,18 +36,19 @@
     >
         <button
             @unless($isDisabled())
-                x-ref="button"
-                x-on:click="togglePickerVisibility()"
-                x-on:keydown.enter.stop.prevent="open ? selectDate() : openPicker()"
-                x-on:keydown.arrow-left.stop.prevent="focusPreviousDay()"
-                x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
-                x-on:keydown.arrow-up.stop.prevent="focusPreviousWeek()"
-                x-on:keydown.arrow-down.stop.prevent="focusNextWeek()"
-                x-on:keydown.backspace.stop.prevent="clearState()"
-                x-on:keydown.clear.stop.prevent="clearState()"
-                x-on:keydown.delete.stop.prevent="clearState()"
-                x-bind:aria-expanded="open"
-                aria-label="{{ $getPlaceholder() }}"
+            x-ref="button"
+            x-on:click="togglePickerVisibility()"
+            x-on:keydown.enter.stop.prevent="open ? selectDate() : openPicker()"
+            x-on:keydown.arrow-left.stop.prevent="focusPreviousDay()"
+            x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
+            x-on:keydown.arrow-up.stop.prevent="focusPreviousWeek()"
+            x-on:keydown.arrow-down.stop.prevent="focusNextWeek()"
+            x-on:keydown.backspace.stop.prevent="clearState()"
+            x-on:keydown.clear.stop.prevent="clearState()"
+            x-on:keydown.delete.stop.prevent="clearState()"
+            x-bind:aria-expanded="open"
+            aria-label="{{ $getPlaceholder() }}"
+            dusk="{{ $getStatePath() }}.open"
             @endunless
             type="button"
             {{ $getExtraTriggerAttributeBag()->class([
@@ -103,6 +104,7 @@
                                     'grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none',
                                     'dark:bg-gray-700 dark:text-gray-200' => config('forms.dark_mode'),
                                 ])
+                                dusk="{{ $getStatePath() }}.focusedMonth"
                             >
                                 <template x-for="(month, index) in months">
                                     <option x-bind:value="index" x-text="month"></option>
@@ -117,6 +119,7 @@
                                     'w-20 p-0 text-lg text-right border-0 focus:ring-0 focus:outline-none',
                                     'dark:bg-gray-700 dark:text-gray-200' => config('forms.dark_mode'),
                                 ])
+                                dusk="{{ $getStatePath() }}.focusedYear"
                             />
                         </div>
 
@@ -153,6 +156,7 @@
                                         'cursor-not-allowed': dayIsDisabled(day),
                                         'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                     }"
+                                    x-bind:dusk="'{{ $getStatePath() }}' + '.focusedDate.' + day"
                                     class="text-sm leading-loose text-center transition duration-100 ease-in-out rounded-full"
                                 ></div>
                             </template>
@@ -179,6 +183,7 @@
                                     'bg-gray-50' => $hasDate(),
                                     'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
                                 ])
+                                dusk="{{ $getStatePath() }}.hour"
                             />
 
                             <span
@@ -202,6 +207,7 @@
                                     'bg-gray-50' => $hasDate(),
                                     'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
                                 ])
+                                dusk="{{ $getStatePath() }}.minute"
                             />
 
                             @if ($hasSeconds())
@@ -221,6 +227,7 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="second"
+                                    dusk="{{ $getStatePath() }}.second"
                                     @class([
                                         'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
                                         'dark:text-gray-200' => config('forms.dark_mode'),

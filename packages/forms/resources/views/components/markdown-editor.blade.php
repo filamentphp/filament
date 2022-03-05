@@ -179,6 +179,7 @@
                         {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
                         {!! $isRequired() ? 'required' : null !!}
                         x-model="state"
+                        dusk="{{ $getStatePath() }}"
                         x-on:keyup.enter="checkForAutoInsertion"
                         x-on:file-attachment-accepted.window="
                             attachment = $event.detail?.attachments?.[0]

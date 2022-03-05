@@ -18,6 +18,7 @@
                 type="checkbox"
                 {!! $isRequired() ? 'required' : null !!}
                 {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
+                dusk="{{ $getStatePath() }}"
                 {{
                     $attributes
                         ->merge($getExtraAttributes())

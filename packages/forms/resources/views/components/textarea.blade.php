@@ -15,6 +15,7 @@
         {!! ($cols = $getCols()) ? "cols=\"{$cols}\"" : null !!}
         {!! $isDisabled() ? 'disabled' : null !!}
         id="{{ $getId() }}"
+        dusk="{{ $getStatePath() }}"
         {!! filled($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
         {!! filled($length = $getMinLength()) ? "minlength=\"{$length}\"" : null !!}
         {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
