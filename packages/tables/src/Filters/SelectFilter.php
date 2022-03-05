@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
@@ -42,12 +43,19 @@ class SelectFilter extends Filter
         }
 
         if ($this->queriesRelationships()) {
-            /** @var BelongsTo $relationship */
             $relationship = $this->getRelationship();
+
+            if ($relationship instanceof MorphToMany) {
+                /** @var MorphToMany $relationship */
+                $column = $relationship->getParentKeyName();
+            } else {
+                /** @var BelongsTo $relationship */
+                $column = $relationship->getOwnerKeyName();
+            }
 
             return $query->whereRelation(
                 $this->getRelationshipName(),
-                $relationship->getOwnerKeyName(),
+                $column,
                 $data['value'],
             );
         }
@@ -62,7 +70,7 @@ class SelectFilter extends Filter
         return $this;
     }
 
-    public function relationship(string $relationshipName, string $displayColumnName): static
+    public function relationship(string $relationshipName, string $displayColumnName = null): static
     {
         $this->column("{$relationshipName}.{$displayColumnName}");
 
