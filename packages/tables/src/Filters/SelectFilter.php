@@ -48,15 +48,15 @@ class SelectFilter extends Filter
 
             if ($relationship instanceof MorphToMany) {
                 /** @var MorphToMany $relationship */
-                $column = $relationship->getParentKeyName();
+                $keyColumn = $relationship->getParentKeyName();
             } else {
                 /** @var BelongsTo $relationship */
-                $column = $relationship->getOwnerKeyName();
+                $keyColumn = $relationship->getOwnerKeyName();
             }
 
             return $query->whereRelation(
                 $this->getRelationshipName(),
-                $column,
+                $keyColumn,
                 $data['value'],
             );
         }

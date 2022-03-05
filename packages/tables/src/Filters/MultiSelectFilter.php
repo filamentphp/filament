@@ -45,16 +45,16 @@ class MultiSelectFilter extends Filter
 
             if ($relationship instanceof MorphToMany) {
                 /** @var MorphToMany $relationship */
-                $column = $relationship->getParentKeyName();
+                $keyColumn = $relationship->getParentKeyName();
             } else {
                 /** @var BelongsTo $relationship */
-                $column = $relationship->getOwnerKeyName();
+                $keyColumn = $relationship->getOwnerKeyName();
             }
 
             return $query->whereHas(
                 $this->getRelationshipName(),
                 fn (Builder $query) => $query->whereIn(
-                    $column,
+                    $keyColumn,
                     $data['values'],
                 ),
             );
