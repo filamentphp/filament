@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\Components\MultiSelect;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
@@ -40,13 +41,20 @@ class MultiSelectFilter extends Filter
         }
 
         if ($this->queriesRelationships()) {
-            /** @var BelongsTo $relationship */
             $relationship = $this->getRelationship();
+
+            if ($relationship instanceof MorphToMany) {
+                /** @var MorphToMany $relationship */
+                $column = $relationship->getParentKeyName();
+            } else {
+                /** @var BelongsTo $relationship */
+                $column = $relationship->getOwnerKeyName();
+            }
 
             return $query->whereHas(
                 $this->getRelationshipName(),
                 fn (Builder $query) => $query->whereIn(
-                    $relationship->getOwnerKeyName(),
+                    $column,
                     $data['values'],
                 ),
             );
@@ -65,7 +73,7 @@ class MultiSelectFilter extends Filter
         return $this;
     }
 
-    public function relationship(string $relationshipName, string $displayColumnName): static
+    public function relationship(string $relationshipName, string $displayColumnName = null): static
     {
         $this->column("{$relationshipName}.{$displayColumnName}");
 
