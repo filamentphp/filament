@@ -94,15 +94,22 @@ class MultiSelectFilter extends Filter
 
     protected function getRelationshipOptions(): array
     {
-        /** @var BelongsTo $relationship */
         $relationship = $this->getRelationship();
+
+        if ($relationship instanceof MorphToMany) {
+            /** @var MorphToMany $relationship */
+            $keyColumn = $relationship->getParentKeyName();
+        } else {
+            /** @var BelongsTo $relationship */
+            $keyColumn = $relationship->getOwnerKeyName();
+        }
 
         $displayColumnName = $this->getRelationshipDisplayColumnName();
 
         $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
 
         return $relationshipQuery
-            ->pluck($displayColumnName, $relationship->getOwnerKeyName())
+            ->pluck($displayColumnName, $keyColumn)
             ->toArray();
     }
 
