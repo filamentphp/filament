@@ -43,7 +43,6 @@ class SelectFilter extends Filter
         }
 
         if ($this->queriesRelationships()) {
-            /** @var BelongsTo $relationship */
             $relationship = $this->getRelationship();
 
             if ($relationship instanceof MorphToMany) {
