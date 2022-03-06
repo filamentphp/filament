@@ -10,7 +10,7 @@ class SelectFilter extends Filter
 {
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
-    use Concerns\HasRelation;
+    use Concerns\HasRelationship;
 
     protected string | Closure | null $column = null;
 

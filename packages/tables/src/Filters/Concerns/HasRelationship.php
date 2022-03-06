@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
-trait HasRelation
+trait HasRelationship
 {
     public function relationship(string $relationshipName, string $displayColumnName = null): static
     {
@@ -16,7 +16,7 @@ trait HasRelation
         return $this;
     }
 
-    public function getRelationshipKey()
+    public function getRelationshipKey(): string
     {
         $relationship = $this->getRelationship();
 
@@ -39,7 +39,7 @@ trait HasRelation
         $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
 
         return $relationshipQuery
-            ->pluck($displayColumnName, $this->getRelationshipKey($relationship))
+            ->pluck($displayColumnName, $this->getRelationshipKey())
             ->toArray();
     }
 
