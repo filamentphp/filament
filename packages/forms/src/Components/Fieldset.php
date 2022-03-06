@@ -25,6 +25,6 @@ class Fieldset extends Component
 
         $this->columnSpan('full');
 
-        $this->columns(2);
+        $this->columns();
     }
 }
