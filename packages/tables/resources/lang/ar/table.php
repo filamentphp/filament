@@ -93,6 +93,10 @@ return [
                 'label' => 'إعادة ضبط الفلترة',
             ],
 
+            'close' => [
+                'label' => 'غلق',
+            ],
+
         ],
 
         'multi_select' => [
