@@ -38,12 +38,10 @@ class MultiSelectFilter extends Filter
         }
 
         if ($this->queriesRelationships()) {
-            $relationship = $this->getRelationship();
-
             return $query->whereHas(
                 $this->getRelationshipName(),
                 fn (Builder $query) => $query->whereIn(
-                    $this->getRelationKey($relationship),
+                    $this->getRelationshipKey(),
                     $data['values'],
                 ),
             );

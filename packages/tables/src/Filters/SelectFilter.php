@@ -40,11 +40,9 @@ class SelectFilter extends Filter
         }
 
         if ($this->queriesRelationships()) {
-            $relationship = $this->getRelationship();
-
             return $query->whereRelation(
                 $this->getRelationshipName(),
-                $this->getRelationKey($relationship),
+                $this->getRelationshipKey(),
                 $data['value'],
             );
         }

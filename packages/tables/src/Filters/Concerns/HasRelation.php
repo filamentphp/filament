@@ -16,10 +16,11 @@ trait HasRelation
         return $this;
     }
 
-    public function getRelationKey($relationship)
+    public function getRelationshipKey()
     {
+        $relationship = $this->getRelationship();
+
         if ($relationship instanceof MorphToMany) {
-            /** @var MorphToMany $relationship */
             $keyColumn = $relationship->getParentKeyName();
         } else {
             /** @var BelongsTo $relationship */
@@ -38,7 +39,7 @@ trait HasRelation
         $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
 
         return $relationshipQuery
-            ->pluck($displayColumnName, $this->getRelationKey($relationship))
+            ->pluck($displayColumnName, $this->getRelationshipKey($relationship))
             ->toArray();
     }
 
