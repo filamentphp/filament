@@ -27,6 +27,11 @@
                 })
             })
         "
+        x-on:trix-file-accept="
+            if ({{ $hasToolbarButton('attachFiles') ? 'true' : 'false' }}) return
+
+            event.preventDefault()
+        "
         wire:ignore
         {{ $attributes->merge($getExtraAttributes())->class(['space-y-2 filament-forms-rich-editor-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
