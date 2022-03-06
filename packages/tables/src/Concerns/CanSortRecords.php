@@ -64,13 +64,15 @@ trait CanSortRecords
             return $query;
         }
 
+        $direction = $this->tableSortDirection ?? 'asc';
+
         $column = $this->getCachedTableColumn($columnName);
 
         if (! $column) {
-            return $query;
+            return $query->orderBy($columnName, $direction);
         }
 
-        $column->applySort($query, $this->tableSortDirection ?? 'asc');
+        $column->applySort($query, $direction);
 
         return $query;
     }
