@@ -107,7 +107,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => 'تم تحديد سجل واحد.|:count سجل/سجلات تم تحديدها.',
+        'selected_count' => '{1} تم تحديد سجل واحد.|[2,*] :count سجل/سجلات تم تحديدها.',
 
         'buttons' => [
 
