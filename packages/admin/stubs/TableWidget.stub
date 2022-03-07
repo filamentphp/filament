@@ -1,0 +1,28 @@
+<?php
+
+namespace {{ namespace }};
+
+use Closure;
+use Filament\Tables;
+use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Database\Eloquent\Builder;
+
+class {{ class }} extends BaseWidget
+{
+    protected function getTableHeading(): string | Closure | null
+    {
+        return 'Table';
+    }
+
+    protected function getTableQuery(): Builder
+    {
+        return null;
+    }
+
+    protected function getTableColumns(): array
+    {
+        return [
+            // ...
+        ];
+    }
+}
