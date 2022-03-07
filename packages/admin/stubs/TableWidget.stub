@@ -9,14 +9,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 class {{ class }} extends BaseWidget
 {
-    protected function getTableHeading(): string | Closure | null
-    {
-        return '{{ class }}';
-    }
-
     protected function getTableQuery(): Builder
     {
-        return Model::all();
+        // ...
     }
 
     protected function getTableColumns(): array
