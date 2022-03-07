@@ -2,6 +2,7 @@
 
 namespace Filament\Widgets;
 
+use Closure;
 use Filament\Tables;
 use Illuminate\Support\Str;
 
