@@ -16,7 +16,7 @@ class {{ class }} extends BaseWidget
 
     protected function getTableQuery(): Builder
     {
-        return {{ class }}::all();
+        return Model::all();
     }
 
     protected function getTableColumns(): array
