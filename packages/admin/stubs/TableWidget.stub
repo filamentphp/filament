@@ -11,12 +11,12 @@ class {{ class }} extends BaseWidget
 {
     protected function getTableHeading(): string | Closure | null
     {
-        return 'Table';
+        return '{{ class }}';
     }
 
     protected function getTableQuery(): Builder
     {
-        return null;
+        return {{ class }}::all();
     }
 
     protected function getTableColumns(): array
