@@ -17,6 +17,7 @@ class TableWidget extends Widget implements Tables\Contracts\HasTable
     protected function getTableHeading(): string | Closure | null
     {
         return static::$heading ?? (string) Str::of(class_basename(static::class))
+            ->beforeLast('Widget')
             ->kebab()
             ->replace('-', ' ')
             ->title();
