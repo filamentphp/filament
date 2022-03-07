@@ -174,11 +174,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class OrdersOverview extends BaseWidget
 {
-    protected function getTableHeading(): string | Closure | null
-    {
-        return 'Recent Orders';
-    }
-
     protected function getTableQuery(): Builder
     {
         return Order::query()->orderBy('created_at', 'desc')->limit(10);
