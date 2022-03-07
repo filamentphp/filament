@@ -44,7 +44,7 @@ Filament comes with a "stats overview" widget template, which you can use to dis
 Start by creating a widget with the command:
 
 ```bash
-php artisan make:filament-widget StatsOverview
+php artisan make:filament-widget StatsOverviewWidget
 ```
 
 You can delete the generated view file, as we're using a template.
