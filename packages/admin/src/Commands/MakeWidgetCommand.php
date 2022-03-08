@@ -12,7 +12,7 @@ class MakeWidgetCommand extends Command
 
     protected $description = 'Creates a Filament widget class.';
 
-    protected $signature = 'make:filament-widget {name?} {--R|resource=} {--C|chart} {--S|stats-overview} {--F|force}';
+    protected $signature = 'make:filament-widget {name?} {--R|resource=} {--C|chart} {--T|table} {--S|stats-overview} {--F|force}';
 
     public function handle(): int
     {
@@ -93,6 +93,11 @@ class MakeWidgetCommand extends Command
                 'class' => $widgetClass,
                 'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
                 'chart' => Str::studly($chart),
+            ]);
+        } elseif ($this->option('table')) {
+            $this->copyStubToApp('TableWidget', $path, [
+                'class' => $widgetClass,
+                'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
             ]);
         } elseif ($this->option('stats-overview')) {
             $this->copyStubToApp('StatsOverviewWidget', $path, [

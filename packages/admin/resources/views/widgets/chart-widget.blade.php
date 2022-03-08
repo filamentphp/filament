@@ -1,4 +1,4 @@
-<x-filament::widget class="filament-wigets-chart-widget">
+<x-filament::widget class="filament-widgets-chart-widget">
     <x-filament::card>
         <div class="flex items-center justify-between gap-8">
             <x-filament::card.heading>
