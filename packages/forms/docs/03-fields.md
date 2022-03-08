@@ -976,7 +976,19 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('attachment')->preserveFilenames()
 ```
 
-> Please note, it is the responsibility of the developer to ensure that uploaded file names are unique when using this option.
+By default, the `FileUpload` component will detect if duplicate files are present on the given disk and increment them accordingly. You can change this behaviour by passing a closure to `getFileNameForStorageUsing` and returning a string. To disable this behaviour completely, pass `false`:
+
+```
+FileUpload::make('attachment')
+    ->getFileNameForStorageUsing(function($component, $file) {
+        //...implement logic for new filename
+    })
+
+FileUpload::make('attachment')
+    ->getFilenameForStorageUsing(false); //if a file with the same name exists, it will be overwritten
+```
+
+
 
 You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types. You may also use the `image()` method as shorthand to allow all image MIME types.
 
