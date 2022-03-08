@@ -555,7 +555,7 @@ public static function getGlobalSearchResultUrl(Model $record): string
 
 ## Simple (modal) resources
 
-Sometimes, your resources are simple enough that you only want to manage records on one page, using modals to create, edit and delete records. Your resource is has a "Manage" page, which is a List page with modals added. To generate a simple resource with modals:
+Sometimes, your resources are simple enough that you only want to manage records on one page, using modals to create, edit and delete records. Your resource has a "Manage" page, which is a List page with modals added. To generate a simple resource with modals:
 
 ```bash
 php artisan make:filament-resource Customer --simple
