@@ -44,12 +44,10 @@ Filament comes with a "stats overview" widget template, which you can use to dis
 Start by creating a widget with the command:
 
 ```bash
-php artisan make:filament-widget StatsOverview
+php artisan make:filament-widget StatsOverview --stats-overview
 ```
 
-You can delete the generated view file, as we're using a template.
-
-Change the class so that it extends `StatsOverviewWidget` instead of `Widget`, then return `Card` instances from the `getCards()` method:
+Then return `Card` instances from the `getCards()` method:
 
 ```php
 <?php
@@ -154,12 +152,10 @@ Filament comes with a "table" widget template, which you can use to display a ta
 Start by creating a widget with the command:
 
 ```bash
-php artisan make:filament-widget OrdersOverview
+php artisan make:filament-widget LatestOrders --table
 ```
 
-You can delete the generated view file, as we're using a template.
-
-Change the class so that it extends `TableWidget` instead of `Widget`, then update the `getTableQuery()` and `getTableColumns()` methods to return the data query and columns you want to display:
+Then update the `getTableQuery()` and `getTableColumns()` methods to return the data query and columns you want to display:
 
 ```php
 <?php
@@ -172,11 +168,11 @@ use Filament\Tables;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 
-class OrdersOverview extends BaseWidget
+class LatestOrders extends BaseWidget
 {
     protected function getTableQuery(): Builder
     {
-        return Order::query()->orderBy('created_at', 'desc')->limit(10);
+        return Order::query()->latest()->limit(10);
     }
 
     protected function getTableColumns(): array
@@ -199,12 +195,10 @@ Filament comes with many "chart" widget template, which you can use to display r
 Start by creating a widget with the command:
 
 ```bash
-php artisan make:filament-widget BlogPostsChart
+php artisan make:filament-widget BlogPostsChart --chart
 ```
 
-You can delete the generated view file, as we're using a template.
-
-Change the class so that it extends a chart widget class instead of `Widget`. There are several chart classes available, but we'll use the `LineChartWidget` class for this example.
+There are several chart classes available, but we'll use the `LineChartWidget` class for this example.
 
 The `getHeading()` method is used to return a heading that describes the chart.
 
