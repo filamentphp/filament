@@ -20,7 +20,7 @@ protected function getTableColumns(): array
 If you're using them in admin panel resources or relation managers, you must put them in the `$table->columns()` method:
 
 ```php
-public static function table(Table $table): Form
+public static function table(Table $table): Table
 {
     return $table
         ->columns([

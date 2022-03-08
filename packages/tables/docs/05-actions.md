@@ -70,7 +70,7 @@ protected function getTableBulkActions(): array
 If you're using them in admin panel resources or relation managers, you must put them on the `$table`:
 
 ```php
-public static function table(Table $table): Form
+public static function table(Table $table): Table
 {
     return $table
         // Add the actions before the default action (before Delete)
