@@ -3,16 +3,15 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Livewire\TemporaryUploadedFile;
-use Filament\Forms\Components\Field;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Filesystem\FilesystemAdapter;
-use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Livewire\TemporaryUploadedFile;
 
 class BaseFileUpload extends Field
 {
@@ -112,8 +111,7 @@ class BaseFileUpload extends Field
             return $storage->url($file);
         });
 
-        $this->getFileNameForStorageUsing(function(BaseFileUpload $component, TemporaryUploadedFile $file) {
-
+        $this->getFileNameForStorageUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file) {
             $filename = $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
 
             $originalFileName = str_replace(" ", "-", $filename);
@@ -121,22 +119,18 @@ class BaseFileUpload extends Field
             $filename = File::name($originalFileName);
             $extension = File::extension($originalFileName);
 
-            if(Storage::disk($this->getDiskName())->exists($originalFileName)) {
-                
+            if (Storage::disk($this->getDiskName())->exists($originalFileName)) {
                 $allFiles = collect(Storage::disk($this->getDiskName())->allFiles())
-                    ->map(fn($file) => File::name($file)) //take the filenames only
-                    ->reject(fn($item) => $item == "") //reject empty filenames
-                    ->reject(fn($item) => !preg_match("/{$filename}-[0-9]*$/", $item)) //reject anything that doesnt match filename-xx
-                    ->sort(); 
-                    
+                    ->map(fn ($file) => File::name($file)) //take the filenames only
+                    ->reject(fn ($item) => $item == "") //reject empty filenames
+                    ->reject(fn ($item) => ! preg_match("/{$filename}-[0-9]*$/", $item)) //reject anything that doesnt match filename-xx
+                    ->sort();
 
-                if($allFiles->count())
-                {
+
+                if ($allFiles->count()) {
                     $f = $allFiles->last();
                     $filename = ++$f;
-                }
-                else
-                {
+                } else {
                     //just add a suffix
                     $filename .= "-01";
                 }
@@ -150,7 +144,7 @@ class BaseFileUpload extends Field
         $this->saveUploadedFileUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file): string {
             $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
 
-            if($this->fileNameForStorage) {
+            if ($this->fileNameForStorage) {
                 $filename = $this->fileNameForStorage($file);
             } else {
                 $filename = $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
@@ -517,7 +511,7 @@ class BaseFileUpload extends Field
     public function fileNameForStorage(TemporaryUploadedFile $file): string
     {
         return $this->evaluate($this->fileNameForStorage, [
-            'file' => $file
+            'file' => $file,
         ]);
     }
 }
