@@ -32,7 +32,6 @@
 
             $event.preventDefault()
         "
-        wire:ignore
         {{ $attributes->merge($getExtraAttributes())->class(['space-y-2 filament-forms-rich-editor-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
@@ -281,6 +280,7 @@
             </trix-toolbar>
 
             <trix-editor
+                wire:ignore
                 {!! $isAutofocused() ? 'autofocus' : null !!}
                 id="{{ $getId() }}"
                 input="trix-value-{{ $getId() }}"
