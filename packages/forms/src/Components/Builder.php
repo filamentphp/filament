@@ -24,6 +24,8 @@ class Builder extends Field
 
     protected bool | Closure $isItemCreationDisabled = false;
 
+    protected bool | Closure $isItemBetweenCreationDisabled = false;
+
     protected bool | Closure $isItemDeletionDisabled = false;
 
     protected function setUp(): void
@@ -196,6 +198,13 @@ class Builder extends Field
         return $this;
     }
 
+    public function disableItemBetweenCreation(bool | Closure $condition = true): static
+    {
+        $this->isItemBetweenCreationDisabled = $condition;
+
+        return $this;
+    }
+
     public function disableItemDeletion(bool | Closure $condition = true): static
     {
         $this->isItemDeletionDisabled = $condition;
@@ -256,6 +265,11 @@ class Builder extends Field
     public function isItemCreationDisabled(): bool
     {
         return $this->evaluate($this->isItemCreationDisabled);
+    }
+    
+    public function isItemBetweenCreationDisabled(): bool
+    {
+        return $this->evaluate($this->isItemBetweenCreationDisabled);
     }
 
     public function isItemDeletionDisabled(): bool
