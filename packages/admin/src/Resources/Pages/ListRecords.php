@@ -136,7 +136,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function handleRecordBulkDeletion(Collection $records): void
     {
-        $records->each(fn (Model $record) => $record->delete());
+        $records->each(fn (Model $record) => static::getResource()::canDelete($record) ? $record->delete() : null);
     }
 
     protected function getTitle(): string
