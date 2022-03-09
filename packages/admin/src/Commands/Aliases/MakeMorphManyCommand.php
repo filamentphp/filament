@@ -4,7 +4,7 @@ namespace Filament\Commands\Aliases;
 
 use Filament\Commands;
 
-class MakeMorphManyCommand extends Commands\MakeHasManyCommand
+class MakeMorphManyCommand extends Commands\MakeMorphManyCommand
 {
     protected $hidden = true;
 
