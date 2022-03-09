@@ -93,6 +93,10 @@ return [
                 'label' => 'Resetea los filtros',
             ],
 
+            'close' => [
+                'label' => 'Cerrar',
+            ],
+
         ],
 
         'multi_select' => [
