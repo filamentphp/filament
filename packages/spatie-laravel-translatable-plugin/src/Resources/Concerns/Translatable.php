@@ -8,7 +8,8 @@ trait Translatable
 {
     public static function getDefaultTranslatableLocale(): string
     {
-        return static::getTranslatableLocales()[0];
+        $firstLocaleKey = array_key_first(static::getTranslatableLocales());
+        return static::getTranslatableLocales()[$firstLocaleKey];
     }
 
     public static function getTranslatableAttributes(): array
