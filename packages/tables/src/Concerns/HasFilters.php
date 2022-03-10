@@ -60,7 +60,7 @@ trait HasFilters
     {
         $data = $this->getTableFiltersForm()->getState();
 
-        return $query->where(function (Builder $query) use ($data) {
+        return $query->where(function () use ($query, $data) {
             foreach ($this->getCachedTableFilters() as $filter) {
                 $filter->apply(
                     $query,
