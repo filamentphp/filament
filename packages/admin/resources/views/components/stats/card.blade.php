@@ -2,6 +2,7 @@
     'chart' => null,
     'chartColor' => null,
     'color' => null,
+    'icon' => null,
     'description' => null,
     'descriptionColor' => null,
     'descriptionIcon' => null,
@@ -50,6 +51,10 @@
             </div>
         @endif
     </div>
+
+    @if ($icon)
+        <x-dynamic-component :component="$icon" class="absolute top-1 left-auto right-2 w-24 h-24 text-gray-300 rtl:left-2 rtl:right-auto" />
+    @endif
 
     @if ($chart)
         <div class="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden">
