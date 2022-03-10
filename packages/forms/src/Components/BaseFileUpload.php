@@ -405,7 +405,7 @@ class BaseFileUpload extends Field
 
                 $callback = $this->getUploadedFileUrlUsing;
 
-                if (!$callback) {
+                if (! $callback) {
                     return null;
                 }
 
