@@ -16065,7 +16065,7 @@ var file_upload_default = (Alpine) => {
     canReorder,
     canPreview,
     deleteUploadedFileUsing,
-    getUploadedFileUrlUsing,
+    getUploadedFilesUrlUsing,
     imageCropAspectRatio,
     imagePreviewHeight,
     imageResizeTargetHeight,
@@ -16087,27 +16087,11 @@ var file_upload_default = (Alpine) => {
   }) => {
     return {
       fileKeyIndex: {},
-      files: [],
       pond: null,
       shouldUpdateState: true,
       state: state2,
       uploadedFileUrlIndex: {},
       init: async function() {
-        for (const [fileKey, file2] of Object.entries(this.state)) {
-          if (file2.startsWith("livewire-file:")) {
-            continue;
-          }
-          let uploadedFileUrl = await this.getUploadedFileUrl(fileKey);
-          if (!uploadedFileUrl) {
-            continue;
-          }
-          this.files.push({
-            source: uploadedFileUrl,
-            options: {
-              type: "local"
-            }
-          });
-        }
         this.pond = create$f(this.$refs.input, {
           acceptedFileTypes,
           allowReorder: canReorder,
@@ -16115,7 +16099,7 @@ var file_upload_default = (Alpine) => {
           allowVideoPreview: canPreview,
           allowAudioPreview: canPreview,
           credits: false,
-          files: shouldAppendFiles ? this.files : this.files.reverse(),
+          files: await this.getFiles(),
           imageCropAspectRatio,
           imagePreviewHeight,
           imageResizeTargetHeight,
@@ -16165,35 +16149,36 @@ var file_upload_default = (Alpine) => {
           if (Object.values(this.state).filter((file2) => file2.startsWith("livewire-file:")).length) {
             return;
           }
-          let files = [];
-          for (let fileKey of Object.keys(this.state)) {
-            let uploadedFileUrl = await this.getUploadedFileUrl(fileKey);
-            if (!uploadedFileUrl) {
-              continue;
-            }
-            files.push({
-              source: uploadedFileUrl,
-              options: {
-                type: "local"
-              }
-            });
-          }
-          this.pond.files = shouldAppendFiles ? files : files.reverse();
+          this.pond.files = await this.getFiles();
         });
         this.pond.on("reorderfiles", async (files) => {
           const orderedFileKeys = files.map((file2) => file2.source instanceof File ? file2.serverId : this.uploadedFileUrlIndex[file2.source] ?? null).filter((fileKey) => fileKey);
           await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse());
         });
       },
-      getUploadedFileUrl: async function(fileKey) {
-        let uploadedFileUrl = this.fileKeyIndex[fileKey] ?? null;
-        if (uploadedFileUrl !== null) {
-          return uploadedFileUrl;
+      getUploadedFilesUrl: async function() {
+        const uploadedFilesUrl = await getUploadedFilesUrlUsing();
+        this.fileKeyIndex = uploadedFilesUrl ?? {};
+        this.uploadedFileUrlIndex = Object.entries(this.fileKeyIndex).filter((value) => value).reduce((obj, [key, value]) => {
+          obj[value] = key;
+          return obj;
+        }, {});
+      },
+      getFiles: async function() {
+        await this.getUploadedFilesUrl();
+        let files = [];
+        for (const uploadedFileUrl of Object.values(this.fileKeyIndex)) {
+          if (!uploadedFileUrl) {
+            continue;
+          }
+          files.push({
+            source: uploadedFileUrl,
+            options: {
+              type: "local"
+            }
+          });
         }
-        uploadedFileUrl = await getUploadedFileUrlUsing(fileKey);
-        this.uploadedFileUrlIndex[uploadedFileUrl] = fileKey;
-        this.fileKeyIndex[fileKey] = uploadedFileUrl;
-        return uploadedFileUrl;
+        return shouldAppendFiles ? files : files.reverse();
       }
     };
   });
