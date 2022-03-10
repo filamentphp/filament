@@ -62,6 +62,7 @@ public static function getNavigationItems(): array
             ->icon($icon)
             ->isActiveWhen($closure)
             ->label($label)
+            ->badge($badge)
             ->sort($sort)
             ->url($url),
     ];

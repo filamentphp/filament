@@ -1,5 +1,6 @@
 @props([
     'active' => false,
+    'badge',
     'icon',
     'url',
 ])
@@ -19,5 +20,16 @@
         <span>
             {{ $slot }}
         </span>
+
+        @if(filled($badge))
+            <span
+                @class([
+                    'inline-flex items-center justify-center ml-auto min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl whitespace-normal',
+                    'text-primary-700 bg-primary-500/10',
+                    'dark:text-primary-500' => config('filament.dark_mode'),
+                ])>
+                {{ $badge }}
+            </span>
+        @endif
     </a>
 </li>
