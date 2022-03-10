@@ -104,6 +104,8 @@ class FilamentServiceProvider extends PackageServiceProvider
             $this->app->singleton(Component::class, fn () => $component);
         });
 
+        Livewire::listen('component.dehydrate', [NotificationManager::class, 'handleLivewireResponses']);
+
         Livewire::component('filament.core.auth.login', Login::class);
         Livewire::component('filament.core.global-search', GlobalSearch::class);
         Livewire::component('filament.core.pages.dashboard', Dashboard::class);
