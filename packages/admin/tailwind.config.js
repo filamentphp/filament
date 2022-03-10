@@ -3,7 +3,13 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
     content: [
-        './packages/**/*.blade.php',
+        './packages/admin/resources/**/*.blade.php',
+        './packages/forms/resources/**/*.blade.php',
+        './packages/tables/resources/**/*.blade.php',
+        './packages/spatie-laravel-media-library-plugin/resources/**/*.blade.php',
+        './packages/spatie-laravel-settings-plugin/resources/**/*.blade.php',
+        './packages/spatie-laravel-tags-plugin/resources/**/*.blade.php',
+        './packages/spatie-laravel-translatable-plugin/resources/**/*.blade.php',
     ],
     darkMode: 'class',
     theme: {
