@@ -12,7 +12,7 @@ Route::domain(config('filament.domain'))
         Route::prefix(config('filament.core_path'))->group(function () {
             Route::get('/assets/{file}', AssetController::class)->where('file', '.*')->name('asset');
 
-            Route::get('/logout', function (): RedirectResponse {
+            Route::post('/logout', function (): RedirectResponse {
                 Filament::auth()->logout();
 
                 session()->invalidate();
