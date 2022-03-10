@@ -201,6 +201,10 @@ return [
                 'type' => \Filament\Tables\Actions\LinkAction::class,
             ],
         ],
+        'notifications' => [
+            'vertical_alignment' => 'top',
+            'alignment' => 'center',
+        ],
     ],
 
     /*
