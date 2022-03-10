@@ -110,7 +110,7 @@ Now, you may register the theme file in a service provider's `boot()` method:
 ```php
 use Filament\Facades\Filament;
 
-Filament::serving(function (): void {
+Filament::serving(function () {
     Filament::registerTheme(mix('css/app.css'));
 });
 ```
