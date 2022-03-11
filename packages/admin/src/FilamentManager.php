@@ -159,7 +159,11 @@ class FilamentManager
     public function notify(string $status, string $message, bool $isAfterRedirect = false): void
     {
         if ($isAfterRedirect) {
-            session()->push('notifications', ['id' => Str::random(), 'status' => $status, 'message' => $message]);
+            session()->push('notifications', [
+                'id' => Str::random(),
+                'status' => $status,
+                'message' => $message,
+            ]);
 
             return;
         }
@@ -171,7 +175,11 @@ class FilamentManager
             return;
         }
 
-        $component->dispatchBrowserEvent('notify', ['status' => $status, 'message' => $message]);
+        $component->dispatchBrowserEvent('notify', [
+            'id' => Str::random(),
+            'status' => $status,
+            'message' => $message,
+        ]);
     }
 
     public function getGlobalSearchProvider(): GlobalSearchProvider
