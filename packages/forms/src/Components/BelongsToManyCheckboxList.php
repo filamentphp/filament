@@ -66,7 +66,7 @@ class BelongsToManyCheckboxList extends CheckboxList
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(fn (Model $record) => [
-                        $record->{$relationship->getRelatedKeyName()} => $component->getOptionLabelFromRecord($record)
+                        $record->{$relationship->getRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
