@@ -75,5 +75,28 @@
                 </span>
             @endif
         </a>
+    @elseif ($tag === 'form')
+        <form {{ $attributes->only(['action', 'method', 'wire:submit.prevent']) }}>
+            @csrf
+
+            <button
+                type="submit"
+                {{ $attributes->except(['action', 'class', 'method', 'wire:submit.prevent'])->class([$buttonClasses]) }}
+            >
+                @if ($icon)
+                    <x-dynamic-component :component="$icon" :class="$iconClasses" />
+                @endif
+
+                <span class="{{ $labelClasses }}">
+                    {{ $slot }}
+                </span>
+
+                @if ($detail)
+                    <span class="{{ $detailClasses }}">
+                        {{ $detail }}
+                    </span>
+                @endif
+            </button>
+        </form>
     @endif
 </li>
