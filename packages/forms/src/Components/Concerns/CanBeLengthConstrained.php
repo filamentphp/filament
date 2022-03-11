@@ -4,11 +4,32 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 
+
 trait CanBeLengthConstrained
 {
+    protected int | Closure | null $length = null;
+
     protected int | Closure | null $maxLength = null;
 
     protected int | Closure | null $minLength = null;
+
+    public function length(int | Closure $length): static
+    {
+        $this->length = $length;
+        $this->maxLength = $length;
+        $this->minLength = $length;
+
+        $this->rule(function (): string {
+            $length = $this->getLength();
+
+            if (method_exists($this, 'isNumeric') && $this->isNumeric())
+                return "digits:{$length}";
+
+            return "size:{$length}";
+        });
+
+        return $this;
+    }
 
     public function maxLength(int | Closure $length): static
     {
@@ -34,6 +55,11 @@ trait CanBeLengthConstrained
         });
 
         return $this;
+    }
+
+    public function getLength(): ?int
+    {
+        return $this->evaluate($this->length);
     }
 
     public function getMaxLength(): ?int
