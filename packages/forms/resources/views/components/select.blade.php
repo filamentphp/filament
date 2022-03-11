@@ -6,7 +6,8 @@
     ];
 @endphp
 
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
@@ -220,4 +221,4 @@
             </span>
         @endif
     </div>
-</x-forms::field-wrapper>
+</x-dynamic-component>

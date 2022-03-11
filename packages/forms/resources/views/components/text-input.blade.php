@@ -8,7 +8,8 @@
     ];
 @endphp
 
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
@@ -77,4 +78,4 @@
             @endforeach
         </datalist>
     @endif
-</x-forms::field-wrapper>
+</x-dynamic-component>

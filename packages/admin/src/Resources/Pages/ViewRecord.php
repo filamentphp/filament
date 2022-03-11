@@ -94,7 +94,8 @@ class ViewRecord extends Page
                 ->disabled()
                 ->model($this->record)
                 ->schema($this->getResourceForm()->getSchema())
-                ->statePath('data'),
+                ->statePath('data')
+                ->usesInlineWrapper(config('filament.layout.forms.use_inline_wrapper')),
         ];
     }
 

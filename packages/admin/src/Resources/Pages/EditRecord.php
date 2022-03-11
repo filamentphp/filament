@@ -219,7 +219,8 @@ class EditRecord extends Page implements HasFormActions
             'form' => $this->makeForm()
                 ->model($this->record)
                 ->schema($this->getResourceForm()->getSchema())
-                ->statePath('data'),
+                ->statePath('data')
+                ->usesInlineWrapper(config('filament.layout.forms.use_inline_wrapper')),
         ];
     }
 
