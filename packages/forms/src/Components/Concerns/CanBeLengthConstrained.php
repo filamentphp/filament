@@ -3,7 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-
+use Filament\Forms\Components\Contracts\CanHaveNumericState;
 
 trait CanBeLengthConstrained
 {
@@ -22,7 +22,7 @@ trait CanBeLengthConstrained
         $this->rule(function (): string {
             $length = $this->getLength();
 
-            if (method_exists($this, 'isNumeric') && $this->isNumeric()) {
+            if ($this instanceof CanHaveNumericState && $this->isNumeric()) {
                 return "digits:{$length}";
             }
 
