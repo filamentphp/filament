@@ -82,7 +82,7 @@
                             </div>
                         @endunless
 
-                        @if ((! $loop->last) && (! $isItemCreationDisabled()) && (blank($getMaxItems()) || ($getMaxItems() > $getItemsCount())))
+                        @if ((! $loop->last) && (! $isItemCreationDisabled()) && (! $isItemMovementDisabled()) && (blank($getMaxItems()) || ($getMaxItems() > $getItemsCount())))
                             <div
                                 x-show="isCreateButtonVisible || isCreateButtonDropdownOpen"
                                 x-transition
