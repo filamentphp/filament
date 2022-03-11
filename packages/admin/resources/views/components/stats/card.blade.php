@@ -2,6 +2,7 @@
     'chart' => null,
     'chartColor' => null,
     'color' => null,
+    'icon' => null,
     'description' => null,
     'descriptionColor' => null,
     'descriptionIcon' => null,
@@ -21,10 +22,13 @@
         'space-y-2',
     ])>
         <div @class([
-            'text-sm font-medium text-gray-500',
+            'flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium text-gray-500',
             'dark:text-gray-200' => config('filament.dark_mode'),
         ])>
-            {{ $label }}
+            @if ($icon)
+                <x-dynamic-component :component="$icon" class="w-4 h-4" />
+            @endif
+            <span>{{ $label }}</span>
         </div>
 
         <div class="text-3xl">
