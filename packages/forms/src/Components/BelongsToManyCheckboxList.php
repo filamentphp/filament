@@ -65,7 +65,9 @@ class BelongsToManyCheckboxList extends CheckboxList
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->map(fn (Model $record) => $component->getOptionLabelFromRecord($record))
+                    ->map(fn (Model $record) => [
+                        $record->getKey() => $component->getOptionLabelFromRecord($record)
+                    ])
                     ->toArray();
             }
 
