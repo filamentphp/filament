@@ -3,6 +3,7 @@
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Http\RedirectResponse;
 
 uses(TestCase::class);
 
@@ -17,7 +18,7 @@ it('can log a user out', function () {
 
 it('allows a user to override the logout response', function () {
     $logoutResponseFake = new class () implements LogoutResponse {
-        public function toResponse($request)
+        public function toResponse($request): RedirectResponse
         {
             return redirect()->to('https://example.com');
         }
