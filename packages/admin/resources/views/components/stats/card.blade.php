@@ -22,10 +22,13 @@
         'space-y-2',
     ])>
         <div @class([
-            'text-sm font-medium text-gray-500',
+            'flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium text-gray-500',
             'dark:text-gray-200' => config('filament.dark_mode'),
         ])>
-            {{ $label }}
+            @if ($icon)
+                <x-dynamic-component :component="$icon" class="w-4 h-4" />
+            @endif
+            <span>{{ $label }}</span>
         </div>
 
         <div class="text-3xl">
@@ -51,10 +54,6 @@
             </div>
         @endif
     </div>
-
-    @if ($icon)
-        <x-dynamic-component :component="$icon" class="absolute top-1 left-auto right-2 w-24 h-24 text-gray-300 rtl:left-2 rtl:right-auto" />
-    @endif
 
     @if ($chart)
         <div class="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden">
