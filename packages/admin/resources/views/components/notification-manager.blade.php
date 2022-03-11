@@ -2,11 +2,7 @@
     x-data="{
         notifications: {{ json_encode(session()->pull('notifications', [])) }},
         add: function (event) {
-            this.notifications.push({
-                id: event.timeStamp,
-                status: event.detail.status,
-                message: event.detail.message,
-            })
+            this.notifications.push(event.detail)
         },
         remove: function (notification) {
             this.notifications = this.notifications.filter(i => i.id !== notification.id)
