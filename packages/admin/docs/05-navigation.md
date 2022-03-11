@@ -15,7 +15,7 @@ protected static ?int $navigationSort = 3;
 
 protected static function getNavigationBadge(): ?string
 {
-    return self::getModel()::count();
+    return static::getModel()::count();
 }
 ```
 
