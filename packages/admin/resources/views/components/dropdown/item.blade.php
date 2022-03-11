@@ -75,5 +75,28 @@
                 </span>
             @endif
         </a>
+    @elseif ($tag === 'form')
+        <form method="post" action="{{ $attributes->get('href') }}">
+            <button
+                type="submit"
+                {{ $attributes->except(['class', 'href'])->class([$buttonClasses]) }}
+            >
+                @if ($icon)
+                    <x-dynamic-component :component="$icon" :class="$iconClasses" />
+                @endif
+
+                <span class="{{ $labelClasses }}">
+                {{ $slot }}
+            </span>
+
+                @if ($detail)
+                    <span class="{{ $detailClasses }}">
+                    {{ $detail }}
+                </span>
+                @endif
+            </button>
+
+            @csrf
+        </form>
     @endif
 </li>

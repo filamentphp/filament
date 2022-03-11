@@ -114,13 +114,14 @@
                 @endif
             @endforeach
 
-            <x-filament::dropdown.form
+            <x-filament::dropdown.item
                 :color="$logoutItem?->getColor() ?? 'secondary'"
                 :icon="$logoutItem?->getIcon() ?? 'heroicon-s-logout'"
-                :action="$logoutItem?->getUrl() ?? route('filament.auth.logout')"
+                :href="$logoutItem?->getUrl() ?? route('filament.auth.logout')"
+                tag="form"
             >
                 {{ $logoutItem?->getLabel() ?? __('filament::layout.buttons.logout.label') }}
-            </x-filament::dropdown.form>
+            </x-filament::dropdown.item>
         </ul>
     </div>
 </div>
