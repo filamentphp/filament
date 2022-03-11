@@ -26,7 +26,7 @@ it('allows a user to override the logout response', function () {
     $this->app->instance(LogoutResponse::class, $logoutResponseFake);
 
     $this
-        ->actingAs(User::factory()->createOne())
+        ->actingAs(User::factory()->create())
         ->post(route('filament.auth.logout'))
         ->assertRedirect('https://example.com');
 });
