@@ -28,7 +28,8 @@ trait HasFieldWrapper
     public function getFieldWrapperView(): string | null
     {
         return $this->evaluate(
-            $this->fieldWrapperView) ??
+            $this->fieldWrapperView
+        ) ??
             $this->getParentComponent()?->getFieldWrapperView() ??
             'forms::field-wrapper'
         ;
