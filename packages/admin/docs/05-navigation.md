@@ -38,11 +38,13 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        Filament::registerNavigationGroups([
-            'Shop',
-            'Blog',
-            'Settings',
-        ]);
+        Filament::serving(function () {
+            Filament::registerNavigationGroups([
+                'Shop',
+                'Blog',
+                'Settings',
+            ]);
+        });
     }
 }
 ```
@@ -145,13 +147,15 @@ To register new items to the user menu, you should use a service provider:
 use Filament\Facades\Filament;
 use Filament\Navigation\UserMenuItem;
 
-Filament::registerUserMenuItems([
-    UserMenuItem::make()
-        ->label('Settings')
-        ->url(route('filament.pages.settings'))
-        ->icon('heroicon-s-cog'),
-    // ...
-]);
+Filament::serving(function () {
+    Filament::registerUserMenuItems([
+        UserMenuItem::make()
+            ->label('Settings')
+            ->url(route('filament.pages.settings'))
+            ->icon('heroicon-s-cog'),
+        // ...
+    ]);
+});
 ```
 
 ### Customizing the account link
@@ -162,10 +166,12 @@ To customize the user account link at the start of the user menu, register a new
 use Filament\Facades\Filament;
 use Filament\Navigation\UserMenuItem;
 
-Filament::registerUserMenuItems([
-    'account' => UserMenuItem::make()->url(route('filament.pages.account')),
-    // ...
-]);
+Filament::serving(function () {
+    Filament::registerUserMenuItems([
+        'account' => UserMenuItem::make()->url(route('filament.pages.account')),
+        // ...
+    ]);
+});
 ```
 
 ### Customizing the logout link
@@ -176,8 +182,10 @@ To customize the user account link at the end of the user menu, register a new i
 use Filament\Facades\Filament;
 use Filament\Navigation\UserMenuItem;
 
-Filament::registerUserMenuItems([
-    // ...
-    'logout' => UserMenuItem::make()->label('Log out'),
-]);
+Filament::serving(function () {
+    Filament::registerUserMenuItems([
+        // ...
+        'logout' => UserMenuItem::make()->label('Log out'),
+    ]);
+});
 ```
