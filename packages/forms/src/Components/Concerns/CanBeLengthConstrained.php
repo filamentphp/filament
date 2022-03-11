@@ -22,8 +22,9 @@ trait CanBeLengthConstrained
         $this->rule(function (): string {
             $length = $this->getLength();
 
-            if (method_exists($this, 'isNumeric') && $this->isNumeric())
+            if (method_exists($this, 'isNumeric') && $this->isNumeric()) {
                 return "digits:{$length}";
+            }
 
             return "size:{$length}";
         });
