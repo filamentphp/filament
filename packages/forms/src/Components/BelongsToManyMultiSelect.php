@@ -72,7 +72,7 @@ class BelongsToManyMultiSelect extends MultiSelect
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(fn (Model $record) => [
-                        $record->getKey() => $component->getOptionLabelFromRecord($record)
+                        $record->{$relatedKeyName} => $component->getOptionLabelFromRecord($record)
                     ])
                     ->toArray();
             }

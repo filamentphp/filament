@@ -100,7 +100,7 @@ class BelongsToSelect extends Select
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(fn (Model $record) => [
-                        $record->getKey() => $component->getOptionLabelFromRecord($record)
+                        $record->{$relationship->getOwnerKeyName()} => $component->getOptionLabelFromRecord($record)
                     ])
                     ->toArray();
             }
