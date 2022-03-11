@@ -12,7 +12,6 @@ trait CanFormatState
 {
     protected ?Closure $formatStateUsing = null;
 
-
     public function date(?string $format = null, ?string $timezone = null): static
     {
         $format ??= config('tables.date_format');
