@@ -8,7 +8,7 @@ uses(TestCase::class);
 
 it('can log a user out', function () {
     $this
-        ->actingAs(User::factory()->createOne())
+        ->actingAs(User::factory()->create())
         ->post(route('filament.auth.logout'))
         ->assertRedirect(route('filament.auth.login'));
 
