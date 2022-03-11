@@ -123,7 +123,7 @@ class RelationshipRepeater extends Repeater
 
     public function getRelationshipName(): string
     {
-        return $this->evaluate($this->relationship);
+        return $this->evaluate($this->relationship) ?? $this->getName();
     }
 
     protected function getCachedExistingRecords(): Collection
