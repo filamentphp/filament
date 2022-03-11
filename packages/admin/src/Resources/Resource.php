@@ -73,6 +73,7 @@ class Resource
                 ->icon(static::getNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs("{$routeBaseName}.*"))
                 ->label(static::getNavigationLabel())
+                ->badge(static::getNavigationBadge())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
@@ -358,6 +359,11 @@ class Resource
     protected static function getNavigationLabel(): string
     {
         return static::$navigationLabel ?? Str::title(static::getPluralLabel());
+    }
+
+    protected static function getNavigationBadge(): ?string
+    {
+        return null;
     }
 
     protected static function getNavigationSort(): ?int

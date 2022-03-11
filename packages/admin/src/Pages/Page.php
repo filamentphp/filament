@@ -55,6 +55,7 @@ class Page extends Component implements Forms\Contracts\HasForms
                 ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName()))
                 ->label(static::getNavigationLabel())
                 ->sort(static::getNavigationSort())
+                ->badge(static::getNavigationBadge())
                 ->url(static::getNavigationUrl()),
         ];
     }
@@ -121,6 +122,11 @@ class Page extends Component implements Forms\Contracts\HasForms
             ->kebab()
             ->replace('-', ' ')
             ->title();
+    }
+
+    protected static function getNavigationBadge(): ?string
+    {
+        return null;
     }
 
     protected static function getNavigationSort(): ?int
