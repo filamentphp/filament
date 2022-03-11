@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Http\Responses\Contracts\LogoutResponse;
+use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 

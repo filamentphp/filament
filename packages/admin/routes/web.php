@@ -2,7 +2,7 @@
 
 use Filament\Facades\Filament;
 use Filament\Http\Controllers\AssetController;
-use Filament\Http\Responses\Contracts\LogoutResponse;
+use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use Illuminate\Support\Facades\Route;
 
 Route::domain(config('filament.domain'))

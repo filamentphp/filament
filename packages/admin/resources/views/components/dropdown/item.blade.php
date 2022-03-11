@@ -76,27 +76,27 @@
             @endif
         </a>
     @elseif ($tag === 'form')
-        <form method="post" action="{{ $attributes->get('href') }}">
+        <form {{ $attributes->only(['action', 'method', 'wire:submit.prevent']) }}>
+            @csrf
+
             <button
                 type="submit"
-                {{ $attributes->except(['class', 'href'])->class([$buttonClasses]) }}
+                {{ $attributes->except(['action', 'class', 'method', 'wire:submit.prevent'])->class([$buttonClasses]) }}
             >
                 @if ($icon)
                     <x-dynamic-component :component="$icon" :class="$iconClasses" />
                 @endif
 
                 <span class="{{ $labelClasses }}">
-                {{ $slot }}
-            </span>
+                    {{ $slot }}
+                </span>
 
                 @if ($detail)
                     <span class="{{ $detailClasses }}">
-                    {{ $detail }}
-                </span>
+                        {{ $detail }}
+                    </span>
                 @endif
             </button>
-
-            @csrf
         </form>
     @endif
 </li>

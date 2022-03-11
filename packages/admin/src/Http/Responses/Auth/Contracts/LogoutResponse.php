@@ -1,8 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Filament\Http\Responses\Contracts;
+namespace Filament\Http\Responses\Auth\Contracts;
 
 use Illuminate\Contracts\Support\Responsable;
 
