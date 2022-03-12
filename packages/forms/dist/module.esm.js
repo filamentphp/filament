@@ -6146,10 +6146,10 @@ var date_time_picker_default = (Alpine) => {
           this.focusedDate = this.focusedDate.month(this.focusedMonth);
         });
         this.$watch("focusedYear", () => {
-          if (this.focusedYear.length > 4) {
+          if (this.focusedYear?.length > 4) {
             this.focusedYear = this.focusedYear.substring(0, 4);
           }
-          if (!this.focusedYear || this.focusedYear.length !== 4) {
+          if (!this.focusedYear || this.focusedYear?.length !== 4) {
             return;
           }
           let year = +this.focusedYear;
@@ -16065,7 +16065,7 @@ var file_upload_default = (Alpine) => {
     canReorder,
     canPreview,
     deleteUploadedFileUsing,
-    getUploadedFilesUrlUsing,
+    getUploadedFileUrlsUsing,
     imageCropAspectRatio,
     imagePreviewHeight,
     imageResizeTargetHeight,
@@ -16156,16 +16156,16 @@ var file_upload_default = (Alpine) => {
           await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse());
         });
       },
-      getUploadedFilesUrl: async function() {
-        const uploadedFilesUrl = await getUploadedFilesUrlUsing();
-        this.fileKeyIndex = uploadedFilesUrl ?? {};
+      getUploadedFileUrls: async function() {
+        const uploadedFileUrls = await getUploadedFileUrlsUsing();
+        this.fileKeyIndex = uploadedFileUrls ?? {};
         this.uploadedFileUrlIndex = Object.entries(this.fileKeyIndex).filter((value) => value).reduce((obj, [key, value]) => {
           obj[value] = key;
           return obj;
         }, {});
       },
       getFiles: async function() {
-        await this.getUploadedFilesUrl();
+        await this.getUploadedFileUrls();
         let files = [];
         for (const uploadedFileUrl of Object.values(this.fileKeyIndex)) {
           if (!uploadedFileUrl) {
