@@ -20,7 +20,7 @@ interface HasForms
 
     public function getSelectSearchResults(string $statePath, string $query): array;
 
-    public function getUploadedFilesUrl(string $statePath): ?array;
+    public function getUploadedFileUrls(string $statePath): ?array;
 
     public function removeUploadedFile(string $statePath, string $fileKey): void;
 

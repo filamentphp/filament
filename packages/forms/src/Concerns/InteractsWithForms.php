@@ -101,10 +101,10 @@ trait InteractsWithForms
         }
     }
 
-    public function getUploadedFilesUrl(string $statePath): ?array
+    public function getUploadedFileUrls(string $statePath): ?array
     {
         foreach ($this->getCachedForms() as $form) {
-            if ($url = $form->getUploadedFilesUrl($statePath)) {
+            if ($url = $form->getUploadedFileUrls($statePath)) {
                 return $url;
             }
         }

@@ -30,7 +30,7 @@ export default (Alpine) => {
         canReorder,
         canPreview,
         deleteUploadedFileUsing,
-        getUploadedFilesUrlUsing,
+        getUploadedFileUrlsUsing,
         imageCropAspectRatio,
         imagePreviewHeight,
         imageResizeTargetHeight,
@@ -145,10 +145,10 @@ export default (Alpine) => {
                 })
             },
 
-            getUploadedFilesUrl: async function () {
-                const uploadedFilesUrl = await getUploadedFilesUrlUsing()
+            getUploadedFileUrls: async function () {
+                const uploadedFileUrls = await getUploadedFileUrlsUsing()
 
-                this.fileKeyIndex = uploadedFilesUrl ?? {}
+                this.fileKeyIndex = uploadedFileUrls ?? {}
 
                 this.uploadedFileUrlIndex = Object.entries(this.fileKeyIndex)
                     .filter(value => value)
@@ -160,7 +160,7 @@ export default (Alpine) => {
             },
 
             getFiles: async function () {
-                await this.getUploadedFilesUrl()
+                await this.getUploadedFileUrls()
 
                 let files = []
 
