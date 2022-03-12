@@ -116,11 +116,11 @@ export default (Alpine) => {
                 })
 
                 this.$watch('focusedYear', () => {
-                    if (this.focusedYear.length > 4) {
+                    if (this.focusedYear?.length > 4) {
                         this.focusedYear = this.focusedYear.substring(0, 4)
                     }
 
-                    if ((! this.focusedYear) || (this.focusedYear.length !== 4)) {
+                    if ((! this.focusedYear) || (this.focusedYear?.length !== 4)) {
                         return
                     }
 

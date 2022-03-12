@@ -14,6 +14,8 @@ class NavigationItem
 
     protected string $label;
 
+    protected ?string $badge = null;
+
     protected ?int $sort = null;
 
     protected ?string $url = null;
@@ -55,6 +57,13 @@ class NavigationItem
         return $this;
     }
 
+    public function badge(?string $badge): static
+    {
+        $this->badge = $badge;
+
+        return $this;
+    }
+
     public function sort(?int $sort): static
     {
         $this->sort = $sort;
@@ -82,6 +91,11 @@ class NavigationItem
     public function getLabel(): string
     {
         return $this->label;
+    }
+
+    public function getBadge(): ?string
+    {
+        return $this->badge;
     }
 
     public function getSort(): int
