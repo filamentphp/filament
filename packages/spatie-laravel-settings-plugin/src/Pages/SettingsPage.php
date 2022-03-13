@@ -97,7 +97,7 @@ class SettingsPage extends Page
                 ->schema($this->getFormSchema())
                 ->statePath('data')
                 ->columns(2)
-                ->usesInlineWrapper(config('filament.layout.forms.use_inline_wrapper')),
+                ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
         ];
     }
 

@@ -8,6 +8,8 @@ trait HasFieldWrapper
 {
     protected string | Closure | null $fieldWrapperView = null;
 
+    protected bool | Closure | null $hasInlineLabels = null;
+
     public function fieldWrapperView(string | Closure | null $view): static
     {
         $this->fieldWrapperView = $view;
@@ -15,20 +17,21 @@ trait HasFieldWrapper
         return $this;
     }
 
-    public function usesInlineWrapper(bool $condition = true): static
+    public function inlineLabel(bool | Closure | null $condition = true): static
     {
-        if ($condition) {
-            $this->fieldWrapperView('forms::field-wrapper.inline');
-            $this->columns(1);
-        }
+        $this->hasInlineLabels = $condition;
 
         return $this;
     }
 
-    public function getFieldWrapperView(): string | null
+    public function getCustomFieldWrapperView(): ?string
     {
         return $this->evaluate($this->fieldWrapperView) ??
-            $this->getParentComponent()?->getFieldWrapperView() ??
-            'forms::field-wrapper';
+            $this->getParentComponent()?->getCustomFieldWrapperView();
+    }
+
+    public function hasInlineLabel(): ?bool
+    {
+        return $this->evaluate($this->hasInlineLabels) ?? $this->getParentComponent()?->hasInlineLabel();
     }
 }

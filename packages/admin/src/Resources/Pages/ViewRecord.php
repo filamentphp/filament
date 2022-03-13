@@ -93,9 +93,9 @@ class ViewRecord extends Page
             'form' => $this->makeForm()
                 ->disabled()
                 ->model($this->record)
-                ->schema($this->getResourceForm()->getSchema())
+                ->schema($this->getResourceForm(columns: config('filament.layout.forms.have_inline_labels') ? 1 : 2)->getSchema())
                 ->statePath('data')
-                ->usesInlineWrapper(config('filament.layout.forms.use_inline_wrapper')),
+                ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
         ];
     }
 

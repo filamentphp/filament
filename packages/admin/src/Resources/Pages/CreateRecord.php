@@ -153,9 +153,9 @@ class CreateRecord extends Page implements HasFormActions
         return [
             'form' => $this->makeForm()
                 ->model(static::getModel())
-                ->schema($this->getResourceForm()->getSchema())
+                ->schema($this->getResourceForm(columns: config('filament.layout.forms.have_inline_labels') ? 1 : 2)->getSchema())
                 ->statePath('data')
-                ->usesInlineWrapper(config('filament.layout.forms.use_inline_wrapper')),
+                ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
         ];
     }
 

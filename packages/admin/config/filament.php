@@ -191,7 +191,7 @@ return [
             'actions' => [
                 'alignment' => 'left',
             ],
-            'use_inline_wrapper' => false,
+            'have_inline_labels' => false,
         ],
         'footer' => [
             'should_show_logo' => true,

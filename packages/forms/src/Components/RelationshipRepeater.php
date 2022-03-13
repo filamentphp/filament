@@ -98,7 +98,8 @@ class RelationshipRepeater extends Repeater
                     ->getChildComponentContainer()
                     ->getClone()
                     ->statePath($itemKey)
-                    ->model($records[$itemKey] ?? $this->getRelatedModel());
+                    ->model($records[$itemKey] ?? $this->getRelatedModel())
+                    ->inlineLabel(false);
             })
             ->toArray();
     }
