@@ -1,4 +1,5 @@
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
@@ -39,4 +40,4 @@
             {{ $getExtraAlpineAttributeBag() }}
         @endif
     ></textarea>
-</x-forms::field-wrapper>
+</x-dynamic-component>

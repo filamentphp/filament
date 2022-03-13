@@ -22,6 +22,8 @@ class Component extends ViewComponent implements Htmlable
     use Concerns\EvaluatesClosures;
     use Concerns\HasChildComponents;
     use Concerns\HasExtraAttributes;
+    use Concerns\HasFieldWrapper;
+    use Concerns\HasInlineLabel;
     use Concerns\HasId;
     use Concerns\HasLabel;
     use Concerns\HasMaxWidth;

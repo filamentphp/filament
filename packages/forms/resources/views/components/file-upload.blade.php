@@ -18,7 +18,8 @@
     @endpush
 @endonce
 
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isAvatar() || $isLabelHidden()"
@@ -83,4 +84,4 @@
             {{ $getExtraInputAttributeBag() }}
         />
     </div>
-</x-forms::field-wrapper>
+</x-dynamic-component>

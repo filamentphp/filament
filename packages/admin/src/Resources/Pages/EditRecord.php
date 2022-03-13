@@ -218,8 +218,9 @@ class EditRecord extends Page implements HasFormActions
         return [
             'form' => $this->makeForm()
                 ->model($this->record)
-                ->schema($this->getResourceForm()->getSchema())
-                ->statePath('data'),
+                ->schema($this->getResourceForm(columns: config('filament.layout.forms.have_inline_labels') ? 1 : 2)->getSchema())
+                ->statePath('data')
+                ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
         ];
     }
 

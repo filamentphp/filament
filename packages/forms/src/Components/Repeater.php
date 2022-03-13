@@ -189,7 +189,8 @@ class Repeater extends Field
                 return $this
                     ->getChildComponentContainer()
                     ->getClone()
-                    ->statePath($itemIndex);
+                    ->statePath($itemIndex)
+                    ->inlineLabel(false);
             })
             ->toArray();
     }
