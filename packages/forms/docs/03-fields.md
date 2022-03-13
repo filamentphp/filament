@@ -1006,8 +1006,8 @@ use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('image')
     ->image()
-    ->imageCropAspectRatio('16:9'),
-    ->imageResizeTargetWidth('1920'),
+    ->imageCropAspectRatio('16:9')
+    ->imageResizeTargetWidth('1920')
     ->imageResizeTargetHeight('1080')
 ```
 
