@@ -28,7 +28,7 @@
     <button
         type="{{ $type }}"
         @if($tooltip)
-        x-data="{ tooltip: '{{ $tooltip }}' }"
+        x-data="{ tooltip: {{ json_encode($tooltip) }} }"
         x-tooltip="tooltip"
         @endif
         {{ $attributes->class($linkClasses) }}

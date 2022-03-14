@@ -27,8 +27,11 @@
             wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $record->getKey() }}')"
             wire:target="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $record->getKey() }}')"
             wire:loading.attr="disabled"
-            x-tooltip.placement.right
             wire:loading.class="opacity-70 cursor-wait"
+            @if($tooltip)
+            x-data="{ tooltip: {{ json_encode($tooltip) }} }"
+            x-tooltip="tooltip"
+            @endif
             type="button"
             class="block text-left"
         >
@@ -36,6 +39,10 @@
         </button>
     @elseif ($url || $recordUrl)
         <a
+            @if($tooltip)
+            x-data="{ tooltip: {{ json_encode($tooltip) }} }"
+            x-tooltip="tooltip"
+            @endif
             href="{{ $url ?: $recordUrl }}"
             {{ $shouldOpenUrlInNewTab ? 'target="_blank"' : null }}
             class="block"

@@ -3,7 +3,6 @@
 namespace Filament\Pages\Actions\Concerns;
 
 use Closure;
-use Illuminate\Support\Str;
 
 trait HasTooltip
 {
@@ -18,6 +17,6 @@ trait HasTooltip
 
     public function getTooltip(): ?string
     {
-        return $this->tooltip;
+        return value($this->tooltip);
     }
 }
