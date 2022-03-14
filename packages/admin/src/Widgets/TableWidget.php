@@ -5,6 +5,9 @@ namespace Filament\Widgets;
 use Closure;
 use Filament\Tables;
 use Illuminate\Support\Str;
+use Filament\Widgets\Widget;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Pagination\Paginator;
 
 class TableWidget extends Widget implements Tables\Contracts\HasTable
 {
@@ -21,5 +24,10 @@ class TableWidget extends Widget implements Tables\Contracts\HasTable
             ->kebab()
             ->replace('-', ' ')
             ->title();
+    }
+
+    protected function paginateTableQuery(Builder $query): Paginator
+    {
+        return $query->simplePaginate($this->getTableRecordsPerPage());
     }
 }
