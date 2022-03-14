@@ -24,8 +24,8 @@
 
 /* Compact-only styles, excluding compact circle layouts */
 
-.filepond--root[data-style-panel-layout='compact'] .filepond--item + .filepond--item {
-    @apply mt-0.5;
+.filepond--root[data-style-panel-layout='compact'] .filepond--item {
+    @apply mb-0.5;
 }
 
 .filepond--root[data-style-panel-layout='compact'] .filepond--drop-label label {

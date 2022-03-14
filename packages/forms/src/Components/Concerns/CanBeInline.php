@@ -17,6 +17,10 @@ trait CanBeInline
 
     public function isInline(): bool
     {
+        if ($this->hasInlineLabel()) {
+            return false;
+        }
+
         return (bool) $this->evaluate($this->isInline);
     }
 }

@@ -1,4 +1,5 @@
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
@@ -73,4 +74,4 @@
     @if ($isInline())
         </x-slot>
     @endif
-</x-forms::field-wrapper>
+</x-dynamic-component>

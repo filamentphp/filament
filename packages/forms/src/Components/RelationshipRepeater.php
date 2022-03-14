@@ -40,7 +40,7 @@ class RelationshipRepeater extends Repeater
             $recordsToDelete = [];
 
             foreach ($existingRecords->pluck($localKeyName) as $keyToCheckForDeletion) {
-                if (array_key_exists($keyToCheckForDeletion, $state)) {
+                if (array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
                     continue;
                 }
 
@@ -98,7 +98,8 @@ class RelationshipRepeater extends Repeater
                     ->getChildComponentContainer()
                     ->getClone()
                     ->statePath($itemKey)
-                    ->model($records[$itemKey] ?? $this->getRelatedModel());
+                    ->model($records[$itemKey] ?? $this->getRelatedModel())
+                    ->inlineLabel(false);
             })
             ->toArray();
     }
@@ -123,7 +124,7 @@ class RelationshipRepeater extends Repeater
 
     public function getRelationshipName(): string
     {
-        return $this->evaluate($this->relationship);
+        return $this->evaluate($this->relationship) ?? $this->getName();
     }
 
     protected function getCachedExistingRecords(): Collection
@@ -133,9 +134,10 @@ class RelationshipRepeater extends Repeater
         }
 
         $relationship = $this->getRelationship();
+        $localKeyName = $relationship->getLocalKeyName();
 
-        return $this->cachedExistingRecords = $relationship->getResults()->keyBy(
-            $relationship->getLocalKeyName(),
+        return $this->cachedExistingRecords = $relationship->getResults()->mapWithKeys(
+            fn (Model $item): array => ["record-{$item[$localKeyName]}" => $item],
         );
     }
 

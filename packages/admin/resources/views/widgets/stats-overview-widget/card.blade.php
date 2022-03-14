@@ -7,6 +7,7 @@
     :chart="$getChart()"
     :chart-color="$getChartColor()"
     :color="$getColor()"
+    :icon="$getIcon()"
     :description="$getDescription()"
     :description-color="$getDescriptionColor()"
     :description-icon="$getDescriptionIcon()"

@@ -27,7 +27,7 @@ trait CanCreateRecords
 
     protected function getCreateFormSchema(): array
     {
-        return $this->getResourceForm()->getSchema();
+        return $this->getResourceForm(columns: 2)->getSchema();
     }
 
     protected function fillCreateForm(): void

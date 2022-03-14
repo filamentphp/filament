@@ -110,7 +110,7 @@ Now, you may register the theme file in a service provider's `boot()` method:
 ```php
 use Filament\Facades\Filament;
 
-Filament::serving(function (): void {
+Filament::serving(function () {
     Filament::registerTheme(mix('css/app.css'));
 });
 ```
@@ -167,4 +167,19 @@ use Illuminate\Support\HtmlString;
 Filament::pushMeta([
     new HtmlString('<link rel="manifest" href="/site.webmanifest" />'),
 ]);
+```
+
+## Notification position
+
+Filament allows you to customize the position of notifications.
+
+In `config/filament.php`, set the `layouts.notifications.alignment` to any value of `left`, `center` or `right` and `layouts.notifications.vertical_alignment` to any value of `top`, `center` or `bottom`:
+
+```php
+'layout' => [
+    'notifications' => [
+        'vertical_alignment' => 'top'
+        'alignment' => 'center',
+    ],
+],
 ```

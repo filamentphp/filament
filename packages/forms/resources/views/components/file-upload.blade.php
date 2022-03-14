@@ -18,7 +18,8 @@
     @endpush
 @endonce
 
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isAvatar() || $isLabelHidden()"
@@ -36,8 +37,8 @@
             deleteUploadedFileUsing: async (fileKey) => {
                 return await $wire.deleteUploadedFile('{{ $getStatePath() }}', fileKey)
             },
-            getUploadedFileUrlUsing: async (fileKey) => {
-                return await $wire.getUploadedFileUrl('{{ $getStatePath() }}', fileKey)
+            getUploadedFileUrlsUsing: async () => {
+                return await $wire.getUploadedFileUrls('{{ $getStatePath() }}')
             },
             imageCropAspectRatio: {{ ($aspectRatio = $getImageCropAspectRatio()) ? "'{$aspectRatio}'" : 'null' }},
             imagePreviewHeight: {{ ($height = $getImagePreviewHeight()) ? "'{$height}'" : 'null' }},
@@ -83,4 +84,4 @@
             {{ $getExtraInputAttributeBag() }}
         />
     </div>
-</x-forms::field-wrapper>
+</x-dynamic-component>
