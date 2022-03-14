@@ -164,8 +164,8 @@
                         <div
                             @class([
                                 'flex items-center justify-center py-2 rounded-lg',
-                                'bg-gray-50' => $hasDate(),
-                                'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                'bg-gray-50' => $hasTime(),
+                                'dark:bg-gray-800' => $hasTime() && config('forms.dark_mode'),
                             ])
                         >
                             <input
@@ -177,8 +177,8 @@
                                 @class([
                                     'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
                                     'dark:text-gray-200' => config('forms.dark_mode'),
-                                    'bg-gray-50' => $hasDate(),
-                                    'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                    'bg-gray-50' => $hasTime(),
+                                    'dark:bg-gray-800' => $hasTime() && config('forms.dark_mode'),
                                 ])
                             />
 
@@ -186,8 +186,8 @@
                                 @class([
                                     'text-xl font-medium text-gray-700',
                                     'dark:text-gray-200' => config('forms.dark_mode'),
-                                    'bg-gray-50' => $hasDate(),
-                                    'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                    'bg-gray-50' => $hasTime(),
+                                    'dark:bg-gray-800' => $hasTime() && config('forms.dark_mode'),
                                 ])
                             >:</span>
 
@@ -200,8 +200,8 @@
                                 @class([
                                     'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
                                     'dark:text-gray-200' => config('forms.dark_mode'),
-                                    'bg-gray-50' => $hasDate(),
-                                    'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                    'bg-gray-50' => $hasTime(),
+                                    'dark:bg-gray-800' => $hasTime() && config('forms.dark_mode'),
                                 ])
                             />
 
@@ -210,8 +210,8 @@
                                     @class([
                                         'text-xl font-medium text-gray-700',
                                         'dark:text-gray-200' => config('forms.dark_mode'),
-                                        'bg-gray-50' => $hasDate(),
-                                        'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                        'bg-gray-50' => $hasSeconds(),
+                                        'dark:bg-gray-800' => $hasSeconds() && config('forms.dark_mode'),
                                     ])
                                 >:</span>
 
@@ -225,8 +225,8 @@
                                     @class([
                                         'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
                                         'dark:text-gray-200' => config('forms.dark_mode'),
-                                        'bg-gray-50' => $hasDate(),
-                                        'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                        'bg-gray-50' => $hasSeconds(),
+                                        'dark:bg-gray-800' => $hasSeconds() && config('forms.dark_mode'),
                                     ])
                                 />
                             @endif
