@@ -26,6 +26,7 @@ class Action extends Component implements Htmlable
     use Concerns\HasName;
     use Concerns\HasRecord;
     use Concerns\HasView;
+    use Concerns\HasTooltip;
     use Conditionable;
     use Macroable;
     use Tappable;

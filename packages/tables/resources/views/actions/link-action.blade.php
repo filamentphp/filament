@@ -14,6 +14,7 @@
 <x-tables::link
     :tag="((! $action) && $url) ? 'a' : 'button'"
     :wire:click="$clickAction"
+    :tooltip="$getTooltip()"
     :href="$getUrl()"
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
     :color="$getColor()"

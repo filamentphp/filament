@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Actions\Concerns;
+namespace Filament\Pages\Actions\Concerns;
 
 use Closure;
 use Illuminate\Support\Str;

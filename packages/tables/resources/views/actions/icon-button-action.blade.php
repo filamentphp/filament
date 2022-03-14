@@ -15,6 +15,7 @@
     :tag="((! $action) && $url) ? 'a' : 'button'"
     :wire:click="$clickAction"
     :href="$getUrl()"
+    :tooltip="$getTooltip()"
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
     :color="$getColor()"
     :label="$getLabel()"

@@ -2,6 +2,7 @@
     'color' => 'primary',
     'tag' => 'a',
     'type' => 'button',
+    'tooltip' => null,
 ])
 
 @php
@@ -19,14 +20,17 @@
         'dark:text-warning-500 dark:hover:text-warning-400' => $color === 'warning' && config('tables.dark_mode'),
     ];
 @endphp
-
 @if ($tag === 'a')
-    <a {{ $attributes->class($linkClasses) }}>
+    <a @if($tooltip) x-data="{ tooltip: '{{ $tooltip }}' }" x-tooltip="tooltip" @endif {{ $attributes->class($linkClasses) }}>
         {{ $slot }}
     </a>
 @elseif ($tag === 'button')
     <button
         type="{{ $type }}"
+        @if($tooltip)
+        x-data="{ tooltip: '{{ $tooltip }}' }"
+        x-tooltip="tooltip"
+        @endif
         {{ $attributes->class($linkClasses) }}
     >
         {{ $slot }}

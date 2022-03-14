@@ -7,6 +7,7 @@
     'recordUrl' => null,
     'shouldOpenUrlInNewTab' => false,
     'url' => null,
+    'tooltip' => null,
 ])
 
 <td
@@ -26,6 +27,7 @@
             wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $record->getKey() }}')"
             wire:target="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $record->getKey() }}')"
             wire:loading.attr="disabled"
+            x-tooltip.placement.right
             wire:loading.class="opacity-70 cursor-wait"
             type="button"
             class="block text-left"
