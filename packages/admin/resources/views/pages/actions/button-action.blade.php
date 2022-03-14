@@ -19,6 +19,7 @@
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
     :type="$canSubmitForm() ? 'submit' : 'button'"
     :color="$getColor()"
+    :tooltip="$getTooltip()"
     :outlined="$isOutlined()"
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"

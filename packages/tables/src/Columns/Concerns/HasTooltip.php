@@ -2,19 +2,21 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
-trait HasName
-{
-    protected string $name;
+use Closure;
 
-    public function name(string $name): static
+trait HasTooltip
+{
+    protected string | Closure | null $tooltip = null;
+
+    public function tooltip(string | Closure | null $tooltip): static
     {
-        $this->name = $name;
+        $this->tooltip = $tooltip;
 
         return $this;
     }
 
-    public function getName(): string
+    public function getTooltip(): ?string
     {
-        return $this->name;
+        return $this->tooltip;
     }
 }

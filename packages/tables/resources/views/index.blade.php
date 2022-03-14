@@ -283,6 +283,7 @@
                                     :name="$column->getName()"
                                     :alignment="$column->getAlignment()"
                                     :record="$record"
+                                    :tooltip="$column->getTooltip()"
                                     :record-action="$getRecordAction()"
                                     :record-url="$getRecordUrl($record)"
                                     :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"

@@ -5,23 +5,19 @@ namespace Filament\Tables\Actions\Concerns;
 use Closure;
 use Illuminate\Support\Str;
 
-trait HasLabel
+trait HasTooltip
 {
-    protected string | Closure | null $label = null;
+    protected string | Closure | null $tooltip = null;
 
-    public function label(string | Closure | null $label): static
+    public function tooltip(string | Closure | null $tooltip): static
     {
-        $this->label = $label;
+        $this->tooltip = $tooltip;
 
         return $this;
     }
 
-    public function getLabel(): string
+    public function getTooltip(): ?string
     {
-        return $this->evaluate($this->label) ?? (string) Str::of($this->getName())
-            ->before('.')
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
+        return $this->tooltip;
     }
 }

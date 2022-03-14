@@ -4,6 +4,7 @@
     'label' => null,
     'tag' => 'button',
     'type' => 'button',
+    'tooltip' => null,
 ])
 
 @php
@@ -23,6 +24,10 @@
 @if ($tag === 'button')
     <button
         type="{{ $type }}"
+        @if($tooltip)
+        x-data="{ tooltip: '{{ $tooltip }}' }"
+        x-tooltip="tooltip"
+        @endif
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($label)
@@ -34,7 +39,12 @@
         <x-dynamic-component :component="$icon" :class="$iconClasses" />
     </button>
 @elseif ($tag === 'a')
-    <a {{ $attributes->class($buttonClasses) }}>
+    <a
+        @if($tooltip)
+        x-data="{ tooltip: '{{ $tooltip }}' }"
+        x-tooltip="tooltip"
+        @endif
+        {{ $attributes->class($buttonClasses) }}>
         @if ($label)
             <span class="sr-only">
                 {{ $label }}
