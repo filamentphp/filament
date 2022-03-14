@@ -15,14 +15,16 @@
                     {{ __('filament::widgets/account-widget.welcome', ['user' => \Filament\Facades\Filament::getUserName($user)]) }}
                 </h2>
 
-                <p class="text-sm">
+                <form method="POST" action="{{ route('filament.auth.logout') }}" class="text-sm">
+                    @csrf
+
                     <a href="{{ route('filament.auth.logout') }}" @class([
                         'text-gray-600 hover:text-primary-500 focus:outline-none focus:underline',
                         'dark:text-gray-300 dark:hover:text-primary-500' => config('filament.dark_mode'),
-                    ])>
+                    ]) onclick="event.preventDefault(); this.closest('form').submit();">
                         {{ __('filament::widgets/account-widget.buttons.logout.label') }}
                     </a>
-                </p>
+                </form>
             </div>
         </div>
     </x-filament::card>
