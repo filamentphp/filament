@@ -4,10 +4,9 @@ namespace Filament\Widgets;
 
 use Closure;
 use Filament\Tables;
-use Illuminate\Support\Str;
-use Filament\Widgets\Widget;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class TableWidget extends Widget implements Tables\Contracts\HasTable
 {
