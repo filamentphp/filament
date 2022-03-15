@@ -36,7 +36,7 @@
                 x-on:blur="closeListbox()"
                 x-on:keydown.escape.stop="closeListbox()"
                 class="relative"
-                dusk="{{ $getStatePath() }}.close"
+                dusk="filament.{{ $getStatePath() }}.close"
             >
                 <div
                     x-ref="button"
@@ -61,7 +61,7 @@
                         placeholder="{{ $getPlaceholder() }}"
                         type="text"
                         autocomplete="off"
-                        dusk="{{ $getStatePath() }}"
+                        dusk="filament.{{ $getStatePath() }}"
                         @class([
                             'block w-full border-0',
                             'dark:bg-gray-700 dark:placeholder-gray-400' => config('forms.dark_mode'),

@@ -39,7 +39,7 @@
                     wire:ignore
                     {{ $getExtraAlpineAttributeBag() }}
                 @endunless
-                dusk="{{ $getStatePath() }}"
+                dusk="filament.{{ $getStatePath() }}"
                 {!! ($autocapitalize = $getAutocapitalize()) ? "autocapitalize=\"{$autocapitalize}\"" : null !!}
                 {!! ($autocomplete = $getAutocomplete()) ? "autocomplete=\"{$autocomplete}\"" : null !!}
                 {!! $isAutofocused() ? 'autofocus' : null !!}

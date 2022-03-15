@@ -81,7 +81,7 @@
             {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
             type="file"
             {{ $getExtraInputAttributeBag() }}
-            dusk="{{ $getStatePath() }}"
+            dusk="filament.{{ $getStatePath() }}"
         />
     </div>
 </x-forms::field-wrapper>
