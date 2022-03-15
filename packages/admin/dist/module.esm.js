@@ -6074,8 +6074,12 @@ esm_default.extend(import_localeData.default);
 esm_default.extend(import_timezone.default);
 esm_default.extend(import_utc.default);
 esm_default.extend((option2, Dayjs2, dayjs3) => {
+  const listeners2 = [];
+  dayjs3.addLocaleListeners = (listener) => listeners2.push(listener);
   dayjs3.onLocaleUpdated = () => {
-  }, dayjs3.updateLocale = (locale) => {
+    listeners2.forEach((listener) => listener());
+  };
+  dayjs3.updateLocale = (locale) => {
     dayjs3.locale(locale);
     dayjs3.onLocaleUpdated();
   };
@@ -6133,11 +6137,11 @@ var date_time_picker_default = (Alpine) => {
         if (isAutofocused) {
           this.openPicker();
         }
-        esm_default.onLocaleUpdated = () => {
+        esm_default.addLocaleListeners(() => {
           this.setDisplayText();
           this.setMonths();
           this.setDayLabels();
-        };
+        });
         this.$watch("focusedMonth", () => {
           this.focusedMonth = +this.focusedMonth;
           if (this.focusedDate.month() === this.focusedMonth) {
