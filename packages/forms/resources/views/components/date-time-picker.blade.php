@@ -36,19 +36,19 @@
     >
         <button
             @unless($isDisabled())
-            x-ref="button"
-            x-on:click="togglePickerVisibility()"
-            x-on:keydown.enter.stop.prevent="open ? selectDate() : openPicker()"
-            x-on:keydown.arrow-left.stop.prevent="focusPreviousDay()"
-            x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
-            x-on:keydown.arrow-up.stop.prevent="focusPreviousWeek()"
-            x-on:keydown.arrow-down.stop.prevent="focusNextWeek()"
-            x-on:keydown.backspace.stop.prevent="clearState()"
-            x-on:keydown.clear.stop.prevent="clearState()"
-            x-on:keydown.delete.stop.prevent="clearState()"
-            x-bind:aria-expanded="open"
-            aria-label="{{ $getPlaceholder() }}"
-            dusk="filament.forms.{{ $getStatePath() }}.open"
+                x-ref="button"
+                x-on:click="togglePickerVisibility()"
+                x-on:keydown.enter.stop.prevent="open ? selectDate() : openPicker()"
+                x-on:keydown.arrow-left.stop.prevent="focusPreviousDay()"
+                x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
+                x-on:keydown.arrow-up.stop.prevent="focusPreviousWeek()"
+                x-on:keydown.arrow-down.stop.prevent="focusNextWeek()"
+                x-on:keydown.backspace.stop.prevent="clearState()"
+                x-on:keydown.clear.stop.prevent="clearState()"
+                x-on:keydown.delete.stop.prevent="clearState()"
+                x-bind:aria-expanded="open"
+                aria-label="{{ $getPlaceholder() }}"
+                dusk="filament.forms.{{ $getStatePath() }}.open"
             @endunless
             type="button"
             {{ $getExtraTriggerAttributeBag()->class([
