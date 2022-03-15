@@ -3,7 +3,8 @@
     "description": "A collection of tools for rapidly building beautiful TALL stack interfaces, designed for humans.",
     "license": "MIT",
     "require": {
-        "php": "^8.0"
+        "php": "^8.0",
+        "ext-intl": "*"
     },
     "require-dev": {
         "akaunting/laravel-money": "^1.2|^2.0",

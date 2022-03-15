@@ -9,9 +9,10 @@
     },
     "require": {
         "php": "^8.0",
+        "ext-intl": "*",
         "filament/filament": "self.version",
         "illuminate/support": "^8.6|^9.0",
-        "spatie/laravel-translatable": "^5.0"
+        "spatie/laravel-translatable": "^5.0|^6.0"
     },
     "autoload": {
         "psr-4": {
