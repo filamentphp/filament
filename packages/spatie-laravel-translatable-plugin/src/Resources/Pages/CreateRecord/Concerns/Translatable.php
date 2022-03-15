@@ -9,6 +9,17 @@ trait Translatable
 {
     use HasActiveFormLocaleSelect;
 
+    public array $locales = [];
+    public function setTranslatableLocales(array $locales): void
+    {
+        $this->locales = $locales;
+    }
+
+    protected function getTranslatableLocales(): array
+    {
+        return count($this->locales)?$this->locales:static::getResource()::getTranslatableLocales();
+    }
+
     public function mount(): void
     {
         static::authorizeResourceAccess();

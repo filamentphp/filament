@@ -13,7 +13,7 @@ trait HasActiveFormLocaleSelect
         return SelectAction::make('activeFormLocale')
             ->label(__('filament-spatie-laravel-translatable-plugin::actions.active_form_locale.label'))
             ->options(
-                collect(static::getResource()::getTranslatableLocales())
+                collect($this->getTranslatableLocales())
                     ->mapWithKeys(function (string $locale): array {
                         return [$locale => $locale];
                     })
