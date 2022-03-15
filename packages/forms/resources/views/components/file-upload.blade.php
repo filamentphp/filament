@@ -82,6 +82,7 @@
             {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
             type="file"
             {{ $getExtraInputAttributeBag() }}
+            dusk="filament.forms.{{ $getStatePath() }}"
         />
     </div>
 </x-dynamic-component>

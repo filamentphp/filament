@@ -94,6 +94,7 @@
                     {!! $isDisabled ? 'disabled' : null !!}
                     type="checkbox"
                     value="{{ $optionValue }}"
+                    dusk="filament.forms.{{ $getStatePath() }}"
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                     {{ $attributes->merge($getExtraAttributes())->class([
                         'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500',
