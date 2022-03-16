@@ -52,8 +52,15 @@ trait InteractsWithTableQuery
             default => 'like',
         };
 
+        $model = $query->getModel();
+        $isTranslatableModel = method_exists($model, 'isTranslatableAttribute');
+
         foreach ($this->getSearchColumns() as $searchColumnName) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
+
+            if ($isTranslatableModel && $model->isTranslatableAttribute($searchColumnName)) {
+                $searchColumnName = $searchColumnName . '->' . app()->getLocale();
+            }
 
             $query->when(
                 $this->queriesRelationships(),
