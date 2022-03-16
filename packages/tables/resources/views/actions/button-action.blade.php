@@ -9,6 +9,8 @@
     } else {
         $clickAction = "mountTableAction('{$getName()}')";
     }
+
+    $clickAction = $isDisabled() ? null : $clickAction;
 @endphp
 
 <x-tables::button
@@ -16,6 +18,7 @@
     :wire:click="$clickAction"
     :href="$getUrl()"
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
+    :disabled="$isDisabled()"
     :color="$getColor()"
     :outlined="$isOutlined()"
     :icon="$getIcon()"

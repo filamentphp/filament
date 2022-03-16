@@ -13,6 +13,7 @@ class Action extends Component implements Htmlable
 {
     use Concerns\BelongsToTable;
     use Concerns\CanBeHidden;
+    use Concerns\CanBeDisabled;
     use Concerns\CanBeMounted;
     use Concerns\CanOpenModal;
     use Concerns\CanOpenUrl;
