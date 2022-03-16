@@ -1,6 +1,6 @@
 @php
     $action = $getAction();
-    $url = $getUrl();
+    $url = $isDisabled() ? null : $getUrl();
 
     if (! $action) {
         $clickAction = null;
@@ -9,6 +9,8 @@
     } else {
         $clickAction = $action;
     }
+
+   $clickAction = $isDisabled() ? null : $action;
 @endphp
 
 <x-filament::button
@@ -20,6 +22,7 @@
     :type="$canSubmitForm() ? 'submit' : 'button'"
     :color="$getColor()"
     :outlined="$isOutlined()"
+    :disabled="$isDisabled()"
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
     class="filament-page-button-action"
