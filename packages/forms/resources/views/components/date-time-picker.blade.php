@@ -157,7 +157,7 @@
                                         'cursor-not-allowed': dayIsDisabled(day),
                                         'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                     }"
-                                    x-bind:dusk="filament.forms.'{{ $getStatePath() }}' + '.focusedDate.' + day"
+                                    x-bind:dusk="'filament.forms.{{ $getStatePath() }}' + '.focusedDate.' + day"
                                     class="text-sm leading-loose text-center transition duration-100 ease-in-out rounded-full"
                                 ></div>
                             </template>

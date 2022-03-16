@@ -69,7 +69,7 @@
                                 x-on:click="deleteTag(tag)"
                             @endunless
                             type="button"
-                            x-bind:dusk="filament.forms.'{{ $getStatePath() }}' + '.tag.' + tag + '.delete'"
+                            x-bind:dusk="'filament.forms.{{ $getStatePath() }}' + '.tag.' + tag + '.delete'"
                             @class([
                                 'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-xl bg-primary-500/10 space-x-1 rtl:space-x-reverse',
                                 'dark:text-primary-500' => config('forms.dark_mode'),
