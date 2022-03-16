@@ -14,7 +14,7 @@ class Action extends Component implements Htmlable
 {
     use Concerns\BelongsToLivewire;
     use Concerns\CanBeHidden;
-    use Concerns\CanBeDisable;
+    use Concerns\CanBeDisabled;
     use Concerns\CanBeMounted;
     use Concerns\CanOpenModal;
     use Concerns\CanOpenUrl;
