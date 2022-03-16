@@ -68,6 +68,7 @@
             },
         })"
         wire:ignore
+        {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
         style="min-height: {{ $isAvatar() ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }}"
         {{ $attributes->merge($getExtraAttributes())->class([
             'filament-forms-file-upload-component',
@@ -78,8 +79,7 @@
         <input
             x-ref="input"
             {{ $isDisabled() ? 'disabled' : '' }}
-            {{ $isMultiple() ? 'multiple' : '' }}
-            {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
+            {{ $isMultiple() ? 'multiple' : '' }}            
             type="file"
             {{ $getExtraInputAttributeBag() }}
             dusk="filament.forms.{{ $getStatePath() }}"
