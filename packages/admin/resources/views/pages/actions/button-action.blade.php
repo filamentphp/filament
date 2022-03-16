@@ -10,7 +10,7 @@
         $clickAction = $action;
     }
 
-   $clickAction = $isDisabled() ? null : $action;
+   $clickAction = $isDisabled() ? null : $clickAction;
 @endphp
 
 <x-filament::button
