@@ -167,7 +167,7 @@
                     @if ($hasTime())
                         <div
                             @class([
-                                'flex items-center justify-center py-2 rounded-lg',
+                                'flex items-center justify-center py-2 rounded-lg rtl:flex-row-reverse',
                                 'bg-gray-50' => $hasDate(),
                                 'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
                             ])
