@@ -22,7 +22,9 @@ class NavigationItem
 
     protected string|Closure|null $url = null;
 
-    final public function __construct() {}
+    final public function __construct()
+    {
+    }
 
     public function badge(?string $badge): static
     {
@@ -79,7 +81,7 @@ class NavigationItem
     {
         $callback = $this->isActiveWhen;
 
-        if ( $callback === null ) {
+        if ($callback === null) {
             return false;
         }
 
