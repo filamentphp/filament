@@ -10,7 +10,7 @@
     :state-path="$getStatePath()"
 >
     @if ($isInline())
-        <x-slot name="labelSuffix">
+        <x-slot name="labelSuffix"></x-slot>
     @endif
             <div {{ $attributes->merge($getExtraAttributes())->class([
                 'filament-forms-radio-component',
@@ -140,7 +140,4 @@
                     </div>
                 @endforeach
             </div>
-    @if ($isInline())
-        </x-slot>
-    @endif
 </x-dynamic-component>
