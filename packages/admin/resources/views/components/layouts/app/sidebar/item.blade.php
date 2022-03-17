@@ -2,6 +2,7 @@
     'active' => false,
     'badge',
     'icon',
+    'shouldOpenUrlInNewTab',
     'url',
 ])
 
@@ -14,6 +15,7 @@
             'dark:text-gray-300 dark:hover:bg-gray-700' => (! $active) && config('filament.dark_mode'),
             'bg-primary-500 text-white' => $active,
         ])
+        @if($shouldOpenUrlInNewTab) target="_blank" @endif
     >
         <x-dynamic-component :component="$icon" class="h-5 w-5" />
 

@@ -3,9 +3,12 @@
 namespace Filament\Navigation;
 
 use Closure;
+use Filament\Pages\Actions\Concerns\CanOpenUrl;
 
 class NavigationItem
 {
+    use CanOpenUrl;
+
     protected ?string $group = null;
 
     protected ?Closure $isActiveWhen = null;
@@ -17,8 +20,6 @@ class NavigationItem
     protected ?string $badge = null;
 
     protected ?int $sort = null;
-
-    protected ?string $url = null;
 
     final public function __construct()
     {
@@ -71,13 +72,6 @@ class NavigationItem
         return $this;
     }
 
-    public function url(?string $url): static
-    {
-        $this->url = $url;
-
-        return $this;
-    }
-
     public function getGroup(): ?string
     {
         return $this->group;
@@ -101,11 +95,6 @@ class NavigationItem
     public function getSort(): int
     {
         return $this->sort ?? -1;
-    }
-
-    public function getUrl(): ?string
-    {
-        return $this->url;
     }
 
     public function isActive(): bool
