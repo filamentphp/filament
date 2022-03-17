@@ -29,7 +29,7 @@
             wire:loading.attr="disabled"
             wire:loading.class="opacity-70 cursor-wait"
             @if($tooltip)
-            x-data="{ tooltip: {{ json_encode($tooltip) }} }"
+            x-data="{ tooltip: @js($tooltip) }"
             x-tooltip="tooltip"
             @endif
             type="button"
@@ -40,7 +40,7 @@
     @elseif ($url || $recordUrl)
         <a
             @if($tooltip)
-            x-data="{ tooltip: {{ json_encode($tooltip) }} }"
+            x-data="{ tooltip: @js($tooltip) }"
             x-tooltip="tooltip"
             @endif
             href="{{ $url ?: $recordUrl }}"
