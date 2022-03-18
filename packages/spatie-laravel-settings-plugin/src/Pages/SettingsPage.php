@@ -28,9 +28,16 @@ class SettingsPage extends Page
 
         $settings = app(static::getSettings());
 
-        $this->form->fill($settings->toArray());
+        $data = $this->mutateFormDataBeforeFill($settings->toArray());
+
+        $this->form->fill($data);
 
         $this->callHook('afterFill');
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        return $data;
     }
 
     public function save(): void
