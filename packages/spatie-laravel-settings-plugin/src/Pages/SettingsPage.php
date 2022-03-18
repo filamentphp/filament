@@ -41,6 +41,8 @@ class SettingsPage extends Page
 
         $this->callHook('afterValidate');
 
+        $data = $this->mutateFormDataBeforeSave($data);
+
         $this->callHook('beforeSave');
 
         $settings = app(static::getSettings());
@@ -71,6 +73,11 @@ class SettingsPage extends Page
         }
 
         $this->{$hook}();
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        return $data;
     }
 
     public static function getSettings(): string
