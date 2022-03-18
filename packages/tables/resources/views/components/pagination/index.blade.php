@@ -5,6 +5,11 @@
 
 @php
     $isSimple = ! $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator;
+
+    // set next/prev icon base on language direction
+    $direction = __('filament::layout.direction') ?? 'ltr';
+    $nextIcon = $direction == 'rtl' ? 'left' : 'right';
+    $prevIcon = $direction == 'rtl' ? 'right' : 'left';
 @endphp
 
 <nav
@@ -18,7 +23,7 @@
                 <x-tables::icon-button
                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
                     rel="prev"
-                    icon="heroicon-o-chevron-left"
+                    icon="heroicon-o-chevron-{{$prevIcon}}"
                     :label="__('tables::table.pagination.buttons.previous.label')"
                 />
             @endif
@@ -31,7 +36,7 @@
                 <x-tables::icon-button
                     :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                     rel="next"
-                    icon="heroicon-o-chevron-right"
+                    icon="heroicon-o-chevron-{{$nextIcon}}"
                     :label="__('tables::table.pagination.buttons.next.label')"
                 />
             @endif
@@ -44,7 +49,7 @@
                 @if (! $paginator->onFirstPage())
                     <x-tables::button
                         :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
-                        icon="heroicon-s-chevron-left"
+                        icon="heroicon-s-chevron-{{$prevIcon}}"
                         rel="prev"
                         size="sm"
                         color="secondary"
@@ -77,7 +82,7 @@
                 @if ($paginator->hasMorePages())
                     <x-tables::button
                         :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
-                        icon="heroicon-s-chevron-right"
+                        icon="heroicon-s-chevron-{{$nextIcon}}"
                         icon-position="after"
                         rel="next"
                         size="sm"
@@ -99,7 +104,7 @@
                             @if (! $paginator->onFirstPage())
                                 <x-tables::pagination.item
                                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
-                                    icon="heroicon-s-chevron-left"
+                                    icon="heroicon-s-chevron-{{$prevIcon}}"
                                     aria-label="{{ __('tables::table.pagination.buttons.previous.label') }}"
                                     rel="prev"
                                 />
@@ -126,7 +131,7 @@
                             @if ($paginator->hasMorePages())
                                 <x-tables::pagination.item
                                     :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
-                                    icon="heroicon-s-chevron-right"
+                                    icon="heroicon-s-chevron-{{$nextIcon}}"
                                     aria-label="{{ __('tables::table.pagination.buttons.next.label') }}"
                                     rel="next"
                                 />
