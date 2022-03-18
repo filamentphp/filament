@@ -182,7 +182,7 @@
                                     'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
                                     'dark:text-gray-200' => config('forms.dark_mode'),
                                     'bg-gray-50' => $hasDate(),
-                                    'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                    'dark:bg-gray-800' => config('forms.dark_mode'),
                                 ])
                                 dusk="filament.forms.{{ $getStatePath() }}.hour"
                             />
@@ -192,7 +192,7 @@
                                     'text-xl font-medium text-gray-700',
                                     'dark:text-gray-200' => config('forms.dark_mode'),
                                     'bg-gray-50' => $hasDate(),
-                                    'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                    'dark:bg-gray-800' => config('forms.dark_mode'),
                                 ])
                             >:</span>
 
@@ -206,7 +206,7 @@
                                     'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
                                     'dark:text-gray-200' => config('forms.dark_mode'),
                                     'bg-gray-50' => $hasDate(),
-                                    'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                    'dark:bg-gray-800' => config('forms.dark_mode'),
                                 ])
                                 dusk="filament.forms.{{ $getStatePath() }}.minute"
                             />
@@ -217,7 +217,7 @@
                                         'text-xl font-medium text-gray-700',
                                         'dark:text-gray-200' => config('forms.dark_mode'),
                                         'bg-gray-50' => $hasDate(),
-                                        'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                        'dark:bg-gray-800' => config('forms.dark_mode'),
                                     ])
                                 >:</span>
 
@@ -233,7 +233,7 @@
                                         'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
                                         'dark:text-gray-200' => config('forms.dark_mode'),
                                         'bg-gray-50' => $hasDate(),
-                                        'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                        'dark:bg-gray-800' => config('forms.dark_mode'),
                                     ])
                                 />
                             @endif
