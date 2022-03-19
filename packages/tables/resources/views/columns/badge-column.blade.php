@@ -23,8 +23,15 @@
     @if (filled($state))
         <span @class([
             'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight rounded-xl whitespace-normal',
+            'flex-row-reverse' => $getIconPosition() === 'end',
             $stateColor => $stateColor,
         ])>
+            @if ($getStateIcon())
+                <x-dynamic-component
+                    :component="$getStateIcon()"
+                    :class="'w-4 h-4 ' . ($getIconPosition() === 'end' ? 'ml-1' : 'mr-1')"
+                />
+            @endif
             {{ $state }}
         </span>
     @endif
