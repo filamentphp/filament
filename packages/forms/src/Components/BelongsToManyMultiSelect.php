@@ -110,8 +110,8 @@ class BelongsToManyMultiSelect extends MultiSelect
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->map(fn (Model $record) => [
-                        $record->getKey() => $component->getOptionLabelFromRecord($record),
+                    ->mapWithKeys(fn (Model $record) => [
+                        $record->{$relationship->getRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
@@ -139,8 +139,8 @@ class BelongsToManyMultiSelect extends MultiSelect
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->map(fn (Model $record) => [
-                        $record->getKey() => $component->getOptionLabelFromRecord($record),
+                    ->mapWithKeys(fn (Model $record) => [
+                        $record->{$relationship->getRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
