@@ -976,13 +976,13 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('attachment')->preserveFilenames()
 ```
 
-You may completely customize how file names are generated using the `getFileNameForStorageUsing()` method, and returning a string from the callback:
+You may completely customize how file names are generated using the `getUploadedFileNameForStorageUsing()` method, and returning a string from the callback:
 
 ```php
 use Livewire\TemporaryUploadedFile;
 
 FileUpload::make('attachment')
-    ->getFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
+    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
         return (string) str($file->getClientOriginalName())->prepend('custom-prefix-');
     })
 ```

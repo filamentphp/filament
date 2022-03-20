@@ -40,7 +40,7 @@ class BaseFileUpload extends Field
 
     protected ?Closure $deleteUploadedFileUsing = null;
 
-    protected ?Closure $getFileNameForStorageUsing = null;
+    protected ?Closure $getUploadedFileNameForStorageUsing = null;
 
     protected ?Closure $getUploadedFileUrlUsing = null;
 
@@ -110,7 +110,7 @@ class BaseFileUpload extends Field
             return $storage->url($file);
         });
 
-        $this->getFileNameForStorageUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file) {
+        $this->getUploadedFileNameForStorageUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file) {
             return $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
         });
 
@@ -119,7 +119,7 @@ class BaseFileUpload extends Field
 
             return $file->{$storeMethod}(
                 $component->getDirectory(),
-                $component->getFileNameForStorage($file),
+                $component->getUploadedFileNameForStorage($file),
                 $component->getDiskName(),
             );
         });
@@ -473,16 +473,16 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->isMultiple);
     }
 
-    public function getFileNameForStorageUsing(Closure $callback): static
+    public function getUploadedFileNameForStorageUsing(Closure $callback): static
     {
-        $this->getFileNameForStorageUsing = $callback;
+        $this->getUploadedFileNameForStorageUsing = $callback;
 
         return $this;
     }
 
-    public function getFileNameForStorage(TemporaryUploadedFile $file): string
+    public function getUploadedFileNameForStorage(TemporaryUploadedFile $file): string
     {
-        return $this->evaluate($this->getFileNameForStorageUsing, [
+        return $this->evaluate($this->getUploadedFileNameForStorageUsing, [
             'file' => $file,
         ]);
     }
