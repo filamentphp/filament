@@ -41,13 +41,13 @@ class BaseFileUpload extends Field
 
     protected ?Closure $deleteUploadedFileUsing = null;
 
+    protected ?Closure $getFileNameForStorageUsing = null;
+
     protected ?Closure $getUploadedFileUrlUsing = null;
 
     protected ?Closure $reorderUploadedFilesUsing = null;
 
     protected ?Closure $saveUploadedFileUsing = null;
-
-    protected bool | Closure $fileNameForStorage = false;
 
     protected function setUp(): void
     {
@@ -112,45 +112,17 @@ class BaseFileUpload extends Field
         });
 
         $this->getFileNameForStorageUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file) {
-            $filename = $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
-
-            $originalFileName = str_replace(" ", "-", $filename);
-
-            $filename = File::name($originalFileName);
-            $extension = File::extension($originalFileName);
-
-            if (Storage::disk($this->getDiskName())->exists($originalFileName)) {
-                $allFiles = collect(Storage::disk($this->getDiskName())->allFiles())
-                    ->map(fn ($file) => File::name($file)) //take the filenames only
-                    ->reject(fn ($item) => $item == "") //reject empty filenames
-                    ->reject(fn ($item) => ! preg_match("/{$filename}-[0-9]*$/", $item)) //reject anything that doesnt match filename-xx
-                    ->sort();
-
-
-                if ($allFiles->count()) {
-                    $f = $allFiles->last();
-                    $filename = ++$f;
-                } else {
-                    //just add a suffix
-                    $filename .= "-01";
-                }
-            }
-
-            $filename .= ".".$extension;
-
-            return $filename;
+            return $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
         });
 
         $this->saveUploadedFileUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file): string {
             $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
 
-            if ($this->fileNameForStorage) {
-                $filename = $this->fileNameForStorage($file);
-            } else {
-                $filename = $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
-            }
-
-            return $file->{$storeMethod}($component->getDirectory(), $filename, $component->getDiskName());
+            return $file->{$storeMethod}(
+                $component->getDirectory(),
+                $component->getFileNameForStorage($file),
+                $component->getDiskName(),
+            );
         });
     }
 
@@ -502,16 +474,16 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->isMultiple);
     }
 
-    public function getFileNameForStorageUsing(bool | Closure $method)
+    public function getFileNameForStorageUsing(Closure $callback): static
     {
-        $this->fileNameForStorage = $method;
+        $this->getFileNameForStorageUsing = $callback;
 
         return $this;
     }
 
-    public function fileNameForStorage(TemporaryUploadedFile $file): string
+    public function getFileNameForStorage(TemporaryUploadedFile $file): string
     {
-        return $this->evaluate($this->fileNameForStorage, [
+        return $this->evaluate($this->getFileNameForStorageUsing, [
             'file' => $file,
         ]);
     }
