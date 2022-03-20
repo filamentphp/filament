@@ -1,12 +1,15 @@
 @props([
     'color' => 'primary',
+    'disabled' => false,
     'tag' => 'a',
+    'tooltip' => null,
     'type' => 'button',
 ])
 
 @php
     $linkClasses = [
         'hover:underline focus:outline-none focus:underline filament-tables-link',
+        'opacity-70 cursor-not-allowed' => $disabled,
         'text-primary-600 hover:text-primary-500' => $color === 'primary',
         'text-danger-600 hover:text-danger-500' => $color === 'danger',
         'text-gray-600 hover:text-gray-500' => $color === 'secondary',
@@ -21,12 +24,23 @@
 @endphp
 
 @if ($tag === 'a')
-    <a {{ $attributes->class($linkClasses) }}>
+    <a
+        @if ($tooltip)
+            x-data="{}"
+            x-tooltip.raw="{{ $tooltip }}"
+        @endif
+        {{ $attributes->class($linkClasses) }}
+    >
         {{ $slot }}
     </a>
 @elseif ($tag === 'button')
     <button
+        @if ($tooltip)
+            x-data="{}"
+            x-tooltip.raw="{{ $tooltip }}"
+        @endif
         type="{{ $type }}"
+        {!! $disabled ? 'disabled' : '' !!}
         {{ $attributes->class($linkClasses) }}
     >
         {{ $slot }}

@@ -250,3 +250,26 @@ By default, the row actions in your table will be aligned to the right in the fi
 ```
 'action_alignment' => 'right', // `right`, `left` or `center`
 ```
+
+## Tooltips
+
+> If you want to use tooltips outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app, including [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager).
+
+You may specify a tooltip to display when you hover over an action:
+
+```php
+use Filament\Tables\Actions\LinkAction;
+
+LinkAction::make('edit')
+    ->tooltip('Edit this blog post')
+```
+
+This method also accepts a closure that can access the current table record:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
+
+LinkAction::make('edit')
+    ->tooltip(fn (Model $record): string => "Edit {$record->title}")
+```

@@ -6,6 +6,9 @@
     @if ($label)
         <button
             x-on:click.prevent="$store.sidebar.toggleCollapsedGroup(label)"
+            @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
+                x-show="$store.sidebar.isOpen"
+            @endif
             class="flex items-center justify-between w-full"
         >
             <p @class([

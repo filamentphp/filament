@@ -12,6 +12,7 @@ use Illuminate\View\Component;
 class Action extends Component implements Htmlable
 {
     use Concerns\BelongsToTable;
+    use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
     use Concerns\CanBeMounted;
     use Concerns\CanOpenModal;
@@ -26,6 +27,7 @@ class Action extends Component implements Htmlable
     use Concerns\HasName;
     use Concerns\HasRecord;
     use Concerns\HasView;
+    use Concerns\HasTooltip;
     use Conditionable;
     use Macroable;
     use Tappable;

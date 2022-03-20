@@ -16,17 +16,21 @@ class NavigationItem
 
     protected ?string $badge = null;
 
+    protected bool $shouldOpenUrlInNewTab = false;
+
     protected ?int $sort = null;
 
-    protected ?string $url = null;
+    protected string | Closure | null $url = null;
 
     final public function __construct()
     {
     }
 
-    public static function make(): static
+    public function badge(?string $badge): static
     {
-        return app(static::class);
+        $this->badge = $badge;
+
+        return $this;
     }
 
     public function group(?string $group): static
@@ -57,9 +61,14 @@ class NavigationItem
         return $this;
     }
 
-    public function badge(?string $badge): static
+    public static function make(): static
     {
-        $this->badge = $badge;
+        return app(static::class);
+    }
+
+    public function openUrlInNewTab(bool $condition = true): static
+    {
+        $this->shouldOpenUrlInNewTab = $condition;
 
         return $this;
     }
@@ -71,11 +80,17 @@ class NavigationItem
         return $this;
     }
 
-    public function url(?string $url): static
+    public function url(string | Closure | null $url, bool $shouldOpenInNewTab = false): static
     {
+        $this->shouldOpenUrlInNewTab = $shouldOpenInNewTab;
         $this->url = $url;
 
         return $this;
+    }
+
+    public function getBadge(): ?string
+    {
+        return $this->badge;
     }
 
     public function getGroup(): ?string
@@ -93,11 +108,6 @@ class NavigationItem
         return $this->label;
     }
 
-    public function getBadge(): ?string
-    {
-        return $this->badge;
-    }
-
     public function getSort(): int
     {
         return $this->sort ?? -1;
@@ -105,7 +115,7 @@ class NavigationItem
 
     public function getUrl(): ?string
     {
-        return $this->url;
+        return value($this->url);
     }
 
     public function isActive(): bool
@@ -117,5 +127,10 @@ class NavigationItem
         }
 
         return app()->call($callback);
+    }
+
+    public function shouldOpenUrlInNewTab(): bool
+    {
+        return $this->shouldOpenUrlInNewTab;
     }
 }

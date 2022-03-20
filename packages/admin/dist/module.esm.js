@@ -252,12 +252,12 @@ var require_timezone = __commonJS((exports, module) => {
     return function(n2, i, o2) {
       var r2, a2 = function(t3, n3, i2) {
         i2 === void 0 && (i2 = {});
-        var o3 = new Date(t3);
-        return function(t4, n4) {
+        var o3 = new Date(t3), r3 = function(t4, n4) {
           n4 === void 0 && (n4 = {});
-          var i3 = n4.timeZoneName || "short", o4 = t4 + "|" + i3, r3 = e2[o4];
-          return r3 || (r3 = new Intl.DateTimeFormat("en-US", {hour12: false, timeZone: t4, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", timeZoneName: i3}), e2[o4] = r3), r3;
-        }(n3, i2).formatToParts(o3);
+          var i3 = n4.timeZoneName || "short", o4 = t4 + "|" + i3, r4 = e2[o4];
+          return r4 || (r4 = new Intl.DateTimeFormat("en-US", {hour12: false, timeZone: t4, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", timeZoneName: i3}), e2[o4] = r4), r4;
+        }(n3, i2);
+        return r3.formatToParts(o3);
       }, u = function(e3, n3) {
         for (var i2 = a2(e3, n3), r3 = [], u2 = 0; u2 < i2.length; u2 += 1) {
           var f2 = i2[u2], s3 = f2.type, m = f2.value, c2 = t2[s3];
@@ -349,7 +349,7 @@ var require_utc = __commonJS((exports, module) => {
             return null;
           var f3 = ("" + s4[0]).match(e2) || ["-", 0, 0], n4 = f3[0], u3 = 60 * +f3[1] + +f3[2];
           return u3 === 0 ? 0 : n4 === "+" ? u3 : -u3;
-        }(s3)) === null)
+        }(s3), s3 === null))
           return this;
         var u2 = Math.abs(s3) <= 16 ? 60 * s3 : s3, o3 = this;
         if (f2)
@@ -5749,12 +5749,17 @@ var parseLocale = function parseLocale2(preset, object, isLocal) {
   if (!preset)
     return L;
   if (typeof preset === "string") {
-    if (Ls[preset]) {
-      l = preset;
+    var presetLower = preset.toLowerCase();
+    if (Ls[presetLower]) {
+      l = presetLower;
     }
     if (object) {
-      Ls[preset] = object;
-      l = preset;
+      Ls[presetLower] = object;
+      l = presetLower;
+    }
+    var presetSplit = preset.split("-");
+    if (!l && presetSplit.length > 1) {
+      return parseLocale2(presetSplit[0]);
     }
   } else {
     var name2 = preset.name;

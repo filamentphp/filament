@@ -7,6 +7,7 @@ class ButtonAction extends Action
     use Concerns\CanBeOutlined;
     use Concerns\CanSubmitForm;
     use Concerns\HasIcon;
+    use Concerns\HasTooltip;
 
     protected string $view = 'filament::pages.actions.button-action';
 
