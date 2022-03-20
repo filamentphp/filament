@@ -13,6 +13,7 @@ use Illuminate\View\Component;
 class Action extends Component implements Htmlable
 {
     use Concerns\BelongsToLivewire;
+    use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
     use Concerns\CanBeMounted;
     use Concerns\CanOpenModal;
@@ -47,7 +48,7 @@ class Action extends Component implements Htmlable
 
     public function call(array $data = [])
     {
-        if ($this->isHidden()) {
+        if ($this->isHidden() || $this->isDisabled()) {
             return;
         }
 

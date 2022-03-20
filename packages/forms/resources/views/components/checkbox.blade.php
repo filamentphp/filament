@@ -19,6 +19,7 @@
                 type="checkbox"
                 {!! $isRequired() ? 'required' : null !!}
                 {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
+                dusk="filament.forms.{{ $getStatePath() }}"
                 {{
                     $attributes
                         ->merge($getExtraAttributes())

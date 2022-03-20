@@ -288,6 +288,7 @@
                 placeholder="{{ $getPlaceholder() }}"
                 toolbar="trix-toolbar-{{ $getId() }}"
                 x-ref="trix"
+                dusk="filament.forms.{{ $getStatePath() }}"
                 @class([
                     'bg-white block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600 prose max-w-none',
                     'dark:prose-invert dark:bg-gray-700' => config('forms.dark_mode'),

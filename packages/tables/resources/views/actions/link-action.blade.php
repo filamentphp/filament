@@ -3,19 +3,20 @@
     $record = $getRecord();
 
     if (! $action) {
-        $clickAction = null;
+        $wireClickAction = null;
     } elseif ($record) {
-        $clickAction = "mountTableAction('{$getName()}', '{$record->getKey()}')";
+        $wireClickAction = "mountTableAction('{$getName()}', '{$record->getKey()}')";
     } else {
-        $clickAction = "mountTableAction('{$getName()}')";
+        $wireClickAction = "mountTableAction('{$getName()}')";
     }
 @endphp
 
 <x-tables::link
     :tag="((! $action) && $url) ? 'a' : 'button'"
-    :wire:click="$clickAction"
-    :href="$getUrl()"
+    :wire:click="$isEnabled() ? $wireClickAction : null"
+    :href="$isEnabled() ? $getUrl() : null"
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
+    :disabled="$isDisabled()"
     :color="$getColor()"
     class="text-sm font-medium filament-tables-link-action"
 >

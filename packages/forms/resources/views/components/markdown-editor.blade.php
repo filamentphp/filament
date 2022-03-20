@@ -143,7 +143,7 @@
                         @endif
                     </markdown-toolbar>
 
-                    @if ($hasToolbarButton(['edit', 'preview']) && ! $isDisabled())
+                    @if ($hasToolbarButton(['edit', 'preview']) && $isEnabled())
                         <div class="flex items-center space-x-4 rtl:space-x-reverse">
                             @if ($hasToolbarButton('edit'))
                                 <button
@@ -180,6 +180,7 @@
                         {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
                         {!! $isRequired() ? 'required' : null !!}
                         x-model="state"
+                        dusk="filament.forms.{{ $getStatePath() }}"
                         x-on:keyup.enter="checkForAutoInsertion"
                         x-on:file-attachment-accepted.window="
                             attachment = $event.detail?.attachments?.[0]
