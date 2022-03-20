@@ -17,6 +17,6 @@ trait HasTooltip
 
     public function getTooltip(): ?string
     {
-        return value($this->tooltip);
+        return $this->evaluate($this->tooltip);
     }
 }

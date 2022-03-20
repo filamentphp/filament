@@ -3,8 +3,8 @@
     'icon' => null,
     'label' => null,
     'tag' => 'button',
-    'type' => 'button',
     'tooltip' => null,
+    'type' => 'button',
 ])
 
 @php
@@ -23,11 +23,11 @@
 
 @if ($tag === 'button')
     <button
-        type="{{ $type }}"
-        @if($tooltip)
-        x-data="{ tooltip: @js($tooltip) }"
-        x-tooltip="tooltip"
+        @if ($tooltip)
+            x-data="{}"
+            x-tooltip.raw="{{ $tooltip }}"
         @endif
+        type="{{ $type }}"
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($label)
@@ -40,11 +40,12 @@
     </button>
 @elseif ($tag === 'a')
     <a
-        @if($tooltip)
-        x-data="{ tooltip: @js($tooltip) }"
-        x-tooltip="tooltip"
+        @if ($tooltip)
+            x-data="{}"
+            x-tooltip.raw="{{ $tooltip }}"
         @endif
-        {{ $attributes->class($buttonClasses) }}>
+        {{ $attributes->class($buttonClasses) }}
+    >
         @if ($label)
             <span class="sr-only">
                 {{ $label }}

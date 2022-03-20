@@ -3,7 +3,6 @@
 namespace Filament\Tables\Actions\Concerns;
 
 use Closure;
-use Illuminate\Support\Str;
 
 trait HasTooltip
 {
@@ -18,6 +17,6 @@ trait HasTooltip
 
     public function getTooltip(): ?string
     {
-        return value($this->tooltip);
+        return $this->evaluate($this->tooltip);
     }
 }

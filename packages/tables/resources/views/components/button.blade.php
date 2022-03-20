@@ -4,11 +4,11 @@
     'form' => null,
     'icon' => null,
     'iconPosition' => 'before',
+    'outlined' => false,
     'tag' => 'button',
+    'tooltip' => null,
     'type' => 'button',
     'size' => 'md',
-    'outlined' => false,
-    'tooltip' => null,
 ])
 
 @php
@@ -66,11 +66,11 @@
 
 @if ($tag === 'button')
     <button
-        type="{{ $type }}"
-        @if($tooltip)
-        x-data="{ tooltip: @js($tooltip) }"
-        x-tooltip="tooltip"
+        @if ($tooltip)
+            x-data="{}"
+            x-tooltip.raw="{{ $tooltip }}"
         @endif
+        type="{{ $type }}"
         wire:loading.attr="disabled"
         {!! $hasLoadingIndicator ? 'wire:loading.class="opacity-70 cursor-wait"' : '' !!}
         {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
@@ -99,9 +99,9 @@
     </button>
 @elseif ($tag === 'a')
     <a
-        @if($tooltip)
-        x-data="{ tooltip: @js($tooltip) }"
-        x-tooltip="tooltip"
+        @if ($tooltip)
+            x-data="{}"
+            x-tooltip.raw="{{ $tooltip }}"
         @endif
         wire:loading.attr="disabled"
         {!! $hasLoadingIndicator ? 'wire:loading.class="opacity-70 cursor-wait"' : '' !!}

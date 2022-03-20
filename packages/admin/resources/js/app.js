@@ -2,16 +2,17 @@ import '../css/app.css'
 
 import Alpine from 'alpinejs'
 import Chart from 'chart.js/auto'
+
+import Collapse from '@alpinejs/collapse'
 import FormsAlpinePlugin from '../../../forms/dist/module.esm'
 import Focus from '@alpinejs/focus'
 import Persist from '@alpinejs/persist'
-import Collapse from '@alpinejs/collapse'
-import Tooltip from "@ryangjchandler/alpine-tooltip"
+import Tooltip from '@ryangjchandler/alpine-tooltip'
 
+Alpine.plugin(Collapse)
 Alpine.plugin(FormsAlpinePlugin)
 Alpine.plugin(Focus)
 Alpine.plugin(Persist)
-Alpine.plugin(Collapse)
 Alpine.plugin(Tooltip)
 
 Alpine.store('sidebar', {
