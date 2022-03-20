@@ -68,7 +68,6 @@ trait HasBulkActions
         }
 
         $this->cacheForm('mountedTableBulkActionForm');
-        $this->resetErrorBag();
 
         app()->call($action->getMountUsing(), [
             'action' => $action,
@@ -79,6 +78,8 @@ trait HasBulkActions
         if (! $action->shouldOpenModal()) {
             return $this->callMountedTableBulkAction();
         }
+
+        $this->resetErrorBag();
 
         $this->dispatchBrowserEvent('open-modal', [
             'id' => static::class . '-bulk-action',

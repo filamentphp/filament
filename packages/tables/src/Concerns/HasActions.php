@@ -69,7 +69,6 @@ trait HasActions
         }
 
         $this->cacheForm('mountedTableActionForm');
-        $this->resetErrorBag();
 
         app()->call($action->getMountUsing(), [
             'action' => $action,
@@ -80,6 +79,8 @@ trait HasActions
         if (! $action->shouldOpenModal()) {
             return $this->callMountedTableAction();
         }
+
+        $this->resetErrorBag();
 
         $this->dispatchBrowserEvent('open-modal', [
             'id' => static::class . '-action',
