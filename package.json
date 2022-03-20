@@ -13,7 +13,7 @@
         "@github/markdown-toolbar-element": "^1.5.1",
         "@tailwindcss/forms": "^0.4.0",
         "@tailwindcss/typography": "^0.5.0",
-        "alpinejs": "^3.5.0",
+        "alpinejs": "3.9.0",
         "autoprefixer": "^10.4.0",
         "chart.js": "^3.6.0",
         "dayjs": "^1.10.6",
