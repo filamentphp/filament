@@ -20,9 +20,11 @@ trait CanAssociateRecords
 
     protected static bool $canAssociateAnother = true;
 
+    protected static bool $hasAssociateAction = false;
+
     protected function hasAssociateAction(): bool
     {
-        return false;
+        return static::$hasAssociateAction;
     }
 
     protected function canAssociate(): bool

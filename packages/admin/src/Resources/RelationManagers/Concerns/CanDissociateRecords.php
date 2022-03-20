@@ -10,14 +10,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait CanDissociateRecords
 {
+    protected static bool $hasDissociateAction = false;
+
+    protected static bool $hasDissociateBulkAction = false;
+
     protected function hasDissociateAction(): bool
     {
-        return false;
+        return static::$hasDissociateAction;
     }
 
     protected function hasDissociateBulkAction(): bool
     {
-        return false;
+        return static::$hasDissociateBulkAction;
     }
 
     protected function canDissociate(Model $record): bool
