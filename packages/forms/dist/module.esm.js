@@ -19194,6 +19194,7 @@ var multi_select_default = (Alpine) => {
   }) => {
     return {
       focusedOptionIndex: null,
+      hasNoSearchResults: false,
       index: {},
       isLoading: false,
       isOpen: false,
@@ -19210,7 +19211,8 @@ var multi_select_default = (Alpine) => {
         }
         this.addOptionsToIndex(this.options);
         this.labels = await this.getOptionLabels();
-        this.$watch("search", async () => {
+        this.$watch("search", Alpine.debounce(async () => {
+          this.hasNoSearchResults = false;
           if (!this.isOpen || this.search === "" || this.search === null) {
             this.options = options2;
             this.focusedOptionIndex = 0;
@@ -19232,7 +19234,10 @@ var multi_select_default = (Alpine) => {
             this.focusedOptionIndex = 0;
             this.isLoading = false;
           }
-        });
+          if (!Object.keys(this.options).length) {
+            this.hasNoSearchResults = true;
+          }
+        }, 500));
         this.$watch("state", async () => {
           this.labels = await this.getOptionLabels();
         });
@@ -19413,6 +19418,7 @@ var select_default = (Alpine) => {
   }) => {
     return {
       focusedOptionIndex: null,
+      hasNoSearchResults: false,
       index: {},
       isLoading: false,
       isOpen: false,
@@ -19426,7 +19432,8 @@ var select_default = (Alpine) => {
         }
         this.addOptionsToIndex(this.options);
         this.label = await this.getOptionLabel();
-        this.$watch("search", async () => {
+        this.$watch("search", Alpine.debounce(async () => {
+          this.hasNoSearchResults = false;
           if (!this.isOpen || this.search === "" || this.search === null) {
             this.options = options2;
             this.focusedOptionIndex = 0;
@@ -19448,7 +19455,10 @@ var select_default = (Alpine) => {
             this.focusedOptionIndex = 0;
             this.isLoading = false;
           }
-        });
+          if (!Object.keys(this.options).length) {
+            this.hasNoSearchResults = true;
+          }
+        }, 500));
         this.$watch("state", async () => {
           this.label = await this.getOptionLabel();
         });
