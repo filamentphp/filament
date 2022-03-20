@@ -13,7 +13,7 @@ Alpine.plugin(Persist)
 Alpine.plugin(Collapse)
 
 Alpine.store('sidebar', {
-    isOpen: false,
+    isOpen: Alpine.$persist(false).as('isOpen'),
 
     collapsedGroups: Alpine.$persist([]).as('collapsedGroups'),
 
