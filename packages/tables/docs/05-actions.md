@@ -250,3 +250,24 @@ By default, the row actions in your table will be aligned to the right in the fi
 ```
 'action_alignment' => 'right', // `right`, `left` or `center`
 ```
+
+## Tooltips
+
+You may specify a tooltip to display when you hover over an action:
+
+```php
+use Filament\Tables\Actions\LinkAction;
+
+LinkAction::make('edit')
+    ->tooltip('Edit this blog post')
+```
+
+This method also accepts a closure that can access the current table record:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
+
+LinkAction::make('edit')
+    ->tooltip(fn (Model $record): string => "Edit {$record->title}")
+```
