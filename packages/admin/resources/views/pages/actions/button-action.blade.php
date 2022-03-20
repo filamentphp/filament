@@ -15,7 +15,7 @@
     :form="$getForm()"
     :tag="((! $action) && $url) ? 'a' : 'button'"
     :wire:click="$isEnabled() ? $wireClickAction : null"
-    :href="$isEnabled() ? $getUrl() ? null"
+    :href="$isEnabled() ? $getUrl() : null"
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
     :type="$canSubmitForm() ? 'submit' : 'button'"
     :color="$getColor()"
