@@ -23,7 +23,7 @@ trait HasColors
         foreach ($this->getColors() as $color => $condition) {
             if (is_numeric($color)) {
                 $stateColor = $condition;
-            } elseif ($condition instanceof Closure && $condition($state)) {
+            } elseif ($condition instanceof Closure && $condition($state, $this->getRecord())) {
                 $stateColor = $color;
             } elseif ($condition === $state) {
                 $stateColor = $color;
