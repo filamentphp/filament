@@ -240,7 +240,7 @@ TextInput::make('domain')
 
 <img src="https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png">
 
-You may limit the length of the string by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
+You may limit the length of the input by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -251,6 +251,16 @@ TextInput::make('name')
 ```
 
 > When using `minLength()` or `maxLength()` with `numeric()`, be aware that the validation will apply to the value of the input instead of its length. This is in line with the behaviour of Laravel's `min` and `max` validation rules.
+
+You may also specify the exact length of the input by setting the `length()`. This method adds both frontend and backend validation:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('code')->length(8)
+```
+
+Internally, this uses the `size` rule by default, and the `digits` rule for numeric inputs.
 
 In addition, you may validate the minimum and maximum value of the input by setting the `minValue()` and `maxValue()` methods:
 
