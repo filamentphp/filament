@@ -38,7 +38,7 @@ trait CanEditRecords
     protected function fillEditForm(): void
     {
         $this->resetErrorBag();
-        
+
         $this->callHook('beforeFill');
         $this->callHook('beforeEditFill');
 
