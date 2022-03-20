@@ -976,7 +976,16 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('attachment')->preserveFilenames()
 ```
 
-> Please note, it is the responsibility of the developer to ensure that uploaded file names are unique when using this option.
+You may completely customize how file names are generated using the `getFileNameForStorageUsing()` method, and returning a string from the callback:
+
+```php
+use Livewire\TemporaryUploadedFile;
+
+FileUpload::make('attachment')
+    ->getFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
+        return (string) str($file->getClientOriginalName())->prepend('custom-prefix-');
+    })
+```
 
 You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types. You may also use the `image()` method as shorthand to allow all image MIME types.
 
