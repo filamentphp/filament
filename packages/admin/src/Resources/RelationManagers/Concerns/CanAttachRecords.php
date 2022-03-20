@@ -18,6 +18,8 @@ trait CanAttachRecords
 
     protected static bool $canAttachAnother = true;
 
+    protected static bool $attachUniqueValues = true;
+
     protected function canAttach(): bool
     {
         return $this->can('attach');
@@ -26,6 +28,11 @@ trait CanAttachRecords
     protected static function canAttachAnother(): bool
     {
         return static::$canAttachAnother;
+    }
+
+    public static function attachUniqueValues(): bool
+    {
+        return static::$attachUniqueValues;
     }
 
     public static function disableAttachAnother(): void
@@ -88,8 +95,10 @@ trait CanAttachRecords
                 }
 
                 return $relationshipQuery
-                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
-                        $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                    ->when(static::attachUniqueValues(), function (Builder $query) use ($livewire){
+                        $query->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
+                            $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                        });
                     })
                     ->pluck($displayColumnName, $relationship->getRelated()->getKeyName())
                     ->toArray();
