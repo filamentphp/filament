@@ -29,6 +29,7 @@
 @elseif ($tag === 'button')
     <button
         type="{{ $type }}"
+        {!! $disabled ? 'disabled' : '' !!}
         {{ $attributes->class($linkClasses) }}
     >
         {{ $slot }}
