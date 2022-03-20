@@ -4,10 +4,11 @@
     'form' => null,
     'icon' => null,
     'iconPosition' => 'before',
+    'outlined' => false,
     'tag' => 'button',
+    'tooltip' => null,
     'type' => 'button',
     'size' => 'md',
-    'outlined' => false,
 ])
 
 @php
@@ -65,10 +66,15 @@
 
 @if ($tag === 'button')
     <button
+        @if ($tooltip)
+            x-data="{}"
+            x-tooltip.raw="{{ $tooltip }}"
+        @endif
         type="{{ $type }}"
         wire:loading.attr="disabled"
         {!! $hasLoadingIndicator ? 'wire:loading.class="opacity-70 cursor-wait"' : '' !!}
         {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
+        {!! $disabled ? 'disabled' : '' !!}
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
@@ -94,6 +100,10 @@
     </button>
 @elseif ($tag === 'a')
     <a
+        @if ($tooltip)
+            x-data="{}"
+            x-tooltip.raw="{{ $tooltip }}"
+        @endif
         wire:loading.attr="disabled"
         {!! $hasLoadingIndicator ? 'wire:loading.class="opacity-70 cursor-wait"' : '' !!}
         {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}

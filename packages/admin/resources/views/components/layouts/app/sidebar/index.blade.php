@@ -1,9 +1,16 @@
 <aside
     x-data="{}"
-    x-cloak="-lg"
-    x-bind:class="$store.sidebar.isOpen ? 'translate-x-0' : '-translate-x-full rtl:lg:-translate-x-0 rtl:translate-x-full'"
+    @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
+        x-cloak
+        x-bind:class="$store.sidebar.isOpen ? 'translate-x-0 lg:max-w-[20em]' : '-translate-x-full lg:translate-x-0 lg:max-w-[4.4em] rtl:lg:-translate-x-0 rtl:translate-x-full'"
+    @else
+        x-cloak="-lg"
+        x-bind:class="$store.sidebar.isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 rtl:lg:-translate-x-0 rtl:translate-x-full'"
+    @endif
+
     @class([
-        'fixed inset-y-0 left-0 rtl:left-auto rtl:right-0 z-20 flex flex-col h-screen overflow-hidden shadow-2xl transition-transform bg-white filament-sidebar lg:border-r w-80 lg:z-0 lg:translate-x-0',
+        'fixed inset-y-0 left-0 rtl:left-auto rtl:right-0 z-20 flex flex-col h-screen overflow-hidden shadow-2xl transition-all bg-white filament-sidebar lg:border-r w-80 lg:z-0',
+        'lg:translate-x-0' => ! config('filament.layout.sidebar.is_collapsible_on_desktop'),
         'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),
     ])
 >
@@ -11,7 +18,16 @@
         'border-b h-[4rem] shrink-0 px-6 flex items-center filament-sidebar-header',
         'dark:border-gray-700' => config('filament.dark_mode'),
     ])>
-        <a href="{{ config('filament.home_url') }}">
+        <a
+            href="{{ config('filament.home_url') }}"
+            @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
+                x-data="{}"
+                x-show="$store.sidebar.isOpen"
+                x-transition:enter="lg:transition delay-100"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+            @endif
+        >
             <x-filament::brand />
         </a>
     </header>

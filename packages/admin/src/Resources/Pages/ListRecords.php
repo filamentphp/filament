@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Closure;
+use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Table;
 use Filament\Tables;
@@ -166,7 +167,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return true;
     }
 
-    protected function getCreateAction(): ButtonAction
+    protected function getCreateAction(): Action
     {
         $resource = static::getResource();
         $label = $resource::getLabel();

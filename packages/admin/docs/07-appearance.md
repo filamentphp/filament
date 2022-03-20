@@ -43,6 +43,22 @@ When the user toggles between dark or light mode, a browser event called **dark-
 </div>
 ```
 
+## Collapsible sidebar
+
+By default, the sidebar is only collapsible on mobile. You may make it collapsible on desktop as well.
+
+You must [publish the configuration](installation#publishing-the-configuration) in order to access this feature.
+
+In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to `true`:
+
+```php
+'layout' => [
+    'sidebar' => [
+        'is_collapsible_on_desktop' => true,
+    ],
+],
+```
+
 ## Building themes
 
 Filament allows you to change the fonts and color scheme used in the UI, by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".

@@ -157,6 +157,29 @@ TextColumn::make('users_count')->counts('users')
 
 In this example, `users` is the name of the relationship to count from. The name of the column must be `users_count`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#counting-related-models) for storing the result.
 
+### Tooltips
+
+> If you want to use tooltips outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app, including [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager).
+
+You may specify a tooltip to display when you hover over a cell:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->tooltip('Title')
+```
+
+This method also accepts a closure that can access the current table record:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
+
+TextColumn::make('title')
+    ->tooltip(fn (Model $record): string => "By {$record->author->name}")
+```
+
 ### Custom attributes
 
 The HTML of columns can be customized, by passing an array of `extraAttributes()`:

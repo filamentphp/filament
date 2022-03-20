@@ -26,6 +26,7 @@ class Column extends Component implements Htmlable
     use Concerns\HasName;
     use Concerns\HasRecord;
     use Concerns\HasState;
+    use Concerns\HasTooltip;
     use Concerns\HasView;
     use Concerns\InteractsWithTableQuery;
     use Conditionable;

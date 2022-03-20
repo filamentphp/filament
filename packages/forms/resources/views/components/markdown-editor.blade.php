@@ -143,7 +143,7 @@
                         @endif
                     </markdown-toolbar>
 
-                    @if ($hasToolbarButton(['edit', 'preview']) && ! $isDisabled())
+                    @if ($hasToolbarButton(['edit', 'preview']) && $isEnabled())
                         <div class="flex items-center space-x-4 rtl:space-x-reverse">
                             @if ($hasToolbarButton('edit'))
                                 <button
