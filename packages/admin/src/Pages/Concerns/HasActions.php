@@ -68,6 +68,7 @@ trait HasActions
         }
 
         $this->cacheForm('mountedActionForm');
+        $this->resetErrorBag();
 
         app()->call($action->getMountUsing(), [
             'action' => $action,

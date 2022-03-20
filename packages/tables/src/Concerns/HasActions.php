@@ -69,6 +69,7 @@ trait HasActions
         }
 
         $this->cacheForm('mountedTableActionForm');
+        $this->resetErrorBag();
 
         app()->call($action->getMountUsing(), [
             'action' => $action,

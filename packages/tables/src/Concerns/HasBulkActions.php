@@ -68,6 +68,7 @@ trait HasBulkActions
         }
 
         $this->cacheForm('mountedTableBulkActionForm');
+        $this->resetErrorBag();
 
         app()->call($action->getMountUsing(), [
             'action' => $action,
