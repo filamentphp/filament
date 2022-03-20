@@ -8,12 +8,14 @@ trait HasActiveFormLocaleSelect
 {
     public $activeFormLocale = null;
 
+    public ?array $translatableLocales = null;
+
     protected function getActiveFormLocaleSelectAction(): SelectAction
     {
         return SelectAction::make('activeFormLocale')
             ->label(__('filament-spatie-laravel-translatable-plugin::actions.active_form_locale.label'))
             ->options(
-                collect(static::getResource()::getTranslatableLocales())
+                collect($this->getTranslatableLocales())
                     ->mapWithKeys(function (string $locale): array {
                         return [$locale => locale_get_display_name($locale, app()->getLocale())];
                     })
@@ -28,5 +30,15 @@ trait HasActiveFormLocaleSelect
         }
 
         return parent::getRecordTitle();
+    }
+
+    public function setTranslatableLocales(array $locales): void
+    {
+        $this->translatableLocales = $locales;
+    }
+
+    protected function getTranslatableLocales(): array
+    {
+        return $this->translatableLocales ?? static::getResource()::getTranslatableLocales();
     }
 }
