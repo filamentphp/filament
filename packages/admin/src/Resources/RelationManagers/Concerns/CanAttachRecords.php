@@ -179,7 +179,7 @@ trait CanAttachRecords
         );
     }
 
-    protected function getAttachActionAttachModalAction(): ButtonAction
+    protected function getAttachActionAttachModalAction(): Tables\Actions\Modal\Actions\Action
     {
         return ButtonAction::make('attach')
             ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach.label'))
@@ -187,7 +187,7 @@ trait CanAttachRecords
             ->color('primary');
     }
 
-    protected function getAttachActionAttachAndAttachAnotherModalAction(): ButtonAction
+    protected function getAttachActionAttachAndAttachAnotherModalAction(): Tables\Actions\Modal\Actions\Action
     {
         return ButtonAction::make('attachAndAttachAnother')
             ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach_and_attach_another.label'))
@@ -195,7 +195,7 @@ trait CanAttachRecords
             ->color('secondary');
     }
 
-    protected function getAttachActionCancelModalAction(): ButtonAction
+    protected function getAttachActionCancelModalAction(): Tables\Actions\Modal\Actions\Action
     {
         return ButtonAction::make('cancel')
             ->label(__('tables::table.actions.modal.buttons.cancel.label'))

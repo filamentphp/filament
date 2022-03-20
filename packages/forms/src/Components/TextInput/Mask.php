@@ -280,7 +280,7 @@ class Mask implements Jsonable
         }
 
         if ($this->fromValue !== null) {
-            $configuration['from'] = $this->toValue;
+            $configuration['from'] = $this->fromValue;
         }
 
         if (! $this->hasLazyPlaceholder) {

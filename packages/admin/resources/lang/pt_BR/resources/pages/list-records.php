@@ -61,7 +61,7 @@ return [
                     'actions' => [
 
                         'save' => [
-                            'label' => 'Salvar!',
+                            'label' => 'Salvar',
                         ],
 
                     ],

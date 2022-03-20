@@ -1,4 +1,5 @@
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
@@ -104,6 +105,7 @@
                                 id="{{ $getId() }}-{{ $value }}"
                                 type="radio"
                                 value="{{ $value }}"
+                                dusk="filament.forms.{{ $getStatePath() }}"
                                 {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                                 {{ $getExtraInputAttributeBag()->class([
                                     'focus:ring-primary-500 h-4 w-4 text-primary-600',
@@ -141,4 +143,4 @@
     @if ($isInline())
         </x-slot>
     @endif
-</x-forms::field-wrapper>
+</x-dynamic-component>

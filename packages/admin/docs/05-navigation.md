@@ -4,7 +4,7 @@ title: Navigation
 
 ## Getting started
 
-By default, Filament will register navigation items for each of your [resources](resources) and [custom pages](pages). These classes contain static properties that you can override, to configure that navigation item and its order:
+By default, Filament will register navigation items for each of your [resources](resources) and [custom pages](pages). These classes contain static properties and methods that you can override, to configure that navigation item and its order:
 
 ```php
 protected static ?string $navigationIcon = 'heroicon-o-document-text';
@@ -12,6 +12,11 @@ protected static ?string $navigationIcon = 'heroicon-o-document-text';
 protected static ?string $navigationLabel = 'Custom Navigation Label';
 
 protected static ?int $navigationSort = 3;
+
+protected static function getNavigationBadge(): ?string
+{
+    return static::getModel()::count();
+}
 ```
 
 The `$navigationIcon` supports the name of any Blade component, and passes a set of formatting classes to it. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
@@ -38,11 +43,13 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        Filament::registerNavigationGroups([
-            'Shop',
-            'Blog',
-            'Settings',
-        ]);
+        Filament::serving(function () {
+            Filament::registerNavigationGroups([
+                'Shop',
+                'Blog',
+                'Settings',
+            ]);
+        });
     }
 }
 ```
@@ -62,6 +69,7 @@ public static function getNavigationItems(): array
             ->icon($icon)
             ->isActiveWhen($closure)
             ->label($label)
+            ->badge($badge)
             ->sort($sort)
             ->url($url),
     ];
@@ -145,13 +153,15 @@ To register new items to the user menu, you should use a service provider:
 use Filament\Facades\Filament;
 use Filament\Navigation\UserMenuItem;
 
-Filament::registerUserMenuItems([
-    UserMenuItem::make()
-        ->label('Settings')
-        ->url(route('filament.pages.settings'))
-        ->icon('heroicon-s-cog'),
-    // ...
-]);
+Filament::serving(function () {
+    Filament::registerUserMenuItems([
+        UserMenuItem::make()
+            ->label('Settings')
+            ->url(route('filament.pages.settings'))
+            ->icon('heroicon-s-cog'),
+        // ...
+    ]);
+});
 ```
 
 ### Customizing the account link
@@ -162,10 +172,12 @@ To customize the user account link at the start of the user menu, register a new
 use Filament\Facades\Filament;
 use Filament\Navigation\UserMenuItem;
 
-Filament::registerUserMenuItems([
-    'account' => UserMenuItem::make()->url(route('filament.pages.account')),
-    // ...
-]);
+Filament::serving(function () {
+    Filament::registerUserMenuItems([
+        'account' => UserMenuItem::make()->url(route('filament.pages.account')),
+        // ...
+    ]);
+});
 ```
 
 ### Customizing the logout link
@@ -176,8 +188,10 @@ To customize the user account link at the end of the user menu, register a new i
 use Filament\Facades\Filament;
 use Filament\Navigation\UserMenuItem;
 
-Filament::registerUserMenuItems([
-    // ...
-    'logout' => UserMenuItem::make()->label('Log out'),
-]);
+Filament::serving(function () {
+    Filament::registerUserMenuItems([
+        // ...
+        'logout' => UserMenuItem::make()->label('Log out'),
+    ]);
+});
 ```

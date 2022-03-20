@@ -28,9 +28,16 @@ class SettingsPage extends Page
 
         $settings = app(static::getSettings());
 
-        $this->form->fill($settings->toArray());
+        $data = $this->mutateFormDataBeforeFill($settings->toArray());
+
+        $this->form->fill($data);
 
         $this->callHook('afterFill');
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        return $data;
     }
 
     public function save(): void
@@ -40,6 +47,8 @@ class SettingsPage extends Page
         $data = $this->form->getState();
 
         $this->callHook('afterValidate');
+
+        $data = $this->mutateFormDataBeforeSave($data);
 
         $this->callHook('beforeSave');
 
@@ -73,6 +82,11 @@ class SettingsPage extends Page
         $this->{$hook}();
     }
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        return $data;
+    }
+
     public static function getSettings(): string
     {
         return static::$settings ?? (string) Str::of(class_basename(static::class))
@@ -96,7 +110,8 @@ class SettingsPage extends Page
             'form' => $this->makeForm()
                 ->schema($this->getFormSchema())
                 ->statePath('data')
-                ->columns(2),
+                ->columns(2)
+                ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
         ];
     }
 

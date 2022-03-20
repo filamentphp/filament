@@ -1,4 +1,5 @@
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
@@ -36,6 +37,7 @@
                 x-on:blur="closeListbox()"
                 x-on:keydown.escape.stop="closeListbox()"
                 class="relative"
+                dusk="filament.forms.{{ $getStatePath() }}.close"
             >
                 <div
                     x-ref="button"
@@ -60,6 +62,7 @@
                         placeholder="{{ $getPlaceholder() }}"
                         type="text"
                         autocomplete="off"
+                        dusk="filament.forms.{{ $getStatePath() }}"
                         @class([
                             'block w-full border-0',
                             'dark:bg-gray-700 dark:placeholder-gray-400' => config('forms.dark_mode'),
@@ -186,4 +189,4 @@
             </div>
         </div>
     </div>
-</x-forms::field-wrapper>
+</x-dynamic-component>

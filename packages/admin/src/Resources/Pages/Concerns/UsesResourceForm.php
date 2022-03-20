@@ -11,10 +11,12 @@ trait UsesResourceForm
 
     protected ?Form $resourceForm = null;
 
-    protected function getResourceForm(): Form
+    protected function getResourceForm(?int $columns = null): Form
     {
         if (! $this->resourceForm) {
-            $this->resourceForm = $this->form(Form::make()->columns(2));
+            $this->resourceForm = $this->form(
+                Form::make()->columns($columns),
+            );
         }
 
         return $this->resourceForm;

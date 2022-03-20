@@ -6,7 +6,8 @@
     ];
 @endphp
 
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
@@ -31,6 +32,7 @@
                     id="{{ $getId() }}"
                     {!! $isRequired() ? 'required' : null !!}
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
+                    dusk="filament.forms.{{ $getStatePath() }}"
                     {{ $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
                         'text-gray-900 block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70',
                         'dark:bg-gray-700 dark:text-white' => config('forms.dark_mode'),
@@ -220,4 +222,4 @@
             </span>
         @endif
     </div>
-</x-forms::field-wrapper>
+</x-dynamic-component>

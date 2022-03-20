@@ -12,20 +12,22 @@ trait CanFormatState
 {
     protected ?Closure $formatStateUsing = null;
 
-    public function date(?string $format = null): static
+    public function date(?string $format = null, ?string $timezone = null): static
     {
         $format ??= config('tables.date_format');
 
-        $this->formatStateUsing(fn ($state): ?string => $state ? Carbon::parse($state)->translatedFormat($format) : null);
+        $timezone ??= config('app.timezone');
+
+        $this->formatStateUsing(fn ($state): ?string => $state ? Carbon::parse($state)->setTimezone($timezone)->translatedFormat($format) : null);
 
         return $this;
     }
 
-    public function dateTime(?string $format = null): static
+    public function dateTime(?string $format = null, ?string $timezone = null): static
     {
         $format ??= config('tables.date_time_format');
 
-        $this->date($format);
+        $this->date($format, $timezone);
 
         return $this;
     }
@@ -87,11 +89,11 @@ trait CanFormatState
         return $state;
     }
 
-    public function time(?string $format = null): static
+    public function time(?string $format = null, ?string $timezone = null): static
     {
         $format ??= config('tables.time_format');
 
-        $this->date($format);
+        $this->date($format, $timezone);
 
         return $this;
     }

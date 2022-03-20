@@ -15,6 +15,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class FilamentManager
@@ -158,7 +159,11 @@ class FilamentManager
     public function notify(string $status, string $message, bool $isAfterRedirect = false): void
     {
         if ($isAfterRedirect) {
-            session()->push('notifications', ['status' => $status, 'message' => $message]);
+            session()->push('notifications', [
+                'id' => Str::random(),
+                'status' => $status,
+                'message' => $message,
+            ]);
 
             return;
         }
@@ -170,7 +175,11 @@ class FilamentManager
             return;
         }
 
-        $component->dispatchBrowserEvent('notify', ['status' => $status, 'message' => $message]);
+        $component->dispatchBrowserEvent('notify', [
+            'id' => Str::random(),
+            'status' => $status,
+            'message' => $message,
+        ]);
     }
 
     public function getGlobalSearchProvider(): GlobalSearchProvider

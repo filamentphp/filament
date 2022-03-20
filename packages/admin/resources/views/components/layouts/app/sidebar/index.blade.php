@@ -27,6 +27,7 @@
                             :active="$item->isActive()"
                             :icon="$item->getIcon()"
                             :url="$item->getUrl()"
+                            :badge="$item->getBadge()"
                         >
                             {{ $item->getLabel() }}
                         </x-filament::layouts.app.sidebar.item>

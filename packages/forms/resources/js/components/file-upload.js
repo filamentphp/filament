@@ -30,7 +30,7 @@ export default (Alpine) => {
         canReorder,
         canPreview,
         deleteUploadedFileUsing,
-        getUploadedFileUrlUsing,
+        getUploadedFileUrlsUsing,
         imageCropAspectRatio,
         imagePreviewHeight,
         imageResizeTargetHeight,
@@ -53,8 +53,6 @@ export default (Alpine) => {
         return {
             fileKeyIndex: {},
 
-            files: [],
-
             pond: null,
 
             shouldUpdateState: true,
@@ -64,25 +62,6 @@ export default (Alpine) => {
             uploadedFileUrlIndex: {},
 
             init: async function () {
-                for (const [fileKey, file] of Object.entries(this.state)) {
-                    if (file.startsWith('livewire-file:')) {
-                        continue;
-                    }
-
-                    let uploadedFileUrl = await this.getUploadedFileUrl(fileKey)
-
-                    if (! uploadedFileUrl) {
-                        continue
-                    }
-
-                    this.files.push({
-                        source: uploadedFileUrl,
-                        options: {
-                            type: 'local',
-                        },
-                    })
-                }
-
                 this.pond = FilePond.create(this.$refs.input, {
                     acceptedFileTypes,
                     allowReorder: canReorder,
@@ -90,7 +69,7 @@ export default (Alpine) => {
                     allowVideoPreview: canPreview,
                     allowAudioPreview: canPreview,
                     credits: false,
-                    files: shouldAppendFiles ? this.files : this.files.reverse(),
+                    files: await this.getFiles(),
                     imageCropAspectRatio,
                     imagePreviewHeight,
                     imageResizeTargetHeight,
@@ -154,24 +133,7 @@ export default (Alpine) => {
                         return
                     }
 
-                    let files = []
-
-                    for (let fileKey of Object.keys(this.state)) {
-                        let uploadedFileUrl = await this.getUploadedFileUrl(fileKey)
-
-                        if (! uploadedFileUrl) {
-                            continue
-                        }
-
-                        files.push({
-                            source: uploadedFileUrl,
-                            options: {
-                                type: 'local',
-                            },
-                        })
-                    }
-
-                    this.pond.files = shouldAppendFiles ? files : files.reverse()
+                    this.pond.files = await this.getFiles()
                 })
 
                 this.pond.on('reorderfiles', async (files) => {
@@ -183,20 +145,40 @@ export default (Alpine) => {
                 })
             },
 
-            getUploadedFileUrl: async function (fileKey) {
-                let uploadedFileUrl = this.fileKeyIndex[fileKey] ?? null
+            getUploadedFileUrls: async function () {
+                const uploadedFileUrls = await getUploadedFileUrlsUsing()
 
-                if (uploadedFileUrl !== null) {
-                    return uploadedFileUrl
+                this.fileKeyIndex = uploadedFileUrls ?? {}
+
+                this.uploadedFileUrlIndex = Object.entries(this.fileKeyIndex)
+                    .filter(value => value)
+                    .reduce((obj, [key, value]) => {
+                        obj[value] = key 
+
+                        return obj
+                    }, {})
+            },
+
+            getFiles: async function () {
+                await this.getUploadedFileUrls()
+
+                let files = []
+
+                for (const uploadedFileUrl of Object.values(this.fileKeyIndex)) {
+                    if (! uploadedFileUrl) {
+                        continue
+                    }
+
+                    files.push({
+                        source: uploadedFileUrl,
+                        options: {
+                            type: 'local',
+                        },
+                    })
                 }
 
-                uploadedFileUrl = await getUploadedFileUrlUsing(fileKey)
-
-                this.uploadedFileUrlIndex[uploadedFileUrl] = fileKey
-                this.fileKeyIndex[fileKey] = uploadedFileUrl
-
-                return uploadedFileUrl
-            },
+                return shouldAppendFiles ? files : files.reverse()
+            }
         }
     })
 }
