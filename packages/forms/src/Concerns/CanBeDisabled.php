@@ -17,4 +17,9 @@ trait CanBeDisabled
     {
         return $this->isDisabled || $this->getParentComponent()?->isDisabled();
     }
+
+    public function isEnabled(): bool
+    {
+        return ! $this->isDisabled();
+    }
 }

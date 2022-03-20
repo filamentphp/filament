@@ -3,19 +3,17 @@
     $record = $getRecord();
 
     if (! $action) {
-        $clickAction = null;
+        $wireClickAction = null;
     } elseif ($record) {
-        $clickAction = "mountTableAction('{$getName()}', '{$record->getKey()}')";
+        $wireClickAction = "mountTableAction('{$getName()}', '{$record->getKey()}')";
     } else {
-        $clickAction = "mountTableAction('{$getName()}')";
+        $wireClickAction = "mountTableAction('{$getName()}')";
     }
-
-    $clickAction = $isDisabled() ? null : $clickAction;
 @endphp
 
 <x-tables::icon-button
     :tag="((! $action) && $url) ? 'a' : 'button'"
-    :wire:click="$clickAction"
+    :wire:click="$isEnabled() ? $wireClickAction : null"
     :href="$getUrl()"
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
     :disabled="$isDisabled()"

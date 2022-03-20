@@ -19,4 +19,9 @@ trait CanBeDisabled
     {
         return value($this->isDisabled);
     }
+
+    public function isEnabled(): bool
+    {
+        return ! $this->isDisabled();
+    }
 }
