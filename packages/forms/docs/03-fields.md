@@ -976,19 +976,16 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('attachment')->preserveFilenames()
 ```
 
-By default, the `FileUpload` component will detect if duplicate files are present on the given disk and increment them accordingly. You can change this behaviour by passing a closure to `getFileNameForStorageUsing` and returning a string. To disable this behaviour completely, pass `false`:
+You may completely customize how file names are generated using the `getFileNameForStorageUsing()` method, and returning a string from the callback:
 
-```
+```php
+use Livewire\TemporaryUploadedFile;
+
 FileUpload::make('attachment')
-    ->getFileNameForStorageUsing(function($component, $file) {
-        //...implement logic for new filename
+    ->getFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
+        return (string) str($file->getClientOriginalName())->prepend('custom-prefix-');
     })
-
-FileUpload::make('attachment')
-    ->getFilenameForStorageUsing(false); //if a file with the same name exists, it will be overwritten
 ```
-
-
 
 You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types. You may also use the `image()` method as shorthand to allow all image MIME types.
 
