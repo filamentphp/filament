@@ -20,7 +20,7 @@ class NavigationItem
 
     protected ?int $sort = null;
 
-    protected string|Closure|null $url = null;
+    protected string | Closure | null $url = null;
 
     final public function __construct()
     {
@@ -29,6 +29,61 @@ class NavigationItem
     public function badge(?string $badge): static
     {
         $this->badge = $badge;
+
+        return $this;
+    }
+
+    public function group(?string $group): static
+    {
+        $this->group = $group;
+
+        return $this;
+    }
+
+    public function icon(string $icon): static
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function isActiveWhen(Closure $callback): static
+    {
+        $this->isActiveWhen = $callback;
+
+        return $this;
+    }
+
+    public function label(string $label): static
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
+    public static function make(): static
+    {
+        return app(static::class);
+    }
+
+    public function openUrlInNewTab(bool $condition = true): static
+    {
+        $this->shouldOpenUrlInNewTab = $condition;
+
+        return $this;
+    }
+
+    public function sort(?int $sort): static
+    {
+        $this->sort = $sort;
+
+        return $this;
+    }
+
+    public function url(string | Closure | null $url, bool $shouldOpenInNewTab = false): static
+    {
+        $this->shouldOpenUrlInNewTab = $shouldOpenInNewTab;
+        $this->url = $url;
 
         return $this;
     }
@@ -63,20 +118,6 @@ class NavigationItem
         return value($this->url);
     }
 
-    public function group(?string $group): static
-    {
-        $this->group = $group;
-
-        return $this;
-    }
-
-    public function icon(string $icon): static
-    {
-        $this->icon = $icon;
-
-        return $this;
-    }
-
     public function isActive(): bool
     {
         $callback = $this->isActiveWhen;
@@ -88,49 +129,8 @@ class NavigationItem
         return app()->call($callback);
     }
 
-    public function isActiveWhen(Closure $callback): static
-    {
-        $this->isActiveWhen = $callback;
-
-        return $this;
-    }
-
-    public function label(string $label): static
-    {
-        $this->label = $label;
-
-        return $this;
-    }
-
-    public static function make(): static
-    {
-        return app(static::class);
-    }
-
-    public function openUrlInNewTab(bool $condition = true): static
-    {
-        $this->shouldOpenUrlInNewTab = $condition;
-
-        return $this;
-    }
-
     public function shouldOpenUrlInNewTab(): bool
     {
         return $this->shouldOpenUrlInNewTab;
-    }
-
-    public function sort(?int $sort): static
-    {
-        $this->sort = $sort;
-
-        return $this;
-    }
-
-    public function url(string|Closure|null $url, bool $shouldOpenInNewTab = false): static
-    {
-        $this->shouldOpenUrlInNewTab = $shouldOpenInNewTab;
-        $this->url = $url;
-
-        return $this;
     }
 }
