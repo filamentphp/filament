@@ -14,10 +14,14 @@
             getOptionLabelsUsing: async (values) => {
                 return await $wire.getMultiSelectOptionLabels('{{ $getStatePath() }}')
             },
+            getOptionsUsing: async () => {
+                return await $wire.getMultiSelectOptions('{{ $getStatePath() }}')
+            },
             getSearchResultsUsing: async (query) => {
                 return await $wire.getMultiSelectSearchResults('{{ $getStatePath() }}', query)
             },
             isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
+            hasDynamicOptions: {{ $hasDynamicOptions() ? 'true' : 'false' }},
             options: {{ json_encode($getOptions()) }},
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"

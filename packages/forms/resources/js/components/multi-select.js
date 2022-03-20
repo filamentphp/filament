@@ -1,8 +1,10 @@
 export default (Alpine) => {
     Alpine.data('multiSelectFormComponent', ({
         getOptionLabelsUsing,
+        getOptionsUsing,
         getSearchResultsUsing,
         isAutofocused,
+        hasDynamicOptions,
         options,
         state,
     }) => {
@@ -25,7 +27,7 @@ export default (Alpine) => {
 
             init: async function () {
                 if (isAutofocused) {
-                    this.openListbox()
+                    this.openListbox(false)
                 }
 
                 if (! this.state) {
@@ -148,7 +150,15 @@ export default (Alpine) => {
                 })
             },
 
-            openListbox: function () {
+            openListbox: async function (shouldLoadDynamicOptions = true) {
+                if (hasDynamicOptions && shouldLoadDynamicOptions) {
+                    this.isLoading = true
+
+                    this.options = await getOptionsUsing()
+
+                    this.isLoading = false
+                }
+
                 this.focusedOptionIndex = 0
 
                 this.isOpen = true

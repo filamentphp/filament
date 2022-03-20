@@ -202,4 +202,9 @@ class BelongsToManyMultiSelect extends MultiSelect
     {
         return $this->evaluate($this->isPreloaded);
     }
+
+    public function hasDynamicOptions(): bool
+    {
+        return $this->isPreloaded();
+    }
 }
