@@ -3,7 +3,6 @@
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
 use Filament\Pages\Actions\Action;
-use Filament\Pages\Actions\ButtonAction;
 use Filament\Pages\Actions\Modal;
 use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Illuminate\Database\Eloquent\Model;
