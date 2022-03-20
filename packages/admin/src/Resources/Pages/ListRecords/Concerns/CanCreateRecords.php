@@ -80,8 +80,6 @@ trait CanCreateRecords
 
     protected function fillCreateForm(): void
     {
-        $this->resetErrorBag();
-
         $this->callHook('beforeFill');
         $this->callHook('beforeCreateFill');
 
