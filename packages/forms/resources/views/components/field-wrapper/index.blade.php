@@ -19,9 +19,9 @@
     @endif
 
     <div class="space-y-2">
-        @if (($label && ! $labelSrOnly) || $hint)
+        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint)
             <div class="flex items-center justify-between space-x-2 rtl:space-x-reverse">
-                @if ($label && ! $labelSrOnly)
+                @if ($label && (! $labelSrOnly))
                     <x-forms::field-wrapper.label
                         :for="$id"
                         :error="$errors->has($statePath)"
@@ -31,6 +31,10 @@
                     >
                         {{ $label }}
                     </x-forms::field-wrapper.label>
+                @elseif ($labelPrefix)
+                    {{ $labelPrefix }}
+                @elseif ($labelSuffix)
+                    {{ $labelSuffix }}
                 @endif
 
                 @if ($hint || $hintIcon)
