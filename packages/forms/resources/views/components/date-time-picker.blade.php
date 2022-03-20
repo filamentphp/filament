@@ -163,9 +163,8 @@
                     @if ($hasTime())
                         <div
                             @class([
-                                'flex items-center justify-center py-2 rounded-lg',
-                                'bg-gray-50' => $hasTime(),
-                                'dark:bg-gray-800' => $hasTime() && config('forms.dark_mode'),
+                                'flex items-center justify-center bg-gray-50 py-2 rounded-lg',
+                                'dark:bg-gray-800' => config('forms.dark_mode'),
                             ])
                         >
                             <input
@@ -175,19 +174,15 @@
                                 inputmode="numeric"
                                 x-model.debounce="hour"
                                 @class([
-                                    'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
-                                    'dark:text-gray-200' => config('forms.dark_mode'),
-                                    'bg-gray-50' => $hasTime(),
-                                    'dark:bg-gray-800' => $hasTime() && config('forms.dark_mode'),
+                                    'w-16 p-0 pr-1 text-xl bg-gray-50 text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
+                                    'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                 ])
                             />
 
                             <span
                                 @class([
-                                    'text-xl font-medium text-gray-700',
-                                    'dark:text-gray-200' => config('forms.dark_mode'),
-                                    'bg-gray-50' => $hasTime(),
-                                    'dark:bg-gray-800' => $hasTime() && config('forms.dark_mode'),
+                                    'text-xl font-medium bg-gray-50 text-gray-700',
+                                    'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                 ])
                             >:</span>
 
@@ -198,20 +193,16 @@
                                 inputmode="numeric"
                                 x-model.debounce="minute"
                                 @class([
-                                    'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
-                                    'dark:text-gray-200' => config('forms.dark_mode'),
-                                    'bg-gray-50' => $hasTime(),
-                                    'dark:bg-gray-800' => $hasTime() && config('forms.dark_mode'),
+                                    'w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 focus:ring-0 focus:outline-none',
+                                    'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                 ])
                             />
 
                             @if ($hasSeconds())
                                 <span
                                     @class([
-                                        'text-xl font-medium text-gray-700',
-                                        'dark:text-gray-200' => config('forms.dark_mode'),
-                                        'bg-gray-50' => $hasSeconds(),
-                                        'dark:bg-gray-800' => $hasSeconds() && config('forms.dark_mode'),
+                                        'text-xl font-medium text-gray-700 bg-gray-50',
+                                        'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                     ])
                                 >:</span>
 
@@ -223,10 +214,8 @@
                                     inputmode="numeric"
                                     x-model.debounce="second"
                                     @class([
-                                        'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
-                                        'dark:text-gray-200' => config('forms.dark_mode'),
-                                        'bg-gray-50' => $hasSeconds(),
-                                        'dark:bg-gray-800' => $hasSeconds() && config('forms.dark_mode'),
+                                        'w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 focus:ring-0 focus:outline-none',
+                                        'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                     ])
                                 />
                             @endif
