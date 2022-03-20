@@ -8,7 +8,7 @@ trait HasIcons
 {
     protected array | Closure $icons = [];
 
-    protected string $iconPosition = 'start';
+    protected string | Closure | null $iconPosition = null;
 
     public function icons(array | Closure $icons): static
     {
@@ -17,7 +17,7 @@ trait HasIcons
         return $this;
     }
 
-    public function iconPosition(string $iconPosition = 'start'): static
+    public function iconPosition(string | Closure | null $iconPosition): static
     {
         $this->iconPosition = $iconPosition;
 
@@ -49,6 +49,6 @@ trait HasIcons
 
     public function getIconPosition(): string
     {
-        return $this->evaluate($this->iconPosition);
+        return $this->evaluate($this->iconPosition) ?? 'before';
     }
 }
