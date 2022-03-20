@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
+use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\ButtonAction;
 use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
@@ -153,7 +154,7 @@ class EditRecord extends Page implements HasFormActions
         );
     }
 
-    protected function getViewAction(): ButtonAction
+    protected function getViewAction(): Action
     {
         return ButtonAction::make('view')
             ->label(__('filament::resources/pages/edit-record.actions.view.label'))
@@ -161,7 +162,7 @@ class EditRecord extends Page implements HasFormActions
             ->color('secondary');
     }
 
-    protected function getDeleteAction(): ButtonAction
+    protected function getDeleteAction(): Action
     {
         return ButtonAction::make('delete')
             ->label(__('filament::resources/pages/edit-record.actions.delete.label'))
@@ -198,14 +199,14 @@ class EditRecord extends Page implements HasFormActions
         ];
     }
 
-    protected function getSaveFormAction(): ButtonAction
+    protected function getSaveFormAction(): Action
     {
         return ButtonAction::make('save')
             ->label(__('filament::resources/pages/edit-record.form.actions.save.label'))
             ->submit('save');
     }
 
-    protected function getCancelFormAction(): ButtonAction
+    protected function getCancelFormAction(): Action
     {
         return ButtonAction::make('cancel')
             ->label(__('filament::resources/pages/edit-record.form.actions.cancel.label'))
