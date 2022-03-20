@@ -223,4 +223,9 @@ class BelongsToSelect extends Select
     {
         return $this->evaluate($this->isPreloaded);
     }
+
+    public function hasDynamicOptions(): bool
+    {
+        return $this->isPreloaded();
+    }
 }

@@ -27,6 +27,27 @@ trait SupportsSelectFields
         return null;
     }
 
+    public function getSelectOptions(string $statePath): array
+    {
+        foreach ($this->getComponents() as $component) {
+            if ($component instanceof Select && $component->getStatePath() === $statePath) {
+                return $component->getOptions();
+            }
+
+            foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
+                if ($results = $container->getSelectOptions($statePath)) {
+                    return $results;
+                }
+            }
+        }
+
+        return [];
+    }
+
     public function getSelectSearchResults(string $statePath, string $query): array
     {
         foreach ($this->getComponents() as $component) {

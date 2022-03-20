@@ -6196,8 +6196,10 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.hour = hour;
           }
-          let date2 = this.getSelectedDate() ?? this.focusedDate;
-          this.setState(date2.hour(this.hour ?? 0));
+          if (this.state !== null) {
+            let date2 = this.getSelectedDate() ?? this.focusedDate;
+            this.setState(date2.hour(this.hour ?? 0));
+          }
         });
         this.$watch("minute", () => {
           let minute = +this.minute;
@@ -6210,8 +6212,10 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.minute = minute;
           }
-          let date2 = this.getSelectedDate() ?? this.focusedDate;
-          this.setState(date2.minute(this.minute ?? 0));
+          if (this.state !== null) {
+            let date2 = this.getSelectedDate() ?? this.focusedDate;
+            this.setState(date2.minute(this.minute ?? 0));
+          }
         });
         this.$watch("second", () => {
           let second = +this.second;
@@ -6224,15 +6228,17 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.second = second;
           }
-          let date2 = this.getSelectedDate() ?? this.focusedDate;
-          this.setState(date2.second(this.second ?? 0));
+          if (this.state !== null) {
+            let date2 = this.getSelectedDate() ?? this.focusedDate;
+            this.setState(date2.second(this.second ?? 0));
+          }
         });
         this.$watch("state", () => {
           let date2 = this.getSelectedDate();
-          if (this.maxDate !== null && date2.isAfter(this.maxDate)) {
+          if (this.maxDate !== null && date2?.isAfter(this.maxDate)) {
             date2 = null;
           }
-          if (this.minDate !== null && date2.isBefore(this.minDate)) {
+          if (this.minDate !== null && date2?.isBefore(this.minDate)) {
             date2 = null;
           }
           this.hour = date2?.hour() ?? 0;
@@ -19179,8 +19185,10 @@ var markdown_editor_default = (Alpine) => {
 var multi_select_default = (Alpine) => {
   Alpine.data("multiSelectFormComponent", ({
     getOptionLabelsUsing,
+    getOptionsUsing,
     getSearchResultsUsing,
     isAutofocused,
+    hasDynamicOptions,
     options: options2,
     state: state2
   }) => {
@@ -19195,7 +19203,7 @@ var multi_select_default = (Alpine) => {
       state: state2,
       init: async function() {
         if (isAutofocused) {
-          this.openListbox();
+          this.openListbox(false);
         }
         if (!this.state) {
           this.state = [];
@@ -19284,7 +19292,12 @@ var multi_select_default = (Alpine) => {
           block: "center"
         });
       },
-      openListbox: function() {
+      openListbox: async function(shouldLoadDynamicOptions = true) {
+        if (hasDynamicOptions && shouldLoadDynamicOptions) {
+          this.isLoading = true;
+          this.options = await getOptionsUsing();
+          this.isLoading = false;
+        }
         this.focusedOptionIndex = 0;
         this.isOpen = true;
         this.$nextTick(() => {
@@ -19391,8 +19404,10 @@ var rich_editor_default = (Alpine) => {
 var select_default = (Alpine) => {
   Alpine.data("selectFormComponent", ({
     getOptionLabelUsing,
+    getOptionsUsing,
     getSearchResultsUsing,
     isAutofocused,
+    hasDynamicOptions,
     options: options2,
     state: state2
   }) => {
@@ -19407,7 +19422,7 @@ var select_default = (Alpine) => {
       state: state2,
       init: async function() {
         if (isAutofocused) {
-          this.openListbox();
+          this.openListbox(false);
         }
         this.addOptionsToIndex(this.options);
         this.label = await this.getOptionLabel();
@@ -19496,7 +19511,12 @@ var select_default = (Alpine) => {
           block: "center"
         });
       },
-      openListbox: function() {
+      openListbox: async function(shouldLoadDynamicOptions = true) {
+        if (hasDynamicOptions && shouldLoadDynamicOptions) {
+          this.isLoading = true;
+          this.options = await getOptionsUsing();
+          this.isLoading = false;
+        }
         this.focusedOptionIndex = Object.keys(this.options).indexOf(this.state);
         if (this.focusedOptionIndex < 0) {
           this.focusedOptionIndex = 0;

@@ -60,10 +60,14 @@
                         getOptionLabelUsing: async (value) => {
                             return await $wire.getSelectOptionLabel('{{ $getStatePath() }}')
                         },
+                        getOptionsUsing: async (query) => {
+                            return await $wire.getSelectOptions('{{ $getStatePath() }}')
+                        },
                         getSearchResultsUsing: async (query) => {
                             return await $wire.getSelectSearchResults('{{ $getStatePath() }}', query)
                         },
                         isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
+                        hasDynamicOptions: {{ $hasDynamicOptions() ? 'true' : 'false' }},
                         options: {{ json_encode($getOptions()) }},
                         state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
                     })"

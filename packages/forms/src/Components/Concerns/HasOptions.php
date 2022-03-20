@@ -30,4 +30,9 @@ trait HasOptions
 
         return $options;
     }
+
+    public function hasDynamicOptions(): bool
+    {
+        return $this->options instanceof Closure;
+    }
 }

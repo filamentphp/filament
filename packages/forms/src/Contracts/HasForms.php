@@ -14,9 +14,13 @@ interface HasForms
 
     public function getMultiSelectOptionLabels(string $statePath): array;
 
+    public function getMultiSelectOptions(string $statePath): array;
+
     public function getMultiSelectSearchResults(string $statePath, string $query): array;
 
     public function getSelectOptionLabel(string $statePath): ?string;
+
+    public function getSelectOptions(string $statePath): array;
 
     public function getSelectSearchResults(string $statePath, string $query): array;
 
