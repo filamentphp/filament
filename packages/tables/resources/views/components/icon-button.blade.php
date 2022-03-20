@@ -1,5 +1,6 @@
 @props([
     'color' => 'primary',
+    'disabled' => false,
     'icon' => null,
     'label' => null,
     'tag' => 'button',
@@ -16,6 +17,7 @@
         'text-success-500 focus:bg-success-500/10' => $color === 'success',
         'text-warning-500 focus:bg-warning-500/10' => $color === 'warning',
         'hover:bg-gray-300/5' => config('filament.dark_mode'),
+        'opacity-70 cursor-not-allowed' => $disabled,
     ];
 
     $iconClasses = 'w-5 h-5 filament-tables-icon-button-icon';
@@ -28,6 +30,7 @@
             x-tooltip.raw="{{ $tooltip }}"
         @endif
         type="{{ $type }}"
+        {!! $disabled ? 'disabled' : '' !!}
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($label)

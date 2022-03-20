@@ -118,7 +118,7 @@ trait CanCreateRecords
         );
     }
 
-    protected function getCreateActionCreateModalAction(): ButtonAction
+    protected function getCreateActionCreateModalAction(): Tables\Actions\Modal\Actions\Action
     {
         return ButtonAction::make('create')
             ->label(__('filament::resources/relation-managers/create.action.modal.actions.create.label'))
@@ -126,7 +126,7 @@ trait CanCreateRecords
             ->color('primary');
     }
 
-    protected function getCreateActionCreateAndCreateAnotherModalAction(): ButtonAction
+    protected function getCreateActionCreateAndCreateAnotherModalAction(): Tables\Actions\Modal\Actions\Action
     {
         return ButtonAction::make('createAndCreateAnother')
             ->label(__('filament::resources/relation-managers/create.action.modal.actions.create_and_create_another.label'))
@@ -134,7 +134,7 @@ trait CanCreateRecords
             ->color('secondary');
     }
 
-    protected function getCreateActionCancelModalAction(): ButtonAction
+    protected function getCreateActionCancelModalAction(): Tables\Actions\Modal\Actions\Action
     {
         return ButtonAction::make('cancel')
             ->label(__('tables::table.actions.modal.buttons.cancel.label'))

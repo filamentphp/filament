@@ -167,9 +167,8 @@
                     @if ($hasTime())
                         <div
                             @class([
-                                'flex items-center justify-center py-2 rounded-lg',
-                                'bg-gray-50' => $hasDate(),
-                                'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                'flex items-center justify-center bg-gray-50 py-2 rounded-lg rtl:flex-row-reverse',
+                                'dark:bg-gray-800' => config('forms.dark_mode'),
                             ])
                         >
                             <input
@@ -179,20 +178,16 @@
                                 inputmode="numeric"
                                 x-model.debounce="hour"
                                 @class([
-                                    'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
-                                    'dark:text-gray-200' => config('forms.dark_mode'),
-                                    'bg-gray-50' => $hasDate(),
-                                    'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                    'w-16 p-0 pr-1 text-xl bg-gray-50 text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
+                                    'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                 ])
                                 dusk="filament.forms.{{ $getStatePath() }}.hour"
                             />
 
                             <span
                                 @class([
-                                    'text-xl font-medium text-gray-700',
-                                    'dark:text-gray-200' => config('forms.dark_mode'),
-                                    'bg-gray-50' => $hasDate(),
-                                    'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                    'text-xl font-medium bg-gray-50 text-gray-700',
+                                    'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                 ])
                             >:</span>
 
@@ -203,10 +198,8 @@
                                 inputmode="numeric"
                                 x-model.debounce="minute"
                                 @class([
-                                    'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
-                                    'dark:text-gray-200' => config('forms.dark_mode'),
-                                    'bg-gray-50' => $hasDate(),
-                                    'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                    'w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 focus:ring-0 focus:outline-none',
+                                    'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                 ])
                                 dusk="filament.forms.{{ $getStatePath() }}.minute"
                             />
@@ -214,10 +207,8 @@
                             @if ($hasSeconds())
                                 <span
                                     @class([
-                                        'text-xl font-medium text-gray-700',
-                                        'dark:text-gray-200' => config('forms.dark_mode'),
-                                        'bg-gray-50' => $hasDate(),
-                                        'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                        'text-xl font-medium text-gray-700 bg-gray-50',
+                                        'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                     ])
                                 >:</span>
 
@@ -230,10 +221,8 @@
                                     x-model.debounce="second"
                                     dusk="filament.forms.{{ $getStatePath() }}.second"
                                     @class([
-                                        'w-16 p-0 pr-1 text-xl text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
-                                        'dark:text-gray-200' => config('forms.dark_mode'),
-                                        'bg-gray-50' => $hasDate(),
-                                        'dark:bg-gray-800' => $hasDate() && config('forms.dark_mode'),
+                                        'w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 focus:ring-0 focus:outline-none',
+                                        'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                     ])
                                 />
                             @endif

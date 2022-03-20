@@ -201,6 +201,9 @@ return [
             'vertical_alignment' => 'top',
             'alignment' => 'center',
         ],
+        'sidebar' => [
+            'is_collapsible_on_desktop' => false,
+        ],
         'tables' => [
             'actions' => [
                 'type' => \Filament\Tables\Actions\LinkAction::class,

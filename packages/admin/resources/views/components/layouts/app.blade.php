@@ -11,7 +11,18 @@
 
         <x-filament::layouts.app.sidebar />
 
-        <div class="w-screen space-y-6 flex-1 flex flex-col lg:pl-80 rtl:lg:pl-0 rtl:lg:pr-80 filament-main">
+        @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
+            <div
+                x-data="{}"
+                class="hidden transition-all w-screen space-y-6 flex-1 flex flex-col filament-main lg:pl-80 rtl:lg:pl-0 rtl:lg:pr-80"
+                x-bind:class.="{
+                    '!block': true, // Prevent flash, x-cloak not working with charts
+                    'lg:pl-0 rtl:lg:pr-0': ! $store.sidebar.isOpen
+                }"
+            >
+        @else
+            <div class="w-screen space-y-6 flex-1 flex flex-col lg:pl-80 rtl:lg:pl-0 rtl:lg:pr-80 filament-main">
+        @endif
             <header @class([
                 'h-[4rem] shrink-0 w-full border-b flex items-center filament-main-topbar',
                 'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),
@@ -29,7 +40,15 @@
                         default => 'max-w-7xl',
                     },
                 ])>
-                    <button x-data="{}" x-on:click="$store.sidebar.open()" class="shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 rounded-full filament-sidebar-open-button hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none lg:hidden">
+                    <button
+                        x-data="{}"
+                        x-on:click="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
+                        @class([
+                            'shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 rounded-full filament-sidebar-open-button hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
+                            'lg:hidden' => ! config('filament.layout.sidebar.is_collapsible_on_desktop'),
+                            'lg:mr-4 rtl:lg:mr-0 rtl:lg:ml-4' => config('filament.layout.sidebar.is_collapsible_on_desktop'),
+                        ])
+                    >
                         <x-heroicon-o-menu class="w-6 h-6" />
                     </button>
 
