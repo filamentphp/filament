@@ -7,16 +7,6 @@ use Filament\Resources\Pages\Concerns\HasActiveFormLocaleSelect;
 trait Translatable
 {
     use HasActiveFormLocaleSelect;
-    public array $locales = [];
-    public function setTranslatableLocales(array $locales): void
-    {
-        $this->locales = $locales;
-    }
-
-    protected function getTranslatableLocales(): array
-    {
-        return count($this->locales)?$this->locales:static::getResource()::getTranslatableLocales();
-    }
 
     protected function fillForm(): void
     {

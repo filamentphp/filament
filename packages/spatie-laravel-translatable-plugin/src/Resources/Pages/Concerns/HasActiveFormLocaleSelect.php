@@ -8,6 +8,8 @@ trait HasActiveFormLocaleSelect
 {
     public $activeFormLocale = null;
 
+    public ?array $translatableLocales = null;
+
     protected function getActiveFormLocaleSelectAction(): SelectAction
     {
         return SelectAction::make('activeFormLocale')
@@ -28,5 +30,15 @@ trait HasActiveFormLocaleSelect
         }
 
         return parent::getRecordTitle();
+    }
+
+    public function setTranslatableLocales(array $locales): void
+    {
+        $this->translatableLocales = $locales;
+    }
+
+    protected function getTranslatableLocales(): array
+    {
+        return $this->translatableLocales ?? static::getResource()::getTranslatableLocales();
     }
 }

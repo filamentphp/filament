@@ -9,19 +9,8 @@ trait Translatable
 {
     use HasActiveFormLocaleSelect;
 
-    public array $locales = [];
-
     public $activeFormLocale = null;
 
-    public function setTranslatableLocales(array $locales): void
-    {
-        $this->locales = $locales;
-    }
-
-    protected function getTranslatableLocales(): array
-    {
-        return count($this->locales)?$this->locales:static::getResource()::getTranslatableLocales();
-    }
     protected function fillForm(): void
     {
         $this->callHook('beforeFill');
