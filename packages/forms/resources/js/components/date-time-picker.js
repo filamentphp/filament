@@ -174,11 +174,11 @@ export default (Alpine) => {
                         this.hour = hour
                     }
                     
-                    if(this.state !== null){
+                    if (this.state !== null) {
                         let date = this.getSelectedDate() ?? this.focusedDate
 
                         this.setState(date.hour(this.hour ?? 0))
-                    }                    
+                    }
                 })
 
                 this.$watch('minute', () => {
@@ -194,7 +194,7 @@ export default (Alpine) => {
                         this.minute = minute
                     }
                     
-                    if(this.state !== null){
+                    if (this.state !== null) {
                         let date = this.getSelectedDate() ?? this.focusedDate
 
                         this.setState(date.minute(this.minute ?? 0))
@@ -213,7 +213,8 @@ export default (Alpine) => {
                     } else {
                         this.second = second
                     }
-                    if(this.state !== null){
+                    
+                    if (this.state !== null) {
                         let date = this.getSelectedDate() ?? this.focusedDate
 
                         this.setState(date.second(this.second ?? 0))
