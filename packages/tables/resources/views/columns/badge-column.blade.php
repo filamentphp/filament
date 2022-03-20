@@ -9,6 +9,10 @@
         null => \Illuminate\Support\Arr::toCssClasses(['text-gray-700 bg-gray-500/10', 'dark:text-gray-300 dark:bg-gray-500/20' => config('tables.dark_mode')]),
         default => $getStateColor(),
     };
+
+    $stateIcon = $getStateIcon();
+    $iconPosition = $getIconPosition();
+    $iconClasses = 'w-4 h-4';
 @endphp
 
 <div {{ $attributes->merge($getExtraAttributes())->class([
@@ -21,11 +25,21 @@
     },
 ]) }}>
     @if (filled($state))
-        <span @class([
-            'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight rounded-xl whitespace-normal',
+        <div @class([
+            'inline-flex items-center justify-center space-x-1 min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight rounded-xl whitespace-normal',
             $stateColor => $stateColor,
         ])>
-            {{ $state }}
-        </span>
+            @if ($stateIcon && $iconPosition === 'before')
+                <x-dynamic-component :component="$stateIcon" :class="$iconClasses" />
+            @endif
+
+            <span>
+                {{ $state }}
+            </span>
+
+            @if ($stateIcon && $iconPosition === 'after')
+                <x-dynamic-component :component="$stateIcon" :class="$iconClasses" />
+            @endif
+        </div>
     @endif
 </div>

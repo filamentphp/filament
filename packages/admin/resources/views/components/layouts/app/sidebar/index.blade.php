@@ -44,6 +44,7 @@
                             :icon="$item->getIcon()"
                             :url="$item->getUrl()"
                             :badge="$item->getBadge()"
+                            :shouldOpenUrlInNewTab="$item->shouldOpenUrlInNewTab()"
                         >
                             {{ $item->getLabel() }}
                         </x-filament::layouts.app.sidebar.item>

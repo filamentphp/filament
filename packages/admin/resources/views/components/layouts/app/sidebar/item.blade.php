@@ -2,13 +2,14 @@
     'active' => false,
     'badge',
     'icon',
+    'shouldOpenUrlInNewTab',
     'url',
 ])
 
 <li class="filament-sidebar-item">
     <a
         href="{{ $url }}"
-        x-data="{}"
+        {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : '' !!}
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
         @class([
             'flex items-center gap-3 px-3 py-2 rounded-lg font-medium transition',
