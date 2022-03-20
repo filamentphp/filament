@@ -150,6 +150,11 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return $this->ownerRecord->{static::getRelationshipName()}();
     }
 
+    protected function getInverseRelationshipFor(Model $record): Relation | Builder
+    {
+        return $record->{$this->getInverseRelationshipName()}();
+    }
+
     protected function getResourceTable(): Table
     {
         if (! $this->resourceTable) {
