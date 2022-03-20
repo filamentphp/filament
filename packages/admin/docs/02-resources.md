@@ -389,6 +389,28 @@ public static function getRelations(): array
 
 Once a table and form have been defined for the relation manager, visit the edit page of your resource to see it in action.
 
+### Associating and dissociating records
+
+Filament is able to associate and dissociate records for the inverse `BelongsTo` relationship. To enable this functionality, you may add the following properties to the relation manager:
+
+```php
+protected static bool $hasAssociateAction = true;
+protected static bool $hasDissociateAction = true;
+protected static bool $hasDissociateBulkAction = true;
+```
+
+Each property represents a different action that you are able to enable for the relation manager:
+
+- `$hasAssociateAction` enables an "Associate" button in the header of the table.
+- `$hasDissociateAction` enables a "Dissociate" button on each row of the table.
+- `$hasDissociateBulkAction` enables a "Dissociate" bulk action, which is available when you select one or more records.
+
+Since associating and dissociating requires access to the inverse relationship, Filament needs to guess its name. For relationships with unconventional naming conventions, you may wish to override the `$inverseRelationship` property on the relation manager:
+
+```php
+protected static ?string $inverseRelationship = 'author'; // Since the inverse related model is `User`, this is normally `user`, not `author`.
+```
+
 ### `BelongsToMany`
 
 To create a relation manager for a `BelongsToMany` relationship, you can use:

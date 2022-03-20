@@ -187,7 +187,7 @@ class Card extends Component implements Htmlable
 
     public function getValue()
     {
-        return $this->value;
+        return value($this->value);
     }
 
     public function toHtml(): string

@@ -1,4 +1,5 @@
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
@@ -18,6 +19,7 @@
                 type="checkbox"
                 {!! $isRequired() ? 'required' : null !!}
                 {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
+                dusk="filament.forms.{{ $getStatePath() }}"
                 {{
                     $attributes
                         ->merge($getExtraAttributes())
@@ -34,4 +36,4 @@
     @if ($isInline())
         </x-slot>
     @endif
-</x-forms::field-wrapper>
+</x-dynamic-component>

@@ -228,7 +228,8 @@ class Builder extends Field
                 return $this->getBlock($itemData['type'])
                     ->getChildComponentContainer()
                     ->getClone()
-                    ->statePath("{$itemIndex}.data");
+                    ->statePath("{$itemIndex}.data")
+                    ->inlineLabel(false);
             })
             ->toArray();
     }

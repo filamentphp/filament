@@ -14,7 +14,7 @@ trait CanEditRecords
 
     protected function getEditFormSchema(): array
     {
-        return $this->getResourceForm()->getSchema();
+        return $this->getResourceForm(columns: 2)->getSchema();
     }
 
     protected function fillEditForm(): void

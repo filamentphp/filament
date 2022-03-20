@@ -3,10 +3,11 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\Contracts\CanHaveNumericState;
 use Filament\Forms\Components\TextInput\Mask;
 use Illuminate\Contracts\Support\Arrayable;
 
-class TextInput extends Field
+class TextInput extends Field implements CanHaveNumericState
 {
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;

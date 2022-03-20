@@ -15,7 +15,7 @@ trait HasActiveFormLocaleSelect
             ->options(
                 collect(static::getResource()::getTranslatableLocales())
                     ->mapWithKeys(function (string $locale): array {
-                        return [$locale => $locale];
+                        return [$locale => locale_get_display_name($locale, app()->getLocale())];
                     })
                     ->toArray(),
             );

@@ -1,4 +1,5 @@
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
@@ -42,7 +43,7 @@
                             {{ $getValueLabel() }}
                         </th>
 
-                        @if ($canDeleteRows() && $getDeleteButtonLabel() && (! $isDisabled()))
+                        @if ($canDeleteRows() && $getDeleteButtonLabel() && $isEnabled())
                             <th class="w-12" scope="col" x-show="rows.length > 1">
                                 <span class="sr-only">
                                     {{ $getDeleteButtonLabel() }}
@@ -90,7 +91,7 @@
                                 >
                             </td>
 
-                            @if ($canDeleteRows() && (! $isDisabled()))
+                            @if ($canDeleteRows() && $isEnabled())
                                 <td x-show="rows.length > 1" class="whitespace-nowrap">
                                     <div class="flex items-center justify-center">
                                         <button
@@ -108,7 +109,7 @@
                 </tbody>
             </table>
 
-            @if ($canAddRows() && (! $isDisabled()))
+            @if ($canAddRows() && $isEnabled())
                 <button
                     x-on:click="addRow"
                     type="button"
@@ -126,4 +127,4 @@
             @endif
         </div>
     </div>
-</x-forms::field-wrapper>
+</x-dynamic-component>

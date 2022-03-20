@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
+use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\ButtonAction;
 use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
@@ -114,14 +115,14 @@ class CreateRecord extends Page implements HasFormActions
         );
     }
 
-    protected function getCreateFormAction(): ButtonAction
+    protected function getCreateFormAction(): Action
     {
         return ButtonAction::make('create')
             ->label(__('filament::resources/pages/create-record.form.actions.create.label'))
             ->submit('create');
     }
 
-    protected function getCreateAndCreateAnotherFormAction(): ButtonAction
+    protected function getCreateAndCreateAnotherFormAction(): Action
     {
         return ButtonAction::make('createAnother')
             ->label(__('filament::resources/pages/create-record.form.actions.create_and_create_another.label'))
@@ -129,7 +130,7 @@ class CreateRecord extends Page implements HasFormActions
             ->color('secondary');
     }
 
-    protected function getCancelFormAction(): ButtonAction
+    protected function getCancelFormAction(): Action
     {
         return ButtonAction::make('cancel')
             ->label(__('filament::resources/pages/create-record.form.actions.cancel.label'))
@@ -153,8 +154,9 @@ class CreateRecord extends Page implements HasFormActions
         return [
             'form' => $this->makeForm()
                 ->model(static::getModel())
-                ->schema($this->getResourceForm()->getSchema())
-                ->statePath('data'),
+                ->schema($this->getResourceForm(columns: config('filament.layout.forms.have_inline_labels') ? 1 : 2)->getSchema())
+                ->statePath('data')
+                ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
         ];
     }
 

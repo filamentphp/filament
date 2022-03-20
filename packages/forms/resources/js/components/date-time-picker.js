@@ -9,7 +9,10 @@ dayjs.extend(localeData)
 dayjs.extend(timezone)
 dayjs.extend(utc)
 dayjs.extend((option, Dayjs, dayjs) => {
-    dayjs.onLocaleUpdated = () => {},
+    const listeners = []
+
+    dayjs.addLocaleListeners = (listener) => listeners.push(listener)
+    dayjs.onLocaleUpdated = () => { listeners.forEach((listener) => listener()) }
     dayjs.updateLocale = (locale) => {
         dayjs.locale(locale)
 
@@ -99,11 +102,11 @@ export default (Alpine) => {
                     this.openPicker()
                 }
 
-                dayjs.onLocaleUpdated = () => {
+                dayjs.addLocaleListeners(() => {
                     this.setDisplayText()
                     this.setMonths()
                     this.setDayLabels()
-                }
+                })
 
                 this.$watch('focusedMonth', () => {
                     this.focusedMonth = +this.focusedMonth

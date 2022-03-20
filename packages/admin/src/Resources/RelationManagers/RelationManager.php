@@ -45,10 +45,12 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return lcfirst(class_basename(static::class));
     }
 
-    protected function getResourceForm(): Form
+    protected function getResourceForm(?int $columns = null): Form
     {
         if (! $this->resourceForm) {
-            $this->resourceForm = static::form(Form::make()->columns(2));
+            $this->resourceForm = static::form(
+                Form::make()->columns($columns),
+            );
         }
 
         return $this->resourceForm;
@@ -146,6 +148,11 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     protected function getRelationship(): Relation | Builder
     {
         return $this->ownerRecord->{static::getRelationshipName()}();
+    }
+
+    protected function getInverseRelationshipFor(Model $record): Relation | Builder
+    {
+        return $record->{$this->getInverseRelationshipName()}();
     }
 
     protected function getResourceTable(): Table
