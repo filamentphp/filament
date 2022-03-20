@@ -11,6 +11,8 @@ export default (Alpine) => {
         return {
             focusedOptionIndex: null,
 
+            hasNoSearchResults: false,
+
             index: {},
 
             isLoading: false,
@@ -34,7 +36,9 @@ export default (Alpine) => {
 
                 this.label = await this.getOptionLabel()
 
-                this.$watch('search', async () => {
+                this.$watch('search', Alpine.debounce(async () => {
+                    this.hasNoSearchResults = false
+
                     if (! this.isOpen || this.search === '' || this.search === null) {
                         this.options = options
                         this.focusedOptionIndex = 0
@@ -61,7 +65,11 @@ export default (Alpine) => {
                         this.focusedOptionIndex = 0
                         this.isLoading = false
                     }
-                })
+
+                    if (! Object.keys(this.options).length) {
+                        this.hasNoSearchResults = true
+                    }
+                }, 500))
 
                 this.$watch('state', async () => {
                     this.label = await this.getOptionLabel()

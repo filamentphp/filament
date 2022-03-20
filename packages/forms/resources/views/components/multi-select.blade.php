@@ -58,7 +58,7 @@
                 >
                     <input
                         x-ref="search"
-                        x-model.debounce.500ms="search"
+                        x-model="search"
                         x-on:keydown="if (! isOpen) openListbox()"
                         x-on:keydown.enter.stop.prevent="selectOption()"
                         x-on:keydown.arrow-up.stop.prevent="focusPreviousOption()"
@@ -150,14 +150,12 @@
                                 'dark:text-gray-200' => config('forms.dark_mode'),
                             ])
                         >
-                            <span x-show="(! search) || isLoading">
+                            <span x-show="! hasNoSearchResults">
                                 {{ $getSearchPrompt() }}
                             </span>
 
-                            <span x-show="search">
-                                <span x-show="! isLoading">
-                                    {{ $getNoSearchResultsMessage() }}
-                                </span>
+                            <span x-show="hasNoSearchResults">
+                                {{ $getNoSearchResultsMessage() }}
                             </span>
                         </div>
                     </ul>
