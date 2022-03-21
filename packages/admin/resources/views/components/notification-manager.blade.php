@@ -1,6 +1,6 @@
 <div
     x-data="{
-        notifications: {{ Js::from(session()->pull('notifications', [])) }},
+        notifications: @js(session()->pull('notifications', [])),
         add (event) {
             this.notifications = this.notifications.concat(event.detail)
         },
