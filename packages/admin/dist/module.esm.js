@@ -19319,6 +19319,9 @@ var multi_select_default = (Alpine) => {
           return;
         }
         let value = Object.keys(this.options)[index ?? this.focusedOptionIndex];
+        if (value === void 0) {
+          return;
+        }
         if (this.state.indexOf(value) < 0) {
           this.state.push(value);
         } else {

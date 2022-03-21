@@ -8,6 +8,7 @@ use Illuminate\Support\HtmlString;
 
 class MultiSelect extends Field
 {
+    use Concerns\CanLimitItemsLength;
     use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
