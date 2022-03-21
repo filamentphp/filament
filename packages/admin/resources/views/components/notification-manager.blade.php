@@ -2,13 +2,7 @@
     x-data="{
         notifications: {{ Js::from(session()->pull('notifications', [])) }},
         add (event) {
-            for (let notification of event.detail) {
-                this.notifications.push({
-                    id: notification.id,
-                    status: notification.status,
-                    message: notification.message,
-                })
-            }
+            this.notifications = this.notifications.concat(event.detail)
         },
         remove: function (notification) {
             this.notifications = this.notifications.filter(i => i.id !== notification.id)
