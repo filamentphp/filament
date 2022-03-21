@@ -2,8 +2,8 @@
 
 namespace Filament;
 
-use Livewire\Response;
 use Livewire\Component;
+use Livewire\Response;
 
 class NotificationManager
 {
