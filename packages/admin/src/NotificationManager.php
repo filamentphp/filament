@@ -3,10 +3,11 @@
 namespace Filament;
 
 use Livewire\Response;
+use Livewire\Component;
 
 class NotificationManager
 {
-    protected static $notifications = [];
+    protected static array $notifications = [];
 
     public static function notify(string $status, string $message): void
     {
@@ -16,16 +17,16 @@ class NotificationManager
             'message' => $message,
         ]);
 
-        self::$notifications = session()->get('notifications');
+        static::$notifications = session()->get('notifications');
     }
 
-    public static function handleLivewireResponses($component, Response $response): Response
+    public static function handleLivewireResponses(Component $component, Response $response): Response
     {
         if ($component->redirectTo !== null) {
             return $response;
         }
 
-        $notifications = self::$notifications;
+        $notifications = static::$notifications;
 
         if (count($notifications) > 0) {
             $component->dispatchBrowserEvent('notify', $notifications);
