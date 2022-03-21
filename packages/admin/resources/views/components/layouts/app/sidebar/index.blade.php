@@ -2,7 +2,7 @@
     x-data="{}"
     @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
         x-cloak
-        x-bind:class="$store.sidebar.isOpen ? 'translate-x-0 lg:max-w-[20em]' : '-translate-x-full lg:translate-x-0 lg:max-w-[4.4em] rtl:lg:-translate-x-0 rtl:translate-x-full'"
+        x-bind:class="$store.sidebar.isOpen ? 'translate-x-0 lg:max-w-[20em]' : '-translate-x-full lg:translate-x-0 lg:max-w-[5.4em] rtl:lg:-translate-x-0 rtl:translate-x-full'"
     @else
         x-cloak="-lg"
         x-bind:class="$store.sidebar.isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 rtl:lg:-translate-x-0 rtl:translate-x-full'"
