@@ -11,6 +11,21 @@
         href="{{ $url }}"
         {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : '' !!}
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
+        x-data="{tooltip: {}}"
+        x-init="
+            Alpine.effect(() => {
+                if (Alpine.store('sidebar').isOpen) {
+                    tooltip = false
+                } else {
+                    tooltip = {
+                        content: '{{ $slot }}',
+                        theme:  Alpine.store('theme') === 'light' ? 'dark' : 'light',
+                        placement: document.dir === 'rtl' ? 'left' : 'right'
+                    }
+                }
+            });
+        "
+        x-tooltip="tooltip"
         @class([
             'flex items-center justify-center gap-3 px-3 py-2 rounded-lg font-medium transition',
             'hover:bg-gray-500/5 focus:bg-gray-500/5' => ! $active,

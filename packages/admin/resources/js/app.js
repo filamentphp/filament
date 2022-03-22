@@ -39,6 +39,19 @@ Alpine.store('sidebar', {
     },
 })
 
+Alpine.store(
+    'theme',
+    window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light'
+);
+
+window
+    .matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener("change", (e) => {
+        Alpine.store('theme', e.matches ? 'dark' : 'light')
+        console.log('store', Alpine.store('theme'), 'event', e);
+    });
+
+
 Chart.defaults.font.family = `'DM Sans', sans-serif`
 Chart.defaults.color = '#6b7280'
 
