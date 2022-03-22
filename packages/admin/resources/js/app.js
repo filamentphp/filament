@@ -44,6 +44,11 @@ Alpine.store(
     window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
 )
 
+
+window.addEventListener('dark-mode-toggled', (event) => {
+    Alpine.store('theme', event.detail)
+})
+
 window
     .matchMedia('(prefers-color-scheme: dark)')
     .addEventListener('change', (event) => {
