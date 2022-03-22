@@ -18,7 +18,7 @@
                     tooltip = false
                 } else {
                     tooltip = {
-                        content: '{{ $slot }}',
+                        content: @js($slot->toHtml()),
                         theme:  Alpine.store('theme') === 'light' ? 'dark' : 'light',
                         placement: document.dir === 'rtl' ? 'left' : 'right'
                     }
