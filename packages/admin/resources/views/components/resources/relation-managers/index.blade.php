@@ -10,7 +10,7 @@
             <x-filament::tabs>
                 @foreach ($managers as $managerKey => $manager)
                     <button
-                        wire:click="$set('activeRelationManager', @if(is_string($managerKey))  '{{ \Illuminate\Support\Str::of($managerKey)->replace('\\', '\\\\') }}' @else {{$managerKey}} @endif)"
+                        wire:click="$set('activeRelationManager', '{{ \Illuminate\Support\Str::of($managerKey)->replace('\\', '\\\\') }}')"
                         @if ($activeManager === $managerKey)
                             aria-selected
                             tabindex="0"
@@ -32,9 +32,8 @@
             </x-filament::tabs>
         </div>
     @endif
-    @dump($activeManager)
 
-    @if (!is_null($activeManager))
+    @if ($activeManager)
         <div
             @if (count($managers) > 1)
                 id="{{ $activeManager }}"
