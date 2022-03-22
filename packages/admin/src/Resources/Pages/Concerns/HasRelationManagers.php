@@ -13,7 +13,7 @@ trait HasRelationManagers
         $managers = $this->getResource()::getRelations();
         if(!Arr::isAssoc($managers)) {
             $managers = array_combine($managers, $managers);
-        };
+        }
         
         return array_filter(
             $managers,
