@@ -11,7 +11,7 @@
         href="{{ $url }}"
         {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : '' !!}
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
-        x-data="{tooltip: {}}"
+        x-data="{ tooltip: {} }"
         x-init="
             Alpine.effect(() => {
                 if (Alpine.store('sidebar').isOpen) {
@@ -19,11 +19,11 @@
                 } else {
                     tooltip = {
                         content: @js($slot->toHtml()),
-                        theme:  Alpine.store('theme') === 'light' ? 'dark' : 'light',
-                        placement: document.dir === 'rtl' ? 'left' : 'right'
+                        theme: Alpine.store('theme') === 'light' ? 'dark' : 'light',
+                        placement: document.dir === 'rtl' ? 'left' : 'right',
                     }
                 }
-            });
+            })
         "
         x-tooltip="tooltip"
         @class([
