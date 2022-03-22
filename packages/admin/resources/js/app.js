@@ -48,7 +48,6 @@ window
     .matchMedia("(prefers-color-scheme: dark)")
     .addEventListener("change", (e) => {
         Alpine.store('theme', e.matches ? 'dark' : 'light')
-        console.log('store', Alpine.store('theme'), 'event', e);
     });
 
 
