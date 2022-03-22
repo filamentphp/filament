@@ -126,12 +126,14 @@ trait CanBeValidated
         return $this->fieldComparisonRule('same', $statePath, $isStatePathAbsolute);
     }
 
-    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure $ignorable = null, ?Closure $callback = null): static
+    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure $ignorable = null, ?Closure $callback = null, bool $ignoreCurrent = false): static
     {
-        $this->rule(function (Field $component, ?string $model) use ($callback, $column, $ignorable, $table) {
+        $this->rule(function (Field $component, ?string $model) use ($callback, $column, $ignorable, $table, $ignoreCurrent) {
             $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
-            $ignorable = $component->evaluate($ignorable);
+            $ignorable = ($ignoreCurrent && ! $ignorable) ?
+                $component->evaluate(fn ($record) => $record) :
+                $component->evaluate($ignorable);
 
             $rule = Rule::unique($table, $column)
                 ->when(
