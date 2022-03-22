@@ -132,7 +132,7 @@ trait CanBeValidated
             $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
             $ignorable = ($ignoreRecord && ! $ignorable) ?
-                $component->evaluate(fn ($record) => $record) :
+                $component->getRecord() :
                 $component->evaluate($ignorable);
 
             $rule = Rule::unique($table, $column)
