@@ -34,12 +34,10 @@
             <a
                 class="block w-full text-center"
                 href="{{ config('filament.home_url') }}"
-                @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
-                    x-show="! $store.sidebar.isOpen"
-                    x-transition:enter="lg:transition delay-100"
-                    x-transition:enter-start="opacity-0"
-                    x-transition:enter-end="opacity-100"
-                @endif
+                x-show="! $store.sidebar.isOpen"
+                x-transition:enter="lg:transition delay-100"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
             >
                 <x-filament::brand-icon />
             </a>
