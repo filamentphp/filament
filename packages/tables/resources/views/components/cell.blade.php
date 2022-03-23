@@ -40,10 +40,7 @@
     @elseif ($url || $recordUrl)
         <a
             @if ($tooltip)
-                 x-data="{ tooltip: {
-                    content: @js($tooltip),
-                    theme: $store.theme.isLight() ? 'dark' : 'light',
-                 } }"
+                x-data="tooltip(@js($tooltip))"
                 x-tooltip="tooltip"
             @endif
             href="{{ $url ?: $recordUrl }}"
