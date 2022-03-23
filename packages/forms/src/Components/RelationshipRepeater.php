@@ -58,7 +58,7 @@ class RelationshipRepeater extends Repeater
             foreach ($childComponentContainers as $itemKey => $item) {
                 $itemData = $item->getState();
 
-                if($this->orderColumn) {
+                if ($this->orderColumn) {
                     $itemData[$this->orderColumn] = $counter;
                 }
                 $counter++;
@@ -145,7 +145,7 @@ class RelationshipRepeater extends Repeater
         $relationship = $this->getRelationship();
         $localKeyName = $relationship->getLocalKeyName();
 
-        if($this->orderColumn) {
+        if ($this->orderColumn) {
             $relationship->orderBy($this->orderColumn);
         }
 
