@@ -67,6 +67,7 @@
                 }, error, progress)
             },
         })"
+        x-intersect.once="initDefer"
         wire:ignore
         {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
         style="min-height: {{ $isAvatar() ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }}"

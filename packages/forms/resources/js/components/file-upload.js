@@ -61,7 +61,7 @@ export default (Alpine) => {
 
             uploadedFileUrlIndex: {},
 
-            init: async function () {
+            initDefer: async function () {
                 this.pond = FilePond.create(this.$refs.input, {
                     acceptedFileTypes,
                     allowReorder: canReorder,

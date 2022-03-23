@@ -7,6 +7,7 @@
     "devDependencies": {
         "@alpinejs/collapse": "^3.8.1",
         "@alpinejs/focus": "^3.8.1",
+        "@alpinejs/intersect": "^3.9.2",
         "@alpinejs/persist": "^3.8.1",
         "@babel/runtime": "^7.15.3",
         "@github/file-attachment-element": "^2.0.1",
