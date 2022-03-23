@@ -2,8 +2,6 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
-use Illuminate\Support\Arr;
-
 trait HasRelationManagers
 {
     public $activeRelationManager = null;
@@ -11,7 +9,7 @@ trait HasRelationManagers
     protected function getRelationManagers(): array
     {
         $managers = $this->getResource()::getRelations();
-        
+
         return array_filter(
             $managers,
             fn (string $manager): bool => $manager::canViewForRecord($this->record),
