@@ -61,4 +61,4 @@ Chart.defaults.color = '#6b7280'
 window.Alpine = Alpine
 window.Chart = Chart
 
-Alpine.start()
+document.addEventListener('DOMContentLoaded', () => Alpine.start())
