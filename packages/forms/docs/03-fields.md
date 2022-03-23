@@ -1332,6 +1332,38 @@ HasManyRepeater::make('qualifications')
 
 > To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
+#### Ordering items
+
+By default, ordering `HasManyRepeater` items is disabled. This is because your related model needs an `order` column to store the order of related records. To enable ordering, you may use the `orderable()` method:
+
+```php
+use App\Models\App;
+use Filament\Forms\Components\HasManyRepeater;
+
+HasManyRepeater::make('qualifications')
+    ->relationship('qualifications')
+    ->schema([
+        // ...
+    ])
+    ->orderable()
+```
+
+This assumes that your related model has a `order` column.
+
+If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may pass this in to `orderable()`:
+
+```php
+use App\Models\App;
+use Filament\Forms\Components\HasManyRepeater;
+
+HasManyRepeater::make('qualifications')
+    ->relationship('qualifications')
+    ->schema([
+        // ...
+    ])
+    ->orderable('order_column')
+```
+
 ### Populating automatically from a `MorphMany` relationship
 
 You may employ the `relationship()` method of the `MorphManyRepeater` to configure a relationship to automatically retrieve and save repeater items:
@@ -1348,6 +1380,8 @@ MorphManyRepeater::make('qualifications')
 ```
 
 > To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
+
+The `MorphManyRepeater` component also allows you to store the order of related records. Follow [these instructions](#ordering-items) to enable that functionality.
 
 ## Builder
 

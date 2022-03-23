@@ -13,6 +13,8 @@ class RelationshipRepeater extends Repeater
 {
     protected ?Collection $cachedExistingRecords = null;
 
+    protected string | Closure | null $orderColumn = null;
+
     protected string | Closure | null $relationship = null;
 
     protected function setUp(): void
@@ -51,8 +53,16 @@ class RelationshipRepeater extends Repeater
 
             $childComponentContainers = $component->getChildComponentContainers();
 
+            $itemOrder = 1;
+
             foreach ($childComponentContainers as $itemKey => $item) {
                 $itemData = $item->getState();
+
+                if ($this->orderColumn) {
+                    $itemData[$this->orderColumn] = $itemOrder;
+
+                    $itemOrder++;
+                }
 
                 if ($record = ($existingRecords[$itemKey] ?? null)) {
                     $record->update($itemData);
@@ -72,6 +82,14 @@ class RelationshipRepeater extends Repeater
         $this->dehydrated(false);
 
         $this->disableItemMovement();
+    }
+
+    public function orderable(string | Closure | null $column = 'order'): static
+    {
+        $this->orderColumn = $column;
+        $this->disableItemMovement(fn (RelationshipRepeater $component): bool => ! $component->evaluate($column));
+
+        return $this;
     }
 
     public function relationship(string | Closure $name): static
@@ -117,6 +135,11 @@ class RelationshipRepeater extends Repeater
         return parent::getLabel();
     }
 
+    public function getOrderColumn(): ?string
+    {
+        return $this->evaluate($this->orderColumn);
+    }
+
     public function getRelationship(): HasOneOrMany
     {
         return $this->getModelInstance()->{$this->getRelationshipName()}();
@@ -135,6 +158,10 @@ class RelationshipRepeater extends Repeater
 
         $relationship = $this->getRelationship();
         $localKeyName = $relationship->getLocalKeyName();
+
+        if ($this->orderColumn) {
+            $relationship->orderBy($this->orderColumn);
+        }
 
         return $this->cachedExistingRecords = $relationship->getResults()->mapWithKeys(
             fn (Model $item): array => ["record-{$item[$localKeyName]}" => $item],
