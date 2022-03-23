@@ -34,7 +34,7 @@ trait CanFormatState
 
     public function enum(array $options, $default = null): static
     {
-        $this->formatStateUsing(fn ($state): string => $options[$state] ?? ($default ?? $state));
+        $this->formatStateUsing(fn ($state): ?string => $options[$state] ?? ($default ?? $state));
 
         return $this;
     }

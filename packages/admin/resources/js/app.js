@@ -39,6 +39,22 @@ Alpine.store('sidebar', {
     },
 })
 
+Alpine.store(
+    'theme',
+    window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+)
+
+
+window.addEventListener('dark-mode-toggled', (event) => {
+    Alpine.store('theme', event.detail)
+})
+
+window
+    .matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', (event) => {
+        Alpine.store('theme', event.matches ? 'dark' : 'light')
+    })
+
 Chart.defaults.font.family = `'DM Sans', sans-serif`
 Chart.defaults.color = '#6b7280'
 
