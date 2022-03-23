@@ -15,6 +15,8 @@ class RelationshipRepeater extends Repeater
 
     protected string | Closure | null $relationship = null;
 
+    protected ?string $orderColumn = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -51,8 +53,15 @@ class RelationshipRepeater extends Repeater
 
             $childComponentContainers = $component->getChildComponentContainers();
 
+            $counter = 1;
+
             foreach ($childComponentContainers as $itemKey => $item) {
                 $itemData = $item->getState();
+
+                if($this->orderColumn) {
+                    $itemData[$this->orderColumn] = $counter;
+                }
+                $counter++;
 
                 if ($record = ($existingRecords[$itemKey] ?? null)) {
                     $record->update($itemData);
@@ -136,6 +145,10 @@ class RelationshipRepeater extends Repeater
         $relationship = $this->getRelationship();
         $localKeyName = $relationship->getLocalKeyName();
 
+        if($this->orderColumn) {
+            $relationship->orderBy($this->orderColumn);
+        }
+
         return $this->cachedExistingRecords = $relationship->getResults()->mapWithKeys(
             fn (Model $item): array => ["record-{$item[$localKeyName]}" => $item],
         );
@@ -149,5 +162,13 @@ class RelationshipRepeater extends Repeater
     protected function getRelatedModel(): string
     {
         return $this->getRelationship()->getModel()::class;
+    }
+
+    public function enableOrdering(string $orderColumn = 'sort_order'): static
+    {
+        $this->orderColumn = $orderColumn;
+        $this->disableItemMovement(false);
+
+        return $this;
     }
 }
