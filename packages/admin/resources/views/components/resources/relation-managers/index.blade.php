@@ -10,8 +10,8 @@
             <x-filament::tabs>
                 @foreach ($managers as $managerKey => $manager)
                     <button
-                        wire:click="$set('activeRelationManager', @if(is_string($managerKey)) '{{ $managerKey }}' @else {{ $managerKey }} @endif)"
-                        @if ($activeManager === $managerKey)
+                        wire:click="$set('activeRelationManager', '{{ $managerKey }}')"
+                        @if ($activeManager == $managerKey)
                             aria-selected
                             tabindex="0"
                         @else
@@ -21,9 +21,9 @@
                         type="button"
                         @class([
                             'flex whitespace-nowrap items-center h-8 px-5 font-medium rounded-lg whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-inset',
-                            'hover:text-gray-800 focus:text-primary-600' => $activeManager !== $managerKey,
-                            'dark:text-gray-400 dark:hover:text-gray-300 dark:focus:text-primary-400' => ($activeManager !== $managerKey) && config('filament.dark_mode'),
-                            'text-primary-600 shadow bg-white' => $activeManager === $managerKey,
+                            'hover:text-gray-800 focus:text-primary-600' => $activeManager != $managerKey,
+                            'dark:text-gray-400 dark:hover:text-gray-300 dark:focus:text-primary-400' => ($activeManager != $managerKey) && config('filament.dark_mode'),
+                            'text-primary-600 shadow bg-white' => $activeManager == $managerKey,
                         ])
                     >
                         {{ $manager::getTitle() }}
@@ -33,10 +33,10 @@
         </div>
     @endif
 
-    @if (!is_null($activeManager))
+    @if (filled($activeManager))
         <div
             @if (count($managers) > 1)
-                id="{{ $activeManager.".active-manager" }}"
+                id="relationManager{{ ucfirst($activeManager) }}"
                 role="tabpanel"
                 tabindex="0"
             @endif
