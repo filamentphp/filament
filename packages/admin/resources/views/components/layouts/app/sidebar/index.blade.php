@@ -53,7 +53,7 @@
                 @if (! $loop->last)
                     <li>
                         <div @class([
-                            'border-t -mr-6',
+                            'border-t -mr-6 rtl:-mr-auto rtl:-ml-6',
                             'dark:border-gray-700' => config('filament.dark_mode'),
                         ])></div>
                     </li>
