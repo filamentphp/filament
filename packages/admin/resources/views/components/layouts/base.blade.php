@@ -80,6 +80,8 @@
             @endif
         @endforeach
 
+        @stack('beforeCoreScripts')
+
         <script src="{{ route('filament.asset', [
             'id' => Filament\get_asset_id('app.js'),
             'file' => 'app.js',
