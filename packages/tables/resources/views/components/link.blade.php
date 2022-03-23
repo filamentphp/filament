@@ -43,6 +43,6 @@
         {!! $disabled ? 'disabled' : '' !!}
         {{ $attributes->class($linkClasses) }}
     >
-        LINK {{ $slot }}
+        {{ $slot }}
     </button>
 @endif
