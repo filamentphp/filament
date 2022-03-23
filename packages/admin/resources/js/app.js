@@ -9,6 +9,8 @@ import Focus from '@alpinejs/focus'
 import Persist from '@alpinejs/persist'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
 
+import {dispatch as $dispatch} from 'alpinejs/src/utils/dispatch';
+
 Alpine.plugin(Collapse)
 Alpine.plugin(FormsAlpinePlugin)
 Alpine.plugin(Focus)
@@ -39,21 +41,64 @@ Alpine.store('sidebar', {
     },
 })
 
-Alpine.store(
-    'theme',
-    window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
-)
+Alpine.store('theme', {
+    currentTheme: null,
 
+    mode: null,
 
-window.addEventListener('dark-mode-toggled', (event) => {
-    Alpine.store('theme', event.detail)
+    init: function () {
+        this.currentTheme = localStorage.getItem('theme') || this.getSystemTheme()
+        this.mode = localStorage.getItem('theme') ? 'manual' : 'auto'
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+            if (this.mode === 'manual') return
+
+            if (event.matches && (! document.documentElement.classList.contains('dark'))) {
+                this.currentTheme = 'dark'
+
+                document.documentElement.classList.add('dark')
+            } else if ((! event.matches) && document.documentElement.classList.contains('dark')) {
+                this.currentTheme = 'light'
+
+                document.documentElement.classList.remove('dark')
+            }
+        })
+
+        Alpine.effect(() => {
+            if (this.mode === 'auto') return
+
+            if (this.currentTheme === 'dark' && (! document.documentElement.classList.contains('dark'))) {
+                document.documentElement.classList.add('dark')
+
+            } else if (this.currentTheme === 'light' && document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark')
+            }
+
+            $dispatch(window, 'dark-mode-toggled', this.currentTheme)
+        })
+    },
+
+    toggle: function () {
+        this.mode = 'manual'
+        this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light'
+    },
+
+    isLight: function() {
+        return this.currentTheme === 'light'
+    },
+
+    isDark: function() {
+        return this.currentTheme === 'dark'
+    },
+
+    getSystemTheme: function() {
+        return this.isSystemDark() ? 'dark' : 'light'
+    },
+
+    isSystemDark: function () {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches
+    },
 })
-
-window
-    .matchMedia('(prefers-color-scheme: dark)')
-    .addEventListener('change', (event) => {
-        Alpine.store('theme', event.matches ? 'dark' : 'light')
-    })
 
 Chart.defaults.font.family = `'DM Sans', sans-serif`
 Chart.defaults.color = '#6b7280'

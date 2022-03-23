@@ -14,12 +14,12 @@
         x-data="{ tooltip: {} }"
         x-init="
             Alpine.effect(() => {
-                if (Alpine.store('sidebar').isOpen) {
+                if ($store.sidebar.isOpen) {
                     tooltip = false
                 } else {
                     tooltip = {
                         content: @js($slot->toHtml()),
-                        theme: Alpine.store('theme') === 'light' ? 'dark' : 'light',
+                        theme: $store.theme.isLight() ? 'dark' : 'light',
                         placement: document.dir === 'rtl' ? 'left' : 'right',
                     }
                 }
