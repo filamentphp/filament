@@ -15,7 +15,7 @@ You may create a `resources/views/vendor/filament/components/brand.blade.php` fi
 If you enabled the [collapsible sidebar](#collapsible-sidebar) you may also provide a brand icon (`resources/views/vendor/filament/components/brand-icon.blade.php`) which is shown when the sidebar is collapsed: 
 
 ```blade
-<img src="{{ asset('/images/icon.svg') }}" alt="Logo" class="h-full h-full object-contain">
+<img src="{{ asset('/images/icon.svg') }}" alt="Icon" class="h-full w-full object-contain">
 ```
 
 ## Dark mode
