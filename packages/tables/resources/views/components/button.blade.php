@@ -67,8 +67,8 @@
 @if ($tag === 'button')
     <button
         @if ($tooltip)
-            x-data="{}"
-            x-tooltip.raw="{{ $tooltip }}"
+            x-data="tooltip(@js($tooltip))"
+            x-tooltip="tooltip"
         @endif
         type="{{ $type }}"
         wire:loading.attr="disabled"
@@ -101,8 +101,8 @@
 @elseif ($tag === 'a')
     <a
         @if ($tooltip)
-            x-data="{}"
-            x-tooltip.raw="{{ $tooltip }}"
+            x-data="tooltip(@js($tooltip))"
+            x-tooltip="tooltip"
         @endif
         wire:loading.attr="disabled"
         {!! $hasLoadingIndicator ? 'wire:loading.class="opacity-70 cursor-wait"' : '' !!}
@@ -124,7 +124,7 @@
             </svg>
         @endif
 
-        <span>{{ $slot }}</span>
+        <span>TET {{ $slot }}</span>
 
         @if ($icon && $iconPosition === 'after')
             <x-dynamic-component :component="$icon" :class="$iconClasses" />

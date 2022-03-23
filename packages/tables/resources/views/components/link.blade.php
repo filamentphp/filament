@@ -26,8 +26,8 @@
 @if ($tag === 'a')
     <a
         @if ($tooltip)
-            x-data="{}"
-            x-tooltip.raw="{{ $tooltip }}"
+            x-data="tooltip(@js($tooltip))"
+            x-tooltip="tooltip"
         @endif
         {{ $attributes->class($linkClasses) }}
     >
@@ -36,13 +36,13 @@
 @elseif ($tag === 'button')
     <button
         @if ($tooltip)
-            x-data="{}"
-            x-tooltip.raw="{{ $tooltip }}"
+            x-data="tooltip(@js($tooltip))"
+            x-tooltip="tooltip"
         @endif
         type="{{ $type }}"
         {!! $disabled ? 'disabled' : '' !!}
         {{ $attributes->class($linkClasses) }}
     >
-        {{ $slot }}
+        LINK {{ $slot }}
     </button>
 @endif

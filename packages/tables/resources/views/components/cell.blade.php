@@ -29,9 +29,9 @@
             wire:loading.attr="disabled"
             wire:loading.class="opacity-70 cursor-wait"
             @if ($tooltip)
-                x-data="{}"
-                x-tooltip.raw="{{ $tooltip }}"
-            @endif
+            x-data="tooltip(@js($tooltip))"
+            x-tooltip="tooltip"
+        @endif
             type="button"
             class="block text-left"
         >
@@ -40,8 +40,11 @@
     @elseif ($url || $recordUrl)
         <a
             @if ($tooltip)
-                x-data="{}"
-                x-tooltip.raw="{{ $tooltip }}"
+                 x-data="{ tooltip: {
+                    content: @js($tooltip),
+                    theme: $store.theme.isLight() ? 'dark' : 'light',
+                 } }"
+                x-tooltip="tooltip"
             @endif
             href="{{ $url ?: $recordUrl }}"
             {{ $shouldOpenUrlInNewTab ? 'target="_blank"' : null }}

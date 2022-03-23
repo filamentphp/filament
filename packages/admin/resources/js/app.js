@@ -100,6 +100,16 @@ Alpine.store('theme', {
     },
 })
 
+Alpine.data('tooltip', (content = null, placement = 'top') => ({
+    get tooltip() {
+        return {
+            content,
+            placement,
+            theme: Alpine.store('theme').isLight() ? 'dark' : 'light'
+        }
+    }
+}))
+
 Chart.defaults.font.family = `'DM Sans', sans-serif`
 Chart.defaults.color = '#6b7280'
 
