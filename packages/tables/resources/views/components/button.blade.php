@@ -124,7 +124,7 @@
             </svg>
         @endif
 
-        <span>TET {{ $slot }}</span>
+        <span>{{ $slot }}</span>
 
         @if ($icon && $iconPosition === 'after')
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
