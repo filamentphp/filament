@@ -54,12 +54,13 @@ class RelationshipRepeater extends Repeater
             $childComponentContainers = $component->getChildComponentContainers();
 
             $itemOrder = 1;
+            $orderColumn = $this->getOrderColumn();
 
             foreach ($childComponentContainers as $itemKey => $item) {
                 $itemData = $item->getState();
 
-                if ($this->orderColumn) {
-                    $itemData[$this->orderColumn] = $itemOrder;
+                if ($orderColumn) {
+                    $itemData[$orderColumn] = $itemOrder;
 
                     $itemOrder++;
                 }
@@ -159,8 +160,8 @@ class RelationshipRepeater extends Repeater
         $relationship = $this->getRelationship();
         $localKeyName = $relationship->getLocalKeyName();
 
-        if ($this->orderColumn) {
-            $relationship->orderBy($this->orderColumn);
+        if ($orderColumn = $this->getOrderColumn()) {
+            $relationship->orderBy($orderColumn);
         }
 
         return $this->cachedExistingRecords = $relationship->getResults()->mapWithKeys(
