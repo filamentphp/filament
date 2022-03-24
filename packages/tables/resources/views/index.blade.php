@@ -257,6 +257,7 @@
 
                     @foreach ($records as $record)
                         <x-tables::row
+                            :record-url="$getRecordUrl($record)"
                             wire:key="{{ $record->getKey() }}"
                             x-bind:class="{
                                 'bg-primary-500/10': isRecordSelected('{{ $record->getKey() }}'),
