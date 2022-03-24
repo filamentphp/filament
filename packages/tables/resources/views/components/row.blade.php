@@ -1,6 +1,7 @@
 @props([
     'recordUrl' => null,
 ])
+
 <tr
     {{
         $attributes->class([
