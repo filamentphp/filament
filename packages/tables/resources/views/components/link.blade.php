@@ -1,6 +1,8 @@
 @props([
     'color' => 'primary',
     'disabled' => false,
+    'icon' => null,
+    'iconPosition' => 'before',
     'tag' => 'a',
     'tooltip' => null,
     'type' => 'button',
@@ -8,7 +10,7 @@
 
 @php
     $linkClasses = [
-        'hover:underline focus:outline-none focus:underline filament-tables-link',
+        'inline-flex items-center justify-center hover:underline focus:outline-none focus:underline filament-tables-link',
         'opacity-70 cursor-not-allowed' => $disabled,
         'text-primary-600 hover:text-primary-500' => $color === 'primary',
         'text-danger-600 hover:text-danger-500' => $color === 'danger',
@@ -21,6 +23,12 @@
         'dark:text-success-500 dark:hover:text-success-400' => $color === 'success' && config('tables.dark_mode'),
         'dark:text-warning-500 dark:hover:text-warning-400' => $color === 'warning' && config('tables.dark_mode'),
     ];
+
+    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
+        'filament-button-icon w-4 h-4',
+        'mr-1 -ml-2 rtl:ml-1 rtl:-mr-2' => $iconPosition === 'before',
+        'ml-1 -mr-2 rtl:mr-1 rtl:-ml-2' => $iconPosition === 'after'
+    ]);
 @endphp
 
 @if ($tag === 'a')
@@ -31,7 +39,15 @@
         @endif
         {{ $attributes->class($linkClasses) }}
     >
+        @if ($icon && $iconPosition === 'before')
+            <x-dynamic-component :component="$icon" :class="$iconClasses"/>
+        @endif
+
         {{ $slot }}
+
+        @if ($icon && $iconPosition === 'after')
+            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+        @endif
     </a>
 @elseif ($tag === 'button')
     <button
@@ -43,6 +59,14 @@
         {!! $disabled ? 'disabled' : '' !!}
         {{ $attributes->class($linkClasses) }}
     >
+        @if ($icon && $iconPosition === 'before')
+            <x-dynamic-component :component="$icon" :class="$iconClasses"/>
+        @endif
+
         {{ $slot }}
+
+        @if ($icon && $iconPosition === 'after')
+            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+        @endif
     </button>
 @endif
