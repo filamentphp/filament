@@ -40,9 +40,9 @@ class CustomSearchProvider implements GlobalSearchProvider
     {
         return GlobalSearchResults::make()
             ->category('foobarbaz', [
-                new GlobalSearchResult(title: 'foo', url: '#', details: []),
-                new GlobalSearchResult(title: 'bar', url: '#', details: []),
-                new GlobalSearchResult(title: 'baz', url: '#', details: []),
+                new GlobalSearchResult(key: 1, title: 'foo', url: '#', details: []),
+                new GlobalSearchResult(key: 2, title: 'bar', url: '#', details: []),
+                new GlobalSearchResult(key: 3, title: 'baz', url: '#', details: []),
             ]);
     }
 }
