@@ -217,12 +217,12 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return function (Model $record): ?string {
             $resource = static::getResource();
 
-            if ($resource::hasPage('edit') && $resource::canEdit($record)) {
-                return $resource::getUrl('edit', ['record' => $record]);
-            }
-
             if ($resource::hasPage('view') && $resource::canView($record)) {
                 return $resource::getUrl('view', ['record' => $record]);
+            }
+
+            if ($resource::hasPage('edit') && $resource::canEdit($record)) {
+                return $resource::getUrl('edit', ['record' => $record]);
             }
 
             return null;
