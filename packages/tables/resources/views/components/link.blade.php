@@ -1,11 +1,11 @@
 @props([
     'color' => 'primary',
     'disabled' => false,
+    'icon' => null,
+    'iconPosition' => 'before',
     'tag' => 'a',
     'tooltip' => null,
     'type' => 'button',
-    'icon' => null,
-    'iconPosition' => 'before',
 ])
 
 @php
@@ -59,6 +59,14 @@
         {!! $disabled ? 'disabled' : '' !!}
         {{ $attributes->class($linkClasses) }}
     >
+        @if ($icon && $iconPosition === 'before')
+            <x-dynamic-component :component="$icon" :class="$iconClasses"/>
+        @endif
+
         {{ $slot }}
+
+        @if ($icon && $iconPosition === 'after')
+            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+        @endif
     </button>
 @endif
