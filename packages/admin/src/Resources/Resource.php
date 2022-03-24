@@ -199,6 +199,7 @@ class Resource
             ->limit(50)
             ->get()
             ->map(fn (Model $record): GlobalSearchResult => new GlobalSearchResult(
+                key: $record->getKey(),
                 title: static::getGlobalSearchResultTitle($record),
                 url: static::getGlobalSearchResultUrl($record),
                 details: static::getGlobalSearchResultDetails($record),
