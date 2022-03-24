@@ -20,7 +20,7 @@
         'opacity-70 cursor-not-allowed' => $disabled,
     ];
 
-    $iconClasses = 'w-5 h-5 filament-tables-icon-button-icon';
+    $iconClasses = 'w-5 h-5 rtl:scale-x-[-1] filament-tables-icon-button-icon';
 @endphp
 
 @if ($tag === 'button')

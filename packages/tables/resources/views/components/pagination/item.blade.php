@@ -23,7 +23,7 @@
         ]) }}
     >
         @if ($icon)
-            <x-dynamic-component :component="$icon" class="w-5 h-5 rtl:rotate-180" />
+            <x-dynamic-component :component="$icon" class="w-5 h-5 rtl:scale-x-[-1]" />
         @endif
 
         <span>{{ $label ?? ($separator ? '...' : '') }}</span>
