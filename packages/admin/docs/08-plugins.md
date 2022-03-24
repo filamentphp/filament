@@ -62,6 +62,31 @@ Much like a normal Laravel package, you should add your service provider's fully
 
 This will ensure your service provider is automatically loaded by Laravel when the package is installed.
 
+## FilamentServing Event
+
+If you rely on data defined by Filament on boot or through `Filament::serving()` you can hook into `Filament\Events\ServingFilament`:
+
+```php
+use Filament\Events\ServingFilament;
+use Filament\PluginServiceProvider;
+use Illuminate\Support\Facades\Event;
+use Spatie\LaravelPackageTools\Package;
+
+class ExampleServiceProvider extends PluginServiceProvider
+{
+    public function packageConfiguring(Package $package): void
+    {
+        Event::listen(ServingFilament::class, [$this, 'registerStuff']);
+    }
+
+    public function registerStuff(ServingFilament $e)
+    {
+        // Do stuff
+    }
+}
+
+```
+
 ## Resources
 
 To register a custom resource, add the fully qualified class name to the `$resources` property in your service provider:
