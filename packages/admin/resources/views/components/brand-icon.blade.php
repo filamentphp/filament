@@ -4,11 +4,11 @@
         'dark:text-white' => config('filament.dark_mode'),
     ])>
         {{
-            str($brand)
+            \Illuminate\Support\Str::of($brand)
                 ->snake()
                 ->upper()
                 ->explode('_')
-                ->map(fn (string $string) => str($string)->substr(0, 1))
+                ->map(fn (string $string) => \Illuminate\Support\Str::substr($string, 0, 1))
                 ->take(2)
                 ->implode('')
         }}
