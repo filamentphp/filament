@@ -57,8 +57,11 @@ trait InteractsWithTableQuery
         foreach ($this->getSearchColumns() as $searchColumnName) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
-            if (method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName)) {
-                $searchColumnName = $searchColumnName . '->' . app()->getLocale();
+            if (isset($this->getLivewire()->activeFormLocale)
+                && method_exists($model, 'isTranslatableAttribute')
+                && $model->isTranslatableAttribute($searchColumnName)
+            ) {
+                $searchColumnName = $searchColumnName . '->' . $this->getLivewire()->activeFormLocale;
             }
 
             $query->when(
