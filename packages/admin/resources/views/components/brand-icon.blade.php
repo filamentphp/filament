@@ -8,7 +8,7 @@
                 ->snake()
                 ->upper()
                 ->explode('_')
-                ->map(fn (string $string) => substr($string, 0, 1))
+                ->map(fn (string $string) => \Illuminate\Support\Str::substr($string, 0, 1))
                 ->take(2)
                 ->implode('')
         }}
