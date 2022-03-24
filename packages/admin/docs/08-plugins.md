@@ -12,16 +12,13 @@ use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
-    public function configurePackage(Package $package): void
-    {
-        $package->name('your-package-name');
-    }
+    public static string $name = 'your-package-name';
     
     // ...
 }
 ```
 
-The `PluginServiceProvider` extends the service provider from [Laravel Package Tools](https://github.com/spatie/laravel-package-tools), so all `configurePackage()` options available there are available here as well.
+The `PluginServiceProvider` extends the service provider from [Laravel Package Tools](https://github.com/spatie/laravel-package-tools) and registers everything automatically. You can also configure the package yourself with `configurePackage()`. All the options from Laravel Package Tools are available here as well.
 
 Plugins must have a unique name property.
 
@@ -62,6 +59,31 @@ Much like a normal Laravel package, you should add your service provider's fully
 
 This will ensure your service provider is automatically loaded by Laravel when the package is installed.
 
+## FilamentServing Event
+
+If you rely on data defined by Filament on boot or through `Filament::serving()` you can hook into `Filament\Events\ServingFilament`:
+
+```php
+use Filament\Events\ServingFilament;
+use Filament\PluginServiceProvider;
+use Illuminate\Support\Facades\Event;
+use Spatie\LaravelPackageTools\Package;
+
+class ExampleServiceProvider extends PluginServiceProvider
+{
+    public function packageConfiguring(Package $package): void
+    {
+        Event::listen(ServingFilament::class, [$this, 'registerStuff']);
+    }
+
+    public function registerStuff(ServingFilament $e)
+    {
+        // Do stuff
+    }
+}
+
+```
+
 ## Resources
 
 To register a custom resource, add the fully qualified class name to the `$resources` property in your service provider:
@@ -73,14 +95,11 @@ use Vendor\Package\Resources\CustomResource;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'your-package-name';
+    
     protected array $resources = [
         CustomResource::class,
     ];
-
-    public function configurePackage(Package $package): void
-    {
-        $package->name('your-package-name');
-    }
 }
 ```
 
@@ -97,14 +116,11 @@ use Vendor\Package\Pages\CustomPage;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'your-package-name';
+    
     protected array $pages = [
         CustomPage::class,
     ];
-    
-    public function configurePackage(Package $package): void
-    {
-        $package->name('your-package-name');
-    }
 }
 ```
 
@@ -121,14 +137,11 @@ use Vendor\Package\Widgers\CustomWidget;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'your-package-name';
+    
     protected array $widgets = [
         CustomWidget::class,
     ];
-
-    public function configurePackage(Package $package): void
-    {
-        $package->name('your-package-name');
-    }
 }
 ```
 
@@ -148,14 +161,11 @@ use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'your-package-name';
+    
     protected array $styles = [
         'my-package-styles' => __DIR__ . '/../dist/app.css',
     ];
-
-    public function configurePackage(Package $package): void
-    {
-        $package->name('your-package-name');
-    }
 }
 ```
 
@@ -169,14 +179,11 @@ use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'your-package-name';
+    
     protected array $scripts = [
         'my-package-scripts' => __DIR__ . '/../dist/app.js',
     ];
-
-    public function configurePackage(Package $package): void
-    {
-        $package->name('your-package-name');
-    }
 }
 ```
 
@@ -188,14 +195,11 @@ use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'your-package-name';
+    
     protected array $beforeCoreScripts = [
         'my-package-scripts' => __DIR__ . '/../dist/app.js',
     ];
-    
-    public function configurePackage(Package $package): void
-    {
-        $package->name('your-package-name');
-    }
 }
 ```
 
@@ -212,10 +216,7 @@ use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
-    public function configurePackage(Package $package): void
-    {
-        $package->name('your-package-name');
-    }
+    public static string $name = 'your-package-name';
     
     protected function getScriptData(): array
     {
@@ -245,10 +246,7 @@ use Vendor\Package\Pages\CustomPage;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
-    public function configurePackage(Package $package): void
-    {
-        $package->name('your-package-name');
-    }
+    public static string $name = 'your-package-name';
     
     protected function getUserMenuItems(): array
     {
