@@ -85,7 +85,7 @@ class RelationshipRepeater extends Repeater
         $this->disableItemMovement();
     }
 
-    public function orderable(string | Closure | null $column = 'order'): static
+    public function orderable(string | Closure | null $column = 'sort'): static
     {
         $this->orderColumn = $column;
         $this->disableItemMovement(fn (RelationshipRepeater $component): bool => ! $component->evaluate($column));

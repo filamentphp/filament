@@ -1334,7 +1334,7 @@ HasManyRepeater::make('qualifications')
 
 #### Ordering items
 
-By default, ordering `HasManyRepeater` items is disabled. This is because your related model needs an `order` column to store the order of related records. To enable ordering, you may use the `orderable()` method:
+By default, ordering `HasManyRepeater` items is disabled. This is because your related model needs an `sort` column to store the order of related records. To enable ordering, you may use the `orderable()` method:
 
 ```php
 use App\Models\App;
@@ -1348,7 +1348,7 @@ HasManyRepeater::make('qualifications')
     ->orderable()
 ```
 
-This assumes that your related model has a `order` column.
+This assumes that your related model has a `sort` column.
 
 If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may pass this in to `orderable()`:
 
