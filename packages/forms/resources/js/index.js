@@ -8,6 +8,7 @@ import SelectFormComponentAlpinePlugin from './components/select'
 import TagsInputFormComponentAlpinePlugin from './components/tags-input'
 import TextInputFormComponentAlpinePlugin from './components/text-input'
 import TextareaFormComponentAlpinePlugin from './components/textarea'
+import SortableLivewireDirective from './sortable'
 
 export default (Alpine) => {
     Alpine.plugin(DateTimePickerFormComponentAlpinePlugin)
@@ -20,6 +21,7 @@ export default (Alpine) => {
     Alpine.plugin(TagsInputFormComponentAlpinePlugin)
     Alpine.plugin(TextInputFormComponentAlpinePlugin)
     Alpine.plugin(TextareaFormComponentAlpinePlugin)
+    window.Livewire.directive('sortable', SortableLivewireDirective);
 }
 
 export {

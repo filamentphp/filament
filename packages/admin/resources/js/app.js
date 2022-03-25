@@ -2,7 +2,6 @@ import '../css/app.css'
 
 import Alpine from 'alpinejs'
 import Chart from 'chart.js/auto'
-import '@nextapps-be/livewire-sortablejs';
 
 import Collapse from '@alpinejs/collapse'
 import FormsAlpinePlugin from '../../../forms/dist/module.esm'
