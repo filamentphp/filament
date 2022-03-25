@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 trait InteractsWithForms
 {
@@ -31,6 +33,24 @@ trait InteractsWithForms
     {
         foreach ($this->getCachedForms() as $form) {
             $form->dispatchEvent(...$args);
+        }
+    }
+
+    public function dispatchFormRepeaterMoveItemsEvent($data): void
+    {
+        $statePaths = collect($data)
+            ->pluck('value')
+            ->map(fn ($item) => [
+                'statePath' => Str::beforeLast($item, '.'),
+                'uuid'      => Str::afterLast($item, '.'),
+            ])
+            ->groupBy('statePath')
+            ->map(fn ($item) => $item->pluck('uuid'));
+        
+        foreach ($this->getCachedForms() as $form) {
+            foreach ($statePaths as $statePath => $uuids) {
+                $form->dispatchEvent('repeater::moveItems', $statePath, $uuids->all());
+            }
         }
     }
 

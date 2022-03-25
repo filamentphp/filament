@@ -11,10 +11,14 @@
 >
     <div {{ $attributes->merge($getExtraAttributes())->class(['space-y-2 filament-forms-repeater-component']) }}>
         @if (count($containers = $getChildComponentContainers()))
-            <ul class="space-y-2">
+            <ul
+                class="space-y-2"
+                wire:sortable="dispatchFormRepeaterMoveItemsEvent"
+            >
                 @foreach ($containers as $uuid => $item)
                     <li
                         wire:key="{{ $item->getStatePath() }}"
+                        wire:sortable.item="{{ $item->getStatePath() }}"
                         @class([
                             'relative p-6 bg-white shadow-sm rounded-lg border border-gray-300',
                             'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
@@ -59,6 +63,22 @@
 
                                         <x-heroicon-s-chevron-down class="w-4 h-4" />
                                     </button>
+                                @endunless
+
+                                @unless ($isItemMovementDisabled())
+                                    <div
+                                        wire:sortable.handle
+                                        @class([
+                                            'flex items-center justify-center w-6 text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600 cursor-move',
+                                            'dark:text-gray-200 dark:hover:bg-gray-600' => config('forms.dark_mode'),
+                                        ])
+                                    >
+                                        <span class="sr-only">
+                                            {{ __('forms::components.repeater.buttons.move_item.label') }}
+                                        </span>
+
+                                        <x-heroicon-s-selector class="w-4 h-4" />
+                                    </div>
                                 @endunless
 
                                 @unless ($isItemDeletionDisabled())
