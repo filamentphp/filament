@@ -79,6 +79,7 @@ If you're building your own theme (see below), you can alternatively compile the
 
 ```css
 @import 'https://unpkg.com/tippy.js@6/dist/tippy.css';
+@import 'https://unpkg.com/tippy.js@6/themes/light.css';
 ```
 
 ## Building themes
