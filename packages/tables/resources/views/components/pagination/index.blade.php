@@ -5,6 +5,9 @@
 
 @php
     $isSimple = ! $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator;
+    $isRtl = __('filament::layout.direction') === 'rtl';
+    $previousArrowIcon = $isRtl ? 'heroicon-o-chevron-right' : 'heroicon-o-chevron-left';
+    $nextArrowIcon = $isRtl ? 'heroicon-o-chevron-left' : 'heroicon-o-chevron-right';
 @endphp
 
 <nav
@@ -18,7 +21,7 @@
                 <x-tables::icon-button
                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
                     rel="prev"
-                    icon="heroicon-o-chevron-left"
+                    :icon="$previousArrowIcon"
                     :label="__('tables::table.pagination.buttons.previous.label')"
                 />
             @endif
@@ -31,7 +34,7 @@
                 <x-tables::icon-button
                     :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                     rel="next"
-                    icon="heroicon-o-chevron-right"
+                    :icon="$nextArrowIcon"
                     :label="__('tables::table.pagination.buttons.next.label')"
                 />
             @endif
@@ -44,7 +47,7 @@
                 @if (! $paginator->onFirstPage())
                     <x-tables::button
                         :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
-                        icon="heroicon-s-chevron-left"
+                        :icon="$previousArrowIcon"
                         rel="prev"
                         size="sm"
                         color="secondary"
@@ -77,7 +80,7 @@
                 @if ($paginator->hasMorePages())
                     <x-tables::button
                         :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
-                        icon="heroicon-s-chevron-right"
+                        :icon="$nextArrowIcon"
                         icon-position="after"
                         rel="next"
                         size="sm"
