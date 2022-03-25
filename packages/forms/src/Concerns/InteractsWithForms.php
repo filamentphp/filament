@@ -38,6 +38,16 @@ trait InteractsWithForms
 
     public function dispatchFormRepeaterMoveItemsEvent($data): void
     {
+        $this->dispatchFormMoveItemsEvent('repeater::moveItems', $data);
+    }
+
+    public function dispatchFormBuilderMoveItemsEvent($data): void
+    {
+        $this->dispatchFormMoveItemsEvent('builder::moveItems', $data);
+    }
+
+    protected function dispatchFormMoveItemsEvent($event, $data): void
+    {
         $statePaths = collect($data)
             ->pluck('value')
             ->map(fn ($item) => [
@@ -50,7 +60,7 @@ trait InteractsWithForms
         
         foreach ($this->getCachedForms() as $form) {
             foreach ($statePaths as $statePath => $uuids) {
-                $form->dispatchEvent('repeater::moveItems', $statePath, $uuids);
+                $form->dispatchEvent($event, $statePath, $uuids);
             }
         }
     }

@@ -11,13 +11,17 @@
 >
     <div {{ $attributes->merge($getExtraAttributes())->class(['space-y-2 filament-forms-builder-component']) }}>
         @if (count($containers = $getChildComponentContainers()))
-            <ul class="space-y-2">
+            <ul
+                class="space-y-2"
+                wire:sortable="dispatchFormBuilderMoveItemsEvent"
+            >
                 @foreach ($containers as $uuid => $item)
                     <li
                         x-data="{ isCreateButtonDropdownOpen: false, isCreateButtonVisible: false }"
                         x-on:click="isCreateButtonVisible = true"
                         x-on:click.away="isCreateButtonVisible = false"
                         wire:key="{{ $item->getStatePath() }}"
+                        wire:sortable.item="{{ $getStatePath() . '.' . $uuid }}"
                         @class([
                             'relative p-6 bg-white shadow-sm rounded-lg border border-gray-300',
                             'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
@@ -26,6 +30,24 @@
                         {{ $item }}
 
                         @unless ($isItemDeletionDisabled() && ($isItemMovementDisabled() && ($loop->count <= 1)))
+                            @unless ($isItemMovementDisabled())
+                                <div
+                                    wire:sortable.handle
+                                    @class([
+                                        'absolute top-0 left-0 flex items-center justify-center h-6 text-gray-800 cursor-grab opacity-50 hover:opacity-100',
+                                        'dark:text-gray-200' => config('forms.dark_mode'),
+                                    ])
+                                >
+                                    <span class="sr-only">
+                                        {{ __('forms::components.repeater.buttons.move_item.label') }}
+                                    </span>
+
+                                    <div class="flex">
+                                        <x-heroicon-o-dots-vertical class="w-4 h-4" />
+                                        <x-heroicon-o-dots-vertical class="w-4 h-4 -ml-3" />
+                                    </div>
+                                </div>
+                            @endunless
                             <div @class([
                                 'absolute top-0 right-0 h-6 flex divide-x rounded-bl-lg rounded-tr-lg border-gray-300 border-b border-l overflow-hidden rtl:border-l-0 rtl:border-r rtl:right-auto rtl:left-0 rtl:rounded-bl-none rtl:rounded-br-lg rtl:rounded-tr-none rtl:rounded-tl-lg',
                                 'dark:border-gray-600 dark:divide-gray-600' => config('forms.dark_mode'),

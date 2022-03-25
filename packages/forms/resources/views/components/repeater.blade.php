@@ -18,7 +18,7 @@
                 @foreach ($containers as $uuid => $item)
                     <li
                         wire:key="{{ $item->getStatePath() }}"
-                        wire:sortable.item="{{ $item->getStatePath() }}"
+                        wire:sortable.item="{{ $getStatePath() . '.' . $uuid }}"
                         @class([
                             'relative p-6 bg-white shadow-sm rounded-lg border border-gray-300',
                             'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
