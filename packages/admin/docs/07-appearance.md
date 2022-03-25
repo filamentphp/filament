@@ -71,6 +71,7 @@ If you enable the collapsible sidebar, make sure to load the Tippy CSS-files as 
 ```php
 Filament::registerStyles([
     'https://unpkg.com/tippy.js@6/dist/tippy.css',
+    'https://unpkg.com/tippy.js@6/themes/light.css',
 ]);
 ```
 
