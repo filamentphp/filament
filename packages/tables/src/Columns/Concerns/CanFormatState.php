@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns\Concerns;
 use Akaunting\Money;
 use Closure;
 use Filament\Tables\Columns\Column;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
@@ -32,7 +33,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function enum(array $options, $default = null): static
+    public function enum(array | Arrayable $options, $default = null): static
     {
         $this->formatStateUsing(fn ($state): ?string => $options[$state] ?? ($default ?? $state));
 
