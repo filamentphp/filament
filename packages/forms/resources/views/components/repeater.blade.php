@@ -27,6 +27,24 @@
                         {{ $item }}
 
                         @unless ($isItemDeletionDisabled() && ($isItemMovementDisabled() && ($loop->count <= 1)))
+                            @unless ($isItemMovementDisabled())
+                                <div
+                                    wire:sortable.handle
+                                    @class([
+                                        'absolute top-0 left-0 flex items-center justify-center h-6 text-gray-800 cursor-grab opacity-50 hover:opacity-100',
+                                        'dark:text-gray-200' => config('forms.dark_mode'),
+                                    ])
+                                >
+                                    <span class="sr-only">
+                                        {{ __('forms::components.repeater.buttons.move_item.label') }}
+                                    </span>
+
+                                    <div class="flex">
+                                        <x-heroicon-o-dots-vertical class="w-4 h-4" />
+                                        <x-heroicon-o-dots-vertical class="w-4 h-4 -ml-3" />
+                                    </div>
+                                </div>
+                            @endunless
                             <div @class([
                                 'absolute top-0 right-0 h-6 flex divide-x rounded-bl-lg rounded-tr-lg border-gray-300 border-b border-l overflow-hidden rtl:border-l-0 rtl:border-r rtl:right-auto rtl:left-0 rtl:rounded-bl-none rtl:rounded-br-lg rtl:rounded-tr-none rtl:rounded-tl-lg',
                                 'dark:border-gray-600 dark:divide-gray-600' => config('forms.dark_mode'),
@@ -63,22 +81,6 @@
 
                                         <x-heroicon-s-chevron-down class="w-4 h-4" />
                                     </button>
-                                @endunless
-
-                                @unless ($isItemMovementDisabled())
-                                    <div
-                                        wire:sortable.handle
-                                        @class([
-                                            'flex items-center justify-center w-6 text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600 cursor-move',
-                                            'dark:text-gray-200 dark:hover:bg-gray-600' => config('forms.dark_mode'),
-                                        ])
-                                    >
-                                        <span class="sr-only">
-                                            {{ __('forms::components.repeater.buttons.move_item.label') }}
-                                        </span>
-
-                                        <x-heroicon-s-selector class="w-4 h-4" />
-                                    </div>
                                 @endunless
 
                                 @unless ($isItemDeletionDisabled())
