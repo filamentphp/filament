@@ -3,7 +3,7 @@
     "description": "A collection of tools for rapidly building beautiful TALL stack interfaces, designed for humans.",
     "license": "MIT",
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "ext-intl": "*"
     },
     "require-dev": {
