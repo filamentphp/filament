@@ -25,7 +25,7 @@ return [
         ],
 
         'messages' => [
-            'created' => 'Created',
+            'created' => 'ساخته شد',
         ],
 
     ],
