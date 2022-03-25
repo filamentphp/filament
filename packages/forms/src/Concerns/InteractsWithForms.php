@@ -45,11 +45,12 @@ trait InteractsWithForms
                 'uuid'      => Str::afterLast($item, '.'),
             ])
             ->groupBy('statePath')
-            ->map(fn ($item) => $item->pluck('uuid'));
+            ->map(fn ($item) => $item->pluck('uuid')->all())
+            ->all();
         
         foreach ($this->getCachedForms() as $form) {
             foreach ($statePaths as $statePath => $uuids) {
-                $form->dispatchEvent('repeater::moveItems', $statePath, $uuids->all());
+                $form->dispatchEvent('repeater::moveItems', $statePath, $uuids);
             }
         }
     }
