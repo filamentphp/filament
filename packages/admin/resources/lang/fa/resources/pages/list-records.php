@@ -50,7 +50,7 @@ return [
             ],
 
             'edit' => [
-                
+
                 'label' => 'اصلاح',
 
                 'modal' => [
