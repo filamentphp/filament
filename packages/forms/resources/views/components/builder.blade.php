@@ -13,7 +13,8 @@
         @if (count($containers = $getChildComponentContainers()))
             <ul
                 class="space-y-2"
-                wire:sortable="dispatchFormBuilderMoveItemsEvent"
+                wire:sortable
+                wire:end="dispatchFormEvent('builder::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
             >
                 @foreach ($containers as $uuid => $item)
                     <li
@@ -21,7 +22,7 @@
                         x-on:click="isCreateButtonVisible = true"
                         x-on:click.away="isCreateButtonVisible = false"
                         wire:key="{{ $item->getStatePath() }}"
-                        wire:sortable.item="{{ $getStatePath() . '.' . $uuid }}"
+                        wire:sortable.item="{{ $uuid }}"
                         @class([
                             'relative p-6 bg-white shadow-sm rounded-lg border border-gray-300',
                             'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),

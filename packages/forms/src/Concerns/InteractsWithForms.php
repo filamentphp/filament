@@ -36,35 +36,6 @@ trait InteractsWithForms
         }
     }
 
-    public function dispatchFormRepeaterMoveItemsEvent($data): void
-    {
-        $this->dispatchFormMoveItemsEvent('repeater::moveItems', $data);
-    }
-
-    public function dispatchFormBuilderMoveItemsEvent($data): void
-    {
-        $this->dispatchFormMoveItemsEvent('builder::moveItems', $data);
-    }
-
-    protected function dispatchFormMoveItemsEvent($event, $data): void
-    {
-        $statePaths = collect($data)
-            ->pluck('value')
-            ->map(fn ($item) => [
-                'statePath' => Str::beforeLast($item, '.'),
-                'uuid'      => Str::afterLast($item, '.'),
-            ])
-            ->groupBy('statePath')
-            ->map(fn ($item) => $item->pluck('uuid')->all())
-            ->all();
-        
-        foreach ($this->getCachedForms() as $form) {
-            foreach ($statePaths as $statePath => $uuids) {
-                $form->dispatchEvent($event, $statePath, $uuids);
-            }
-        }
-    }
-
     public function getComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
     {
         return data_get($this->componentFileAttachments, $statePath);

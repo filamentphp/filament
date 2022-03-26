@@ -13,12 +13,13 @@
         @if (count($containers = $getChildComponentContainers()))
             <ul
                 class="space-y-2"
-                wire:sortable="dispatchFormRepeaterMoveItemsEvent"
+                wire:sortable
+                wire:end="dispatchFormEvent('repeater::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
             >
                 @foreach ($containers as $uuid => $item)
                     <li
                         wire:key="{{ $item->getStatePath() }}"
-                        wire:sortable.item="{{ $getStatePath() . '.' . $uuid }}"
+                        wire:sortable.item="{{ $uuid }}"
                         @class([
                             'relative p-6 bg-white shadow-sm rounded-lg border border-gray-300',
                             'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
