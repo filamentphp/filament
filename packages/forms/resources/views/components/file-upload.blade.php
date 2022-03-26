@@ -7,8 +7,8 @@
 
             $allAvailableLocale = ['ar-ar', 'cs-cz', 'da-dk', 'de-de', 'en-en', 'es-es', 'fa_ir', 'fr-fr', 'he-he', 'hu-hu', 'id-id', 'it-it', 'ja-ja', 'lt-lt', 'nl-nl', 'no-nb', 'pl-pl', 'pt-br', 'ru-ru', 'sk-sk', 'sv_se', 'tr-tr', 'uk-ua', 'zh-cn', 'zh-tw'];
 
-            foreach ($allAvailableLocale as $availableLocale){
-                if(str_contains($availableLocale, $locale)){
+            foreach ($allAvailableLocale as $availableLocale) {
+                if (str_contains($availableLocale, $locale)) {
                     $locale = $availableLocale;
                 }
             }
