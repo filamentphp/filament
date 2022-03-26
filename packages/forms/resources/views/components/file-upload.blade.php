@@ -6,19 +6,22 @@
             $defaultLocaleData = ($placeholder = $getPlaceholder()) ? "{ labelIdle: '{$placeholder}' }" : '{}';
 
             $allAvailableLocale = ['ar-ar', 'cs-cz', 'da-dk', 'de-de', 'en-en', 'es-es', 'fa_ir', 'fr-fr', 'he-he', 'hu-hu', 'id-id', 'it-it', 'ja-ja', 'lt-lt', 'nl-nl', 'no-nb', 'pl-pl', 'pt-br', 'ru-ru', 'sk-sk', 'sv_se', 'tr-tr', 'uk-ua', 'zh-cn', 'zh-tw'];
-
+            
+            $isContainLocale = false;
             foreach ($allAvailableLocale as $availableLocale) {
                 if (str_contains($availableLocale, $locale)) {
                     $locale = $availableLocale;
+                    $isContainLocale = true;
                 }
             }
         @endphp
+        @if($isContainLocale)
+            <script type="module">
+                import localeData from 'https://cdn.skypack.dev/filepond/locale/{{$locale}}.js'
 
-        <script type="module">
-            import localeData from 'https://cdn.skypack.dev/filepond/locale/{{$locale}}.js'
-
-            window.FilePond && window.FilePond.setOptions({ ...localeData, ...{!! $defaultLocaleData !!} })
-        </script>
+                window.FilePond && window.FilePond.setOptions({ ...localeData, ...{!! $defaultLocaleData !!} })
+            </script>
+        @endif
     @endpush
 @endonce
 
