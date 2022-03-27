@@ -198,11 +198,20 @@ class Resource
         return $query
             ->limit(50)
             ->get()
-            ->map(fn (Model $record): GlobalSearchResult => new GlobalSearchResult(
-                title: static::getGlobalSearchResultTitle($record),
-                url: static::getGlobalSearchResultUrl($record),
-                details: static::getGlobalSearchResultDetails($record),
-            ));
+            ->map(function (Model $record): ?GlobalSearchResult {
+                $url = static::getGlobalSearchResultUrl($record);
+
+                if (blank($url)) {
+                    return null;
+                }
+
+                return new GlobalSearchResult(
+                    title: static::getGlobalSearchResultTitle($record),
+                    url: $url,
+                    details: static::getGlobalSearchResultDetails($record),
+                );
+            })
+            ->filter();
     }
 
     public static function getLabel(): string
