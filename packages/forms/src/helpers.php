@@ -9,7 +9,7 @@ if (! function_exists('Filament\Forms\array_move_after')) {
 
         $indexToMoveAfter = array_search($keyToMoveAfter, $keys);
         $keyToMoveBefore = $keys[$indexToMoveAfter + 1] ?? null;
-        if (!isset($keyToMoveBefore)) {
+        if (filled($keyToMoveBefore)) {
             return $array;
         }
 
