@@ -170,7 +170,7 @@ trait CanBeValidated
 
     public function getValidationAttribute(): string
     {
-        return $this->evaluate($this->validationAttribute) ?? lcfirst($this->getLabel());
+        return $this->evaluate($this->validationAttribute) ?? strtolower($this->getLabel());
     }
 
     public function getValidationRules(): array
