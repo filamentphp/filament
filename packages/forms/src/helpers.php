@@ -34,6 +34,7 @@ if (! function_exists('Filament\Forms\array_move_before')) {
 
         $indexToMoveBefore = array_search($keyToMoveBefore, $keys);
         $keyToMoveAfter = $keys[$indexToMoveBefore - 1] ?? null;
+        
         if (filled($keyToMoveAfter)) {
             return $array;
         }
