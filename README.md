@@ -31,25 +31,25 @@ composer require filament/forms
 composer require filament/tables
 ```
 
-### spatie/laravel-medialibrary Plugin • [Documentation](https://filamentphp.com/docs/spatie-laravel-media-library-plugin)
+### Spatie Media Library Plugin • [Documentation](https://filamentphp.com/docs/spatie-laravel-media-library-plugin)
 
 ```bash
 composer require filament/spatie-laravel-media-library-plugin
 ```
 
-### spatie/laravel-settings Plugin • [Documentation](https://filamentphp.com/docs/spatie-laravel-settings-plugin)
+### Spatie Settings Plugin • [Documentation](https://filamentphp.com/docs/spatie-laravel-settings-plugin)
 
 ```bash
 composer require filament/spatie-laravel-settings-plugin
 ```
 
-### spatie/laravel-tags Plugin • [Documentation](https://filamentphp.com/docs/spatie-laravel-tags-plugin)
+### Spatie Tags Plugin • [Documentation](https://filamentphp.com/docs/spatie-laravel-tags-plugin)
 
 ```bash
 composer require filament/spatie-laravel-tags-plugin
 ```
 
-### spatie/laravel-translatable Plugin • [Documentation](https://filamentphp.com/docs/spatie-laravel-translatable-plugin)
+### Spatie Translatable Plugin • [Documentation](https://filamentphp.com/docs/spatie-laravel-translatable-plugin)
 
 ```bash
 composer require filament/spatie-laravel-translatable-plugin

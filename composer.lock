@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9c161decd8f813b5f72272339a0bd536",
+    "content-hash": "6f7714fa151ec0387cfe10a1c3eacf85",
     "packages": [],
     "packages-dev": [
         {
@@ -124,16 +124,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.216.1",
+            "version": "3.216.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "00176c97319448c9520176d7c7d107b04b35406d"
+                "reference": "9e09386c3a5b313eeb324490beff4eb843ed339d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/00176c97319448c9520176d7c7d107b04b35406d",
-                "reference": "00176c97319448c9520176d7c7d107b04b35406d",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9e09386c3a5b313eeb324490beff4eb843ed339d",
+                "reference": "9e09386c3a5b313eeb324490beff4eb843ed339d",
                 "shasum": ""
             },
             "require": {
@@ -209,9 +209,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.216.1"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.216.2"
             },
-            "time": "2022-03-24T18:15:20+00:00"
+            "time": "2022-03-25T18:17:03+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -365,16 +365,16 @@
         },
         {
             "name": "brianium/paratest",
-            "version": "v6.4.3",
+            "version": "v6.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paratestphp/paratest.git",
-                "reference": "5123a31dbf0b5deeaec17b00c0c5f31732c14483"
+                "reference": "589cdb23728b2a19872945580b95d8aa2c6619da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/5123a31dbf0b5deeaec17b00c0c5f31732c14483",
-                "reference": "5123a31dbf0b5deeaec17b00c0c5f31732c14483",
+                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/589cdb23728b2a19872945580b95d8aa2c6619da",
+                "reference": "589cdb23728b2a19872945580b95d8aa2c6619da",
                 "shasum": ""
             },
             "require": {
@@ -437,7 +437,7 @@
             ],
             "support": {
                 "issues": "https://github.com/paratestphp/paratest/issues",
-                "source": "https://github.com/paratestphp/paratest/tree/v6.4.3"
+                "source": "https://github.com/paratestphp/paratest/tree/v6.4.4"
             },
             "funding": [
                 {
@@ -449,7 +449,7 @@
                     "type": "paypal"
                 }
             ],
-            "time": "2022-02-18T13:23:47+00:00"
+            "time": "2022-03-28T07:55:11+00:00"
         },
         {
             "name": "brick/math",
@@ -5608,35 +5608,30 @@
         },
         {
             "name": "phpstan/phpdoc-parser",
-            "version": "1.2.0",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "dbc093d7af60eff5cd575d2ed761b15ed40bd08e"
+                "reference": "c08946968bda74869e696982b0af40a9a8784c84"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/dbc093d7af60eff5cd575d2ed761b15ed40bd08e",
-                "reference": "dbc093d7af60eff5cd575d2ed761b15ed40bd08e",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/c08946968bda74869e696982b0af40a9a8784c84",
+                "reference": "c08946968bda74869e696982b0af40a9a8784c84",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1 || ^8.0"
+                "php": "^7.2 || ^8.0"
             },
             "require-dev": {
                 "php-parallel-lint/php-parallel-lint": "^1.2",
                 "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "^1.0",
+                "phpstan/phpstan": "^1.5",
                 "phpstan/phpstan-strict-rules": "^1.0",
                 "phpunit/phpunit": "^9.5",
                 "symfony/process": "^5.2"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "PHPStan\\PhpDocParser\\": [
@@ -5651,9 +5646,9 @@
             "description": "PHPDoc parser with support for nullable, intersection and generic types",
             "support": {
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.2.0"
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.3.0"
             },
-            "time": "2021-09-16T20:46:02+00:00"
+            "time": "2022-03-28T07:53:31+00:00"
         },
         {
             "name": "phpstan/phpstan",
@@ -6726,25 +6721,24 @@
         },
         {
             "name": "ramsey/uuid",
-            "version": "4.2.3",
+            "version": "4.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
-                "reference": "fc9bb7fb5388691fd7373cd44dcb4d63bbcf24df"
+                "reference": "8505afd4fea63b81a85d3b7b53ac3cb8dc347c28"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/fc9bb7fb5388691fd7373cd44dcb4d63bbcf24df",
-                "reference": "fc9bb7fb5388691fd7373cd44dcb4d63bbcf24df",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/8505afd4fea63b81a85d3b7b53ac3cb8dc347c28",
+                "reference": "8505afd4fea63b81a85d3b7b53ac3cb8dc347c28",
                 "shasum": ""
             },
             "require": {
                 "brick/math": "^0.8 || ^0.9",
+                "ext-ctype": "*",
                 "ext-json": "*",
-                "php": "^7.2 || ^8.0",
-                "ramsey/collection": "^1.0",
-                "symfony/polyfill-ctype": "^1.8",
-                "symfony/polyfill-php80": "^1.14"
+                "php": "^8.0",
+                "ramsey/collection": "^1.0"
             },
             "replace": {
                 "rhumsaa/uuid": "self.version"
@@ -6781,9 +6775,6 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "4.x-dev"
-                },
                 "captainhook": {
                     "force-install": true
                 }
@@ -6808,7 +6799,7 @@
             ],
             "support": {
                 "issues": "https://github.com/ramsey/uuid/issues",
-                "source": "https://github.com/ramsey/uuid/tree/4.2.3"
+                "source": "https://github.com/ramsey/uuid/tree/4.3.1"
             },
             "funding": [
                 {
@@ -6820,7 +6811,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-09-25T23:10:38+00:00"
+            "time": "2022-03-27T21:42:02+00:00"
         },
         {
             "name": "react/promise",
@@ -12668,7 +12659,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.1",
+        "php": "^8.0",
         "ext-intl": "*"
     },
     "platform-dev": [],
