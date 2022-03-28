@@ -85,6 +85,7 @@ trait HasFilters
         return array_map(
             fn (Filter $filter) => Forms\Components\Group::make()
                 ->schema($filter->getFormSchema())
+                ->columnSpan($filter->getColumnSpan())
                 ->statePath($filter->getName()),
             $this->getCachedTableFilters(),
         );
