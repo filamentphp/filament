@@ -65,7 +65,7 @@ class MakeResourceCommand extends Command
             'createResourcePageClass' => $createResourcePageClass,
             'editResourcePageClass' => $editResourcePageClass,
             'formSchema' => $this->option('generate') ? $this->getResourceFormSchema(
-                ($modelNamespace !== '' ? $modelNamespace : "App\Models") . "\\" . $modelClass
+                ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass
             ) : $this->indentString('//'),
             'indexResourcePageClass' => $this->option('simple') ? $manageResourcePageClass : $listResourcePageClass,
             'model' => $model,
@@ -74,7 +74,7 @@ class MakeResourceCommand extends Command
             'resource' => $resource,
             'resourceClass' => $resourceClass,
             'tableColumns' => $this->option('generate') ? $this->getResourceTableColumns(
-                ($modelNamespace !== '' ? $modelNamespace : "App\Models") . "\\" . $modelClass
+                ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass
             ) : $this->indentString('//'),
         ]);
 
