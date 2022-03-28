@@ -64,14 +64,18 @@ class MakeResourceCommand extends Command
         $this->copyStubToApp($this->option('simple') ? 'SimpleResource' : 'Resource', $resourcePath, [
             'createResourcePageClass' => $createResourcePageClass,
             'editResourcePageClass' => $editResourcePageClass,
-            'formSchema' => $this->option('generate') ? $this->getResourceFormSchema("App\Models\\{$model}") : $this->indentString('//'),
+            'formSchema' => $this->option('generate') ? $this->getResourceFormSchema(
+                ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass
+            ) : $this->indentString('//'),
             'indexResourcePageClass' => $this->option('simple') ? $manageResourcePageClass : $listResourcePageClass,
             'model' => $model,
             'modelClass' => $modelClass,
             'namespace' => 'App\\Filament\\Resources' . ($resourceNamespace !== '' ? "\\{$resourceNamespace}" : ''),
             'resource' => $resource,
             'resourceClass' => $resourceClass,
-            'tableColumns' => $this->option('generate') ? $this->getResourceTableColumns("App\Models\\{$model}") : $this->indentString('//'),
+            'tableColumns' => $this->option('generate') ? $this->getResourceTableColumns(
+                ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass
+            ) : $this->indentString('//'),
         ]);
 
         if ($this->option('simple')) {

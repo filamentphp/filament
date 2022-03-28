@@ -7,7 +7,9 @@ use Filament\Http\Livewire\Auth\Login;
 use Filament\Http\Livewire\GlobalSearch;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
+use Filament\Http\Responses\Auth\LoginResponse;
 use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
@@ -73,6 +75,7 @@ class FilamentServiceProvider extends PackageServiceProvider
             return app(FilamentManager::class);
         });
 
+        $this->app->bind(LoginResponseContract::class, LoginResponse::class);
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
 
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
