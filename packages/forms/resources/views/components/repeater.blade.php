@@ -49,7 +49,7 @@
 
                                         <div class="flex flex-col">
                                             <x-heroicon-o-dots-horizontal class="w-4 h-4" />
-                                            <x-heroicon-o-dots-horizontal class="w-4 h-4 -mt-[0.7rem]" />
+                                            <x-heroicon-o-dots-horizontal class="w-4 h-4 -mt-[0.6875rem]" />
                                         </div>
                                     </button>
                                 @endunless
