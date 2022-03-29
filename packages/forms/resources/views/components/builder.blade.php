@@ -11,13 +11,18 @@
 >
     <div {{ $attributes->merge($getExtraAttributes())->class(['space-y-2 filament-forms-builder-component']) }}>
         @if (count($containers = $getChildComponentContainers()))
-            <ul class="space-y-2">
+            <ul
+                class="space-y-2"
+                wire:sortable
+                wire:end="dispatchFormEvent('builder::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
+            >
                 @foreach ($containers as $uuid => $item)
                     <li
                         x-data="{ isCreateButtonDropdownOpen: false, isCreateButtonVisible: false }"
                         x-on:click="isCreateButtonVisible = true"
                         x-on:click.away="isCreateButtonVisible = false"
                         wire:key="{{ $item->getStatePath() }}"
+                        wire:sortable.item="{{ $uuid }}"
                         @class([
                             'relative p-6 bg-white shadow-sm rounded-lg border border-gray-300',
                             'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
@@ -30,37 +35,25 @@
                                 'absolute top-0 right-0 h-6 flex divide-x rounded-bl-lg rounded-tr-lg border-gray-300 border-b border-l overflow-hidden rtl:border-l-0 rtl:border-r rtl:right-auto rtl:left-0 rtl:rounded-bl-none rtl:rounded-br-lg rtl:rounded-tr-none rtl:rounded-tl-lg',
                                 'dark:border-gray-600 dark:divide-gray-600' => config('forms.dark_mode'),
                             ])>
-                                @unless ($loop->first || $isItemMovementDisabled())
+                                @unless ($isItemMovementDisabled())
                                     <button
-                                        wire:click="dispatchFormEvent('builder::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                        wire:sortable.handle
+                                        wire:keydown.prevent.arrow-up="dispatchFormEvent('builder::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                        wire:keydown.prevent.arrow-down="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
                                         @class([
-                                            'flex items-center justify-center w-6 text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600',
-                                            'dark:text-gray-200 dark:hover:bg-gray-600' => config('forms.dark_mode'),
-                                        ])
-                                    >
-                                        <span class="sr-only">
-                                            {{ __('forms::components.repeater.buttons.move_item_up.label') }}
-                                        </span>
-
-                                        <x-heroicon-s-chevron-up class="w-4 h-4" />
-                                    </button>
-                                @endunless
-
-                                @unless ($loop->last || $isItemMovementDisabled())
-                                    <button
-                                        wire:click="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
-                                        type="button"
-                                        @class([
-                                            'flex items-center justify-center w-6 text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600',
-                                            'dark:text-gray-200 dark:hover:bg-gray-600' => config('forms.dark_mode'),
+                                            'flex items-center justify-center w-6 text-gray-800 cursor-grab hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600',
+                                            'dark:text-gray-200 dark:hover:bg-gray-600 dark:focus:text-primary-600' => config('forms.dark_mode'),
                                         ])
                                     >
                                         <span class="sr-only">
                                             {{ __('forms::components.repeater.buttons.move_item_down.label') }}
                                         </span>
 
-                                        <x-heroicon-s-chevron-down class="w-4 h-4" />
+                                        <div class="flex flex-col">
+                                            <x-heroicon-o-dots-horizontal class="w-4 h-4" />
+                                            <x-heroicon-o-dots-horizontal class="w-4 h-4 -mt-[0.6875rem]" />
+                                        </div>
                                     </button>
                                 @endunless
 

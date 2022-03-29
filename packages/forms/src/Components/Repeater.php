@@ -115,6 +115,26 @@ class Repeater extends Field
                     data_set($livewire, $statePath, $items);
                 },
             ],
+            'repeater::moveItems' => [
+                function (Repeater $component, string $statePath, array $uuids): void {
+                    if ($component->isDisabled()) {
+                        return;
+                    }
+
+                    if ($component->isItemMovementDisabled()) {
+                        return;
+                    }
+
+                    if ($statePath !== $component->getStatePath()) {
+                        return;
+                    }
+
+                    $items = array_merge(array_flip($uuids), $component->getState());
+
+                    $livewire = $component->getLivewire();
+                    data_set($livewire, $statePath, $items);
+                },
+            ],
         ]);
 
         $this->createItemButtonLabel(function (Repeater $component) {
