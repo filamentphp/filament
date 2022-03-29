@@ -218,6 +218,14 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('description')->limit('50')
 ```
 
+You may output the rendered `html()` display of the text content:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('description')->html()
+```
+
 You may also transform a set of known cell values using the `enum()` method:
 
 ```php

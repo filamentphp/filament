@@ -8,6 +8,7 @@ use Filament\Tables\Columns\Column;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use \Illuminate\Support\HtmlString;
 
 trait CanFormatState
 {
@@ -51,6 +52,11 @@ trait CanFormatState
         });
 
         return $this;
+    }
+
+    public function html() : static
+    {
+        return $this->formatStateUsing(fn ($state) => new HtmlString($state));
     }
 
     public function formatStateUsing(?Closure $callback): static
