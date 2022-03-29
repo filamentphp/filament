@@ -3,6 +3,7 @@
 namespace Filament\Tables\Filters;
 
 use Filament\Forms\Components\Concerns\CanSpanColumns;
+use Filament\Forms\Concerns\HasColumns;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
@@ -18,6 +19,7 @@ class Filter
     use Concerns\HasName;
     use Concerns\InteractsWithTableQuery;
     use CanSpanColumns;
+    use HasColumns;
     use Conditionable;
     use Macroable;
     use Tappable;

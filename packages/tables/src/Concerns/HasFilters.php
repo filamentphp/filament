@@ -86,6 +86,7 @@ trait HasFilters
             fn (Filter $filter) => Forms\Components\Group::make()
                 ->schema($filter->getFormSchema())
                 ->columnSpan($filter->getColumnSpan())
+                ->columns($filter->getColumns())
                 ->statePath($filter->getName()),
             $this->getCachedTableFilters(),
         );
