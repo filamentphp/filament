@@ -75,7 +75,7 @@ trait CanCreateRecords
 
     protected function getCreateFormSchema(): array
     {
-        return $this->getResourceForm(columns: 2)->getSchema();
+        return $this->getResourceForm(columns: config('filament.layout.forms.have_inline_labels') ? 1 : 2)->getSchema();
     }
 
     protected function fillCreateForm(): void

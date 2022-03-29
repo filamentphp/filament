@@ -47,7 +47,8 @@ class Form
         if (is_array($schema) || $schema instanceof Closure) {
             $schema = Grid::make()
                 ->schema($schema)
-                ->columns($this->getColumns());
+                ->columns($this->getColumns())
+                ->inlineLabel(config('filament.layout.forms.have_inline_labels'));
         }
 
         return [$schema];
