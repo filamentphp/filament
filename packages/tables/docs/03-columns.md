@@ -218,7 +218,7 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('description')->limit('50')
 ```
 
-You may output the rendered `html()` display of the text content:
+If your column value is HTML, you may render it using `html()`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
