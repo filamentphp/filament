@@ -18,6 +18,8 @@ trait CanAttachRecords
 
     protected static bool $canAttachAnother = true;
 
+    protected static bool $shouldPreloadAttachFormRecordSelectOptions = false;
+
     protected function canAttach(): bool
     {
         return $this->can('attach');
@@ -54,6 +56,25 @@ trait CanAttachRecords
         return Select::make('recordId')
             ->label(__('filament::resources/relation-managers/attach.action.modal.fields.record_id.label'))
             ->searchable()
+            ->options(function (RelationManager $livewire): array {
+                if (!static::$shouldPreloadAttachFormRecordSelectOptions) {
+                    return [];
+                }
+
+                $relationship = $livewire->getRelationship();
+
+                $displayColumnName = static::getRecordTitleAttribute();
+
+                /** @var Builder $relationshipQuery */
+                $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
+
+                return $relationshipQuery
+                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
+                        $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                    })
+                    ->pluck($displayColumnName, $relationship->getRelated()->getKeyName())
+                    ->toArray();
+            })
             ->getSearchResultsUsing(function (Select $component, RelationManager $livewire, string $query): array {
                 $relationship = $livewire->getRelationship();
 
