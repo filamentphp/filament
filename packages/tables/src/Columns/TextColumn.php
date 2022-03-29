@@ -28,5 +28,4 @@ class TextColumn extends Column
     {
         return implode(', ', $state);
     }
-    
 }
