@@ -29,8 +29,4 @@ class TextColumn extends Column
         return implode(', ', $state);
     }
     
-    public function html() : static
-    {
-        return $this->formatStateUsing(fn ($state) => new \Illuminate\Support\HtmlString($state));
-    }
 }
