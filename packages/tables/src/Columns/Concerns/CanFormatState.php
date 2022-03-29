@@ -54,9 +54,9 @@ trait CanFormatState
         return $this;
     }
 
-    public function html() : static
+    public function html(): static
     {
-        return $this->formatStateUsing(fn ($state) => new HtmlString($state));
+        return $this->formatStateUsing(fn ($state): HtmlString => new HtmlString($state));
     }
 
     public function formatStateUsing(?Closure $callback): static
