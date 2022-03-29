@@ -18,6 +18,10 @@ return [
                 'label' => 'Delete',
             ],
 
+            'move_item' => [
+                'label' => 'Move',
+            ],
+
             'move_item_down' => [
                 'label' => 'Move down',
             ],

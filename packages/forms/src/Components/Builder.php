@@ -146,6 +146,26 @@ class Builder extends Field
                     data_set($livewire, $statePath, $items);
                 },
             ],
+            'builder::moveItems' => [
+                function (Builder $component, string $statePath, array $uuids): void {
+                    if ($component->isDisabled()) {
+                        return;
+                    }
+
+                    if ($component->isItemMovementDisabled()) {
+                        return;
+                    }
+
+                    if ($statePath !== $component->getStatePath()) {
+                        return;
+                    }
+
+                    $items = array_merge(array_flip($uuids), $component->getState());
+
+                    $livewire = $component->getLivewire();
+                    data_set($livewire, $statePath, $items);
+                },
+            ],
         ]);
 
         $this->createItemBetweenButtonLabel(__('forms::components.builder.buttons.create_item_between.label'));
