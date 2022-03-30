@@ -222,43 +222,6 @@
             <div>
                 <x-forms::icon-button wire:click="mountFormComponentAction('{{ $getStatePath() }}', 'create')" icon="heroicon-o-plus" class="-mr-2" />
             </div>
-
-            @php
-                $action = $this->getMountedFormComponentAction();
-            @endphp
-
-            @push('modals')
-                <form wire:submit.prevent="callMountedFormComponentAction">
-                    <x-forms::modal id="form-component-action" :width="$action?->getModalWidth()" display-classes="block">
-                        @if ($action)
-                            @if ($action->isModalCentered())
-                                <x-slot name="heading">
-                                    {{ $action->getModalHeading() }}
-                                </x-slot>
-                                @if ($subheading = $action->getModalSubheading())
-                                    <x-slot name="subheading">
-                                        {{ $subheading }}
-                                    </x-slot>
-                                @endif
-                            @else
-                                <x-slot name="header">
-                                    <x-forms::modal.heading>
-                                        {{ $action->getModalHeading() }}
-                                    </x-forms::modal.heading>
-                                </x-slot>
-                            @endif
-                            {{ $this->getMountedFormComponentActionForm() }}
-                            <x-slot name="footer">
-                                <x-forms::modal.actions :full-width="$action->isModalCentered()">
-                                    @foreach ($action->getModalActions() as $modalAction)
-                                        {{ $modalAction }}
-                                    @endforeach
-                                </x-forms::modal.actions>
-                            </x-slot>
-                        @endif
-                    </x-forms::modal>
-                </form>
-            @endpush
         @endif
 
         @if ($label = $getPostfixLabel())
