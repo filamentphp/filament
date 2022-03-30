@@ -70,6 +70,10 @@ class Select extends Field
     {
         $this->createFormSchema = $schema;
 
+        $this->registerActions([
+            'create' => $this->getCreateAction(),
+        ]);
+
         return $this;
     }
 
@@ -94,6 +98,11 @@ class Select extends Field
         return $this;
     }
 
+    public function getSaveCreateFormUsing(): ?Closure
+    {
+        return $this->saveCreateFormUsing;
+    }
+
     public function getCreateAction(): ?Action
     {
         if ($this->createFormSchema === null) {
@@ -101,18 +110,19 @@ class Select extends Field
         }
 
         return Action::make('create')
+            ->modalHeading('Create')
             ->form($this->getCreateFormSchema())
-            ->action($this->saveCreateFormUsing);
+            ->action($this->getSaveCreateFormUsing());
     }
 
-    public function getCreateFormSchema(): array
+    public function getCreateFormSchema(): ?array
     {
         return $this->evaluate($this->createFormSchema);
     }
 
     public function hasCreateFormSchema(): bool
     {
-        return (bool) count($this->getCreateFormSchema());
+        return $this->getCreateFormSchema() !== null;
     }
 
     public function getOptionLabelUsing(?Closure $callback): static
