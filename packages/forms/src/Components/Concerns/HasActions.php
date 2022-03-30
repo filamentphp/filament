@@ -17,7 +17,13 @@ trait HasActions
 
     public function getAction(string $name): ?Action
     {
-        return $this->actions[$name] ?? null;
+        $action = $this->actions[$name] ?? null;
+
+        if ($action === null) {
+            return null;
+        }
+
+        return $action->component($this);
     }
 
     public function hasAction(string $name): bool

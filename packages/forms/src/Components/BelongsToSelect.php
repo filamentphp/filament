@@ -46,6 +46,12 @@ class BelongsToSelect extends Select
             $component->getRelationship()->associate($state);
             $record->save();
         });
+
+        $this->saveCreateFormUsing(function (array $data, BelongsToSelect $component) {
+            $record = $component->getRelationship()->create($data);
+
+            $component->state($record->getKey());
+        });
     }
 
     public function preload(bool | Closure $condition = true): static
