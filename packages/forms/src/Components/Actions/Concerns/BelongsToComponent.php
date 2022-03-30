@@ -2,10 +2,8 @@
 
 namespace Filament\Forms\Components\Actions\Concerns;
 
-use Filament\Forms\Table;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Contracts\HasTable;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Contracts\HasForms;
 
 trait BelongsToComponent
 {
