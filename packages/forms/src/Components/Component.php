@@ -21,6 +21,7 @@ class Component extends ViewComponent implements Htmlable
     use Concerns\CanSpanColumns;
     use Concerns\Cloneable;
     use Concerns\EvaluatesClosures;
+    use Concerns\HasActions;
     use Concerns\HasChildComponents;
     use Concerns\HasExtraAttributes;
     use Concerns\HasFieldWrapper;

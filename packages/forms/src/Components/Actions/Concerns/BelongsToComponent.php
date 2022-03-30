@@ -1,0 +1,30 @@
+<?php
+
+namespace Filament\Forms\Components\Actions\Concerns;
+
+use Filament\Forms\Table;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Contracts\HasTable;
+use Filament\Forms\Components\Component;
+
+trait BelongsToComponent
+{
+    protected Component $component;
+
+    public function component(Component $component): static
+    {
+        $this->component = $component;
+
+        return $this;
+    }
+
+    public function getComponent(): Component
+    {
+        return $this->component;
+    }
+
+    public function getLivewire(): HasForms
+    {
+        return $this->getComponent()->getLivewire();
+    }
+}

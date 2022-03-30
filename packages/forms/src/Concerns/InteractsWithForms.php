@@ -2,15 +2,17 @@
 
 namespace Filament\Forms\Concerns;
 
+use Livewire\WithFileUploads;
+use Livewire\TemporaryUploadedFile;
 use Filament\Forms\ComponentContainer;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Concerns\HasFormComponentActions;
 use Illuminate\Validation\ValidationException;
-use Livewire\TemporaryUploadedFile;
-use Livewire\WithFileUploads;
 
 trait InteractsWithForms
 {
     use WithFileUploads;
+    use HasFormComponentActions;
 
     public array $componentFileAttachments = [];
 
