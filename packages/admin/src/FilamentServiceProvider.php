@@ -47,6 +47,7 @@ class FilamentServiceProvider extends PackageServiceProvider
             Commands\MakeHasManyCommand::class,
             Commands\MakeHasManyThroughCommand::class,
             Commands\MakeMorphManyCommand::class,
+            Commands\MakeMorphToManyCommand::class,
             Commands\MakePageCommand::class,
             Commands\MakeResourceCommand::class,
             Commands\MakeUserCommand::class,
