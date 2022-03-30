@@ -11,7 +11,7 @@
     }
 @endphp
 
-<x-tables::button
+<x-forms::button
     :tag="((! $action) && $url) ? 'a' : 'button'"
     :wire:click="$isEnabled() ? $wireClickAction : null"
     :href="$isEnabled() ? $getUrl() : null"
@@ -26,4 +26,4 @@
     class="filament-forms-button-action"
 >
     {{ $getLabel() }}
-</x-tables::button>
+</x-forms::button>
