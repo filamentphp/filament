@@ -219,7 +219,9 @@
         </div>
 
         @if($hasCreateFormSchema())
-            <x-forms::icon-button wire:click="mountFormComponentAction('{{ $getStatePath() }}', 'create')" icon="heroicon-o-plus" class="-mr-2" />
+            <div>
+                <x-forms::icon-button wire:click="mountFormComponentAction('{{ $getStatePath() }}', 'create')" icon="heroicon-o-plus" class="-mr-2" />
+            </div>
 
             @php
                 $action = $this->getMountedFormComponentAction();
