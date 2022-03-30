@@ -1527,7 +1527,7 @@ trix-editor .attachment__metadata .attachment__size {
 
 /* packages/forms/resources/css/components/file-upload.css */
 .filepond--root {
-  @apply mb-0;
+  @apply mb-0 overflow-hidden;
 }
 .filepond--panel-root {
   @apply bg-white border border-gray-300 rounded-lg shadow-sm;
