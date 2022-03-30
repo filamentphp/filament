@@ -72,7 +72,7 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->resolving('filament', function () {
+        $this->app->resolving('filament', function (): void {
             $this->discoverPages();
             $this->discoverResources();
             $this->discoverWidgets();
