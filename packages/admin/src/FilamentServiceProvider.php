@@ -72,7 +72,13 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->singleton('filament', function (): FilamentManager {
+        $this->app->resolving('filament', function () {
+            $this->discoverPages();
+            $this->discoverResources();
+            $this->discoverWidgets();
+        });
+
+        $this->app->scoped('filament', function (): FilamentManager {
             return app(FilamentManager::class);
         });
 
@@ -80,10 +86,6 @@ class FilamentServiceProvider extends PackageServiceProvider
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
 
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
-
-        $this->discoverPages();
-        $this->discoverResources();
-        $this->discoverWidgets();
     }
 
     public function packageBooted(): void
