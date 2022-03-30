@@ -1,4 +1,4 @@
-<x-tables::button
+<x-forms::button
     :form="$getForm()"
     :type="$canSubmitForm() ? 'submit' : 'button'"
     :wire:click="$getAction()"
@@ -11,4 +11,4 @@
 
 >
     {{ $getLabel() }}
-</x-tables::button>
+</x-forms::button>

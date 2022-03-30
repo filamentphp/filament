@@ -11,7 +11,7 @@
     }
 @endphp
 
-<x-tables::icon-button
+<x-forms::icon-button
     :tag="((! $action) && $url) ? 'a' : 'button'"
     :wire:click="$isEnabled() ? $wireClickAction : null"
     :href="$isEnabled() ? $getUrl() : null"
