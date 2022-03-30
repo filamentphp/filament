@@ -1,5 +1,4 @@
 @props([
-    'modals' => null,
     'widgetRecord' => null,
 ])
 
@@ -70,7 +69,7 @@
         </x-filament::modal>
     </form>
 
-    {{ $modals }}
+    {{ $this->modal }}
 
     @stack('modals')
 

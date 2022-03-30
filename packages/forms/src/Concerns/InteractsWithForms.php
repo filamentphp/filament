@@ -26,6 +26,10 @@ trait InteractsWithForms
             return $form;
         }
 
+        if ($property === 'modal') {
+            return view('forms::components.actions.modal');
+        }
+
         return parent::__get($property);
     }
 
