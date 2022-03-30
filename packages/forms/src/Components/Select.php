@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\Actions\Action;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\HtmlString;
 
@@ -15,6 +16,10 @@ class Select extends Field
     use Concerns\HasPlaceholder;
 
     protected string $view = 'forms::components.select';
+
+    protected array | Closure | null $createFormSchema = null;
+
+    protected ?Closure $saveCreateFormUsing = null;
 
     protected ?Closure $getOptionLabelUsing = null;
 
@@ -61,6 +66,20 @@ class Select extends Field
         return $this;
     }
 
+    public function createForm(array | Closure $schema): static
+    {
+        $this->createFormSchema = $schema;
+
+        return $this;
+    }
+
+    public function saveCreateFormUsing(Closure $callback): static
+    {
+        $this->saveCreateFormUsing = $callback;
+
+        return $this;
+    }
+
     public function disableOptionWhen(bool | Closure $callback): static
     {
         $this->isOptionDisabled = $callback;
@@ -73,6 +92,27 @@ class Select extends Field
         $this->isPlaceholderSelectionDisabled = $condition;
 
         return $this;
+    }
+
+    public function getCreateAction(): ?Action
+    {
+        if ($this->createFormSchema === null) {
+            return null;
+        }
+
+        return Action::make('create')
+            ->form($this->getCreateFormSchema())
+            ->action($this->saveCreateFormUsing);
+    }
+
+    public function getCreateFormSchema(): array
+    {
+        return $this->evaluate($this->createFormSchema);
+    }
+
+    public function hasCreateFormSchema(): bool
+    {
+        return (bool) count($this->getCreateFormSchema());
     }
 
     public function getOptionLabelUsing(?Closure $callback): static
