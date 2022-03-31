@@ -55,6 +55,7 @@ trait CanBeValidated
     public function regex(string $regex, bool | Closure $condition = true): static
     {
         $this->rule('regex:' . $regex, $condition);
+
         return $this;
     }
 
