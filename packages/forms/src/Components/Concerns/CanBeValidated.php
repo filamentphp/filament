@@ -52,6 +52,12 @@ trait CanBeValidated
         return $this;
     }
 
+    public function regex(string $regex, bool | Closure $condition = true): static
+    {
+        $this->rule('regex:' . $regex, $condition);
+        return $this;
+    }
+
     public function rule(string | object $rule, bool | Closure $condition = true): static
     {
         $this->rules = array_merge(
