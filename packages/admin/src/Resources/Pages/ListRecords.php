@@ -20,11 +20,33 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected ?Table $resourceTable = null;
 
-    protected $queryString = [
-        'tableSortColumn',
-        'tableSortDirection',
-        'tableSearchQuery' => ['except' => ''],
-    ];
+    public function queryString()
+    {
+        $formQuery = collect($this->getTableFilters())
+            ->mapWithKeys(function (Tables\Filters\Filter $filter) {
+                return [
+                    $filter->getName() => [
+                        'value' => ['except' => '']
+                    ]
+                ];
+            })
+            ->all();
+        
+        // Init per page
+        if (request()->has('tableRecordsPerPage')) {
+            $this->tableRecordsPerPage = request()->get('tableRecordsPerPage');
+        }
+
+        return [
+            'tableFilters' => [
+                'form' => $formQuery,
+            ],
+            'tableRecordsPerPage',
+            'tableSortColumn',
+            'tableSortDirection',
+            'tableSearchQuery' => ['except' => ''],
+        ];
+    }
 
     public function mount(): void
     {
