@@ -42,7 +42,7 @@
                         x-on:blur="createTag()"
                         x-model="newTag"
                         {{ $getExtraInputAttributeBag()->class([
-                            'block w-full border-0',
+                            'tags-input block w-full border-0',
                             'dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400' => config('forms.dark_mode'),
                         ]) }}
                     />
