@@ -1,6 +1,6 @@
 import TomSelect from 'tom-select'
 
-import 'tom-select/dist/css/tom-select.bootstrap5.css'
+import '../../css/components/select.css'
 
 export default (Alpine) => {
     Alpine.data('selectFormComponent', ({
