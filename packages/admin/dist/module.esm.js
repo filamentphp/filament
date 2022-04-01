@@ -17607,7 +17607,7 @@ function applyStyle(button, stylesToApply) {
   const toolbar = button.closest("markdown-toolbar");
   if (!(toolbar instanceof MarkdownToolbarElement))
     return;
-  const defaults4 = {
+  const defaults5 = {
     prefix: "",
     suffix: "",
     blockPrefix: "",
@@ -17620,7 +17620,7 @@ function applyStyle(button, stylesToApply) {
     orderedList: false,
     trimFirst: false
   };
-  const style = Object.assign(Object.assign({}, defaults4), stylesToApply);
+  const style = Object.assign(Object.assign({}, defaults5), stylesToApply);
   const field = toolbar.field;
   if (field) {
     field.focus();
@@ -19357,7 +19357,7 @@ function marked(src, opt, callback) {
   opt = merge({}, marked.defaults, opt || {});
   checkSanitizeDeprecation(opt);
   if (callback) {
-    const highlight = opt.highlight;
+    const highlight2 = opt.highlight;
     let tokens;
     try {
       tokens = Lexer.lex(src, opt);
@@ -19376,10 +19376,10 @@ function marked(src, opt, callback) {
           err = e2;
         }
       }
-      opt.highlight = highlight;
+      opt.highlight = highlight2;
       return err ? callback(err) : callback(null, out);
     };
-    if (!highlight || highlight.length < 3) {
+    if (!highlight2 || highlight2.length < 3) {
       return done();
     }
     delete opt.highlight;
@@ -19390,7 +19390,7 @@ function marked(src, opt, callback) {
       if (token.type === "code") {
         pending++;
         setTimeout(() => {
-          highlight(token.text, token.lang, function(err, code) {
+          highlight2(token.text, token.lang, function(err, code) {
             if (err) {
               return done(err);
             }
@@ -19949,6 +19949,3127 @@ var rich_editor_default = (Alpine) => {
   });
 };
 
+// node_modules/tom-select/dist/esm/tom-select.complete.js
+function forEvents(events, callback) {
+  events.split(/\s+/).forEach((event) => {
+    callback(event);
+  });
+}
+var MicroEvent = class {
+  constructor() {
+    this._events = void 0;
+    this._events = {};
+  }
+  on(events, fct) {
+    forEvents(events, (event) => {
+      this._events[event] = this._events[event] || [];
+      this._events[event].push(fct);
+    });
+  }
+  off(events, fct) {
+    var n2 = arguments.length;
+    if (n2 === 0) {
+      this._events = {};
+      return;
+    }
+    forEvents(events, (event) => {
+      if (n2 === 1)
+        return delete this._events[event];
+      if (event in this._events === false)
+        return;
+      this._events[event].splice(this._events[event].indexOf(fct), 1);
+    });
+  }
+  trigger(events, ...args) {
+    var self2 = this;
+    forEvents(events, (event) => {
+      if (event in self2._events === false)
+        return;
+      for (let fct of self2._events[event]) {
+        fct.apply(self2, args);
+      }
+    });
+  }
+};
+function MicroPlugin(Interface) {
+  Interface.plugins = {};
+  return class extends Interface {
+    constructor(...args) {
+      super(...args);
+      this.plugins = {
+        names: [],
+        settings: {},
+        requested: {},
+        loaded: {}
+      };
+    }
+    static define(name2, fn2) {
+      Interface.plugins[name2] = {
+        name: name2,
+        fn: fn2
+      };
+    }
+    initializePlugins(plugins2) {
+      var key, name2;
+      const self2 = this;
+      const queue = [];
+      if (Array.isArray(plugins2)) {
+        plugins2.forEach((plugin9) => {
+          if (typeof plugin9 === "string") {
+            queue.push(plugin9);
+          } else {
+            self2.plugins.settings[plugin9.name] = plugin9.options;
+            queue.push(plugin9.name);
+          }
+        });
+      } else if (plugins2) {
+        for (key in plugins2) {
+          if (plugins2.hasOwnProperty(key)) {
+            self2.plugins.settings[key] = plugins2[key];
+            queue.push(key);
+          }
+        }
+      }
+      while (name2 = queue.shift()) {
+        self2.require(name2);
+      }
+    }
+    loadPlugin(name2) {
+      var self2 = this;
+      var plugins2 = self2.plugins;
+      var plugin9 = Interface.plugins[name2];
+      if (!Interface.plugins.hasOwnProperty(name2)) {
+        throw new Error('Unable to find "' + name2 + '" plugin');
+      }
+      plugins2.requested[name2] = true;
+      plugins2.loaded[name2] = plugin9.fn.apply(self2, [self2.plugins.settings[name2] || {}]);
+      plugins2.names.push(name2);
+    }
+    require(name2) {
+      var self2 = this;
+      var plugins2 = self2.plugins;
+      if (!self2.plugins.loaded.hasOwnProperty(name2)) {
+        if (plugins2.requested[name2]) {
+          throw new Error('Plugin has circular dependency ("' + name2 + '")');
+        }
+        self2.loadPlugin(name2);
+      }
+      return plugins2.loaded[name2];
+    }
+  };
+}
+var latin_pat;
+var accent_pat = "[\u0300-\u036F\xB7\u02BE]";
+var accent_reg = new RegExp(accent_pat, "g");
+var diacritic_patterns;
+var latin_convert = {
+  \u00E6: "ae",
+  \u2C65: "a",
+  \u00F8: "o"
+};
+var convert_pat = new RegExp(Object.keys(latin_convert).join("|"), "g");
+var code_points = [[67, 67], [160, 160], [192, 438], [452, 652], [961, 961], [1019, 1019], [1083, 1083], [1281, 1289], [1984, 1984], [5095, 5095], [7429, 7441], [7545, 7549], [7680, 7935], [8580, 8580], [9398, 9449], [11360, 11391], [42792, 42793], [42802, 42851], [42873, 42897], [42912, 42922], [64256, 64260], [65313, 65338], [65345, 65370]];
+var asciifold = (str) => {
+  return str.normalize("NFKD").replace(accent_reg, "").toLowerCase().replace(convert_pat, function(foreignletter) {
+    return latin_convert[foreignletter];
+  });
+};
+var arrayToPattern = (chars, glue = "|") => {
+  if (chars.length == 1) {
+    return chars[0];
+  }
+  var longest = 1;
+  chars.forEach((a2) => {
+    longest = Math.max(longest, a2.length);
+  });
+  if (longest == 1) {
+    return "[" + chars.join("") + "]";
+  }
+  return "(?:" + chars.join(glue) + ")";
+};
+var allSubstrings = (input) => {
+  if (input.length === 1)
+    return [[input]];
+  var result = [];
+  allSubstrings(input.substring(1)).forEach(function(subresult) {
+    var tmp = subresult.slice(0);
+    tmp[0] = input.charAt(0) + tmp[0];
+    result.push(tmp);
+    tmp = subresult.slice(0);
+    tmp.unshift(input.charAt(0));
+    result.push(tmp);
+  });
+  return result;
+};
+var generateDiacritics = () => {
+  var diacritics = {};
+  code_points.forEach((code_range) => {
+    for (let i = code_range[0]; i <= code_range[1]; i++) {
+      let diacritic = String.fromCharCode(i);
+      let latin = asciifold(diacritic);
+      if (latin == diacritic.toLowerCase()) {
+        continue;
+      }
+      if (!(latin in diacritics)) {
+        diacritics[latin] = [latin];
+      }
+      var patt = new RegExp(arrayToPattern(diacritics[latin]), "iu");
+      if (diacritic.match(patt)) {
+        continue;
+      }
+      diacritics[latin].push(diacritic);
+    }
+  });
+  var latin_chars = Object.keys(diacritics);
+  latin_chars = latin_chars.sort((a2, b) => b.length - a2.length);
+  latin_pat = new RegExp("(" + arrayToPattern(latin_chars) + accent_pat + "*)", "g");
+  var diacritic_patterns2 = {};
+  latin_chars.sort((a2, b) => a2.length - b.length).forEach((latin) => {
+    var substrings = allSubstrings(latin);
+    var pattern = substrings.map((sub_pat) => {
+      sub_pat = sub_pat.map((l) => {
+        if (diacritics.hasOwnProperty(l)) {
+          return arrayToPattern(diacritics[l]);
+        }
+        return l;
+      });
+      return arrayToPattern(sub_pat, "");
+    });
+    diacritic_patterns2[latin] = arrayToPattern(pattern);
+  });
+  return diacritic_patterns2;
+};
+var diacriticRegexPoints = (regex) => {
+  if (diacritic_patterns === void 0) {
+    diacritic_patterns = generateDiacritics();
+  }
+  const decomposed = regex.normalize("NFKD").toLowerCase();
+  return decomposed.split(latin_pat).map((part) => {
+    if (part == "") {
+      return "";
+    }
+    const no_accent = asciifold(part);
+    if (diacritic_patterns.hasOwnProperty(no_accent)) {
+      return diacritic_patterns[no_accent];
+    }
+    const composed_part = part.normalize("NFC");
+    if (composed_part != part) {
+      return arrayToPattern([part, composed_part]);
+    }
+    return part;
+  }).join("");
+};
+var getAttr = (obj, name2) => {
+  if (!obj)
+    return;
+  return obj[name2];
+};
+var getAttrNesting = (obj, name2) => {
+  if (!obj)
+    return;
+  var part, names = name2.split(".");
+  while ((part = names.shift()) && (obj = obj[part]))
+    ;
+  return obj;
+};
+var scoreValue = (value, token, weight) => {
+  var score, pos;
+  if (!value)
+    return 0;
+  value = value + "";
+  pos = value.search(token.regex);
+  if (pos === -1)
+    return 0;
+  score = token.string.length / value.length;
+  if (pos === 0)
+    score += 0.5;
+  return score * weight;
+};
+var escape_regex = (str) => {
+  return (str + "").replace(/([\$\(-\+\.\?\[-\^\{-\}])/g, "\\$1");
+};
+var propToArray = (obj, key) => {
+  var value = obj[key];
+  if (typeof value == "function")
+    return value;
+  if (value && !Array.isArray(value)) {
+    obj[key] = [value];
+  }
+};
+var iterate = (object, callback) => {
+  if (Array.isArray(object)) {
+    object.forEach(callback);
+  } else {
+    for (var key in object) {
+      if (object.hasOwnProperty(key)) {
+        callback(object[key], key);
+      }
+    }
+  }
+};
+var cmp = (a2, b) => {
+  if (typeof a2 === "number" && typeof b === "number") {
+    return a2 > b ? 1 : a2 < b ? -1 : 0;
+  }
+  a2 = asciifold(a2 + "").toLowerCase();
+  b = asciifold(b + "").toLowerCase();
+  if (a2 > b)
+    return 1;
+  if (b > a2)
+    return -1;
+  return 0;
+};
+var Sifter = class {
+  constructor(items, settings) {
+    this.items = void 0;
+    this.settings = void 0;
+    this.items = items;
+    this.settings = settings || {
+      diacritics: true
+    };
+  }
+  tokenize(query, respect_word_boundaries, weights) {
+    if (!query || !query.length)
+      return [];
+    const tokens = [];
+    const words = query.split(/\s+/);
+    var field_regex;
+    if (weights) {
+      field_regex = new RegExp("^(" + Object.keys(weights).map(escape_regex).join("|") + "):(.*)$");
+    }
+    words.forEach((word) => {
+      let field_match;
+      let field = null;
+      let regex = null;
+      if (field_regex && (field_match = word.match(field_regex))) {
+        field = field_match[1];
+        word = field_match[2];
+      }
+      if (word.length > 0) {
+        regex = escape_regex(word);
+        if (this.settings.diacritics) {
+          regex = diacriticRegexPoints(regex);
+        }
+        if (respect_word_boundaries)
+          regex = "\\b" + regex;
+      }
+      tokens.push({
+        string: word,
+        regex: regex ? new RegExp(regex, "iu") : null,
+        field
+      });
+    });
+    return tokens;
+  }
+  getScoreFunction(query, options2) {
+    var search = this.prepareSearch(query, options2);
+    return this._getScoreFunction(search);
+  }
+  _getScoreFunction(search) {
+    const tokens = search.tokens, token_count = tokens.length;
+    if (!token_count) {
+      return function() {
+        return 0;
+      };
+    }
+    const fields = search.options.fields, weights = search.weights, field_count = fields.length, getAttrFn = search.getAttrFn;
+    if (!field_count) {
+      return function() {
+        return 1;
+      };
+    }
+    const scoreObject = function() {
+      if (field_count === 1) {
+        return function(token, data3) {
+          const field = fields[0].field;
+          return scoreValue(getAttrFn(data3, field), token, weights[field]);
+        };
+      }
+      return function(token, data3) {
+        var sum = 0;
+        if (token.field) {
+          const value = getAttrFn(data3, token.field);
+          if (!token.regex && value) {
+            sum += 1 / field_count;
+          } else {
+            sum += scoreValue(value, token, 1);
+          }
+        } else {
+          iterate(weights, (weight, field) => {
+            sum += scoreValue(getAttrFn(data3, field), token, weight);
+          });
+        }
+        return sum / field_count;
+      };
+    }();
+    if (token_count === 1) {
+      return function(data3) {
+        return scoreObject(tokens[0], data3);
+      };
+    }
+    if (search.options.conjunction === "and") {
+      return function(data3) {
+        var i = 0, score, sum = 0;
+        for (; i < token_count; i++) {
+          score = scoreObject(tokens[i], data3);
+          if (score <= 0)
+            return 0;
+          sum += score;
+        }
+        return sum / token_count;
+      };
+    } else {
+      return function(data3) {
+        var sum = 0;
+        iterate(tokens, (token) => {
+          sum += scoreObject(token, data3);
+        });
+        return sum / token_count;
+      };
+    }
+  }
+  getSortFunction(query, options2) {
+    var search = this.prepareSearch(query, options2);
+    return this._getSortFunction(search);
+  }
+  _getSortFunction(search) {
+    var i, n2, implicit_score;
+    const self2 = this, options2 = search.options, sort2 = !search.query && options2.sort_empty ? options2.sort_empty : options2.sort, sort_flds = [], multipliers = [];
+    if (typeof sort2 == "function") {
+      return sort2.bind(this);
+    }
+    const get_field = function get_field2(name2, result) {
+      if (name2 === "$score")
+        return result.score;
+      return search.getAttrFn(self2.items[result.id], name2);
+    };
+    if (sort2) {
+      for (i = 0, n2 = sort2.length; i < n2; i++) {
+        if (search.query || sort2[i].field !== "$score") {
+          sort_flds.push(sort2[i]);
+        }
+      }
+    }
+    if (search.query) {
+      implicit_score = true;
+      for (i = 0, n2 = sort_flds.length; i < n2; i++) {
+        if (sort_flds[i].field === "$score") {
+          implicit_score = false;
+          break;
+        }
+      }
+      if (implicit_score) {
+        sort_flds.unshift({
+          field: "$score",
+          direction: "desc"
+        });
+      }
+    } else {
+      for (i = 0, n2 = sort_flds.length; i < n2; i++) {
+        if (sort_flds[i].field === "$score") {
+          sort_flds.splice(i, 1);
+          break;
+        }
+      }
+    }
+    for (i = 0, n2 = sort_flds.length; i < n2; i++) {
+      multipliers.push(sort_flds[i].direction === "desc" ? -1 : 1);
+    }
+    const sort_flds_count = sort_flds.length;
+    if (!sort_flds_count) {
+      return null;
+    } else if (sort_flds_count === 1) {
+      const sort_fld = sort_flds[0].field;
+      const multiplier = multipliers[0];
+      return function(a2, b) {
+        return multiplier * cmp(get_field(sort_fld, a2), get_field(sort_fld, b));
+      };
+    } else {
+      return function(a2, b) {
+        var i2, result, field;
+        for (i2 = 0; i2 < sort_flds_count; i2++) {
+          field = sort_flds[i2].field;
+          result = multipliers[i2] * cmp(get_field(field, a2), get_field(field, b));
+          if (result)
+            return result;
+        }
+        return 0;
+      };
+    }
+  }
+  prepareSearch(query, optsUser) {
+    const weights = {};
+    var options2 = Object.assign({}, optsUser);
+    propToArray(options2, "sort");
+    propToArray(options2, "sort_empty");
+    if (options2.fields) {
+      propToArray(options2, "fields");
+      const fields = [];
+      options2.fields.forEach((field) => {
+        if (typeof field == "string") {
+          field = {
+            field,
+            weight: 1
+          };
+        }
+        fields.push(field);
+        weights[field.field] = "weight" in field ? field.weight : 1;
+      });
+      options2.fields = fields;
+    }
+    return {
+      options: options2,
+      query: query.toLowerCase().trim(),
+      tokens: this.tokenize(query, options2.respect_word_boundaries, weights),
+      total: 0,
+      items: [],
+      weights,
+      getAttrFn: options2.nesting ? getAttrNesting : getAttr
+    };
+  }
+  search(query, options2) {
+    var self2 = this, score, search;
+    search = this.prepareSearch(query, options2);
+    options2 = search.options;
+    query = search.query;
+    const fn_score = options2.score || self2._getScoreFunction(search);
+    if (query.length) {
+      iterate(self2.items, (item2, id) => {
+        score = fn_score(item2);
+        if (options2.filter === false || score > 0) {
+          search.items.push({
+            score,
+            id
+          });
+        }
+      });
+    } else {
+      iterate(self2.items, (_, id) => {
+        search.items.push({
+          score: 1,
+          id
+        });
+      });
+    }
+    const fn_sort = self2._getSortFunction(search);
+    if (fn_sort)
+      search.items.sort(fn_sort);
+    search.total = search.items.length;
+    if (typeof options2.limit === "number") {
+      search.items = search.items.slice(0, options2.limit);
+    }
+    return search;
+  }
+};
+var getDom = (query) => {
+  if (query.jquery) {
+    return query[0];
+  }
+  if (query instanceof HTMLElement) {
+    return query;
+  }
+  if (isHtmlString(query)) {
+    let div = document.createElement("div");
+    div.innerHTML = query.trim();
+    return div.firstChild;
+  }
+  return document.querySelector(query);
+};
+var isHtmlString = (arg) => {
+  if (typeof arg === "string" && arg.indexOf("<") > -1) {
+    return true;
+  }
+  return false;
+};
+var escapeQuery = (query) => {
+  return query.replace(/['"\\]/g, "\\$&");
+};
+var triggerEvent = (dom_el, event_name) => {
+  var event = document.createEvent("HTMLEvents");
+  event.initEvent(event_name, true, false);
+  dom_el.dispatchEvent(event);
+};
+var applyCSS = (dom_el, css2) => {
+  Object.assign(dom_el.style, css2);
+};
+var addClasses = (elmts, ...classes) => {
+  var norm_classes = classesArray(classes);
+  elmts = castAsArray(elmts);
+  elmts.map((el) => {
+    norm_classes.map((cls) => {
+      el.classList.add(cls);
+    });
+  });
+};
+var removeClasses = (elmts, ...classes) => {
+  var norm_classes = classesArray(classes);
+  elmts = castAsArray(elmts);
+  elmts.map((el) => {
+    norm_classes.map((cls) => {
+      el.classList.remove(cls);
+    });
+  });
+};
+var classesArray = (args) => {
+  var classes = [];
+  iterate(args, (_classes) => {
+    if (typeof _classes === "string") {
+      _classes = _classes.trim().split(/[\11\12\14\15\40]/);
+    }
+    if (Array.isArray(_classes)) {
+      classes = classes.concat(_classes);
+    }
+  });
+  return classes.filter(Boolean);
+};
+var castAsArray = (arg) => {
+  if (!Array.isArray(arg)) {
+    arg = [arg];
+  }
+  return arg;
+};
+var parentMatch = (target, selector, wrapper3) => {
+  if (wrapper3 && !wrapper3.contains(target)) {
+    return;
+  }
+  while (target && target.matches) {
+    if (target.matches(selector)) {
+      return target;
+    }
+    target = target.parentNode;
+  }
+};
+var getTail = (list2, direction = 0) => {
+  if (direction > 0) {
+    return list2[list2.length - 1];
+  }
+  return list2[0];
+};
+var isEmptyObject = (obj) => {
+  return Object.keys(obj).length === 0;
+};
+var nodeIndex = (el, amongst) => {
+  if (!el)
+    return -1;
+  amongst = amongst || el.nodeName;
+  var i = 0;
+  while (el = el.previousElementSibling) {
+    if (el.matches(amongst)) {
+      i++;
+    }
+  }
+  return i;
+};
+var setAttr = (el, attrs) => {
+  iterate(attrs, (val, attr2) => {
+    if (val == null) {
+      el.removeAttribute(attr2);
+    } else {
+      el.setAttribute(attr2, "" + val);
+    }
+  });
+};
+var replaceNode = (existing, replacement) => {
+  if (existing.parentNode)
+    existing.parentNode.replaceChild(replacement, existing);
+};
+var highlight = (element, regex) => {
+  if (regex === null)
+    return;
+  if (typeof regex === "string") {
+    if (!regex.length)
+      return;
+    regex = new RegExp(regex, "i");
+  }
+  const highlightText = (node) => {
+    var match = node.data.match(regex);
+    if (match && node.data.length > 0) {
+      var spannode = document.createElement("span");
+      spannode.className = "highlight";
+      var middlebit = node.splitText(match.index);
+      middlebit.splitText(match[0].length);
+      var middleclone = middlebit.cloneNode(true);
+      spannode.appendChild(middleclone);
+      replaceNode(middlebit, spannode);
+      return 1;
+    }
+    return 0;
+  };
+  const highlightChildren = (node) => {
+    if (node.nodeType === 1 && node.childNodes && !/(script|style)/i.test(node.tagName) && (node.className !== "highlight" || node.tagName !== "SPAN")) {
+      for (var i = 0; i < node.childNodes.length; ++i) {
+        i += highlightRecursive(node.childNodes[i]);
+      }
+    }
+  };
+  const highlightRecursive = (node) => {
+    if (node.nodeType === 3) {
+      return highlightText(node);
+    }
+    highlightChildren(node);
+    return 0;
+  };
+  highlightRecursive(element);
+};
+var removeHighlight = (el) => {
+  var elements = el.querySelectorAll("span.highlight");
+  Array.prototype.forEach.call(elements, function(el2) {
+    var parent = el2.parentNode;
+    parent.replaceChild(el2.firstChild, el2);
+    parent.normalize();
+  });
+};
+var KEY_A = 65;
+var KEY_RETURN = 13;
+var KEY_ESC = 27;
+var KEY_LEFT = 37;
+var KEY_UP = 38;
+var KEY_RIGHT = 39;
+var KEY_DOWN = 40;
+var KEY_BACKSPACE = 8;
+var KEY_DELETE = 46;
+var KEY_TAB = 9;
+var IS_MAC = typeof navigator === "undefined" ? false : /Mac/.test(navigator.userAgent);
+var KEY_SHORTCUT = IS_MAC ? "metaKey" : "ctrlKey";
+var defaults3 = {
+  options: [],
+  optgroups: [],
+  plugins: [],
+  delimiter: ",",
+  splitOn: null,
+  persist: true,
+  diacritics: true,
+  create: null,
+  createOnBlur: false,
+  createFilter: null,
+  highlight: true,
+  openOnFocus: true,
+  shouldOpen: null,
+  maxOptions: 50,
+  maxItems: null,
+  hideSelected: null,
+  duplicates: false,
+  addPrecedence: false,
+  selectOnTab: false,
+  preload: null,
+  allowEmptyOption: false,
+  loadThrottle: 300,
+  loadingClass: "loading",
+  dataAttr: null,
+  optgroupField: "optgroup",
+  valueField: "value",
+  labelField: "text",
+  disabledField: "disabled",
+  optgroupLabelField: "label",
+  optgroupValueField: "value",
+  lockOptgroupOrder: false,
+  sortField: "$order",
+  searchField: ["text"],
+  searchConjunction: "and",
+  mode: null,
+  wrapperClass: "ts-wrapper",
+  controlClass: "ts-control",
+  dropdownClass: "ts-dropdown",
+  dropdownContentClass: "ts-dropdown-content",
+  itemClass: "item",
+  optionClass: "option",
+  dropdownParent: null,
+  controlInput: '<input type="text" autocomplete="off" size="1" />',
+  copyClassesToDropdown: false,
+  placeholder: null,
+  hidePlaceholder: null,
+  shouldLoad: function(query) {
+    return query.length > 0;
+  },
+  render: {}
+};
+var hash_key = (value) => {
+  if (typeof value === "undefined" || value === null)
+    return null;
+  return get_hash(value);
+};
+var get_hash = (value) => {
+  if (typeof value === "boolean")
+    return value ? "1" : "0";
+  return value + "";
+};
+var escape_html = (str) => {
+  return (str + "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+};
+var loadDebounce = (fn2, delay) => {
+  var timeout;
+  return function(value, callback) {
+    var self2 = this;
+    if (timeout) {
+      self2.loading = Math.max(self2.loading - 1, 0);
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(function() {
+      timeout = null;
+      self2.loadedSearches[value] = true;
+      fn2.call(self2, value, callback);
+    }, delay);
+  };
+};
+var debounce_events = (self2, types, fn2) => {
+  var type;
+  var trigger = self2.trigger;
+  var event_args = {};
+  self2.trigger = function() {
+    var type2 = arguments[0];
+    if (types.indexOf(type2) !== -1) {
+      event_args[type2] = arguments;
+    } else {
+      return trigger.apply(self2, arguments);
+    }
+  };
+  fn2.apply(self2, []);
+  self2.trigger = trigger;
+  for (type of types) {
+    if (type in event_args) {
+      trigger.apply(self2, event_args[type]);
+    }
+  }
+};
+var getSelection = (input) => {
+  return {
+    start: input.selectionStart || 0,
+    length: (input.selectionEnd || 0) - (input.selectionStart || 0)
+  };
+};
+var preventDefault = (evt, stop = false) => {
+  if (evt) {
+    evt.preventDefault();
+    if (stop) {
+      evt.stopPropagation();
+    }
+  }
+};
+var addEvent2 = (target, type, callback, options2) => {
+  target.addEventListener(type, callback, options2);
+};
+var isKeyDown = (key_name, evt) => {
+  if (!evt) {
+    return false;
+  }
+  if (!evt[key_name]) {
+    return false;
+  }
+  var count = (evt.altKey ? 1 : 0) + (evt.ctrlKey ? 1 : 0) + (evt.shiftKey ? 1 : 0) + (evt.metaKey ? 1 : 0);
+  if (count === 1) {
+    return true;
+  }
+  return false;
+};
+var getId = (el, id) => {
+  const existing_id = el.getAttribute("id");
+  if (existing_id) {
+    return existing_id;
+  }
+  el.setAttribute("id", id);
+  return id;
+};
+var addSlashes = (str) => {
+  return str.replace(/[\\"']/g, "\\$&");
+};
+var append = (parent, node) => {
+  if (node)
+    parent.append(node);
+};
+function getSettings(input, settings_user) {
+  var settings = Object.assign({}, defaults3, settings_user);
+  var attr_data = settings.dataAttr;
+  var field_label = settings.labelField;
+  var field_value = settings.valueField;
+  var field_disabled = settings.disabledField;
+  var field_optgroup = settings.optgroupField;
+  var field_optgroup_label = settings.optgroupLabelField;
+  var field_optgroup_value = settings.optgroupValueField;
+  var tag_name = input.tagName.toLowerCase();
+  var placeholder = input.getAttribute("placeholder") || input.getAttribute("data-placeholder");
+  if (!placeholder && !settings.allowEmptyOption) {
+    let option3 = input.querySelector('option[value=""]');
+    if (option3) {
+      placeholder = option3.textContent;
+    }
+  }
+  var settings_element = {
+    placeholder,
+    options: [],
+    optgroups: [],
+    items: [],
+    maxItems: null
+  };
+  var init_select = () => {
+    var tagName;
+    var options2 = settings_element.options;
+    var optionsMap = {};
+    var group_count = 1;
+    var readData2 = (el) => {
+      var data3 = Object.assign({}, el.dataset);
+      var json = attr_data && data3[attr_data];
+      if (typeof json === "string" && json.length) {
+        data3 = Object.assign(data3, JSON.parse(json));
+      }
+      return data3;
+    };
+    var addOption = (option3, group) => {
+      var value = hash_key(option3.value);
+      if (value == null)
+        return;
+      if (!value && !settings.allowEmptyOption)
+        return;
+      if (optionsMap.hasOwnProperty(value)) {
+        if (group) {
+          var arr = optionsMap[value][field_optgroup];
+          if (!arr) {
+            optionsMap[value][field_optgroup] = group;
+          } else if (!Array.isArray(arr)) {
+            optionsMap[value][field_optgroup] = [arr, group];
+          } else {
+            arr.push(group);
+          }
+        }
+      } else {
+        var option_data = readData2(option3);
+        option_data[field_label] = option_data[field_label] || option3.textContent;
+        option_data[field_value] = option_data[field_value] || value;
+        option_data[field_disabled] = option_data[field_disabled] || option3.disabled;
+        option_data[field_optgroup] = option_data[field_optgroup] || group;
+        option_data.$option = option3;
+        optionsMap[value] = option_data;
+        options2.push(option_data);
+      }
+      if (option3.selected) {
+        settings_element.items.push(value);
+      }
+    };
+    var addGroup = (optgroup) => {
+      var id, optgroup_data;
+      optgroup_data = readData2(optgroup);
+      optgroup_data[field_optgroup_label] = optgroup_data[field_optgroup_label] || optgroup.getAttribute("label") || "";
+      optgroup_data[field_optgroup_value] = optgroup_data[field_optgroup_value] || group_count++;
+      optgroup_data[field_disabled] = optgroup_data[field_disabled] || optgroup.disabled;
+      settings_element.optgroups.push(optgroup_data);
+      id = optgroup_data[field_optgroup_value];
+      iterate(optgroup.children, (option3) => {
+        addOption(option3, id);
+      });
+    };
+    settings_element.maxItems = input.hasAttribute("multiple") ? null : 1;
+    iterate(input.children, (child) => {
+      tagName = child.tagName.toLowerCase();
+      if (tagName === "optgroup") {
+        addGroup(child);
+      } else if (tagName === "option") {
+        addOption(child);
+      }
+    });
+  };
+  var init_textbox = () => {
+    const data_raw = input.getAttribute(attr_data);
+    if (!data_raw) {
+      var value = input.value.trim() || "";
+      if (!settings.allowEmptyOption && !value.length)
+        return;
+      const values = value.split(settings.delimiter);
+      iterate(values, (value2) => {
+        const option3 = {};
+        option3[field_label] = value2;
+        option3[field_value] = value2;
+        settings_element.options.push(option3);
+      });
+      settings_element.items = values;
+    } else {
+      settings_element.options = JSON.parse(data_raw);
+      iterate(settings_element.options, (opt) => {
+        settings_element.items.push(opt[field_value]);
+      });
+    }
+  };
+  if (tag_name === "select") {
+    init_select();
+  } else {
+    init_textbox();
+  }
+  return Object.assign({}, defaults3, settings_element, settings_user);
+}
+var instance_i = 0;
+var TomSelect = class extends MicroPlugin(MicroEvent) {
+  constructor(input_arg, user_settings) {
+    super();
+    this.control_input = void 0;
+    this.wrapper = void 0;
+    this.dropdown = void 0;
+    this.control = void 0;
+    this.dropdown_content = void 0;
+    this.focus_node = void 0;
+    this.order = 0;
+    this.settings = void 0;
+    this.input = void 0;
+    this.tabIndex = void 0;
+    this.is_select_tag = void 0;
+    this.rtl = void 0;
+    this.inputId = void 0;
+    this._destroy = void 0;
+    this.sifter = void 0;
+    this.isOpen = false;
+    this.isDisabled = false;
+    this.isRequired = void 0;
+    this.isInvalid = false;
+    this.isValid = true;
+    this.isLocked = false;
+    this.isFocused = false;
+    this.isInputHidden = false;
+    this.isSetup = false;
+    this.ignoreFocus = false;
+    this.hasOptions = false;
+    this.currentResults = void 0;
+    this.lastValue = "";
+    this.caretPos = 0;
+    this.loading = 0;
+    this.loadedSearches = {};
+    this.activeOption = null;
+    this.activeItems = [];
+    this.optgroups = {};
+    this.options = {};
+    this.userOptions = {};
+    this.items = [];
+    instance_i++;
+    var dir;
+    var input = getDom(input_arg);
+    if (input.tomselect) {
+      throw new Error("Tom Select already initialized on this element");
+    }
+    input.tomselect = this;
+    var computedStyle = window.getComputedStyle && window.getComputedStyle(input, null);
+    dir = computedStyle.getPropertyValue("direction");
+    const settings = getSettings(input, user_settings);
+    this.settings = settings;
+    this.input = input;
+    this.tabIndex = input.tabIndex || 0;
+    this.is_select_tag = input.tagName.toLowerCase() === "select";
+    this.rtl = /rtl/i.test(dir);
+    this.inputId = getId(input, "tomselect-" + instance_i);
+    this.isRequired = input.required;
+    this.sifter = new Sifter(this.options, {
+      diacritics: settings.diacritics
+    });
+    settings.mode = settings.mode || (settings.maxItems === 1 ? "single" : "multi");
+    if (typeof settings.hideSelected !== "boolean") {
+      settings.hideSelected = settings.mode === "multi";
+    }
+    if (typeof settings.hidePlaceholder !== "boolean") {
+      settings.hidePlaceholder = settings.mode !== "multi";
+    }
+    var filter = settings.createFilter;
+    if (typeof filter !== "function") {
+      if (typeof filter === "string") {
+        filter = new RegExp(filter);
+      }
+      if (filter instanceof RegExp) {
+        settings.createFilter = (input2) => filter.test(input2);
+      } else {
+        settings.createFilter = () => true;
+      }
+    }
+    this.initializePlugins(settings.plugins);
+    this.setupCallbacks();
+    this.setupTemplates();
+    const wrapper3 = getDom("<div>");
+    const control = getDom("<div>");
+    const dropdown = this._render("dropdown");
+    const dropdown_content = getDom(`<div role="listbox" tabindex="-1">`);
+    const classes = this.input.getAttribute("class") || "";
+    const inputMode = settings.mode;
+    var control_input;
+    addClasses(wrapper3, settings.wrapperClass, classes, inputMode);
+    addClasses(control, settings.controlClass);
+    append(wrapper3, control);
+    addClasses(dropdown, settings.dropdownClass, inputMode);
+    if (settings.copyClassesToDropdown) {
+      addClasses(dropdown, classes);
+    }
+    addClasses(dropdown_content, settings.dropdownContentClass);
+    append(dropdown, dropdown_content);
+    getDom(settings.dropdownParent || wrapper3).appendChild(dropdown);
+    if (isHtmlString(settings.controlInput)) {
+      control_input = getDom(settings.controlInput);
+      var attrs = ["autocorrect", "autocapitalize", "autocomplete"];
+      iterate(attrs, (attr2) => {
+        if (input.getAttribute(attr2)) {
+          setAttr(control_input, {
+            [attr2]: input.getAttribute(attr2)
+          });
+        }
+      });
+      control_input.tabIndex = -1;
+      control.appendChild(control_input);
+      this.focus_node = control_input;
+    } else if (settings.controlInput) {
+      control_input = getDom(settings.controlInput);
+      this.focus_node = control_input;
+    } else {
+      control_input = getDom("<input/>");
+      this.focus_node = control;
+    }
+    this.wrapper = wrapper3;
+    this.dropdown = dropdown;
+    this.dropdown_content = dropdown_content;
+    this.control = control;
+    this.control_input = control_input;
+    this.setup();
+  }
+  setup() {
+    const self2 = this;
+    const settings = self2.settings;
+    const control_input = self2.control_input;
+    const dropdown = self2.dropdown;
+    const dropdown_content = self2.dropdown_content;
+    const wrapper3 = self2.wrapper;
+    const control = self2.control;
+    const input = self2.input;
+    const focus_node = self2.focus_node;
+    const passive_event = {
+      passive: true
+    };
+    const listboxId = self2.inputId + "-ts-dropdown";
+    setAttr(dropdown_content, {
+      id: listboxId
+    });
+    setAttr(focus_node, {
+      role: "combobox",
+      "aria-haspopup": "listbox",
+      "aria-expanded": "false",
+      "aria-controls": listboxId
+    });
+    const control_id = getId(focus_node, self2.inputId + "-ts-control");
+    const query = "label[for='" + escapeQuery(self2.inputId) + "']";
+    const label = document.querySelector(query);
+    const label_click = self2.focus.bind(self2);
+    if (label) {
+      addEvent2(label, "click", label_click);
+      setAttr(label, {
+        for: control_id
+      });
+      const label_id = getId(label, self2.inputId + "-ts-label");
+      setAttr(focus_node, {
+        "aria-labelledby": label_id
+      });
+      setAttr(dropdown_content, {
+        "aria-labelledby": label_id
+      });
+    }
+    wrapper3.style.width = input.style.width;
+    if (self2.plugins.names.length) {
+      const classes_plugins = "plugin-" + self2.plugins.names.join(" plugin-");
+      addClasses([wrapper3, dropdown], classes_plugins);
+    }
+    if ((settings.maxItems === null || settings.maxItems > 1) && self2.is_select_tag) {
+      setAttr(input, {
+        multiple: "multiple"
+      });
+    }
+    if (self2.settings.placeholder) {
+      setAttr(control_input, {
+        placeholder: settings.placeholder
+      });
+    }
+    if (!self2.settings.splitOn && self2.settings.delimiter) {
+      self2.settings.splitOn = new RegExp("\\s*" + escape_regex(self2.settings.delimiter) + "+\\s*");
+    }
+    if (settings.load && settings.loadThrottle) {
+      settings.load = loadDebounce(settings.load, settings.loadThrottle);
+    }
+    self2.control_input.type = input.type;
+    addEvent2(dropdown, "click", (evt) => {
+      const option3 = parentMatch(evt.target, "[data-selectable]");
+      if (option3) {
+        self2.onOptionSelect(evt, option3);
+        preventDefault(evt, true);
+      }
+    });
+    addEvent2(control, "click", (evt) => {
+      var target_match = parentMatch(evt.target, "[data-ts-item]", control);
+      if (target_match && self2.onItemSelect(evt, target_match)) {
+        preventDefault(evt, true);
+        return;
+      }
+      if (control_input.value != "") {
+        return;
+      }
+      self2.onClick();
+      preventDefault(evt, true);
+    });
+    addEvent2(focus_node, "keydown", (e2) => self2.onKeyDown(e2));
+    addEvent2(control_input, "keypress", (e2) => self2.onKeyPress(e2));
+    addEvent2(control_input, "input", (e2) => self2.onInput(e2));
+    addEvent2(focus_node, "resize", () => self2.positionDropdown(), passive_event);
+    addEvent2(focus_node, "blur", (e2) => self2.onBlur(e2));
+    addEvent2(focus_node, "focus", (e2) => self2.onFocus(e2));
+    addEvent2(focus_node, "paste", (e2) => self2.onPaste(e2));
+    const doc_mousedown = (evt) => {
+      const target = evt.composedPath()[0];
+      if (!wrapper3.contains(target) && !dropdown.contains(target)) {
+        if (self2.isFocused) {
+          self2.blur();
+        }
+        self2.inputState();
+        return;
+      }
+      if (target == control_input && self2.isOpen) {
+        evt.stopPropagation();
+      } else {
+        preventDefault(evt, true);
+      }
+    };
+    var win_scroll = () => {
+      if (self2.isOpen) {
+        self2.positionDropdown();
+      }
+    };
+    addEvent2(document, "mousedown", doc_mousedown);
+    addEvent2(window, "scroll", win_scroll, passive_event);
+    addEvent2(window, "resize", win_scroll, passive_event);
+    this._destroy = () => {
+      document.removeEventListener("mousedown", doc_mousedown);
+      window.removeEventListener("sroll", win_scroll);
+      window.removeEventListener("resize", win_scroll);
+      if (label)
+        label.removeEventListener("click", label_click);
+    };
+    this.revertSettings = {
+      innerHTML: input.innerHTML,
+      tabIndex: input.tabIndex
+    };
+    input.tabIndex = -1;
+    input.insertAdjacentElement("afterend", self2.wrapper);
+    self2.sync(false);
+    settings.items = [];
+    delete settings.optgroups;
+    delete settings.options;
+    addEvent2(input, "invalid", (e2) => {
+      if (self2.isValid) {
+        self2.isValid = false;
+        self2.isInvalid = true;
+        self2.refreshState();
+      }
+    });
+    self2.updateOriginalInput();
+    self2.refreshItems();
+    self2.close(false);
+    self2.inputState();
+    self2.isSetup = true;
+    if (input.disabled) {
+      self2.disable();
+    } else {
+      self2.enable();
+    }
+    self2.on("change", this.onChange);
+    addClasses(input, "tomselected", "ts-hidden-accessible");
+    self2.trigger("initialize");
+    if (settings.preload === true) {
+      self2.preload();
+    }
+  }
+  setupOptions(options2 = [], optgroups = []) {
+    this.addOptions(options2);
+    iterate(optgroups, (optgroup) => {
+      this.registerOptionGroup(optgroup);
+    });
+  }
+  setupTemplates() {
+    var self2 = this;
+    var field_label = self2.settings.labelField;
+    var field_optgroup = self2.settings.optgroupLabelField;
+    var templates = {
+      optgroup: (data3) => {
+        let optgroup = document.createElement("div");
+        optgroup.className = "optgroup";
+        optgroup.appendChild(data3.options);
+        return optgroup;
+      },
+      optgroup_header: (data3, escape2) => {
+        return '<div class="optgroup-header">' + escape2(data3[field_optgroup]) + "</div>";
+      },
+      option: (data3, escape2) => {
+        return "<div>" + escape2(data3[field_label]) + "</div>";
+      },
+      item: (data3, escape2) => {
+        return "<div>" + escape2(data3[field_label]) + "</div>";
+      },
+      option_create: (data3, escape2) => {
+        return '<div class="create">Add <strong>' + escape2(data3.input) + "</strong>&hellip;</div>";
+      },
+      no_results: () => {
+        return '<div class="no-results">No results found</div>';
+      },
+      loading: () => {
+        return '<div class="spinner"></div>';
+      },
+      not_loading: () => {
+      },
+      dropdown: () => {
+        return "<div></div>";
+      }
+    };
+    self2.settings.render = Object.assign({}, templates, self2.settings.render);
+  }
+  setupCallbacks() {
+    var key, fn2;
+    var callbacks = {
+      initialize: "onInitialize",
+      change: "onChange",
+      item_add: "onItemAdd",
+      item_remove: "onItemRemove",
+      item_select: "onItemSelect",
+      clear: "onClear",
+      option_add: "onOptionAdd",
+      option_remove: "onOptionRemove",
+      option_clear: "onOptionClear",
+      optgroup_add: "onOptionGroupAdd",
+      optgroup_remove: "onOptionGroupRemove",
+      optgroup_clear: "onOptionGroupClear",
+      dropdown_open: "onDropdownOpen",
+      dropdown_close: "onDropdownClose",
+      type: "onType",
+      load: "onLoad",
+      focus: "onFocus",
+      blur: "onBlur"
+    };
+    for (key in callbacks) {
+      fn2 = this.settings[callbacks[key]];
+      if (fn2)
+        this.on(key, fn2);
+    }
+  }
+  sync(get_settings = true) {
+    const self2 = this;
+    const settings = get_settings ? getSettings(self2.input, {
+      delimiter: self2.settings.delimiter
+    }) : self2.settings;
+    self2.setupOptions(settings.options, settings.optgroups);
+    self2.setValue(settings.items, true);
+    self2.lastQuery = null;
+  }
+  onClick() {
+    var self2 = this;
+    if (self2.activeItems.length > 0) {
+      self2.clearActiveItems();
+      self2.focus();
+      return;
+    }
+    if (self2.isFocused && self2.isOpen) {
+      self2.blur();
+    } else {
+      self2.focus();
+    }
+  }
+  onMouseDown() {
+  }
+  onChange() {
+    triggerEvent(this.input, "input");
+    triggerEvent(this.input, "change");
+  }
+  onPaste(e2) {
+    var self2 = this;
+    if (self2.isInputHidden || self2.isLocked) {
+      preventDefault(e2);
+      return;
+    }
+    if (self2.settings.splitOn) {
+      setTimeout(() => {
+        var pastedText = self2.inputValue();
+        if (!pastedText.match(self2.settings.splitOn)) {
+          return;
+        }
+        var splitInput = pastedText.trim().split(self2.settings.splitOn);
+        iterate(splitInput, (piece) => {
+          self2.createItem(piece);
+        });
+      }, 0);
+    }
+  }
+  onKeyPress(e2) {
+    var self2 = this;
+    if (self2.isLocked) {
+      preventDefault(e2);
+      return;
+    }
+    var character = String.fromCharCode(e2.keyCode || e2.which);
+    if (self2.settings.create && self2.settings.mode === "multi" && character === self2.settings.delimiter) {
+      self2.createItem();
+      preventDefault(e2);
+      return;
+    }
+  }
+  onKeyDown(e2) {
+    var self2 = this;
+    if (self2.isLocked) {
+      if (e2.keyCode !== KEY_TAB) {
+        preventDefault(e2);
+      }
+      return;
+    }
+    switch (e2.keyCode) {
+      case KEY_A:
+        if (isKeyDown(KEY_SHORTCUT, e2)) {
+          if (self2.control_input.value == "") {
+            preventDefault(e2);
+            self2.selectAll();
+            return;
+          }
+        }
+        break;
+      case KEY_ESC:
+        if (self2.isOpen) {
+          preventDefault(e2, true);
+          self2.close();
+        }
+        self2.clearActiveItems();
+        return;
+      case KEY_DOWN:
+        if (!self2.isOpen && self2.hasOptions) {
+          self2.open();
+        } else if (self2.activeOption) {
+          let next = self2.getAdjacent(self2.activeOption, 1);
+          if (next)
+            self2.setActiveOption(next);
+        }
+        preventDefault(e2);
+        return;
+      case KEY_UP:
+        if (self2.activeOption) {
+          let prev = self2.getAdjacent(self2.activeOption, -1);
+          if (prev)
+            self2.setActiveOption(prev);
+        }
+        preventDefault(e2);
+        return;
+      case KEY_RETURN:
+        if (self2.canSelect(self2.activeOption)) {
+          self2.onOptionSelect(e2, self2.activeOption);
+          preventDefault(e2);
+        } else if (self2.settings.create && self2.createItem()) {
+          preventDefault(e2);
+        }
+        return;
+      case KEY_LEFT:
+        self2.advanceSelection(-1, e2);
+        return;
+      case KEY_RIGHT:
+        self2.advanceSelection(1, e2);
+        return;
+      case KEY_TAB:
+        if (self2.settings.selectOnTab) {
+          if (self2.canSelect(self2.activeOption)) {
+            self2.onOptionSelect(e2, self2.activeOption);
+            preventDefault(e2);
+          }
+          if (self2.settings.create && self2.createItem()) {
+            preventDefault(e2);
+          }
+        }
+        return;
+      case KEY_BACKSPACE:
+      case KEY_DELETE:
+        self2.deleteSelection(e2);
+        return;
+    }
+    if (self2.isInputHidden && !isKeyDown(KEY_SHORTCUT, e2)) {
+      preventDefault(e2);
+    }
+  }
+  onInput(e2) {
+    var self2 = this;
+    if (self2.isLocked) {
+      return;
+    }
+    var value = self2.inputValue();
+    if (self2.lastValue !== value) {
+      self2.lastValue = value;
+      if (self2.settings.shouldLoad.call(self2, value)) {
+        self2.load(value);
+      }
+      self2.refreshOptions();
+      self2.trigger("type", value);
+    }
+  }
+  onFocus(e2) {
+    var self2 = this;
+    var wasFocused = self2.isFocused;
+    if (self2.isDisabled) {
+      self2.blur();
+      preventDefault(e2);
+      return;
+    }
+    if (self2.ignoreFocus)
+      return;
+    self2.isFocused = true;
+    if (self2.settings.preload === "focus")
+      self2.preload();
+    if (!wasFocused)
+      self2.trigger("focus");
+    if (!self2.activeItems.length) {
+      self2.showInput();
+      self2.refreshOptions(!!self2.settings.openOnFocus);
+    }
+    self2.refreshState();
+  }
+  onBlur(e2) {
+    if (document.hasFocus() === false)
+      return;
+    var self2 = this;
+    if (!self2.isFocused)
+      return;
+    self2.isFocused = false;
+    self2.ignoreFocus = false;
+    var deactivate = () => {
+      self2.close();
+      self2.setActiveItem();
+      self2.setCaret(self2.items.length);
+      self2.trigger("blur");
+    };
+    if (self2.settings.create && self2.settings.createOnBlur) {
+      self2.createItem(null, false, deactivate);
+    } else {
+      deactivate();
+    }
+  }
+  onOptionSelect(evt, option3) {
+    var value, self2 = this;
+    if (option3.parentElement && option3.parentElement.matches("[data-disabled]")) {
+      return;
+    }
+    if (option3.classList.contains("create")) {
+      self2.createItem(null, true, () => {
+        if (self2.settings.closeAfterSelect) {
+          self2.close();
+        }
+      });
+    } else {
+      value = option3.dataset.value;
+      if (typeof value !== "undefined") {
+        self2.lastQuery = null;
+        self2.addItem(value);
+        if (self2.settings.closeAfterSelect) {
+          self2.close();
+        }
+        if (!self2.settings.hideSelected && evt.type && /click/.test(evt.type)) {
+          self2.setActiveOption(option3);
+        }
+      }
+    }
+  }
+  canSelect(option3) {
+    if (this.isOpen && option3 && this.dropdown_content.contains(option3)) {
+      return true;
+    }
+    return false;
+  }
+  onItemSelect(evt, item2) {
+    var self2 = this;
+    if (!self2.isLocked && self2.settings.mode === "multi") {
+      preventDefault(evt);
+      self2.setActiveItem(item2, evt);
+      return true;
+    }
+    return false;
+  }
+  canLoad(value) {
+    if (!this.settings.load)
+      return false;
+    if (this.loadedSearches.hasOwnProperty(value))
+      return false;
+    return true;
+  }
+  load(value) {
+    const self2 = this;
+    if (!self2.canLoad(value))
+      return;
+    addClasses(self2.wrapper, self2.settings.loadingClass);
+    self2.loading++;
+    const callback = self2.loadCallback.bind(self2);
+    self2.settings.load.call(self2, value, callback);
+  }
+  loadCallback(options2, optgroups) {
+    const self2 = this;
+    self2.loading = Math.max(self2.loading - 1, 0);
+    self2.lastQuery = null;
+    self2.clearActiveOption();
+    self2.setupOptions(options2, optgroups);
+    self2.refreshOptions(self2.isFocused && !self2.isInputHidden);
+    if (!self2.loading) {
+      removeClasses(self2.wrapper, self2.settings.loadingClass);
+    }
+    self2.trigger("load", options2, optgroups);
+  }
+  preload() {
+    var classList = this.wrapper.classList;
+    if (classList.contains("preloaded"))
+      return;
+    classList.add("preloaded");
+    this.load("");
+  }
+  setTextboxValue(value = "") {
+    var input = this.control_input;
+    var changed = input.value !== value;
+    if (changed) {
+      input.value = value;
+      triggerEvent(input, "update");
+      this.lastValue = value;
+    }
+  }
+  getValue() {
+    if (this.is_select_tag && this.input.hasAttribute("multiple")) {
+      return this.items;
+    }
+    return this.items.join(this.settings.delimiter);
+  }
+  setValue(value, silent) {
+    var events = silent ? [] : ["change"];
+    debounce_events(this, events, () => {
+      this.clear(silent);
+      this.addItems(value, silent);
+    });
+  }
+  setMaxItems(value) {
+    if (value === 0)
+      value = null;
+    this.settings.maxItems = value;
+    this.refreshState();
+  }
+  setActiveItem(item2, e2) {
+    var self2 = this;
+    var eventName;
+    var i, begin, end, swap;
+    var last;
+    if (self2.settings.mode === "single")
+      return;
+    if (!item2) {
+      self2.clearActiveItems();
+      if (self2.isFocused) {
+        self2.showInput();
+      }
+      return;
+    }
+    eventName = e2 && e2.type.toLowerCase();
+    if (eventName === "click" && isKeyDown("shiftKey", e2) && self2.activeItems.length) {
+      last = self2.getLastActive();
+      begin = Array.prototype.indexOf.call(self2.control.children, last);
+      end = Array.prototype.indexOf.call(self2.control.children, item2);
+      if (begin > end) {
+        swap = begin;
+        begin = end;
+        end = swap;
+      }
+      for (i = begin; i <= end; i++) {
+        item2 = self2.control.children[i];
+        if (self2.activeItems.indexOf(item2) === -1) {
+          self2.setActiveItemClass(item2);
+        }
+      }
+      preventDefault(e2);
+    } else if (eventName === "click" && isKeyDown(KEY_SHORTCUT, e2) || eventName === "keydown" && isKeyDown("shiftKey", e2)) {
+      if (item2.classList.contains("active")) {
+        self2.removeActiveItem(item2);
+      } else {
+        self2.setActiveItemClass(item2);
+      }
+    } else {
+      self2.clearActiveItems();
+      self2.setActiveItemClass(item2);
+    }
+    self2.hideInput();
+    if (!self2.isFocused) {
+      self2.focus();
+    }
+  }
+  setActiveItemClass(item2) {
+    const self2 = this;
+    const last_active = self2.control.querySelector(".last-active");
+    if (last_active)
+      removeClasses(last_active, "last-active");
+    addClasses(item2, "active last-active");
+    self2.trigger("item_select", item2);
+    if (self2.activeItems.indexOf(item2) == -1) {
+      self2.activeItems.push(item2);
+    }
+  }
+  removeActiveItem(item2) {
+    var idx = this.activeItems.indexOf(item2);
+    this.activeItems.splice(idx, 1);
+    removeClasses(item2, "active");
+  }
+  clearActiveItems() {
+    removeClasses(this.activeItems, "active");
+    this.activeItems = [];
+  }
+  setActiveOption(option3) {
+    if (option3 === this.activeOption) {
+      return;
+    }
+    this.clearActiveOption();
+    if (!option3)
+      return;
+    this.activeOption = option3;
+    setAttr(this.focus_node, {
+      "aria-activedescendant": option3.getAttribute("id")
+    });
+    setAttr(option3, {
+      "aria-selected": "true"
+    });
+    addClasses(option3, "active");
+    this.scrollToOption(option3);
+  }
+  scrollToOption(option3, behavior) {
+    if (!option3)
+      return;
+    const content = this.dropdown_content;
+    const height_menu = content.clientHeight;
+    const scrollTop = content.scrollTop || 0;
+    const height_item = option3.offsetHeight;
+    const y = option3.getBoundingClientRect().top - content.getBoundingClientRect().top + scrollTop;
+    if (y + height_item > height_menu + scrollTop) {
+      this.scroll(y - height_menu + height_item, behavior);
+    } else if (y < scrollTop) {
+      this.scroll(y, behavior);
+    }
+  }
+  scroll(scrollTop, behavior) {
+    const content = this.dropdown_content;
+    if (behavior) {
+      content.style.scrollBehavior = behavior;
+    }
+    content.scrollTop = scrollTop;
+    content.style.scrollBehavior = "";
+  }
+  clearActiveOption() {
+    if (this.activeOption) {
+      removeClasses(this.activeOption, "active");
+      setAttr(this.activeOption, {
+        "aria-selected": null
+      });
+    }
+    this.activeOption = null;
+    setAttr(this.focus_node, {
+      "aria-activedescendant": null
+    });
+  }
+  selectAll() {
+    const self2 = this;
+    if (self2.settings.mode === "single")
+      return;
+    const activeItems = self2.controlChildren();
+    if (!activeItems.length)
+      return;
+    self2.hideInput();
+    self2.close();
+    self2.activeItems = activeItems;
+    iterate(activeItems, (item2) => {
+      self2.setActiveItemClass(item2);
+    });
+  }
+  inputState() {
+    var self2 = this;
+    if (!self2.control.contains(self2.control_input))
+      return;
+    setAttr(self2.control_input, {
+      placeholder: self2.settings.placeholder
+    });
+    if (self2.activeItems.length > 0 || !self2.isFocused && self2.settings.hidePlaceholder && self2.items.length > 0) {
+      self2.setTextboxValue();
+      self2.isInputHidden = true;
+    } else {
+      if (self2.settings.hidePlaceholder && self2.items.length > 0) {
+        setAttr(self2.control_input, {
+          placeholder: ""
+        });
+      }
+      self2.isInputHidden = false;
+    }
+    self2.wrapper.classList.toggle("input-hidden", self2.isInputHidden);
+  }
+  hideInput() {
+    this.inputState();
+  }
+  showInput() {
+    this.inputState();
+  }
+  inputValue() {
+    return this.control_input.value.trim();
+  }
+  focus() {
+    var self2 = this;
+    if (self2.isDisabled)
+      return;
+    self2.ignoreFocus = true;
+    if (self2.control_input.offsetWidth) {
+      self2.control_input.focus();
+    } else {
+      self2.focus_node.focus();
+    }
+    setTimeout(() => {
+      self2.ignoreFocus = false;
+      self2.onFocus();
+    }, 0);
+  }
+  blur() {
+    this.focus_node.blur();
+    this.onBlur();
+  }
+  getScoreFunction(query) {
+    return this.sifter.getScoreFunction(query, this.getSearchOptions());
+  }
+  getSearchOptions() {
+    var settings = this.settings;
+    var sort2 = settings.sortField;
+    if (typeof settings.sortField === "string") {
+      sort2 = [{
+        field: settings.sortField
+      }];
+    }
+    return {
+      fields: settings.searchField,
+      conjunction: settings.searchConjunction,
+      sort: sort2,
+      nesting: settings.nesting
+    };
+  }
+  search(query) {
+    var i, result, calculateScore;
+    var self2 = this;
+    var options2 = this.getSearchOptions();
+    if (self2.settings.score) {
+      calculateScore = self2.settings.score.call(self2, query);
+      if (typeof calculateScore !== "function") {
+        throw new Error('Tom Select "score" setting must be a function that returns a function');
+      }
+    }
+    if (query !== self2.lastQuery) {
+      self2.lastQuery = query;
+      result = self2.sifter.search(query, Object.assign(options2, {
+        score: calculateScore
+      }));
+      self2.currentResults = result;
+    } else {
+      result = Object.assign({}, self2.currentResults);
+    }
+    if (self2.settings.hideSelected) {
+      for (i = result.items.length - 1; i >= 0; i--) {
+        let hashed = hash_key(result.items[i].id);
+        if (hashed && self2.items.indexOf(hashed) !== -1) {
+          result.items.splice(i, 1);
+        }
+      }
+    }
+    return result;
+  }
+  refreshOptions(triggerDropdown = true) {
+    var i, j, k, n2, optgroup, optgroups, html, has_create_option, active_value, active_group;
+    var create2;
+    const groups = {};
+    const groups_order = [];
+    var self2 = this;
+    var query = self2.inputValue();
+    var results = self2.search(query);
+    var active_option = null;
+    var show_dropdown = self2.settings.shouldOpen || false;
+    var dropdown_content = self2.dropdown_content;
+    if (self2.activeOption) {
+      active_value = self2.activeOption.dataset.value;
+      active_group = self2.activeOption.closest("[data-group]");
+    }
+    n2 = results.items.length;
+    if (typeof self2.settings.maxOptions === "number") {
+      n2 = Math.min(n2, self2.settings.maxOptions);
+    }
+    if (n2 > 0) {
+      show_dropdown = true;
+    }
+    for (i = 0; i < n2; i++) {
+      let opt_value = results.items[i].id;
+      let option3 = self2.options[opt_value];
+      let option_el = self2.getOption(opt_value, true);
+      if (!self2.settings.hideSelected) {
+        option_el.classList.toggle("selected", self2.items.includes(opt_value));
+      }
+      optgroup = option3[self2.settings.optgroupField] || "";
+      optgroups = Array.isArray(optgroup) ? optgroup : [optgroup];
+      for (j = 0, k = optgroups && optgroups.length; j < k; j++) {
+        optgroup = optgroups[j];
+        if (!self2.optgroups.hasOwnProperty(optgroup)) {
+          optgroup = "";
+        }
+        if (!groups.hasOwnProperty(optgroup)) {
+          groups[optgroup] = document.createDocumentFragment();
+          groups_order.push(optgroup);
+        }
+        if (j > 0) {
+          option_el = option_el.cloneNode(true);
+          setAttr(option_el, {
+            id: option3.$id + "-clone-" + j,
+            "aria-selected": null
+          });
+          option_el.classList.add("ts-cloned");
+          removeClasses(option_el, "active");
+        }
+        if (!active_option && active_value == opt_value) {
+          if (active_group) {
+            if (active_group.dataset.group === optgroup) {
+              active_option = option_el;
+            }
+          } else {
+            active_option = option_el;
+          }
+        }
+        groups[optgroup].appendChild(option_el);
+      }
+    }
+    if (this.settings.lockOptgroupOrder) {
+      groups_order.sort((a2, b) => {
+        var a_order = self2.optgroups[a2] && self2.optgroups[a2].$order || 0;
+        var b_order = self2.optgroups[b] && self2.optgroups[b].$order || 0;
+        return a_order - b_order;
+      });
+    }
+    html = document.createDocumentFragment();
+    iterate(groups_order, (optgroup2) => {
+      if (self2.optgroups.hasOwnProperty(optgroup2) && groups[optgroup2].children.length) {
+        let group_options = document.createDocumentFragment();
+        let header = self2.render("optgroup_header", self2.optgroups[optgroup2]);
+        append(group_options, header);
+        append(group_options, groups[optgroup2]);
+        let group_html = self2.render("optgroup", {
+          group: self2.optgroups[optgroup2],
+          options: group_options
+        });
+        append(html, group_html);
+      } else {
+        append(html, groups[optgroup2]);
+      }
+    });
+    dropdown_content.innerHTML = "";
+    append(dropdown_content, html);
+    if (self2.settings.highlight) {
+      removeHighlight(dropdown_content);
+      if (results.query.length && results.tokens.length) {
+        iterate(results.tokens, (tok) => {
+          highlight(dropdown_content, tok.regex);
+        });
+      }
+    }
+    var add_template = (template) => {
+      let content = self2.render(template, {
+        input: query
+      });
+      if (content) {
+        show_dropdown = true;
+        dropdown_content.insertBefore(content, dropdown_content.firstChild);
+      }
+      return content;
+    };
+    if (self2.loading) {
+      add_template("loading");
+    } else if (!self2.settings.shouldLoad.call(self2, query)) {
+      add_template("not_loading");
+    } else if (results.items.length === 0) {
+      add_template("no_results");
+    }
+    has_create_option = self2.canCreate(query);
+    if (has_create_option) {
+      create2 = add_template("option_create");
+    }
+    self2.hasOptions = results.items.length > 0 || has_create_option;
+    if (show_dropdown) {
+      if (results.items.length > 0) {
+        if (!active_option && self2.settings.mode === "single" && self2.items.length) {
+          active_option = self2.getOption(self2.items[0]);
+        }
+        if (!dropdown_content.contains(active_option)) {
+          let active_index = 0;
+          if (create2 && !self2.settings.addPrecedence) {
+            active_index = 1;
+          }
+          active_option = self2.selectable()[active_index];
+        }
+      } else if (create2) {
+        active_option = create2;
+      }
+      if (triggerDropdown && !self2.isOpen) {
+        self2.open();
+        self2.scrollToOption(active_option, "auto");
+      }
+      self2.setActiveOption(active_option);
+    } else {
+      self2.clearActiveOption();
+      if (triggerDropdown && self2.isOpen) {
+        self2.close(false);
+      }
+    }
+  }
+  selectable() {
+    return this.dropdown_content.querySelectorAll("[data-selectable]");
+  }
+  addOption(data3, user_created = false) {
+    const self2 = this;
+    if (Array.isArray(data3)) {
+      self2.addOptions(data3, user_created);
+      return false;
+    }
+    const key = hash_key(data3[self2.settings.valueField]);
+    if (key === null || self2.options.hasOwnProperty(key)) {
+      return false;
+    }
+    data3.$order = data3.$order || ++self2.order;
+    data3.$id = self2.inputId + "-opt-" + data3.$order;
+    self2.options[key] = data3;
+    self2.lastQuery = null;
+    if (user_created) {
+      self2.userOptions[key] = user_created;
+      self2.trigger("option_add", key, data3);
+    }
+    return key;
+  }
+  addOptions(data3, user_created = false) {
+    iterate(data3, (dat) => {
+      this.addOption(dat, user_created);
+    });
+  }
+  registerOption(data3) {
+    return this.addOption(data3);
+  }
+  registerOptionGroup(data3) {
+    var key = hash_key(data3[this.settings.optgroupValueField]);
+    if (key === null)
+      return false;
+    data3.$order = data3.$order || ++this.order;
+    this.optgroups[key] = data3;
+    return key;
+  }
+  addOptionGroup(id, data3) {
+    var hashed_id;
+    data3[this.settings.optgroupValueField] = id;
+    if (hashed_id = this.registerOptionGroup(data3)) {
+      this.trigger("optgroup_add", hashed_id, data3);
+    }
+  }
+  removeOptionGroup(id) {
+    if (this.optgroups.hasOwnProperty(id)) {
+      delete this.optgroups[id];
+      this.clearCache();
+      this.trigger("optgroup_remove", id);
+    }
+  }
+  clearOptionGroups() {
+    this.optgroups = {};
+    this.clearCache();
+    this.trigger("optgroup_clear");
+  }
+  updateOption(value, data3) {
+    const self2 = this;
+    var item_new;
+    var index_item;
+    const value_old = hash_key(value);
+    const value_new = hash_key(data3[self2.settings.valueField]);
+    if (value_old === null)
+      return;
+    if (!self2.options.hasOwnProperty(value_old))
+      return;
+    if (typeof value_new !== "string")
+      throw new Error("Value must be set in option data");
+    const option3 = self2.getOption(value_old);
+    const item2 = self2.getItem(value_old);
+    data3.$order = data3.$order || self2.options[value_old].$order;
+    delete self2.options[value_old];
+    self2.uncacheValue(value_new);
+    self2.options[value_new] = data3;
+    if (option3) {
+      if (self2.dropdown_content.contains(option3)) {
+        const option_new = self2._render("option", data3);
+        replaceNode(option3, option_new);
+        if (self2.activeOption === option3) {
+          self2.setActiveOption(option_new);
+        }
+      }
+      option3.remove();
+    }
+    if (item2) {
+      index_item = self2.items.indexOf(value_old);
+      if (index_item !== -1) {
+        self2.items.splice(index_item, 1, value_new);
+      }
+      item_new = self2._render("item", data3);
+      if (item2.classList.contains("active"))
+        addClasses(item_new, "active");
+      replaceNode(item2, item_new);
+    }
+    self2.lastQuery = null;
+  }
+  removeOption(value, silent) {
+    const self2 = this;
+    value = get_hash(value);
+    self2.uncacheValue(value);
+    delete self2.userOptions[value];
+    delete self2.options[value];
+    self2.lastQuery = null;
+    self2.trigger("option_remove", value);
+    self2.removeItem(value, silent);
+  }
+  clearOptions() {
+    this.loadedSearches = {};
+    this.userOptions = {};
+    this.clearCache();
+    var selected = {};
+    iterate(this.options, (option3, key) => {
+      if (this.items.indexOf(key) >= 0) {
+        selected[key] = this.options[key];
+      }
+    });
+    this.options = this.sifter.items = selected;
+    this.lastQuery = null;
+    this.trigger("option_clear");
+  }
+  getOption(value, create2 = false) {
+    const hashed = hash_key(value);
+    if (hashed !== null && this.options.hasOwnProperty(hashed)) {
+      const option3 = this.options[hashed];
+      if (option3.$div) {
+        return option3.$div;
+      }
+      if (create2) {
+        return this._render("option", option3);
+      }
+    }
+    return null;
+  }
+  getAdjacent(option3, direction, type = "option") {
+    var self2 = this, all;
+    if (!option3) {
+      return null;
+    }
+    if (type == "item") {
+      all = self2.controlChildren();
+    } else {
+      all = self2.dropdown_content.querySelectorAll("[data-selectable]");
+    }
+    for (let i = 0; i < all.length; i++) {
+      if (all[i] != option3) {
+        continue;
+      }
+      if (direction > 0) {
+        return all[i + 1];
+      }
+      return all[i - 1];
+    }
+    return null;
+  }
+  getItem(item2) {
+    if (typeof item2 == "object") {
+      return item2;
+    }
+    var value = hash_key(item2);
+    return value !== null ? this.control.querySelector(`[data-value="${addSlashes(value)}"]`) : null;
+  }
+  addItems(values, silent) {
+    var self2 = this;
+    var items = Array.isArray(values) ? values : [values];
+    items = items.filter((x) => self2.items.indexOf(x) === -1);
+    for (let i = 0, n2 = items.length; i < n2; i++) {
+      self2.isPending = i < n2 - 1;
+      self2.addItem(items[i], silent);
+    }
+  }
+  addItem(value, silent) {
+    var events = silent ? [] : ["change", "dropdown_close"];
+    debounce_events(this, events, () => {
+      var item2, wasFull;
+      const self2 = this;
+      const inputMode = self2.settings.mode;
+      const hashed = hash_key(value);
+      if (hashed && self2.items.indexOf(hashed) !== -1) {
+        if (inputMode === "single") {
+          self2.close();
+        }
+        if (inputMode === "single" || !self2.settings.duplicates) {
+          return;
+        }
+      }
+      if (hashed === null || !self2.options.hasOwnProperty(hashed))
+        return;
+      if (inputMode === "single")
+        self2.clear(silent);
+      if (inputMode === "multi" && self2.isFull())
+        return;
+      item2 = self2._render("item", self2.options[hashed]);
+      if (self2.control.contains(item2)) {
+        item2 = item2.cloneNode(true);
+      }
+      wasFull = self2.isFull();
+      self2.items.splice(self2.caretPos, 0, hashed);
+      self2.insertAtCaret(item2);
+      if (self2.isSetup) {
+        if (!self2.isPending && self2.settings.hideSelected) {
+          let option3 = self2.getOption(hashed);
+          let next = self2.getAdjacent(option3, 1);
+          if (next) {
+            self2.setActiveOption(next);
+          }
+        }
+        if (!self2.isPending && !self2.settings.closeAfterSelect) {
+          self2.refreshOptions(self2.isFocused && inputMode !== "single");
+        }
+        if (self2.settings.closeAfterSelect != false && self2.isFull()) {
+          self2.close();
+        } else if (!self2.isPending) {
+          self2.positionDropdown();
+        }
+        self2.trigger("item_add", hashed, item2);
+        if (!self2.isPending) {
+          self2.updateOriginalInput({
+            silent
+          });
+        }
+      }
+      if (!self2.isPending || !wasFull && self2.isFull()) {
+        self2.inputState();
+        self2.refreshState();
+      }
+    });
+  }
+  removeItem(item2 = null, silent) {
+    const self2 = this;
+    item2 = self2.getItem(item2);
+    if (!item2)
+      return;
+    var i, idx;
+    const value = item2.dataset.value;
+    i = nodeIndex(item2);
+    item2.remove();
+    if (item2.classList.contains("active")) {
+      idx = self2.activeItems.indexOf(item2);
+      self2.activeItems.splice(idx, 1);
+      removeClasses(item2, "active");
+    }
+    self2.items.splice(i, 1);
+    self2.lastQuery = null;
+    if (!self2.settings.persist && self2.userOptions.hasOwnProperty(value)) {
+      self2.removeOption(value, silent);
+    }
+    if (i < self2.caretPos) {
+      self2.setCaret(self2.caretPos - 1);
+    }
+    self2.updateOriginalInput({
+      silent
+    });
+    self2.refreshState();
+    self2.positionDropdown();
+    self2.trigger("item_remove", value, item2);
+  }
+  createItem(input = null, triggerDropdown = true, callback = () => {
+  }) {
+    var self2 = this;
+    var caret2 = self2.caretPos;
+    var output;
+    input = input || self2.inputValue();
+    if (!self2.canCreate(input)) {
+      callback();
+      return false;
+    }
+    self2.lock();
+    var created = false;
+    var create2 = (data3) => {
+      self2.unlock();
+      if (!data3 || typeof data3 !== "object")
+        return callback();
+      var value = hash_key(data3[self2.settings.valueField]);
+      if (typeof value !== "string") {
+        return callback();
+      }
+      self2.setTextboxValue();
+      self2.addOption(data3, true);
+      self2.setCaret(caret2);
+      self2.addItem(value);
+      callback(data3);
+      created = true;
+    };
+    if (typeof self2.settings.create === "function") {
+      output = self2.settings.create.call(this, input, create2);
+    } else {
+      output = {
+        [self2.settings.labelField]: input,
+        [self2.settings.valueField]: input
+      };
+    }
+    if (!created) {
+      create2(output);
+    }
+    return true;
+  }
+  refreshItems() {
+    var self2 = this;
+    self2.lastQuery = null;
+    if (self2.isSetup) {
+      self2.addItems(self2.items);
+    }
+    self2.updateOriginalInput();
+    self2.refreshState();
+  }
+  refreshState() {
+    const self2 = this;
+    self2.refreshValidityState();
+    const isFull = self2.isFull();
+    const isLocked = self2.isLocked;
+    self2.wrapper.classList.toggle("rtl", self2.rtl);
+    const wrap_classList = self2.wrapper.classList;
+    wrap_classList.toggle("focus", self2.isFocused);
+    wrap_classList.toggle("disabled", self2.isDisabled);
+    wrap_classList.toggle("required", self2.isRequired);
+    wrap_classList.toggle("invalid", !self2.isValid);
+    wrap_classList.toggle("locked", isLocked);
+    wrap_classList.toggle("full", isFull);
+    wrap_classList.toggle("input-active", self2.isFocused && !self2.isInputHidden);
+    wrap_classList.toggle("dropdown-active", self2.isOpen);
+    wrap_classList.toggle("has-options", isEmptyObject(self2.options));
+    wrap_classList.toggle("has-items", self2.items.length > 0);
+  }
+  refreshValidityState() {
+    var self2 = this;
+    if (!self2.input.checkValidity) {
+      return;
+    }
+    self2.isValid = self2.input.checkValidity();
+    self2.isInvalid = !self2.isValid;
+  }
+  isFull() {
+    return this.settings.maxItems !== null && this.items.length >= this.settings.maxItems;
+  }
+  updateOriginalInput(opts = {}) {
+    const self2 = this;
+    var option3, label;
+    const empty_option = self2.input.querySelector('option[value=""]');
+    if (self2.is_select_tag) {
+      let AddSelected = function(option_el, value, label2) {
+        if (!option_el) {
+          option_el = getDom('<option value="' + escape_html(value) + '">' + escape_html(label2) + "</option>");
+        }
+        if (option_el != empty_option) {
+          self2.input.append(option_el);
+        }
+        selected.push(option_el);
+        if (option_el != empty_option || has_selected > 0) {
+          option_el.selected = true;
+        }
+        return option_el;
+      };
+      const selected = [];
+      const has_selected = self2.input.querySelectorAll("option:checked").length;
+      self2.input.querySelectorAll("option:checked").forEach((option_el) => {
+        option_el.selected = false;
+      });
+      if (self2.items.length == 0 && self2.settings.mode == "single") {
+        AddSelected(empty_option, "", "");
+      } else {
+        self2.items.forEach((value) => {
+          option3 = self2.options[value];
+          label = option3[self2.settings.labelField] || "";
+          if (selected.includes(option3.$option)) {
+            const reuse_opt = self2.input.querySelector(`option[value="${addSlashes(value)}"]:not(:checked)`);
+            AddSelected(reuse_opt, value, label);
+          } else {
+            option3.$option = AddSelected(option3.$option, value, label);
+          }
+        });
+      }
+    } else {
+      self2.input.value = self2.getValue();
+    }
+    if (self2.isSetup) {
+      if (!opts.silent) {
+        self2.trigger("change", self2.getValue());
+      }
+    }
+  }
+  open() {
+    var self2 = this;
+    if (self2.isLocked || self2.isOpen || self2.settings.mode === "multi" && self2.isFull())
+      return;
+    self2.isOpen = true;
+    setAttr(self2.focus_node, {
+      "aria-expanded": "true"
+    });
+    self2.refreshState();
+    applyCSS(self2.dropdown, {
+      visibility: "hidden",
+      display: "block"
+    });
+    self2.positionDropdown();
+    applyCSS(self2.dropdown, {
+      visibility: "visible",
+      display: "block"
+    });
+    self2.focus();
+    self2.trigger("dropdown_open", self2.dropdown);
+  }
+  close(setTextboxValue = true) {
+    var self2 = this;
+    var trigger = self2.isOpen;
+    if (setTextboxValue) {
+      self2.setTextboxValue();
+      if (self2.settings.mode === "single" && self2.items.length) {
+        self2.hideInput();
+      }
+    }
+    self2.isOpen = false;
+    setAttr(self2.focus_node, {
+      "aria-expanded": "false"
+    });
+    applyCSS(self2.dropdown, {
+      display: "none"
+    });
+    if (self2.settings.hideSelected) {
+      self2.clearActiveOption();
+    }
+    self2.refreshState();
+    if (trigger)
+      self2.trigger("dropdown_close", self2.dropdown);
+  }
+  positionDropdown() {
+    if (this.settings.dropdownParent !== "body") {
+      return;
+    }
+    var context = this.control;
+    var rect = context.getBoundingClientRect();
+    var top = context.offsetHeight + rect.top + window.scrollY;
+    var left = rect.left + window.scrollX;
+    applyCSS(this.dropdown, {
+      width: rect.width + "px",
+      top: top + "px",
+      left: left + "px"
+    });
+  }
+  clear(silent) {
+    var self2 = this;
+    if (!self2.items.length)
+      return;
+    var items = self2.controlChildren();
+    iterate(items, (item2) => {
+      self2.removeItem(item2, true);
+    });
+    self2.showInput();
+    if (!silent)
+      self2.updateOriginalInput();
+    self2.trigger("clear");
+  }
+  insertAtCaret(el) {
+    const self2 = this;
+    const caret2 = self2.caretPos;
+    const target = self2.control;
+    target.insertBefore(el, target.children[caret2]);
+    self2.setCaret(caret2 + 1);
+  }
+  deleteSelection(e2) {
+    var direction, selection, caret2, tail;
+    var self2 = this;
+    direction = e2 && e2.keyCode === KEY_BACKSPACE ? -1 : 1;
+    selection = getSelection(self2.control_input);
+    const rm_items = [];
+    if (self2.activeItems.length) {
+      tail = getTail(self2.activeItems, direction);
+      caret2 = nodeIndex(tail);
+      if (direction > 0) {
+        caret2++;
+      }
+      iterate(self2.activeItems, (item2) => rm_items.push(item2));
+    } else if ((self2.isFocused || self2.settings.mode === "single") && self2.items.length) {
+      const items = self2.controlChildren();
+      if (direction < 0 && selection.start === 0 && selection.length === 0) {
+        rm_items.push(items[self2.caretPos - 1]);
+      } else if (direction > 0 && selection.start === self2.inputValue().length) {
+        rm_items.push(items[self2.caretPos]);
+      }
+    }
+    const values = rm_items.map((item2) => item2.dataset.value);
+    if (!values.length || typeof self2.settings.onDelete === "function" && self2.settings.onDelete.call(self2, values, e2) === false) {
+      return false;
+    }
+    preventDefault(e2, true);
+    if (typeof caret2 !== "undefined") {
+      self2.setCaret(caret2);
+    }
+    while (rm_items.length) {
+      self2.removeItem(rm_items.pop());
+    }
+    self2.showInput();
+    self2.positionDropdown();
+    self2.refreshOptions(false);
+    return true;
+  }
+  advanceSelection(direction, e2) {
+    var last_active, adjacent, self2 = this;
+    if (self2.rtl)
+      direction *= -1;
+    if (self2.inputValue().length)
+      return;
+    if (isKeyDown(KEY_SHORTCUT, e2) || isKeyDown("shiftKey", e2)) {
+      last_active = self2.getLastActive(direction);
+      if (last_active) {
+        if (!last_active.classList.contains("active")) {
+          adjacent = last_active;
+        } else {
+          adjacent = self2.getAdjacent(last_active, direction, "item");
+        }
+      } else if (direction > 0) {
+        adjacent = self2.control_input.nextElementSibling;
+      } else {
+        adjacent = self2.control_input.previousElementSibling;
+      }
+      if (adjacent) {
+        if (adjacent.classList.contains("active")) {
+          self2.removeActiveItem(last_active);
+        }
+        self2.setActiveItemClass(adjacent);
+      }
+    } else {
+      self2.moveCaret(direction);
+    }
+  }
+  moveCaret(direction) {
+  }
+  getLastActive(direction) {
+    let last_active = this.control.querySelector(".last-active");
+    if (last_active) {
+      return last_active;
+    }
+    var result = this.control.querySelectorAll(".active");
+    if (result) {
+      return getTail(result, direction);
+    }
+  }
+  setCaret(new_pos) {
+    this.caretPos = this.items.length;
+  }
+  controlChildren() {
+    return Array.from(this.control.querySelectorAll("[data-ts-item]"));
+  }
+  lock() {
+    this.isLocked = true;
+    this.refreshState();
+  }
+  unlock() {
+    this.isLocked = false;
+    this.refreshState();
+  }
+  disable() {
+    var self2 = this;
+    self2.input.disabled = true;
+    self2.control_input.disabled = true;
+    self2.focus_node.tabIndex = -1;
+    self2.isDisabled = true;
+    this.close();
+    self2.lock();
+  }
+  enable() {
+    var self2 = this;
+    self2.input.disabled = false;
+    self2.control_input.disabled = false;
+    self2.focus_node.tabIndex = self2.tabIndex;
+    self2.isDisabled = false;
+    self2.unlock();
+  }
+  destroy() {
+    var self2 = this;
+    var revertSettings = self2.revertSettings;
+    self2.trigger("destroy");
+    self2.off();
+    self2.wrapper.remove();
+    self2.dropdown.remove();
+    self2.input.innerHTML = revertSettings.innerHTML;
+    self2.input.tabIndex = revertSettings.tabIndex;
+    removeClasses(self2.input, "tomselected", "ts-hidden-accessible");
+    self2._destroy();
+    delete self2.input.tomselect;
+  }
+  render(templateName, data3) {
+    if (typeof this.settings.render[templateName] !== "function") {
+      return null;
+    }
+    return this._render(templateName, data3);
+  }
+  _render(templateName, data3) {
+    var value = "", id, html;
+    const self2 = this;
+    if (templateName === "option" || templateName == "item") {
+      value = get_hash(data3[self2.settings.valueField]);
+    }
+    html = self2.settings.render[templateName].call(this, data3, escape_html);
+    if (html == null) {
+      return html;
+    }
+    html = getDom(html);
+    if (templateName === "option" || templateName === "option_create") {
+      if (data3[self2.settings.disabledField]) {
+        setAttr(html, {
+          "aria-disabled": "true"
+        });
+      } else {
+        setAttr(html, {
+          "data-selectable": ""
+        });
+      }
+    } else if (templateName === "optgroup") {
+      id = data3.group[self2.settings.optgroupValueField];
+      setAttr(html, {
+        "data-group": id
+      });
+      if (data3.group[self2.settings.disabledField]) {
+        setAttr(html, {
+          "data-disabled": ""
+        });
+      }
+    }
+    if (templateName === "option" || templateName === "item") {
+      setAttr(html, {
+        "data-value": value
+      });
+      if (templateName === "item") {
+        addClasses(html, self2.settings.itemClass);
+        setAttr(html, {
+          "data-ts-item": ""
+        });
+      } else {
+        addClasses(html, self2.settings.optionClass);
+        setAttr(html, {
+          role: "option",
+          id: data3.$id
+        });
+        self2.options[value].$div = html;
+      }
+    }
+    return html;
+  }
+  clearCache() {
+    iterate(this.options, (option3, value) => {
+      if (option3.$div) {
+        option3.$div.remove();
+        delete option3.$div;
+      }
+    });
+  }
+  uncacheValue(value) {
+    const option_el = this.getOption(value);
+    if (option_el)
+      option_el.remove();
+  }
+  canCreate(input) {
+    return this.settings.create && input.length > 0 && this.settings.createFilter.call(this, input);
+  }
+  hook(when, method, new_fn) {
+    var self2 = this;
+    var orig_method = self2[method];
+    self2[method] = function() {
+      var result, result_new;
+      if (when === "after") {
+        result = orig_method.apply(self2, arguments);
+      }
+      result_new = new_fn.apply(self2, arguments);
+      if (when === "instead") {
+        return result_new;
+      }
+      if (when === "before") {
+        result = orig_method.apply(self2, arguments);
+      }
+      return result;
+    };
+  }
+};
+function change_listener() {
+  addEvent2(this.input, "change", () => {
+    this.sync();
+  });
+}
+function checkbox_options() {
+  var self2 = this;
+  var orig_onOptionSelect = self2.onOptionSelect;
+  self2.settings.hideSelected = false;
+  var UpdateCheckbox = function UpdateCheckbox2(option3) {
+    setTimeout(() => {
+      var checkbox = option3.querySelector("input");
+      if (option3.classList.contains("selected")) {
+        checkbox.checked = true;
+      } else {
+        checkbox.checked = false;
+      }
+    }, 1);
+  };
+  self2.hook("after", "setupTemplates", () => {
+    var orig_render_option = self2.settings.render.option;
+    self2.settings.render.option = (data3, escape_html2) => {
+      var rendered = getDom(orig_render_option.call(self2, data3, escape_html2));
+      var checkbox = document.createElement("input");
+      checkbox.addEventListener("click", function(evt) {
+        preventDefault(evt);
+      });
+      checkbox.type = "checkbox";
+      const hashed = hash_key(data3[self2.settings.valueField]);
+      if (hashed && self2.items.indexOf(hashed) > -1) {
+        checkbox.checked = true;
+      }
+      rendered.prepend(checkbox);
+      return rendered;
+    };
+  });
+  self2.on("item_remove", (value) => {
+    var option3 = self2.getOption(value);
+    if (option3) {
+      option3.classList.remove("selected");
+      UpdateCheckbox(option3);
+    }
+  });
+  self2.hook("instead", "onOptionSelect", (evt, option3) => {
+    if (option3.classList.contains("selected")) {
+      option3.classList.remove("selected");
+      self2.removeItem(option3.dataset.value);
+      self2.refreshOptions();
+      preventDefault(evt, true);
+      return;
+    }
+    orig_onOptionSelect.call(self2, evt, option3);
+    UpdateCheckbox(option3);
+  });
+}
+function clear_button(userOptions) {
+  const self2 = this;
+  const options2 = Object.assign({
+    className: "clear-button",
+    title: "Clear All",
+    html: (data3) => {
+      return `<div class="${data3.className}" title="${data3.title}">&times;</div>`;
+    }
+  }, userOptions);
+  self2.on("initialize", () => {
+    var button = getDom(options2.html(options2));
+    button.addEventListener("click", (evt) => {
+      if (self2.isDisabled) {
+        return;
+      }
+      self2.clear();
+      if (self2.settings.mode === "single" && self2.settings.allowEmptyOption) {
+        self2.addItem("");
+      }
+      evt.preventDefault();
+      evt.stopPropagation();
+    });
+    self2.control.appendChild(button);
+  });
+}
+function drag_drop() {
+  var self2 = this;
+  if (!$.fn.sortable)
+    throw new Error('The "drag_drop" plugin requires jQuery UI "sortable".');
+  if (self2.settings.mode !== "multi")
+    return;
+  var orig_lock = self2.lock;
+  var orig_unlock = self2.unlock;
+  self2.hook("instead", "lock", () => {
+    var sortable = $(self2.control).data("sortable");
+    if (sortable)
+      sortable.disable();
+    return orig_lock.call(self2);
+  });
+  self2.hook("instead", "unlock", () => {
+    var sortable = $(self2.control).data("sortable");
+    if (sortable)
+      sortable.enable();
+    return orig_unlock.call(self2);
+  });
+  self2.on("initialize", () => {
+    var $control = $(self2.control).sortable({
+      items: "[data-value]",
+      forcePlaceholderSize: true,
+      disabled: self2.isLocked,
+      start: (e2, ui) => {
+        ui.placeholder.css("width", ui.helper.css("width"));
+        $control.css({
+          overflow: "visible"
+        });
+      },
+      stop: () => {
+        $control.css({
+          overflow: "hidden"
+        });
+        var values = [];
+        $control.children("[data-value]").each(function() {
+          if (this.dataset.value)
+            values.push(this.dataset.value);
+        });
+        self2.setValue(values);
+      }
+    });
+  });
+}
+function dropdown_header(userOptions) {
+  const self2 = this;
+  const options2 = Object.assign({
+    title: "Untitled",
+    headerClass: "dropdown-header",
+    titleRowClass: "dropdown-header-title",
+    labelClass: "dropdown-header-label",
+    closeClass: "dropdown-header-close",
+    html: (data3) => {
+      return '<div class="' + data3.headerClass + '"><div class="' + data3.titleRowClass + '"><span class="' + data3.labelClass + '">' + data3.title + '</span><a class="' + data3.closeClass + '">&times;</a></div></div>';
+    }
+  }, userOptions);
+  self2.on("initialize", () => {
+    var header = getDom(options2.html(options2));
+    var close_link = header.querySelector("." + options2.closeClass);
+    if (close_link) {
+      close_link.addEventListener("click", (evt) => {
+        preventDefault(evt, true);
+        self2.close();
+      });
+    }
+    self2.dropdown.insertBefore(header, self2.dropdown.firstChild);
+  });
+}
+function caret_position() {
+  var self2 = this;
+  self2.hook("instead", "setCaret", (new_pos) => {
+    if (self2.settings.mode === "single" || !self2.control.contains(self2.control_input)) {
+      new_pos = self2.items.length;
+    } else {
+      new_pos = Math.max(0, Math.min(self2.items.length, new_pos));
+      if (new_pos != self2.caretPos && !self2.isPending) {
+        self2.controlChildren().forEach((child, j) => {
+          if (j < new_pos) {
+            self2.control_input.insertAdjacentElement("beforebegin", child);
+          } else {
+            self2.control.appendChild(child);
+          }
+        });
+      }
+    }
+    self2.caretPos = new_pos;
+  });
+  self2.hook("instead", "moveCaret", (direction) => {
+    if (!self2.isFocused)
+      return;
+    const last_active = self2.getLastActive(direction);
+    if (last_active) {
+      const idx = nodeIndex(last_active);
+      self2.setCaret(direction > 0 ? idx + 1 : idx);
+      self2.setActiveItem();
+      removeClasses(last_active, "last-active");
+    } else {
+      self2.setCaret(self2.caretPos + direction);
+    }
+  });
+}
+function dropdown_input() {
+  var self2 = this;
+  self2.settings.shouldOpen = true;
+  self2.hook("before", "setup", () => {
+    self2.focus_node = self2.control;
+    addClasses(self2.control_input, "dropdown-input");
+    const div = getDom('<div class="dropdown-input-wrap">');
+    div.append(self2.control_input);
+    self2.dropdown.insertBefore(div, self2.dropdown.firstChild);
+  });
+  self2.on("initialize", () => {
+    self2.control_input.addEventListener("keydown", (evt) => {
+      switch (evt.keyCode) {
+        case KEY_ESC:
+          if (self2.isOpen) {
+            preventDefault(evt, true);
+            self2.close();
+          }
+          self2.clearActiveItems();
+          return;
+        case KEY_TAB:
+          self2.focus_node.tabIndex = -1;
+          break;
+      }
+      return self2.onKeyDown.call(self2, evt);
+    });
+    self2.on("blur", () => {
+      self2.focus_node.tabIndex = self2.isDisabled ? -1 : self2.tabIndex;
+    });
+    self2.on("dropdown_open", () => {
+      self2.control_input.focus();
+    });
+    const orig_onBlur = self2.onBlur;
+    self2.hook("instead", "onBlur", (evt) => {
+      if (evt && evt.relatedTarget == self2.control_input)
+        return;
+      return orig_onBlur.call(self2);
+    });
+    addEvent2(self2.control_input, "blur", () => self2.onBlur());
+    self2.hook("before", "close", () => {
+      if (!self2.isOpen)
+        return;
+      self2.focus_node.focus();
+    });
+  });
+}
+function input_autogrow() {
+  var self2 = this;
+  self2.on("initialize", () => {
+    var test_input = document.createElement("span");
+    var control = self2.control_input;
+    test_input.style.cssText = "position:absolute; top:-99999px; left:-99999px; width:auto; padding:0; white-space:pre; ";
+    self2.wrapper.appendChild(test_input);
+    var transfer_styles = ["letterSpacing", "fontSize", "fontFamily", "fontWeight", "textTransform"];
+    for (const style_name of transfer_styles) {
+      test_input.style[style_name] = control.style[style_name];
+    }
+    var resize = () => {
+      if (self2.items.length > 0) {
+        test_input.textContent = control.value;
+        control.style.width = test_input.clientWidth + "px";
+      } else {
+        control.style.width = "";
+      }
+    };
+    resize();
+    self2.on("update item_add item_remove", resize);
+    addEvent2(control, "input", resize);
+    addEvent2(control, "keyup", resize);
+    addEvent2(control, "blur", resize);
+    addEvent2(control, "update", resize);
+  });
+}
+function no_backspace_delete() {
+  var self2 = this;
+  var orig_deleteSelection = self2.deleteSelection;
+  this.hook("instead", "deleteSelection", (evt) => {
+    if (self2.activeItems.length) {
+      return orig_deleteSelection.call(self2, evt);
+    }
+    return false;
+  });
+}
+function no_active_items() {
+  this.hook("instead", "setActiveItem", () => {
+  });
+  this.hook("instead", "selectAll", () => {
+  });
+}
+function optgroup_columns() {
+  var self2 = this;
+  var orig_keydown = self2.onKeyDown;
+  self2.hook("instead", "onKeyDown", (evt) => {
+    var index2, option3, options2, optgroup;
+    if (!self2.isOpen || !(evt.keyCode === KEY_LEFT || evt.keyCode === KEY_RIGHT)) {
+      return orig_keydown.call(self2, evt);
+    }
+    optgroup = parentMatch(self2.activeOption, "[data-group]");
+    index2 = nodeIndex(self2.activeOption, "[data-selectable]");
+    if (!optgroup) {
+      return;
+    }
+    if (evt.keyCode === KEY_LEFT) {
+      optgroup = optgroup.previousSibling;
+    } else {
+      optgroup = optgroup.nextSibling;
+    }
+    if (!optgroup) {
+      return;
+    }
+    options2 = optgroup.querySelectorAll("[data-selectable]");
+    option3 = options2[Math.min(options2.length - 1, index2)];
+    if (option3) {
+      self2.setActiveOption(option3);
+    }
+  });
+}
+function remove_button(userOptions) {
+  const options2 = Object.assign({
+    label: "&times;",
+    title: "Remove",
+    className: "remove",
+    append: true
+  }, userOptions);
+  var self2 = this;
+  if (!options2.append) {
+    return;
+  }
+  var html = '<a href="javascript:void(0)" class="' + options2.className + '" tabindex="-1" title="' + escape_html(options2.title) + '">' + options2.label + "</a>";
+  self2.hook("after", "setupTemplates", () => {
+    var orig_render_item = self2.settings.render.item;
+    self2.settings.render.item = (data3, escape2) => {
+      var rendered = getDom(orig_render_item.call(self2, data3, escape2));
+      var close_button = getDom(html);
+      rendered.appendChild(close_button);
+      addEvent2(close_button, "mousedown", (evt) => {
+        preventDefault(evt, true);
+      });
+      addEvent2(close_button, "click", (evt) => {
+        preventDefault(evt, true);
+        if (self2.isLocked)
+          return;
+        var value = rendered.dataset.value;
+        self2.removeItem(value);
+        self2.refreshOptions(false);
+        self2.inputState();
+      });
+      return rendered;
+    };
+  });
+}
+function restore_on_backspace(userOptions) {
+  const self2 = this;
+  const options2 = Object.assign({
+    text: (option3) => {
+      return option3[self2.settings.labelField];
+    }
+  }, userOptions);
+  self2.on("item_remove", function(value) {
+    if (!self2.isFocused) {
+      return;
+    }
+    if (self2.control_input.value.trim() === "") {
+      var option3 = self2.options[value];
+      if (option3) {
+        self2.setTextboxValue(options2.text.call(self2, option3));
+      }
+    }
+  });
+}
+function virtual_scroll() {
+  const self2 = this;
+  const orig_canLoad = self2.canLoad;
+  const orig_clearActiveOption = self2.clearActiveOption;
+  const orig_loadCallback = self2.loadCallback;
+  var pagination = {};
+  var dropdown_content;
+  var loading_more = false;
+  var load_more_opt;
+  if (!self2.settings.shouldLoadMore) {
+    self2.settings.shouldLoadMore = function() {
+      const scroll_percent = dropdown_content.clientHeight / (dropdown_content.scrollHeight - dropdown_content.scrollTop);
+      if (scroll_percent > 0.9) {
+        return true;
+      }
+      if (self2.activeOption) {
+        var selectable = self2.selectable();
+        var index2 = [...selectable].indexOf(self2.activeOption);
+        if (index2 >= selectable.length - 2) {
+          return true;
+        }
+      }
+      return false;
+    };
+  }
+  if (!self2.settings.firstUrl) {
+    throw "virtual_scroll plugin requires a firstUrl() method";
+  }
+  self2.settings.sortField = [{
+    field: "$order"
+  }, {
+    field: "$score"
+  }];
+  function canLoadMore(query) {
+    if (typeof self2.settings.maxOptions === "number" && dropdown_content.children.length >= self2.settings.maxOptions) {
+      return false;
+    }
+    if (query in pagination && pagination[query]) {
+      return true;
+    }
+    return false;
+  }
+  self2.setNextUrl = function(value, next_url) {
+    pagination[value] = next_url;
+  };
+  self2.getUrl = function(query) {
+    if (query in pagination) {
+      const next_url = pagination[query];
+      pagination[query] = false;
+      return next_url;
+    }
+    pagination = {};
+    return self2.settings.firstUrl.call(self2, query);
+  };
+  self2.hook("instead", "clearActiveOption", () => {
+    if (loading_more) {
+      return;
+    }
+    return orig_clearActiveOption.call(self2);
+  });
+  self2.hook("instead", "canLoad", (query) => {
+    if (!(query in pagination)) {
+      return orig_canLoad.call(self2, query);
+    }
+    return canLoadMore(query);
+  });
+  self2.hook("instead", "loadCallback", (options2, optgroups) => {
+    if (!loading_more) {
+      self2.clearOptions();
+    } else if (load_more_opt && options2.length > 0) {
+      load_more_opt.dataset.value = options2[0][self2.settings.valueField];
+    }
+    orig_loadCallback.call(self2, options2, optgroups);
+    loading_more = false;
+  });
+  self2.hook("after", "refreshOptions", () => {
+    const query = self2.lastValue;
+    var option3;
+    if (canLoadMore(query)) {
+      option3 = self2.render("loading_more", {
+        query
+      });
+      if (option3) {
+        option3.setAttribute("data-selectable", "");
+        load_more_opt = option3;
+      }
+    } else if (query in pagination && !dropdown_content.querySelector(".no-results")) {
+      option3 = self2.render("no_more_results", {
+        query
+      });
+    }
+    if (option3) {
+      addClasses(option3, self2.settings.optionClass);
+      dropdown_content.append(option3);
+    }
+  });
+  self2.on("initialize", () => {
+    dropdown_content = self2.dropdown_content;
+    self2.settings.render = Object.assign({}, {
+      loading_more: function() {
+        return `<div class="loading-more-results">Loading more results ... </div>`;
+      },
+      no_more_results: function() {
+        return `<div class="no-more-results">No more results</div>`;
+      }
+    }, self2.settings.render);
+    dropdown_content.addEventListener("scroll", function() {
+      if (!self2.settings.shouldLoadMore.call(self2)) {
+        return;
+      }
+      if (!canLoadMore(self2.lastValue)) {
+        return;
+      }
+      if (loading_more)
+        return;
+      loading_more = true;
+      self2.load.call(self2, self2.lastValue);
+    });
+  });
+}
+TomSelect.define("change_listener", change_listener);
+TomSelect.define("checkbox_options", checkbox_options);
+TomSelect.define("clear_button", clear_button);
+TomSelect.define("drag_drop", drag_drop);
+TomSelect.define("dropdown_header", dropdown_header);
+TomSelect.define("caret_position", caret_position);
+TomSelect.define("dropdown_input", dropdown_input);
+TomSelect.define("input_autogrow", input_autogrow);
+TomSelect.define("no_backspace_delete", no_backspace_delete);
+TomSelect.define("no_active_items", no_active_items);
+TomSelect.define("optgroup_columns", optgroup_columns);
+TomSelect.define("remove_button", remove_button);
+TomSelect.define("restore_on_backspace", restore_on_backspace);
+TomSelect.define("virtual_scroll", virtual_scroll);
+
 // packages/forms/resources/js/components/select.js
 var select_default = (Alpine) => {
   Alpine.data("selectFormComponent", ({
@@ -19956,158 +23077,77 @@ var select_default = (Alpine) => {
     getOptionsUsing,
     getSearchResultsUsing,
     isAutofocused,
+    isMultiple,
     hasDynamicOptions,
+    maxItems,
+    noSearchResultsMessage,
     options: options2,
+    placeholder,
     state: state2
   }) => {
     return {
-      focusedOptionIndex: null,
-      hasNoSearchResults: false,
-      index: {},
-      isLoading: false,
-      isOpen: false,
-      label: null,
-      options: options2,
-      search: "",
+      select: null,
+      shouldUpdateState: true,
       state: state2,
-      init: async function() {
+      init: function() {
+        this.select = new TomSelect(this.$refs.input, {
+          loadThrottle: 1e3,
+          maxItems: maxItems ?? void 0,
+          options: this.transformOptions(options2),
+          placeholder,
+          load: async (query, loadOptions) => {
+            if (query === void 0 || query === null || query === "") {
+              loadOptions(this.transformOptions(await getOptionsUsing()));
+              return;
+            }
+            loadOptions(this.transformOptions(await getSearchResultsUsing(query)));
+          },
+          onChange: (state3) => {
+            this.shouldUpdateState = false;
+            this.state = state3;
+          },
+          onDropdownOpen: async () => {
+            if (!hasDynamicOptions) {
+              return;
+            }
+            this.select.clearOptions();
+            this.select.load();
+          },
+          onFocus: async () => {
+            this.select.open();
+          },
+          render: {
+            no_results: () => `<div class="no-results">${noSearchResultsMessage}</div>`
+          }
+        });
         if (isAutofocused) {
-          this.openListbox(false);
+          this.select.focus();
         }
-        this.addOptionsToIndex(this.options);
-        this.label = await this.getOptionLabel();
-        this.$watch("search", Alpine.debounce(async () => {
-          this.hasNoSearchResults = false;
-          if (!this.isOpen || this.search === "" || this.search === null) {
-            this.options = options2;
-            this.focusedOptionIndex = 0;
+        this.$watch("state", () => {
+          if (!this.shouldUpdateState) {
+            this.shouldUpdateState = true;
             return;
           }
-          if (Object.keys(options2).length) {
-            this.options = {};
-            let search = this.search.trim().toLowerCase();
-            for (let key in options2) {
-              if (options2[key].toString().trim().toLowerCase().includes(search)) {
-                this.options[key] = options2[key];
-              }
-            }
-            this.focusedOptionIndex = 0;
+          this.select.clear(true);
+          if (isMultiple) {
+            this.state.forEach((selectedItem) => {
+              this.select.addItem(selectedItem, true);
+            });
           } else {
-            this.isLoading = true;
-            this.options = await getSearchResultsUsing(this.search);
-            this.addOptionsToIndex(this.options);
-            this.focusedOptionIndex = 0;
-            this.isLoading = false;
+            this.select.addItem(this.state, true);
           }
-          if (!Object.keys(this.options).length) {
-            this.hasNoSearchResults = true;
-          }
-        }, 500));
-        this.$watch("state", async () => {
-          this.label = await this.getOptionLabel();
+          this.select.refreshItems();
         });
       },
-      addOptionToIndex: function(key, label) {
-        this.index[key] = label;
-      },
-      addOptionsToIndex: function(options3) {
-        this.index = {
-          ...this.index,
-          ...options3
-        };
-      },
-      clearState: function() {
-        this.state = null;
-        this.label = null;
-        this.closeListbox();
-      },
-      closeListbox: function() {
-        this.isOpen = false;
-        this.focusedOptionIndex = null;
-        this.search = "";
-      },
-      evaluatePosition: function() {
-        let availableHeight = window.innerHeight - this.$refs.button.offsetHeight;
-        let element = this.$refs.button;
-        while (element) {
-          availableHeight -= element.offsetTop;
-          element = element.offsetParent;
+      transformOptions: function(options3) {
+        let optionEntires = Object.entries(options3);
+        if (!optionEntires.length) {
+          return [];
         }
-        if (this.$refs.listbox.offsetHeight <= availableHeight) {
-          this.$refs.listbox.style.bottom = "auto";
-          return;
+        if (typeof optionEntires[0][1] === "object") {
+          return options3;
         }
-        this.$refs.listbox.style.bottom = `${this.$refs.button.offsetHeight}px`;
-      },
-      focusNextOption: function() {
-        if (this.focusedOptionIndex === null) {
-          this.focusedOptionIndex = Object.keys(this.options).length - 1;
-          return;
-        }
-        if (this.focusedOptionIndex + 1 >= Object.keys(this.options).length) {
-          return;
-        }
-        this.focusedOptionIndex++;
-        this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
-          block: "center"
-        });
-      },
-      focusPreviousOption: function() {
-        if (this.focusedOptionIndex === null) {
-          this.focusedOptionIndex = 0;
-          return;
-        }
-        if (this.focusedOptionIndex <= 0) {
-          return;
-        }
-        this.focusedOptionIndex--;
-        this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
-          block: "center"
-        });
-      },
-      openListbox: async function(shouldLoadDynamicOptions = true) {
-        if (hasDynamicOptions && shouldLoadDynamicOptions) {
-          this.isLoading = true;
-          this.options = await getOptionsUsing();
-          this.isLoading = false;
-        }
-        this.focusedOptionIndex = Object.keys(this.options).indexOf(this.state);
-        if (this.focusedOptionIndex < 0) {
-          this.focusedOptionIndex = 0;
-        }
-        this.isOpen = true;
-        this.$nextTick(() => {
-          this.$refs.search.focus();
-          this.evaluatePosition();
-          this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
-            block: "center"
-          });
-        });
-      },
-      selectOption: function(index2 = null) {
-        if (!this.isOpen) {
-          this.closeListbox();
-          return;
-        }
-        this.state = Object.keys(this.options)[index2 ?? this.focusedOptionIndex];
-        this.label = this.options[this.state];
-        this.closeListbox();
-      },
-      toggleListboxVisibility: function() {
-        if (this.isOpen) {
-          this.closeListbox();
-          return;
-        }
-        this.openListbox();
-      },
-      getOptionLabel: async function() {
-        let label = this.index[this.state] ?? null;
-        if (label !== null) {
-          return label;
-        }
-        label = await getOptionLabelUsing(this.state);
-        this.addOptionToIndex(this.state, label);
-        return label;
+        return optionEntires.map((option3) => ({value: option3[0], text: option3[1]}));
       }
     };
   });
@@ -20823,7 +23863,7 @@ var Masked = /* @__PURE__ */ function() {
     }
   }, {
     key: "append",
-    value: function append(str, flags, tail) {
+    value: function append2(str, flags, tail) {
       if (!isString2(str))
         throw new Error("value should be string");
       var details = new ChangeDetails();
@@ -21061,7 +24101,7 @@ var PatternInputDefinition = /* @__PURE__ */ function() {
     }
   }, {
     key: "append",
-    value: function append() {
+    value: function append2() {
       var _this$masked;
       return (_this$masked = this.masked).append.apply(_this$masked, arguments);
     }
@@ -21259,7 +24299,7 @@ var PatternFixedDefinition = /* @__PURE__ */ function() {
     }
   }, {
     key: "append",
-    value: function append(str, flags, tail) {
+    value: function append2(str, flags, tail) {
       var details = this._appendChar(str[0], flags);
       if (tail != null) {
         details.tailShift += this.appendTail(tail).tailShift;
@@ -23845,11 +26885,11 @@ function scrollBy(el, x, y) {
 }
 function clone(el) {
   var Polymer = window.Polymer;
-  var $ = window.jQuery || window.Zepto;
+  var $2 = window.jQuery || window.Zepto;
   if (Polymer && Polymer.dom) {
     return Polymer.dom(el).cloneNode(true);
-  } else if ($) {
-    return $(el).clone(true)[0];
+  } else if ($2) {
+    return $2(el).clone(true)[0];
   } else {
     return el.cloneNode(true);
   }
@@ -23974,14 +27014,14 @@ function calculateRealTime(animatingRect, fromRect, toRect, options2) {
   return Math.sqrt(Math.pow(fromRect.top - animatingRect.top, 2) + Math.pow(fromRect.left - animatingRect.left, 2)) / Math.sqrt(Math.pow(fromRect.top - toRect.top, 2) + Math.pow(fromRect.left - toRect.left, 2)) * options2.animation;
 }
 var plugins = [];
-var defaults3 = {
+var defaults4 = {
   initializeByDefault: true
 };
 var PluginManager = {
   mount: function mount(plugin9) {
-    for (var option3 in defaults3) {
-      if (defaults3.hasOwnProperty(option3) && !(option3 in plugin9)) {
-        plugin9[option3] = defaults3[option3];
+    for (var option3 in defaults4) {
+      if (defaults4.hasOwnProperty(option3) && !(option3 in plugin9)) {
+        plugin9[option3] = defaults4[option3];
       }
     }
     plugins.forEach(function(p2) {
@@ -24013,7 +27053,7 @@ var PluginManager = {
       }
     });
   },
-  initializePlugins: function initializePlugins(sortable, el, defaults4, options2) {
+  initializePlugins: function initializePlugins(sortable, el, defaults5, options2) {
     plugins.forEach(function(plugin9) {
       var pluginName = plugin9.pluginName;
       if (!sortable.options[pluginName] && !plugin9.initializeByDefault)
@@ -24022,7 +27062,7 @@ var PluginManager = {
       initialized.sortable = sortable;
       initialized.options = sortable.options;
       sortable[pluginName] = initialized;
-      _extends(defaults4, initialized.defaults);
+      _extends(defaults5, initialized.defaults);
     });
     for (var option3 in sortable.options) {
       if (!sortable.options.hasOwnProperty(option3))
@@ -24299,7 +27339,7 @@ function Sortable(el, options2) {
   this.el = el;
   this.options = options2 = _extends({}, options2);
   el[expando] = this;
-  var defaults4 = {
+  var defaults5 = {
     group: null,
     sort: true,
     disabled: false,
@@ -24341,9 +27381,9 @@ function Sortable(el, options2) {
     supportPointer: Sortable.supportPointer !== false && "PointerEvent" in window && !Safari,
     emptyInsertThreshold: 5
   };
-  PluginManager.initializePlugins(this, el, defaults4);
-  for (var name2 in defaults4) {
-    !(name2 in options2) && (options2[name2] = defaults4[name2]);
+  PluginManager.initializePlugins(this, el, defaults5);
+  for (var name2 in defaults5) {
+    !(name2 in options2) && (options2[name2] = defaults5[name2]);
   }
   _prepareGroup(options2);
   for (var fn2 in this) {
