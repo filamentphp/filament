@@ -11,12 +11,17 @@ class Select extends Field
     use Concerns\HasAffixes;
     use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasExtraInputAttributes;
+    use Concerns\CanLimitItemsLength;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
 
     protected string $view = 'forms::components.select';
 
+    protected bool | Closure $isMultiple = false;
+
     protected ?Closure $getOptionLabelUsing = null;
+
+    protected ?Closure $getOptionLabelsUsing = null;
 
     protected ?Closure $getSearchResultsUsing = null;
 
@@ -42,6 +47,14 @@ class Select extends Field
             }
 
             return $value;
+        });
+
+        $this->getOptionLabelsUsing(function (MultiSelect $component, array $values): array {
+            $options = $component->getOptions();
+
+            return collect($values)
+                ->mapWithKeys(fn ($value) => [$value => $options[$value] ?? $value])
+                ->toArray();
         });
 
         $this->noSearchResultsMessage(__('forms::components.select.no_search_results_message'));
@@ -82,6 +95,13 @@ class Select extends Field
         return $this;
     }
 
+    public function getOptionLabelsUsing(?Closure $callback): static
+    {
+        $this->getOptionLabelsUsing = $callback;
+
+        return $this;
+    }
+
     public function getSearchResultsUsing(?Closure $callback): static
     {
         $this->getSearchResultsUsing = $callback;
@@ -98,6 +118,13 @@ class Select extends Field
             $this->isSearchable = $condition;
             $this->searchColumns = null;
         }
+
+        return $this;
+    }
+
+    public function multiple(bool | Closure $condition = true): static
+    {
+        $this->isMultiple = $condition;
 
         return $this;
     }
@@ -121,6 +148,19 @@ class Select extends Field
         return $this->evaluate($this->getOptionLabelUsing, [
             'value' => $this->getState(),
         ]);
+    }
+
+    public function getOptionLabels(): array
+    {
+        $labels = $this->evaluate($this->getOptionLabelsUsing, [
+            'values' => $this->getState(),
+        ]);
+
+        if ($labels instanceof Arrayable) {
+            $labels = $labels->toArray();
+        }
+
+        return $labels;
     }
 
     public function getNoSearchResultsMessage(): string | HtmlString
@@ -153,6 +193,11 @@ class Select extends Field
         }
 
         return $results;
+    }
+
+    public function isMultiple(): bool
+    {
+        return $this->evaluate($this->isMultiple);
     }
 
     public function isOptionDisabled($value, string $label): bool
