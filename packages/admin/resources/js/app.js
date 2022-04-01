@@ -21,6 +21,10 @@ Alpine.store('sidebar', {
     collapsedGroups: Alpine.$persist([]).as('collapsedGroups'),
 
     groupIsCollapsed(group) {
+        return this.collapsedGroups.includes(group)
+    },
+
+    groupIsCollapsedForCollapsibleSidebar(group) {
         return this.collapsedGroups.includes(group) && this.isOpen
     },
 

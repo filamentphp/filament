@@ -30,7 +30,13 @@
         </button>
     @endif
 
-    <ul x-show="! $store.sidebar.groupIsCollapsed(label)" x-collapse.duration.200ms @class([
+    <ul 
+    @if(config('filament.layout.sidebar.is_collapsible_on_desktop'))
+        x-show="! $store.sidebar.groupIsCollapsedForCollapsibleSidebar(label)" 
+    @else
+        x-show="! $store.sidebar.groupIsCollapsed(label)" 
+    @endif
+    x-collapse.duration.200ms @class([
         'text-sm space-y-1 -mx-3',
         'mt-2' => $label,
     ])>
