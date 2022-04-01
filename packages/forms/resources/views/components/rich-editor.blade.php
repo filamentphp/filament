@@ -299,8 +299,8 @@
             ></trix-editor>
         @else
             <div x-html="state" @class([
-                'p-3 prose border border-gray-300 rounded-lg shadow-sm',
-                'dark:prose-invert' => config('forms.dark_mode'),
+                'prose block w-full max-w-none rounded-lg border border-gray-300 bg-white p-3 opacity-70 shadow-sm',
+                'dark:prose-invert dark:border-gray-600 dark:bg-gray-700' => config('forms.dark_mode'),
             ])></div>
         @endunless
     </div>
