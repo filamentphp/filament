@@ -23092,7 +23092,6 @@ var select_default = (Alpine) => {
       init: function() {
         this.select = new TomSelect(this.$refs.input, {
           loadThrottle: 1e3,
-          maxItems: maxItems ?? void 0,
           options: this.transformOptions(options2),
           placeholder,
           load: async (query, loadOptions) => {
@@ -23120,6 +23119,10 @@ var select_default = (Alpine) => {
             no_results: () => `<div class="no-results">${noSearchResultsMessage}</div>`
           }
         });
+        if (maxItems) {
+          this.select.setMaxItems(maxItems);
+        }
+        this.refreshItems();
         if (isAutofocused) {
           this.select.focus();
         }
@@ -23128,16 +23131,19 @@ var select_default = (Alpine) => {
             this.shouldUpdateState = true;
             return;
           }
-          this.select.clear(true);
-          if (isMultiple) {
-            this.state.forEach((selectedItem) => {
-              this.select.addItem(selectedItem, true);
-            });
-          } else {
-            this.select.addItem(this.state, true);
-          }
-          this.select.refreshItems();
+          this.refreshItems();
         });
+      },
+      refreshItems: function() {
+        this.select.clear(true);
+        if (isMultiple) {
+          this.state.forEach((selectedItem) => {
+            this.select.addItem(selectedItem, true);
+          });
+        } else {
+          this.select.addItem(this.state, true);
+        }
+        this.select.refreshItems();
       },
       transformOptions: function(options3) {
         let optionEntires = Object.entries(options3);
