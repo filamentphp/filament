@@ -19722,186 +19722,6 @@ var markdown_editor_default = (Alpine) => {
   });
 };
 
-// packages/forms/resources/js/components/multi-select.js
-var multi_select_default = (Alpine) => {
-  Alpine.data("multiSelectFormComponent", ({
-    getOptionLabelsUsing,
-    getOptionsUsing,
-    getSearchResultsUsing,
-    isAutofocused,
-    hasDynamicOptions,
-    options: options2,
-    state: state2
-  }) => {
-    return {
-      focusedOptionIndex: null,
-      hasNoSearchResults: false,
-      index: {},
-      isLoading: false,
-      isOpen: false,
-      labels: [],
-      options: options2,
-      search: "",
-      state: state2,
-      init: async function() {
-        if (isAutofocused) {
-          this.openListbox(false);
-        }
-        if (!this.state) {
-          this.state = [];
-        }
-        this.addOptionsToIndex(this.options);
-        this.labels = await this.getOptionLabels();
-        this.$watch("search", Alpine.debounce(async () => {
-          this.hasNoSearchResults = false;
-          if (!this.isOpen || this.search === "" || this.search === null) {
-            this.options = options2;
-            this.focusedOptionIndex = 0;
-            return;
-          }
-          if (Object.keys(options2).length) {
-            this.options = {};
-            let search = this.search.trim().toLowerCase();
-            for (let key in options2) {
-              if (options2[key].toString().trim().toLowerCase().includes(search)) {
-                this.options[key] = options2[key];
-              }
-            }
-            this.focusedOptionIndex = 0;
-          } else {
-            this.isLoading = true;
-            this.options = await getSearchResultsUsing(this.search);
-            this.addOptionsToIndex(this.options);
-            this.focusedOptionIndex = 0;
-            this.isLoading = false;
-          }
-          if (!Object.keys(this.options).length) {
-            this.hasNoSearchResults = true;
-          }
-        }, 500));
-        this.$watch("state", async () => {
-          this.labels = await this.getOptionLabels();
-        });
-      },
-      addOptionsToIndex: function(options3) {
-        this.index = {
-          ...this.index,
-          ...options3
-        };
-      },
-      clearState: function() {
-        this.state = [];
-        this.labels = [];
-        this.closeListbox();
-      },
-      closeListbox: function() {
-        this.isOpen = false;
-        this.focusedOptionIndex = null;
-        this.search = "";
-      },
-      evaluatePosition: function() {
-        let availableHeight = window.innerHeight - this.$refs.button.offsetHeight;
-        let element = this.$refs.button;
-        while (element) {
-          availableHeight -= element.offsetTop;
-          element = element.offsetParent;
-        }
-        if (this.$refs.listbox.offsetHeight <= availableHeight) {
-          this.$refs.listbox.style.bottom = "auto";
-          return;
-        }
-        this.$refs.listbox.style.bottom = `${this.$refs.button.offsetHeight}px`;
-      },
-      focusNextOption: function() {
-        if (this.focusedOptionIndex === null) {
-          this.focusedOptionIndex = Object.keys(this.options).length - 1;
-          return;
-        }
-        if (this.focusedOptionIndex + 1 >= Object.keys(this.options).length) {
-          return;
-        }
-        this.focusedOptionIndex++;
-        this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
-          block: "center"
-        });
-      },
-      focusPreviousOption: function() {
-        if (this.focusedOptionIndex === null) {
-          this.focusedOptionIndex = 0;
-          return;
-        }
-        if (this.focusedOptionIndex <= 0) {
-          return;
-        }
-        this.focusedOptionIndex--;
-        this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
-          block: "center"
-        });
-      },
-      openListbox: async function(shouldLoadDynamicOptions = true) {
-        if (hasDynamicOptions && shouldLoadDynamicOptions) {
-          this.isLoading = true;
-          this.options = await getOptionsUsing();
-          this.isLoading = false;
-        }
-        this.focusedOptionIndex = 0;
-        this.isOpen = true;
-        this.$nextTick(() => {
-          this.$refs.search.focus();
-          this.evaluatePosition();
-          this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
-            block: "center"
-          });
-        });
-      },
-      selectOption: function(index2 = null) {
-        if (!this.isOpen) {
-          this.closeListbox();
-          return;
-        }
-        let value = Object.keys(this.options)[index2 ?? this.focusedOptionIndex];
-        if (value === void 0) {
-          return;
-        }
-        if (this.state.indexOf(value) < 0) {
-          this.state.push(value);
-        } else {
-          this.deselectOption(value);
-        }
-        this.closeListbox();
-      },
-      deselectOption: function(optionToDeselect) {
-        this.state = this.state.filter((option3) => option3 !== optionToDeselect);
-      },
-      toggleListboxVisibility: function() {
-        if (this.isOpen) {
-          this.closeListbox();
-          return;
-        }
-        this.openListbox();
-      },
-      getOptionLabels: async function() {
-        let labels = {};
-        let areAllLabelsIndexed = true;
-        for (let key of this.state) {
-          let label = this.index[key] ?? null;
-          if (label === null) {
-            areAllLabelsIndexed = false;
-            break;
-          }
-          labels[key] = label;
-        }
-        if (areAllLabelsIndexed) {
-          return labels;
-        }
-        labels = await getOptionLabelsUsing();
-        this.addOptionsToIndex(labels);
-        return labels;
-      }
-    };
-  });
-};
-
 // packages/forms/resources/js/components/rich-editor.js
 var import_trix = __toModule(require_trix());
 import_trix.default.config.blockAttributes.default.tagName = "p";
@@ -28678,7 +28498,6 @@ var js_default = (Alpine) => {
   Alpine.plugin(file_upload_default);
   Alpine.plugin(key_value_default);
   Alpine.plugin(markdown_editor_default);
-  Alpine.plugin(multi_select_default);
   Alpine.plugin(rich_editor_default);
   Alpine.plugin(select_default);
   Alpine.plugin(tags_input_default);
@@ -28691,7 +28510,6 @@ export {
   file_upload_default as FileUploadFormComponentAlpinePlugin,
   key_value_default as KeyValueFormComponentAlpinePlugin,
   markdown_editor_default as MarkdownEditorFormComponentAlpinePlugin,
-  multi_select_default as MultiSelectFormComponentAlpinePlugin,
   rich_editor_default as RichEditorFormComponentAlpinePlugin,
   select_default as SelectFormComponentAlpinePlugin,
   tags_input_default as TagsInputFormComponentAlpinePlugin,
