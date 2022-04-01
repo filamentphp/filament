@@ -27,8 +27,6 @@ export default (Alpine) => {
                 this.select = new TomSelect(this.$refs.input, {
                     loadThrottle: 1000,
 
-                    maxItems: maxItems ?? undefined,
-
                     options: this.transformOptions(options),
 
                     placeholder,
@@ -68,6 +66,12 @@ export default (Alpine) => {
                     },
                 })
 
+                if (maxItems) {
+                    this.select.setMaxItems(maxItems)
+                }
+
+                this.refreshItems()
+
                 if (isAutofocused) {
                     this.select.focus()
                 }
@@ -79,18 +83,22 @@ export default (Alpine) => {
                         return
                     }
 
-                    this.select.clear(true)
-
-                    if (isMultiple) {
-                        this.state.forEach((selectedItem) => {
-                            this.select.addItem(selectedItem, true)
-                        })
-                    } else {
-                        this.select.addItem(this.state, true)
-                    }
-
-                    this.select.refreshItems()
+                    this.refreshItems()
                 })
+            },
+
+            refreshItems: function () {
+                this.select.clear(true)
+
+                if (isMultiple) {
+                    this.state.forEach((selectedItem) => {
+                        this.select.addItem(selectedItem, true)
+                    })
+                } else {
+                    this.select.addItem(this.state, true)
+                }
+
+                this.select.refreshItems()
             },
 
             transformOptions: function (options) {
