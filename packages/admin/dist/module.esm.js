@@ -22912,7 +22912,7 @@ var select_default = (Alpine) => {
       state: state2,
       init: async function() {
         this.select = new TomSelect(this.$refs.input, {
-          loadThrottle: 1e3,
+          loadThrottle: 500,
           options: await this.transformOptions(options2),
           placeholder,
           load: async (query, loadOptions) => {

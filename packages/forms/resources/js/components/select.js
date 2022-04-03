@@ -26,7 +26,7 @@ export default (Alpine) => {
 
             init: async function () {
                 this.select = new TomSelect(this.$refs.input, {
-                    loadThrottle: 1000,
+                    loadThrottle: 500,
 
                     options: await this.transformOptions(options),
 
