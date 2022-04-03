@@ -22894,6 +22894,7 @@ TomSelect.define("virtual_scroll", virtual_scroll);
 var select_default = (Alpine) => {
   Alpine.data("selectFormComponent", ({
     getOptionLabelUsing,
+    getOptionLabelsUsing,
     getOptionsUsing,
     getSearchResultsUsing,
     isAutofocused,
@@ -22909,21 +22910,24 @@ var select_default = (Alpine) => {
       select: null,
       shouldUpdateState: true,
       state: state2,
-      init: function() {
+      init: async function() {
         this.select = new TomSelect(this.$refs.input, {
           loadThrottle: 1e3,
-          options: this.transformOptions(options2),
+          options: await this.transformOptions(options2),
           placeholder,
           load: async (query, loadOptions) => {
             if (query === void 0 || query === null || query === "") {
-              loadOptions(this.transformOptions(await getOptionsUsing()));
+              loadOptions(await this.transformOptions(await getOptionsUsing()));
               return;
             }
-            loadOptions(this.transformOptions(await getSearchResultsUsing(query)));
+            loadOptions(await this.transformOptions(await getSearchResultsUsing(query)));
           },
-          onChange: (state3) => {
+          onChange: (items) => {
             this.shouldUpdateState = false;
-            this.state = state3;
+            if (Array.isArray(items)) {
+              items = {...items};
+            }
+            this.state = items;
           },
           onDropdownOpen: async () => {
             if (!hasDynamicOptions) {
@@ -22957,15 +22961,16 @@ var select_default = (Alpine) => {
       refreshItems: function() {
         this.select.clear(true);
         if (isMultiple) {
-          this.state.forEach((selectedItem) => {
-            this.select.addItem(selectedItem, true);
+          this.state.forEach((item2) => {
+            this.select.addItem(item2, false);
           });
         } else {
           this.select.addItem(this.state, true);
         }
         this.select.refreshItems();
       },
-      transformOptions: function(options3) {
+      transformOptions: async function(options3) {
+        options3 = await this.loadMissingOptions(options3);
         let optionEntires = Object.entries(options3);
         if (!optionEntires.length) {
           return [];
@@ -22974,6 +22979,25 @@ var select_default = (Alpine) => {
           return options3;
         }
         return optionEntires.map((option3) => ({value: option3[0], text: option3[1]}));
+      },
+      loadMissingOptions: async function(options3) {
+        if (this.state === null || this.state === void 0) {
+          return options3;
+        }
+        if (isMultiple) {
+          if (Object.values(this.state ?? {}).every((item2) => item2 in options3)) {
+            return options3;
+          }
+          return {
+            ...options3,
+            ...await getOptionLabelsUsing()
+          };
+        }
+        if (this.state in options3) {
+          return options3;
+        }
+        options3[this.state] = await getOptionLabelUsing();
+        return options3;
       }
     };
   });
