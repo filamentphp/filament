@@ -55,33 +55,11 @@ trait InteractsWithForms
         return null;
     }
 
-    public function getMultiSelectOptionLabels(string $statePath): array
+    public function getSelectOptionLabels(string $statePath): array
     {
         foreach ($this->getCachedForms() as $form) {
-            if ($labels = $form->getMultiSelectOptionLabels($statePath)) {
+            if ($labels = $form->getSelectOptionLabels($statePath)) {
                 return $labels;
-            }
-        }
-
-        return [];
-    }
-
-    public function getMultiSelectOptions(string $statePath): array
-    {
-        foreach ($this->getCachedForms() as $form) {
-            if ($results = $form->getMultiSelectOptions($statePath)) {
-                return $results;
-            }
-        }
-
-        return [];
-    }
-
-    public function getMultiSelectSearchResults(string $statePath, string $query): array
-    {
-        foreach ($this->getCachedForms() as $form) {
-            if ($results = $form->getMultiSelectSearchResults($statePath, $query)) {
-                return $results;
             }
         }
 

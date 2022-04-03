@@ -12,6 +12,7 @@ class Select extends Field
     use Concerns\HasAffixes;
     use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasExtraInputAttributes;
+    use Concerns\CanLimitItemsLength;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
 
@@ -19,9 +20,11 @@ class Select extends Field
 
     protected array | Closure | null $createFormSchema = null;
 
-    protected ?Closure $saveCreateFormUsing = null;
+    protected bool | Closure $isMultiple = false;
 
     protected ?Closure $getOptionLabelUsing = null;
+
+    protected ?Closure $getOptionLabelsUsing = null;
 
     protected ?Closure $getSearchResultsUsing = null;
 
@@ -30,6 +33,8 @@ class Select extends Field
     protected bool | Closure | null $isPlaceholderSelectionDisabled = false;
 
     protected bool | Closure $isSearchable = false;
+
+    protected ?Closure $saveCreateFormUsing = null;
 
     protected ?array $searchColumns = null;
 
@@ -41,12 +46,34 @@ class Select extends Field
     {
         parent::setUp();
 
+        $this->default(fn (Select $component): ?array => $component->isMultiple() ? [] : null);
+
+        $this->afterStateHydrated(function (Select $component, $state): void {
+            if (! $component->isMultiple()) {
+                return;
+            }
+
+            if (is_array($state)) {
+                return;
+            }
+
+            $component->state([]);
+        });
+
         $this->getOptionLabelUsing(function (Select $component, $value): ?string {
             if (array_key_exists($value, $options = $component->getOptions())) {
                 return $options[$value];
             }
 
             return $value;
+        });
+
+        $this->getOptionLabelsUsing(function (Select $component, array $values): array {
+            $options = $component->getOptions();
+
+            return collect($values)
+                ->mapWithKeys(fn ($value) => [$value => $options[$value] ?? $value])
+                ->toArray();
         });
 
         $this->noSearchResultsMessage(__('forms::components.select.no_search_results_message'));
@@ -132,6 +159,13 @@ class Select extends Field
         return $this;
     }
 
+    public function getOptionLabelsUsing(?Closure $callback): static
+    {
+        $this->getOptionLabelsUsing = $callback;
+
+        return $this;
+    }
+
     public function getSearchResultsUsing(?Closure $callback): static
     {
         $this->getSearchResultsUsing = $callback;
@@ -148,6 +182,13 @@ class Select extends Field
             $this->isSearchable = $condition;
             $this->searchColumns = null;
         }
+
+        return $this;
+    }
+
+    public function multiple(bool | Closure $condition = true): static
+    {
+        $this->isMultiple = $condition;
 
         return $this;
     }
@@ -171,6 +212,19 @@ class Select extends Field
         return $this->evaluate($this->getOptionLabelUsing, [
             'value' => $this->getState(),
         ]);
+    }
+
+    public function getOptionLabels(): array
+    {
+        $labels = $this->evaluate($this->getOptionLabelsUsing, [
+            'values' => $this->getState(),
+        ]);
+
+        if ($labels instanceof Arrayable) {
+            $labels = $labels->toArray();
+        }
+
+        return $labels;
     }
 
     public function getNoSearchResultsMessage(): string | HtmlString
@@ -203,6 +257,11 @@ class Select extends Field
         }
 
         return $results;
+    }
+
+    public function isMultiple(): bool
+    {
+        return $this->evaluate($this->isMultiple);
     }
 
     public function isOptionDisabled($value, string $label): bool

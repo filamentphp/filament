@@ -1,226 +1,151 @@
+import TomSelect from 'tom-select'
+
+import '../../css/components/select.css'
+
 export default (Alpine) => {
     Alpine.data('selectFormComponent', ({
         getOptionLabelUsing,
+        getOptionLabelsUsing,
         getOptionsUsing,
         getSearchResultsUsing,
         isAutofocused,
+        isMultiple,
         hasDynamicOptions,
+        maxItems,
+        noSearchResultsMessage,
         options,
+        placeholder,
         state,
     }) => {
         return {
-            focusedOptionIndex: null,
+            select: null,
 
-            hasNoSearchResults: false,
-
-            index: {},
-
-            isLoading: false,
-
-            isOpen: false,
-
-            label: null,
-
-            options,
-
-            search: '',
+            shouldUpdateState: true,
 
             state,
 
             init: async function () {
-                if (isAutofocused) {
-                    this.openListbox(false)
+                this.select = new TomSelect(this.$refs.input, {
+                    loadThrottle: 500,
+
+                    options: await this.transformOptions(options),
+
+                    placeholder,
+
+                    load: async (query, loadOptions) => {
+                        if (query === undefined || query === null || query === '') {
+                            loadOptions(await this.transformOptions(await getOptionsUsing()))
+
+                            return
+                        }
+
+                        loadOptions(await this.transformOptions(await getSearchResultsUsing(query)))
+                    },
+
+                    onChange: (items) => {
+                        this.shouldUpdateState = false
+
+                        if (Array.isArray(items)) {
+                            items = { ...items }
+                        }
+
+                        this.state = items
+                    },
+
+                    onDropdownOpen: async () => {
+                        if (! hasDynamicOptions) {
+                            return
+                        }
+
+                        this.select.clearOptions()
+                        this.select.load()
+                    },
+
+                    onFocus: async () => {
+                        this.select.open()
+                    },
+
+                    render: {
+
+                        no_results: () => `<div class="no-results">${noSearchResultsMessage}</div>`,
+
+                    },
+                })
+
+                if (maxItems) {
+                    this.select.setMaxItems(maxItems)
                 }
 
-                this.addOptionsToIndex(this.options)
+                this.refreshItems()
 
-                this.label = await this.getOptionLabel()
+                if (isAutofocused) {
+                    this.select.focus()
+                }
 
-                this.$watch('search', Alpine.debounce(async () => {
-                    this.hasNoSearchResults = false
-
-                    if (! this.isOpen || this.search === '' || this.search === null) {
-                        this.options = options
-                        this.focusedOptionIndex = 0
+                this.$watch('state', () => {
+                    if (! this.shouldUpdateState) {
+                        this.shouldUpdateState = true
 
                         return
                     }
 
-                    if (Object.keys(options).length) {
-                        this.options = {}
-
-                        let search = this.search.trim().toLowerCase()
-
-                        for (let key in options) {
-                            if (options[key].toString().trim().toLowerCase().includes(search)) {
-                                this.options[key] = options[key]
-                            }
-                        }
-
-                        this.focusedOptionIndex = 0
-                    } else {
-                        this.isLoading = true
-                        this.options = await getSearchResultsUsing(this.search)
-                        this.addOptionsToIndex(this.options)
-                        this.focusedOptionIndex = 0
-                        this.isLoading = false
-                    }
-
-                    if (! Object.keys(this.options).length) {
-                        this.hasNoSearchResults = true
-                    }
-                }, 500))
-
-                this.$watch('state', async () => {
-                    this.label = await this.getOptionLabel()
+                    this.refreshItems()
                 })
             },
 
-            addOptionToIndex: function (key, label) {
-                this.index[key] = label
-            },
+            refreshItems: function () {
+                this.select.clear(true)
 
-            addOptionsToIndex: function (options) {
-                this.index = {
-                    ...this.index,
-                    ...options,
-                }
-            },
-
-            clearState: function () {
-                this.state = null
-                this.label = null
-
-                this.closeListbox()
-            },
-
-            closeListbox: function () {
-                this.isOpen = false
-
-                this.focusedOptionIndex = null
-
-                this.search = ''
-            },
-
-            evaluatePosition: function () {
-                let availableHeight = window.innerHeight - this.$refs.button.offsetHeight
-
-                let element = this.$refs.button
-
-                while (element) {
-                    availableHeight -= element.offsetTop
-
-                    element = element.offsetParent
-                }
-
-                if (this.$refs.listbox.offsetHeight <= availableHeight) {
-                    this.$refs.listbox.style.bottom = 'auto'
-
-                    return
-                }
-
-                this.$refs.listbox.style.bottom = `${this.$refs.button.offsetHeight}px`
-            },
-
-            focusNextOption: function () {
-                if (this.focusedOptionIndex === null) {
-                    this.focusedOptionIndex = Object.keys(this.options).length - 1
-
-                    return
-                }
-
-                if (this.focusedOptionIndex + 1 >= Object.keys(this.options).length) {
-                    return
-                }
-
-                this.focusedOptionIndex++
-
-                this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
-                    block: 'center',
-                })
-            },
-
-            focusPreviousOption: function () {
-                if (this.focusedOptionIndex === null) {
-                    this.focusedOptionIndex = 0
-
-                    return
-                }
-
-                if (this.focusedOptionIndex <= 0) {
-                    return
-                }
-
-                this.focusedOptionIndex--
-
-                this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
-                    block: 'center',
-                })
-            },
-
-            openListbox: async function (shouldLoadDynamicOptions = true) {
-                if (hasDynamicOptions && shouldLoadDynamicOptions) {
-                    this.isLoading = true
-
-                    this.options = await getOptionsUsing()
-
-                    this.isLoading = false
-                }
-
-                this.focusedOptionIndex = Object.keys(this.options).indexOf(this.state)
-
-                if (this.focusedOptionIndex < 0) {
-                    this.focusedOptionIndex = 0
-                }
-
-                this.isOpen = true
-
-                this.$nextTick(() => {
-                    this.$refs.search.focus()
-
-                    this.evaluatePosition()
-
-                    this.$refs.listboxOptionsList.children[this.focusedOptionIndex].scrollIntoView({
-                        block: 'center'
+                if (isMultiple) {
+                    this.state.forEach((item) => {
+                        this.select.addItem(item, false)
                     })
-                })
-            },
-
-            selectOption: function (index = null) {
-                if (! this.isOpen) {
-                    this.closeListbox()
-
-                    return
+                } else {
+                    this.select.addItem(this.state, true)
                 }
 
-                this.state = Object.keys(this.options)[index ?? this.focusedOptionIndex]
-                this.label = this.options[this.state]
-
-                this.closeListbox()
+                this.select.refreshItems()
             },
 
-            toggleListboxVisibility: function () {
-                if (this.isOpen) {
-                    this.closeListbox()
+            transformOptions: async function (options) {
+                options = await this.loadMissingOptions(options)
 
-                    return
+                let optionEntires = Object.entries(options)
+
+                if (! optionEntires.length) {
+                    return []
                 }
 
-                this.openListbox()
+                if (typeof optionEntires[0][1] === 'object') {
+                    return options
+                }
+
+                return optionEntires.map((option) => ({ value: option[0], text: option[1] }))
             },
 
-            getOptionLabel: async function () {
-                let label = this.index[this.state] ?? null
-
-                if (label !== null) {
-                    return label
+            loadMissingOptions: async function (options) {
+                if (this.state === null || this.state === undefined) {
+                    return options
                 }
 
-                label = await getOptionLabelUsing(this.state)
+                if (isMultiple) {
+                    if (Object.values(this.state ?? {}).every((item) => item in options)) {
+                        return options
+                    }
 
-                this.addOptionToIndex(this.state, label)
+                    return {
+                        ...options,
+                        ...await getOptionLabelsUsing(),
+                    }
+                }
 
-                return label
+                if (this.state in options) {
+                    return options
+                }
+
+                options[this.state] = await getOptionLabelUsing()
+
+                return options
             },
         }
     })
