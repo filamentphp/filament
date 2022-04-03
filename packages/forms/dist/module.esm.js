@@ -22959,13 +22959,13 @@ var select_default = (Alpine) => {
         });
       },
       refreshItems: function() {
-        this.select.clear(true);
+        this.select.clear(false);
         if (isMultiple) {
           this.state.forEach((item2) => {
             this.select.addItem(item2, false);
           });
         } else {
-          this.select.addItem(this.state, true);
+          this.select.addItem(this.state, false);
         }
         this.select.refreshItems();
       },
