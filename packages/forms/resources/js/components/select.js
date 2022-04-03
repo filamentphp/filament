@@ -94,14 +94,14 @@ export default (Alpine) => {
             },
 
             refreshItems: function () {
-                this.select.clear(true)
+                this.select.clear(false)
 
                 if (isMultiple) {
                     this.state.forEach((item) => {
                         this.select.addItem(item, false)
                     })
                 } else {
-                    this.select.addItem(this.state, true)
+                    this.select.addItem(this.state, false)
                 }
 
                 this.select.refreshItems()

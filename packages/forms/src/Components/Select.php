@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Exception;
 use Filament\Forms\Components\Actions\Action;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\HtmlString;
@@ -139,7 +140,21 @@ class Select extends Field
         return Action::make('create')
             ->modalHeading('Create')
             ->form($this->getCreateFormSchema())
-            ->action($this->getSaveCreateFormUsing());
+            ->action(function (Select $component, $data) {
+                if (! $this->getSaveCreateFormUsing()) {
+                    throw new Exception("Select field [{$component->getStatePath()}] must have a [saveCreateFormUsing()] closure set.");
+                }
+
+                $key = $component->evaluate($this->getSaveCreateFormUsing(), [
+                    'data' => $data,
+                ]);
+
+                $state = $component->isMultiple() ?
+                    array_merge($component->getState(), $key) :
+                    $key;
+
+                $component->state($state);
+            });
     }
 
     public function getCreateFormSchema(): ?array
