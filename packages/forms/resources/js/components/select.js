@@ -5,6 +5,7 @@ import '../../css/components/select.css'
 export default (Alpine) => {
     Alpine.data('selectFormComponent', ({
         getOptionLabelUsing,
+        getOptionLabelsUsing,
         getOptionsUsing,
         getSearchResultsUsing,
         isAutofocused,
@@ -23,27 +24,32 @@ export default (Alpine) => {
 
             state,
 
-            init: function () {
+            init: async function () {
                 this.select = new TomSelect(this.$refs.input, {
                     loadThrottle: 1000,
 
-                    options: this.transformOptions(options),
+                    options: await this.transformOptions(options),
 
                     placeholder,
 
                     load: async (query, loadOptions) => {
                         if (query === undefined || query === null || query === '') {
-                            loadOptions(this.transformOptions(await getOptionsUsing()))
+                            loadOptions(await this.transformOptions(await getOptionsUsing()))
 
                             return
                         }
 
-                        loadOptions(this.transformOptions(await getSearchResultsUsing(query)))
+                        loadOptions(await this.transformOptions(await getSearchResultsUsing(query)))
                     },
 
-                    onChange: (state) => {
+                    onChange: (items) => {
                         this.shouldUpdateState = false
-                        this.state = state
+
+                        if (Array.isArray(items)) {
+                            items = { ...items }
+                        }
+
+                        this.state = items
                     },
 
                     onDropdownOpen: async () => {
@@ -91,8 +97,8 @@ export default (Alpine) => {
                 this.select.clear(true)
 
                 if (isMultiple) {
-                    this.state.forEach((selectedItem) => {
-                        this.select.addItem(selectedItem, true)
+                    this.state.forEach((item) => {
+                        this.select.addItem(item, false)
                     })
                 } else {
                     this.select.addItem(this.state, true)
@@ -101,7 +107,9 @@ export default (Alpine) => {
                 this.select.refreshItems()
             },
 
-            transformOptions: function (options) {
+            transformOptions: async function (options) {
+                options = await this.loadMissingOptions(options)
+
                 let optionEntires = Object.entries(options)
 
                 if (! optionEntires.length) {
@@ -113,7 +121,32 @@ export default (Alpine) => {
                 }
 
                 return optionEntires.map((option) => ({ value: option[0], text: option[1] }))
-            }
+            },
+
+            loadMissingOptions: async function (options) {
+                if (this.state === null || this.state === undefined) {
+                    return options
+                }
+
+                if (isMultiple) {
+                    if (Object.values(this.state ?? {}).every((item) => item in options)) {
+                        return options
+                    }
+
+                    return {
+                        ...options,
+                        ...await getOptionLabelsUsing(),
+                    }
+                }
+
+                if (this.state in options) {
+                    return options
+                }
+
+                options[this.state] = await getOptionLabelUsing()
+
+                return options
+            },
         }
     })
 }

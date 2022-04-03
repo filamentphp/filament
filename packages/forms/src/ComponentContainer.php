@@ -28,7 +28,6 @@ class ComponentContainer extends ViewComponent implements Htmlable
     use Concerns\ListensToEvents;
     use Concerns\SupportsComponentFileAttachments;
     use Concerns\SupportsFileUploadFields;
-    use Concerns\SupportsMultiSelectFields;
     use Concerns\SupportsSelectFields;
     use Macroable;
     use Tappable;

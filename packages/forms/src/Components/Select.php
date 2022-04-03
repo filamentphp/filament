@@ -41,6 +41,20 @@ class Select extends Field
     {
         parent::setUp();
 
+        $this->default(fn (Select $component): ?array => $component->isMultiple() ? [] : null);
+
+        $this->afterStateHydrated(function (Select $component, $state): void {
+            if (! $component->isMultiple()) {
+                return;
+            }
+
+            if (is_array($state)) {
+                return;
+            }
+
+            $component->state([]);
+        });
+
         $this->getOptionLabelUsing(function (Select $component, $value): ?string {
             if (array_key_exists($value, $options = $component->getOptions())) {
                 return $options[$value];
@@ -49,7 +63,7 @@ class Select extends Field
             return $value;
         });
 
-        $this->getOptionLabelsUsing(function (MultiSelect $component, array $values): array {
+        $this->getOptionLabelsUsing(function (Select $component, array $values): array {
             $options = $component->getOptions();
 
             return collect($values)
