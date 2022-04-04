@@ -22908,13 +22908,13 @@ var select_default = (Alpine) => {
   }) => {
     return {
       select: null,
-      shouldUpdateState: true,
       state: state2,
       init: async function() {
         this.select = new TomSelect(this.$refs.input, {
           loadThrottle: 500,
           options: await this.transformOptions(options2),
           placeholder,
+          shouldUpdateState: true,
           load: async (query, loadOptions) => {
             if (query === void 0 || query === null || query === "") {
               loadOptions(await this.transformOptions(await getOptionsUsing()));
@@ -22928,6 +22928,7 @@ var select_default = (Alpine) => {
               items = {...items};
             }
             this.state = items;
+            this.shouldUpdateState = true;
           },
           onDropdownOpen: async () => {
             if (!hasDynamicOptions) {
@@ -22950,24 +22951,37 @@ var select_default = (Alpine) => {
         if (isAutofocused) {
           this.select.focus();
         }
-        this.$watch("state", () => {
+        this.$watch("state", async () => {
           if (!this.shouldUpdateState) {
-            this.shouldUpdateState = true;
             return;
+          }
+          if (hasDynamicOptions && !(this.state === "" || this.state === null || this.state === void 0)) {
+            this.select.clearOptions();
+            this.select.load();
+            this.select.refreshOptions();
           }
           this.refreshItems();
         });
       },
       refreshItems: function() {
-        this.select.clear(false);
+        this.select.clear(true);
         if (isMultiple) {
           this.state.forEach((item2) => {
-            this.select.addItem(item2, false);
+            this.select.addItem(item2, true);
           });
         } else {
-          this.select.addItem(this.state, false);
+          console.log(this.select.getOption(this.state));
+          this.select.addItem(this.state, true);
         }
         this.select.refreshItems();
+      },
+      refreshOptions: async function() {
+        if (isMultiple && !Object.values(this.state ?? {}).every((item2) => this.select.getOption(item2))) {
+          this.select.addOptions(await this.transformOptions({}));
+        } else if (!this.select.getOption(this.state)) {
+          this.select.addOptions(await this.transformOptions({}));
+        }
+        this.select.refreshOptions();
       },
       transformOptions: async function(options3) {
         options3 = await this.loadMissingOptions(options3);
@@ -22978,10 +22992,13 @@ var select_default = (Alpine) => {
         if (typeof optionEntires[0][1] === "object") {
           return options3;
         }
-        return optionEntires.map((option3) => ({value: option3[0], text: option3[1]}));
+        return optionEntires.map((option3) => ({
+          value: option3[0],
+          text: option3[1]
+        }));
       },
       loadMissingOptions: async function(options3) {
-        if (this.state === null || this.state === void 0) {
+        if (this.state === "" || this.state === null || this.state === void 0) {
           return options3;
         }
         if (isMultiple) {
