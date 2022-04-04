@@ -20,8 +20,6 @@ export default (Alpine) => {
         return {
             select: null,
 
-            shouldUpdateState: true,
-
             state,
 
             init: async function () {
@@ -31,6 +29,8 @@ export default (Alpine) => {
                     options: await this.transformOptions(options),
 
                     placeholder,
+
+                    shouldUpdateState: true,
 
                     load: async (query, loadOptions) => {
                         if (query === undefined || query === null || query === '') {
@@ -50,6 +50,8 @@ export default (Alpine) => {
                         }
 
                         this.state = items
+
+                        this.shouldUpdateState = true
                     },
 
                     onDropdownOpen: async () => {
@@ -66,9 +68,7 @@ export default (Alpine) => {
                     },
 
                     render: {
-
                         no_results: () => `<div class="no-results">${noSearchResultsMessage}</div>`,
-
                     },
                 })
 
@@ -82,11 +82,15 @@ export default (Alpine) => {
                     this.select.focus()
                 }
 
-                this.$watch('state', () => {
+                this.$watch('state', async () => {
                     if (! this.shouldUpdateState) {
-                        this.shouldUpdateState = true
-
                         return
+                    }
+
+                    if (hasDynamicOptions && ! (this.state === '' || this.state === null || this.state === undefined)) {
+                        this.select.clearOptions()
+                        this.select.load()
+                        this.select.refreshOptions()
                     }
 
                     this.refreshItems()
@@ -94,17 +98,28 @@ export default (Alpine) => {
             },
 
             refreshItems: function () {
-                this.select.clear(false)
+                this.select.clear(true)
 
                 if (isMultiple) {
                     this.state.forEach((item) => {
-                        this.select.addItem(item, false)
+                        this.select.addItem(item, true)
                     })
                 } else {
-                    this.select.addItem(this.state, false)
+                    console.log(this.select.getOption(this.state))
+                    this.select.addItem(this.state, true)
                 }
 
                 this.select.refreshItems()
+            },
+
+            refreshOptions: async function () {
+                if (isMultiple && (! Object.values(this.state ?? {}).every((item) => this.select.getOption(item)))) {
+                    this.select.addOptions(await this.transformOptions({}))
+                } else if (! this.select.getOption(this.state)) {
+                    this.select.addOptions(await this.transformOptions({}))
+                }
+
+                this.select.refreshOptions()
             },
 
             transformOptions: async function (options) {
@@ -120,11 +135,15 @@ export default (Alpine) => {
                     return options
                 }
 
-                return optionEntires.map((option) => ({ value: option[0], text: option[1] }))
+                return optionEntires
+                    .map((option) => ({
+                        value: option[0],
+                        text: option[1],
+                    }))
             },
 
             loadMissingOptions: async function (options) {
-                if (this.state === null || this.state === undefined) {
+                if (this.state === '' || this.state === null || this.state === undefined) {
                     return options
                 }
 

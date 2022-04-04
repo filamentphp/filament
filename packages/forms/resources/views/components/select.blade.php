@@ -93,7 +93,7 @@
             @endif
         </div>
 
-        @if($hasCreateFormSchema())
+        @if ($hasCreateFormSchema())
             <div>
                 <x-forms::icon-button wire:click="mountFormComponentAction('{{ $getStatePath() }}', 'create')" icon="heroicon-o-plus" class="-mr-2" />
             </div>
