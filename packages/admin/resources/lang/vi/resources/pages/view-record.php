@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => 'Xem :label',
+
     'breadcrumb' => 'Xem',
 
     'actions' => [

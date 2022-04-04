@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => 'Просмотр :label',
+
     'breadcrumb' => 'Просмотр',
 
     'actions' => [
