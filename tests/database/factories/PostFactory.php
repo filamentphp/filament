@@ -17,6 +17,7 @@ class PostFactory extends Factory
             'content' => $this->faker->paragraph(),
             'tags' => $this->faker->words(),
             'title' => $this->faker->sentence(),
+            'rating' => $this->faker->numberBetween(1, 10),
         ];
     }
 }
