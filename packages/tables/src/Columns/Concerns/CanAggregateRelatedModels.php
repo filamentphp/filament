@@ -71,7 +71,7 @@ trait CanAggregateRelatedModels
 
         return $this;
     }
-    
+
     public function getColumnToAvg(): ?string
     {
         return $this->evaluate($this->columnToAvg);
