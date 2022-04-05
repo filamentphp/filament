@@ -228,7 +228,7 @@ class FilamentManager
                     $group => [
                         'items' => $groupedItems->get($group),
                         'collapsible' => true,
-                    ]
+                    ],
                 ];
             })
             ->toArray();
