@@ -65,7 +65,12 @@ class FilamentManager
         /** @var \Filament\Navigation\NavigationBuilder $builder */
         $builder = app()->call($this->navigationBuilder);
 
-        return collect([null => $builder->getItems()])
+        return collect([
+            null => [
+                'items' => $builder->getItems(),
+                'collapsible' => false,
+            ]
+        ])
             ->merge($builder->getGroups())
             ->toArray();
     }
