@@ -13,7 +13,7 @@ trait InteractsWithTableQuery
     public function applyRelationshipAggregates(Builder $query): Builder
     {
         return $query->when(
-            filled($this->getRelationshipToAvg(), $this->getColumnToAvg()),
+            filled([$this->getRelationshipToAvg(), $this->getColumnToAvg()]),
             fn ($query) => $query->withAvg($this->getRelationshipToAvg(), $this->getColumnToAvg())
         )->when(
             filled($this->getRelationshipToCount()),
@@ -22,13 +22,13 @@ trait InteractsWithTableQuery
             filled($this->getRelationshipToExistenceCheck()),
             fn ($query) => $query->withExists($this->getRelationshipToExistenceCheck())
         )->when(
-            filled($this->getRelationshipToMax(), $this->getColumnToMax()),
+            filled([$this->getRelationshipToMax(), $this->getColumnToMax()]),
             fn ($query) => $query->withMax($this->getRelationshipToMax(), $this->getColumnToMax())
         )->when(
-            filled($this->getRelationshipToMin(), $this->getColumnToMin()),
+            filled([$this->getRelationshipToMin(), $this->getColumnToMin()]),
             fn ($query) => $query->withMin($this->getRelationshipToMin(), $this->getColumnToMin())
         )->when(
-            filled($this->getRelationshipToSum(), $this->getColumnToSum()),
+            filled([$this->getRelationshipToSum(), $this->getColumnToSum()]),
             fn ($query) => $query->withSum($this->getRelationshipToSum(), $this->getColumnToSum())
         );
     }
