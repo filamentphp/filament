@@ -224,7 +224,12 @@ class FilamentManager
 
         return $sortedGroups
             ->mapWithKeys(function (?string $group) use ($groupedItems): array {
-                return [$group => $groupedItems->get($group)];
+                return [
+                    $group => [
+                        'items' => $groupedItems->get($group),
+                        'collapsible' => true,
+                    ]
+                ];
             })
             ->toArray();
     }
