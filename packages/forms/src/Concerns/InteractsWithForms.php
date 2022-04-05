@@ -72,10 +72,10 @@ trait InteractsWithForms
         return [];
     }
 
-    public function getMultiSelectSearchResults(string $statePath, string $query): array
+    public function getMultiSelectSearchResults(string $statePath, string $search): array
     {
         foreach ($this->getCachedForms() as $form) {
-            if ($results = $form->getMultiSelectSearchResults($statePath, $query)) {
+            if ($results = $form->getMultiSelectSearchResults($statePath, $search)) {
                 return $results;
             }
         }
@@ -105,10 +105,10 @@ trait InteractsWithForms
         return [];
     }
 
-    public function getSelectSearchResults(string $statePath, string $query): array
+    public function getSelectSearchResults(string $statePath, string $search): array
     {
         foreach ($this->getCachedForms() as $form) {
-            if ($results = $form->getSelectSearchResults($statePath, $query)) {
+            if ($results = $form->getSelectSearchResults($statePath, $search)) {
                 return $results;
             }
         }
