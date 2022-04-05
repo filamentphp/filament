@@ -17,8 +17,8 @@
             getOptionsUsing: async () => {
                 return await $wire.getMultiSelectOptions('{{ $getStatePath() }}')
             },
-            getSearchResultsUsing: async (query) => {
-                return await $wire.getMultiSelectSearchResults('{{ $getStatePath() }}', query)
+            getSearchResultsUsing: async (search) => {
+                return await $wire.getMultiSelectSearchResults('{{ $getStatePath() }}', search)
             },
             isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
             hasDynamicOptions: {{ $hasDynamicOptions() ? 'true' : 'false' }},
