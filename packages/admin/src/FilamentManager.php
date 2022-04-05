@@ -69,7 +69,7 @@ class FilamentManager
             null => [
                 'items' => $builder->getItems(),
                 'collapsible' => false,
-            ]
+            ],
         ])
             ->merge($builder->getGroups())
             ->toArray();
