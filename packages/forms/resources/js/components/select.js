@@ -87,12 +87,7 @@ export default (Alpine) => {
                         return
                     }
 
-                    if (hasDynamicOptions && ! (this.state === '' || this.state === null || this.state === undefined)) {
-                        this.select.clearOptions()
-                        this.select.load()
-                        this.select.refreshOptions()
-                    }
-
+                    await this.refreshOptions()
                     this.refreshItems()
                 })
             },
@@ -113,12 +108,8 @@ export default (Alpine) => {
             },
 
             refreshOptions: async function () {
-                if (isMultiple && (! Object.values(this.state ?? {}).every((item) => this.select.getOption(item)))) {
-                    this.select.addOptions(await this.transformOptions({}))
-                } else if (! this.select.getOption(this.state)) {
-                    this.select.addOptions(await this.transformOptions({}))
-                }
-
+                this.select.clearOptions()
+                this.select.addOptions(await this.transformOptions(await getOptionsUsing()))
                 this.select.refreshOptions()
             },
 
