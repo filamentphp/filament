@@ -157,6 +157,30 @@ TextColumn::make('users_count')->counts('users')
 
 In this example, `users` is the name of the relationship to count from. The name of the column must be `users_count`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#counting-related-models) for storing the result.
 
+### Determining relationship existence
+
+If you simply wish to indicate whether related records exist in a column, you may use the `exists()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('users_exists')->exists('users')
+```
+
+In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/9.x/eloquent-relationships#other-aggregate-functions) for storing the result.
+
+### Aggregating relationships
+
+Filament provides several methods for aggregating a relationship field, including `avg()`, `max()`, `min()` and `sum()`. For instance, if you you wish to show the average of a field on all related records in a column, you may use the `avg()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('users_avg_age')->avg('users', 'age')
+```
+
+In this example, `users` is the name of the relationship, while `age` is the field that is being averaged. The name of the column must be `users_avg_age`, as this is the convention that [Laravel uses](https://laravel.com/docs/9.x/eloquent-relationships#other-aggregate-functions) for storing the result.
+
 ### Tooltips
 
 > If you want to use tooltips outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app, including [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager). You'll also need to install [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager) if you're using a [custom admin theme](/docs/admin/appearance#building-themes).

@@ -26,6 +26,9 @@ class PostResource extends Resource
                     ->relationship('author', 'name')
                     ->required(),
                 Forms\Components\TagsInput::make('tags'),
+                Forms\Components\TextInput::make('rating')
+                    ->numeric()
+                    ->required(),
             ]);
     }
 
