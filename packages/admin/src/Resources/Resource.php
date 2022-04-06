@@ -86,9 +86,8 @@ class Resource
 
     public static function resolveRecordRouteBinding($key): ?Model
     {
-        return static::getEloquentQuery()
-            ->where(static::getRecordRouteKeyName(), $key)
-            ->first();
+        return (new (static::getModel()))
+            ->resolveRouteBinding($key);
     }
 
     public static function can(string $action, ?Model $record = null): bool
