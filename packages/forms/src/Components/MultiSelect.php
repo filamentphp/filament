@@ -103,15 +103,15 @@ class MultiSelect extends Field
         return $this->evaluate($this->searchPrompt);
     }
 
-    public function getSearchResults(string $search): array
+    public function getSearchResults(string $searchQuery): array
     {
         if (! $this->getSearchResultsUsing) {
             return [];
         }
 
         $results = $this->evaluate($this->getSearchResultsUsing, [
-            'query' => $search,
-            'search' => $search,
+            'query' => $searchQuery,
+            'search' => $searchQuery,
         ]);
 
         if ($results instanceof Arrayable) {

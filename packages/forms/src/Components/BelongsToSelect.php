@@ -81,7 +81,7 @@ class BelongsToSelect extends Select
             return $record->getAttributeValue($component->getDisplayColumnName());
         });
 
-        $this->getSearchResultsUsing(static function (BelongsToSelect $component, ?string $search) use ($callback): array {
+        $this->getSearchResultsUsing(static function (BelongsToSelect $component, ?string $searchQuery) use ($callback): array {
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
@@ -92,9 +92,9 @@ class BelongsToSelect extends Select
                 ]);
             }
 
-            $search = strtolower($search);
+            $searchQuery = strtolower($searchQuery);
 
-            $relationshipQuery = $component->applySearchConstraint($relationshipQuery, $search)->limit(50);
+            $relationshipQuery = $component->applySearchConstraint($relationshipQuery, $searchQuery)->limit(50);
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
