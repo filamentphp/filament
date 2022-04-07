@@ -5,13 +5,13 @@
                 $locale = __($localeString);
             } else {
                 $locale = strtolower(str_replace('_', '-', app()->getLocale()));
+
+                if (! str_contains($locale, '-')) {
+                    $locale .= '-' . $locale;
+                }
             }
 
             $defaultLocaleData = ($placeholder = $getPlaceholder()) ? "{ labelIdle: '{$placeholder}' }" : '{}';
-
-            if (! str_contains($locale, '-')) {
-                $locale .= '-' . $locale;
-            }
         @endphp
 
         <script type="module">

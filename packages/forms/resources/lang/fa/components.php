@@ -2,6 +2,10 @@
 
 return [
 
+    'file_upload' => [
+        'filepond_locale' => 'fa_ir',
+    ],
+
     'key_value' => [
 
         'buttons' => [

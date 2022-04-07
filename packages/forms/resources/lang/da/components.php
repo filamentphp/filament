@@ -2,6 +2,10 @@
 
 return [
 
+    'file_upload' => [
+        'filepond_locale' => 'da-dk',
+    ],
+
     'multi_select' => [
         'no_search_results_message' => 'Ingen resultater der matcher din søgning.',
         'placeholder' => 'Vælg en indstilling',
