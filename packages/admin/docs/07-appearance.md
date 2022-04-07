@@ -65,7 +65,7 @@ In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to
 ],
 ```
 
-If you use a [custom theme](#building-themes), make sure to load the Tippy CSS-files as well:
+If you use a [custom theme](#building-themes), make sure to load the Tippy's CSS files as well:
 
 ```bash
 npm install tippy.js --save-dev
