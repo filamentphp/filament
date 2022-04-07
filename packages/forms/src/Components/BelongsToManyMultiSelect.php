@@ -82,7 +82,7 @@ class BelongsToManyMultiSelect extends MultiSelect
                 ->toArray();
         });
 
-        $this->getSearchResultsUsing(static function (BelongsToManyMultiSelect $component, ?string $query) use ($callback): array {
+        $this->getSearchResultsUsing(static function (BelongsToManyMultiSelect $component, ?string $searchQuery) use ($callback): array {
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
@@ -93,7 +93,7 @@ class BelongsToManyMultiSelect extends MultiSelect
                 ]);
             }
 
-            $query = strtolower($query);
+            $searchQuery = strtolower($searchQuery);
 
             /** @var Connection $databaseConnection */
             $databaseConnection = $relationshipQuery->getConnection();
@@ -104,7 +104,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             };
 
             $relationshipQuery = $relationshipQuery
-                ->where($component->getDisplayColumnName(), $searchOperator, "%{$query}%")
+                ->where($component->getDisplayColumnName(), $searchOperator, "%{$searchQuery}%")
                 ->limit(50);
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {

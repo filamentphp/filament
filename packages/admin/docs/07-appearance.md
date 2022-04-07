@@ -65,6 +65,17 @@ In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to
 ],
 ```
 
+If you use a [custom theme](#building-themes), make sure to load the Tippy's CSS files as well:
+
+```bash
+npm install tippy.js --save-dev
+```
+
+```css
+@import '~tippy.js/dist/tippy.css';
+@import '~tippy.js/themes/light.css';
+```
+
 ## Building themes
 
 Filament allows you to change the fonts and color scheme used in the UI, by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".

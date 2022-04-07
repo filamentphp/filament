@@ -19,6 +19,7 @@ it('can create', function () {
         ->set('data.content', $newData->content)
         ->set('data.tags', $newData->tags)
         ->set('data.title', $newData->title)
+        ->set('data.rating', $newData->rating)
         ->call('create');
 
     $this->assertDatabaseHas(Post::class, [
@@ -26,6 +27,7 @@ it('can create', function () {
         'content' => $newData->content,
         'tags' => json_encode($newData->tags),
         'title' => $newData->title,
+        'rating' => $newData->rating,
     ]);
 });
 

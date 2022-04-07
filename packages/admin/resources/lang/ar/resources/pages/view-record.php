@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => 'عرض :label',
+
     'breadcrumb' => 'عرض',
 
     'actions' => [

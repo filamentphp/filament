@@ -61,7 +61,7 @@ trait CanAssociateRecords
         return Select::make('recordId')
             ->label(__('filament::resources/relation-managers/associate.action.modal.fields.record_id.label'))
             ->searchable()
-            ->getSearchResultsUsing(function (Select $component, RelationManager $livewire, string $query): array {
+            ->getSearchResultsUsing(function (Select $component, RelationManager $livewire, string $searchQuery): array {
                 $relationship = $livewire->getRelationship();
 
                 $displayColumnName = static::getRecordTitleAttribute();
@@ -69,7 +69,7 @@ trait CanAssociateRecords
                 /** @var Builder $relationshipQuery */
                 $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
 
-                $query = strtolower($query);
+                $searchQuery = strtolower($searchQuery);
 
                 /** @var Connection $databaseConnection */
                 $databaseConnection = $relationshipQuery->getConnection();
@@ -88,7 +88,7 @@ trait CanAssociateRecords
                     $relationshipQuery->{$whereClause}(
                         $searchColumnName,
                         $searchOperator,
-                        "%{$query}%",
+                        "%{$searchQuery}%",
                     );
 
                     $isFirst = false;

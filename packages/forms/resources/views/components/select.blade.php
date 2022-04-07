@@ -63,11 +63,11 @@
                         getOptionLabelsUsing: async () => {
                             return await $wire.getSelectOptionLabels(@js($getStatePath()))
                         },
-                        getOptionsUsing: async (query) => {
+                        getOptionsUsing: async () => {
                             return await $wire.getSelectOptions(@js($getStatePath()))
                         },
-                        getSearchResultsUsing: async (query) => {
-                            return await $wire.getSelectSearchResults(@js($getStatePath()), query)
+                        getSearchResultsUsing: async (searchQuery) => {
+                            return await $wire.getSelectSearchResults(@js($getStatePath()), searchQuery)
                         },
                         isAutofocused: @js($isAutofocused()),
                         isMultiple: @js($isMultiple()),
