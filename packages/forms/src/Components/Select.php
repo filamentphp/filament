@@ -146,7 +146,7 @@ class Select extends Field
 
         $results = $this->evaluate($this->getSearchResultsUsing, [
             'query' => $searchQuery,
-            'search' => $searchQuery,
+            'searchQuery' => $searchQuery,
         ]);
 
         if ($results instanceof Arrayable) {
