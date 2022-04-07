@@ -57,10 +57,10 @@
             @else
                 <div
                     x-data="selectFormComponent({
-                        getOptionLabelUsing: async (value) => {
+                        getOptionLabelUsing: async () => {
                             return await $wire.getSelectOptionLabel('{{ $getStatePath() }}')
                         },
-                        getOptionsUsing: async (query) => {
+                        getOptionsUsing: async () => {
                             return await $wire.getSelectOptions('{{ $getStatePath() }}')
                         },
                         getSearchResultsUsing: async (query) => {

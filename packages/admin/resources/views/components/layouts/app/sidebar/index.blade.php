@@ -48,8 +48,8 @@
         <x-filament::layouts.app.sidebar.start />
 
         <ul class="space-y-6 px-6">
-            @foreach (\Filament\Facades\Filament::getNavigation() as $group => $items)
-                <x-filament::layouts.app.sidebar.group :label="$group">
+            @foreach (\Filament\Facades\Filament::getNavigation() as $group => ['items' => $items, 'collapsible' => $collapsible])
+                <x-filament::layouts.app.sidebar.group :label="$group" :collapsible="$collapsible">
                     @foreach ($items as $item)
                         <x-filament::layouts.app.sidebar.item
                             :active="$item->isActive()"

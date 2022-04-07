@@ -11,7 +11,7 @@
 >
     <div
         x-data="multiSelectFormComponent({
-            getOptionLabelsUsing: async (values) => {
+            getOptionLabelsUsing: async () => {
                 return await $wire.getMultiSelectOptionLabels('{{ $getStatePath() }}')
             },
             getOptionsUsing: async () => {
