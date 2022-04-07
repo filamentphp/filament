@@ -92,8 +92,7 @@ class Resource
                 ->first();
         }
 
-        return app(static::getModel())
-            ->resolveRouteBinding($key);
+        return app(static::getModel())->resolveRouteBinding($key);
     }
 
     public static function can(string $action, ?Model $record = null): bool
@@ -272,7 +271,7 @@ class Resource
 
     public static function shouldUseRecordRouteKeyName(): bool
     {
-        return isset(static::$recordRouteKeyName);
+        return filled(static::$recordRouteKeyName);
     }
 
     public static function getRecordRouteKeyName(): string
