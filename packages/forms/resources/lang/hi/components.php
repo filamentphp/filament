@@ -75,12 +75,6 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'आपकी खोज से मेल खाने वाला कोई विकल्प नहीं मिला',
-        'placeholder' => 'किसी विकल्प का चयन करें',
-        'search_prompt' => 'खोज करने के लिए लिखना प्रारंभ करें...',
-    ],
-
     'repeater' => [
 
         'buttons' => [

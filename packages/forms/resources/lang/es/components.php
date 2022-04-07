@@ -75,12 +75,6 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'No se encontranron coincidencias con su búsqueda.',
-        'placeholder' => 'Seleccionar una opción',
-        'search_prompt' => 'No hay opciones para elegir.',
-    ],
-
     'repeater' => [
 
         'buttons' => [
