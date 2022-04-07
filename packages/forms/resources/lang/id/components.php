@@ -2,12 +2,6 @@
 
 return [
 
-    'multi_select' => [
-        'no_search_results_message' => 'Tidak ada opsi yang sesuai pencarian anda.',
-        'placeholder' => 'Pilih Opsi',
-        'search_prompt' => 'Tidak ada opsi yang bisa dipilih.',
-    ],
-
     'rich_editor' => [
 
         'dialogs' => [

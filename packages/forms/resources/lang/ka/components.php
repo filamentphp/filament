@@ -2,12 +2,6 @@
 
 return [
 
-    'multi_select' => [
-        'no_search_results_message' => 'ამ პარამეტრებით არცერთი ჩანაწერი არ მოიძებნა.',
-        'placeholder' => 'აირჩიეთ ჩანაწერი',
-        'search_prompt' => 'ჩანაწერების სია ცარიელია.',
-    ],
-
     'rich_editor' => [
 
         'dialogs' => [

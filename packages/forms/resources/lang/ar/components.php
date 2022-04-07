@@ -75,12 +75,6 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'لا توجد عناصر تطابق بحثك.',
-        'placeholder' => 'إختر عنصرا',
-        'search_prompt' => 'أبدأ الكتابة للبحث...',
-    ],
-
     'repeater' => [
 
         'buttons' => [

@@ -2,12 +2,6 @@
 
 return [
 
-    'multi_select' => [
-        'no_search_results_message' => 'Nessuna opzione trovata per la ricerca.',
-        'placeholder' => 'Seleziona un\'opzione',
-        'search_prompt' => 'Nessuna opzione disponibile.',
-    ],
-
     'rich_editor' => [
 
         'dialogs' => [

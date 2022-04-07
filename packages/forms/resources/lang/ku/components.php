@@ -47,12 +47,6 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'هیچ هەڵبژاردەیەک نییە وەک گەڕانەکەت.',
-        'placeholder' => 'هەڵبژاردەیەک دیاریبکە',
-        'search_prompt' => 'هیچ هەڵبژاردەیەک نییە تا دیاریبکەیت',
-    ],
-
     'rich_editor' => [
 
         'dialogs' => [

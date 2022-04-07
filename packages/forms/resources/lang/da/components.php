@@ -2,12 +2,6 @@
 
 return [
 
-    'multi_select' => [
-        'no_search_results_message' => 'Ingen resultater der matcher din søgning.',
-        'placeholder' => 'Vælg en indstilling',
-        'search_prompt' => 'Ingen muligheder at vælge imellem.',
-    ],
-
     'rich_editor' => [
 
         'dialogs' => [

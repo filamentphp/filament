@@ -2,12 +2,6 @@
 
 return [
 
-    'multi_select' => [
-        'no_search_results_message' => 'Er zijn geen resultaten voor je zoekopdracht.',
-        'placeholder' => 'Selecteer een optie',
-        'search_prompt' => 'Geen opties om te selecteren.',
-    ],
-
     'rich_editor' => [
 
         'dialogs' => [
