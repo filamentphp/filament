@@ -1565,3 +1565,8 @@ trix-editor .attachment__metadata .attachment__size {
 .dark .trix-button-group {
   @apply border-gray-600;
 }
+
+/* packages/forms/resources/css/components/tags-input.css */
+.webkit-calendar-picker-indicator\:opacity-0::-webkit-calendar-picker-indicator {
+  @apply opacity-0;
+}
