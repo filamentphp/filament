@@ -1567,6 +1567,6 @@ trix-editor .attachment__metadata .attachment__size {
 }
 
 /* packages/forms/resources/css/components/tags-input.css */
-.tags-input::-webkit-calendar-picker-indicator {
-  opacity: 0;
+.webkit-calendar-picker-indicator\:opacity-0::-webkit-calendar-picker-indicator {
+  @apply opacity-0;
 }
