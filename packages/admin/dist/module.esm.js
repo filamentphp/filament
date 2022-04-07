@@ -13097,7 +13097,7 @@ var filepond_plugin_image_exif_orientation_esm_default = plugin4;
 
 // node_modules/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.esm.js
 /*!
- * FilePondPluginImagePreview 4.6.11
+ * FilePondPluginImagePreview 4.6.10
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -13809,7 +13809,7 @@ var createImageOverlayView = (fpAPI) => fpAPI.utils.createView({
   create: ({root: root2, props}) => {
     let mask = SVG_MASK;
     if (document.querySelector("base")) {
-      const url = new URL(window.location.href.replace(window.location.hash, "")).href;
+      const url = window.location.href.replace(window.location.hash, "");
       mask = mask.replace(/url\(\#/g, "url(" + url + "#");
     }
     SVGMaskUniqueId++;
