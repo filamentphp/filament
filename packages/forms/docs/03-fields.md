@@ -437,7 +437,7 @@ The `getOptionLabelUsing()` method accepts a callback that transforms the select
 ```php
 Select::make('authorId')
     ->searchable()
-    ->getSearchResultsUsing(fn (string $query) => User::where('name', 'like', "%{$query}%")->limit(50)->pluck('name', 'id'))
+    ->getSearchResultsUsing(fn (string $searchQuery) => User::where('name', 'like', "%{$searchQuery}%")->limit(50)->pluck('name', 'id'))
     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
 ```
 
@@ -554,7 +554,7 @@ The `getOptionLabelsUsing()` method accepts a callback that transforms the selec
 use Filament\Forms\Components\MultiSelect;
 
 MultiSelect::make('technologies')
-    ->getSearchResultsUsing(fn (string $query) => Technology::where('name', 'like', "%{$query}%")->limit(50)->pluck('name', 'id'))
+    ->getSearchResultsUsing(fn (string $searchQuery) => Technology::where('name', 'like', "%{$searchQuery}%")->limit(50)->pluck('name', 'id'))
     ->getOptionLabelsUsing(fn (array $values) => Technology::find($values)->pluck('name')),
 ```
 
