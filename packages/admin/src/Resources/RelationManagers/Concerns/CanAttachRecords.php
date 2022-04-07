@@ -18,6 +18,8 @@ trait CanAttachRecords
 
     protected static bool $canAttachAnother = true;
 
+    protected static bool $shouldPreloadAttachFormRecordSelectOptions = false;
+
     protected function canAttach(): bool
     {
         return $this->can('attach');
@@ -95,6 +97,25 @@ trait CanAttachRecords
                     ->toArray();
             })
             ->getOptionLabelUsing(fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->query()->find($value)))
+            ->options(function (RelationManager $livewire): array {
+                if (! static::$shouldPreloadAttachFormRecordSelectOptions) {
+                    return [];
+                }
+
+                $relationship = $livewire->getRelationship();
+
+                $displayColumnName = static::getRecordTitleAttribute();
+
+                return $relationship
+                    ->getRelated()
+                    ->query()
+                    ->orderBy($displayColumnName)
+                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
+                        $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                    })
+                    ->pluck($displayColumnName, $relationship->getRelated()->getKeyName())
+                    ->toArray();
+            })
             ->disableLabel();
     }
 
