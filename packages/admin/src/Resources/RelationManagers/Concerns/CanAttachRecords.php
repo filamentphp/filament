@@ -56,25 +56,6 @@ trait CanAttachRecords
         return Select::make('recordId')
             ->label(__('filament::resources/relation-managers/attach.action.modal.fields.record_id.label'))
             ->searchable()
-            ->options(function (RelationManager $livewire): array {
-                if (!static::$shouldPreloadAttachFormRecordSelectOptions) {
-                    return [];
-                }
-
-                $relationship = $livewire->getRelationship();
-
-                $displayColumnName = static::getRecordTitleAttribute();
-
-                /** @var Builder $relationshipQuery */
-                $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
-
-                return $relationshipQuery
-                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
-                        $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
-                    })
-                    ->pluck($displayColumnName, $relationship->getRelated()->getKeyName())
-                    ->toArray();
-            })
             ->getSearchResultsUsing(function (Select $component, RelationManager $livewire, string $query): array {
                 $relationship = $livewire->getRelationship();
 
@@ -116,6 +97,25 @@ trait CanAttachRecords
                     ->toArray();
             })
             ->getOptionLabelUsing(fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->query()->find($value)))
+            ->options(function (RelationManager $livewire): array {
+                if (! static::$shouldPreloadAttachFormRecordSelectOptions) {
+                    return [];
+                }
+
+                $relationship = $livewire->getRelationship();
+
+                $displayColumnName = static::getRecordTitleAttribute();
+
+                return $relationship
+                    ->getRelated()
+                    ->query()
+                    ->orderBy($displayColumnName)
+                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
+                        $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                    })
+                    ->pluck($displayColumnName, $relationship->getRelated()->getKeyName())
+                    ->toArray();
+            })
             ->disableLabel();
     }
 
