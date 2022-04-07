@@ -1,7 +1,11 @@
 @once
     @push('scripts')
         @php
-            $locale = strtolower(str_replace('_', '-', app()->getLocale()));
+            if (\Illuminate\Support\Facades\Lang::has($localeString = 'forms::components.file_upload.filepond_locale')) {
+                $locale = __($localeString);
+            } else {
+                $locale = strtolower(str_replace('_', '-', app()->getLocale()));
+            }
 
             $defaultLocaleData = ($placeholder = $getPlaceholder()) ? "{ labelIdle: '{$placeholder}' }" : '{}';
 
