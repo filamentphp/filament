@@ -1777,6 +1777,7 @@ trix-editor .attachment__metadata .attachment__size {
   @apply rounded-lg;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 /* packages/forms/resources/css/components/color-picker.css */
 .filament-forms-color-picker-preview {
@@ -1797,6 +1798,10 @@ trix-editor .attachment__metadata .attachment__size {
 .focus .ts-control {
   @apply border-primary-600 ring-1 ring-inset ring-primary-600;
 >>>>>>> e750f9f4 (wip)
+=======
+.focus .ts-control {
+  @apply border-primary-600 ring-1 ring-inset ring-primary-600;
+>>>>>>> b38f158f (wip)
 }
 .ts-control .item {
   @apply flex items-center;
@@ -1842,6 +1847,7 @@ trix-editor .attachment__metadata .attachment__size {
   @apply p-0 h-auto shadow-none;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 .filepond--root[data-style-panel-layout=grid] .filepond--item {
   width: calc(50% - 0.5em);
 }
@@ -1859,6 +1865,11 @@ trix-editor .attachment__metadata .attachment__size {
 .ts-wrapper.form-select.single.input-active .ts-control {
   @apply !border-0 !bg-transparent;
 >>>>>>> e750f9f4 (wip)
+=======
+.ts-wrapper.form-select .ts-control,
+.ts-wrapper.form-select.single.input-active .ts-control {
+  @apply !border-0 !bg-transparent;
+>>>>>>> b38f158f (wip)
 }
 .input-group > .ts-wrapper {
   @apply flex-grow;
