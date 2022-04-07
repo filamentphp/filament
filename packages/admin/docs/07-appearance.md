@@ -65,21 +65,15 @@ In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to
 ],
 ```
 
-If you enable the collapsible sidebar, make sure to load the Tippy CSS-files as well, by adding the following to your service provider:
+If you use a [custom theme](#building-themes), make sure to load the Tippy CSS-files as well:
 
-
-```php
-Filament::registerStyles([
-    'https://unpkg.com/tippy.js@6/dist/tippy.css',
-    'https://unpkg.com/tippy.js@6/themes/light.css',
-]);
+```bash
+npm install tippy.js --save-dev
 ```
 
-If you're building your own theme (see below), you can alternatively compile the Tippy CSS directly into your own CSS-file:
-
 ```css
-@import 'https://unpkg.com/tippy.js@6/dist/tippy.css';
-@import 'https://unpkg.com/tippy.js@6/themes/light.css';
+@import '~tippy.js/dist/tippy.css';
+@import '~tippy.js/themes/light.css';
 ```
 
 ## Building themes
