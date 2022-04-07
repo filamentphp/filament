@@ -6196,10 +6196,8 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.hour = hour;
           }
-          if (this.state !== null) {
-            let date2 = this.getSelectedDate() ?? this.focusedDate;
-            this.setState(date2.hour(this.hour ?? 0));
-          }
+          let date2 = this.getSelectedDate() ?? this.focusedDate;
+          this.setState(date2.hour(this.hour ?? 0));
         });
         this.$watch("minute", () => {
           let minute = +this.minute;
@@ -6212,10 +6210,8 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.minute = minute;
           }
-          if (this.state !== null) {
-            let date2 = this.getSelectedDate() ?? this.focusedDate;
-            this.setState(date2.minute(this.minute ?? 0));
-          }
+          let date2 = this.getSelectedDate() ?? this.focusedDate;
+          this.setState(date2.minute(this.minute ?? 0));
         });
         this.$watch("second", () => {
           let second = +this.second;
@@ -6228,17 +6224,15 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.second = second;
           }
-          if (this.state !== null) {
-            let date2 = this.getSelectedDate() ?? this.focusedDate;
-            this.setState(date2.second(this.second ?? 0));
-          }
+          let date2 = this.getSelectedDate() ?? this.focusedDate;
+          this.setState(date2.second(this.second ?? 0));
         });
         this.$watch("state", () => {
           let date2 = this.getSelectedDate();
-          if (this.maxDate !== null && date2?.isAfter(this.maxDate)) {
+          if (this.maxDate !== null && date2.isAfter(this.maxDate)) {
             date2 = null;
           }
-          if (this.minDate !== null && date2?.isBefore(this.minDate)) {
+          if (this.minDate !== null && date2.isBefore(this.minDate)) {
             date2 = null;
           }
           this.hour = date2?.hour() ?? 0;
