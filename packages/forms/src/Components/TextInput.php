@@ -144,7 +144,7 @@ class TextInput extends Field implements CanHaveNumericState
     {
         $this->isTel = $condition;
 
-        $this->regex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/', $condition);
+        $this->regex(fn (TextInput $component) => $component->evaluate($condition) ? '/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/' : null);
 
         return $this;
     }
