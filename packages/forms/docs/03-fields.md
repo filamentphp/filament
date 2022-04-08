@@ -139,12 +139,39 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->disabled()
 ```
 
-Optionally, you may pass a boolean value to control the disabled state:
+Optionally, you may pass a boolean value to control if the field should be disabled or not:
 
 ```php
 use Filament\Forms\Components\Toggle;
 
 Toggle::make('is_admin')->disabled(! auth()->user()->isAdmin())
+```
+
+Please note that disabling a field does not prevent it from being saved, and a skillful user could manipulate the HTML of the page and alter its value.
+
+To prevent a field from being saved, use the `dehydrated(false)` method:
+
+```php
+Toggle::make('is_admin')->dehydrated(false)
+```
+
+Alternatively, you may only want to save a field conditionally, maybe if the user is an admin:
+
+```php
+Toggle::make('is_admin')
+    ->disabled(! auth()->user()->isAdmin())
+    ->dehydrated(auth()->user()->isAdmin())
+```
+
+If you're using the [admin panel](/docs/admin) and only want to save disabled fields on the [Create page of a resource](/docs/admin/resources):
+
+```php
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\Page;
+
+TextInput::make('slug')
+    ->disabled()
+    ->dehydrated(fn (Page $livewire) => $livewire instanceof CreateRecord)
 ```
 
 ### Autofocusing
