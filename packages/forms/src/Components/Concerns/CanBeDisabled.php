@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Component;
 
 trait CanBeDisabled
 {
@@ -12,7 +11,6 @@ trait CanBeDisabled
     public function disabled(bool | Closure $condition = true): static
     {
         $this->isDisabled = $condition;
-        $this->dehydrated(fn (Component $component): bool => ! $component->evaluate($condition));
 
         return $this;
     }
