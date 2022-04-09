@@ -1,3 +1,4 @@
+import ColorPickerFormComponentAlpinePlugin from './components/color-picker'
 import DateTimePickerFormComponentAlpinePlugin from './components/date-time-picker'
 import FileUploadFormComponentAlpinePlugin from './components/file-upload'
 import KeyValueFormComponentAlpinePlugin from './components/key-value'
@@ -11,6 +12,7 @@ import TextareaFormComponentAlpinePlugin from './components/textarea'
 import './sortable'
 
 export default (Alpine) => {
+    Alpine.plugin(ColorPickerFormComponentAlpinePlugin)
     Alpine.plugin(DateTimePickerFormComponentAlpinePlugin)
     Alpine.plugin(FileUploadFormComponentAlpinePlugin)
     Alpine.plugin(KeyValueFormComponentAlpinePlugin)
@@ -24,6 +26,7 @@ export default (Alpine) => {
 }
 
 export {
+    ColorPickerFormComponentAlpinePlugin,
     DateTimePickerFormComponentAlpinePlugin,
     FileUploadFormComponentAlpinePlugin,
     KeyValueFormComponentAlpinePlugin,
