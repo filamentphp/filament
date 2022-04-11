@@ -29,7 +29,7 @@
                             'relative bg-white shadow-sm rounded-lg border border-gray-300',
                             'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
                             'p-6' => ! $withBlockLabels,
-                            'px-6 pt-10 pb-6' => $withBlockLabels,
+                            'px-6 pt-12 pb-6' => $withBlockLabels,
                         ])
                     >
                         @if($withBlockLabels)
