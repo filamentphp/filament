@@ -39,6 +39,26 @@ class ColorPicker extends Field
         return $this;
     }
 
+    public function hex(): static
+    {
+        return $this->format('hex');
+    }
+
+    public function hsl(): static
+    {
+        return $this->format('hsl');
+    }
+
+    public function rgb(): static
+    {
+        return $this->format('rgb');
+    }
+
+    public function rgba(): static
+    {
+        return $this->format('rgba');
+    }
+
     public function getFormat(): string
     {
         return $this->evaluate($this->format);

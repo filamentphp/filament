@@ -46,6 +46,7 @@
                 type="text"
                 dusk="filament.forms.{{ $getStatePath() }}"
                 id="{{ $getId() }}"
+                autocomplete="off"
                 {{ $getExtraAlpineAttributeBag() }}
                 {!! $isDisabled() ? 'disabled' : null !!}
                 {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
