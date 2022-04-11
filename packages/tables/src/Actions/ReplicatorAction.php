@@ -91,11 +91,6 @@ class ReplicatorAction extends ButtonAction
         return $this->evaluate($this->exclude);
     }
 
-    public function getRelationships(): ?array
-    {
-        return $this->evaluate($this->relationships);
-    }
-
     public function getView(): string
     {
         if ($this->isButton) {
