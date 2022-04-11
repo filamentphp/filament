@@ -6,7 +6,7 @@ use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 
-class ReplicatorAction extends Action
+class ReplicatorAction extends ButtonAction
 {
     protected bool $isButton = false;
 
