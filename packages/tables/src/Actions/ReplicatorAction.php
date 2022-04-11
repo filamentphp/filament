@@ -5,8 +5,6 @@ namespace Filament\Tables\Actions;
 use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ReplicatorAction extends Action
 {
