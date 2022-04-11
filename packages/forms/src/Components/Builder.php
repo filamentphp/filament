@@ -26,6 +26,8 @@ class Builder extends Field
 
     protected bool | Closure $isItemDeletionDisabled = false;
 
+    protected bool | Closure $showBlockLabels = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -228,6 +230,13 @@ class Builder extends Field
         $this->getChildComponentContainers()[$uuid]->hydrateDefaultState();
     }
 
+    public function showBlockLabels(bool | Closure $condition = true): static
+    {
+        $this->showBlockLabels = $condition;
+
+        return $this;
+    }
+
     public function getBlock($name): ?Block
     {
         return Arr::first(
@@ -282,5 +291,10 @@ class Builder extends Field
     public function isItemDeletionDisabled(): bool
     {
         return $this->evaluate($this->isItemDeletionDisabled);
+    }
+
+    public function shouldShowBlockLabels(): bool
+    {
+        return (bool) $this->evaluate($this->showBlockLabels);
     }
 }
