@@ -1,13 +1,17 @@
 @once
     @push('scripts')
         @php
-            $locale = strtolower(str_replace('_', '-', app()->getLocale()));
+            if (\Illuminate\Support\Facades\Lang::has($localeString = 'forms::components.file_upload.filepond_locale')) {
+                $locale = __($localeString);
+            } else {
+                $locale = strtolower(str_replace('_', '-', app()->getLocale()));
+
+                if (! str_contains($locale, '-')) {
+                    $locale .= '-' . $locale;
+                }
+            }
 
             $defaultLocaleData = ($placeholder = $getPlaceholder()) ? "{ labelIdle: '{$placeholder}' }" : '{}';
-
-            if (! str_contains($locale, '-')) {
-                $locale .= '-' . $locale;
-            }
         @endphp
 
         <script type="module">
@@ -79,7 +83,7 @@
         <input
             x-ref="input"
             {{ $isDisabled() ? 'disabled' : '' }}
-            {{ $isMultiple() ? 'multiple' : '' }}            
+            {{ $isMultiple() ? 'multiple' : '' }}
             type="file"
             {{ $getExtraInputAttributeBag() }}
             dusk="filament.forms.{{ $getStatePath() }}"
