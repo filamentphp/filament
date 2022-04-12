@@ -15,7 +15,7 @@ return [
 
         'label' => '分页',
 
-        'overview' => '显示 :first 到 :last 的 :total 结果',
+        'overview' => '当前显示第 :first 条到第 :last 条，共 :total 条',
 
         'fields' => [
 
@@ -85,12 +85,42 @@ return [
         'heading' => '没有找到相关记录',
     ],
 
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => '重置筛选条件',
+            ],
+
+            'close' => [
+                'label' => '关闭',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => '全部',
+        ],
+
+        'select' => [
+            'placeholder' => '全部',
+        ],
+
+    ],
+
     'selection_indicator' => [
+
+        'selected_count' => '已选 :count 条记录',
 
         'buttons' => [
 
             'select_all' => [
                 'label' => '选择全部 :count 条记录',
+            ],
+
+            'deselect_all' => [
+                'label' => '取消全选',
             ],
 
         ],
