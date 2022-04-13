@@ -2,6 +2,10 @@
 
 return [
 
+    'file_upload' => [
+        'filepond_locale' => 'sv_se',
+    ],
+
     'key_value' => [
 
         'buttons' => [

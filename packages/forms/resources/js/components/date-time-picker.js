@@ -173,12 +173,10 @@ export default (Alpine) => {
                     } else {
                         this.hour = hour
                     }
-                    
-                    if (this.state !== null) {
-                        let date = this.getSelectedDate() ?? this.focusedDate
 
-                        this.setState(date.hour(this.hour ?? 0))
-                    }
+                    let date = this.getSelectedDate() ?? this.focusedDate
+
+                    this.setState(date.hour(this.hour ?? 0))
                 })
 
                 this.$watch('minute', () => {
@@ -193,12 +191,10 @@ export default (Alpine) => {
                     } else {
                         this.minute = minute
                     }
-                    
-                    if (this.state !== null) {
-                        let date = this.getSelectedDate() ?? this.focusedDate
 
-                        this.setState(date.minute(this.minute ?? 0))
-                    }
+                    let date = this.getSelectedDate() ?? this.focusedDate
+
+                    this.setState(date.minute(this.minute ?? 0))
                 })
 
                 this.$watch('second', () => {
@@ -213,21 +209,19 @@ export default (Alpine) => {
                     } else {
                         this.second = second
                     }
-                    
-                    if (this.state !== null) {
-                        let date = this.getSelectedDate() ?? this.focusedDate
 
-                        this.setState(date.second(this.second ?? 0))
-                    }
+                    let date = this.getSelectedDate() ?? this.focusedDate
+
+                    this.setState(date.second(this.second ?? 0))
                 })
 
                 this.$watch('state', () => {
                     let date = this.getSelectedDate()
 
-                    if (this.maxDate !== null && date?.isAfter(this.maxDate)) {
+                    if (this.maxDate !== null && date.isAfter(this.maxDate)) {
                         date = null
                     }
-                    if (this.minDate !== null && date?.isBefore(this.minDate)) {
+                    if (this.minDate !== null && date.isBefore(this.minDate)) {
                         date = null
                     }
 

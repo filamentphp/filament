@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class Section extends Component implements Contracts\CanConcealComponents
@@ -15,7 +16,7 @@ class Section extends Component implements Contracts\CanConcealComponents
 
     protected bool | Closure $isCollapsible = false;
 
-    protected string | Closure | null $description = null;
+    protected string | HtmlString | Closure | null $description = null;
 
     protected string | Closure $heading;
 
@@ -54,7 +55,7 @@ class Section extends Component implements Contracts\CanConcealComponents
         return $this;
     }
 
-    public function description(string | Closure | null $description = null): static
+    public function description(string | HtmlString | Closure | null $description = null): static
     {
         $this->description = $description;
 
@@ -68,7 +69,7 @@ class Section extends Component implements Contracts\CanConcealComponents
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string | HtmlString | null
     {
         return $this->evaluate($this->description);
     }
