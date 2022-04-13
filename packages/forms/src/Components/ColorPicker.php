@@ -16,7 +16,7 @@ class ColorPicker extends Field
 
     protected string | Closure $format = 'hex';
 
-    protected bool | Closure $preview = true;
+    protected bool | Closure $isPreviewable = true;
 
     protected function setUp(): void
     {
@@ -32,31 +32,39 @@ class ColorPicker extends Field
         return $this;
     }
 
-    public function preview(bool | Closure $preview = true): static
+    public function previewable(bool | Closure $condition = true): static
     {
-        $this->preview = $preview;
+        $this->isPreviewable = $condition;
 
         return $this;
     }
 
     public function hex(): static
     {
-        return $this->format('hex');
+        $this->format('hex');
+        
+        return $this;
     }
 
     public function hsl(): static
     {
-        return $this->format('hsl');
+        $this->format('hsl');
+        
+        return $this;
     }
 
     public function rgb(): static
     {
-        return $this->format('rgb');
+        $this->format('rgb');
+        
+        return $this;
     }
 
     public function rgba(): static
     {
-        return $this->format('rgba');
+        $this->format('rgba');
+        
+        return $this;
     }
 
     public function getFormat(): string
@@ -64,8 +72,8 @@ class ColorPicker extends Field
         return $this->evaluate($this->format);
     }
 
-    public function hasPreview(): bool
+    public function isPreviewable(): bool
     {
-        return (bool) $this->evaluate($this->preview);
+        return (bool) $this->evaluate($this->isPreviewable);
     }
 }
