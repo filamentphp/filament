@@ -62,7 +62,7 @@
                 >
                     <span
                         x-bind:style="{'--color': state}"
-                        class="relative overflow-hidden rounded-md w-7 h-7 filament-forms-color-picker-preview"
+                        class="relative overflow-hidden rounded-md w-7 h-7 filament-forms-color-picker-component-preview"
                     ></span>
                 </span>
             @endif
