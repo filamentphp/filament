@@ -1659,7 +1659,7 @@ use Filament\Forms\Components\ColorPicker;
 ColorPicker::make('color')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/163199160-d1007249-2a7f-45a2-a1f4-a679534fa154.png)
+![](https://user-images.githubusercontent.com/41773797/163201755-8926ce35-0d72-42b0-bd31-8967ba40f089.png)
 
 Alternatively, you can use a different format:
 
