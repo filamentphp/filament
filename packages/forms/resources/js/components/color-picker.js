@@ -1,31 +1,39 @@
-import 'vanilla-colorful/hex-color-picker';
-import 'vanilla-colorful/hsl-string-color-picker';
-import 'vanilla-colorful/rgb-string-color-picker';
-import 'vanilla-colorful/rgba-string-color-picker';
+import 'vanilla-colorful/hex-color-picker'
+import 'vanilla-colorful/hsl-string-color-picker'
+import 'vanilla-colorful/rgb-string-color-picker'
+import 'vanilla-colorful/rgba-string-color-picker'
 
-import '../../css/components/color-picker.css';
-
+import '../../css/components/color-picker.css'
 
 export default (Alpine) => {
     Alpine.data('colorPickerFormComponent', ({
+        isAutofocused,
+        isDisabled,
         state,
     }) => {
         return {
-            state,
-
             isOpen: false,
 
+            state,
+
             init: function () {
-                if( this.state )
-                    this.setState(this.state);
+                if (! (this.state === null || this.state === '')) {
+                    this.setState(this.state)
+                }
+                
+                if (isAutofocused) {
+                    this.openPicker()
+                }
 
                 this.$refs.picker.addEventListener('color-changed', (event) => {
-                    this.setState(event.detail.value);
+                    this.setState(event.detail.value)
                 });
             },
 
             openPicker: function () {
-                if( this.isDisabled ) return
+                if (isDisabled) {
+                    return
+                }
 
                 this.isOpen = true
             },
