@@ -286,7 +286,7 @@ trait InteractsWithForms
         if (method_exists($this, 'rules')) {
             $rules = $this->rules();
         }
-        
+
         if (property_exists($this, 'rules')) {
             $rules = $this->rules;
         }
