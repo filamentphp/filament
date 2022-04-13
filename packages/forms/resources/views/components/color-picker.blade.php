@@ -4,13 +4,6 @@
         'text-gray-400' => ! $errors->has($getStatePath()),
         'text-danger-400' => $errors->has($getStatePath()),
     ];
-
-    $componentTag = match($getFormat()){
-        'hsl' => 'hsl-string',
-        'rgb' => 'rgb-string',
-        'rgba' => 'rgba-string',
-        default => 'hex'
-    }
 @endphp
 
 <x-dynamic-component
@@ -33,16 +26,18 @@
 
         <div
             x-data="colorPickerFormComponent({
+                isAutofocused: @js($isAutofocused()),
+                isDisabled: @js($isDisabled()),
                 state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }}
             })"
-            x-on:click="@js(! $isDisabled()) && openPicker()"
+            x-on:click="openPicker()"
             x-on:click.away="closePicker()"
             x-on:keydown.escape.stop="closePicker()"
             class="relative flex-1"
         >
             <input
                 x-ref="input"
-                x-on:focus="@js(! $isDisabled()) && openPicker()"
+                x-on:focus="openPicker()"
                 type="text"
                 dusk="filament.forms.{{ $getStatePath() }}"
                 id="{{ $getId() }}"
@@ -60,7 +55,7 @@
                 ]) }}
             />
 
-            @if ($hasPreview() && ! $isInline())
+            @if ($hasPreview() && (! $isInline()))
                 <span
                     x-cloak
                     class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2"
@@ -72,7 +67,12 @@
                 </span>
             @endif
 
-            <{{ $componentTag }}-color-picker
+            <{{ match($getFormat()) {
+                'hsl' => 'hsl-string',
+                'rgb' => 'rgb-string',
+                'rgba' => 'rgba-string',
+                default => 'hex',
+            } }}-color-picker
                 x-cloak
                 x-ref="picker"
                 @unless ($isInline())
