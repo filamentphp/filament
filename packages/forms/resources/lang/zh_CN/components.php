@@ -18,6 +18,10 @@ return [
                 'label' => '删除',
             ],
 
+            'move_item' => [
+                'label' => '移动',
+            ],
+
             'move_item_down' => [
                 'label' => '下移',
             ],
