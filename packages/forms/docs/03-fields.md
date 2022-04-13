@@ -1659,6 +1659,8 @@ use Filament\Forms\Components\ColorPicker;
 ColorPicker::make('color')
 ```
 
+![](https://user-images.githubusercontent.com/41773797/163199160-d1007249-2a7f-45a2-a1f4-a679534fa154.png)
+
 Alternatively, you can use a different format:
 
 ```php

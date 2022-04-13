@@ -20,10 +20,14 @@ export default (Alpine) => {
                 if (! (this.state === null || this.state === '')) {
                     this.setState(this.state)
                 }
-                
+
                 if (isAutofocused) {
                     this.openPicker()
                 }
+
+                this.$refs.input.addEventListener('change', (event) => {
+                    this.setState(event.target.value)
+                });
 
                 this.$refs.picker.addEventListener('color-changed', (event) => {
                     this.setState(event.detail.value)
