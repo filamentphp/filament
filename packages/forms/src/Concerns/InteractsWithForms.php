@@ -283,8 +283,13 @@ trait InteractsWithForms
     {
         $rules = [];
 
-        if (method_exists($this, 'rules')) $rules = $this->rules();
-        if (property_exists($this, 'rules')) $rules = $this->rules;
+        if (method_exists($this, 'rules')) {
+            $rules = $this->rules();
+        }
+        
+        if (property_exists($this, 'rules')) {
+            $rules = $this->rules;
+        }
 
         foreach ($this->getCachedForms() as $form) {
             $rules = array_merge($rules, $form->getValidationRules());
