@@ -91,7 +91,7 @@ class EditPost extends Component implements Forms\Contracts\HasForms
 
 Visit your Livewire component in the browser, and you should see the form components from `getFormSchema()`.
 
-<img src="https://user-images.githubusercontent.com/41773797/147614478-5b40c645-107e-40ac-ba41-f0feb99dd480.png">
+![](https://user-images.githubusercontent.com/41773797/147614478-5b40c645-107e-40ac-ba41-f0feb99dd480.png)
 
 ## Initializing forms
 
