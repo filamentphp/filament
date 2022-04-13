@@ -10,31 +10,14 @@ class ColorPicker extends Field
     use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
-    use Concerns\CanBeInline;
 
     protected string $view = 'forms::components.color-picker';
 
     protected string | Closure $format = 'hex';
 
-    protected bool | Closure $isPreviewable = true;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->inline(false);
-    }
-
     public function format(string | Closure $format): static
     {
         $this->format = $format;
-
-        return $this;
-    }
-
-    public function previewable(bool | Closure $condition = true): static
-    {
-        $this->isPreviewable = $condition;
 
         return $this;
     }
@@ -70,10 +53,5 @@ class ColorPicker extends Field
     public function getFormat(): string
     {
         return $this->evaluate($this->format);
-    }
-
-    public function isPreviewable(): bool
-    {
-        return (bool) $this->evaluate($this->isPreviewable);
     }
 }

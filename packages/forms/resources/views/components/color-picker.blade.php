@@ -33,7 +33,7 @@
             x-on:click="openPicker()"
             x-on:click.away="closePicker()"
             x-on:keydown.escape.stop="closePicker()"
-            class="relative flex-1"
+            {{ $getExtraAlpineAttributeBag()->class(['relative flex-1']) }}
         >
             <input
                 x-ref="input"
@@ -42,7 +42,6 @@
                 dusk="filament.forms.{{ $getStatePath() }}"
                 id="{{ $getId() }}"
                 autocomplete="off"
-                {{ $getExtraAlpineAttributeBag() }}
                 {!! $isDisabled() ? 'disabled' : null !!}
                 {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
                 {!! $isRequired() ? 'required' : null !!}
@@ -55,17 +54,15 @@
                 ]) }}
             />
 
-            @if ($isPreviewable() && (! $isInline()))
+            <span
+                x-cloak
+                class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2"
+            >
                 <span
-                    x-cloak
-                    class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2"
-                >
-                    <span
-                        x-bind:style="{'--color': state}"
-                        class="relative overflow-hidden rounded-md w-7 h-7 filament-forms-color-picker-component-preview"
-                    ></span>
-                </span>
-            @endif
+                    x-bind:style="{'background-color': state}"
+                    class="relative overflow-hidden rounded-md w-7 h-7 filament-forms-color-picker-component-preview"
+                ></span>
+            </span>
 
             <{{ match($getFormat()) {
                 'hsl' => 'hsl-string',
@@ -75,17 +72,13 @@
             } }}-color-picker
                 x-cloak
                 x-ref="picker"
-                @unless ($isInline())
-                    x-show="isOpen"
-                    x-on:blur="isOpen && closePicker()"
-                    x-transition:leave="ease-in duration-100"
-                    x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0"
-                @endunless
+                x-show="isOpen"
+                x-on:blur="isOpen && closePicker()"
+                x-transition:leave="ease-in duration-100"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
                 @class([
-                    'mt-4',
-                    'absolute z-10 shadow-lg' => ! $isInline(),
-                    'w-full shadow-sm border border-gray-300 rounded-lg dark:border-gray-600' => $isInline(),
+                    'mt-4 absolute z-10 shadow-lg',
                     'opacity-70 pointer-events-none' => $isDisabled(),
                 ])
             />
