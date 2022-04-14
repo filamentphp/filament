@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class Placeholder extends Component
