@@ -6161,7 +6161,6 @@ var color_picker_default2 = (Alpine) => {
           this.openPicker();
         }
         this.$refs.input.addEventListener("change", (event) => {
-          console.log("hey");
           this.setState(event.target.value);
         });
         this.$refs.picker.addEventListener("color-changed", (event) => {
