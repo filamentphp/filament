@@ -52,7 +52,7 @@ class Placeholder extends Component
         return parent::getId() ?? $this->getStatePath();
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | HtmlString | null
     {
         return parent::getLabel() ?? (string) Str::of($this->getName())
             ->kebab()
