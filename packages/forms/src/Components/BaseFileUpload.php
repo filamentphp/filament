@@ -10,9 +10,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Livewire\FileUploadConfiguration;
-use Livewire\TemporaryUploadedFile;
 use function Livewire\invade;
+use Livewire\TemporaryUploadedFile;
 
 class BaseFileUpload extends Field
 {

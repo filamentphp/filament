@@ -6,11 +6,11 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Collection;
+use function Livewire\invade;
 use Livewire\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use function Livewire\invade;
 
 class SpatieMediaLibraryFileUpload extends FileUpload
 {
