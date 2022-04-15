@@ -9,7 +9,6 @@ import SelectFormComponentAlpinePlugin from './components/select'
 import TagsInputFormComponentAlpinePlugin from './components/tags-input'
 import TextInputFormComponentAlpinePlugin from './components/text-input'
 import TextareaFormComponentAlpinePlugin from './components/textarea'
-import './sortable'
 
 export default (Alpine) => {
     Alpine.plugin(ColorPickerFormComponentAlpinePlugin)
