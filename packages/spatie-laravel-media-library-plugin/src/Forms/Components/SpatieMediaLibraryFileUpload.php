@@ -10,6 +10,7 @@ use Livewire\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use function Livewire\invade;
 
 class SpatieMediaLibraryFileUpload extends FileUpload
 {
@@ -62,9 +63,14 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             /** @var FilesystemAdapter $storage */
             $storage = $component->getDisk();
 
-            // An ugly mess as we need to support both Flysystem v1 and v3.
-            $storageAdapter = method_exists($storage, 'getAdapter') ? $storage->getAdapter() : (method_exists($storageDriver = $storage->getDriver(), 'getAdapter') ? $storageDriver->getAdapter() : null);
-            $supportsTemporaryUrls = method_exists($storageAdapter, 'temporaryUrl') || method_exists($storageAdapter, 'getTemporaryUrl');
+            // Flysystem V2+ doesn't allow direct access to adapter, so we need to invade instead.
+            if (method_exists($storage, 'getAdapter')) {
+                $adapter = $storage->getAdapter();
+            } else {
+                $adapter = invade($storage)->adapter;
+            }
+
+            $supportsTemporaryUrls = method_exists($adapter, 'temporaryUrl') || method_exists($adapter, 'getTemporaryUrl');
 
             if ($component->getVisibility() === 'private' && $supportsTemporaryUrls) {
                 return $media?->getTemporaryUrl(now()->addMinutes(5));

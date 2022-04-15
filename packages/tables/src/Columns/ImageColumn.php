@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
+use function Livewire\invade;
 
 class ImageColumn extends Column
 {
@@ -100,9 +101,14 @@ class ImageColumn extends Column
         /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
 
-        // An ugly mess as we need to support both Flysystem v1 and v3.
-        $storageAdapter = method_exists($storage, 'getAdapter') ? $storage->getAdapter() : (method_exists($storageDriver = $storage->getDriver(), 'getAdapter') ? $storageDriver->getAdapter() : null);
-        $supportsTemporaryUrls = method_exists($storageAdapter, 'temporaryUrl') || method_exists($storageAdapter, 'getTemporaryUrl');
+        // Flysystem V2+ doesn't allow direct access to adapter, so we need to invade instead.
+        if (method_exists($storage, 'getAdapter')) {
+            $adapter = $storage->getAdapter();
+        } else {
+            $adapter = invade($storage)->adapter;
+        }
+
+        $supportsTemporaryUrls = method_exists($adapter, 'temporaryUrl') || method_exists($adapter, 'getTemporaryUrl');
 
         if ($storage->getVisibility($state) === 'private' && $supportsTemporaryUrls) {
             return $storage->temporaryUrl(

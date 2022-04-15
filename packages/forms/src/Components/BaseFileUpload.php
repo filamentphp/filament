@@ -10,7 +10,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Livewire\FileUploadConfiguration;
 use Livewire\TemporaryUploadedFile;
+use function Livewire\invade;
 
 class BaseFileUpload extends Field
 {
@@ -96,9 +98,14 @@ class BaseFileUpload extends Field
             /** @var FilesystemAdapter $storage */
             $storage = $component->getDisk();
 
-            // An ugly mess as we need to support both Flysystem v1 and v3.
-            $storageAdapter = method_exists($storage, 'getAdapter') ? $storage->getAdapter() : (method_exists($storageDriver = $storage->getDriver(), 'getAdapter') ? $storageDriver->getAdapter() : null);
-            $supportsTemporaryUrls = method_exists($storageAdapter, 'temporaryUrl') || method_exists($storageAdapter, 'getTemporaryUrl');
+            // Flysystem V2+ doesn't allow direct access to adapter, so we need to invade instead.
+            if (method_exists($storage, 'getAdapter')) {
+                $adapter = $storage->getAdapter();
+            } else {
+                $adapter = invade($storage)->adapter;
+            }
+
+            $supportsTemporaryUrls = method_exists($adapter, 'temporaryUrl') || method_exists($adapter, 'getTemporaryUrl');
 
             if ($storage->getVisibility($file) === 'private' && $supportsTemporaryUrls) {
                 return $storage->temporaryUrl(
