@@ -60,19 +60,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             /** @var ?Media $media */
             $media = $mediaClass::findByUuid($file);
 
-            /** @var FilesystemAdapter $storage */
-            $storage = $component->getDisk();
-
-            // Flysystem V2+ doesn't allow direct access to adapter, so we need to invade instead.
-            if (method_exists($storage, 'getAdapter')) {
-                $adapter = $storage->getAdapter();
-            } else {
-                $adapter = invade($storage)->adapter;
-            }
-
-            $supportsTemporaryUrls = method_exists($adapter, 'temporaryUrl') || method_exists($adapter, 'getTemporaryUrl');
-
-            if ($component->getVisibility() === 'private' && $supportsTemporaryUrls) {
+            if ($component->getVisibility() === 'private') {
                 return $media?->getTemporaryUrl(now()->addMinutes(5));
             }
 

@@ -97,16 +97,7 @@ class BaseFileUpload extends Field
             /** @var FilesystemAdapter $storage */
             $storage = $component->getDisk();
 
-            // Flysystem V2+ doesn't allow direct access to adapter, so we need to invade instead.
-            if (method_exists($storage, 'getAdapter')) {
-                $adapter = $storage->getAdapter();
-            } else {
-                $adapter = invade($storage)->adapter;
-            }
-
-            $supportsTemporaryUrls = method_exists($adapter, 'temporaryUrl') || method_exists($adapter, 'getTemporaryUrl');
-
-            if ($storage->getVisibility($file) === 'private' && $supportsTemporaryUrls) {
+            if ($storage->getVisibility($file) === 'private') {
                 return $storage->temporaryUrl(
                     $file,
                     now()->addMinutes(5),

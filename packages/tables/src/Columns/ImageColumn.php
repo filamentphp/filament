@@ -101,16 +101,7 @@ class ImageColumn extends Column
         /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
 
-        // Flysystem V2+ doesn't allow direct access to adapter, so we need to invade instead.
-        if (method_exists($storage, 'getAdapter')) {
-            $adapter = $storage->getAdapter();
-        } else {
-            $adapter = invade($storage)->adapter;
-        }
-
-        $supportsTemporaryUrls = method_exists($adapter, 'temporaryUrl') || method_exists($adapter, 'getTemporaryUrl');
-
-        if ($storage->getVisibility($state) === 'private' && $supportsTemporaryUrls) {
+        if ($storage->getVisibility($state) === 'private') {
             return $storage->temporaryUrl(
                 $state,
                 now()->addMinutes(5),
