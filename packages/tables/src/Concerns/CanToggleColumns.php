@@ -14,7 +14,7 @@ trait CanToggleColumns
 {
     public array $tableColumnToggleStates = [];
 
-    public function preparetableColumnToggleStates(): void
+    public function prepareTableColumnToggleStates(): void
     {
         // If we have toggled columns already, use those.
         if (count($this->tableColumnToggleStates)) {
@@ -34,15 +34,14 @@ trait CanToggleColumns
 
     public function hasToggleableTableColumns(): bool
     {
-        return $this->table->getLivewire()->getResourceTable()->isSelectable();
+        return $this->table->getLivewire()->getResourceTable()->isToggleable();
     }
 
     public function tableColumnsToggled(): int
     {
         return count(
             array_filter(
-            array_map(fn ($selection) => Arr::get($selection, 'isActive', false), $this->tableColumnToggleStates)
-        )
+            array_map(fn ($selection) => Arr::get($selection, 'isActive', false), $this->tableColumnToggleStates))
         );
     }
 

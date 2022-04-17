@@ -323,7 +323,7 @@ class Table extends ViewComponent implements Htmlable
         return $this->getLivewire()->isTableFilterable();
     }
 
-    public function isSelectable(): bool
+    public function isToggleable(): bool
     {
         return $this->getLivewire()->hasToggleableTableColumns();
     }

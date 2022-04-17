@@ -26,7 +26,7 @@ trait CanBeSelected
 
     public function isSelected(): bool
     {
-        return ! $this->getTable()->isSelectable() || $this->getTable()->getLivewire()->getTableColumnToggleState($this->getName());
+        return ! $this->getTable()->isToggleable() || $this->getTable()->getLivewire()->getTableColumnToggleState($this->getName());
     }
 
     public function getToggleFormSchema(): array

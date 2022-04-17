@@ -20,8 +20,6 @@ class Table
 
     protected int $initialColumnsSelected = 1;
 
-    protected bool $isColumnSelectionEnabled = false;
-
     final public function __construct()
     {
     }
@@ -114,24 +112,6 @@ class Table
         $this->headerActions = array_merge($this->headerActions, $actions);
 
         return $this;
-    }
-
-    public function selectable(int $initiallySelected = 1): static
-    {
-        $this->isColumnSelectionEnabled = true;
-        $this->initialColumnsSelected = $initiallySelected;
-
-        return $this;
-    }
-
-    public function isSelectable(): bool
-    {
-        return $this->isColumnSelectionEnabled;
-    }
-
-    public function initialColumnsSelected(): int
-    {
-        return $this->initialColumnsSelected;
     }
 
     public function getActions(): array

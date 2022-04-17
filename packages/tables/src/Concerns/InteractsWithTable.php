@@ -44,7 +44,7 @@ trait InteractsWithTable
         $this->cacheTableFilters();
         $this->getTableFiltersForm()->fill($this->tableFilters);
 
-        $this->preparetableColumnToggleStates();
+        $this->prepareTableColumnToggleStates();
     }
 
     public function mountInteractsWithTable(): void
