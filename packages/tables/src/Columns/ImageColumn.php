@@ -5,7 +5,9 @@ namespace Filament\Tables\Columns;
 use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use League\Flysystem\UnableToRetrieveMetadata;
 
 class ImageColumn extends Column
 {
@@ -104,6 +106,13 @@ class ImageColumn extends Column
         $storageAdapter = method_exists($storage, 'getAdapter') ? $storage->getAdapter() : (method_exists($storageDriver = $storage->getDriver(), 'getAdapter') ? $storageDriver->getAdapter() : null);
         $supportsTemporaryUrls = method_exists($storageAdapter, 'temporaryUrl') || method_exists($storageAdapter, 'getTemporaryUrl');
 
+        try {
+            $storage->getVisibility($state);
+        } catch (UnableToRetrieveMetadata $e) {
+            Log::error($e);
+            return '';
+        }
+        
         if ($storage->getVisibility($state) === 'private' && $supportsTemporaryUrls) {
             return $storage->temporaryUrl(
                 $state,

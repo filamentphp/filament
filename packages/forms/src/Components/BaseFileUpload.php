@@ -7,9 +7,11 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use League\Flysystem\UnableToRetrieveMetadata;
 use Livewire\TemporaryUploadedFile;
 
 class BaseFileUpload extends Field
@@ -99,6 +101,13 @@ class BaseFileUpload extends Field
             // An ugly mess as we need to support both Flysystem v1 and v3.
             $storageAdapter = method_exists($storage, 'getAdapter') ? $storage->getAdapter() : (method_exists($storageDriver = $storage->getDriver(), 'getAdapter') ? $storageDriver->getAdapter() : null);
             $supportsTemporaryUrls = method_exists($storageAdapter, 'temporaryUrl') || method_exists($storageAdapter, 'getTemporaryUrl');
+            
+            try {
+                $storage->getVisibility($file);
+            } catch (UnableToRetrieveMetadata $e) {
+                Log::error($e);
+                return '';
+            }
 
             if ($storage->getVisibility($file) === 'private' && $supportsTemporaryUrls) {
                 return $storage->temporaryUrl(
