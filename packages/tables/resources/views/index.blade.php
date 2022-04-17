@@ -7,7 +7,7 @@
     $heading = $getHeading();
     $isSearchVisible = $isSearchable();
     $isFiltersDropdownVisible = $isFilterable();
-    $isColumnToggleFormVisible = $isToggleable();
+    $isColumnToggleFormVisible = false;
 
     $columnsCount = count($columns);
     if (count($actions)) $columnsCount++;
