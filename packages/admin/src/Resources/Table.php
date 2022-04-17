@@ -18,8 +18,6 @@ class Table
 
     protected array $headerActions = [];
 
-    protected int $initialColumnsSelected = 1;
-
     final public function __construct()
     {
     }
