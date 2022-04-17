@@ -42,8 +42,6 @@ trait InteractsWithTable
 
         $this->cacheTableFilters();
         $this->getTableFiltersForm()->fill($this->tableFilters);
-
-        $this->prepareTableColumnToggleStates();
     }
 
     public function mountInteractsWithTable(): void
@@ -114,11 +112,6 @@ trait InteractsWithTable
                 ->schema($this->getTableFiltersFormSchema())
                 ->columns($this->getTableFiltersFormColumns())
                 ->statePath('tableFilters')
-                ->reactive(),
-            'tableColumnToggleForm' => $this->makeForm()
-                ->schema($this->getTableColumnToggleFormSchema())
-                ->columns($this->getTableColumnToggleFormColumns())
-                ->statePath('tableColumnToggleStates')
                 ->reactive(),
         ];
     }
