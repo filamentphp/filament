@@ -38,8 +38,6 @@ class Table extends ViewComponent implements Htmlable
 
     protected ?string $recordAction = null;
 
-    protected ?string $columnSelectionFormWidth = null;
-
     protected ?Closure $getRecordUrlUsing = null;
 
     protected ?View $header = null;
