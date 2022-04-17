@@ -8,9 +8,9 @@ trait CanBeToggled
 {
     protected bool | Closure $isToggleable = false;
 
-    protected bool $isToggledByDefault = false;
+    protected bool | Closure $isToggledByDefault = false;
 
-    public function toggleable(bool | Closure $condition = true, bool $isToggledByDefault = false): static
+    public function toggleable(bool | Closure $condition = true, bool | Closure $isToggledByDefault = false): static
     {
         $this->isToggleable = $condition;
         $this->isToggledByDefault = $isToggledByDefault;
@@ -18,7 +18,7 @@ trait CanBeToggled
         return $this;
     }
 
-    public function toggledByDefault(bool $condition = true): static
+    public function toggledByDefault(bool | Closure $condition = true): static
     {
         $this->isToggledByDefault = $condition;
 
@@ -37,6 +37,6 @@ trait CanBeToggled
 
     public function isToggled(): bool
     {
-        return $this->getTable()->getLivewire()->isToggled($this->getName());
+        return $this->getTable()->getLivewire()->isTableColumnToggled($this->getName());
     }
 }

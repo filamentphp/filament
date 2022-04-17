@@ -343,7 +343,7 @@ class Table extends ViewComponent implements Htmlable
 
     public function hasToggleableColumns(): bool
     {
-        return $this->getLivewire()->hasToggleableColumns();
+        return $this->getLivewire()->hasToggleableTableColumns();
     }
 
     public function toHtml(): string
