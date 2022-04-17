@@ -14,7 +14,25 @@ trait CanToggleColumns
 
     public function prepareToggledColumns(): void
     {
-        $this->toggledColumns = session()->get($this->getColumnToggleFormStateSessionKey(), []);
+        $this->toggledColumns = session()->get(
+            $this->getColumnToggleFormStateSessionKey(),
+            $this->getDefaultColumnToggleState()
+        );
+    }
+
+    protected function getDefaultColumnToggleState(): array
+    {
+        $state = [];
+
+        foreach ($this->getCachedTableColumns() as $column) {
+            if (! $column->isToggledByDefault()) {
+                continue;
+            }
+
+            $state[$column->getName()] = true;
+        }
+
+        return $state;
     }
 
     public function updatedToggledColumns(): void

@@ -8,11 +8,26 @@ trait CanBeToggled
 {
     protected bool | Closure $isToggleable = false;
 
-    public function toggleable(bool | Closure $condition = true): static
+    protected bool $isToggledByDefault = false;
+
+    public function toggleable(bool | Closure $condition = true, bool $isToggledByDefault = false): static
     {
         $this->isToggleable = $condition;
+        $this->isToggledByDefault = $isToggledByDefault;
 
         return $this;
+    }
+
+    public function toggledByDefault(bool $condition = true): static
+    {
+        $this->isToggledByDefault = $condition;
+
+        return $this;
+    }
+
+    public function isToggledByDefault(): bool
+    {
+        return $this->isToggleable() && (bool) $this->evaluate($this->isToggledByDefault);
     }
 
     public function isToggleable(): bool
