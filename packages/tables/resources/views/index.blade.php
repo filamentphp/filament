@@ -7,7 +7,7 @@
     $heading = $getHeading();
     $isSearchVisible = $isSearchable();
     $isFiltersDropdownVisible = $isFilterable();
-    $isColumnToggleFormVisible = false;
+    $isColumnToggleFormVisible = $hasToggleableColumns();
 
     $columnsCount = count($columns);
     if (count($actions)) $columnsCount++;
@@ -189,7 +189,6 @@
                         @if ($isColumnToggleFormVisible)
                             <x-tables::toggleable
                                 :form="$getColumnToggleForm()"
-                                :width="$getColumnToggleFormWidth()"
                                 class="shrink-0"
                             />
                         @endif

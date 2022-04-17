@@ -36,6 +36,8 @@ class Table extends ViewComponent implements Htmlable
 
     protected ?string $filtersFormWidth = null;
 
+    protected ?string $columnToggleFormWidth = null;
+
     protected ?string $recordAction = null;
 
     protected ?Closure $getRecordUrlUsing = null;
@@ -230,6 +232,16 @@ class Table extends ViewComponent implements Htmlable
         return $this->filtersFormWidth;
     }
 
+    public function getColumnToggleForm(): ComponentContainer
+    {
+        return $this->getLivewire()->getColumnToggleForm();
+    }
+
+    public function getColumnToggleFormWidth(): ?string
+    {
+        return $this->columnToggleFormWidth;
+    }
+
     public function getHeader(): ?View
     {
         return $this->header;
@@ -324,6 +336,11 @@ class Table extends ViewComponent implements Htmlable
     public function isSearchable(): bool
     {
         return $this->getLivewire()->isTableSearchable();
+    }
+
+    public function hasToggleableColumns(): bool
+    {
+        return $this->getLivewire()->hasToggleableColumns();
     }
 
     public function toHtml(): string
