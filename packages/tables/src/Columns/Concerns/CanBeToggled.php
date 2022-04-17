@@ -29,4 +29,9 @@ trait CanBeToggled
     {
         return (bool) $this->evaluate($this->isToggleable);
     }
+
+    public function isToggled(): bool
+    {
+        return $this->getTable()->getLivewire()->isToggled($this->getName());
+    }
 }
