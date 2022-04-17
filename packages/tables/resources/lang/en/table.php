@@ -54,7 +54,7 @@ return [
         ],
 
         'toggle_columns' => [
-            'label' => 'Select columns',
+            'label' => 'Toggle columns',
         ],
 
     ],
