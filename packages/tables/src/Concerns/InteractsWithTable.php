@@ -14,6 +14,7 @@ trait InteractsWithTable
     use CanPaginateRecords;
     use CanSearchRecords;
     use CanSelectRecords;
+    use CanToggleColumns;
     use CanSortRecords;
     use HasActions;
     use HasBulkActions;
@@ -42,6 +43,8 @@ trait InteractsWithTable
 
         $this->cacheTableFilters();
         $this->getTableFiltersForm()->fill($this->tableFilters);
+
+        $this->preparetableColumnToggleStates();
     }
 
     public function mountInteractsWithTable(): void
@@ -112,6 +115,11 @@ trait InteractsWithTable
                 ->schema($this->getTableFiltersFormSchema())
                 ->columns($this->getTableFiltersFormColumns())
                 ->statePath('tableFilters')
+                ->reactive(),
+            'tableColumnToggleForm' => $this->makeForm()
+                ->schema($this->getTableColumnToggleFormSchema())
+                ->columns($this->getTableColumnToggleFormColumns())
+                ->statePath('tableColumnToggleStates')
                 ->reactive(),
         ];
     }

@@ -53,6 +53,10 @@ return [
             'label' => 'Open actions',
         ],
 
+        'toggle_columns' => [
+            'label' => 'Select columns',
+        ],
+
     ],
 
     'actions' => [

@@ -7,6 +7,7 @@
     $heading = $getHeading();
     $isSearchVisible = $isSearchable();
     $isFiltersDropdownVisible = $isFilterable();
+    $isColumnToggleFormVisible = $isSelectable();
 
     $columnsCount = count($columns);
     if (count($actions)) $columnsCount++;
@@ -135,7 +136,7 @@
 >
     <x-tables::container>
         <div
-            x-show="hasHeader = ({{ ($renderHeader = ($header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible)) ? 'true' : 'false' }} || selectedRecords.length)"
+            x-show="hasHeader = ({{ ($renderHeader = ($header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length)"
             {!! ! $renderHeader ? 'x-cloak' : null !!}
         >
             @if ($header)
@@ -152,12 +153,12 @@
                         </x-slot>
                     </x-tables::header>
 
-                    <x-tables::hr x-show="{{ ($isSearchVisible || $isFiltersDropdownVisible) ? 'true' : 'false' }} || selectedRecords.length" />
+                    <x-tables::hr x-show="{{ ($isSearchVisible || $isFiltersDropdownVisible || $isColumnToggleFormVisible) ? 'true' : 'false' }} || selectedRecords.length" />
                 </div>
             @endif
 
             <div
-                x-show="{{ ($renderHeaderDiv = ($isSearchVisible || $isFiltersDropdownVisible)) ? 'true' : 'false' }} || selectedRecords.length"
+                x-show="{{ ($renderHeaderDiv = ($isSearchVisible || $isFiltersDropdownVisible || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length"
                 {!! ! $renderHeaderDiv ? 'x-cloak' : null !!}
                 class="flex items-center justify-between p-2 h-14"
             >
@@ -165,11 +166,11 @@
                     <x-tables::bulk-actions
                         x-show="selectedRecords.length"
                         :actions="$getBulkActions()"
-                        class="mr-2"
+                        class="md:mr-2"
                     />
                 </div>
 
-                @if ($isSearchVisible || $isFiltersDropdownVisible)
+                @if ($isSearchVisible || $isFiltersDropdownVisible || $isColumnToggleFormVisible)
                     <div class="w-full flex items-center justify-end gap-2 md:max-w-md">
                         @if ($isSearchVisible)
                             <div class="flex-1">
@@ -181,6 +182,14 @@
                             <x-tables::filters
                                 :form="$getFiltersForm()"
                                 :width="$getFiltersFormWidth()"
+                                class="shrink-0"
+                            />
+                        @endif
+
+                        @if ($isColumnToggleFormVisible)
+                            <x-tables::toggleable
+                                :form="$getColumnSelectionForm()"
+                                :width="$getColumnSelectionFormWidth()"
                                 class="shrink-0"
                             />
                         @endif

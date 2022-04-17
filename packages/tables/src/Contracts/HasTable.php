@@ -41,6 +41,8 @@ interface HasTable extends HasForms
 
     public function getTableFiltersForm(): ComponentContainer;
 
+    public function getTableColumnToggleForm(): ComponentContainer;
+
     public function getTableRecords(): Collection | Paginator;
 
     public function getTableSortColumn(): ?string;
@@ -48,6 +50,8 @@ interface HasTable extends HasForms
     public function getTableSortDirection(): ?string;
 
     public function isTableFilterable(): bool;
+
+    public function hasToggleableTableColumns(): bool;
 
     public function isTableSearchable(): bool;
 
