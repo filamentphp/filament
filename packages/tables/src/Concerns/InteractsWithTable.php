@@ -14,7 +14,6 @@ trait InteractsWithTable
     use CanPaginateRecords;
     use CanSearchRecords;
     use CanSelectRecords;
-    use CanToggleColumns;
     use CanSortRecords;
     use HasActions;
     use HasBulkActions;

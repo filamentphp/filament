@@ -15,7 +15,6 @@ class Column extends Component implements Htmlable
     use Concerns\CanAggregateRelatedModels;
     use Concerns\CanBeHidden;
     use Concerns\CanBeSearchable;
-    use Concerns\CanBeSelected;
     use Concerns\CanBeSortable;
     use Concerns\CanBeToggled;
     use Concerns\CanCallAction;
