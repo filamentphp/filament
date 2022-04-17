@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Columns\Column;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\Support\Htmlable;
@@ -179,7 +180,9 @@ class Table extends ViewComponent implements Htmlable
 
     public function getColumns(): array
     {
-        return $this->getLivewire()->getCachedTableColumns();
+        return collect($this->getLivewire()->getCachedTableColumns())
+            ->filter(fn (Column $column) => ! $column->isToggled())
+            ->toArray();
     }
 
     public function getContentFooter(): ?View
