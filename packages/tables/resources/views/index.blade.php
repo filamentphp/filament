@@ -188,8 +188,8 @@
 
                         @if ($isColumnToggleFormVisible)
                             <x-tables::toggleable
-                                :form="$getColumnSelectionForm()"
-                                :width="$getColumnSelectionFormWidth()"
+                                :form="$getColumnToggleForm()"
+                                :width="$getColumnToggleFormWidth()"
                                 class="shrink-0"
                             />
                         @endif
