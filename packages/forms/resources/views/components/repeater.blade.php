@@ -14,7 +14,7 @@
             <ul
                 class="space-y-2"
                 wire:sortable
-                wire:end="dispatchFormEvent('repeater::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
+                wire:end.stop="dispatchFormEvent('repeater::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
             >
                 @foreach ($containers as $uuid => $item)
                     <li
