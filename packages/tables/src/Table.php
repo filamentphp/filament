@@ -232,16 +232,6 @@ class Table extends ViewComponent implements Htmlable
         return $this->filtersFormWidth;
     }
 
-    public function getColumnSelectionForm(): ComponentContainer
-    {
-        return $this->getLivewire()->getTableColumnToggleForm();
-    }
-
-    public function getColumnSelectionFormWidth(): ?string
-    {
-        return $this->columnSelectionFormWidth;
-    }
-
     public function getHeader(): ?View
     {
         return $this->header;
