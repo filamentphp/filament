@@ -55,5 +55,7 @@ interface HasTable extends HasForms
 
     public function hasToggleableColumns(): bool;
 
+    public function isToggled(string $name): bool;
+
     public function getColumnToggleForm(): ComponentContainer;
 }
