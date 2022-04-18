@@ -41,7 +41,7 @@ class MakeUserCommand extends Command
         return $userProvider->getModel();
     }
 
-    protected function message(string $userModel, $user): int
+    protected function successMessage(string $userModel, $user): int
     {
         $loginUrl = route('filament.auth.login');
         $this->info("Success! {$user->email} may now log in at {$loginUrl}.");
