@@ -16,39 +16,43 @@ class MakeUserCommand extends Command
 
     protected $signature = 'make:filament-user';
 
-    protected function askAttributes(string $userModel): array
+    protected static function getAuthGuard(): SessionGuard
+    {
+        return Filament::auth();
+    }
+
+    protected static function getUserProvider(): EloquentUserProvider
+    {
+        return static::getAuthGuard()->getProvider();
+    }
+
+    protected static function getUserModel(): string
+    {
+        return static::getUserProvider()->getModel();
+    }
+
+    protected function askAttributes(): array
     {
         return [
             'name' => $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']),
-            'email' => $this->validateInput(fn () => $this->ask('Email address'), 'email', ['required', 'email', 'unique:'.$userModel]),
+            'email' => $this->validateInput(fn () => $this->ask('Email address'), 'email', ['required', 'email', 'unique:'.static::getUserModel()]),
             'password' => Hash::make($this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8'])),
         ];
     }
 
-    protected function createUser(string $userModel)
+    protected function createUser()
     {
-        return $userModel::create(
-            $this->askAttributes($userModel)
+        return static::getUserModel()::create(
+            $this->askAttributes()
         );
     }
 
-    protected function getUserModel(): string
-    {
-        /** @var SessionGuard $auth */
-        $auth = Filament::auth();
-
-        /** @var EloquentUserProvider $userProvider */
-        $userProvider = $auth->getProvider();
-
-        return $userProvider->getModel();
-    }
-
-    protected function successMessage(string $userModel, $user): int
+    protected function successMessage($user): int
     {
         $loginUrl = route('filament.auth.login');
         $this->info("Success! {$user->email} may now log in at {$loginUrl}.");
 
-        if ($userModel::count() === 1 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
+        if (static::getUserModel()::count() === 1 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
             if (PHP_OS_FAMILY === 'Darwin') {
                 exec('open https://github.com/laravel-filament/filament');
             }
@@ -67,10 +71,8 @@ class MakeUserCommand extends Command
 
     public function handle(): int
     {
-        $user = $this->createUser(
-            $userModel = $this->getUserModel()
+        return $this->successMessage(
+            $this->createUser()
         );
-
-        return $this->successMessage($userModel, $user);
     }
 }
