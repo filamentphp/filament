@@ -16,7 +16,7 @@ class MakeUserCommand extends Command
 
     protected $signature = 'make:filament-user';
 
-    protected function askAttributes(): array
+    protected function askAttributes(string $userModel): array
     {
         return [
             'name' => $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']),
@@ -27,7 +27,9 @@ class MakeUserCommand extends Command
 
     protected function createUser(string $userModel)
     {
-        return $userModel::create($this->askAttributes());
+        return $userModel::create(
+            $this->askAttributes($userModel)
+        );
     }
 
     protected function getUserModel(): string
