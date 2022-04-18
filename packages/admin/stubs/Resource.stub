@@ -46,9 +46,7 @@ class {{ resourceClass }} extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\{{ indexResourcePageClass }}::route('/'),
-            'create' => Pages\{{ createResourcePageClass }}::route('/create'),
-            'edit' => Pages\{{ editResourcePageClass }}::route('/{record}/edit'),
+{{ pages }}
         ];
     }
 }

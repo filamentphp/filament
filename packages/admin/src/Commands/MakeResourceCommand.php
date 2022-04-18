@@ -13,7 +13,7 @@ class MakeResourceCommand extends Command
 
     protected $description = 'Creates a Filament resource class and default page classes.';
 
-    protected $signature = 'make:filament-resource {name?} {--G|generate} {--S|simple} {--F|force}';
+    protected $signature = 'make:filament-resource {name?} {--G|generate} {--S|simple} {--F|force} {--view}';
 
     public function handle(): int
     {
@@ -38,6 +38,7 @@ class MakeResourceCommand extends Command
         $manageResourcePageClass = "Manage{$pluralModelClass}";
         $createResourcePageClass = "Create{$modelClass}";
         $editResourcePageClass = "Edit{$modelClass}";
+        $viewResourcePageClass = "View{$modelClass}";
 
         $baseResourcePath = app_path(
             (string) Str::of($resource)
@@ -50,6 +51,7 @@ class MakeResourceCommand extends Command
         $manageResourcePagePath = "{$resourcePagesDirectory}/{$manageResourcePageClass}.php";
         $createResourcePagePath = "{$resourcePagesDirectory}/{$createResourcePageClass}.php";
         $editResourcePagePath = "{$resourcePagesDirectory}/{$editResourcePageClass}.php";
+        $viewResourcePagePath = "{$resourcePagesDirectory}/{$viewResourcePageClass}.php";
 
         if (! $this->option('force') && $this->checkForCollision([
             $resourcePath,
@@ -57,17 +59,26 @@ class MakeResourceCommand extends Command
             $manageResourcePagePath,
             $createResourcePagePath,
             $editResourcePagePath,
+            $viewResourcePagePath,
         ])) {
             return static::INVALID;
         }
 
-        $this->copyStubToApp($this->option('simple') ? 'SimpleResource' : 'Resource', $resourcePath, [
-            'createResourcePageClass' => $createResourcePageClass,
-            'editResourcePageClass' => $editResourcePageClass,
+        $pages = '';
+        $pages .= "'index' => Pages\\".($this->option('simple') ? $manageResourcePageClass : $listResourcePageClass)."::route('/'),";
+        
+        if (! $this->option('simple')) {
+            $pages .= PHP_EOL."'create' => Pages\\".$createResourcePageClass."::route('/create'),";
+            $pages .= PHP_EOL."'edit' => Pages\\".$editResourcePageClass."::route('/{record}/edit'),";
+            if ($this->option('view')) {
+                $pages .= PHP_EOL."'view' => Pages\\".$viewResourcePageClass."::route('/{record}'),";
+            }
+        }
+
+        $this->copyStubToApp('Resource', $resourcePath, [
             'formSchema' => $this->option('generate') ? $this->getResourceFormSchema(
                 ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass
             ) : $this->indentString('//'),
-            'indexResourcePageClass' => $this->option('simple') ? $manageResourcePageClass : $listResourcePageClass,
             'model' => $model,
             'modelClass' => $modelClass,
             'namespace' => 'App\\Filament\\Resources' . ($resourceNamespace !== '' ? "\\{$resourceNamespace}" : ''),
@@ -76,6 +87,7 @@ class MakeResourceCommand extends Command
             'tableColumns' => $this->option('generate') ? $this->getResourceTableColumns(
                 ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass
             ) : $this->indentString('//'),
+            'pages' => $this->indentString($pages, 3),
         ]);
 
         if ($this->option('simple')) {
@@ -114,6 +126,17 @@ class MakeResourceCommand extends Command
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $editResourcePageClass,
             ]);
+
+            if ($this->option('view')) {
+                $this->copyStubToApp('DefaultResourcePage', $viewResourcePagePath, [
+                    'baseResourcePage' => 'Filament\\Resources\\Pages\\ViewRecord',
+                    'baseResourcePageClass' => 'ViewRecord',
+                    'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
+                    'resource' => $resource,
+                    'resourceClass' => $resourceClass,
+                    'resourcePageClass' => $viewResourcePageClass,
+                ]);
+            }
         }
 
         $this->info("Successfully created {$resource}!");
