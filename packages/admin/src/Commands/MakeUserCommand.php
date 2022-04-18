@@ -16,7 +16,21 @@ class MakeUserCommand extends Command
 
     protected $signature = 'make:filament-user';
 
-    public function handle(): int
+    protected function askAttributes(): array
+    {
+        return [
+            'name' => $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']),
+            'email' => $this->validateInput(fn () => $this->ask('Email address'), 'email', ['required', 'email', 'unique:'.$userModel]),
+            'password' => Hash::make($this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8'])),
+        ];
+    }
+
+    protected function createUser(string $userModel)
+    {
+        return $userModel::create($this->askAttributes());
+    }
+
+    protected function getUserModel(): string
     {
         /** @var SessionGuard $auth */
         $auth = Filament::auth();
@@ -24,18 +38,15 @@ class MakeUserCommand extends Command
         /** @var EloquentUserProvider $userProvider */
         $userProvider = $auth->getProvider();
 
-        $userModel = $userProvider->getModel();
+        return $userProvider->getModel();
+    }
 
-        $user = $userModel::create([
-            'name' => $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']),
-            'email' => $this->validateInput(fn () => $this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $userModel]),
-            'password' => Hash::make($this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8'])),
-        ]);
-
+    protected function message(string $userModel, $user): int
+    {
         $loginUrl = route('filament.auth.login');
         $this->info("Success! {$user->email} may now log in at {$loginUrl}.");
 
-        if ($userProvider->getModel()::count() === 1 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
+        if ($userModel::count() === 1 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
             if (PHP_OS_FAMILY === 'Darwin') {
                 exec('open https://github.com/laravel-filament/filament');
             }
@@ -50,5 +61,14 @@ class MakeUserCommand extends Command
         }
 
         return static::SUCCESS;
+    }
+
+    public function handle(): int
+    {
+        $user = $this->createUser(
+            $userModel = $this->getUserModel()
+        );
+
+        return $this->successMessage($userModel, $user);
     }
 }
