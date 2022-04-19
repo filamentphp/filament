@@ -369,7 +369,7 @@ class Resource
         return static::$navigationGroup;
     }
 
-    public static function setNavigationGroup(string $group): void
+    public static function navigationGroup(string $group): void
     {
         static::$navigationGroup = $group;
     }
@@ -379,7 +379,7 @@ class Resource
         return static::$navigationIcon ?? 'heroicon-o-collection';
     }
 
-    public static function setNavigationIcon(string $icon): void
+    public static function navigationIcon(string $icon): void
     {
         static::$navigationIcon = $icon;
     }
@@ -399,7 +399,7 @@ class Resource
         return static::$navigationSort;
     }
 
-    public static function setNavigationSort(int $sort): void
+    public static function navigationSort(int $sort): void
     {
         static::$navigationSort = $sort;
     }
