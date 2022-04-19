@@ -10,7 +10,7 @@ class ReplicatorAction extends Action
 {
     protected array | Closure | null $exclude = null;
 
-    protected ?Closure $beforeSavingCallback = null;
+    protected ?Closure $beforeReplicaSavedCallback = null;
 
     protected ?Closure $afterReplicaSavedCallback = null;
 
@@ -25,7 +25,7 @@ class ReplicatorAction extends Action
         $this->action(function (ReplicatorAction $action, Model $record, array $data = []) {
             $replica = $record->replicate($action->getExcludedAttributes());
 
-            $action->callBeforeSaving($replica, $data);
+            $action->callBeforeReplicaSaved($replica, $data);
 
             $replica->save();
 
@@ -47,16 +47,16 @@ class ReplicatorAction extends Action
         return $this->exclude($attributes);
     }
 
-    public function beforeSaving(Closure $callback): static
+    public function beforeReplicaSaved(Closure $callback): static
     {
-        $this->beforeSavingCallback = $callback;
+        $this->beforeReplicaSavedCallback = $callback;
 
         return $this;
     }
 
-    public function callBeforeSaving(Model $replica, array $data = []): void
+    public function callBeforeReplicaSaved(Model $replica, array $data = []): void
     {
-        $this->evaluate($this->beforeSavingCallback, [
+        $this->evaluate($this->beforeReplicaSavedCallback, [
             'replica' => $replica,
             'data' => $data,
         ]);
