@@ -106,6 +106,10 @@ trait HasFileAttachments
         /** @var FilesystemAdapter $storage */
         $storage = $this->getFileAttachmentsDisk();
 
+        if (! $storage->exists($file)) {
+            return null;
+        }
+
         if ($storage->getVisibility($file) === 'private') {
             return $storage->temporaryUrl(
                 $file,
