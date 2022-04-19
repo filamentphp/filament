@@ -4,10 +4,9 @@ namespace Filament\Commands;
 
 use Filament\Facades\Filament;
 use Illuminate\Auth\EloquentUserProvider;
-use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Console\Command;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
-use Illuminate\Console\Command;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -67,16 +66,16 @@ class MakeUserCommand extends Command
     {
         /** @var EloquentUserProvider $provider */
         $provider = $this->getUserProvider();
-        
+
         return $provider->getModel();
     }
 
     public function handle(): int
     {
         $user = $this->createUser();
-        
+
         $this->sendSuccessMessage($user);
-        
+
         return static::SUCCESS;
     }
 }
