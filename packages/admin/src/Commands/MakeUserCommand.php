@@ -36,7 +36,7 @@ class MakeUserCommand extends Command
     protected function sendSuccessMessage(User $user): void
     {
         $loginUrl = route('filament.auth.login');
-        $this->info('Success! ' . ($user->attributes['email'] ?? $user->attributes['username'] ?? 'You') . " may now log in at {$loginUrl}.");
+        $this->info('Success! ' . ($user->getAttribute('email') ?? $user->getAttribute('username') ?? 'You') . " may now log in at {$loginUrl}.");
 
         if ($this->getUserModel()::count() === 1 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
             if (PHP_OS_FAMILY === 'Darwin') {
