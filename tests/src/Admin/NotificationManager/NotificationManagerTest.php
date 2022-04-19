@@ -1,9 +1,9 @@
 <?php
 
-use Livewire\Livewire;
 use Filament\Tests\Admin\Fixtures\Pages\Settings;
 use Filament\Tests\Admin\NotificationManager\TestCase;
 use Illuminate\Support\Facades\Session;
+use Livewire\Livewire;
 
 uses(TestCase::class);
 

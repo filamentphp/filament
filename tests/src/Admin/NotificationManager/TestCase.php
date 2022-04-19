@@ -2,7 +2,6 @@
 
 namespace Filament\Tests\Admin\NotificationManager;
 
-use Filament\Tests\Admin\NotificationManager\NotificationManagerServiceProvider;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase as BaseTestCase;
 
