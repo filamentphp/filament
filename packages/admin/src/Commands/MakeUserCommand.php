@@ -3,10 +3,11 @@
 namespace Filament\Commands;
 
 use Filament\Facades\Filament;
-use Illuminate\Auth\EloquentUserProvider;
-use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Console\Command;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Hash;
 
 class MakeUserCommand extends Command
@@ -26,12 +27,12 @@ class MakeUserCommand extends Command
         ];
     }
 
-    protected function createUser(): Authenticatable
+    protected function createUser(): User
     {
         return static::getUserModel()::create($this->getUserData());
     }
 
-    protected function sendSuccessMessage(Authenticatable $user): void
+    protected function sendSuccessMessage(User $user): void
     {
         $loginUrl = route('filament.auth.login');
         $this->info("Success! {$user->email} may now log in at {$loginUrl}.");
@@ -51,12 +52,12 @@ class MakeUserCommand extends Command
         }
     }
 
-    protected function getAuthGuard(): SessionGuard
+    protected function getAuthGuard(): Guard
     {
         return Filament::auth();
     }
 
-    protected function getUserProvider(): EloquentUserProvider
+    protected function getUserProvider(): UserProvider
     {
         return $this->getAuthGuard()->getProvider();
     }
