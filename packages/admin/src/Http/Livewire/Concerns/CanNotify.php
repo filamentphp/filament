@@ -8,6 +8,6 @@ trait CanNotify
 {
     public function notify(string $status, string $message, bool $isAfterRedirect = false): void
     {
-        Filament::notify($status, $message, $isAfterRedirect);
+        Filament::notify($status, $message);
     }
 }

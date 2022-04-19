@@ -92,15 +92,15 @@ class BaseFileUpload extends Field
             return $files[0] ?? null;
         });
 
-        $this->getUploadedFileUrlUsing(function (BaseFileUpload $component, string $file): string {
+        $this->getUploadedFileUrlUsing(function (BaseFileUpload $component, string $file): ?string {
             /** @var FilesystemAdapter $storage */
             $storage = $component->getDisk();
 
-            // An ugly mess as we need to support both Flysystem v1 and v3.
-            $storageAdapter = method_exists($storage, 'getAdapter') ? $storage->getAdapter() : (method_exists($storageDriver = $storage->getDriver(), 'getAdapter') ? $storageDriver->getAdapter() : null);
-            $supportsTemporaryUrls = method_exists($storageAdapter, 'temporaryUrl') || method_exists($storageAdapter, 'getTemporaryUrl');
+            if (! $storage->exists($file)) {
+                return null;
+            }
 
-            if ($storage->getVisibility($file) === 'private' && $supportsTemporaryUrls) {
+            if ($storage->getVisibility($file) === 'private') {
                 return $storage->temporaryUrl(
                     $file,
                     now()->addMinutes(5),
@@ -417,9 +417,15 @@ class BaseFileUpload extends Field
                     return null;
                 }
 
-                return [$fileKey => $this->evaluate($callback, [
+                $url = $this->evaluate($callback, [
                     'file' => $file,
-                ])];
+                ]);
+
+                if (! $url) {
+                    return null;
+                }
+
+                return [$fileKey => $url];
             })->toArray();
 
         return $uploadedFileUrls;

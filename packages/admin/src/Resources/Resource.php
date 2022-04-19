@@ -369,9 +369,19 @@ class Resource
         return static::$navigationGroup;
     }
 
+    public static function navigationGroup(?string $group): void
+    {
+        static::$navigationGroup = $group;
+    }
+
     protected static function getNavigationIcon(): string
     {
         return static::$navigationIcon ?? 'heroicon-o-collection';
+    }
+
+    public static function navigationIcon(?string $icon): void
+    {
+        static::$navigationIcon = $icon;
     }
 
     protected static function getNavigationLabel(): string
@@ -387,6 +397,11 @@ class Resource
     protected static function getNavigationSort(): ?int
     {
         return static::$navigationSort;
+    }
+
+    public static function navigationSort(?int $sort): void
+    {
+        static::$navigationSort = $sort;
     }
 
     protected static function getNavigationUrl(): string
