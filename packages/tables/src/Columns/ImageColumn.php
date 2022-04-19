@@ -3,7 +3,6 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
-use Filament\Facades\Filament;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
