@@ -4,7 +4,6 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Collection;
 use Livewire\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
@@ -59,14 +58,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             /** @var ?Media $media */
             $media = $mediaClass::findByUuid($file);
 
-            /** @var FilesystemAdapter $storage */
-            $storage = $component->getDisk();
-
-            // An ugly mess as we need to support both Flysystem v1 and v3.
-            $storageAdapter = method_exists($storage, 'getAdapter') ? $storage->getAdapter() : (method_exists($storageDriver = $storage->getDriver(), 'getAdapter') ? $storageDriver->getAdapter() : null);
-            $supportsTemporaryUrls = method_exists($storageAdapter, 'temporaryUrl') || method_exists($storageAdapter, 'getTemporaryUrl');
-
-            if ($component->getVisibility() === 'private' && $supportsTemporaryUrls) {
+            if ($component->getVisibility() === 'private') {
                 return $media?->getTemporaryUrl(now()->addMinutes(5));
             }
 
