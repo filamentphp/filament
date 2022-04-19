@@ -77,13 +77,6 @@ class ReplicatorAction extends Action
         ]);
     }
 
-    public function type(string $type): static
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
     public function button(): static
     {
         $this->view = 'tables::actions.button-action';
