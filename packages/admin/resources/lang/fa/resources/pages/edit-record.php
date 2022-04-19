@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'اصلاح :label',
+    'title' => 'ویرایش :label',
 
-    'breadcrumb' => 'اصلاح',
+    'breadcrumb' => 'ویرایش',
 
     'actions' => [
 
@@ -26,6 +26,10 @@ return [
 
                 ],
 
+            ],
+
+            'messages' => [
+                'deleted' => 'حذف شد',
             ],
 
         ],

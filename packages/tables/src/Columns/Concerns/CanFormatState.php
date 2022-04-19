@@ -5,12 +5,18 @@ namespace Filament\Tables\Columns\Concerns;
 use Akaunting\Money;
 use Closure;
 use Filament\Tables\Columns\Column;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 trait CanFormatState
 {
     protected ?Closure $formatStateUsing = null;
+
+    protected string | Closure | null $prefix = null;
+
+    protected string | Closure | null $suffix = null;
 
     public function date(?string $format = null, ?string $timezone = null): static
     {
@@ -32,9 +38,9 @@ trait CanFormatState
         return $this;
     }
 
-    public function enum(array $options, $default = null): static
+    public function enum(array | Arrayable $options, $default = null): static
     {
-        $this->formatStateUsing(fn ($state): string => $options[$state] ?? ($default ?? $state));
+        $this->formatStateUsing(fn ($state): ?string => $options[$state] ?? ($default ?? $state));
 
         return $this;
     }
@@ -50,6 +56,25 @@ trait CanFormatState
         });
 
         return $this;
+    }
+
+    public function prefix(string | Closure $prefix): static
+    {
+        $this->prefix = $prefix;
+
+        return $this;
+    }
+
+    public function suffix(string | Closure $suffix): static
+    {
+        $this->suffix = $suffix;
+
+        return $this;
+    }
+
+    public function html(): static
+    {
+        return $this->formatStateUsing(fn ($state): HtmlString => new HtmlString($state));
     }
 
     public function formatStateUsing(?Closure $callback): static
@@ -84,6 +109,14 @@ trait CanFormatState
             $state = $this->evaluate($this->formatStateUsing, [
                 'state' => $state,
             ]);
+        }
+
+        if ($this->prefix) {
+            $state = $this->evaluate($this->prefix) . $state;
+        }
+
+        if ($this->suffix) {
+            $state = $state . $this->evaluate($this->suffix);
         }
 
         return $state;

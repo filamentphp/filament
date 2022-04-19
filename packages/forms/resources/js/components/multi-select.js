@@ -191,6 +191,10 @@ export default (Alpine) => {
 
                 let value = Object.keys(this.options)[index ?? this.focusedOptionIndex]
 
+                if (value === undefined) {
+                    return
+                }
+
                 if (this.state.indexOf(value) < 0) {
                     this.state.push(value)
                 } else {

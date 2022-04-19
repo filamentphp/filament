@@ -7,7 +7,9 @@ use Filament\Http\Livewire\Auth\Login;
 use Filament\Http\Livewire\GlobalSearch;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
+use Filament\Http\Responses\Auth\LoginResponse;
 use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
@@ -45,6 +47,7 @@ class FilamentServiceProvider extends PackageServiceProvider
             Commands\MakeHasManyCommand::class,
             Commands\MakeHasManyThroughCommand::class,
             Commands\MakeMorphManyCommand::class,
+            Commands\MakeMorphToManyCommand::class,
             Commands\MakePageCommand::class,
             Commands\MakeResourceCommand::class,
             Commands\MakeUserCommand::class,
@@ -69,17 +72,20 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->singleton('filament', function (): FilamentManager {
+        $this->app->resolving('filament', function (): void {
+            $this->discoverPages();
+            $this->discoverResources();
+            $this->discoverWidgets();
+        });
+
+        $this->app->scoped('filament', function (): FilamentManager {
             return app(FilamentManager::class);
         });
 
+        $this->app->bind(LoginResponseContract::class, LoginResponse::class);
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
 
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
-
-        $this->discoverPages();
-        $this->discoverResources();
-        $this->discoverWidgets();
     }
 
     public function packageBooted(): void
@@ -94,9 +100,7 @@ class FilamentServiceProvider extends PackageServiceProvider
             MirrorConfigToSubpackages::class,
         ]);
 
-        Livewire::listen('component.hydrate', function ($component) {
-            $this->app->singleton(Component::class, fn () => $component);
-        });
+        Livewire::listen('component.dehydrate', [NotificationManager::class, 'handleLivewireResponses']);
 
         Livewire::component('filament.core.auth.login', Login::class);
         Livewire::component('filament.core.global-search', GlobalSearch::class);

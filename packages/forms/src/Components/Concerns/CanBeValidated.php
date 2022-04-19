@@ -12,6 +12,8 @@ trait CanBeValidated
 {
     protected bool | Closure $isRequired = false;
 
+    protected string | Closure | null $regexPattern = null;
+
     protected array $rules = [];
 
     protected string | Closure | null $validationAttribute = null;
@@ -48,6 +50,13 @@ trait CanBeValidated
     public function required(bool | Closure $condition = true): static
     {
         $this->isRequired = $condition;
+
+        return $this;
+    }
+
+    public function regex(string | Closure | null $pattern): static
+    {
+        $this->regexPattern = $pattern;
 
         return $this;
     }
@@ -126,12 +135,14 @@ trait CanBeValidated
         return $this->fieldComparisonRule('same', $statePath, $isStatePathAbsolute);
     }
 
-    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure $ignorable = null, ?Closure $callback = null): static
+    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure $ignorable = null, ?Closure $callback = null, bool $ignoreRecord = false): static
     {
-        $this->rule(function (Field $component, ?string $model) use ($callback, $column, $ignorable, $table) {
+        $this->rule(function (Field $component, ?string $model) use ($callback, $column, $ignorable, $table, $ignoreRecord) {
             $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
-            $ignorable = $component->evaluate($ignorable);
+            $ignorable = ($ignoreRecord && ! $ignorable) ?
+                $component->getRecord() :
+                $component->evaluate($ignorable);
 
             $rule = Rule::unique($table, $column)
                 ->when(
@@ -161,6 +172,11 @@ trait CanBeValidated
         return $this;
     }
 
+    public function getRegexPattern(): ?string
+    {
+        return $this->evaluate($this->regexPattern);
+    }
+
     public function getRequiredValidationRule(): string
     {
         return $this->isRequired() ? 'required' : 'nullable';
@@ -176,6 +192,10 @@ trait CanBeValidated
         $rules = [
             $this->getRequiredValidationRule(),
         ];
+
+        if (filled($regexPattern = $this->getRegexPattern())) {
+            $rules[] = "regex:{$regexPattern}";
+        }
 
         foreach ($this->rules as [$rule, $condition]) {
             if (is_numeric($rule)) {

@@ -13,6 +13,7 @@ return new class () extends Migration {
             $table->text('content')->nullable();
             $table->json('tags')->nullable();
             $table->string('title');
+            $table->unsignedTinyInteger('rating')->default(0);
             $table->timestamps();
         });
     }

@@ -3,7 +3,7 @@
 return [
 
     'field' => [
-        'label' => 'جستجوی کل سایت',
+        'label' => 'جستجو در کل سایت',
         'placeholder' => 'جستجو',
     ],
 

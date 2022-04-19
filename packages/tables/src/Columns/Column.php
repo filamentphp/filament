@@ -12,11 +12,11 @@ use Illuminate\View\Component;
 class Column extends Component implements Htmlable
 {
     use Concerns\BelongsToTable;
+    use Concerns\CanAggregateRelatedModels;
     use Concerns\CanBeHidden;
     use Concerns\CanBeSearchable;
     use Concerns\CanBeSortable;
     use Concerns\CanCallAction;
-    use Concerns\CanCountRelatedModels;
     use Concerns\CanOpenUrl;
     use Concerns\EvaluatesClosures;
     use Concerns\HasAlignment;

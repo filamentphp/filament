@@ -136,7 +136,7 @@ By default, stats overview widgets refresh their data every 5 seconds.
 To customize this, you may override the `$pollingInterval` property on the class to a new interval:
 
 ```php
-protected static string $pollingInterval = '10s';
+protected static ?string $pollingInterval = '10s';
 ```
 
 Alternatively, you may disable polling altogether:
@@ -322,7 +322,7 @@ By default, chart widgets refresh their data every 5 seconds.
 To customize this, you may override the `$pollingInterval` property on the class to a new interval:
 
 ```php
-protected static string $pollingInterval = '10s';
+protected static ?string $pollingInterval = '10s';
 ```
 
 Alternatively, you may disable polling altogether:

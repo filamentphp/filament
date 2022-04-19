@@ -5652,6 +5652,539 @@ var require_trix = __commonJS((exports, module) => {
   }.call(exports);
 });
 
+// node_modules/vanilla-colorful/lib/utils/math.js
+var clamp = (number, min = 0, max = 1) => {
+  return number > max ? max : number < min ? min : number;
+};
+var round = (number, digits = 0, base = Math.pow(10, digits)) => {
+  return Math.round(base * number) / base;
+};
+
+// node_modules/vanilla-colorful/lib/utils/convert.js
+var angleUnits = {
+  grad: 360 / 400,
+  turn: 360,
+  rad: 360 / (Math.PI * 2)
+};
+var hexToHsva = (hex) => rgbaToHsva(hexToRgba(hex));
+var hexToRgba = (hex) => {
+  if (hex[0] === "#")
+    hex = hex.substr(1);
+  if (hex.length < 6) {
+    return {
+      r: parseInt(hex[0] + hex[0], 16),
+      g: parseInt(hex[1] + hex[1], 16),
+      b: parseInt(hex[2] + hex[2], 16),
+      a: 1
+    };
+  }
+  return {
+    r: parseInt(hex.substr(0, 2), 16),
+    g: parseInt(hex.substr(2, 2), 16),
+    b: parseInt(hex.substr(4, 2), 16),
+    a: 1
+  };
+};
+var parseHue = (value, unit = "deg") => {
+  return Number(value) * (angleUnits[unit] || 1);
+};
+var hslaStringToHsva = (hslString) => {
+  const matcher = /hsla?\(?\s*(-?\d*\.?\d+)(deg|rad|grad|turn)?[,\s]+(-?\d*\.?\d+)%?[,\s]+(-?\d*\.?\d+)%?,?\s*[/\s]*(-?\d*\.?\d+)?(%)?\s*\)?/i;
+  const match = matcher.exec(hslString);
+  if (!match)
+    return {h: 0, s: 0, v: 0, a: 1};
+  return hslaToHsva({
+    h: parseHue(match[1], match[2]),
+    s: Number(match[3]),
+    l: Number(match[4]),
+    a: match[5] === void 0 ? 1 : Number(match[5]) / (match[6] ? 100 : 1)
+  });
+};
+var hslStringToHsva = hslaStringToHsva;
+var hslaToHsva = ({h, s: s2, l, a: a2}) => {
+  s2 *= (l < 50 ? l : 100 - l) / 100;
+  return {
+    h,
+    s: s2 > 0 ? 2 * s2 / (l + s2) * 100 : 0,
+    v: l + s2,
+    a: a2
+  };
+};
+var hsvaToHex = (hsva) => rgbaToHex(hsvaToRgba(hsva));
+var hsvaToHsla = ({h, s: s2, v, a: a2}) => {
+  const hh = (200 - s2) * v / 100;
+  return {
+    h: round(h),
+    s: round(hh > 0 && hh < 200 ? s2 * v / 100 / (hh <= 100 ? hh : 200 - hh) * 100 : 0),
+    l: round(hh / 2),
+    a: round(a2, 2)
+  };
+};
+var hsvaToHslString = (hsva) => {
+  const {h, s: s2, l} = hsvaToHsla(hsva);
+  return `hsl(${h}, ${s2}%, ${l}%)`;
+};
+var hsvaToHslaString = (hsva) => {
+  const {h, s: s2, l, a: a2} = hsvaToHsla(hsva);
+  return `hsla(${h}, ${s2}%, ${l}%, ${a2})`;
+};
+var hsvaToRgba = ({h, s: s2, v, a: a2}) => {
+  h = h / 360 * 6;
+  s2 = s2 / 100;
+  v = v / 100;
+  const hh = Math.floor(h), b = v * (1 - s2), c2 = v * (1 - (h - hh) * s2), d = v * (1 - (1 - h + hh) * s2), module = hh % 6;
+  return {
+    r: round([v, c2, b, b, d, v][module] * 255),
+    g: round([d, v, v, c2, b, b][module] * 255),
+    b: round([b, b, d, v, v, c2][module] * 255),
+    a: round(a2, 2)
+  };
+};
+var hsvaToRgbString = (hsva) => {
+  const {r: r2, g, b} = hsvaToRgba(hsva);
+  return `rgb(${r2}, ${g}, ${b})`;
+};
+var hsvaToRgbaString = (hsva) => {
+  const {r: r2, g, b, a: a2} = hsvaToRgba(hsva);
+  return `rgba(${r2}, ${g}, ${b}, ${a2})`;
+};
+var rgbaStringToHsva = (rgbaString) => {
+  const matcher = /rgba?\(?\s*(-?\d*\.?\d+)(%)?[,\s]+(-?\d*\.?\d+)(%)?[,\s]+(-?\d*\.?\d+)(%)?,?\s*[/\s]*(-?\d*\.?\d+)?(%)?\s*\)?/i;
+  const match = matcher.exec(rgbaString);
+  if (!match)
+    return {h: 0, s: 0, v: 0, a: 1};
+  return rgbaToHsva({
+    r: Number(match[1]) / (match[2] ? 100 / 255 : 1),
+    g: Number(match[3]) / (match[4] ? 100 / 255 : 1),
+    b: Number(match[5]) / (match[6] ? 100 / 255 : 1),
+    a: match[7] === void 0 ? 1 : Number(match[7]) / (match[8] ? 100 : 1)
+  });
+};
+var rgbStringToHsva = rgbaStringToHsva;
+var format = (number) => {
+  const hex = number.toString(16);
+  return hex.length < 2 ? "0" + hex : hex;
+};
+var rgbaToHex = ({r: r2, g, b}) => {
+  return "#" + format(r2) + format(g) + format(b);
+};
+var rgbaToHsva = ({r: r2, g, b, a: a2}) => {
+  const max = Math.max(r2, g, b);
+  const delta = max - Math.min(r2, g, b);
+  const hh = delta ? max === r2 ? (g - b) / delta : max === g ? 2 + (b - r2) / delta : 4 + (r2 - g) / delta : 0;
+  return {
+    h: round(60 * (hh < 0 ? hh + 6 : hh)),
+    s: round(max ? delta / max * 100 : 0),
+    v: round(max / 255 * 100),
+    a: a2
+  };
+};
+
+// node_modules/vanilla-colorful/lib/utils/compare.js
+var equalColorObjects = (first, second) => {
+  if (first === second)
+    return true;
+  for (const prop in first) {
+    if (first[prop] !== second[prop])
+      return false;
+  }
+  return true;
+};
+var equalColorString = (first, second) => {
+  return first.replace(/\s/g, "") === second.replace(/\s/g, "");
+};
+var equalHex = (first, second) => {
+  if (first.toLowerCase() === second.toLowerCase())
+    return true;
+  return equalColorObjects(hexToRgba(first), hexToRgba(second));
+};
+
+// node_modules/vanilla-colorful/lib/utils/dom.js
+var cache = {};
+var tpl = (html) => {
+  let template = cache[html];
+  if (!template) {
+    template = document.createElement("template");
+    template.innerHTML = html;
+    cache[html] = template;
+  }
+  return template;
+};
+var fire = (target, type, detail) => {
+  target.dispatchEvent(new CustomEvent(type, {
+    bubbles: true,
+    detail
+  }));
+};
+
+// node_modules/vanilla-colorful/lib/components/slider.js
+var hasTouched = false;
+var isTouch = (e2) => "touches" in e2;
+var isValid = (event) => {
+  if (hasTouched && !isTouch(event))
+    return false;
+  if (!hasTouched)
+    hasTouched = isTouch(event);
+  return true;
+};
+var pointerMove = (target, event) => {
+  const pointer = isTouch(event) ? event.touches[0] : event;
+  const rect = target.el.getBoundingClientRect();
+  fire(target.el, "move", target.getMove({
+    x: clamp((pointer.pageX - (rect.left + window.pageXOffset)) / rect.width),
+    y: clamp((pointer.pageY - (rect.top + window.pageYOffset)) / rect.height)
+  }));
+};
+var keyMove = (target, event) => {
+  const keyCode = event.keyCode;
+  if (keyCode > 40 || target.xy && keyCode < 37 || keyCode < 33)
+    return;
+  event.preventDefault();
+  fire(target.el, "move", target.getMove({
+    x: keyCode === 39 ? 0.01 : keyCode === 37 ? -0.01 : keyCode === 34 ? 0.05 : keyCode === 33 ? -0.05 : keyCode === 35 ? 1 : keyCode === 36 ? -1 : 0,
+    y: keyCode === 40 ? 0.01 : keyCode === 38 ? -0.01 : 0
+  }, true));
+};
+var Slider = class {
+  constructor(root2, part, aria, xy) {
+    const template = tpl(`<div role="slider" tabindex="0" part="${part}" ${aria}><div part="${part}-pointer"></div></div>`);
+    root2.appendChild(template.content.cloneNode(true));
+    const el = root2.querySelector(`[part=${part}]`);
+    el.addEventListener("mousedown", this);
+    el.addEventListener("touchstart", this);
+    el.addEventListener("keydown", this);
+    this.el = el;
+    this.xy = xy;
+    this.nodes = [el.firstChild, el];
+  }
+  set dragging(state2) {
+    const toggleEvent = state2 ? document.addEventListener : document.removeEventListener;
+    toggleEvent(hasTouched ? "touchmove" : "mousemove", this);
+    toggleEvent(hasTouched ? "touchend" : "mouseup", this);
+  }
+  handleEvent(event) {
+    switch (event.type) {
+      case "mousedown":
+      case "touchstart":
+        event.preventDefault();
+        if (!isValid(event) || !hasTouched && event.button != 0)
+          return;
+        this.el.focus();
+        pointerMove(this, event);
+        this.dragging = true;
+        break;
+      case "mousemove":
+      case "touchmove":
+        event.preventDefault();
+        pointerMove(this, event);
+        break;
+      case "mouseup":
+      case "touchend":
+        this.dragging = false;
+        break;
+      case "keydown":
+        keyMove(this, event);
+        break;
+    }
+  }
+  style(styles3) {
+    styles3.forEach((style, i) => {
+      for (const p2 in style) {
+        this.nodes[i].style.setProperty(p2, style[p2]);
+      }
+    });
+  }
+};
+
+// node_modules/vanilla-colorful/lib/components/hue.js
+var Hue = class extends Slider {
+  constructor(root2) {
+    super(root2, "hue", 'aria-label="Hue" aria-valuemin="0" aria-valuemax="360"', false);
+  }
+  update({h}) {
+    this.h = h;
+    this.style([
+      {
+        left: `${h / 360 * 100}%`,
+        color: hsvaToHslString({h, s: 100, v: 100, a: 1})
+      }
+    ]);
+    this.el.setAttribute("aria-valuenow", `${round(h)}`);
+  }
+  getMove(offset, key) {
+    return {h: key ? clamp(this.h + offset.x * 360, 0, 360) : 360 * offset.x};
+  }
+};
+
+// node_modules/vanilla-colorful/lib/components/saturation.js
+var Saturation = class extends Slider {
+  constructor(root2) {
+    super(root2, "saturation", 'aria-label="Color"', true);
+  }
+  update(hsva) {
+    this.hsva = hsva;
+    this.style([
+      {
+        top: `${100 - hsva.v}%`,
+        left: `${hsva.s}%`,
+        color: hsvaToHslString(hsva)
+      },
+      {
+        "background-color": hsvaToHslString({h: hsva.h, s: 100, v: 100, a: 1})
+      }
+    ]);
+    this.el.setAttribute("aria-valuetext", `Saturation ${round(hsva.s)}%, Brightness ${round(hsva.v)}%`);
+  }
+  getMove(offset, key) {
+    return {
+      s: key ? clamp(this.hsva.s + offset.x * 100, 0, 100) : offset.x * 100,
+      v: key ? clamp(this.hsva.v - offset.y * 100, 0, 100) : Math.round(100 - offset.y * 100)
+    };
+  }
+};
+
+// node_modules/vanilla-colorful/lib/styles/color-picker.js
+var color_picker_default = `:host{display:flex;flex-direction:column;position:relative;width:200px;height:200px;user-select:none;-webkit-user-select:none;cursor:default}:host([hidden]){display:none!important}[role=slider]{position:relative;touch-action:none;user-select:none;-webkit-user-select:none;outline:0}[role=slider]:last-child{border-radius:0 0 8px 8px}[part$=pointer]{position:absolute;z-index:1;box-sizing:border-box;width:28px;height:28px;transform:translate(-50%,-50%);background-color:#fff;border:2px solid #fff;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,.2)}[part$=pointer]::after{display:block;content:'';position:absolute;left:0;top:0;right:0;bottom:0;border-radius:inherit;background-color:currentColor}[role=slider]:focus [part$=pointer]{transform:translate(-50%,-50%) scale(1.1)}`;
+
+// node_modules/vanilla-colorful/lib/styles/hue.js
+var hue_default = `[part=hue]{flex:0 0 24px;background:linear-gradient(to right,red 0,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,red 100%)}[part=hue-pointer]{top:50%;z-index:2}`;
+
+// node_modules/vanilla-colorful/lib/styles/saturation.js
+var saturation_default = `[part=saturation]{flex-grow:1;border-color:transparent;border-bottom:12px solid #000;border-radius:8px 8px 0 0;background-image:linear-gradient(to top,#000,transparent),linear-gradient(to right,#fff,rgba(255,255,255,0));box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}[part=saturation-pointer]{z-index:3}`;
+
+// node_modules/vanilla-colorful/lib/components/color-picker.js
+var $isSame = Symbol("same");
+var $color = Symbol("color");
+var $hsva = Symbol("hsva");
+var $change = Symbol("change");
+var $update = Symbol("update");
+var $parts = Symbol("parts");
+var $css = Symbol("css");
+var $sliders = Symbol("sliders");
+var ColorPicker = class extends HTMLElement {
+  static get observedAttributes() {
+    return ["color"];
+  }
+  get [$css]() {
+    return [color_picker_default, hue_default, saturation_default];
+  }
+  get [$sliders]() {
+    return [Saturation, Hue];
+  }
+  get color() {
+    return this[$color];
+  }
+  set color(newColor) {
+    if (!this[$isSame](newColor)) {
+      const newHsva = this.colorModel.toHsva(newColor);
+      this[$update](newHsva);
+      this[$change](newColor);
+    }
+  }
+  constructor() {
+    super();
+    const template = tpl(`<style>${this[$css].join("")}</style>`);
+    const root2 = this.attachShadow({mode: "open"});
+    root2.appendChild(template.content.cloneNode(true));
+    root2.addEventListener("move", this);
+    this[$parts] = this[$sliders].map((slider) => new slider(root2));
+  }
+  connectedCallback() {
+    if (this.hasOwnProperty("color")) {
+      const value = this.color;
+      delete this["color"];
+      this.color = value;
+    } else if (!this.color) {
+      this.color = this.colorModel.defaultColor;
+    }
+  }
+  attributeChangedCallback(_attr, _oldVal, newVal) {
+    const color = this.colorModel.fromAttr(newVal);
+    if (!this[$isSame](color)) {
+      this.color = color;
+    }
+  }
+  handleEvent(event) {
+    const oldHsva = this[$hsva];
+    const newHsva = {...oldHsva, ...event.detail};
+    this[$update](newHsva);
+    let newColor;
+    if (!equalColorObjects(newHsva, oldHsva) && !this[$isSame](newColor = this.colorModel.fromHsva(newHsva))) {
+      this[$change](newColor);
+    }
+  }
+  [$isSame](color) {
+    return this.color && this.colorModel.equal(color, this.color);
+  }
+  [$update](hsva) {
+    this[$hsva] = hsva;
+    this[$parts].forEach((part) => part.update(hsva));
+  }
+  [$change](value) {
+    this[$color] = value;
+    fire(this, "color-changed", {value});
+  }
+};
+
+// node_modules/vanilla-colorful/lib/entrypoints/hex.js
+var colorModel = {
+  defaultColor: "#000",
+  toHsva: hexToHsva,
+  fromHsva: hsvaToHex,
+  equal: equalHex,
+  fromAttr: (color) => color
+};
+var HexBase = class extends ColorPicker {
+  get colorModel() {
+    return colorModel;
+  }
+};
+
+// node_modules/vanilla-colorful/hex-color-picker.js
+var HexColorPicker = class extends HexBase {
+};
+customElements.define("hex-color-picker", HexColorPicker);
+
+// node_modules/vanilla-colorful/lib/entrypoints/hsl-string.js
+var colorModel2 = {
+  defaultColor: "hsl(0, 0%, 0%)",
+  toHsva: hslStringToHsva,
+  fromHsva: hsvaToHslString,
+  equal: equalColorString,
+  fromAttr: (color) => color
+};
+var HslStringBase = class extends ColorPicker {
+  get colorModel() {
+    return colorModel2;
+  }
+};
+
+// node_modules/vanilla-colorful/hsl-string-color-picker.js
+var HslStringColorPicker = class extends HslStringBase {
+};
+customElements.define("hsl-string-color-picker", HslStringColorPicker);
+
+// node_modules/vanilla-colorful/lib/entrypoints/rgb-string.js
+var colorModel3 = {
+  defaultColor: "rgb(0, 0, 0)",
+  toHsva: rgbStringToHsva,
+  fromHsva: hsvaToRgbString,
+  equal: equalColorString,
+  fromAttr: (color) => color
+};
+var RgbStringBase = class extends ColorPicker {
+  get colorModel() {
+    return colorModel3;
+  }
+};
+
+// node_modules/vanilla-colorful/rgb-string-color-picker.js
+var RgbStringColorPicker = class extends RgbStringBase {
+};
+customElements.define("rgb-string-color-picker", RgbStringColorPicker);
+
+// node_modules/vanilla-colorful/lib/components/alpha.js
+var Alpha = class extends Slider {
+  constructor(root2) {
+    super(root2, "alpha", 'aria-label="Alpha" aria-valuemin="0" aria-valuemax="1"', false);
+  }
+  update(hsva) {
+    this.hsva = hsva;
+    const colorFrom = hsvaToHslaString({...hsva, a: 0});
+    const colorTo = hsvaToHslaString({...hsva, a: 1});
+    const value = hsva.a * 100;
+    this.style([
+      {
+        left: `${value}%`,
+        color: hsvaToHslaString(hsva)
+      },
+      {
+        "--gradient": `linear-gradient(90deg, ${colorFrom}, ${colorTo}`
+      }
+    ]);
+    const v = round(value);
+    this.el.setAttribute("aria-valuenow", `${v}`);
+    this.el.setAttribute("aria-valuetext", `${v}%`);
+  }
+  getMove(offset, key) {
+    return {a: key ? clamp(this.hsva.a + offset.x) : offset.x};
+  }
+};
+
+// node_modules/vanilla-colorful/lib/styles/alpha.js
+var alpha_default = `[part=alpha]{flex:0 0 24px}[part=alpha]::after{display:block;content:'';position:absolute;top:0;left:0;right:0;bottom:0;border-radius:inherit;background-image:var(--gradient);box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}[part^=alpha]{background-color:#fff;background-image:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill-opacity=".05"><rect x="8" width="8" height="8"/><rect y="8" width="8" height="8"/></svg>')}[part=alpha-pointer]{top:50%}`;
+
+// node_modules/vanilla-colorful/lib/components/alpha-color-picker.js
+var AlphaColorPicker = class extends ColorPicker {
+  get [$css]() {
+    return [...super[$css], alpha_default];
+  }
+  get [$sliders]() {
+    return [...super[$sliders], Alpha];
+  }
+};
+
+// node_modules/vanilla-colorful/lib/entrypoints/rgba-string.js
+var colorModel4 = {
+  defaultColor: "rgba(0, 0, 0, 1)",
+  toHsva: rgbaStringToHsva,
+  fromHsva: hsvaToRgbaString,
+  equal: equalColorString,
+  fromAttr: (color) => color
+};
+var RgbaStringBase = class extends AlphaColorPicker {
+  get colorModel() {
+    return colorModel4;
+  }
+};
+
+// node_modules/vanilla-colorful/rgba-string-color-picker.js
+var RgbaStringColorPicker = class extends RgbaStringBase {
+};
+customElements.define("rgba-string-color-picker", RgbaStringColorPicker);
+
+// packages/forms/resources/js/components/color-picker.js
+var color_picker_default2 = (Alpine) => {
+  Alpine.data("colorPickerFormComponent", ({
+    isAutofocused,
+    isDisabled,
+    state: state2
+  }) => {
+    return {
+      isOpen: false,
+      state: state2,
+      init: function() {
+        if (!(this.state === null || this.state === "")) {
+          this.setState(this.state);
+        }
+        if (isAutofocused) {
+          this.openPicker();
+        }
+        this.$refs.input.addEventListener("change", (event) => {
+          this.setState(event.target.value);
+        });
+        this.$refs.picker.addEventListener("color-changed", (event) => {
+          this.setState(event.detail.value);
+        });
+      },
+      openPicker: function() {
+        if (isDisabled) {
+          return;
+        }
+        this.isOpen = true;
+      },
+      closePicker: function() {
+        this.isOpen = false;
+      },
+      setState: function(value) {
+        this.state = value;
+        this.$refs.input.value = value;
+        this.$refs.picker.color = value;
+      }
+    };
+  });
+};
+
 // node_modules/dayjs/esm/constant.js
 var SECONDS_A_MINUTE = 60;
 var SECONDS_A_HOUR = SECONDS_A_MINUTE * 60;
@@ -5837,7 +6370,7 @@ var Dayjs = /* @__PURE__ */ function() {
   _proto.$utils = function $utils() {
     return Utils;
   };
-  _proto.isValid = function isValid() {
+  _proto.isValid = function isValid2() {
     return !(this.$d.toString() === INVALID_DATE_STRING);
   };
   _proto.isSame = function isSame(that, units) {
@@ -5951,7 +6484,7 @@ var Dayjs = /* @__PURE__ */ function() {
   _proto.subtract = function subtract(number, string) {
     return this.add(number * -1, string);
   };
-  _proto.format = function format3(formatStr) {
+  _proto.format = function format4(formatStr) {
     var _this3 = this;
     var locale = this.$locale();
     if (!this.isValid())
@@ -5960,8 +6493,8 @@ var Dayjs = /* @__PURE__ */ function() {
     var zoneStr = Utils.z(this);
     var $H = this.$H, $m = this.$m, $M = this.$M;
     var weekdays = locale.weekdays, months = locale.months, meridiem = locale.meridiem;
-    var getShort = function getShort2(arr, index, full, length) {
-      return arr && (arr[index] || arr(_this3, str)) || full[index].substr(0, length);
+    var getShort = function getShort2(arr, index2, full, length) {
+      return arr && (arr[index2] || arr(_this3, str)) || full[index2].substr(0, length);
     };
     var get$H = function get$H2(num) {
       return Utils.s($H % 12 || 12, num, "0");
@@ -5970,7 +6503,7 @@ var Dayjs = /* @__PURE__ */ function() {
       var m = hour < 12 ? "AM" : "PM";
       return isLowercase ? m.toLowerCase() : m;
     };
-    var matches = {
+    var matches2 = {
       YY: String(this.$y).slice(-2),
       YYYY: this.$y,
       M: $M + 1,
@@ -5997,7 +6530,7 @@ var Dayjs = /* @__PURE__ */ function() {
       Z: zoneStr
     };
     return str.replace(REGEX_FORMAT, function(match, $1) {
-      return $1 || matches[match] || zoneStr.replace(":", "");
+      return $1 || matches2[match] || zoneStr.replace(":", "");
     });
   };
   _proto.utcOffset = function utcOffset() {
@@ -6028,7 +6561,7 @@ var Dayjs = /* @__PURE__ */ function() {
       that.$L = nextLocaleName;
     return that;
   };
-  _proto.clone = function clone() {
+  _proto.clone = function clone2() {
     return Utils.w(this.$d, this);
   };
   _proto.toDate = function toDate() {
@@ -6052,9 +6585,9 @@ dayjs.prototype = proto;
     return this.$g(input, g[0], g[1]);
   };
 });
-dayjs.extend = function(plugin9, option2) {
+dayjs.extend = function(plugin9, option3) {
   if (!plugin9.$i) {
-    plugin9(option2, Dayjs, dayjs);
+    plugin9(option3, Dayjs, dayjs);
     plugin9.$i = true;
   }
   return dayjs;
@@ -6078,7 +6611,7 @@ esm_default.extend(import_customParseFormat.default);
 esm_default.extend(import_localeData.default);
 esm_default.extend(import_timezone.default);
 esm_default.extend(import_utc.default);
-esm_default.extend((option2, Dayjs2, dayjs3) => {
+esm_default.extend((option3, Dayjs2, dayjs3) => {
   const listeners2 = [];
   dayjs3.addLocaleListeners = (listener) => listeners2.push(listener);
   dayjs3.onLocaleUpdated = () => {
@@ -6094,7 +6627,7 @@ var date_time_picker_default = (Alpine) => {
   Alpine.data("dateTimePickerFormComponent", ({
     displayFormat,
     firstDayOfWeek,
-    format: format3,
+    format: format4,
     isAutofocused,
     maxDate,
     minDate,
@@ -6196,10 +6729,8 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.hour = hour;
           }
-          if (this.state !== null) {
-            let date2 = this.getSelectedDate() ?? this.focusedDate;
-            this.setState(date2.hour(this.hour ?? 0));
-          }
+          let date2 = this.getSelectedDate() ?? this.focusedDate;
+          this.setState(date2.hour(this.hour ?? 0));
         });
         this.$watch("minute", () => {
           let minute = +this.minute;
@@ -6212,10 +6743,8 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.minute = minute;
           }
-          if (this.state !== null) {
-            let date2 = this.getSelectedDate() ?? this.focusedDate;
-            this.setState(date2.minute(this.minute ?? 0));
-          }
+          let date2 = this.getSelectedDate() ?? this.focusedDate;
+          this.setState(date2.minute(this.minute ?? 0));
         });
         this.$watch("second", () => {
           let second = +this.second;
@@ -6228,17 +6757,15 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.second = second;
           }
-          if (this.state !== null) {
-            let date2 = this.getSelectedDate() ?? this.focusedDate;
-            this.setState(date2.second(this.second ?? 0));
-          }
+          let date2 = this.getSelectedDate() ?? this.focusedDate;
+          this.setState(date2.second(this.second ?? 0));
         });
         this.$watch("state", () => {
           let date2 = this.getSelectedDate();
-          if (this.maxDate !== null && date2?.isAfter(this.maxDate)) {
+          if (this.maxDate !== null && date2.isAfter(this.maxDate)) {
             date2 = null;
           }
-          if (this.minDate !== null && date2?.isBefore(this.minDate)) {
+          if (this.minDate !== null && date2.isBefore(this.minDate)) {
             date2 = null;
           }
           this.hour = date2?.hour() ?? 0;
@@ -6320,7 +6847,7 @@ var date_time_picker_default = (Alpine) => {
         ];
       },
       getSelectedDate: function() {
-        let date = esm_default(this.state, format3);
+        let date = esm_default(this.state, format4);
         if (!date.isValid()) {
           return null;
         }
@@ -6372,7 +6899,7 @@ var date_time_picker_default = (Alpine) => {
             return;
           }
         }
-        this.state = date.hour(this.hour ?? 0).minute(this.minute ?? 0).second(this.second ?? 0).format(format3);
+        this.state = date.hour(this.hour ?? 0).minute(this.minute ?? 0).second(this.second ?? 0).format(format4);
         this.setDisplayText();
       },
       togglePickerVisibility: function() {
@@ -6513,16 +7040,16 @@ var createElement = (tag, className, attributes = {}) => {
   });
   return element;
 };
-var appendChild = (parent) => (child, index) => {
-  if (typeof index !== "undefined" && parent.children[index]) {
-    parent.insertBefore(child, parent.children[index]);
+var appendChild = (parent) => (child, index2) => {
+  if (typeof index2 !== "undefined" && parent.children[index2]) {
+    parent.insertBefore(child, parent.children[index2]);
   } else {
     parent.appendChild(child);
   }
 };
-var appendChildView = (parent, childViews) => (view, index) => {
-  if (typeof index !== "undefined") {
-    childViews.splice(index, 0, view);
+var appendChildView = (parent, childViews) => (view, index2) => {
+  if (typeof index2 !== "undefined") {
+    childViews.splice(index2, 0, view);
   } else {
     childViews.push(view);
   }
@@ -6845,9 +7372,9 @@ var styles = ({mixinConfig, viewProps, viewInternalAPI, viewExternalAPI, view}) 
   addGetSet(mixinConfig, [viewInternalAPI, viewExternalAPI], viewProps);
   const getOffset = () => [viewProps["translateX"] || 0, viewProps["translateY"] || 0];
   const getScale = () => [viewProps["scaleX"] || 0, viewProps["scaleY"] || 0];
-  const getRect = () => view.rect ? getViewRect(view.rect, view.childViews, getOffset(), getScale()) : null;
-  viewInternalAPI.rect = {get: getRect};
-  viewExternalAPI.rect = {get: getRect};
+  const getRect2 = () => view.rect ? getViewRect(view.rect, view.childViews, getOffset(), getScale()) : null;
+  viewInternalAPI.rect = {get: getRect2};
+  viewExternalAPI.rect = {get: getRect2};
   mixinConfig.forEach((key) => {
     viewProps[key] = typeof initialProps[key] === "undefined" ? defaults[key] : initialProps[key];
   });
@@ -6972,7 +7499,7 @@ var createView = ({
   },
   create: create2 = () => {
   },
-  destroy: destroy2 = () => {
+  destroy: destroy3 = () => {
   },
   filterFrameActionsForChild = (child, actions2) => actions2,
   didCreateView = () => {
@@ -6999,13 +7526,13 @@ var createView = ({
     read
   ];
   const destroyers = [
-    destroy2
+    destroy3
   ];
   const getElement = () => element;
   const getChildViews = () => childViews.concat();
   const getReference = () => ref;
   const createChildView = (store2) => (view, props2) => view(store2, props2);
-  const getRect = () => {
+  const getRect2 = () => {
     if (frameRect) {
       return frameRect;
     }
@@ -7049,11 +7576,11 @@ var createView = ({
         resting = false;
       }
     });
-    childViews.forEach((child, index) => {
+    childViews.forEach((child, index2) => {
       if (child.element.parentNode) {
         return;
       }
-      internalAPI.appendChild(child.element, index);
+      internalAPI.appendChild(child.element, index2);
       child._read();
       child._write(ts, filterFrameActionsForChild(child, frameActions), shouldOptimize);
       resting = false;
@@ -7088,7 +7615,7 @@ var createView = ({
   const internalAPIDefinition = {
     ...sharedAPIDefinition,
     rect: {
-      get: getRect
+      get: getRect2
     },
     ref: {
       get: getReference
@@ -7120,7 +7647,7 @@ var createView = ({
       get: getChildViews
     },
     rect: {
-      get: getRect
+      get: getRect2
     },
     resting: {
       get: () => isResting
@@ -7162,8 +7689,8 @@ var createView = ({
     props
   });
   const childCount = getChildCount(element);
-  childViews.forEach((child, index) => {
-    internalAPI.appendChild(child.element, childCount + index);
+  childViews.forEach((child, index2) => {
+    internalAPI.appendChild(child.element, childCount + index2);
   });
   didCreateView(internalAPI);
   return createObject(externalAPIDefinition);
@@ -7461,7 +7988,7 @@ var InteractionMethod = {
   NONE: 5
 };
 var getUniqueId = () => Math.random().toString(36).substr(2, 9);
-var arrayRemove = (arr, index) => arr.splice(index, 1);
+var arrayRemove = (arr, index2) => arr.splice(index2, 1);
 var run = (cb, sync) => {
   if (sync) {
     cb();
@@ -7473,18 +8000,18 @@ var run = (cb, sync) => {
 };
 var on = () => {
   const listeners2 = [];
-  const off = (event, cb) => {
+  const off2 = (event, cb) => {
     arrayRemove(listeners2, listeners2.findIndex((listener) => listener.event === event && (listener.cb === cb || !cb)));
   };
-  const fire = (event, args, sync) => {
+  const fire2 = (event, args, sync) => {
     listeners2.filter((listener) => listener.event === event).map((listener) => listener.cb).forEach((cb) => run(() => cb(...args), sync));
   };
   return {
     fireSync: (event, ...args) => {
-      fire(event, args, true);
+      fire2(event, args, true);
     },
     fire: (event, ...args) => {
-      fire(event, args, false);
+      fire2(event, args, false);
     },
     on: (event, cb) => {
       listeners2.push({event, cb});
@@ -7493,12 +8020,12 @@ var on = () => {
       listeners2.push({
         event,
         cb: (...args) => {
-          off(event, cb);
+          off2(event, cb);
           cb(...args);
         }
       });
     },
-    off
+    off: off2
   };
 };
 var copyObjectPropertiesToObject = (src, target, excluded) => {
@@ -7527,9 +8054,9 @@ var createItemAPI = (item2) => {
   return api;
 };
 var removeReleasedItems = (items) => {
-  items.forEach((item2, index) => {
+  items.forEach((item2, index2) => {
     if (item2.released) {
-      arrayRemove(items, index);
+      arrayRemove(items, index2);
     }
   });
 };
@@ -7808,9 +8335,9 @@ var queries = (state2) => ({
     const item2 = getItemByQuery(state2.items, query);
     return item2 ? item2.fileSize : null;
   },
-  GET_STYLES: () => Object.keys(state2.options).filter((key) => /^style/.test(key)).map((option2) => ({
-    name: option2,
-    value: state2.options[option2]
+  GET_STYLES: () => Object.keys(state2.options).filter((key) => /^style/.test(key)).map((option3) => ({
+    name: option3,
+    value: state2.options[option3]
   })),
   GET_PANEL_ASPECT_RATIO: () => {
     const isShapeCircle = /circle/.test(state2.options.stylePanelLayout);
@@ -7844,17 +8371,17 @@ var hasRoomForItem = (state2) => {
   return false;
 };
 var limit = (value, min, max) => Math.max(Math.min(max, value), min);
-var arrayInsert = (arr, index, item2) => arr.splice(index, 0, item2);
-var insertItem = (items, item2, index) => {
+var arrayInsert = (arr, index2, item2) => arr.splice(index2, 0, item2);
+var insertItem = (items, item2, index2) => {
   if (isEmpty(item2)) {
     return null;
   }
-  if (typeof index === "undefined") {
+  if (typeof index2 === "undefined") {
     items.push(item2);
     return item2;
   }
-  index = limit(index, 0, items.length);
-  arrayInsert(items, index, item2);
+  index2 = limit(index2, 0, items.length);
+  arrayInsert(items, index2, item2);
   return item2;
 };
 var isBase64DataURI = (str) => /^\s*data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@\/?%\s]*)\s*$/i.test(str);
@@ -7946,8 +8473,8 @@ var getFileFromBase64DataURI = (dataURI, filename, extension) => {
 var getFileNameFromHeader = (header) => {
   if (!/^content-disposition:/i.test(header))
     return null;
-  const matches = header.split(/filename=|filename\*=.+''/).splice(1).map((name2) => name2.trim().replace(/^["']|[;"']{0,2}$/g, "")).filter((name2) => name2.length);
-  return matches.length ? decodeURI(matches[matches.length - 1]) : null;
+  const matches2 = header.split(/filename=|filename\*=.+''/).splice(1).map((name2) => name2.trim().replace(/^["']|[;"']{0,2}$/g, "")).filter((name2) => name2.length);
+  return matches2.length ? decodeURI(matches2[matches2.length - 1]) : null;
 };
 var getFileSizeFromHeader = (header) => {
   if (/content-length:/i.test(header)) {
@@ -8624,7 +9151,7 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
   let abortProcessingRequestComplete = null;
   const metadata = {};
   const setStatus = (status) => state2.status = status;
-  const fire = (event, ...params) => {
+  const fire2 = (event, ...params) => {
     if (state2.released || state2.frozen)
       return;
     api.fire(event, ...params);
@@ -8642,7 +9169,7 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
     }
     state2.file = createFileStub(source);
     loader.on("init", () => {
-      fire("load-init");
+      fire2("load-init");
     });
     loader.on("meta", (meta) => {
       state2.file.size = meta.size;
@@ -8652,19 +9179,19 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
         state2.serverFileReference = meta.source;
         state2.status = ItemStatus.PROCESSING_COMPLETE;
       }
-      fire("load-meta");
+      fire2("load-meta");
     });
     loader.on("progress", (progress) => {
       setStatus(ItemStatus.LOADING);
-      fire("load-progress", progress);
+      fire2("load-progress", progress);
     });
     loader.on("error", (error2) => {
       setStatus(ItemStatus.LOAD_ERROR);
-      fire("load-request-error", error2);
+      fire2("load-request-error", error2);
     });
     loader.on("abort", () => {
       setStatus(ItemStatus.INIT);
-      fire("load-abort");
+      fire2("load-abort");
     });
     loader.on("load", (file3) => {
       state2.activeLoader = null;
@@ -8675,13 +9202,13 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
         } else {
           setStatus(ItemStatus.IDLE);
         }
-        fire("load");
+        fire2("load");
       };
       const error2 = (result) => {
         state2.file = file3;
-        fire("load-meta");
+        fire2("load-meta");
         setStatus(ItemStatus.LOAD_ERROR);
-        fire("load-file-error", result);
+        fire2("load-file-error", result);
       };
       if (state2.serverFileReference) {
         success(file3);
@@ -8705,7 +9232,7 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
       return;
     }
     setStatus(ItemStatus.INIT);
-    fire("load-abort");
+    fire2("load-abort");
   };
   const process = (processor, onprocess) => {
     if (state2.processingAborted) {
@@ -8732,27 +9259,27 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
       state2.transferId = null;
       state2.serverFileReference = serverFileReference2;
       setStatus(ItemStatus.PROCESSING_COMPLETE);
-      fire("process-complete", serverFileReference2);
+      fire2("process-complete", serverFileReference2);
     });
     processor.on("start", () => {
-      fire("process-start");
+      fire2("process-start");
     });
     processor.on("error", (error3) => {
       state2.activeProcessor = null;
       setStatus(ItemStatus.PROCESSING_ERROR);
-      fire("process-error", error3);
+      fire2("process-error", error3);
     });
     processor.on("abort", (serverFileReference2) => {
       state2.activeProcessor = null;
       state2.serverFileReference = serverFileReference2;
       setStatus(ItemStatus.IDLE);
-      fire("process-abort");
+      fire2("process-abort");
       if (abortProcessingRequestComplete) {
         abortProcessingRequestComplete();
       }
     });
     processor.on("progress", (progress) => {
-      fire("process-progress", progress);
+      fire2("process-progress", progress);
     });
     const success = (file3) => {
       if (state2.archived)
@@ -8771,7 +9298,7 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
     if (!state2.activeProcessor) {
       state2.processingAborted = true;
       setStatus(ItemStatus.IDLE);
-      fire("process-abort");
+      fire2("process-abort");
       resolve();
       return;
     }
@@ -8796,11 +9323,11 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
         return;
       }
       setStatus(ItemStatus.PROCESSING_REVERT_ERROR);
-      fire("process-revert-error");
+      fire2("process-revert-error");
       reject(error2);
     });
     setStatus(ItemStatus.IDLE);
-    fire("process-revert");
+    fire2("process-revert");
   });
   const setMetadata = (key, value, silent) => {
     const keys = key.split(".");
@@ -8811,7 +9338,7 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
     if (JSON.stringify(data3[last]) === JSON.stringify(value))
       return;
     data3[last] = value;
-    fire("metadata-update", {
+    fire2("metadata-update", {
       key: root2,
       value: metadata[root2],
       silent
@@ -8872,11 +9399,11 @@ var getItemIndexByQuery = (items, query) => {
   return items.findIndex((item2) => item2.id === query);
 };
 var getItemById = (items, itemId) => {
-  const index = getItemIndexByQuery(items, itemId);
-  if (index < 0) {
+  const index2 = getItemIndexByQuery(items, itemId);
+  if (index2 < 0) {
     return;
   }
-  return items[index] || null;
+  return items[index2] || null;
 };
 var fetchBlob = (url, load, error2, progress, abort, headers) => {
   const request = sendRequest(null, url, {
@@ -8970,13 +9497,13 @@ var actions = (dispatch2, query, state2) => ({
       }
     });
     activeItems = getActiveItems(state2.items);
-    files.forEach((file2, index) => {
+    files.forEach((file2, index2) => {
       if (activeItems.find((item2) => item2.source === file2.source || item2.file === file2.source))
         return;
       dispatch2("ADD_ITEM", {
         ...file2,
         interactionMethod: InteractionMethod.NONE,
-        index
+        index: index2
       });
     });
   },
@@ -9040,15 +9567,15 @@ var actions = (dispatch2, query, state2) => ({
       }
     }, 0);
   },
-  MOVE_ITEM: ({query: query2, index}) => {
+  MOVE_ITEM: ({query: query2, index: index2}) => {
     const item2 = getItemByQuery(state2.items, query2);
     if (!item2)
       return;
     const currentIndex = state2.items.indexOf(item2);
-    index = limit(index, 0, state2.items.length - 1);
-    if (currentIndex === index)
+    index2 = limit(index2, 0, state2.items.length - 1);
+    if (currentIndex === index2)
       return;
-    state2.items.splice(index, 0, state2.items.splice(currentIndex, 1)[0]);
+    state2.items.splice(index2, 0, state2.items.splice(currentIndex, 1)[0]);
   },
   SORT: ({compare}) => {
     sortItems(state2, compare);
@@ -9056,11 +9583,11 @@ var actions = (dispatch2, query, state2) => ({
       items: query("GET_ACTIVE_ITEMS")
     });
   },
-  ADD_ITEMS: ({items, index, interactionMethod, success = () => {
+  ADD_ITEMS: ({items, index: index2, interactionMethod, success = () => {
   }, failure = () => {
   }}) => {
-    let currentIndex = index;
-    if (index === -1 || typeof index === "undefined") {
+    let currentIndex = index2;
+    if (index2 === -1 || typeof index2 === "undefined") {
       const insertLocation = query("GET_ITEM_INSERT_LOCATION");
       const totalItems = query("GET_TOTAL_ITEMS");
       currentIndex = insertLocation === "before" ? 0 : totalItems;
@@ -9082,7 +9609,7 @@ var actions = (dispatch2, query, state2) => ({
   },
   ADD_ITEM: ({
     source,
-    index = -1,
+    index: index2 = -1,
     interactionMethod,
     success = () => {
     },
@@ -9118,7 +9645,7 @@ var actions = (dispatch2, query, state2) => ({
             return;
           dispatch2("ADD_ITEM", {
             source,
-            index,
+            index: index2,
             interactionMethod,
             success,
             failure,
@@ -9139,9 +9666,9 @@ var actions = (dispatch2, query, state2) => ({
     applyFilters("DID_CREATE_ITEM", item2, {query, dispatch: dispatch2});
     const itemInsertLocation = query("GET_ITEM_INSERT_LOCATION");
     if (!state2.options.itemInsertLocationFreedom) {
-      index = itemInsertLocation === "before" ? -1 : state2.items.length;
+      index2 = itemInsertLocation === "before" ? -1 : state2.items.length;
     }
-    insertItem(state2.items, item2, index);
+    insertItem(state2.items, item2, index2);
     if (isFunction(itemInsertLocation) && source) {
       sortItems(state2, itemInsertLocation);
     }
@@ -9295,7 +9822,7 @@ var actions = (dispatch2, query, state2) => ({
       dispatch2("DID_REVERT_ITEM_PROCESSING", {id});
       dispatch2("DID_DEFINE_VALUE", {id, value: null});
     });
-    dispatch2("DID_ADD_ITEM", {id, index, interactionMethod});
+    dispatch2("DID_ADD_ITEM", {id, index: index2, interactionMethod});
     listUpdated(dispatch2, state2);
     const {url, load, restore, fetch: fetch2} = state2.options.server || {};
     item2.load(source, createFileLoader(origin === FileOrigin.INPUT ? isString(source) && isExternalURL(source) ? fetch2 ? createFetchFunction(url, fetch2) : fetchBlob : fetchBlob : origin === FileOrigin.LIMBO ? createFetchFunction(url, restore) : createFetchFunction(url, load)), (file2, success2, error2) => {
@@ -10248,8 +10775,8 @@ var createDragHelper = (items) => {
   const itemIds = items.map((item2) => item2.id);
   let prevIndex = void 0;
   return {
-    setIndex: (index) => {
-      prevIndex = index;
+    setIndex: (index2) => {
+      prevIndex = index2;
     },
     getIndex: () => prevIndex,
     getItemIndex: (item2) => itemIds.indexOf(item2.id)
@@ -10324,11 +10851,11 @@ var create$7 = ({root: root2, props}) => {
       }
       root2.dispatch("DID_DRAG_ITEM", {id: props.id, dragState});
     };
-    const drop2 = (e3) => {
+    const drop4 = (e3) => {
       if (!e3.isPrimary)
         return;
       document.removeEventListener("pointermove", drag);
-      document.removeEventListener("pointerup", drop2);
+      document.removeEventListener("pointerup", drop4);
       props.dragOffset = {
         x: e3.pageX - origin.x,
         y: e3.pageY - origin.y
@@ -10339,7 +10866,7 @@ var create$7 = ({root: root2, props}) => {
       }
     };
     document.addEventListener("pointermove", drag);
-    document.addEventListener("pointerup", drop2);
+    document.addEventListener("pointerup", drop4);
   };
   root2.element.addEventListener("pointerdown", grab);
 };
@@ -10434,20 +10961,20 @@ var getItemIndexByPosition = (view, children, positionInView) => {
   const itemWidth = itemRect.width + itemHorizontalMargin;
   const itemsPerRow = getItemsPerRow(horizontalSpace, itemWidth);
   if (itemsPerRow === 1) {
-    for (let index = 0; index < l; index++) {
-      const child = children[index];
+    for (let index2 = 0; index2 < l; index2++) {
+      const child = children[index2];
       const childMid = child.rect.outer.top + child.rect.element.height * 0.5;
       if (positionInView.top < childMid) {
-        return index;
+        return index2;
       }
     }
     return l;
   }
   const itemVerticalMargin = itemRect.marginTop + itemRect.marginBottom;
   const itemHeight = itemRect.height + itemVerticalMargin;
-  for (let index = 0; index < l; index++) {
-    const indexX = index % itemsPerRow;
-    const indexY = Math.floor(index / itemsPerRow);
+  for (let index2 = 0; index2 < l; index2++) {
+    const indexX = index2 % itemsPerRow;
+    const indexY = Math.floor(index2 / itemsPerRow);
     const offsetX = indexX * itemWidth;
     const offsetY = indexY * itemHeight;
     const itemTop = offsetY - itemRect.marginTop;
@@ -10455,9 +10982,9 @@ var getItemIndexByPosition = (view, children, positionInView) => {
     const itemBottom = offsetY + itemHeight + itemRect.marginBottom;
     if (positionInView.top < itemBottom && positionInView.top > itemTop) {
       if (positionInView.left < itemRight) {
-        return index;
-      } else if (index !== l - 1) {
-        last = index;
+        return index2;
+      } else if (index2 !== l - 1) {
+        last = index2;
       } else {
         last = null;
       }
@@ -10497,8 +11024,8 @@ var create$8 = ({root: root2}) => {
   root2.ref.lastItemSpanwDate = Date.now();
 };
 var addItemView = ({root: root2, action}) => {
-  const {id, index, interactionMethod} = action;
-  root2.ref.addIndex = index;
+  const {id, index: index2, interactionMethod} = action;
+  root2.ref.addIndex = index2;
   const now = Date.now();
   let spawnDate = now;
   let opacity = 1;
@@ -10514,7 +11041,7 @@ var addItemView = ({root: root2, action}) => {
     id,
     opacity,
     interactionMethod
-  }), index);
+  }), index2);
 };
 var moveItem = (item2, x, y, vx = 0, vy = 1) => {
   if (item2.dragOffset) {
@@ -10577,7 +11104,7 @@ var dragItem = ({root: root2, action}) => {
   const item2 = root2.query("GET_ITEM", {id});
   const view = root2.childViews.find((child) => child.id === id);
   const numItems = root2.childViews.length;
-  const oldIndex = dragState.getItemIndex(item2);
+  const oldIndex2 = dragState.getItemIndex(item2);
   if (!view)
     return;
   const dragPosition = {
@@ -10597,7 +11124,7 @@ var dragItem = ({root: root2, action}) => {
     x: Math.floor(dragPosition.x / dragWidth),
     getGridIndex: function getGridIndex() {
       if (dragPosition.y > dropAreaDimensions.getHeight || dragPosition.y < 0 || dragPosition.x > dropAreaDimensions.getWidth || dragPosition.x < 0)
-        return oldIndex;
+        return oldIndex2;
       return this.y * cols + this.x;
     },
     getColIndex: function getColIndex() {
@@ -10630,17 +11157,17 @@ var dragItem = ({root: root2, action}) => {
       return idx;
     }
   };
-  const index = cols > 1 ? location2.getGridIndex() : location2.getColIndex();
-  root2.dispatch("MOVE_ITEM", {query: view, index});
+  const index2 = cols > 1 ? location2.getGridIndex() : location2.getColIndex();
+  root2.dispatch("MOVE_ITEM", {query: view, index: index2});
   const currentIndex = dragState.getIndex();
-  if (currentIndex === void 0 || currentIndex !== index) {
-    dragState.setIndex(index);
+  if (currentIndex === void 0 || currentIndex !== index2) {
+    dragState.setIndex(index2);
     if (currentIndex === void 0)
       return;
     root2.dispatch("DID_REORDER_ITEMS", {
       items: root2.query("GET_ACTIVE_ITEMS"),
-      origin: oldIndex,
-      target: index
+      origin: oldIndex2,
+      target: index2
     });
   }
 };
@@ -10672,9 +11199,9 @@ var write$5 = ({root: root2, props, actions: actions2, shouldOptimize}) => {
   if (itemsPerRow === 1) {
     let offsetY = 0;
     let dragOffset = 0;
-    children.forEach((child, index) => {
+    children.forEach((child, index2) => {
       if (dragIndex) {
-        let dist = index - dragIndex;
+        let dist = index2 - dragIndex;
         if (dist === -2) {
           dragOffset = -itemVerticalMargin * 0.25;
         } else if (dist === -1) {
@@ -10701,17 +11228,17 @@ var write$5 = ({root: root2, props, actions: actions2, shouldOptimize}) => {
   } else {
     let prevX = 0;
     let prevY = 0;
-    children.forEach((child, index) => {
-      if (index === dragIndex) {
+    children.forEach((child, index2) => {
+      if (index2 === dragIndex) {
         dragIndexOffset = 1;
       }
-      if (index === addIndex) {
+      if (index2 === addIndex) {
         addIndexOffset += 1;
       }
       if (child.markedForRemoval && child.opacity < 0.5) {
         removeIndexOffset -= 1;
       }
-      const visualIndex = index + addIndexOffset + dragIndexOffset + removeIndexOffset;
+      const visualIndex = index2 + addIndexOffset + dragIndexOffset + removeIndexOffset;
       const indexX = visualIndex % itemsPerRow;
       const indexY = Math.floor(visualIndex / itemsPerRow);
       const offsetX = indexX * itemWidth;
@@ -11297,9 +11824,9 @@ var getLinksFromTransferURLData = (dataTransfer) => {
 var getLinksFromTransferMetaData = (dataTransfer) => {
   let data3 = dataTransfer.getData("text/html");
   if (typeof data3 === "string" && data3.length) {
-    const matches = data3.match(/src\s*=\s*"(.+?)"/);
-    if (matches) {
-      return [matches[1]];
+    const matches2 = data3.match(/src\s*=\s*"(.+?)"/);
+    if (matches2) {
+      return [matches2[1]];
     }
   }
   return [];
@@ -12336,7 +12863,7 @@ var createApp = (initialOptions = {}) => {
     processFile,
     prepareFile,
     removeFile,
-    moveFile: (query, index) => store.dispatch("MOVE_ITEM", {query, index}),
+    moveFile: (query, index2) => store.dispatch("MOVE_ITEM", {query, index: index2}),
     getFiles: getFiles2,
     processFiles,
     removeFiles,
@@ -12400,8 +12927,8 @@ var mapObject = (object, propertyMap) => {
   forin(propertyMap, (selector, mapping) => {
     forin(object, (property, value) => {
       const selectorRegExp = new RegExp(selector);
-      const matches = selectorRegExp.test(property);
-      if (!matches) {
+      const matches2 = selectorRegExp.test(property);
+      if (!matches2) {
         return;
       }
       delete object[property];
@@ -12425,8 +12952,8 @@ var mapObject = (object, propertyMap) => {
 };
 var getAttributesAsObject = (node, attributeMapping = {}) => {
   const attributes = [];
-  forin(node.attributes, (index) => {
-    attributes.push(node.attributes[index]);
+  forin(node.attributes, (index2) => {
+    attributes.push(node.attributes[index2]);
   });
   const output = attributes.filter((attribute) => attribute.name).reduce((obj, attribute) => {
     const value = attr(node, attribute.name);
@@ -12674,8 +13201,8 @@ if (supported()) {
     }
     return createAppAPI(app);
   };
-  registerPlugin = (...plugins) => {
-    plugins.forEach(createAppPlugin);
+  registerPlugin = (...plugins2) => {
+    plugins2.forEach(createAppPlugin);
     updateOptionTypes();
   };
   getOptions$1 = () => {
@@ -13192,7 +13719,7 @@ var getMarkupRect = (rect, size, scalar = 1) => {
     height: height || 0
   };
 };
-var pointsToPathShape = (points) => points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
+var pointsToPathShape = (points) => points.map((point, index2) => `${index2 === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
 var setAttributes = (element, attr2) => Object.keys(attr2).forEach((key) => element.setAttribute(key, attr2[key]));
 var ns2 = "http://www.w3.org/2000/svg";
 var svg = (tag, attr2) => {
@@ -13833,39 +14360,39 @@ var BitmapWorker = function() {
 var ColorMatrixWorker = function() {
   self.onmessage = (e2) => {
     const imageData = e2.data.message.imageData;
-    const matrix = e2.data.message.colorMatrix;
+    const matrix2 = e2.data.message.colorMatrix;
     const data3 = imageData.data;
     const l = data3.length;
-    const m11 = matrix[0];
-    const m12 = matrix[1];
-    const m13 = matrix[2];
-    const m14 = matrix[3];
-    const m15 = matrix[4];
-    const m21 = matrix[5];
-    const m22 = matrix[6];
-    const m23 = matrix[7];
-    const m24 = matrix[8];
-    const m25 = matrix[9];
-    const m31 = matrix[10];
-    const m32 = matrix[11];
-    const m33 = matrix[12];
-    const m34 = matrix[13];
-    const m35 = matrix[14];
-    const m41 = matrix[15];
-    const m42 = matrix[16];
-    const m43 = matrix[17];
-    const m44 = matrix[18];
-    const m45 = matrix[19];
-    let index = 0, r2 = 0, g = 0, b = 0, a2 = 0;
-    for (; index < l; index += 4) {
-      r2 = data3[index] / 255;
-      g = data3[index + 1] / 255;
-      b = data3[index + 2] / 255;
-      a2 = data3[index + 3] / 255;
-      data3[index] = Math.max(0, Math.min((r2 * m11 + g * m12 + b * m13 + a2 * m14 + m15) * 255, 255));
-      data3[index + 1] = Math.max(0, Math.min((r2 * m21 + g * m22 + b * m23 + a2 * m24 + m25) * 255, 255));
-      data3[index + 2] = Math.max(0, Math.min((r2 * m31 + g * m32 + b * m33 + a2 * m34 + m35) * 255, 255));
-      data3[index + 3] = Math.max(0, Math.min((r2 * m41 + g * m42 + b * m43 + a2 * m44 + m45) * 255, 255));
+    const m11 = matrix2[0];
+    const m12 = matrix2[1];
+    const m13 = matrix2[2];
+    const m14 = matrix2[3];
+    const m15 = matrix2[4];
+    const m21 = matrix2[5];
+    const m22 = matrix2[6];
+    const m23 = matrix2[7];
+    const m24 = matrix2[8];
+    const m25 = matrix2[9];
+    const m31 = matrix2[10];
+    const m32 = matrix2[11];
+    const m33 = matrix2[12];
+    const m34 = matrix2[13];
+    const m35 = matrix2[14];
+    const m41 = matrix2[15];
+    const m42 = matrix2[16];
+    const m43 = matrix2[17];
+    const m44 = matrix2[18];
+    const m45 = matrix2[19];
+    let index2 = 0, r2 = 0, g = 0, b = 0, a2 = 0;
+    for (; index2 < l; index2 += 4) {
+      r2 = data3[index2] / 255;
+      g = data3[index2 + 1] / 255;
+      b = data3[index2 + 2] / 255;
+      a2 = data3[index2 + 3] / 255;
+      data3[index2] = Math.max(0, Math.min((r2 * m11 + g * m12 + b * m13 + a2 * m14 + m15) * 255, 255));
+      data3[index2 + 1] = Math.max(0, Math.min((r2 * m21 + g * m22 + b * m23 + a2 * m24 + m25) * 255, 255));
+      data3[index2 + 2] = Math.max(0, Math.min((r2 * m31 + g * m32 + b * m33 + a2 * m34 + m35) * 255, 255));
+      data3[index2 + 3] = Math.max(0, Math.min((r2 * m41 + g * m42 + b * m43 + a2 * m44 + m45) * 255, 255));
     }
     self.postMessage({id: e2.data.id, message: imageData}, [
       imageData.data.buffer
@@ -14098,8 +14625,8 @@ var createImageWrapperView = (_) => {
     }
   };
   const canCreateImageBitmap = (file2) => {
-    const userAgent = window.navigator.userAgent;
-    const isFirefox = userAgent.match(/Firefox\/([0-9]+)\./);
+    const userAgent2 = window.navigator.userAgent;
+    const isFirefox = userAgent2.match(/Firefox\/([0-9]+)\./);
     const firefoxVersion = isFirefox ? parseInt(isFirefox[1]) : null;
     if (firefoxVersion <= 58)
       return false;
@@ -14263,8 +14790,8 @@ var plugin5 = (fpAPI) => {
   const {Type: Type2, createRoute: createRoute2, isFile: isFile2} = utils;
   const imagePreviewView = createImageWrapperView(fpAPI);
   addFilter2("CREATE_VIEW", (viewAPI) => {
-    const {is, view, query} = viewAPI;
-    if (!is("file") || !query("GET_ALLOW_IMAGE_PREVIEW"))
+    const {is: is2, view, query} = viewAPI;
+    if (!is2("file") || !query("GET_ALLOW_IMAGE_PREVIEW"))
       return;
     const didLoadItem2 = ({root: root2, props}) => {
       const {id} = props;
@@ -14612,16 +15139,16 @@ var getBitmap = (image, orientation, flip) => {
     ctx.transform.apply(ctx, getImageOrientationMatrix(width, height, orientation));
   }
   if (isFlipped(flip)) {
-    const matrix = [1, 0, 0, 1, 0, 0];
+    const matrix2 = [1, 0, 0, 1, 0, 0];
     if (!swapped && flip.horizontal || swapped & flip.vertical) {
-      matrix[0] = -1;
-      matrix[4] = width;
+      matrix2[0] = -1;
+      matrix2[4] = width;
     }
     if (!swapped && flip.vertical || swapped && flip.horizontal) {
-      matrix[3] = -1;
-      matrix[5] = height;
+      matrix2[3] = -1;
+      matrix2[5] = height;
     }
-    ctx.transform(...matrix);
+    ctx.transform(...matrix2);
   }
   ctx.drawImage(image, 0, 0, width, height);
   return canvas;
@@ -14794,7 +15321,7 @@ var getMarkupRect2 = (rect, size, scalar = 1) => {
     height: height || 0
   };
 };
-var pointsToPathShape2 = (points) => points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
+var pointsToPathShape2 = (points) => points.map((point, index2) => `${index2 === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
 var setAttributes2 = (element, attr2) => Object.keys(attr2).forEach((key) => element.setAttribute(key, attr2[key]));
 var ns3 = "http://www.w3.org/2000/svg";
 var svg2 = (tag, attr2) => {
@@ -15136,11 +15663,11 @@ var TransformWorker = () => {
   const br = 1;
   const bg = 1;
   const bb = 1;
-  function applyFilterMatrix(index, data3, m) {
-    const ir = data3[index] / 255;
-    const ig = data3[index + 1] / 255;
-    const ib = data3[index + 2] / 255;
-    const ia = data3[index + 3] / 255;
+  function applyFilterMatrix(index2, data3, m) {
+    const ir = data3[index2] / 255;
+    const ig = data3[index2 + 1] / 255;
+    const ib = data3[index2 + 2] / 255;
+    const ia = data3[index2 + 3] / 255;
     const mr = ir * m[0] + ig * m[1] + ib * m[2] + ia * m[3] + m[4];
     const mg = ir * m[5] + ig * m[6] + ib * m[7] + ia * m[8] + m[9];
     const mb = ir * m[10] + ig * m[11] + ib * m[12] + ia * m[13] + m[14];
@@ -15148,9 +15675,9 @@ var TransformWorker = () => {
     const or = Math.max(0, mr * ma) + br * (1 - ma);
     const og = Math.max(0, mg * ma) + bg * (1 - ma);
     const ob = Math.max(0, mb * ma) + bb * (1 - ma);
-    data3[index] = Math.max(0, Math.min(1, or)) * 255;
-    data3[index + 1] = Math.max(0, Math.min(1, og)) * 255;
-    data3[index + 2] = Math.max(0, Math.min(1, ob)) * 255;
+    data3[index2] = Math.max(0, Math.min(1, or)) * 255;
+    data3[index2 + 1] = Math.max(0, Math.min(1, og)) * 255;
+    data3[index2 + 2] = Math.max(0, Math.min(1, ob)) * 255;
   }
   const identityMatrix = self.JSON.stringify([
     1,
@@ -15177,37 +15704,37 @@ var TransformWorker = () => {
   function isIdentityMatrix(filter2) {
     return self.JSON.stringify(filter2 || []) === identityMatrix;
   }
-  function filter(imageData, matrix) {
-    if (!matrix || isIdentityMatrix(matrix))
+  function filter(imageData, matrix2) {
+    if (!matrix2 || isIdentityMatrix(matrix2))
       return imageData;
     const data3 = imageData.data;
     const l = data3.length;
-    const m11 = matrix[0];
-    const m12 = matrix[1];
-    const m13 = matrix[2];
-    const m14 = matrix[3];
-    const m15 = matrix[4];
-    const m21 = matrix[5];
-    const m22 = matrix[6];
-    const m23 = matrix[7];
-    const m24 = matrix[8];
-    const m25 = matrix[9];
-    const m31 = matrix[10];
-    const m32 = matrix[11];
-    const m33 = matrix[12];
-    const m34 = matrix[13];
-    const m35 = matrix[14];
-    const m41 = matrix[15];
-    const m42 = matrix[16];
-    const m43 = matrix[17];
-    const m44 = matrix[18];
-    const m45 = matrix[19];
-    let index = 0, r2 = 0, g = 0, b = 0, a2 = 0, mr = 0, mg = 0, mb = 0, ma = 0, or = 0, og = 0, ob = 0;
-    for (; index < l; index += 4) {
-      r2 = data3[index] / 255;
-      g = data3[index + 1] / 255;
-      b = data3[index + 2] / 255;
-      a2 = data3[index + 3] / 255;
+    const m11 = matrix2[0];
+    const m12 = matrix2[1];
+    const m13 = matrix2[2];
+    const m14 = matrix2[3];
+    const m15 = matrix2[4];
+    const m21 = matrix2[5];
+    const m22 = matrix2[6];
+    const m23 = matrix2[7];
+    const m24 = matrix2[8];
+    const m25 = matrix2[9];
+    const m31 = matrix2[10];
+    const m32 = matrix2[11];
+    const m33 = matrix2[12];
+    const m34 = matrix2[13];
+    const m35 = matrix2[14];
+    const m41 = matrix2[15];
+    const m42 = matrix2[16];
+    const m43 = matrix2[17];
+    const m44 = matrix2[18];
+    const m45 = matrix2[19];
+    let index2 = 0, r2 = 0, g = 0, b = 0, a2 = 0, mr = 0, mg = 0, mb = 0, ma = 0, or = 0, og = 0, ob = 0;
+    for (; index2 < l; index2 += 4) {
+      r2 = data3[index2] / 255;
+      g = data3[index2 + 1] / 255;
+      b = data3[index2 + 2] / 255;
+      a2 = data3[index2 + 3] / 255;
       mr = r2 * m11 + g * m12 + b * m13 + a2 * m14 + m15;
       mg = r2 * m21 + g * m22 + b * m23 + a2 * m24 + m25;
       mb = r2 * m31 + g * m32 + b * m33 + a2 * m34 + m35;
@@ -15215,17 +15742,17 @@ var TransformWorker = () => {
       or = Math.max(0, mr * ma) + br * (1 - ma);
       og = Math.max(0, mg * ma) + bg * (1 - ma);
       ob = Math.max(0, mb * ma) + bb * (1 - ma);
-      data3[index] = Math.max(0, Math.min(1, or)) * 255;
-      data3[index + 1] = Math.max(0, Math.min(1, og)) * 255;
-      data3[index + 2] = Math.max(0, Math.min(1, ob)) * 255;
+      data3[index2] = Math.max(0, Math.min(1, or)) * 255;
+      data3[index2 + 1] = Math.max(0, Math.min(1, og)) * 255;
+      data3[index2 + 2] = Math.max(0, Math.min(1, ob)) * 255;
     }
     return imageData;
   }
   function resize(imageData, data3) {
-    let {mode = "contain", upscale = false, width, height, matrix} = data3;
-    matrix = !matrix || isIdentityMatrix(matrix) ? null : matrix;
+    let {mode = "contain", upscale = false, width, height, matrix: matrix2} = data3;
+    matrix2 = !matrix2 || isIdentityMatrix(matrix2) ? null : matrix2;
     if (!width && !height) {
-      return filter(imageData, matrix);
+      return filter(imageData, matrix2);
     }
     if (width === null) {
       width = height;
@@ -15242,7 +15769,7 @@ var TransformWorker = () => {
         scalar = Math.min(scalarWidth, scalarHeight);
       }
       if (scalar > 1 && upscale === false) {
-        return filter(imageData, matrix);
+        return filter(imageData, matrix2);
       }
       width = imageData.width * scalar;
       height = imageData.height * scalar;
@@ -15297,7 +15824,7 @@ var TransformWorker = () => {
         outputData[x2 + 1] = g / weights;
         outputData[x2 + 2] = b / weights;
         outputData[x2 + 3] = a2 / weightsAlpha;
-        matrix && applyFilterMatrix(x2, outputData, matrix);
+        matrix2 && applyFilterMatrix(x2, outputData, matrix2);
       }
     }
     return {
@@ -15690,10 +16217,10 @@ if (typeof window !== "undefined" && typeof window.document !== "undefined") {
         setTimeout(() => {
           const dataURL = canvas.toDataURL(type, quality).split(",")[1];
           const binStr = atob(dataURL);
-          let index = binStr.length;
-          const data3 = new Uint8Array(index);
-          while (index--) {
-            data3[index] = binStr.charCodeAt(index);
+          let index2 = binStr.length;
+          const data3 = new Uint8Array(index2);
+          while (index2--) {
+            data3[index2] = binStr.charCodeAt(index2);
           }
           cb(new Blob([data3], {type: type || "image/png"}));
         });
@@ -16026,8 +16553,8 @@ var plugin8 = (fpAPI) => {
   const {Type: Type2, createRoute: createRoute2} = utils;
   const mediaWrapperView = createMediaWrapperView(fpAPI);
   addFilter2("CREATE_VIEW", (viewAPI) => {
-    const {is, view, query} = viewAPI;
-    if (!is("file")) {
+    const {is: is2, view, query} = viewAPI;
+    if (!is2("file")) {
       return;
     }
     const didLoadItem2 = ({root: root2, props}) => {
@@ -16224,8 +16751,8 @@ var key_value_default = (Alpine) => {
       this.rows.push({key: "", value: ""});
       this.updateState();
     },
-    deleteRow: function(index) {
-      this.rows.splice(index, 1);
+    deleteRow: function(index2) {
+      this.rows.splice(index2, 1);
       if (this.rows.length <= 0) {
         this.addRow();
       }
@@ -16788,15 +17315,15 @@ function focusKeydown(event) {
   if (!(toolbar instanceof HTMLElement))
     return;
   const buttons = getButtons(toolbar);
-  const index = buttons.indexOf(event.target);
+  const index2 = buttons.indexOf(event.target);
   const length = buttons.length;
-  if (index === -1)
+  if (index2 === -1)
     return;
   let n2 = 0;
   if (key === "ArrowLeft")
-    n2 = index - 1;
+    n2 = index2 - 1;
   if (key === "ArrowRight")
-    n2 = index + 1;
+    n2 = index2 + 1;
   if (key === "End")
     n2 = length - 1;
   if (n2 < 0)
@@ -16842,19 +17369,19 @@ function repeat(string, n2) {
   return Array(n2 + 1).join(string);
 }
 function wordSelectionStart(text2, i) {
-  let index = i;
-  while (text2[index] && text2[index - 1] != null && !text2[index - 1].match(/\s/)) {
-    index--;
+  let index2 = i;
+  while (text2[index2] && text2[index2 - 1] != null && !text2[index2 - 1].match(/\s/)) {
+    index2--;
   }
-  return index;
+  return index2;
 }
 function wordSelectionEnd(text2, i, multiline) {
-  let index = i;
+  let index2 = i;
   const breakpoint = multiline ? /\n/ : /\s/;
-  while (text2[index] && !text2[index].match(breakpoint)) {
-    index++;
+  while (text2[index2] && !text2[index2].match(breakpoint)) {
+    index2++;
   }
-  return index;
+  return index2;
 }
 var canInsertText = null;
 function insertText(textarea, {text: text2, selectionStart, selectionEnd}) {
@@ -17068,11 +17595,11 @@ function orderedList(textarea) {
 function numberedLines(lines) {
   let i;
   let len;
-  let index;
+  let index2;
   const results = [];
-  for (index = i = 0, len = lines.length; i < len; index = ++i) {
-    const line = lines[index];
-    results.push(`${index + 1}. ${line}`);
+  for (index2 = i = 0, len = lines.length; i < len; index2 = ++i) {
+    const line = lines[index2];
+    results.push(`${index2 + 1}. ${line}`);
   }
   return results;
 }
@@ -17080,7 +17607,7 @@ function applyStyle(button, stylesToApply) {
   const toolbar = button.closest("markdown-toolbar");
   if (!(toolbar instanceof MarkdownToolbarElement))
     return;
-  const defaults3 = {
+  const defaults4 = {
     prefix: "",
     suffix: "",
     blockPrefix: "",
@@ -17093,7 +17620,7 @@ function applyStyle(button, stylesToApply) {
     orderedList: false,
     trimFirst: false
   };
-  const style = Object.assign(Object.assign({}, defaults3), stylesToApply);
+  const style = Object.assign(Object.assign({}, defaults4), stylesToApply);
   const field = toolbar.field;
   if (field) {
     field.focus();
@@ -19166,8 +19693,8 @@ var markdown_editor_default = (Alpine) => {
             delete lines[currentLine - 2];
           }
         } else {
-          const matches = previousLine.match(/^(\d)+/);
-          const number = matches[0];
+          const matches2 = previousLine.match(/^(\d)+/);
+          const number = matches2[0];
           if (previousLine.trim().length > number.length + 2) {
             lines[currentLine - 1] = `${parseInt(number) + 1}. `;
           } else {
@@ -19313,12 +19840,15 @@ var multi_select_default = (Alpine) => {
           });
         });
       },
-      selectOption: function(index = null) {
+      selectOption: function(index2 = null) {
         if (!this.isOpen) {
           this.closeListbox();
           return;
         }
-        let value = Object.keys(this.options)[index ?? this.focusedOptionIndex];
+        let value = Object.keys(this.options)[index2 ?? this.focusedOptionIndex];
+        if (value === void 0) {
+          return;
+        }
         if (this.state.indexOf(value) < 0) {
           this.state.push(value);
         } else {
@@ -19327,7 +19857,7 @@ var multi_select_default = (Alpine) => {
         this.closeListbox();
       },
       deselectOption: function(optionToDeselect) {
-        this.state = this.state.filter((option2) => option2 !== optionToDeselect);
+        this.state = this.state.filter((option3) => option3 !== optionToDeselect);
       },
       toggleListboxVisibility: function() {
         if (this.isOpen) {
@@ -19540,12 +20070,12 @@ var select_default = (Alpine) => {
           });
         });
       },
-      selectOption: function(index = null) {
+      selectOption: function(index2 = null) {
         if (!this.isOpen) {
           this.closeListbox();
           return;
         }
-        this.state = Object.keys(this.options)[index ?? this.focusedOptionIndex];
+        this.state = Object.keys(this.options)[index2 ?? this.focusedOptionIndex];
         this.label = this.options[this.state];
         this.closeListbox();
       },
@@ -20043,7 +20573,7 @@ var ContinuousTailDetails = /* @__PURE__ */ function() {
     }
   }, {
     key: "extend",
-    value: function extend(tail) {
+    value: function extend2(tail) {
       this.value += String(tail);
     }
   }, {
@@ -20401,7 +20931,7 @@ var Masked = /* @__PURE__ */ function() {
   return Masked2;
 }();
 Masked.DEFAULTS = {
-  format: function format(v) {
+  format: function format2(v) {
     return v;
   },
   parse: function parse2(v) {
@@ -20758,7 +21288,7 @@ var ChunksTailDetails = /* @__PURE__ */ function() {
     }
   }, {
     key: "extend",
-    value: function extend(tailChunk) {
+    value: function extend2(tailChunk) {
       if (!String(tailChunk))
         return;
       if (isString2(tailChunk))
@@ -20903,9 +21433,9 @@ var PatternCursor = /* @__PURE__ */ function() {
     } : {
       index: this.masked._blocks.length,
       offset: 0
-    }), offset = _ref.offset, index = _ref.index;
+    }), offset = _ref.offset, index2 = _ref.index;
     this.offset = offset;
-    this.index = index;
+    this.index = index2;
     this.ok = false;
   }
   _createClass(PatternCursor2, [{
@@ -21689,7 +22219,7 @@ var MaskedDate = /* @__PURE__ */ function(_MaskedPattern) {
 }(MaskedPattern);
 MaskedDate.DEFAULTS = {
   pattern: "d{.}`m{.}`Y",
-  format: function format2(date) {
+  format: function format3(date) {
     if (!date)
       return "";
     var day = String(date.getDate()).padStart(2, "0");
@@ -22147,7 +22677,7 @@ var InputMask = /* @__PURE__ */ function() {
     }
   }, {
     key: "on",
-    value: function on2(ev, handler) {
+    value: function on3(ev, handler) {
       if (!this._listeners[ev])
         this._listeners[ev] = [];
       this._listeners[ev].push(handler);
@@ -22155,7 +22685,7 @@ var InputMask = /* @__PURE__ */ function() {
     }
   }, {
     key: "off",
-    value: function off(ev, handler) {
+    value: function off2(ev, handler) {
       if (!this._listeners[ev])
         return this;
       if (!handler) {
@@ -22197,7 +22727,7 @@ var InputMask = /* @__PURE__ */ function() {
     }
   }, {
     key: "_onDrop",
-    value: function _onDrop(ev) {
+    value: function _onDrop2(ev) {
       ev.preventDefault();
       ev.stopPropagation();
     }
@@ -22213,7 +22743,7 @@ var InputMask = /* @__PURE__ */ function() {
     }
   }, {
     key: "destroy",
-    value: function destroy2() {
+    value: function destroy3() {
       this._unbindEvents();
       this._listeners.length = 0;
       delete this.el;
@@ -22790,7 +23320,7 @@ MaskedDynamic.DEFAULTS = {
     if (!masked.compiledMasks.length)
       return;
     var inputValue = masked.rawInputValue;
-    var inputs = masked.compiledMasks.map(function(m, index) {
+    var inputs = masked.compiledMasks.map(function(m, index2) {
       m.reset();
       m.append(inputValue, {
         raw: true
@@ -22799,7 +23329,7 @@ MaskedDynamic.DEFAULTS = {
       var weight = m.rawInputValue.length;
       return {
         weight,
-        index
+        index: index2
       };
     });
     inputs.sort(function(i1, i2) {
@@ -22887,8 +23417,2203 @@ var textarea_default = (Alpine) => {
   }));
 };
 
+// node_modules/sortablejs/modular/sortable.esm.js
+/**!
+ * Sortable 1.15.0
+ * @author	RubaXa   <trash@rubaxa.org>
+ * @author	owenm    <owen23355@gmail.com>
+ * @license MIT
+ */
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) {
+      symbols = symbols.filter(function(sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+    }
+    keys.push.apply(keys, symbols);
+  }
+  return keys;
+}
+function _objectSpread2(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function(key) {
+        _defineProperty2(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function(key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+  return target;
+}
+function _typeof2(obj) {
+  "@babel/helpers - typeof";
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof2 = function(obj2) {
+      return typeof obj2;
+    };
+  } else {
+    _typeof2 = function(obj2) {
+      return obj2 && typeof Symbol === "function" && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+    };
+  }
+  return _typeof2(obj);
+}
+function _defineProperty2(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
+function _extends() {
+  _extends = Object.assign || function(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+    return target;
+  };
+  return _extends.apply(this, arguments);
+}
+function _objectWithoutPropertiesLoose2(source, excluded) {
+  if (source == null)
+    return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0)
+      continue;
+    target[key] = source[key];
+  }
+  return target;
+}
+function _objectWithoutProperties2(source, excluded) {
+  if (source == null)
+    return {};
+  var target = _objectWithoutPropertiesLoose2(source, excluded);
+  var key, i;
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0)
+        continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key))
+        continue;
+      target[key] = source[key];
+    }
+  }
+  return target;
+}
+var version = "1.15.0";
+function userAgent(pattern) {
+  if (typeof window !== "undefined" && window.navigator) {
+    return !!/* @__PURE__ */ navigator.userAgent.match(pattern);
+  }
+}
+var IE11OrLess = userAgent(/(?:Trident.*rv[ :]?11\.|msie|iemobile|Windows Phone)/i);
+var Edge = userAgent(/Edge/i);
+var FireFox = userAgent(/firefox/i);
+var Safari = userAgent(/safari/i) && !userAgent(/chrome/i) && !userAgent(/android/i);
+var IOS = userAgent(/iP(ad|od|hone)/i);
+var ChromeForAndroid = userAgent(/chrome/i) && userAgent(/android/i);
+var captureMode = {
+  capture: false,
+  passive: false
+};
+function on2(el, event, fn2) {
+  el.addEventListener(event, fn2, !IE11OrLess && captureMode);
+}
+function off(el, event, fn2) {
+  el.removeEventListener(event, fn2, !IE11OrLess && captureMode);
+}
+function matches(el, selector) {
+  if (!selector)
+    return;
+  selector[0] === ">" && (selector = selector.substring(1));
+  if (el) {
+    try {
+      if (el.matches) {
+        return el.matches(selector);
+      } else if (el.msMatchesSelector) {
+        return el.msMatchesSelector(selector);
+      } else if (el.webkitMatchesSelector) {
+        return el.webkitMatchesSelector(selector);
+      }
+    } catch (_) {
+      return false;
+    }
+  }
+  return false;
+}
+function getParentOrHost(el) {
+  return el.host && el !== document && el.host.nodeType ? el.host : el.parentNode;
+}
+function closest(el, selector, ctx, includeCTX) {
+  if (el) {
+    ctx = ctx || document;
+    do {
+      if (selector != null && (selector[0] === ">" ? el.parentNode === ctx && matches(el, selector) : matches(el, selector)) || includeCTX && el === ctx) {
+        return el;
+      }
+      if (el === ctx)
+        break;
+    } while (el = getParentOrHost(el));
+  }
+  return null;
+}
+var R_SPACE = /\s+/g;
+function toggleClass(el, name2, state2) {
+  if (el && name2) {
+    if (el.classList) {
+      el.classList[state2 ? "add" : "remove"](name2);
+    } else {
+      var className = (" " + el.className + " ").replace(R_SPACE, " ").replace(" " + name2 + " ", " ");
+      el.className = (className + (state2 ? " " + name2 : "")).replace(R_SPACE, " ");
+    }
+  }
+}
+function css(el, prop, val) {
+  var style = el && el.style;
+  if (style) {
+    if (val === void 0) {
+      if (document.defaultView && document.defaultView.getComputedStyle) {
+        val = document.defaultView.getComputedStyle(el, "");
+      } else if (el.currentStyle) {
+        val = el.currentStyle;
+      }
+      return prop === void 0 ? val : val[prop];
+    } else {
+      if (!(prop in style) && prop.indexOf("webkit") === -1) {
+        prop = "-webkit-" + prop;
+      }
+      style[prop] = val + (typeof val === "string" ? "" : "px");
+    }
+  }
+}
+function matrix(el, selfOnly) {
+  var appliedTransforms = "";
+  if (typeof el === "string") {
+    appliedTransforms = el;
+  } else {
+    do {
+      var transform = css(el, "transform");
+      if (transform && transform !== "none") {
+        appliedTransforms = transform + " " + appliedTransforms;
+      }
+    } while (!selfOnly && (el = el.parentNode));
+  }
+  var matrixFn = window.DOMMatrix || window.WebKitCSSMatrix || window.CSSMatrix || window.MSCSSMatrix;
+  return matrixFn && new matrixFn(appliedTransforms);
+}
+function find2(ctx, tagName, iterator) {
+  if (ctx) {
+    var list2 = ctx.getElementsByTagName(tagName), i = 0, n2 = list2.length;
+    if (iterator) {
+      for (; i < n2; i++) {
+        iterator(list2[i], i);
+      }
+    }
+    return list2;
+  }
+  return [];
+}
+function getWindowScrollingElement() {
+  var scrollingElement = document.scrollingElement;
+  if (scrollingElement) {
+    return scrollingElement;
+  } else {
+    return document.documentElement;
+  }
+}
+function getRect(el, relativeToContainingBlock, relativeToNonStaticParent, undoScale, container) {
+  if (!el.getBoundingClientRect && el !== window)
+    return;
+  var elRect, top, left, bottom, right, height, width;
+  if (el !== window && el.parentNode && el !== getWindowScrollingElement()) {
+    elRect = el.getBoundingClientRect();
+    top = elRect.top;
+    left = elRect.left;
+    bottom = elRect.bottom;
+    right = elRect.right;
+    height = elRect.height;
+    width = elRect.width;
+  } else {
+    top = 0;
+    left = 0;
+    bottom = window.innerHeight;
+    right = window.innerWidth;
+    height = window.innerHeight;
+    width = window.innerWidth;
+  }
+  if ((relativeToContainingBlock || relativeToNonStaticParent) && el !== window) {
+    container = container || el.parentNode;
+    if (!IE11OrLess) {
+      do {
+        if (container && container.getBoundingClientRect && (css(container, "transform") !== "none" || relativeToNonStaticParent && css(container, "position") !== "static")) {
+          var containerRect = container.getBoundingClientRect();
+          top -= containerRect.top + parseInt(css(container, "border-top-width"));
+          left -= containerRect.left + parseInt(css(container, "border-left-width"));
+          bottom = top + elRect.height;
+          right = left + elRect.width;
+          break;
+        }
+      } while (container = container.parentNode);
+    }
+  }
+  if (undoScale && el !== window) {
+    var elMatrix = matrix(container || el), scaleX = elMatrix && elMatrix.a, scaleY = elMatrix && elMatrix.d;
+    if (elMatrix) {
+      top /= scaleY;
+      left /= scaleX;
+      width /= scaleX;
+      height /= scaleY;
+      bottom = top + height;
+      right = left + width;
+    }
+  }
+  return {
+    top,
+    left,
+    bottom,
+    right,
+    width,
+    height
+  };
+}
+function isScrolledPast(el, elSide, parentSide) {
+  var parent = getParentAutoScrollElement(el, true), elSideVal = getRect(el)[elSide];
+  while (parent) {
+    var parentSideVal = getRect(parent)[parentSide], visible2 = void 0;
+    if (parentSide === "top" || parentSide === "left") {
+      visible2 = elSideVal >= parentSideVal;
+    } else {
+      visible2 = elSideVal <= parentSideVal;
+    }
+    if (!visible2)
+      return parent;
+    if (parent === getWindowScrollingElement())
+      break;
+    parent = getParentAutoScrollElement(parent, false);
+  }
+  return false;
+}
+function getChild(el, childNum, options2, includeDragEl) {
+  var currentChild = 0, i = 0, children = el.children;
+  while (i < children.length) {
+    if (children[i].style.display !== "none" && children[i] !== Sortable.ghost && (includeDragEl || children[i] !== Sortable.dragged) && closest(children[i], options2.draggable, el, false)) {
+      if (currentChild === childNum) {
+        return children[i];
+      }
+      currentChild++;
+    }
+    i++;
+  }
+  return null;
+}
+function lastChild(el, selector) {
+  var last = el.lastElementChild;
+  while (last && (last === Sortable.ghost || css(last, "display") === "none" || selector && !matches(last, selector))) {
+    last = last.previousElementSibling;
+  }
+  return last || null;
+}
+function index(el, selector) {
+  var index2 = 0;
+  if (!el || !el.parentNode) {
+    return -1;
+  }
+  while (el = el.previousElementSibling) {
+    if (el.nodeName.toUpperCase() !== "TEMPLATE" && el !== Sortable.clone && (!selector || matches(el, selector))) {
+      index2++;
+    }
+  }
+  return index2;
+}
+function getRelativeScrollOffset(el) {
+  var offsetLeft = 0, offsetTop = 0, winScroller = getWindowScrollingElement();
+  if (el) {
+    do {
+      var elMatrix = matrix(el), scaleX = elMatrix.a, scaleY = elMatrix.d;
+      offsetLeft += el.scrollLeft * scaleX;
+      offsetTop += el.scrollTop * scaleY;
+    } while (el !== winScroller && (el = el.parentNode));
+  }
+  return [offsetLeft, offsetTop];
+}
+function indexOfObject(arr, obj) {
+  for (var i in arr) {
+    if (!arr.hasOwnProperty(i))
+      continue;
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key) && obj[key] === arr[i][key])
+        return Number(i);
+    }
+  }
+  return -1;
+}
+function getParentAutoScrollElement(el, includeSelf) {
+  if (!el || !el.getBoundingClientRect)
+    return getWindowScrollingElement();
+  var elem = el;
+  var gotSelf = false;
+  do {
+    if (elem.clientWidth < elem.scrollWidth || elem.clientHeight < elem.scrollHeight) {
+      var elemCSS = css(elem);
+      if (elem.clientWidth < elem.scrollWidth && (elemCSS.overflowX == "auto" || elemCSS.overflowX == "scroll") || elem.clientHeight < elem.scrollHeight && (elemCSS.overflowY == "auto" || elemCSS.overflowY == "scroll")) {
+        if (!elem.getBoundingClientRect || elem === document.body)
+          return getWindowScrollingElement();
+        if (gotSelf || includeSelf)
+          return elem;
+        gotSelf = true;
+      }
+    }
+  } while (elem = elem.parentNode);
+  return getWindowScrollingElement();
+}
+function extend(dst, src) {
+  if (dst && src) {
+    for (var key in src) {
+      if (src.hasOwnProperty(key)) {
+        dst[key] = src[key];
+      }
+    }
+  }
+  return dst;
+}
+function isRectEqual(rect1, rect2) {
+  return Math.round(rect1.top) === Math.round(rect2.top) && Math.round(rect1.left) === Math.round(rect2.left) && Math.round(rect1.height) === Math.round(rect2.height) && Math.round(rect1.width) === Math.round(rect2.width);
+}
+var _throttleTimeout;
+function throttle(callback, ms) {
+  return function() {
+    if (!_throttleTimeout) {
+      var args = arguments, _this = this;
+      if (args.length === 1) {
+        callback.call(_this, args[0]);
+      } else {
+        callback.apply(_this, args);
+      }
+      _throttleTimeout = setTimeout(function() {
+        _throttleTimeout = void 0;
+      }, ms);
+    }
+  };
+}
+function cancelThrottle() {
+  clearTimeout(_throttleTimeout);
+  _throttleTimeout = void 0;
+}
+function scrollBy(el, x, y) {
+  el.scrollLeft += x;
+  el.scrollTop += y;
+}
+function clone(el) {
+  var Polymer = window.Polymer;
+  var $ = window.jQuery || window.Zepto;
+  if (Polymer && Polymer.dom) {
+    return Polymer.dom(el).cloneNode(true);
+  } else if ($) {
+    return $(el).clone(true)[0];
+  } else {
+    return el.cloneNode(true);
+  }
+}
+var expando = "Sortable" + new Date().getTime();
+function AnimationStateManager() {
+  var animationStates = [], animationCallbackId;
+  return {
+    captureAnimationState: function captureAnimationState() {
+      animationStates = [];
+      if (!this.options.animation)
+        return;
+      var children = [].slice.call(this.el.children);
+      children.forEach(function(child) {
+        if (css(child, "display") === "none" || child === Sortable.ghost)
+          return;
+        animationStates.push({
+          target: child,
+          rect: getRect(child)
+        });
+        var fromRect = _objectSpread2({}, animationStates[animationStates.length - 1].rect);
+        if (child.thisAnimationDuration) {
+          var childMatrix = matrix(child, true);
+          if (childMatrix) {
+            fromRect.top -= childMatrix.f;
+            fromRect.left -= childMatrix.e;
+          }
+        }
+        child.fromRect = fromRect;
+      });
+    },
+    addAnimationState: function addAnimationState(state2) {
+      animationStates.push(state2);
+    },
+    removeAnimationState: function removeAnimationState(target) {
+      animationStates.splice(indexOfObject(animationStates, {
+        target
+      }), 1);
+    },
+    animateAll: function animateAll(callback) {
+      var _this = this;
+      if (!this.options.animation) {
+        clearTimeout(animationCallbackId);
+        if (typeof callback === "function")
+          callback();
+        return;
+      }
+      var animating = false, animationTime = 0;
+      animationStates.forEach(function(state2) {
+        var time = 0, target = state2.target, fromRect = target.fromRect, toRect = getRect(target), prevFromRect = target.prevFromRect, prevToRect = target.prevToRect, animatingRect = state2.rect, targetMatrix = matrix(target, true);
+        if (targetMatrix) {
+          toRect.top -= targetMatrix.f;
+          toRect.left -= targetMatrix.e;
+        }
+        target.toRect = toRect;
+        if (target.thisAnimationDuration) {
+          if (isRectEqual(prevFromRect, toRect) && !isRectEqual(fromRect, toRect) && (animatingRect.top - toRect.top) / (animatingRect.left - toRect.left) === (fromRect.top - toRect.top) / (fromRect.left - toRect.left)) {
+            time = calculateRealTime(animatingRect, prevFromRect, prevToRect, _this.options);
+          }
+        }
+        if (!isRectEqual(toRect, fromRect)) {
+          target.prevFromRect = fromRect;
+          target.prevToRect = toRect;
+          if (!time) {
+            time = _this.options.animation;
+          }
+          _this.animate(target, animatingRect, toRect, time);
+        }
+        if (time) {
+          animating = true;
+          animationTime = Math.max(animationTime, time);
+          clearTimeout(target.animationResetTimer);
+          target.animationResetTimer = setTimeout(function() {
+            target.animationTime = 0;
+            target.prevFromRect = null;
+            target.fromRect = null;
+            target.prevToRect = null;
+            target.thisAnimationDuration = null;
+          }, time);
+          target.thisAnimationDuration = time;
+        }
+      });
+      clearTimeout(animationCallbackId);
+      if (!animating) {
+        if (typeof callback === "function")
+          callback();
+      } else {
+        animationCallbackId = setTimeout(function() {
+          if (typeof callback === "function")
+            callback();
+        }, animationTime);
+      }
+      animationStates = [];
+    },
+    animate: function animate(target, currentRect, toRect, duration) {
+      if (duration) {
+        css(target, "transition", "");
+        css(target, "transform", "");
+        var elMatrix = matrix(this.el), scaleX = elMatrix && elMatrix.a, scaleY = elMatrix && elMatrix.d, translateX = (currentRect.left - toRect.left) / (scaleX || 1), translateY = (currentRect.top - toRect.top) / (scaleY || 1);
+        target.animatingX = !!translateX;
+        target.animatingY = !!translateY;
+        css(target, "transform", "translate3d(" + translateX + "px," + translateY + "px,0)");
+        this.forRepaintDummy = repaint(target);
+        css(target, "transition", "transform " + duration + "ms" + (this.options.easing ? " " + this.options.easing : ""));
+        css(target, "transform", "translate3d(0,0,0)");
+        typeof target.animated === "number" && clearTimeout(target.animated);
+        target.animated = setTimeout(function() {
+          css(target, "transition", "");
+          css(target, "transform", "");
+          target.animated = false;
+          target.animatingX = false;
+          target.animatingY = false;
+        }, duration);
+      }
+    }
+  };
+}
+function repaint(target) {
+  return target.offsetWidth;
+}
+function calculateRealTime(animatingRect, fromRect, toRect, options2) {
+  return Math.sqrt(Math.pow(fromRect.top - animatingRect.top, 2) + Math.pow(fromRect.left - animatingRect.left, 2)) / Math.sqrt(Math.pow(fromRect.top - toRect.top, 2) + Math.pow(fromRect.left - toRect.left, 2)) * options2.animation;
+}
+var plugins = [];
+var defaults3 = {
+  initializeByDefault: true
+};
+var PluginManager = {
+  mount: function mount(plugin9) {
+    for (var option3 in defaults3) {
+      if (defaults3.hasOwnProperty(option3) && !(option3 in plugin9)) {
+        plugin9[option3] = defaults3[option3];
+      }
+    }
+    plugins.forEach(function(p2) {
+      if (p2.pluginName === plugin9.pluginName) {
+        throw "Sortable: Cannot mount plugin ".concat(plugin9.pluginName, " more than once");
+      }
+    });
+    plugins.push(plugin9);
+  },
+  pluginEvent: function pluginEvent(eventName, sortable, evt) {
+    var _this = this;
+    this.eventCanceled = false;
+    evt.cancel = function() {
+      _this.eventCanceled = true;
+    };
+    var eventNameGlobal = eventName + "Global";
+    plugins.forEach(function(plugin9) {
+      if (!sortable[plugin9.pluginName])
+        return;
+      if (sortable[plugin9.pluginName][eventNameGlobal]) {
+        sortable[plugin9.pluginName][eventNameGlobal](_objectSpread2({
+          sortable
+        }, evt));
+      }
+      if (sortable.options[plugin9.pluginName] && sortable[plugin9.pluginName][eventName]) {
+        sortable[plugin9.pluginName][eventName](_objectSpread2({
+          sortable
+        }, evt));
+      }
+    });
+  },
+  initializePlugins: function initializePlugins(sortable, el, defaults4, options2) {
+    plugins.forEach(function(plugin9) {
+      var pluginName = plugin9.pluginName;
+      if (!sortable.options[pluginName] && !plugin9.initializeByDefault)
+        return;
+      var initialized = new plugin9(sortable, el, sortable.options);
+      initialized.sortable = sortable;
+      initialized.options = sortable.options;
+      sortable[pluginName] = initialized;
+      _extends(defaults4, initialized.defaults);
+    });
+    for (var option3 in sortable.options) {
+      if (!sortable.options.hasOwnProperty(option3))
+        continue;
+      var modified = this.modifyOption(sortable, option3, sortable.options[option3]);
+      if (typeof modified !== "undefined") {
+        sortable.options[option3] = modified;
+      }
+    }
+  },
+  getEventProperties: function getEventProperties(name2, sortable) {
+    var eventProperties = {};
+    plugins.forEach(function(plugin9) {
+      if (typeof plugin9.eventProperties !== "function")
+        return;
+      _extends(eventProperties, plugin9.eventProperties.call(sortable[plugin9.pluginName], name2));
+    });
+    return eventProperties;
+  },
+  modifyOption: function modifyOption(sortable, name2, value) {
+    var modifiedValue;
+    plugins.forEach(function(plugin9) {
+      if (!sortable[plugin9.pluginName])
+        return;
+      if (plugin9.optionListeners && typeof plugin9.optionListeners[name2] === "function") {
+        modifiedValue = plugin9.optionListeners[name2].call(sortable[plugin9.pluginName], value);
+      }
+    });
+    return modifiedValue;
+  }
+};
+function dispatchEvent(_ref) {
+  var sortable = _ref.sortable, rootEl2 = _ref.rootEl, name2 = _ref.name, targetEl = _ref.targetEl, cloneEl2 = _ref.cloneEl, toEl = _ref.toEl, fromEl = _ref.fromEl, oldIndex2 = _ref.oldIndex, newIndex2 = _ref.newIndex, oldDraggableIndex2 = _ref.oldDraggableIndex, newDraggableIndex2 = _ref.newDraggableIndex, originalEvent = _ref.originalEvent, putSortable2 = _ref.putSortable, extraEventProperties = _ref.extraEventProperties;
+  sortable = sortable || rootEl2 && rootEl2[expando];
+  if (!sortable)
+    return;
+  var evt, options2 = sortable.options, onName = "on" + name2.charAt(0).toUpperCase() + name2.substr(1);
+  if (window.CustomEvent && !IE11OrLess && !Edge) {
+    evt = new CustomEvent(name2, {
+      bubbles: true,
+      cancelable: true
+    });
+  } else {
+    evt = document.createEvent("Event");
+    evt.initEvent(name2, true, true);
+  }
+  evt.to = toEl || rootEl2;
+  evt.from = fromEl || rootEl2;
+  evt.item = targetEl || rootEl2;
+  evt.clone = cloneEl2;
+  evt.oldIndex = oldIndex2;
+  evt.newIndex = newIndex2;
+  evt.oldDraggableIndex = oldDraggableIndex2;
+  evt.newDraggableIndex = newDraggableIndex2;
+  evt.originalEvent = originalEvent;
+  evt.pullMode = putSortable2 ? putSortable2.lastPutMode : void 0;
+  var allEventProperties = _objectSpread2(_objectSpread2({}, extraEventProperties), PluginManager.getEventProperties(name2, sortable));
+  for (var option3 in allEventProperties) {
+    evt[option3] = allEventProperties[option3];
+  }
+  if (rootEl2) {
+    rootEl2.dispatchEvent(evt);
+  }
+  if (options2[onName]) {
+    options2[onName].call(sortable, evt);
+  }
+}
+var _excluded6 = ["evt"];
+var pluginEvent2 = function pluginEvent3(eventName, sortable) {
+  var _ref = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : {}, originalEvent = _ref.evt, data3 = _objectWithoutProperties2(_ref, _excluded6);
+  PluginManager.pluginEvent.bind(Sortable)(eventName, sortable, _objectSpread2({
+    dragEl,
+    parentEl,
+    ghostEl,
+    rootEl,
+    nextEl,
+    lastDownEl,
+    cloneEl,
+    cloneHidden,
+    dragStarted: moved,
+    putSortable,
+    activeSortable: Sortable.active,
+    originalEvent,
+    oldIndex,
+    oldDraggableIndex,
+    newIndex,
+    newDraggableIndex,
+    hideGhostForTarget: _hideGhostForTarget,
+    unhideGhostForTarget: _unhideGhostForTarget,
+    cloneNowHidden: function cloneNowHidden() {
+      cloneHidden = true;
+    },
+    cloneNowShown: function cloneNowShown() {
+      cloneHidden = false;
+    },
+    dispatchSortableEvent: function dispatchSortableEvent(name2) {
+      _dispatchEvent({
+        sortable,
+        name: name2,
+        originalEvent
+      });
+    }
+  }, data3));
+};
+function _dispatchEvent(info) {
+  dispatchEvent(_objectSpread2({
+    putSortable,
+    cloneEl,
+    targetEl: dragEl,
+    rootEl,
+    oldIndex,
+    oldDraggableIndex,
+    newIndex,
+    newDraggableIndex
+  }, info));
+}
+var dragEl;
+var parentEl;
+var ghostEl;
+var rootEl;
+var nextEl;
+var lastDownEl;
+var cloneEl;
+var cloneHidden;
+var oldIndex;
+var newIndex;
+var oldDraggableIndex;
+var newDraggableIndex;
+var activeGroup;
+var putSortable;
+var awaitingDragStarted = false;
+var ignoreNextClick = false;
+var sortables = [];
+var tapEvt;
+var touchEvt;
+var lastDx;
+var lastDy;
+var tapDistanceLeft;
+var tapDistanceTop;
+var moved;
+var lastTarget;
+var lastDirection;
+var pastFirstInvertThresh = false;
+var isCircumstantialInvert = false;
+var targetMoveDistance;
+var ghostRelativeParent;
+var ghostRelativeParentInitialScroll = [];
+var _silent = false;
+var savedInputChecked = [];
+var documentExists = typeof document !== "undefined";
+var PositionGhostAbsolutely = IOS;
+var CSSFloatProperty = Edge || IE11OrLess ? "cssFloat" : "float";
+var supportDraggable = documentExists && !ChromeForAndroid && !IOS && "draggable" in document.createElement("div");
+var supportCssPointerEvents = function() {
+  if (!documentExists)
+    return;
+  if (IE11OrLess) {
+    return false;
+  }
+  var el = document.createElement("x");
+  el.style.cssText = "pointer-events:auto";
+  return el.style.pointerEvents === "auto";
+}();
+var _detectDirection = function _detectDirection2(el, options2) {
+  var elCSS = css(el), elWidth = parseInt(elCSS.width) - parseInt(elCSS.paddingLeft) - parseInt(elCSS.paddingRight) - parseInt(elCSS.borderLeftWidth) - parseInt(elCSS.borderRightWidth), child1 = getChild(el, 0, options2), child2 = getChild(el, 1, options2), firstChildCSS = child1 && css(child1), secondChildCSS = child2 && css(child2), firstChildWidth = firstChildCSS && parseInt(firstChildCSS.marginLeft) + parseInt(firstChildCSS.marginRight) + getRect(child1).width, secondChildWidth = secondChildCSS && parseInt(secondChildCSS.marginLeft) + parseInt(secondChildCSS.marginRight) + getRect(child2).width;
+  if (elCSS.display === "flex") {
+    return elCSS.flexDirection === "column" || elCSS.flexDirection === "column-reverse" ? "vertical" : "horizontal";
+  }
+  if (elCSS.display === "grid") {
+    return elCSS.gridTemplateColumns.split(" ").length <= 1 ? "vertical" : "horizontal";
+  }
+  if (child1 && firstChildCSS["float"] && firstChildCSS["float"] !== "none") {
+    var touchingSideChild2 = firstChildCSS["float"] === "left" ? "left" : "right";
+    return child2 && (secondChildCSS.clear === "both" || secondChildCSS.clear === touchingSideChild2) ? "vertical" : "horizontal";
+  }
+  return child1 && (firstChildCSS.display === "block" || firstChildCSS.display === "flex" || firstChildCSS.display === "table" || firstChildCSS.display === "grid" || firstChildWidth >= elWidth && elCSS[CSSFloatProperty] === "none" || child2 && elCSS[CSSFloatProperty] === "none" && firstChildWidth + secondChildWidth > elWidth) ? "vertical" : "horizontal";
+};
+var _dragElInRowColumn = function _dragElInRowColumn2(dragRect, targetRect, vertical) {
+  var dragElS1Opp = vertical ? dragRect.left : dragRect.top, dragElS2Opp = vertical ? dragRect.right : dragRect.bottom, dragElOppLength = vertical ? dragRect.width : dragRect.height, targetS1Opp = vertical ? targetRect.left : targetRect.top, targetS2Opp = vertical ? targetRect.right : targetRect.bottom, targetOppLength = vertical ? targetRect.width : targetRect.height;
+  return dragElS1Opp === targetS1Opp || dragElS2Opp === targetS2Opp || dragElS1Opp + dragElOppLength / 2 === targetS1Opp + targetOppLength / 2;
+};
+var _detectNearestEmptySortable = function _detectNearestEmptySortable2(x, y) {
+  var ret;
+  sortables.some(function(sortable) {
+    var threshold = sortable[expando].options.emptyInsertThreshold;
+    if (!threshold || lastChild(sortable))
+      return;
+    var rect = getRect(sortable), insideHorizontally = x >= rect.left - threshold && x <= rect.right + threshold, insideVertically = y >= rect.top - threshold && y <= rect.bottom + threshold;
+    if (insideHorizontally && insideVertically) {
+      return ret = sortable;
+    }
+  });
+  return ret;
+};
+var _prepareGroup = function _prepareGroup2(options2) {
+  function toFn(value, pull) {
+    return function(to, from, dragEl2, evt) {
+      var sameGroup = to.options.group.name && from.options.group.name && to.options.group.name === from.options.group.name;
+      if (value == null && (pull || sameGroup)) {
+        return true;
+      } else if (value == null || value === false) {
+        return false;
+      } else if (pull && value === "clone") {
+        return value;
+      } else if (typeof value === "function") {
+        return toFn(value(to, from, dragEl2, evt), pull)(to, from, dragEl2, evt);
+      } else {
+        var otherGroup = (pull ? to : from).options.group.name;
+        return value === true || typeof value === "string" && value === otherGroup || value.join && value.indexOf(otherGroup) > -1;
+      }
+    };
+  }
+  var group = {};
+  var originalGroup = options2.group;
+  if (!originalGroup || _typeof2(originalGroup) != "object") {
+    originalGroup = {
+      name: originalGroup
+    };
+  }
+  group.name = originalGroup.name;
+  group.checkPull = toFn(originalGroup.pull, true);
+  group.checkPut = toFn(originalGroup.put);
+  group.revertClone = originalGroup.revertClone;
+  options2.group = group;
+};
+var _hideGhostForTarget = function _hideGhostForTarget2() {
+  if (!supportCssPointerEvents && ghostEl) {
+    css(ghostEl, "display", "none");
+  }
+};
+var _unhideGhostForTarget = function _unhideGhostForTarget2() {
+  if (!supportCssPointerEvents && ghostEl) {
+    css(ghostEl, "display", "");
+  }
+};
+if (documentExists && !ChromeForAndroid) {
+  document.addEventListener("click", function(evt) {
+    if (ignoreNextClick) {
+      evt.preventDefault();
+      evt.stopPropagation && evt.stopPropagation();
+      evt.stopImmediatePropagation && evt.stopImmediatePropagation();
+      ignoreNextClick = false;
+      return false;
+    }
+  }, true);
+}
+var nearestEmptyInsertDetectEvent = function nearestEmptyInsertDetectEvent2(evt) {
+  if (dragEl) {
+    evt = evt.touches ? evt.touches[0] : evt;
+    var nearest = _detectNearestEmptySortable(evt.clientX, evt.clientY);
+    if (nearest) {
+      var event = {};
+      for (var i in evt) {
+        if (evt.hasOwnProperty(i)) {
+          event[i] = evt[i];
+        }
+      }
+      event.target = event.rootEl = nearest;
+      event.preventDefault = void 0;
+      event.stopPropagation = void 0;
+      nearest[expando]._onDragOver(event);
+    }
+  }
+};
+var _checkOutsideTargetEl = function _checkOutsideTargetEl2(evt) {
+  if (dragEl) {
+    dragEl.parentNode[expando]._isOutsideThisEl(evt.target);
+  }
+};
+function Sortable(el, options2) {
+  if (!(el && el.nodeType && el.nodeType === 1)) {
+    throw "Sortable: `el` must be an HTMLElement, not ".concat({}.toString.call(el));
+  }
+  this.el = el;
+  this.options = options2 = _extends({}, options2);
+  el[expando] = this;
+  var defaults4 = {
+    group: null,
+    sort: true,
+    disabled: false,
+    store: null,
+    handle: null,
+    draggable: /^[uo]l$/i.test(el.nodeName) ? ">li" : ">*",
+    swapThreshold: 1,
+    invertSwap: false,
+    invertedSwapThreshold: null,
+    removeCloneOnHide: true,
+    direction: function direction() {
+      return _detectDirection(el, this.options);
+    },
+    ghostClass: "sortable-ghost",
+    chosenClass: "sortable-chosen",
+    dragClass: "sortable-drag",
+    ignore: "a, img",
+    filter: null,
+    preventOnFilter: true,
+    animation: 0,
+    easing: null,
+    setData: function setData(dataTransfer, dragEl2) {
+      dataTransfer.setData("Text", dragEl2.textContent);
+    },
+    dropBubble: false,
+    dragoverBubble: false,
+    dataIdAttr: "data-id",
+    delay: 0,
+    delayOnTouchOnly: false,
+    touchStartThreshold: (Number.parseInt ? Number : window).parseInt(window.devicePixelRatio, 10) || 1,
+    forceFallback: false,
+    fallbackClass: "sortable-fallback",
+    fallbackOnBody: false,
+    fallbackTolerance: 0,
+    fallbackOffset: {
+      x: 0,
+      y: 0
+    },
+    supportPointer: Sortable.supportPointer !== false && "PointerEvent" in window && !Safari,
+    emptyInsertThreshold: 5
+  };
+  PluginManager.initializePlugins(this, el, defaults4);
+  for (var name2 in defaults4) {
+    !(name2 in options2) && (options2[name2] = defaults4[name2]);
+  }
+  _prepareGroup(options2);
+  for (var fn2 in this) {
+    if (fn2.charAt(0) === "_" && typeof this[fn2] === "function") {
+      this[fn2] = this[fn2].bind(this);
+    }
+  }
+  this.nativeDraggable = options2.forceFallback ? false : supportDraggable;
+  if (this.nativeDraggable) {
+    this.options.touchStartThreshold = 1;
+  }
+  if (options2.supportPointer) {
+    on2(el, "pointerdown", this._onTapStart);
+  } else {
+    on2(el, "mousedown", this._onTapStart);
+    on2(el, "touchstart", this._onTapStart);
+  }
+  if (this.nativeDraggable) {
+    on2(el, "dragover", this);
+    on2(el, "dragenter", this);
+  }
+  sortables.push(this.el);
+  options2.store && options2.store.get && this.sort(options2.store.get(this) || []);
+  _extends(this, AnimationStateManager());
+}
+Sortable.prototype = {
+  constructor: Sortable,
+  _isOutsideThisEl: function _isOutsideThisEl(target) {
+    if (!this.el.contains(target) && target !== this.el) {
+      lastTarget = null;
+    }
+  },
+  _getDirection: function _getDirection(evt, target) {
+    return typeof this.options.direction === "function" ? this.options.direction.call(this, evt, target, dragEl) : this.options.direction;
+  },
+  _onTapStart: function _onTapStart(evt) {
+    if (!evt.cancelable)
+      return;
+    var _this = this, el = this.el, options2 = this.options, preventOnFilter = options2.preventOnFilter, type = evt.type, touch = evt.touches && evt.touches[0] || evt.pointerType && evt.pointerType === "touch" && evt, target = (touch || evt).target, originalTarget = evt.target.shadowRoot && (evt.path && evt.path[0] || evt.composedPath && evt.composedPath()[0]) || target, filter = options2.filter;
+    _saveInputCheckedState(el);
+    if (dragEl) {
+      return;
+    }
+    if (/mousedown|pointerdown/.test(type) && evt.button !== 0 || options2.disabled) {
+      return;
+    }
+    if (originalTarget.isContentEditable) {
+      return;
+    }
+    if (!this.nativeDraggable && Safari && target && target.tagName.toUpperCase() === "SELECT") {
+      return;
+    }
+    target = closest(target, options2.draggable, el, false);
+    if (target && target.animated) {
+      return;
+    }
+    if (lastDownEl === target) {
+      return;
+    }
+    oldIndex = index(target);
+    oldDraggableIndex = index(target, options2.draggable);
+    if (typeof filter === "function") {
+      if (filter.call(this, evt, target, this)) {
+        _dispatchEvent({
+          sortable: _this,
+          rootEl: originalTarget,
+          name: "filter",
+          targetEl: target,
+          toEl: el,
+          fromEl: el
+        });
+        pluginEvent2("filter", _this, {
+          evt
+        });
+        preventOnFilter && evt.cancelable && evt.preventDefault();
+        return;
+      }
+    } else if (filter) {
+      filter = filter.split(",").some(function(criteria) {
+        criteria = closest(originalTarget, criteria.trim(), el, false);
+        if (criteria) {
+          _dispatchEvent({
+            sortable: _this,
+            rootEl: criteria,
+            name: "filter",
+            targetEl: target,
+            fromEl: el,
+            toEl: el
+          });
+          pluginEvent2("filter", _this, {
+            evt
+          });
+          return true;
+        }
+      });
+      if (filter) {
+        preventOnFilter && evt.cancelable && evt.preventDefault();
+        return;
+      }
+    }
+    if (options2.handle && !closest(originalTarget, options2.handle, el, false)) {
+      return;
+    }
+    this._prepareDragStart(evt, touch, target);
+  },
+  _prepareDragStart: function _prepareDragStart(evt, touch, target) {
+    var _this = this, el = _this.el, options2 = _this.options, ownerDocument = el.ownerDocument, dragStartFn;
+    if (target && !dragEl && target.parentNode === el) {
+      var dragRect = getRect(target);
+      rootEl = el;
+      dragEl = target;
+      parentEl = dragEl.parentNode;
+      nextEl = dragEl.nextSibling;
+      lastDownEl = target;
+      activeGroup = options2.group;
+      Sortable.dragged = dragEl;
+      tapEvt = {
+        target: dragEl,
+        clientX: (touch || evt).clientX,
+        clientY: (touch || evt).clientY
+      };
+      tapDistanceLeft = tapEvt.clientX - dragRect.left;
+      tapDistanceTop = tapEvt.clientY - dragRect.top;
+      this._lastX = (touch || evt).clientX;
+      this._lastY = (touch || evt).clientY;
+      dragEl.style["will-change"] = "all";
+      dragStartFn = function dragStartFn2() {
+        pluginEvent2("delayEnded", _this, {
+          evt
+        });
+        if (Sortable.eventCanceled) {
+          _this._onDrop();
+          return;
+        }
+        _this._disableDelayedDragEvents();
+        if (!FireFox && _this.nativeDraggable) {
+          dragEl.draggable = true;
+        }
+        _this._triggerDragStart(evt, touch);
+        _dispatchEvent({
+          sortable: _this,
+          name: "choose",
+          originalEvent: evt
+        });
+        toggleClass(dragEl, options2.chosenClass, true);
+      };
+      options2.ignore.split(",").forEach(function(criteria) {
+        find2(dragEl, criteria.trim(), _disableDraggable);
+      });
+      on2(ownerDocument, "dragover", nearestEmptyInsertDetectEvent);
+      on2(ownerDocument, "mousemove", nearestEmptyInsertDetectEvent);
+      on2(ownerDocument, "touchmove", nearestEmptyInsertDetectEvent);
+      on2(ownerDocument, "mouseup", _this._onDrop);
+      on2(ownerDocument, "touchend", _this._onDrop);
+      on2(ownerDocument, "touchcancel", _this._onDrop);
+      if (FireFox && this.nativeDraggable) {
+        this.options.touchStartThreshold = 4;
+        dragEl.draggable = true;
+      }
+      pluginEvent2("delayStart", this, {
+        evt
+      });
+      if (options2.delay && (!options2.delayOnTouchOnly || touch) && (!this.nativeDraggable || !(Edge || IE11OrLess))) {
+        if (Sortable.eventCanceled) {
+          this._onDrop();
+          return;
+        }
+        on2(ownerDocument, "mouseup", _this._disableDelayedDrag);
+        on2(ownerDocument, "touchend", _this._disableDelayedDrag);
+        on2(ownerDocument, "touchcancel", _this._disableDelayedDrag);
+        on2(ownerDocument, "mousemove", _this._delayedDragTouchMoveHandler);
+        on2(ownerDocument, "touchmove", _this._delayedDragTouchMoveHandler);
+        options2.supportPointer && on2(ownerDocument, "pointermove", _this._delayedDragTouchMoveHandler);
+        _this._dragStartTimer = setTimeout(dragStartFn, options2.delay);
+      } else {
+        dragStartFn();
+      }
+    }
+  },
+  _delayedDragTouchMoveHandler: function _delayedDragTouchMoveHandler(e2) {
+    var touch = e2.touches ? e2.touches[0] : e2;
+    if (Math.max(Math.abs(touch.clientX - this._lastX), Math.abs(touch.clientY - this._lastY)) >= Math.floor(this.options.touchStartThreshold / (this.nativeDraggable && window.devicePixelRatio || 1))) {
+      this._disableDelayedDrag();
+    }
+  },
+  _disableDelayedDrag: function _disableDelayedDrag() {
+    dragEl && _disableDraggable(dragEl);
+    clearTimeout(this._dragStartTimer);
+    this._disableDelayedDragEvents();
+  },
+  _disableDelayedDragEvents: function _disableDelayedDragEvents() {
+    var ownerDocument = this.el.ownerDocument;
+    off(ownerDocument, "mouseup", this._disableDelayedDrag);
+    off(ownerDocument, "touchend", this._disableDelayedDrag);
+    off(ownerDocument, "touchcancel", this._disableDelayedDrag);
+    off(ownerDocument, "mousemove", this._delayedDragTouchMoveHandler);
+    off(ownerDocument, "touchmove", this._delayedDragTouchMoveHandler);
+    off(ownerDocument, "pointermove", this._delayedDragTouchMoveHandler);
+  },
+  _triggerDragStart: function _triggerDragStart(evt, touch) {
+    touch = touch || evt.pointerType == "touch" && evt;
+    if (!this.nativeDraggable || touch) {
+      if (this.options.supportPointer) {
+        on2(document, "pointermove", this._onTouchMove);
+      } else if (touch) {
+        on2(document, "touchmove", this._onTouchMove);
+      } else {
+        on2(document, "mousemove", this._onTouchMove);
+      }
+    } else {
+      on2(dragEl, "dragend", this);
+      on2(rootEl, "dragstart", this._onDragStart);
+    }
+    try {
+      if (document.selection) {
+        _nextTick(function() {
+          document.selection.empty();
+        });
+      } else {
+        window.getSelection().removeAllRanges();
+      }
+    } catch (err) {
+    }
+  },
+  _dragStarted: function _dragStarted(fallback, evt) {
+    awaitingDragStarted = false;
+    if (rootEl && dragEl) {
+      pluginEvent2("dragStarted", this, {
+        evt
+      });
+      if (this.nativeDraggable) {
+        on2(document, "dragover", _checkOutsideTargetEl);
+      }
+      var options2 = this.options;
+      !fallback && toggleClass(dragEl, options2.dragClass, false);
+      toggleClass(dragEl, options2.ghostClass, true);
+      Sortable.active = this;
+      fallback && this._appendGhost();
+      _dispatchEvent({
+        sortable: this,
+        name: "start",
+        originalEvent: evt
+      });
+    } else {
+      this._nulling();
+    }
+  },
+  _emulateDragOver: function _emulateDragOver() {
+    if (touchEvt) {
+      this._lastX = touchEvt.clientX;
+      this._lastY = touchEvt.clientY;
+      _hideGhostForTarget();
+      var target = document.elementFromPoint(touchEvt.clientX, touchEvt.clientY);
+      var parent = target;
+      while (target && target.shadowRoot) {
+        target = target.shadowRoot.elementFromPoint(touchEvt.clientX, touchEvt.clientY);
+        if (target === parent)
+          break;
+        parent = target;
+      }
+      dragEl.parentNode[expando]._isOutsideThisEl(target);
+      if (parent) {
+        do {
+          if (parent[expando]) {
+            var inserted = void 0;
+            inserted = parent[expando]._onDragOver({
+              clientX: touchEvt.clientX,
+              clientY: touchEvt.clientY,
+              target,
+              rootEl: parent
+            });
+            if (inserted && !this.options.dragoverBubble) {
+              break;
+            }
+          }
+          target = parent;
+        } while (parent = parent.parentNode);
+      }
+      _unhideGhostForTarget();
+    }
+  },
+  _onTouchMove: function _onTouchMove(evt) {
+    if (tapEvt) {
+      var options2 = this.options, fallbackTolerance = options2.fallbackTolerance, fallbackOffset = options2.fallbackOffset, touch = evt.touches ? evt.touches[0] : evt, ghostMatrix = ghostEl && matrix(ghostEl, true), scaleX = ghostEl && ghostMatrix && ghostMatrix.a, scaleY = ghostEl && ghostMatrix && ghostMatrix.d, relativeScrollOffset = PositionGhostAbsolutely && ghostRelativeParent && getRelativeScrollOffset(ghostRelativeParent), dx = (touch.clientX - tapEvt.clientX + fallbackOffset.x) / (scaleX || 1) + (relativeScrollOffset ? relativeScrollOffset[0] - ghostRelativeParentInitialScroll[0] : 0) / (scaleX || 1), dy = (touch.clientY - tapEvt.clientY + fallbackOffset.y) / (scaleY || 1) + (relativeScrollOffset ? relativeScrollOffset[1] - ghostRelativeParentInitialScroll[1] : 0) / (scaleY || 1);
+      if (!Sortable.active && !awaitingDragStarted) {
+        if (fallbackTolerance && Math.max(Math.abs(touch.clientX - this._lastX), Math.abs(touch.clientY - this._lastY)) < fallbackTolerance) {
+          return;
+        }
+        this._onDragStart(evt, true);
+      }
+      if (ghostEl) {
+        if (ghostMatrix) {
+          ghostMatrix.e += dx - (lastDx || 0);
+          ghostMatrix.f += dy - (lastDy || 0);
+        } else {
+          ghostMatrix = {
+            a: 1,
+            b: 0,
+            c: 0,
+            d: 1,
+            e: dx,
+            f: dy
+          };
+        }
+        var cssMatrix = "matrix(".concat(ghostMatrix.a, ",").concat(ghostMatrix.b, ",").concat(ghostMatrix.c, ",").concat(ghostMatrix.d, ",").concat(ghostMatrix.e, ",").concat(ghostMatrix.f, ")");
+        css(ghostEl, "webkitTransform", cssMatrix);
+        css(ghostEl, "mozTransform", cssMatrix);
+        css(ghostEl, "msTransform", cssMatrix);
+        css(ghostEl, "transform", cssMatrix);
+        lastDx = dx;
+        lastDy = dy;
+        touchEvt = touch;
+      }
+      evt.cancelable && evt.preventDefault();
+    }
+  },
+  _appendGhost: function _appendGhost() {
+    if (!ghostEl) {
+      var container = this.options.fallbackOnBody ? document.body : rootEl, rect = getRect(dragEl, true, PositionGhostAbsolutely, true, container), options2 = this.options;
+      if (PositionGhostAbsolutely) {
+        ghostRelativeParent = container;
+        while (css(ghostRelativeParent, "position") === "static" && css(ghostRelativeParent, "transform") === "none" && ghostRelativeParent !== document) {
+          ghostRelativeParent = ghostRelativeParent.parentNode;
+        }
+        if (ghostRelativeParent !== document.body && ghostRelativeParent !== document.documentElement) {
+          if (ghostRelativeParent === document)
+            ghostRelativeParent = getWindowScrollingElement();
+          rect.top += ghostRelativeParent.scrollTop;
+          rect.left += ghostRelativeParent.scrollLeft;
+        } else {
+          ghostRelativeParent = getWindowScrollingElement();
+        }
+        ghostRelativeParentInitialScroll = getRelativeScrollOffset(ghostRelativeParent);
+      }
+      ghostEl = dragEl.cloneNode(true);
+      toggleClass(ghostEl, options2.ghostClass, false);
+      toggleClass(ghostEl, options2.fallbackClass, true);
+      toggleClass(ghostEl, options2.dragClass, true);
+      css(ghostEl, "transition", "");
+      css(ghostEl, "transform", "");
+      css(ghostEl, "box-sizing", "border-box");
+      css(ghostEl, "margin", 0);
+      css(ghostEl, "top", rect.top);
+      css(ghostEl, "left", rect.left);
+      css(ghostEl, "width", rect.width);
+      css(ghostEl, "height", rect.height);
+      css(ghostEl, "opacity", "0.8");
+      css(ghostEl, "position", PositionGhostAbsolutely ? "absolute" : "fixed");
+      css(ghostEl, "zIndex", "100000");
+      css(ghostEl, "pointerEvents", "none");
+      Sortable.ghost = ghostEl;
+      container.appendChild(ghostEl);
+      css(ghostEl, "transform-origin", tapDistanceLeft / parseInt(ghostEl.style.width) * 100 + "% " + tapDistanceTop / parseInt(ghostEl.style.height) * 100 + "%");
+    }
+  },
+  _onDragStart: function _onDragStart(evt, fallback) {
+    var _this = this;
+    var dataTransfer = evt.dataTransfer;
+    var options2 = _this.options;
+    pluginEvent2("dragStart", this, {
+      evt
+    });
+    if (Sortable.eventCanceled) {
+      this._onDrop();
+      return;
+    }
+    pluginEvent2("setupClone", this);
+    if (!Sortable.eventCanceled) {
+      cloneEl = clone(dragEl);
+      cloneEl.removeAttribute("id");
+      cloneEl.draggable = false;
+      cloneEl.style["will-change"] = "";
+      this._hideClone();
+      toggleClass(cloneEl, this.options.chosenClass, false);
+      Sortable.clone = cloneEl;
+    }
+    _this.cloneId = _nextTick(function() {
+      pluginEvent2("clone", _this);
+      if (Sortable.eventCanceled)
+        return;
+      if (!_this.options.removeCloneOnHide) {
+        rootEl.insertBefore(cloneEl, dragEl);
+      }
+      _this._hideClone();
+      _dispatchEvent({
+        sortable: _this,
+        name: "clone"
+      });
+    });
+    !fallback && toggleClass(dragEl, options2.dragClass, true);
+    if (fallback) {
+      ignoreNextClick = true;
+      _this._loopId = setInterval(_this._emulateDragOver, 50);
+    } else {
+      off(document, "mouseup", _this._onDrop);
+      off(document, "touchend", _this._onDrop);
+      off(document, "touchcancel", _this._onDrop);
+      if (dataTransfer) {
+        dataTransfer.effectAllowed = "move";
+        options2.setData && options2.setData.call(_this, dataTransfer, dragEl);
+      }
+      on2(document, "drop", _this);
+      css(dragEl, "transform", "translateZ(0)");
+    }
+    awaitingDragStarted = true;
+    _this._dragStartId = _nextTick(_this._dragStarted.bind(_this, fallback, evt));
+    on2(document, "selectstart", _this);
+    moved = true;
+    if (Safari) {
+      css(document.body, "user-select", "none");
+    }
+  },
+  _onDragOver: function _onDragOver(evt) {
+    var el = this.el, target = evt.target, dragRect, targetRect, revert, options2 = this.options, group = options2.group, activeSortable = Sortable.active, isOwner = activeGroup === group, canSort = options2.sort, fromSortable = putSortable || activeSortable, vertical, _this = this, completedFired = false;
+    if (_silent)
+      return;
+    function dragOverEvent(name2, extra) {
+      pluginEvent2(name2, _this, _objectSpread2({
+        evt,
+        isOwner,
+        axis: vertical ? "vertical" : "horizontal",
+        revert,
+        dragRect,
+        targetRect,
+        canSort,
+        fromSortable,
+        target,
+        completed,
+        onMove: function onMove(target2, after2) {
+          return _onMove(rootEl, el, dragEl, dragRect, target2, getRect(target2), evt, after2);
+        },
+        changed
+      }, extra));
+    }
+    function capture() {
+      dragOverEvent("dragOverAnimationCapture");
+      _this.captureAnimationState();
+      if (_this !== fromSortable) {
+        fromSortable.captureAnimationState();
+      }
+    }
+    function completed(insertion) {
+      dragOverEvent("dragOverCompleted", {
+        insertion
+      });
+      if (insertion) {
+        if (isOwner) {
+          activeSortable._hideClone();
+        } else {
+          activeSortable._showClone(_this);
+        }
+        if (_this !== fromSortable) {
+          toggleClass(dragEl, putSortable ? putSortable.options.ghostClass : activeSortable.options.ghostClass, false);
+          toggleClass(dragEl, options2.ghostClass, true);
+        }
+        if (putSortable !== _this && _this !== Sortable.active) {
+          putSortable = _this;
+        } else if (_this === Sortable.active && putSortable) {
+          putSortable = null;
+        }
+        if (fromSortable === _this) {
+          _this._ignoreWhileAnimating = target;
+        }
+        _this.animateAll(function() {
+          dragOverEvent("dragOverAnimationComplete");
+          _this._ignoreWhileAnimating = null;
+        });
+        if (_this !== fromSortable) {
+          fromSortable.animateAll();
+          fromSortable._ignoreWhileAnimating = null;
+        }
+      }
+      if (target === dragEl && !dragEl.animated || target === el && !target.animated) {
+        lastTarget = null;
+      }
+      if (!options2.dragoverBubble && !evt.rootEl && target !== document) {
+        dragEl.parentNode[expando]._isOutsideThisEl(evt.target);
+        !insertion && nearestEmptyInsertDetectEvent(evt);
+      }
+      !options2.dragoverBubble && evt.stopPropagation && evt.stopPropagation();
+      return completedFired = true;
+    }
+    function changed() {
+      newIndex = index(dragEl);
+      newDraggableIndex = index(dragEl, options2.draggable);
+      _dispatchEvent({
+        sortable: _this,
+        name: "change",
+        toEl: el,
+        newIndex,
+        newDraggableIndex,
+        originalEvent: evt
+      });
+    }
+    if (evt.preventDefault !== void 0) {
+      evt.cancelable && evt.preventDefault();
+    }
+    target = closest(target, options2.draggable, el, true);
+    dragOverEvent("dragOver");
+    if (Sortable.eventCanceled)
+      return completedFired;
+    if (dragEl.contains(evt.target) || target.animated && target.animatingX && target.animatingY || _this._ignoreWhileAnimating === target) {
+      return completed(false);
+    }
+    ignoreNextClick = false;
+    if (activeSortable && !options2.disabled && (isOwner ? canSort || (revert = parentEl !== rootEl) : putSortable === this || (this.lastPutMode = activeGroup.checkPull(this, activeSortable, dragEl, evt)) && group.checkPut(this, activeSortable, dragEl, evt))) {
+      vertical = this._getDirection(evt, target) === "vertical";
+      dragRect = getRect(dragEl);
+      dragOverEvent("dragOverValid");
+      if (Sortable.eventCanceled)
+        return completedFired;
+      if (revert) {
+        parentEl = rootEl;
+        capture();
+        this._hideClone();
+        dragOverEvent("revert");
+        if (!Sortable.eventCanceled) {
+          if (nextEl) {
+            rootEl.insertBefore(dragEl, nextEl);
+          } else {
+            rootEl.appendChild(dragEl);
+          }
+        }
+        return completed(true);
+      }
+      var elLastChild = lastChild(el, options2.draggable);
+      if (!elLastChild || _ghostIsLast(evt, vertical, this) && !elLastChild.animated) {
+        if (elLastChild === dragEl) {
+          return completed(false);
+        }
+        if (elLastChild && el === evt.target) {
+          target = elLastChild;
+        }
+        if (target) {
+          targetRect = getRect(target);
+        }
+        if (_onMove(rootEl, el, dragEl, dragRect, target, targetRect, evt, !!target) !== false) {
+          capture();
+          if (elLastChild && elLastChild.nextSibling) {
+            el.insertBefore(dragEl, elLastChild.nextSibling);
+          } else {
+            el.appendChild(dragEl);
+          }
+          parentEl = el;
+          changed();
+          return completed(true);
+        }
+      } else if (elLastChild && _ghostIsFirst(evt, vertical, this)) {
+        var firstChild = getChild(el, 0, options2, true);
+        if (firstChild === dragEl) {
+          return completed(false);
+        }
+        target = firstChild;
+        targetRect = getRect(target);
+        if (_onMove(rootEl, el, dragEl, dragRect, target, targetRect, evt, false) !== false) {
+          capture();
+          el.insertBefore(dragEl, firstChild);
+          parentEl = el;
+          changed();
+          return completed(true);
+        }
+      } else if (target.parentNode === el) {
+        targetRect = getRect(target);
+        var direction = 0, targetBeforeFirstSwap, differentLevel = dragEl.parentNode !== el, differentRowCol = !_dragElInRowColumn(dragEl.animated && dragEl.toRect || dragRect, target.animated && target.toRect || targetRect, vertical), side1 = vertical ? "top" : "left", scrolledPastTop = isScrolledPast(target, "top", "top") || isScrolledPast(dragEl, "top", "top"), scrollBefore = scrolledPastTop ? scrolledPastTop.scrollTop : void 0;
+        if (lastTarget !== target) {
+          targetBeforeFirstSwap = targetRect[side1];
+          pastFirstInvertThresh = false;
+          isCircumstantialInvert = !differentRowCol && options2.invertSwap || differentLevel;
+        }
+        direction = _getSwapDirection(evt, target, targetRect, vertical, differentRowCol ? 1 : options2.swapThreshold, options2.invertedSwapThreshold == null ? options2.swapThreshold : options2.invertedSwapThreshold, isCircumstantialInvert, lastTarget === target);
+        var sibling;
+        if (direction !== 0) {
+          var dragIndex = index(dragEl);
+          do {
+            dragIndex -= direction;
+            sibling = parentEl.children[dragIndex];
+          } while (sibling && (css(sibling, "display") === "none" || sibling === ghostEl));
+        }
+        if (direction === 0 || sibling === target) {
+          return completed(false);
+        }
+        lastTarget = target;
+        lastDirection = direction;
+        var nextSibling = target.nextElementSibling, after = false;
+        after = direction === 1;
+        var moveVector = _onMove(rootEl, el, dragEl, dragRect, target, targetRect, evt, after);
+        if (moveVector !== false) {
+          if (moveVector === 1 || moveVector === -1) {
+            after = moveVector === 1;
+          }
+          _silent = true;
+          setTimeout(_unsilent, 30);
+          capture();
+          if (after && !nextSibling) {
+            el.appendChild(dragEl);
+          } else {
+            target.parentNode.insertBefore(dragEl, after ? nextSibling : target);
+          }
+          if (scrolledPastTop) {
+            scrollBy(scrolledPastTop, 0, scrollBefore - scrolledPastTop.scrollTop);
+          }
+          parentEl = dragEl.parentNode;
+          if (targetBeforeFirstSwap !== void 0 && !isCircumstantialInvert) {
+            targetMoveDistance = Math.abs(targetBeforeFirstSwap - getRect(target)[side1]);
+          }
+          changed();
+          return completed(true);
+        }
+      }
+      if (el.contains(dragEl)) {
+        return completed(false);
+      }
+    }
+    return false;
+  },
+  _ignoreWhileAnimating: null,
+  _offMoveEvents: function _offMoveEvents() {
+    off(document, "mousemove", this._onTouchMove);
+    off(document, "touchmove", this._onTouchMove);
+    off(document, "pointermove", this._onTouchMove);
+    off(document, "dragover", nearestEmptyInsertDetectEvent);
+    off(document, "mousemove", nearestEmptyInsertDetectEvent);
+    off(document, "touchmove", nearestEmptyInsertDetectEvent);
+  },
+  _offUpEvents: function _offUpEvents() {
+    var ownerDocument = this.el.ownerDocument;
+    off(ownerDocument, "mouseup", this._onDrop);
+    off(ownerDocument, "touchend", this._onDrop);
+    off(ownerDocument, "pointerup", this._onDrop);
+    off(ownerDocument, "touchcancel", this._onDrop);
+    off(document, "selectstart", this);
+  },
+  _onDrop: function _onDrop(evt) {
+    var el = this.el, options2 = this.options;
+    newIndex = index(dragEl);
+    newDraggableIndex = index(dragEl, options2.draggable);
+    pluginEvent2("drop", this, {
+      evt
+    });
+    parentEl = dragEl && dragEl.parentNode;
+    newIndex = index(dragEl);
+    newDraggableIndex = index(dragEl, options2.draggable);
+    if (Sortable.eventCanceled) {
+      this._nulling();
+      return;
+    }
+    awaitingDragStarted = false;
+    isCircumstantialInvert = false;
+    pastFirstInvertThresh = false;
+    clearInterval(this._loopId);
+    clearTimeout(this._dragStartTimer);
+    _cancelNextTick(this.cloneId);
+    _cancelNextTick(this._dragStartId);
+    if (this.nativeDraggable) {
+      off(document, "drop", this);
+      off(el, "dragstart", this._onDragStart);
+    }
+    this._offMoveEvents();
+    this._offUpEvents();
+    if (Safari) {
+      css(document.body, "user-select", "");
+    }
+    css(dragEl, "transform", "");
+    if (evt) {
+      if (moved) {
+        evt.cancelable && evt.preventDefault();
+        !options2.dropBubble && evt.stopPropagation();
+      }
+      ghostEl && ghostEl.parentNode && ghostEl.parentNode.removeChild(ghostEl);
+      if (rootEl === parentEl || putSortable && putSortable.lastPutMode !== "clone") {
+        cloneEl && cloneEl.parentNode && cloneEl.parentNode.removeChild(cloneEl);
+      }
+      if (dragEl) {
+        if (this.nativeDraggable) {
+          off(dragEl, "dragend", this);
+        }
+        _disableDraggable(dragEl);
+        dragEl.style["will-change"] = "";
+        if (moved && !awaitingDragStarted) {
+          toggleClass(dragEl, putSortable ? putSortable.options.ghostClass : this.options.ghostClass, false);
+        }
+        toggleClass(dragEl, this.options.chosenClass, false);
+        _dispatchEvent({
+          sortable: this,
+          name: "unchoose",
+          toEl: parentEl,
+          newIndex: null,
+          newDraggableIndex: null,
+          originalEvent: evt
+        });
+        if (rootEl !== parentEl) {
+          if (newIndex >= 0) {
+            _dispatchEvent({
+              rootEl: parentEl,
+              name: "add",
+              toEl: parentEl,
+              fromEl: rootEl,
+              originalEvent: evt
+            });
+            _dispatchEvent({
+              sortable: this,
+              name: "remove",
+              toEl: parentEl,
+              originalEvent: evt
+            });
+            _dispatchEvent({
+              rootEl: parentEl,
+              name: "sort",
+              toEl: parentEl,
+              fromEl: rootEl,
+              originalEvent: evt
+            });
+            _dispatchEvent({
+              sortable: this,
+              name: "sort",
+              toEl: parentEl,
+              originalEvent: evt
+            });
+          }
+          putSortable && putSortable.save();
+        } else {
+          if (newIndex !== oldIndex) {
+            if (newIndex >= 0) {
+              _dispatchEvent({
+                sortable: this,
+                name: "update",
+                toEl: parentEl,
+                originalEvent: evt
+              });
+              _dispatchEvent({
+                sortable: this,
+                name: "sort",
+                toEl: parentEl,
+                originalEvent: evt
+              });
+            }
+          }
+        }
+        if (Sortable.active) {
+          if (newIndex == null || newIndex === -1) {
+            newIndex = oldIndex;
+            newDraggableIndex = oldDraggableIndex;
+          }
+          _dispatchEvent({
+            sortable: this,
+            name: "end",
+            toEl: parentEl,
+            originalEvent: evt
+          });
+          this.save();
+        }
+      }
+    }
+    this._nulling();
+  },
+  _nulling: function _nulling() {
+    pluginEvent2("nulling", this);
+    rootEl = dragEl = parentEl = ghostEl = nextEl = cloneEl = lastDownEl = cloneHidden = tapEvt = touchEvt = moved = newIndex = newDraggableIndex = oldIndex = oldDraggableIndex = lastTarget = lastDirection = putSortable = activeGroup = Sortable.dragged = Sortable.ghost = Sortable.clone = Sortable.active = null;
+    savedInputChecked.forEach(function(el) {
+      el.checked = true;
+    });
+    savedInputChecked.length = lastDx = lastDy = 0;
+  },
+  handleEvent: function handleEvent(evt) {
+    switch (evt.type) {
+      case "drop":
+      case "dragend":
+        this._onDrop(evt);
+        break;
+      case "dragenter":
+      case "dragover":
+        if (dragEl) {
+          this._onDragOver(evt);
+          _globalDragOver(evt);
+        }
+        break;
+      case "selectstart":
+        evt.preventDefault();
+        break;
+    }
+  },
+  toArray: function toArray2() {
+    var order = [], el, children = this.el.children, i = 0, n2 = children.length, options2 = this.options;
+    for (; i < n2; i++) {
+      el = children[i];
+      if (closest(el, options2.draggable, this.el, false)) {
+        order.push(el.getAttribute(options2.dataIdAttr) || _generateId(el));
+      }
+    }
+    return order;
+  },
+  sort: function sort(order, useAnimation) {
+    var items = {}, rootEl2 = this.el;
+    this.toArray().forEach(function(id, i) {
+      var el = rootEl2.children[i];
+      if (closest(el, this.options.draggable, rootEl2, false)) {
+        items[id] = el;
+      }
+    }, this);
+    useAnimation && this.captureAnimationState();
+    order.forEach(function(id) {
+      if (items[id]) {
+        rootEl2.removeChild(items[id]);
+        rootEl2.appendChild(items[id]);
+      }
+    });
+    useAnimation && this.animateAll();
+  },
+  save: function save() {
+    var store = this.options.store;
+    store && store.set && store.set(this);
+  },
+  closest: function closest$1(el, selector) {
+    return closest(el, selector || this.options.draggable, this.el, false);
+  },
+  option: function option2(name2, value) {
+    var options2 = this.options;
+    if (value === void 0) {
+      return options2[name2];
+    } else {
+      var modifiedValue = PluginManager.modifyOption(this, name2, value);
+      if (typeof modifiedValue !== "undefined") {
+        options2[name2] = modifiedValue;
+      } else {
+        options2[name2] = value;
+      }
+      if (name2 === "group") {
+        _prepareGroup(options2);
+      }
+    }
+  },
+  destroy: function destroy2() {
+    pluginEvent2("destroy", this);
+    var el = this.el;
+    el[expando] = null;
+    off(el, "mousedown", this._onTapStart);
+    off(el, "touchstart", this._onTapStart);
+    off(el, "pointerdown", this._onTapStart);
+    if (this.nativeDraggable) {
+      off(el, "dragover", this);
+      off(el, "dragenter", this);
+    }
+    Array.prototype.forEach.call(el.querySelectorAll("[draggable]"), function(el2) {
+      el2.removeAttribute("draggable");
+    });
+    this._onDrop();
+    this._disableDelayedDragEvents();
+    sortables.splice(sortables.indexOf(this.el), 1);
+    this.el = el = null;
+  },
+  _hideClone: function _hideClone() {
+    if (!cloneHidden) {
+      pluginEvent2("hideClone", this);
+      if (Sortable.eventCanceled)
+        return;
+      css(cloneEl, "display", "none");
+      if (this.options.removeCloneOnHide && cloneEl.parentNode) {
+        cloneEl.parentNode.removeChild(cloneEl);
+      }
+      cloneHidden = true;
+    }
+  },
+  _showClone: function _showClone(putSortable2) {
+    if (putSortable2.lastPutMode !== "clone") {
+      this._hideClone();
+      return;
+    }
+    if (cloneHidden) {
+      pluginEvent2("showClone", this);
+      if (Sortable.eventCanceled)
+        return;
+      if (dragEl.parentNode == rootEl && !this.options.group.revertClone) {
+        rootEl.insertBefore(cloneEl, dragEl);
+      } else if (nextEl) {
+        rootEl.insertBefore(cloneEl, nextEl);
+      } else {
+        rootEl.appendChild(cloneEl);
+      }
+      if (this.options.group.revertClone) {
+        this.animate(dragEl, cloneEl);
+      }
+      css(cloneEl, "display", "");
+      cloneHidden = false;
+    }
+  }
+};
+function _globalDragOver(evt) {
+  if (evt.dataTransfer) {
+    evt.dataTransfer.dropEffect = "move";
+  }
+  evt.cancelable && evt.preventDefault();
+}
+function _onMove(fromEl, toEl, dragEl2, dragRect, targetEl, targetRect, originalEvent, willInsertAfter) {
+  var evt, sortable = fromEl[expando], onMoveFn = sortable.options.onMove, retVal;
+  if (window.CustomEvent && !IE11OrLess && !Edge) {
+    evt = new CustomEvent("move", {
+      bubbles: true,
+      cancelable: true
+    });
+  } else {
+    evt = document.createEvent("Event");
+    evt.initEvent("move", true, true);
+  }
+  evt.to = toEl;
+  evt.from = fromEl;
+  evt.dragged = dragEl2;
+  evt.draggedRect = dragRect;
+  evt.related = targetEl || toEl;
+  evt.relatedRect = targetRect || getRect(toEl);
+  evt.willInsertAfter = willInsertAfter;
+  evt.originalEvent = originalEvent;
+  fromEl.dispatchEvent(evt);
+  if (onMoveFn) {
+    retVal = onMoveFn.call(sortable, evt, originalEvent);
+  }
+  return retVal;
+}
+function _disableDraggable(el) {
+  el.draggable = false;
+}
+function _unsilent() {
+  _silent = false;
+}
+function _ghostIsFirst(evt, vertical, sortable) {
+  var rect = getRect(getChild(sortable.el, 0, sortable.options, true));
+  var spacer = 10;
+  return vertical ? evt.clientX < rect.left - spacer || evt.clientY < rect.top && evt.clientX < rect.right : evt.clientY < rect.top - spacer || evt.clientY < rect.bottom && evt.clientX < rect.left;
+}
+function _ghostIsLast(evt, vertical, sortable) {
+  var rect = getRect(lastChild(sortable.el, sortable.options.draggable));
+  var spacer = 10;
+  return vertical ? evt.clientX > rect.right + spacer || evt.clientX <= rect.right && evt.clientY > rect.bottom && evt.clientX >= rect.left : evt.clientX > rect.right && evt.clientY > rect.top || evt.clientX <= rect.right && evt.clientY > rect.bottom + spacer;
+}
+function _getSwapDirection(evt, target, targetRect, vertical, swapThreshold, invertedSwapThreshold, invertSwap, isLastTarget) {
+  var mouseOnAxis = vertical ? evt.clientY : evt.clientX, targetLength = vertical ? targetRect.height : targetRect.width, targetS1 = vertical ? targetRect.top : targetRect.left, targetS2 = vertical ? targetRect.bottom : targetRect.right, invert = false;
+  if (!invertSwap) {
+    if (isLastTarget && targetMoveDistance < targetLength * swapThreshold) {
+      if (!pastFirstInvertThresh && (lastDirection === 1 ? mouseOnAxis > targetS1 + targetLength * invertedSwapThreshold / 2 : mouseOnAxis < targetS2 - targetLength * invertedSwapThreshold / 2)) {
+        pastFirstInvertThresh = true;
+      }
+      if (!pastFirstInvertThresh) {
+        if (lastDirection === 1 ? mouseOnAxis < targetS1 + targetMoveDistance : mouseOnAxis > targetS2 - targetMoveDistance) {
+          return -lastDirection;
+        }
+      } else {
+        invert = true;
+      }
+    } else {
+      if (mouseOnAxis > targetS1 + targetLength * (1 - swapThreshold) / 2 && mouseOnAxis < targetS2 - targetLength * (1 - swapThreshold) / 2) {
+        return _getInsertDirection(target);
+      }
+    }
+  }
+  invert = invert || invertSwap;
+  if (invert) {
+    if (mouseOnAxis < targetS1 + targetLength * invertedSwapThreshold / 2 || mouseOnAxis > targetS2 - targetLength * invertedSwapThreshold / 2) {
+      return mouseOnAxis > targetS1 + targetLength / 2 ? 1 : -1;
+    }
+  }
+  return 0;
+}
+function _getInsertDirection(target) {
+  if (index(dragEl) < index(target)) {
+    return 1;
+  } else {
+    return -1;
+  }
+}
+function _generateId(el) {
+  var str = el.tagName + el.className + el.src + el.href + el.textContent, i = str.length, sum = 0;
+  while (i--) {
+    sum += str.charCodeAt(i);
+  }
+  return sum.toString(36);
+}
+function _saveInputCheckedState(root2) {
+  savedInputChecked.length = 0;
+  var inputs = root2.getElementsByTagName("input");
+  var idx = inputs.length;
+  while (idx--) {
+    var el = inputs[idx];
+    el.checked && savedInputChecked.push(el);
+  }
+}
+function _nextTick(fn2) {
+  return setTimeout(fn2, 0);
+}
+function _cancelNextTick(id) {
+  return clearTimeout(id);
+}
+if (documentExists) {
+  on2(document, "touchmove", function(evt) {
+    if ((Sortable.active || awaitingDragStarted) && evt.cancelable) {
+      evt.preventDefault();
+    }
+  });
+}
+Sortable.utils = {
+  on: on2,
+  off,
+  css,
+  find: find2,
+  is: function is(el, selector) {
+    return !!closest(el, selector, el, false);
+  },
+  extend,
+  throttle,
+  closest,
+  toggleClass,
+  clone,
+  index,
+  nextTick: _nextTick,
+  cancelNextTick: _cancelNextTick,
+  detectDirection: _detectDirection,
+  getChild
+};
+Sortable.get = function(element) {
+  return element[expando];
+};
+Sortable.mount = function() {
+  for (var _len = arguments.length, plugins2 = new Array(_len), _key = 0; _key < _len; _key++) {
+    plugins2[_key] = arguments[_key];
+  }
+  if (plugins2[0].constructor === Array)
+    plugins2 = plugins2[0];
+  plugins2.forEach(function(plugin9) {
+    if (!plugin9.prototype || !plugin9.prototype.constructor) {
+      throw "Sortable: Mounted plugin must be a constructor function, not ".concat({}.toString.call(plugin9));
+    }
+    if (plugin9.utils)
+      Sortable.utils = _objectSpread2(_objectSpread2({}, Sortable.utils), plugin9.utils);
+    PluginManager.mount(plugin9);
+  });
+};
+Sortable.create = function(el, options2) {
+  return new Sortable(el, options2);
+};
+Sortable.version = version;
+var autoScrolls = [];
+var scrollEl;
+var scrollRootEl;
+var scrolling = false;
+var lastAutoScrollX;
+var lastAutoScrollY;
+var touchEvt$1;
+var pointerElemChangedInterval;
+function AutoScrollPlugin() {
+  function AutoScroll() {
+    this.defaults = {
+      scroll: true,
+      forceAutoScrollFallback: false,
+      scrollSensitivity: 30,
+      scrollSpeed: 10,
+      bubbleScroll: true
+    };
+    for (var fn2 in this) {
+      if (fn2.charAt(0) === "_" && typeof this[fn2] === "function") {
+        this[fn2] = this[fn2].bind(this);
+      }
+    }
+  }
+  AutoScroll.prototype = {
+    dragStarted: function dragStarted(_ref) {
+      var originalEvent = _ref.originalEvent;
+      if (this.sortable.nativeDraggable) {
+        on2(document, "dragover", this._handleAutoScroll);
+      } else {
+        if (this.options.supportPointer) {
+          on2(document, "pointermove", this._handleFallbackAutoScroll);
+        } else if (originalEvent.touches) {
+          on2(document, "touchmove", this._handleFallbackAutoScroll);
+        } else {
+          on2(document, "mousemove", this._handleFallbackAutoScroll);
+        }
+      }
+    },
+    dragOverCompleted: function dragOverCompleted(_ref2) {
+      var originalEvent = _ref2.originalEvent;
+      if (!this.options.dragOverBubble && !originalEvent.rootEl) {
+        this._handleAutoScroll(originalEvent);
+      }
+    },
+    drop: function drop4() {
+      if (this.sortable.nativeDraggable) {
+        off(document, "dragover", this._handleAutoScroll);
+      } else {
+        off(document, "pointermove", this._handleFallbackAutoScroll);
+        off(document, "touchmove", this._handleFallbackAutoScroll);
+        off(document, "mousemove", this._handleFallbackAutoScroll);
+      }
+      clearPointerElemChangedInterval();
+      clearAutoScrolls();
+      cancelThrottle();
+    },
+    nulling: function nulling() {
+      touchEvt$1 = scrollRootEl = scrollEl = scrolling = pointerElemChangedInterval = lastAutoScrollX = lastAutoScrollY = null;
+      autoScrolls.length = 0;
+    },
+    _handleFallbackAutoScroll: function _handleFallbackAutoScroll(evt) {
+      this._handleAutoScroll(evt, true);
+    },
+    _handleAutoScroll: function _handleAutoScroll(evt, fallback) {
+      var _this = this;
+      var x = (evt.touches ? evt.touches[0] : evt).clientX, y = (evt.touches ? evt.touches[0] : evt).clientY, elem = document.elementFromPoint(x, y);
+      touchEvt$1 = evt;
+      if (fallback || this.options.forceAutoScrollFallback || Edge || IE11OrLess || Safari) {
+        autoScroll(evt, this.options, elem, fallback);
+        var ogElemScroller = getParentAutoScrollElement(elem, true);
+        if (scrolling && (!pointerElemChangedInterval || x !== lastAutoScrollX || y !== lastAutoScrollY)) {
+          pointerElemChangedInterval && clearPointerElemChangedInterval();
+          pointerElemChangedInterval = setInterval(function() {
+            var newElem = getParentAutoScrollElement(document.elementFromPoint(x, y), true);
+            if (newElem !== ogElemScroller) {
+              ogElemScroller = newElem;
+              clearAutoScrolls();
+            }
+            autoScroll(evt, _this.options, newElem, fallback);
+          }, 10);
+          lastAutoScrollX = x;
+          lastAutoScrollY = y;
+        }
+      } else {
+        if (!this.options.bubbleScroll || getParentAutoScrollElement(elem, true) === getWindowScrollingElement()) {
+          clearAutoScrolls();
+          return;
+        }
+        autoScroll(evt, this.options, getParentAutoScrollElement(elem, false), false);
+      }
+    }
+  };
+  return _extends(AutoScroll, {
+    pluginName: "scroll",
+    initializeByDefault: true
+  });
+}
+function clearAutoScrolls() {
+  autoScrolls.forEach(function(autoScroll2) {
+    clearInterval(autoScroll2.pid);
+  });
+  autoScrolls = [];
+}
+function clearPointerElemChangedInterval() {
+  clearInterval(pointerElemChangedInterval);
+}
+var autoScroll = throttle(function(evt, options2, rootEl2, isFallback) {
+  if (!options2.scroll)
+    return;
+  var x = (evt.touches ? evt.touches[0] : evt).clientX, y = (evt.touches ? evt.touches[0] : evt).clientY, sens = options2.scrollSensitivity, speed = options2.scrollSpeed, winScroller = getWindowScrollingElement();
+  var scrollThisInstance = false, scrollCustomFn;
+  if (scrollRootEl !== rootEl2) {
+    scrollRootEl = rootEl2;
+    clearAutoScrolls();
+    scrollEl = options2.scroll;
+    scrollCustomFn = options2.scrollFn;
+    if (scrollEl === true) {
+      scrollEl = getParentAutoScrollElement(rootEl2, true);
+    }
+  }
+  var layersOut = 0;
+  var currentParent = scrollEl;
+  do {
+    var el = currentParent, rect = getRect(el), top = rect.top, bottom = rect.bottom, left = rect.left, right = rect.right, width = rect.width, height = rect.height, canScrollX = void 0, canScrollY = void 0, scrollWidth = el.scrollWidth, scrollHeight = el.scrollHeight, elCSS = css(el), scrollPosX = el.scrollLeft, scrollPosY = el.scrollTop;
+    if (el === winScroller) {
+      canScrollX = width < scrollWidth && (elCSS.overflowX === "auto" || elCSS.overflowX === "scroll" || elCSS.overflowX === "visible");
+      canScrollY = height < scrollHeight && (elCSS.overflowY === "auto" || elCSS.overflowY === "scroll" || elCSS.overflowY === "visible");
+    } else {
+      canScrollX = width < scrollWidth && (elCSS.overflowX === "auto" || elCSS.overflowX === "scroll");
+      canScrollY = height < scrollHeight && (elCSS.overflowY === "auto" || elCSS.overflowY === "scroll");
+    }
+    var vx = canScrollX && (Math.abs(right - x) <= sens && scrollPosX + width < scrollWidth) - (Math.abs(left - x) <= sens && !!scrollPosX);
+    var vy = canScrollY && (Math.abs(bottom - y) <= sens && scrollPosY + height < scrollHeight) - (Math.abs(top - y) <= sens && !!scrollPosY);
+    if (!autoScrolls[layersOut]) {
+      for (var i = 0; i <= layersOut; i++) {
+        if (!autoScrolls[i]) {
+          autoScrolls[i] = {};
+        }
+      }
+    }
+    if (autoScrolls[layersOut].vx != vx || autoScrolls[layersOut].vy != vy || autoScrolls[layersOut].el !== el) {
+      autoScrolls[layersOut].el = el;
+      autoScrolls[layersOut].vx = vx;
+      autoScrolls[layersOut].vy = vy;
+      clearInterval(autoScrolls[layersOut].pid);
+      if (vx != 0 || vy != 0) {
+        scrollThisInstance = true;
+        autoScrolls[layersOut].pid = setInterval(function() {
+          if (isFallback && this.layer === 0) {
+            Sortable.active._onTouchMove(touchEvt$1);
+          }
+          var scrollOffsetY = autoScrolls[this.layer].vy ? autoScrolls[this.layer].vy * speed : 0;
+          var scrollOffsetX = autoScrolls[this.layer].vx ? autoScrolls[this.layer].vx * speed : 0;
+          if (typeof scrollCustomFn === "function") {
+            if (scrollCustomFn.call(Sortable.dragged.parentNode[expando], scrollOffsetX, scrollOffsetY, evt, touchEvt$1, autoScrolls[this.layer].el) !== "continue") {
+              return;
+            }
+          }
+          scrollBy(autoScrolls[this.layer].el, scrollOffsetX, scrollOffsetY);
+        }.bind({
+          layer: layersOut
+        }), 24);
+      }
+    }
+    layersOut++;
+  } while (options2.bubbleScroll && currentParent !== winScroller && (currentParent = getParentAutoScrollElement(currentParent, false)));
+  scrolling = scrollThisInstance;
+}, 30);
+var drop2 = function drop3(_ref) {
+  var originalEvent = _ref.originalEvent, putSortable2 = _ref.putSortable, dragEl2 = _ref.dragEl, activeSortable = _ref.activeSortable, dispatchSortableEvent = _ref.dispatchSortableEvent, hideGhostForTarget = _ref.hideGhostForTarget, unhideGhostForTarget = _ref.unhideGhostForTarget;
+  if (!originalEvent)
+    return;
+  var toSortable = putSortable2 || activeSortable;
+  hideGhostForTarget();
+  var touch = originalEvent.changedTouches && originalEvent.changedTouches.length ? originalEvent.changedTouches[0] : originalEvent;
+  var target = document.elementFromPoint(touch.clientX, touch.clientY);
+  unhideGhostForTarget();
+  if (toSortable && !toSortable.el.contains(target)) {
+    dispatchSortableEvent("spill");
+    this.onSpill({
+      dragEl: dragEl2,
+      putSortable: putSortable2
+    });
+  }
+};
+function Revert() {
+}
+Revert.prototype = {
+  startIndex: null,
+  dragStart: function dragStart(_ref2) {
+    var oldDraggableIndex2 = _ref2.oldDraggableIndex;
+    this.startIndex = oldDraggableIndex2;
+  },
+  onSpill: function onSpill(_ref3) {
+    var dragEl2 = _ref3.dragEl, putSortable2 = _ref3.putSortable;
+    this.sortable.captureAnimationState();
+    if (putSortable2) {
+      putSortable2.captureAnimationState();
+    }
+    var nextSibling = getChild(this.sortable.el, this.startIndex, this.options);
+    if (nextSibling) {
+      this.sortable.el.insertBefore(dragEl2, nextSibling);
+    } else {
+      this.sortable.el.appendChild(dragEl2);
+    }
+    this.sortable.animateAll();
+    if (putSortable2) {
+      putSortable2.animateAll();
+    }
+  },
+  drop: drop2
+};
+_extends(Revert, {
+  pluginName: "revertOnSpill"
+});
+function Remove() {
+}
+Remove.prototype = {
+  onSpill: function onSpill2(_ref4) {
+    var dragEl2 = _ref4.dragEl, putSortable2 = _ref4.putSortable;
+    var parentSortable = putSortable2 || this.sortable;
+    parentSortable.captureAnimationState();
+    dragEl2.parentNode && dragEl2.parentNode.removeChild(dragEl2);
+    parentSortable.animateAll();
+  },
+  drop: drop2
+};
+_extends(Remove, {
+  pluginName: "removeOnSpill"
+});
+Sortable.mount(new AutoScrollPlugin());
+Sortable.mount(Remove, Revert);
+var sortable_esm_default = Sortable;
+
+// packages/forms/resources/js/sortable.js
+window.Livewire.directive("sortable", (el) => {
+  el.sortable = sortable_esm_default.create(el, {
+    draggable: "[wire\\:sortable\\.item]",
+    handle: "[wire\\:sortable\\.handle]",
+    dataIdAttr: "wire:sortable.item"
+  });
+});
+
 // packages/forms/resources/js/index.js
 var js_default = (Alpine) => {
+  Alpine.plugin(color_picker_default2);
   Alpine.plugin(date_time_picker_default);
   Alpine.plugin(file_upload_default);
   Alpine.plugin(key_value_default);
@@ -22901,6 +25626,7 @@ var js_default = (Alpine) => {
   Alpine.plugin(textarea_default);
 };
 export {
+  color_picker_default2 as ColorPickerFormComponentAlpinePlugin,
   date_time_picker_default as DateTimePickerFormComponentAlpinePlugin,
   file_upload_default as FileUploadFormComponentAlpinePlugin,
   key_value_default as KeyValueFormComponentAlpinePlugin,

@@ -411,12 +411,13 @@ Since associating and dissociating requires access to the inverse relationship, 
 protected static ?string $inverseRelationship = 'author'; // Since the inverse related model is `User`, this is normally `user`, not `author`.
 ```
 
-### `BelongsToMany`
+### `BelongsToMany` and `MorphToMany`
 
-To create a relation manager for a `BelongsToMany` relationship, you can use:
+To create a relation manager for a `BelongsToMany` or `MorphMany` relationship, you can use:
 
 ```bash
 php artisan make:filament-belongs-to-many UserResource teams name
+php artisan make:filament-morph-to-many TagResource posts title
 ```
 
 - `UserResource` is the name of the resource class for the parent model.

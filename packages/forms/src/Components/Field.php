@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class Field extends Component implements Contracts\HasValidationRules
@@ -31,7 +32,7 @@ class Field extends Component implements Contracts\HasValidationRules
         return parent::getId() ?? $this->getStatePath();
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | HtmlString | null
     {
         return parent::getLabel() ?? (string) Str::of($this->getName())
             ->afterLast('.')

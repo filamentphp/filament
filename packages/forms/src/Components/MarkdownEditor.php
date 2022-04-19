@@ -6,6 +6,7 @@ use Closure;
 
 class MarkdownEditor extends Field implements Contracts\HasFileAttachments
 {
+    use Concerns\CanBeLengthConstrained;
     use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasFileAttachments;
     use Concerns\HasPlaceholder;

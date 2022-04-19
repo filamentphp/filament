@@ -46,7 +46,7 @@ class DateTimePicker extends Field
             $component->state($state);
         });
 
-        $this->rule('date', $this->hasDate());
+        $this->rule('date', fn (DateTimePicker $component): bool => $component->hasDate());
     }
 
     public function displayFormat(string | Closure | null $format): static

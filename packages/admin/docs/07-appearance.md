@@ -12,6 +12,12 @@ You may create a `resources/views/vendor/filament/components/brand.blade.php` fi
 <img src="{{ asset('/images/logo.svg') }}" alt="Logo" class="h-10">
 ```
 
+If you enabled the [collapsible sidebar](#collapsible-sidebar), you may also provide a brand icon (`resources/views/vendor/filament/components/brand-icon.blade.php`) which is shown when the sidebar is collapsed:
+
+```blade
+<img src="{{ asset('/images/icon.svg') }}" alt="Icon" class="h-full w-full object-contain" />
+```
+
 ## Dark mode
 
 By default, Filament only includes a light theme. However, you may allow the user to switch to dark mode if they wish, using the `dark_mode` setting of the [configuration file](installation#publishing-the-configuration):
@@ -57,6 +63,17 @@ In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to
         'is_collapsible_on_desktop' => true,
     ],
 ],
+```
+
+If you use a [custom theme](#building-themes), make sure to load the Tippy's CSS files as well:
+
+```bash
+npm install tippy.js --save-dev
+```
+
+```css
+@import '~tippy.js/dist/tippy.css';
+@import '~tippy.js/themes/light.css';
 ```
 
 ## Building themes

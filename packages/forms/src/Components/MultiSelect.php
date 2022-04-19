@@ -8,6 +8,7 @@ use Illuminate\Support\HtmlString;
 
 class MultiSelect extends Field
 {
+    use Concerns\CanLimitItemsLength;
     use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
@@ -102,14 +103,15 @@ class MultiSelect extends Field
         return $this->evaluate($this->searchPrompt);
     }
 
-    public function getSearchResults(string $query): array
+    public function getSearchResults(string $searchQuery): array
     {
         if (! $this->getSearchResultsUsing) {
             return [];
         }
 
         $results = $this->evaluate($this->getSearchResultsUsing, [
-            'query' => $query,
+            'query' => $searchQuery,
+            'searchQuery' => $searchQuery,
         ]);
 
         if ($results instanceof Arrayable) {

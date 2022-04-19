@@ -48,11 +48,11 @@ trait SupportsMultiSelectFields
         return [];
     }
 
-    public function getMultiSelectSearchResults(string $statePath, string $query): array
+    public function getMultiSelectSearchResults(string $statePath, string $searchQuery): array
     {
         foreach ($this->getComponents() as $component) {
             if ($component instanceof MultiSelect && $component->getStatePath() === $statePath) {
-                return $component->getSearchResults($query);
+                return $component->getSearchResults($searchQuery);
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
@@ -60,7 +60,7 @@ trait SupportsMultiSelectFields
                     continue;
                 }
 
-                if ($results = $container->getMultiSelectSearchResults($statePath, $query)) {
+                if ($results = $container->getMultiSelectSearchResults($statePath, $searchQuery)) {
                     return $results;
                 }
             }

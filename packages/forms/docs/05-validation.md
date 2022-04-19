@@ -8,6 +8,8 @@ Validation rules may be added to any [field](fields).
 
 Filament includes several [dedicated validation methods](#available-rules), but you can also use any [other Laravel validation rules](#other-rules), including [custom validation rules](#custom-rules).
 
+> Beware that some validations rely on the field name and therefore won't work when passed via `->rule()`/`->rules()`. Use the dedicated validation methods whenever you can.
+
 ## Available rules
 
 ### After (date)

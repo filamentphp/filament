@@ -1,5 +1,5 @@
 .filepond--root {
-    @apply mb-0;
+    @apply mb-0 overflow-hidden;
 }
 
 .filepond--panel-root {

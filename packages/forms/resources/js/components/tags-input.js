@@ -1,3 +1,5 @@
+import '../../css/components/tags-input.css'
+
 export default (Alpine) => {
     Alpine.data('tagsInputFormComponent', ({
         state,

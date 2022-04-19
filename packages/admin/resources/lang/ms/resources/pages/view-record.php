@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => 'Lihat :label',
+
     'breadcrumb' => 'Lihat',
 
     'actions' => [

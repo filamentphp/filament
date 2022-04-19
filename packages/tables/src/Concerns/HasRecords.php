@@ -21,7 +21,7 @@ trait HasRecords
 
         foreach ($this->getCachedTableColumns() as $column) {
             $column->applyEagerLoading($query);
-            $column->applyRelationshipCount($query);
+            $column->applyRelationshipAggregates($query);
         }
 
         return $query;

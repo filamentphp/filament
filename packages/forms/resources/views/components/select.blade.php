@@ -57,14 +57,14 @@
             @else
                 <div
                     x-data="selectFormComponent({
-                        getOptionLabelUsing: async (value) => {
+                        getOptionLabelUsing: async () => {
                             return await $wire.getSelectOptionLabel('{{ $getStatePath() }}')
                         },
-                        getOptionsUsing: async (query) => {
+                        getOptionsUsing: async () => {
                             return await $wire.getSelectOptions('{{ $getStatePath() }}')
                         },
-                        getSearchResultsUsing: async (query) => {
-                            return await $wire.getSelectSearchResults('{{ $getStatePath() }}', query)
+                        getSearchResultsUsing: async (searchQuery) => {
+                            return await $wire.getSelectSearchResults('{{ $getStatePath() }}', searchQuery)
                         },
                         isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
                         hasDynamicOptions: {{ $hasDynamicOptions() ? 'true' : 'false' }},
@@ -125,7 +125,7 @@
                             />
 
                             <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                                <svg x-show="! isLoading" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <svg x-show="! isLoading" class="w-5 h-5" x-bind:class="isOpen && 'rotate-180'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                     <path stroke="#6B7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4" />
                                 </svg>
 
@@ -148,7 +148,7 @@
                             tabindex="-1"
                             x-cloak
                             @class([
-                                'absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none',
+                                'absolute z-10 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-md focus:outline-none',
                                 'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
                             ])
                         >

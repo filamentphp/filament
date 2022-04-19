@@ -11,12 +11,9 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Navigation\UserMenuItem;
 use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Str;
-use Livewire\Component;
 
 class FilamentManager
 {
@@ -65,7 +62,12 @@ class FilamentManager
         /** @var \Filament\Navigation\NavigationBuilder $builder */
         $builder = app()->call($this->navigationBuilder);
 
-        return collect([null => $builder->getItems()])
+        return collect([
+            null => [
+                'items' => $builder->getItems(),
+                'collapsible' => false,
+            ],
+        ])
             ->merge($builder->getGroups())
             ->toArray();
     }
@@ -158,28 +160,7 @@ class FilamentManager
 
     public function notify(string $status, string $message, bool $isAfterRedirect = false): void
     {
-        if ($isAfterRedirect) {
-            session()->push('notifications', [
-                'id' => Str::random(),
-                'status' => $status,
-                'message' => $message,
-            ]);
-
-            return;
-        }
-
-        try {
-            /** @var \Livewire\Component $component */
-            $component = app(Component::class);
-        } catch (BindingResolutionException $exception) {
-            return;
-        }
-
-        $component->dispatchBrowserEvent('notify', [
-            'id' => Str::random(),
-            'status' => $status,
-            'message' => $message,
-        ]);
+        NotificationManager::notify($status, $message);
     }
 
     public function getGlobalSearchProvider(): GlobalSearchProvider
@@ -219,7 +200,12 @@ class FilamentManager
 
         return $sortedGroups
             ->mapWithKeys(function (?string $group) use ($groupedItems): array {
-                return [$group => $groupedItems->get($group)];
+                return [
+                    $group => [
+                        'items' => $groupedItems->get($group),
+                        'collapsible' => true,
+                    ],
+                ];
             })
             ->toArray();
     }

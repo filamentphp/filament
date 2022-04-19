@@ -84,7 +84,8 @@ class SelectFilter extends Filter
                 ->options($this->getOptions())
                 ->placeholder($this->getPlaceholder())
                 ->default($this->getDefaultState())
-                ->searchable($this->isSearchable()),
+                ->searchable($this->isSearchable())
+                ->columnSpan($this->getColumnSpan()),
         ];
     }
 

@@ -48,11 +48,11 @@ trait SupportsSelectFields
         return [];
     }
 
-    public function getSelectSearchResults(string $statePath, string $query): array
+    public function getSelectSearchResults(string $statePath, string $searchQuery): array
     {
         foreach ($this->getComponents() as $component) {
             if ($component instanceof Select && $component->getStatePath() === $statePath) {
-                return $component->getSearchResults($query);
+                return $component->getSearchResults($searchQuery);
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
@@ -60,7 +60,7 @@ trait SupportsSelectFields
                     continue;
                 }
 
-                if ($results = $container->getSelectSearchResults($statePath, $query)) {
+                if ($results = $container->getSelectSearchResults($statePath, $searchQuery)) {
                     return $results;
                 }
             }

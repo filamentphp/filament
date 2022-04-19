@@ -17,7 +17,7 @@
                 class="hidden transition-all w-screen space-y-6 flex-1 flex flex-col filament-main lg:pl-80 rtl:lg:pl-0 rtl:lg:pr-80"
                 x-bind:class.="{
                     '!block': true, // Prevent flash, x-cloak not working with charts
-                    'lg:pl-0 rtl:lg:pr-0': ! $store.sidebar.isOpen
+                    'lg:pl-[5.4rem] rtl:lg:pr-[5.4rem]': ! $store.sidebar.isOpen
                 }"
             >
         @else

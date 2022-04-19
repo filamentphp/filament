@@ -22,7 +22,7 @@ class BelongsToManyMultiSelect extends MultiSelect
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (BelongsToManyMultiSelect $component, ?array $state): void {
+        $this->afterStateHydrated(static function (BelongsToManyMultiSelect $component, ?array $state): void {
             if (count($state ?? [])) {
                 return;
             }
@@ -42,7 +42,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             );
         });
 
-        $this->saveRelationshipsUsing(function (BelongsToManyMultiSelect $component, ?array $state) {
+        $this->saveRelationshipsUsing(static function (BelongsToManyMultiSelect $component, ?array $state) {
             $component->getRelationship()->sync($state ?? []);
         });
 
@@ -61,7 +61,7 @@ class BelongsToManyMultiSelect extends MultiSelect
         $this->displayColumnName = $displayColumnName;
         $this->relationship = $relationshipName;
 
-        $this->getOptionLabelsUsing(function (BelongsToManyMultiSelect $component, array $values): array {
+        $this->getOptionLabelsUsing(static function (BelongsToManyMultiSelect $component, array $values): array {
             $relationship = $component->getRelationship();
             $relatedKeyName = $relationship->getRelatedKeyName();
 
@@ -71,7 +71,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->mapWithKeys(fn (Model $record) => [
+                    ->mapWithKeys(static fn (Model $record) => [
                         $record->{$relatedKeyName} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
@@ -82,18 +82,18 @@ class BelongsToManyMultiSelect extends MultiSelect
                 ->toArray();
         });
 
-        $this->getSearchResultsUsing(function (BelongsToManyMultiSelect $component, ?string $query) use ($callback): array {
+        $this->getSearchResultsUsing(static function (BelongsToManyMultiSelect $component, ?string $searchQuery) use ($callback): array {
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
-                $relationshipQuery = $this->evaluate($callback, [
+                $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
                 ]);
             }
 
-            $query = strtolower($query);
+            $searchQuery = strtolower($searchQuery);
 
             /** @var Connection $databaseConnection */
             $databaseConnection = $relationshipQuery->getConnection();
@@ -104,7 +104,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             };
 
             $relationshipQuery = $relationshipQuery
-                ->where($component->getDisplayColumnName(), $searchOperator, "%{$query}%")
+                ->where($component->getDisplayColumnName(), $searchOperator, "%{$searchQuery}%")
                 ->limit(50);
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
@@ -121,7 +121,7 @@ class BelongsToManyMultiSelect extends MultiSelect
                 ->toArray();
         });
 
-        $this->options(function (BelongsToManyMultiSelect $component) use ($callback): array {
+        $this->options(static function (BelongsToManyMultiSelect $component) use ($callback): array {
             if (! $component->isPreloaded()) {
                 return [];
             }
@@ -131,7 +131,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
-                $relationshipQuery = $this->evaluate($callback, [
+                $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
                 ]);
             }

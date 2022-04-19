@@ -41,7 +41,7 @@
 
     <div
         @if ($isCollapsible())
-            x-show="! isCollapsed"
+            x-bind:class="{ 'invisible h-0 !m-0 overflow-y-hidden': isCollapsed }"
             x-bind:aria-expanded="(! isCollapsed).toString()"
         @endif
     >
