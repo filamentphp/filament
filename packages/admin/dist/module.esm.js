@@ -30,122 +30,122 @@ var __toModule = (module) => {
 
 // node_modules/dayjs/plugin/customParseFormat.js
 var require_customParseFormat = __commonJS((exports, module) => {
-  !function(t2, e2) {
-    typeof exports == "object" && typeof module != "undefined" ? module.exports = e2() : typeof define == "function" && define.amd ? define(e2) : (t2 = typeof globalThis != "undefined" ? globalThis : t2 || self).dayjs_plugin_customParseFormat = e2();
+  !function(e2, t2) {
+    typeof exports == "object" && typeof module != "undefined" ? module.exports = t2() : typeof define == "function" && define.amd ? define(t2) : (e2 = typeof globalThis != "undefined" ? globalThis : e2 || self).dayjs_plugin_customParseFormat = t2();
   }(exports, function() {
     "use strict";
-    var t2 = {LTS: "h:mm:ss A", LT: "h:mm A", L: "MM/DD/YYYY", LL: "MMMM D, YYYY", LLL: "MMMM D, YYYY h:mm A", LLLL: "dddd, MMMM D, YYYY h:mm A"}, e2 = /(\[[^[]*\])|([-:/.()\s]+)|(A|a|YYYY|YY?|MM?M?M?|Do|DD?|hh?|HH?|mm?|ss?|S{1,3}|z|ZZ?)/g, n2 = /\d\d/, r2 = /\d\d?/, i = /\d*[^\s\d-_:/()]+/, o2 = {}, s2 = function(t3) {
-      return (t3 = +t3) + (t3 > 68 ? 1900 : 2e3);
+    var e2 = {LTS: "h:mm:ss A", LT: "h:mm A", L: "MM/DD/YYYY", LL: "MMMM D, YYYY", LLL: "MMMM D, YYYY h:mm A", LLLL: "dddd, MMMM D, YYYY h:mm A"}, t2 = /(\[[^[]*\])|([-:/.()\s]+)|(A|a|YYYY|YY?|MM?M?M?|Do|DD?|hh?|HH?|mm?|ss?|S{1,3}|z|ZZ?)/g, n2 = /\d\d/, r2 = /\d\d?/, i = /\d*[^\s\d-_:/()]+/, o2 = {}, s2 = function(e3) {
+      return (e3 = +e3) + (e3 > 68 ? 1900 : 2e3);
     };
-    var a2 = function(t3) {
-      return function(e3) {
-        this[t3] = +e3;
+    var a2 = function(e3) {
+      return function(t3) {
+        this[e3] = +t3;
       };
-    }, f = [/[+-]\d\d:?(\d\d)?|Z/, function(t3) {
-      (this.zone || (this.zone = {})).offset = function(t4) {
-        if (!t4)
+    }, f = [/[+-]\d\d:?(\d\d)?|Z/, function(e3) {
+      (this.zone || (this.zone = {})).offset = function(e4) {
+        if (!e4)
           return 0;
-        if (t4 === "Z")
+        if (e4 === "Z")
           return 0;
-        var e3 = t4.match(/([+-]|\d\d)/g), n3 = 60 * e3[1] + (+e3[2] || 0);
-        return n3 === 0 ? 0 : e3[0] === "+" ? -n3 : n3;
-      }(t3);
-    }], u = function(t3) {
-      var e3 = o2[t3];
-      return e3 && (e3.indexOf ? e3 : e3.s.concat(e3.f));
-    }, h = function(t3, e3) {
+        var t3 = e4.match(/([+-]|\d\d)/g), n3 = 60 * t3[1] + (+t3[2] || 0);
+        return n3 === 0 ? 0 : t3[0] === "+" ? -n3 : n3;
+      }(e3);
+    }], h = function(e3) {
+      var t3 = o2[e3];
+      return t3 && (t3.indexOf ? t3 : t3.s.concat(t3.f));
+    }, u = function(e3, t3) {
       var n3, r3 = o2.meridiem;
       if (r3) {
         for (var i2 = 1; i2 <= 24; i2 += 1)
-          if (t3.indexOf(r3(i2, 0, e3)) > -1) {
+          if (e3.indexOf(r3(i2, 0, t3)) > -1) {
             n3 = i2 > 12;
             break;
           }
       } else
-        n3 = t3 === (e3 ? "pm" : "PM");
+        n3 = e3 === (t3 ? "pm" : "PM");
       return n3;
-    }, d = {A: [i, function(t3) {
-      this.afternoon = h(t3, false);
-    }], a: [i, function(t3) {
-      this.afternoon = h(t3, true);
-    }], S: [/\d/, function(t3) {
-      this.milliseconds = 100 * +t3;
-    }], SS: [n2, function(t3) {
-      this.milliseconds = 10 * +t3;
-    }], SSS: [/\d{3}/, function(t3) {
-      this.milliseconds = +t3;
-    }], s: [r2, a2("seconds")], ss: [r2, a2("seconds")], m: [r2, a2("minutes")], mm: [r2, a2("minutes")], H: [r2, a2("hours")], h: [r2, a2("hours")], HH: [r2, a2("hours")], hh: [r2, a2("hours")], D: [r2, a2("day")], DD: [n2, a2("day")], Do: [i, function(t3) {
-      var e3 = o2.ordinal, n3 = t3.match(/\d+/);
-      if (this.day = n3[0], e3)
+    }, d = {A: [i, function(e3) {
+      this.afternoon = u(e3, false);
+    }], a: [i, function(e3) {
+      this.afternoon = u(e3, true);
+    }], S: [/\d/, function(e3) {
+      this.milliseconds = 100 * +e3;
+    }], SS: [n2, function(e3) {
+      this.milliseconds = 10 * +e3;
+    }], SSS: [/\d{3}/, function(e3) {
+      this.milliseconds = +e3;
+    }], s: [r2, a2("seconds")], ss: [r2, a2("seconds")], m: [r2, a2("minutes")], mm: [r2, a2("minutes")], H: [r2, a2("hours")], h: [r2, a2("hours")], HH: [r2, a2("hours")], hh: [r2, a2("hours")], D: [r2, a2("day")], DD: [n2, a2("day")], Do: [i, function(e3) {
+      var t3 = o2.ordinal, n3 = e3.match(/\d+/);
+      if (this.day = n3[0], t3)
         for (var r3 = 1; r3 <= 31; r3 += 1)
-          e3(r3).replace(/\[|\]/g, "") === t3 && (this.day = r3);
-    }], M: [r2, a2("month")], MM: [n2, a2("month")], MMM: [i, function(t3) {
-      var e3 = u("months"), n3 = (u("monthsShort") || e3.map(function(t4) {
-        return t4.substr(0, 3);
-      })).indexOf(t3) + 1;
+          t3(r3).replace(/\[|\]/g, "") === e3 && (this.day = r3);
+    }], M: [r2, a2("month")], MM: [n2, a2("month")], MMM: [i, function(e3) {
+      var t3 = h("months"), n3 = (h("monthsShort") || t3.map(function(e4) {
+        return e4.slice(0, 3);
+      })).indexOf(e3) + 1;
       if (n3 < 1)
         throw new Error();
       this.month = n3 % 12 || n3;
-    }], MMMM: [i, function(t3) {
-      var e3 = u("months").indexOf(t3) + 1;
-      if (e3 < 1)
+    }], MMMM: [i, function(e3) {
+      var t3 = h("months").indexOf(e3) + 1;
+      if (t3 < 1)
         throw new Error();
-      this.month = e3 % 12 || e3;
-    }], Y: [/[+-]?\d+/, a2("year")], YY: [n2, function(t3) {
-      this.year = s2(t3);
+      this.month = t3 % 12 || t3;
+    }], Y: [/[+-]?\d+/, a2("year")], YY: [n2, function(e3) {
+      this.year = s2(e3);
     }], YYYY: [/\d{4}/, a2("year")], Z: f, ZZ: f};
     function c2(n3) {
       var r3, i2;
       r3 = n3, i2 = o2 && o2.formats;
-      for (var s3 = (n3 = r3.replace(/(\[[^\]]+])|(LTS?|l{1,4}|L{1,4})/g, function(e3, n4, r4) {
+      for (var s3 = (n3 = r3.replace(/(\[[^\]]+])|(LTS?|l{1,4}|L{1,4})/g, function(t3, n4, r4) {
         var o3 = r4 && r4.toUpperCase();
-        return n4 || i2[r4] || t2[r4] || i2[o3].replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, function(t3, e4, n5) {
-          return e4 || n5.slice(1);
+        return n4 || i2[r4] || e2[r4] || i2[o3].replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, function(e3, t4, n5) {
+          return t4 || n5.slice(1);
         });
-      })).match(e2), a3 = s3.length, f2 = 0; f2 < a3; f2 += 1) {
-        var u2 = s3[f2], h2 = d[u2], c3 = h2 && h2[0], l = h2 && h2[1];
-        s3[f2] = l ? {regex: c3, parser: l} : u2.replace(/^\[|\]$/g, "");
+      })).match(t2), a3 = s3.length, f2 = 0; f2 < a3; f2 += 1) {
+        var h2 = s3[f2], u2 = d[h2], c3 = u2 && u2[0], l = u2 && u2[1];
+        s3[f2] = l ? {regex: c3, parser: l} : h2.replace(/^\[|\]$/g, "");
       }
-      return function(t3) {
-        for (var e3 = {}, n4 = 0, r4 = 0; n4 < a3; n4 += 1) {
+      return function(e3) {
+        for (var t3 = {}, n4 = 0, r4 = 0; n4 < a3; n4 += 1) {
           var i3 = s3[n4];
           if (typeof i3 == "string")
             r4 += i3.length;
           else {
-            var o3 = i3.regex, f3 = i3.parser, u3 = t3.substr(r4), h3 = o3.exec(u3)[0];
-            f3.call(e3, h3), t3 = t3.replace(h3, "");
+            var o3 = i3.regex, f3 = i3.parser, h3 = e3.slice(r4), u3 = o3.exec(h3)[0];
+            f3.call(t3, u3), e3 = e3.replace(u3, "");
           }
         }
-        return function(t4) {
-          var e4 = t4.afternoon;
-          if (e4 !== void 0) {
-            var n5 = t4.hours;
-            e4 ? n5 < 12 && (t4.hours += 12) : n5 === 12 && (t4.hours = 0), delete t4.afternoon;
+        return function(e4) {
+          var t4 = e4.afternoon;
+          if (t4 !== void 0) {
+            var n5 = e4.hours;
+            t4 ? n5 < 12 && (e4.hours += 12) : n5 === 12 && (e4.hours = 0), delete e4.afternoon;
           }
-        }(e3), e3;
+        }(t3), t3;
       };
     }
-    return function(t3, e3, n3) {
-      n3.p.customParseFormat = true, t3 && t3.parseTwoDigitYear && (s2 = t3.parseTwoDigitYear);
-      var r3 = e3.prototype, i2 = r3.parse;
-      r3.parse = function(t4) {
-        var e4 = t4.date, r4 = t4.utc, s3 = t4.args;
+    return function(e3, t3, n3) {
+      n3.p.customParseFormat = true, e3 && e3.parseTwoDigitYear && (s2 = e3.parseTwoDigitYear);
+      var r3 = t3.prototype, i2 = r3.parse;
+      r3.parse = function(e4) {
+        var t4 = e4.date, r4 = e4.utc, s3 = e4.args;
         this.$u = r4;
         var a3 = s3[1];
         if (typeof a3 == "string") {
-          var f2 = s3[2] === true, u2 = s3[3] === true, h2 = f2 || u2, d2 = s3[2];
-          u2 && (d2 = s3[2]), o2 = this.$locale(), !f2 && d2 && (o2 = n3.Ls[d2]), this.$d = function(t5, e5, n4) {
+          var f2 = s3[2] === true, h2 = s3[3] === true, u2 = f2 || h2, d2 = s3[2];
+          h2 && (d2 = s3[2]), o2 = this.$locale(), !f2 && d2 && (o2 = n3.Ls[d2]), this.$d = function(e5, t5, n4) {
             try {
-              if (["x", "X"].indexOf(e5) > -1)
-                return new Date((e5 === "X" ? 1e3 : 1) * t5);
-              var r5 = c2(e5)(t5), i3 = r5.year, o3 = r5.month, s4 = r5.day, a4 = r5.hours, f3 = r5.minutes, u3 = r5.seconds, h3 = r5.milliseconds, d3 = r5.zone, l2 = new Date(), m2 = s4 || (i3 || o3 ? 1 : l2.getDate()), M3 = i3 || l2.getFullYear(), Y2 = 0;
+              if (["x", "X"].indexOf(t5) > -1)
+                return new Date((t5 === "X" ? 1e3 : 1) * e5);
+              var r5 = c2(t5)(e5), i3 = r5.year, o3 = r5.month, s4 = r5.day, a4 = r5.hours, f3 = r5.minutes, h3 = r5.seconds, u3 = r5.milliseconds, d3 = r5.zone, l2 = new Date(), m2 = s4 || (i3 || o3 ? 1 : l2.getDate()), M3 = i3 || l2.getFullYear(), Y2 = 0;
               i3 && !o3 || (Y2 = o3 > 0 ? o3 - 1 : l2.getMonth());
-              var p2 = a4 || 0, v = f3 || 0, D2 = u3 || 0, g = h3 || 0;
+              var p2 = a4 || 0, v = f3 || 0, D2 = h3 || 0, g = u3 || 0;
               return d3 ? new Date(Date.UTC(M3, Y2, m2, p2, v, D2, g + 60 * d3.offset * 1e3)) : n4 ? new Date(Date.UTC(M3, Y2, m2, p2, v, D2, g)) : new Date(M3, Y2, m2, p2, v, D2, g);
-            } catch (t6) {
+            } catch (e6) {
               return new Date("");
             }
-          }(e4, a3, r4), this.init(), d2 && d2 !== true && (this.$L = this.locale(d2).$L), h2 && e4 != this.format(a3) && (this.$d = new Date("")), o2 = {};
+          }(t4, a3, r4), this.init(), d2 && d2 !== true && (this.$L = this.locale(d2).$L), u2 && t4 != this.format(a3) && (this.$d = new Date("")), o2 = {};
         } else if (a3 instanceof Array)
           for (var l = a3.length, m = 1; m <= l; m += 1) {
             s3[1] = a3[m - 1];
@@ -157,7 +157,7 @@ var require_customParseFormat = __commonJS((exports, module) => {
             m === l && (this.$d = new Date(""));
           }
         else
-          i2.call(this, t4);
+          i2.call(this, e4);
       };
     };
   });
@@ -174,7 +174,7 @@ var require_localeData = __commonJS((exports, module) => {
         return n3 && (n3.indexOf ? n3 : n3.s);
       }, u = function(n3, e3, t3, r3, u2) {
         var i2 = n3.name ? n3 : n3.$locale(), a3 = o2(i2[e3]), s3 = o2(i2[t3]), f = a3 || s3.map(function(n4) {
-          return n4.substr(0, r3);
+          return n4.slice(0, r3);
         });
         if (!u2)
           return f;
@@ -6494,7 +6494,7 @@ var Dayjs = /* @__PURE__ */ function() {
     var $H = this.$H, $m = this.$m, $M = this.$M;
     var weekdays = locale.weekdays, months = locale.months, meridiem = locale.meridiem;
     var getShort = function getShort2(arr, index2, full, length) {
-      return arr && (arr[index2] || arr(_this3, str)) || full[index2].substr(0, length);
+      return arr && (arr[index2] || arr(_this3, str)) || full[index2].slice(0, length);
     };
     var get$H = function get$H2(num) {
       return Utils.s($H % 12 || 12, num, "0");
@@ -13225,7 +13225,7 @@ if (supported()) {
 
 // node_modules/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.esm.js
 /*!
- * FilePondPluginFileValidateSize 2.2.5
+ * FilePondPluginFileValidateSize 2.2.6
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -13320,7 +13320,7 @@ var filepond_plugin_file_validate_size_esm_default = plugin;
 
 // node_modules/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.esm.js
 /*!
- * FilePondPluginFileValidateType 1.2.6
+ * FilePondPluginFileValidateType 1.2.7
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -13624,7 +13624,7 @@ var filepond_plugin_image_exif_orientation_esm_default = plugin4;
 
 // node_modules/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.esm.js
 /*!
- * FilePondPluginImagePreview 4.6.10
+ * FilePondPluginImagePreview 4.6.11
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -14336,7 +14336,7 @@ var createImageOverlayView = (fpAPI) => fpAPI.utils.createView({
   create: ({root: root2, props}) => {
     let mask = SVG_MASK;
     if (document.querySelector("base")) {
-      const url = window.location.href.replace(window.location.hash, "");
+      const url = new URL(window.location.href.replace(window.location.hash, "")).href;
       mask = mask.replace(/url\(\#/g, "url(" + url + "#");
     }
     SVGMaskUniqueId++;
@@ -17694,7 +17694,7 @@ function unescape2(html) {
 }
 var caret = /(^|[^\[])\^/g;
 function edit(regex, opt) {
-  regex = regex.source || regex;
+  regex = typeof regex === "string" ? regex : regex.source;
   opt = opt || "";
   const obj = {
     replace: (name2, val) => {
@@ -17820,7 +17820,7 @@ function rtrim(str, c2, invert) {
       break;
     }
   }
-  return str.substr(0, l - suffLen);
+  return str.slice(0, l - suffLen);
 }
 function findClosingBracket(str, b) {
   if (str.indexOf(b[1]) === -1) {
@@ -17978,7 +17978,7 @@ var Tokenizer = class {
   blockquote(src) {
     const cap = this.rules.block.blockquote.exec(src);
     if (cap) {
-      const text2 = cap[0].replace(/^ *> ?/gm, "");
+      const text2 = cap[0].replace(/^ *>[ \t]?/gm, "");
       return {
         type: "blockquote",
         raw: cap[0],
@@ -18005,7 +18005,7 @@ var Tokenizer = class {
       if (this.options.pedantic) {
         bull = isordered ? bull : "[*+-]";
       }
-      const itemRegex = new RegExp(`^( {0,3}${bull})((?: [^\\n]*)?(?:\\n|$))`);
+      const itemRegex = new RegExp(`^( {0,3}${bull})((?:[	 ][^\\n]*)?(?:\\n|$))`);
       while (src) {
         endEarly = false;
         if (!(cap = itemRegex.exec(src))) {
@@ -18497,10 +18497,10 @@ var block = {
   newline: /^(?: *(?:\n|$))+/,
   code: /^( {4}[^\n]+(?:\n(?: *(?:\n|$))*)?)+/,
   fences: /^ {0,3}(`{3,}(?=[^`\n]*\n)|~{3,})([^\n]*)\n(?:|([\s\S]*?)\n)(?: {0,3}\1[~`]* *(?=\n|$)|$)/,
-  hr: /^ {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\* *){3,})(?:\n+|$)/,
+  hr: /^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/,
   heading: /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/,
   blockquote: /^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/,
-  list: /^( {0,3}bull)( [^\n]+?)?(?:\n|$)/,
+  list: /^( {0,3}bull)([ \t][^\n]+?)?(?:\n|$)/,
   html: "^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>\\n*|$)|<![A-Z][\\s\\S]*?(?:>\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n *)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$))",
   def: /^ {0,3}\[(label)\]: *(?:\n *)?<?([^\s>]+)>?(?:(?: +(?:\n *)?| *\n *)(title))? *(?:\n+|$)/,
   table: noopTest,
@@ -18543,8 +18543,8 @@ var inline = {
   reflinkSearch: "reflink|nolink(?!\\()",
   emStrong: {
     lDelim: /^(?:\*+(?:([punct_])|[^\s*]))|^_+(?:([punct*])|([^\s_]))/,
-    rDelimAst: /^[^_*]*?\_\_[^_*]*?\*[^_*]*?(?=\_\_)|[punct_](\*+)(?=[\s]|$)|[^punct*_\s](\*+)(?=[punct_\s]|$)|[punct_\s](\*+)(?=[^punct*_\s])|[\s](\*+)(?=[punct_])|[punct_](\*+)(?=[punct_])|[^punct*_\s](\*+)(?=[^punct*_\s])/,
-    rDelimUnd: /^[^_*]*?\*\*[^_*]*?\_[^_*]*?(?=\*\*)|[punct*](\_+)(?=[\s]|$)|[^punct*_\s](\_+)(?=[punct*\s]|$)|[punct*\s](\_+)(?=[^punct*_\s])|[\s](\_+)(?=[punct*])|[punct*](\_+)(?=[punct*])/
+    rDelimAst: /^[^_*]*?\_\_[^_*]*?\*[^_*]*?(?=\_\_)|[^*]+(?=[^*])|[punct_](\*+)(?=[\s]|$)|[^punct*_\s](\*+)(?=[punct_\s]|$)|[punct_\s](\*+)(?=[^punct*_\s])|[\s](\*+)(?=[punct_])|[punct_](\*+)(?=[punct_])|[^punct*_\s](\*+)(?=[^punct*_\s])/,
+    rDelimUnd: /^[^_*]*?\*\*[^_*]*?\_[^_*]*?(?=\*\*)|[^_]+(?=[^_])|[punct*](\_+)(?=[\s]|$)|[^punct*_\s](\_+)(?=[punct*\s]|$)|[punct*\s](\_+)(?=[^punct*_\s])|[\s](\_+)(?=[punct*])|[punct*](\_+)(?=[punct*])/
   },
   code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
   br: /^( {2,}|\\)\n(?!\s*$)/,
@@ -18665,7 +18665,7 @@ var Lexer = class {
     return lexer2.inlineTokens(src);
   }
   lex(src) {
-    src = src.replace(/\r\n|\r/g, "\n").replace(/\t/g, "    ");
+    src = src.replace(/\r\n|\r/g, "\n");
     this.blockTokens(src, this.tokens);
     let next;
     while (next = this.inlineQueue.shift()) {
@@ -18675,7 +18675,11 @@ var Lexer = class {
   }
   blockTokens(src, tokens = []) {
     if (this.options.pedantic) {
-      src = src.replace(/^ +$/gm, "");
+      src = src.replace(/\t/g, "    ").replace(/^ +$/gm, "");
+    } else {
+      src = src.replace(/^( *)(\t+)/gm, (_, leading, tabs) => {
+        return leading + "    ".repeat(tabs.length);
+      });
     }
     let token, lastToken, cutSrc, lastParagraphClipped;
     while (src) {
@@ -18984,16 +18988,21 @@ var Renderer = class {
     return '<pre><code class="' + this.options.langPrefix + escape(lang, true) + '">' + (escaped ? code : escape(code, true)) + "</code></pre>\n";
   }
   blockquote(quote) {
-    return "<blockquote>\n" + quote + "</blockquote>\n";
+    return `<blockquote>
+${quote}</blockquote>
+`;
   }
   html(html) {
     return html;
   }
   heading(text2, level, raw, slugger) {
     if (this.options.headerIds) {
-      return "<h" + level + ' id="' + this.options.headerPrefix + slugger.slug(raw) + '">' + text2 + "</h" + level + ">\n";
+      const id = this.options.headerPrefix + slugger.slug(raw);
+      return `<h${level} id="${id}">${text2}</h${level}>
+`;
     }
-    return "<h" + level + ">" + text2 + "</h" + level + ">\n";
+    return `<h${level}>${text2}</h${level}>
+`;
   }
   hr() {
     return this.options.xhtml ? "<hr/>\n" : "<hr>\n";
@@ -19003,41 +19012,46 @@ var Renderer = class {
     return "<" + type + startatt + ">\n" + body + "</" + type + ">\n";
   }
   listitem(text2) {
-    return "<li>" + text2 + "</li>\n";
+    return `<li>${text2}</li>
+`;
   }
   checkbox(checked) {
     return "<input " + (checked ? 'checked="" ' : "") + 'disabled="" type="checkbox"' + (this.options.xhtml ? " /" : "") + "> ";
   }
   paragraph(text2) {
-    return "<p>" + text2 + "</p>\n";
+    return `<p>${text2}</p>
+`;
   }
   table(header, body) {
     if (body)
-      body = "<tbody>" + body + "</tbody>";
+      body = `<tbody>${body}</tbody>`;
     return "<table>\n<thead>\n" + header + "</thead>\n" + body + "</table>\n";
   }
   tablerow(content) {
-    return "<tr>\n" + content + "</tr>\n";
+    return `<tr>
+${content}</tr>
+`;
   }
   tablecell(content, flags) {
     const type = flags.header ? "th" : "td";
-    const tag = flags.align ? "<" + type + ' align="' + flags.align + '">' : "<" + type + ">";
-    return tag + content + "</" + type + ">\n";
+    const tag = flags.align ? `<${type} align="${flags.align}">` : `<${type}>`;
+    return tag + content + `</${type}>
+`;
   }
   strong(text2) {
-    return "<strong>" + text2 + "</strong>";
+    return `<strong>${text2}</strong>`;
   }
   em(text2) {
-    return "<em>" + text2 + "</em>";
+    return `<em>${text2}</em>`;
   }
   codespan(text2) {
-    return "<code>" + text2 + "</code>";
+    return `<code>${text2}</code>`;
   }
   br() {
     return this.options.xhtml ? "<br/>" : "<br>";
   }
   del(text2) {
-    return "<del>" + text2 + "</del>";
+    return `<del>${text2}</del>`;
   }
   link(href, title, text2) {
     href = cleanUrl(this.options.sanitize, this.options.baseUrl, href);
@@ -19056,9 +19070,9 @@ var Renderer = class {
     if (href === null) {
       return text2;
     }
-    let out = '<img src="' + href + '" alt="' + text2 + '"';
+    let out = `<img src="${href}" alt="${text2}"`;
     if (title) {
-      out += ' title="' + title + '"';
+      out += ` title="${title}"`;
     }
     out += this.options.xhtml ? "/>" : ">";
     return out;
