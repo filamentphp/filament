@@ -19,7 +19,7 @@ it('adds notifications to the session', function () {
         );
 });
 
-it('can automatically dispatch notify event to browser', function () {
+it('can immediately dispatch notify event to browser', function () {
     Livewire::test(Settings::class)
         ->call('notificationManager')
         ->assertDispatchedBrowserEvent('notify');
