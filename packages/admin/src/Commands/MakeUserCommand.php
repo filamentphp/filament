@@ -3,6 +3,7 @@
 namespace Filament\Commands;
 
 use Filament\Facades\Filament;
+use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
@@ -35,7 +36,7 @@ class MakeUserCommand extends Command
     protected function sendSuccessMessage(User $user): void
     {
         $loginUrl = route('filament.auth.login');
-        $this->info("Success! {$user->email} may now log in at {$loginUrl}.");
+        $this->info('Success! ' . ($user->attributes['email'] ?? $user->attributes['username'] ?? 'You') . " may now log in at {$loginUrl}.");
 
         if ($this->getUserModel()::count() === 1 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
             if (PHP_OS_FAMILY === 'Darwin') {
@@ -64,7 +65,10 @@ class MakeUserCommand extends Command
 
     protected function getUserModel(): string
     {
-        return $this->getUserProvider()->getModel();
+        /** @var EloquentUserProvider $provider */
+        $provider = $this->getUserProvider();
+        
+        return $provider->getModel();
     }
 
     public function handle(): int
