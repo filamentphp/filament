@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ReplicatorAction extends Action
 {
-    protected string $type = 'button';
-
     protected array | Closure | null $exclude = null;
 
     protected ?Closure $beforeSavingCallback = null;
@@ -88,30 +86,27 @@ class ReplicatorAction extends Action
 
     public function button(): static
     {
-        return $this->type('button');
+        $this->view = 'tables::actions.button-action';
+
+        return $this;
     }
 
     public function link(): static
     {
-        return $this->type('link');
+        $this->view = 'tables::actions.link-action';
+
+        return $this;
     }
 
     public function iconButton(): static
     {
-        return $this->type('iconButton');
+        $this->view = 'tables::actions.icon-button-action';
+
+        return $this;
     }
 
     public function getExcludedAttributes(): ?array
     {
         return $this->evaluate($this->exclude);
-    }
-
-    public function getView(): string
-    {
-        return match ($this->type) {
-            'button' => 'tables::actions.button-action',
-            'iconButton' => 'tables::actions.icon-button-action',
-            'link' => 'tables::actions.link-action'
-        };
     }
 }
