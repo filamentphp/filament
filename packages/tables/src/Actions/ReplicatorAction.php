@@ -12,7 +12,7 @@ class ReplicatorAction extends Action
 
     protected ?Closure $beforeSavingCallback = null;
 
-    protected ?Closure $afterSavingCallback = null;
+    protected ?Closure $afterReplicaSavedCallback = null;
 
     protected function setUp(): void
     {
@@ -31,7 +31,7 @@ class ReplicatorAction extends Action
 
             Filament::notify('success', 'Record replicated.');
 
-            return $action->callAfterSaving($replica, $data);
+            return $action->callAfterReplicaSaved($replica, $data);
         });
     }
 
@@ -62,16 +62,16 @@ class ReplicatorAction extends Action
         ]);
     }
 
-    public function afterSaving(Closure $callback): static
+    public function afterReplicaSaved(Closure $callback): static
     {
-        $this->afterSavingCallback = $callback;
+        $this->afterReplicaSavedCallback = $callback;
 
         return $this;
     }
 
-    public function callAfterSaving(Model $replica, array $data = []): mixed
+    public function callAfterReplicaSaved(Model $replica, array $data = []): mixed
     {
-        return $this->evaluate($this->afterSavingCallback, [
+        return $this->evaluate($this->afterReplicaSavedCallback, [
             'replica' => $replica,
             'data' => $data,
         ]);
