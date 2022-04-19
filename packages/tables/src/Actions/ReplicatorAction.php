@@ -16,8 +16,6 @@ class ReplicatorAction extends Action
 
     protected function setUp(): void
     {
-        $this->color('success');
-
         $this->modalButton(function (ReplicatorAction $action) {
             return $action->getLabel();
         });
@@ -79,21 +77,21 @@ class ReplicatorAction extends Action
 
     public function button(): static
     {
-        $this->view = 'tables::actions.button-action';
+        $this->view('tables::actions.button-action');
 
         return $this;
     }
 
     public function link(): static
     {
-        $this->view = 'tables::actions.link-action';
+        $this->view('tables::actions.link-action');
 
         return $this;
     }
 
     public function iconButton(): static
     {
-        $this->view = 'tables::actions.icon-button-action';
+        $this->view('tables::actions.icon-button-action');
 
         return $this;
     }
