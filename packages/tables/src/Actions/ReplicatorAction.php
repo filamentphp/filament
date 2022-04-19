@@ -6,9 +6,9 @@ use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 
-class ReplicatorAction extends ButtonAction
+class ReplicatorAction extends Action
 {
-    protected bool $isButton = false;
+    protected string $type = 'button';
 
     protected array | Closure | null $exclude = null;
 
@@ -79,11 +79,26 @@ class ReplicatorAction extends ButtonAction
         ]);
     }
 
-    public function button(bool $condition = true): static
+    public function type(string $type): static
     {
-        $this->isButton = $condition;
+        $this->type = $type;
 
         return $this;
+    }
+
+    public function button(): static
+    {
+        return $this->type('button');
+    }
+
+    public function link(): static
+    {
+        return $this->type('link');
+    }
+
+    public function iconButton(): static
+    {
+        return $this->type('iconButton');
     }
 
     public function getExcludedAttributes(): ?array
@@ -93,10 +108,10 @@ class ReplicatorAction extends ButtonAction
 
     public function getView(): string
     {
-        if ($this->isButton) {
-            return 'tables::actions.button-action';
-        }
-
-        return 'tables::actions.link-action';
+        return match ($this->type) {
+            'button' => 'tables::actions.button-action',
+            'iconButton' => 'tables::actions.icon-button-action',
+            'link' => 'tables::actions.link-action'
+        };
     }
 }
