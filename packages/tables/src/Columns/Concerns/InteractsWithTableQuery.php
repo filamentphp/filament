@@ -72,7 +72,7 @@ trait InteractsWithTableQuery
             $query->when(
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName),
                 fn (Builder $query): Builder => $query->{"{$whereClause}Raw"}(
-                    "lower({$searchColumnName}->\"" . app()->getLocale() . '") like ?',
+                    "lower({$searchColumnName}->" . app()->getLocale() . ') like ?',
                     "%{$searchQuery}%",
                 ),
                 fn (Builder $query): Builder => $query->when(
