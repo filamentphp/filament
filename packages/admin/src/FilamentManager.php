@@ -13,6 +13,7 @@ use Filament\Navigation\UserMenuItem;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Event;
 
 class FilamentManager
@@ -175,19 +176,13 @@ class FilamentManager
         return app($this->globalSearchProvider);
     }
 
-    public function renderHook(string $name): ?string
+    public function renderHook(string $name): HtmlString
     {
-        if (! array_key_exists($name, $this->renderHooks)) {
-            return null;
-        }
-
-        $output = '';
-
-        foreach ($this->renderHooks[$name] as $renderHook) {
-            $output .= (string) app()->call($renderHook);
-        }
-
-        return $output;
+        $output = collect($this->renderHooks[$name] ?? [])
+            ->map(fn (callable $hook): string => (string) app()->call($renderHook))
+            ->implode();
+        
+        return new HtmlString($output);
     }
 
     public function getNavigation(): array
