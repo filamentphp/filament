@@ -147,7 +147,7 @@ TextColumn::make('role')->hidden(! auth()->user()->isAdmin())
 TextColumn::make('role')->visible(auth()->user()->isAdmin())
 ```
 
-#### Allowing users to toggle columns hidden
+#### Toggling column visibility
 
 Users may hide or show columns themselves in the table. To make a column toggleable, use the `toggleable()` method:
 
