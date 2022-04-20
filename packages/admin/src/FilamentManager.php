@@ -13,8 +13,8 @@ use Filament\Navigation\UserMenuItem;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\HtmlString;
 
 class FilamentManager
 {
@@ -181,7 +181,7 @@ class FilamentManager
         $output = collect($this->renderHooks[$name] ?? [])
             ->map(fn (callable $hook): string => (string) app()->call($renderHook))
             ->implode();
-        
+
         return new HtmlString($output);
     }
 
