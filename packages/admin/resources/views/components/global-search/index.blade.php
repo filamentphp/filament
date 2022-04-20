@@ -1,5 +1,6 @@
 <div class="flex items-center filament-global-search">
     <x-filament::global-search.start />
+    {{ \Filament\Facades\Filament::renderHook('global-search.start') }}
 
     @if ($this->isEnabled())
         <div class="relative">
@@ -12,4 +13,5 @@
     @endif
 
     <x-filament::global-search.end />
+    {{ \Filament\Facades\Filament::renderHook('global-search.end') }}
 </div>
