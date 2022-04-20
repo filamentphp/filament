@@ -69,26 +69,28 @@ trait InteractsWithTableQuery
         foreach ($this->getSearchColumns() as $searchColumnName) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
-            if (method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName)) {
-                $whereClause = $isFirst ? 'whereRaw' : 'orWhereRaw';
-                $query->{$whereClause}('LOWER('.$searchColumnName . '->"$.'.app()->getLocale().'") LIKE ?', "%{$searchQuery}%");
-            }
-            else {
-                $query->when(
+            $query->when(
+                method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName),
+                fn (Builder $query): Builder => $query->{"{$whereClause}Raw"}(
+                    "lower({$searchColumnName}->\"" . app()->getLocale() . '") like ?',
+                    "%{$searchQuery}%",
+                ),
+                fn (Builder $query): Builder => $query->when(
                     $this->queriesRelationships(),
-                    fn($query) => $query->{"{$whereClause}Relation"}(
+                    fn (Builder $query): Builder => $query->{"{$whereClause}Relation"}(
                         $this->getRelationshipName(),
                         $searchColumnName,
                         $searchOperator,
                         "%{$searchQuery}%",
                     ),
-                    fn($query) => $query->{$whereClause}(
+                    fn (Builder $query): Builder => $query->{$whereClause}(
                         $searchColumnName,
                         $searchOperator,
                         "%{$searchQuery}%",
                     ),
-                );
-            }
+                ),
+            );
+            
             $isFirst = false;
         }
 
