@@ -47,6 +47,8 @@ class FilamentManager
 
     protected ?Closure $navigationBuilder = null;
 
+    protected array $renderHooks = [];
+
     public function auth(): Guard
     {
         return auth()->guard(config('filament.auth.guard'));
@@ -109,6 +111,11 @@ class FilamentManager
         $this->pages = array_merge($this->pages, $pages);
     }
 
+    public function registerRenderHook(string $name, Closure $callback): void
+    {
+        $this->renderHooks[$name][] = $callback;
+    }
+
     public function registerResources(array $resources): void
     {
         $this->resources = array_merge($this->resources, $resources);
@@ -166,6 +173,21 @@ class FilamentManager
     public function getGlobalSearchProvider(): GlobalSearchProvider
     {
         return app($this->globalSearchProvider);
+    }
+
+    public function renderHook(string $name): ?string
+    {
+        if (! array_key_exists($name, $this->renderHooks)) {
+            return null;
+        }
+
+        $output = '';
+
+        foreach ($this->renderHooks[$name] as $renderHook) {
+            $output .= (string) app()->call($renderHook);
+        }
+
+        return $output;
     }
 
     public function getNavigation(): array

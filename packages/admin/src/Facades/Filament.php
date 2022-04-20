@@ -35,6 +35,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerNavigationGroups(array $groups)
  * @method static void registerNavigationItems(array $items)
  * @method static void registerPages(array $pages)
+ * @method static void registerRenderHook(string $name, \Closure $callback)
  * @method static void registerResources(array $resources)
  * @method static void registerBeforeCoreScripts(array $scripts)
  * @method static void registerScripts(array $scripts)
@@ -43,6 +44,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerTheme(string $url)
  * @method static void registerUserMenuItems(array $items)
  * @method static void registerWidgets(array $widgets)
+ * @method static ?string renderHook(string $name)
  * @method static void serving(Closure $callback)
  *
  * @see FilamentManager
