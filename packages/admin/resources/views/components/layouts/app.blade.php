@@ -80,7 +80,6 @@
 
             <div class="py-4 shrink-0 filament-main-footer">
                 <x-filament::footer />
-                {{ \Filament\Facades\Filament::renderHook('footer') }}
             </div>
         </div>
     </div>
