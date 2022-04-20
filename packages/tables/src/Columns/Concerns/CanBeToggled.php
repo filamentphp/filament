@@ -8,26 +8,26 @@ trait CanBeToggled
 {
     protected bool | Closure $isToggleable = false;
 
-    protected bool | Closure $isToggledByDefault = false;
+    protected bool | Closure $isToggledHiddenByDefault = false;
 
-    public function toggleable(bool | Closure $condition = true, bool | Closure $isToggledByDefault = false): static
+    public function toggleable(bool | Closure $condition = true, bool | Closure $isToggledHiddenByDefault = false): static
     {
         $this->isToggleable = $condition;
-        $this->isToggledByDefault = $isToggledByDefault;
+        $this->isToggledHiddenByDefault($isToggledHiddenByDefault);
 
         return $this;
     }
 
-    public function toggledByDefault(bool | Closure $condition = true): static
+    public function toggledHiddenByDefault(bool | Closure $condition = true): static
     {
-        $this->isToggledByDefault = $condition;
+        $this->isToggledHiddenByDefault = $condition;
 
         return $this;
     }
 
-    public function isToggledByDefault(): bool
+    public function isToggledHiddenByDefault(): bool
     {
-        return (bool) $this->evaluate($this->isToggledByDefault);
+        return (bool) $this->evaluate($this->isToggledHiddenByDefault);
     }
 
     public function isToggleable(): bool
@@ -35,8 +35,8 @@ trait CanBeToggled
         return (bool) $this->evaluate($this->isToggleable);
     }
 
-    public function isToggled(): bool
+    public function isToggledHidden(): bool
     {
-        return $this->getTable()->getLivewire()->isTableColumnToggled($this->getName());
+        return $this->getTable()->getLivewire()->isTableColumnToggledHidden($this->getName());
     }
 }

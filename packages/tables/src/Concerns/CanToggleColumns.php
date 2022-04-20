@@ -29,7 +29,7 @@ trait CanToggleColumns
                 continue;
             }
 
-            $state[$column->getName()] = ! $column->isToggledByDefault();
+            $state[$column->getName()] = ! $column->isToggledHiddenByDefault();
         }
 
         return $state;
@@ -81,7 +81,7 @@ trait CanToggleColumns
         return 1;
     }
 
-    public function isTableColumnToggled(string $name): bool
+    public function isTableColumnToggledHidden(string $name): bool
     {
         return isset($this->toggledTableColumns[$name]) && ! $this->toggledTableColumns[$name];
     }
