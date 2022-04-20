@@ -181,7 +181,7 @@ class Table extends ViewComponent implements Htmlable
     public function getColumns(): array
     {
         return collect($this->getLivewire()->getCachedTableColumns())
-            ->reject(fn (Column $column): bool => $column->isToggledHidden())
+            ->filter(fn (Column $column): bool => ! $column->isToggledHidden())
             ->toArray();
     }
 

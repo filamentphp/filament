@@ -13,7 +13,7 @@ trait CanBeToggled
     public function toggleable(bool | Closure $condition = true, bool | Closure $isToggledHiddenByDefault = false): static
     {
         $this->isToggleable = $condition;
-        $this->isToggledHiddenByDefault($isToggledHiddenByDefault);
+        $this->toggledHiddenByDefault($isToggledHiddenByDefault);
 
         return $this;
     }
