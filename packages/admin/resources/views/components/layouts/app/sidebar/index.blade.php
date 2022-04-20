@@ -80,5 +80,4 @@
     </nav>
 
     <x-filament::layouts.app.sidebar.footer />
-    {{ \Filament\Facades\Filament::renderHook('sidebar.footer') }}
 </aside>
