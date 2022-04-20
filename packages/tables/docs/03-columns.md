@@ -135,7 +135,37 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')->default('Untitled')
 ```
 
-### Responsive layouts
+### Hiding columns
+
+To hide a column conditionally, you may use the `hidden()` and `visible()` methods, whichever you prefer:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('role')->hidden(! auth()->user()->isAdmin())
+// or
+TextColumn::make('role')->visible(auth()->user()->isAdmin())
+```
+
+#### Toggling column visibility
+
+Users may hide or show columns themselves in the table. To make a column toggleable, use the `toggleable()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('id')->toggleable()
+```
+
+By default, toggleable columns are visible. To make them hidden instead:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('id')->toggleable(isToggledHiddenByDefault: true)
+```
+
+#### Responsive layouts
 
 You may choose to show and hide columns based on the responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) of the browser. To do this, you may use a `visibleFrom()` or `hiddenFrom()` method:
 
