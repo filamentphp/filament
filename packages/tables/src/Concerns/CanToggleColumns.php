@@ -25,11 +25,11 @@ trait CanToggleColumns
         $state = [];
 
         foreach ($this->getCachedTableColumns() as $column) {
-            if (! $column->isToggledByDefault()) {
+            if (! $column->isToggleable()) {
                 continue;
             }
 
-            $state[$column->getName()] = true;
+            $state[$column->getName()] = ! $column->isToggledByDefault();
         }
 
         return $state;
@@ -83,7 +83,7 @@ trait CanToggleColumns
 
     public function isTableColumnToggled(string $name): bool
     {
-        return isset($this->toggledTableColumns[$name]) && (bool) $this->toggledTableColumns[$name];
+        return isset($this->toggledTableColumns[$name]) && ! $this->toggledTableColumns[$name];
     }
 
     public function getTableColumnToggleFormStateSessionKey(): string

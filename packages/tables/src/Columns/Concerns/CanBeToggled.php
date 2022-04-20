@@ -27,7 +27,7 @@ trait CanBeToggled
 
     public function isToggledByDefault(): bool
     {
-        return $this->isToggleable() && (bool) $this->evaluate($this->isToggledByDefault);
+        return (bool) $this->evaluate($this->isToggledByDefault);
     }
 
     public function isToggleable(): bool
