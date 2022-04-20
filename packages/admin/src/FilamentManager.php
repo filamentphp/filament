@@ -178,11 +178,12 @@ class FilamentManager
 
     public function renderHook(string $name): HtmlString
     {
-        $output = collect($this->renderHooks[$name] ?? [])
-            ->map(fn (callable $hook): string => (string) app()->call($renderHook))
-            ->implode();
+        $hooks = array_map(
+            fn (callable $hook): string => (string) app()->call($hook),
+            $this->renderHooks[$name] ?? [],
+        );
 
-        return new HtmlString($output);
+        return new HtmlString(implode('', $hooks));
     }
 
     public function getNavigation(): array

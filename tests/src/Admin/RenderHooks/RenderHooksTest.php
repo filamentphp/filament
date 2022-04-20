@@ -8,7 +8,7 @@ use Illuminate\Support\HtmlString;
 uses(TestCase::class);
 
 test('render hooks can be registered', function () {
-    Filament::registerRenderHook('foo', function () {
+    Filament::registerRenderHook('foo', function (): string {
         return Blade::render('bar');
     });
 
@@ -18,11 +18,11 @@ test('render hooks can be registered', function () {
 });
 
 test('render hooks can render view files', function () {
-    Filament::registerRenderHook('view-foo', function () {
+    Filament::registerRenderHook('view-foo', function (): \Illuminate\Contracts\View\View {
         return view('fixtures.pages.render-hooks.foo');
     });
 
     expect(Filament::renderHook('view-foo'))
         ->toBeInstanceOf(HtmlString::class)
-        ->toHtml()->toContain('Hello, foo!');
+        ->toHtml()->toContain('bar');
 });

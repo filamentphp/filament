@@ -1,1 +1,1 @@
-Hello, foo!
+bar
