@@ -75,6 +75,16 @@ class MakeResourceCommand extends Command
             }
         }
 
+        $getRelations = '';
+        if (! $this->option('simple')) {
+            $getRelations .= PHP_EOL."public static function getRelations(): array";
+            $getRelations .= PHP_EOL."{";
+            $getRelations .= PHP_EOL."    return [";
+            $getRelations .= PHP_EOL."        //";
+            $getRelations .= PHP_EOL."    ];";
+            $getRelations .= PHP_EOL."}".PHP_EOL;
+        }
+
         $this->copyStubToApp('Resource', $resourcePath, [
             'formSchema' => $this->option('generate') ? $this->getResourceFormSchema(
                 ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass
@@ -88,6 +98,7 @@ class MakeResourceCommand extends Command
                 ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass
             ) : $this->indentString('//'),
             'pages' => $this->indentString($pages, 3),
+            'getRelations' => $this->indentString($getRelations, 1),
         ]);
 
         if ($this->option('simple')) {
