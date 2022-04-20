@@ -9,6 +9,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\HtmlString;
 
 /**
  * @method static StatefulGuard auth()
@@ -44,7 +45,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerTheme(string $url)
  * @method static void registerUserMenuItems(array $items)
  * @method static void registerWidgets(array $widgets)
- * @method static ?string renderHook(string $name)
+ * @method static HtmlString renderHook(string $name)
  * @method static void serving(Closure $callback)
  *
  * @see FilamentManager
