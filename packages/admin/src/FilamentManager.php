@@ -14,6 +14,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\HtmlString;
 
 class FilamentManager
 {
@@ -46,6 +47,8 @@ class FilamentManager
     protected array $widgets = [];
 
     protected ?Closure $navigationBuilder = null;
+
+    protected array $renderHooks = [];
 
     public function auth(): Guard
     {
@@ -109,6 +112,11 @@ class FilamentManager
         $this->pages = array_merge($this->pages, $pages);
     }
 
+    public function registerRenderHook(string $name, Closure $callback): void
+    {
+        $this->renderHooks[$name][] = $callback;
+    }
+
     public function registerResources(array $resources): void
     {
         $this->resources = array_merge($this->resources, $resources);
@@ -166,6 +174,16 @@ class FilamentManager
     public function getGlobalSearchProvider(): GlobalSearchProvider
     {
         return app($this->globalSearchProvider);
+    }
+
+    public function renderHook(string $name): HtmlString
+    {
+        $hooks = array_map(
+            fn (callable $hook): string => (string) app()->call($hook),
+            $this->renderHooks[$name] ?? [],
+        );
+
+        return new HtmlString(implode('', $hooks));
     }
 
     public function getNavigation(): array
