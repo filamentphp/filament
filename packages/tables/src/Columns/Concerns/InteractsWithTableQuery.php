@@ -70,24 +70,25 @@ trait InteractsWithTableQuery
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
             if (method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName)) {
-                $searchColumnName = $searchColumnName . '->' . app()->getLocale();
+                $whereClause = $isFirst ? 'whereRaw' : 'orWhereRaw';
+                $query->{$whereClause}('LOWER('.$searchColumnName . '->"$.'.app()->getLocale().'") LIKE ?', "%{$searchQuery}%");
             }
-
-            $query->when(
-                $this->queriesRelationships(),
-                fn ($query) => $query->{"{$whereClause}Relation"}(
-                    $this->getRelationshipName(),
-                    $searchColumnName,
-                    $searchOperator,
-                    "%{$searchQuery}%",
-                ),
-                fn ($query) => $query->{$whereClause}(
-                    $searchColumnName,
-                    $searchOperator,
-                    "%{$searchQuery}%",
-                ),
-            );
-
+            else {
+                $query->when(
+                    $this->queriesRelationships(),
+                    fn($query) => $query->{"{$whereClause}Relation"}(
+                        $this->getRelationshipName(),
+                        $searchColumnName,
+                        $searchOperator,
+                        "%{$searchQuery}%",
+                    ),
+                    fn($query) => $query->{$whereClause}(
+                        $searchColumnName,
+                        $searchOperator,
+                        "%{$searchQuery}%",
+                    ),
+                );
+            }
             $isFirst = false;
         }
 
