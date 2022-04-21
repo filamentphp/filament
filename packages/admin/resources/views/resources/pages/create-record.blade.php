@@ -5,10 +5,10 @@
         <x-filament::form.actions :actions="$this->getCachedFormActions()" />
     </x-filament::form>
 
-    @if (config('filament.shortcuts_enabled'))
+    @if (config('filament.shortcuts.enabled'))
         <div x-data
              x-init="
-                Mousetrap.bindGlobal(['ctrl+s', 'command+s'], $event => {
+                Mousetrap.bindGlobal(@js(config('filament.shortcuts.bindings.save')), $event => {
                     $event.preventDefault()
                     
                     $wire.create()

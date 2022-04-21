@@ -222,7 +222,13 @@ return [
     |
     */
 
-    'shortcuts_enabled' => true,
+    'shortcuts' => [
+        'enabled'  => false,
+        'bindings' => [
+            'save' => ['ctrl+s', 'command+s'],
+            'new' => ['ctrl+o', 'command+o'],
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------
