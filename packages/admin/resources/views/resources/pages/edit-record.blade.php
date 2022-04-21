@@ -17,8 +17,7 @@
             Mousetrap.bindGlobal(['ctrl+s', 'command+s'], $event => {
                 $event.preventDefault()
 
-                document.getElementsByClassName('filament-form-actions')[0].
-                    getElementsByTagName('button')[0].click()
+                $wire.save()
             })
         "
     ></div>

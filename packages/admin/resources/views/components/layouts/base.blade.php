@@ -56,9 +56,6 @@
                 }
             </script>
         @endif
-        
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.5/mousetrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.5/plugins/global-bind/mousetrap-global-bind.min.js"></script>
     </head>
 
     <body @class([
