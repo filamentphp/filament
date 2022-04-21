@@ -72,7 +72,7 @@ trait InteractsWithTableQuery
             $query->when(
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName),
                 fn (Builder $query): Builder => $query->{"{$whereClause}Raw"}(
-                    "lower({$searchColumnName}->" . app()->getLocale() . ') '.$searchOperator.' ?',
+                    'lower('.$searchColumnName . '->"$.'.app()->getLocale().'") '.$searchOperator.' ?',
                     "%{$searchQuery}%",
                 ),
                 fn (Builder $query): Builder => $query->when(
@@ -90,7 +90,7 @@ trait InteractsWithTableQuery
                     ),
                 ),
             );
-            
+
             $isFirst = false;
         }
 
