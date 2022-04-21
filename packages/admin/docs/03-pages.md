@@ -102,6 +102,28 @@ ButtonAction::make('delete')
 
 > Note: The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` callback.
 
+#### Password confirmation modals
+
+You can also protect sensitive actions with a simple password confirmation modal like so:
+
+```php
+use Filament\Pages\Actions\ButtonAction;
+
+ButtonAction::make('delete')
+    ->action(fn () => $this->record->delete())
+    ->requiresConfirmation()
+    ->modalHeading("Confirm password")
+    ->modalSubheading(
+        "Please confirm your password to complete this action."
+    )
+    ->form([
+        Forms\Components\TextInput::make("current_password")
+            ->required()
+            ->password()
+            ->rule("current_password"),
+    ])
+```
+
 #### Custom forms
 
 You may also render a form in this modal to collect extra information from the user before the action runs.
