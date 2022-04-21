@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Checkbox;
+use Illuminate\Support\Arr;
 
 /**
  * @property ComponentContainer $toggleTableColumnForm
@@ -29,7 +30,7 @@ trait CanToggleColumns
                 continue;
             }
 
-            $state[$column->getName()] = ! $column->isToggledHiddenByDefault();
+            data_set($state, $column->getName(), ! $column->isToggledHiddenByDefault());
         }
 
         return $state;
@@ -83,7 +84,7 @@ trait CanToggleColumns
 
     public function isTableColumnToggledHidden(string $name): bool
     {
-        return isset($this->toggledTableColumns[$name]) && ! $this->toggledTableColumns[$name];
+        return Arr::has($this->toggledTableColumns, $name) && ! data_get($this->toggledTableColumns, $name);
     }
 
     public function getTableColumnToggleFormStateSessionKey(): string
