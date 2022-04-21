@@ -65,24 +65,27 @@ class MakeResourceCommand extends Command
         }
 
         $pages = '';
-        $pages .= "'index' => Pages\\".($this->option('simple') ? $manageResourcePageClass : $listResourcePageClass)."::route('/'),";
+        $pages .= '\'index\' => Pages\\' . ($this->option('simple') ? $manageResourcePageClass : $listResourcePageClass) . '::route(\'/\'),';
         
         if (! $this->option('simple')) {
-            $pages .= PHP_EOL."'create' => Pages\\".$createResourcePageClass."::route('/create'),";
-            $pages .= PHP_EOL."'edit' => Pages\\".$editResourcePageClass."::route('/{record}/edit'),";
+            $pages .= PHP_EOL . "'create' => Pages\\{$createResourcePageClass}::route('/create'),";
+            
+            $pages .= PHP_EOL . "'edit' => Pages\\{$editResourcePageClass}::route('/{record}/edit'),";
+            
             if ($this->option('view')) {
-                $pages .= PHP_EOL."'view' => Pages\\".$viewResourcePageClass."::route('/{record}'),";
+                $pages .= PHP_EOL . "'view' => Pages\\"{$viewResourcePageClass}::route('/{record}'),";
             }
         }
 
-        $getRelations = '';
+        $relations = '';
+        
         if (! $this->option('simple')) {
-            $getRelations .= PHP_EOL."public static function getRelations(): array";
-            $getRelations .= PHP_EOL."{";
-            $getRelations .= PHP_EOL."    return [";
-            $getRelations .= PHP_EOL."        //";
-            $getRelations .= PHP_EOL."    ];";
-            $getRelations .= PHP_EOL."}".PHP_EOL;
+            $relations .= PHP_EOL . 'public static function getRelations(): array';
+            $relations .= PHP_EOL . '{';
+            $relations .= PHP_EOL . '    return [';
+            $relations .= PHP_EOL . '        //';
+            $relations .= PHP_EOL . '    ];';
+            $relations .= PHP_EOL . '}' . PHP_EOL;
         }
 
         $this->copyStubToApp('Resource', $resourcePath, [
@@ -98,7 +101,7 @@ class MakeResourceCommand extends Command
                 ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass
             ) : $this->indentString('//'),
             'pages' => $this->indentString($pages, 3),
-            'getRelations' => $this->indentString($getRelations, 1),
+            'relations' => $this->indentString($relations, 1),
         ]);
 
         if ($this->option('simple')) {
