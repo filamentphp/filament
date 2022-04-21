@@ -228,7 +228,7 @@ use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Blade;
 
 Filament::registerRenderHook(
-    'body.end',
+    'body.start',
     fn (): string => Blade::render('@livewire(\'livewire-ui-modal\')'),
 );
 ```
