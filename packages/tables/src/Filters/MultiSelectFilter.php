@@ -79,7 +79,8 @@ class MultiSelectFilter extends Filter
                 ->label($this->getLabel())
                 ->options($this->getOptions())
                 ->placeholder($this->getPlaceholder())
-                ->default($this->getDefaultState()),
+                ->default($this->getDefaultState())
+                ->columnSpan($this->getColumnSpan()),
         ];
     }
 }

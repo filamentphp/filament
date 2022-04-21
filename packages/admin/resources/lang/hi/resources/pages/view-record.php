@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => ':label देखें',
+
     'breadcrumb' => 'देखें',
 
     'actions' => [

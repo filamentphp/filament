@@ -72,7 +72,13 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->singleton('filament', function (): FilamentManager {
+        $this->app->resolving('filament', function (): void {
+            $this->discoverPages();
+            $this->discoverResources();
+            $this->discoverWidgets();
+        });
+
+        $this->app->scoped('filament', function (): FilamentManager {
             return app(FilamentManager::class);
         });
 
@@ -80,10 +86,6 @@ class FilamentServiceProvider extends PackageServiceProvider
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
 
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
-
-        $this->discoverPages();
-        $this->discoverResources();
-        $this->discoverWidgets();
     }
 
     public function packageBooted(): void
@@ -98,9 +100,7 @@ class FilamentServiceProvider extends PackageServiceProvider
             MirrorConfigToSubpackages::class,
         ]);
 
-        Livewire::listen('component.hydrate', function ($component) {
-            $this->app->singleton(Component::class, fn () => $component);
-        });
+        Livewire::listen('component.dehydrate', [NotificationManager::class, 'handleLivewireResponses']);
 
         Livewire::component('filament.core.auth.login', Login::class);
         Livewire::component('filament.core.global-search', GlobalSearch::class);

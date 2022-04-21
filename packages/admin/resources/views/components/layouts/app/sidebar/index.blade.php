@@ -46,10 +46,11 @@
 
     <nav class="flex-1 overflow-y-auto py-6 filament-sidebar-nav">
         <x-filament::layouts.app.sidebar.start />
+        {{ \Filament\Facades\Filament::renderHook('sidebar.start') }}
 
         <ul class="space-y-6 px-6">
-            @foreach (\Filament\Facades\Filament::getNavigation() as $group => $items)
-                <x-filament::layouts.app.sidebar.group :label="$group">
+            @foreach (\Filament\Facades\Filament::getNavigation() as $group => ['items' => $items, 'collapsible' => $collapsible])
+                <x-filament::layouts.app.sidebar.group :label="$group" :collapsible="$collapsible">
                     @foreach ($items as $item)
                         <x-filament::layouts.app.sidebar.item
                             :active="$item->isActive()"
@@ -75,6 +76,7 @@
         </ul>
 
         <x-filament::layouts.app.sidebar.end />
+        {{ \Filament\Facades\Filament::renderHook('sidebar.end') }}
     </nav>
 
     <x-filament::layouts.app.sidebar.footer />

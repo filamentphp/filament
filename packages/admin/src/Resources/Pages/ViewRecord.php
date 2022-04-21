@@ -82,10 +82,14 @@ class ViewRecord extends Page
         }
 
         if (filled($recordTitle = $this->getRecordTitle())) {
-            return $recordTitle;
+            return __('filament::resources/pages/view-record.title', [
+                'label' => $recordTitle,
+            ]);
         }
 
-        return Str::title(static::getResource()::getLabel());
+        return __('filament::resources/pages/view-record.title', [
+            'label' => Str::title(static::getResource()::getLabel()),
+        ]);
     }
 
     protected function getForms(): array

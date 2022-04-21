@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => 'Ver :label',
+
     'breadcrumb' => 'Ver',
 
     'actions' => [

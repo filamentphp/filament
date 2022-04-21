@@ -91,7 +91,7 @@
                 role="dialog"
                 x-cloak
                 @class([
-                    'absolute z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-sm',
+                    'absolute z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-md',
                     'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
                     'p-4 w-64' => $hasDate(),
                 ])

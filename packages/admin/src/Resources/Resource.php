@@ -86,9 +86,13 @@ class Resource
 
     public static function resolveRecordRouteBinding($key): ?Model
     {
-        return static::getEloquentQuery()
-            ->where(static::getRecordRouteKeyName(), $key)
-            ->first();
+        if (static::shouldUseRecordRouteKeyName()) {
+            return static::getEloquentQuery()
+                ->where(static::getRecordRouteKeyName(), $key)
+                ->first();
+        }
+
+        return app(static::getModel())->resolveRouteBinding($key);
     }
 
     public static function can(string $action, ?Model $record = null): bool
@@ -265,6 +269,11 @@ class Resource
         return "filament.resources.{$slug}";
     }
 
+    public static function shouldUseRecordRouteKeyName(): bool
+    {
+        return filled(static::$recordRouteKeyName);
+    }
+
     public static function getRecordRouteKeyName(): string
     {
         return static::$recordRouteKeyName ?? app(static::getModel())->getRouteKeyName();
@@ -360,9 +369,19 @@ class Resource
         return static::$navigationGroup;
     }
 
+    public static function navigationGroup(?string $group): void
+    {
+        static::$navigationGroup = $group;
+    }
+
     protected static function getNavigationIcon(): string
     {
         return static::$navigationIcon ?? 'heroicon-o-collection';
+    }
+
+    public static function navigationIcon(?string $icon): void
+    {
+        static::$navigationIcon = $icon;
     }
 
     protected static function getNavigationLabel(): string
@@ -378,6 +397,11 @@ class Resource
     protected static function getNavigationSort(): ?int
     {
         return static::$navigationSort;
+    }
+
+    public static function navigationSort(?int $sort): void
+    {
+        static::$navigationSort = $sort;
     }
 
     protected static function getNavigationUrl(): string

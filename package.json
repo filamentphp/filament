@@ -11,6 +11,7 @@
         "@babel/runtime": "^7.15.3",
         "@github/file-attachment-element": "^2.0.1",
         "@github/markdown-toolbar-element": "^1.5.1",
+        "vanilla-colorful": "^0.6.2",
         "@ryangjchandler/alpine-tooltip": "^1.2.0",
         "@tailwindcss/forms": "^0.4.0",
         "@tailwindcss/typography": "^0.5.0",

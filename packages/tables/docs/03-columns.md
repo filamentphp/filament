@@ -135,7 +135,37 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')->default('Untitled')
 ```
 
-### Responsive layouts
+### Hiding columns
+
+To hide a column conditionally, you may use the `hidden()` and `visible()` methods, whichever you prefer:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('role')->hidden(! auth()->user()->isAdmin())
+// or
+TextColumn::make('role')->visible(auth()->user()->isAdmin())
+```
+
+#### Toggling column visibility
+
+Users may hide or show columns themselves in the table. To make a column toggleable, use the `toggleable()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('id')->toggleable()
+```
+
+By default, toggleable columns are visible. To make them hidden instead:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('id')->toggleable(isToggledHiddenByDefault: true)
+```
+
+#### Responsive layouts
 
 You may choose to show and hide columns based on the responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) of the browser. To do this, you may use a `visibleFrom()` or `hiddenFrom()` method:
 
@@ -156,6 +186,30 @@ TextColumn::make('users_count')->counts('users')
 ```
 
 In this example, `users` is the name of the relationship to count from. The name of the column must be `users_count`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#counting-related-models) for storing the result.
+
+### Determining relationship existence
+
+If you simply wish to indicate whether related records exist in a column, you may use the `exists()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('users_exists')->exists('users')
+```
+
+In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/9.x/eloquent-relationships#other-aggregate-functions) for storing the result.
+
+### Aggregating relationships
+
+Filament provides several methods for aggregating a relationship field, including `avg()`, `max()`, `min()` and `sum()`. For instance, if you you wish to show the average of a field on all related records in a column, you may use the `avg()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('users_avg_age')->avg('users', 'age')
+```
+
+In this example, `users` is the name of the relationship, while `age` is the field that is being averaged. The name of the column must be `users_avg_age`, as this is the convention that [Laravel uses](https://laravel.com/docs/9.x/eloquent-relationships#other-aggregate-functions) for storing the result.
 
 ### Tooltips
 

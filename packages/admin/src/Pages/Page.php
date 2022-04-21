@@ -35,7 +35,7 @@ class Page extends Component implements Forms\Contracts\HasForms
 
     protected static string $view;
 
-    protected static string | array  $middlewares = [];
+    protected static string | array $middlewares = [];
 
     public static function registerNavigationItems(): void
     {

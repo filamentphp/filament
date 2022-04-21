@@ -10,15 +10,27 @@ use Illuminate\Support\Str;
 
 trait InteractsWithTableQuery
 {
-    public function applyRelationshipCount(Builder $query): Builder
+    public function applyRelationshipAggregates(Builder $query): Builder
     {
-        $relationship = $this->getRelationshipToCount();
-
-        if (filled($relationship)) {
-            return $query->withCount([$relationship]);
-        }
-
-        return $query;
+        return $query->when(
+            filled([$this->getRelationshipToAvg(), $this->getColumnToAvg()]),
+            fn ($query) => $query->withAvg($this->getRelationshipToAvg(), $this->getColumnToAvg())
+        )->when(
+            filled($this->getRelationshipToCount()),
+            fn ($query) => $query->withCount([$this->getRelationshipToCount()])
+        )->when(
+            filled($this->getRelationshipToExistenceCheck()),
+            fn ($query) => $query->withExists($this->getRelationshipToExistenceCheck())
+        )->when(
+            filled([$this->getRelationshipToMax(), $this->getColumnToMax()]),
+            fn ($query) => $query->withMax($this->getRelationshipToMax(), $this->getColumnToMax())
+        )->when(
+            filled([$this->getRelationshipToMin(), $this->getColumnToMin()]),
+            fn ($query) => $query->withMin($this->getRelationshipToMin(), $this->getColumnToMin())
+        )->when(
+            filled([$this->getRelationshipToSum(), $this->getColumnToSum()]),
+            fn ($query) => $query->withSum($this->getRelationshipToSum(), $this->getColumnToSum())
+        );
     }
 
     public function applyEagerLoading(Builder $query): Builder
@@ -57,22 +69,25 @@ trait InteractsWithTableQuery
         foreach ($this->getSearchColumns() as $searchColumnName) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
-            if (method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName)) {
-                $searchColumnName = $searchColumnName . '->' . app()->getLocale();
-            }
-
             $query->when(
-                $this->queriesRelationships(),
-                fn ($query) => $query->{"{$whereClause}Relation"}(
-                    $this->getRelationshipName(),
-                    $searchColumnName,
-                    $searchOperator,
+                method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName),
+                fn (Builder $query): Builder => $query->{"{$whereClause}Raw"}(
+                    "lower({$searchColumnName}->\"$." . app()->getLocale() . "\") {$searchOperator} ?",
                     "%{$searchQuery}%",
                 ),
-                fn ($query) => $query->{$whereClause}(
-                    $searchColumnName,
-                    $searchOperator,
-                    "%{$searchQuery}%",
+                fn (Builder $query): Builder => $query->when(
+                    $this->queriesRelationships(),
+                    fn (Builder $query): Builder => $query->{"{$whereClause}Relation"}(
+                        $this->getRelationshipName(),
+                        $searchColumnName,
+                        $searchOperator,
+                        "%{$searchQuery}%",
+                    ),
+                    fn (Builder $query): Builder => $query->{$whereClause}(
+                        $searchColumnName,
+                        $searchOperator,
+                        "%{$searchQuery}%",
+                    ),
                 ),
             );
 

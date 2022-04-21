@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => 'Mostrar :label',
+
     'breadcrumb' => 'Mostrar',
 
     'actions' => [

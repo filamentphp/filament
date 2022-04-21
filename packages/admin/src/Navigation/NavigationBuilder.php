@@ -14,11 +14,14 @@ class NavigationBuilder
     /** @var \Filament\Navigation\NavigationItem[] */
     protected array $items = [];
 
-    public function group(string $name, array $items = []): static
+    public function group(string $name, array $items = [], bool $collapsible = true): static
     {
-        $this->groups[$name] = collect($items)->map(
-            fn (NavigationItem $item, int $index) => $item->group($name)->sort($index),
-        )->toArray();
+        $this->groups[$name] = [
+            'items' => collect($items)->map(
+                fn (NavigationItem $item, int $index) => $item->group($name)->sort($index),
+            )->toArray(),
+            'collapsible' => $collapsible,
+        ];
 
         return $this;
     }

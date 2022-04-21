@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => 'Podgląd :label',
+
     'breadcrumb' => 'Podgląd',
 
     'actions' => [

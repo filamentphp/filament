@@ -85,7 +85,6 @@ class EditRecord extends Page implements HasFormActions
             $this->notify(
                 'success',
                 $this->getSavedNotificationMessage(),
-                isAfterRedirect: $shouldRedirect,
             );
         }
 
@@ -132,7 +131,6 @@ class EditRecord extends Page implements HasFormActions
             $this->notify(
                 'success',
                 $this->getDeletedNotificationMessage(),
-                isAfterRedirect: true,
             );
         }
 

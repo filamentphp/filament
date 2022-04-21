@@ -65,6 +65,17 @@ In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to
 ],
 ```
 
+If you use a [custom theme](#building-themes), make sure to load the Tippy's CSS files as well:
+
+```bash
+npm install tippy.js --save-dev
+```
+
+```css
+@import '~tippy.js/dist/tippy.css';
+@import '~tippy.js/themes/light.css';
+```
+
 ## Building themes
 
 Filament allows you to change the fonts and color scheme used in the UI, by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".
@@ -205,3 +216,42 @@ In `config/filament.php`, set the `layouts.notifications.alignment` to any value
     ],
 ],
 ```
+
+## Render hooks
+
+Filament allows you to render Blade content at various points in the admin panel layout. This is useful for integrations with packages like [`wire-elements/modal`](https://github.com/wire-elements/modal) which require you to add a Livewire component to your app.
+
+Here's an example, integrating [`wire-elements/modal`](https://github.com/wire-elements/modal) with Filament in a service provider:
+
+```php
+use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Blade;
+
+Filament::registerRenderHook(
+    'body.start',
+    fn (): string => Blade::render('@livewire(\'livewire-ui-modal\')'),
+);
+```
+
+You could also render view content from a file:
+
+```php
+use Filament\Facades\Filament;
+use Illuminate\Contracts\View\View;
+
+Filament::registerRenderHook(
+    'body.start',
+    fn (): View => view('impersonation-banner'),
+);
+```
+
+The available hooks are as follows:
+
+- `body.start` - after `<body>`
+- `body.end` - before `</body>`
+- `global-search.start` - after [global search](resources#global-search) input
+- `global-search.end` - before [global search](resources#global-search) input
+- `head.start` - after `<head>`
+- `head.end` - before `</head>`
+- `sidebar.start` - after [sidebar](navigation) content
+- `sidebar.end` - before [sidebar](navigation) content

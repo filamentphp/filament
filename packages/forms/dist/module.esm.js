@@ -30,122 +30,122 @@ var __toModule = (module) => {
 
 // node_modules/dayjs/plugin/customParseFormat.js
 var require_customParseFormat = __commonJS((exports, module) => {
-  !function(t2, e2) {
-    typeof exports == "object" && typeof module != "undefined" ? module.exports = e2() : typeof define == "function" && define.amd ? define(e2) : (t2 = typeof globalThis != "undefined" ? globalThis : t2 || self).dayjs_plugin_customParseFormat = e2();
+  !function(e2, t2) {
+    typeof exports == "object" && typeof module != "undefined" ? module.exports = t2() : typeof define == "function" && define.amd ? define(t2) : (e2 = typeof globalThis != "undefined" ? globalThis : e2 || self).dayjs_plugin_customParseFormat = t2();
   }(exports, function() {
     "use strict";
-    var t2 = {LTS: "h:mm:ss A", LT: "h:mm A", L: "MM/DD/YYYY", LL: "MMMM D, YYYY", LLL: "MMMM D, YYYY h:mm A", LLLL: "dddd, MMMM D, YYYY h:mm A"}, e2 = /(\[[^[]*\])|([-:/.()\s]+)|(A|a|YYYY|YY?|MM?M?M?|Do|DD?|hh?|HH?|mm?|ss?|S{1,3}|z|ZZ?)/g, n2 = /\d\d/, r2 = /\d\d?/, i = /\d*[^\s\d-_:/()]+/, o2 = {}, s2 = function(t3) {
-      return (t3 = +t3) + (t3 > 68 ? 1900 : 2e3);
+    var e2 = {LTS: "h:mm:ss A", LT: "h:mm A", L: "MM/DD/YYYY", LL: "MMMM D, YYYY", LLL: "MMMM D, YYYY h:mm A", LLLL: "dddd, MMMM D, YYYY h:mm A"}, t2 = /(\[[^[]*\])|([-:/.()\s]+)|(A|a|YYYY|YY?|MM?M?M?|Do|DD?|hh?|HH?|mm?|ss?|S{1,3}|z|ZZ?)/g, n2 = /\d\d/, r2 = /\d\d?/, i = /\d*[^\s\d-_:/()]+/, o2 = {}, s2 = function(e3) {
+      return (e3 = +e3) + (e3 > 68 ? 1900 : 2e3);
     };
-    var a2 = function(t3) {
-      return function(e3) {
-        this[t3] = +e3;
+    var a2 = function(e3) {
+      return function(t3) {
+        this[e3] = +t3;
       };
-    }, f = [/[+-]\d\d:?(\d\d)?|Z/, function(t3) {
-      (this.zone || (this.zone = {})).offset = function(t4) {
-        if (!t4)
+    }, f = [/[+-]\d\d:?(\d\d)?|Z/, function(e3) {
+      (this.zone || (this.zone = {})).offset = function(e4) {
+        if (!e4)
           return 0;
-        if (t4 === "Z")
+        if (e4 === "Z")
           return 0;
-        var e3 = t4.match(/([+-]|\d\d)/g), n3 = 60 * e3[1] + (+e3[2] || 0);
-        return n3 === 0 ? 0 : e3[0] === "+" ? -n3 : n3;
-      }(t3);
-    }], u = function(t3) {
-      var e3 = o2[t3];
-      return e3 && (e3.indexOf ? e3 : e3.s.concat(e3.f));
-    }, h = function(t3, e3) {
+        var t3 = e4.match(/([+-]|\d\d)/g), n3 = 60 * t3[1] + (+t3[2] || 0);
+        return n3 === 0 ? 0 : t3[0] === "+" ? -n3 : n3;
+      }(e3);
+    }], h = function(e3) {
+      var t3 = o2[e3];
+      return t3 && (t3.indexOf ? t3 : t3.s.concat(t3.f));
+    }, u = function(e3, t3) {
       var n3, r3 = o2.meridiem;
       if (r3) {
         for (var i2 = 1; i2 <= 24; i2 += 1)
-          if (t3.indexOf(r3(i2, 0, e3)) > -1) {
+          if (e3.indexOf(r3(i2, 0, t3)) > -1) {
             n3 = i2 > 12;
             break;
           }
       } else
-        n3 = t3 === (e3 ? "pm" : "PM");
+        n3 = e3 === (t3 ? "pm" : "PM");
       return n3;
-    }, d = {A: [i, function(t3) {
-      this.afternoon = h(t3, false);
-    }], a: [i, function(t3) {
-      this.afternoon = h(t3, true);
-    }], S: [/\d/, function(t3) {
-      this.milliseconds = 100 * +t3;
-    }], SS: [n2, function(t3) {
-      this.milliseconds = 10 * +t3;
-    }], SSS: [/\d{3}/, function(t3) {
-      this.milliseconds = +t3;
-    }], s: [r2, a2("seconds")], ss: [r2, a2("seconds")], m: [r2, a2("minutes")], mm: [r2, a2("minutes")], H: [r2, a2("hours")], h: [r2, a2("hours")], HH: [r2, a2("hours")], hh: [r2, a2("hours")], D: [r2, a2("day")], DD: [n2, a2("day")], Do: [i, function(t3) {
-      var e3 = o2.ordinal, n3 = t3.match(/\d+/);
-      if (this.day = n3[0], e3)
+    }, d = {A: [i, function(e3) {
+      this.afternoon = u(e3, false);
+    }], a: [i, function(e3) {
+      this.afternoon = u(e3, true);
+    }], S: [/\d/, function(e3) {
+      this.milliseconds = 100 * +e3;
+    }], SS: [n2, function(e3) {
+      this.milliseconds = 10 * +e3;
+    }], SSS: [/\d{3}/, function(e3) {
+      this.milliseconds = +e3;
+    }], s: [r2, a2("seconds")], ss: [r2, a2("seconds")], m: [r2, a2("minutes")], mm: [r2, a2("minutes")], H: [r2, a2("hours")], h: [r2, a2("hours")], HH: [r2, a2("hours")], hh: [r2, a2("hours")], D: [r2, a2("day")], DD: [n2, a2("day")], Do: [i, function(e3) {
+      var t3 = o2.ordinal, n3 = e3.match(/\d+/);
+      if (this.day = n3[0], t3)
         for (var r3 = 1; r3 <= 31; r3 += 1)
-          e3(r3).replace(/\[|\]/g, "") === t3 && (this.day = r3);
-    }], M: [r2, a2("month")], MM: [n2, a2("month")], MMM: [i, function(t3) {
-      var e3 = u("months"), n3 = (u("monthsShort") || e3.map(function(t4) {
-        return t4.substr(0, 3);
-      })).indexOf(t3) + 1;
+          t3(r3).replace(/\[|\]/g, "") === e3 && (this.day = r3);
+    }], M: [r2, a2("month")], MM: [n2, a2("month")], MMM: [i, function(e3) {
+      var t3 = h("months"), n3 = (h("monthsShort") || t3.map(function(e4) {
+        return e4.slice(0, 3);
+      })).indexOf(e3) + 1;
       if (n3 < 1)
         throw new Error();
       this.month = n3 % 12 || n3;
-    }], MMMM: [i, function(t3) {
-      var e3 = u("months").indexOf(t3) + 1;
-      if (e3 < 1)
+    }], MMMM: [i, function(e3) {
+      var t3 = h("months").indexOf(e3) + 1;
+      if (t3 < 1)
         throw new Error();
-      this.month = e3 % 12 || e3;
-    }], Y: [/[+-]?\d+/, a2("year")], YY: [n2, function(t3) {
-      this.year = s2(t3);
+      this.month = t3 % 12 || t3;
+    }], Y: [/[+-]?\d+/, a2("year")], YY: [n2, function(e3) {
+      this.year = s2(e3);
     }], YYYY: [/\d{4}/, a2("year")], Z: f, ZZ: f};
     function c2(n3) {
       var r3, i2;
       r3 = n3, i2 = o2 && o2.formats;
-      for (var s3 = (n3 = r3.replace(/(\[[^\]]+])|(LTS?|l{1,4}|L{1,4})/g, function(e3, n4, r4) {
+      for (var s3 = (n3 = r3.replace(/(\[[^\]]+])|(LTS?|l{1,4}|L{1,4})/g, function(t3, n4, r4) {
         var o3 = r4 && r4.toUpperCase();
-        return n4 || i2[r4] || t2[r4] || i2[o3].replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, function(t3, e4, n5) {
-          return e4 || n5.slice(1);
+        return n4 || i2[r4] || e2[r4] || i2[o3].replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, function(e3, t4, n5) {
+          return t4 || n5.slice(1);
         });
-      })).match(e2), a3 = s3.length, f2 = 0; f2 < a3; f2 += 1) {
-        var u2 = s3[f2], h2 = d[u2], c3 = h2 && h2[0], l = h2 && h2[1];
-        s3[f2] = l ? {regex: c3, parser: l} : u2.replace(/^\[|\]$/g, "");
+      })).match(t2), a3 = s3.length, f2 = 0; f2 < a3; f2 += 1) {
+        var h2 = s3[f2], u2 = d[h2], c3 = u2 && u2[0], l = u2 && u2[1];
+        s3[f2] = l ? {regex: c3, parser: l} : h2.replace(/^\[|\]$/g, "");
       }
-      return function(t3) {
-        for (var e3 = {}, n4 = 0, r4 = 0; n4 < a3; n4 += 1) {
+      return function(e3) {
+        for (var t3 = {}, n4 = 0, r4 = 0; n4 < a3; n4 += 1) {
           var i3 = s3[n4];
           if (typeof i3 == "string")
             r4 += i3.length;
           else {
-            var o3 = i3.regex, f3 = i3.parser, u3 = t3.substr(r4), h3 = o3.exec(u3)[0];
-            f3.call(e3, h3), t3 = t3.replace(h3, "");
+            var o3 = i3.regex, f3 = i3.parser, h3 = e3.slice(r4), u3 = o3.exec(h3)[0];
+            f3.call(t3, u3), e3 = e3.replace(u3, "");
           }
         }
-        return function(t4) {
-          var e4 = t4.afternoon;
-          if (e4 !== void 0) {
-            var n5 = t4.hours;
-            e4 ? n5 < 12 && (t4.hours += 12) : n5 === 12 && (t4.hours = 0), delete t4.afternoon;
+        return function(e4) {
+          var t4 = e4.afternoon;
+          if (t4 !== void 0) {
+            var n5 = e4.hours;
+            t4 ? n5 < 12 && (e4.hours += 12) : n5 === 12 && (e4.hours = 0), delete e4.afternoon;
           }
-        }(e3), e3;
+        }(t3), t3;
       };
     }
-    return function(t3, e3, n3) {
-      n3.p.customParseFormat = true, t3 && t3.parseTwoDigitYear && (s2 = t3.parseTwoDigitYear);
-      var r3 = e3.prototype, i2 = r3.parse;
-      r3.parse = function(t4) {
-        var e4 = t4.date, r4 = t4.utc, s3 = t4.args;
+    return function(e3, t3, n3) {
+      n3.p.customParseFormat = true, e3 && e3.parseTwoDigitYear && (s2 = e3.parseTwoDigitYear);
+      var r3 = t3.prototype, i2 = r3.parse;
+      r3.parse = function(e4) {
+        var t4 = e4.date, r4 = e4.utc, s3 = e4.args;
         this.$u = r4;
         var a3 = s3[1];
         if (typeof a3 == "string") {
-          var f2 = s3[2] === true, u2 = s3[3] === true, h2 = f2 || u2, d2 = s3[2];
-          u2 && (d2 = s3[2]), o2 = this.$locale(), !f2 && d2 && (o2 = n3.Ls[d2]), this.$d = function(t5, e5, n4) {
+          var f2 = s3[2] === true, h2 = s3[3] === true, u2 = f2 || h2, d2 = s3[2];
+          h2 && (d2 = s3[2]), o2 = this.$locale(), !f2 && d2 && (o2 = n3.Ls[d2]), this.$d = function(e5, t5, n4) {
             try {
-              if (["x", "X"].indexOf(e5) > -1)
-                return new Date((e5 === "X" ? 1e3 : 1) * t5);
-              var r5 = c2(e5)(t5), i3 = r5.year, o3 = r5.month, s4 = r5.day, a4 = r5.hours, f3 = r5.minutes, u3 = r5.seconds, h3 = r5.milliseconds, d3 = r5.zone, l2 = new Date(), m2 = s4 || (i3 || o3 ? 1 : l2.getDate()), M3 = i3 || l2.getFullYear(), Y2 = 0;
+              if (["x", "X"].indexOf(t5) > -1)
+                return new Date((t5 === "X" ? 1e3 : 1) * e5);
+              var r5 = c2(t5)(e5), i3 = r5.year, o3 = r5.month, s4 = r5.day, a4 = r5.hours, f3 = r5.minutes, h3 = r5.seconds, u3 = r5.milliseconds, d3 = r5.zone, l2 = new Date(), m2 = s4 || (i3 || o3 ? 1 : l2.getDate()), M3 = i3 || l2.getFullYear(), Y2 = 0;
               i3 && !o3 || (Y2 = o3 > 0 ? o3 - 1 : l2.getMonth());
-              var p2 = a4 || 0, v = f3 || 0, D2 = u3 || 0, g = h3 || 0;
+              var p2 = a4 || 0, v = f3 || 0, D2 = h3 || 0, g = u3 || 0;
               return d3 ? new Date(Date.UTC(M3, Y2, m2, p2, v, D2, g + 60 * d3.offset * 1e3)) : n4 ? new Date(Date.UTC(M3, Y2, m2, p2, v, D2, g)) : new Date(M3, Y2, m2, p2, v, D2, g);
-            } catch (t6) {
+            } catch (e6) {
               return new Date("");
             }
-          }(e4, a3, r4), this.init(), d2 && d2 !== true && (this.$L = this.locale(d2).$L), h2 && e4 != this.format(a3) && (this.$d = new Date("")), o2 = {};
+          }(t4, a3, r4), this.init(), d2 && d2 !== true && (this.$L = this.locale(d2).$L), u2 && t4 != this.format(a3) && (this.$d = new Date("")), o2 = {};
         } else if (a3 instanceof Array)
           for (var l = a3.length, m = 1; m <= l; m += 1) {
             s3[1] = a3[m - 1];
@@ -157,7 +157,7 @@ var require_customParseFormat = __commonJS((exports, module) => {
             m === l && (this.$d = new Date(""));
           }
         else
-          i2.call(this, t4);
+          i2.call(this, e4);
       };
     };
   });
@@ -174,7 +174,7 @@ var require_localeData = __commonJS((exports, module) => {
         return n3 && (n3.indexOf ? n3 : n3.s);
       }, u = function(n3, e3, t3, r3, u2) {
         var i2 = n3.name ? n3 : n3.$locale(), a3 = o2(i2[e3]), s3 = o2(i2[t3]), f = a3 || s3.map(function(n4) {
-          return n4.substr(0, r3);
+          return n4.slice(0, r3);
         });
         if (!u2)
           return f;
@@ -5652,6 +5652,539 @@ var require_trix = __commonJS((exports, module) => {
   }.call(exports);
 });
 
+// node_modules/vanilla-colorful/lib/utils/math.js
+var clamp = (number, min = 0, max = 1) => {
+  return number > max ? max : number < min ? min : number;
+};
+var round = (number, digits = 0, base = Math.pow(10, digits)) => {
+  return Math.round(base * number) / base;
+};
+
+// node_modules/vanilla-colorful/lib/utils/convert.js
+var angleUnits = {
+  grad: 360 / 400,
+  turn: 360,
+  rad: 360 / (Math.PI * 2)
+};
+var hexToHsva = (hex) => rgbaToHsva(hexToRgba(hex));
+var hexToRgba = (hex) => {
+  if (hex[0] === "#")
+    hex = hex.substr(1);
+  if (hex.length < 6) {
+    return {
+      r: parseInt(hex[0] + hex[0], 16),
+      g: parseInt(hex[1] + hex[1], 16),
+      b: parseInt(hex[2] + hex[2], 16),
+      a: 1
+    };
+  }
+  return {
+    r: parseInt(hex.substr(0, 2), 16),
+    g: parseInt(hex.substr(2, 2), 16),
+    b: parseInt(hex.substr(4, 2), 16),
+    a: 1
+  };
+};
+var parseHue = (value, unit = "deg") => {
+  return Number(value) * (angleUnits[unit] || 1);
+};
+var hslaStringToHsva = (hslString) => {
+  const matcher = /hsla?\(?\s*(-?\d*\.?\d+)(deg|rad|grad|turn)?[,\s]+(-?\d*\.?\d+)%?[,\s]+(-?\d*\.?\d+)%?,?\s*[/\s]*(-?\d*\.?\d+)?(%)?\s*\)?/i;
+  const match = matcher.exec(hslString);
+  if (!match)
+    return {h: 0, s: 0, v: 0, a: 1};
+  return hslaToHsva({
+    h: parseHue(match[1], match[2]),
+    s: Number(match[3]),
+    l: Number(match[4]),
+    a: match[5] === void 0 ? 1 : Number(match[5]) / (match[6] ? 100 : 1)
+  });
+};
+var hslStringToHsva = hslaStringToHsva;
+var hslaToHsva = ({h, s: s2, l, a: a2}) => {
+  s2 *= (l < 50 ? l : 100 - l) / 100;
+  return {
+    h,
+    s: s2 > 0 ? 2 * s2 / (l + s2) * 100 : 0,
+    v: l + s2,
+    a: a2
+  };
+};
+var hsvaToHex = (hsva) => rgbaToHex(hsvaToRgba(hsva));
+var hsvaToHsla = ({h, s: s2, v, a: a2}) => {
+  const hh = (200 - s2) * v / 100;
+  return {
+    h: round(h),
+    s: round(hh > 0 && hh < 200 ? s2 * v / 100 / (hh <= 100 ? hh : 200 - hh) * 100 : 0),
+    l: round(hh / 2),
+    a: round(a2, 2)
+  };
+};
+var hsvaToHslString = (hsva) => {
+  const {h, s: s2, l} = hsvaToHsla(hsva);
+  return `hsl(${h}, ${s2}%, ${l}%)`;
+};
+var hsvaToHslaString = (hsva) => {
+  const {h, s: s2, l, a: a2} = hsvaToHsla(hsva);
+  return `hsla(${h}, ${s2}%, ${l}%, ${a2})`;
+};
+var hsvaToRgba = ({h, s: s2, v, a: a2}) => {
+  h = h / 360 * 6;
+  s2 = s2 / 100;
+  v = v / 100;
+  const hh = Math.floor(h), b = v * (1 - s2), c2 = v * (1 - (h - hh) * s2), d = v * (1 - (1 - h + hh) * s2), module = hh % 6;
+  return {
+    r: round([v, c2, b, b, d, v][module] * 255),
+    g: round([d, v, v, c2, b, b][module] * 255),
+    b: round([b, b, d, v, v, c2][module] * 255),
+    a: round(a2, 2)
+  };
+};
+var hsvaToRgbString = (hsva) => {
+  const {r: r2, g, b} = hsvaToRgba(hsva);
+  return `rgb(${r2}, ${g}, ${b})`;
+};
+var hsvaToRgbaString = (hsva) => {
+  const {r: r2, g, b, a: a2} = hsvaToRgba(hsva);
+  return `rgba(${r2}, ${g}, ${b}, ${a2})`;
+};
+var rgbaStringToHsva = (rgbaString) => {
+  const matcher = /rgba?\(?\s*(-?\d*\.?\d+)(%)?[,\s]+(-?\d*\.?\d+)(%)?[,\s]+(-?\d*\.?\d+)(%)?,?\s*[/\s]*(-?\d*\.?\d+)?(%)?\s*\)?/i;
+  const match = matcher.exec(rgbaString);
+  if (!match)
+    return {h: 0, s: 0, v: 0, a: 1};
+  return rgbaToHsva({
+    r: Number(match[1]) / (match[2] ? 100 / 255 : 1),
+    g: Number(match[3]) / (match[4] ? 100 / 255 : 1),
+    b: Number(match[5]) / (match[6] ? 100 / 255 : 1),
+    a: match[7] === void 0 ? 1 : Number(match[7]) / (match[8] ? 100 : 1)
+  });
+};
+var rgbStringToHsva = rgbaStringToHsva;
+var format = (number) => {
+  const hex = number.toString(16);
+  return hex.length < 2 ? "0" + hex : hex;
+};
+var rgbaToHex = ({r: r2, g, b}) => {
+  return "#" + format(r2) + format(g) + format(b);
+};
+var rgbaToHsva = ({r: r2, g, b, a: a2}) => {
+  const max = Math.max(r2, g, b);
+  const delta = max - Math.min(r2, g, b);
+  const hh = delta ? max === r2 ? (g - b) / delta : max === g ? 2 + (b - r2) / delta : 4 + (r2 - g) / delta : 0;
+  return {
+    h: round(60 * (hh < 0 ? hh + 6 : hh)),
+    s: round(max ? delta / max * 100 : 0),
+    v: round(max / 255 * 100),
+    a: a2
+  };
+};
+
+// node_modules/vanilla-colorful/lib/utils/compare.js
+var equalColorObjects = (first, second) => {
+  if (first === second)
+    return true;
+  for (const prop in first) {
+    if (first[prop] !== second[prop])
+      return false;
+  }
+  return true;
+};
+var equalColorString = (first, second) => {
+  return first.replace(/\s/g, "") === second.replace(/\s/g, "");
+};
+var equalHex = (first, second) => {
+  if (first.toLowerCase() === second.toLowerCase())
+    return true;
+  return equalColorObjects(hexToRgba(first), hexToRgba(second));
+};
+
+// node_modules/vanilla-colorful/lib/utils/dom.js
+var cache = {};
+var tpl = (html) => {
+  let template = cache[html];
+  if (!template) {
+    template = document.createElement("template");
+    template.innerHTML = html;
+    cache[html] = template;
+  }
+  return template;
+};
+var fire = (target, type, detail) => {
+  target.dispatchEvent(new CustomEvent(type, {
+    bubbles: true,
+    detail
+  }));
+};
+
+// node_modules/vanilla-colorful/lib/components/slider.js
+var hasTouched = false;
+var isTouch = (e2) => "touches" in e2;
+var isValid = (event) => {
+  if (hasTouched && !isTouch(event))
+    return false;
+  if (!hasTouched)
+    hasTouched = isTouch(event);
+  return true;
+};
+var pointerMove = (target, event) => {
+  const pointer = isTouch(event) ? event.touches[0] : event;
+  const rect = target.el.getBoundingClientRect();
+  fire(target.el, "move", target.getMove({
+    x: clamp((pointer.pageX - (rect.left + window.pageXOffset)) / rect.width),
+    y: clamp((pointer.pageY - (rect.top + window.pageYOffset)) / rect.height)
+  }));
+};
+var keyMove = (target, event) => {
+  const keyCode = event.keyCode;
+  if (keyCode > 40 || target.xy && keyCode < 37 || keyCode < 33)
+    return;
+  event.preventDefault();
+  fire(target.el, "move", target.getMove({
+    x: keyCode === 39 ? 0.01 : keyCode === 37 ? -0.01 : keyCode === 34 ? 0.05 : keyCode === 33 ? -0.05 : keyCode === 35 ? 1 : keyCode === 36 ? -1 : 0,
+    y: keyCode === 40 ? 0.01 : keyCode === 38 ? -0.01 : 0
+  }, true));
+};
+var Slider = class {
+  constructor(root2, part, aria, xy) {
+    const template = tpl(`<div role="slider" tabindex="0" part="${part}" ${aria}><div part="${part}-pointer"></div></div>`);
+    root2.appendChild(template.content.cloneNode(true));
+    const el = root2.querySelector(`[part=${part}]`);
+    el.addEventListener("mousedown", this);
+    el.addEventListener("touchstart", this);
+    el.addEventListener("keydown", this);
+    this.el = el;
+    this.xy = xy;
+    this.nodes = [el.firstChild, el];
+  }
+  set dragging(state2) {
+    const toggleEvent = state2 ? document.addEventListener : document.removeEventListener;
+    toggleEvent(hasTouched ? "touchmove" : "mousemove", this);
+    toggleEvent(hasTouched ? "touchend" : "mouseup", this);
+  }
+  handleEvent(event) {
+    switch (event.type) {
+      case "mousedown":
+      case "touchstart":
+        event.preventDefault();
+        if (!isValid(event) || !hasTouched && event.button != 0)
+          return;
+        this.el.focus();
+        pointerMove(this, event);
+        this.dragging = true;
+        break;
+      case "mousemove":
+      case "touchmove":
+        event.preventDefault();
+        pointerMove(this, event);
+        break;
+      case "mouseup":
+      case "touchend":
+        this.dragging = false;
+        break;
+      case "keydown":
+        keyMove(this, event);
+        break;
+    }
+  }
+  style(styles3) {
+    styles3.forEach((style, i) => {
+      for (const p2 in style) {
+        this.nodes[i].style.setProperty(p2, style[p2]);
+      }
+    });
+  }
+};
+
+// node_modules/vanilla-colorful/lib/components/hue.js
+var Hue = class extends Slider {
+  constructor(root2) {
+    super(root2, "hue", 'aria-label="Hue" aria-valuemin="0" aria-valuemax="360"', false);
+  }
+  update({h}) {
+    this.h = h;
+    this.style([
+      {
+        left: `${h / 360 * 100}%`,
+        color: hsvaToHslString({h, s: 100, v: 100, a: 1})
+      }
+    ]);
+    this.el.setAttribute("aria-valuenow", `${round(h)}`);
+  }
+  getMove(offset, key) {
+    return {h: key ? clamp(this.h + offset.x * 360, 0, 360) : 360 * offset.x};
+  }
+};
+
+// node_modules/vanilla-colorful/lib/components/saturation.js
+var Saturation = class extends Slider {
+  constructor(root2) {
+    super(root2, "saturation", 'aria-label="Color"', true);
+  }
+  update(hsva) {
+    this.hsva = hsva;
+    this.style([
+      {
+        top: `${100 - hsva.v}%`,
+        left: `${hsva.s}%`,
+        color: hsvaToHslString(hsva)
+      },
+      {
+        "background-color": hsvaToHslString({h: hsva.h, s: 100, v: 100, a: 1})
+      }
+    ]);
+    this.el.setAttribute("aria-valuetext", `Saturation ${round(hsva.s)}%, Brightness ${round(hsva.v)}%`);
+  }
+  getMove(offset, key) {
+    return {
+      s: key ? clamp(this.hsva.s + offset.x * 100, 0, 100) : offset.x * 100,
+      v: key ? clamp(this.hsva.v - offset.y * 100, 0, 100) : Math.round(100 - offset.y * 100)
+    };
+  }
+};
+
+// node_modules/vanilla-colorful/lib/styles/color-picker.js
+var color_picker_default = `:host{display:flex;flex-direction:column;position:relative;width:200px;height:200px;user-select:none;-webkit-user-select:none;cursor:default}:host([hidden]){display:none!important}[role=slider]{position:relative;touch-action:none;user-select:none;-webkit-user-select:none;outline:0}[role=slider]:last-child{border-radius:0 0 8px 8px}[part$=pointer]{position:absolute;z-index:1;box-sizing:border-box;width:28px;height:28px;transform:translate(-50%,-50%);background-color:#fff;border:2px solid #fff;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,.2)}[part$=pointer]::after{display:block;content:'';position:absolute;left:0;top:0;right:0;bottom:0;border-radius:inherit;background-color:currentColor}[role=slider]:focus [part$=pointer]{transform:translate(-50%,-50%) scale(1.1)}`;
+
+// node_modules/vanilla-colorful/lib/styles/hue.js
+var hue_default = `[part=hue]{flex:0 0 24px;background:linear-gradient(to right,red 0,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,red 100%)}[part=hue-pointer]{top:50%;z-index:2}`;
+
+// node_modules/vanilla-colorful/lib/styles/saturation.js
+var saturation_default = `[part=saturation]{flex-grow:1;border-color:transparent;border-bottom:12px solid #000;border-radius:8px 8px 0 0;background-image:linear-gradient(to top,#000,transparent),linear-gradient(to right,#fff,rgba(255,255,255,0));box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}[part=saturation-pointer]{z-index:3}`;
+
+// node_modules/vanilla-colorful/lib/components/color-picker.js
+var $isSame = Symbol("same");
+var $color = Symbol("color");
+var $hsva = Symbol("hsva");
+var $change = Symbol("change");
+var $update = Symbol("update");
+var $parts = Symbol("parts");
+var $css = Symbol("css");
+var $sliders = Symbol("sliders");
+var ColorPicker = class extends HTMLElement {
+  static get observedAttributes() {
+    return ["color"];
+  }
+  get [$css]() {
+    return [color_picker_default, hue_default, saturation_default];
+  }
+  get [$sliders]() {
+    return [Saturation, Hue];
+  }
+  get color() {
+    return this[$color];
+  }
+  set color(newColor) {
+    if (!this[$isSame](newColor)) {
+      const newHsva = this.colorModel.toHsva(newColor);
+      this[$update](newHsva);
+      this[$change](newColor);
+    }
+  }
+  constructor() {
+    super();
+    const template = tpl(`<style>${this[$css].join("")}</style>`);
+    const root2 = this.attachShadow({mode: "open"});
+    root2.appendChild(template.content.cloneNode(true));
+    root2.addEventListener("move", this);
+    this[$parts] = this[$sliders].map((slider) => new slider(root2));
+  }
+  connectedCallback() {
+    if (this.hasOwnProperty("color")) {
+      const value = this.color;
+      delete this["color"];
+      this.color = value;
+    } else if (!this.color) {
+      this.color = this.colorModel.defaultColor;
+    }
+  }
+  attributeChangedCallback(_attr, _oldVal, newVal) {
+    const color = this.colorModel.fromAttr(newVal);
+    if (!this[$isSame](color)) {
+      this.color = color;
+    }
+  }
+  handleEvent(event) {
+    const oldHsva = this[$hsva];
+    const newHsva = {...oldHsva, ...event.detail};
+    this[$update](newHsva);
+    let newColor;
+    if (!equalColorObjects(newHsva, oldHsva) && !this[$isSame](newColor = this.colorModel.fromHsva(newHsva))) {
+      this[$change](newColor);
+    }
+  }
+  [$isSame](color) {
+    return this.color && this.colorModel.equal(color, this.color);
+  }
+  [$update](hsva) {
+    this[$hsva] = hsva;
+    this[$parts].forEach((part) => part.update(hsva));
+  }
+  [$change](value) {
+    this[$color] = value;
+    fire(this, "color-changed", {value});
+  }
+};
+
+// node_modules/vanilla-colorful/lib/entrypoints/hex.js
+var colorModel = {
+  defaultColor: "#000",
+  toHsva: hexToHsva,
+  fromHsva: hsvaToHex,
+  equal: equalHex,
+  fromAttr: (color) => color
+};
+var HexBase = class extends ColorPicker {
+  get colorModel() {
+    return colorModel;
+  }
+};
+
+// node_modules/vanilla-colorful/hex-color-picker.js
+var HexColorPicker = class extends HexBase {
+};
+customElements.define("hex-color-picker", HexColorPicker);
+
+// node_modules/vanilla-colorful/lib/entrypoints/hsl-string.js
+var colorModel2 = {
+  defaultColor: "hsl(0, 0%, 0%)",
+  toHsva: hslStringToHsva,
+  fromHsva: hsvaToHslString,
+  equal: equalColorString,
+  fromAttr: (color) => color
+};
+var HslStringBase = class extends ColorPicker {
+  get colorModel() {
+    return colorModel2;
+  }
+};
+
+// node_modules/vanilla-colorful/hsl-string-color-picker.js
+var HslStringColorPicker = class extends HslStringBase {
+};
+customElements.define("hsl-string-color-picker", HslStringColorPicker);
+
+// node_modules/vanilla-colorful/lib/entrypoints/rgb-string.js
+var colorModel3 = {
+  defaultColor: "rgb(0, 0, 0)",
+  toHsva: rgbStringToHsva,
+  fromHsva: hsvaToRgbString,
+  equal: equalColorString,
+  fromAttr: (color) => color
+};
+var RgbStringBase = class extends ColorPicker {
+  get colorModel() {
+    return colorModel3;
+  }
+};
+
+// node_modules/vanilla-colorful/rgb-string-color-picker.js
+var RgbStringColorPicker = class extends RgbStringBase {
+};
+customElements.define("rgb-string-color-picker", RgbStringColorPicker);
+
+// node_modules/vanilla-colorful/lib/components/alpha.js
+var Alpha = class extends Slider {
+  constructor(root2) {
+    super(root2, "alpha", 'aria-label="Alpha" aria-valuemin="0" aria-valuemax="1"', false);
+  }
+  update(hsva) {
+    this.hsva = hsva;
+    const colorFrom = hsvaToHslaString({...hsva, a: 0});
+    const colorTo = hsvaToHslaString({...hsva, a: 1});
+    const value = hsva.a * 100;
+    this.style([
+      {
+        left: `${value}%`,
+        color: hsvaToHslaString(hsva)
+      },
+      {
+        "--gradient": `linear-gradient(90deg, ${colorFrom}, ${colorTo}`
+      }
+    ]);
+    const v = round(value);
+    this.el.setAttribute("aria-valuenow", `${v}`);
+    this.el.setAttribute("aria-valuetext", `${v}%`);
+  }
+  getMove(offset, key) {
+    return {a: key ? clamp(this.hsva.a + offset.x) : offset.x};
+  }
+};
+
+// node_modules/vanilla-colorful/lib/styles/alpha.js
+var alpha_default = `[part=alpha]{flex:0 0 24px}[part=alpha]::after{display:block;content:'';position:absolute;top:0;left:0;right:0;bottom:0;border-radius:inherit;background-image:var(--gradient);box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}[part^=alpha]{background-color:#fff;background-image:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill-opacity=".05"><rect x="8" width="8" height="8"/><rect y="8" width="8" height="8"/></svg>')}[part=alpha-pointer]{top:50%}`;
+
+// node_modules/vanilla-colorful/lib/components/alpha-color-picker.js
+var AlphaColorPicker = class extends ColorPicker {
+  get [$css]() {
+    return [...super[$css], alpha_default];
+  }
+  get [$sliders]() {
+    return [...super[$sliders], Alpha];
+  }
+};
+
+// node_modules/vanilla-colorful/lib/entrypoints/rgba-string.js
+var colorModel4 = {
+  defaultColor: "rgba(0, 0, 0, 1)",
+  toHsva: rgbaStringToHsva,
+  fromHsva: hsvaToRgbaString,
+  equal: equalColorString,
+  fromAttr: (color) => color
+};
+var RgbaStringBase = class extends AlphaColorPicker {
+  get colorModel() {
+    return colorModel4;
+  }
+};
+
+// node_modules/vanilla-colorful/rgba-string-color-picker.js
+var RgbaStringColorPicker = class extends RgbaStringBase {
+};
+customElements.define("rgba-string-color-picker", RgbaStringColorPicker);
+
+// packages/forms/resources/js/components/color-picker.js
+var color_picker_default2 = (Alpine) => {
+  Alpine.data("colorPickerFormComponent", ({
+    isAutofocused,
+    isDisabled,
+    state: state2
+  }) => {
+    return {
+      isOpen: false,
+      state: state2,
+      init: function() {
+        if (!(this.state === null || this.state === "")) {
+          this.setState(this.state);
+        }
+        if (isAutofocused) {
+          this.openPicker();
+        }
+        this.$refs.input.addEventListener("change", (event) => {
+          this.setState(event.target.value);
+        });
+        this.$refs.picker.addEventListener("color-changed", (event) => {
+          this.setState(event.detail.value);
+        });
+      },
+      openPicker: function() {
+        if (isDisabled) {
+          return;
+        }
+        this.isOpen = true;
+      },
+      closePicker: function() {
+        this.isOpen = false;
+      },
+      setState: function(value) {
+        this.state = value;
+        this.$refs.input.value = value;
+        this.$refs.picker.color = value;
+      }
+    };
+  });
+};
+
 // node_modules/dayjs/esm/constant.js
 var SECONDS_A_MINUTE = 60;
 var SECONDS_A_HOUR = SECONDS_A_MINUTE * 60;
@@ -5837,7 +6370,7 @@ var Dayjs = /* @__PURE__ */ function() {
   _proto.$utils = function $utils() {
     return Utils;
   };
-  _proto.isValid = function isValid() {
+  _proto.isValid = function isValid2() {
     return !(this.$d.toString() === INVALID_DATE_STRING);
   };
   _proto.isSame = function isSame(that, units) {
@@ -5951,7 +6484,7 @@ var Dayjs = /* @__PURE__ */ function() {
   _proto.subtract = function subtract(number, string) {
     return this.add(number * -1, string);
   };
-  _proto.format = function format3(formatStr) {
+  _proto.format = function format4(formatStr) {
     var _this3 = this;
     var locale = this.$locale();
     if (!this.isValid())
@@ -5961,7 +6494,7 @@ var Dayjs = /* @__PURE__ */ function() {
     var $H = this.$H, $m = this.$m, $M = this.$M;
     var weekdays = locale.weekdays, months = locale.months, meridiem = locale.meridiem;
     var getShort = function getShort2(arr, index2, full, length) {
-      return arr && (arr[index2] || arr(_this3, str)) || full[index2].substr(0, length);
+      return arr && (arr[index2] || arr(_this3, str)) || full[index2].slice(0, length);
     };
     var get$H = function get$H2(num) {
       return Utils.s($H % 12 || 12, num, "0");
@@ -6094,7 +6627,7 @@ var date_time_picker_default = (Alpine) => {
   Alpine.data("dateTimePickerFormComponent", ({
     displayFormat,
     firstDayOfWeek,
-    format: format3,
+    format: format4,
     isAutofocused,
     maxDate,
     minDate,
@@ -6196,10 +6729,8 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.hour = hour;
           }
-          if (this.state !== null) {
-            let date2 = this.getSelectedDate() ?? this.focusedDate;
-            this.setState(date2.hour(this.hour ?? 0));
-          }
+          let date2 = this.getSelectedDate() ?? this.focusedDate;
+          this.setState(date2.hour(this.hour ?? 0));
         });
         this.$watch("minute", () => {
           let minute = +this.minute;
@@ -6212,10 +6743,8 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.minute = minute;
           }
-          if (this.state !== null) {
-            let date2 = this.getSelectedDate() ?? this.focusedDate;
-            this.setState(date2.minute(this.minute ?? 0));
-          }
+          let date2 = this.getSelectedDate() ?? this.focusedDate;
+          this.setState(date2.minute(this.minute ?? 0));
         });
         this.$watch("second", () => {
           let second = +this.second;
@@ -6228,17 +6757,15 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.second = second;
           }
-          if (this.state !== null) {
-            let date2 = this.getSelectedDate() ?? this.focusedDate;
-            this.setState(date2.second(this.second ?? 0));
-          }
+          let date2 = this.getSelectedDate() ?? this.focusedDate;
+          this.setState(date2.second(this.second ?? 0));
         });
         this.$watch("state", () => {
           let date2 = this.getSelectedDate();
-          if (this.maxDate !== null && date2?.isAfter(this.maxDate)) {
+          if (this.maxDate !== null && date2.isAfter(this.maxDate)) {
             date2 = null;
           }
-          if (this.minDate !== null && date2?.isBefore(this.minDate)) {
+          if (this.minDate !== null && date2.isBefore(this.minDate)) {
             date2 = null;
           }
           this.hour = date2?.hour() ?? 0;
@@ -6320,7 +6847,7 @@ var date_time_picker_default = (Alpine) => {
         ];
       },
       getSelectedDate: function() {
-        let date = esm_default(this.state, format3);
+        let date = esm_default(this.state, format4);
         if (!date.isValid()) {
           return null;
         }
@@ -6372,7 +6899,7 @@ var date_time_picker_default = (Alpine) => {
             return;
           }
         }
-        this.state = date.hour(this.hour ?? 0).minute(this.minute ?? 0).second(this.second ?? 0).format(format3);
+        this.state = date.hour(this.hour ?? 0).minute(this.minute ?? 0).second(this.second ?? 0).format(format4);
         this.setDisplayText();
       },
       togglePickerVisibility: function() {
@@ -7476,15 +8003,15 @@ var on = () => {
   const off2 = (event, cb) => {
     arrayRemove(listeners2, listeners2.findIndex((listener) => listener.event === event && (listener.cb === cb || !cb)));
   };
-  const fire = (event, args, sync) => {
+  const fire2 = (event, args, sync) => {
     listeners2.filter((listener) => listener.event === event).map((listener) => listener.cb).forEach((cb) => run(() => cb(...args), sync));
   };
   return {
     fireSync: (event, ...args) => {
-      fire(event, args, true);
+      fire2(event, args, true);
     },
     fire: (event, ...args) => {
-      fire(event, args, false);
+      fire2(event, args, false);
     },
     on: (event, cb) => {
       listeners2.push({event, cb});
@@ -8624,7 +9151,7 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
   let abortProcessingRequestComplete = null;
   const metadata = {};
   const setStatus = (status) => state2.status = status;
-  const fire = (event, ...params) => {
+  const fire2 = (event, ...params) => {
     if (state2.released || state2.frozen)
       return;
     api.fire(event, ...params);
@@ -8642,7 +9169,7 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
     }
     state2.file = createFileStub(source);
     loader.on("init", () => {
-      fire("load-init");
+      fire2("load-init");
     });
     loader.on("meta", (meta) => {
       state2.file.size = meta.size;
@@ -8652,19 +9179,19 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
         state2.serverFileReference = meta.source;
         state2.status = ItemStatus.PROCESSING_COMPLETE;
       }
-      fire("load-meta");
+      fire2("load-meta");
     });
     loader.on("progress", (progress) => {
       setStatus(ItemStatus.LOADING);
-      fire("load-progress", progress);
+      fire2("load-progress", progress);
     });
     loader.on("error", (error2) => {
       setStatus(ItemStatus.LOAD_ERROR);
-      fire("load-request-error", error2);
+      fire2("load-request-error", error2);
     });
     loader.on("abort", () => {
       setStatus(ItemStatus.INIT);
-      fire("load-abort");
+      fire2("load-abort");
     });
     loader.on("load", (file3) => {
       state2.activeLoader = null;
@@ -8675,13 +9202,13 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
         } else {
           setStatus(ItemStatus.IDLE);
         }
-        fire("load");
+        fire2("load");
       };
       const error2 = (result) => {
         state2.file = file3;
-        fire("load-meta");
+        fire2("load-meta");
         setStatus(ItemStatus.LOAD_ERROR);
-        fire("load-file-error", result);
+        fire2("load-file-error", result);
       };
       if (state2.serverFileReference) {
         success(file3);
@@ -8705,7 +9232,7 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
       return;
     }
     setStatus(ItemStatus.INIT);
-    fire("load-abort");
+    fire2("load-abort");
   };
   const process = (processor, onprocess) => {
     if (state2.processingAborted) {
@@ -8732,27 +9259,27 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
       state2.transferId = null;
       state2.serverFileReference = serverFileReference2;
       setStatus(ItemStatus.PROCESSING_COMPLETE);
-      fire("process-complete", serverFileReference2);
+      fire2("process-complete", serverFileReference2);
     });
     processor.on("start", () => {
-      fire("process-start");
+      fire2("process-start");
     });
     processor.on("error", (error3) => {
       state2.activeProcessor = null;
       setStatus(ItemStatus.PROCESSING_ERROR);
-      fire("process-error", error3);
+      fire2("process-error", error3);
     });
     processor.on("abort", (serverFileReference2) => {
       state2.activeProcessor = null;
       state2.serverFileReference = serverFileReference2;
       setStatus(ItemStatus.IDLE);
-      fire("process-abort");
+      fire2("process-abort");
       if (abortProcessingRequestComplete) {
         abortProcessingRequestComplete();
       }
     });
     processor.on("progress", (progress) => {
-      fire("process-progress", progress);
+      fire2("process-progress", progress);
     });
     const success = (file3) => {
       if (state2.archived)
@@ -8771,7 +9298,7 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
     if (!state2.activeProcessor) {
       state2.processingAborted = true;
       setStatus(ItemStatus.IDLE);
-      fire("process-abort");
+      fire2("process-abort");
       resolve();
       return;
     }
@@ -8796,11 +9323,11 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
         return;
       }
       setStatus(ItemStatus.PROCESSING_REVERT_ERROR);
-      fire("process-revert-error");
+      fire2("process-revert-error");
       reject(error2);
     });
     setStatus(ItemStatus.IDLE);
-    fire("process-revert");
+    fire2("process-revert");
   });
   const setMetadata = (key, value, silent) => {
     const keys = key.split(".");
@@ -8811,7 +9338,7 @@ var createItem = (origin = null, serverFileReference = null, file2 = null) => {
     if (JSON.stringify(data3[last]) === JSON.stringify(value))
       return;
     data3[last] = value;
-    fire("metadata-update", {
+    fire2("metadata-update", {
       key: root2,
       value: metadata[root2],
       silent
@@ -12698,7 +13225,7 @@ if (supported()) {
 
 // node_modules/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.esm.js
 /*!
- * FilePondPluginFileValidateSize 2.2.5
+ * FilePondPluginFileValidateSize 2.2.6
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -12793,7 +13320,7 @@ var filepond_plugin_file_validate_size_esm_default = plugin;
 
 // node_modules/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.esm.js
 /*!
- * FilePondPluginFileValidateType 1.2.6
+ * FilePondPluginFileValidateType 1.2.7
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -13097,7 +13624,7 @@ var filepond_plugin_image_exif_orientation_esm_default = plugin4;
 
 // node_modules/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.esm.js
 /*!
- * FilePondPluginImagePreview 4.6.10
+ * FilePondPluginImagePreview 4.6.11
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -13809,7 +14336,7 @@ var createImageOverlayView = (fpAPI) => fpAPI.utils.createView({
   create: ({root: root2, props}) => {
     let mask = SVG_MASK;
     if (document.querySelector("base")) {
-      const url = window.location.href.replace(window.location.hash, "");
+      const url = new URL(window.location.href.replace(window.location.hash, "")).href;
       mask = mask.replace(/url\(\#/g, "url(" + url + "#");
     }
     SVGMaskUniqueId++;
@@ -17167,7 +17694,7 @@ function unescape2(html) {
 }
 var caret = /(^|[^\[])\^/g;
 function edit(regex, opt) {
-  regex = regex.source || regex;
+  regex = typeof regex === "string" ? regex : regex.source;
   opt = opt || "";
   const obj = {
     replace: (name2, val) => {
@@ -17293,7 +17820,7 @@ function rtrim(str, c2, invert) {
       break;
     }
   }
-  return str.substr(0, l - suffLen);
+  return str.slice(0, l - suffLen);
 }
 function findClosingBracket(str, b) {
   if (str.indexOf(b[1]) === -1) {
@@ -17451,7 +17978,7 @@ var Tokenizer = class {
   blockquote(src) {
     const cap = this.rules.block.blockquote.exec(src);
     if (cap) {
-      const text2 = cap[0].replace(/^ *> ?/gm, "");
+      const text2 = cap[0].replace(/^ *>[ \t]?/gm, "");
       return {
         type: "blockquote",
         raw: cap[0],
@@ -17478,7 +18005,7 @@ var Tokenizer = class {
       if (this.options.pedantic) {
         bull = isordered ? bull : "[*+-]";
       }
-      const itemRegex = new RegExp(`^( {0,3}${bull})((?: [^\\n]*)?(?:\\n|$))`);
+      const itemRegex = new RegExp(`^( {0,3}${bull})((?:[	 ][^\\n]*)?(?:\\n|$))`);
       while (src) {
         endEarly = false;
         if (!(cap = itemRegex.exec(src))) {
@@ -17970,10 +18497,10 @@ var block = {
   newline: /^(?: *(?:\n|$))+/,
   code: /^( {4}[^\n]+(?:\n(?: *(?:\n|$))*)?)+/,
   fences: /^ {0,3}(`{3,}(?=[^`\n]*\n)|~{3,})([^\n]*)\n(?:|([\s\S]*?)\n)(?: {0,3}\1[~`]* *(?=\n|$)|$)/,
-  hr: /^ {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\* *){3,})(?:\n+|$)/,
+  hr: /^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/,
   heading: /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/,
   blockquote: /^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/,
-  list: /^( {0,3}bull)( [^\n]+?)?(?:\n|$)/,
+  list: /^( {0,3}bull)([ \t][^\n]+?)?(?:\n|$)/,
   html: "^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>\\n*|$)|<![A-Z][\\s\\S]*?(?:>\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n *)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$))",
   def: /^ {0,3}\[(label)\]: *(?:\n *)?<?([^\s>]+)>?(?:(?: +(?:\n *)?| *\n *)(title))? *(?:\n+|$)/,
   table: noopTest,
@@ -18016,8 +18543,8 @@ var inline = {
   reflinkSearch: "reflink|nolink(?!\\()",
   emStrong: {
     lDelim: /^(?:\*+(?:([punct_])|[^\s*]))|^_+(?:([punct*])|([^\s_]))/,
-    rDelimAst: /^[^_*]*?\_\_[^_*]*?\*[^_*]*?(?=\_\_)|[punct_](\*+)(?=[\s]|$)|[^punct*_\s](\*+)(?=[punct_\s]|$)|[punct_\s](\*+)(?=[^punct*_\s])|[\s](\*+)(?=[punct_])|[punct_](\*+)(?=[punct_])|[^punct*_\s](\*+)(?=[^punct*_\s])/,
-    rDelimUnd: /^[^_*]*?\*\*[^_*]*?\_[^_*]*?(?=\*\*)|[punct*](\_+)(?=[\s]|$)|[^punct*_\s](\_+)(?=[punct*\s]|$)|[punct*\s](\_+)(?=[^punct*_\s])|[\s](\_+)(?=[punct*])|[punct*](\_+)(?=[punct*])/
+    rDelimAst: /^[^_*]*?\_\_[^_*]*?\*[^_*]*?(?=\_\_)|[^*]+(?=[^*])|[punct_](\*+)(?=[\s]|$)|[^punct*_\s](\*+)(?=[punct_\s]|$)|[punct_\s](\*+)(?=[^punct*_\s])|[\s](\*+)(?=[punct_])|[punct_](\*+)(?=[punct_])|[^punct*_\s](\*+)(?=[^punct*_\s])/,
+    rDelimUnd: /^[^_*]*?\*\*[^_*]*?\_[^_*]*?(?=\*\*)|[^_]+(?=[^_])|[punct*](\_+)(?=[\s]|$)|[^punct*_\s](\_+)(?=[punct*\s]|$)|[punct*\s](\_+)(?=[^punct*_\s])|[\s](\_+)(?=[punct*])|[punct*](\_+)(?=[punct*])/
   },
   code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
   br: /^( {2,}|\\)\n(?!\s*$)/,
@@ -18138,7 +18665,7 @@ var Lexer = class {
     return lexer2.inlineTokens(src);
   }
   lex(src) {
-    src = src.replace(/\r\n|\r/g, "\n").replace(/\t/g, "    ");
+    src = src.replace(/\r\n|\r/g, "\n");
     this.blockTokens(src, this.tokens);
     let next;
     while (next = this.inlineQueue.shift()) {
@@ -18148,7 +18675,11 @@ var Lexer = class {
   }
   blockTokens(src, tokens = []) {
     if (this.options.pedantic) {
-      src = src.replace(/^ +$/gm, "");
+      src = src.replace(/\t/g, "    ").replace(/^ +$/gm, "");
+    } else {
+      src = src.replace(/^( *)(\t+)/gm, (_, leading, tabs) => {
+        return leading + "    ".repeat(tabs.length);
+      });
     }
     let token, lastToken, cutSrc, lastParagraphClipped;
     while (src) {
@@ -18457,16 +18988,21 @@ var Renderer = class {
     return '<pre><code class="' + this.options.langPrefix + escape(lang, true) + '">' + (escaped ? code : escape(code, true)) + "</code></pre>\n";
   }
   blockquote(quote) {
-    return "<blockquote>\n" + quote + "</blockquote>\n";
+    return `<blockquote>
+${quote}</blockquote>
+`;
   }
   html(html) {
     return html;
   }
   heading(text2, level, raw, slugger) {
     if (this.options.headerIds) {
-      return "<h" + level + ' id="' + this.options.headerPrefix + slugger.slug(raw) + '">' + text2 + "</h" + level + ">\n";
+      const id = this.options.headerPrefix + slugger.slug(raw);
+      return `<h${level} id="${id}">${text2}</h${level}>
+`;
     }
-    return "<h" + level + ">" + text2 + "</h" + level + ">\n";
+    return `<h${level}>${text2}</h${level}>
+`;
   }
   hr() {
     return this.options.xhtml ? "<hr/>\n" : "<hr>\n";
@@ -18476,41 +19012,46 @@ var Renderer = class {
     return "<" + type + startatt + ">\n" + body + "</" + type + ">\n";
   }
   listitem(text2) {
-    return "<li>" + text2 + "</li>\n";
+    return `<li>${text2}</li>
+`;
   }
   checkbox(checked) {
     return "<input " + (checked ? 'checked="" ' : "") + 'disabled="" type="checkbox"' + (this.options.xhtml ? " /" : "") + "> ";
   }
   paragraph(text2) {
-    return "<p>" + text2 + "</p>\n";
+    return `<p>${text2}</p>
+`;
   }
   table(header, body) {
     if (body)
-      body = "<tbody>" + body + "</tbody>";
+      body = `<tbody>${body}</tbody>`;
     return "<table>\n<thead>\n" + header + "</thead>\n" + body + "</table>\n";
   }
   tablerow(content) {
-    return "<tr>\n" + content + "</tr>\n";
+    return `<tr>
+${content}</tr>
+`;
   }
   tablecell(content, flags) {
     const type = flags.header ? "th" : "td";
-    const tag = flags.align ? "<" + type + ' align="' + flags.align + '">' : "<" + type + ">";
-    return tag + content + "</" + type + ">\n";
+    const tag = flags.align ? `<${type} align="${flags.align}">` : `<${type}>`;
+    return tag + content + `</${type}>
+`;
   }
   strong(text2) {
-    return "<strong>" + text2 + "</strong>";
+    return `<strong>${text2}</strong>`;
   }
   em(text2) {
-    return "<em>" + text2 + "</em>";
+    return `<em>${text2}</em>`;
   }
   codespan(text2) {
-    return "<code>" + text2 + "</code>";
+    return `<code>${text2}</code>`;
   }
   br() {
     return this.options.xhtml ? "<br/>" : "<br>";
   }
   del(text2) {
-    return "<del>" + text2 + "</del>";
+    return `<del>${text2}</del>`;
   }
   link(href, title, text2) {
     href = cleanUrl(this.options.sanitize, this.options.baseUrl, href);
@@ -18529,9 +19070,9 @@ var Renderer = class {
     if (href === null) {
       return text2;
     }
-    let out = '<img src="' + href + '" alt="' + text2 + '"';
+    let out = `<img src="${href}" alt="${text2}"`;
     if (title) {
-      out += ' title="' + title + '"';
+      out += ` title="${title}"`;
     }
     out += this.options.xhtml ? "/>" : ">";
     return out;
@@ -20404,7 +20945,7 @@ var Masked = /* @__PURE__ */ function() {
   return Masked2;
 }();
 Masked.DEFAULTS = {
-  format: function format(v) {
+  format: function format2(v) {
     return v;
   },
   parse: function parse2(v) {
@@ -21692,7 +22233,7 @@ var MaskedDate = /* @__PURE__ */ function(_MaskedPattern) {
 }(MaskedPattern);
 MaskedDate.DEFAULTS = {
   pattern: "d{.}`m{.}`Y",
-  format: function format2(date) {
+  format: function format3(date) {
     if (!date)
       return "";
     var day = String(date.getDate()).padStart(2, "0");
@@ -25086,6 +25627,7 @@ window.Livewire.directive("sortable", (el) => {
 
 // packages/forms/resources/js/index.js
 var js_default = (Alpine) => {
+  Alpine.plugin(color_picker_default2);
   Alpine.plugin(date_time_picker_default);
   Alpine.plugin(file_upload_default);
   Alpine.plugin(key_value_default);
@@ -25098,6 +25640,7 @@ var js_default = (Alpine) => {
   Alpine.plugin(textarea_default);
 };
 export {
+  color_picker_default2 as ColorPickerFormComponentAlpinePlugin,
   date_time_picker_default as DateTimePickerFormComponentAlpinePlugin,
   file_upload_default as FileUploadFormComponentAlpinePlugin,
   key_value_default as KeyValueFormComponentAlpinePlugin,

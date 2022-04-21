@@ -9,9 +9,10 @@ use Illuminate\Support\Traits\Tappable;
 class Filter
 {
     use Concerns\BelongsToTable;
-    use Concerns\HasDefaultState;
     use Concerns\CanBeHidden;
+    use Concerns\CanSpanColumns;
     use Concerns\EvaluatesClosures;
+    use Concerns\HasDefaultState;
     use Concerns\HasFormSchema;
     use Concerns\HasLabel;
     use Concerns\HasName;

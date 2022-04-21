@@ -1,8 +1,8 @@
 <div
     x-data="{
-        notifications: {{ json_encode(session()->pull('notifications', [])) }},
-        add: function (event) {
-            this.notifications.push(event.detail)
+        notifications: @js(session()->pull('notifications', [])),
+        add (event) {
+            this.notifications = this.notifications.concat(event.detail)
         },
         remove: function (notification) {
             this.notifications = this.notifications.filter(i => i.id !== notification.id)

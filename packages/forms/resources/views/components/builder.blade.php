@@ -14,9 +14,11 @@
             <ul
                 class="space-y-2"
                 wire:sortable
-                wire:end="dispatchFormEvent('builder::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
+                wire:end.stop="dispatchFormEvent('builder::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
             >
                 @foreach ($containers as $uuid => $item)
+                    @php($withBlockLabels = $shouldShowBlockLabels())
+
                     <li
                         x-data="{ isCreateButtonDropdownOpen: false, isCreateButtonVisible: false }"
                         x-on:click="isCreateButtonVisible = true"
@@ -24,10 +26,21 @@
                         wire:key="{{ $item->getStatePath() }}"
                         wire:sortable.item="{{ $uuid }}"
                         @class([
-                            'relative p-6 bg-white shadow-sm rounded-lg border border-gray-300',
+                            'relative bg-white shadow-sm rounded-lg border border-gray-300',
                             'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
+                            'p-6' => ! $withBlockLabels,
+                            'px-6 pt-12 pb-6' => $withBlockLabels,
                         ])
                     >
+                        @if($withBlockLabels)
+                            <div @class([
+                                'absolute px-2 top-0 left-0 h-6 flex items-center divide-x rounded-br-lg rounded-tl-lg border-gray-300 border-b border-r overflow-hidden rtl:border-r-0 rtl:border-l rtl:left-auto rtl:right-0 rtl:rounded-br-none rtl:rounded-bl-lg rtl:rounded-tl-none rtl:rounded-tr-lg text-xs font-medium',
+                                'dark:border-gray-600 dark:divide-gray-600 dark:text-gray-200 dark:hover:bg-gray-600 dark:focus:text-primary-600' => config('forms.dark_mode'),
+                            ])>
+                                <span>{{ $item->getParentComponent()->getLabel() }}</span>
+                            </div>
+                        @endif
+
                         {{ $item }}
 
                         @unless ($isItemDeletionDisabled() && ($isItemMovementDisabled() && ($loop->count <= 1)))

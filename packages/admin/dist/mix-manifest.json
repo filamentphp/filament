@@ -1,4 +1,9 @@
 {
+<<<<<<< HEAD
     "/app.js": "/app.js?id=35376e0273b4a14020d59a14b4b2b8fc",
     "/app.css": "/app.css?id=f93cfdfb0b49cbfcdec1abecb8c095eb"
+=======
+    "/app.js": "/app.js?id=ef538782e4228ac56325076f0648420e",
+    "/app.css": "/app.css?id=ec5e4c45b7b5855a3d04b151178ada04"
+>>>>>>> 981ab8d50f993f9ee5e5f6efe1424a237db1748a
 }

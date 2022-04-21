@@ -11,14 +11,14 @@
 >
     <div
         x-data="multiSelectFormComponent({
-            getOptionLabelsUsing: async (values) => {
+            getOptionLabelsUsing: async () => {
                 return await $wire.getMultiSelectOptionLabels('{{ $getStatePath() }}')
             },
             getOptionsUsing: async () => {
                 return await $wire.getMultiSelectOptions('{{ $getStatePath() }}')
             },
-            getSearchResultsUsing: async (query) => {
-                return await $wire.getMultiSelectSearchResults('{{ $getStatePath() }}', query)
+            getSearchResultsUsing: async (searchQuery) => {
+                return await $wire.getMultiSelectSearchResults('{{ $getStatePath() }}', searchQuery)
             },
             isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
             hasDynamicOptions: {{ $hasDynamicOptions() ? 'true' : 'false' }},
@@ -74,7 +74,7 @@
                     />
 
                     <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pr-0 rtl:pl-2">
-                        <svg x-show="! isLoading" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <svg x-show="! isLoading" class="w-5 h-5" x-bind:class="isOpen && 'rotate-180'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                             <path stroke="#6B7280" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4" />
                         </svg>
 
@@ -95,7 +95,7 @@
                     tabindex="-1"
                     x-cloak
                     @class([
-                        'absolute z-30 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none transition',
+                        'absolute z-30 w-full my-1 bg-white border border-gray-300 rounded-lg shadow-md focus:outline-none transition',
                         'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
                     ])
                 >

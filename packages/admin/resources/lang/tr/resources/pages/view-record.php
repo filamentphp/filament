@@ -2,6 +2,8 @@
 
 return [
 
+    'title' => 'Görüntüle :label',
+
     'breadcrumb' => 'Görüntüle',
 
     'actions' => [

@@ -108,7 +108,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
     {
         return [ // [tl! collapse:start]
             Tables\Filters\Filter::make('published')
-                ->query(fn (Builder $query): $query => $query->where('is_published', true)),
+                ->query(fn (Builder $query): Builder => $query->where('is_published', true)),
             Tables\Filters\SelectFilter::make('status')
                 ->options([
                     'draft' => 'Draft',
@@ -269,7 +269,7 @@ First, you must ensure that the table search input is visible:
 ```php
 public function isTableSearchable(): bool
 {
-    return true
+    return true;
 }
 ```
 

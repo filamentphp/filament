@@ -72,10 +72,10 @@ trait InteractsWithForms
         return [];
     }
 
-    public function getMultiSelectSearchResults(string $statePath, string $query): array
+    public function getMultiSelectSearchResults(string $statePath, string $searchQuery): array
     {
         foreach ($this->getCachedForms() as $form) {
-            if ($results = $form->getMultiSelectSearchResults($statePath, $query)) {
+            if ($results = $form->getMultiSelectSearchResults($statePath, $searchQuery)) {
                 return $results;
             }
         }
@@ -105,10 +105,10 @@ trait InteractsWithForms
         return [];
     }
 
-    public function getSelectSearchResults(string $statePath, string $query): array
+    public function getSelectSearchResults(string $statePath, string $searchQuery): array
     {
         foreach ($this->getCachedForms() as $form) {
-            if ($results = $form->getSelectSearchResults($statePath, $query)) {
+            if ($results = $form->getSelectSearchResults($statePath, $searchQuery)) {
                 return $results;
             }
         }
@@ -282,6 +282,14 @@ trait InteractsWithForms
     protected function getRules(): array
     {
         $rules = [];
+
+        if (method_exists($this, 'rules')) {
+            $rules = $this->rules();
+        }
+
+        if (property_exists($this, 'rules')) {
+            $rules = $this->rules;
+        }
 
         foreach ($this->getCachedForms() as $form) {
             $rules = array_merge($rules, $form->getValidationRules());

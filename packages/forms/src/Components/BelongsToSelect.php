@@ -23,8 +23,8 @@ class BelongsToSelect extends Select
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (BelongsToSelect $component): void {
-            if (filled($this->getState())) {
+        $this->afterStateHydrated(static function (BelongsToSelect $component, $state): void {
+            if (filled($state)) {
                 return;
             }
 
@@ -42,7 +42,7 @@ class BelongsToSelect extends Select
             );
         });
 
-        $this->saveRelationshipsUsing(function (BelongsToSelect $component, Model $record, $state) {
+        $this->saveRelationshipsUsing(static function (BelongsToSelect $component, Model $record, $state) {
             $component->getRelationship()->associate($state);
             $record->save();
         });
@@ -65,7 +65,7 @@ class BelongsToSelect extends Select
         $this->displayColumnName = $displayColumnName;
         $this->relationship = $relationshipName;
 
-        $this->getOptionLabelUsing(function (BelongsToSelect $component, $value) {
+        $this->getOptionLabelUsing(static function (BelongsToSelect $component, $value) {
             $relationship = $component->getRelationship();
 
             $record = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $value)->first();
@@ -81,20 +81,20 @@ class BelongsToSelect extends Select
             return $record->getAttributeValue($component->getDisplayColumnName());
         });
 
-        $this->getSearchResultsUsing(function (BelongsToSelect $component, ?string $query) use ($callback): array {
+        $this->getSearchResultsUsing(static function (BelongsToSelect $component, ?string $searchQuery) use ($callback): array {
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
-                $relationshipQuery = $this->evaluate($callback, [
+                $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
                 ]);
             }
 
-            $query = strtolower($query);
+            $searchQuery = strtolower($searchQuery);
 
-            $relationshipQuery = $this->applySearchConstraint($relationshipQuery, $query)->limit(50);
+            $relationshipQuery = $component->applySearchConstraint($relationshipQuery, $searchQuery)->limit(50);
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
@@ -110,7 +110,7 @@ class BelongsToSelect extends Select
                 ->toArray();
         });
 
-        $this->options(function (BelongsToSelect $component) use ($callback): array {
+        $this->options(static function (BelongsToSelect $component) use ($callback): array {
             if ($component->isSearchable() && ! $component->isPreloaded()) {
                 return [];
             }
@@ -120,7 +120,7 @@ class BelongsToSelect extends Select
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
-                $relationshipQuery = $this->evaluate($callback, [
+                $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
                 ]);
             }
