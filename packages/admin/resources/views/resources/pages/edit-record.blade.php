@@ -11,14 +11,15 @@
         <x-filament::resources.relation-managers :active-manager="$activeRelationManager" :managers="$relationManagers" :owner-record="$record" />
     @endif
 
-    <div
-            x-data
-            x-init="
+    @if (config('filament.shortcuts_enabled'))
+        <div x-data
+             x-init="
             Mousetrap.bindGlobal(['ctrl+s', 'command+s'], $event => {
                 $event.preventDefault()
 
                 $wire.save()
             })
         "
-    ></div>
+        ></div>
+    @endif
 </x-filament::page>

@@ -8,6 +8,9 @@ import FormsAlpinePlugin from '../../../forms/dist/module.esm'
 import Focus from '@alpinejs/focus'
 import Persist from '@alpinejs/persist'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
+import Mousetrap from 'mousetrap';
+import 'mousetrap/plugins/global-bind/mousetrap-global-bind';
+
 
 Alpine.plugin(Collapse)
 Alpine.plugin(FormsAlpinePlugin)

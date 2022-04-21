@@ -4,15 +4,16 @@
 
         <x-filament::form.actions :actions="$this->getCachedFormActions()" />
     </x-filament::form>
-    
-    <div
-            x-data
-            x-init="
-            Mousetrap.bindGlobal(['ctrl+s', 'command+s'], $event => {
-                $event.preventDefault()
-                
-                $wire.save()
-            })
-        "
-    ></div>
+
+    @if (config('filament.shortcuts_enabled'))
+        <div x-data
+             x-init="
+                Mousetrap.bindGlobal(['ctrl+s', 'command+s'], $event => {
+                    $event.preventDefault()
+                    
+                    $wire.create()
+                })
+            "
+        ></div>
+    @endif
 </x-filament::page>

@@ -1,9 +1,9 @@
 <x-filament::page class="filament-resources-list-records-page">
     {{ $this->table }}
-    
-    <div
-            x-data
-            x-init="
+
+    @if (config('filament.shortcuts_enabled'))
+        <div x-data
+             x-init="
             Mousetrap.bindGlobal(['ctrl+o', 'command+o'], $event => {
                 $event.preventDefault()
 
@@ -11,5 +11,6 @@
                     getElementsByTagName('a')[0].click()
             })
         "
-    ></div>
+        ></div>
+    @endif
 </x-filament::page>

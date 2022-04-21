@@ -213,6 +213,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Shortcuts
+    |--------------------------------------------------------------------------
+    |
+    | Using Mousetrap, you can bind keyboard shortcuts to your admin panel.
+    | Ctrl|Cmd + S will save the create or edit form
+    | Ctrl|Cmd + 0 will open the create form from the list page
+    |
+    */
+
+    'shortcuts_enabled' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | Favicon
     |--------------------------------------------------------------------------
     |
