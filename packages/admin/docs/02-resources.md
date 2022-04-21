@@ -600,7 +600,17 @@ By default, resources are generated with three pages:
 
 ### View page
 
-Filament also comes with a "view" page for resources, which you can enable by creating a new page in your resource's `Pages` directory:
+Filament also comes with a "view" page for resources. By default, this contains a form with all inputs disabled, allowing the user to access information without being able to edit it.
+
+To create a new resource with a view page, you can use the `--view-page` flag:
+
+```bash
+php artisan make:filament-resource User --view-page
+```
+
+#### Adding a view page to an existing resource
+
+If you want to add a view page to an existing resource, create a new page in your resource's `Pages` directory:
 
 ```bash
 php artisan make:filament-page ViewUser --resource=UserResource
