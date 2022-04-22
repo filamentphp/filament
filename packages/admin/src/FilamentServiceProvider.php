@@ -92,7 +92,7 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        TestableLivewire::mixin(new TestsPages);
+        TestableLivewire::mixin(new TestsPages());
 
         $this->bootLivewireComponents();
     }

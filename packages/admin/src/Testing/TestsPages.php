@@ -20,7 +20,7 @@ class TestsPages
             if ($action->shouldOpenModal()) {
                 $this
                 ->assertDispatchedBrowserEvent('open-modal', [
-                    'id' => 'page-action'
+                    'id' => 'page-action',
                 ])
                 ->call('callMountedAction');
             }

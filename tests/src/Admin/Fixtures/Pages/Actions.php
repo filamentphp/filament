@@ -19,7 +19,7 @@ class Actions extends Page
             ButtonAction::make('foo-form')
                 ->form([
                     TextInput::make('name')
-                        ->required()
+                        ->required(),
                 ])
                 ->action(fn (array $data) => $this->dispatchBrowserEvent('foo-form-called', $data)),
         ];
