@@ -14,6 +14,7 @@ use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
+use Filament\Testing\TestsPages;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Filament\Widgets\Widget;
@@ -22,6 +23,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
+use Livewire\Testing\TestableLivewire;
 use ReflectionClass;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -90,6 +92,8 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        TestableLivewire::mixin(new TestsPages);
+
         $this->bootLivewireComponents();
     }
 
