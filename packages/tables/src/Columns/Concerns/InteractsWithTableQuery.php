@@ -58,11 +58,11 @@ trait InteractsWithTableQuery
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
             if (
-                isset($this->getLivewire()->activeFormLocale) &&
+                isset($this->getLivewire()->activeLocale) &&
                 method_exists($model, 'isTranslatableAttribute') &&
                 $model->isTranslatableAttribute($searchColumnName)
             ) {
-                $searchColumnName = "{$searchColumnName}->{$this->getLivewire()->activeFormLocale}";
+                $searchColumnName = "{$searchColumnName}->{$this->getLivewire()->activeLocale}";
             }
 
             $query->when(

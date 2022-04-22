@@ -2,49 +2,41 @@
 
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
-use Filament\Resources\Pages\Concerns\HasActiveFormLocaleSelect;
+use Filament\Resources\Pages\Concerns\HasActiveLocaleSelect;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 trait Translatable
 {
-    use HasActiveFormLocaleSelect;
+    use HasActiveLocaleSelect;
 
-    public function getTableRecords(): Collection|Paginator
+    public function mount(): void
     {
-        if ($this->records) {
-            return $this->records;
-        }
+        static::authorizeResourceAccess();
 
-        $query = $this->getFilteredTableQuery();
+        $this->setActiveFormLocale();
+    }
 
-        $this->applySortingToTableQuery($query);
+    protected function setActiveFormLocale(): void
+    {
+        $this->activeLocale = static::getResource()::getDefaultTranslatableLocale();
+    }
 
-        if (! $this->activeFormLocale) {
-            $this->activeFormLocale = in_array(app()->getLocale(), static::getTranslatableLocales()) ? app()->getLocale() : static::getTranslatableLocales();
-        }
+    public function getTableRecords(): Collection | Paginator
+    {
+        parent::getTableRecords();
 
-        foreach (self::$resource::getTranslatableAttributes() as $translatableAttribute) {
-            $query->where($translatableAttribute.'->'.$this->activeFormLocale, '!=', '');
-        }
-
-        $this->records = $this->isTablePaginationEnabled() ?
-            $this->paginateTableQuery($query) :
-            $query->get();
-
-        if ($this->isTablePaginationEnabled()) {
-            $this->records->transform(fn ($item) => $item->setLocale($this->activeFormLocale));
-        } else {
-            $this->records->map(fn ($record) => $record->setLocale($this->activeFormLocale));
-        }
+        $this->records->transform(fn (Model $record) => $record->setLocale($this->activeLocale));
 
         return $this->records;
     }
 
     protected function getActions(): array
     {
-        return array_merge([
-            $this->getActiveFormLocaleSelectAction(),
-        ], parent::getActions());
+        return array_merge(
+            [$this->getActiveLocaleSelectAction()],
+            parent::getActions(),
+        );
     }
 }
