@@ -4,15 +4,15 @@ namespace Filament\Resources\Pages\Concerns;
 
 use Filament\Pages\Actions\SelectAction;
 
-trait HasActiveFormLocaleSelect
+trait HasActiveLocaleSelect
 {
-    public $activeFormLocale = null;
+    public $activeLocale = null;
 
     public ?array $translatableLocales = null;
 
-    protected function getActiveFormLocaleSelectAction(): SelectAction
+    protected function getActiveLocaleSelectAction(): SelectAction
     {
-        return SelectAction::make('activeFormLocale')
+        return SelectAction::make('activeLocale')
             ->label(__('filament-spatie-laravel-translatable-plugin::actions.active_locale.label'))
             ->options(
                 collect($this->getTranslatableLocales())
@@ -21,15 +21,6 @@ trait HasActiveFormLocaleSelect
                     })
                     ->toArray(),
             );
-    }
-
-    protected function getRecordTitle(): ?string
-    {
-        if ($this->activeFormLocale) {
-            $this->record->setLocale($this->activeFormLocale);
-        }
-
-        return parent::getRecordTitle();
     }
 
     public function setTranslatableLocales(array $locales): void
