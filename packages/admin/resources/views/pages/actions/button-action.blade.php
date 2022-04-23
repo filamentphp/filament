@@ -20,6 +20,7 @@
     :type="$canSubmitForm() ? 'submit' : 'button'"
     :color="$getColor()"
     :tooltip="$getTooltip()"
+    :keyBindings="$getKeyBindings()"
     :outlined="$isOutlined()"
     :disabled="$isDisabled()"
     :icon="$getIcon()"

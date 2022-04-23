@@ -225,8 +225,8 @@ return [
     'shortcuts' => [
         'enabled'  => false,
         'bindings' => [
-            'save' => ['ctrl+s', 'command+s'],
-            'new' => ['ctrl+o', 'command+o'],
+            'save'   => "['ctrl+s', 'command+s']",
+            'new' => "['ctrl+o', 'command+o']",
         ],
     ],
 

@@ -174,6 +174,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
         return ButtonAction::make('create')
             ->label(__('filament::resources/pages/list-records.actions.create.label', ['label' => $label]))
+            ->keyBindings(config('filament.shortcuts.bindings.new'))
             ->url(fn () => $resource::getUrl('create'));
     }
 

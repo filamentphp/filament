@@ -118,6 +118,7 @@ class CreateRecord extends Page implements HasFormActions
     {
         return ButtonAction::make('create')
             ->label(__('filament::resources/pages/create-record.form.actions.create.label'))
+            ->keyBindings(config('filament.shortcuts.bindings.save'))
             ->submit('create');
     }
 

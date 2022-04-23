@@ -7,8 +7,10 @@
     'outlined' => false,
     'tag' => 'button',
     'tooltip' => null,
+    'keyBindings' => null,
     'type' => 'button',
     'size' => 'md',
+    'href' => null,
 ])
 
 @php
@@ -98,6 +100,17 @@
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
         @endif
     </button>
+
+    @if(config('filament.shortcuts.enabled') && $keyBindings)
+        <div x-data
+             x-init="
+            Mousetrap.bindGlobal({{ $keyBindings }}, $event => {
+                $event.preventDefault();
+                $wire.{{ $loadingIndicatorTarget }}();
+            })
+        "
+        ></div>
+    @endif
 @elseif ($tag === 'a')
     <a
         @if ($tooltip)
@@ -130,4 +143,15 @@
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
         @endif
     </a>
+
+    @if(config('filament.shortcuts.enabled') && $keyBindings)
+        <div x-data
+             x-init="
+            Mousetrap.bindGlobal({{ $keyBindings }}, $event => {
+                $event.preventDefault();
+                window.location.href = '{{$href}}';
+            })
+        "
+        ></div>
+    @endif
 @endif

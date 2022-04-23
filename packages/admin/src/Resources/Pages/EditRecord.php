@@ -201,6 +201,7 @@ class EditRecord extends Page implements HasFormActions
     {
         return ButtonAction::make('save')
             ->label(__('filament::resources/pages/edit-record.form.actions.save.label'))
+            ->keyBindings(config('filament.shortcuts.bindings.save'))
             ->submit('save');
     }
 
