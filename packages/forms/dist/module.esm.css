@@ -1569,6 +1569,14 @@ trix-editor .attachment__metadata .attachment__size {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
 }
+.filepond--root[data-style-panel-layout=grid] .filepond--item {
+  width: calc(50% - 0.5em);
+}
+@media (min-width: 50em) {
+  .filepond--root[data-style-panel-layout=grid] .filepond--item {
+    width: calc(33.33% - 0.5em);
+  }
+}
 
 /* packages/forms/resources/css/components/rich-editor.css */
 .dark .trix-button {
