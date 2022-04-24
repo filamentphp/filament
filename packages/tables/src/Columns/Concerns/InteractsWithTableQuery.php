@@ -76,11 +76,19 @@ trait InteractsWithTableQuery
             }
 
             $query->when(
-                $isTranslatableAttribute,
-                fn (Builder $query): Builder => $query->{"{$whereClause}Raw"}(
-                    "lower({$searchColumnName}->\"$." . app()->getLocale() . "\") {$searchOperator} ?",
-                    "%{$searchQuery}%",
-                ),
+                method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName),
+                function (Builder $query) use ($searchColumnName, $searchOperator, $searchQuery, $whereClause): Builder {
+                    $livewire = $this->getLivewire();
+
+                    $locale = isset($livewire->activeLocale)
+                        ? $livewire->activeLocale
+                        : app()->getLocale();
+
+                    return $query->{"{$whereClause}Raw"}(
+                        "lower({$searchColumnName}->\"$.{$locale}\") {$searchOperator} ?",
+                        "%{$searchQuery}%",
+                    );
+                },
                 fn (Builder $query): Builder => $query->when(
                     $this->queriesRelationships(),
                     fn (Builder $query): Builder => $query->{"{$whereClause}Relation"}(
