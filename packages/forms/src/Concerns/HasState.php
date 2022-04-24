@@ -47,16 +47,16 @@ trait HasState
 
             $component->callBeforeStateDehydrated();
 
-            if ($component->getRecord()?->exists) {
-                $component->saveRelationships();
-            }
-
             foreach ($component->getChildComponentContainers() as $container) {
                 if ($container->isHidden()) {
                     continue;
                 }
 
                 $container->callBeforeStateDehydrated();
+            }
+
+            if ($component->getRecord()?->exists) {
+                $component->saveRelationships();
             }
         }
     }
