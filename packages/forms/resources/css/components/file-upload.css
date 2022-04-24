@@ -42,6 +42,7 @@
 }
 
 /* Grid styles */
+
 .filepond--root[data-style-panel-layout='grid'] .filepond--item {
     width: calc(50% - 0.5em);
 }
