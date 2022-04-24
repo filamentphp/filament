@@ -63,8 +63,6 @@ trait HasState
 
     public function dehydrateState(array &$state = []): array
     {
-        $this->callBeforeStateDehydrated();
-
         foreach ($this->getComponents() as $component) {
             if ($component->isHidden()) {
                 continue;
@@ -190,9 +188,13 @@ trait HasState
         return $this;
     }
 
-    public function getState(): array
+    public function getState(bool $shouldCallHooksBefore = true): array
     {
         $state = $this->validate();
+
+        if ($shouldCallHooksBefore) {
+            $this->callBeforeStateDehydrated();
+        }
 
         $this->dehydrateState($state);
         $this->mutateDehydratedState($state);

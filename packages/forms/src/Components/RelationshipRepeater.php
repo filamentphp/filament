@@ -37,7 +37,7 @@ class RelationshipRepeater extends Repeater
             $relationship = $component->getRelationship();
             $localKeyName = $relationship->getLocalKeyName();
 
-            $existingRecords = $this->getCachedExistingRecords();
+            $existingRecords = $component->getCachedExistingRecords();
 
             $recordsToDelete = [];
 
@@ -54,10 +54,10 @@ class RelationshipRepeater extends Repeater
             $childComponentContainers = $component->getChildComponentContainers();
 
             $itemOrder = 1;
-            $orderColumn = $this->getOrderColumn();
+            $orderColumn = $component->getOrderColumn();
 
             foreach ($childComponentContainers as $itemKey => $item) {
-                $itemData = $item->getState();
+                $itemData = $item->getState(shouldCallHooksBefore: false);
 
                 if ($orderColumn) {
                     $itemData[$orderColumn] = $itemOrder;
@@ -75,7 +75,7 @@ class RelationshipRepeater extends Repeater
                 $item->model($record)->saveRelationships();
             }
 
-            $this->clearCachedExistingRecords();
+            $component->clearCachedExistingRecords();
 
             $component->fillFromRelationship();
         });
@@ -151,7 +151,7 @@ class RelationshipRepeater extends Repeater
         return $this->evaluate($this->relationship) ?? $this->getName();
     }
 
-    protected function getCachedExistingRecords(): Collection
+    public function getCachedExistingRecords(): Collection
     {
         if ($this->cachedExistingRecords) {
             return $this->cachedExistingRecords;
@@ -169,7 +169,7 @@ class RelationshipRepeater extends Repeater
         );
     }
 
-    protected function clearCachedExistingRecords(): void
+    public function clearCachedExistingRecords(): void
     {
         $this->cachedExistingRecords = null;
     }
