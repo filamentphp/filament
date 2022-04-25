@@ -86,8 +86,8 @@ class Resource
 
     public static function resolveRecordRouteBinding($key): ?Model
     {
-        return static::getEloquentQuery()
-            ->where(static::getRecordRouteKeyName(), $key)
+        return app(static::getModel())
+            ->resolveRouteBindingQuery(static::getEloquentQuery(), $key, static::getRecordRouteKeyName())
             ->first();
     }
 
@@ -265,9 +265,9 @@ class Resource
         return "filament.resources.{$slug}";
     }
 
-    public static function getRecordRouteKeyName(): string
+    public static function getRecordRouteKeyName(): ?string
     {
-        return static::$recordRouteKeyName ?? app(static::getModel())->getRouteKeyName();
+        return static::$recordRouteKeyName;
     }
 
     public static function getRoutes(): Closure
