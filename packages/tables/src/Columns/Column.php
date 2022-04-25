@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Columns;
 
-use Filament\Tables\Concerns\CanConfigure;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Traits\Conditionable;
