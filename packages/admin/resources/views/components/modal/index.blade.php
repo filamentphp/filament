@@ -59,11 +59,11 @@
             x-transition:leave-start="translate-y-0"
             x-transition:leave-end="translate-y-8"
             x-cloak
-            {{ $attributes->class(['relative w-full mt-auto md:mb-auto cursor-pointer']) }}
+            {{ $attributes->class(['relative w-full mt-auto md:mb-auto cursor-pointer pointer-events-none']) }}
         >
             <div
                 @class([
-                    'w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default filament-modal-window',
+                    'w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default pointer-events-auto filament-modal-window',
                     'dark:bg-gray-800' => config('filament.dark_mode'),
                     'max-w-xs' => $width === 'xs',
                     'max-w-sm' => $width === 'sm',
