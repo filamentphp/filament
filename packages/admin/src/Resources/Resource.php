@@ -86,13 +86,9 @@ class Resource
 
     public static function resolveRecordRouteBinding($key): ?Model
     {
-        if (static::shouldUseRecordRouteKeyName()) {
-            return static::getEloquentQuery()
-                ->where(static::getRecordRouteKeyName(), $key)
-                ->first();
-        }
-
-        return app(static::getModel())->resolveRouteBinding($key);
+        return static::getEloquentQuery()
+            ->where(static::getRecordRouteKeyName(), $key)
+            ->first();
     }
 
     public static function can(string $action, ?Model $record = null): bool
@@ -267,11 +263,6 @@ class Resource
         $slug = static::getSlug();
 
         return "filament.resources.{$slug}";
-    }
-
-    public static function shouldUseRecordRouteKeyName(): bool
-    {
-        return filled(static::$recordRouteKeyName);
     }
 
     public static function getRecordRouteKeyName(): string
