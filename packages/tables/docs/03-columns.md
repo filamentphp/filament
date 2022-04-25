@@ -175,6 +175,20 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('slug')->visibleFrom('md')
 ```
 
+### Global settings for columns
+
+If you wish to change the default behaviour of all columns globally (=in all tables), then you can call the static `configure` method inside your `AppServiceProvider::boot()` method, where you can provide a callback to modify all columns. For example if you wish to make all columns `sortable` and `toggleable`, you can do it like so:
+
+```php
+use Filament\Tables\Columns\Column;
+
+Column::configure(function(Column $column) {
+    $column->toggleable()->sortable();
+});
+```
+
+Of course, you are still able to overwrite this on each column individually.
+
 ### Counting relationships
 
 If you wish to count the number of related records in a column, you may use the `counts()` method:
