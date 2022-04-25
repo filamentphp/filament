@@ -187,6 +187,16 @@ Column::configure(function(Column $column) {
 });
 ```
 
+You can call this code on specific column types only as well:
+
+```php
+use Filament\Tables\Columns\BooleanColumn;
+
+Column::configure(function(BooleanColumn $column) {
+    $column->toggleable()->sortable();
+});
+```
+
 Of course, you are still able to overwrite this on each column individually.
 
 ### Counting relationships
