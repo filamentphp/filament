@@ -15,7 +15,7 @@ trait HasView
 
     public function button(): static
     {
-        $this->view('forms::components.actions.modal.actions.button-action');
+        $this->view('forms::actions.modal.actions.button-action');
 
         return $this;
     }

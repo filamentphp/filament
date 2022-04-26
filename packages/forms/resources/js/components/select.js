@@ -100,7 +100,6 @@ export default (Alpine) => {
                         this.select.addItem(item, true)
                     })
                 } else {
-                    console.log(this.select.getOption(this.state))
                     this.select.addItem(this.state, true)
                 }
 

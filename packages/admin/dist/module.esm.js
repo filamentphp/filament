@@ -22952,7 +22952,6 @@ var select_default = (Alpine) => {
             this.select.addItem(item2, true);
           });
         } else {
-          console.log(this.select.getOption(this.state));
           this.select.addItem(this.state, true);
         }
         this.select.refreshItems();
