@@ -46,6 +46,8 @@ class Action extends Component implements Htmlable
 
     protected function setUp(): void
     {
+        $this->button();
+
         $this->configure();
     }
 
