@@ -80,10 +80,12 @@ class MakePageCommand extends Command
                 ->append('.blade.php'),
         );
 
-        if (! $this->option('force') && $this->checkForCollision([
-            $path,
-            $viewPath,
-        ])) {
+        $files = array_merge(
+            [$path],
+            $resourcePage === 'Page' ? [$viewPath] : []
+        );
+
+        if (!$this->option('force') && $this->checkForCollision($files)) {
             return static::INVALID;
         }
 
@@ -94,6 +96,11 @@ class MakePageCommand extends Command
                 'view' => $view,
             ]);
         } else {
+            $viewLine = '';
+            if ($resourcePage === 'Page') {
+                $viewLine = PHP_EOL . PHP_EOL . '    protected static string $view = \'' . $view . '\';';
+            }
+
             $this->copyStubToApp('ResourcePage', $path, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\' . $resourcePage,
                 'baseResourcePageClass' => $resourcePage,
@@ -101,11 +108,13 @@ class MakePageCommand extends Command
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $pageClass,
-                'view' => $view,
+                'viewLine' => $viewLine,
             ]);
         }
 
-        $this->copyStubToApp('PageView', $viewPath);
+        if ($resource === null || $resourcePage === 'Page') {
+            $this->copyStubToApp('PageView', $viewPath);
+        }
 
         $this->info("Successfully created {$page}!");
 
