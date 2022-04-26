@@ -18,7 +18,7 @@ trait CanBeMounted
 
     public function getMountUsing(): Closure
     {
-        return $this->mountUsing ?? function ($action, ?ComponentContainer $form = null): void {
+        return $this->mountUsing ?? static function ($action, ?ComponentContainer $form = null): void {
             if (! $action->shouldOpenModal()) {
                 return;
             }
