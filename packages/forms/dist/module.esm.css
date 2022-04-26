@@ -1525,6 +1525,18 @@ trix-editor .attachment__metadata .attachment__size {
   max-width: 50%;
 }
 
+/* packages/forms/resources/css/components/color-picker.css */
+.filament-forms-color-picker-preview {
+  background-image: repeating-linear-gradient(45deg, #aaa 25%, transparent 25%, transparent 75%, #aaa 75%, #aaa), repeating-linear-gradient(45deg, #aaa 25%, #fff 25%, #fff 75%, #aaa 75%, #aaa);
+  background-position: 0 0, 4px 4px;
+  background-size: 8px 8px;
+}
+.filament-forms-color-picker-preview::after {
+  content: "";
+  background: var(--color);
+  @apply absolute inset-0;
+}
+
 /* packages/forms/resources/css/components/file-upload.css */
 .filepond--root {
   @apply mb-0 overflow-hidden;
@@ -1556,6 +1568,14 @@ trix-editor .attachment__metadata .attachment__size {
 .filepond--root[data-style-panel-layout=compact] .filepond--file {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
+}
+.filepond--root[data-style-panel-layout=grid] .filepond--item {
+  width: calc(50% - 0.5em);
+}
+@media (min-width: 50em) {
+  .filepond--root[data-style-panel-layout=grid] .filepond--item {
+    width: calc(33.33% - 0.5em);
+  }
 }
 
 /* packages/forms/resources/css/components/rich-editor.css */
@@ -1776,32 +1796,8 @@ trix-editor .attachment__metadata .attachment__size {
 .ts-control.dropdown -active {
   @apply rounded-lg;
 }
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-/* packages/forms/resources/css/components/color-picker.css */
-.filament-forms-color-picker-preview {
-  background-image: repeating-linear-gradient(45deg, #aaa 25%, transparent 25%, transparent 75%, #aaa 75%, #aaa), repeating-linear-gradient(45deg, #aaa 25%, #fff 25%, #fff 75%, #aaa 75%, #aaa);
-  background-position: 0 0, 4px 4px;
-  background-size: 8px 8px;
-}
-.filament-forms-color-picker-preview::after {
-  content: "";
-  background: var(--color);
-  @apply absolute inset-0;
-}
-
-/* packages/forms/resources/css/components/file-upload.css */
-.filepond--root {
-  @apply mb-0 overflow-hidden;
-=======
 .focus .ts-control {
   @apply border-primary-600 ring-1 ring-inset ring-primary-600;
->>>>>>> e750f9f4 (wip)
-=======
-.focus .ts-control {
-  @apply border-primary-600 ring-1 ring-inset ring-primary-600;
->>>>>>> b38f158f (wip)
 }
 .ts-control .item {
   @apply flex items-center;
@@ -1846,30 +1842,9 @@ trix-editor .attachment__metadata .attachment__size {
 .ts-wrapper.form-select {
   @apply p-0 h-auto shadow-none;
 }
-<<<<<<< HEAD
-<<<<<<< HEAD
-.filepond--root[data-style-panel-layout=grid] .filepond--item {
-  width: calc(50% - 0.5em);
-}
-@media (min-width: 50em) {
-  .filepond--root[data-style-panel-layout=grid] .filepond--item {
-    width: calc(33.33% - 0.5em);
-  }
-}
-
-/* packages/forms/resources/css/components/rich-editor.css */
-.dark .trix-button {
-  @apply bg-gray-700 border-gray-600 text-gray-200;
-=======
 .ts-wrapper.form-select .ts-control,
 .ts-wrapper.form-select.single.input-active .ts-control {
   @apply !border-0 !bg-transparent;
->>>>>>> e750f9f4 (wip)
-=======
-.ts-wrapper.form-select .ts-control,
-.ts-wrapper.form-select.single.input-active .ts-control {
-  @apply !border-0 !bg-transparent;
->>>>>>> b38f158f (wip)
 }
 .input-group > .ts-wrapper {
   @apply flex-grow;
