@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Contracts;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
 
 trait CanBeLengthConstrained
@@ -19,10 +20,10 @@ trait CanBeLengthConstrained
         $this->maxLength = $length;
         $this->minLength = $length;
 
-        $this->rule(function (): string {
-            $length = $this->getLength();
+        $this->rule(static function (Contracts\CanBeLengthConstrained $component): string {
+            $length = $component->getLength();
 
-            if ($this instanceof CanHaveNumericState && $this->isNumeric()) {
+            if ($component instanceof CanHaveNumericState && $component->isNumeric()) {
                 return "digits:{$length}";
             }
 
@@ -36,8 +37,8 @@ trait CanBeLengthConstrained
     {
         $this->maxLength = $length;
 
-        $this->rule(function (): string {
-            $length = $this->getMaxLength();
+        $this->rule(static function (Contracts\CanBeLengthConstrained $component): string {
+            $length = $component->getMaxLength();
 
             return "max:{$length}";
         });
@@ -49,8 +50,8 @@ trait CanBeLengthConstrained
     {
         $this->minLength = $length;
 
-        $this->rule(function (): string {
-            $length = $this->getMinLength();
+        $this->rule(static function (Contracts\CanBeLengthConstrained $component): string {
+            $length = $component->getMinLength();
 
             return "min:{$length}";
         });

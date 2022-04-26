@@ -14,7 +14,7 @@
             <ul
                 class="space-y-2"
                 wire:sortable
-                wire:end="dispatchFormEvent('builder::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
+                wire:end.stop="dispatchFormEvent('builder::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
             >
                 @foreach ($containers as $uuid => $item)
                     @php($withBlockLabels = $shouldShowBlockLabels())

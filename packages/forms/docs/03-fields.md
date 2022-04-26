@@ -221,6 +221,26 @@ Grid::make([
 
 > More information about grids is available in the [layout documentation](layout#grid).
 
+### Global settings
+
+If you wish to change the default behaviour of a field globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all checkboxes [`inline(false)`](#checkbox), you can do it like so:
+
+```php
+use Filament\Forms\Components\Checkbox;
+
+Checkbox::configureUsing(function (Checkbox $checkbox): void {
+    $checkbox->inline(false);
+});
+```
+
+Of course, you are still able to overwrite this on each field individually:
+
+```php
+use Filament\Forms\Components\Checkbox;
+
+Checkbox::make('is_admin')->inline()
+```
+
 ## Text input
 
 The text input allows you to interact with a string:

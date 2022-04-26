@@ -56,7 +56,7 @@ trait CanAttachRecords
         return Select::make('recordId')
             ->label(__('filament::resources/relation-managers/attach.action.modal.fields.record_id.label'))
             ->searchable()
-            ->getSearchResultsUsing(function (Select $component, RelationManager $livewire, string $searchQuery): array {
+            ->getSearchResultsUsing(static function (Select $component, RelationManager $livewire, string $searchQuery): array {
                 $relationship = $livewire->getRelationship();
 
                 $displayColumnName = static::getRecordTitleAttribute();
@@ -96,7 +96,7 @@ trait CanAttachRecords
                     ->pluck($displayColumnName, $relationship->getRelated()->getKeyName())
                     ->toArray();
             })
-            ->getOptionLabelUsing(fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->query()->find($value)))
+            ->getOptionLabelUsing(static fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->query()->find($value)))
             ->options(function (RelationManager $livewire): array {
                 if (! static::$shouldPreloadAttachFormRecordSelectOptions) {
                     return [];

@@ -21,7 +21,7 @@ class MultipleFileUpload extends Field
     {
         parent::setUp();
 
-        $this->dehydrateStateUsing(function (array $state): array {
+        $this->dehydrateStateUsing(static function (array $state): array {
             return array_values($state);
         });
     }

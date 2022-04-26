@@ -69,7 +69,6 @@ class CreateRecord extends Page implements HasFormActions
             $this->notify(
                 'success',
                 $this->getCreatedNotificationMessage(),
-                isAfterRedirect: ! $another,
             );
         }
 

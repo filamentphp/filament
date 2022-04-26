@@ -69,22 +69,33 @@ trait InteractsWithTableQuery
         foreach ($this->getSearchColumns() as $searchColumnName) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
-            if (method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName)) {
-                $searchColumnName = $searchColumnName . '->' . app()->getLocale();
-            }
-
             $query->when(
-                $this->queriesRelationships(),
-                fn ($query) => $query->{"{$whereClause}Relation"}(
-                    $this->getRelationshipName(),
-                    $searchColumnName,
-                    $searchOperator,
-                    "%{$searchQuery}%",
-                ),
-                fn ($query) => $query->{$whereClause}(
-                    $searchColumnName,
-                    $searchOperator,
-                    "%{$searchQuery}%",
+                method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName),
+                function (Builder $query) use ($searchColumnName, $searchOperator, $searchQuery, $whereClause): Builder {
+                    $livewire = $this->getLivewire();
+
+                    $locale = isset($livewire->activeLocale)
+                        ? $livewire->activeLocale
+                        : app()->getLocale();
+
+                    return $query->{"{$whereClause}Raw"}(
+                        "lower({$searchColumnName}->\"$.{$locale}\") {$searchOperator} ?",
+                        "%{$searchQuery}%",
+                    );
+                },
+                fn (Builder $query): Builder => $query->when(
+                    $this->queriesRelationships(),
+                    fn (Builder $query): Builder => $query->{"{$whereClause}Relation"}(
+                        $this->getRelationshipName(),
+                        $searchColumnName,
+                        $searchOperator,
+                        "%{$searchQuery}%",
+                    ),
+                    fn (Builder $query): Builder => $query->{$whereClause}(
+                        $searchColumnName,
+                        $searchOperator,
+                        "%{$searchQuery}%",
+                    ),
                 ),
             );
 

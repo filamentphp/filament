@@ -11,12 +11,10 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Navigation\UserMenuItem;
 use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Str;
-use Livewire\Component;
+use Illuminate\Support\HtmlString;
 
 class FilamentManager
 {
@@ -49,6 +47,8 @@ class FilamentManager
     protected array $widgets = [];
 
     protected ?Closure $navigationBuilder = null;
+
+    protected array $renderHooks = [];
 
     public function auth(): Guard
     {
@@ -112,6 +112,11 @@ class FilamentManager
         $this->pages = array_merge($this->pages, $pages);
     }
 
+    public function registerRenderHook(string $name, Closure $callback): void
+    {
+        $this->renderHooks[$name][] = $callback;
+    }
+
     public function registerResources(array $resources): void
     {
         $this->resources = array_merge($this->resources, $resources);
@@ -163,33 +168,22 @@ class FilamentManager
 
     public function notify(string $status, string $message, bool $isAfterRedirect = false): void
     {
-        if ($isAfterRedirect) {
-            session()->push('notifications', [
-                'id' => Str::random(),
-                'status' => $status,
-                'message' => $message,
-            ]);
-
-            return;
-        }
-
-        try {
-            /** @var \Livewire\Component $component */
-            $component = app(Component::class);
-        } catch (BindingResolutionException $exception) {
-            return;
-        }
-
-        $component->dispatchBrowserEvent('notify', [
-            'id' => Str::random(),
-            'status' => $status,
-            'message' => $message,
-        ]);
+        NotificationManager::notify($status, $message);
     }
 
     public function getGlobalSearchProvider(): GlobalSearchProvider
     {
         return app($this->globalSearchProvider);
+    }
+
+    public function renderHook(string $name): HtmlString
+    {
+        $hooks = array_map(
+            fn (callable $hook): string => (string) app()->call($hook),
+            $this->renderHooks[$name] ?? [],
+        );
+
+        return new HtmlString(implode('', $hooks));
     }
 
     public function getNavigation(): array

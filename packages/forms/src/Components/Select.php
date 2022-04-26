@@ -21,6 +21,8 @@ class Select extends Field
 
     protected array | Closure | null $createFormSchema = null;
 
+    protected ?Closure $saveCreateFormUsing = null;
+
     protected bool | Closure $isMultiple = false;
 
     protected ?Closure $getOptionLabelUsing = null;
@@ -61,7 +63,7 @@ class Select extends Field
             $component->state([]);
         });
 
-        $this->getOptionLabelUsing(function (Select $component, $value): ?string {
+        $this->getOptionLabelUsing(static function (Select $component, $value): ?string {
             if (array_key_exists($value, $options = $component->getOptions())) {
                 return $options[$value];
             }

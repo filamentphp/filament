@@ -28,7 +28,7 @@ class Repeater extends Field
 
         $this->defaultItems(1);
 
-        $this->afterStateHydrated(function (Repeater $component, ?array $state): void {
+        $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
             $items = collect($state ?? [])
                 ->mapWithKeys(fn ($itemData) => [(string) Str::uuid() => $itemData])
                 ->toArray();
@@ -137,13 +137,13 @@ class Repeater extends Field
             ],
         ]);
 
-        $this->createItemButtonLabel(function (Repeater $component) {
+        $this->createItemButtonLabel(static function (Repeater $component) {
             return __('forms::components.repeater.buttons.create_item.label', [
                 'label' => lcfirst($component->getLabel()),
             ]);
         });
 
-        $this->mutateDehydratedStateUsing(function (?array $state): array {
+        $this->mutateDehydratedStateUsing(static function (?array $state): array {
             return array_values($state ?? []);
         });
     }
@@ -157,7 +157,7 @@ class Repeater extends Field
 
     public function defaultItems(int | Closure $count): static
     {
-        $this->default(function (Repeater $component) use ($count): array {
+        $this->default(static function (Repeater $component) use ($count): array {
             $items = [];
 
             $count = $component->evaluate($count);

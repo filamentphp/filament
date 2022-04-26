@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Filament\Forms\Concerns\HasColumns;
 use Filament\Forms\Concerns\HasStateBindingModifiers;
+use Filament\Support\Concerns\Configurable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Traits\Macroable;
@@ -32,6 +33,7 @@ class Component extends ViewComponent implements Htmlable
     use Concerns\HasState;
     use Concerns\HasView;
     use Concerns\ListensToEvents;
+    use Configurable;
     use HasColumns;
     use HasStateBindingModifiers;
     use Macroable;
@@ -39,6 +41,7 @@ class Component extends ViewComponent implements Htmlable
 
     protected function setUp(): void
     {
+        $this->configure();
     }
 
     public function toHtml(): string

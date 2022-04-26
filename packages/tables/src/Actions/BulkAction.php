@@ -3,6 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
+use Filament\Support\Concerns\Configurable;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
@@ -24,6 +25,7 @@ class BulkAction
     use Concerns\HasName;
     use Concerns\HasRecords;
     use Conditionable;
+    use Configurable;
     use Macroable;
     use Tappable;
 
@@ -42,6 +44,7 @@ class BulkAction
 
     protected function setUp(): void
     {
+        $this->configure();
     }
 
     public function call(array $data = [])

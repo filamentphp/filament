@@ -9,6 +9,8 @@ trait BelongsToModel
 {
     protected Model | string | Closure | null $model = null;
 
+    protected ?Closure $loadStateFromRelationshipsUsing = null;
+
     protected ?Closure $saveRelationshipsUsing = null;
 
     public function model(Model | string | Closure | null $model = null): static
@@ -29,9 +31,27 @@ trait BelongsToModel
         $this->evaluate($callback);
     }
 
+    public function loadStateFromRelationships(): void
+    {
+        $callback = $this->loadStateFromRelationshipsUsing;
+
+        if (! $callback) {
+            return;
+        }
+
+        $this->evaluate($callback);
+    }
+
     public function saveRelationshipsUsing(?Closure $callback): static
     {
         $this->saveRelationshipsUsing = $callback;
+
+        return $this;
+    }
+
+    public function loadStateFromRelationshipsUsing(?Closure $callback): static
+    {
+        $this->loadStateFromRelationshipsUsing = $callback;
 
         return $this;
     }

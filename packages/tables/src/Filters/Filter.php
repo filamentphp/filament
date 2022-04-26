@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Filters;
 
+use Filament\Support\Concerns\Configurable;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
@@ -18,6 +19,7 @@ class Filter
     use Concerns\HasName;
     use Concerns\InteractsWithTableQuery;
     use Conditionable;
+    use Configurable;
     use Macroable;
     use Tappable;
 
@@ -36,5 +38,6 @@ class Filter
 
     protected function setUp(): void
     {
+        $this->configure();
     }
 }

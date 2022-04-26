@@ -20,6 +20,22 @@ Install the plugin with Composer:
 composer require filament/spatie-laravel-tags-plugin:"^2.0"
 ```
 
+If you haven't already done so, you need to publish the migration to create the tags table:
+
+```bash
+php artisan vendor:publish --provider="Spatie\Tags\TagsServiceProvider" --tag="tags-migrations"
+```
+
+Run the migrations:
+
+```bash
+php artisan migrate
+```
+
+You must also [prepare your Eloquent model](https://spatie.be/docs/laravel-tags/basic-usage/using-tags) for attaching tags.
+
+> For more information, check out [Spatie's documentation](https://spatie.be/docs/laravel-tags).
+
 You're now ready to start using the [form components](form-components) and [table columns](table-columns)!
 
 ## Upgrade Guide

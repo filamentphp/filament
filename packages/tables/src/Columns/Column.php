@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Columns;
 
+use Filament\Support\Concerns\Configurable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Traits\Conditionable;
@@ -16,6 +17,7 @@ class Column extends Component implements Htmlable
     use Concerns\CanBeHidden;
     use Concerns\CanBeSearchable;
     use Concerns\CanBeSortable;
+    use Concerns\CanBeToggled;
     use Concerns\CanCallAction;
     use Concerns\CanOpenUrl;
     use Concerns\EvaluatesClosures;
@@ -30,6 +32,7 @@ class Column extends Component implements Htmlable
     use Concerns\HasView;
     use Concerns\InteractsWithTableQuery;
     use Conditionable;
+    use Configurable;
     use Macroable;
     use Tappable;
 
@@ -48,6 +51,7 @@ class Column extends Component implements Htmlable
 
     protected function setUp(): void
     {
+        $this->configure();
     }
 
     public function toHtml(): string

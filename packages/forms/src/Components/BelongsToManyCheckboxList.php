@@ -19,7 +19,7 @@ class BelongsToManyCheckboxList extends CheckboxList
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (BelongsToManyCheckboxList $component, ?array $state): void {
+        $this->afterStateHydrated(static function (BelongsToManyCheckboxList $component, ?array $state): void {
             if (count($state ?? [])) {
                 return;
             }
@@ -39,7 +39,7 @@ class BelongsToManyCheckboxList extends CheckboxList
             );
         });
 
-        $this->saveRelationshipsUsing(function (BelongsToManyCheckboxList $component, ?array $state) {
+        $this->saveRelationshipsUsing(static function (BelongsToManyCheckboxList $component, ?array $state) {
             $component->getRelationship()->sync($state ?? []);
         });
 
@@ -51,13 +51,13 @@ class BelongsToManyCheckboxList extends CheckboxList
         $this->displayColumnName = $displayColumnName;
         $this->relationship = $relationshipName;
 
-        $this->options(function (BelongsToManyCheckboxList $component) use ($callback): array {
+        $this->options(static function (BelongsToManyCheckboxList $component) use ($callback): array {
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
-                $relationshipQuery = $this->evaluate($callback, [
+                $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
                 ]);
             }
