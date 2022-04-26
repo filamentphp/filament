@@ -22930,6 +22930,11 @@ var select_default = (Alpine) => {
             no_results: () => `<div class="no-results">${noSearchResultsMessage}</div>`
           }
         });
+        if (this.state === null) {
+          this.shouldUpdateState = false;
+          this.state = isMultiple ? [] : "";
+          this.shouldUpdateState = true;
+        }
         if (maxItems) {
           this.select.setMaxItems(maxItems);
         }

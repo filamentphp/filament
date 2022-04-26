@@ -72,6 +72,14 @@ export default (Alpine) => {
                     },
                 })
 
+                if (this.state === null) {
+                    this.shouldUpdateState = false
+
+                    this.state = isMultiple ? [] : ''
+
+                    this.shouldUpdateState = true
+                }
+
                 if (maxItems) {
                     this.select.setMaxItems(maxItems)
                 }
