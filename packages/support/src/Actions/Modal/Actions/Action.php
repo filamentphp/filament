@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Actions\Modal\Actions;
 
+use Filament\Support\Actions\BaseAction;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\HasColor;
 use Filament\Support\Actions\Concerns\HasIcon;
@@ -16,37 +17,10 @@ use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
 use Illuminate\View\Component;
 
-abstract class Action extends Component implements Htmlable
+abstract class Action extends BaseAction
 {
     use CanBeOutlined;
     use Concerns\CanCancelAction;
     use Concerns\CanSubmitForm;
     use Concerns\HasAction;
-    use Conditionable;
-    use Configurable;
-    use HasColor;
-    use HasLabel;
-    use HasIcon;
-    use HasName;
-    use HasView;
-    use Macroable;
-    use Tappable;
-
-    final public function __construct(string $name)
-    {
-        $this->name($name);
-    }
-
-    public static function make(string $name): static
-    {
-        $static = app(static::class, ['name' => $name]);
-        $static->setUp();
-
-        return $static;
-    }
-
-    protected function setUp(): void
-    {
-        $this->configure();
-    }
 }
