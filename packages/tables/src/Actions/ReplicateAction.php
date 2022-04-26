@@ -18,9 +18,9 @@ class ReplicateAction extends Action
     {
         parent::setUp();
 
-        $this->modalButton(function (ReplicateAction $action) {
-            return $action->getLabel();
-        });
+        $this->label(__('tables::table.actions.replicate.label'));
+
+        $this->modalButton(fn (ReplicateAction $action): string => $action->getLabel());
 
         $this->action(function (ReplicateAction $action, Model $record, array $data = []) {
             $replica = $record->replicate($action->getExcludedAttributes());
