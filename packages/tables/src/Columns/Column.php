@@ -31,8 +31,8 @@ class Column extends Component implements Htmlable
     use Concerns\HasTooltip;
     use Concerns\HasView;
     use Concerns\InteractsWithTableQuery;
-    use Configurable;
     use Conditionable;
+    use Configurable;
     use Macroable;
     use Tappable;
 
