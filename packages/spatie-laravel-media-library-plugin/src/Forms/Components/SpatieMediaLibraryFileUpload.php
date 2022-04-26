@@ -81,7 +81,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             /** @var FileAdder $mediaAdder */
             $mediaAdder = $record->addMediaFromString($file->get());
 
-            $filename = $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
+            $filename = $component->getUploadedFileNameForStorage($file);
 
             $media = $mediaAdder
                 ->usingFileName($filename)
