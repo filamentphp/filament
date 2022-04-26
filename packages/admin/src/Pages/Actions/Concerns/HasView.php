@@ -13,6 +13,27 @@ trait HasView
         return $this;
     }
 
+    public function button(): static
+    {
+        $this->view('filament::pages.actions.button-action');
+
+        return $this;
+    }
+
+    public function link(): static
+    {
+        $this->view('filament::pages.actions.link-action');
+
+        return $this;
+    }
+
+    public function iconButton(): static
+    {
+        $this->view('filament::pages.actions.icon-button-action');
+
+        return $this;
+    }
+
     public function getView(): string
     {
         return $this->view;

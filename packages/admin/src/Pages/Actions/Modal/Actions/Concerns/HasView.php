@@ -13,6 +13,13 @@ trait HasView
         return $this;
     }
 
+    public function button(): static
+    {
+        $this->view('filament::pages.actions.modal.actions.button-action');
+
+        return $this;
+    }
+
     public function getView(): string
     {
         return $this->view;

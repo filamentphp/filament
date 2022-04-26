@@ -13,6 +13,27 @@ trait HasView
         return $this;
     }
 
+    public function button(): static
+    {
+        $this->view('tables::actions.button-action');
+
+        return $this;
+    }
+
+    public function link(): static
+    {
+        $this->view('tables::actions.link-action');
+
+        return $this;
+    }
+
+    public function iconButton(): static
+    {
+        $this->view('tables::actions.icon-button-action');
+
+        return $this;
+    }
+
     public function getView(): string
     {
         return $this->view;
