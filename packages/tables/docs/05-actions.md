@@ -243,6 +243,75 @@ LinkAction::make('edit')
 
 This is useful for authorization of certain actions to only users who have permission.
 
+## Prebuilt actions
+
+### Replicate
+
+This package includes an action to replicate table records. You may use it like so:
+
+```php
+use Filament\Tables\Actions\ReplicateAction;
+
+ReplicateAction::make('replicate')
+```
+
+The `excludeAttributes()` method is used to instruct the action which columns to be excluded from replication:
+
+```php
+use Filament\Tables\Actions\ReplicateAction;
+
+ReplicateAction::make('replicate')->excludeAttributes('slug')
+```
+
+The `beforeReplicaSaved()` method can be used to invoke a Closure before saving the replica:
+
+```php
+use Filament\Tables\Actions\ReplicateAction;
+use Illuminate\Database\Eloquent\Model;
+
+ReplicateAction::make('replicate')
+    ->beforeReplicaSaved(function (Model $replica): void {
+        // ...
+    })
+```
+
+The `afterReplicaSaved()` method can be used to invoke a Closure after saving the replica:
+
+```php
+use Filament\Tables\Actions\ReplicateAction;
+use Illuminate\Database\Eloquent\Model;
+
+ReplicateAction::make('replicate')
+    ->afterReplicaSaved(function (Model $replica): void {
+        // ...
+    })
+```
+
+By default, the action will appear as a `LinkAction`, but calling the `->button()` method will make it a `ButtonAction` instead.
+
+```php
+use Filament\Tables\Actions\ReplicateAction;
+
+ReplicateAction::make('replicate')->button()
+```
+
+#### Retrieving user input
+
+Just like [normal actions](#custom-forms), you can provide a [form schema](/docs/forms/fields) that can be used to modify the replication process:
+
+```php
+use Filament\Tables\Actions\ReplicateAction;
+
+ReplicateAction::make('replicate')
+	->excludeAttributes(['title'])
+	->form([
+		TextInput::make('title')->required(),
+	])
+	->beforeSaving(function (Model $replica, array $data): void {
+		$replica->fill($data);
+	})
+```
+
 ## Alignment
 
 By default, the row actions in your table will be aligned to the right in the final cell. To change the default alignment, update the configuration value inside of the package config:

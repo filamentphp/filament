@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class ReplicateAction extends Action
 {
-    protected array | Closure | null $exclude = null;
+    protected ?Closure $afterReplicaSavedCallback = null;
 
     protected ?Closure $beforeReplicaSavedCallback = null;
 
-    protected ?Closure $afterReplicaSavedCallback = null;
+    protected array | Closure | null $excludedAttributes = null;
 
     protected function setUp(): void
     {
@@ -20,9 +20,9 @@ class ReplicateAction extends Action
 
         $this->label(__('tables::table.actions.replicate.label'));
 
-        $this->modalButton(fn (ReplicateAction $action): string => $action->getLabel());
+        $this->modalButton(static fn (ReplicateAction $action): string => $action->getLabel());
 
-        $this->action(function (ReplicateAction $action, Model $record, array $data = []) {
+        $this->action(static function (ReplicateAction $action, Model $record, array $data = []) {
             $replica = $record->replicate($action->getExcludedAttributes());
 
             $action->callBeforeReplicaSaved($replica, $data);
@@ -35,31 +35,11 @@ class ReplicateAction extends Action
         });
     }
 
-    public function exclude(array | Closure $attributes): static
-    {
-        $this->exclude = $attributes;
-
-        return $this;
-    }
-
-    public function without(array | Closure $attributes): static
-    {
-        return $this->exclude($attributes);
-    }
-
     public function beforeReplicaSaved(Closure $callback): static
     {
         $this->beforeReplicaSavedCallback = $callback;
 
         return $this;
-    }
-
-    public function callBeforeReplicaSaved(Model $replica, array $data = []): void
-    {
-        $this->evaluate($this->beforeReplicaSavedCallback, [
-            'replica' => $replica,
-            'data' => $data,
-        ]);
     }
 
     public function afterReplicaSaved(Closure $callback): static
@@ -69,16 +49,31 @@ class ReplicateAction extends Action
         return $this;
     }
 
+    public function excludeAttributes(array | Closure | null $attributes): static
+    {
+        $this->excludedAttributes = $attributes;
+
+        return $this;
+    }
+
+    public function callBeforeReplicaSaved(Model $replica, array $data = []): void
+    {
+        $this->evaluate($this->beforeReplicaSavedCallback, [
+            'data' => $data,
+            'replica' => $replica,
+        ]);
+    }
+
     public function callAfterReplicaSaved(Model $replica, array $data = [])
     {
         return $this->evaluate($this->afterReplicaSavedCallback, [
-            'replica' => $replica,
             'data' => $data,
+            'replica' => $replica,
         ]);
     }
 
     public function getExcludedAttributes(): ?array
     {
-        return $this->evaluate($this->exclude);
+        return $this->evaluate($this->excludedAttributes);
     }
 }
