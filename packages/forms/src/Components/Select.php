@@ -37,8 +37,6 @@ class Select extends Field
 
     protected bool | Closure $isSearchable = false;
 
-    protected ?Closure $saveCreateFormUsing = null;
-
     protected ?array $searchColumns = null;
 
     protected string | HtmlString | Closure | null $noSearchResultsMessage = null;
@@ -147,7 +145,7 @@ class Select extends Field
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [saveCreateFormUsing()] closure set.");
                 }
 
-                $key = $component->evaluate($this->getSaveCreateFormUsing(), [
+                $key = $component->evaluate($component->getSaveCreateFormUsing(), [
                     'data' => $data,
                 ]);
 
