@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Concerns;
+namespace Filament\Support\Concerns;
 
 trait Configurable
 {
