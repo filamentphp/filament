@@ -61,7 +61,7 @@ class Select extends Field
             $component->state([]);
         });
 
-        $this->getOptionLabelUsing(function (Select $component, $value): ?string {
+        $this->getOptionLabelUsing(static function (Select $component, $value): ?string {
             if (array_key_exists($value, $options = $component->getOptions())) {
                 return $options[$value];
             }
