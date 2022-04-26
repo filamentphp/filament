@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Columns\Column;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\Support\Htmlable;
@@ -35,6 +36,8 @@ class Table extends ViewComponent implements Htmlable
     protected ?string $emptyStateIcon = null;
 
     protected ?string $filtersFormWidth = null;
+
+    protected ?string $columnToggleFormWidth = null;
 
     protected ?string $recordAction = null;
 
@@ -177,7 +180,9 @@ class Table extends ViewComponent implements Htmlable
 
     public function getColumns(): array
     {
-        return $this->getLivewire()->getCachedTableColumns();
+        return collect($this->getLivewire()->getCachedTableColumns())
+            ->filter(fn (Column $column): bool => ! $column->isToggledHidden())
+            ->toArray();
     }
 
     public function getContentFooter(): ?View
@@ -228,6 +233,16 @@ class Table extends ViewComponent implements Htmlable
     public function getFiltersFormWidth(): ?string
     {
         return $this->filtersFormWidth;
+    }
+
+    public function getTableColumnToggleForm(): ComponentContainer
+    {
+        return $this->getLivewire()->getTableColumnToggleForm();
+    }
+
+    public function getTableColumnToggleFormWidth(): ?string
+    {
+        return $this->columnToggleFormWidth;
     }
 
     public function getHeader(): ?View
@@ -324,6 +339,11 @@ class Table extends ViewComponent implements Htmlable
     public function isSearchable(): bool
     {
         return $this->getLivewire()->isTableSearchable();
+    }
+
+    public function hasToggleableColumns(): bool
+    {
+        return $this->getLivewire()->hasToggleableTableColumns();
     }
 
     public function toHtml(): string

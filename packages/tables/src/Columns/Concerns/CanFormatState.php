@@ -24,7 +24,7 @@ trait CanFormatState
 
         $timezone ??= config('app.timezone');
 
-        $this->formatStateUsing(fn ($state): ?string => $state ? Carbon::parse($state)->setTimezone($timezone)->translatedFormat($format) : null);
+        $this->formatStateUsing(static fn ($state): ?string => $state ? Carbon::parse($state)->setTimezone($timezone)->translatedFormat($format) : null);
 
         return $this;
     }
@@ -40,14 +40,14 @@ trait CanFormatState
 
     public function enum(array | Arrayable $options, $default = null): static
     {
-        $this->formatStateUsing(fn ($state): ?string => $options[$state] ?? ($default ?? $state));
+        $this->formatStateUsing(static fn ($state): ?string => $options[$state] ?? ($default ?? $state));
 
         return $this;
     }
 
     public function limit(int $length = 100, string $end = '...'): static
     {
-        $this->formatStateUsing(function ($state) use ($length, $end): ?string {
+        $this->formatStateUsing(static function ($state) use ($length, $end): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -74,7 +74,7 @@ trait CanFormatState
 
     public function html(): static
     {
-        return $this->formatStateUsing(fn ($state): HtmlString => new HtmlString($state));
+        return $this->formatStateUsing(static fn ($state): HtmlString => new HtmlString($state));
     }
 
     public function formatStateUsing(?Closure $callback): static
@@ -86,7 +86,7 @@ trait CanFormatState
 
     public function money(string | Closure $currency = 'usd', bool $shouldConvert = false): static
     {
-        $this->formatStateUsing(function (Column $column, $state) use ($currency, $shouldConvert): ?string {
+        $this->formatStateUsing(static function (Column $column, $state) use ($currency, $shouldConvert): ?string {
             if (blank($state)) {
                 return null;
             }

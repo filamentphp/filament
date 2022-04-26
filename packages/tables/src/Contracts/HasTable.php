@@ -52,4 +52,10 @@ interface HasTable extends HasForms
     public function isTableSearchable(): bool;
 
     public function isTableSelectionEnabled(): bool;
+
+    public function hasToggleableTableColumns(): bool;
+
+    public function isTableColumnToggledHidden(string $name): bool;
+
+    public function getTableColumnToggleForm(): ComponentContainer;
 }

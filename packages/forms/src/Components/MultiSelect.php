@@ -29,7 +29,7 @@ class MultiSelect extends Field
 
         $this->default([]);
 
-        $this->afterStateHydrated(function (MultiSelect $component, $state) {
+        $this->afterStateHydrated(static function (MultiSelect $component, $state) {
             if (is_array($state)) {
                 return;
             }
@@ -37,7 +37,7 @@ class MultiSelect extends Field
             $component->state([]);
         });
 
-        $this->getOptionLabelsUsing(function (MultiSelect $component, array $values): array {
+        $this->getOptionLabelsUsing(static function (MultiSelect $component, array $values): array {
             $options = $component->getOptions();
 
             return collect($values)

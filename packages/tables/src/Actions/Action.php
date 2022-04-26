@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Support\Concerns\Configurable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Traits\Conditionable;
@@ -29,6 +30,7 @@ class Action extends Component implements Htmlable
     use Concerns\HasView;
     use Concerns\HasTooltip;
     use Conditionable;
+    use Configurable;
     use Macroable;
     use Tappable;
 
@@ -47,6 +49,7 @@ class Action extends Component implements Htmlable
 
     protected function setUp(): void
     {
+        $this->configure();
     }
 
     public function call(array $data = [])

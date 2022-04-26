@@ -9,6 +9,8 @@
     class="filament antialiased bg-gray-100 js-focus-visible"
 >
     <head>
+        {{ \Filament\Facades\Filament::renderHook('head.start') }}
+
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -56,12 +58,16 @@
                 }
             </script>
         @endif
+
+        {{ \Filament\Facades\Filament::renderHook('head.end') }}
     </head>
 
     <body @class([
         'bg-gray-100 text-gray-900 filament-body',
         'dark:text-gray-100 dark:bg-gray-900' => config('filament.dark_mode'),
     ])>
+        {{ \Filament\Facades\Filament::renderHook('body.start') }}
+
         {{ $slot }}
 
         @livewireScripts
@@ -98,5 +104,7 @@
         @endforeach
 
         @stack('scripts')
+
+        {{ \Filament\Facades\Filament::renderHook('body.end') }}
     </body>
 </html>

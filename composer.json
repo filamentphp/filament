@@ -39,6 +39,7 @@
                 "packages/spatie-laravel-translatable-plugin/src"
             ],
             "Filament\\Forms\\": "packages/forms/src",
+            "Filament\\Support\\": "packages/support/src",
             "Filament\\Tables\\": "packages/tables/src",
             "Filament\\Tests\\": "tests/src",
             "Filament\\Tests\\Database\\Factories\\": "tests/database/factories"

@@ -22,7 +22,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (SpatieMediaLibraryFileUpload $component, ?HasMedia $record): void {
+        $this->afterStateHydrated(static function (SpatieMediaLibraryFileUpload $component, ?HasMedia $record): void {
             if (! $record) {
                 $component->state([]);
 
@@ -48,7 +48,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
         $this->dehydrated(false);
 
-        $this->getUploadedFileUrlUsing(function (SpatieMediaLibraryFileUpload $component, string $file): ?string {
+        $this->getUploadedFileUrlUsing(static function (SpatieMediaLibraryFileUpload $component, string $file): ?string {
             if (! $component->getRecord()) {
                 return null;
             }
@@ -69,11 +69,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             return $media?->getUrl();
         });
 
-        $this->saveRelationshipsUsing(function (SpatieMediaLibraryFileUpload $component) {
+        $this->saveRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component) {
             $component->saveUploadedFiles();
         });
 
-        $this->saveUploadedFileUsing(function (SpatieMediaLibraryFileUpload $component, TemporaryUploadedFile $file, ?Model $record): string {
+        $this->saveUploadedFileUsing(static function (SpatieMediaLibraryFileUpload $component, TemporaryUploadedFile $file, ?Model $record): string {
             if (! method_exists($record, 'addMediaFromString')) {
                 return $file;
             }
@@ -81,7 +81,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             /** @var FileAdder $mediaAdder */
             $mediaAdder = $record->addMediaFromString($file->get());
 
-            $filename = $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
+            $filename = $component->getUploadedFileNameForStorage($file);
 
             $media = $mediaAdder
                 ->usingFileName($filename)
@@ -91,7 +91,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             return $media->getAttributeValue('uuid');
         });
 
-        $this->deleteUploadedFileUsing(function (SpatieMediaLibraryFileUpload $component, string $file): void {
+        $this->deleteUploadedFileUsing(static function (SpatieMediaLibraryFileUpload $component, string $file): void {
             if (! $file) {
                 return;
             }
@@ -101,7 +101,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $mediaClass::findByUuid($file)?->delete();
         });
 
-        $this->reorderUploadedFilesUsing(function (SpatieMediaLibraryFileUpload $component, array $state): array {
+        $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, array $state): array {
             $uuids = array_filter(array_values($state));
             $mappedIds = Media::query()->whereIn('uuid', $uuids)->pluck('id', 'uuid')->toArray();
 
