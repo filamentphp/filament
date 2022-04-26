@@ -49,7 +49,7 @@ class Select extends Field
     {
         parent::setUp();
 
-        $this->default(fn (Select $component): ?array => $component->isMultiple() ? [] : null);
+        $this->default(static fn (Select $component): ?array => $component->isMultiple() ? [] : null);
 
         $this->afterStateHydrated(static function (Select $component, $state): void {
             if (! $component->isMultiple()) {
@@ -142,8 +142,8 @@ class Select extends Field
         return Action::make('create')
             ->modalHeading('Create')
             ->form($this->getCreateFormSchema())
-            ->action(function (Select $component, $data) {
-                if (! $this->getSaveCreateFormUsing()) {
+            ->action(static function (Select $component, $data) {
+                if (! $component->getSaveCreateFormUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [saveCreateFormUsing()] closure set.");
                 }
 

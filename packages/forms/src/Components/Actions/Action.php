@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\Actions;
 
+use Filament\Support\Concerns\Configurable;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
@@ -18,6 +19,7 @@ class Action
     use Concerns\HasFormSchema;
     use Concerns\HasName;
     use Conditionable;
+    use Configurable;
     use Macroable;
     use Tappable;
 
@@ -36,6 +38,7 @@ class Action
 
     protected function setUp(): void
     {
+        $this->configure();
     }
 
     public function call(array $data = [])
