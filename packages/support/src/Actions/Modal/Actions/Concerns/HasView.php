@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Forms\Components\Actions\Modal\Actions\Concerns;
+namespace Filament\Support\Actions\Modal\Actions\Concerns;
 
 trait HasView
 {
@@ -9,13 +9,6 @@ trait HasView
     public function view(string $view): static
     {
         $this->view = $view;
-
-        return $this;
-    }
-
-    public function button(): static
-    {
-        $this->view('forms::actions.modal.actions.button-action');
 
         return $this;
     }

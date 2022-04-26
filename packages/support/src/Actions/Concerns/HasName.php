@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Forms\Components\Actions\Concerns;
+namespace Filament\Support\Actions\Concerns;
 
 trait HasName
 {

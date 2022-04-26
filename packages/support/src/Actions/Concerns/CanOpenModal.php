@@ -1,9 +1,9 @@
 <?php
 
-namespace Filament\Forms\Components\Actions\Concerns;
+namespace Filament\Support\Actions\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Actions\Modal\Actions\ButtonAction;
+use Filament\Support\Actions\Modal\Actions\Action as ModalAction;
 
 trait CanOpenModal
 {
@@ -68,11 +68,11 @@ trait CanOpenModal
         }
 
         $actions = [
-            ButtonAction::make('submit')
+            $this->makeModalAction('submit')
                 ->label($this->getModalButtonLabel())
                 ->submit('callMountedFormComponentAction')
                 ->color('primary'),
-            ButtonAction::make('cancel')
+            $this->makeModalAction('cancel')
                 ->label(__('forms::components.actions.modal.buttons.cancel.label'))
                 ->cancel()
                 ->color('secondary'),
@@ -145,5 +145,15 @@ trait CanOpenModal
     public function shouldOpenModal(): bool
     {
         return $this->isConfirmationRequired() || $this->hasFormSchema();
+    }
+
+    protected function getModalActionClass(): string
+    {
+        return ModalAction::class;
+    }
+
+    protected function makeModalAction(string $name): ModalAction
+    {
+        return $this->getModalActionClass()::make($name);
     }
 }

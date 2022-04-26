@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Forms\Components\Actions\Concerns;
+namespace Filament\Support\Actions\Concerns;
 
 use Closure;
 
@@ -21,9 +21,8 @@ trait EvaluatesClosures
     protected function getDefaultEvaluationParameters(): array
     {
         return [
-                'action' => $this,
-                'component' => $this->getComponent(),
-                'livewire' => $this->getLivewire(),
+            'action' => $this,
+            'livewire' => $this->getLivewire(),
         ];
     }
 }
