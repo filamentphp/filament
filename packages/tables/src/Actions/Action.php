@@ -5,11 +5,7 @@ namespace Filament\Tables\Actions;
 use Filament\Support\Actions\Action as BaseAction;
 use Filament\Support\Actions\Concerns\CanBeDisabled;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
-use Filament\Support\Actions\Concerns\HasColor;
-use Filament\Support\Actions\Concerns\HasIcon;
-use Filament\Support\Actions\Concerns\HasLabel;
 use Filament\Support\Actions\Concerns\HasTooltip;
-use Filament\Support\Actions\Concerns\HasView;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 
 class Action extends BaseAction
