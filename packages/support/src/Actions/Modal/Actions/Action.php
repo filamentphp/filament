@@ -2,6 +2,12 @@
 
 namespace Filament\Support\Actions\Modal\Actions;
 
+use Filament\Support\Actions\Concerns\CanBeOutlined;
+use Filament\Support\Actions\Concerns\HasColor;
+use Filament\Support\Actions\Concerns\HasIcon;
+use Filament\Support\Actions\Concerns\HasLabel;
+use Filament\Support\Actions\Concerns\HasName;
+use Filament\Support\Actions\Concerns\HasView;
 use Filament\Support\Concerns\Configurable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -10,19 +16,19 @@ use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
 use Illuminate\View\Component;
 
-class Action extends Component implements Htmlable
+abstract class Action extends Component implements Htmlable
 {
-    use Concerns\CanBeOutlined;
+    use CanBeOutlined;
     use Concerns\CanCancelAction;
     use Concerns\CanSubmitForm;
     use Concerns\HasAction;
-    use Concerns\HasColor;
-    use Concerns\HasLabel;
-    use Concerns\HasIcon;
-    use Concerns\HasName;
-    use Concerns\HasView;
     use Conditionable;
     use Configurable;
+    use HasColor;
+    use HasLabel;
+    use HasIcon;
+    use HasName;
+    use HasView;
     use Macroable;
     use Tappable;
 
@@ -41,20 +47,6 @@ class Action extends Component implements Htmlable
 
     protected function setUp(): void
     {
-        $this->button();
-
         $this->configure();
-    }
-
-    public function toHtml(): string
-    {
-        return $this->render()->render();
-    }
-
-    public function render(): View
-    {
-        return view($this->getView(), array_merge($this->data(), [
-            'action' => $this,
-        ]));
     }
 }

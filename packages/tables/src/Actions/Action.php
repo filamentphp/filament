@@ -2,56 +2,43 @@
 
 namespace Filament\Tables\Actions;
 
-use Filament\Support\Concerns\Configurable;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Traits\Conditionable;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\Tappable;
-use Illuminate\View\Component;
+use Filament\Support\Actions\Action as BaseAction;
+use Filament\Support\Actions\Concerns\CanBeDisabled;
+use Filament\Support\Actions\Concerns\CanOpenUrl;
+use Filament\Support\Actions\Concerns\HasColor;
+use Filament\Support\Actions\Concerns\HasIcon;
+use Filament\Support\Actions\Concerns\HasLabel;
+use Filament\Support\Actions\Concerns\HasTooltip;
+use Filament\Support\Actions\Concerns\HasView;
+use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 
-class Action extends Component implements Htmlable
+class Action extends BaseAction
 {
+    use CanBeDisabled;
+    use CanOpenUrl;
     use Concerns\BelongsToTable;
-    use Concerns\CanBeDisabled;
-    use Concerns\CanBeHidden;
-    use Concerns\CanBeMounted;
-    use Concerns\CanOpenModal;
-    use Concerns\CanOpenUrl;
-    use Concerns\CanRequireConfirmation;
-    use Concerns\EvaluatesClosures;
-    use Concerns\HasAction;
-    use Concerns\HasColor;
-    use Concerns\HasFormSchema;
-    use Concerns\HasIcon;
-    use Concerns\HasLabel;
-    use Concerns\HasName;
     use Concerns\HasRecord;
-    use Concerns\HasView;
-    use Concerns\HasTooltip;
-    use Conditionable;
-    use Configurable;
-    use Macroable;
-    use Tappable;
+    use HasTooltip;
 
-    final public function __construct(string $name)
+    public function button(): static
     {
-        $this->name($name);
+        $this->view('tables::actions.button-action');
+
+        return $this;
     }
 
-    public static function make(string $name): static
+    public function link(): static
     {
-        $static = app(static::class, ['name' => $name]);
-        $static->setUp();
+        $this->view('tables::actions.link-action');
 
-        return $static;
+        return $this;
     }
 
-    protected function setUp(): void
+    public function iconButton(): static
     {
-        $this->link();
+        $this->view('tables::actions.icon-button-action');
 
-        $this->configure();
+        return $this;
     }
 
     public function call(array $data = [])
@@ -70,15 +57,15 @@ class Action extends Component implements Htmlable
         return 'callMountedTableAction';
     }
 
-    public function toHtml(): string
+    protected function getModalActionClass(): string
     {
-        return $this->render()->render();
+        return ModalAction::class;
     }
 
-    public function render(): View
+    protected function getDefaultEvaluationParameters(): array
     {
-        return view($this->getView(), array_merge($this->data(), [
-            'action' => $this,
-        ]));
+        return array_merge(parent::getDefaultEvaluationParameters(), [
+            'record' => $this->getRecord(),
+        ]);
     }
 }

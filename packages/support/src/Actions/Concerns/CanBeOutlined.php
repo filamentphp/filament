@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Support\Actions\Modal\Actions\Concerns;
+namespace Filament\Support\Actions\Concerns;
 
 trait CanBeOutlined
 {

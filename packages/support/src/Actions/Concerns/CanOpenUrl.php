@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Actions\Concerns;
+namespace Filament\Support\Actions\Concerns;
 
 use Closure;
 

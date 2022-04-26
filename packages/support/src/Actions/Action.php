@@ -3,11 +3,13 @@
 namespace Filament\Support\Actions;
 
 use Filament\Support\Concerns\Configurable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
+use Illuminate\View\Component;
 
-class Action
+abstract class Action extends Component implements Htmlable
 {
     use Concerns\CanBeHidden;
     use Concerns\CanBeMounted;
@@ -15,8 +17,12 @@ class Action
     use Concerns\CanRequireConfirmation;
     use Concerns\EvaluatesClosures;
     use Concerns\HasAction;
+    use Concerns\HasColor;
     use Concerns\HasFormSchema;
+    use Concerns\HasIcon;
+    use Concerns\HasLabel;
     use Concerns\HasName;
+    use Concerns\HasView;
     use Conditionable;
     use Configurable;
     use Macroable;
@@ -50,4 +56,6 @@ class Action
             'data' => $data,
         ]);
     }
+
+    abstract public function getLivewire();
 }
