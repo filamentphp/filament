@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Columns;
 
+use Filament\Support\Concerns\Configurable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Traits\Conditionable;
@@ -31,6 +32,7 @@ class Column extends Component implements Htmlable
     use Concerns\HasView;
     use Concerns\InteractsWithTableQuery;
     use Conditionable;
+    use Configurable;
     use Macroable;
     use Tappable;
 
@@ -42,6 +44,7 @@ class Column extends Component implements Htmlable
     public static function make(string $name): static
     {
         $static = app(static::class, ['name' => $name]);
+        $static->configureObject();
         $static->setUp();
 
         return $static;

@@ -17,6 +17,7 @@ jobs:
                     - spatie-laravel-settings-plugin
                     - spatie-laravel-tags-plugin
                     - spatie-laravel-translatable-plugin
+                    - support
                     - tables
         steps:
             - uses: actions/checkout@v2

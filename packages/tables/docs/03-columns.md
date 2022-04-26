@@ -246,6 +246,40 @@ TextColumn::make('slug')->extraAttributes(['class' => 'bg-gray-200'])
 
 These get merged onto the outer `<div>` element of each cell in that column.
 
+### Global settings for columns
+
+If you wish to change the default behaviour of all columns globally (=in all tables), then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the columns using. For example, if you wish to make all columns [`sortable()`](#sorting) and [`toggleable()`](#toggling-column-visibility), you can do it like so:
+
+```php
+use Filament\Tables\Columns\Column;
+
+Column::configureUsing(function (Column $column): void {
+    $column
+        ->toggleable()
+        ->sortable();
+});
+```
+
+Additionally, you can call this code on specific column types as well:
+
+```php
+use Filament\Tables\Columns\BooleanColumn;
+
+BooleanColumn::configureUsing(function (BooleanColumn $column): void {
+    $column
+        ->toggleable()
+        ->sortable();
+});
+```
+
+Of course, you are still able to overwrite this on each column individually:
+
+```php
+use Filament\Tables\Columns\BooleanColumn;
+
+BooleanColumn::make('is_admin')->toggleable(false)
+```
+
 ## Text column
 
 You may use the `date()` and `dateTime()` methods to format the column's state using [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
