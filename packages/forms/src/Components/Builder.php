@@ -34,7 +34,7 @@ class Builder extends Field
 
         $this->default([]);
 
-        $this->afterStateHydrated(function (Builder $component, ?array $state): void {
+        $this->afterStateHydrated(static function (Builder $component, ?array $state): void {
             $items = collect($state ?? [])
                 ->mapWithKeys(fn ($itemData) => [(string) Str::uuid() => $itemData])
                 ->toArray();
@@ -172,13 +172,13 @@ class Builder extends Field
 
         $this->createItemBetweenButtonLabel(__('forms::components.builder.buttons.create_item_between.label'));
 
-        $this->createItemButtonLabel(function (Builder $component) {
+        $this->createItemButtonLabel(static function (Builder $component) {
             return __('forms::components.builder.buttons.create_item.label', [
                 'label' => lcfirst($component->getLabel()),
             ]);
         });
 
-        $this->mutateDehydratedStateUsing(function (?array $state): array {
+        $this->mutateDehydratedStateUsing(static function (?array $state): array {
             return array_values($state ?? []);
         });
     }

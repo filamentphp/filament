@@ -14,7 +14,7 @@ class CheckboxList extends Field
 
         $this->default([]);
 
-        $this->afterStateHydrated(function (CheckboxList $component, $state) {
+        $this->afterStateHydrated(static function (CheckboxList $component, $state) {
             if (is_array($state)) {
                 return;
             }

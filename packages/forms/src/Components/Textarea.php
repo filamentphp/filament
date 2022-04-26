@@ -4,7 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 
-class Textarea extends Field
+class Textarea extends Field implements Contracts\CanBeLengthConstrained
 {
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;

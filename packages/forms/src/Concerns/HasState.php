@@ -54,10 +54,6 @@ trait HasState
 
                 $container->callBeforeStateDehydrated();
             }
-
-            if ($component->getRecord()?->exists) {
-                $component->saveRelationships();
-            }
         }
     }
 
@@ -144,6 +140,8 @@ trait HasState
 
             $this->fillMissingComponentStateWithNull();
 
+            $this->loadStateFromRelationships();
+
             $this->callAfterStateHydrated();
         } else {
             $this->hydrateDefaultState();
@@ -194,6 +192,8 @@ trait HasState
 
         if ($shouldCallHooksBefore) {
             $this->callBeforeStateDehydrated();
+            $this->saveRelationships();
+            $this->loadStateFromRelationships();
         }
 
         $this->dehydrateState($state);

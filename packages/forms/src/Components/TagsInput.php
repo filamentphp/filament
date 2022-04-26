@@ -23,7 +23,7 @@ class TagsInput extends Field
 
         $this->default([]);
 
-        $this->afterStateHydrated(function (TagsInput $component, $state): void {
+        $this->afterStateHydrated(static function (TagsInput $component, $state): void {
             if (is_array($state)) {
                 return;
             }
@@ -43,7 +43,7 @@ class TagsInput extends Field
             $component->state($state);
         });
 
-        $this->dehydrateStateUsing(function (TagsInput $component, $state) {
+        $this->dehydrateStateUsing(static function (TagsInput $component, $state) {
             if ($separator = $component->getSeparator()) {
                 return implode($separator, $state);
             }

@@ -21,15 +21,13 @@ class RelationshipRepeater extends Repeater
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (RelationshipRepeater $component, ?array $state): void {
+        $this->afterStateHydrated(static function (RelationshipRepeater $component, ?array $state): void {
             if (count($state ?? [])) {
                 return;
             }
-
-            $component->fillFromRelationship();
         });
 
-        $this->saveRelationshipsUsing(function (RelationshipRepeater $component, ?array $state) {
+        $this->saveRelationshipsUsing(static function (RelationshipRepeater $component, ?array $state) {
             if (! is_array($state)) {
                 $state = [];
             }
@@ -74,7 +72,9 @@ class RelationshipRepeater extends Repeater
                 $record = $relationship->create($itemData);
                 $item->model($record)->saveRelationships();
             }
+        });
 
+        $this->loadStateFromRelationshipsUsing(static function (RelationshipRepeater $component, ?array $state) {
             $component->clearCachedExistingRecords();
 
             $component->fillFromRelationship();
@@ -88,7 +88,7 @@ class RelationshipRepeater extends Repeater
     public function orderable(string | Closure | null $column = 'sort'): static
     {
         $this->orderColumn = $column;
-        $this->disableItemMovement(fn (RelationshipRepeater $component): bool => ! $component->evaluate($column));
+        $this->disableItemMovement(static fn (RelationshipRepeater $component): bool => ! $component->evaluate($column));
 
         return $this;
     }
@@ -102,9 +102,7 @@ class RelationshipRepeater extends Repeater
 
     public function fillFromRelationship(): void
     {
-        $records = $this->getCachedExistingRecords();
-
-        $this->state($records->toArray());
+        $this->state($this->getCachedExistingRecords()->toArray());
     }
 
     public function getChildComponentContainers(bool $withHidden = false): array

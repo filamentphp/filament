@@ -29,7 +29,7 @@ trait CanBeHidden
     {
         $paths = Arr::wrap($paths);
 
-        $this->hidden(function (Closure $get) use ($paths): bool {
+        $this->hidden(static function (Closure $get) use ($paths): bool {
             foreach ($paths as $path) {
                 if (! $get($path)) {
                     return true;
@@ -46,7 +46,7 @@ trait CanBeHidden
     {
         $paths = Arr::wrap($paths);
 
-        $this->hidden(function (Closure $get) use ($paths): bool {
+        $this->hidden(static function (Closure $get) use ($paths): bool {
             foreach ($paths as $path) {
                 if (! ! $get($path)) {
                     return true;
