@@ -6,7 +6,7 @@ use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 
-class ReplicatorAction extends Action
+class ReplicateAction extends Action
 {
     protected array | Closure | null $exclude = null;
 
@@ -16,11 +16,13 @@ class ReplicatorAction extends Action
 
     protected function setUp(): void
     {
-        $this->modalButton(function (ReplicatorAction $action) {
+        parent::setUp();
+
+        $this->modalButton(function (ReplicateAction $action) {
             return $action->getLabel();
         });
 
-        $this->action(function (ReplicatorAction $action, Model $record, array $data = []) {
+        $this->action(function (ReplicateAction $action, Model $record, array $data = []) {
             $replica = $record->replicate($action->getExcludedAttributes());
 
             $action->callBeforeReplicaSaved($replica, $data);
@@ -67,33 +69,12 @@ class ReplicatorAction extends Action
         return $this;
     }
 
-    public function callAfterReplicaSaved(Model $replica, array $data = []): mixed
+    public function callAfterReplicaSaved(Model $replica, array $data = [])
     {
         return $this->evaluate($this->afterReplicaSavedCallback, [
             'replica' => $replica,
             'data' => $data,
         ]);
-    }
-
-    public function button(): static
-    {
-        $this->view('tables::actions.button-action');
-
-        return $this;
-    }
-
-    public function link(): static
-    {
-        $this->view('tables::actions.link-action');
-
-        return $this;
-    }
-
-    public function iconButton(): static
-    {
-        $this->view('tables::actions.icon-button-action');
-
-        return $this;
     }
 
     public function getExcludedAttributes(): ?array
