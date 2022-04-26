@@ -175,30 +175,6 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('slug')->visibleFrom('md')
 ```
 
-### Global settings for columns
-
-If you wish to change the default behaviour of all columns globally (=in all tables), then you can call the static `configure` method inside your `AppServiceProvider::boot()` method, where you can provide a callback to modify all columns. For example if you wish to make all columns `sortable` and `toggleable`, you can do it like so:
-
-```php
-use Filament\Tables\Columns\Column;
-
-Column::configure(function(Column $column) {
-    $column->toggleable()->sortable();
-});
-```
-
-You can call this code on specific column types only as well:
-
-```php
-use Filament\Tables\Columns\BooleanColumn;
-
-Column::configure(function(BooleanColumn $column) {
-    $column->toggleable()->sortable();
-});
-```
-
-Of course, you are still able to overwrite this on each column individually.
-
 ### Counting relationships
 
 If you wish to count the number of related records in a column, you may use the `counts()` method:
@@ -269,6 +245,40 @@ TextColumn::make('slug')->extraAttributes(['class' => 'bg-gray-200'])
 ```
 
 These get merged onto the outer `<div>` element of each cell in that column.
+
+### Global settings for columns
+
+If you wish to change the default behaviour of all columns globally (=in all tables), then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the columns using. For example, if you wish to make all columns [`sortable()`](#sorting) and [`toggleable()`](#toggling-column-visibility), you can do it like so:
+
+```php
+use Filament\Tables\Columns\Column;
+
+Column::configureUsing(function (Column $column): void {
+    $column
+        ->toggleable()
+        ->sortable();
+});
+```
+
+Additionally, you can call this code on specific column types as well:
+
+```php
+use Filament\Tables\Columns\BooleanColumn;
+
+BooleanColumn::configureUsing(function (BooleanColumn $column): void {
+    $column
+        ->toggleable()
+        ->sortable();
+});
+```
+
+Of course, you are still able to overwrite this on each column individually:
+
+```php
+use Filament\Tables\Columns\BooleanColumn;
+
+BooleanColumn::make('is_admin')->toggleable(false)
+```
 
 ## Text column
 
