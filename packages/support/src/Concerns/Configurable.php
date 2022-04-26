@@ -4,17 +4,19 @@ namespace Filament\Support\Concerns;
 
 trait Configurable
 {
-    protected static array $configurables = [];
+    protected static array $configurations = [];
 
-    public static function configure(callable $callback)
+    public static function configureUsing(callable $callback): void
     {
-        static::$configurables[] = $callback;
+        static::$configurations[] = $callback;
     }
 
-    protected function configureObject()
+    public function configureObject(): static
     {
-        foreach (static::$configurables as $callback) {
+        foreach (static::$configurations as $callback) {
             $callback($this);
         }
+
+        return $this;
     }
 }
