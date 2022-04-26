@@ -28,6 +28,7 @@ class MakePageCommand extends Command
 
         $resource = null;
         $resourceClass = null;
+        $resourcePage = null;
 
         $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `UserResource`)');
 
@@ -45,6 +46,19 @@ class MakePageCommand extends Command
 
             $resourceClass = (string) Str::of($resource)
                 ->afterLast('\\');
+
+            $resourcePage = $this->choice(
+                'Which page type would you like to create?',
+                [
+                    'Page',
+                    'ListRecords',
+                    'ManageRecords',
+                    'CreateRecord',
+                    'EditRecord',
+                    'ViewRecord',
+                ],
+                0
+            );
         }
 
         $view = Str::of($page)
@@ -81,8 +95,8 @@ class MakePageCommand extends Command
             ]);
         } else {
             $this->copyStubToApp('ResourcePage', $path, [
-                'baseResourcePage' => 'Filament\\Resources\\Pages\\Page',
-                'baseResourcePageClass' => 'Page',
+                'baseResourcePage' => 'Filament\\Resources\\Pages\\' . $resourcePage,
+                'baseResourcePageClass' => $resourcePage,
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,
