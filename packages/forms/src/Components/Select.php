@@ -49,7 +49,7 @@ class Select extends Field
 
         $this->default(fn (Select $component): ?array => $component->isMultiple() ? [] : null);
 
-        $this->afterStateHydrated(function (Select $component, $state): void {
+        $this->afterStateHydrated(static function (Select $component, $state): void {
             if (! $component->isMultiple()) {
                 return;
             }
@@ -69,7 +69,7 @@ class Select extends Field
             return $value;
         });
 
-        $this->getOptionLabelsUsing(function (Select $component, array $values): array {
+        $this->getOptionLabelsUsing(static function (Select $component, array $values): array {
             $options = $component->getOptions();
 
             return collect($values)
