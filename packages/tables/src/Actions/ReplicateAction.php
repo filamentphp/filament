@@ -29,7 +29,7 @@ class ReplicateAction extends Action
 
             $replica->save();
 
-            Filament::notify('success', 'Record replicated.');
+            Filament::notify('success', __('tables::table.actions.replicate.messages.replicated'));
 
             return $action->callAfterReplicaSaved($replica, $data);
         });

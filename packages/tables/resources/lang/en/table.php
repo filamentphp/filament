@@ -83,6 +83,14 @@ return [
 
         ],
 
+        'replicate' => [
+
+            'messages' => [
+                'replicated' => 'Record replicated',
+            ],
+
+        ],
+
     ],
 
     'empty' => [
