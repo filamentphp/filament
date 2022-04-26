@@ -74,6 +74,26 @@ use Filament\Forms\Components\Card;
 Card::make()->extraAttributes(['class' => 'bg-gray-50'])
 ```
 
+### Global settings
+
+If you wish to change the default behaviour of a component globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all card components have [2 columns](#columns) by default, you can do it like so:
+
+```php
+use Filament\Forms\Components\Card;
+
+Card::configureUsing(function (Card $card): void {
+    $card->columns(2);
+});
+```
+
+Of course, you are still able to overwrite this on each field individually:
+
+```php
+use Filament\Forms\Components\Card;
+
+Card::make()->columns(1)
+```
+
 ## Grid
 
 Generally, form fields are stacked on top of each other in one column. To change this, you may use a grid component:
