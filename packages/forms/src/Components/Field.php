@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components;
 
-use Filament\Support\Concerns\Configurable;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
