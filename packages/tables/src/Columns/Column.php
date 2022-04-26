@@ -44,7 +44,6 @@ class Column extends Component implements Htmlable
     public static function make(string $name): static
     {
         $static = app(static::class, ['name' => $name]);
-        $static->configureObject();
         $static->setUp();
 
         return $static;
@@ -52,6 +51,7 @@ class Column extends Component implements Htmlable
 
     protected function setUp(): void
     {
+        $this->configure();
     }
 
     public function toHtml(): string

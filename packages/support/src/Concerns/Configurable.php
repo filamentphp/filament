@@ -11,7 +11,7 @@ trait Configurable
         static::$configurations[] = $callback;
     }
 
-    public function configureObject(): static
+    public function configure(): static
     {
         foreach (static::$configurations as $callback) {
             $callback($this);
