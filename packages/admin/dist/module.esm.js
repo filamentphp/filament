@@ -22948,13 +22948,12 @@ var select_default = (Alpine) => {
       refreshItems: function() {
         this.select.clear(true);
         if (isMultiple) {
-          this.state.forEach((item2) => {
+          Object.values(this.state ?? {}).forEach((item2) => {
             this.select.addItem(item2, true);
           });
         } else {
           this.select.addItem(this.state, true);
         }
-        this.select.refreshItems();
       },
       refreshOptions: async function() {
         this.select.clearOptions();
