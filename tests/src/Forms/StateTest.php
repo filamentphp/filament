@@ -161,6 +161,8 @@ test('custom logic can be executed before state is dehydrated', function () {
         ])
         ->fill();
 
+    $container->callBeforeStateDehydrated();
+
     expect($container)
         ->dehydrateState()->toBe([
             'data' => [$statePath => strrev($state)],

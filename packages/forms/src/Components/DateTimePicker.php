@@ -36,7 +36,7 @@ class DateTimePicker extends Field
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (DateTimePicker $component, $state): void {
+        $this->afterStateHydrated(static function (DateTimePicker $component, $state): void {
             if (! $state instanceof CarbonInterface) {
                 return;
             }
@@ -46,7 +46,10 @@ class DateTimePicker extends Field
             $component->state($state);
         });
 
-        $this->rule('date', fn (DateTimePicker $component): bool => $component->hasDate());
+        $this->rule(
+            'date',
+            static fn (DateTimePicker $component): bool => $component->hasDate(),
+        );
     }
 
     public function displayFormat(string | Closure | null $format): static
@@ -85,15 +88,15 @@ class DateTimePicker extends Field
     {
         $this->maxDate = $date;
 
-        $this->rule(function () use ($date) {
-            $date = $this->evaluate($date);
+        $this->rule(static function (DateTimePicker $component) use ($date) {
+            $date = $component->evaluate($date);
 
             if ($date instanceof DateTime) {
                 $date = $date->format('Y-m-d');
             }
 
             return "before_or_equal:{$date}";
-        }, fn (): bool => (bool) $this->evaluate($date));
+        }, static fn (DateTimePicker $component): bool => (bool) $component->evaluate($date));
 
         return $this;
     }
@@ -102,15 +105,15 @@ class DateTimePicker extends Field
     {
         $this->minDate = $date;
 
-        $this->rule(function () use ($date) {
-            $date = $this->evaluate($date);
+        $this->rule(static function (DateTimePicker $component) use ($date) {
+            $date = $component->evaluate($date);
 
             if ($date instanceof DateTime) {
                 $date = $date->format('Y-m-d');
             }
 
             return "after_or_equal:{$date}";
-        }, fn (): bool => (bool) $this->evaluate($date));
+        }, static fn (DateTimePicker $component): bool => (bool) $component->evaluate($date));
 
         return $this;
     }

@@ -47,10 +47,6 @@ trait HasState
 
             $component->callBeforeStateDehydrated();
 
-            if ($component->getRecord()?->exists) {
-                $component->saveRelationships();
-            }
-
             foreach ($component->getChildComponentContainers() as $container) {
                 if ($container->isHidden()) {
                     continue;
@@ -63,8 +59,6 @@ trait HasState
 
     public function dehydrateState(array &$state = []): array
     {
-        $this->callBeforeStateDehydrated();
-
         foreach ($this->getComponents() as $component) {
             if ($component->isHidden()) {
                 continue;
@@ -146,6 +140,8 @@ trait HasState
 
             $this->fillMissingComponentStateWithNull();
 
+            $this->loadStateFromRelationships();
+
             $this->callAfterStateHydrated();
         } else {
             $this->hydrateDefaultState();
@@ -190,9 +186,15 @@ trait HasState
         return $this;
     }
 
-    public function getState(): array
+    public function getState(bool $shouldCallHooksBefore = true): array
     {
         $state = $this->validate();
+
+        if ($shouldCallHooksBefore) {
+            $this->callBeforeStateDehydrated();
+            $this->saveRelationships();
+            $this->loadStateFromRelationships();
+        }
 
         $this->dehydrateState($state);
         $this->mutateDehydratedState($state);

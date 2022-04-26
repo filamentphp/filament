@@ -21,15 +21,13 @@ class RelationshipRepeater extends Repeater
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (RelationshipRepeater $component, ?array $state): void {
+        $this->afterStateHydrated(static function (RelationshipRepeater $component, ?array $state): void {
             if (count($state ?? [])) {
                 return;
             }
-
-            $component->fillFromRelationship();
         });
 
-        $this->saveRelationshipsUsing(function (RelationshipRepeater $component, ?array $state) {
+        $this->saveRelationshipsUsing(static function (RelationshipRepeater $component, ?array $state) {
             if (! is_array($state)) {
                 $state = [];
             }
@@ -37,7 +35,7 @@ class RelationshipRepeater extends Repeater
             $relationship = $component->getRelationship();
             $localKeyName = $relationship->getLocalKeyName();
 
-            $existingRecords = $this->getCachedExistingRecords();
+            $existingRecords = $component->getCachedExistingRecords();
 
             $recordsToDelete = [];
 
@@ -54,10 +52,10 @@ class RelationshipRepeater extends Repeater
             $childComponentContainers = $component->getChildComponentContainers();
 
             $itemOrder = 1;
-            $orderColumn = $this->getOrderColumn();
+            $orderColumn = $component->getOrderColumn();
 
             foreach ($childComponentContainers as $itemKey => $item) {
-                $itemData = $item->getState();
+                $itemData = $item->getState(shouldCallHooksBefore: false);
 
                 if ($orderColumn) {
                     $itemData[$orderColumn] = $itemOrder;
@@ -74,8 +72,10 @@ class RelationshipRepeater extends Repeater
                 $record = $relationship->create($itemData);
                 $item->model($record)->saveRelationships();
             }
+        });
 
-            $this->clearCachedExistingRecords();
+        $this->loadStateFromRelationshipsUsing(static function (RelationshipRepeater $component, ?array $state) {
+            $component->clearCachedExistingRecords();
 
             $component->fillFromRelationship();
         });
@@ -88,7 +88,7 @@ class RelationshipRepeater extends Repeater
     public function orderable(string | Closure | null $column = 'sort'): static
     {
         $this->orderColumn = $column;
-        $this->disableItemMovement(fn (RelationshipRepeater $component): bool => ! $component->evaluate($column));
+        $this->disableItemMovement(static fn (RelationshipRepeater $component): bool => ! $component->evaluate($column));
 
         return $this;
     }
@@ -102,9 +102,7 @@ class RelationshipRepeater extends Repeater
 
     public function fillFromRelationship(): void
     {
-        $records = $this->getCachedExistingRecords();
-
-        $this->state($records->toArray());
+        $this->state($this->getCachedExistingRecords()->toArray());
     }
 
     public function getChildComponentContainers(bool $withHidden = false): array
@@ -151,7 +149,7 @@ class RelationshipRepeater extends Repeater
         return $this->evaluate($this->relationship) ?? $this->getName();
     }
 
-    protected function getCachedExistingRecords(): Collection
+    public function getCachedExistingRecords(): Collection
     {
         if ($this->cachedExistingRecords) {
             return $this->cachedExistingRecords;
@@ -169,7 +167,7 @@ class RelationshipRepeater extends Repeater
         );
     }
 
-    protected function clearCachedExistingRecords(): void
+    public function clearCachedExistingRecords(): void
     {
         $this->cachedExistingRecords = null;
     }

@@ -15,7 +15,7 @@ class SpatieTagsInput extends TagsInput
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (SpatieTagsInput $component, ?Model $record): void {
+        $this->afterStateHydrated(static function (SpatieTagsInput $component, ?Model $record): void {
             if (! $record) {
                 $component->state([]);
 
@@ -32,7 +32,7 @@ class SpatieTagsInput extends TagsInput
             $component->state($tags->pluck('name'));
         });
 
-        $this->saveRelationshipsUsing(function (SpatieTagsInput $component, ?Model $record, array $state) {
+        $this->saveRelationshipsUsing(static function (SpatieTagsInput $component, ?Model $record, array $state) {
             if (! (method_exists($record, 'syncTagsWithType') && method_exists($record, 'syncTags'))) {
                 return;
             }

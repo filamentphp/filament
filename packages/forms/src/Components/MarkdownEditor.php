@@ -4,7 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 
-class MarkdownEditor extends Field implements Contracts\HasFileAttachments
+class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, Contracts\HasFileAttachments
 {
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasExtraAlpineAttributes;

@@ -7,7 +7,7 @@ use Filament\Forms\Components\Contracts\CanHaveNumericState;
 use Filament\Forms\Components\TextInput\Mask;
 use Illuminate\Contracts\Support\Arrayable;
 
-class TextInput extends Field implements CanHaveNumericState
+class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHaveNumericState
 {
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
@@ -76,8 +76,8 @@ class TextInput extends Field implements CanHaveNumericState
     public function integer(bool | Closure $condition = true): static
     {
         $this->numeric($condition);
-        $this->inputMode(fn (): ?string => $condition ? 'numeric' : null);
-        $this->step(fn (): ?int => $condition ? 1 : null);
+        $this->inputMode(static fn (): ?string => $condition ? 'numeric' : null);
+        $this->step(static fn (): ?int => $condition ? 1 : null);
 
         return $this;
     }
@@ -93,8 +93,8 @@ class TextInput extends Field implements CanHaveNumericState
     {
         $this->maxValue = $value;
 
-        $this->rule(function (): string {
-            $value = $this->getMaxValue();
+        $this->rule(static function (TextInput $component): string {
+            $value = $component->getMaxValue();
 
             return "max:{$value}";
         });
@@ -106,8 +106,8 @@ class TextInput extends Field implements CanHaveNumericState
     {
         $this->minValue = $value;
 
-        $this->rule(function (): string {
-            $value = $this->getMinValue();
+        $this->rule(static function (TextInput $component): string {
+            $value = $component->getMinValue();
 
             return "min:{$value}";
         });
@@ -119,9 +119,9 @@ class TextInput extends Field implements CanHaveNumericState
     {
         $this->isNumeric = $condition;
 
-        $this->inputMode(fn (): ?string => $condition ? 'decimal' : null);
+        $this->inputMode(static fn (): ?string => $condition ? 'decimal' : null);
         $this->rule('numeric', $condition);
-        $this->step(fn (): ?string => $condition ? 'any' : null);
+        $this->step(static fn (): ?string => $condition ? 'any' : null);
 
         return $this;
     }
@@ -144,7 +144,7 @@ class TextInput extends Field implements CanHaveNumericState
     {
         $this->isTel = $condition;
 
-        $this->regex(fn (TextInput $component) => $component->evaluate($condition) ? '/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/' : null);
+        $this->regex(static fn (TextInput $component) => $component->evaluate($condition) ? '/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/' : null);
 
         return $this;
     }

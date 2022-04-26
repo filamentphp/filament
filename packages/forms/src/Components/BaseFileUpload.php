@@ -52,7 +52,7 @@ class BaseFileUpload extends Field
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (BaseFileUpload $component, string | array | null $state): void {
+        $this->afterStateHydrated(static function (BaseFileUpload $component, string | array | null $state): void {
             if (blank($state)) {
                 $component->state([]);
 
@@ -66,7 +66,7 @@ class BaseFileUpload extends Field
             $component->state($files);
         });
 
-        $this->afterStateUpdated(function (BaseFileUpload $component, $state) {
+        $this->afterStateUpdated(static function (BaseFileUpload $component, $state) {
             if (blank($state)) {
                 return;
             }
@@ -78,11 +78,11 @@ class BaseFileUpload extends Field
             $component->state([(string) Str::uuid() => $state]);
         });
 
-        $this->beforeStateDehydrated(function (BaseFileUpload $component): void {
+        $this->beforeStateDehydrated(static function (BaseFileUpload $component): void {
             $component->saveUploadedFiles();
         });
 
-        $this->dehydrateStateUsing(function (BaseFileUpload $component, ?array $state): string | array | null {
+        $this->dehydrateStateUsing(static function (BaseFileUpload $component, ?array $state): string | array | null {
             $files = array_values($state ?? []);
 
             if ($component->isMultiple()) {
@@ -92,7 +92,7 @@ class BaseFileUpload extends Field
             return $files[0] ?? null;
         });
 
-        $this->getUploadedFileUrlUsing(function (BaseFileUpload $component, string $file): ?string {
+        $this->getUploadedFileUrlUsing(static function (BaseFileUpload $component, string $file): ?string {
             /** @var FilesystemAdapter $storage */
             $storage = $component->getDisk();
 
@@ -110,11 +110,11 @@ class BaseFileUpload extends Field
             return $storage->url($file);
         });
 
-        $this->getUploadedFileNameForStorageUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file) {
+        $this->getUploadedFileNameForStorageUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file) {
             return $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
         });
 
-        $this->saveUploadedFileUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file): string {
+        $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): string {
             $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
 
             return $file->{$storeMethod}(
@@ -129,8 +129,8 @@ class BaseFileUpload extends Field
     {
         $this->acceptedFileTypes = $types;
 
-        $this->rule(function () {
-            $types = implode(',', ($this->getAcceptedFileTypes() ?? []));
+        $this->rule(static function (BaseFileUpload $component) {
+            $types = implode(',', ($component->getAcceptedFileTypes() ?? []));
 
             return "mimetypes:{$types}";
         });
@@ -177,8 +177,8 @@ class BaseFileUpload extends Field
     {
         $this->maxSize = $size;
 
-        $this->rule(function (): string {
-            $size = $this->getMaxSize();
+        $this->rule(static function (BaseFileUpload $component): string {
+            $size = $component->getMaxSize();
 
             return "max:{$size}";
         });
@@ -190,8 +190,8 @@ class BaseFileUpload extends Field
     {
         $this->minSize = $size;
 
-        $this->rule(function (): string {
-            $size = $this->getMinSize();
+        $this->rule(static function (BaseFileUpload $component): string {
+            $size = $component->getMinSize();
 
             return "min:{$size}";
         });
