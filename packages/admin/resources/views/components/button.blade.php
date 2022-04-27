@@ -13,7 +13,7 @@
 
 @php
     $buttonClasses = array_merge([
-        'inline-flex items-center justify-center font-medium tracking-tight rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset filament-button',
+        'inline-flex items-center justify-center font-medium text-sm rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset filament-button',
         'dark:focus:ring-offset-0' => config('filament.dark_mode'),
         'opacity-70 cursor-not-allowed' => $disabled,
         'h-9 px-4' => $size === 'md',
