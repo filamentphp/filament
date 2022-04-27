@@ -3,13 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Filament\Support\Components\ViewComponent;
-use Filament\Support\Concerns\Configurable;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Traits\Conditionable;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\Tappable;
-use Illuminate\View\Component;
 
 class Column extends ViewComponent
 {
