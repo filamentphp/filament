@@ -57,7 +57,7 @@ class MakePageCommand extends Command
                     'EditRecord',
                     'ViewRecord',
                 ],
-                0
+                '0'
             );
         }
 
