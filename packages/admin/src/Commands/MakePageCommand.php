@@ -50,7 +50,7 @@ class MakePageCommand extends Command
             $resourcePage = $this->choice(
                 'Which page type would you like to create?',
                 [
-                    'Page',
+                    'Custom Page',
                     'ListRecords',
                     'ManageRecords',
                     'CreateRecord',
@@ -59,6 +59,7 @@ class MakePageCommand extends Command
                 ],
                 '0'
             );
+            $resourcePage = $resourcePage === 'Custom Page' ? 'Page' : $resourcePage;
         }
 
         $view = Str::of($page)
