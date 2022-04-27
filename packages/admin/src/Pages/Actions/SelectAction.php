@@ -8,11 +8,16 @@ class SelectAction extends Action
 {
     use Concerns\HasId;
 
-    protected string $view = 'filament::pages.actions.select-action';
-
     protected array | Arrayable $options = [];
 
     protected ?string $placeholder = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->view('filament::pages.actions.select-action');
+    }
 
     public function options(array | Arrayable $options): static
     {
