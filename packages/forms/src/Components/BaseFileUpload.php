@@ -405,27 +405,23 @@ class BaseFileUpload extends Field
 
     public function getUploadedFileUrls(): ?array
     {
-        $uploadedFileUrls = collect($this->getState())
-            ->mapWithKeys(function (TemporaryUploadedFile | string $file, string $fileKey) {
+        $uploadedFileUrls = collect($this->getState() ?? [])
+            ->mapWithKeys(function (TemporaryUploadedFile | string $file, string $fileKey): array {
                 if ($file instanceof TemporaryUploadedFile) {
-                    return null;
+                    return [$fileKey => null];
                 }
 
                 $callback = $this->getUploadedFileUrlUsing;
 
                 if (! $callback) {
-                    return null;
+                    return [$fileKey => null];
                 }
 
                 $url = $this->evaluate($callback, [
                     'file' => $file,
                 ]);
 
-                if (! $url) {
-                    return null;
-                }
-
-                return [$fileKey => $url];
+                return [$fileKey => ($url ?: null)];
             })->toArray();
 
         return $uploadedFileUrls;
