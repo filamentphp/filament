@@ -22,7 +22,7 @@ class Action extends BaseAction
     {
         $this->button();
 
-        $this->configure();
+        parent::setUp();
     }
 
     public function button(): static

@@ -2,6 +2,8 @@
 
 namespace Filament\Support\Actions;
 
+use Illuminate\Support\Traits\Conditionable;
+
 abstract class Action extends BaseAction
 {
     use Concerns\CanBeHidden;

@@ -2,12 +2,10 @@
 
 namespace Filament\Tables\Filters;
 
-use Filament\Support\Concerns\Configurable;
+use Filament\Support\Components\Component;
 use Illuminate\Support\Traits\Conditionable;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\Tappable;
 
-class Filter
+class Filter extends Component
 {
     use Concerns\BelongsToTable;
     use Concerns\CanBeHidden;
@@ -19,9 +17,6 @@ class Filter
     use Concerns\HasName;
     use Concerns\InteractsWithTableQuery;
     use Conditionable;
-    use Configurable;
-    use Macroable;
-    use Tappable;
 
     final public function __construct(string $name)
     {
@@ -34,10 +29,5 @@ class Filter
         $static->setUp();
 
         return $static;
-    }
-
-    protected function setUp(): void
-    {
-        $this->configure();
     }
 }

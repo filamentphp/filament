@@ -19,4 +19,9 @@ trait Configurable
 
         return $this;
     }
+
+    protected function setUp(): void
+    {
+        $this->configure();
+    }
 }
