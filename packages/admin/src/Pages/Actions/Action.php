@@ -6,8 +6,8 @@ use Filament\Support\Actions\Action as BaseAction;
 use Filament\Support\Actions\Concerns\CanBeDisabled;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
-use Filament\Support\Actions\Concerns\HasTooltip;
 use Filament\Support\Actions\Concerns\CanSubmitForm;
+use Filament\Support\Actions\Concerns\HasTooltip;
 
 class Action extends BaseAction
 {
