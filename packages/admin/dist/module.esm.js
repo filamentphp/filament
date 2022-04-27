@@ -22951,14 +22951,18 @@ var select_default = (Alpine) => {
         });
       },
       refreshItems: function() {
-        this.select.clear(true);
-        if (isMultiple) {
-          Object.values(this.state ?? {}).forEach((item2) => {
-            this.select.addItem(item2, true);
-          });
-        } else {
-          this.select.addItem(this.state, true);
-        }
+        Alpine.debounce(() => {
+          this.select.clear(true);
+          if (isMultiple) {
+            Object.values(this.state ?? {}).forEach((item2) => {
+              this.select.addItem(item2, true);
+            });
+          } else {
+            this.select.addItem(this.state, true);
+            this.select.refreshItems();
+          }
+          console.log("hey");
+        }, 500)();
       },
       refreshOptions: async function() {
         this.select.clearOptions();

@@ -96,6 +96,7 @@ export default (Alpine) => {
                     }
 
                     await this.refreshOptions()
+
                     this.refreshItems()
                 })
             },
@@ -109,6 +110,7 @@ export default (Alpine) => {
                     })
                 } else {
                     this.select.addItem(this.state, true)
+                    this.select.refreshItems()
                 }
             },
 
