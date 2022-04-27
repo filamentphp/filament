@@ -2,47 +2,21 @@
 
 namespace Filament\Pages\Actions;
 
-use Closure;
-use Filament\Support\Concerns\Configurable;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Traits\Conditionable;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\Tappable;
-use Illuminate\View\Component;
+use Filament\Support\Actions\Action as BaseAction;
+use Filament\Support\Actions\Concerns\CanBeDisabled;
+use Filament\Support\Actions\Concerns\CanBeOutlined;
+use Filament\Support\Actions\Concerns\CanOpenUrl;
+use Filament\Support\Actions\Concerns\HasTooltip;
+use Filament\Support\Actions\Concerns\CanSubmitForm;
 
-class Action extends Component implements Htmlable
+class Action extends BaseAction
 {
+    use CanBeDisabled;
+    use CanBeOutlined;
+    use CanOpenUrl;
+    use CanSubmitForm;
     use Concerns\BelongsToLivewire;
-    use Concerns\CanBeDisabled;
-    use Concerns\CanBeHidden;
-    use Concerns\CanBeMounted;
-    use Concerns\CanOpenModal;
-    use Concerns\CanOpenUrl;
-    use Concerns\CanRequireConfirmation;
-    use Concerns\HasAction;
-    use Concerns\HasColor;
-    use Concerns\HasFormSchema;
-    use Concerns\HasLabel;
-    use Concerns\HasName;
-    use Concerns\HasView;
-    use Conditionable;
-    use Configurable;
-    use Macroable;
-    use Tappable;
-
-    final public function __construct(string $name)
-    {
-        $this->name($name);
-    }
-
-    public static function make(string $name): static
-    {
-        $static = app(static::class, ['name' => $name]);
-        $static->setUp();
-
-        return $static;
-    }
+    use HasTooltip;
 
     protected function setUp(): void
     {
@@ -51,32 +25,21 @@ class Action extends Component implements Htmlable
         $this->configure();
     }
 
+    public function button(): static
+    {
+        $this->view('filament::pages.actions.button-action');
+
+        return $this;
+    }
+
     public function call(array $data = [])
     {
         if ($this->isHidden() || $this->isDisabled()) {
             return;
         }
 
-        $action = $this->getAction();
-
-        if (is_string($action)) {
-            $action = Closure::fromCallable([$this->getLivewire(), $action]);
-        }
-
-        return app()->call($action, [
+        return app()->call($this->getAction(), [
             'data' => $data,
         ]);
-    }
-
-    public function toHtml(): string
-    {
-        return $this->render()->render();
-    }
-
-    public function render(): View
-    {
-        return view($this->getView(), array_merge($this->data(), [
-            'action' => $this,
-        ]));
     }
 }
