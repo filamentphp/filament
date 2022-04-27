@@ -4,6 +4,7 @@ namespace Filament\Tables\Actions;
 
 use Filament\Support\Actions\Action as BaseAction;
 use Filament\Support\Actions\Concerns\CanBeDisabled;
+use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
 use Filament\Support\Actions\Concerns\HasTooltip;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
@@ -11,10 +12,18 @@ use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 class Action extends BaseAction
 {
     use CanBeDisabled;
+    use CanBeOutlined;
     use CanOpenUrl;
     use Concerns\BelongsToTable;
     use Concerns\HasRecord;
     use HasTooltip;
+
+    protected function setUp(): void
+    {
+        $this->link();
+
+        parent::setUp();
+    }
 
     public function button(): static
     {

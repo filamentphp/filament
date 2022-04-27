@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Components;
 
+use Exception;
 use Filament\Support\Concerns\Configurable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -28,6 +29,10 @@ abstract class ViewComponent extends BaseComponent implements Htmlable
 
     public function getView(): string
     {
+        if (! isset($this->view)) {
+            throw new Exception('Class [' . static::class . '] extends [' . ViewComponent::class . '] but does not have a [$view] property defined.');
+        }
+
         return $this->view;
     }
 

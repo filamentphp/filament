@@ -78,7 +78,7 @@ class FilamentManager
     public function globalSearchProvider(string $provider): void
     {
         if (! in_array(GlobalSearchProvider::class, class_implements($provider))) {
-            throw new Exception('Global search provider ' . $provider . ' does not implement the ' . GlobalSearchProvider::class . ' interface.');
+            throw new Exception("Global search provider {$provider} does not implement the " . GlobalSearchProvider::class . ' interface.');
         }
 
         $this->globalSearchProvider = $provider;

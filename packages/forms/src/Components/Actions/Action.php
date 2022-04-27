@@ -9,6 +9,11 @@ class Action extends BaseAction
 {
     use Concerns\BelongsToComponent;
 
+    protected function getLivewireSubmitActionName(): string
+    {
+        return 'callMountedFormComponentAction';
+    }
+
     protected function getModalActionClass(): string
     {
         return ModalAction::class;

@@ -61,6 +61,8 @@ trait CanOpenModal
         return $this;
     }
 
+    abstract protected function getLivewireSubmitActionName(): string;
+
     public function getModalActions(): array
     {
         if ($this->modalActions !== null) {
@@ -70,8 +72,8 @@ trait CanOpenModal
         $actions = [
             $this->makeModalAction('submit')
                 ->label($this->getModalButtonLabel())
-                ->submit('callMountedFormComponentAction')
-                ->color('primary'),
+                ->submit($this->getLivewireSubmitActionName())
+                ->color($this->getColor()),
             $this->makeModalAction('cancel')
                 ->label(__('forms::components.actions.modal.buttons.cancel.label'))
                 ->cancel()

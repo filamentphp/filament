@@ -2,6 +2,7 @@
 
 namespace Filament\Pages\Actions;
 
+use Filament\Pages\Actions\Modal\Actions\Action as ModalAction;
 use Filament\Support\Actions\Action as BaseAction;
 use Filament\Support\Actions\Concerns\CanBeDisabled;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
@@ -30,6 +31,16 @@ class Action extends BaseAction
         $this->view('filament::pages.actions.button-action');
 
         return $this;
+    }
+
+    protected function getLivewireSubmitActionName(): string
+    {
+        return 'callMountedAction';
+    }
+
+    protected function getModalActionClass(): string
+    {
+        return ModalAction::class;
     }
 
     public function call(array $data = [])
