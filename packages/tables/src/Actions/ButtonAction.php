@@ -8,9 +8,14 @@ class ButtonAction extends Action
 {
     use Concerns\CanBeOutlined;
 
-    protected string $view = 'tables::actions.button-action';
-
     protected string | Closure | null $iconPosition = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->button();
+    }
 
     public function iconPosition(string | Closure | null $position): static
     {
