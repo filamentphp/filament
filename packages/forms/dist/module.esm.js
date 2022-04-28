@@ -19864,8 +19864,9 @@ var select_default = (Alpine) => {
       },
       transformOptions: function(options3) {
         let selection = isMultiple ? (this.state ?? []).map((value) => value?.toString()) : [this.state?.toString()];
-        return Object.entries(options3).filter((option3) => !selection.includes(option3[0]?.toString())).map((option3) => ({
+        return Object.entries(options3).map((option3) => ({
           label: option3[1],
+          selected: selection.includes(option3[0]?.toString()),
           value: option3[0]
         }));
       },
