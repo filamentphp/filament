@@ -19826,13 +19826,23 @@ var select_default = (Alpine) => {
         }
         if (hasDynamicSearchResults) {
           this.$refs.input.addEventListener("search", async (event) => {
+            let search = event.detail.value?.trim();
+            if (search === null) {
+              return;
+            }
+            if (search === "") {
+              return;
+            }
+            if (search === void 0) {
+              return;
+            }
             this.isSearching = true;
             this.select.clearChoices();
             await this.select.setChoices([{value: "", label: "Searching...", disabled: true}]);
           });
           this.$refs.input.addEventListener("search", Alpine.debounce(async (event) => {
             await this.refreshChoices({
-              search: event.detail.value
+              search: event.detail.value?.trim()
             });
             this.isSearching = false;
           }, 1e3));
