@@ -4,6 +4,7 @@ namespace Filament\Support\Actions\Concerns;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Support\Actions\Action;
 
 trait CanBeMounted
 {
@@ -18,7 +19,7 @@ trait CanBeMounted
 
     public function getMountUsing(): Closure
     {
-        return $this->mountUsing ?? static function ($action, ?ComponentContainer $form = null): void {
+        return $this->mountUsing ?? static function (Action $action, ?ComponentContainer $form = null): void {
             if (! $action->shouldOpenModal()) {
                 return;
             }
