@@ -6,8 +6,6 @@ use Closure;
 
 class ButtonAction extends Action
 {
-    use Concerns\CanBeOutlined;
-
     protected string | Closure | null $iconPosition = null;
 
     protected function setUp(): void
