@@ -130,9 +130,9 @@ export default (Alpine) => {
                     [this.state?.toString()]
 
                 return Object.entries(options)
+                    .filter((option) => ! selection.includes(option[0]?.toString()))
                     .map((option) => ({
                         label: option[1],
-                        selected: selection.includes(option[0]?.toString()),
                         value: option[0],
                     }))
             },
