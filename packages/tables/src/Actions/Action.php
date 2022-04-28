@@ -49,7 +49,7 @@ class Action extends Component implements Htmlable
 
     protected function setUp(): void
     {
-        $this->link();
+        $this->view ?? $this->link();
 
         $this->configure();
     }
