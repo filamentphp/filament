@@ -232,4 +232,9 @@ class BelongsToSelect extends Select
     {
         return $this->isPreloaded();
     }
+
+    public function hasDynamicSearchResults(): bool
+    {
+        return ! $this->isPreloaded();
+    }
 }

@@ -301,4 +301,9 @@ class Select extends Field
     {
         return (bool) $this->evaluate($this->isSearchable);
     }
+
+    public function hasDynamicSearchResults(): bool
+    {
+        return $this->getSearchResultsUsing instanceof Closure;
+    }
 }

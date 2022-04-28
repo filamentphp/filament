@@ -1,3 +1,9 @@
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 @php
     $sideLabelClasses = [
         'whitespace-nowrap group-focus-within:text-primary-500',
@@ -66,12 +72,13 @@
                         getOptionsUsing: async () => {
                             return await $wire.getSelectOptions(@js($getStatePath()))
                         },
-                        getSearchResultsUsing: async (searchQuery) => {
-                            return await $wire.getSelectSearchResults(@js($getStatePath()), searchQuery)
+                        getSearchResultsUsing: async (search) => {
+                            return await $wire.getSelectSearchResults(@js($getStatePath()), search)
                         },
                         isAutofocused: @js($isAutofocused()),
                         isMultiple: @js($isMultiple()),
                         hasDynamicOptions: @js($hasDynamicOptions()),
+                        hasDynamicSearchResults: @js($hasDynamicSearchResults()),
                         maxItems: @js($getMaxItems()),
                         noSearchResultsMessage: @js($getNoSearchResultsMessage()),
                         options: @js($getOptions()),
