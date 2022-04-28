@@ -37,7 +37,6 @@ export default (Alpine) => {
                     searchChoices: ! hasDynamicSearchResults,
                     searchFields: ['label'],
                     searchResultLimit: 50,
-                    shouldSort: false,
                 })
 
                 await this.refreshChoices({ withInitialOptions: true })

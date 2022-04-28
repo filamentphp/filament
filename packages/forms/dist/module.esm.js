@@ -19803,8 +19803,7 @@ var select_default = (Alpine) => {
           placeholderValue: placeholder,
           searchChoices: !hasDynamicSearchResults,
           searchFields: ["label"],
-          searchResultLimit: 50,
-          shouldSort: false
+          searchResultLimit: 50
         });
         await this.refreshChoices({withInitialOptions: true});
         if (isAutofocused) {
