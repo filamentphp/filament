@@ -21,7 +21,7 @@ class Action extends BaseAction
 
     protected function setUp(): void
     {
-        $this->button();
+        $this->view ?? $this->button();
 
         parent::setUp();
     }

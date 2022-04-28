@@ -20,7 +20,7 @@ class Action extends BaseAction
 
     protected function setUp(): void
     {
-        $this->link();
+        $this->view ?? $this->link();
 
         parent::setUp();
     }
