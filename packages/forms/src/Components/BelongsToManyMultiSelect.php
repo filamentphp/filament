@@ -207,4 +207,9 @@ class BelongsToManyMultiSelect extends MultiSelect
     {
         return $this->isPreloaded();
     }
+
+    public function hasDynamicSearchResults(): bool
+    {
+        return ! $this->isPreloaded();
+    }
 }

@@ -1,3 +1,5 @@
+import '../../css/components/select.css'
+
 export default (Alpine) => {
     Alpine.data('selectFormComponent', ({
         getOptionLabelUsing,
@@ -42,7 +44,7 @@ export default (Alpine) => {
                 await this.refreshChoices({ withInitialOptions: true })
 
                 if (isAutofocused) {
-                    this.select.focus()
+                    this.select.showDropdown()
                 }
 
                 this.$refs.input.addEventListener('change', () => {

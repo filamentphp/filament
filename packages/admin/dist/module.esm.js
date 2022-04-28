@@ -19807,7 +19807,7 @@ var select_default = (Alpine) => {
         });
         await this.refreshChoices({withInitialOptions: true});
         if (isAutofocused) {
-          this.select.focus();
+          this.select.showDropdown();
         }
         this.$refs.input.addEventListener("change", () => {
           if (this.isStateBeingUpdated) {
