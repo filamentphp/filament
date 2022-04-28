@@ -131,12 +131,13 @@
 
         @if ((! $isItemCreationDisabled()) && (blank($getMaxItems()) || ($getMaxItems() > $getItemsCount())))
             <div x-data="{ isCreateButtonDropdownOpen: false }" class="relative flex justify-center">
-                <x-filament::button
+                <button
+                    class="inline-flex items-center justify-center px-4 text-sm font-medium text-white transition-colors border border-transparent rounded-lg shadow focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset filament-button h-9 focus:ring-white bg-primary-600 hover:bg-primary-500 focus:bg-primary-700 focus:ring-offset-primary-700"
                     x-on:click="isCreateButtonDropdownOpen = true"
                     type="button"
                 >
                     {{ $getCreateItemButtonLabel() }}
-                </x-filament::button>
+                </button>
 
                 <x-forms::builder.block-picker
                     :blocks="$getBlocks()"
