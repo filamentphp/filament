@@ -10,8 +10,9 @@
     :state-path="$getStatePath()"
 >
     <div {{ $attributes->merge($getExtraAttributes())->class([
-        'space-y-6 bg-gray-50 p-6 rounded-xl filament-forms-builder-component',
-        'dark:bg-gray-900' => config('forms.dark_mode'),
+        'space-y-6 rounded-xl filament-forms-builder-component',
+        'bg-gray-50 p-6' => $isContained(),
+        'dark:bg-gray-900' => $isContained() && config('forms.dark_mode'),
     ]) }}>
         @if (count($containers = $getChildComponentContainers()))
             <ul

@@ -28,6 +28,8 @@ class Builder extends Field
 
     protected bool | Closure $showBlockLabels = false;
 
+    protected bool | Closure $isContained = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -225,6 +227,13 @@ class Builder extends Field
         return $this;
     }
 
+    public function contained(bool | Closure $condition = true): static
+    {
+        $this->isContained = $condition;
+
+        return $this;
+    }
+
     public function hydrateDefaultItemState(string $uuid): void
     {
         $this->getChildComponentContainers()[$uuid]->hydrateDefaultState();
@@ -296,5 +305,10 @@ class Builder extends Field
     public function shouldShowBlockLabels(): bool
     {
         return (bool) $this->evaluate($this->showBlockLabels);
+    }
+
+    public function isContained(): bool
+    {
+        return (bool) $this->evaluate($this->isContained);
     }
 }
