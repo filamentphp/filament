@@ -70,6 +70,20 @@ export default (Alpine) => {
 
                 if (hasDynamicSearchResults) {
                     this.$refs.input.addEventListener('search', async (event) => {
+                        let search = event.detail.value?.trim()
+
+                        if (search === null) {
+                            return
+                        }
+
+                        if (search === '') {
+                            return
+                        }
+
+                        if (search === undefined) {
+                            return
+                        }
+
                         this.isSearching = true
 
                         this.select.clearChoices()
@@ -80,7 +94,7 @@ export default (Alpine) => {
 
                     this.$refs.input.addEventListener('search', Alpine.debounce(async (event) => {
                         await this.refreshChoices({
-                            search: event.detail.value,
+                            search: event.detail.value?.trim(),
                         })
 
                         this.isSearching = false
