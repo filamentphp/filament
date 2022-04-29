@@ -222,16 +222,22 @@ class Repeater extends Field
 
     public function isItemCreationDisabled(): bool
     {
+        if ($this->isDisabled()) return true;
+
         return $this->evaluate($this->isItemCreationDisabled);
     }
 
     public function isItemDeletionDisabled(): bool
     {
+        if ($this->isDisabled()) return true;
+
         return $this->evaluate($this->isItemDeletionDisabled);
     }
 
     public function isItemMovementDisabled(): bool
     {
+        if ($this->isDisabled()) return true;
+
         return $this->evaluate($this->isItemMovementDisabled);
     }
 }
