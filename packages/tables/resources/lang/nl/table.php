@@ -107,6 +107,11 @@ return [
             'placeholder' => 'Alles',
         ],
 
+        'boolean' => [
+            'true' => 'Ja',
+            'false' => 'Nee',
+        ],
+
     ],
 
     'selection_indicator' => [

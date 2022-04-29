@@ -121,6 +121,11 @@ return [
             'placeholder' => 'All',
         ],
 
+        'boolean' => [
+            'true' => 'Yes',
+            'false' => 'No',
+        ],
+
     ],
 
     'selection_indicator' => [
