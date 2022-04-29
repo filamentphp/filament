@@ -19796,6 +19796,7 @@ var select_default = (Alpine) => {
         this.select = new Choices(this.$refs.input, {
           allowHTML: false,
           duplicateItemsAllowed: false,
+          itemSelectText: "",
           loadingText: "Loading...",
           maxItemCount: maxItems ?? -1,
           noResultsText: noSearchResultsMessage,

@@ -1639,25 +1639,10 @@ trix-editor .attachment__metadata .attachment__size {
   @apply w-full;
 }
 .choices__list--multiple {
-  @apply inline pr-16;
+  @apply inline;
 }
 .choices__list--multiple .choices__item {
   @apply inline-block cursor-pointer break-all box-border mr-1 mb-1 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-lg bg-primary-500/10 space-x-1;
-}
-.choices__list--multiple .choices__item[data-deletable] {
-  padding-right: 5px;
-}
-[dir=rtl] .choices__list--multiple .choices__item {
-  margin-right: 0;
-  margin-left: 3.75px;
-}
-.choices__list--multiple .choices__item.is-highlighted {
-  background-color: #00a5bb;
-  border: 1px solid #008fa1;
-}
-.is-disabled .choices__list--multiple .choices__item {
-  background-color: #aaaaaa;
-  border: 1px solid #919191;
 }
 .choices__list--dropdown,
 .choices__list[aria-expanded] {
@@ -1665,97 +1650,45 @@ trix-editor .attachment__metadata .attachment__size {
 }
 .is-active.choices__list--dropdown,
 .is-active.choices__list[aria-expanded] {
-  visibility: visible;
-}
-.is-open .choices__list--dropdown,
-.is-open .choices__list[aria-expanded] {
-  border-color: #b7b7b7;
-}
-.is-flipped .choices__list--dropdown,
-.is-flipped .choices__list[aria-expanded] {
-  top: auto;
-  bottom: 100%;
-  margin-top: 0;
-  margin-bottom: -1px;
-  border-radius: 0.25rem 0.25rem 0 0;
+  @apply visible;
 }
 .choices__list--dropdown .choices__list,
 .choices__list[aria-expanded] .choices__list {
-  position: relative;
-  max-height: 300px;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  will-change: scroll-position;
+  @apply relative max-h-60 overflow-auto will-change-scroll;
 }
 .choices__list--dropdown .choices__item,
 .choices__list[aria-expanded] .choices__item {
-  position: relative;
-  padding: 10px;
-  font-size: 14px;
+  @apply relative px-3 py-2;
 }
 [dir=rtl] .choices__list--dropdown .choices__item,
 [dir=rtl] .choices__list[aria-expanded] .choices__item {
-  text-align: right;
-}
-@media (min-width: 640px) {
-  .choices__list--dropdown .choices__item--selectable,
-  .choices__list[aria-expanded] .choices__item--selectable {
-    padding-right: 100px;
-  }
-  .choices__list--dropdown .choices__item--selectable::after,
-  .choices__list[aria-expanded] .choices__item--selectable::after {
-    content: attr(data-select-text);
-    font-size: 12px;
-    opacity: 0;
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  [dir=rtl] .choices__list--dropdown .choices__item--selectable,
-  [dir=rtl] .choices__list[aria-expanded] .choices__item--selectable {
-    text-align: right;
-    padding-left: 100px;
-    padding-right: 10px;
-  }
-  [dir=rtl] .choices__list--dropdown .choices__item--selectable::after,
-  [dir=rtl] .choices__list[aria-expanded] .choices__item--selectable::after {
-    right: auto;
-    left: 10px;
-  }
+  @apply text-right;
 }
 .choices__list--dropdown .choices__item--selectable.is-highlighted,
 .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
-  background-color: #f2f2f2;
+  @apply bg-primary-600 text-white font-medium;
 }
 .choices__list--dropdown .choices__item--selectable.is-highlighted::after,
 .choices__list[aria-expanded] .choices__item--selectable.is-highlighted::after {
-  opacity: 0.5;
+  @apply opacity-70;
 }
 .choices__item {
-  cursor: default;
+  @apply cursor-default;
 }
 .choices__item--selectable {
-  cursor: pointer;
+  @apply cursor-pointer;
 }
 .choices__item--disabled {
-  cursor: not-allowed;
-  -webkit-user-select: none;
-  user-select: none;
-  opacity: 0.5;
+  @apply cursor-not-allowed select-none opacity-70;
 }
-.choices__heading {
-  font-weight: 600;
-  font-size: 12px;
-  padding: 10px;
-  border-bottom: 1px solid #f7f7f7;
-  color: gray;
+.choices__list--dropdown .choices__input {
+  @apply !px-3 !py-2 !border-x-0 !border-t-0 !border-b !border-gray-300;
 }
 .choices__input {
-  @apply inline-block bg-transparent !border-0 max-w-full !p-0;
+  @apply inline-block bg-transparent border-0 !border-transparent max-w-full !p-0;
 }
 .choices__input:focus {
-  @apply outline-none ring-0;
+  @apply !outline-none !ring-0;
 }
 .choices__input::-webkit-search-decoration,
 .choices__input::-webkit-search-cancel-button,
