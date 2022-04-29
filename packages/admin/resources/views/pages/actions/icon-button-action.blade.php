@@ -22,7 +22,7 @@
     :tooltip="$getTooltip()"
     :outlined="$isOutlined()"
     :disabled="$isDisabled()"
-    :icon="$getIcon()"
-    :icon-position="$getIconPosition()"
     class="filament-page-button-action"
-/>
+>
+    <x-dynamic-component :component="$getIcon()" class="filament-button-icon w-6 h-6"/>
+</x-filament::button>
