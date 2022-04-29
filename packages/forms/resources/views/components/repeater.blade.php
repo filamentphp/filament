@@ -32,7 +32,7 @@
                                 'absolute top-0 right-0 h-6 flex divide-x rounded-bl-lg rounded-tr-lg border-gray-300 border-b border-l overflow-hidden rtl:border-l-0 rtl:border-r rtl:right-auto rtl:left-0 rtl:rounded-bl-none rtl:rounded-br-lg rtl:rounded-tr-none rtl:rounded-tl-lg',
                                 'dark:border-gray-600 dark:divide-gray-600' => config('forms.dark_mode'),
                             ])>
-                                @unless ($isItemMovementDisabled())
+                                @unless ($isItemMovementDisabled() || ($loop->count <= 1))
                                     <button
                                         wire:sortable.handle
                                         wire:keydown.prevent.arrow-up="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
