@@ -134,6 +134,28 @@
     }"
     class="filament-tables-component"
 >
+
+    @if ($isFiltersDropdownVisible && $showFiltersOnTop())
+        <div @class([
+            'relative space-y-4 mb-4',
+            'dark:bg-gray-700' => config('tables.dark_mode'),
+        ])>
+
+            {{ $getFiltersForm() }}
+
+            <div class="text-right">
+                <x-tables::link
+                    wire:click="resetTableFiltersForm"
+                    color="danger"
+                    tag="button"
+                    class="text-sm font-medium"
+                >
+                    {{ __('tables::table.filters.buttons.reset.label') }}
+                </x-tables::link>
+            </div>
+        </div>
+    @endif
+
     <x-tables::container>
         <div
             x-show="hasHeader = ({{ ($renderHeader = ($header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length)"
@@ -178,7 +200,7 @@
                             </div>
                         @endif
 
-                        @if ($isFiltersDropdownVisible)
+                        @if ($isFiltersDropdownVisible && !$showFiltersOnTop())
                             <x-tables::filters
                                 :form="$getFiltersForm()"
                                 :width="$getFiltersFormWidth()"

@@ -357,4 +357,9 @@ class Table extends ViewComponent implements Htmlable
             'table' => $this,
         ]));
     }
+
+    public function showFiltersOnTop(): bool
+    {
+        return $this->getLivewire()->showFiltersOnTop ?? false;
+    }
 }
