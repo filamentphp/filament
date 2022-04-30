@@ -122,6 +122,7 @@ return [
         ],
 
         'boolean' => [
+            'placeholder' => 'All',
             'true' => 'Yes',
             'false' => 'No',
         ],

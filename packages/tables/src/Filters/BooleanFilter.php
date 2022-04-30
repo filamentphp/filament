@@ -19,6 +19,8 @@ class BooleanFilter extends SelectFilter
             'yes' => $this->getTrueLabel(),
             'no' => $this->getFalseLabel(),
         ]);
+
+        $this->placeholder(__('tables::table.filters.boolean.placeholder'));
     }
 
     public function getTrueLabel(): string

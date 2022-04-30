@@ -108,6 +108,7 @@ return [
         ],
 
         'boolean' => [
+            'placeholder' => 'Alles',
             'true' => 'Ja',
             'false' => 'Nee',
         ],
