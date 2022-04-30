@@ -170,7 +170,7 @@ Filter::make('created_at')
 
 ### Ternary filters
 
-Ternary filters allow you to quickly create a filter has three states, where not applied is the default state. To filter a column named `is_admin` to be `true` or `false`, you may use the filter in its default configuration:
+Ternary filters allow you to quickly create a filter which has three states, where not applied is the default state. To filter a column named `is_admin` to be `true` or `false`, you may use the filter in its default configuration:
 
 
 ```php
