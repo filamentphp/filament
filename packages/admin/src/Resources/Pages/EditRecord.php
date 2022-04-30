@@ -21,6 +21,8 @@ class EditRecord extends Page implements HasFormActions
 
     protected static string $view = 'filament::resources.pages.edit-record';
 
+    public bool $hasMultiActionButton = false;
+
     public $record;
 
     public $data;

@@ -18,6 +18,8 @@ class CreateRecord extends Page implements HasFormActions
 
     protected static string $view = 'filament::resources.pages.create-record';
 
+    public bool $hasMultiActionButton = false;
+
     public $record;
 
     public $data;
