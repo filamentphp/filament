@@ -14,7 +14,7 @@ trait HasFilters
 {
     protected array $cachedTableFilters;
 
-    public $tableFilters = null;
+    public ?array $tableFilters = null;
 
     public function cacheTableFilters(): void
     {
