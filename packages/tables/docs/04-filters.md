@@ -168,6 +168,43 @@ Filter::make('created_at')
     })
 ```
 
+### Ternary filters
+
+Ternary filters allow you to quickly create a filter has three states, where not applied is the default state. To filter a column named `is_admin` to be `true` or `false`, you may use the filter in its default configuration:
+
+
+```php
+use Filament\Tables\Filters\TernaryFilter;
+
+TernaryFilter::make('is_admin')
+```
+
+Another common pattern is to use a nullable column. To apply that logic, you may use the `nullableColumn()` method. This method accepts a name to override the column used.
+
+```php
+use Filament\Tables\Filters\TernaryFilter;
+
+TernaryFilter::make('activated_at')
+    ->nullableColumn()
+```
+
+Ternary filters do not require the use of a boolean or nullable column. To apply custom conditions, you may use the `conditions()` method:
+
+```php
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TernaryFilter;
+
+TernaryFilter::make('trashed')
+    ->placeholder('Without Trashed')
+    ->trueLabel('With Trashed')
+    ->falseLabel('Only Trashed')
+    ->conditions(
+        fn (Builder $query) => $query->withTrashed(),
+        fn (Builder $query) => $query->onlyTrashed(),
+        fn (Builder $query) => $query->withoutTrashed(),
+    )
+```
+
 ### Setting default values
 
 If you wish to set a default filter value, you may use the `default()` method on the form component:

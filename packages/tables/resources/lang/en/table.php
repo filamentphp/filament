@@ -121,8 +121,8 @@ return [
             'placeholder' => 'All',
         ],
 
-        'boolean' => [
-            'placeholder' => 'All',
+        'ternary' => [
+            'placeholder' => '-',
             'true' => 'Yes',
             'false' => 'No',
         ],

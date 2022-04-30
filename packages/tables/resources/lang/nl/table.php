@@ -107,8 +107,8 @@ return [
             'placeholder' => 'Alles',
         ],
 
-        'boolean' => [
-            'placeholder' => 'Alles',
+        'ternary' => [
+            'placeholder' => '-',
             'true' => 'Ja',
             'false' => 'Nee',
         ],

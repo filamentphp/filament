@@ -20,17 +20,19 @@ class BooleanFilter extends SelectFilter
             'no' => $this->getFalseLabel(),
         ]);
 
-        $this->placeholder(__('tables::table.filters.boolean.placeholder'));
+        $this->placeholder(__('tables::table.filters.ternary.placeholder'));
+
+        $this->booleanColumn();
     }
 
     public function getTrueLabel(): string
     {
-        return $this->evaluate($this->trueLabel) ?? __('tables::table.filters.boolean.true');
+        return $this->evaluate($this->trueLabel) ?? __('tables::table.filters.ternary.true');
     }
 
     public function getFalseLabel(): string
     {
-        return $this->evaluate($this->falseLabel) ?? __('tables::table.filters.boolean.false');
+        return $this->evaluate($this->falseLabel) ?? __('tables::table.filters.ternary.false');
     }
 
     public function trueLabel(string | Closure | null $trueLabel): static
@@ -47,36 +49,36 @@ class BooleanFilter extends SelectFilter
         return $this;
     }
 
-    public function nullableAttribute(string $attribute): static
+    public function nullableColumn(string | Closure | null $name = null): static
     {
-        return $this->conditions(
-            fn (Builder $query) => $query->whereNotNull($attribute),
-            fn (Builder $query) => $query->whereNull($attribute),
+        return $this->column($name)->conditions(
+            fn (Builder $query) => $query->whereNotNull($this->getColumn()),
+            fn (Builder $query) => $query->whereNull($this->getColumn()),
         );
     }
 
-    public function booleanAttribute(string $attribute): static
+    public function booleanColumn(string | Closure | null $name = null): static
     {
-        return $this->conditions(
-            fn (Builder $query) => $query->where($attribute, true),
-            fn (Builder $query) => $query->where($attribute, false),
+        return $this->column($name)->conditions(
+            fn (Builder $query) => $query->where($this->getColumn(), true),
+            fn (Builder $query) => $query->where($this->getColumn(), false),
         );
     }
 
     public function conditions(Closure $trueQuery, Closure $falseQuery, Closure $blankQuery = null): static
     {
         return $this->query(function (Builder $query, array $data) use ($trueQuery, $falseQuery, $blankQuery) {
-            if (blank($data['value'])) {
+            if (blank($data['value'] ?? null)) {
                 return $blankQuery instanceof Closure
-                    ? $blankQuery($query)
+                    ? $blankQuery($query, $data)
                     : $query;
             }
 
             if ($data['value'] == 'yes') {
-                return $trueQuery($query);
+                return $trueQuery($query, $data);
             }
 
-            return $falseQuery($query);
+            return $falseQuery($query, $data);
         });
     }
 }
