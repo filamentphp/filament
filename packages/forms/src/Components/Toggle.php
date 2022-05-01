@@ -3,12 +3,13 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class Toggle extends Field
 {
     use Concerns\CanBeAccepted;
     use Concerns\CanBeInline;
-    use Concerns\HasExtraAlpineAttributes;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.toggle';
 

@@ -5,6 +5,7 @@ namespace Filament\Forms\Components;
 use Filament\Forms\Concerns\HasColumns;
 use Filament\Forms\Concerns\HasStateBindingModifiers;
 use Filament\Support\Concerns\Configurable;
+use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Traits\Macroable;
@@ -22,7 +23,6 @@ class Component extends ViewComponent implements Htmlable
     use Concerns\Cloneable;
     use Concerns\EvaluatesClosures;
     use Concerns\HasChildComponents;
-    use Concerns\HasExtraAttributes;
     use Concerns\HasFieldWrapper;
     use Concerns\HasInlineLabel;
     use Concerns\HasId;
@@ -34,6 +34,7 @@ class Component extends ViewComponent implements Htmlable
     use Concerns\ListensToEvents;
     use Configurable;
     use HasColumns;
+    use HasExtraAttributes;
     use HasStateBindingModifiers;
     use Macroable;
     use Tappable;

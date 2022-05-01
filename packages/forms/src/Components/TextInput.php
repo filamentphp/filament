@@ -5,6 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
 use Filament\Forms\Components\TextInput\Mask;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 
 class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHaveNumericState
@@ -13,9 +14,9 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasAffixes;
-    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.text-input';
 

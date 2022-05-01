@@ -5,12 +5,13 @@ namespace Filament\Forms\Components;
 use Carbon\CarbonInterface;
 use Closure;
 use DateTime;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\View\ComponentAttributeBag;
 
 class DateTimePicker extends Field
 {
-    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasPlaceholder;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.date-time-picker';
 
