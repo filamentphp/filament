@@ -2,7 +2,9 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Filament\Support\Concerns\HasExtraAlpineAttributes as BaseTrait;
+
 trait HasExtraAlpineAttributes
 {
-    use \Filament\Support\Concerns\HasExtraAlpineAttributes;
+    use BaseTrait;
 }
