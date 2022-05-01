@@ -13,11 +13,14 @@ trait CanBeHidden
 
     public function hidden(bool | Closure | string $condition = true): static
     {
-        $condition = is_string($condition) && class_exists($condition)
-            ? fn ($livewire) => $livewire instanceof $condition
-            : $condition;
-
         $this->isHidden = $condition;
+
+        return $this;
+    }
+
+    public function hiddenFor(string $target): static
+    {
+        $this->hidden(fn ($livewire) => $livewire instanceof $target);
 
         return $this;
     }
@@ -70,6 +73,13 @@ trait CanBeHidden
             : $condition;
 
         $this->isVisible = $condition;
+
+        return $this;
+    }
+
+    public function visibleFor(string $target): static
+    {
+        $this->visible(fn ($livewire) => $livewire instanceof $target);
 
         return $this;
     }
