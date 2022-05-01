@@ -1601,7 +1601,7 @@ trix-editor .attachment__metadata .attachment__size {
 }
 .choices.is-disabled .choices__inner,
 .choices.is-disabled .choices__input {
-  @apply bg-white cursor-not-allowed select-none;
+  @apply cursor-not-allowed select-none;
 }
 .choices.is-disabled .choices__item {
   @apply cursor-not-allowed;
@@ -1613,7 +1613,10 @@ trix-editor .attachment__metadata .attachment__size {
   @apply cursor-pointer;
 }
 .choices[data-type*=select-one] .choices__input {
-  @apply block w-full p-2 border-b bg-white m-0;
+  @apply block w-full p-2 border-b m-0;
+}
+.dark .choices[data-type*=select-one] .choices__input {
+  @apply bg-gray-700;
 }
 .choices[data-type*=select-multiple] .choices__inner,
 .choices[data-type*=text] .choices__inner {
@@ -1624,6 +1627,9 @@ trix-editor .attachment__metadata .attachment__size {
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
   background-position: right .5rem center;
   background-size: 1.5em 1.5em;
+}
+.dark .choices__inner {
+  @apply border-gray-600 bg-gray-700 text-white;
 }
 .is-focused .choices__inner,
 .is-open .choices__inner {
@@ -1647,6 +1653,10 @@ trix-editor .attachment__metadata .attachment__size {
 .choices__list--dropdown,
 .choices__list[aria-expanded] {
   @apply mt-2 rounded-lg invisible z-[1] absolute w-full bg-white border border-gray-300 shadow-sm top-full overflow-hidden break-words will-change-[visibility];
+}
+.dark .choices__list--dropdown,
+.dark .choices__list[aria-expanded] {
+  @apply bg-gray-700 border-gray-600;
 }
 .is-active.choices__list--dropdown,
 .is-active.choices__list[aria-expanded] {
@@ -1683,6 +1693,9 @@ trix-editor .attachment__metadata .attachment__size {
 }
 .choices__list--dropdown .choices__input {
   @apply !px-3 !py-2 !border-x-0 !border-t-0 !border-b !border-gray-300;
+}
+.dark .choices__list--dropdown .choices__input {
+  @apply !border-gray-600;
 }
 .choices__input {
   @apply inline-block bg-transparent border-0 !border-transparent max-w-full !p-0;
