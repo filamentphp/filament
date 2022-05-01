@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Filament\Support\Concerns\Configurable;
+use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Traits\Conditionable;
@@ -22,7 +23,6 @@ class Column extends Component implements Htmlable
     use Concerns\CanOpenUrl;
     use Concerns\EvaluatesClosures;
     use Concerns\HasAlignment;
-    use Concerns\HasExtraAttributes;
     use Concerns\HasExtraHeaderAttributes;
     use Concerns\HasLabel;
     use Concerns\HasName;
@@ -33,6 +33,7 @@ class Column extends Component implements Htmlable
     use Concerns\InteractsWithTableQuery;
     use Conditionable;
     use Configurable;
+    use HasExtraAttributes;
     use Macroable;
     use Tappable;
 

@@ -3,12 +3,13 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class Section extends Component implements Contracts\CanConcealComponents
 {
-    use Concerns\HasExtraAlpineAttributes;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.section';
 

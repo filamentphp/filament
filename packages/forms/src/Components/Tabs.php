@@ -3,10 +3,11 @@
 namespace Filament\Forms\Components;
 
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class Tabs extends Component
 {
-    use Concerns\HasExtraAlpineAttributes;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.tabs';
 
