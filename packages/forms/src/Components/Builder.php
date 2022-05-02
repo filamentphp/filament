@@ -28,7 +28,7 @@ class Builder extends Field
 
     protected bool | Closure $showBlockLabels = false;
 
-    protected bool | Closure $isContained = false;
+    protected bool | Closure $isInset = false;
 
     protected function setUp(): void
     {
@@ -227,9 +227,9 @@ class Builder extends Field
         return $this;
     }
 
-    public function contained(bool | Closure $condition = true): static
+    public function inset(bool | Closure $condition = true): static
     {
-        $this->isContained = $condition;
+        $this->isInset = $condition;
 
         return $this;
     }
@@ -307,8 +307,8 @@ class Builder extends Field
         return (bool) $this->evaluate($this->showBlockLabels);
     }
 
-    public function isContained(): bool
+    public function isInset(): bool
     {
-        return (bool) $this->evaluate($this->isContained);
+        return (bool) $this->evaluate($this->isInset);
     }
 }

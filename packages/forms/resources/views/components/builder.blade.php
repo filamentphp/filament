@@ -21,8 +21,8 @@
 
     <div {{ $attributes->merge($getExtraAttributes())->class([
         'space-y-6 rounded-xl filament-forms-builder-component',
-        'bg-gray-50 p-6' => $isContained(),
-        'dark:bg-gray-900' => $isContained() && config('forms.dark_mode'),
+        'bg-gray-50 p-6' => $isInset(),
+        'dark:bg-gray-900' => $isInset() && config('forms.dark_mode'),
     ]) }}>
         @if (count($containers = $getChildComponentContainers()))
             <ul
