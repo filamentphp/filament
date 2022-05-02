@@ -88,7 +88,6 @@ return [
     'select' => [
         'no_search_results_message' => 'هیچ هەڵبژاردەیەک نەدۆزرایەوە بۆ گەڕانەکەت.',
         'placeholder' => 'هەڵبژاردەیەک دیاری بکە',
-        'search_prompt' => 'دەستبکە بە نوسین بۆ گەڕان ...',
     ],
 
     'tags_input' => [

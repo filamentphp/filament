@@ -43,7 +43,6 @@ return [
     'select' => [
         'no_search_results_message' => 'Nessuna opzione trovata per la ricerca.',
         'placeholder' => 'Seleziona un\'opzione',
-        'search_prompt' => 'Digita per cercare...',
     ],
 
     'tags_input' => [

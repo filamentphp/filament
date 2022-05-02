@@ -140,7 +140,6 @@ return [
     'select' => [
         'no_search_results_message' => 'No se encontraron coincidencias con su búsqueda.',
         'placeholder' => 'Selecciona una opción',
-        'search_prompt' => 'Escribe para buscar...',
     ],
 
     'tags_input' => [
