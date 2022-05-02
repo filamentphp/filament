@@ -86,6 +86,7 @@ return [
     ],
 
     'repeater' => [
+        'collapsed_empty_state' => 'Content collapsed',
 
         'buttons' => [
 
@@ -103,6 +104,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Move up',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Collapse',
+            ],
+
+            'expand_item' => [
+                'label' => 'Expand',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Collapse all',
+            ],
+
+            'expand_all' => [
+                'label' => 'Expand all',
             ],
 
         ],
