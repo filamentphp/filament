@@ -9,12 +9,12 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div class="space-x-2 text-sm font-medium text-primary-600" x-data>
-        <button type="button" x-on:click="$dispatch('builder-collapse', '{{ $getId() }}')">
+    <div class="space-x-2 text-sm text-primary-600" x-data>
+        <button class="font-medium type="button" x-on:click="$dispatch('builder-collapse', '{{ $getId() }}')">
             {{ __('forms::components.repeater.buttons.collapse_all.label') }}
         </button>
 
-        <button type="button" x-on:click="$dispatch('builder-expand', '{{ $getId() }}')">
+        <button class="font-medium type="button" x-on:click="$dispatch('builder-expand', '{{ $getId() }}')">
             {{ __('forms::components.repeater.buttons.expand_all.label') }}
         </button>
     </div>
