@@ -98,9 +98,9 @@
             @endif
         </div>
 
-        @if ($hasCreateFormSchema())
+        @if ($canCreateOption())
             <div>
-                <x-forms::icon-button wire:click="mountFormComponentAction('{{ $getStatePath() }}', 'create')" icon="heroicon-o-plus" class="-mr-2" />
+                <x-forms::icon-button wire:click="mountFormComponentAction('{{ $getStatePath() }}', 'createOption')" icon="heroicon-o-plus" class="-mr-2" />
             </div>
         @endif
 

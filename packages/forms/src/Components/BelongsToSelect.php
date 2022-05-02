@@ -47,7 +47,7 @@ class BelongsToSelect extends Select
             $record->save();
         });
 
-        $this->saveCreateFormUsing(static function (BelongsToSelect $component, array $data) {
+        $this->createOptionUsing(static function (BelongsToSelect $component, array $data) {
             return $component->getRelationship()->create($data)->getKey();
         });
     }

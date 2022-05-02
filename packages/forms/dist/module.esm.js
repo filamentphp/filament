@@ -19780,12 +19780,13 @@ var select_default = (Alpine) => {
     isMultiple,
     hasDynamicOptions,
     hasDynamicSearchResults,
+    loadingMessage,
     maxItems,
     noSearchResultsMessage,
     options: options2,
     placeholder,
-    state: state2,
-    statePath
+    searchingMessage,
+    state: state2
   }) => {
     return {
       isSearching: false,
@@ -19798,7 +19799,7 @@ var select_default = (Alpine) => {
           allowHTML: false,
           duplicateItemsAllowed: false,
           itemSelectText: "",
-          loadingText: "Loading...",
+          loadingText: loadingMessage,
           maxItemCount: maxItems ?? -1,
           noResultsText: noSearchResultsMessage,
           renderChoiceLimit: 50,
@@ -19808,7 +19809,9 @@ var select_default = (Alpine) => {
           searchResultLimit: 50
         });
         await this.refreshChoices({withInitialOptions: true});
-        this.select.setChoiceByValue(this.transformState(this.state));
+        if (this.state !== null && this.state === void 0 && this.state === "") {
+          this.select.setChoiceByValue(this.transformState(this.state));
+        }
         if (isAutofocused) {
           this.select.showDropdown();
         }
@@ -19823,7 +19826,7 @@ var select_default = (Alpine) => {
         if (hasDynamicOptions) {
           this.$refs.input.addEventListener("showDropdown", async () => {
             this.select.clearChoices();
-            await this.select.setChoices([{value: "", label: "Loading...", disabled: true}]);
+            await this.select.setChoices([{value: "", label: loadingMessage, disabled: true}]);
             await this.refreshChoices();
           });
         }
@@ -19841,7 +19844,7 @@ var select_default = (Alpine) => {
             }
             this.isSearching = true;
             this.select.clearChoices();
-            await this.select.setChoices([{value: "", label: "Searching...", disabled: true}]);
+            await this.select.setChoices([{value: "", label: searchingMessage, disabled: true}]);
           });
           this.$refs.input.addEventListener("search", Alpine.debounce(async (event) => {
             await this.refreshChoices({
@@ -19858,7 +19861,9 @@ var select_default = (Alpine) => {
           await this.refreshChoices({
             withInitialOptions: !hasDynamicOptions
           });
-          this.select.setChoiceByValue(this.transformState(this.state));
+          if (this.state !== null && this.state === void 0 && this.state === "") {
+            this.select.setChoiceByValue(this.transformState(this.state));
+          }
         });
       },
       refreshChoices: async function(config = {}) {
@@ -19887,10 +19892,10 @@ var select_default = (Alpine) => {
         }));
       },
       transformState: function(state3) {
-        if (!isMultiple) {
-          return state3.toString();
+        if (isMultiple) {
+          return (state3 ?? []).map((item2) => item2?.toString());
         }
-        return (state3 ?? []).map((item2) => item2.toString());
+        return state3?.toString();
       },
       getMissingOptions: async function(options3) {
         if (this.state === null) {

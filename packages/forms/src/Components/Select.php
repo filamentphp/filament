@@ -20,9 +20,11 @@ class Select extends Field
 
     protected string $view = 'forms::components.select';
 
-    protected array | Closure | null $createFormSchema = null;
+    protected array | Closure | null $createOptionActionFormSchema = null;
 
-    protected ?Closure $saveCreateFormUsing = null;
+    protected ?Closure $createOptionUsing = null;
+
+    protected ?Closure $modifyCreateOptionActionUsing = null;
 
     protected bool | Closure $isMultiple = false;
 
@@ -97,20 +99,27 @@ class Select extends Field
         return $this;
     }
 
-    public function createForm(array | Closure $schema): static
+    public function createOptionAction(?Closure $callback): static
     {
-        $this->createFormSchema = $schema;
+        $this->modifyCreateOptionActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function createOptionForm(array | Closure $schema): static
+    {
+        $this->createOptionActionFormSchema = $schema;
 
         $this->registerActions([
-            'create' => $this->getCreateAction(),
+            'createOption' => $this->getCreateOptionAction(),
         ]);
 
         return $this;
     }
 
-    public function saveCreateFormUsing(Closure $callback): static
+    public function createOptionUsing(Closure $callback): static
     {
-        $this->saveCreateFormUsing = $callback;
+        $this->createOptionUsing = $callback;
 
         return $this;
     }
@@ -129,26 +138,26 @@ class Select extends Field
         return $this;
     }
 
-    public function getSaveCreateFormUsing(): ?Closure
+    public function getCreateOptionUsing(): ?Closure
     {
-        return $this->saveCreateFormUsing;
+        return $this->createOptionUsing;
     }
 
-    public function getCreateAction(): ?Action
+    public function getCreateOptionAction(): ?Action
     {
-        if ($this->createFormSchema === null) {
+        if ($this->createOptionActionFormSchema === null) {
             return null;
         }
 
-        return Action::make('create')
-            ->modalHeading('Create')
-            ->form($this->getCreateFormSchema())
+        $action = Action::make('create')
+            ->modalHeading(__(''))
+            ->form($this->getCreateOptionActionFormSchema())
             ->action(static function (Select $component, $data) {
-                if (! $component->getSaveCreateFormUsing()) {
-                    throw new Exception("Select field [{$component->getStatePath()}] must have a [saveCreateFormUsing()] closure set.");
+                if (! $component->getCreateOptionUsing()) {
+                    throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
                 }
 
-                $key = $component->evaluate($component->getSaveCreateFormUsing(), [
+                $key = $component->evaluate($component->getCreateOptionUsing(), [
                     'data' => $data,
                 ]);
 
@@ -158,16 +167,24 @@ class Select extends Field
 
                 $component->state($state);
             });
+
+        if ($this->modifyCreateOptionActionUsing) {
+            $action = $this->evaluate($this->modifyCreateOptionActionUsing, [
+                'action' => $action,
+            ]);
+        }
+
+        return $action;
     }
 
-    public function getCreateFormSchema(): ?array
+    public function getCreateOptionActionFormSchema(): ?array
     {
-        return $this->evaluate($this->createFormSchema);
+        return $this->evaluate($this->createOptionActionFormSchema);
     }
 
-    public function hasCreateFormSchema(): bool
+    public function canCreateOption(): bool
     {
-        return $this->getCreateFormSchema() !== null;
+        return $this->getCreateOptionActionFormSchema() !== null;
     }
 
     public function getOptionLabelUsing(?Closure $callback): static

@@ -45,7 +45,10 @@ export default (Alpine) => {
                 })
 
                 await this.refreshChoices({ withInitialOptions: true })
-                this.select.setChoiceByValue(this.transformState(this.state))
+
+                if (this.state !== null && this.state === undefined && this.state === '') {
+                    this.select.setChoiceByValue(this.transformState(this.state))
+                }
 
                 if (isAutofocused) {
                     this.select.showDropdown()
@@ -116,7 +119,9 @@ export default (Alpine) => {
                         withInitialOptions: ! hasDynamicOptions,
                     })
 
-                    this.select.setChoiceByValue(this.transformState(this.state))
+                    if (this.state !== null && this.state === undefined && this.state === '') {
+                        this.select.setChoiceByValue(this.transformState(this.state))
+                    }
                 })
             },
 
@@ -159,11 +164,11 @@ export default (Alpine) => {
             },
 
             transformState: function (state) {
-                if (! isMultiple) {
-                    return state.toString()
+                if (isMultiple) {
+                    return (state ?? []).map((item) => item?.toString())
                 }
 
-                return (state ?? []).map((item) => item.toString())
+                return state?.toString()
             },
 
             getMissingOptions: async function (options) {
