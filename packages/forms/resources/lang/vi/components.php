@@ -140,6 +140,7 @@ return [
     'select' => [
         'no_search_results_message' => 'Không có tùy chọn nào phù hợp với tìm kiếm của bạn.',
         'placeholder' => 'Chọn một mục',
+        'search_prompt' => 'Gõ để tìm kiếm...',
     ],
 
     'tags_input' => [

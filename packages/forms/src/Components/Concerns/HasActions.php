@@ -10,20 +10,14 @@ trait HasActions
 
     public function registerActions(array $actions): static
     {
-        $this->actions = array_merge($this->actions, $actions);
+        $this->actions = array_merge($this->actions, array_map(fn (Action $action): Action => $action->component($this), $actions));
 
         return $this;
     }
 
     public function getAction(string $name): ?Action
     {
-        $action = $this->actions[$name] ?? null;
-
-        if ($action === null) {
-            return null;
-        }
-
-        return $action->component($this);
+        return $this->actions[$name] ?? null;
     }
 
     public function hasAction(string $name): bool

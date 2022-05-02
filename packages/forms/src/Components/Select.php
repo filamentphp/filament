@@ -48,6 +48,8 @@ class Select extends Field
 
     protected string | Closure | null $searchingMessage = null;
 
+    protected string | HtmlString | Closure | null $searchPrompt = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -85,6 +87,7 @@ class Select extends Field
         $this->loadingMessage(__('forms::components.select.loading_message'));
         $this->noSearchResultsMessage(__('forms::components.select.no_search_results_message'));
         $this->searchingMessage(__('forms::components.select.searching_message'));
+        $this->searchPrompt(__('forms::components.select.search_prompt'));
 
         $this->placeholder(__('forms::components.select.placeholder'));
     }
@@ -110,9 +113,13 @@ class Select extends Field
     {
         $this->createOptionActionFormSchema = $schema;
 
+        $action = $this->getCreateOptionAction();
+
         $this->registerActions([
-            'createOption' => $this->getCreateOptionAction(),
+            'createOption' => $action,
         ]);
+
+        $this->suffixAction($action);
 
         return $this;
     }
@@ -149,24 +156,27 @@ class Select extends Field
             return null;
         }
 
-        $action = Action::make('create')
-            ->modalHeading(__(''))
+        $action = Action::make('createOption')
             ->form($this->getCreateOptionActionFormSchema())
             ->action(static function (Select $component, $data) {
                 if (! $component->getCreateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
                 }
 
-                $key = $component->evaluate($component->getCreateOptionUsing(), [
+                $createdOptionKey = $component->evaluate($component->getCreateOptionUsing(), [
                     'data' => $data,
                 ]);
 
                 $state = $component->isMultiple() ?
-                    array_merge($component->getState(), $key) :
-                    $key;
+                    array_merge($component->getState(), $createdOptionKey) :
+                    $createdOptionKey;
 
                 $component->state($state);
-            });
+            })
+            ->icon('heroicon-o-plus')
+            ->iconButton()
+            ->modalHeading(__('forms::components.select.actions.create_option.modal.heading'))
+            ->modalButton(__('forms::components.select.actions.create_option.modal.actions.create.label'));
 
         if ($this->modifyCreateOptionActionUsing) {
             $action = $this->evaluate($this->modifyCreateOptionActionUsing, [
@@ -249,9 +259,10 @@ class Select extends Field
         return $this;
     }
 
-    /** @deprecated */
     public function searchPrompt(string | HtmlString | Closure | null $message): static
     {
+        $this->searchPrompt = $message;
+
         return $this;
     }
 
@@ -278,6 +289,11 @@ class Select extends Field
     public function getNoSearchResultsMessage(): string | HtmlString
     {
         return $this->evaluate($this->noSearchResultsMessage);
+    }
+
+    public function getSearchPrompt(): string | HtmlString
+    {
+        return $this->evaluate($this->searchPrompt);
     }
 
     public function getLoadingMessage(): string

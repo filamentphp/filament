@@ -144,6 +144,7 @@ return [
     'select' => [
         'no_search_results_message' => '没有选项匹配您的搜索.',
         'placeholder' => '请选择',
+        'search_prompt' => '搜索...',
     ],
 
     'tags_input' => [

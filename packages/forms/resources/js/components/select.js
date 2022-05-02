@@ -16,6 +16,7 @@ export default (Alpine) => {
         options,
         placeholder,
         searchingMessage,
+        searchPrompt,
         state,
     }) => {
         return {
@@ -36,6 +37,7 @@ export default (Alpine) => {
                     itemSelectText: '',
                     loadingText: loadingMessage,
                     maxItemCount: maxItems ?? -1,
+                    noChoicesText: searchPrompt,
                     noResultsText: noSearchResultsMessage,
                     renderChoiceLimit: 50,
                     placeholderValue: placeholder,
@@ -46,7 +48,7 @@ export default (Alpine) => {
 
                 await this.refreshChoices({ withInitialOptions: true })
 
-                if (this.state !== null && this.state === undefined && this.state === '') {
+                if (! [null, undefined, ''].includes(this.state)) {
                     this.select.setChoiceByValue(this.transformState(this.state))
                 }
 
@@ -79,15 +81,7 @@ export default (Alpine) => {
                     this.$refs.input.addEventListener('search', async (event) => {
                         let search = event.detail.value?.trim()
 
-                        if (search === null) {
-                            return
-                        }
-
-                        if (search === '') {
-                            return
-                        }
-
-                        if (search === undefined) {
+                        if ([null, undefined, ''].includes(search)) {
                             return
                         }
 
@@ -119,7 +113,7 @@ export default (Alpine) => {
                         withInitialOptions: ! hasDynamicOptions,
                     })
 
-                    if (this.state !== null && this.state === undefined && this.state === '') {
+                    if (! [null, undefined, ''].includes(this.state)) {
                         this.select.setChoiceByValue(this.transformState(this.state))
                     }
                 })
@@ -172,23 +166,7 @@ export default (Alpine) => {
             },
 
             getMissingOptions: async function (options) {
-                if (this.state === null) {
-                    return {}
-                }
-
-                if (this.state === '') {
-                    return {}
-                }
-
-                if (this.state === undefined) {
-                    return {}
-                }
-
-                if (this.state === []) {
-                    return {}
-                }
-
-                if (this.state === {}) {
+                if ([null, undefined, '', [], {}].includes(this.state)) {
                     return {}
                 }
 

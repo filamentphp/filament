@@ -140,6 +140,7 @@ return [
     'select' => [
         'no_search_results_message' => 'Aramanızla eşleşen seçenek yok.',
         'placeholder' => 'Bir seçenek seçin',
+        'search_prompt' => 'Aramak için yazmaya başlayın...',
     ],
 
     'tags_input' => [

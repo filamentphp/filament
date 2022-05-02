@@ -43,6 +43,7 @@ return [
     'select' => [
         'no_search_results_message' => 'Keine Optionen passen zu Ihrer Suche.',
         'placeholder' => 'Wählen Sie eine Option',
+        'search_prompt' => 'Beginnen Sie mit der Eingabe, um zu suchen...',
     ],
 
     'tags_input' => [

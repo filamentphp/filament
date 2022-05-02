@@ -47,6 +47,7 @@ return [
     'select' => [
         'no_search_results_message' => 'Ingen muligheder der matcher din søgning.',
         'placeholder' => 'Vælg en indstilling',
+        'search_prompt' => 'Begynd at skrive for at søge ...',
     ],
 
     'tags_input' => [

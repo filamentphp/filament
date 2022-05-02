@@ -144,6 +144,7 @@ return [
     'select' => [
         'no_search_results_message' => 'No options match your search.',
         'placeholder' => 'Select an option',
+        'search_prompt' => 'Start typing to search...',
     ],
 
     'tags_input' => [

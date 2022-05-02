@@ -140,6 +140,7 @@ return [
     'select' => [
         'no_search_results_message' => 'Vašemu hledání neodpovídají žádné výsledky.',
         'placeholder' => 'Zvolte některou z možností',
+        'search_prompt' => 'Začněte psát pro začátek vyhledávání...',
     ],
 
     'tags_input' => [

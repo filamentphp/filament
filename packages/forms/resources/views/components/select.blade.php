@@ -1,7 +1,7 @@
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
 @php
-    $sideLabelClasses = [
+    $affixLabelClasses = [
         'whitespace-nowrap group-focus-within:text-primary-500',
         'text-gray-400' => ! $errors->has($getStatePath()),
         'text-danger-400' => $errors->has($getStatePath()),
@@ -20,8 +20,10 @@
     :state-path="$getStatePath()"
 >
     <div {{ $attributes->merge($getExtraAttributes())->class(['flex items-center space-x-1 group filament-forms-select-component']) }}>
+        {{ $getPrefixAction() }}
+
         @if ($label = $getPrefixLabel())
-            <span @class($sideLabelClasses)>
+            <span @class($affixLabelClasses)>
                 {{ $label }}
             </span>
         @endif
@@ -81,6 +83,7 @@
                         options: @js($getOptions()),
                         placeholder: @js($getPlaceholder()),
                         searchingMessage: @js($getSearchingMessage()),
+                        searchPrompt: @js($getSearchPrompt()),
                         state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
                     })"
                     wire:ignore
@@ -98,16 +101,12 @@
             @endif
         </div>
 
-        @if ($canCreateOption())
-            <div>
-                <x-forms::icon-button wire:click="mountFormComponentAction('{{ $getStatePath() }}', 'createOption')" icon="heroicon-o-plus" class="-mr-2" />
-            </div>
-        @endif
-
-        @if ($label = $getPostfixLabel())
-            <span @class($sideLabelClasses)>
+        @if ($label = $getSuffixLabel())
+            <span @class($affixLabelClasses)>
                 {{ $label }}
             </span>
         @endif
+
+        {{ $getSuffixAction() }}
     </div>
 </x-dynamic-component>

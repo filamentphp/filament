@@ -274,7 +274,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('backgroundColor')->type('color')
 ```
 
-You may place text before and after the input using the `prefix()` and `postfix()` methods:
+You may place text before and after the input using the `prefix()` and `suffix()` methods:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -282,7 +282,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('domain')
     ->url()
     ->prefix('https://')
-    ->postfix('.com')
+    ->suffix('.com')
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)

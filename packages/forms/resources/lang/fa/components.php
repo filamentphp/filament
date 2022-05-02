@@ -92,6 +92,7 @@ return [
     'select' => [
         'no_search_results_message' => 'هیچ گزینه ای با جستجوی شما مطابقت ندارد',
         'placeholder' => 'یک گزینه را انتخاب کنید',
+        'search_prompt' => 'برای جستجو تایپ کنید...',
     ],
 
     'tags_input' => [

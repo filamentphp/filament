@@ -199,6 +199,8 @@ return [
 
         'searching_message' => 'Searching...',
 
+        'search_prompt' => 'Start typing to search...',
+
     ],
 
     'tags_input' => [

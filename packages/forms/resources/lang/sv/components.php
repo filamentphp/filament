@@ -92,6 +92,7 @@ return [
     'select' => [
         'no_search_results_message' => 'Hittar inget som matchar din sökning.',
         'placeholder' => 'Välj ett alternativ',
+        'search_prompt' => 'Börja skriva för att söka...',
     ],
 
     'tags_input' => [

@@ -19786,6 +19786,7 @@ var select_default = (Alpine) => {
     options: options2,
     placeholder,
     searchingMessage,
+    searchPrompt,
     state: state2
   }) => {
     return {
@@ -19801,6 +19802,7 @@ var select_default = (Alpine) => {
           itemSelectText: "",
           loadingText: loadingMessage,
           maxItemCount: maxItems ?? -1,
+          noChoicesText: searchPrompt,
           noResultsText: noSearchResultsMessage,
           renderChoiceLimit: 50,
           placeholderValue: placeholder,
@@ -19809,7 +19811,7 @@ var select_default = (Alpine) => {
           searchResultLimit: 50
         });
         await this.refreshChoices({withInitialOptions: true});
-        if (this.state !== null && this.state === void 0 && this.state === "") {
+        if (![null, void 0, ""].includes(this.state)) {
           this.select.setChoiceByValue(this.transformState(this.state));
         }
         if (isAutofocused) {
@@ -19833,13 +19835,7 @@ var select_default = (Alpine) => {
         if (hasDynamicSearchResults) {
           this.$refs.input.addEventListener("search", async (event) => {
             let search = event.detail.value?.trim();
-            if (search === null) {
-              return;
-            }
-            if (search === "") {
-              return;
-            }
-            if (search === void 0) {
+            if ([null, void 0, ""].includes(search)) {
               return;
             }
             this.isSearching = true;
@@ -19861,7 +19857,7 @@ var select_default = (Alpine) => {
           await this.refreshChoices({
             withInitialOptions: !hasDynamicOptions
           });
-          if (this.state !== null && this.state === void 0 && this.state === "") {
+          if (![null, void 0, ""].includes(this.state)) {
             this.select.setChoiceByValue(this.transformState(this.state));
           }
         });
@@ -19898,19 +19894,7 @@ var select_default = (Alpine) => {
         return state3?.toString();
       },
       getMissingOptions: async function(options3) {
-        if (this.state === null) {
-          return {};
-        }
-        if (this.state === "") {
-          return {};
-        }
-        if (this.state === void 0) {
-          return {};
-        }
-        if (this.state === []) {
-          return {};
-        }
-        if (this.state === {}) {
+        if ([null, void 0, "", [], {}].includes(this.state)) {
           return {};
         }
         if (isMultiple) {
