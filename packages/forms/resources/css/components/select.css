@@ -72,11 +72,19 @@
 }
 
 .choices__list--multiple {
-    @apply inline;
+    @apply inline-flex flex-wrap gap-1;
+}
+
+.choices__list--multiple:not(:empty) {
+    @apply flex mb-1;
 }
 
 .choices__list--multiple .choices__item {
-    @apply inline-block cursor-pointer break-all box-border mr-1 mb-1 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-lg bg-primary-500/10 space-x-1;
+    @apply inline-block cursor-pointer break-all box-border px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-lg bg-primary-500/10 space-x-1;
+}
+
+.dark .choices__list--multiple .choices__item {
+    @apply text-primary-500;
 }
 
 .choices__list--dropdown, .choices__list[aria-expanded] {
@@ -123,6 +131,10 @@
     @apply cursor-not-allowed select-none opacity-70;
 }
 
+.choices__placeholder {
+    @apply opacity-70;
+}
+
 /* !important is used to override default Tailwind input styling */
 
 .choices__list--dropdown .choices__input {
@@ -130,11 +142,11 @@
 }
 
 .dark .choices__list--dropdown .choices__input {
-    @apply !border-gray-600;
+    @apply placeholder-gray-300 !border-gray-600;
 }
 
 .choices__input {
-    @apply inline-block bg-transparent border-0 !border-transparent max-w-full !p-0;
+    @apply inline-block !bg-transparent border-0 !border-transparent max-w-full !p-0;
 }
 
 .choices__input:focus {
@@ -147,8 +159,4 @@
 
 .choices__input::-ms-clear, .choices__input::-ms-reveal {
     @apply hidden w-0 h-0;
-}
-
-.choices__placeholder {
-    @apply opacity-70;
 }

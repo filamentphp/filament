@@ -15,6 +15,7 @@ export default (Alpine) => {
         options,
         placeholder,
         state,
+        statePath,
     }) => {
         return {
             isSearching: false,
@@ -43,6 +44,7 @@ export default (Alpine) => {
                 })
 
                 await this.refreshChoices({ withInitialOptions: true })
+                this.select.setChoiceByValue(this.transformState(this.state))
 
                 if (isAutofocused) {
                     this.select.showDropdown()
@@ -55,11 +57,11 @@ export default (Alpine) => {
 
                     this.isStateBeingUpdated = true
                     this.state = this.select.getValue(true)
-                    this.isStateBeingUpdated = false
+                    this.$nextTick(() => this.isStateBeingUpdated = false)
                 })
 
                 if (hasDynamicOptions) {
-                    this.$refs.input.addEventListener('showDropdown', async (event) => {
+                    this.$refs.input.addEventListener('showDropdown', async () => {
                         this.select.clearChoices()
                         await this.select.setChoices(
                             [{ value: '', label: 'Loading...', disabled: true }],
@@ -107,13 +109,21 @@ export default (Alpine) => {
                         return
                     }
 
-                    await this.refreshChoices({ withInitialOptions: ! hasDynamicOptions })
+                    this.select.clearStore()
+
+                    await this.refreshChoices({
+                        withInitialOptions: ! hasDynamicOptions,
+                    })
+
+                    this.select.setChoiceByValue(this.transformState(this.state))
                 })
             },
 
             refreshChoices: async function (config = {}) {
+                const choices = await this.getChoices(config)
+
                 await this.select.setChoices(
-                    await this.getChoices(config),
+                    choices,
                     'value',
                     'label',
                     true,
@@ -140,16 +150,19 @@ export default (Alpine) => {
             },
 
             transformOptions: function (options) {
-                let selection = isMultiple ?
-                    ((this.state ?? []).map((value) => value?.toString())) :
-                    [this.state?.toString()]
-
                 return Object.entries(options)
                     .map((option) => ({
                         label: option[1],
-                        selected: selection.includes(option[0]?.toString()),
                         value: option[0],
                     }))
+            },
+
+            transformState: function (state) {
+                if (! isMultiple) {
+                    return state.toString()
+                }
+
+                return (state ?? []).map((item) => item.toString())
             },
 
             getMissingOptions: async function (options) {

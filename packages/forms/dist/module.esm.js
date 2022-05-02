@@ -19784,7 +19784,8 @@ var select_default = (Alpine) => {
     noSearchResultsMessage,
     options: options2,
     placeholder,
-    state: state2
+    state: state2,
+    statePath
   }) => {
     return {
       isSearching: false,
@@ -19807,6 +19808,7 @@ var select_default = (Alpine) => {
           searchResultLimit: 50
         });
         await this.refreshChoices({withInitialOptions: true});
+        this.select.setChoiceByValue(this.transformState(this.state));
         if (isAutofocused) {
           this.select.showDropdown();
         }
@@ -19816,10 +19818,10 @@ var select_default = (Alpine) => {
           }
           this.isStateBeingUpdated = true;
           this.state = this.select.getValue(true);
-          this.isStateBeingUpdated = false;
+          this.$nextTick(() => this.isStateBeingUpdated = false);
         });
         if (hasDynamicOptions) {
-          this.$refs.input.addEventListener("showDropdown", async (event) => {
+          this.$refs.input.addEventListener("showDropdown", async () => {
             this.select.clearChoices();
             await this.select.setChoices([{value: "", label: "Loading...", disabled: true}]);
             await this.refreshChoices();
@@ -19852,11 +19854,16 @@ var select_default = (Alpine) => {
           if (this.isStateBeingUpdated) {
             return;
           }
-          await this.refreshChoices({withInitialOptions: !hasDynamicOptions});
+          this.select.clearStore();
+          await this.refreshChoices({
+            withInitialOptions: !hasDynamicOptions
+          });
+          this.select.setChoiceByValue(this.transformState(this.state));
         });
       },
       refreshChoices: async function(config = {}) {
-        await this.select.setChoices(await this.getChoices(config), "value", "label", true);
+        const choices = await this.getChoices(config);
+        await this.select.setChoices(choices, "value", "label", true);
       },
       getChoices: async function(config = {}) {
         return this.transformOptions({
@@ -19874,12 +19881,16 @@ var select_default = (Alpine) => {
         return await getOptionsUsing();
       },
       transformOptions: function(options3) {
-        let selection = isMultiple ? (this.state ?? []).map((value) => value?.toString()) : [this.state?.toString()];
         return Object.entries(options3).map((option3) => ({
           label: option3[1],
-          selected: selection.includes(option3[0]?.toString()),
           value: option3[0]
         }));
+      },
+      transformState: function(state3) {
+        if (!isMultiple) {
+          return state3.toString();
+        }
+        return (state3 ?? []).map((item2) => item2.toString());
       },
       getMissingOptions: async function(options3) {
         if (this.state === null) {
