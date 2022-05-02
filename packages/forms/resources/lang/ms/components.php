@@ -140,7 +140,6 @@ return [
     'select' => [
         'no_search_results_message' => 'Tiada pilihan yang sepadan dengan carian anda.',
         'placeholder' => 'Pilih satu pilihan',
-        'search_prompt' => 'Mula menaip untuk mencari...',
     ],
 
     'tags_input' => [

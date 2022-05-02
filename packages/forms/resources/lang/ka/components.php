@@ -43,7 +43,6 @@ return [
     'select' => [
         'no_search_results_message' => 'ამ პარამეტრებით არცერთი ჩანაწერი არ მოიძებნა.',
         'placeholder' => 'აირჩიეთ ჩანაწერი',
-        'search_prompt' => 'ძიება...',
     ],
 
     'tags_input' => [

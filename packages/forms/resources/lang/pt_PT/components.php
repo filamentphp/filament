@@ -140,7 +140,6 @@ return [
     'select' => [
         'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
         'placeholder' => 'Selecione uma opção',
-        'search_prompt' => 'Comece a escrever para pesquisar...',
     ],
 
     'tags_input' => [

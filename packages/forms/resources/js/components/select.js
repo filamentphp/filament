@@ -10,12 +10,13 @@ export default (Alpine) => {
         isMultiple,
         hasDynamicOptions,
         hasDynamicSearchResults,
+        loadingMessage,
         maxItems,
         noSearchResultsMessage,
         options,
         placeholder,
+        searchingMessage,
         state,
-        statePath,
     }) => {
         return {
             isSearching: false,
@@ -33,7 +34,7 @@ export default (Alpine) => {
                     allowHTML: false,
                     duplicateItemsAllowed: false,
                     itemSelectText: '',
-                    loadingText: 'Loading...',
+                    loadingText: loadingMessage,
                     maxItemCount: maxItems ?? -1,
                     noResultsText: noSearchResultsMessage,
                     renderChoiceLimit: 50,
@@ -64,7 +65,7 @@ export default (Alpine) => {
                     this.$refs.input.addEventListener('showDropdown', async () => {
                         this.select.clearChoices()
                         await this.select.setChoices(
-                            [{ value: '', label: 'Loading...', disabled: true }],
+                            [{ value: '', label: loadingMessage, disabled: true }],
                         )
 
                         await this.refreshChoices()
@@ -91,7 +92,7 @@ export default (Alpine) => {
 
                         this.select.clearChoices()
                         await this.select.setChoices(
-                            [{ value: '', label: 'Searching...', disabled: true }],
+                            [{ value: '', label: searchingMessage, disabled: true }],
                         )
                     })
 

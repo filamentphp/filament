@@ -43,7 +43,6 @@ return [
     'select' => [
         'no_search_results_message' => 'Tidak ada opsi yang sesuai pencarian anda.',
         'placeholder' => 'Pilih salah satu opsi',
-        'search_prompt' => 'Mulai mengetik untuk mencari...',
     ],
 
     'tags_input' => [

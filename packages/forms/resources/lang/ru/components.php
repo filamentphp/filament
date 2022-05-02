@@ -140,7 +140,6 @@ return [
     'select' => [
         'no_search_results_message' => 'Нет вариантов, соответствующих вашему запросу.',
         'placeholder' => 'Выберите опцию',
-        'search_prompt' => 'Введите текст для поиска...',
     ],
 
     'tags_input' => [

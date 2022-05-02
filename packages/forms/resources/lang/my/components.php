@@ -144,7 +144,6 @@ return [
     'select' => [
         'no_search_results_message' => 'သင့်ရှာဖွေမှုနှင့် ကိုက်ညီသော ရွေးချယ်ခွင့်မရှိပါ',
         'placeholder' => 'ကျေးဇူးပြုပြီး ရွေးချယ်ပါ',
-        'search_prompt' => 'စာရိုက်ပြီး ရှာပါ...',
     ],
 
     'tags_input' => [

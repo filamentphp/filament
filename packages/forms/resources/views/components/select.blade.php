@@ -75,10 +75,12 @@
                         isMultiple: @js($isMultiple()),
                         hasDynamicOptions: @js($hasDynamicOptions()),
                         hasDynamicSearchResults: @js($hasDynamicSearchResults()),
+                        loadingMessage: @js($getLoadingMessage()),
                         maxItems: @js($getMaxItems()),
                         noSearchResultsMessage: @js($getNoSearchResultsMessage()),
                         options: @js($getOptions()),
                         placeholder: @js($getPlaceholder()),
+                        searchingMessage: @js($getSearchingMessage()),
                         state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
                     })"
                     wire:ignore

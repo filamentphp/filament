@@ -39,9 +39,11 @@ class Select extends Field
 
     protected ?array $searchColumns = null;
 
+    protected string | Closure | null $loadingMessage = null;
+
     protected string | HtmlString | Closure | null $noSearchResultsMessage = null;
 
-    protected string | HtmlString | Closure | null $searchPrompt = null;
+    protected string | Closure | null $searchingMessage = null;
 
     protected function setUp(): void
     {
@@ -77,11 +79,11 @@ class Select extends Field
                 ->toArray();
         });
 
+        $this->loadingMessage(__('forms::components.select.loading_message'));
         $this->noSearchResultsMessage(__('forms::components.select.no_search_results_message'));
+        $this->searchingMessage(__('forms::components.select.searching_message'));
 
         $this->placeholder(__('forms::components.select.placeholder'));
-
-        $this->searchPrompt(__('forms::components.select.search_prompt'));
     }
 
     public function boolean(string $trueLabel = 'Yes', string $falseLabel = 'No'): static
@@ -208,6 +210,13 @@ class Select extends Field
         return $this;
     }
 
+    public function loadingMessage(string | Closure | null $message): static
+    {
+        $this->loadingMessage = $message;
+
+        return $this;
+    }
+
     public function noSearchResultsMessage(string | HtmlString | Closure | null $message): static
     {
         $this->noSearchResultsMessage = $message;
@@ -215,10 +224,16 @@ class Select extends Field
         return $this;
     }
 
+    public function searchingMessage(string | Closure | null $message): static
+    {
+        $this->searchingMessage = $message;
+
+        return $this;
+    }
+
+    /** @deprecated */
     public function searchPrompt(string | HtmlString | Closure | null $message): static
     {
-        $this->searchPrompt = $message;
-
         return $this;
     }
 
@@ -247,9 +262,14 @@ class Select extends Field
         return $this->evaluate($this->noSearchResultsMessage);
     }
 
-    public function getSearchPrompt(): string | HtmlString
+    public function getLoadingMessage(): string
     {
-        return $this->evaluate($this->searchPrompt);
+        return $this->evaluate($this->loadingMessage);
+    }
+
+    public function getSearchingMessage(): string
+    {
+        return $this->evaluate($this->searchingMessage);
     }
 
     public function getSearchColumns(): ?array
