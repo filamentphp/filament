@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Support\Traits\Conditionable;
 
 class Column extends ViewComponent
@@ -17,7 +18,6 @@ class Column extends ViewComponent
     use Concerns\CanOpenUrl;
     use Concerns\EvaluatesClosures;
     use Concerns\HasAlignment;
-    use Concerns\HasExtraAttributes;
     use Concerns\HasExtraHeaderAttributes;
     use Concerns\HasLabel;
     use Concerns\HasName;
@@ -26,6 +26,7 @@ class Column extends ViewComponent
     use Concerns\HasTooltip;
     use Concerns\InteractsWithTableQuery;
     use Conditionable;
+    use HasExtraAttributes;
 
     protected string $viewIdentifier = 'column';
 

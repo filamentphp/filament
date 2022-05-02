@@ -5,17 +5,18 @@ namespace Filament\Forms\Components;
 use Closure;
 use Exception;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\HtmlString;
 
 class Select extends Field
 {
     use Concerns\HasAffixes;
-    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.select';
 
