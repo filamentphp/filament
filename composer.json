@@ -1,6 +1,6 @@
 {
     "name": "filament/filament",
-    "description": "A collection of tools for rapidly building beautiful TALL stack interfaces, designed for humans.",
+    "description": "A collection of tools for rapidly building beautiful TALL stack apps, designed for humans.",
     "license": "MIT",
     "require": {
         "php": "^8.0",
