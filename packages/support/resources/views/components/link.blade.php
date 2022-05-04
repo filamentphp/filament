@@ -4,6 +4,7 @@
     'disabled' => false,
     'icon' => null,
     'iconPosition' => 'before',
+    'keyBindings' => null,
     'tag' => 'a',
     'tooltip' => null,
     'type' => 'button',
@@ -34,8 +35,13 @@
 
 @if ($tag === 'a')
     <a
-        @if ($tooltip)
+        @if ($keyBindings || $tooltip)
             x-data="{}"
+        @endif
+        @if ($keyBindings)
+            x-mousetrap.global.{{ implode('.', $keyBindings) }}
+        @endif
+        @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
         {{ $attributes->class($linkClasses) }}
@@ -52,8 +58,13 @@
     </a>
 @elseif ($tag === 'button')
     <button
-        @if ($tooltip)
+        @if ($keyBindings || $tooltip)
             x-data="{}"
+        @endif
+        @if ($keyBindings)
+            x-mousetrap.global.{{ implode('.', $keyBindings) }}
+        @endif
+        @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
         type="{{ $type }}"

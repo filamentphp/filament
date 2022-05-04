@@ -3,6 +3,7 @@
     'darkMode' => false,
     'disabled' => false,
     'icon' => null,
+    'keyBindings' => null,
     'label' => null,
     'tag' => 'button',
     'tooltip' => null,
@@ -26,8 +27,13 @@
 
 @if ($tag === 'button')
     <button
-        @if ($tooltip)
+        @if ($keyBindings || $tooltip)
             x-data="{}"
+        @endif
+        @if ($keyBindings)
+            x-mousetrap.global.{{ implode('.', $keyBindings) }}
+        @endif
+        @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
         type="{{ $type }}"
@@ -44,8 +50,13 @@
     </button>
 @elseif ($tag === 'a')
     <a
-        @if ($tooltip)
+        @if ($keyBindings || $tooltip)
             x-data="{}"
+        @endif
+        @if ($keyBindings)
+            x-mousetrap.global.{{ implode('.', $keyBindings) }}
+        @endif
+        @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
         {{ $attributes->class($buttonClasses) }}

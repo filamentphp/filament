@@ -24,6 +24,7 @@
     :target="$action->shouldOpenUrlInNewTab() ? '_blank' : null"
     :type="$action->canSubmitForm() ? 'submit' : 'button'"
     :color="$action->getColor()"
+    :key-bindings="$action->getKeybindings()"
     :tooltip="$action->getTooltip()"
     :disabled="$action->isDisabled()"
     :icon="$action->getIcon()"

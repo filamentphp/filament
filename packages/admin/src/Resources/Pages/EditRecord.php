@@ -169,6 +169,7 @@ class EditRecord extends Page implements HasFormActions
             ->modalSubheading(__('filament::resources/pages/edit-record.actions.delete.modal.subheading'))
             ->modalButton(__('filament::resources/pages/edit-record.actions.delete.modal.buttons.delete.label'))
             ->action('delete')
+            ->keyBindings(['command+d', 'ctrl+d'])
             ->color('danger');
     }
 
@@ -201,7 +202,8 @@ class EditRecord extends Page implements HasFormActions
     {
         return ButtonAction::make('save')
             ->label(__('filament::resources/pages/edit-record.form.actions.save.label'))
-            ->submit('save');
+            ->submit('save')
+            ->keyBindings(['command+s', 'ctrl+s']);
     }
 
     protected function getCancelFormAction(): Action

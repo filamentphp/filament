@@ -94,7 +94,6 @@
                         id="{{ $getId() }}"
                         {!! $isDisabled() ? 'disabled' : null !!}
                         {!! $isMultiple() ? 'multiple' : null !!}
-                        {!! $isRequired() ? 'required' : null !!}
                         {{ $getExtraInputAttributeBag() }}
                     ></select>
                 </div>
