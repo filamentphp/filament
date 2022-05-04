@@ -7,10 +7,10 @@
     'iconPosition' => 'before',
     'keyBindings' => null,
     'outlined' => false,
+    'size' => 'md',
     'tag' => 'button',
     'tooltip' => null,
     'type' => 'button',
-    'size' => 'md',
 ])
 
 @php

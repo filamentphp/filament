@@ -5,6 +5,7 @@
     'icon' => null,
     'iconPosition' => 'before',
     'keyBindings' => null,
+    'size' => 'md',
     'tag' => 'a',
     'tooltip' => null,
     'type' => 'button',
@@ -12,8 +13,10 @@
 
 @php
     $linkClasses = [
-        'inline-flex items-center justify-center hover:underline focus:outline-none focus:underline filament-link',
+        'inline-flex items-center justify-center font-medium hover:underline focus:outline-none focus:underline filament-link',
         'opacity-70 cursor-not-allowed' => $disabled,
+        'text-sm' => $size === 'sm',
+        'text-lg' => $size === 'lg',
         'text-primary-600 hover:text-primary-500' => $color === 'primary',
         'text-danger-600 hover:text-danger-500' => $color === 'danger',
         'text-gray-600 hover:text-gray-500' => $color === 'secondary',
@@ -27,7 +30,10 @@
     ];
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-button-icon w-4 h-4',
+        'filament-button-icon',
+        'w-3 h-3' => $size === 'sm',
+        'w-4 h-4' => $size === 'md',
+        'w-5 h-5' => $size === 'lg',
         'mr-1 -ml-2 rtl:ml-1 rtl:-mr-2' => $iconPosition === 'before',
         'ml-1 -mr-2 rtl:mr-1 rtl:-ml-2' => $iconPosition === 'after'
     ]);
