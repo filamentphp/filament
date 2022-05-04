@@ -105,6 +105,17 @@ Forms\Components\TextInput::make('password')
     ->hidden(fn (Component $livewire): bool => $livewire instanceof Pages\EditUser),
 ```
 
+Alternatively, we have a `hiddenOn()` shortcut method for this case:
+
+```php
+use Livewire\Component;
+
+Forms\Components\TextInput::make('password')
+    ->password()
+    ->required()
+    ->hiddenOn(Pages\EditUser::class),
+```
+
 You may instead use the `visible` to check if a component should be visible or not:
 
 ```php
@@ -114,6 +125,17 @@ Forms\Components\TextInput::make('password')
     ->password()
     ->required()
     ->visible(fn (Component $livewire): bool => $livewire instanceof Pages\CreateUser),
+```
+
+Alternatively, we have a `visibleOn()` shortcut method for this case:
+
+```php
+use Livewire\Component;
+
+Forms\Components\TextInput::make('password')
+    ->password()
+    ->required()
+    ->visibleOn(Pages\CreateUser::class),
 ```
 
 For more information about closure customization, see the [form builder documentation](/docs/forms/advanced#using-closure-customisation).
