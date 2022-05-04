@@ -5,7 +5,6 @@ namespace Filament\Resources\Pages;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Pages\Actions\Action;
-use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
