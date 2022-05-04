@@ -78,7 +78,8 @@ trait InteractsWithTable
             ->header($this->getTableHeader())
             ->heading($this->getTableHeading())
             ->model($this->getTableQuery()->getModel()::class)
-            ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions());
+            ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions())
+            ->displayFiltersAboveTable($this->showFiltersAboveTable());
     }
 
     protected function getTableQueryStringIdentifier(): ?string

@@ -99,4 +99,10 @@ trait HasFilters
             default => null,
         };
     }
+
+    protected function showFiltersAboveTable(): bool
+    {
+        return false;
+    }
+
 }

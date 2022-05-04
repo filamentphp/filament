@@ -135,6 +135,9 @@
     class="filament-tables-component"
 >
 
+
+    @json($showFiltersOnTop())
+
     @if ($isFiltersDropdownVisible && $showFiltersOnTop())
         <div @class([
             'relative space-y-4 mb-4',
@@ -157,6 +160,7 @@
     @endif
 
     <x-tables::container>
+
         <div
             x-show="hasHeader = ({{ ($renderHeader = ($header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length)"
             {!! ! $renderHeader ? 'x-cloak' : null !!}

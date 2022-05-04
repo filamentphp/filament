@@ -55,6 +55,8 @@ class Table extends ViewComponent implements Htmlable
 
     protected ?array $recordsPerPageSelectOptions = null;
 
+    protected bool $showFiltersOnTop = false;
+
     final public function __construct(HasTable $livewire)
     {
         $this->livewire($livewire);
@@ -351,6 +353,18 @@ class Table extends ViewComponent implements Htmlable
         return $this->render()->render();
     }
 
+    public function displayFiltersAboveTable(bool $condition = true): static
+    {
+        $this->showFiltersOnTop = $condition;
+
+        return $this;
+    }
+
+    public function showFiltersOnTop(): bool
+    {
+        return $this->showFiltersOnTop;
+    }
+
     public function render(): View
     {
         return view('tables::index', array_merge($this->data(), [
@@ -358,8 +372,4 @@ class Table extends ViewComponent implements Htmlable
         ]));
     }
 
-    public function showFiltersOnTop(): bool
-    {
-        return $this->getLivewire()->showFiltersOnTop ?? false;
-    }
 }
