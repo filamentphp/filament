@@ -1,3 +1,6 @@
-<h3 {{ $attributes->class(['text-gray-500 filament-modal-subheading']) }}>
+<x-filament-support::modal.subheading
+    :attributes="$attributes"
+    :dark-mode="config('filament.dark_mode')"
+>
     {{ $slot }}
-</h3>
+</x-filament-support::modal.subheading>

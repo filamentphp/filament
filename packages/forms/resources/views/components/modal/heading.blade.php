@@ -1,3 +1,6 @@
-<h2 {{ $attributes->class(['text-xl font-bold tracking-tight filament-forms-modal-heading']) }}>
+<x-filament-support::modal.heading
+    :attributes="$attributes"
+    :dark-mode="config('forms.dark_mode')"
+>
     {{ $slot }}
-</h2>
+</x-filament-support::modal.heading>

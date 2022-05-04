@@ -7,9 +7,12 @@
     'footer' => null,
     'header' => null,
     'heading' => null,
+    'headingComponent' => 'filament-support::modal.heading',
+    'hrComponent' => 'filament-support::hr',
     'id' => null,
     'openEventName' => 'open-modal',
     'subheading' => null,
+    'subheadingComponent' => 'filament-support::modal.subheading',
     'trigger' => null,
     'width' => 'sm',
 ])
@@ -86,7 +89,7 @@
                 @endif
 
                 @if ($header && ($actions || $heading || $slot->isNotEmpty() || $subheading))
-                    <x-filament::hr />
+                    <x-dynamic-component :component="$hrComponent" />
                 @endif
 
                 <div class="space-y-2 filament-modal-content">
@@ -96,15 +99,18 @@
                             'dark:text-white' => $darkMode,
                         ])>
                             @if ($heading)
-                                <x-filament::modal.heading :id="$id . '.heading'">
+                                <x-dynamic-component
+                                    :component="$headingComponent"
+                                    :id="$id . '.heading'"
+                                >
                                     {{ $heading }}
-                                </x-filament::modal.heading>
+                                </x-dynamic-component>
                             @endif
 
                             @if ($subheading)
-                                <x-filament::modal.subheading>
+                                <x-dynamic-component :component="$subheadingComponent">
                                     {{ $subheading }}
-                                </x-filament::modal.subheading>
+                                </x-dynamic-component>
                             @endif
                         </div>
                     @endif
@@ -119,7 +125,7 @@
                 </div>
 
                 @if ($footer && ($actions || $heading || $slot->isNotEmpty() || $subheading))
-                    <x-filament::hr />
+                        <x-dynamic-component :component="$hrComponent" />
                 @endif
 
                 @if ($footer)
