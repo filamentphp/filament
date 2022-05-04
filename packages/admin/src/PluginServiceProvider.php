@@ -59,21 +59,18 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->singletonIf(
-            'filament',
-            fn (): FilamentManager => app(FilamentManager::class),
-        );
+        $this->app->resolving('filament', function () {
+            Facades\Filament::registerPages($this->getPages());
+            Facades\Filament::registerResources($this->getResources());
+            Facades\Filament::registerUserMenuItems($this->getUserMenuItems());
+            Facades\Filament::registerWidgets($this->getWidgets());
 
-        Facades\Filament::registerPages($this->getPages());
-        Facades\Filament::registerResources($this->getResources());
-        Facades\Filament::registerUserMenuItems($this->getUserMenuItems());
-        Facades\Filament::registerWidgets($this->getWidgets());
-
-        Facades\Filament::serving(function () {
-            Facades\Filament::registerScripts($this->getBeforeCoreScripts(), true);
-            Facades\Filament::registerScripts($this->getScripts());
-            Facades\Filament::registerStyles($this->getStyles());
-            Facades\Filament::registerScriptData($this->getScriptData());
+            Facades\Filament::serving(function () {
+                Facades\Filament::registerScripts($this->getBeforeCoreScripts(), true);
+                Facades\Filament::registerScripts($this->getScripts());
+                Facades\Filament::registerStyles($this->getStyles());
+                Facades\Filament::registerScriptData($this->getScriptData());
+            });
         });
     }
 
