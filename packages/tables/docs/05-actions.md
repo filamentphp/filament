@@ -142,9 +142,8 @@ Bulk actions and some single actions may also render a Blade icon component to i
 
 ```php
 use App\Models\Post;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\ButtonAction;
-use Filament\Tables\Actions\IconButtonAction;
 use Illuminate\Database\Eloquent\Collection;
 
 BulkAction::make('delete')
@@ -153,12 +152,12 @@ BulkAction::make('delete')
     ->color('danger')
     ->icon('heroicon-o-trash')
 
-ButtonAction::make('edit')
+Action::make('edit')
     ->label('Edit post')
     ->url(fn (Post $record): string => route('posts.edit', $record))
     ->icon('heroicon-o-pencil')
 
-IconButtonAction::make('edit')
+Action::make('edit')
     ->label('Edit post')
     ->url(fn (Post $record): string => route('posts.edit', $record))
     ->icon('heroicon-o-pencil')
@@ -285,14 +284,6 @@ ReplicateAction::make('replicate')
     ->afterReplicaSaved(function (Model $replica): void {
         // ...
     })
-```
-
-By default, the action will appear as a `LinkAction`, but calling the `->button()` method will make it a `ButtonAction` instead.
-
-```php
-use Filament\Tables\Actions\ReplicateAction;
-
-ReplicateAction::make('replicate')->button()
 ```
 
 #### Retrieving user input

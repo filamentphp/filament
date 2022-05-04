@@ -370,10 +370,11 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
     protected function getTableEmptyStateActions(): array
     {
         return [
-            Tables\Actions\ButtonAction::make('create')
+            Tables\Actions\Action::make('create')
                 ->label('Create post')
                 ->url(route('posts.create'))
-                ->icon('heroicon-o-plus'),
+                ->icon('heroicon-o-plus')
+                ->button(),
         ];
     } // [tl! focus:end]
     
