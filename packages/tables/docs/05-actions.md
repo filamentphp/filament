@@ -46,9 +46,9 @@ Actions may be created using the static `make()` method, passing its name. The n
 
 ```php
 use App\Models\Post;
-use Filament\Tables\Actions\LinkAction;
+use Filament\Tables\Actions\Action;
 
-LinkAction::make('edit')
+Action::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
 ```
 
@@ -115,9 +115,9 @@ By default, the label of the action is generated from its name. You may customiz
 
 ```php
 use App\Models\Post;
-use Filament\Tables\Actions\LinkAction;
+use Filament\Tables\Actions\Action;
 
-LinkAction::make('edit')
+Action::make('edit')
     ->label('Edit post')
     ->url(fn (Post $record): string => route('posts.edit', $record))
 ```
@@ -233,9 +233,9 @@ You may conditionally hide actions and bulk actions for certain users using the 
 
 ```php
 use App\Models\Post;
-use Filament\Tables\Actions\LinkAction;
+use Filament\Tables\Actions\Action;
 
-LinkAction::make('edit')
+Action::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
     ->hidden(fn (Post $record): bool => auth()->user()->can('update', $record))
 ```
@@ -318,18 +318,19 @@ By default, the row actions in your table will be aligned to the right in the fi
 You may specify a tooltip to display when you hover over an action:
 
 ```php
-use Filament\Tables\Actions\LinkAction;
+use Filament\Tables\Actions\Action;
 
-LinkAction::make('edit')
+Action::make('edit')
     ->tooltip('Edit this blog post')
 ```
 
 This method also accepts a closure that can access the current table record:
 
 ```php
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 
-LinkAction::make('edit')
+Action::make('edit')
     ->tooltip(fn (Model $record): string => "Edit {$record->title}")
 ```

@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,7 +15,7 @@ trait CanDeleteRecords
 
     protected function getDeleteAction(): Tables\Actions\Action
     {
-        return config('filament.layout.tables.actions.type')::make('delete')
+        return Filament::makeTableAction('delete')
             ->label(__('filament::resources/pages/list-records.table.actions.delete.label'))
             ->action(fn () => $this->delete())
             ->requiresConfirmation()

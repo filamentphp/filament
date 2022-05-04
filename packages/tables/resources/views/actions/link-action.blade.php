@@ -2,6 +2,7 @@
     :action="$action"
     component="tables::link"
     :icon-position="$getIconPosition()"
+    size="sm"
     class="filament-tables-link-action"
 >
     {{ $getLabel }}

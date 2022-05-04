@@ -3,7 +3,7 @@
 namespace Filament\Pages;
 
 use Filament\Forms\ComponentContainer;
-use Filament\Pages\Actions\ButtonAction;
+use Filament\Pages\Actions\Action;
 use Illuminate\Support\Str;
 
 /**
@@ -98,7 +98,7 @@ class SettingsPage extends Page
     protected function getFormActions(): array
     {
         return [
-            ButtonAction::make('save')
+            Action::make('save')
                 ->label(__('filament-spatie-laravel-settings-plugin::pages/settings-page.form.actions.save.label'))
                 ->submit('save'),
         ];

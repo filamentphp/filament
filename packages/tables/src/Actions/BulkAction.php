@@ -51,9 +51,17 @@ class BulkAction extends BaseAction
         return 'callMountedTableBulkAction';
     }
 
-    protected function getModalActionClass(): string
+    protected static function getModalActionClass(): string
     {
         return ModalAction::class;
+    }
+
+    public static function makeModalAction(string $name): ModalAction
+    {
+        /** @var ModalAction $action */
+        $action = parent::makeModalAction($name);
+
+        return $action;
     }
 
     protected function getDefaultEvaluationParameters(): array

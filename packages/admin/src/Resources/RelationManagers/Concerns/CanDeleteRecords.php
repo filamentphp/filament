@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 
@@ -55,7 +56,7 @@ trait CanDeleteRecords
 
     protected function getDeleteAction(): Tables\Actions\Action
     {
-        return config('filament.layout.tables.actions.type')::make('delete')
+        return Filament::makeTableAction('delete')
             ->label(__('filament::resources/relation-managers/delete.action.label'))
             ->requiresConfirmation()
             ->modalHeading(__('filament::resources/relation-managers/delete.action.modal.heading', ['label' => static::getRecordLabel()]))

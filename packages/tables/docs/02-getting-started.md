@@ -121,7 +121,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
     protected function getTableActions(): array
     {
         return [ // [tl! collapse:start]
-            Tables\Actions\LinkAction::make('edit')
+            Tables\Actions\Action::make('edit')
                 ->url(fn (Post $record): string => route('posts.edit', $record)),
         ]; // [tl! collapse:end]
     }

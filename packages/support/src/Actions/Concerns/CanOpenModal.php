@@ -70,11 +70,11 @@ trait CanOpenModal
         }
 
         $actions = [
-            $this->makeModalAction('submit')
+            static::makeModalAction('submit')
                 ->label($this->getModalButtonLabel())
                 ->submit($this->getLivewireSubmitActionName())
                 ->color($this->getColor()),
-            $this->makeModalAction('cancel')
+            static::makeModalAction('cancel')
                 ->label(__('forms::components.actions.modal.buttons.cancel.label'))
                 ->cancel()
                 ->color('secondary'),
@@ -149,13 +149,13 @@ trait CanOpenModal
         return $this->isConfirmationRequired() || $this->hasFormSchema();
     }
 
-    protected function getModalActionClass(): string
+    protected static function getModalActionClass(): string
     {
         return ModalAction::class;
     }
 
-    protected function makeModalAction(string $name): ModalAction
+    public static function makeModalAction(string $name): ModalAction
     {
-        return $this->getModalActionClass()::make($name);
+        return static::getModalActionClass()::make($name);
     }
 }

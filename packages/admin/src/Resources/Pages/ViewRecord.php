@@ -70,7 +70,7 @@ class ViewRecord extends Page
 
     protected function getEditAction(): Action
     {
-        return ButtonAction::make('edit')
+        return Action::make('edit')
             ->label(__('filament::resources/pages/view-record.actions.edit.label'))
             ->url(fn () => static::getResource()::getUrl('edit', ['record' => $this->record]));
     }

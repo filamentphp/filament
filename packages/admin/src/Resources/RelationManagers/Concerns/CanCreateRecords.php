@@ -98,15 +98,16 @@ trait CanCreateRecords
         return $data;
     }
 
-    protected function getCreateAction(): Tables\Actions\ButtonAction
+    protected function getCreateAction(): Tables\Actions\Action
     {
-        return Tables\Actions\ButtonAction::make('create')
+        return Tables\Actions\Action::make('create')
             ->label(__('filament::resources/relation-managers/create.action.label'))
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
             ->modalActions($this->getCreateActionModalActions())
             ->modalHeading(__('filament::resources/relation-managers/create.action.modal.heading', ['label' => static::getRecordLabel()]))
-            ->action(fn () => $this->create());
+            ->action(fn () => $this->create())
+            ->button();
     }
 
     protected function getCreateActionModalActions(): array
@@ -120,7 +121,7 @@ trait CanCreateRecords
 
     protected function getCreateActionCreateModalAction(): Tables\Actions\Modal\Actions\Action
     {
-        return ButtonAction::make('create')
+        return Tables\Actions\Action::makeModalAction('create')
             ->label(__('filament::resources/relation-managers/create.action.modal.actions.create.label'))
             ->submit('callMountedTableAction')
             ->color('primary');
@@ -128,7 +129,7 @@ trait CanCreateRecords
 
     protected function getCreateActionCreateAndCreateAnotherModalAction(): Tables\Actions\Modal\Actions\Action
     {
-        return ButtonAction::make('createAndCreateAnother')
+        return Tables\Actions\Action::makeModalAction('createAndCreateAnother')
             ->label(__('filament::resources/relation-managers/create.action.modal.actions.create_and_create_another.label'))
             ->action('createAndCreateAnother')
             ->color('secondary');
@@ -136,7 +137,7 @@ trait CanCreateRecords
 
     protected function getCreateActionCancelModalAction(): Tables\Actions\Modal\Actions\Action
     {
-        return ButtonAction::make('cancel')
+        return Tables\Actions\Action::makeModalAction('cancel')
             ->label(__('tables::table.actions.modal.buttons.cancel.label'))
             ->cancel()
             ->color('secondary');
