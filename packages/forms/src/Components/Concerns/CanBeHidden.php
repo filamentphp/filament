@@ -11,21 +11,21 @@ trait CanBeHidden
 
     protected bool | Closure $isVisible = true;
 
-    public function hidden(bool | Closure | string $condition = true): static
+    public function hidden(bool | Closure $condition = true): static
     {
         $this->isHidden = $condition;
 
         return $this;
     }
 
-    public function hiddenFor(string $target): static
+    public function hiddenFor(string $page): static
     {
-        $this->hidden(fn ($livewire) => $livewire instanceof $target);
+        $this->hidden(fn ($livewire) => $livewire instanceof $page);
 
         return $this;
     }
 
-    public function when(bool | Closure | string $condition = true): static
+    public function when(bool | Closure $condition = true): static
     {
         $this->visible($condition);
 
@@ -66,20 +66,16 @@ trait CanBeHidden
         return $this;
     }
 
-    public function visible(bool | Closure | string $condition = true): static
+    public function visible(bool | Closure $condition = true): static
     {
-        $condition = is_string($condition) && class_exists($condition)
-            ? fn ($livewire) => $livewire instanceof $condition
-            : $condition;
-
         $this->isVisible = $condition;
 
         return $this;
     }
 
-    public function visibleFor(string $target): static
+    public function visibleFor(string $page): static
     {
-        $this->visible(fn ($livewire) => $livewire instanceof $target);
+        $this->visible(fn ($livewire) => $livewire instanceof $page);
 
         return $this;
     }
