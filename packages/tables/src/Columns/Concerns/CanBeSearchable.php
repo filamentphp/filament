@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use Closure;
 use Illuminate\Support\Str;
 
 trait CanBeSearchable
@@ -10,7 +11,9 @@ trait CanBeSearchable
 
     protected ?array $searchColumns = null;
 
-    public function searchable(bool | array $condition = true): static
+    protected ?Closure $searchQuery = null;
+
+    public function searchable(bool | array $condition = true, ?Closure $query = null): static
     {
         if (is_array($condition)) {
             $this->isSearchable = true;
@@ -19,6 +22,8 @@ trait CanBeSearchable
             $this->isSearchable = $condition;
             $this->searchColumns = null;
         }
+
+        $this->searchQuery = $query;
 
         return $this;
     }

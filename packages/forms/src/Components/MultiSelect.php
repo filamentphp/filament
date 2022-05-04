@@ -3,15 +3,16 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\HtmlString;
 
 class MultiSelect extends Field
 {
     use Concerns\CanLimitItemsLength;
-    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.multi-select';
 

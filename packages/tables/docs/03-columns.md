@@ -67,6 +67,20 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('full_name')->sortable(['first_name', 'last_name'])
 ```
 
+You may customize how the sorting is applied to the Eloquent query using a callback:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
+
+TextColumn::make('full_name')
+    ->sortable(query: function (Builder $query, string $direction): Builder {
+        return $query
+            ->orderBy('last_name', $direction)
+            ->orderBy('first_name', $direction);
+    })
+```
+
 ### Searching
 
 Columns may be searchable, by using the text input in the top right of the table. To make a column searchable, you must use the `searchable()` method:
@@ -83,6 +97,20 @@ If you're using an accessor column, you may pass `searchable()` an array of data
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('full_name')->searchable(['first_name', 'last_name'])
+```
+
+You may customize how the search is applied to the Eloquent query using a callback:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
+
+TextColumn::make('full_name')
+    ->searchable(query: function (Builder $query, string $search): Builder {
+        return $query
+            ->where('first_name', 'like', "%{$search}%")
+            ->where('last_name', 'like', "%{$search}%");
+    })
 ```
 
 ### Cell actions and URLs
