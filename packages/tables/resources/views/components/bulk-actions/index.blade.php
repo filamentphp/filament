@@ -27,13 +27,7 @@
             'dark:border-gray-600 dark:bg-gray-700' => config('tables.dark_mode'),
         ])>
             @foreach ($actions as $action)
-                <x-tables::dropdown.item
-                    :x-on:click="'mountBulkAction(\'' . $action->getName() . '\')'"
-                    :icon="$action->getIcon()"
-                    :color="$action->getColor()"
-                >
-                    {{ $action->getLabel() }}
-                </x-tables::dropdown.item>
+                {{ $action }}
             @endforeach
         </ul>
     </div>

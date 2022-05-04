@@ -12,6 +12,13 @@ class BulkAction extends BaseAction
     use Concerns\CanDeselectRecordsAfterCompletion;
     use Concerns\HasRecords;
 
+    protected function setUp(): void
+    {
+        $this->view ?? $this->view('tables::actions.bulk-action');
+
+        parent::setUp();
+    }
+
     public function call(array $data = [])
     {
         if ($this->isHidden()) {
