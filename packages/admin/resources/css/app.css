@@ -7,37 +7,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Radial gradient for Login Screen */
-.filament-login-page {
-    position: relative;
-    background-repeat: no-repeat;
-    background-image: radial-gradient(
-        circle at top,
-        theme('colors.primary.100'),
-        theme('colors.white') 55%
-    );
-}
-
-.dark .filament-login-page {
-    background-image: radial-gradient(
-        circle at top,
-        theme('colors.primary.700'),
-        theme('colors.gray.900') 55%
-    );
-}
-
-.filament-login-page form::before {
-    content: '';
-    z-index: 1;
-    top: -2px;
-    @apply w-2/3 absolute inset-x-0 h-px mx-auto bg-gradient-to-r from-transparent dark:via-primary-400 via-primary-300 to-transparent;
-}
-
 /* @override: @tailwindcss/forms */
 @layer base {
     [dir='rtl'] select {
         background-position: left 0.5rem center !important;
         padding-left: 2.5rem;
         padding-right: 0.75rem;
+    }
+}
+
+@layer components {
+    /* Radial gradient for Login Screen */
+    .filament-login-page {
+        position: relative;
+        background-repeat: no-repeat;
+        background-image: radial-gradient(
+            circle at top,
+            theme('colors.primary.100'),
+            theme('colors.white') 55%
+        );
+    }
+
+    .dark .filament-login-page {
+        background-image: radial-gradient(
+            circle at top,
+            theme('colors.primary.700'),
+            theme('colors.gray.900') 55%
+        );
+    }
+
+    .filament-login-page form::before {
+        content: '';
+        z-index: 1;
+        top: -2px;
+        @apply w-2/3 absolute inset-x-0 h-px mx-auto bg-gradient-to-r from-transparent dark:via-primary-400 via-primary-300 to-transparent;
     }
 }
