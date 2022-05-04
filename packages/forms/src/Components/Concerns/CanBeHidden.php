@@ -5,7 +5,6 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Arr;
-use Livewire\Component;
 
 trait CanBeHidden
 {
