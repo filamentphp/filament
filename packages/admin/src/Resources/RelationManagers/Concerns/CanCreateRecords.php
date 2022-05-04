@@ -3,7 +3,6 @@
 namespace Filament\Resources\RelationManagers\Concerns;
 
 use Filament\Tables;
-use Filament\Tables\Actions\Modal\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Model;
 
 trait CanCreateRecords
