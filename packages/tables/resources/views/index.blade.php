@@ -135,9 +135,6 @@
     class="filament-tables-component"
 >
 
-
-    @json($showFiltersOnTop())
-
     @if ($isFiltersDropdownVisible && $showFiltersOnTop())
         <div @class([
             'relative space-y-4 mb-4',
