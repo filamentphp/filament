@@ -39,8 +39,9 @@ export default (Alpine) => {
                     maxItemCount: maxItems ?? -1,
                     noChoicesText: searchPrompt,
                     noResultsText: noSearchResultsMessage,
-                    renderChoiceLimit: 50,
                     placeholderValue: placeholder,
+                    removeItemButton: true,
+                    renderChoiceLimit: 50,
                     searchChoices: ! hasDynamicSearchResults,
                     searchFields: ['label'],
                     searchResultLimit: 50,
@@ -49,7 +50,7 @@ export default (Alpine) => {
                 await this.refreshChoices({ withInitialOptions: true })
 
                 if (! [null, undefined, ''].includes(this.state)) {
-                    this.select.setChoiceByValue(this.transformState(this.state))
+                    this.select.setChoiceByValue(this.formatState(this.state))
                 }
 
                 if (isAutofocused) {
@@ -114,7 +115,7 @@ export default (Alpine) => {
                     })
 
                     if (! [null, undefined, ''].includes(this.state)) {
-                        this.select.setChoiceByValue(this.transformState(this.state))
+                        this.select.setChoiceByValue(this.formatState(this.state))
                     }
                 })
             },
@@ -131,8 +132,10 @@ export default (Alpine) => {
             },
 
             getChoices: async function (config = {}) {
-                return this.transformOptions({
-                    ...await this.getOptions(config),
+                const options = await this.getOptions(config)
+
+                return this.transformOptionsIntoChoices({
+                    ...options,
                     ...await this.getMissingOptions(options),
                 })
             },
@@ -149,15 +152,15 @@ export default (Alpine) => {
                 return await getOptionsUsing()
             },
 
-            transformOptions: function (options) {
+            transformOptionsIntoChoices: function (options) {
                 return Object.entries(options)
-                    .map((option) => ({
-                        label: option[1],
-                        value: option[0],
+                    .map(([value, label]) => ({
+                        label,
+                        value,
                     }))
             },
 
-            transformState: function (state) {
+            formatState: function (state) {
                 if (isMultiple) {
                     return (state ?? []).map((item) => item?.toString())
                 }
@@ -170,8 +173,12 @@ export default (Alpine) => {
                     return {}
                 }
 
+                if (! options.length) {
+                    options = {}
+                }
+
                 if (isMultiple) {
-                    if (! this.state.some((value) => ! value in options)) {
+                    if (this.state.every((value) => value in options)) {
                         return {}
                     }
 

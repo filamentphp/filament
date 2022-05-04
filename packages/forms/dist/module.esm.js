@@ -19804,15 +19804,16 @@ var select_default = (Alpine) => {
           maxItemCount: maxItems ?? -1,
           noChoicesText: searchPrompt,
           noResultsText: noSearchResultsMessage,
-          renderChoiceLimit: 50,
           placeholderValue: placeholder,
+          removeItemButton: true,
+          renderChoiceLimit: 50,
           searchChoices: !hasDynamicSearchResults,
           searchFields: ["label"],
           searchResultLimit: 50
         });
         await this.refreshChoices({withInitialOptions: true});
         if (![null, void 0, ""].includes(this.state)) {
-          this.select.setChoiceByValue(this.transformState(this.state));
+          this.select.setChoiceByValue(this.formatState(this.state));
         }
         if (isAutofocused) {
           this.select.showDropdown();
@@ -19858,7 +19859,7 @@ var select_default = (Alpine) => {
             withInitialOptions: !hasDynamicOptions
           });
           if (![null, void 0, ""].includes(this.state)) {
-            this.select.setChoiceByValue(this.transformState(this.state));
+            this.select.setChoiceByValue(this.formatState(this.state));
           }
         });
       },
@@ -19867,9 +19868,10 @@ var select_default = (Alpine) => {
         await this.select.setChoices(choices, "value", "label", true);
       },
       getChoices: async function(config = {}) {
-        return this.transformOptions({
-          ...await this.getOptions(config),
-          ...await this.getMissingOptions(options2)
+        const options3 = await this.getOptions(config);
+        return this.transformOptionsIntoChoices({
+          ...options3,
+          ...await this.getMissingOptions(options3)
         });
       },
       getOptions: async function({search, withInitialOptions}) {
@@ -19881,13 +19883,13 @@ var select_default = (Alpine) => {
         }
         return await getOptionsUsing();
       },
-      transformOptions: function(options3) {
-        return Object.entries(options3).map((option3) => ({
-          label: option3[1],
-          value: option3[0]
+      transformOptionsIntoChoices: function(options3) {
+        return Object.entries(options3).map(([value, label]) => ({
+          label,
+          value
         }));
       },
-      transformState: function(state3) {
+      formatState: function(state3) {
         if (isMultiple) {
           return (state3 ?? []).map((item2) => item2?.toString());
         }
@@ -19897,8 +19899,11 @@ var select_default = (Alpine) => {
         if ([null, void 0, "", [], {}].includes(this.state)) {
           return {};
         }
+        if (!options3.length) {
+          options3 = {};
+        }
         if (isMultiple) {
-          if (!this.state.some((value) => !value in options3)) {
+          if (this.state.every((value) => value in options3)) {
             return {};
           }
           return await getOptionLabelsUsing();
