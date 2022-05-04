@@ -19,7 +19,7 @@ trait CanBeHidden
         return $this;
     }
 
-    public function hiddenFor(string $livewireClass): static
+    public function hiddenOn(string $livewireClass): static
     {
         $this->hidden(static fn (HasForms $livewire): bool => $livewire instanceof $livewireClass);
 
@@ -74,7 +74,7 @@ trait CanBeHidden
         return $this;
     }
 
-    public function visibleFor(string $livewireClass): static
+    public function visibleOn(string $livewireClass): static
     {
         $this->visible(static fn (HasForms $livewire): bool => $livewire instanceof $livewireClass);
 
