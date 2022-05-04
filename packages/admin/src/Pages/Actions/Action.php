@@ -33,6 +33,20 @@ class Action extends BaseAction
         return $this;
     }
 
+    public function iconButton(): static
+    {
+        $this->view('filament::pages.actions.icon-button-action');
+
+        return $this;
+    }
+
+    public function link(): static
+    {
+        $this->view('filament::pages.actions.link-action');
+
+        return $this;
+    }
+
     protected function getLivewireSubmitActionName(): string
     {
         return 'callMountedAction';

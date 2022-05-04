@@ -125,7 +125,7 @@
                 </div>
 
                 @if ($footer && ($actions || $heading || $slot->isNotEmpty() || $subheading))
-                        <x-dynamic-component :component="$hrComponent" />
+                    <x-dynamic-component :component="$hrComponent" />
                 @endif
 
                 @if ($footer)

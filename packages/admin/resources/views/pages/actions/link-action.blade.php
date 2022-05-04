@@ -1,9 +1,8 @@
 <x-filament::pages.actions.action
     :action="$action"
-    component="filament::button"
-    :outlined="$isOutlined()"
+    component="filament::link"
     :icon-position="$getIconPosition()"
-    class="filament-page-button-action"
+    class="filament-page-link-action"
 >
     {{ $getLabel }}
 </x-filament::pages.actions.action>

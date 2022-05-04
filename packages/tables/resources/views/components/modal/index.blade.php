@@ -1,5 +1,13 @@
+@captureSlots([
+    'actions',
+    'footer',
+    'header',
+    'heading',
+    'subheading',
+])
+
 <x-filament-support::modal
-    :attributes="$attributes"
+    :attributes="$attributes->merge($slots)"
     :dark-mode="config('tables.dark_mode')"
     heading-component="tables::modal.heading"
     hr-component="tables::hr"

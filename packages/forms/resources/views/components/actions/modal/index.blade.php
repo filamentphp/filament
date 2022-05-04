@@ -9,6 +9,7 @@
                 <x-slot name="heading">
                     {{ $action->getModalHeading() }}
                 </x-slot>
+
                 @if ($subheading = $action->getModalSubheading())
                     <x-slot name="subheading">
                         {{ $subheading }}
@@ -21,7 +22,9 @@
                     </x-forms::modal.heading>
                 </x-slot>
             @endif
+
             {{ $this->getMountedFormComponentActionForm() }}
+
             <x-slot name="footer">
                 <x-forms::modal.actions :full-width="$action->isModalCentered()">
                     @foreach ($action->getModalActions() as $modalAction)

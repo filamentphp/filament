@@ -8,7 +8,6 @@
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
     class="filament-forms-modal-button-action"
-
 >
     {{ $getLabel() }}
 </x-forms::button>

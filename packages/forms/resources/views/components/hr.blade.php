@@ -1,4 +1,4 @@
 <x-filament-support::hr
-    :attributes="$attributes"
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
     :dark-mode="config('forms.dark_mode')"
 />

@@ -28,7 +28,8 @@
     },
     "autoload": {
         "files": [
-            "packages/admin/src/helpers.php"
+            "packages/admin/src/helpers.php",
+            "packages/support/src/helpers.php"
         ],
         "psr-4": {
             "Filament\\": [
