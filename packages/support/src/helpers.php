@@ -4,7 +4,6 @@ namespace Filament\Support;
 
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
-use Throwable;
 
 if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
     function prepare_inherited_attributes(ComponentAttributeBag $attributes): ComponentAttributeBag
