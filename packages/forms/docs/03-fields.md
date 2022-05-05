@@ -558,6 +558,27 @@ BelongsToSelect::make('authorId')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
+#### Creating new records
+
+You may define a custom form that can be used to create a new record and attach it to the `BelongsTo` relationship:
+
+```php
+use Filament\Forms\Components\BelongsToSelect;
+use Illuminate\Database\Eloquent\Model;
+
+BelongsToSelect::make('authorId')
+    ->relationship('author', 'name')
+    ->createOptionForm([
+        Forms\Components\TextInput::make('name')
+            ->required(),
+        Forms\Components\TextInput::make('email')
+            ->required()
+            ->email(),
+    ]),
+```
+
+The form opens in a modal, where the user can fill it with data. Upon form submission, the new record is selected by the field.
+
 ## Multi-select
 
 The multi-select component allows you to select multiple values from a list of predefined options:
