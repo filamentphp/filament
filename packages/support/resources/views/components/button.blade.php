@@ -49,8 +49,8 @@
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-button-icon',
         'w-6 h-6' => $size === 'md',
+        'w-4 h-4' => $size === 'sm',
         'w-7 h-7' => $size === 'lg',
-        'w-5 h-5' => $size === 'sm',
         'mr-1 -ml-2 rtl:ml-1 rtl:-mr-2' => ($iconPosition === 'before') && ($size === 'md'),
         'mr-2 -ml-3 rtl:ml-2 rtl:-mr-3' => ($iconPosition === 'before') && ($size === 'lg'),
         'mr-1 -ml-1.5 rtl:ml-1 rtl:-mr-1.5' => ($iconPosition === 'before') && ($size === 'sm'),

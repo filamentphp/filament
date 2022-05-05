@@ -269,7 +269,7 @@
                             :record-url="$getRecordUrl($record)"
                             wire:key="{{ $record->getKey() }}"
                             x-bind:class="{
-                                'bg-primary-500/10': isRecordSelected('{{ $record->getKey() }}'),
+                                'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $record->getKey() }}'),
                             }"
                         >
                             @if ($isSelectionEnabled())
