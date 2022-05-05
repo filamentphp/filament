@@ -74,6 +74,10 @@ trait HasFormComponentActions
 
     public function getMountedFormComponentAction(): ?Action
     {
+        if (! $this->mountedFormComponentAction) {
+            return null;
+        }
+
         return $this->getMountedFormComponentActionComponent()?->getAction($this->mountedFormComponentAction);
     }
 
