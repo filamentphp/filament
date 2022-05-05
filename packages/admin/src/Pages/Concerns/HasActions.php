@@ -47,6 +47,8 @@ trait HasActions
         try {
             return $action->call($data);
         } finally {
+            $this->mountedAction = null;
+
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => 'page-action',
             ]);

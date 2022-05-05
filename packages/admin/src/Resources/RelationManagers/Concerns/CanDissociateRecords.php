@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -82,13 +83,13 @@ trait CanDissociateRecords
 
     protected function getDissociateAction(): Tables\Actions\Action
     {
-        return config('filament.layout.tables.actions.type')::make('dissociate')
+        return Filament::makeTableAction('dissociate')
             ->label(__('filament::resources/relation-managers/dissociate.action.label'))
             ->requiresConfirmation()
             ->modalHeading(__('filament::resources/relation-managers/dissociate.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->dissociate())
             ->color('danger')
-            ->icon('heroicon-o-x')
+            ->defaultIcon('heroicon-s-x')
             ->hidden(fn (Model $record): bool => ! static::canDissociate($record));
     }
 

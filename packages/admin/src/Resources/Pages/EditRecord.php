@@ -4,7 +4,6 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
-use Filament\Pages\Actions\ButtonAction;
 use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -154,7 +153,7 @@ class EditRecord extends Page implements HasFormActions
 
     protected function getViewAction(): Action
     {
-        return ButtonAction::make('view')
+        return Action::make('view')
             ->label(__('filament::resources/pages/edit-record.actions.view.label'))
             ->url(fn () => static::getResource()::getUrl('view', ['record' => $this->record]))
             ->color('secondary');
@@ -162,13 +161,14 @@ class EditRecord extends Page implements HasFormActions
 
     protected function getDeleteAction(): Action
     {
-        return ButtonAction::make('delete')
+        return Action::make('delete')
             ->label(__('filament::resources/pages/edit-record.actions.delete.label'))
             ->requiresConfirmation()
             ->modalHeading(__('filament::resources/pages/edit-record.actions.delete.modal.heading', ['label' => $this->getRecordTitle() ?? static::getResource()::getLabel()]))
             ->modalSubheading(__('filament::resources/pages/edit-record.actions.delete.modal.subheading'))
             ->modalButton(__('filament::resources/pages/edit-record.actions.delete.modal.buttons.delete.label'))
             ->action('delete')
+            ->keyBindings(['mod+d'])
             ->color('danger');
     }
 
@@ -199,14 +199,15 @@ class EditRecord extends Page implements HasFormActions
 
     protected function getSaveFormAction(): Action
     {
-        return ButtonAction::make('save')
+        return Action::make('save')
             ->label(__('filament::resources/pages/edit-record.form.actions.save.label'))
-            ->submit('save');
+            ->submit('save')
+            ->keyBindings(['mod+s']);
     }
 
     protected function getCancelFormAction(): Action
     {
-        return ButtonAction::make('cancel')
+        return Action::make('cancel')
             ->label(__('filament::resources/pages/edit-record.form.actions.cancel.label'))
             ->url(static::getResource()::getUrl())
             ->color('secondary');

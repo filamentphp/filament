@@ -105,6 +105,17 @@ Forms\Components\TextInput::make('password')
     ->hidden(fn (Component $livewire): bool => $livewire instanceof Pages\EditUser),
 ```
 
+Alternatively, we have a `hiddenOn()` shortcut method for this case:
+
+```php
+use Livewire\Component;
+
+Forms\Components\TextInput::make('password')
+    ->password()
+    ->required()
+    ->hiddenOn(Pages\EditUser::class),
+```
+
 You may instead use the `visible` to check if a component should be visible or not:
 
 ```php
@@ -114,6 +125,17 @@ Forms\Components\TextInput::make('password')
     ->password()
     ->required()
     ->visible(fn (Component $livewire): bool => $livewire instanceof Pages\CreateUser),
+```
+
+Alternatively, we have a `visibleOn()` shortcut method for this case:
+
+```php
+use Livewire\Component;
+
+Forms\Components\TextInput::make('password')
+    ->password()
+    ->required()
+    ->visibleOn(Pages\CreateUser::class),
 ```
 
 For more information about closure customization, see the [form builder documentation](/docs/forms/advanced#using-closure-customisation).
@@ -208,7 +230,7 @@ public static function table(Table $table): Table
             // ...
         ])
         ->prependActions([
-            Tables\Actions\LinkAction::make('delete')
+            Tables\Actions\Action::make('delete')
                 ->action(fn (Post $record) => $record->delete())
                 ->requiresConfirmation()
                 ->color('danger'),
@@ -229,7 +251,7 @@ public static function table(Table $table): Table
             // ...
         ])
         ->pushActions([
-            Tables\Actions\LinkAction::make('delete')
+            Tables\Actions\Action::make('delete')
                 ->action(fn (Post $record) => $record->delete())
                 ->requiresConfirmation()
                 ->color('danger'),
@@ -250,7 +272,7 @@ public static function table(Table $table): Table
             // ...
         ])
         ->actions([
-            Tables\Actions\LinkAction::make('delete')
+            Tables\Actions\Action::make('delete')
                 ->action(fn (Post $record) => $record->delete())
                 ->requiresConfirmation()
                 ->color('danger'),
@@ -808,7 +830,7 @@ On resource pages, actions are usually in 2 places: in the top right of the page
 For example, you may add a new button action next to "Delete" on the edit page that runs the `impersonate()` Livewire method:
 
 ```php
-use Filament\Pages\Actions\ButtonAction;
+use Filament\Pages\Actions\Action;
 use Filament\Resources\Pages\EditRecord;
 
 class EditUser extends EditRecord
@@ -818,7 +840,7 @@ class EditUser extends EditRecord
     protected function getActions(): array
     {
         return array_merge(parent::getActions(), [
-            ButtonAction::make('impersonate')->action('impersonate'),
+            Action::make('impersonate')->action('impersonate'),
         ]);
     }
 
@@ -832,7 +854,7 @@ class EditUser extends EditRecord
 Or, a new button next to "Save" below the form:
 
 ```php
-use Filament\Pages\Actions\ButtonAction;
+use Filament\Pages\Actions\Action;
 use Filament\Resources\Pages\EditRecord;
 
 class EditUser extends EditRecord
@@ -842,7 +864,7 @@ class EditUser extends EditRecord
     protected function getFormActions(): array
     {
         return array_merge(parent::getFormActions(), [
-            ButtonAction::make('close')->action('saveAndClose'),
+            Action::make('close')->action('saveAndClose'),
         ]);
     }
 

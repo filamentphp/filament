@@ -5,6 +5,7 @@ namespace Filament\Tables\Concerns;
 use Filament\Forms;
 use Filament\Forms\ComponentContainer;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\Layout;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -77,7 +78,15 @@ trait HasFilters
 
     protected function getTableFiltersFormColumns(): int | array
     {
-        return 1;
+        return match ($this->getTableFiltersLayout()) {
+            Layout::AboveContent => [
+                'sm' => 2,
+                'lg' => 3,
+                'xl' => 4,
+                '2xl' => 5,
+            ],
+            default => 1,
+        };
     }
 
     protected function getTableFiltersFormSchema(): array
@@ -98,5 +107,10 @@ trait HasFilters
             4 => '6xl',
             default => null,
         };
+    }
+
+    protected function getTableFiltersLayout(): ?string
+    {
+        return null;
     }
 }

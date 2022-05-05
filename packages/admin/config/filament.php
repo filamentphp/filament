@@ -204,11 +204,6 @@ return [
         'sidebar' => [
             'is_collapsible_on_desktop' => false,
         ],
-        'tables' => [
-            'actions' => [
-                'type' => \Filament\Tables\Actions\LinkAction::class,
-            ],
-        ],
     ],
 
     /*

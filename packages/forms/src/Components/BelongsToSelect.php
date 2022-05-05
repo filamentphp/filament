@@ -46,6 +46,10 @@ class BelongsToSelect extends Select
             $component->getRelationship()->associate($state);
             $record->save();
         });
+
+        $this->createOptionUsing(static function (BelongsToSelect $component, array $data) {
+            return $component->getRelationship()->create($data)->getKey();
+        });
     }
 
     public function preload(bool | Closure $condition = true): static
@@ -140,7 +144,7 @@ class BelongsToSelect extends Select
         });
 
         $this->exists(
-            fn (BelongsToSelect $component): ?string => ($relationship = $component->getRelationship()) ? $relationship->getModel()::class : null,
+            fn (BelongsToSelect $component): string => $component->getRelationship()->getModel()::class,
             fn (BelongsToSelect $component): string => $component->getRelationship()->getOwnerKeyName(),
         );
 
@@ -209,7 +213,7 @@ class BelongsToSelect extends Select
         return parent::getLabel();
     }
 
-    public function getRelationship(): ?BelongsTo
+    public function getRelationship(): BelongsTo
     {
         return $this->getModelInstance()->{$this->getRelationshipName()}();
     }
@@ -227,5 +231,15 @@ class BelongsToSelect extends Select
     public function hasDynamicOptions(): bool
     {
         return $this->isPreloaded();
+    }
+
+    public function hasDynamicSearchResults(): bool
+    {
+        return ! $this->isPreloaded();
+    }
+
+    public function getActionFormModel(): Model | string | null
+    {
+        return $this->getRelationship()->getModel()::class;
     }
 }

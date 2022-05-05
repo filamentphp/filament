@@ -73,6 +73,7 @@ trait InteractsWithTable
             ->emptyStateIcon($this->getTableEmptyStateIcon())
             ->enablePagination($this->isTablePaginationEnabled())
             ->filtersFormWidth($this->getTableFiltersFormWidth())
+            ->filtersLayout($this->getTableFiltersLayout())
             ->recordAction($this->getTableRecordAction())
             ->getRecordUrlUsing($this->getTableRecordUrlUsing())
             ->header($this->getTableHeader())

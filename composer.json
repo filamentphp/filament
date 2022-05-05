@@ -1,13 +1,13 @@
 {
     "name": "filament/filament",
-    "description": "A collection of tools for rapidly building beautiful TALL stack interfaces, designed for humans.",
+    "description": "A collection of tools for rapidly building beautiful TALL stack apps, designed for humans.",
     "license": "MIT",
     "require": {
         "php": "^8.0",
         "ext-intl": "*"
     },
     "require-dev": {
-        "akaunting/laravel-money": "^1.2|^2.0",
+        "akaunting/laravel-money": "^1.2|^2.0|^3.0",
         "blade-ui-kit/blade-heroicons": "^1.2",
         "canvural/phpstan-blade-rule": "^0.1.0",
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
@@ -28,7 +28,8 @@
     },
     "autoload": {
         "files": [
-            "packages/admin/src/helpers.php"
+            "packages/admin/src/helpers.php",
+            "packages/support/src/helpers.php"
         ],
         "psr-4": {
             "Filament\\": [

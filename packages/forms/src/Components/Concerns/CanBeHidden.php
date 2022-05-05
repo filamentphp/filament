@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Arr;
 
 trait CanBeHidden
@@ -14,6 +15,13 @@ trait CanBeHidden
     public function hidden(bool | Closure $condition = true): static
     {
         $this->isHidden = $condition;
+
+        return $this;
+    }
+
+    public function hiddenOn(string $livewireClass): static
+    {
+        $this->hidden(static fn (HasForms $livewire): bool => $livewire instanceof $livewireClass);
 
         return $this;
     }
@@ -62,6 +70,13 @@ trait CanBeHidden
     public function visible(bool | Closure $condition = true): static
     {
         $this->isVisible = $condition;
+
+        return $this;
+    }
+
+    public function visibleOn(string $livewireClass): static
+    {
+        $this->visible(static fn (HasForms $livewire): bool => $livewire instanceof $livewireClass);
 
         return $this;
     }

@@ -6,7 +6,6 @@ use Filament\Forms\Components\Select;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
-use Filament\Tables\Actions\Modal\Actions\ButtonAction;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -160,9 +159,9 @@ trait CanAssociateRecords
         $this->associate(another: true);
     }
 
-    protected function getAssociateAction(): Tables\Actions\ButtonAction
+    protected function getAssociateAction(): Tables\Actions\Action
     {
-        return Tables\Actions\ButtonAction::make('associate')
+        return Tables\Actions\Action::make('associate')
             ->label(__('filament::resources/relation-managers/associate.action.label'))
             ->form($this->getAssociateFormSchema())
             ->mountUsing(fn () => $this->fillAssociateForm())
@@ -170,7 +169,8 @@ trait CanAssociateRecords
             ->modalHeading(__('filament::resources/relation-managers/associate.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->modalWidth('lg')
             ->action(fn () => $this->associate())
-            ->color('secondary');
+            ->color('secondary')
+            ->button();
     }
 
     protected function getAssociateActionModalActions(): array
@@ -184,7 +184,7 @@ trait CanAssociateRecords
 
     protected function getAssociateActionAssociateModalAction(): Tables\Actions\Modal\Actions\Action
     {
-        return ButtonAction::make('associate')
+        return Tables\Actions\Action::makeModalAction('associate')
             ->label(__('filament::resources/relation-managers/associate.action.modal.actions.associate.label'))
             ->submit('callMountedTableAction')
             ->color('primary');
@@ -192,7 +192,7 @@ trait CanAssociateRecords
 
     protected function getAssociateActionAssociateAndAssociateAnotherModalAction(): Tables\Actions\Modal\Actions\Action
     {
-        return ButtonAction::make('associateAndAssociateAnother')
+        return Tables\Actions\Action::makeModalAction('associateAndAssociateAnother')
             ->label(__('filament::resources/relation-managers/associate.action.modal.actions.associate_and_associate_another.label'))
             ->action('associateAndAssociateAnother')
             ->color('secondary');
@@ -200,7 +200,7 @@ trait CanAssociateRecords
 
     protected function getAssociateActionCancelModalAction(): Tables\Actions\Modal\Actions\Action
     {
-        return ButtonAction::make('cancel')
+        return Tables\Actions\Action::makeModalAction('cancel')
             ->label(__('tables::table.actions.modal.buttons.cancel.label'))
             ->cancel()
             ->color('secondary');

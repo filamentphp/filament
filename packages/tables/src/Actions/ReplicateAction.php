@@ -4,6 +4,7 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Facades\Filament;
+use Filament\Forms\ComponentContainer;
 use Illuminate\Database\Eloquent\Model;
 
 class ReplicateAction extends Action
@@ -22,6 +23,18 @@ class ReplicateAction extends Action
 
         $this->modalButton(static fn (ReplicateAction $action): string => $action->getLabel());
 
+        $this->mountUsing(static function (ReplicateAction $action, ?ComponentContainer $form = null, Model $record): void {
+            if (! $action->shouldOpenModal()) {
+                return;
+            }
+
+            if (! $form) {
+                return;
+            }
+
+            $form->fill($record->toArray());
+        });
+
         $this->action(static function (ReplicateAction $action, Model $record, array $data = []) {
             $replica = $record->replicate($action->getExcludedAttributes());
 
@@ -33,6 +46,8 @@ class ReplicateAction extends Action
 
             return $action->callAfterReplicaSaved($replica, $data);
         });
+
+        $this->defaultIcon('heroicon-s-duplicate');
     }
 
     public function beforeReplicaSaved(Closure $callback): static

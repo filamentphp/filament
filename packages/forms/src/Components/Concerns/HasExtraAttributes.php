@@ -2,21 +2,13 @@
 
 namespace Filament\Forms\Components\Concerns;
 
-use Closure;
+use Filament\Support\Concerns\HasExtraAttributes as BaseTrait;
 
+/**
+ * @deprecated Use `\Filament\Support\Concerns\HasExtraAttributes` instead.
+ * @see BaseTrait
+ */
 trait HasExtraAttributes
 {
-    protected array | Closure $extraAttributes = [];
-
-    public function extraAttributes(array | Closure $attributes): static
-    {
-        $this->extraAttributes = $attributes;
-
-        return $this;
-    }
-
-    public function getExtraAttributes(): array
-    {
-        return $this->evaluate($this->extraAttributes);
-    }
+    use BaseTrait;
 }

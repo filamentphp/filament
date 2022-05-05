@@ -6,12 +6,14 @@ import Chart from 'chart.js/auto'
 import Collapse from '@alpinejs/collapse'
 import FormsAlpinePlugin from '../../../forms/dist/module.esm'
 import Focus from '@alpinejs/focus'
+import Mousetrap from '@danharrin/alpine-mousetrap'
 import Persist from '@alpinejs/persist'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
 
 Alpine.plugin(Collapse)
 Alpine.plugin(FormsAlpinePlugin)
 Alpine.plugin(Focus)
+Alpine.plugin(Mousetrap)
 Alpine.plugin(Persist)
 Alpine.plugin(Tooltip)
 

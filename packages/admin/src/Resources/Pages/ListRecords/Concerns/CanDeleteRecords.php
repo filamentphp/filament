@@ -2,8 +2,10 @@
 
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 trait CanDeleteRecords
 {
@@ -14,13 +16,16 @@ trait CanDeleteRecords
 
     protected function getDeleteAction(): Tables\Actions\Action
     {
-        return config('filament.layout.tables.actions.type')::make('delete')
+        $resource = static::getResource();
+
+        return Filament::makeTableAction('delete')
             ->label(__('filament::resources/pages/list-records.table.actions.delete.label'))
-            ->action(fn () => $this->delete())
             ->requiresConfirmation()
+            ->modalHeading(fn (Model $record) => __('filament::resources/pages/list-records.table.actions.delete.modal.heading', ['label' => $resource::hasRecordTitle() ? $resource::getRecordTitle($record) : Str::title($resource::getLabel())]))
+            ->action(fn () => $this->delete())
             ->color('danger')
-            ->icon('heroicon-o-trash')
-            ->hidden(fn (Model $record): bool => ! static::getResource()::canDelete($record));
+            ->defaultIcon('heroicon-s-trash')
+            ->hidden(fn (Model $record): bool => ! $resource::canDelete($record));
     }
 
     public function delete(): void

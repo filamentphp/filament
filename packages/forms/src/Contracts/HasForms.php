@@ -12,11 +12,7 @@ interface HasForms
 
     public function getComponentFileAttachmentUrl(string $statePath): ?string;
 
-    public function getMultiSelectOptionLabels(string $statePath): array;
-
-    public function getMultiSelectOptions(string $statePath): array;
-
-    public function getMultiSelectSearchResults(string $statePath, string $searchQuery): array;
+    public function getSelectOptionLabels(string $statePath): array;
 
     public function getSelectOptionLabel(string $statePath): ?string;
 
