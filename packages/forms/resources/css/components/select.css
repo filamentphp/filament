@@ -63,7 +63,7 @@
 }
 
 .choices__list--single {
-    @apply inline-block w-full;
+    @apply pr-12 inline-block w-full;
 }
 
 .choices__list--single .choices__item {
@@ -71,7 +71,7 @@
 }
 
 .choices__list--multiple {
-    @apply inline-flex flex-wrap gap-1;
+    @apply pr-6 inline-flex flex-wrap gap-1;
 }
 
 .choices__list--multiple:not(:empty) {

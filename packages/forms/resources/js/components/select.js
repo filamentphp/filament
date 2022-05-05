@@ -55,11 +55,15 @@ export default (Alpine) => {
                     this.select.setChoiceByValue(this.formatState(this.state))
                 }
 
+                this.refreshPlaceholder()
+
                 if (isAutofocused) {
                     this.select.showDropdown()
                 }
 
                 this.$refs.input.addEventListener('change', () => {
+                    this.refreshPlaceholder()
+
                     if (this.isStateBeingUpdated) {
                         return
                     }
@@ -106,6 +110,8 @@ export default (Alpine) => {
                 }
 
                 this.$watch('state', async () => {
+                    this.refreshPlaceholder()
+
                     if (this.isStateBeingUpdated) {
                         return
                     }
@@ -164,6 +170,20 @@ export default (Alpine) => {
                         label,
                         value,
                     }))
+            },
+
+            refreshPlaceholder: function () {
+                if (isMultiple) {
+                    return
+                }
+
+                this.select._renderItems()
+
+                if (! [null, undefined, ''].includes(this.state)) {
+                    return
+                }
+
+                this.$el.querySelector('.choices__list--single').innerHTML = `<div class="choices__placeholder choices__item">${placeholder}</div>`
             },
 
             formatState: function (state) {
