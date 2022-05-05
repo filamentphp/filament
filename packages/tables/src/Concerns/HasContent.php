@@ -4,8 +4,13 @@ namespace Filament\Tables\Concerns;
 
 use Illuminate\Contracts\View\View;
 
-trait HasContentFooter
+trait HasContent
 {
+    protected function getTableContent(): ?View
+    {
+        return null;
+    }
+
     protected function getTableContentFooter(): ?View
     {
         return null;

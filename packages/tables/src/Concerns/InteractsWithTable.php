@@ -19,7 +19,7 @@ trait InteractsWithTable
     use HasActions;
     use HasBulkActions;
     use HasColumns;
-    use HasContentFooter;
+    use HasContent;
     use HasEmptyState;
     use HasFilters;
     use HasHeader;
@@ -65,6 +65,7 @@ trait InteractsWithTable
     protected function getTable(): Table
     {
         return $this->makeTable()
+            ->content($this->getTableContent())
             ->contentFooter($this->getTableContentFooter())
             ->description($this->getTableDescription())
             ->emptyState($this->getTableEmptyState())

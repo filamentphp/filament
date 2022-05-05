@@ -3,6 +3,7 @@
 
     $actions = $getActions();
     $columns = $getColumns();
+    $content = $getContent();
     $contentFooter = $getContentFooter();
     $header = $getHeader();
     $headerActions = $getHeaderActions();
@@ -225,112 +226,115 @@
             }"
         >
             @if (($records = $getRecords())->count())
-                <x-tables::table>
-                    <x-slot name="header">
-                        @if ($isSelectionEnabled())
-                            <x-tables::checkbox-cell>
-                                <x-slot
-                                    name="checkbox"
-                                    x-on:click="toggleSelectRecordsOnPage"
-                                    x-bind:checked="
-                                        if (areRecordsSelected(getRecordsOnPage())) {
-                                            $el.checked = true
-
-                                            return 'checked'
-                                        }
-
-                                        $el.checked = false
-
-                                        return null
-                                    "
-                                ></x-slot>
-                            </x-tables::checkbox-cell>
-                        @endif
-
-                        @foreach ($columns as $column)
-                            <x-tables::header-cell
-                                :extra-attributes="$column->getExtraHeaderAttributes()"
-                                :is-sort-column="$getSortColumn() === $column->getName()"
-                                :name="$column->getName()"
-                                :alignment="$column->getAlignment()"
-                                :sortable="$column->isSortable()"
-                                :sort-direction="$getSortDirection()"
-                                :class="$getHiddenClasses($column)"
-                            >
-                                {{ $column->getLabel() }}
-                            </x-tables::header-cell>
-                        @endforeach
-
-                        @if (count($actions))
-                            <th class="w-5"></th>
-                        @endif
-                    </x-slot>
-
-                    @if ($isSelectionEnabled())
-                        <x-tables::selection-indicator
-                            :all-records-count="$getAllRecordsCount()"
-                            :colspan="$columnsCount"
-                            x-show="selectedRecords.length"
-                        >
-                            <x-slot name="selectedRecordsCount">
-                                <span x-text="selectedRecords.length"></span>
-                            </x-slot>
-                        </x-tables::selection-indicator>
-                    @endif
-
-                    @foreach ($records as $record)
-                        <x-tables::row
-                            :record-url="$getRecordUrl($record)"
-                            wire:key="{{ $record->getKey() }}"
-                            x-bind:class="{
-                                'bg-primary-500/10': isRecordSelected('{{ $record->getKey() }}'),
-                            }"
-                        >
+                @if ($content)
+                    {{ $content->with(['records' => $records]) }}
+                @else
+                    <x-tables::table>
+                        <x-slot name="header">
                             @if ($isSelectionEnabled())
                                 <x-tables::checkbox-cell>
                                     <x-slot
                                         name="checkbox"
-                                        x-model="selectedRecords"
-                                        :value="$record->getKey()"
-                                        class="table-row-checkbox"
+                                        x-on:click="toggleSelectRecordsOnPage"
+                                        x-bind:checked="
+                                            if (areRecordsSelected(getRecordsOnPage())) {
+                                                $el.checked = true
+
+                                                return 'checked'
+                                            }
+
+                                            $el.checked = false
+
+                                            return null
+                                        "
                                     ></x-slot>
                                 </x-tables::checkbox-cell>
                             @endif
 
                             @foreach ($columns as $column)
-                                @php
-                                    $column->record($record);
-                                @endphp
-
-                                <x-tables::cell
-                                    :action="$column->getAction()"
+                                <x-tables::header-cell
+                                    :extra-attributes="$column->getExtraHeaderAttributes()"
+                                    :is-sort-column="$getSortColumn() === $column->getName()"
                                     :name="$column->getName()"
                                     :alignment="$column->getAlignment()"
-                                    :record="$record"
-                                    :tooltip="$column->getTooltip()"
-                                    :record-action="$getRecordAction()"
-                                    :record-url="$getRecordUrl($record)"
-                                    :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
-                                    :url="$column->getUrl()"
+                                    :sortable="$column->isSortable()"
+                                    :sort-direction="$getSortDirection()"
                                     :class="$getHiddenClasses($column)"
                                 >
-                                    {{ $column }}
-                                </x-tables::cell>
+                                    {{ $column->getLabel() }}
+                                </x-tables::header-cell>
                             @endforeach
 
                             @if (count($actions))
-                                <x-tables::actions-cell :actions="$actions" :record="$record"/>
+                                <th class="w-5"></th>
                             @endif
-                        </x-tables::row>
-                    @endforeach
-
-                    @if ($contentFooter)
-                        <x-slot name="footer">
-                            {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
                         </x-slot>
-                    @endif
 
-                </x-tables::table>
+                        @if ($isSelectionEnabled())
+                            <x-tables::selection-indicator
+                                :all-records-count="$getAllRecordsCount()"
+                                :colspan="$columnsCount"
+                                x-show="selectedRecords.length"
+                            >
+                                <x-slot name="selectedRecordsCount">
+                                    <span x-text="selectedRecords.length"></span>
+                                </x-slot>
+                            </x-tables::selection-indicator>
+                        @endif
+
+                        @foreach ($records as $record)
+                            <x-tables::row
+                                :record-url="$getRecordUrl($record)"
+                                wire:key="{{ $record->getKey() }}"
+                                x-bind:class="{
+                                    'bg-primary-500/10': isRecordSelected('{{ $record->getKey() }}'),
+                                }"
+                            >
+                                @if ($isSelectionEnabled())
+                                    <x-tables::checkbox-cell>
+                                        <x-slot
+                                            name="checkbox"
+                                            x-model="selectedRecords"
+                                            :value="$record->getKey()"
+                                            class="table-row-checkbox"
+                                        ></x-slot>
+                                    </x-tables::checkbox-cell>
+                                @endif
+
+                                @foreach ($columns as $column)
+                                    @php
+                                        $column->record($record);
+                                    @endphp
+
+                                    <x-tables::cell
+                                        :action="$column->getAction()"
+                                        :name="$column->getName()"
+                                        :alignment="$column->getAlignment()"
+                                        :record="$record"
+                                        :tooltip="$column->getTooltip()"
+                                        :record-action="$getRecordAction()"
+                                        :record-url="$getRecordUrl($record)"
+                                        :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
+                                        :url="$column->getUrl()"
+                                        :class="$getHiddenClasses($column)"
+                                    >
+                                        {{ $column }}
+                                    </x-tables::cell>
+                                @endforeach
+
+                                @if (count($actions))
+                                    <x-tables::actions-cell :actions="$actions" :record="$record"/>
+                                @endif
+                            </x-tables::row>
+                        @endforeach
+
+                        @if ($contentFooter)
+                            <x-slot name="footer">
+                                {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
+                            </x-slot>
+                        @endif
+                    </x-tables::table>
+                @endif
             @else
                 @if ($emptyState = $getEmptyState())
                     {{ $emptyState }}

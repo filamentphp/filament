@@ -24,6 +24,8 @@ class Table extends ViewComponent implements Htmlable
     use Macroable;
     use Tappable;
 
+    protected ?View $content = null;
+
     protected ?View $contentFooter = null;
 
     protected ?string $description = null;
@@ -106,6 +108,13 @@ class Table extends ViewComponent implements Htmlable
     public function enablePagination(bool $condition = true): static
     {
         $this->isPaginationEnabled = $condition;
+
+        return $this;
+    }
+
+    public function content(?View $view): static
+    {
+        $this->content = $view;
 
         return $this;
     }
@@ -193,6 +202,11 @@ class Table extends ViewComponent implements Htmlable
         return collect($this->getLivewire()->getCachedTableColumns())
             ->filter(fn (Column $column): bool => ! $column->isToggledHidden())
             ->toArray();
+    }
+
+    public function getContent(): ?View
+    {
+        return $this->content;
     }
 
     public function getContentFooter(): ?View
