@@ -26,7 +26,7 @@ class Builder extends Field
 
     protected bool | Closure $isItemDeletionDisabled = false;
 
-    protected bool | Closure $showBlockLabels = false;
+    protected bool | Closure $hasBlockLabels = true;
 
     protected bool | Closure $isInset = false;
 
@@ -47,10 +47,6 @@ class Builder extends Field
         $this->registerListeners([
             'builder::createItem' => [
                 function (Builder $component, string $statePath, string $block, ?string $afterUuid = null): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($component->isItemCreationDisabled()) {
                         return;
                     }
@@ -90,10 +86,6 @@ class Builder extends Field
             ],
             'builder::deleteItem' => [
                 function (Builder $component, string $statePath, string $uuidToDelete): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($component->isItemDeletionDisabled()) {
                         return;
                     }
@@ -112,10 +104,6 @@ class Builder extends Field
             ],
             'builder::moveItemDown' => [
                 function (Builder $component, string $statePath, string $uuidToMoveDown): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($component->isItemMovementDisabled()) {
                         return;
                     }
@@ -132,10 +120,6 @@ class Builder extends Field
             ],
             'builder::moveItemUp' => [
                 function (Builder $component, string $statePath, string $uuidToMoveUp): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($component->isItemMovementDisabled()) {
                         return;
                     }
@@ -152,10 +136,6 @@ class Builder extends Field
             ],
             'builder::moveItems' => [
                 function (Builder $component, string $statePath, array $uuids): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($component->isItemMovementDisabled()) {
                         return;
                     }
@@ -239,9 +219,9 @@ class Builder extends Field
         $this->getChildComponentContainers()[$uuid]->hydrateDefaultState();
     }
 
-    public function showBlockLabels(bool | Closure $condition = true): static
+    public function withBlockLabels(bool | Closure $condition = true): static
     {
-        $this->showBlockLabels = $condition;
+        $this->hasBlockLabels = $condition;
 
         return $this;
     }
@@ -289,22 +269,22 @@ class Builder extends Field
 
     public function isItemMovementDisabled(): bool
     {
-        return $this->evaluate($this->isItemMovementDisabled);
+        return $this->evaluate($this->isItemMovementDisabled) || $this->isDisabled();
     }
 
     public function isItemCreationDisabled(): bool
     {
-        return $this->evaluate($this->isItemCreationDisabled);
+        return $this->evaluate($this->isItemCreationDisabled) || $this->isDisabled() || (filled($this->getMaxItems()) && ($this->getMaxItems() <= $this->getItemsCount()));
     }
 
     public function isItemDeletionDisabled(): bool
     {
-        return $this->evaluate($this->isItemDeletionDisabled);
+        return $this->evaluate($this->isItemDeletionDisabled) || $this->isDisabled();
     }
 
-    public function shouldShowBlockLabels(): bool
+    public function hasBlockLabels(): bool
     {
-        return (bool) $this->evaluate($this->showBlockLabels);
+        return (bool) $this->evaluate($this->hasBlockLabels);
     }
 
     public function isInset(): bool

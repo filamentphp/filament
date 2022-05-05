@@ -30,22 +30,16 @@ return [
 
     'builder' => [
 
+        'collapsed' => 'Content collapsed',
+
         'buttons' => [
 
             'create_item' => [
                 'label' => 'Add to :label',
             ],
 
-            'create_item_between' => [
-                'label' => 'Add between',
-            ],
-
             'delete_item' => [
                 'label' => 'Delete',
-            ],
-
-            'move_item' => [
-                'label' => 'Move',
             ],
 
             'move_item_down' => [
@@ -54,6 +48,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Move up',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Collapse',
+            ],
+
+            'expand_item' => [
+                'label' => 'Expand',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Collapse all',
+            ],
+
+            'expand_all' => [
+                'label' => 'Expand all',
             ],
 
         ],
@@ -106,7 +116,8 @@ return [
     ],
 
     'repeater' => [
-        'collapsed_empty_state' => 'Content collapsed',
+
+        'collapsed' => 'Content collapsed',
 
         'buttons' => [
 
