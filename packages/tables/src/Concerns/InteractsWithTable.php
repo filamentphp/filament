@@ -73,13 +73,13 @@ trait InteractsWithTable
             ->emptyStateIcon($this->getTableEmptyStateIcon())
             ->enablePagination($this->isTablePaginationEnabled())
             ->filtersFormWidth($this->getTableFiltersFormWidth())
+            ->filtersLayout($this->getTableFiltersLayout())
             ->recordAction($this->getTableRecordAction())
             ->getRecordUrlUsing($this->getTableRecordUrlUsing())
             ->header($this->getTableHeader())
             ->heading($this->getTableHeading())
             ->model($this->getTableQuery()->getModel()::class)
-            ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions())
-            ->displayFiltersAboveTable($this->showFiltersAboveTable());
+            ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions());
     }
 
     protected function getTableQueryStringIdentifier(): ?string
