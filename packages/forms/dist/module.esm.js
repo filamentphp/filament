@@ -23119,14 +23119,15 @@ function outputLink(cap, link, raw, lexer2) {
     };
     lexer2.state.inLink = false;
     return token;
+  } else {
+    return {
+      type: "image",
+      raw,
+      href,
+      title,
+      text: escape(text2)
+    };
   }
-  return {
-    type: "image",
-    raw,
-    href,
-    title,
-    text: escape(text2)
-  };
 }
 function indentCodeCompensation(raw, text2) {
   const matchIndentToCode = raw.match(/^(\s+)(?:```)/);
@@ -23275,8 +23276,7 @@ var Tokenizer = class {
           endEarly = true;
         }
         if (!endEarly) {
-          const nextBulletRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}(?:[*+-]|\\d{1,9}[.)])((?: [^\\n]*)?(?:\\n|$))`);
-          const hrRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$)`);
+          const nextBulletRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}(?:[*+-]|\\d{1,9}[.)])`);
           while (src) {
             rawLine = src.split("\n", 1)[0];
             line = rawLine;
@@ -23284,9 +23284,6 @@ var Tokenizer = class {
               line = line.replace(/^ {1,4}(?=( {4})*[^ ])/g, "  ");
             }
             if (nextBulletRegex.test(line)) {
-              break;
-            }
-            if (hrRegex.test(src)) {
               break;
             }
             if (line.search(/[^ ]/) >= indent || !line.trim()) {
