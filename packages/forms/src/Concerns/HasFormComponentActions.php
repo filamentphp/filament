@@ -64,6 +64,8 @@ trait HasFormComponentActions
         try {
             return $action->call($data);
         } finally {
+            $this->mountedFormComponentAction = null;
+
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => 'form-component-action',
             ]);

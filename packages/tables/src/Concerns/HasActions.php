@@ -47,6 +47,9 @@ trait HasActions
         try {
             return $action->call($data);
         } finally {
+            $this->mountedTableAction = null;
+            $this->mountedTableActionRecord = null;
+
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => static::class . '-action',
             ]);

@@ -44,6 +44,7 @@ trait HasBulkActions
         try {
             return $action->call($data);
         } finally {
+            $this->mountedTableBulkAction = null;
             $this->selectedTableRecords = [];
 
             $this->dispatchBrowserEvent('close-modal', [
