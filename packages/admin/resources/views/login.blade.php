@@ -1,14 +1,17 @@
-<div class="flex items-center justify-center min-h-screen filament-login-page">
-    <div class="p-2 max-w-md space-y-8 w-screen">
+<div @class([
+    'flex items-center justify-center min-h-screen filament-login-page bg-gray-100 text-gray-900',
+    'dark:bg-gray-900 dark:text-white' => config('filament.dark_mode'),
+])>
+    <div class="w-screen max-w-md px-6 -mt-16 space-y-8 md:mt-0 md:px-2">
         <form wire:submit.prevent="authenticate" @class([
-            'bg-white space-y-8 shadow border border-gray-300 rounded-2xl p-8',
-            'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),
+            'p-8 space-y-8 bg-white/50 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-2xl relative',
+            'dark:bg-gray-900/50 dark:border-gray-700' => config('filament.dark_mode'),
         ])>
-            <div class="w-full flex justify-center">
+            <div class="flex justify-center w-full">
                 <x-filament::brand />
             </div>
 
-            <h2 class="font-bold tracking-tight text-center text-2xl">
+            <h2 class="text-2xl font-bold tracking-tight text-center">
                 {{ __('filament::login.heading') }}
             </h2>
 
@@ -18,7 +21,5 @@
                 {{ __('filament::login.buttons.submit.label') }}
             </x-filament::button>
         </form>
-
-        <x-filament::footer />
     </div>
 </div>
