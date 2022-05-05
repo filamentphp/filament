@@ -1,3 +1,5 @@
+import Choices from 'choices.js'
+
 import '../../css/components/select.css'
 
 export default (Alpine) => {

@@ -1,5 +1,3 @@
-<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-
 @php
     $affixLabelClasses = [
         'whitespace-nowrap group-focus-within:text-primary-500',
