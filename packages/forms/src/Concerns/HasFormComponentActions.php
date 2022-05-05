@@ -47,7 +47,7 @@ trait HasFormComponentActions
 
         return $this->makeForm()
             ->schema(($action = $this->getMountedFormComponentAction()) ? $action->getFormSchema() : [])
-            ->model($component->getRecord() ?? $component->getModel())
+            ->model($component->getActionFormModel())
             ->statePath('mountedFormComponentActionData');
     }
 
@@ -67,7 +67,7 @@ trait HasFormComponentActions
             $this->mountedFormComponentAction = null;
 
             $this->dispatchBrowserEvent('close-modal', [
-                'id' => 'form-component-action',
+                'id' => static::class . '-form-component-action',
             ]);
         }
     }
@@ -110,7 +110,7 @@ trait HasFormComponentActions
         $this->resetErrorBag();
 
         $this->dispatchBrowserEvent('open-modal', [
-            'id' => 'form-component-action',
+            'id' => static::class . '-form-component-action',
         ]);
     }
 

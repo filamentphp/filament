@@ -579,6 +579,20 @@ BelongsToSelect::make('authorId')
 
 The form opens in a modal, where the user can fill it with data. Upon form submission, the new record is selected by the field.
 
+Since HTML does not support nested `<form>` elements, you must also render the modal outside the `<form>` in the view. If you're using the [admin panel](/docs/admin), this is included already:
+
+```blade
+<form wire:submit.prevent="submit">
+    {{ $this->form }}
+    
+    <button type="submit">
+        Submit
+    </button>
+</form>
+
+{{ $this->modal }}
+```
+
 ## Multi-select
 
 The multi-select component allows you to select multiple values from a list of predefined options:

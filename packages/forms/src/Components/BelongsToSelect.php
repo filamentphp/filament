@@ -237,4 +237,9 @@ class BelongsToSelect extends Select
     {
         return ! $this->isPreloaded();
     }
+
+    public function getActionFormModel(): Model | string | null
+    {
+        return $this->getRelationship()?->getModel()::class;
+    }
 }

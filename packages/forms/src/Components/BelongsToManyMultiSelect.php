@@ -46,6 +46,14 @@ class BelongsToManyMultiSelect extends MultiSelect
             $component->getRelationship()->sync($state ?? []);
         });
 
+        $this->createOptionUsing(static function (BelongsToManyMultiSelect $component, array $data) {
+            $record = $component->getRelationship()->getRelated();
+            $record->fill($data);
+            $record->save();
+
+            return $record->getKey();
+        });
+
         $this->dehydrated(false);
     }
 
@@ -211,5 +219,10 @@ class BelongsToManyMultiSelect extends MultiSelect
     public function hasDynamicSearchResults(): bool
     {
         return ! $this->isPreloaded();
+    }
+
+    public function getActionFormModel(): Model | string | null
+    {
+        return $this->getRelationship()?->getModel()::class;
     }
 }
