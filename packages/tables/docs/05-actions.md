@@ -155,12 +155,7 @@ BulkAction::make('delete')
 Action::make('edit')
     ->label('Edit post')
     ->url(fn (Post $record): string => route('posts.edit', $record))
-    ->icon('heroicon-o-pencil')
-
-Action::make('edit')
-    ->label('Edit post')
-    ->url(fn (Post $record): string => route('posts.edit', $record))
-    ->icon('heroicon-o-pencil')
+    ->icon('heroicon-s-pencil')
 ```
 
 ## Modals

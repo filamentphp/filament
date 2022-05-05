@@ -86,7 +86,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return Filament::makeTableAction('view')
             ->label(__('filament::resources/pages/list-records.table.actions.view.label'))
             ->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]))
-            ->icon('heroicon-o-eye')
+            ->defaultIcon('heroicon-s-eye')
             ->hidden(fn (Model $record): bool => ! $resource::canView($record));
     }
 
@@ -97,7 +97,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return Filament::makeTableAction('edit')
             ->label(__('filament::resources/pages/list-records.table.actions.edit.label'))
             ->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]))
-            ->icon('heroicon-o-pencil')
+            ->defaultIcon('heroicon-s-pencil')
             ->hidden(fn (Model $record): bool => ! $resource::canEdit($record));
     }
 

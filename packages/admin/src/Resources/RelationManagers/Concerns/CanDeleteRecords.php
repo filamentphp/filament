@@ -62,7 +62,7 @@ trait CanDeleteRecords
             ->modalHeading(__('filament::resources/relation-managers/delete.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->delete())
             ->color('danger')
-            ->icon('heroicon-o-trash')
+            ->defaultIcon('heroicon-s-trash')
             ->hidden(fn (Model $record): bool => ! static::canDelete($record));
     }
 

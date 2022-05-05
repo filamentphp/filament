@@ -15,12 +15,13 @@ class Action extends BaseAction
     use CanBeOutlined;
     use CanOpenUrl;
     use Concerns\BelongsToTable;
+    use Concerns\HasDefaultIcon;
     use Concerns\HasRecord;
     use HasTooltip;
 
     protected function setUp(): void
     {
-        $this->view ?? $this->link();
+        $this->view ?? $this->button();
 
         parent::setUp();
     }
@@ -34,7 +35,7 @@ class Action extends BaseAction
 
     public function link(): static
     {
-        $this->view('tables::actions.link-action');
+        $this->view($this->getLinkView());
 
         return $this;
     }
@@ -44,6 +45,16 @@ class Action extends BaseAction
         $this->view('tables::actions.icon-button-action');
 
         return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return parent::getIcon() ?? $this->getDefaultIcon();
+    }
+
+    protected function getLinkView(): string
+    {
+        return 'tables::actions.link-action';
     }
 
     public function call(array $data = [])

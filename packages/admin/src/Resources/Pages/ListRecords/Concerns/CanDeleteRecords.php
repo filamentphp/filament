@@ -24,7 +24,7 @@ trait CanDeleteRecords
             ->modalHeading(fn (Model $record) => __('filament::resources/pages/list-records.table.actions.delete.modal.heading', ['label' => $resource::hasRecordTitle() ? $resource::getRecordTitle($record) : Str::title($resource::getLabel())]))
             ->action(fn () => $this->delete())
             ->color('danger')
-            ->icon('heroicon-o-trash')
+            ->defaultIcon('heroicon-s-trash')
             ->hidden(fn (Model $record): bool => ! $resource::canDelete($record));
     }
 
