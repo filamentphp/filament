@@ -25061,10 +25061,12 @@ var select_default = (Alpine) => {
         if (![null, void 0, ""].includes(this.state)) {
           this.select.setChoiceByValue(this.formatState(this.state));
         }
+        this.refreshPlaceholder();
         if (isAutofocused) {
           this.select.showDropdown();
         }
         this.$refs.input.addEventListener("change", () => {
+          this.refreshPlaceholder();
           if (this.isStateBeingUpdated) {
             return;
           }
@@ -25097,6 +25099,7 @@ var select_default = (Alpine) => {
           }, 1e3));
         }
         this.$watch("state", async () => {
+          this.refreshPlaceholder();
           if (this.isStateBeingUpdated) {
             return;
           }
@@ -25137,6 +25140,16 @@ var select_default = (Alpine) => {
           label,
           value
         }));
+      },
+      refreshPlaceholder: function() {
+        if (isMultiple) {
+          return;
+        }
+        this.select._renderItems();
+        if (![null, void 0, ""].includes(this.state)) {
+          return;
+        }
+        this.$el.querySelector(".choices__list--single").innerHTML = `<div class="choices__placeholder choices__item">${placeholder}</div>`;
       },
       formatState: function(state3) {
         if (isMultiple) {

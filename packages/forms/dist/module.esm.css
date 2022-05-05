@@ -1638,13 +1638,13 @@ trix-editor .attachment__metadata .attachment__size {
   @apply m-0 pl-0 list-none;
 }
 .choices__list--single {
-  @apply inline-block w-full;
+  @apply pr-12 inline-block w-full;
 }
 .choices__list--single .choices__item {
   @apply w-full;
 }
 .choices__list--multiple {
-  @apply inline-flex flex-wrap gap-1;
+  @apply pr-6 inline-flex flex-wrap gap-1;
 }
 .choices__list--multiple:not(:empty) {
   @apply flex mb-1;
