@@ -100,9 +100,9 @@ trait CanOpenModal
         return __('forms::components.actions.modal.buttons.submit.label');
     }
 
-    public function getModalHeading(): ?string
+    public function getModalHeading(): string
     {
-        return $this->evaluate($this->modalHeading);
+        return $this->evaluate($this->modalHeading) ?? $this->getLabel();
     }
 
     public function getModalSubheading(): ?string
