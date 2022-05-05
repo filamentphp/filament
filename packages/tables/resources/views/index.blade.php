@@ -1,4 +1,6 @@
 @php
+    use Filament\Tables\Filters\Layout;
+
     $actions = $getActions();
     $columns = $getColumns();
     $contentFooter = $getContentFooter();
@@ -6,7 +8,9 @@
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
     $isSearchVisible = $isSearchable();
-    $isFiltersDropdownVisible = $isFilterable();
+    $hasFilters = $isFilterable();
+    $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === Layout::Popover);
+    $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === Layout::AboveContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
 
     $columnsCount = count($columns);
@@ -136,7 +140,7 @@
 >
     <x-tables::container>
         <div
-            x-show="hasHeader = ({{ ($renderHeader = ($header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length)"
+            x-show="hasHeader = ({{ ($renderHeader = ($header || $heading || $headerActions || $isSearchVisible || $hasFilters || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length)"
             {!! ! $renderHeader ? 'x-cloak' : null !!}
         >
             @if ($header)
@@ -153,12 +157,22 @@
                         </x-slot>
                     </x-tables::header>
 
-                    <x-tables::hr x-show="{{ ($isSearchVisible || $isFiltersDropdownVisible || $isColumnToggleFormVisible) ? 'true' : 'false' }} || selectedRecords.length" />
+                    <x-tables::hr x-show="{{ ($isSearchVisible || $hasFilters || $isColumnToggleFormVisible) ? 'true' : 'false' }} || selectedRecords.length" />
+                </div>
+            @endif
+
+            @if ($hasFiltersAboveContent)
+                <div class="px-2 pt-2 space-y-2">
+                    <div class="p-4">
+                        <x-tables::filters :form="$getFiltersForm()" />
+                    </div>
+
+                    <x-tables::hr x-show="{{ ($isSearchVisible || $isColumnToggleFormVisible) ? 'true' : 'false' }} || selectedRecords.length" />
                 </div>
             @endif
 
             <div
-                x-show="{{ ($renderHeaderDiv = ($isSearchVisible || $isFiltersDropdownVisible || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length"
+                x-show="{{ ($renderHeaderDiv = ($isSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length"
                 {!! ! $renderHeaderDiv ? 'x-cloak' : null !!}
                 class="flex items-center justify-between p-2 h-14"
             >
@@ -170,16 +184,16 @@
                     />
                 </div>
 
-                @if ($isSearchVisible || $isFiltersDropdownVisible || $isColumnToggleFormVisible)
+                @if ($isSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)
                     <div class="w-full flex items-center justify-end gap-2 md:max-w-md">
                         @if ($isSearchVisible)
                             <div class="flex-1">
-                                <x-tables::search-input />
+                                <x-tables::search-input/>
                             </div>
                         @endif
 
-                        @if ($isFiltersDropdownVisible)
-                            <x-tables::filters
+                        @if ($hasFiltersPopover)
+                            <x-tables::filters.popover
                                 :form="$getFiltersForm()"
                                 :width="$getFiltersFormWidth()"
                                 class="shrink-0"
@@ -188,8 +202,8 @@
 
                         @if ($isColumnToggleFormVisible)
                             <x-tables::toggleable
-                                :form="$getTableColumnToggleForm()"
-                                :width="$getTableColumnToggleFormWidth()"
+                                :form="$getColumnToggleForm()"
+                                :width="$getColumnToggleFormWidth()"
                                 class="shrink-0"
                             />
                         @endif
@@ -305,7 +319,7 @@
                             @endforeach
 
                             @if (count($actions))
-                                <x-tables::actions-cell :actions="$actions" :record="$record" />
+                                <x-tables::actions-cell :actions="$actions" :record="$record"/>
                             @endif
                         </x-tables::row>
                     @endforeach
