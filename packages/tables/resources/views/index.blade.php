@@ -173,8 +173,8 @@
             @endif
 
             <div
-                x-show="{{ ($renderHeaderDiv = ($isSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length"
-                {!! ! $renderHeaderDiv ? 'x-cloak' : null !!}
+                x-show="{{ ($shouldRenderHeaderDiv = ($isSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length"
+                {!! ! $shouldRenderHeaderDiv ? 'x-cloak' : null !!}
                 class="flex items-center justify-between p-2 h-14"
             >
                 <div>
@@ -287,7 +287,7 @@
                                 :record-url="$getRecordUrl($record)"
                                 wire:key="{{ $record->getKey() }}"
                                 x-bind:class="{
-                                    'bg-primary-500/10': isRecordSelected('{{ $record->getKey() }}'),
+                                    'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $record->getKey() }}'),
                                 }"
                             >
                                 @if ($isSelectionEnabled())
