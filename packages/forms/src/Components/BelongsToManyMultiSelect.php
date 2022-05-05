@@ -223,6 +223,6 @@ class BelongsToManyMultiSelect extends MultiSelect
 
     public function getActionFormModel(): Model | string | null
     {
-        return $this->getRelationship()?->getModel()::class;
+        return $this->getRelationship()->getModel()::class;
     }
 }

@@ -144,7 +144,7 @@ class BelongsToSelect extends Select
         });
 
         $this->exists(
-            fn (BelongsToSelect $component): ?string => ($relationship = $component->getRelationship()) ? $relationship->getModel()::class : null,
+            fn (BelongsToSelect $component): string => $component->getRelationship()->getModel()::class,
             fn (BelongsToSelect $component): string => $component->getRelationship()->getOwnerKeyName(),
         );
 
@@ -213,7 +213,7 @@ class BelongsToSelect extends Select
         return parent::getLabel();
     }
 
-    public function getRelationship(): ?BelongsTo
+    public function getRelationship(): BelongsTo
     {
         return $this->getModelInstance()->{$this->getRelationshipName()}();
     }
@@ -240,6 +240,6 @@ class BelongsToSelect extends Select
 
     public function getActionFormModel(): Model | string | null
     {
-        return $this->getRelationship()?->getModel()::class;
+        return $this->getRelationship()->getModel()::class;
     }
 }
