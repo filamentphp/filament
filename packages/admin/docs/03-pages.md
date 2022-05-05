@@ -151,6 +151,17 @@ Action::make('delete')
     ->modalButton('Yes, delete them')
 ```
 
+### Keybindings
+
+You can attach keyboard shortcuts to actions. These use the same key codes as [Mousetrap](https://craig.is/killing/mice):
+
+```php
+use Filament\Pages\Actions\Action;
+
+Action::make('save')
+    ->action(fn () => $this->save())
+    ->keyBindings(['command+s', 'ctrl+s'])
+```
 
 ## Conditionally hiding pages in navigation
 

@@ -118,7 +118,7 @@ class CreateRecord extends Page implements HasFormActions
         return Action::make('create')
             ->label(__('filament::resources/pages/create-record.form.actions.create.label'))
             ->submit('create')
-            ->keyBindings(['command+s', 'ctrl+s']);
+            ->keyBindings(['mod+s']);
     }
 
     protected function getCreateAndCreateAnotherFormAction(): Action
@@ -126,7 +126,7 @@ class CreateRecord extends Page implements HasFormActions
         return Action::make('createAnother')
             ->label(__('filament::resources/pages/create-record.form.actions.create_and_create_another.label'))
             ->action('createAndCreateAnother')
-            ->keyBindings(['command+shift+s', 'ctrl+shift+s'])
+            ->keyBindings(['mod+shift+s'])
             ->color('secondary');
     }
 
