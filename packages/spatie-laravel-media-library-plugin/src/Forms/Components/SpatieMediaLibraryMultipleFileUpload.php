@@ -4,7 +4,10 @@ namespace Filament\Forms\Components;
 
 use Closure;
 
-/** @deprecated Use `\Filament\Forms\Components\SpatieMediaLibraryFileUpload` instead, with the `multiple()` method. */
+/**
+ * @deprecated Use `\Filament\Forms\Components\SpatieMediaLibraryFileUpload` instead, with the `multiple()` method.
+ * @see SpatieMediaLibraryFileUpload
+ */
 class SpatieMediaLibraryMultipleFileUpload extends MultipleFileUpload
 {
     protected string | Closure | null $collection = null;

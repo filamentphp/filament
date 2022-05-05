@@ -564,6 +564,7 @@ The multi-select component allows you to select multiple values from a list of p
 
 ```php
 use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Select;
 
 MultiSelect::make('technologies')
     ->options([

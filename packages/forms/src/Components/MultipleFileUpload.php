@@ -4,7 +4,10 @@ namespace Filament\Forms\Components;
 
 use Closure;
 
-/** @deprecated Use `\Filament\Forms\Components\FileUpload` instead, with the `multiple()` method. */
+/**
+ * @deprecated Use `\Filament\Forms\Components\FileUpload` instead, with the `multiple()` method.
+ * @see FileUpload
+ */
 class MultipleFileUpload extends Field
 {
     protected string $view = 'forms::components.multiple-file-upload';
