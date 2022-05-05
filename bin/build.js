@@ -9,6 +9,6 @@ esbuild.build({
     outfile: 'packages/forms/dist/module.esm.js',
     bundle: true,
     platform: 'neutral',
-    mainFields: ['module'],
+    mainFields: ['main'],
     watch: shouldWatch,
 }).catch(() => process.exit(1))

@@ -110,11 +110,13 @@ export default (Alpine) => {
                         return
                     }
 
-                    this.select.clearStore()
-
-                    await this.refreshChoices({
+                    const choices = await this.getChoices({
                         withInitialOptions: ! hasDynamicOptions,
                     })
+
+                    this.select.clearStore()
+
+                    this.setChoices(choices)
 
                     if (! [null, undefined, ''].includes(this.state)) {
                         this.select.setChoiceByValue(this.formatState(this.state))
@@ -123,9 +125,11 @@ export default (Alpine) => {
             },
 
             refreshChoices: async function (config = {}) {
-                const choices = await this.getChoices(config)
+                this.setChoices(await this.getChoices(config))
+            },
 
-                await this.select.setChoices(
+            setChoices: function (choices) {
+                this.select.setChoices(
                     choices,
                     'value',
                     'label',

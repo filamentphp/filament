@@ -1532,9 +1532,9 @@ trix-editor .attachment__metadata .attachment__size {
   background-size: 8px 8px;
 }
 .filament-forms-color-picker-preview::after {
+  @apply absolute inset-0;
   content: "";
   background: var(--color);
-  @apply absolute inset-0;
 }
 
 /* packages/forms/resources/css/components/file-upload.css */
