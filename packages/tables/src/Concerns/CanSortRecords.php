@@ -65,6 +65,7 @@ trait CanSortRecords
         }
 
         $direction = $this->tableSortDirection ?? 'asc';
+        $direction = $this->tableSortDirection === 'desc' ? 'desc' : 'asc';
 
         if ($column = $this->getCachedTableColumn($columnName)) {
             $column->applySort($query, $direction);
