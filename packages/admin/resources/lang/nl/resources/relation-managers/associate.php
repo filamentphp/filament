@@ -4,11 +4,11 @@ return [
 
     'action' => [
 
-        'label' => 'Associëren',
+        'label' => 'Koppelen',
 
         'modal' => [
 
-            'heading' => 'Associëren :label',
+            'heading' => 'Koppel :label',
 
             'fields' => [
 
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'associate' => [
-                    'label' => 'Associëren',
+                    'label' => 'Koppelen',
                 ],
 
                 'associate_and_associate_another' => [
-                    'label' => 'Associëren & nieuwe Associëren',
+                    'label' => 'Koppelen & nieuwe koppelen',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'associated' => 'Geassocieerd',
+            'associated' => 'Gekoppeld',
         ],
 
     ],
