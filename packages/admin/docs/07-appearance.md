@@ -123,19 +123,15 @@ In your `webpack.mix.js` file, Register Tailwind CSS as a PostCSS plugin :
 ```js
 const mix = require('laravel-mix')
 
-mix.postCss('resources/css/app.css', 'public/css', [
+mix.postCss('resources/css/filament.css', 'public/css', [
     require('tailwindcss'), // [tl! focus]
 ])
 ```
 
-In `/resources/css/app.css`, import `filament/forms` vendor CSS and [TailwindCSS](https://tailwindcss.com):
+In `/resources/css/filament.css`, import Filament's vendor CSS:
 
 ```css
-@import '../../vendor/filament/forms/dist/module.esm.css';
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import '../../vendor/filament/filament/resources/css/app.css';
 ```
 
 Now, you may register the theme file in a service provider's `boot()` method:
@@ -144,7 +140,7 @@ Now, you may register the theme file in a service provider's `boot()` method:
 use Filament\Facades\Filament;
 
 Filament::serving(function () {
-    Filament::registerTheme(mix('css/app.css'));
+    Filament::registerTheme(mix('css/filament.css'));
 });
 ```
 
