@@ -355,7 +355,7 @@ public static function table(Table $table): Table
 
 ## Relations
 
-"Relation managers" in Filament allow administrators to list, create, attach, edit, detach and delete related records without leaving the resource's edit page. Resource classes contain a static `getRelations()` method that is used to register relation managers for your resource.
+"Relation managers" in Filament allow administrators to list, create, attach, edit, detach and delete related many records without leaving the resource's edit page. Resource classes contain a static `getRelations()` method that is used to register relation managers for your resource.
 
 ### `HasMany`, `HasManyThrough` and `MorphMany`
 
@@ -539,6 +539,25 @@ public static function attachForm(Form $form): Form
 ```
 
 As included in the above example, you may use `getAttachFormRecordSelect()` to create a select field for the record to attach.
+
+### `HasOne`, `BelongsTo` and `MorphOne`
+
+If you'd like to save data in a form to a singular relationship, you may use the [`relationship()` method for layout components](/docs/forms/layout#saving-data-to-relationships):
+
+```php
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+
+Fieldset::make('Metadata')
+    ->relationship('metadata')
+    ->schema([
+        TextInput::make('title'),
+        Textarea::make('description'),
+        FileUpload::make('image'),
+    ])
+```
 
 ## Global search
 
