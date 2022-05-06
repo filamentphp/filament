@@ -12,7 +12,7 @@ class MakePageCommand extends Command
 
     protected $description = 'Creates a Filament page class and view.';
 
-    protected $signature = 'make:filament-page {name?} {--R|resource=} {--F|force}';
+    protected $signature = 'make:filament-page {name?} {--R|resource=} {--T|type=} {--F|force}';
 
     public function handle(): int
     {
@@ -47,7 +47,7 @@ class MakePageCommand extends Command
             $resourceClass = (string) Str::of($resource)
                 ->afterLast('\\');
 
-            $resourcePage = $this->choice(
+            $resourcePage = $this->option('type') ?? $this->choice(
                 'Which type of page would you like to create?',
                 [
                     'custom' => 'Custom',
@@ -98,7 +98,7 @@ class MakePageCommand extends Command
         } else {
             $this->copyStubToApp($resourcePage === 'custom' ? 'CustomResourcePage' : 'ResourcePage', $path, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\' . $resourcePage,
-                'baseResourcePageClass' => $resourcePage,
+                'baseResourcePageClass' => $resourcePage === 'custom' ? 'Page' :  $resourcePage,
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,
