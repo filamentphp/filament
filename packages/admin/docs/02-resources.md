@@ -608,6 +608,29 @@ php artisan make:filament-resource Customer --simple
 
 Additionally, your resource will have no `getRelations()` method, as relation managers are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
 
+### Migrating to a simple resource
+
+If you want to migrate from a normal resource to a simple resource, first create a ManageRecords page:
+
+```bash
+php artisan make:filament-page ManageCustomers --resource=CustomerResource --type=ManageRecords
+```
+
+You must register this new page in your resource's `getPages()` method, and remove the others:
+
+```php
+public static function getPages(): array
+{
+    return [
+        'index' => Pages\ManageCustomers::route('/'),
+    ];
+}
+```
+
+Also, remove the `getRelations()` method from the resource.
+
+Finally, you may remove the other page classes from the resource's `Pages` directory.
+
 ## Pages
 
 Pages are classes that are associated with a resource. They are full-page [Livewire](https://laravel-livewire.com) components with a few extra utilities you can use with the admin panel.
@@ -635,23 +658,7 @@ php artisan make:filament-resource User --view-page
 If you want to add a view page to an existing resource, create a new page in your resource's `Pages` directory:
 
 ```bash
-php artisan make:filament-page ViewUser --resource=UserResource
-```
-
-Inside the new page class, you may extend the `Filament\Resources\Pages\ViewRecord` class and remove the `$view` property:
-
-```php
-<?php
-
-namespace App\Filament\Resources\UserResource\Pages;
-
-use App\Filament\Resources\UserResource;
-use Filament\Resources\Pages\ViewRecord;
-
-class ViewUser extends ViewRecord
-{
-    protected static string $resource = UserResource::class;
-}
+php artisan make:filament-page ViewUser --resource=UserResource --type=ViewRecord
 ```
 
 You must register this new page in your resource's `getPages()` method:
@@ -890,7 +897,7 @@ protected static string $view = 'filament.resources.users.pages.list-users';
 Filament allows you to create completely custom pages for resources. To create a new page, you can use:
 
 ```bash
-php artisan make:filament-page SortUsers --resource=UserResource
+php artisan make:filament-page SortUsers --resource=UserResource --type=custom
 ```
 
 This command will create two files - a page class in the `/Pages` directory of your resource directory, and a view in the `/pages` directory of the resource views directory.
