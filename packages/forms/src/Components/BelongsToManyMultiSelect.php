@@ -42,25 +42,6 @@ class BelongsToManyMultiSelect extends MultiSelect
             );
         });
 
-        $this->saveRelationshipsUsing(static function (BelongsToManyMultiSelect $component, ?array $state) {
-            $component->getRelationship()->sync($state ?? []);
-        });
-
-        $this->dehydrated(false);
-    }
-
-    public function preload(bool | Closure $condition = true): static
-    {
-        $this->isPreloaded = $condition;
-
-        return $this;
-    }
-
-    public function relationship(string | Closure $relationshipName, string | Closure $displayColumnName, ?Closure $callback = null): static
-    {
-        $this->displayColumnName = $displayColumnName;
-        $this->relationship = $relationshipName;
-
         $this->getOptionLabelsUsing(static function (BelongsToManyMultiSelect $component, array $values): array {
             $relationship = $component->getRelationship();
             $relatedKeyName = $relationship->getRelatedKeyName();
@@ -81,6 +62,25 @@ class BelongsToManyMultiSelect extends MultiSelect
                 ->pluck($component->getDisplayColumnName(), $relatedKeyName)
                 ->toArray();
         });
+
+        $this->saveRelationshipsUsing(static function (BelongsToManyMultiSelect $component, ?array $state) {
+            $component->getRelationship()->sync($state ?? []);
+        });
+
+        $this->dehydrated(false);
+    }
+
+    public function preload(bool | Closure $condition = true): static
+    {
+        $this->isPreloaded = $condition;
+
+        return $this;
+    }
+
+    public function relationship(string | Closure $relationshipName, string | Closure $displayColumnName, ?Closure $callback = null): static
+    {
+        $this->displayColumnName = $displayColumnName;
+        $this->relationship = $relationshipName;
 
         $this->getSearchResultsUsing(static function (BelongsToManyMultiSelect $component, ?string $searchQuery) use ($callback): array {
             $relationship = $component->getRelationship();

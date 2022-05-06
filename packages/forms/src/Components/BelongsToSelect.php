@@ -42,6 +42,27 @@ class BelongsToSelect extends Select
             );
         });
 
+        $this->getOptionLabelUsing(static function (BelongsToSelect $component, $value) {
+            $relationship = $component->getRelationship();
+
+            $record = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $value)->first();
+
+            if (! $record) {
+                return null;
+            }
+
+            if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                return $component->getOptionLabelFromRecord($record);
+            }
+
+            return $record->getAttributeValue($component->getDisplayColumnName());
+        });
+
+        $this->exists(
+            static fn (BelongsToSelect $component): ?string => ($relationship = $component->getRelationship()) ? $relationship->getModel()::class : null,
+            static fn (BelongsToSelect $component): string => $component->getRelationship()->getOwnerKeyName(),
+        );
+
         $this->saveRelationshipsUsing(static function (BelongsToSelect $component, Model $record, $state) {
             $component->getRelationship()->associate($state);
             $record->save();
@@ -64,22 +85,6 @@ class BelongsToSelect extends Select
     {
         $this->displayColumnName = $displayColumnName;
         $this->relationship = $relationshipName;
-
-        $this->getOptionLabelUsing(static function (BelongsToSelect $component, $value) {
-            $relationship = $component->getRelationship();
-
-            $record = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $value)->first();
-
-            if (! $record) {
-                return null;
-            }
-
-            if ($component->hasOptionLabelFromRecordUsingCallback()) {
-                return $component->getOptionLabelFromRecord($record);
-            }
-
-            return $record->getAttributeValue($component->getDisplayColumnName());
-        });
 
         $this->getSearchResultsUsing(static function (BelongsToSelect $component, ?string $searchQuery) use ($callback): array {
             $relationship = $component->getRelationship();
@@ -138,11 +143,6 @@ class BelongsToSelect extends Select
                 ->pluck($component->getDisplayColumnName(), $relationship->getOwnerKeyName())
                 ->toArray();
         });
-
-        $this->exists(
-            fn (BelongsToSelect $component): ?string => ($relationship = $component->getRelationship()) ? $relationship->getModel()::class : null,
-            fn (BelongsToSelect $component): string => $component->getRelationship()->getOwnerKeyName(),
-        );
 
         return $this;
     }
