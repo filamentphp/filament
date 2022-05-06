@@ -3,11 +3,12 @@
 namespace Filament\Forms\Components\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 interface CanEntangleWithSingularRelationships
 {
-    public function getRelationship(): ?HasOne;
+    public function getRelationship(): BelongsTo | HasOne | null;
 
     public function getCachedExistingRecord(): ?Model;
 

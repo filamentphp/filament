@@ -5,9 +5,8 @@ namespace Filament\Forms\Components\Concerns;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
-use Filament\Forms\Components\RelationshipRepeater;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 trait EntanglesStateWithSingularRelationship
@@ -67,7 +66,7 @@ trait EntanglesStateWithSingularRelationship
             ->model($this->getCachedExistingRecord() ?? $this->getRelatedModel());
     }
 
-    public function getRelationship(): ?HasOne
+    public function getRelationship(): BelongsTo | HasOne | null
     {
         $name = $this->getRelationshipName();
 
