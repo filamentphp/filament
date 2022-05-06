@@ -48,18 +48,17 @@ class MakePageCommand extends Command
                 ->afterLast('\\');
 
             $resourcePage = $this->choice(
-                'Which page type would you like to create?',
+                'Which type of page would you like to create?',
                 [
-                    'Custom Page',
-                    'ListRecords',
-                    'ManageRecords',
-                    'CreateRecord',
-                    'EditRecord',
-                    'ViewRecord',
+                    'custom' => 'Custom',
+                    'ListRecords' => 'List',
+                    'CreateRecord' => 'Create',
+                    'EditRecord' => 'Edit',
+                    'ViewRecord' => 'View',
+                    'ManageRecords' => 'Manage',
                 ],
-                '0'
+                'custom',
             );
-            $resourcePage = $resourcePage === 'Custom Page' ? 'Page' : $resourcePage;
         }
 
         $view = Str::of($page)
@@ -83,10 +82,10 @@ class MakePageCommand extends Command
 
         $files = array_merge(
             [$path],
-            $resourcePage === 'Page' ? [$viewPath] : []
+            $resourcePage === 'custom' ? [$viewPath] : [],
         );
 
-        if (!$this->option('force') && $this->checkForCollision($files)) {
+        if (! $this->option('force') && $this->checkForCollision($files)) {
             return static::INVALID;
         }
 
@@ -97,8 +96,7 @@ class MakePageCommand extends Command
                 'view' => $view,
             ]);
         } else {
-            $resourcePageStub = $resourcePage === 'Page' ? 'CustomResourcePage' : 'ResourcePage';
-            $this->copyStubToApp($resourcePageStub, $path, [
+            $this->copyStubToApp($resourcePage === 'custom' ? 'CustomResourcePage' : 'ResourcePage', $path, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\' . $resourcePage,
                 'baseResourcePageClass' => $resourcePage,
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
@@ -109,7 +107,7 @@ class MakePageCommand extends Command
             ]);
         }
 
-        if ($resource === null || $resourcePage === 'Page') {
+        if ($resource === null || $resourcePage === 'custom') {
             $this->copyStubToApp('PageView', $viewPath);
         }
 
