@@ -21,10 +21,10 @@ trait HasRelationship
         $relationship = $this->getRelationship();
 
         if ($relationship instanceof MorphToMany) {
-            $keyColumn = $relationship->getParentKeyName();
+            $keyColumn = $relationship->getQualifiedRelatedKeyName();
         } else {
             /** @var BelongsTo $relationship */
-            $keyColumn = $relationship->getOwnerKeyName();
+            $keyColumn = $relationship->getQualifiedOwnerKeyName();
         }
 
         return $keyColumn;
