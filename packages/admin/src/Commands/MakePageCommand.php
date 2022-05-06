@@ -97,19 +97,15 @@ class MakePageCommand extends Command
                 'view' => $view,
             ]);
         } else {
-            $viewLine = '';
-            if ($resourcePage === 'Page') {
-                $viewLine = PHP_EOL . PHP_EOL . '    protected static string $view = \'' . $view . '\';';
-            }
-
-            $this->copyStubToApp('ResourcePage', $path, [
+            $resourcePageStub = $resourcePage === 'Page' ? 'CustomResourcePage' : 'ResourcePage';
+            $this->copyStubToApp($resourcePageStub, $path, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\' . $resourcePage,
                 'baseResourcePageClass' => $resourcePage,
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $pageClass,
-                'viewLine' => $viewLine,
+                'view' => $view,
             ]);
         }
 
