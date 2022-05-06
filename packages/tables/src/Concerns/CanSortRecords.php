@@ -13,19 +13,17 @@ trait CanSortRecords
     public function sortTable(?string $column = null): void
     {
         if ($column === $this->tableSortColumn) {
-            if ($this->tableSortDirection === 'asc') {
-                $direction = 'desc';
-            } elseif ($this->tableSortDirection === 'desc') {
-                $column = null;
-                $direction = null;
-            } else {
-                $direction = 'asc';
-            }
+            $direction = match ($this->tableSortDirection) {
+                'asc' => 'desc',
+                'desc' => null,
+                default => 'asc',
+            };
         } else {
             $direction = 'asc';
         }
 
         $this->tableSortColumn = $column;
+        $this->tableSortColumn = $direction ? $column : null;
         $this->tableSortDirection = $direction;
 
         $this->updatedTableSort();
