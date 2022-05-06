@@ -1,5 +1,6 @@
 @props([
-    'widgetRecord' => null,
+    'modals' => null,
+    'widgetData' => [],
 ])
 
 <div {{ $attributes->class(['filament-page']) }}>
@@ -15,13 +16,13 @@
         @endif
 
         @if ($headerWidgets = $this->getHeaderWidgets())
-            <x-filament::widgets :widgets="$headerWidgets" :data="['record' => $widgetRecord]" />
+            <x-filament::widgets :widgets="$headerWidgets" :data="$widgetData" />
         @endif
 
         {{ $slot }}
 
         @if ($footerWidgets = $this->getFooterWidgets())
-            <x-filament::widgets :widgets="$footerWidgets" :data="['record' => $widgetRecord]" />
+            <x-filament::widgets :widgets="$footerWidgets" :data="$widgetData" />
         @endif
 
         @if ($footer = $this->getFooter())
