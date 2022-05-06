@@ -27,6 +27,12 @@ class RelationshipRepeater extends Repeater
             }
         });
 
+        $this->loadStateFromRelationshipsUsing(static function (RelationshipRepeater $component) {
+            $component->clearCachedExistingRecords();
+
+            $component->fillFromRelationship();
+        });
+
         $this->saveRelationshipsUsing(static function (RelationshipRepeater $component, ?array $state) {
             if (! is_array($state)) {
                 $state = [];
@@ -47,7 +53,10 @@ class RelationshipRepeater extends Repeater
                 $recordsToDelete[] = $keyToCheckForDeletion;
             }
 
-            $relationship->whereIn($localKeyName, $recordsToDelete)->get()->each(fn (Model $record) => $record->delete());
+            $relationship
+                ->whereIn($localKeyName, $recordsToDelete)
+                ->get()
+                ->each(static fn (Model $record) => $record->delete());
 
             $childComponentContainers = $component->getChildComponentContainers();
 
@@ -72,12 +81,6 @@ class RelationshipRepeater extends Repeater
                 $record = $relationship->create($itemData);
                 $item->model($record)->saveRelationships();
             }
-        });
-
-        $this->loadStateFromRelationshipsUsing(static function (RelationshipRepeater $component, ?array $state) {
-            $component->clearCachedExistingRecords();
-
-            $component->fillFromRelationship();
         });
 
         $this->dehydrated(false);

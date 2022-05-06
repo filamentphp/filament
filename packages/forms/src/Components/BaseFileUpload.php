@@ -60,7 +60,7 @@ class BaseFileUpload extends Field
             }
 
             $files = collect(Arr::wrap($state))
-                ->mapWithKeys(fn (string $file): array => [(string) Str::uuid() => $file])
+                ->mapWithKeys(static fn (string $file): array => [(string) Str::uuid() => $file])
                 ->toArray();
 
             $component->state($files);
@@ -397,7 +397,7 @@ class BaseFileUpload extends Field
         $fileKeys = array_flip($fileKeys);
 
         $state = collect($this->getState())
-            ->sortBy(fn ($file, $fileKey) => $fileKeys[$fileKey] ?? null) // $fileKey may not be present in $fileKeys if it was added to the state during the reorder call
+            ->sortBy(static fn ($file, $fileKey) => $fileKeys[$fileKey] ?? null) // $fileKey may not be present in $fileKeys if it was added to the state during the reorder call
             ->toArray();
 
         $this->state($state);

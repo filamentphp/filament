@@ -9,5 +9,9 @@ interface CanEntangleWithSingularRelationships
 {
     public function getRelationship(): ?HasOne;
 
-    public function getRelatedRecord(): ?Model;
+    public function getCachedExistingRecord(): ?Model;
+
+    public function fillFromRelationship(): void;
+
+    public function clearCachedExistingRecord(): void;
 }

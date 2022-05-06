@@ -104,7 +104,7 @@ class BelongsToSelect extends Select
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->mapWithKeys(fn (Model $record) => [
+                    ->mapWithKeys(static fn (Model $record) => [
                         $record->{$relationship->getOwnerKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
@@ -133,7 +133,7 @@ class BelongsToSelect extends Select
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->mapWithKeys(fn (Model $record) => [
+                    ->mapWithKeys(static fn (Model $record) => [
                         $record->{$relationship->getOwnerKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();

@@ -42,7 +42,7 @@ class MultiSelect extends Field
             $options = $component->getOptions();
 
             return collect($values)
-                ->mapWithKeys(fn ($value) => [$value => $options[$value] ?? $value])
+                ->mapWithKeys(static fn ($value) => [$value => $options[$value] ?? $value])
                 ->toArray();
         });
 

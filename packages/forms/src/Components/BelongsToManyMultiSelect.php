@@ -37,7 +37,7 @@ class BelongsToManyMultiSelect extends MultiSelect
                 // https://github.com/laravel-filament/filament/issues/1111
                 $relatedModels
                     ->pluck($relationship->getRelatedKeyName())
-                    ->map(fn ($key): string => strval($key))
+                    ->map(static fn ($key): string => strval($key))
                     ->toArray(),
             );
         });
@@ -110,7 +110,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->mapWithKeys(fn (Model $record) => [
+                    ->mapWithKeys(static fn (Model $record) => [
                         $record->{$relationship->getRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
@@ -139,7 +139,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->mapWithKeys(fn (Model $record) => [
+                    ->mapWithKeys(static fn (Model $record) => [
                         $record->{$relationship->getRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
