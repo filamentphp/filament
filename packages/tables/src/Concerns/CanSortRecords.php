@@ -22,7 +22,6 @@ trait CanSortRecords
             $direction = 'asc';
         }
 
-        $this->tableSortColumn = $column;
         $this->tableSortColumn = $direction ? $column : null;
         $this->tableSortDirection = $direction;
 
@@ -62,7 +61,6 @@ trait CanSortRecords
             return $query;
         }
 
-        $direction = $this->tableSortDirection ?? 'asc';
         $direction = $this->tableSortDirection === 'desc' ? 'desc' : 'asc';
 
         if ($column = $this->getCachedTableColumn($columnName)) {
