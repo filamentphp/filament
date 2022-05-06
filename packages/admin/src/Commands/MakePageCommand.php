@@ -98,7 +98,7 @@ class MakePageCommand extends Command
         } else {
             $this->copyStubToApp($resourcePage === 'custom' ? 'CustomResourcePage' : 'ResourcePage', $path, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\' . $resourcePage,
-                'baseResourcePageClass' => $resourcePage === 'custom' ? 'Page' :  $resourcePage,
+                'baseResourcePageClass' => $resourcePage === 'custom' ? 'Page' : $resourcePage,
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,
