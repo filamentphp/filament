@@ -25,6 +25,11 @@ class MakeResourceCommand extends Command
             ->trim(' ')
             ->studly()
             ->replace('/', '\\');
+
+        if (blank($model)) {
+            $model = 'Resource';
+        }
+
         $modelClass = (string) Str::of($model)->afterLast('\\');
         $modelNamespace = Str::of($model)->contains('\\') ?
             (string) Str::of($model)->beforeLast('\\') :
@@ -90,10 +95,10 @@ class MakeResourceCommand extends Command
 
         $this->copyStubToApp('Resource', $resourcePath, [
             'formSchema' => $this->option('generate') ? $this->getResourceFormSchema(
-                ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass
+                ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass,
             ) : $this->indentString('//', 4),
-            'model' => $model,
-            'modelClass' => $modelClass,
+            'model' => $model === 'Resource' ? 'Resource as ResourceModel' : $model,
+            'modelClass' => $model === 'Resource' ? 'ResourceModel' : $modelClass,
             'namespace' => 'App\\Filament\\Resources' . ($resourceNamespace !== '' ? "\\{$resourceNamespace}" : ''),
             'resource' => $resource,
             'resourceClass' => $resourceClass,
