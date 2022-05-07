@@ -4,11 +4,11 @@ return [
 
     'action' => [
 
-        'label' => 'Dołącz',
+        'label' => 'Powiąż',
 
         'modal' => [
 
-            'heading' => 'Dołączanie :label',
+            'heading' => 'Powiązywanie :label',
 
             'fields' => [
 
@@ -20,12 +20,12 @@ return [
 
             'actions' => [
 
-                'attach' => [
-                    'label' => 'Dołącz',
+                'associate' => [
+                    'label' => 'Powiąż',
                 ],
 
-                'attach_and_attach_another' => [
-                    'label' => 'Dołącz i dołącz kolejny',
+                'associate_and_associate_another' => [
+                    'label' => 'Powiąż i powiąż kolejny',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Dołączono',
+            'associated' => 'Powiązano',
         ],
 
     ],
