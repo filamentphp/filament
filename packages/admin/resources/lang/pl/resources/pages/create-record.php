@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Utwórz :label',
+    'title' => 'Tworzenie :label',
 
-    'breadcrumb' => 'Utwórz',
+    'breadcrumb' => 'Tworzenie',
 
     'form' => [
 

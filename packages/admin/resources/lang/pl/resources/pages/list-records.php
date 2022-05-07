@@ -29,7 +29,7 @@ return [
             ],
 
             'messages' => [
-                'created' => 'Created',
+                'created' => 'Utworzono',
             ],
 
         ],
