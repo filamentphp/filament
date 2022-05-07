@@ -79,7 +79,6 @@ class BelongsToManyRelationManager extends RelationManager
         return $record;
     }
 
-    // https://github.com/laravel/framework/issues/4962
     protected function getTableQuery(): Builder
     {
         $query = parent::getTableQuery();
@@ -87,10 +86,15 @@ class BelongsToManyRelationManager extends RelationManager
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
-        /** @var Builder $query */
+        // https://github.com/laravel/framework/issues/4962
         $query->select(
             $relationship->getTable().'.*',
             $query->getModel()->getTable().'.*',
+        );
+
+        // https://github.com/laravel-filament/filament/issues/2079
+        $query->withCasts(
+            app($relationship->getPivotClass())->getCasts(),
         );
 
         return $query;
