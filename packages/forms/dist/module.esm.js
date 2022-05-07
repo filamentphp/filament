@@ -6629,8 +6629,6 @@ var date_time_picker_default = (Alpine) => {
     firstDayOfWeek,
     format: format4,
     isAutofocused,
-    maxDate,
-    minDate,
     state: state2
   }) => {
     const timezone2 = esm_default.tz.guess();
@@ -6642,8 +6640,6 @@ var date_time_picker_default = (Alpine) => {
       focusedMonth: null,
       focusedYear: null,
       hour: null,
-      maxDate,
-      minDate,
       minute: null,
       open: false,
       second: null,
@@ -6652,18 +6648,10 @@ var date_time_picker_default = (Alpine) => {
       months: [],
       init: function() {
         this.focusedDate = esm_default().tz(timezone2);
-        this.maxDate = esm_default(this.maxDate);
-        if (!this.maxDate.isValid()) {
-          this.maxDate = null;
-        }
-        this.minDate = esm_default(this.minDate);
-        if (!this.minDate.isValid()) {
-          this.minDate = null;
-        }
         let date = this.getSelectedDate() ?? esm_default().tz(timezone2).hour(0).minute(0).second(0);
-        if (this.maxDate !== null && date.isAfter(this.maxDate)) {
+        if (this.getMaxDate() !== null && date.isAfter(this.getMaxDate())) {
           date = null;
-        } else if (this.minDate !== null && date.isBefore(this.minDate)) {
+        } else if (this.getMinDate() !== null && date.isBefore(this.getMinDate())) {
           date = null;
         }
         this.hour = date?.hour() ?? 0;
@@ -6762,10 +6750,10 @@ var date_time_picker_default = (Alpine) => {
         });
         this.$watch("state", () => {
           let date2 = this.getSelectedDate();
-          if (this.maxDate !== null && date2.isAfter(this.maxDate)) {
+          if (this.getMaxDate() !== null && date2.isAfter(this.getMaxDate())) {
             date2 = null;
           }
-          if (this.minDate !== null && date2.isBefore(this.minDate)) {
+          if (this.getMinDate() !== null && date2.isBefore(this.getMinDate())) {
             date2 = null;
           }
           this.hour = date2?.hour() ?? 0;
@@ -6782,10 +6770,10 @@ var date_time_picker_default = (Alpine) => {
         this.open = false;
       },
       dateIsDisabled: function(date) {
-        if (this.maxDate && date.isAfter(this.maxDate)) {
+        if (this.getMaxDate() && date.isAfter(this.getMaxDate())) {
           return true;
         }
-        if (this.minDate && date.isBefore(this.minDate)) {
+        if (this.getMinDate() && date.isBefore(this.getMinDate())) {
           return true;
         }
         return false;
@@ -6845,6 +6833,14 @@ var date_time_picker_default = (Alpine) => {
           ...labels.slice(firstDayOfWeek),
           ...labels.slice(0, firstDayOfWeek)
         ];
+      },
+      getMaxDate: function() {
+        let date = esm_default(this.$refs.maxDate.value);
+        return date.isValid() ? date : null;
+      },
+      getMinDate: function() {
+        let date = esm_default(this.$refs.minDate.value);
+        return date.isValid() ? date : null;
       },
       getSelectedDate: function() {
         let date = esm_default(this.state, format4);
@@ -17877,15 +17873,14 @@ function outputLink(cap, link, raw, lexer2) {
     };
     lexer2.state.inLink = false;
     return token;
-  } else {
-    return {
-      type: "image",
-      raw,
-      href,
-      title,
-      text: escape(text2)
-    };
   }
+  return {
+    type: "image",
+    raw,
+    href,
+    title,
+    text: escape(text2)
+  };
 }
 function indentCodeCompensation(raw, text2) {
   const matchIndentToCode = raw.match(/^(\s+)(?:```)/);
@@ -18034,7 +18029,8 @@ var Tokenizer = class {
           endEarly = true;
         }
         if (!endEarly) {
-          const nextBulletRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}(?:[*+-]|\\d{1,9}[.)])`);
+          const nextBulletRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}(?:[*+-]|\\d{1,9}[.)])((?: [^\\n]*)?(?:\\n|$))`);
+          const hrRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$)`);
           while (src) {
             rawLine = src.split("\n", 1)[0];
             line = rawLine;
@@ -18042,6 +18038,9 @@ var Tokenizer = class {
               line = line.replace(/^ {1,4}(?=( {4})*[^ ])/g, "  ");
             }
             if (nextBulletRegex.test(line)) {
+              break;
+            }
+            if (hrRegex.test(src)) {
               break;
             }
             if (line.search(/[^ ]/) >= indent || !line.trim()) {
