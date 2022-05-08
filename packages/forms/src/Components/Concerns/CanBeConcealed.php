@@ -7,18 +7,29 @@ use Filament\Forms\Components\Contracts\CanConcealComponents;
 
 trait CanBeConcealed
 {
+    protected Component | bool | null $cachedConcealingComponent = null;
+
     public function getConcealingComponent(): ?Component
     {
+        if (filled($this->cachedConcealingComponent)) {
+            return $this->cachedConcealingComponent ?: null;
+        }
+
         $parentComponent = $this->getContainer()->getParentComponent();
 
         if (! $parentComponent) {
-            return null;
+            $this->cachedConcealingComponent = false;
+        } elseif ($parentComponent instanceof CanConcealComponents && $parentComponent->canConcealComponents()) {
+            $this->cachedConcealingComponent = $parentComponent;
+        } else {
+            $this->cachedConcealingComponent = $parentComponent->getConcealingComponent();
         }
 
-        if (! $parentComponent instanceof CanConcealComponents) {
-            return $parentComponent->getConcealingComponent();
-        }
+        return $this->cachedConcealingComponent ?: null;
+    }
 
-        return $parentComponent;
+    public function isConcealed(): bool
+    {
+        return (bool) $this->getConcealingComponent();
     }
 }

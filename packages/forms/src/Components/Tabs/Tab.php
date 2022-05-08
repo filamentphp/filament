@@ -28,4 +28,9 @@ class Tab extends Component implements CanConcealComponents
     {
         return $this->getContainer()->getParentComponent()->getId() . '-' . parent::getId() . '-tab';
     }
+
+    public function canConcealComponents(): bool
+    {
+        return true;
+    }
 }
