@@ -366,7 +366,7 @@ var require_utc = __commonJS((exports, module) => {
         var i2 = t3 || (this.$u ? "YYYY-MM-DDTHH:mm:ss[Z]" : "");
         return h.call(this, i2);
       }, u.valueOf = function() {
-        var t3 = this.$utils().u(this.$offset) ? 0 : this.$offset + (this.$x.$localOffset || new Date().getTimezoneOffset());
+        var t3 = this.$utils().u(this.$offset) ? 0 : this.$offset + (this.$x.$localOffset || this.$d.getTimezoneOffset());
         return this.$d.valueOf() - 6e4 * t3;
       }, u.isUTC = function() {
         return !!this.$u;
