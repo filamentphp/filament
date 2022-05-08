@@ -11871,8 +11871,6 @@ var date_time_picker_default = (Alpine) => {
     firstDayOfWeek,
     format: format4,
     isAutofocused,
-    maxDate,
-    minDate,
     state: state2
   }) => {
     const timezone2 = esm_default.tz.guess();
@@ -11884,8 +11882,6 @@ var date_time_picker_default = (Alpine) => {
       focusedMonth: null,
       focusedYear: null,
       hour: null,
-      maxDate,
-      minDate,
       minute: null,
       open: false,
       second: null,
@@ -11894,18 +11890,10 @@ var date_time_picker_default = (Alpine) => {
       months: [],
       init: function() {
         this.focusedDate = esm_default().tz(timezone2);
-        this.maxDate = esm_default(this.maxDate);
-        if (!this.maxDate.isValid()) {
-          this.maxDate = null;
-        }
-        this.minDate = esm_default(this.minDate);
-        if (!this.minDate.isValid()) {
-          this.minDate = null;
-        }
         let date = this.getSelectedDate() ?? esm_default().tz(timezone2).hour(0).minute(0).second(0);
-        if (this.maxDate !== null && date.isAfter(this.maxDate)) {
+        if (this.getMaxDate() !== null && date.isAfter(this.getMaxDate())) {
           date = null;
-        } else if (this.minDate !== null && date.isBefore(this.minDate)) {
+        } else if (this.getMinDate() !== null && date.isBefore(this.getMinDate())) {
           date = null;
         }
         this.hour = date?.hour() ?? 0;
@@ -12004,10 +11992,10 @@ var date_time_picker_default = (Alpine) => {
         });
         this.$watch("state", () => {
           let date2 = this.getSelectedDate();
-          if (this.maxDate !== null && date2.isAfter(this.maxDate)) {
+          if (this.getMaxDate() !== null && date2.isAfter(this.getMaxDate())) {
             date2 = null;
           }
-          if (this.minDate !== null && date2.isBefore(this.minDate)) {
+          if (this.getMinDate() !== null && date2.isBefore(this.getMinDate())) {
             date2 = null;
           }
           this.hour = date2?.hour() ?? 0;
@@ -12024,10 +12012,10 @@ var date_time_picker_default = (Alpine) => {
         this.open = false;
       },
       dateIsDisabled: function(date) {
-        if (this.maxDate && date.isAfter(this.maxDate)) {
+        if (this.getMaxDate() && date.isAfter(this.getMaxDate())) {
           return true;
         }
-        if (this.minDate && date.isBefore(this.minDate)) {
+        if (this.getMinDate() && date.isBefore(this.getMinDate())) {
           return true;
         }
         return false;
@@ -12087,6 +12075,14 @@ var date_time_picker_default = (Alpine) => {
           ...labels.slice(firstDayOfWeek),
           ...labels.slice(0, firstDayOfWeek)
         ];
+      },
+      getMaxDate: function() {
+        let date = esm_default(this.$refs.maxDate.value);
+        return date.isValid() ? date : null;
+      },
+      getMinDate: function() {
+        let date = esm_default(this.$refs.minDate.value);
+        return date.isValid() ? date : null;
       },
       getSelectedDate: function() {
         let date = esm_default(this.state, format4);

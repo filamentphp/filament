@@ -21,7 +21,7 @@ trait HasOptions
         $options = $this->evaluate($this->options);
 
         if (is_string($options) && function_exists('enum_exists') && enum_exists($options)) {
-            $options = collect($options::cases())->mapWithKeys(fn ($case) => [($case?->value ?? $case->name) => $case->name]);
+            $options = collect($options::cases())->mapWithKeys(static fn ($case) => [($case?->value ?? $case->name) => $case->name]);
         }
 
         if ($options instanceof Arrayable) {

@@ -30,7 +30,7 @@ class Repeater extends Field
 
         $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
             $items = collect($state ?? [])
-                ->mapWithKeys(fn ($itemData) => [(string) Str::uuid() => $itemData])
+                ->mapWithKeys(static fn ($itemData) => [(string) Str::uuid() => $itemData])
                 ->toArray();
 
             $component->state($items);

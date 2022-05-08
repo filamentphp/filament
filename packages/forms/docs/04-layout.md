@@ -94,6 +94,29 @@ use Filament\Forms\Components\Card;
 Card::make()->columns(1)
 ```
 
+### Saving data to relationships
+
+You may load and save the contents of a layout component to a `HasOne`, `BelongsTo` or `MorphOne` Eloquent relationship, using the `relationship()` method:
+
+```php
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+
+Fieldset::make('Metadata')
+    ->relationship('metadata')
+    ->schema([
+        TextInput::make('title'),
+        Textarea::make('description'),
+        FileUpload::make('image'),
+    ])
+```
+
+In this example, the `title`, `description` and `image` is automatically loaded from saved to the `metadata` relationship, and saved again when the form is submitted. If the `metadata` record does not exist, it is automatically created.
+
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
+
 ## Grid
 
 Generally, form fields are stacked on top of each other in one column. To change this, you may use a grid component:

@@ -36,7 +36,7 @@ trait HasComponents
     public function getFlatComponents(bool $withHidden = false): array
     {
         return collect($this->getComponents($withHidden))
-            ->map(function (Component $component) use ($withHidden) {
+            ->map(static function (Component $component) use ($withHidden) {
                 if ($component->hasChildComponentContainer()) {
                     return array_merge([$component], $component->getChildComponentContainer()->getFlatComponents($withHidden));
                 }
@@ -51,7 +51,7 @@ trait HasComponents
     {
         return collect($this->getFlatComponents($withHidden))
             ->whereInstanceOf(Field::class)
-            ->mapWithKeys(fn (Field $field) => [
+            ->mapWithKeys(static fn (Field $field) => [
                 $field->getName() => $field,
             ])
             ->all();

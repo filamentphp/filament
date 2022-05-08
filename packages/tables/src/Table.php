@@ -19,6 +19,8 @@ class Table extends ViewComponent
 {
     use Concerns\BelongsToLivewire;
 
+    protected ?View $content = null;
+
     protected ?View $contentFooter = null;
 
     protected ?string $description = null;
@@ -109,6 +111,13 @@ class Table extends ViewComponent
         return $this;
     }
 
+    public function content(?View $view): static
+    {
+        $this->content = $view;
+
+        return $this;
+    }
+
     public function contentFooter(?View $view): static
     {
         $this->contentFooter = $view;
@@ -192,6 +201,11 @@ class Table extends ViewComponent
         return collect($this->getLivewire()->getCachedTableColumns())
             ->filter(fn (Column $column): bool => ! $column->isToggledHidden())
             ->toArray();
+    }
+
+    public function getContent(): ?View
+    {
+        return $this->content;
     }
 
     public function getContentFooter(): ?View

@@ -2,8 +2,12 @@
 
 namespace Filament\Forms\Components;
 
-class Group extends Component
+use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
+
+class Group extends Component implements CanEntangleWithSingularRelationships
 {
+    use Concerns\EntanglesStateWithSingularRelationship;
+
     protected string $view = 'forms::components.group';
 
     final public function __construct(array $schema = [])

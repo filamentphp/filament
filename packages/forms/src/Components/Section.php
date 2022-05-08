@@ -7,8 +7,9 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
-class Section extends Component implements Contracts\CanConcealComponents
+class Section extends Component implements Contracts\CanConcealComponents, Contracts\CanEntangleWithSingularRelationships
 {
+    use Concerns\EntanglesStateWithSingularRelationship;
     use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.section';
@@ -103,5 +104,10 @@ class Section extends Component implements Contracts\CanConcealComponents
     public function isCollapsible(): bool
     {
         return (bool) $this->evaluate($this->isCollapsible);
+    }
+
+    public function canConcealComponents(): bool
+    {
+        return $this->isCollapsible();
     }
 }

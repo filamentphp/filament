@@ -3,7 +3,7 @@
     'label' => null,
 ])
 
-<li x-data="{ label: @js($label) }" class="filament-sidebar-group">
+<li x-data="{ label: {{ \Illuminate\Support\Js::from($label) }} }" class="filament-sidebar-group">
     @if ($label)
         <button
             @if ($collapsible)

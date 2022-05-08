@@ -65,25 +65,14 @@ In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to
 ],
 ```
 
-If you use a [custom theme](#building-themes), make sure to load the Tippy's CSS files as well:
-
-```bash
-npm install tippy.js --save-dev
-```
-
-```css
-@import '~tippy.js/dist/tippy.css';
-@import '~tippy.js/themes/light.css';
-```
-
 ## Building themes
 
 Filament allows you to change the fonts and color scheme used in the UI, by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".
 
-Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin. You may install these through NPM:
+Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin, and [Tippy.js](https://atomiks.github.io/tippyjs/). You may install these through NPM:
 
 ```bash
-npm install tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
+npm install tailwindcss @tailwindcss/forms @tailwindcss/typography tippy.js --save-dev
 ```
 
 To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
@@ -123,19 +112,15 @@ In your `webpack.mix.js` file, Register Tailwind CSS as a PostCSS plugin :
 ```js
 const mix = require('laravel-mix')
 
-mix.postCss('resources/css/app.css', 'public/css', [
+mix.postCss('resources/css/filament.css', 'public/css', [
     require('tailwindcss'), // [tl! focus]
 ])
 ```
 
-In `/resources/css/app.css`, import `filament/forms` vendor CSS and [TailwindCSS](https://tailwindcss.com):
+In `/resources/css/filament.css`, import Filament's vendor CSS:
 
 ```css
-@import '../../vendor/filament/forms/dist/module.esm.css';
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import '../../vendor/filament/filament/resources/css/app.css';
 ```
 
 Now, you may register the theme file in a service provider's `boot()` method:
@@ -144,7 +129,7 @@ Now, you may register the theme file in a service provider's `boot()` method:
 use Filament\Facades\Filament;
 
 Filament::serving(function () {
-    Filament::registerTheme(mix('css/app.css'));
+    Filament::registerTheme(mix('css/filament.css'));
 });
 ```
 

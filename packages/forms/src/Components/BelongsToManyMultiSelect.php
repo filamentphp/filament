@@ -37,9 +37,30 @@ class BelongsToManyMultiSelect extends MultiSelect
                 // https://github.com/laravel-filament/filament/issues/1111
                 $relatedModels
                     ->pluck($relationship->getRelatedKeyName())
-                    ->map(fn ($key): string => strval($key))
+                    ->map(static fn ($key): string => strval($key))
                     ->toArray(),
             );
+        });
+
+        $this->getOptionLabelsUsing(static function (BelongsToManyMultiSelect $component, array $values): array {
+            $relationship = $component->getRelationship();
+            $relatedKeyName = $relationship->getRelatedKeyName();
+
+            $relationshipQuery = $relationship->getRelated()->query()
+                ->whereIn($relatedKeyName, $values);
+
+            if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                return $relationshipQuery
+                    ->get()
+                    ->mapWithKeys(static fn (Model $record) => [
+                        $record->{$relatedKeyName} => $component->getOptionLabelFromRecord($record),
+                    ])
+                    ->toArray();
+            }
+
+            return $relationshipQuery
+                ->pluck($component->getDisplayColumnName(), $relatedKeyName)
+                ->toArray();
         });
 
         $this->saveRelationshipsUsing(static function (BelongsToManyMultiSelect $component, ?array $state) {
@@ -69,27 +90,6 @@ class BelongsToManyMultiSelect extends MultiSelect
         $this->displayColumnName = $displayColumnName;
         $this->relationship = $relationshipName;
 
-        $this->getOptionLabelsUsing(static function (BelongsToManyMultiSelect $component, array $values): array {
-            $relationship = $component->getRelationship();
-            $relatedKeyName = $relationship->getRelatedKeyName();
-
-            $relationshipQuery = $relationship->getRelated()->query()
-                ->whereIn($relatedKeyName, $values);
-
-            if ($component->hasOptionLabelFromRecordUsingCallback()) {
-                return $relationshipQuery
-                    ->get()
-                    ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relatedKeyName} => $component->getOptionLabelFromRecord($record),
-                    ])
-                    ->toArray();
-            }
-
-            return $relationshipQuery
-                ->pluck($component->getDisplayColumnName(), $relatedKeyName)
-                ->toArray();
-        });
-
         $this->getSearchResultsUsing(static function (BelongsToManyMultiSelect $component, ?string $searchQuery) use ($callback): array {
             $relationship = $component->getRelationship();
 
@@ -118,7 +118,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->mapWithKeys(fn (Model $record) => [
+                    ->mapWithKeys(static fn (Model $record) => [
                         $record->{$relationship->getRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
@@ -147,7 +147,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->mapWithKeys(fn (Model $record) => [
+                    ->mapWithKeys(static fn (Model $record) => [
                         $record->{$relationship->getRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
