@@ -34,8 +34,8 @@ class Tabs extends Component
     public function getTabsConfig(): array
     {
         return collect($this->getChildComponentContainer()->getComponents())
-            ->filter(fn (Tab $tab): bool => ! $tab->isHidden())
-            ->mapWithKeys(fn (Tab $tab): array => [$tab->getId() => $tab->getLabel()])
+            ->filter(static fn (Tab $tab): bool => ! $tab->isHidden())
+            ->mapWithKeys(static fn (Tab $tab): array => [$tab->getId() => $tab->getLabel()])
             ->toArray();
     }
 }

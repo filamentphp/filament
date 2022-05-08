@@ -193,18 +193,18 @@
                             </div>
                         @endif
 
-                        @if ($hasFiltersPopover)
-                            <x-tables::filters.popover
-                                :form="$getFiltersForm()"
-                                :width="$getFiltersFormWidth()"
-                                class="shrink-0"
-                            />
-                        @endif
-
                         @if ($isColumnToggleFormVisible)
                             <x-tables::toggleable
                                 :form="$getColumnToggleForm()"
                                 :width="$getColumnToggleFormWidth()"
+                                class="shrink-0"
+                            />
+                        @endif
+
+                        @if ($hasFiltersPopover)
+                            <x-tables::filters.popover
+                                :form="$getFiltersForm()"
+                                :width="$getFiltersFormWidth()"
                                 class="shrink-0"
                             />
                         @endif

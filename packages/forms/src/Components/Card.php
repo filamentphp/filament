@@ -2,8 +2,12 @@
 
 namespace Filament\Forms\Components;
 
-class Card extends Component
+use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
+
+class Card extends Component implements CanEntangleWithSingularRelationships
 {
+    use Concerns\EntanglesStateWithSingularRelationship;
+
     protected string $view = 'forms::components.card';
 
     final public function __construct(array $schema = [])

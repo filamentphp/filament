@@ -34,7 +34,7 @@ class BelongsToManyCheckboxList extends CheckboxList
                 // https://github.com/laravel-filament/filament/issues/1111
                 $relatedModels
                     ->pluck($relationship->getRelatedKeyName())
-                    ->map(fn ($key): string => strval($key))
+                    ->map(static fn ($key): string => strval($key))
                     ->toArray(),
             );
         });
@@ -65,7 +65,7 @@ class BelongsToManyCheckboxList extends CheckboxList
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->mapWithKeys(fn (Model $record) => [
+                    ->mapWithKeys(static fn (Model $record) => [
                         $record->{$relationship->getRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();

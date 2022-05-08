@@ -9,7 +9,7 @@ return [
     'actions' => [
 
         'edit' => [
-            'label' => 'Edycja',
+            'label' => 'Edytuj',
         ],
 
     ],

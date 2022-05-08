@@ -29,7 +29,7 @@ class MakeFieldCommand extends Command
         $view = Str::of($field)
             ->prepend('forms\\components\\')
             ->explode('\\')
-            ->map(fn ($segment) => Str::kebab($segment))
+            ->map(static fn ($segment) => Str::kebab($segment))
             ->implode('.');
 
         $path = app_path(
