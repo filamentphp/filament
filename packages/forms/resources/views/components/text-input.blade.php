@@ -48,13 +48,15 @@
                 id="{{ $getId() }}"
                 {!! ($inputMode = $getInputMode()) ? "inputmode=\"{$inputMode}\"" : null !!}
                 {!! $datalistOptions ? "list=\"{$getId()}-list\"" : null !!}
-                {!! filled($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
-                {!! filled($value = $getMaxValue()) ? "max=\"{$value}\"" : null !!}
-                {!! filled($length = $getMinLength()) ? "minlength=\"{$length}\"" : null !!}
-                {!! filled($value = $getMinValue()) ? "min=\"{$value}\"" : null !!}
                 {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
                 {!! ($interval = $getStep()) ? "step=\"{$interval}\"" : null !!}
-                {!! $isRequired() ? 'required' : null !!}
+                @if (! $isConcealed())
+                    {!! filled($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
+                    {!! filled($value = $getMaxValue()) ? "max=\"{$value}\"" : null !!}
+                    {!! filled($length = $getMinLength()) ? "minlength=\"{$length}\"" : null !!}
+                    {!! filled($value = $getMinValue()) ? "min=\"{$value}\"" : null !!}
+                    {!! $isRequired() ? 'required' : null !!}
+                @endif
                 {{ $getExtraInputAttributeBag()->class([
                     'block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70',
                     'dark:bg-gray-700 dark:text-white' => config('forms.dark_mode'),

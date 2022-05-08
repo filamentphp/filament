@@ -44,7 +44,9 @@
                 autocomplete="off"
                 {!! $isDisabled() ? 'disabled' : null !!}
                 {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
-                {!! $isRequired() ? 'required' : null !!}
+                @if (! $isConcealed())
+                    {!! $isRequired() ? 'required' : null !!}
+                @endif
                 {{ $getExtraInputAttributeBag()->class([
                     'text-gray-900 block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70',
                     'dark:bg-gray-700 dark:text-white' => config('forms.dark_mode'),
