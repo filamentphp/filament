@@ -1630,6 +1630,9 @@ trix-editor .attachment__metadata .attachment__size {
 .dark .choices__inner {
   @apply border-gray-600 bg-gray-700 text-white;
 }
+[dir=rtl] .choices__inner {
+  background-position: left .5rem center;
+}
 .is-focused .choices__inner,
 .is-open .choices__inner {
   @apply border-primary-600 ring-1 ring-inset ring-primary-600;
@@ -1654,6 +1657,9 @@ trix-editor .attachment__metadata .attachment__size {
 }
 .dark .choices__list--multiple .choices__item {
   @apply text-primary-500;
+}
+[dir=rtl] .choices__list--multiple .choices__item {
+  @apply break-normal;
 }
 .choices__list--dropdown,
 .choices__list[aria-expanded] {

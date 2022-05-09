@@ -54,6 +54,10 @@
     @apply border-gray-600 bg-gray-700 text-white;
 }
 
+[dir=rtl] .choices__inner {
+    background-position: left .5rem center;
+}
+
 .is-focused .choices__inner, .is-open .choices__inner {
     @apply border-primary-600 ring-1 ring-inset ring-primary-600;
 }
@@ -86,6 +90,10 @@
     @apply text-primary-500;
 }
 
+[dir=rtl] .choices__list--multiple .choices__item {
+    @apply break-normal;
+}
+
 .choices__list--dropdown, .choices__list[aria-expanded] {
     @apply mt-2 rounded-lg invisible z-[1] absolute w-full bg-white border border-gray-300 shadow-sm top-full overflow-hidden break-words will-change-[visibility];
 }
@@ -106,7 +114,8 @@
     @apply relative px-3 py-2;
 }
 
-[dir=rtl] .choices__list--dropdown .choices__item, [dir=rtl] .choices__list[aria-expanded] .choices__item {
+[dir=rtl] .choices__list--dropdown .choices__item,
+[dir=rtl] .choices__list[aria-expanded] .choices__item {
     @apply text-right;
 }
 
