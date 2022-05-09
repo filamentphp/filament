@@ -21,12 +21,7 @@ class Action extends BaseAction
     use HasKeyBindings;
     use HasTooltip;
 
-    protected function setUp(): void
-    {
-        $this->view ?? $this->button();
-
-        parent::setUp();
-    }
+    protected string $view = 'filament::pages.actions.button-action';
 
     public function button(): static
     {

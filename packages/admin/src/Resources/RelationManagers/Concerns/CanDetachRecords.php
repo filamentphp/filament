@@ -69,7 +69,7 @@ trait CanDetachRecords
             ->modalHeading(__('filament::resources/relation-managers/detach.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->detach())
             ->color('danger')
-            ->defaultIcon('heroicon-s-x')
+            ->icon('heroicon-s-x')
             ->hidden(fn (Model $record): bool => ! static::canDetach($record));
     }
 

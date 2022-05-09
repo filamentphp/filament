@@ -89,7 +89,7 @@ trait CanDissociateRecords
             ->modalHeading(__('filament::resources/relation-managers/dissociate.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->dissociate())
             ->color('danger')
-            ->defaultIcon('heroicon-s-x')
+            ->icon('heroicon-s-x')
             ->hidden(fn (Model $record): bool => ! static::canDissociate($record));
     }
 

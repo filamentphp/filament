@@ -357,10 +357,10 @@ class FilamentManager
     {
         $type = config('filament.layout.tables.actions.type');
 
-        if (filled($type) && class_exists($type)) {
-            return $type::make($name);
+        if (blank($type) || (! class_exists($type))) {
+            $type = Action::class;
         }
 
-        return Action::make($name);
+        return $type::make($name);
     }
 }

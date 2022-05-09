@@ -15,12 +15,7 @@ class Action extends BaseAction
     use CanOpenUrl;
     use HasTooltip;
 
-    protected function setUp(): void
-    {
-        $this->view ?? $this->iconButton();
-
-        parent::setUp();
-    }
+    protected string $view = 'forms::components.actions.icon-button-action';
 
     public function iconButton(): static
     {

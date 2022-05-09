@@ -87,7 +87,7 @@ trait CanEditRecords
             ->modalButton(__('filament::resources/relation-managers/edit.action.modal.actions.save.label'))
             ->modalHeading(__('filament::resources/relation-managers/edit.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->save())
-            ->defaultIcon('heroicon-s-pencil')
+            ->icon('heroicon-s-pencil')
             ->hidden(fn (Model $record): bool => ! static::canEdit($record));
     }
 }
