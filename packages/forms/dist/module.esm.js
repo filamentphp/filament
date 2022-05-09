@@ -21935,6 +21935,24 @@ var file_upload_default = (Alpine) => {
           const orderedFileKeys = files.map((file2) => file2.source instanceof File ? file2.serverId : this.uploadedFileUrlIndex[file2.source] ?? null).filter((fileKey) => fileKey);
           await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse());
         });
+        this.pond.on("addfilestart", async () => {
+          this.dispatchFormEvent("file-upload-started");
+        });
+        this.pond.on("processfiles", async () => {
+          this.dispatchFormEvent("file-upload-finished");
+        });
+        this.pond.on("processfileabort", async () => {
+          this.dispatchFormEvent("file-upload-finished");
+        });
+        this.pond.on("processfilerevert", async () => {
+          this.dispatchFormEvent("file-upload-finished");
+        });
+      },
+      dispatchFormEvent: function(name2) {
+        this.pond.element.querySelector("input")?.form?.dispatchEvent(new CustomEvent(name2, {
+          composed: true,
+          cancelable: true
+        }));
       },
       getUploadedFileUrls: async function() {
         const uploadedFileUrls = await getUploadedFileUrlsUsing();

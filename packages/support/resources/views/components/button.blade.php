@@ -68,9 +68,6 @@
 
 @if ($tag === 'button')
     <button
-        @if ($keyBindings || $tooltip)
-            x-data="{}"
-        @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ implode('.', $keyBindings) }}
         @endif
@@ -82,6 +79,29 @@
         {!! $hasLoadingIndicator ? 'wire:loading.class="opacity-70 cursor-wait"' : '' !!}
         {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
         {!! $disabled ? 'disabled' : '' !!}
+        @if ($form)
+            x-data="{
+                form: null,
+                label: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
+                isUploadingFile: false
+            }"
+            x-html="isUploadingFile ? '{{ __('filament-support::components/button.messages.uploading_file') }}' : label"
+            x-bind:disabled="isUploadingFile"
+            x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
+            x-init="
+                form = $el.closest('form')
+
+                form?.addEventListener('file-upload-started', () => {
+                    isUploadingFile = true
+                })
+
+                form?.addEventListener('file-upload-finished', () => {
+                    isUploadingFile = false
+                })
+            "
+        @elseif ($keyBindings || $tooltip)
+            x-data="{}"
+        @endif
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
@@ -116,24 +136,10 @@
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
-        wire:loading.attr="disabled"
-        {!! $hasLoadingIndicator ? 'wire:loading.class="opacity-70 cursor-wait"' : '' !!}
-        {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
-        @elseif ($hasLoadingIndicator)
-            <svg
-                wire:loading
-                {!! $loadingIndicatorTarget ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
-                @class([$iconClasses, 'animate-spin'])
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-            >
-                <path d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z" />
-            </svg>
         @endif
 
         <span>{{ $slot }}</span>

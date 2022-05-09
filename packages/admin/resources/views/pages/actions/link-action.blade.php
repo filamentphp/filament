@@ -4,5 +4,5 @@
     :icon-position="$getIconPosition()"
     class="filament-page-link-action"
 >
-    {{ $getLabel }}
+    {{ $getLabel() }}
 </x-filament::pages.actions.action>

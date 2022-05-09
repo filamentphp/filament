@@ -5,5 +5,5 @@
     :icon-position="$getIconPosition()"
     class="filament-tables-button-action"
 >
-    {{ $getLabel }}
+    {{ $getLabel() }}
 </x-tables::actions.action>
