@@ -144,7 +144,7 @@ export default (Alpine) => {
                     await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse())
                 })
 
-                this.pond.on('addfilestart', async () => {
+                this.pond.on('processfilestart', async () => {
                     this.dispatchFormEvent('file-upload-started')
                 })
 
@@ -162,7 +162,7 @@ export default (Alpine) => {
             },
 
             dispatchFormEvent: function (name) {
-                this.pond.element.closest('form')?.dispatchEvent(
+                this.$el.closest('form')?.dispatchEvent(
                     new CustomEvent(name, {
                         composed: true,
                         cancelable: true,

@@ -85,7 +85,6 @@
                 label: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
                 isUploadingFile: false
             }"
-            x-html="isUploadingFile ? '{{ __('filament-support::components/button.messages.uploading_file') }}' : label"
             x-bind:disabled="isUploadingFile"
             x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
             x-init="
@@ -107,19 +106,23 @@
         @if ($icon && $iconPosition === 'before')
             <x-dynamic-component :component="$icon" :class="$iconClasses"/>
         @elseif ($hasLoadingIndicator)
-            <svg
+            <x-filament-support::loading-indicator
                 wire:loading
-                {!! $loadingIndicatorTarget ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
-                @class([$iconClasses, 'animate-spin'])
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-            >
-                <path d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z" />
-            </svg>
+                :wire:target="$loadingIndicatorTarget"
+                :class="$iconClasses"
+            />
         @endif
 
-        <span>{{ $slot }}</span>
+        @if ($form)
+            <x-filament-support::loading-indicator
+                x-show="isUploadingFile"
+                :class="$iconClasses"
+            />
+        @endif
+
+        <span @if ($form) x-html="isUploadingFile ? '{{ __('filament-support::components/button.messages.uploading_file') }}' : label" @endif>
+            {{ $slot }}
+        </span>
 
         @if ($icon && $iconPosition === 'after')
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
@@ -142,7 +145,9 @@
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
         @endif
 
-        <span>{{ $slot }}</span>
+        <span>
+            {{ $slot }}
+        </span>
 
         @if ($icon && $iconPosition === 'after')
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
