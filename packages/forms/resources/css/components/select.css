@@ -135,7 +135,7 @@
 }
 
 .choices__button {
-    @apply -indent-96 appearance-none border-0 bg-transparent bg-no-repeat bg-center cursor-pointer;
+    @apply -indent-[100vw] text-transparent appearance-none border-0 bg-transparent bg-no-repeat bg-center cursor-pointer;
 }
 
 .choices__button:focus {
