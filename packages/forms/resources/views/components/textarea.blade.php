@@ -41,8 +41,6 @@
             x-on:input="render()"
             style="height: 150px"
             {{ $getExtraAlpineAttributeBag() }}
-        @elseif ($concealingComponent)
-            x-data="{}"
         @endif
     ></textarea>
 </x-dynamic-component>
