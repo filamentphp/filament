@@ -71,7 +71,7 @@
 }
 
 .choices__list--multiple {
-    @apply pr-6 inline-flex flex-wrap gap-1;
+    @apply pr-6 flex flex-wrap gap-1;
 }
 
 .choices__list--multiple:not(:empty) {
