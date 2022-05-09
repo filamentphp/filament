@@ -21935,7 +21935,7 @@ var file_upload_default = (Alpine) => {
           const orderedFileKeys = files.map((file2) => file2.source instanceof File ? file2.serverId : this.uploadedFileUrlIndex[file2.source] ?? null).filter((fileKey) => fileKey);
           await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse());
         });
-        this.pond.on("addfilestart", async () => {
+        this.pond.on("processfilestart", async () => {
           this.dispatchFormEvent("file-upload-started");
         });
         this.pond.on("processfiles", async () => {
@@ -21949,7 +21949,7 @@ var file_upload_default = (Alpine) => {
         });
       },
       dispatchFormEvent: function(name2) {
-        this.pond.element.closest("form")?.dispatchEvent(new CustomEvent(name2, {
+        this.$el.closest("form")?.dispatchEvent(new CustomEvent(name2, {
           composed: true,
           cancelable: true
         }));
