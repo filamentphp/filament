@@ -65,7 +65,7 @@
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
             uploadButtonPosition: '{{ $getUploadButtonPosition() }}',
             uploadProgressIndicatorPosition: '{{ $getUploadProgressIndicatorPosition() }}',
-            uploadUsing: async (fileKey, file, success, error, progress) => {
+            uploadUsing: (fileKey, file, success, error, progress) => {
                 $wire.upload(`{{ $getStatePath() }}.${fileKey}`, file, () => {
                     success(fileKey)
                 }, error, progress)

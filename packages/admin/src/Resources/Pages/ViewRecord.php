@@ -4,7 +4,6 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
-use Filament\Pages\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -70,7 +69,7 @@ class ViewRecord extends Page
 
     protected function getEditAction(): Action
     {
-        return ButtonAction::make('edit')
+        return Action::make('edit')
             ->label(__('filament::resources/pages/view-record.actions.edit.label'))
             ->url(fn () => static::getResource()::getUrl('edit', ['record' => $this->record]));
     }

@@ -3,8 +3,8 @@
 namespace Filament\Resources\Pages;
 
 use Closure;
+use Filament\Facades\Filament;
 use Filament\Pages\Actions\Action;
-use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
@@ -83,10 +83,10 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         $resource = static::getResource();
 
-        return config('filament.layout.tables.actions.type')::make('view')
+        return Filament::makeTableAction('view')
             ->label(__('filament::resources/pages/list-records.table.actions.view.label'))
             ->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]))
-            ->icon('heroicon-o-eye')
+            ->defaultIcon('heroicon-s-eye')
             ->hidden(fn (Model $record): bool => ! $resource::canView($record));
     }
 
@@ -94,10 +94,10 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         $resource = static::getResource();
 
-        return config('filament.layout.tables.actions.type')::make('edit')
+        return Filament::makeTableAction('edit')
             ->label(__('filament::resources/pages/list-records.table.actions.edit.label'))
             ->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]))
-            ->icon('heroicon-o-pencil')
+            ->defaultIcon('heroicon-s-pencil')
             ->hidden(fn (Model $record): bool => ! $resource::canEdit($record));
     }
 
@@ -172,7 +172,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         $resource = static::getResource();
         $label = $resource::getLabel();
 
-        return ButtonAction::make('create')
+        return Action::make('create')
             ->label(__('filament::resources/pages/list-records.actions.create.label', ['label' => $label]))
             ->url(fn () => $resource::getUrl('create'));
     }

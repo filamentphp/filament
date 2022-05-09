@@ -2,6 +2,32 @@
 
 return [
 
+    'actions' => [
+
+        'modal' => [
+
+            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
+
+            'buttons' => [
+
+                'cancel' => [
+                    'label' => 'Cancel',
+                ],
+
+                'confirm' => [
+                    'label' => 'Confirm',
+                ],
+
+                'submit' => [
+                    'label' => 'Submit',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'builder' => [
 
         'buttons' => [
@@ -79,12 +105,6 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'No options match your search.',
-        'placeholder' => 'Select an option',
-        'search_prompt' => 'Start typing to search...',
-    ],
-
     'repeater' => [
 
         'buttons' => [
@@ -148,9 +168,39 @@ return [
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Create',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Create',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'loading_message' => 'Loading...',
+
         'no_search_results_message' => 'No options match your search.',
+
         'placeholder' => 'Select an option',
+
+        'searching_message' => 'Searching...',
+
         'search_prompt' => 'Start typing to search...',
+
     ],
 
     'tags_input' => [

@@ -44,6 +44,10 @@ return [
 
                 'label' => 'Delete',
 
+                'modal' => [
+                    'heading' => 'Delete :label',
+                ],
+
                 'messages' => [
                     'deleted' => 'Deleted',
                 ],

@@ -2,12 +2,6 @@
 
 return [
 
-    'multi_select' => [
-        'no_search_results_message' => 'Keine Optionen passen zu Ihrer Suche.',
-        'placeholder' => 'Wählen Sie eine Option',
-        'search_prompt' => 'Es stehen keine Optionen zur Auswahl.',
-    ],
-
     'rich_editor' => [
 
         'dialogs' => [

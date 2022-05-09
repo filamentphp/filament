@@ -2,57 +2,21 @@
 
 namespace Filament\Pages\Actions\Modal\Actions;
 
-use Filament\Support\Concerns\Configurable;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Traits\Conditionable;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\Tappable;
-use Illuminate\View\Component;
+use Filament\Support\Actions\Modal\Actions\Action as BaseAction;
 
-class Action extends Component implements Htmlable
+class Action extends BaseAction
 {
-    use Concerns\CanCancelAction;
-    use Concerns\CanSubmitForm;
-    use Concerns\HasAction;
-    use Concerns\HasColor;
-    use Concerns\HasLabel;
-    use Concerns\HasName;
-    use Concerns\HasView;
-    use Conditionable;
-    use Configurable;
-    use Macroable;
-    use Tappable;
-
-    final public function __construct(string $name)
-    {
-        $this->name($name);
-    }
-
-    public static function make(string $name): static
-    {
-        $static = app(static::class, ['name' => $name]);
-        $static->setUp();
-
-        return $static;
-    }
-
     protected function setUp(): void
     {
         $this->view ?? $this->button();
 
-        $this->configure();
+        parent::setUp();
     }
 
-    public function toHtml(): string
+    public function button(): static
     {
-        return $this->render()->render();
-    }
+        $this->view('filament::pages.actions.modal.actions.button-action');
 
-    public function render(): View
-    {
-        return view($this->getView(), array_merge($this->data(), [
-            'action' => $this,
-        ]));
+        return $this;
     }
 }

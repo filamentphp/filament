@@ -46,6 +46,8 @@ class ReplicateAction extends Action
 
             return $action->callAfterReplicaSaved($replica, $data);
         });
+
+        $this->defaultIcon('heroicon-s-duplicate');
     }
 
     public function beforeReplicaSaved(Closure $callback): static

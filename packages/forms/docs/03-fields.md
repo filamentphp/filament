@@ -274,7 +274,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('backgroundColor')->type('color')
 ```
 
-You may place text before and after the input using the `prefix()` and `postfix()` methods:
+You may place text before and after the input using the `prefix()` and `suffix()` methods:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -282,7 +282,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('domain')
     ->url()
     ->prefix('https://')
-    ->postfix('.com')
+    ->suffix('.com')
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
@@ -558,12 +558,48 @@ BelongsToSelect::make('authorId')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
+#### Creating new records
+
+You may define a custom form that can be used to create a new record and attach it to the `BelongsTo` relationship:
+
+```php
+use Filament\Forms\Components\BelongsToSelect;
+use Illuminate\Database\Eloquent\Model;
+
+BelongsToSelect::make('authorId')
+    ->relationship('author', 'name')
+    ->createOptionForm([
+        Forms\Components\TextInput::make('name')
+            ->required(),
+        Forms\Components\TextInput::make('email')
+            ->required()
+            ->email(),
+    ]),
+```
+
+The form opens in a modal, where the user can fill it with data. Upon form submission, the new record is selected by the field.
+
+Since HTML does not support nested `<form>` elements, you must also render the modal outside the `<form>` in the view. If you're using the [admin panel](/docs/admin), this is included already:
+
+```blade
+<form wire:submit.prevent="submit">
+    {{ $this->form }}
+    
+    <button type="submit">
+        Submit
+    </button>
+</form>
+
+{{ $this->modal }}
+```
+
 ## Multi-select
 
 The multi-select component allows you to select multiple values from a list of predefined options:
 
 ```php
 use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Select;
 
 MultiSelect::make('technologies')
     ->options([

@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -62,13 +63,13 @@ trait CanDetachRecords
 
     protected function getDetachAction(): Tables\Actions\Action
     {
-        return config('filament.layout.tables.actions.type')::make('detach')
+        return Filament::makeTableAction('detach')
             ->label(__('filament::resources/relation-managers/detach.action.label'))
             ->requiresConfirmation()
             ->modalHeading(__('filament::resources/relation-managers/detach.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->detach())
             ->color('danger')
-            ->icon('heroicon-o-x')
+            ->defaultIcon('heroicon-s-x')
             ->hidden(fn (Model $record): bool => ! static::canDetach($record));
     }
 

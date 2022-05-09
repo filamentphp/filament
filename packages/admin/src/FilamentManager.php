@@ -10,6 +10,7 @@ use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Navigation\UserMenuItem;
+use Filament\Tables\Actions\Action;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -78,7 +79,7 @@ class FilamentManager
     public function globalSearchProvider(string $provider): void
     {
         if (! in_array(GlobalSearchProvider::class, class_implements($provider))) {
-            throw new Exception('Global search provider ' . $provider . ' does not implement the ' . GlobalSearchProvider::class . ' interface.');
+            throw new Exception("Global search provider {$provider} does not implement the " . GlobalSearchProvider::class . ' interface.');
         }
 
         $this->globalSearchProvider = $provider;
@@ -350,5 +351,16 @@ class FilamentManager
     public function getMeta(): array
     {
         return array_unique($this->meta);
+    }
+
+    public function makeTableAction(string $name): Action
+    {
+        $type = config('filament.layout.tables.actions.type');
+
+        if (filled($type) && class_exists($type)) {
+            return $type::make($name);
+        }
+
+        return Action::make($name);
     }
 }

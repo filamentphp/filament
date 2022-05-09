@@ -75,12 +75,6 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'Żadne wyniki nie pasują do Twojego wyszukiwania.',
-        'placeholder' => 'Wybierz z listy',
-        'search_prompt' => 'Zacznij pisać aby wyszukać...',
-    ],
-
     'repeater' => [
 
         'buttons' => [

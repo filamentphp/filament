@@ -3,13 +3,9 @@
 namespace Filament\Forms;
 
 use Filament\Forms\Contracts\HasForms;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\Tappable;
-use Illuminate\View\Component as ViewComponent;
+use Filament\Support\Components\ViewComponent;
 
-class ComponentContainer extends ViewComponent implements Htmlable
+class ComponentContainer extends ViewComponent
 {
     use Concerns\BelongsToLivewire;
     use Concerns\BelongsToModel;
@@ -28,12 +24,13 @@ class ComponentContainer extends ViewComponent implements Htmlable
     use Concerns\ListensToEvents;
     use Concerns\SupportsComponentFileAttachments;
     use Concerns\SupportsFileUploadFields;
-    use Concerns\SupportsMultiSelectFields;
     use Concerns\SupportsSelectFields;
-    use Macroable;
-    use Tappable;
 
     protected array $meta = [];
+
+    protected string $view = 'forms::component-container';
+
+    protected string $viewIdentifier = 'container';
 
     final public function __construct(HasForms $livewire)
     {
@@ -43,17 +40,5 @@ class ComponentContainer extends ViewComponent implements Htmlable
     public static function make(HasForms $livewire): static
     {
         return app(static::class, ['livewire' => $livewire]);
-    }
-
-    public function toHtml(): string
-    {
-        return $this->render()->render();
-    }
-
-    public function render(): View
-    {
-        return view('forms::component-container', array_merge($this->data(), [
-            'container' => $this,
-        ]));
     }
 }

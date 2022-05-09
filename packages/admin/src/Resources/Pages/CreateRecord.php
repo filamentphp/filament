@@ -4,7 +4,6 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
-use Filament\Pages\Actions\ButtonAction;
 use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -116,22 +115,24 @@ class CreateRecord extends Page implements HasFormActions
 
     protected function getCreateFormAction(): Action
     {
-        return ButtonAction::make('create')
+        return Action::make('create')
             ->label(__('filament::resources/pages/create-record.form.actions.create.label'))
-            ->submit('create');
+            ->submit('create')
+            ->keyBindings(['mod+s']);
     }
 
     protected function getCreateAndCreateAnotherFormAction(): Action
     {
-        return ButtonAction::make('createAnother')
+        return Action::make('createAnother')
             ->label(__('filament::resources/pages/create-record.form.actions.create_and_create_another.label'))
             ->action('createAndCreateAnother')
+            ->keyBindings(['mod+shift+s'])
             ->color('secondary');
     }
 
     protected function getCancelFormAction(): Action
     {
-        return ButtonAction::make('cancel')
+        return Action::make('cancel')
             ->label(__('filament::resources/pages/create-record.form.actions.cancel.label'))
             ->url(static::getResource()::getUrl())
             ->color('secondary');

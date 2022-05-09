@@ -1,7 +1,7 @@
 @php
     $datalistOptions = $getDatalistOptions();
 
-    $sideLabelClasses = [
+    $affixLabelClasses = [
         'whitespace-nowrap group-focus-within:text-primary-500',
         'text-gray-400' => ! $errors->has($getStatePath()),
         'text-danger-400' => $errors->has($getStatePath()),
@@ -20,8 +20,10 @@
     :state-path="$getStatePath()"
 >
     <div {{ $attributes->merge($getExtraAttributes())->class(['flex items-center space-x-1 rtl:space-x-reverse group filament-forms-text-input-component']) }}>
+        {{ $getPrefixAction() }}
+
         @if ($label = $getPrefixLabel())
-            <span @class($sideLabelClasses)>
+            <span @class($affixLabelClasses)>
                 {{ $label }}
             </span>
         @endif
@@ -67,11 +69,13 @@
             />
         </div>
 
-        @if ($label = $getPostfixLabel())
-            <span @class($sideLabelClasses)>
+        @if ($label = $getSuffixLabel())
+            <span @class($affixLabelClasses)>
                 {{ $label }}
             </span>
         @endif
+
+        {{ $getSuffixAction() }}
     </div>
 
     @if ($datalistOptions)

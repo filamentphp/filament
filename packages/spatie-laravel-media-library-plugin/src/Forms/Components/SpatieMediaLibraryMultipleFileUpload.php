@@ -6,6 +6,7 @@ use Closure;
 
 /**
  * @deprecated Use `\Filament\Forms\Components\SpatieMediaLibraryFileUpload` instead, with the `multiple()` method.
+ * @see SpatieMediaLibraryFileUpload
  */
 class SpatieMediaLibraryMultipleFileUpload extends MultipleFileUpload
 {

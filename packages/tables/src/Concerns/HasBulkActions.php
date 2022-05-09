@@ -44,10 +44,11 @@ trait HasBulkActions
         try {
             return $action->call($data);
         } finally {
+            $this->mountedTableBulkAction = null;
             $this->selectedTableRecords = [];
 
             $this->dispatchBrowserEvent('close-modal', [
-                'id' => static::class . '-bulk-action',
+                'id' => static::class . '-table-bulk-action',
             ]);
         }
     }
@@ -82,7 +83,7 @@ trait HasBulkActions
         $this->resetErrorBag();
 
         $this->dispatchBrowserEvent('open-modal', [
-            'id' => static::class . '-bulk-action',
+            'id' => static::class . '-table-bulk-action',
         ]);
     }
 

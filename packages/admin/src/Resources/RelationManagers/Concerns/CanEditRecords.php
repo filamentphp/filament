@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 
@@ -79,14 +80,14 @@ trait CanEditRecords
 
     protected function getEditAction(): Tables\Actions\Action
     {
-        return config('filament.layout.tables.actions.type')::make('edit')
+        return Filament::makeTableAction('edit')
             ->label(__('filament::resources/relation-managers/edit.action.label'))
             ->form($this->getEditFormSchema())
             ->mountUsing(fn () => $this->fillEditForm())
             ->modalButton(__('filament::resources/relation-managers/edit.action.modal.actions.save.label'))
             ->modalHeading(__('filament::resources/relation-managers/edit.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->save())
-            ->icon('heroicon-o-pencil')
+            ->defaultIcon('heroicon-s-pencil')
             ->hidden(fn (Model $record): bool => ! static::canEdit($record));
     }
 }
