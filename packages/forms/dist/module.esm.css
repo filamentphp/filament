@@ -1700,7 +1700,8 @@ trix-editor .attachment__metadata .attachment__size {
   @apply opacity-70;
 }
 .choices__button {
-  @apply -indent-[100vw] text-transparent appearance-none border-0 bg-transparent bg-no-repeat bg-center cursor-pointer;
+  @apply appearance-none border-0 bg-transparent bg-no-repeat bg-center cursor-pointer;
+  text-indent: -9999px;
 }
 .choices__button:focus {
   @apply outline-none;
