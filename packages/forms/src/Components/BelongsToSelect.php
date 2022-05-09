@@ -59,7 +59,7 @@ class BelongsToSelect extends Select
         });
 
         $this->exists(
-            static fn (BelongsToSelect $component): ?string => ($relationship = $component->getRelationship()) ? $relationship->getModel()::class : null,
+            static fn (BelongsToSelect $component): string => $component->getRelationship()->getModel()::class,
             static fn (BelongsToSelect $component): string => $component->getRelationship()->getOwnerKeyName(),
         );
 
