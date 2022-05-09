@@ -1643,11 +1643,17 @@ trix-editor .attachment__metadata .attachment__size {
 .choices__list--single {
   @apply pr-12 inline-block w-full;
 }
+[dir=rtl] .choices__list--single {
+  @apply pl-12 pr-0;
+}
 .choices__list--single .choices__item {
   @apply w-full;
 }
 .choices__list--multiple {
   @apply pr-6 flex flex-wrap gap-1;
+}
+[dir=rtl] .choices__list--multiple {
+  @apply pl-6 pr-0;
 }
 .choices__list--multiple:not(:empty) {
   @apply flex mb-1;
@@ -1721,6 +1727,9 @@ trix-editor .attachment__metadata .attachment__size {
 .dark .choices[data-type*=select-one] .choices__button {
   @apply opacity-30;
   background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==);
+}
+[dir=rtl] .choices[data-type*=select-one] .choices__button {
+  @apply left-0 right-auto ml-9 mr-0;
 }
 .choices[data-type*=select-one] .choices__button:hover,
 .choices[data-type*=select-one] .choices__button:focus {
