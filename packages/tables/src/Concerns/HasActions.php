@@ -51,7 +51,7 @@ trait HasActions
             $this->mountedTableActionRecord = null;
 
             $this->dispatchBrowserEvent('close-modal', [
-                'id' => static::class . '-action',
+                'id' => static::class . '-table-action',
             ]);
         }
     }
@@ -86,7 +86,7 @@ trait HasActions
         $this->resetErrorBag();
 
         $this->dispatchBrowserEvent('open-modal', [
-            'id' => static::class . '-action',
+            'id' => static::class . '-table-action',
         ]);
     }
 

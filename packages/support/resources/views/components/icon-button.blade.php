@@ -27,9 +27,6 @@
 
 @if ($tag === 'button')
     <button
-        @if ($keyBindings || $tooltip)
-            x-data="{}"
-        @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ implode('.', $keyBindings) }}
         @endif
@@ -38,6 +35,29 @@
         @endif
         type="{{ $type }}"
         {!! $disabled ? 'disabled' : '' !!}
+        @if ($form)
+            x-data="{
+                form: null,
+                label: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
+                isUploadingFile: false
+            }"
+            x-html="isUploadingFile ? '{{ __('filament-support::components/icon-button.messages.uploading_file') }}' : label"
+            x-bind:disabled="isUploadingFile"
+            x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
+            x-init="
+                form = $el.closest('form')
+
+                form?.addEventListener('file-upload-started', () => {
+                    isUploadingFile = true
+                })
+
+                form?.addEventListener('file-upload-finished', () => {
+                    isUploadingFile = false
+                })
+            "
+        @elseif ($keyBindings || $tooltip)
+            x-data="{}"
+        @endif
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($label)

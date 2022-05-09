@@ -162,7 +162,7 @@ export default (Alpine) => {
             },
 
             dispatchFormEvent: function (name) {
-                this.pond.element.querySelector('input')?.form?.dispatchEvent(
+                this.pond.element.closest('form')?.dispatchEvent(
                     new CustomEvent(name, {
                         composed: true,
                         cancelable: true,

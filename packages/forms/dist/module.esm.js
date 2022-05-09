@@ -21949,7 +21949,7 @@ var file_upload_default = (Alpine) => {
         });
       },
       dispatchFormEvent: function(name2) {
-        this.pond.element.querySelector("input")?.form?.dispatchEvent(new CustomEvent(name2, {
+        this.pond.element.closest("form")?.dispatchEvent(new CustomEvent(name2, {
           composed: true,
           cancelable: true
         }));
