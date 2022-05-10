@@ -5,10 +5,12 @@ namespace Filament\Forms\Components\Concerns;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
+use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Spatie\Translatable\HasTranslations;
 
 trait EntanglesStateWithSingularRelationship
 {
@@ -29,18 +31,35 @@ trait EntanglesStateWithSingularRelationship
             $component->fillFromRelationship();
         });
 
-        $this->saveRelationshipsUsing(static function (Component $component, $state): void {
+        $this->saveRelationshipsUsing(static function (Component $component, HasForms $livewire, $state): void {
             /** @var Component|CanEntangleWithSingularRelationships $component */
 
             $record = $component->getCachedExistingRecord();
 
+            $activeLocale = $livewire->getActiveFormLocale();
+
             if ($record) {
-                $record->update($state);
+                if ($activeLocale && method_exists($record, 'setLocale')) {
+                    $record->setLocale($activeLocale);
+                }
+
+                $record->fill($state)->save();
 
                 return;
             }
 
-            $component->getRelationship()->create($state);
+            $relatedModel = $component->getRelatedModel();
+            $record = $activeLocale && method_exists($relatedModel, 'usingLocale') ?
+                $relatedModel::usingLocale($activeLocale) :
+                new $relatedModel();
+            $record->fill($state);
+
+            $relationship = $component->getRelationship();
+            match ($relationship::class) {
+                BelongsTo::class => $relationship->associate($record->save()),
+                HasOne::class => $relationship->save($record),
+                MorphOne::class => $relationship->save($record),
+            };
         });
 
         $this->dehydrated(false);
@@ -50,9 +69,25 @@ trait EntanglesStateWithSingularRelationship
 
     public function fillFromRelationship(): void
     {
-        $this->getChildComponentContainer()->fill(
-            $this->getCachedExistingRecord()?->toArray(),
-        );
+        $record = $this->getCachedExistingRecord();
+
+        if (! $record) {
+            $this->getChildComponentContainer()->fill();
+
+            return;
+        }
+
+        $data = $record->toArray();
+
+        $activeLocale = $this->getLivewire()->getActiveFormLocale();
+
+        if ($activeLocale && method_exists($record, 'getTranslatableAttributes') && method_exists($record, 'getTranslation')) {
+            foreach ($record->getTranslatableAttributes() as $attribute) {
+                $data[$attribute] = $record->getTranslation($attribute, $activeLocale);
+            }
+        }
+
+        $this->getChildComponentContainer()->fill($data);
     }
 
     public function getChildComponentContainer(): ComponentContainer

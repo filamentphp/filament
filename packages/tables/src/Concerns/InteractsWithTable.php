@@ -102,6 +102,11 @@ trait InteractsWithTable
         return $this->getTableForms();
     }
 
+    public function getActiveTableLocale(): ?string
+    {
+        return null;
+    }
+
     protected function getTableForms(): array
     {
         return [

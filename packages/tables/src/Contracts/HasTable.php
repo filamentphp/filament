@@ -15,6 +15,8 @@ interface HasTable extends HasForms
 
     public function deselectAllTableRecords(): void;
 
+    public function getActiveTableLocale(): ?string;
+
     public function getAllTableRecordKeys(): array;
 
     public function getAllTableRecordsCount(): int;
