@@ -22,11 +22,7 @@ class RelationshipRepeater extends Repeater
     {
         parent::setUp();
 
-        $this->afterStateHydrated(static function (RelationshipRepeater $component, ?array $state): void {
-            if (count($state ?? [])) {
-                return;
-            }
-        });
+        $this->afterStateHydrated(null);
 
         $this->loadStateFromRelationshipsUsing(static function (RelationshipRepeater $component) {
             $component->clearCachedExistingRecords();
