@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Powiązywanie :label',
+            'heading' => 'Powiąż :label',
 
             'fields' => [
 

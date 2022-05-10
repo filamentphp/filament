@@ -50,7 +50,11 @@ return [
         ],
 
         'open_actions' => [
-            'label' => 'Otwórz akcję',
+            'label' => 'Otwórz akcje',
+        ],
+
+        'toggle_columns' => [
+            'label' => 'Wybierz kolumny',
         ],
 
     ],
@@ -79,6 +83,16 @@ return [
 
         ],
 
+        'replicate' => [
+
+            'label' => 'Powiel',
+
+            'messages' => [
+                'replicated' => 'Rekord powielony',
+            ],
+
+        ],
+
     ],
 
     'empty' => [
@@ -91,6 +105,10 @@ return [
 
             'reset' => [
                 'label' => 'Zresetuj filtry',
+            ],
+
+            'close' => [
+                'label' => 'Zamknij',
             ],
 
         ],
@@ -107,7 +125,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '{1} 1 rekord zaznaczony.|[2,4]:count rekordy zaznaczone.|[5,*]:count rekordów zaznaczonych.',
+        'selected_count' => '{1} 1 rekord zaznaczony.|[2,*] Zaznaczono rekordów: :count.',
 
         'buttons' => [
 

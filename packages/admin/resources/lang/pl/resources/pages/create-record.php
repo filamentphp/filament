@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Tworzenie :label',
+    'title' => 'Utwórz :label',
 
-    'breadcrumb' => 'Tworzenie',
+    'breadcrumb' => 'Utwórz',
 
     'form' => [
 
@@ -19,7 +19,7 @@ return [
             ],
 
             'create_and_create_another' => [
-                'label' => 'Utwórz i dodaj kolejną',
+                'label' => 'Utwórz i dodaj kolejny',
             ],
 
         ],
