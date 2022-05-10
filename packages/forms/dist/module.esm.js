@@ -11959,6 +11959,9 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.hour = hour;
           }
+          if (this.state === null) {
+            return;
+          }
           let date2 = this.getSelectedDate() ?? this.focusedDate;
           this.setState(date2.hour(this.hour ?? 0));
         });
@@ -11973,6 +11976,9 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.minute = minute;
           }
+          if (this.state === null) {
+            return;
+          }
           let date2 = this.getSelectedDate() ?? this.focusedDate;
           this.setState(date2.minute(this.minute ?? 0));
         });
@@ -11986,6 +11992,9 @@ var date_time_picker_default = (Alpine) => {
             this.second = 59;
           } else {
             this.second = second;
+          }
+          if (this.state === null) {
+            return;
           }
           let date2 = this.getSelectedDate() ?? this.focusedDate;
           this.setState(date2.second(this.second ?? 0));
@@ -12130,7 +12139,6 @@ var date_time_picker_default = (Alpine) => {
       setState: function(date) {
         if (date === null) {
           this.state = null;
-          this.setDisplayText();
           return;
         } else {
           if (this.dateIsDisabled(date)) {
@@ -12138,7 +12146,6 @@ var date_time_picker_default = (Alpine) => {
           }
         }
         this.state = date.hour(this.hour ?? 0).minute(this.minute ?? 0).second(this.second ?? 0).format(format4);
-        this.setDisplayText();
       },
       togglePickerVisibility: function() {
         if (this.open) {
