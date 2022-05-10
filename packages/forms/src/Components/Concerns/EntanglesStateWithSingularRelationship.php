@@ -39,9 +39,7 @@ trait EntanglesStateWithSingularRelationship
             $activeLocale = $livewire->getActiveFormLocale();
 
             if ($record) {
-                if ($activeLocale && method_exists($record, 'setLocale')) {
-                    $record->setLocale($activeLocale);
-                }
+                $activeLocale && method_exists($record, 'setLocale') && $record->setLocale($activeLocale);
 
                 $record->fill($state)->save();
 
@@ -49,17 +47,22 @@ trait EntanglesStateWithSingularRelationship
             }
 
             $relatedModel = $component->getRelatedModel();
-            $record = $activeLocale && method_exists($relatedModel, 'usingLocale') ?
-                $relatedModel::usingLocale($activeLocale) :
-                new $relatedModel();
+
+            $record = new $relatedModel();
+
+            if ($activeLocale && method_exists($relatedModel, 'setLocale')) {
+                $record->setLocale($activeLocale);
+            }
+
             $record->fill($state);
 
             $relationship = $component->getRelationship();
-            match ($relationship::class) {
-                BelongsTo::class => $relationship->associate($record->save()),
-                HasOne::class => $relationship->save($record),
-                MorphOne::class => $relationship->save($record),
-            };
+
+            if ($relationship instanceof BelongsTo) {
+                $relationship->associate($record->save());
+            }
+
+            $relationship->save($record);
         });
 
         $this->dehydrated(false);
@@ -77,17 +80,26 @@ trait EntanglesStateWithSingularRelationship
             return;
         }
 
-        $data = $record->toArray();
+        $this->getChildComponentContainer()->fill(
+            $this->getStateFromRelatedRecord($record),
+        );
+    }
 
-        $activeLocale = $this->getLivewire()->getActiveFormLocale();
+    protected function getStateFromRelatedRecord(Model $record): array
+    {
+        $state = $record->toArray();
 
-        if ($activeLocale && method_exists($record, 'getTranslatableAttributes') && method_exists($record, 'getTranslation')) {
+        if (
+            ($activeLocale = $this->getLivewire()->getActiveFormLocale()) &&
+            method_exists($record, 'getTranslatableAttributes') &&
+            method_exists($record, 'getTranslation')
+        ) {
             foreach ($record->getTranslatableAttributes() as $attribute) {
-                $data[$attribute] = $record->getTranslation($attribute, $activeLocale);
+                $state[$attribute] = $record->getTranslation($attribute, $activeLocale);
             }
         }
 
-        $this->getChildComponentContainer()->fill($data);
+        return $state;
     }
 
     public function getChildComponentContainer(): ComponentContainer
