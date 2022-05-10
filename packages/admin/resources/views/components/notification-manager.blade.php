@@ -1,7 +1,7 @@
 <div
     x-data="{
         notifications: {{ \Illuminate\Support\Js::from(session()->pull('notifications', [])) }},
-        add (event) {
+        add: function (event) {
             this.notifications = this.notifications.concat(event.detail)
         },
         remove: function (notification) {
