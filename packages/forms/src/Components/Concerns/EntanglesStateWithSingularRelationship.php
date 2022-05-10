@@ -60,9 +60,9 @@ trait EntanglesStateWithSingularRelationship
 
             if ($relationship instanceof BelongsTo) {
                 $relationship->associate($record->save());
+            } else {
+                $relationship->save($record);
             }
-
-            $relationship->save($record);
         });
 
         $this->dehydrated(false);
