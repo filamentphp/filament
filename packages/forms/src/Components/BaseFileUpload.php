@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Livewire\TemporaryUploadedFile;
+use Throwable;
 
 class BaseFileUpload extends Field
 {
@@ -101,10 +102,14 @@ class BaseFileUpload extends Field
             }
 
             if ($storage->getVisibility($file) === 'private') {
-                return $storage->temporaryUrl(
-                    $file,
-                    now()->addMinutes(5),
-                );
+                try {
+                    return $storage->temporaryUrl(
+                        $file,
+                        now()->addMinutes(5),
+                    );
+                } catch (Throwable $exception) {
+                    // This driver does not support creating temporary URLs.
+                }
             }
 
             return $storage->url($file);
