@@ -2,32 +2,32 @@
 
 namespace Filament\Tables\Filters;
 
-use Filament\Support\Components\Component;
-use Illuminate\Support\Traits\Conditionable;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Toggle;
 
-class Filter extends Component
+class Filter extends BaseFilter
 {
-    use Concerns\BelongsToTable;
-    use Concerns\CanBeHidden;
-    use Concerns\CanSpanColumns;
-    use Concerns\EvaluatesClosures;
-    use Concerns\HasDefaultState;
-    use Concerns\HasFormSchema;
-    use Concerns\HasLabel;
-    use Concerns\HasName;
-    use Concerns\InteractsWithTableQuery;
-    use Conditionable;
+    public string $filterType = Checkbox::class;
 
-    final public function __construct(string $name)
+    public function toggle(): static
     {
-        $this->name($name);
+        $this->filterType = Toggle::class;
+        return $this;
     }
 
-    public static function make(string $name): static
+    public function checkbox(): static
     {
-        $static = app(static::class, ['name' => $name]);
-        $static->setUp();
+        $this->filterType = Checkbox::class;
+        return $this;
+    }
 
-        return $static;
+    public function getFormSchema(): array
+    {
+        return $this->evaluate($this->formSchema) ?? [
+            $this->filterType::make('isActive')
+                ->label($this->getLabel())
+                ->default($this->getDefaultState())
+                ->columnSpan($this->getColumnSpan()),
+        ];
     }
 }

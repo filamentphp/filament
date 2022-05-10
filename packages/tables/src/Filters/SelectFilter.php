@@ -6,7 +6,7 @@ use Closure;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 
-class SelectFilter extends Filter
+class SelectFilter extends BaseFilter
 {
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
