@@ -1677,7 +1677,7 @@ trix-editor .attachment__metadata .attachment__size {
 }
 .is-active.choices__list--dropdown,
 .is-active.choices__list[aria-expanded] {
-  @apply visible;
+  @apply visible z-10;
 }
 .choices__list--dropdown .choices__list,
 .choices__list[aria-expanded] .choices__list {
