@@ -12,12 +12,14 @@ class Filter extends BaseFilter
     public function toggle(): static
     {
         $this->filterType = Toggle::class;
+
         return $this;
     }
 
     public function checkbox(): static
     {
         $this->filterType = Checkbox::class;
+
         return $this;
     }
 

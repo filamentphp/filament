@@ -31,7 +31,7 @@ trait HasFilters
     public function getCachedTableFilters(): array
     {
         return collect($this->cachedTableFilters)
-            ->filter(fn (BaseFilter $filter): bool => !$filter->isHidden())
+            ->filter(fn (BaseFilter $filter): bool => ! $filter->isHidden())
             ->toArray();
     }
 
