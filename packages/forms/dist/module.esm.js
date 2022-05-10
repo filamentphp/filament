@@ -21938,6 +21938,12 @@ var file_upload_default = (Alpine) => {
         this.pond.on("processfilestart", async () => {
           this.dispatchFormEvent("file-upload-started");
         });
+        this.pond.on("processfileprogress", async () => {
+          this.dispatchFormEvent("file-upload-started");
+        });
+        this.pond.on("processfile", async () => {
+          this.dispatchFormEvent("file-upload-finished");
+        });
         this.pond.on("processfiles", async () => {
           this.dispatchFormEvent("file-upload-finished");
         });
