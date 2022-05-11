@@ -4,6 +4,7 @@
     'header',
     'heading',
     'subheading',
+    'displayClasses',
 ])
 
 <x-filament-support::modal
