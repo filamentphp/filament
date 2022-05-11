@@ -173,8 +173,8 @@
             @endif
 
             <div
-                x-show="{{ ($renderHeaderDiv = ($isSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length"
-                {!! ! $renderHeaderDiv ? 'x-cloak' : null !!}
+                x-show="{{ ($shouldRenderHeaderDiv = ($isSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length"
+                {!! ! $shouldRenderHeaderDiv ? 'x-cloak' : null !!}
                 class="flex items-center justify-between p-2 h-14"
             >
                 <div>
@@ -193,18 +193,18 @@
                             </div>
                         @endif
 
-                        @if ($hasFiltersPopover)
-                            <x-tables::filters.popover
-                                :form="$getFiltersForm()"
-                                :width="$getFiltersFormWidth()"
-                                class="shrink-0"
-                            />
-                        @endif
-
                         @if ($isColumnToggleFormVisible)
                             <x-tables::toggleable
                                 :form="$getColumnToggleForm()"
                                 :width="$getColumnToggleFormWidth()"
+                                class="shrink-0"
+                            />
+                        @endif
+
+                        @if ($hasFiltersPopover)
+                            <x-tables::filters.popover
+                                :form="$getFiltersForm()"
+                                :width="$getFiltersFormWidth()"
                                 class="shrink-0"
                             />
                         @endif
@@ -287,7 +287,7 @@
                                 :record-url="$getRecordUrl($record)"
                                 wire:key="{{ $record->getKey() }}"
                                 x-bind:class="{
-                                    'bg-primary-500/10': isRecordSelected('{{ $record->getKey() }}'),
+                                    'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $record->getKey() }}'),
                                 }"
                             >
                                 @if ($isSelectionEnabled())
@@ -372,8 +372,7 @@
             $action = $getMountedAction();
         @endphp
 
-        <x-tables::modal :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-action'"
-                         :width="$action?->getModalWidth()" display-classes="block">
+        <x-tables::modal :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-table-action'" :visible="filled($action)" :width="$action?->getModalWidth()" display-classes="block">
             @if ($action)
                 @if ($action->isModalCentered())
                     <x-slot name="heading">
@@ -413,8 +412,7 @@
             $action = $getMountedBulkAction();
         @endphp
 
-        <x-tables::modal :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-bulk-action'"
-                         :width="$action?->getModalWidth()" display-classes="block">
+        <x-tables::modal :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-table-bulk-action'" :visible="filled($action)" :width="$action?->getModalWidth()" display-classes="block">
             @if ($action)
                 @if ($action->isModalCentered())
                     <x-slot name="heading">

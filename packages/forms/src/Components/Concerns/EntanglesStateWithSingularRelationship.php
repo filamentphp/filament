@@ -5,6 +5,7 @@ namespace Filament\Forms\Components\Concerns;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
+use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -29,18 +30,40 @@ trait EntanglesStateWithSingularRelationship
             $component->fillFromRelationship();
         });
 
-        $this->saveRelationshipsUsing(static function (Component $component, $state): void {
+        $this->saveRelationshipsUsing(static function (Component $component, HasForms $livewire): void {
             /** @var Component|CanEntangleWithSingularRelationships $component */
+
+            $state = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
 
             $record = $component->getCachedExistingRecord();
 
+            $activeLocale = $livewire->getActiveFormLocale();
+
             if ($record) {
-                $record->update($state);
+                $activeLocale && method_exists($record, 'setLocale') && $record->setLocale($activeLocale);
+
+                $record->fill($state)->save();
 
                 return;
             }
 
-            $component->getRelationship()->create($state);
+            $relatedModel = $component->getRelatedModel();
+
+            $record = new $relatedModel();
+
+            if ($activeLocale && method_exists($relatedModel, 'setLocale')) {
+                $record->setLocale($activeLocale);
+            }
+
+            $record->fill($state);
+
+            $relationship = $component->getRelationship();
+
+            if ($relationship instanceof BelongsTo) {
+                $relationship->associate($record->save());
+            } else {
+                $relationship->save($record);
+            }
         });
 
         $this->dehydrated(false);
@@ -50,9 +73,34 @@ trait EntanglesStateWithSingularRelationship
 
     public function fillFromRelationship(): void
     {
+        $record = $this->getCachedExistingRecord();
+
+        if (! $record) {
+            $this->getChildComponentContainer()->fill();
+
+            return;
+        }
+
         $this->getChildComponentContainer()->fill(
-            $this->getCachedExistingRecord()?->toArray(),
+            $this->getStateFromRelatedRecord($record),
         );
+    }
+
+    protected function getStateFromRelatedRecord(Model $record): array
+    {
+        $state = $record->toArray();
+
+        if (
+            ($activeLocale = $this->getLivewire()->getActiveFormLocale()) &&
+            method_exists($record, 'getTranslatableAttributes') &&
+            method_exists($record, 'getTranslation')
+        ) {
+            foreach ($record->getTranslatableAttributes() as $attribute) {
+                $state[$attribute] = $record->getTranslation($attribute, $activeLocale);
+            }
+        }
+
+        return $state;
     }
 
     public function getChildComponentContainer(): ComponentContainer

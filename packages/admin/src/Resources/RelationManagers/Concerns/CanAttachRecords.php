@@ -6,7 +6,6 @@ use Filament\Forms\Components\Select;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
-use Filament\Tables\Actions\Modal\Actions\ButtonAction;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -178,9 +177,9 @@ trait CanAttachRecords
         $this->attach(another: true);
     }
 
-    protected function getAttachAction(): Tables\Actions\ButtonAction
+    protected function getAttachAction(): Tables\Actions\Action
     {
-        return Tables\Actions\ButtonAction::make('attach')
+        return Tables\Actions\Action::make('attach')
             ->label(__('filament::resources/relation-managers/attach.action.label'))
             ->form($this->getAttachFormSchema())
             ->mountUsing(fn () => $this->fillAttachForm())
@@ -188,7 +187,8 @@ trait CanAttachRecords
             ->modalHeading(__('filament::resources/relation-managers/attach.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->modalWidth('lg')
             ->action(fn () => $this->attach())
-            ->color('secondary');
+            ->color('secondary')
+            ->button();
     }
 
     protected function getAttachActionModalActions(): array
@@ -202,7 +202,7 @@ trait CanAttachRecords
 
     protected function getAttachActionAttachModalAction(): Tables\Actions\Modal\Actions\Action
     {
-        return ButtonAction::make('attach')
+        return Tables\Actions\Action::makeModalAction('attach')
             ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach.label'))
             ->submit('callMountedTableAction')
             ->color('primary');
@@ -210,7 +210,7 @@ trait CanAttachRecords
 
     protected function getAttachActionAttachAndAttachAnotherModalAction(): Tables\Actions\Modal\Actions\Action
     {
-        return ButtonAction::make('attachAndAttachAnother')
+        return Tables\Actions\Action::makeModalAction('attachAndAttachAnother')
             ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach_and_attach_another.label'))
             ->action('attachAndAttachAnother')
             ->color('secondary');
@@ -218,7 +218,7 @@ trait CanAttachRecords
 
     protected function getAttachActionCancelModalAction(): Tables\Actions\Modal\Actions\Action
     {
-        return ButtonAction::make('cancel')
+        return Tables\Actions\Action::makeModalAction('cancel')
             ->label(__('tables::table.actions.modal.buttons.cancel.label'))
             ->cancel()
             ->color('secondary');

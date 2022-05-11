@@ -18,6 +18,11 @@ trait Translatable
         $this->setActiveFormLocale();
     }
 
+    public function getActiveTableLocale(): ?string
+    {
+        return $this->activeLocale;
+    }
+
     protected function setActiveFormLocale(): void
     {
         $this->activeLocale = static::getResource()::getDefaultTranslatableLocale();

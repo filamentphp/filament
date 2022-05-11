@@ -4,7 +4,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
 use Filament\Pages;
-use Filament\Resources;
+use Filament\Tables\Actions\Action;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -206,7 +206,7 @@ return [
         ],
         'tables' => [
             'actions' => [
-                'type' => \Filament\Tables\Actions\LinkAction::class,
+                'type' => Action::class,
             ],
         ],
     ],

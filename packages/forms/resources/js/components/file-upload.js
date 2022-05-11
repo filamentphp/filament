@@ -143,6 +143,39 @@ export default (Alpine) => {
 
                     await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse())
                 })
+
+                this.pond.on('processfilestart', async () => {
+                    this.dispatchFormEvent('file-upload-started')
+                })
+
+                this.pond.on('processfileprogress', async () => {
+                    this.dispatchFormEvent('file-upload-started')
+                })
+
+                this.pond.on('processfile', async () => {
+                    this.dispatchFormEvent('file-upload-finished')
+                })
+
+                this.pond.on('processfiles', async () => {
+                    this.dispatchFormEvent('file-upload-finished')
+                })
+
+                this.pond.on('processfileabort', async () => {
+                    this.dispatchFormEvent('file-upload-finished')
+                })
+
+                this.pond.on('processfilerevert', async () => {
+                    this.dispatchFormEvent('file-upload-finished')
+                })
+            },
+
+            dispatchFormEvent: function (name) {
+                this.$el.closest('form')?.dispatchEvent(
+                    new CustomEvent(name, {
+                        composed: true,
+                        cancelable: true,
+                    })
+                )
             },
 
             getUploadedFileUrls: async function () {
@@ -153,7 +186,7 @@ export default (Alpine) => {
                 this.uploadedFileUrlIndex = Object.entries(this.fileKeyIndex)
                     .filter(value => value)
                     .reduce((obj, [key, value]) => {
-                        obj[value] = key 
+                        obj[value] = key
 
                         return obj
                     }, {})

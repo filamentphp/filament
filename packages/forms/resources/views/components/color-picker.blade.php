@@ -1,5 +1,5 @@
 @php
-    $sideLabelClasses = [
+    $affixLabelClasses = [
         'whitespace-nowrap group-focus-within:text-primary-500',
         'text-gray-400' => ! $errors->has($getStatePath()),
         'text-danger-400' => $errors->has($getStatePath()),
@@ -18,8 +18,10 @@
     :state-path="$getStatePath()"
 >
     <div {{ $attributes->merge($getExtraAttributes())->class(['flex items-center space-x-1 rtl:space-x-reverse group filament-forms-color-picker-component']) }}>
+        {{ $getPrefixAction() }}
+
         @if ($label = $getPrefixLabel())
-            <span @class($sideLabelClasses)>
+            <span @class($affixLabelClasses)>
                 {{ $label }}
             </span>
         @endif
@@ -44,7 +46,9 @@
                 autocomplete="off"
                 {!! $isDisabled() ? 'disabled' : null !!}
                 {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
-                {!! $isRequired() ? 'required' : null !!}
+                @if (! $isConcealed())
+                    {!! $isRequired() ? 'required' : null !!}
+                @endif
                 {{ $getExtraInputAttributeBag()->class([
                     'text-gray-900 block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70',
                     'dark:bg-gray-700 dark:text-white' => config('forms.dark_mode'),
@@ -84,10 +88,12 @@
             />
         </div>
 
-        @if ($label = $getPostfixLabel())
-            <span @class($sideLabelClasses)>
+        @if ($label = $getSuffixLabel())
+            <span @class($affixLabelClasses)>
                 {{ $label }}
             </span>
         @endif
+
+        {{ $getSuffixAction() }}
     </div>
 </x-dynamic-component>

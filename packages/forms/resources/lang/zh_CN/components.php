@@ -79,12 +79,6 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => '没有选项匹配您的搜索.',
-        'placeholder' => '请选择',
-        'search_prompt' => '没有可供选择的选项.',
-    ],
-
     'repeater' => [
 
         'buttons' => [

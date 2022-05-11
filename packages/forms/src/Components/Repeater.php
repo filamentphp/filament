@@ -22,6 +22,8 @@ class Repeater extends Field
 
     protected bool | Closure $isItemMovementDisabled = false;
 
+    protected bool | Closure $isInset = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -39,10 +41,6 @@ class Repeater extends Field
         $this->registerListeners([
             'repeater::createItem' => [
                 function (Repeater $component, string $statePath): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($statePath !== $component->getStatePath()) {
                         return;
                     }
@@ -59,10 +57,6 @@ class Repeater extends Field
             ],
             'repeater::deleteItem' => [
                 function (Repeater $component, string $statePath, string $uuidToDelete): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($statePath !== $component->getStatePath()) {
                         return;
                     }
@@ -77,10 +71,6 @@ class Repeater extends Field
             ],
             'repeater::moveItemDown' => [
                 function (Repeater $component, string $statePath, string $uuidToMoveDown): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($component->isItemMovementDisabled()) {
                         return;
                     }
@@ -97,10 +87,6 @@ class Repeater extends Field
             ],
             'repeater::moveItemUp' => [
                 function (Repeater $component, string $statePath, string $uuidToMoveUp): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($component->isItemMovementDisabled()) {
                         return;
                     }
@@ -117,10 +103,6 @@ class Repeater extends Field
             ],
             'repeater::moveItems' => [
                 function (Repeater $component, string $statePath, array $uuids): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($component->isItemMovementDisabled()) {
                         return;
                     }
@@ -197,6 +179,13 @@ class Repeater extends Field
         return $this;
     }
 
+    public function inset(bool | Closure $condition = true): static
+    {
+        $this->isInset = $condition;
+
+        return $this;
+    }
+
     public function hydrateDefaultItemState(string $uuid): void
     {
         $this->getChildComponentContainers()[$uuid]->hydrateDefaultState();
@@ -220,18 +209,23 @@ class Repeater extends Field
         return $this->evaluate($this->createItemButtonLabel);
     }
 
+    public function isItemMovementDisabled(): bool
+    {
+        return $this->evaluate($this->isItemMovementDisabled) || $this->isDisabled();
+    }
+
     public function isItemCreationDisabled(): bool
     {
-        return $this->evaluate($this->isItemCreationDisabled);
+        return $this->evaluate($this->isItemCreationDisabled) || $this->isDisabled() || (filled($this->getMaxItems()) && ($this->getMaxItems() <= $this->getItemsCount()));
     }
 
     public function isItemDeletionDisabled(): bool
     {
-        return $this->evaluate($this->isItemDeletionDisabled);
+        return $this->evaluate($this->isItemDeletionDisabled) || $this->isDisabled();
     }
 
-    public function isItemMovementDisabled(): bool
+    public function isInset(): bool
     {
-        return $this->evaluate($this->isItemMovementDisabled);
+        return (bool) $this->evaluate($this->isInset);
     }
 }

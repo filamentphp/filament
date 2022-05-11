@@ -2,12 +2,6 @@
 
 return [
 
-    'multi_select' => [
-        'no_search_results_message' => 'No s\'ha trobat cap opció que coincideixi amb la vostra cerca.',
-        'placeholder' => 'Trieu una opció',
-        'search_prompt' => 'No hi ha opcions disponibles',
-    ],
-
     'rich_editor' => [
 
         'dialogs' => [

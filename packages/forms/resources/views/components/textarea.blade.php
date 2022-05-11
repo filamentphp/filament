@@ -17,12 +17,14 @@
         {!! $isDisabled() ? 'disabled' : null !!}
         id="{{ $getId() }}"
         dusk="filament.forms.{{ $getStatePath() }}"
-        {!! filled($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
-        {!! filled($length = $getMinLength()) ? "minlength=\"{$length}\"" : null !!}
         {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
-        {!! $isRequired() ? 'required' : null !!}
         {!! ($rows = $getRows()) ? "rows=\"{$rows}\"" : null !!}
         {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
+        @if (! $isConcealed())
+            {!! filled($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
+            {!! filled($length = $getMinLength()) ? "minlength=\"{$length}\"" : null !!}
+            {!! $isRequired() ? 'required' : null !!}
+        @endif
         {{
             $attributes
                 ->merge($getExtraAttributes())

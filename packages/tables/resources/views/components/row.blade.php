@@ -3,12 +3,11 @@
 ])
 
 <tr
-    {{
-        $attributes->class([
-            'hover:bg-primary-500/5 dark:hover:bg-primary-500/5' => $recordUrl,
-            'filament-tables-row',
-        ])
-    }}
+    {{ $attributes->class([
+        'hover:bg-gray-50' => $recordUrl,
+        'dark:hover:bg-gray-500/10' => $recordUrl && config('tables.dark_mode'),
+        'filament-tables-row',
+    ]) }}
 >
     {{ $slot }}
 </tr>

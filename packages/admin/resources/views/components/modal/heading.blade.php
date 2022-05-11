@@ -1,3 +1,6 @@
-<h2 {{ $attributes->class(['text-xl font-bold tracking-tight filament-modal-heading']) }}>
+<x-filament-support::modal.heading
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
+    :dark-mode="config('filament.dark_mode')"
+>
     {{ $slot }}
-</h2>
+</x-filament-support::modal.heading>

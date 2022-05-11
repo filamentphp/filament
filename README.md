@@ -9,7 +9,7 @@
     <a href="https://php.net"><img alt="PHP 8.0" src="https://img.shields.io/badge/PHP-8.0-777BB4?style=for-the-badge&logo=php"></a>
 </p>
 
-Filament is a collection of tools for rapidly building beautiful TALL stack interfaces, designed for humans.
+Filament is a collection of tools for rapidly building beautiful TALL stack apps, designed for humans.
 
 ## Packages
 

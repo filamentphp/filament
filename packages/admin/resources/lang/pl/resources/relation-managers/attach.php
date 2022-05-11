@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Dołącz :label',
+            'heading' => 'Dołączanie :label',
 
             'fields' => [
 

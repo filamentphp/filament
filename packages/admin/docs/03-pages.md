@@ -23,10 +23,12 @@ Page classes are all full-page [Livewire](https://laravel-livewire.com) componen
 To define actions for a page, use the `getActions()` method:
 
 ```php
+use Filament\Pages\Actions\Action;
+
 protected function getActions(): array
 {
     return [
-        ButtonAction::make('settings')->action('openSettingsModal'),
+        Action::make('settings')->action('openSettingsModal'),
     ];
 }
 
@@ -39,10 +41,12 @@ public function openSettingsModal(): void
 The button's label is generated based on it's name. To override it, you may use the `label()` method:
 
 ```php
+use Filament\Pages\Actions\Action;
+
 protected function getActions(): array
 {
     return [
-        ButtonAction::make('settings')
+        Action::make('settings')
             ->label('Settings')
             ->action('openSettingsModal'),
     ];
@@ -52,10 +56,12 @@ protected function getActions(): array
 You may also allow the button to open a URL, using the `url()` method:
 
 ```php
+use Filament\Pages\Actions\Action;
+
 protected function getActions(): array
 {
     return [
-        ButtonAction::make('settings')
+        Action::make('settings')
             ->label('Settings')
             ->url(route('settings')),
     ];
@@ -65,10 +71,12 @@ protected function getActions(): array
 Buttons may have a `color()`. The default is `primary`, but you may use `secondary`, `success`, `warning`, or `danger`:
 
 ```php
+use Filament\Pages\Actions\Action;
+
 protected function getActions(): array
 {
     return [
-        ButtonAction::make('settings')->color('secondary'),
+        Action::make('settings')->color('secondary'),
     ];
 }
 ```
@@ -76,10 +84,12 @@ protected function getActions(): array
 Buttons may also have an `icon()`, which is the name of any Blade component. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
 ```php
+use Filament\Pages\Actions\Action;
+
 protected function getActions(): array
 {
     return [
-        ButtonAction::make('settings')->icon('heroicon-s-cog'),
+        Action::make('settings')->icon('heroicon-s-cog'),
     ];
 }
 ```
@@ -93,9 +103,9 @@ Actions may require additional confirmation or form information before they run.
 You may require confirmation before an action is run using the `requiresConfirmation()` method. This is useful for particularly destructive actions, such as those that delete records.
 
 ```php
-use Filament\Pages\Actions\ButtonAction;
+use Filament\Pages\Actions\Action;
 
-ButtonAction::make('delete')
+Action::make('delete')
     ->action(fn () => $this->record->delete())
     ->requiresConfirmation()
 ```
@@ -111,9 +121,9 @@ You may use components from the [Form Builder](/docs/forms/fields) to create cus
 ```php
 use App\Models\User;
 use Filament\Forms;
-use Filament\Pages\Actions\ButtonAction;
+use Filament\Pages\Actions\Action;
 
-ButtonAction::make('updateAuthor')
+Action::make('updateAuthor')
     ->action(function (array $data): void {
         $this->record->author()->associate($data['authorId']);
         $this->record->save();
@@ -131,9 +141,9 @@ ButtonAction::make('updateAuthor')
 You may customize the heading, subheading and button label of the modal:
 
 ```php
-use Filament\Pages\Actions\ButtonAction;
+use Filament\Pages\Actions\Action;
 
-ButtonAction::make('delete')
+Action::make('delete')
     ->action(fn () => $this->record->delete())
     ->requiresConfirmation()
     ->modalHeading('Delete posts')
@@ -141,6 +151,17 @@ ButtonAction::make('delete')
     ->modalButton('Yes, delete them')
 ```
 
+### Keybindings
+
+You can attach keyboard shortcuts to actions. These use the same key codes as [Mousetrap](https://craig.is/killing/mice):
+
+```php
+use Filament\Pages\Actions\Action;
+
+Action::make('save')
+    ->action(fn () => $this->save())
+    ->keyBindings(['command+s', 'ctrl+s'])
+```
 
 ## Conditionally hiding pages in navigation
 

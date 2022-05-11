@@ -41,4 +41,9 @@ trait HasActiveFormLocaleSelect
     {
         return $this->translatableLocales ?? static::getResource()::getTranslatableLocales();
     }
+
+    public function getActiveFormLocale(): ?string
+    {
+        return $this->activeFormLocale;
+    }
 }

@@ -2,7 +2,35 @@
 
 return [
 
+    'actions' => [
+
+        'modal' => [
+
+            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
+
+            'buttons' => [
+
+                'cancel' => [
+                    'label' => 'Cancel',
+                ],
+
+                'confirm' => [
+                    'label' => 'Confirm',
+                ],
+
+                'submit' => [
+                    'label' => 'Submit',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'builder' => [
+
+        'collapsed' => 'Content collapsed',
 
         'buttons' => [
 
@@ -10,16 +38,8 @@ return [
                 'label' => 'Add to :label',
             ],
 
-            'create_item_between' => [
-                'label' => 'Add between',
-            ],
-
             'delete_item' => [
                 'label' => 'Delete',
-            ],
-
-            'move_item' => [
-                'label' => 'Move',
             ],
 
             'move_item_down' => [
@@ -28,6 +48,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Move up',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Collapse',
+            ],
+
+            'expand_item' => [
+                'label' => 'Expand',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Collapse all',
+            ],
+
+            'expand_all' => [
+                'label' => 'Expand all',
             ],
 
         ],
@@ -79,13 +115,9 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'No options match your search.',
-        'placeholder' => 'Select an option',
-        'search_prompt' => 'Start typing to search...',
-    ],
-
     'repeater' => [
+
+        'collapsed' => 'Content collapsed',
 
         'buttons' => [
 
@@ -103,6 +135,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Move up',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Collapse',
+            ],
+
+            'expand_item' => [
+                'label' => 'Expand',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Collapse all',
+            ],
+
+            'expand_all' => [
+                'label' => 'Expand all',
             ],
 
         ],
@@ -148,9 +196,39 @@ return [
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Create',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Create',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'loading_message' => 'Loading...',
+
         'no_search_results_message' => 'No options match your search.',
+
         'placeholder' => 'Select an option',
+
+        'searching_message' => 'Searching...',
+
         'search_prompt' => 'Start typing to search...',
+
     ],
 
     'tags_input' => [

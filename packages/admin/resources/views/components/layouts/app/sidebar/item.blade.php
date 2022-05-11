@@ -19,14 +19,14 @@
                         tooltip = false
                     } else {
                         tooltip = {
-                            content: @js($slot->toHtml()),
+                            content: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
                             theme: Alpine.store('theme') === 'light' ? 'dark' : 'light',
                             placement: document.dir === 'rtl' ? 'left' : 'right',
                         }
                     }
                 })
             "
-            x-tooltip="tooltip"
+            x-tooltip.html="tooltip"
         @endif
         @class([
             'flex items-center justify-center gap-3 px-3 py-2 rounded-lg font-medium transition',
