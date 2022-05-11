@@ -4,7 +4,6 @@ namespace Filament\Support\Actions;
 
 abstract class Action extends BaseAction
 {
-    use Concerns\CanBeHidden;
     use Concerns\CanBeMounted;
     use Concerns\CanOpenModal;
     use Concerns\CanRequireConfirmation;
@@ -13,7 +12,7 @@ abstract class Action extends BaseAction
 
     public function call(array $data = [])
     {
-        if ($this->isHidden()) {
+        if ($this->isDisabled()) {
             return;
         }
 
