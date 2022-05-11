@@ -4,11 +4,11 @@ return [
 
     'action' => [
 
-        'label' => 'Edycja',
+        'label' => 'Edytuj',
 
         'modal' => [
 
-            'heading' => 'Edycja :label',
+            'heading' => 'Edytuj :label',
 
             'actions' => [
 

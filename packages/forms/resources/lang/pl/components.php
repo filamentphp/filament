@@ -2,16 +2,40 @@
 
 return [
 
+    'actions' => [
+
+        'modal' => [
+
+            'requires_confirmation_subheading' => 'Czy na pewno chcesz to zrobić?',
+
+            'buttons' => [
+
+                'cancel' => [
+                    'label' => 'Anuluj',
+                ],
+
+                'confirm' => [
+                    'label' => 'Potwierdź',
+                ],
+
+                'submit' => [
+                    'label' => 'Zatwierdź',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'builder' => [
+
+        'collapsed' => 'Treść zwinięta',
 
         'buttons' => [
 
             'create_item' => [
                 'label' => 'Dodaj do :label',
-            ],
-
-            'create_item_between' => [
-                'label' => 'Dodaj pomiędzy',
             ],
 
             'delete_item' => [
@@ -24,6 +48,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Przesuń w górę',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Zwiń',
+            ],
+
+            'expand_item' => [
+                'label' => 'Rozwiń',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Zwiń wszystko',
+            ],
+
+            'expand_all' => [
+                'label' => 'Rozwiń wszystko',
             ],
 
         ],
@@ -77,6 +117,8 @@ return [
 
     'repeater' => [
 
+        'collapsed' => 'Treść zwinięta',
+
         'buttons' => [
 
             'create_item' => [
@@ -93,6 +135,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Przesuń w górę',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Zwiń',
+            ],
+
+            'expand_item' => [
+                'label' => 'Rozwiń',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Zwiń wszystko',
+            ],
+
+            'expand_all' => [
+                'label' => 'Rozwiń wszystko',
             ],
 
         ],
@@ -138,9 +196,39 @@ return [
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Utwórz',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Utwórz',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'loading_message' => 'Ładowanie...',
+
         'no_search_results_message' => 'Żadne wyniki nie pasują do Twojego wyszukiwania.',
+
         'placeholder' => 'Wybierz z listy',
+
+        'searching_message' => 'Szukanie...',
+
         'search_prompt' => 'Zacznij pisać aby wyszukać...',
+
     ],
 
     'tags_input' => [
