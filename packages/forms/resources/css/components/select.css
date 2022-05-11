@@ -99,7 +99,7 @@
 }
 
 [dir=rtl] .choices__list--multiple .choices__item {
-    @apply break-normal;
+    @apply break-normal space-x-reverse;
 }
 
 .choices__list--dropdown, .choices__list[aria-expanded] {
@@ -111,7 +111,7 @@
 }
 
 .is-active.choices__list--dropdown, .is-active.choices__list[aria-expanded] {
-    @apply visible;
+    @apply visible z-10;
 }
 
 .choices__list--dropdown .choices__list, .choices__list[aria-expanded] .choices__list {

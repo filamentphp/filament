@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
@@ -21,11 +22,7 @@ class RelationshipRepeater extends Repeater
     {
         parent::setUp();
 
-        $this->afterStateHydrated(static function (RelationshipRepeater $component, ?array $state): void {
-            if (count($state ?? [])) {
-                return;
-            }
-        });
+        $this->afterStateHydrated(null);
 
         $this->loadStateFromRelationshipsUsing(static function (RelationshipRepeater $component) {
             $component->clearCachedExistingRecords();
@@ -33,7 +30,7 @@ class RelationshipRepeater extends Repeater
             $component->fillFromRelationship();
         });
 
-        $this->saveRelationshipsUsing(static function (RelationshipRepeater $component, ?array $state) {
+        $this->saveRelationshipsUsing(static function (RelationshipRepeater $component, HasForms $livewire, ?array $state) {
             if (! is_array($state)) {
                 $state = [];
             }
@@ -63,6 +60,8 @@ class RelationshipRepeater extends Repeater
             $itemOrder = 1;
             $orderColumn = $component->getOrderColumn();
 
+            $activeLocale = $livewire->getActiveFormLocale();
+
             foreach ($childComponentContainers as $itemKey => $item) {
                 $itemData = $item->getState(shouldCallHooksBefore: false);
 
@@ -73,12 +72,24 @@ class RelationshipRepeater extends Repeater
                 }
 
                 if ($record = ($existingRecords[$itemKey] ?? null)) {
-                    $record->update($itemData);
+                    $activeLocale && method_exists($record, 'setLocale') && $record->setLocale($activeLocale);
+
+                    $record->fill($itemData)->save();
 
                     continue;
                 }
 
-                $record = $relationship->create($itemData);
+                $relatedModel = $component->getRelatedModel();
+
+                $record = new $relatedModel();
+
+                if ($activeLocale && method_exists($relatedModel, 'setLocale')) {
+                    $record->setLocale($activeLocale);
+                }
+
+                $record->fill($itemData);
+
+                $record = $relationship->save($record);
                 $item->model($record)->saveRelationships();
             }
         });
@@ -105,7 +116,39 @@ class RelationshipRepeater extends Repeater
 
     public function fillFromRelationship(): void
     {
-        $this->state($this->getCachedExistingRecords()->toArray());
+        $this->state(
+            $this->getStateFromRelatedRecords($this->getCachedExistingRecords()),
+        );
+    }
+
+    protected function getStateFromRelatedRecords(Collection $records): array
+    {
+        if (! $records->count()) {
+            return [];
+        }
+
+        $firstRecord = $records->first();
+
+        if (
+            ($activeLocale = $this->getLivewire()->getActiveFormLocale()) &&
+            method_exists($firstRecord, 'getTranslatableAttributes')
+        ) {
+            $translatableAttributes = $firstRecord->getTranslatableAttributes();
+
+            $records = $records->map(function (Model $record) use ($activeLocale, $translatableAttributes): array {
+                $state = $record->toArray();
+
+                if (method_exists($record, 'getTranslation')) {
+                    foreach ($translatableAttributes as $attribute) {
+                        $state[$attribute] = $record->getTranslation($attribute, $activeLocale);
+                    }
+                }
+
+                return $state;
+            });
+        }
+
+        return $records->toArray();
     }
 
     public function getChildComponentContainers(bool $withHidden = false): array

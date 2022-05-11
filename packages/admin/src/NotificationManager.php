@@ -27,6 +27,7 @@ class NotificationManager
         }
 
         $notifications = static::$notifications;
+        session()->forget('notifications');
 
         if (count($notifications) > 0) {
             $component->dispatchBrowserEvent('notify', $notifications);

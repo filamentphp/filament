@@ -10,6 +10,8 @@ class Form
 {
     protected array | int | null $columns = null;
 
+    protected bool $isDisabled = false;
+
     protected array | Component | Closure $schema = [];
 
     final public function __construct()
@@ -28,6 +30,13 @@ class Form
         return $this;
     }
 
+    public function disabled(bool $condition = true): static
+    {
+        $this->isDisabled = $condition;
+
+        return $this;
+    }
+
     public function schema(array | Component | Closure $schema): static
     {
         $this->schema = $schema;
@@ -40,6 +49,11 @@ class Form
         return $this->columns;
     }
 
+    public function isDisabled(): bool
+    {
+        return $this->isDisabled;
+    }
+
     public function getSchema(): array
     {
         $schema = $this->schema;
@@ -47,7 +61,8 @@ class Form
         if (is_array($schema) || $schema instanceof Closure) {
             $schema = Grid::make()
                 ->schema($schema)
-                ->columns($this->getColumns());
+                ->columns($this->getColumns())
+                ->disabled($this->isDisabled());
         }
 
         return [$schema];

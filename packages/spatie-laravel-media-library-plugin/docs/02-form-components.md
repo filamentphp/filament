@@ -37,3 +37,15 @@ SpatieMediaLibraryFileUpload::make('attachments')
 ```
 
 You may now drag and drop files into order.
+
+### Adding custom properties
+
+You may pass in [custom properties](https://spatie.be/docs/laravel-medialibrary/advanced-usage/using-custom-properties) when uploading files using the `customProperties()` method:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+
+SpatieMediaLibraryFileUpload::make('attachments')
+    ->multiple()
+    ->customProperties(['zip_filename_prefix' => 'folder/subfolder/']),
+```
