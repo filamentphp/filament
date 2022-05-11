@@ -18,7 +18,7 @@ return [
 
     'bulk_action' => [
 
-        'label' => 'حذف انتخاب شده‌ها',
+        'label' => 'حذف انتخاب شده‌',
 
         'modal' => [
             'heading' => 'حذف :label انتخاب شده',

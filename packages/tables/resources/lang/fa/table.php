@@ -53,6 +53,10 @@ return [
             'label' => 'بازکردن عملیات',
         ],
 
+        'toggle_columns' => [
+            'label' => 'باز/بستن ستون ها',
+        ],
+
     ],
 
     'actions' => [
@@ -79,10 +83,20 @@ return [
 
         ],
 
+        'replicate' => [
+
+            'label' => 'تکثیر',
+
+            'messages' => [
+                'replicated' => 'رکورد تکثیر شد',
+            ],
+
+        ],
+
     ],
 
     'empty' => [
-        'heading' => 'هیچ آیتمی یافت نشد',
+        'heading' => 'هیچ رکوردی یافت نشد',
     ],
 
     'filters' => [
@@ -91,6 +105,10 @@ return [
 
             'reset' => [
                 'label' => 'پاک کردن فیلترها',
+            ],
+
+            'close' => [
+                'label' => 'بستن',
             ],
 
         ],
