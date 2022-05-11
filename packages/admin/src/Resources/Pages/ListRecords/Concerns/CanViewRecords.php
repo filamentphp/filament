@@ -25,10 +25,10 @@ trait CanViewRecords
             ->url(null)
             ->form($this->getViewFormSchema())
             ->mountUsing(fn () => $this->fillViewForm())
-            ->modalHeading(fn (Model $record) => __('filament::resources/pages/view-record.title', ['label' => $resource::hasRecordTitle() ? $resource::getRecordTitle($record) : Str::title($resource::getLabel())]))
+            ->modalHeading(fn (Model $record) => __('filament::resources/pages/list-records.table.actions.view.modal.heading', ['label' => $resource::hasRecordTitle() ? $resource::getRecordTitle($record) : Str::title($resource::getLabel())]))
             ->modalActions([
-                ModalAction::make('cancel')
-                    ->label(__('forms::components.actions.modal.buttons.cancel.label'))
+                ModalAction::make('close')
+                    ->label(__('filament::resources/pages/list-records.table.actions.view.modal.actions.close.label'))
                     ->cancel()
                     ->color('secondary'),
             ])
@@ -38,7 +38,7 @@ trait CanViewRecords
 
     protected function getViewFormSchema(): array
     {
-        return $this->getResourceForm(columns: 2)->getSchema();
+        return $this->getResourceForm(columns: 2, isDisabled: true)->getSchema();
     }
 
     protected function fillViewForm(): void
@@ -47,7 +47,7 @@ trait CanViewRecords
 
         $data = $this->getMountedTableActionRecord()->toArray();
 
-        $this->getMountedTableActionForm()->fill($data)->disabled();
+        $this->getMountedTableActionForm()->fill($data);
 
         $this->callHook('afterFill');
     }
