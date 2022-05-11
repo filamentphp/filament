@@ -1665,7 +1665,7 @@ trix-editor .attachment__metadata .attachment__size {
   @apply text-primary-500;
 }
 [dir=rtl] .choices__list--multiple .choices__item {
-  @apply break-normal;
+  @apply break-normal space-x-reverse;
 }
 .choices__list--dropdown,
 .choices__list[aria-expanded] {

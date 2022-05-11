@@ -18,7 +18,7 @@
     @endphp
 
     @if (count($containers) > 1)
-        <div class="space-x-2" x-data="{}">
+        <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
             <x-forms::link
                 x-on:click="$dispatch('repeater-collapse', '{{ $getStatePath() }}')"
                 tag="button"
