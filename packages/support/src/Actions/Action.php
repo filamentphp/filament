@@ -2,13 +2,14 @@
 
 namespace Filament\Support\Actions;
 
+use Filament\Support\Concerns\EvaluatesClosures;
+
 abstract class Action extends BaseAction
 {
     use Concerns\CanBeHidden;
     use Concerns\CanBeMounted;
     use Concerns\CanOpenModal;
     use Concerns\CanRequireConfirmation;
-    use Concerns\EvaluatesClosures;
     use Concerns\HasAction;
     use Concerns\HasFormSchema;
 
@@ -24,4 +25,11 @@ abstract class Action extends BaseAction
     }
 
     abstract public function getLivewire();
+
+    protected function getDefaultEvaluationParameters(): array
+    {
+        return [
+            'livewire' => $this->getLivewire(),
+        ];
+    }
 }

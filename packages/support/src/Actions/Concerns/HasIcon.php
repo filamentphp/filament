@@ -6,18 +6,18 @@ use Closure;
 
 trait HasIcon
 {
-    protected Closure | string | null $icon = null;
+    protected string | Closure | null $icon = null;
 
-    protected ?string $iconPosition = null;
+    protected string | Closure | null $iconPosition = null;
 
-    public function icon(Closure | string | null $icon): static
+    public function icon(string | Closure | null $icon): static
     {
         $this->icon = $icon;
 
         return $this;
     }
 
-    public function iconPosition(?string $position): static
+    public function iconPosition(string | Closure | null $position): static
     {
         $this->iconPosition = $position;
 
@@ -31,6 +31,6 @@ trait HasIcon
 
     public function getIconPosition(): ?string
     {
-        return $this->iconPosition;
+        return $this->evaluate($this->iconPosition);
     }
 }

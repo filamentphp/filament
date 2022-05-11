@@ -1,17 +1,23 @@
 <?php
 
-namespace Filament\Support\Actions\Concerns;
+namespace Filament\Support\Concerns;
 
 use Closure;
 
 trait EvaluatesClosures
 {
+    protected string $evaluationIdentifier;
+
     public function evaluate($value, array $parameters = [])
     {
         if ($value instanceof Closure) {
             return app()->call(
                 $value,
-                array_merge($this->getDefaultEvaluationParameters(), $parameters),
+                array_merge(
+                    [$this->evaluationIdentifier => $this],
+                    $this->getDefaultEvaluationParameters(),
+                    $parameters,
+                ),
             );
         }
 
@@ -20,9 +26,6 @@ trait EvaluatesClosures
 
     protected function getDefaultEvaluationParameters(): array
     {
-        return [
-            'action' => $this,
-            'livewire' => $this->getLivewire(),
-        ];
+        return [];
     }
 }

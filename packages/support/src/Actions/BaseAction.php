@@ -13,6 +13,7 @@ abstract class BaseAction extends ViewComponent
     use Concerns\HasName;
     use Conditionable;
 
+    protected string $evaluationIdentifier = 'action';
     protected string $viewIdentifier = 'action';
 
     final public function __construct(string $name)
