@@ -14,7 +14,7 @@ trait EvaluatesClosures
             return app()->call(
                 $value,
                 array_merge(
-                    [$this->evaluationIdentifier => $this],
+                    isset($this->evaluationIdentifier) ? [$this->evaluationIdentifier => $this] : [],
                     $this->getDefaultEvaluationParameters(),
                     $parameters,
                 ),
