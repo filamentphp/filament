@@ -28,8 +28,8 @@ abstract class Action extends BaseAction
 
     protected function getDefaultEvaluationParameters(): array
     {
-        return [
+        return array_merge(parent::getDefaultEvaluationParameters(), [
             'livewire' => $this->getLivewire(),
-        ];
+        ]);
     }
 }

@@ -14,7 +14,6 @@ class ComponentContainer extends ViewComponent
     use Concerns\CanBeHidden;
     use Concerns\CanBeValidated;
     use Concerns\Cloneable;
-    use Concerns\EvaluatesClosures;
     use Concerns\HasColumns;
     use Concerns\HasComponents;
     use Concerns\HasFieldWrapper;
@@ -30,6 +29,7 @@ class ComponentContainer extends ViewComponent
 
     protected string $view = 'forms::component-container';
 
+    protected string $evaluationIdentifier = 'container';
     protected string $viewIdentifier = 'container';
 
     final public function __construct(HasForms $livewire)
@@ -40,5 +40,14 @@ class ComponentContainer extends ViewComponent
     public static function make(HasForms $livewire): static
     {
         return app(static::class, ['livewire' => $livewire]);
+    }
+
+    protected function getDefaultEvaluationParameters(): array
+    {
+        return array_merge(parent::getDefaultEvaluationParameters(), [
+            'livewire' => $this->getLivewire(),
+            'model' => $this->getModel(),
+            'record' => $this->getRecord(),
+        ]);
     }
 }

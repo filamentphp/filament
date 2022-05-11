@@ -45,8 +45,12 @@ abstract class ViewComponent extends BaseComponent implements Htmlable
 
     public function render(): View
     {
-        return view($this->getView(), array_merge($this->data(), [
-            $this->viewIdentifier => $this,
-        ]));
+        return view(
+            $this->getView(),
+            array_merge(
+                $this->data(),
+                isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : [],
+            ),
+        );
     }
 }
