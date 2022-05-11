@@ -2,15 +2,18 @@
 
 namespace Filament\Support\Actions\Concerns;
 
+use Closure;
+
 trait HasIcon
 {
     protected ?string $icon = null;
 
     protected ?string $iconPosition = null;
 
-    public function icon(?string $icon): static
+    public function icon(Closure | ?string $icon): static
     {
-        $this->icon = $icon;
+        //$this->icon = $icon;
+        return $this->evaluate($icon);
 
         return $this;
     }
