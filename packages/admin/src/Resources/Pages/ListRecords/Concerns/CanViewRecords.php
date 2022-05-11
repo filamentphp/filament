@@ -3,8 +3,8 @@
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
 use Filament\Resources\Pages\Concerns\UsesResourceForm;
-use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Filament\Tables;
+use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -32,7 +32,8 @@ trait CanViewRecords
                     ->cancel()
                     ->color('secondary'),
             ])
-            ->action(function () {})
+            ->action(function () {
+            })
             ->hidden(fn (Model $record) => ! $resource::canView($record));
     }
 
@@ -51,5 +52,4 @@ trait CanViewRecords
 
         $this->callHook('afterFill');
     }
-
 }
