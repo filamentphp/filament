@@ -105,7 +105,7 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'پوستن فایل ها',
+            'attach_files' => 'پیوستن فایل ها',
             'bold' => 'پررنگ',
             'bullet_list' => 'لیست نامرتب',
             'code_block' => 'بلاک کد',
