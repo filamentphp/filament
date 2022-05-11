@@ -75,7 +75,23 @@ return [
             ],
 
             'view' => [
-                'label' => 'Voir',
+
+                'label' => 'Afficher',
+
+                'modal' => [
+
+                    'heading' => 'Afficher :label',
+
+                    'actions' => [
+
+                        'close' => [
+                            'label' => 'Fermer',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
         ],
