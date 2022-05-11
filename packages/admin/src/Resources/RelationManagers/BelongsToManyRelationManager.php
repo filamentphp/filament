@@ -16,7 +16,14 @@ class BelongsToManyRelationManager extends RelationManager
     use Concerns\CanDetachRecords;
     use Concerns\CanEditRecords;
 
+    protected bool $allowsDuplicates = false;
+
     protected static string $view = 'filament::resources.relation-managers.belongs-to-many-relation-manager';
+
+    public function allowsDuplicates(): bool
+    {
+        return $this->allowsDuplicates;
+    }
 
     protected function getResourceTable(): Table
     {
