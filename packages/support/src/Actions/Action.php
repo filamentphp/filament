@@ -8,7 +8,6 @@ abstract class Action extends BaseAction
     use Concerns\CanBeMounted;
     use Concerns\CanOpenModal;
     use Concerns\CanRequireConfirmation;
-    use Concerns\EvaluatesClosures;
     use Concerns\HasAction;
     use Concerns\HasFormSchema;
 
@@ -24,4 +23,11 @@ abstract class Action extends BaseAction
     }
 
     abstract public function getLivewire();
+
+    protected function getDefaultEvaluationParameters(): array
+    {
+        return array_merge(parent::getDefaultEvaluationParameters(), [
+            'livewire' => $this->getLivewire(),
+        ]);
+    }
 }
