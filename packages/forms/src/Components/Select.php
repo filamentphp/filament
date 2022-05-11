@@ -176,7 +176,8 @@ class Select extends Field
             ->icon('heroicon-o-plus')
             ->iconButton()
             ->modalHeading(__('forms::components.select.actions.create_option.modal.heading'))
-            ->modalButton(__('forms::components.select.actions.create_option.modal.actions.create.label'));
+            ->modalButton(__('forms::components.select.actions.create_option.modal.actions.create.label'))
+            ->hidden(fn (Component $component): bool => $component->isDisabled());
 
         if ($this->modifyCreateOptionActionUsing) {
             $action = $this->evaluate($this->modifyCreateOptionActionUsing, [

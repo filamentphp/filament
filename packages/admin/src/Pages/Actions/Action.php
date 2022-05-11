@@ -64,7 +64,7 @@ class Action extends BaseAction
 
     public function call(array $data = [])
     {
-        if ($this->isHidden() || $this->isDisabled()) {
+        if ($this->isDisabled()) {
             return;
         }
 

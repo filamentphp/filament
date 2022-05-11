@@ -20,7 +20,9 @@
     :state-path="$getStatePath()"
 >
     <div {{ $attributes->merge($getExtraAttributes())->class(['flex items-center space-x-1 rtl:space-x-reverse group filament-forms-text-input-component']) }}>
-        {{ $getPrefixAction() }}
+        @if (($prefixAction = $getPrefixAction()) && (! $prefixAction->isHidden()))
+            {{ $prefixAction }}
+        @endif
 
         @if ($label = $getPrefixLabel())
             <span @class($affixLabelClasses)>
@@ -75,7 +77,9 @@
             </span>
         @endif
 
-        {{ $getSuffixAction() }}
+        @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))
+            {{ $suffixAction }}
+        @endif
     </div>
 
     @if ($datalistOptions)

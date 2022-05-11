@@ -17,7 +17,7 @@ trait CanBeDisabled
 
     public function isDisabled(): bool
     {
-        return $this->evaluate($this->isDisabled);
+        return $this->evaluate($this->isDisabled) || $this->isHidden();
     }
 
     public function isEnabled(): bool
