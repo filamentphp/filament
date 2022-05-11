@@ -55,32 +55,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Apakah Anda yakin ingin melakukan ini?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Batalkan',
-                ],
-
-                'confirm' => [
-                    'label' => 'Konfirmasi',
-                ],
-
-                'submit' => [
-                    'label' => 'Kirim',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Data tidak ditemukan',
     ],

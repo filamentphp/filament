@@ -75,7 +75,7 @@ trait CanOpenModal
                 ->submit($this->getLivewireSubmitActionName())
                 ->color($this->getColor()),
             static::makeModalAction('cancel')
-                ->label(__('forms::components.actions.modal.buttons.cancel.label'))
+                ->label(__('filament-support::actions.modal.buttons.cancel.label'))
                 ->cancel()
                 ->color('secondary'),
         ];
@@ -94,10 +94,10 @@ trait CanOpenModal
         }
 
         if ($this->isConfirmationRequired()) {
-            return __('forms::components.actions.modal.buttons.confirm.label');
+            return __('filament-support::actions.modal.buttons.confirm.label');
         }
 
-        return __('forms::components.actions.modal.buttons.submit.label');
+        return __('filament-support::actions.modal.buttons.submit.label');
     }
 
     public function getModalHeading(): string
@@ -112,7 +112,7 @@ trait CanOpenModal
         }
 
         if ($this->isConfirmationRequired()) {
-            return __('forms::components.actions.modal.requires_confirmation_subheading');
+            return __('filament-support::actions.modal.requires_confirmation_subheading');
         }
 
         return null;

@@ -55,32 +55,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => '¿Estás seguro de que quieres hacer esto?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Cancelar',
-                ],
-
-                'confirm' => [
-                    'label' => 'Confirmar',
-                ],
-
-                'submit' => [
-                    'label' => 'Enviar',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'No se encontraron registros',
     ],

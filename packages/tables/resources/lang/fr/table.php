@@ -55,32 +55,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Êtes-vous sûr de vouloir faire cela ?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Annuler',
-                ],
-
-                'confirm' => [
-                    'label' => 'Confirmer',
-                ],
-
-                'submit' => [
-                    'label' => 'Envoyer',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Aucun élément trouvé',
     ],

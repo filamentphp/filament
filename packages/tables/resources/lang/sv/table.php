@@ -55,32 +55,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Är du säker på att du vill göra detta?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Ångra',
-                ],
-
-                'confirm' => [
-                    'label' => 'Bekräfta',
-                ],
-
-                'submit' => [
-                    'label' => 'Skicka in',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Finns inga rader',
     ],

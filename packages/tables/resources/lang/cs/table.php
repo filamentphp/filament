@@ -55,32 +55,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Opravdu chcete tuto akci provést?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Zrušit',
-                ],
-
-                'confirm' => [
-                    'label' => 'Potvrdit',
-                ],
-
-                'submit' => [
-                    'label' => 'Odeslat',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Žádné záznamy nenalezeny',
     ],

@@ -55,32 +55,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Вы уверены, что хотите это сделать?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Отменить',
-                ],
-
-                'confirm' => [
-                    'label' => 'Подтвердить',
-                ],
-
-                'submit' => [
-                    'label' => 'Отправить',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'не найдено записей',
     ],
