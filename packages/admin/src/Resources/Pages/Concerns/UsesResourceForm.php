@@ -11,11 +11,13 @@ trait UsesResourceForm
 
     protected ?Form $resourceForm = null;
 
-    protected function getResourceForm(?int $columns = null): Form
+    protected function getResourceForm(?int $columns = null, bool $isDisabled = false): Form
     {
         if (! $this->resourceForm) {
             $this->resourceForm = $this->form(
-                Form::make()->columns($columns),
+                Form::make()
+                    ->columns($columns)
+                    ->disabled($isDisabled),
             );
         }
 
