@@ -6,14 +6,13 @@ use Closure;
 
 trait HasIcon
 {
-    protected ?string $icon = null;
+    protected Closure | string | null $icon = null;
 
     protected ?string $iconPosition = null;
 
-    public function icon(Closure | ?string $icon): static
+    public function icon(Closure | string | null $icon): static
     {
-        //$this->icon = $icon;
-        return $this->evaluate($icon);
+        $this->icon = $icon;
 
         return $this;
     }
@@ -27,7 +26,7 @@ trait HasIcon
 
     public function getIcon(): ?string
     {
-        return $this->icon;
+        return $this->evaluate($this->icon);
     }
 
     public function getIconPosition(): ?string
