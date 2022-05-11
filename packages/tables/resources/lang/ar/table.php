@@ -55,32 +55,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'هل أنت متأكد من القيام بهذا؟',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'إلغاء',
-                ],
-
-                'confirm' => [
-                    'label' => 'تأكيد',
-                ],
-
-                'submit' => [
-                    'label' => 'إعتماد',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'لا توجد سجلات',
     ],

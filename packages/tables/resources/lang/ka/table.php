@@ -55,32 +55,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'გაუქმება',
-                ],
-
-                'confirm' => [
-                    'label' => 'Confirm',
-                ],
-
-                'submit' => [
-                    'label' => 'Submit',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'ჩანაწერები არ არსებობს.',
     ],
