@@ -43,6 +43,10 @@ return [
 
                 'label' => 'حذف',
 
+                'modal' => [
+                    'heading' => 'حذف :label',
+                ],
+
                 'messages' => [
                     'deleted' => 'حذف شد',
                 ],
