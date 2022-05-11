@@ -4,11 +4,10 @@
     'header',
     'heading',
     'subheading',
-    'displayClasses',
 ])
 
 <x-filament-support::modal
-    :attributes="$attributes->merge($slots)"
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($slots)"
     :dark-mode="config('forms.dark_mode')"
     heading-component="forms::modal.heading"
     hr-component="forms::hr"
