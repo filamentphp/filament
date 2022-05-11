@@ -7,18 +7,25 @@ use Filament\Forms\Components\Toggle;
 
 class Filter extends BaseFilter
 {
-    public string $filterType = Checkbox::class;
+    public string $formComponent = Checkbox::class;
 
     public function toggle(): static
     {
-        $this->filterType = Toggle::class;
+        $this->formComponent(Toggle::class);
 
         return $this;
     }
 
     public function checkbox(): static
     {
-        $this->filterType = Checkbox::class;
+        $this->formComponent(Checkbox::class);
+
+        return $this;
+    }
+
+    public function formComponent(string $component): static
+    {
+        $this->formComponent = $component;
 
         return $this;
     }
@@ -26,7 +33,7 @@ class Filter extends BaseFilter
     public function getFormSchema(): array
     {
         return $this->evaluate($this->formSchema) ?? [
-            $this->filterType::make('isActive')
+            $this->formComponent::make('isActive')
                 ->label($this->getLabel())
                 ->default($this->getDefaultState())
                 ->columnSpan($this->getColumnSpan()),
