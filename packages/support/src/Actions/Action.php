@@ -2,8 +2,6 @@
 
 namespace Filament\Support\Actions;
 
-use Filament\Support\Concerns\EvaluatesClosures;
-
 abstract class Action extends BaseAction
 {
     use Concerns\CanBeHidden;
