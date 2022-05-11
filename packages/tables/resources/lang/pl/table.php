@@ -125,7 +125,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '{1} 1 rekord zaznaczony.|[2,*] Zaznaczono rekordów: :count.',
+        'selected_count' => '{1} 1 rekord zaznaczony.|[2,4]:count rekordy zaznaczone.|[5,*]:count rekordów zaznaczonych.',
 
         'buttons' => [
 
