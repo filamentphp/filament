@@ -9,6 +9,7 @@ use Livewire\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Throwable;
 
 class SpatieMediaLibraryFileUpload extends FileUpload
 {
@@ -59,7 +60,13 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $media = $mediaClass::findByUuid($file);
 
             if ($component->getVisibility() === 'private') {
-                return $media?->getTemporaryUrl(now()->addMinutes(5));
+                try {
+                    return $media?->getTemporaryUrl(
+                        now()->addMinutes(5),
+                    );
+                } catch (Throwable $exception) {
+                    // This driver does not support creating temporary URLs.
+                }
             }
 
             if ($component->getConversion() && $media->hasGeneratedConversion($component->getConversion())) {

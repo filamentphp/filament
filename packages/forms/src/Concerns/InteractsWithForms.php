@@ -153,6 +153,11 @@ trait InteractsWithForms
         }
     }
 
+    public function getActiveFormLocale(): ?string
+    {
+        return null;
+    }
+
     protected function callBeforeAndAfterSyncHooks($name, $value, $callback): void
     {
         parent::callBeforeAndAfterSyncHooks($name, $value, $callback);

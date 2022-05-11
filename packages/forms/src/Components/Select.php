@@ -168,7 +168,7 @@ class Select extends Field
                 ]);
 
                 $state = $component->isMultiple() ?
-                    array_merge($component->getState(), $createdOptionKey) :
+                    array_merge($component->getState(), [$createdOptionKey]) :
                     $createdOptionKey;
 
                 $component->state($state);
