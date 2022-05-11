@@ -40,9 +40,4 @@ class Field extends Component implements Contracts\HasValidationRules
             ->replace(['-', '_'], ' ')
             ->ucfirst();
     }
-
-    protected function hasDefaultState(): bool
-    {
-        return true;
-    }
 }

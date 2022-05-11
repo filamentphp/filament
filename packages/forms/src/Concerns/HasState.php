@@ -144,6 +144,8 @@ trait HasState
 
             $this->callAfterStateHydrated();
         } else {
+            $this->fillMissingComponentStateWithNull();
+
             $this->hydrateDefaultState();
         }
 
