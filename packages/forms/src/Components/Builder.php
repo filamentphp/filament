@@ -219,6 +219,13 @@ class Builder extends Field
         $this->getChildComponentContainers()[$uuid]->hydrateDefaultState();
     }
 
+    public function showBlockLabels(bool | Closure $condition = true): static
+    {
+        $this->withBlockLabels($condition);
+
+        return $this;
+    }
+
     public function withBlockLabels(bool | Closure $condition = true): static
     {
         $this->hasBlockLabels = $condition;
