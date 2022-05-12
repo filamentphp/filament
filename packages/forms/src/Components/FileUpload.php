@@ -62,14 +62,14 @@ class FileUpload extends BaseFileUpload
 
         return $this;
     }
-    
+
     public function disableInstantUpload(bool $instantUpload = false): static
     {
         $this->instantUpload = instantUpload;
 
         return $this;
     }
-    
+
     public function instantUpload(): bool
     {
         return $this->instantUpload;
