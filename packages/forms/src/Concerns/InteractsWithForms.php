@@ -4,7 +4,6 @@ namespace Filament\Forms\Concerns;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\TemporaryUploadedFile;
