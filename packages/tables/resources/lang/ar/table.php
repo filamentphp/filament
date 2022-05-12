@@ -61,18 +61,6 @@ return [
 
     'actions' => [
 
-        'modal' => [
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Cancel',
-                ],
-
-            ],
-
-        ],
-
         'replicate' => [
 
             'label' => 'نسخة',
