@@ -242,7 +242,7 @@ class Builder extends Field
     public function getChildComponentContainers(bool $withHidden = false): array
     {
         return collect($this->getState())
-            ->filter(fn (array $itemData): ?Block => $this->hasBlock($itemData['type']))
+            ->filter(fn (array $itemData): bool => $this->hasBlock($itemData['type']))
             ->map(
                 fn (array $itemData, $itemIndex): ComponentContainer => $this
                     ->getBlock($itemData['type'])
