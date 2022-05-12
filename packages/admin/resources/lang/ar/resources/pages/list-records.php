@@ -2,26 +2,26 @@
 
 return [
 
-    'breadcrumb' => 'القائمة',
+    'breadcrumb' => 'List',
 
     'actions' => [
 
         'create' => [
 
-            'label' => 'إضافة :label',
+            'label' => 'New :label',
 
             'modal' => [
 
-                'heading' => 'إضافة :label',
+                'heading' => 'Create :label',
 
                 'actions' => [
 
                     'create' => [
-                        'label' => 'إضافة',
+                        'label' => 'Create',
                     ],
 
                     'create_and_create_another' => [
-                        'label' => 'إضافة وبدء إضافة المزيد',
+                        'label' => 'Create & create another',
                     ],
 
                 ],
@@ -29,7 +29,7 @@ return [
             ],
 
             'messages' => [
-                'created' => 'تمت الإضافة',
+                'created' => 'Created',
             ],
 
         ],
@@ -43,6 +43,10 @@ return [
             'delete' => [
 
                 'label' => 'حذف',
+
+                'modal' => [
+                    'heading' => 'حذف :label',
+                ],
 
                 'messages' => [
                     'deleted' => 'تم الحذف',
