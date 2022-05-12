@@ -53,6 +53,36 @@ return [
             'label' => 'فتح الإجراءات',
         ],
 
+        'toggle_columns' => [
+            'label' => 'تبديل الأعمدة',
+        ],
+
+    ],
+
+    'actions' => [
+
+        'modal' => [
+
+            'buttons' => [
+
+                'cancel' => [
+                    'label' => 'Cancel',
+                ],
+
+            ],
+
+        ],
+
+        'replicate' => [
+
+            'label' => 'نسخة',
+
+            'messages' => [
+                'replicated' => 'تم نسخ السجل',
+            ],
+
+        ],
+
     ],
 
     'empty' => [
