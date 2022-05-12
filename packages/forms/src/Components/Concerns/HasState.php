@@ -243,10 +243,7 @@ trait HasState
             return $path;
         }
 
-        $statePath = Str::of($this->getStatePath());
-        $containerPath = $statePath->contains('.') ?
-            ((string) $statePath->beforeLast('.')) :
-            null;
+        $containerPath = $this->getContainer()->getStatePath();
 
         if (blank($containerPath)) {
             return $path;
