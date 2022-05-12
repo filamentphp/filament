@@ -70,6 +70,7 @@
                     success(fileKey)
                 }, error, progress)
             },
+            instantUpload: {{ $instantUpload() ? 'true' : 'false' }},
         })"
         wire:ignore
         {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
