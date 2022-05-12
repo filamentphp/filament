@@ -191,14 +191,14 @@ trait InteractsWithForms
 
         $this->cachedForms = array_filter($this->getUncachedForms());
 
+        $this->isCachingForms = false;
+
+        $this->hasCachedForms = true;
+
         $this->cacheForm(
             'mountedFormComponentActionForm',
             $this->getMountedFormComponentActionForm(),
         );
-
-        $this->isCachingForms = false;
-
-        $this->hasCachedForms = true;
 
         return $this->cachedForms;
     }
