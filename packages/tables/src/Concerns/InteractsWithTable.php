@@ -110,14 +110,8 @@ trait InteractsWithTable
     protected function getTableForms(): array
     {
         return [
-            'mountedTableActionForm' => $this->makeForm()
-                ->schema(($action = $this->getMountedTableAction()) ? $action->getFormSchema() : [])
-                ->model($this->getMountedTableActionRecord() ?? $this->getTableQuery()->getModel()::class)
-                ->statePath('mountedTableActionData'),
-            'mountedTableBulkActionForm' => $this->makeForm()
-                ->schema(($action = $this->getMountedTableBulkAction()) ? $action->getFormSchema() : [])
-                ->model($this->getTableQuery()->getModel()::class)
-                ->statePath('mountedTableBulkActionData'),
+            'mountedTableActionForm' => $this->getMountedTableActionForm(),
+            'mountedTableBulkActionForm' => $this->getMountedTableBulkActionForm(),
             'tableFiltersForm' => $this->makeForm()
                 ->schema($this->getTableFiltersFormSchema())
                 ->columns($this->getTableFiltersFormColumns())
