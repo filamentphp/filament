@@ -18,6 +18,10 @@ return [
                 'label' => 'حذف',
             ],
 
+            'move_item' => [
+                'label' => 'نقل',
+            ],
+
             'move_item_down' => [
                 'label' => 'تحريك لأسفل',
             ],
