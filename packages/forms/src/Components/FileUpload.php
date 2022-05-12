@@ -37,6 +37,8 @@ class FileUpload extends BaseFileUpload
 
     protected string | Closure $uploadProgressIndicatorPosition = 'right';
 
+    protected bool $instantUpload = true;
+
     public function appendFiles(bool | Closure $condition = true): static
     {
         $this->shouldAppendFiles = $condition;
@@ -59,6 +61,18 @@ class FileUpload extends BaseFileUpload
         $this->uploadProgressIndicatorPosition('center bottom');
 
         return $this;
+    }
+    
+    public function disableInstantUpload(bool $instantUpload = false): static
+    {
+        $this->instantUpload = instantUpload;
+
+        return $this;
+    }
+    
+    public function instantUpload(): bool
+    {
+        return $this->instantUpload;
     }
 
     public function idleLabel(string | Closure | null $label): static
