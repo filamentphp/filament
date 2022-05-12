@@ -49,6 +49,7 @@ export default (Alpine) => {
         uploadButtonPosition,
         uploadProgressIndicatorPosition,
         uploadUsing,
+        instantUpload,
     }) => {
         return {
             fileKeyIndex: {},
@@ -84,6 +85,9 @@ export default (Alpine) => {
                     stylePanelAspectRatio: panelAspectRatio,
                     stylePanelLayout: panelLayout,
                     styleProgressIndicatorPosition: uploadProgressIndicatorPosition,
+                    instantUpload: instantUpload,
+                    allowProcess: instantUpload,
+                    storeAsFile: ! instantUpload,
                     server: {
                         load: async (source, load) => {
                             let response = await fetch(source)
