@@ -25,7 +25,7 @@ trait HasChildComponents
 
     public function getChildComponents(): array
     {
-        return $this->evaluate($this->childComponents);
+        return $this->isHidden() ? [] : $this->evaluate($this->childComponents);
     }
 
     public function getChildComponentContainer(): ComponentContainer
