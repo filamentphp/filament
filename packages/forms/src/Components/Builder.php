@@ -243,11 +243,11 @@ class Builder extends Field
     {
         return collect($this->getState())
             ->map(
-                fn ($itemData, $itemIndex): ?ComponentContainer =>  $this->getBlock($itemData['type'])
+                fn ($itemData, $itemIndex): ?Block =>  $this->getBlock($itemData['type'])
                 )
             ->filter()
             ->map(
-                fn ($block, $itemIndex): ComponentContainer  =>  $block->getChildComponentContainer()
+                fn (Block $block, $itemIndex): ComponentContainer  =>  $block->getChildComponentContainer()
                     ->getClone()
                     ->statePath("{$itemIndex}.data")
                     ->inlineLabel(false)
