@@ -21,8 +21,8 @@ export default (Alpine) => {
 
             init: function () {
                 if (this.state !== null) {
-                    this.$nextTick(() => { 
-                        this.render() 
+                    this.$nextTick(() => {
+                        this.render()
                     })
                 }
 
@@ -32,7 +32,7 @@ export default (Alpine) => {
             },
 
             render: function () {
-                if (this.$refs.textarea.scrollHeight > 0) {
+                if (this.$refs.textarea?.scrollHeight > 0) {
                     this.$refs.overlay.style.height = '150px'
                     this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + 'px'
                 }
