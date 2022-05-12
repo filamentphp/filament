@@ -56,7 +56,7 @@ return [
         'toggle_columns' => [
             'label' => 'Basculer les colonnes',
         ],
-        
+
     ],
 
     'actions' => [
