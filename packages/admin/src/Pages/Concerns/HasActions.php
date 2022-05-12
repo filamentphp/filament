@@ -119,7 +119,7 @@ trait HasActions
         return $this->getCachedFormAction($this->mountedAction);
     }
 
-    protected function getHasFormComponentActionsForms(): array
+    protected function getHasActionsForms(): array
     {
         return [
             'mountedActionForm' => $this->getMountedActionForm(),
