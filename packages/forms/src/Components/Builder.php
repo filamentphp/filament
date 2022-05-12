@@ -242,13 +242,15 @@ class Builder extends Field
     public function getChildComponentContainers(bool $withHidden = false): array
     {
         return collect($this->getState())
-            ->map(function ($itemData, $itemIndex): ComponentContainer {
-                return $this->getBlock($itemData['type'])
+            ->filter(fn (array $itemData): bool => $this->hasBlock($itemData['type']))
+            ->map(
+                fn (array $itemData, $itemIndex): ComponentContainer => $this
+                    ->getBlock($itemData['type'])
                     ->getChildComponentContainer()
                     ->getClone()
                     ->statePath("{$itemIndex}.data")
-                    ->inlineLabel(false);
-            })
+                    ->inlineLabel(false),
+            )
             ->toArray();
     }
 
