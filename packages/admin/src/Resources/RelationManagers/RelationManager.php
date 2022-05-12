@@ -28,8 +28,6 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     protected static ?string $inverseRelationship = null;
 
-    protected ?Form $resourceForm = null;
-
     protected ?Table $resourceTable = null;
 
     protected static ?string $label = null;
@@ -47,13 +45,9 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     protected function getResourceForm(?int $columns = null): Form
     {
-        if (! $this->resourceForm) {
-            $this->resourceForm = static::form(
-                Form::make()->columns($columns),
-            );
-        }
-
-        return $this->resourceForm;
+        return static::form(
+            Form::make()->columns($columns),
+        );
     }
 
     protected function callHook(string $hook): void

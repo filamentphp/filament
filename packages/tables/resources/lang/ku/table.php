@@ -55,32 +55,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'ڕەتکردنەوە',
-                ],
-
-                'confirm' => [
-                    'label' => 'Confirm',
-                ],
-
-                'submit' => [
-                    'label' => 'Submit',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'هیچ تۆمارێک نەدۆزرایەوە',
     ],

@@ -83,7 +83,7 @@
             x-data="{
                 form: null,
                 label: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
-                isUploadingFile: false
+                isUploadingFile: false,
             }"
             x-bind:disabled="isUploadingFile"
             x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"

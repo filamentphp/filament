@@ -68,7 +68,7 @@ trait CanCreateRecords
     protected function getCreateActionCancelModalAction(): Modal\Actions\Action
     {
         return Action::makeModalAction('cancel')
-            ->label(__('tables::table.actions.modal.buttons.cancel.label'))
+            ->label(__('filament-support::actions.modal.buttons.cancel.label'))
             ->cancel()
             ->color('secondary');
     }

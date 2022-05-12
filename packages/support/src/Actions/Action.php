@@ -4,17 +4,15 @@ namespace Filament\Support\Actions;
 
 abstract class Action extends BaseAction
 {
-    use Concerns\CanBeHidden;
     use Concerns\CanBeMounted;
     use Concerns\CanOpenModal;
     use Concerns\CanRequireConfirmation;
-    use Concerns\EvaluatesClosures;
     use Concerns\HasAction;
     use Concerns\HasFormSchema;
 
     public function call(array $data = [])
     {
-        if ($this->isHidden()) {
+        if ($this->isDisabled()) {
             return;
         }
 
@@ -24,4 +22,11 @@ abstract class Action extends BaseAction
     }
 
     abstract public function getLivewire();
+
+    protected function getDefaultEvaluationParameters(): array
+    {
+        return array_merge(parent::getDefaultEvaluationParameters(), [
+            'livewire' => $this->getLivewire(),
+        ]);
+    }
 }
