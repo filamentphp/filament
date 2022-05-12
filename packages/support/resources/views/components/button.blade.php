@@ -79,28 +79,24 @@
         {!! $hasLoadingIndicator ? 'wire:loading.class="opacity-70 cursor-wait"' : '' !!}
         {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
         {!! $disabled ? 'disabled' : '' !!}
-        @if ($form)
-            x-data="{
-                form: null,
-                label: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
-                isUploadingFile: false,
-            }"
-            x-bind:disabled="isUploadingFile"
-            x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
-            x-init="
-                form = $el.closest('form')
+        x-data="{
+            form: null,
+            label: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
+            isUploadingFile: false,
+        }"
+        x-bind:disabled="isUploadingFile"
+        x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
+        x-init="
+            form = $el.closest('form')
 
-                form?.addEventListener('file-upload-started', () => {
-                    isUploadingFile = true
-                })
+            form?.addEventListener('file-upload-started', () => {
+                isUploadingFile = true
+            })
 
-                form?.addEventListener('file-upload-finished', () => {
-                    isUploadingFile = false
-                })
-            "
-        @elseif ($keyBindings || $tooltip)
-            x-data="{}"
-        @endif
+            form?.addEventListener('file-upload-finished', () => {
+                isUploadingFile = false
+            })
+        "
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
@@ -113,14 +109,16 @@
             />
         @endif
 
-        @if ($form)
-            <x-filament-support::loading-indicator
-                x-show="isUploadingFile"
-                :class="$iconClasses"
-            />
-        @endif
+        <x-filament-support::loading-indicator
+            x-show="isUploadingFile"
+            :class="$iconClasses"
+        />
 
-        <span @if ($form) x-html="isUploadingFile ? '{{ __('filament-support::components/button.messages.uploading_file') }}' : label" @endif>
+        <span x-show="isUploadingFile">
+            {{ __('filament-support::components/button.messages.uploading_file') }}
+        </span>
+
+        <span x-show="! isUploadingFile">
             {{ $slot }}
         </span>
 
