@@ -90,16 +90,14 @@ trait CanAttachRecords
                     $isFirst = false;
                 }
 
-                $relatedKey = $relationship->getRelatedKeyName();
+                $relatedKeyName = $relationship->getRelatedKeyName();
 
                 return $relationshipQuery
                     ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
                         $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
                     })
                     ->get()
-                    ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relatedKey} => static::getRecordTitle($record),
-                    ])
+                    ->mapWithKeys(static fn (Model $record): array => [$record->{$relatedKeyName} => static::getRecordTitle($record)])
                     ->toArray();
             })
             ->getOptionLabelUsing(static fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->query()->find($value)))
@@ -113,7 +111,7 @@ trait CanAttachRecords
 
                 $displayColumnName = static::getRecordTitleAttribute();
 
-                $relatedKey = $relationship->getRelatedKeyName();
+                $relatedKeyName = $relationship->getRelatedKeyName();
 
                 return $relationship
                     ->getRelated()
@@ -123,9 +121,7 @@ trait CanAttachRecords
                         $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
                     })
                     ->get()
-                    ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relatedKey} => static::getRecordTitle($record),
-                    ])
+                    ->mapWithKeys(static fn (Model $record): array => [$record->{$relatedKeyName} => static::getRecordTitle($record)])
                     ->toArray();
             })
             ->disableLabel();
