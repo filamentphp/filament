@@ -102,9 +102,7 @@ trait CanAssociateRecords
                         $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
                     })
                     ->get()
-                    ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$localKeyName} => static::getRecordTitle($record),
-                    ])
+                    ->mapWithKeys(static fn (Model $record): array => [$record->{$localKeyName} => static::getRecordTitle($record)])
                     ->toArray();
             })
             ->getOptionLabelUsing(static fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->query()->find($value)))
