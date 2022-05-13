@@ -100,7 +100,7 @@ trait CanAssociateRecords
                     })
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relationship->getRelated()->getKeyName()} => static::getRecordTitle($record),
+                        $record->{$relationship->getLocalKeyName()} => static::getRecordTitle($record),
                     ])
                     ->toArray();
             })

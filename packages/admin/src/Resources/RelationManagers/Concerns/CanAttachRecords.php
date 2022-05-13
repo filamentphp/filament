@@ -95,7 +95,7 @@ trait CanAttachRecords
                     })
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relationship->getRelated()->getKeyName()} => static::getRecordTitle($record),
+                        $record->{$relationship->getRelatedKeyName()} => static::getRecordTitle($record),
                     ])
                     ->toArray();
             })
@@ -118,7 +118,7 @@ trait CanAttachRecords
                     })
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relationship->getRelated()->getKeyName()} => static::getRecordTitle($record),
+                        $record->{$relationship->getRelatedKeyName()} => static::getRecordTitle($record),
                     ])
                     ->toArray();
             })
