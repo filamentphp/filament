@@ -71,7 +71,10 @@ trait HasActions
             return;
         }
 
-        $this->cacheForm('mountedTableActionForm');
+        $this->cacheForm(
+            'mountedTableActionForm',
+            fn () => $this->getMountedTableActionForm(),
+        );
 
         app()->call($action->getMountUsing(), [
             'action' => $action,
@@ -104,9 +107,22 @@ trait HasActions
         return $this->getCachedTableAction($this->mountedTableAction) ?? $this->getCachedTableEmptyStateAction($this->mountedTableAction) ?? $this->getCachedTableHeaderAction($this->mountedTableAction);
     }
 
-    public function getMountedTableActionForm(): ComponentContainer
+    public function getMountedTableActionForm(): ?ComponentContainer
     {
-        return $this->mountedTableActionForm;
+        $action = $this->getMountedTableAction();
+
+        if (! $action) {
+            return null;
+        }
+
+        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedTableActionForm')) {
+            return $this->getCachedForm('mountedTableActionForm');
+        }
+
+        return $this->makeForm()
+            ->schema($action->getFormSchema())
+            ->model($this->getMountedTableActionRecord() ?? $this->getTableQuery()->getModel()::class)
+            ->statePath('mountedTableActionData');
     }
 
     public function getMountedTableActionRecord(): ?Model

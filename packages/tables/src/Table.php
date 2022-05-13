@@ -298,7 +298,7 @@ class Table extends ViewComponent
         return $this->getLivewire()->getMountedTableAction();
     }
 
-    public function getMountedActionForm(): ComponentContainer
+    public function getMountedActionForm(): ?ComponentContainer
     {
         return $this->getLivewire()->getMountedTableActionForm();
     }
@@ -308,7 +308,7 @@ class Table extends ViewComponent
         return $this->getLivewire()->getMountedTableBulkAction();
     }
 
-    public function getMountedBulkActionForm(): ComponentContainer
+    public function getMountedBulkActionForm(): ?ComponentContainer
     {
         return $this->getLivewire()->getMountedTableBulkActionForm();
     }

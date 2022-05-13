@@ -37,7 +37,15 @@ trait HasFilters
 
     public function getTableFiltersForm(): Forms\ComponentContainer
     {
-        return $this->tableFiltersForm;
+        if ((! $this->isCachingForms) && $this->hasCachedForm('tableFiltersForm')) {
+            return $this->getCachedForm('tableFiltersForm');
+        }
+
+        return $this->makeForm()
+            ->schema($this->getTableFiltersFormSchema())
+            ->columns($this->getTableFiltersFormColumns())
+            ->statePath('tableFilters')
+            ->reactive();
     }
 
     public function isTableFilterable(): bool
