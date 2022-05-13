@@ -95,7 +95,7 @@ trait CanAssociateRecords
                     $isFirst = false;
                 }
 
-                $relatedKey = $relationship->getLocalKeyName();
+                $localKeyName = $relationship->getLocalKeyName();
 
                 return $relationshipQuery
                     ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
@@ -103,7 +103,7 @@ trait CanAssociateRecords
                     })
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relatedKey} => static::getRecordTitle($record),
+                        $record->{$localKeyName} => static::getRecordTitle($record),
                     ])
                     ->toArray();
             })
