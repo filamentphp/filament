@@ -20,16 +20,6 @@ trait HasActions
 
     protected ?array $cachedActions = null;
 
-    protected function getHasActionsForms(): array
-    {
-        return [
-            'mountedActionForm' => $this->makeForm()
-                ->schema(($action = $this->getMountedAction()) ? $action->getFormSchema() : [])
-                ->statePath('mountedActionData')
-                ->model($this->getMountedActionFormModel()),
-        ];
-    }
-
     public function callMountedAction()
     {
         $action = $this->getMountedAction();
@@ -69,7 +59,10 @@ trait HasActions
             return;
         }
 
-        $this->cacheForm('mountedActionForm');
+        $this->cacheForm(
+            'mountedActionForm',
+            fn () => $this->getMountedActionForm(),
+        );
 
         app()->call($action->getMountUsing(), [
             'action' => $action,
@@ -126,9 +119,29 @@ trait HasActions
         return $this->getCachedFormAction($this->mountedAction);
     }
 
-    public function getMountedActionForm(): Forms\ComponentContainer
+    protected function getHasActionsForms(): array
     {
-        return $this->mountedActionForm;
+        return [
+            'mountedActionForm' => $this->getMountedActionForm(),
+        ];
+    }
+
+    public function getMountedActionForm(): ?Forms\ComponentContainer
+    {
+        $action = $this->getMountedAction();
+
+        if (! $action) {
+            return null;
+        }
+
+        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedActionForm')) {
+            return $this->getCachedForm('mountedActionForm');
+        }
+
+        return $this->makeForm()
+            ->schema($action->getFormSchema())
+            ->statePath('mountedActionData')
+            ->model($this->getMountedActionFormModel());
     }
 
     protected function getMountedActionFormModel(): Model | string | null
