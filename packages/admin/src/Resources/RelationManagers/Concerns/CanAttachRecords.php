@@ -57,6 +57,7 @@ trait CanAttachRecords
             ->label(__('filament::resources/relation-managers/attach.action.modal.fields.record_id.label'))
             ->searchable()
             ->getSearchResultsUsing(static function (Select $component, RelationManager $livewire, string $searchQuery): array {
+                /** @var BelongsToMany $relationship */
                 $relationship = $livewire->getRelationship();
 
                 $displayColumnName = static::getRecordTitleAttribute();
@@ -89,13 +90,15 @@ trait CanAttachRecords
                     $isFirst = false;
                 }
 
+                $relatedKey = $relationship->getRelatedKeyName();
+
                 return $relationshipQuery
                     ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
                         $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
                     })
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relationship->getRelatedKeyName()} => static::getRecordTitle($record),
+                        $record->{$relatedKey} => static::getRecordTitle($record),
                     ])
                     ->toArray();
             })
@@ -109,6 +112,8 @@ trait CanAttachRecords
 
                 $displayColumnName = static::getRecordTitleAttribute();
 
+                $relatedKey = $relationship->getRelatedKeyName();
+
                 return $relationship
                     ->getRelated()
                     ->query()
@@ -118,7 +123,7 @@ trait CanAttachRecords
                     })
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relationship->getRelatedKeyName()} => static::getRecordTitle($record),
+                        $record->{$relatedKey} => static::getRecordTitle($record),
                     ])
                     ->toArray();
             })
