@@ -108,6 +108,7 @@ trait CanAttachRecords
                     return [];
                 }
 
+                /** @var BelongsToMany $relationship */
                 $relationship = $livewire->getRelationship();
 
                 $displayColumnName = static::getRecordTitleAttribute();
