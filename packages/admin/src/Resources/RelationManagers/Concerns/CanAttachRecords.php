@@ -8,6 +8,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
 
@@ -56,6 +57,7 @@ trait CanAttachRecords
             ->label(__('filament::resources/relation-managers/attach.action.modal.fields.record_id.label'))
             ->searchable()
             ->getSearchResultsUsing(static function (Select $component, RelationManager $livewire, string $searchQuery): array {
+                /** @var BelongsToMany $relationship */
                 $relationship = $livewire->getRelationship();
 
                 $displayColumnName = static::getRecordTitleAttribute();
@@ -88,11 +90,14 @@ trait CanAttachRecords
                     $isFirst = false;
                 }
 
+                $relatedKeyName = $relationship->getRelatedKeyName();
+
                 return $relationshipQuery
                     ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
                         $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
                     })
-                    ->pluck($displayColumnName, $relationship->getRelated()->getKeyName())
+                    ->get()
+                    ->mapWithKeys(static fn (Model $record): array => [$record->{$relatedKeyName} => static::getRecordTitle($record)])
                     ->toArray();
             })
             ->getOptionLabelUsing(static fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->query()->find($value)))
@@ -101,9 +106,12 @@ trait CanAttachRecords
                     return [];
                 }
 
+                /** @var BelongsToMany $relationship */
                 $relationship = $livewire->getRelationship();
 
                 $displayColumnName = static::getRecordTitleAttribute();
+
+                $relatedKeyName = $relationship->getRelatedKeyName();
 
                 return $relationship
                     ->getRelated()
@@ -112,7 +120,8 @@ trait CanAttachRecords
                     ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
                         $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
                     })
-                    ->pluck($displayColumnName, $relationship->getRelated()->getKeyName())
+                    ->get()
+                    ->mapWithKeys(static fn (Model $record): array => [$record->{$relatedKeyName} => static::getRecordTitle($record)])
                     ->toArray();
             })
             ->disableLabel();
