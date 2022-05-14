@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class Tabs extends Component
@@ -26,12 +27,12 @@ class Tabs extends Component
 
     public function tabs(array $tabs): static
     {
-        $this->schema($tabs);
+        $this->childComponents($tabs);
 
         return $this;
     }
 
-    public function getTabsConfig(): array
+    public function getConfig(): array
     {
         return collect($this->getChildComponentContainer()->getComponents())
             ->filter(static fn (Tab $tab): bool => ! $tab->isHidden())
