@@ -2,18 +2,8 @@
 
 namespace Filament\Forms\Components;
 
-use Closure;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use Illuminate\Support\Collection;
-use function Filament\Forms\array_move_after;
-use function Filament\Forms\array_move_before;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Builder\Block;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 class Wizard extends Component
 {

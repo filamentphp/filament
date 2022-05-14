@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class Tabs extends Component
