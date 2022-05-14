@@ -15,7 +15,7 @@
 
 @php
     $buttonClasses = array_merge([
-        'inline-flex items-center justify-center font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset filament-button',
+        'inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset filament-button',
         'dark:focus:ring-offset-0' => $darkMode,
         'opacity-70 cursor-not-allowed' => $disabled,
         'h-9 px-4 text-sm' => $size === 'md',
@@ -109,17 +109,25 @@
             />
         @endif
 
-        <x-filament-support::loading-indicator
-            x-show="isUploadingFile"
-            :class="$iconClasses"
-        />
+        <span class="flex items-center gap-1">
+            @if ($type === 'submit')
+                <x-filament-support::loading-indicator
+                    x-show="isUploadingFile"
+                    :class="$iconClasses"
+                />
 
-        <span x-show="isUploadingFile">
-            {{ __('filament-support::components/button.messages.uploading_file') }}
-        </span>
+                <span x-show="isUploadingFile">
+                    {{ __('filament-support::components/button.messages.uploading_file') }}
+                </span>
 
-        <span x-show="! isUploadingFile">
-            {{ $slot }}
+                <span x-show="! isUploadingFile">
+                    {{ $slot }}
+                </span>
+            @else
+                <span>
+                    {{ $slot }}
+                </span>
+            @endif
         </span>
 
         @if ($icon && $iconPosition === 'after')
