@@ -15,11 +15,23 @@ trait HasWizard
         )
             ->wizard()
             ->modifyBaseComponentUsing(function (Wizard $component) {
-                $component->submit($this->getSubmitFormAction());
+                $component
+                    ->cancelAction($this->getCancelFormAction())
+                    ->submitAction($this->getSubmitFormAction());
             });
     }
 
+    protected function form(Form $form): Form
+    {
+        return $form->schema($this->getSteps());
+    }
+
     protected function getFormActions(): array
+    {
+        return [];
+    }
+
+    protected function getSteps(): array
     {
         return [];
     }

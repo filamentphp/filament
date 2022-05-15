@@ -120,15 +120,15 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center">
-                            <span class="text-xs font-semibold tracking-wide uppercase">
+                        <div class="flex flex-col items-start justify-center">
+                            <div class="text-xs font-semibold tracking-wide uppercase">
                                 {{ $step->getLabel() }}
-                            </span>
+                            </div>
 
                             @if (filled($description = $step->getDescription()))
-                                <span class="text-sm font-medium text-gray-500">
+                                <div class="text-sm font-medium text-gray-500">
                                     {{ $description }}
-                                </span>
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -163,6 +163,10 @@
             >
                 {{ __('forms::components.wizard.buttons.previous_step.label') }}
             </x-forms::button>
+
+            <div x-show="isFirstStep()">
+                {{ $getCancelAction() }}
+            </div>
         </div>
 
         <div>

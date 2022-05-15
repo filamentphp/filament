@@ -11,6 +11,8 @@ class Wizard extends Component
 {
     use HasExtraAlpineAttributes;
 
+    protected string | Htmlable | null $cancelAction = null;
+
     protected string | Htmlable | null $submitAction = null;
 
     protected string $view = 'forms::components.wizard';
@@ -58,7 +60,14 @@ class Wizard extends Component
         return $this;
     }
 
-    public function submit(string | Htmlable | null $action): static
+    public function cancelAction(string | Htmlable | null $action): static
+    {
+        $this->cancelAction = $action;
+
+        return $this;
+    }
+
+    public function submitAction(string | Htmlable | null $action): static
     {
         $this->submitAction = $action;
 
@@ -71,6 +80,11 @@ class Wizard extends Component
             ->filter(static fn (Step $step): bool => ! $step->isHidden())
             ->mapWithKeys(static fn (Step $step): array => [$step->getId() => $step->getLabel()])
             ->toArray();
+    }
+
+    public function getCancelAction(): string | Htmlable | null
+    {
+        return $this->cancelAction;
     }
 
     public function getSubmitAction(): string | Htmlable | null

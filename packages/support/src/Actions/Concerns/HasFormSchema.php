@@ -3,6 +3,7 @@
 namespace Filament\Support\Actions\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Wizard;
 
 trait HasFormSchema
 {
@@ -17,7 +18,17 @@ trait HasFormSchema
 
     public function getFormSchema(): array
     {
-        return $this->evaluate($this->formSchema);
+        $schema = $this->evaluate($this->formSchema);
+
+        if ($this->isWizard()) {
+            return [
+                Wizard::make($schema)
+                    ->cancelAction($this->getModalCancelAction())
+                    ->submitAction($this->getModalSubmitAction()),
+            ];
+        }
+
+        return $schema;
     }
 
     public function hasFormSchema(): bool
