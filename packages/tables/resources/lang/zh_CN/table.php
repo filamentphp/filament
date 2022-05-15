@@ -55,32 +55,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => '您确定要这样做吗？',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => '取消',
-                ],
-
-                'confirm' => [
-                    'label' => '确认',
-                ],
-
-                'submit' => [
-                    'label' => '提交',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => '没有找到相关记录',
     ],

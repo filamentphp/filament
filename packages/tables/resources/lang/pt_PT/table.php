@@ -55,32 +55,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Tem certeza que pretende fazer isso?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Cancelar',
-                ],
-
-                'confirm' => [
-                    'label' => 'Confirmar',
-                ],
-
-                'submit' => [
-                    'label' => 'Enviar para',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Sem registos',
     ],

@@ -158,6 +158,10 @@ export default (Alpine) => {
                         this.hour = hour
                     }
 
+                    if (this.state === null) {
+                        return
+                    }
+
                     let date = this.getSelectedDate() ?? this.focusedDate
 
                     this.setState(date.hour(this.hour ?? 0))
@@ -176,6 +180,10 @@ export default (Alpine) => {
                         this.minute = minute
                     }
 
+                    if (this.state === null) {
+                        return
+                    }
+
                     let date = this.getSelectedDate() ?? this.focusedDate
 
                     this.setState(date.minute(this.minute ?? 0))
@@ -192,6 +200,10 @@ export default (Alpine) => {
                         this.second = 59
                     } else {
                         this.second = second
+                    }
+
+                    if (this.state === null) {
+                        return
                     }
 
                     let date = this.getSelectedDate() ?? this.focusedDate
@@ -400,8 +412,6 @@ export default (Alpine) => {
                 if (date === null) {
                     this.state = null
 
-                    this.setDisplayText()
-
                     return
                 } else {
                     if (this.dateIsDisabled(date)) {
@@ -414,8 +424,6 @@ export default (Alpine) => {
                     .minute(this.minute ?? 0)
                     .second(this.second ?? 0)
                     .format(format)
-
-                this.setDisplayText()
             },
 
             togglePickerVisibility: function () {

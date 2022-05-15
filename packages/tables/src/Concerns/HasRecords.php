@@ -48,4 +48,9 @@ trait HasRecords
     {
         return $this->getTableQuery()->find($key);
     }
+
+    public function getTableRecordKey(Model $record): string
+    {
+        return $record->getKey();
+    }
 }

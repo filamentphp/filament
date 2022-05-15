@@ -7,7 +7,7 @@
 ])
 
 <x-filament-support::modal
-    :attributes="$attributes->merge($slots)"
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($slots)"
     :dark-mode="config('tables.dark_mode')"
     heading-component="tables::modal.heading"
     hr-component="tables::hr"

@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Edycja :label',
+    'title' => 'Edytuj :label',
 
-    'breadcrumb' => 'Edycja',
+    'breadcrumb' => 'Edytuj',
 
     'actions' => [
 

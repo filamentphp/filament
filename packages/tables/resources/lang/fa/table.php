@@ -53,28 +53,20 @@ return [
             'label' => 'بازکردن عملیات',
         ],
 
+        'toggle_columns' => [
+            'label' => 'باز/بستن ستون ها',
+        ],
+
     ],
 
     'actions' => [
 
-        'modal' => [
+        'replicate' => [
 
-            'requires_confirmation_subheading' => 'آیا برای انجام این کار مطمئن هستید؟',
+            'label' => 'تکثیر',
 
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'لغو',
-                ],
-
-                'confirm' => [
-                    'label' => 'تایید',
-                ],
-
-                'submit' => [
-                    'label' => 'ثبت',
-                ],
-
+            'messages' => [
+                'replicated' => 'رکورد تکثیر شد',
             ],
 
         ],
@@ -82,7 +74,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'هیچ آیتمی یافت نشد',
+        'heading' => 'هیچ رکوردی یافت نشد',
     ],
 
     'filters' => [
@@ -91,6 +83,10 @@ return [
 
             'reset' => [
                 'label' => 'پاک کردن فیلترها',
+            ],
+
+            'close' => [
+                'label' => 'بستن',
             ],
 
         ],

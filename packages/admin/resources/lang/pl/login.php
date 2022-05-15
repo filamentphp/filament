@@ -31,8 +31,8 @@ return [
     ],
 
     'messages' => [
-        'failed' => 'Nieprawidłowe poświadczenia.',
-        'throttled' => 'Zbyt wiele nieudanych prób logowania. Spróbuj ponownie za :seconds sekund.',
+        'failed' => 'Błędny login lub hasło.',
+        'throttled' => 'Za dużo nieudanych prób logowania. Proszę spróbować za :seconds sekund.',
     ],
 
 ];

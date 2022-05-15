@@ -55,32 +55,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Weet u zeker dat u dit wilt doen?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Annuleren',
-                ],
-
-                'confirm' => [
-                    'label' => 'Bevestig',
-                ],
-
-                'submit' => [
-                    'label' => 'Verzenden',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Geen resultaten gevonden',
     ],

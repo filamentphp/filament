@@ -55,32 +55,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Er du sikker på, at du gerne vil gøre dette?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Annuller',
-                ],
-
-                'confirm' => [
-                    'label' => 'Bekræft',
-                ],
-
-                'submit' => [
-                    'label' => 'Indsend',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Ingen resultater',
     ],
