@@ -10,16 +10,10 @@ trait HasRelationManagers
     {
         $managers = $this->getResource()::getRelations();
 
-        if (empty($managers) || !is_array($managers[0])) {
-            return $this->filterForViewableRelationManagers($managers);
-        }
-
-        for($i = 0; $i < count($managers); $i++) {
-            $managers[$i] = $this->filterForViewableRelationManagers($managers[$i]);
-        }
-
-        return $managers;
-
+        return array_filter(
+            $managers,
+            fn (string $manager): bool => $manager::canViewForRecord($this->record),
+        );
     }
 
     public function mountHasRelationManagers(): void
@@ -31,13 +25,5 @@ trait HasRelationManagers
         }
 
         $this->activeRelationManager = array_key_first($this->getRelationManagers()) ?? null;
-    }
-
-    private function filterForViewableRelationManagers(array $managers): array
-    {
-        return array_filter(
-            $managers,
-            fn (string $manager): bool => $manager::canViewForRecord($this->record),
-        );
     }
 }
