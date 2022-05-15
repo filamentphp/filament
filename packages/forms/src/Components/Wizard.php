@@ -4,11 +4,14 @@ namespace Filament\Forms\Components;
 
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Component as LivewireComponent;
 
 class Wizard extends Component
 {
     use HasExtraAlpineAttributes;
+
+    protected string | Htmlable | null $submitAction = null;
 
     protected string $view = 'forms::components.wizard';
 
@@ -50,11 +53,23 @@ class Wizard extends Component
         return $this;
     }
 
+    public function submit(string | Htmlable | null $action): static
+    {
+        $this->submitAction = $action;
+
+        return $this;
+    }
+
     public function getConfig(): array
     {
         return collect($this->getChildComponentContainer()->getComponents())
             ->filter(static fn (Step $step): bool => ! $step->isHidden())
             ->mapWithKeys(static fn (Step $step): array => [$step->getId() => $step->getLabel()])
             ->toArray();
+    }
+
+    public function getSubmitAction(): string | Htmlable | null
+    {
+        return $this->submitAction;
     }
 }

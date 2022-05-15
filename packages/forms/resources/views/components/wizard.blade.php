@@ -33,6 +33,14 @@
             return Object.entries(this.steps)
         },
 
+        isFirstStep: function () {
+            return this.getStepIndex(this.step) <= 0
+        },
+
+        isLastStep: function () {
+            return (this.getStepIndex(this.step) + 1) >= Object.keys(this.steps).length
+        },
+
     }"
     x-on:expand-concealing-component.window="if ($event.detail.id in steps) step = $event.detail.id"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
@@ -146,12 +154,13 @@
         <div>
             <x-forms::button
                 icon="heroicon-s-chevron-left"
-                x-show="getStepIndex(step) > 0"
+                x-show="! isFirstStep()"
                 x-cloak
                 x-on:click="previousStep"
                 color="secondary"
+                size="sm"
             >
-                Previous
+                {{ __('forms::components.wizard.buttons.previous_step.label') }}
             </x-forms::button>
         </div>
 
@@ -159,13 +168,19 @@
             <x-forms::button
                 icon="heroicon-s-chevron-right"
                 icon-position="after"
-                x-show="(getStepIndex(step) + 1) < Object.keys(steps).length"
+                x-show="! isLastStep()"
                 x-cloak
                 x-on:click="$wire.dispatchFormEvent('wizard::nextStep', '{{ $getStatePath() }}', getStepIndex(step))"
-                x-bind:wire:click="``"
+                wire:loading.attr="disabled"
+                wire:loading.class="opacity-70 cursor-wait"
+                size="sm"
             >
-                Next
+                {{ __('forms::components.wizard.buttons.next_step.label') }}
             </x-forms::button>
+
+            <div x-show="isLastStep()">
+                {{ $getSubmitAction() }}
+            </div>
         </div>
     </div>
 </div>
