@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Livewire\Component as LivewireComponent;
 
 class Wizard extends Component
 {
@@ -30,10 +31,10 @@ class Wizard extends Component
                         return;
                     }
 
-                    $livewire = $component->getLivewire();
-
                     $component->getChildComponentContainer()->getComponents()[$currentStep]->getChildComponentContainer()->validate();
 
+                    /** @var LivewireComponent $livewire */
+                    $livewire = $component->getLivewire();
                     $livewire->dispatchBrowserEvent('next-wizard-step', [
                         'statePath' => $statePath,
                     ]);
