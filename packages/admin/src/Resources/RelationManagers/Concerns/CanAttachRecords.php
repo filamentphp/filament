@@ -103,8 +103,8 @@ trait CanAttachRecords
                         static fn (Builder $query): Builder => $query->whereDoesntHave(
                             $livewire->getInverseRelationshipName(),
                             static function (Builder $query) use ($livewire): Builder {
-                            return $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
-                        }
+                                return $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                            }
                         ),
                     )
                     ->get()
