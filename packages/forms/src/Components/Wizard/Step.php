@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Wizard;
 
 use Closure;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Illuminate\Support\Str;
 
@@ -50,5 +51,10 @@ class Step extends Component
     public function getIcon(): ?string
     {
         return $this->evaluate($this->icon);
+    }
+
+    public function getColumnsConfig(): array
+    {
+        return $this->columns ?? $this->getContainer()->getColumnsConfig();
     }
 }

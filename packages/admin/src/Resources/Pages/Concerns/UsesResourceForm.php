@@ -12,10 +12,18 @@ trait UsesResourceForm
     protected function getResourceForm(?int $columns = null, bool $isDisabled = false): Form
     {
         return $this->form(
-            Form::make()
-                ->columns($columns)
-                ->disabled($isDisabled),
+            $this->getBaseResourceForm(
+                columns: $columns,
+                isDisabled: $isDisabled,
+            ),
         );
+    }
+
+    protected function getBaseResourceForm(?int $columns = null, bool $isDisabled = false): Form
+    {
+        return Form::make()
+            ->columns($columns)
+            ->disabled($isDisabled);
     }
 
     protected function form(Form $form): Form

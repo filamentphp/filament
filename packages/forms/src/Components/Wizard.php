@@ -15,9 +15,14 @@ class Wizard extends Component
 
     protected string $view = 'forms::components.wizard';
 
-    public static function make(): static
+    final public function __construct(array $steps = [])
     {
-        $static = app(static::class);
+        $this->steps($steps);
+    }
+
+    public static function make(array $steps = []): static
+    {
+        $static = app(static::class, ['steps' => $steps]);
         $static->setUp();
 
         return $static;

@@ -53,7 +53,7 @@
         {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}
         role="list"
         @class([
-            'border border-gray-300 rounded-xl overflow-hidden divide-y divide-gray-300 md:flex md:divide-y-0',
+            'border border-gray-300 bg-white rounded-xl overflow-hidden divide-y divide-gray-300 lg:flex lg:divide-y-0',
             'dark:border-gray-700 dark:divide-gray-700' => config('forms.dark_mode'),
         ])
     >
@@ -69,18 +69,18 @@
                     role="step"
                     class="group"
                 >
-                    <span
+                    <div
                         x-bind:class="{
                             'bg-primary-600': getStepIndex(step) === {{ $loop->index }},
                             'bg-transparent group-hover:bg-gray-200': getStepIndex(step) > {{ $loop->index }},
                         }"
                         class="absolute top-0 left-0 w-1 h-full lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
                         aria-hidden="true"
-                    ></span>
+                    ></div>
 
-                    <span class="px-6 py-5 flex items-start text-sm font-medium">
-                        <span class="flex-shrink-0">
-                            <span
+                    <div class="px-6 py-5 flex gap-4 items-center text-sm font-medium">
+                        <div class="flex-shrink-0">
+                            <div
                                 x-bind:class="{
                                     'bg-primary-600': getStepIndex(step) > {{ $loop->index }},
                                     'border-2': getStepIndex(step) <= {{ $loop->index }},
@@ -108,6 +108,7 @@
                                     />
                                 @else
                                     <span
+                                        x-show="getStepIndex(step) <= {{ $loop->index }}"
                                         x-bind:class="{
                                             'text-gray-500': getStepIndex(step) !== {{ $loop->index }},
                                             'text-primary-600': getStepIndex(step) === {{ $loop->index }},
@@ -116,10 +117,10 @@
                                         {{ str_pad($loop->index + 1, 2, '0', STR_PAD_LEFT) }}
                                     </span>
                                 @endif
-                            </span>
-                        </span>
+                            </div>
+                        </div>
 
-                        <span class="mt-0.5 ml-4 min-w-0 flex flex-col items-start">
+                        <div class="flex items-center">
                             <span class="text-xs font-semibold tracking-wide uppercase">
                                 {{ $step->getLabel() }}
                             </span>
@@ -129,8 +130,8 @@
                                     {{ $description }}
                                 </span>
                             @endif
-                        </span>
-                    </span>
+                        </div>
+                    </div>
                 </button>
 
                 @if (! $loop->first)
