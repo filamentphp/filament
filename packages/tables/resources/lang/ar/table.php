@@ -53,6 +53,24 @@ return [
             'label' => 'فتح الإجراءات',
         ],
 
+        'toggle_columns' => [
+            'label' => 'تبديل الأعمدة',
+        ],
+
+    ],
+
+    'actions' => [
+
+        'replicate' => [
+
+            'label' => 'نسخة',
+
+            'messages' => [
+                'replicated' => 'تم نسخ السجل',
+            ],
+
+        ],
+
     ],
 
     'empty' => [

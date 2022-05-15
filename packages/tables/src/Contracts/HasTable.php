@@ -36,11 +36,11 @@ interface HasTable extends HasForms
 
     public function getMountedTableAction(): ?Action;
 
-    public function getMountedTableActionForm(): ComponentContainer;
+    public function getMountedTableActionForm(): ?ComponentContainer;
 
     public function getMountedTableBulkAction(): ?BulkAction;
 
-    public function getMountedTableBulkActionForm(): ComponentContainer;
+    public function getMountedTableBulkActionForm(): ?ComponentContainer;
 
     public function getTableFiltersForm(): ComponentContainer;
 

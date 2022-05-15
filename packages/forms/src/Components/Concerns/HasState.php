@@ -116,11 +116,15 @@ trait HasState
         return $this;
     }
 
-    public function fillMissingStateWithNull(): static
+    public function fillStateWithNull(bool $ifMissing = false): static
     {
         $livewire = $this->getLivewire();
 
-        data_fill($livewire, $this->getStatePath(), null);
+        if ($ifMissing) {
+            data_fill($livewire, $this->getStatePath(), null);
+        } else {
+            data_set($livewire, $this->getStatePath(), null);
+        }
 
         return $this;
     }
@@ -243,10 +247,7 @@ trait HasState
             return $path;
         }
 
-        $statePath = Str::of($this->getStatePath());
-        $containerPath = $statePath->contains('.') ?
-            ((string) $statePath->beforeLast('.')) :
-            null;
+        $containerPath = $this->getContainer()->getStatePath();
 
         if (blank($containerPath)) {
             return $path;

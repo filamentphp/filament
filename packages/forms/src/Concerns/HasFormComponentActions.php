@@ -22,32 +22,21 @@ trait HasFormComponentActions
         return $this->mountedFormComponentActionComponent !== null;
     }
 
-    protected function getHasFormComponentActionsForms(): array
+    protected function getMountedFormComponentActionForm(): ?ComponentContainer
     {
-        if ($this->cachedForms === null) {
-            return [];
+        $action = $this->getMountedFormComponentAction();
+
+        if (! $action) {
+            return null;
         }
 
-        if (! $this->hasMountedFormComponentAction()) {
-            return [];
+        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedFormComponentActionForm')) {
+            return $this->getCachedForm('mountedFormComponentActionForm');
         }
-
-        return [
-            'mountedFormComponentActionForm' => $this->getMountedFormComponentActionForm(),
-        ];
-    }
-
-    protected function getMountedFormComponentActionForm(): ComponentContainer
-    {
-        if (array_key_exists('mountedFormComponentActionForm', $this->cachedForms)) {
-            return $this->cachedForms['mountedFormComponentActionForm'];
-        }
-
-        $component = $this->getMountedFormComponentActionComponent();
 
         return $this->makeForm()
-            ->schema(($action = $this->getMountedFormComponentAction()) ? $action->getFormSchema() : [])
-            ->model($component->getActionFormModel())
+            ->schema($action->getFormSchema())
+            ->model($this->getMountedFormComponentActionComponent()->getActionFormModel())
             ->statePath('mountedFormComponentActionData');
     }
 
@@ -96,7 +85,10 @@ trait HasFormComponentActions
             return;
         }
 
-        $this->cachedForms['mountedFormComponentActionForm'] = $this->getMountedFormComponentActionForm();
+        $this->cacheForm(
+            'mountedFormComponentActionForm',
+            fn () => $this->getMountedFormComponentActionForm(),
+        );
 
         app()->call($action->getMountUsing(), [
             'action' => $action,

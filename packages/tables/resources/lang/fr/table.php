@@ -53,6 +53,24 @@ return [
             'label' => 'Actions ouvertes',
         ],
 
+        'toggle_columns' => [
+            'label' => 'Basculer les colonnes',
+        ],
+
+    ],
+
+    'actions' => [
+
+        'replicate' => [
+
+            'label' => 'Dupliquer',
+
+            'messages' => [
+                'replicated' => 'Enregistrement dupliqué',
+            ],
+
+        ],
+
     ],
 
     'empty' => [
@@ -65,6 +83,10 @@ return [
 
             'reset' => [
                 'label' => 'Réinitialiser',
+            ],
+
+            'close' => [
+                'label' => 'Fermer',
             ],
 
         ],
@@ -96,4 +118,5 @@ return [
         ],
 
     ],
+
 ];
