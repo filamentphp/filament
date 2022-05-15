@@ -8,6 +8,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 interface HasTable extends HasForms
 {
@@ -60,4 +61,6 @@ interface HasTable extends HasForms
     public function isTableColumnToggledHidden(string $name): bool;
 
     public function getTableColumnToggleForm(): ComponentContainer;
+
+    public function getTableRecordKey(Model $record): string;
 }

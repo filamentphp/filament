@@ -285,9 +285,9 @@
                         @foreach ($records as $record)
                             <x-tables::row
                                 :record-url="$getRecordUrl($record)"
-                                wire:key="{{ $record->getKey() }}"
+                                wire:key="{{ $this->getTableRecordKey($record) }}"
                                 x-bind:class="{
-                                    'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $record->getKey() }}'),
+                                    'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $this->getTableRecordKey($record) }}'),
                                 }"
                             >
                                 @if ($isSelectionEnabled())
@@ -295,7 +295,7 @@
                                         <x-slot
                                             name="checkbox"
                                             x-model="selectedRecords"
-                                            :value="$record->getKey()"
+                                            :value="$this->getTableRecordKey($record)"
                                             class="table-row-checkbox"
                                         ></x-slot>
                                     </x-tables::checkbox-cell>

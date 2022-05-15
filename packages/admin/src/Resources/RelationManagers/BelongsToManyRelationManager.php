@@ -124,9 +124,11 @@ class BelongsToManyRelationManager extends RelationManager
         $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
-        return $this->selectPivotDataInQuery(
+        $record = $this->selectPivotDataInQuery(
             $relationship->wherePivot($pivotKeyName, $key),
         )->first();
+
+        return $record?->setRawAttributes($record->getRawOriginal());
     }
 
     public function getSelectedTableRecords(): Collection
@@ -155,5 +157,20 @@ class BelongsToManyRelationManager extends RelationManager
             $relationship->getTable().'.*',
             $query->getModel()->getTable().'.*',
         );
+    }
+
+    public function getTableRecordKey(Model $record): string
+    {
+        if (! $this->allowsDuplicates()) {
+            return parent::getTableRecordKey($record);
+        }
+
+        /** @var BelongsToMany $relationship */
+        $relationship = $this->getRelationship();
+
+        $pivotClass = $relationship->getPivotClass();
+        $pivotKeyName = app($pivotClass)->getKeyName();
+
+        return $record->getAttributeValue($pivotKeyName);
     }
 }
