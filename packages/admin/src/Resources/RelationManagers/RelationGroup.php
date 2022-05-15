@@ -9,7 +9,8 @@ class RelationGroup
     public function __construct(
         protected string $label,
         protected array $managers,
-    ) {}
+    ) {
+    }
 
     public static function make(string $label, array $managers): static
     {
