@@ -554,6 +554,27 @@ Finally, add the `$allowsDuplicates` property to the relation manager:
 protected bool $allowsDuplicates = true;
 ```
 
+### Grouping relation managers
+
+You may choose to group relation managers together into one tab. To do this, you may wrap multiple managers in a `RelationGroup` object, with a label:
+
+```php
+
+use Filament\Resources\RelationManagers\RelationGroup;
+
+public static function getRelations(): array
+{
+    return [
+        // ...
+        RelationGroup::make('Contacts', [
+            RelationManagers\IndividualsRelationManager::class,
+            RelationManagers\OrganizationsRelationManager::class,
+        ]),
+        // ...
+    ];
+}
+```
+
 ### `HasOne`, `BelongsTo` and `MorphOne`
 
 If you'd like to save data in a form to a singular relationship, you may use the [`relationship()` method for layout components](/docs/forms/layout#saving-data-to-relationships):
