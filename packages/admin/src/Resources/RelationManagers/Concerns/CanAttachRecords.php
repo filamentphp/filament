@@ -100,10 +100,12 @@ trait CanAttachRecords
                 return $relationshipQuery
                     ->when(
                         ! $livewire->allowsDuplicates(),
-                        static fn (Builder $query): Builder => $query->whereDoesntHave($livewire->getInverseRelationshipName(),
-                        static function (Builder $query) use ($livewire): Builder {
+                        static fn (Builder $query): Builder => $query->whereDoesntHave(
+                            $livewire->getInverseRelationshipName(),
+                            static function (Builder $query) use ($livewire): Builder {
                             return $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
-                        }),
+                        }
+                        ),
                     )
                     ->get()
                     ->mapWithKeys(static fn (Model $record): array => [$record->{$relatedKeyName} => static::getRecordTitle($record)])
