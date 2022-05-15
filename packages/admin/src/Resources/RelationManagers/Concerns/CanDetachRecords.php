@@ -26,7 +26,13 @@ trait CanDetachRecords
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
-        $relationship->detach($this->getMountedTableActionRecord());
+        $recordToDetatch = $this->getMountedTableActionRecord();
+
+        if ($this->allowsDuplicates()) {
+            $recordToDetatch->{$relationship->getPivotAccessor()}->delete();
+        } else {
+            $relationship->detach($recordToDetatch);
+        }
 
         $this->callHook('afterDetach');
 
@@ -47,7 +53,15 @@ trait CanDetachRecords
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
-        $relationship->detach($this->getSelectedTableRecords());
+        $recordsToDetach = $this->getSelectedTableRecords();
+
+        if ($this->allowsDuplicates()) {
+            $recordsToDetach->each(
+                fn (Model $recordToDetach) => $recordToDetach->{$relationship->getPivotAccessor()}->delete(),
+            );
+        } else {
+            $relationship->detach($recordsToDetach);
+        }
 
         $this->callHook('afterBulkDetach');
 

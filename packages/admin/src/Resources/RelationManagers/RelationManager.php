@@ -92,7 +92,6 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     public function getInverseRelationshipName(): string
     {
         return static::$inverseRelationship ?? (string) Str::of(class_basename($this->ownerRecord))
-            ->lower()
             ->plural()
             ->camel();
     }

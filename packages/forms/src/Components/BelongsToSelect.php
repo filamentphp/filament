@@ -163,17 +163,21 @@ class BelongsToSelect extends Select
 
         $isFirst = true;
 
-        foreach ($this->getSearchColumns() as $searchColumnName) {
-            $whereClause = $isFirst ? 'where' : 'orWhere';
+        $query->where(function (Builder $query) use ($isFirst, $searchOperator, $searchQuery): Builder {
+            foreach ($this->getSearchColumns() as $searchColumnName) {
+                $whereClause = $isFirst ? 'where' : 'orWhere';
 
-            $query->{$whereClause}(
-                $searchColumnName,
-                $searchOperator,
-                "%{$searchQuery}%",
-            );
+                $query->{$whereClause}(
+                    $searchColumnName,
+                    $searchOperator,
+                    "%{$searchQuery}%",
+                );
 
-            $isFirst = false;
-        }
+                $isFirst = false;
+            }
+
+            return $query;
+        });
 
         return $query;
     }
