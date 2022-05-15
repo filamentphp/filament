@@ -53,12 +53,12 @@
         {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}
         role="list"
         @class([
-            'border border-gray-300 bg-white rounded-xl overflow-hidden divide-y divide-gray-300 lg:flex lg:divide-y-0',
-            'dark:border-gray-700 dark:divide-gray-700' => config('forms.dark_mode'),
+            'border border-gray-300 shadow-sm bg-white rounded-xl overflow-hidden divide-y divide-gray-300 lg:flex lg:divide-y-0',
+            'dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700' => config('forms.dark_mode'),
         ])
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
-            <li class="relative overflow-hidden lg:flex-1">
+            <li class="group relative overflow-hidden lg:flex-1">
                 <button
                     type="button"
                     x-on:click="if (getStepIndex(step) > {{ $loop->index }}) step = '{{ $step->getId() }}'"
@@ -67,25 +67,28 @@
                         'cursor-not-allowed': getStepIndex(step) <= {{ $loop->index }},
                     }"
                     role="step"
-                    class="group"
+                    class="w-full"
                 >
                     <div
                         x-bind:class="{
                             'bg-primary-600': getStepIndex(step) === {{ $loop->index }},
-                            'bg-transparent group-hover:bg-gray-200': getStepIndex(step) > {{ $loop->index }},
+                            'bg-transparent group-hover:bg-gray-200 @if (config('forms.dark_mode')) dark:group-hover:bg-gray-600 @endif': getStepIndex(step) > {{ $loop->index }},
                         }"
                         class="absolute top-0 left-0 w-1 h-full lg:w-full lg:h-1 lg:bottom-0 lg:top-auto"
                         aria-hidden="true"
                     ></div>
 
-                    <div class="px-6 py-5 flex gap-4 items-center text-sm font-medium">
+                    <div @class([
+                        'p-3 flex gap-3 items-center text-sm font-medium',
+                        'lg:pl-5' => ! $loop->first,
+                    ])>
                         <div class="flex-shrink-0">
                             <div
                                 x-bind:class="{
                                     'bg-primary-600': getStepIndex(step) > {{ $loop->index }},
                                     'border-2': getStepIndex(step) <= {{ $loop->index }},
                                     'border-primary-600': getStepIndex(step) === {{ $loop->index }},
-                                    'border-gray-300': getStepIndex(step) < {{ $loop->index }},
+                                    'border-gray-300 @if (config('forms.dark_mode')) dark:border-gray-500 @endif': getStepIndex(step) < {{ $loop->index }},
                                 }"
                                 class="w-10 h-10 flex items-center justify-center rounded-full"
                             >
@@ -101,7 +104,7 @@
                                         x-show="getStepIndex(step) <= {{ $loop->index }}"
                                         x-cloak
                                         x-bind:class="{
-                                            'text-gray-500': getStepIndex(step) !== {{ $loop->index }},
+                                            'text-gray-500 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': getStepIndex(step) !== {{ $loop->index }},
                                             'text-primary-600': getStepIndex(step) === {{ $loop->index }},
                                         }"
                                         class="w-5 h-5"
@@ -110,7 +113,7 @@
                                     <span
                                         x-show="getStepIndex(step) <= {{ $loop->index }}"
                                         x-bind:class="{
-                                            'text-gray-500': getStepIndex(step) !== {{ $loop->index }},
+                                            'text-gray-500 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': getStepIndex(step) !== {{ $loop->index }},
                                             'text-primary-600': getStepIndex(step) === {{ $loop->index }},
                                         }"
                                     >
@@ -126,7 +129,10 @@
                             </div>
 
                             @if (filled($description = $step->getDescription()))
-                                <div class="text-sm font-medium text-gray-500">
+                                <div @class([
+                                    'text-sm font-medium text-gray-500',
+                                    'dark:text-gray-400' => config('forms.dark_mode'),
+                                ])>
                                     {{ $description }}
                                 </div>
                             @endif
@@ -136,7 +142,10 @@
 
                 @if (! $loop->first)
                     <div class="hidden absolute top-0 left-0 w-3 inset-0 lg:block" aria-hidden="true">
-                        <svg class="h-full w-full text-gray-300" viewBox="0 0 12 82" fill="none" preserveAspectRatio="none">
+                        <svg @class([
+                            'h-full w-full text-gray-300',
+                            'text-gray-500' => config('forms.dark_mode'),
+                        ]) viewBox="0 0 12 82" fill="none" preserveAspectRatio="none">
                             <path d="M0.5 0V31L10.5 41L0.5 51V82" stroke="currentcolor" vector-effect="non-scaling-stroke" />
                         </svg>
                     </div>
