@@ -2,6 +2,8 @@
 
 namespace Filament\Resources\RelationManagers;
 
+use Illuminate\Database\Eloquent\Model;
+
 class RelationGroup
 {
     public function __construct(
@@ -19,8 +21,11 @@ class RelationGroup
         return $this->label;
     }
 
-    public function getManagers(): array
+    public function getManagers(Model $ownerRecord): array
     {
-        return $this->managers;
+        return array_filter(
+            $this->managers,
+            fn (string $manager): bool => $manager::canViewForRecord($ownerRecord),
+        );
     }
 }
