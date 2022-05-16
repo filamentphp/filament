@@ -4,6 +4,7 @@ namespace Filament\Resources\RelationManagers\Concerns;
 
 use Filament\Forms\Components\Select;
 use Filament\Resources\Form;
+use Filament\Resources\RelationManagers\BelongsToManyRelationManager;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Illuminate\Database\Connection;
@@ -56,7 +57,7 @@ trait CanAttachRecords
         return Select::make('recordId')
             ->label(__('filament::resources/relation-managers/attach.action.modal.fields.record_id.label'))
             ->searchable()
-            ->getSearchResultsUsing(static function (Select $component, RelationManager $livewire, string $searchQuery): array {
+            ->getSearchResultsUsing(static function (Select $component, BelongsToManyRelationManager $livewire, string $searchQuery): array {
                 /** @var BelongsToMany $relationship */
                 $relationship = $livewire->getRelationship();
 
@@ -78,24 +79,34 @@ trait CanAttachRecords
                 $searchColumns = $component->getSearchColumns() ?? [$displayColumnName];
                 $isFirst = true;
 
-                foreach ($searchColumns as $searchColumnName) {
-                    $whereClause = $isFirst ? 'where' : 'orWhere';
+                $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $searchQuery): Builder {
+                    foreach ($searchColumns as $searchColumnName) {
+                        $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                    $relationshipQuery->{$whereClause}(
-                        $searchColumnName,
-                        $searchOperator,
-                        "%{$searchQuery}%",
-                    );
+                        $query->{$whereClause}(
+                            $searchColumnName,
+                            $searchOperator,
+                            "%{$searchQuery}%",
+                        );
 
-                    $isFirst = false;
-                }
+                        $isFirst = false;
+                    }
+
+                    return $query;
+                });
 
                 $relatedKeyName = $relationship->getRelatedKeyName();
 
                 return $relationshipQuery
-                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
-                        $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
-                    })
+                    ->when(
+                        ! $livewire->allowsDuplicates(),
+                        static fn (Builder $query): Builder => $query->whereDoesntHave(
+                            $livewire->getInverseRelationshipName(),
+                            static function (Builder $query) use ($livewire): Builder {
+                                return $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                            }
+                        ),
+                    )
                     ->get()
                     ->mapWithKeys(static fn (Model $record): array => [$record->{$relatedKeyName} => static::getRecordTitle($record)])
                     ->toArray();

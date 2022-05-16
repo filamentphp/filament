@@ -83,23 +83,27 @@ trait CanAssociateRecords
                 $searchColumns = $component->getSearchColumns() ?? [$displayColumnName];
                 $isFirst = true;
 
-                foreach ($searchColumns as $searchColumnName) {
-                    $whereClause = $isFirst ? 'where' : 'orWhere';
+                $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $searchQuery): Builder {
+                    foreach ($searchColumns as $searchColumnName) {
+                        $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                    $relationshipQuery->{$whereClause}(
-                        $searchColumnName,
-                        $searchOperator,
-                        "%{$searchQuery}%",
-                    );
+                        $query->{$whereClause}(
+                            $searchColumnName,
+                            $searchOperator,
+                            "%{$searchQuery}%",
+                        );
 
-                    $isFirst = false;
-                }
+                        $isFirst = false;
+                    }
+
+                    return $query;
+                });
 
                 $localKeyName = $relationship->getLocalKeyName();
 
                 return $relationshipQuery
-                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
-                        $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): Builder {
+                        return $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
                     })
                     ->get()
                     ->mapWithKeys(static fn (Model $record): array => [$record->{$localKeyName} => static::getRecordTitle($record)])

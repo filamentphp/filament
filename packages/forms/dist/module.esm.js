@@ -11882,6 +11882,7 @@ var date_time_picker_default = (Alpine) => {
       focusedMonth: null,
       focusedYear: null,
       hour: null,
+      isClearingState: false,
       minute: null,
       open: false,
       second: null,
@@ -11959,7 +11960,7 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.hour = hour;
           }
-          if (this.state === null) {
+          if (this.isClearingState) {
             return;
           }
           let date2 = this.getSelectedDate() ?? this.focusedDate;
@@ -11976,7 +11977,7 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.minute = minute;
           }
-          if (this.state === null) {
+          if (this.isClearingState) {
             return;
           }
           let date2 = this.getSelectedDate() ?? this.focusedDate;
@@ -11993,7 +11994,7 @@ var date_time_picker_default = (Alpine) => {
           } else {
             this.second = second;
           }
-          if (this.state === null) {
+          if (this.isClearingState) {
             return;
           }
           let date2 = this.getSelectedDate() ?? this.focusedDate;
@@ -12014,8 +12015,10 @@ var date_time_picker_default = (Alpine) => {
         });
       },
       clearState: function() {
+        this.isClearingState = true;
         this.setState(null);
         this.closePicker();
+        this.$nextTick(() => this.isClearingState = false);
       },
       closePicker: function() {
         this.open = false;
@@ -12139,13 +12142,14 @@ var date_time_picker_default = (Alpine) => {
       setState: function(date) {
         if (date === null) {
           this.state = null;
+          this.setDisplayText();
           return;
-        } else {
-          if (this.dateIsDisabled(date)) {
-            return;
-          }
+        }
+        if (this.dateIsDisabled(date)) {
+          return;
         }
         this.state = date.hour(this.hour ?? 0).minute(this.minute ?? 0).second(this.second ?? 0).format(format4);
+        this.setDisplayText();
       },
       togglePickerVisibility: function() {
         if (this.open) {

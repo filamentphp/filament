@@ -7,7 +7,7 @@
     if (! $action->getAction()) {
         $wireClickAction = null;
     } elseif ($record = $action->getRecord()) {
-        $wireClickAction = "mountTableAction('{$action->getName()}', '{$record->getKey()}')";
+        $wireClickAction = "mountTableAction('{$action->getName()}', '{$this->getTableRecordKey($record)}')";
     } else {
         $wireClickAction = "mountTableAction('{$action->getName()}')";
     }

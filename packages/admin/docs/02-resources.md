@@ -521,6 +521,8 @@ public static function table(Table $table): Table
 }
 ```
 
+Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
+
 When you attach record with the `Attach` button, you may wish to define a custom form to add pivot attributes to the relationship:
 
 ```php
@@ -539,6 +541,39 @@ public static function attachForm(Form $form): Form
 ```
 
 As included in the above example, you may use `getAttachFormRecordSelect()` to create a select field for the record to attach.
+
+#### Handling duplicates
+
+By default, you will not be allowed to attach a record more than once. This is because you must also set up a primary `id` column on the pivot table for this feature to work.
+
+Please ensure that the `id` attribute is listed in the `withPivot()` method of the relationship *and* inverse relationship.
+
+Finally, add the `$allowsDuplicates` property to the relation manager:
+
+```php
+protected bool $allowsDuplicates = true;
+```
+
+### Grouping relation managers
+
+You may choose to group relation managers together into one tab. To do this, you may wrap multiple managers in a `RelationGroup` object, with a label:
+
+```php
+
+use Filament\Resources\RelationManagers\RelationGroup;
+
+public static function getRelations(): array
+{
+    return [
+        // ...
+        RelationGroup::make('Contacts', [
+            RelationManagers\IndividualsRelationManager::class,
+            RelationManagers\OrganizationsRelationManager::class,
+        ]),
+        // ...
+    ];
+}
+```
 
 ### `HasOne`, `BelongsTo` and `MorphOne`
 
