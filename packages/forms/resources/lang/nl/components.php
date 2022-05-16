@@ -43,6 +43,7 @@ return [
     'select' => [
         'no_search_results_message' => 'Er zijn geen resultaten voor je zoekopdracht.',
         'placeholder' => 'Selecteer een optie',
+        'searching_message' => 'Zoeken...',
         'search_prompt' => 'Start met typen om te zoeken...',
     ],
 
