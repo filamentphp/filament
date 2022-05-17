@@ -7,8 +7,10 @@ return [
     'actions' => [
 
         'create' => [
+
             'label' => 'Nuevo :label',
-            'modal' => [
+	    
+	    'modal' => [
 
                 'heading' => 'Nuevo :label',
 
@@ -22,8 +24,10 @@ return [
                         'label' => 'Guardar y crear otro',
                     ],
 
-                ],
-        ],
+		],
+
+	    ],
+
             'messages' => [
                 'created' => 'Registro creado',
             ],
@@ -31,21 +35,30 @@ return [
         ],
 
     ],
+
     'table' => [
 
         'actions' => [
+
             'delete' => [
 
                 'label' => 'Borrar',
+                
+		'modal' => [
+                    'heading' => 'Borrar :label',
+		],
 
                 'messages' => [
                     'deleted' => 'Registro borrado',
                 ],
 
             ],
-            'edit' => [
+
+	    'edit' => [
+
                 'label' => 'Editar',
-                'modal' => [
+		
+		'modal' => [
 
                     'heading' => 'Editar :label',
 
@@ -55,25 +68,48 @@ return [
                             'label' => 'Guardar',
                         ],
 
-                    ],
-                ],
+		    ],
+
+		],
+
                 'messages' => [
                     'saved' => 'Registro actualizado',
                 ],
+
             ],
 
             'view' => [
-                'label' => 'Ver',
+		    
+		'label' => 'Ver',
+
+		'modal' => [
+
+                    'heading' => 'Ver :label',
+
+                    'actions' => [
+
+                        'close' => [
+                            'label' => 'Cerrar',
+                        ],
+
+                    ],
+
+		],
+
             ],
 
         ],
 
         'bulk_actions' => [
-            'delete' => [
-                'label' => 'Borrar seleccionado(s)',
-                'messages' => [
-                    'deleted' => 'Registro(s) borrado(s)',
-                ],
+
+		'delete' => [
+
+		    'label' => 'Borrar seleccionado(s)',
+
+                    'messages' => [
+                       'deleted' => 'Registro(s) borrado(s)',
+		],
+
             ],
 
         ],
