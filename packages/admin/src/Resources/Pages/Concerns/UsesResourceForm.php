@@ -9,17 +9,13 @@ trait UsesResourceForm
 {
     use HasFormActions;
 
-    protected ?Form $resourceForm = null;
-
-    protected function getResourceForm(?int $columns = null): Form
+    protected function getResourceForm(?int $columns = null, bool $isDisabled = false): Form
     {
-        if (! $this->resourceForm) {
-            $this->resourceForm = $this->form(
-                Form::make()->columns($columns),
-            );
-        }
-
-        return $this->resourceForm;
+        return $this->form(
+            Form::make()
+                ->columns($columns)
+                ->disabled($isDisabled),
+        );
     }
 
     protected function form(Form $form): Form

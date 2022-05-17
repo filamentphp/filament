@@ -56,7 +56,7 @@ return [
 
                 'modal' => [
 
-                    'heading' => 'Edycja :label',
+                    'heading' => 'Edytuj :label',
 
                     'actions' => [
 

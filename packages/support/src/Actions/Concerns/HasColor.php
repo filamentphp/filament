@@ -2,11 +2,13 @@
 
 namespace Filament\Support\Actions\Concerns;
 
+use Closure;
+
 trait HasColor
 {
-    protected ?string $color = null;
+    protected string | Closure | null $color = null;
 
-    public function color(?string $color): static
+    public function color(string | Closure | null $color): static
     {
         $this->color = $color;
 
@@ -15,6 +17,6 @@ trait HasColor
 
     public function getColor(): ?string
     {
-        return $this->color;
+        return $this->evaluate($this->color);
     }
 }

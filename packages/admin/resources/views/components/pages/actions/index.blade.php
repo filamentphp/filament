@@ -19,7 +19,7 @@
                 'flex flex-wrap items-center gap-4 filament-page-actions',
                 match ($align) {
                     'center' => 'justify-center',
-                    'right' => 'justify-end',
+                    'right' => 'flex-row-reverse space-x-reverse',
                     default => 'justify-start',
                 },
             ]) }}

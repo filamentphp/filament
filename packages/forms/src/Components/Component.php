@@ -16,7 +16,6 @@ class Component extends ViewComponent
     use Concerns\CanBeHidden;
     use Concerns\CanSpanColumns;
     use Concerns\Cloneable;
-    use Concerns\EvaluatesClosures;
     use Concerns\HasActions;
     use Concerns\HasChildComponents;
     use Concerns\HasFieldWrapper;
@@ -31,5 +30,22 @@ class Component extends ViewComponent
     use HasExtraAttributes;
     use HasStateBindingModifiers;
 
-    protected string $viewIdentifier = 'component';
+    protected string $evaluationIdentifier = 'component';
+
+    protected function getDefaultEvaluationParameters(): array
+    {
+        return array_merge(parent::getDefaultEvaluationParameters(), [
+            'get' => $this->getGetCallback(),
+            'livewire' => $this->getLivewire(),
+            'model' => $this->getModel(),
+            'record' => $this->getRecord(),
+            'set' => $this->getSetCallback(),
+            'state' => $this->shouldEvaluateWithState() ? $this->getState() : null,
+        ]);
+    }
+
+    protected function shouldEvaluateWithState(): bool
+    {
+        return true;
+    }
 }

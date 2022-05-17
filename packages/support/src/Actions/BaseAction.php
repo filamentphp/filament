@@ -7,12 +7,15 @@ use Illuminate\Support\Traits\Conditionable;
 
 abstract class BaseAction extends ViewComponent
 {
+    use Concerns\CanBeDisabled;
+    use Concerns\CanBeHidden;
     use Concerns\HasColor;
     use Concerns\HasIcon;
     use Concerns\HasLabel;
     use Concerns\HasName;
     use Conditionable;
 
+    protected string $evaluationIdentifier = 'action';
     protected string $viewIdentifier = 'action';
 
     final public function __construct(string $name)

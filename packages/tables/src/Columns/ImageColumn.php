@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class ImageColumn extends Column
 {
@@ -105,10 +106,14 @@ class ImageColumn extends Column
         }
 
         if ($storage->getVisibility($state) === 'private') {
-            return $storage->temporaryUrl(
-                $state,
-                now()->addMinutes(5),
-            );
+            try {
+                return $storage->temporaryUrl(
+                    $state,
+                    now()->addMinutes(5),
+                );
+            } catch (Throwable $exception) {
+                // This driver does not support creating temporary URLs.
+            }
         }
 
         return $storage->url($state);

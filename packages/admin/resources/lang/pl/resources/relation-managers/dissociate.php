@@ -7,7 +7,7 @@ return [
         'label' => 'Usuń powiązanie',
 
         'modal' => [
-            'heading' => 'Usuwanie powiązania :label',
+            'heading' => 'Usuń powiązanie :label',
         ],
 
         'messages' => [
@@ -21,7 +21,7 @@ return [
         'label' => 'Usuń powiązanie zaznaczonych',
 
         'modal' => [
-            'heading' => 'Usuwanie powiązań zaznaczonych :label',
+            'heading' => 'Usuń powiązania zaznaczonych :label',
         ],
 
         'messages' => [

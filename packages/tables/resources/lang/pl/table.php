@@ -50,31 +50,23 @@ return [
         ],
 
         'open_actions' => [
-            'label' => 'Otwórz akcję',
+            'label' => 'Otwórz akcje',
+        ],
+
+        'toggle_columns' => [
+            'label' => 'Wybierz kolumny',
         ],
 
     ],
 
     'actions' => [
 
-        'modal' => [
+        'replicate' => [
 
-            'requires_confirmation_subheading' => 'Czy na pewno chcesz to zrobić?',
+            'label' => 'Powiel',
 
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Anuluj',
-                ],
-
-                'confirm' => [
-                    'label' => 'Potwierdź',
-                ],
-
-                'submit' => [
-                    'label' => 'Zatwierdź',
-                ],
-
+            'messages' => [
+                'replicated' => 'Rekord powielony',
             ],
 
         ],
@@ -91,6 +83,10 @@ return [
 
             'reset' => [
                 'label' => 'Zresetuj filtry',
+            ],
+
+            'close' => [
+                'label' => 'Zamknij',
             ],
 
         ],

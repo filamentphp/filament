@@ -26,7 +26,7 @@
                             'text-primary-600 shadow bg-white' => $activeManager == $managerKey,
                         ])
                     >
-                        {{ $manager::getTitle() }}
+                        {{ $manager instanceof \Filament\Resources\RelationManagers\RelationGroup ? $manager->getLabel() : $manager::getTitle() }}
                     </button>
                 @endforeach
             </x-filament::tabs>
@@ -40,9 +40,15 @@
                 role="tabpanel"
                 tabindex="0"
             @endif
-            class="focus:outline-none"
+            class="space-y-4 focus:outline-none"
         >
-            @livewire(\Livewire\Livewire::getAlias($managers[$activeManager], $managers[$activeManager]::getName()), ['ownerRecord' => $ownerRecord], key($activeManager))
+            @if ($managers[$activeManager] instanceof \Filament\Resources\RelationManagers\RelationGroup)
+                @foreach($managers[$activeManager]->getManagers(ownerRecord: $ownerRecord) as $groupedManager)
+                    @livewire(\Livewire\Livewire::getAlias($groupedManager, $groupedManager::getName()), ['ownerRecord' => $ownerRecord], key($activeManager))
+                @endforeach
+            @else
+                @livewire(\Livewire\Livewire::getAlias($managers[$activeManager], $managers[$activeManager]::getName()), ['ownerRecord' => $ownerRecord], key($activeManager))
+            @endif
         </div>
     @endif
 </div>

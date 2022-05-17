@@ -224,7 +224,7 @@ BulkAction::make('delete')
 
 ## Authorization
 
-You may conditionally hide actions and bulk actions for certain users using the `hidden()` method, passing a closure:
+You may conditionally show or hide actions and bulk actions for certain users using either the `visible()` or `hidden()` methods, passing a closure:
 
 ```php
 use App\Models\Post;
@@ -232,7 +232,7 @@ use Filament\Tables\Actions\Action;
 
 Action::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
-    ->hidden(fn (Post $record): bool => auth()->user()->can('update', $record))
+    ->visible(fn (Post $record): bool => auth()->user()->can('update', $record))
 ```
 
 This is useful for authorization of certain actions to only users who have permission.
@@ -303,7 +303,11 @@ ReplicateAction::make('replicate')
 By default, the row actions in your table will be aligned to the right in the final cell. To change the default alignment, update the configuration value inside of the package config:
 
 ```
-'action_alignment' => 'right', // `right`, `left` or `center`
+'actions' => [
+    'cell' => [
+        'alignment' => 'right', // `right`, `left` or `center`
+    ],
+]
 ```
 
 ## Tooltips

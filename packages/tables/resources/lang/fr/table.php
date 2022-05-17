@@ -53,28 +53,20 @@ return [
             'label' => 'Actions ouvertes',
         ],
 
+        'toggle_columns' => [
+            'label' => 'Basculer les colonnes',
+        ],
+
     ],
 
     'actions' => [
 
-        'modal' => [
+        'replicate' => [
 
-            'requires_confirmation_subheading' => 'Êtes-vous sûr de vouloir faire cela ?',
+            'label' => 'Dupliquer',
 
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Annuler',
-                ],
-
-                'confirm' => [
-                    'label' => 'Confirmer',
-                ],
-
-                'submit' => [
-                    'label' => 'Envoyer',
-                ],
-
+            'messages' => [
+                'replicated' => 'Enregistrement dupliqué',
             ],
 
         ],
@@ -91,6 +83,10 @@ return [
 
             'reset' => [
                 'label' => 'Réinitialiser',
+            ],
+
+            'close' => [
+                'label' => 'Fermer',
             ],
 
         ],
@@ -122,4 +118,5 @@ return [
         ],
 
     ],
+
 ];

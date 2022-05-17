@@ -15,5 +15,7 @@ interface CanEntangleWithSingularRelationships
 
     public function getCachedExistingRecord(): ?Model;
 
+    public function getRelatedModel(): ?string;
+
     public function getRelationship(): BelongsTo | HasOne | MorphOne | null;
 }

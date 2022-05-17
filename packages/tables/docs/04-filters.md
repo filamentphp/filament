@@ -49,6 +49,16 @@ use Filament\Tables\Filters\Filter;
 Filter::make('is_featured')->label('Featured')
 ```
 
+### Using a toggle button instead of a checkbox
+
+By default, filters use a checkbox to control the filter. Instead, you may switch to using a toggle button, using the `toggle()` method:
+
+```php
+use Filament\Tables\Filters\Filter;
+
+Filter::make('is_featured')->toggle()
+```
+
 ### Default filters
 
 You may set a filter to be enabled by default, using the `default()` method:

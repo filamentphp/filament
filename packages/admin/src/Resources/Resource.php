@@ -170,11 +170,11 @@ class Resource
 
     public static function getGlobalSearchResultUrl(Model $record): ?string
     {
-        if (static::canEdit($record)) {
+        if (static::hasPage('edit') && static::canEdit($record)) {
             return static::getUrl('edit', ['record' => $record]);
         }
 
-        if (static::canView($record)) {
+        if (static::hasPage('view') && static::canView($record)) {
             return static::getUrl('view', ['record' => $record]);
         }
 

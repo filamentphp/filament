@@ -44,6 +44,10 @@ return [
 
                 'label' => 'حذف',
 
+                'modal' => [
+                    'heading' => 'حذف :label',
+                ],
+
                 'messages' => [
                     'deleted' => 'تم الحذف',
                 ],
@@ -75,7 +79,23 @@ return [
             ],
 
             'view' => [
+
                 'label' => 'عرض',
+
+                'modal' => [
+
+                    'heading' => 'عرض :label',
+
+                    'actions' => [
+
+                        'close' => [
+                            'label' => 'إغلاق',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
         ],

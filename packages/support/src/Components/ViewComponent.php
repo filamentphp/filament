@@ -4,6 +4,7 @@ namespace Filament\Support\Components;
 
 use Exception;
 use Filament\Support\Concerns\Configurable;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Traits\Macroable;
@@ -13,6 +14,7 @@ use Illuminate\View\Component as BaseComponent;
 abstract class ViewComponent extends BaseComponent implements Htmlable
 {
     use Configurable;
+    use EvaluatesClosures;
     use Macroable;
     use Tappable;
 
@@ -43,8 +45,12 @@ abstract class ViewComponent extends BaseComponent implements Htmlable
 
     public function render(): View
     {
-        return view($this->getView(), array_merge($this->data(), [
-            $this->viewIdentifier => $this,
-        ]));
+        return view(
+            $this->getView(),
+            array_merge(
+                $this->data(),
+                isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : [],
+            ),
+        );
     }
 }

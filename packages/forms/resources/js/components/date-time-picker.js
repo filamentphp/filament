@@ -48,6 +48,8 @@ export default (Alpine) => {
 
             hour: null,
 
+            isClearingState: false,
+
             minute: null,
 
             open: false,
@@ -158,6 +160,10 @@ export default (Alpine) => {
                         this.hour = hour
                     }
 
+                    if (this.isClearingState) {
+                        return
+                    }
+
                     let date = this.getSelectedDate() ?? this.focusedDate
 
                     this.setState(date.hour(this.hour ?? 0))
@@ -176,6 +182,10 @@ export default (Alpine) => {
                         this.minute = minute
                     }
 
+                    if (this.isClearingState) {
+                        return
+                    }
+
                     let date = this.getSelectedDate() ?? this.focusedDate
 
                     this.setState(date.minute(this.minute ?? 0))
@@ -192,6 +202,10 @@ export default (Alpine) => {
                         this.second = 59
                     } else {
                         this.second = second
+                    }
+
+                    if (this.isClearingState) {
+                        return
                     }
 
                     let date = this.getSelectedDate() ?? this.focusedDate
@@ -218,9 +232,13 @@ export default (Alpine) => {
             },
 
             clearState: function () {
+                this.isClearingState = true
+
                 this.setState(null)
 
                 this.closePicker()
+
+                this.$nextTick(() => this.isClearingState = false)
             },
 
             closePicker: function () {
@@ -323,10 +341,10 @@ export default (Alpine) => {
                     ...labels.slice(0, firstDayOfWeek),
                 ]
             },
-            
+
             getMaxDate: function () {
                 let date = dayjs(this.$refs.maxDate.value)
-                
+
                 return date.isValid() ? date : null
             },
 
@@ -399,14 +417,13 @@ export default (Alpine) => {
             setState: function (date) {
                 if (date === null) {
                     this.state = null
-
                     this.setDisplayText()
 
                     return
-                } else {
-                    if (this.dateIsDisabled(date)) {
-                        return
-                    }
+                }
+
+                if (this.dateIsDisabled(date)) {
+                    return
                 }
 
                 this.state = date

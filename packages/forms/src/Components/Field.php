@@ -13,6 +13,8 @@ class Field extends Component implements Contracts\HasValidationRules
     use Concerns\HasHint;
     use Concerns\HasName;
 
+    protected string $viewIdentifier = 'field';
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -39,10 +41,5 @@ class Field extends Component implements Contracts\HasValidationRules
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
-    }
-
-    protected function hasDefaultState(): bool
-    {
-        return true;
     }
 }
