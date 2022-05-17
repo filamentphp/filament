@@ -9,8 +9,8 @@ return [
         'create' => [
 
             'label' => 'Nuevo :label',
-	    
-	    'modal' => [
+
+            'modal' => [
 
                 'heading' => 'Nuevo :label',
 
@@ -24,9 +24,9 @@ return [
                         'label' => 'Guardar y crear otro',
                     ],
 
-		],
+                ],
 
-	    ],
+            ],
 
             'messages' => [
                 'created' => 'Registro creado',
@@ -43,10 +43,10 @@ return [
             'delete' => [
 
                 'label' => 'Borrar',
-                
-		'modal' => [
+
+                'modal' => [
                     'heading' => 'Borrar :label',
-		],
+                ],
 
                 'messages' => [
                     'deleted' => 'Registro borrado',
@@ -54,11 +54,11 @@ return [
 
             ],
 
-	    'edit' => [
+            'edit' => [
 
                 'label' => 'Editar',
-		
-		'modal' => [
+
+                'modal' => [
 
                     'heading' => 'Editar :label',
 
@@ -68,9 +68,9 @@ return [
                             'label' => 'Guardar',
                         ],
 
-		    ],
+                    ],
 
-		],
+                ],
 
                 'messages' => [
                     'saved' => 'Registro actualizado',
@@ -79,10 +79,10 @@ return [
             ],
 
             'view' => [
-		    
-		'label' => 'Ver',
 
-		'modal' => [
+                'label' => 'Ver',
+
+                'modal' => [
 
                     'heading' => 'Ver :label',
 
@@ -94,7 +94,7 @@ return [
 
                     ],
 
-		],
+                ],
 
             ],
 
@@ -102,13 +102,13 @@ return [
 
         'bulk_actions' => [
 
-		'delete' => [
+            'delete' => [
 
-		    'label' => 'Borrar seleccionado(s)',
+                'label' => 'Borrar seleccionado(s)',
 
-                    'messages' => [
-                       'deleted' => 'Registro(s) borrado(s)',
-		],
+                'messages' => [
+                    'deleted' => 'Registro(s) borrado(s)',
+                ],
 
             ],
 

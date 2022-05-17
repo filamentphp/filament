@@ -2,13 +2,13 @@
 
 return [
 
-     'builder' => [
+    'builder' => [
 
-	'collapsed' => 'Contenido contraido',
+        'collapsed' => 'Contenido contraido',
 
         'buttons' => [
 
-	    'create_item' => [
+            'create_item' => [
                 'label' => 'Añadir a :label',
             ],
 
@@ -22,9 +22,9 @@ return [
 
             'move_item_up' => [
                 'label' => 'Subir',
-	    ],
+            ],
 
-	    'collapse_item' => [
+            'collapse_item' => [
                 'label' => 'Contraer',
             ],
 
@@ -171,7 +171,7 @@ return [
 
     'select' => [
 
-	'actions' => [
+        'actions' => [
 
             'create_option' => [
 
@@ -193,16 +193,16 @@ return [
 
         ],
 
-	'loading_message' => 'Cargando...',
+        'loading_message' => 'Cargando...',
 
         'no_search_results_message' => 'No se encontraron coincidencias con su búsqueda.',
-	
-	'placeholder' => 'Seleccione una opción',
 
-	'searching_message' => 'Buscando...',
+        'placeholder' => 'Seleccione una opción',
+
+        'searching_message' => 'Buscando...',
 
         'search_prompt' => 'Teclee para buscar...',
-    
+
     ],
 
     'tags_input' => [

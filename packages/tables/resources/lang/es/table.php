@@ -51,9 +51,9 @@ return [
 
         'open_actions' => [
             'label' => 'Abrir acciones',
-	],
+        ],
 
-	'toggle_columns' => [
+        'toggle_columns' => [
             'label' => 'Alternar columnas',
         ],
 
