@@ -240,3 +240,5 @@ The available hooks are as follows:
 - `head.end` - before `</head>`
 - `sidebar.start` - before [sidebar](navigation) content
 - `sidebar.end` - after [sidebar](navigation) content
+- `content.start` - before main content
+- `content.after` - after main content
