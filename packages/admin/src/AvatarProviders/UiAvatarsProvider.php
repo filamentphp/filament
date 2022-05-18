@@ -9,6 +9,8 @@ class UiAvatarsProvider implements Contracts\AvatarProvider
 {
     public function get(Model $user): string
     {
-        return 'https://ui-avatars.com/api/?name=' . urlencode(Filament::getUserName($user)) . '&color=FFFFFF&background=111827';
+        $name = trim(collect(explode(' ', Filament::getUserName($user)))->map(fn($segment) => $segment[0] ?? '')->join(' '));
+        
+        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=FFFFFF&background=111827';
     }
 }
