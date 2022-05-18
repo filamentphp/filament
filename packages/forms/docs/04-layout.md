@@ -236,6 +236,51 @@ Tabs::make('Heading')
     ])
 ```
 
+## Wizards
+
+Similar to [tabs](#tabs), you may want to use a multi-step form wizard to reduce the number of components that are visible at once. These are especially useful if your form has a definite chronological order, in which you want each step to be validated as the user progresses.
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard::make([
+    Wizard\Step::make('Order')
+        ->schema([
+            // ...
+        ]),
+    Wizard\Step::make('Delivery')
+        ->schema([
+            // ...
+        ]),
+    Wizard\Step::make('Billing')
+        ->schema([
+            // ...
+        ]),
+])
+```
+
+Each step has a mandatory label. You may optionally also add a description for extra detail:
+
+```php
+Wizard\Step::make('Order')
+    ->description('Review your basket')
+    ->schema([
+        // ...
+    ]),
+```
+
+Steps may also have an icon, which can be the name of any Blade icon component:
+
+```php
+Wizard\Step::make('Order')
+    ->icon('heroicon-o-shopping-bag')
+    ->schema([
+        // ...
+    ]),
+```
+
+You may also add wizards to table [actions](../tables/actions#wizards) and admin [resource pages](../admin/resources#wizards).
+
 ## Section
 
 You may want to separate your fields into sections, each with a heading and description. To do this, you can use a section component:

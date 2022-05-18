@@ -174,6 +174,8 @@ trait CanAssociateRecords
             ->label(__('filament::resources/relation-managers/associate.action.label'))
             ->form($this->getAssociateFormSchema())
             ->mountUsing(fn () => $this->fillAssociateForm())
+            ->modalSubmitAction($this->getAssociateActionAssociateModalAction())
+            ->modalCancelAction($this->getAssociateActionCancelModalAction())
             ->modalActions($this->getAssociateActionModalActions())
             ->modalHeading(__('filament::resources/relation-managers/associate.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->modalWidth('lg')

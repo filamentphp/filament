@@ -25,13 +25,15 @@
 
             {{ $this->getMountedFormComponentActionForm() }}
 
-            <x-slot name="footer">
-                <x-forms::modal.actions :full-width="$action->isModalCentered()">
-                    @foreach ($action->getModalActions() as $modalAction)
-                        {{ $modalAction }}
-                    @endforeach
-                </x-forms::modal.actions>
-            </x-slot>
+            @if (count($action->getModalActions()))
+                <x-slot name="footer">
+                    <x-forms::modal.actions :full-width="$action->isModalCentered()">
+                        @foreach ($action->getModalActions() as $modalAction)
+                            {{ $modalAction }}
+                        @endforeach
+                    </x-forms::modal.actions>
+                </x-slot>
+            @endif
         @endif
     </x-forms::modal>
 </form>

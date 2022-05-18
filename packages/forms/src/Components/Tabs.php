@@ -26,12 +26,12 @@ class Tabs extends Component
 
     public function tabs(array $tabs): static
     {
-        $this->schema($tabs);
+        $this->childComponents($tabs);
 
         return $this;
     }
 
-    public function getTabsConfig(): array
+    public function getConfig(): array
     {
         return collect($this->getChildComponentContainer()->getComponents())
             ->filter(static fn (Tab $tab): bool => ! $tab->isHidden())
