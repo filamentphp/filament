@@ -4,7 +4,6 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\HtmlString;
 
 trait HasLabel
 {
