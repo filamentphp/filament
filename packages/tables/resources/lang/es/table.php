@@ -5,7 +5,7 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Buscar',
+            'label' => 'Búsqueda',
             'placeholder' => 'Buscar',
         ],
 
@@ -51,6 +51,24 @@ return [
 
         'open_actions' => [
             'label' => 'Abrir acciones',
+        ],
+
+        'toggle_columns' => [
+            'label' => 'Alternar columnas',
+        ],
+
+    ],
+
+    'actions' => [
+
+        'replicate' => [
+
+            'label' => 'Repetir',
+
+            'messages' => [
+                'replicated' => 'Registro replicado',
+            ],
+
         ],
 
     ],
