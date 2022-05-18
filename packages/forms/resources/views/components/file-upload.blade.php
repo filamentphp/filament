@@ -50,10 +50,10 @@
             getUploadedFileUrlsUsing: async () => {
                 return await $wire.getUploadedFileUrls('{{ $getStatePath() }}')
             },
-            imageCropAspectRatio: {{ $imageCropAspectRatio ? "'{$aspectRatio}'" : 'null' }},
+            imageCropAspectRatio: {{ $imageCropAspectRatio ? "'{$imageCropAspectRatio}'" : 'null' }},
             imagePreviewHeight: {{ ($height = $getImagePreviewHeight()) ? "'{$height}'" : 'null' }},
-            imageResizeTargetHeight: {{ $imageResizeTargetHeight ? "'{$height}'" : 'null' }},
-            imageResizeTargetWidth: {{ $imageResizeTargetWidth ? "'{$width}'" : 'null' }},
+            imageResizeTargetHeight: {{ $imageResizeTargetHeight ? "'{$imageResizeTargetHeight}'" : 'null' }},
+            imageResizeTargetWidth: {{ $imageResizeTargetWidth ? "'{$imageResizeTargetWidth}'" : 'null' }},
             loadingIndicatorPosition: '{{ $getLoadingIndicatorPosition() }}',
             panelAspectRatio: {{ ($aspectRatio = $getPanelAspectRatio()) ? "'{$aspectRatio}'" : 'null' }},
             panelLayout: {{ ($layout = $getPanelLayout()) ? "'{$layout}'" : 'null' }},
