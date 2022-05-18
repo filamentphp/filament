@@ -5,11 +5,11 @@ namespace Filament\Support\Actions;
 abstract class Action extends BaseAction
 {
     use Concerns\CanBeMounted;
-    use Concerns\CanBeWizard;
     use Concerns\CanOpenModal;
     use Concerns\CanRequireConfirmation;
     use Concerns\HasAction;
     use Concerns\HasFormSchema;
+    use Concerns\HasWizard;
 
     public function call(array $data = [])
     {

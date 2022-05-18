@@ -4,11 +4,11 @@ namespace Filament\Support\Actions\Concerns;
 
 use Closure;
 
-trait CanBeWizard
+trait HasWizard
 {
     protected bool $isWizard = false;
 
-    public function wizard(array | Closure $steps): static
+    public function steps(array | Closure $steps): static
     {
         $this->isWizard = true;
         $this->form($steps);
