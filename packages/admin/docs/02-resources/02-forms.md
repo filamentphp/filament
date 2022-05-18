@@ -19,51 +19,43 @@ public static function form(Form $form): Form
 }
 ```
 
-### Available field types
+## Fields
 
-The `schema()` method is used to define the structure of your form. It is an array of [fields](/docs/forms/fields), in the order they should appear in your form.
+The `schema()` method is used to define the structure of your form. It is an array of [fields](../../forms/fields), in the order they should appear in your form.
 
 We have many fields available for your forms, including:
 
-- [Text input](/docs/forms/fields#text-input)
-- [Select](/docs/forms/fields#select)
-- [Multi-select](/docs/forms/fields#multi-select)
-- [Checkbox](/docs/forms/fields#checkbox)
-- [Date-time picker](/docs/forms/fields#date-time-picker)
-- [File upload](/docs/forms/fields#file-upload)
-- [Rich editor](/docs/forms/fields#rich-editor)
-- [Markdown editor](/docs/forms/fields#markdown-editor)
-- [Repeater](/docs/forms/fields#repeater)
+- [Text input](../../forms/fields#text-input)
+- [Select](../../forms/fields#select)
+- [Multi-select](../../forms/fields#multi-select)
+- [Checkbox](../../forms/fields#checkbox)
+- [Date-time picker](../../forms/fields#date-time-picker)
+- [File upload](../../forms/fields#file-upload)
+- [Rich editor](../../forms/fields#rich-editor)
+- [Markdown editor](../../forms/fields#markdown-editor)
+- [Repeater](../../forms/fields#repeater)
 
-To view a full list of available form [fields](/docs/forms/fields) and [layout components](/docs/forms/layout), see the [Form Builder documentation](/docs/forms/fields).
+To view a full list of available form [fields](../../forms/fields), see the [Form Builder documentation](../../forms/fields).
 
-You may also build your own completely [custom form fields](/docs/forms/fields#building-custom-fields) and [custom layout components](/docs/forms/layout#building-custom-layout-components).
+You may also build your own completely [custom form fields](../../forms/fields#building-custom-fields).
 
-### Automatically generating fields
+## Layout
 
-If you'd like to save time, Filament can automatically generate some fields and [tables](#tables) for you, based on your model's database columns:
+Form layouts are completely customizable. We have many layout components available, which can be used in any combination:
 
-```bash
-composer require doctrine/dbal
-php artisan make:filament-resource Customer --generate
-```
+- [Grid](../../forms/layout#grid)
+- [Card](../../forms/layout#card)
+- [Tabs](../../forms/layout#tabs)
 
-### Hiding components based on the page
+To view a full list of available [layout components](../../forms/layout), see the [Form Builder documentation](../../forms/layout).
 
-The `hidden()` method of form components allows you to dynamically hide fields based on the current page.
+You may also build your own completely [custom layout components](../../forms/layout#building-custom-layout-components).
 
-To do this, you must pass a closure to the `hidden()` method which checks if the Livewire component is a certain page or not. In this example, we hide the `password` field on the `EditUser` resource page:
+## Hiding components based on the page
 
-```php
-use Livewire\Component;
+The `hiddenOn()` method of form components allows you to dynamically hide fields based on the current page.
 
-Forms\Components\TextInput::make('password')
-    ->password()
-    ->required()
-    ->hidden(fn (Component $livewire): bool => $livewire instanceof Pages\EditUser),
-```
-
-Alternatively, we have a `hiddenOn()` shortcut method for this case:
+In this example, we hide the `password` field on the `EditUser` resource page:
 
 ```php
 use Livewire\Component;
@@ -74,18 +66,7 @@ Forms\Components\TextInput::make('password')
     ->hiddenOn(Pages\EditUser::class),
 ```
 
-You may instead use the `visible` to check if a component should be visible or not:
-
-```php
-use Livewire\Component;
-
-Forms\Components\TextInput::make('password')
-    ->password()
-    ->required()
-    ->visible(fn (Component $livewire): bool => $livewire instanceof Pages\CreateUser),
-```
-
-Alternatively, we have a `visibleOn()` shortcut method for this case:
+Alternatively, we have a `visibleOn()` shortcut method for only showing a field on one page:
 
 ```php
 use Livewire\Component;
@@ -95,5 +76,3 @@ Forms\Components\TextInput::make('password')
     ->required()
     ->visibleOn(Pages\CreateUser::class),
 ```
-
-For more information about closure customization, see the [form builder documentation](/docs/forms/advanced#using-closure-customisation).
