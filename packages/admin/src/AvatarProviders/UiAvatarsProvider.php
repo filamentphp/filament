@@ -10,7 +10,11 @@ class UiAvatarsProvider implements Contracts\AvatarProvider
 {
     public function get(Model $user): string
     {
-        $name = Str::of(Filament::getUserName($user))->trim()->explode(' ')->map(fn (string $segment): string => $segment[0] ?? '')->join(' ');
+        $name = Str::of(Filament::getUserName($user))
+            ->trim()
+            ->explode(' ')
+            ->map(fn (string $segment): string => $segment[0] ?? '')
+            ->join(' ');
         
         return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=FFFFFF&background=111827';
     }
