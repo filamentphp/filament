@@ -15,7 +15,7 @@ class UiAvatarsProvider implements Contracts\AvatarProvider
             ->explode(' ')
             ->map(fn (string $segment): string => $segment[0] ?? '')
             ->join(' ');
-        
+
         return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=FFFFFF&background=111827';
     }
 }
