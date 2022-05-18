@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class Field extends Component implements Contracts\HasValidationRules

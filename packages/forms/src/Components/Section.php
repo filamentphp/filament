@@ -5,7 +5,6 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class Section extends Component implements Contracts\CanConcealComponents, Contracts\CanEntangleWithSingularRelationships
