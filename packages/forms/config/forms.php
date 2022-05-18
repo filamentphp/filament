@@ -1,6 +1,19 @@
 <?php
 
 return [
+    /*
+    |--------------------------------------------------------------------------
+    | Date / Time Formatting
+    |--------------------------------------------------------------------------
+    |
+    | These are the formats that Filament will use to display dates and times
+    | by default.
+    |
+    */
+
+    'date_format' => 'M j, Y',
+    'date_time_format' => 'M j, Y H:i',
+    'date_time_second_format' => 'M j, Y H:i:s',
 
     /*
     |--------------------------------------------------------------------------
