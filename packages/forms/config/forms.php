@@ -13,7 +13,9 @@ return [
 
     'date_format' => 'M j, Y',
     'date_time_format' => 'M j, Y H:i',
-    'date_time_second_format' => 'M j, Y H:i:s',
+    'date_time_with_seconds_format' => 'M j, Y H:i:s',
+    'time_format' => 'H:i',
+    'time_with_seconds_format' => 'H:i:s',
 
     /*
     |--------------------------------------------------------------------------

@@ -169,15 +169,21 @@ class DateTimePicker extends Field
             return $format;
         }
 
-        if ($this->hasDate() & $this->hasTime() & $this->hasSeconds()) {
-            return config('forms.date_time_second_format', 'M j, Y H:i:s');
+        if (! $this->hasDate()) {
+            // Time is required.
+            return ($this->hasTime() & $this->hasSeconds())
+                ? config('forms.time_with_seconds_format', 'H:i:s')
+                : config('forms.time_format', 'H:i');
         }
 
-        if ($this->hasDate() & $this->hasTime()) {
-            return config('forms.date_time_format', 'M j, Y H:i');
+        // Date is required.
+        if ($this->hasTime() & $this->hasSeconds()) {
+            return config('forms.date_time_with_seconds_format', 'M j, Y H:i:s');
         }
 
-        return config('forms.date_format', 'M j, Y');
+        return ($this->hasTime())
+            ? config('forms.date_time_format', 'M j, Y H:i')
+            :config('forms.date_format', 'M j, Y');
     }
 
 
