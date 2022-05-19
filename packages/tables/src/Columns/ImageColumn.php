@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\ComponentAttributeBag;
 use Throwable;
 
 class ImageColumn extends Column
@@ -19,6 +20,8 @@ class ImageColumn extends Column
     protected bool | Closure $isRounded = false;
 
     protected int | string | Closure | null $width = null;
+
+    protected array | Closure $extraImgAttributes = [];
 
     protected function setUp(): void
     {
@@ -137,5 +140,22 @@ class ImageColumn extends Column
     public function isRounded(): bool
     {
         return $this->evaluate($this->isRounded);
+    }
+
+    public function extraImgAttributes(array | Closure $attributes): static
+    {
+        $this->extraImgAttributes = $attributes;
+
+        return $this;
+    }
+
+    public function getExtraImgAttributes(): array
+    {
+        return $this->evaluate($this->extraImgAttributes);
+    }
+
+    public function getExtraImgAttributeBag(): ComponentAttributeBag
+    {
+        return new ComponentAttributeBag($this->getExtraImgAttributes());
     }
 }
