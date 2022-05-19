@@ -1,29 +1,6 @@
 ---
-title: Tables
+title: Listing Records
 ---
-
-Resource classes contain a static `table()` method that is used to build the table on the [list page](listing-records):
-
-```php
-use Filament\Resources\Table;
-use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-
-public static function table(Table $table): Table
-{
-    return $table
-        ->columns([
-            Tables\Columns\TextColumn::make('name'),
-            Tables\Columns\TextColumn::make('email'),
-            // ...
-        ])
-        ->filters([
-            Tables\Filters\Filter::make('verified')
-                ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
-            // ...
-        ]);
-}
-```
 
 ## Columns
 

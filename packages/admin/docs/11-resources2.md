@@ -12,7 +12,7 @@ By default, resources are generated with three pages:
 
 - List has a [table](#tables) for displaying, searching and deleting resource records. From here, you are able to access the create and edit pages. It is routed to `/`.
 - Create has a [form](#forms) that is able to create a resource record. It is routed to `/create`.
-- Edit has a [form](#forms) that is able to update a resource record, along with the [relation managers](#relations) registered to your resource. It is routed to `/{record}/edit`.
+- Edit has a [form](#forms) that is able to update a resource record, along with the [relation managers](#relation-managers) registered to your resource. It is routed to `/{record}/edit`.
 
 ### View page
 

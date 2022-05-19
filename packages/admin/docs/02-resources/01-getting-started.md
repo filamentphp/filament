@@ -44,7 +44,7 @@ Additionally, your simple resource will have no `getRelations()` method, as rela
 
 ### Automatically generating forms and tables
 
-If you'd like to save time, Filament can automatically generate the [form](forms) and [table](tables) for you, based on your model's database columns.
+If you'd like to save time, Filament can automatically generate the [form](#forms) and [table](#tables) for you, based on your model's database columns.
 
 The `doctrine/dbal` package is required to use this functionality:
 
@@ -71,6 +71,305 @@ protected static ?string $recordTitleAttribute = 'name';
 This is required for features like [global search](global-search) to work.
 
 > You may specify the name of an [Eloquent accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) if just one column is inadequate at identifying a record.
+
+## Forms
+
+Resource classes contain a static `form()` method that is used to build the forms on the create and edit pages:
+
+```php
+use Filament\Forms;
+use Filament\Resources\Form;
+
+public static function form(Form $form): Form
+{
+    return $form
+        ->schema([
+            Forms\Components\TextInput::make('name')->required(),
+            Forms\Components\TextInput::make('email')->email()->required(),
+            // ...
+        ]);
+}
+```
+
+### Fields
+
+The `schema()` method is used to define the structure of your form. It is an array of [fields](../../forms/fields), in the order they should appear in your form.
+
+We have many fields available for your forms, including:
+
+- [Text input](../../forms/fields#text-input)
+- [Select](../../forms/fields#select)
+- [Multi-select](../../forms/fields#multi-select)
+- [Checkbox](../../forms/fields#checkbox)
+- [Date-time picker](../../forms/fields#date-time-picker)
+- [File upload](../../forms/fields#file-upload)
+- [Rich editor](../../forms/fields#rich-editor)
+- [Markdown editor](../../forms/fields#markdown-editor)
+- [Repeater](../../forms/fields#repeater)
+
+To view a full list of available form [fields](../../forms/fields), see the [Form Builder documentation](../../forms/fields).
+
+You may also build your own completely [custom form fields](../../forms/fields#building-custom-fields).
+
+### Layout
+
+Form layouts are completely customizable. We have many layout components available, which can be used in any combination:
+
+- [Grid](../../forms/layout#grid)
+- [Card](../../forms/layout#card)
+- [Tabs](../../forms/layout#tabs)
+
+To view a full list of available [layout components](../../forms/layout), see the [Form Builder documentation](../../forms/layout).
+
+You may also build your own completely [custom layout components](../../forms/layout#building-custom-layout-components).
+
+### Hiding components based on the page
+
+The `hiddenOn()` method of form components allows you to dynamically hide fields based on the current page.
+
+In this example, we hide the `password` field on the `EditUser` resource page:
+
+```php
+use Livewire\Component;
+
+Forms\Components\TextInput::make('password')
+    ->password()
+    ->required()
+    ->hiddenOn(Pages\EditUser::class),
+```
+
+Alternatively, we have a `visibleOn()` shortcut method for only showing a field on one page:
+
+```php
+use Livewire\Component;
+
+Forms\Components\TextInput::make('password')
+    ->password()
+    ->required()
+    ->visibleOn(Pages\CreateUser::class),
+```
+
+## Tables
+
+Resource classes contain a static `table()` method that is used to build the table on the [list page](listing-records):
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            Tables\Columns\TextColumn::make('name'),
+            Tables\Columns\TextColumn::make('email'),
+            // ...
+        ])
+        ->filters([
+            Tables\Filters\Filter::make('verified')
+                ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
+            // ...
+        ]);
+}
+```
+
+Check out the [listing records](listing-records) docs to find out how to implement table columns, filters, sorting, actions, bulk actions and more.
+
+## Relations
+
+Filament has many utilities available for managing resource relationships. Which solution you choose to use depends on your use case:
+
+### `BelongsTo`
+
+#### Select field
+
+Filament includes a dedicated select field that automatically loads options from a `BelongsTo` relationship:
+
+```php
+use Filament\Forms\Components\BelongsToSelect;
+
+BelongsToSelect::make('author_id')
+    ->relationship('author', 'name')
+```
+
+More information about `BelongsToSelect` is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongsto-relationship).
+
+#### Layout component
+
+Layout form components are able to [save child data to relationships](../../forms/layout#saving-data-to-relationships), such as `BelongsTo`:
+
+```php
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+
+Fieldset::make('Author')
+    ->relationship('author')
+    ->schema([
+        TextInput::make('name')->required(),
+        Textarea::make('bio'),
+    ])
+```
+
+For more information, see the [Form docs](../../forms/layout#saving-data-to-relationships).
+
+### `HasOne`
+
+#### Layout component
+
+Layout form components are able to [save child data to relationships](../../forms/layout#saving-data-to-relationships), such as `HasOne`:
+
+```php
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+
+Fieldset::make('Metadata')
+    ->relationship('metadata')
+    ->schema([
+        TextInput::make('title'),
+        Textarea::make('description'),
+        FileUpload::make('image'),
+    ])
+```
+
+For more information, see the [Form docs](../../forms/layout#saving-data-to-relationships).
+
+### `HasMany`
+
+#### Relation manager
+
+"Relation managers" in Filament allow admins to list, create, associate, edit, dissociate and delete related many records without leaving the resource's edit page.
+
+The related records are listed in a table, which has buttons to open a modal for each action.
+
+For more information on relation managers, see the [full documentation](#relation-managers).
+
+#### Repeater
+
+Alternatively, if you're looking to edit the relationship from the main form, you could use a [repeater](../../forms/fields#populating-automatically-from-a-hasmany-relationship):
+
+```php
+use App\Models\App;
+use Filament\Forms\Components\HasManyRepeater;
+ 
+HasManyRepeater::make('qualifications')
+    ->relationship('qualifications')
+    ->schema([
+        // ...
+    ])
+```
+
+From a UX perspective, this solution is only suitable if your related model only has a few fields. Otherwise, the form can get very long.
+
+### `HasManyThrough`
+
+#### Relation manager
+
+"Relation managers" in Filament allow admins to list, create, associate, edit, dissociate and delete related many records without leaving the resource's edit page.
+
+The related records are listed in a table, which has buttons to open a modal for each action.
+
+For more information on relation managers, see the [full documentation](#relation-managers).
+
+### `BelongsToMany`
+
+#### Multi-select field
+
+Filament includes a dedicated multi-select field that automatically loads options from a `BelongsToMany` relationship:
+
+```php
+use Filament\Forms\Components\BelongsToManyMultiSelect;
+
+BelongsToManyMultiSelect::make('technologies')
+    ->relationship('technologies', 'name')
+```
+
+More information about `BelongsToManyMultiSelect` is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongstomany-relationship).
+
+#### Checkbox list field
+
+Filament includes a dedicated checkbox list field that automatically loads options from a `BelongsToMany` relationship:
+
+```php
+use Filament\Forms\Components\BelongsToManyCheckboxList;
+
+BelongsToManyCheckboxList::make('technologies')
+    ->relationship('technologies', 'name')
+```
+
+More information about `BelongsToManyCheckboxList` is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongstomany-relationship-1).
+
+#### Relation manager
+
+"Relation managers" in Filament allow admins to list, create, attach, edit, detach and delete related many records without leaving the resource's edit page.
+
+The related records are listed in a table, which has buttons to open a modal for each action.
+
+For more information on relation managers, see the [full documentation](#relation-managers).
+
+### `MorphOne`
+
+#### Layout component
+
+Layout form components are able to [save child data to relationships](../../forms/layout#saving-data-to-relationships), such as `MorphOne`:
+
+```php
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+
+Fieldset::make('Metadata')
+    ->relationship('metadata')
+    ->schema([
+        TextInput::make('title'),
+        Textarea::make('description'),
+        FileUpload::make('image'),
+    ])
+```
+
+For more information, see the [Form docs](../../forms/layout#saving-data-to-relationships).
+
+### `MorphMany`
+
+#### Relation manager
+
+"Relation managers" in Filament allow admins to list, create, associate, edit, dissociate and delete related many records without leaving the resource's edit page.
+
+The related records are listed in a table, which has buttons to open a modal for each action.
+
+For more information on relation managers, see the [full documentation](#relation-managers).
+
+#### Repeater
+
+Alternatively, if you're looking to edit the relationship from the main form, you could use a [repeater](../../forms/fields#populating-automatically-from-a-morphmany-relationship):
+
+```php
+use App\Models\App;
+use Filament\Forms\Components\MorphManyRepeater;
+ 
+MorphManyRepeater::make('qualifications')
+    ->relationship('qualifications')
+    ->schema([
+        // ...
+    ])
+```
+
+From a UX perspective, this solution is only suitable if your related model only has a few fields. Otherwise, the form can get very long.
+
+### `MorphToMany`
+
+#### Relation manager
+
+"Relation managers" in Filament allow admins to list, create, attach, edit, detach and delete related many records without leaving the resource's edit page.
+
+The related records are listed in a table, which has buttons to open a modal for each action.
+
+For more information on relation managers, see the [full documentation](#relation-managers).
 
 ## Authorization
 
