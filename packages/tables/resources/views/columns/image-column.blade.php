@@ -11,12 +11,12 @@
             ></div>
         @else
             <img
-                {!! $attributes->merge($getExtraImgAttributes()) !!}
                 src="{{ $path }}"
                 style="
                     {!! ($height = $getHeight()) !== null ? "height: {$height};" : null !!}
                     {!! ($width = $getWidth()) !== null ? "width: {$width};" : null !!}
                 "
+                {{ $getExtraImgAttributeBag() }}
             >
         @endif
     @endif

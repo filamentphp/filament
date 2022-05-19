@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\ComponentAttributeBag;
 use Throwable;
 
 class ImageColumn extends Column
@@ -151,5 +152,10 @@ class ImageColumn extends Column
     public function getExtraImgAttributes(): array
     {
         return $this->evaluate($this->extraImgAttributes);
+    }
+
+    public function getExtraImgAttributeBag(): ComponentAttributeBag
+    {
+        return new ComponentAttributeBag($this->getExtraImgAttributes());
     }
 }
