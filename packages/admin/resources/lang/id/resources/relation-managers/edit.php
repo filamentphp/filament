@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'saved' => 'Telah disimpan',
+            'saved' => 'Data berhasil disimpan',
         ],
 
     ],
