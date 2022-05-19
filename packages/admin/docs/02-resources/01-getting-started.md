@@ -76,7 +76,7 @@ This is required for features like [global search](global-search) to work.
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app. The following methods are used:
 
-- `viewAny()` is used to completely hide resources from the navigation menu.
+- `viewAny()` is used to completely hide resources from the navigation menu, and prevents the user from accessing any pages.
 - `create()` is used to control [creating new records](creating-records).
 - `update()` is used to control [editing a record](editing-records).
 - `delete()` is used to prevent a single record from being deleted. `deleteAny()` is used to prevent records from being bulk deleted. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant.
@@ -221,7 +221,7 @@ public static function getEloquentQuery(): Builder
 
 In this example we use `whereBelongsTo()` to scope the records to only those that belong to the currently authenticated user. However, you may use whatever Eloquent method you wish here, including a manual `where()` clause, or a [scope](https://laravel.com/docs/eloquent#local-scopes).
 
-Finally, you need to ensure that records are attached to the current user when they are first created. The easiest way to do this is through a [model observer](https://laravel.com/docs/9.x/eloquent#observers):
+Finally, you need to ensure that records are attached to the current user when they are first created. The easiest way to do this is through a [model observer](https://laravel.com/docs/eloquent#observers):
 
 ```php
 public function creating(Post $post): void
