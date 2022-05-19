@@ -236,7 +236,7 @@ Tabs::make('Heading')
     ])
 ```
 
-## Wizards
+## Wizard
 
 Similar to [tabs](#tabs), you may want to use a multi-step form wizard to reduce the number of components that are visible at once. These are especially useful if your form has a definite chronological order, in which you want each step to be validated as the user progresses.
 
