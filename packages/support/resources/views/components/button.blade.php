@@ -15,7 +15,7 @@
 
 @php
     $buttonClasses = array_merge([
-        'inline-flex items-center justify-center font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset filament-button',
+        'inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset filament-button',
         'dark:focus:ring-offset-0' => $darkMode,
         'opacity-70 cursor-not-allowed' => $disabled,
         'h-9 px-4 text-sm' => $size === 'md',
@@ -48,9 +48,9 @@
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-button-icon',
-        'w-6 h-6' => $size === 'md',
+        'w-5 h-5' => $size === 'md',
         'w-4 h-4' => $size === 'sm',
-        'w-7 h-7' => $size === 'lg',
+        'w-6 h-6' => $size === 'lg',
         'mr-1 -ml-2 rtl:ml-1 rtl:-mr-2' => ($iconPosition === 'before') && ($size === 'md'),
         'mr-2 -ml-3 rtl:ml-2 rtl:-mr-3' => ($iconPosition === 'before') && ($size === 'lg'),
         'mr-1 -ml-1.5 rtl:ml-1 rtl:-mr-1.5' => ($iconPosition === 'before') && ($size === 'sm'),
@@ -59,10 +59,10 @@
         'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm'),
     ]);
 
-    $hasLoadingIndicator = filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
+    $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:click', $form), ENT_QUOTES);
+        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
     }
 @endphp
 
@@ -79,28 +79,24 @@
         {!! $hasLoadingIndicator ? 'wire:loading.class="opacity-70 cursor-wait"' : '' !!}
         {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
         {!! $disabled ? 'disabled' : '' !!}
-        @if ($form)
-            x-data="{
-                form: null,
-                label: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
-                isUploadingFile: false
-            }"
-            x-bind:disabled="isUploadingFile"
-            x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
-            x-init="
-                form = $el.closest('form')
+        x-data="{
+            form: null,
+            label: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
+            isUploadingFile: false,
+        }"
+        x-bind:disabled="isUploadingFile"
+        x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
+        x-init="
+            form = $el.closest('form')
 
-                form?.addEventListener('file-upload-started', () => {
-                    isUploadingFile = true
-                })
+            form?.addEventListener('file-upload-started', () => {
+                isUploadingFile = true
+            })
 
-                form?.addEventListener('file-upload-finished', () => {
-                    isUploadingFile = false
-                })
-            "
-        @elseif ($keyBindings || $tooltip)
-            x-data="{}"
-        @endif
+            form?.addEventListener('file-upload-finished', () => {
+                isUploadingFile = false
+            })
+        "
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
@@ -113,15 +109,25 @@
             />
         @endif
 
-        @if ($form)
-            <x-filament-support::loading-indicator
-                x-show="isUploadingFile"
-                :class="$iconClasses"
-            />
-        @endif
+        <span class="flex items-center gap-1">
+            @if (($type === 'submit') && filled($form))
+                <x-filament-support::loading-indicator
+                    x-show="isUploadingFile"
+                    :class="$iconClasses"
+                />
 
-        <span @if ($form) x-html="isUploadingFile ? '{{ __('filament-support::components/button.messages.uploading_file') }}' : label" @endif>
-            {{ $slot }}
+                <span x-show="isUploadingFile">
+                    {{ __('filament-support::components/button.messages.uploading_file') }}
+                </span>
+
+                <span x-show="! isUploadingFile">
+                    {{ $slot }}
+                </span>
+            @else
+                <span>
+                    {{ $slot }}
+                </span>
+            @endif
         </span>
 
         @if ($icon && $iconPosition === 'after')

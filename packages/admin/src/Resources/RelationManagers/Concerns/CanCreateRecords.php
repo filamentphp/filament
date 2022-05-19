@@ -103,6 +103,8 @@ trait CanCreateRecords
             ->label(__('filament::resources/relation-managers/create.action.label'))
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
+            ->modalSubmitAction($this->getCreateActionCreateModalAction())
+            ->modalCancelAction($this->getCreateActionCancelModalAction())
             ->modalActions($this->getCreateActionModalActions())
             ->modalHeading(__('filament::resources/relation-managers/create.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->create())
@@ -137,7 +139,7 @@ trait CanCreateRecords
     protected function getCreateActionCancelModalAction(): Tables\Actions\Modal\Actions\Action
     {
         return Tables\Actions\Action::makeModalAction('cancel')
-            ->label(__('tables::table.actions.modal.buttons.cancel.label'))
+            ->label(__('filament-support::actions.modal.buttons.cancel.label'))
             ->cancel()
             ->color('secondary');
     }

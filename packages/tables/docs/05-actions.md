@@ -205,6 +205,49 @@ BulkAction::make('updateAuthor')
     ])
 ```
 
+#### Wizards
+
+You may easily transform action forms into multi-step wizards.
+
+On the action, simply pass in the [wizard steps](../forms/layout#wizard) to the `steps()` method, instead of `form()`:
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Wizard\Step;
+use Filament\Tables\Actions\Action;
+
+Action::make('create')
+    ->steps([
+        Step::make('Name')
+            ->description('Give the category a clear and unique name')
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->reactive()
+                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
+                TextInput::make('slug')
+                    ->disabled()
+                    ->required()
+                    ->unique(Category::class, 'slug', fn ($record) => $record),
+            ]),
+        Step::make('Description')
+            ->description('Add some extra details')
+            ->schema([
+                MarkdownEditor::make('description')
+                    ->columnSpan('full'),
+            ]),
+        Step::make('Visibility')
+            ->description('Control who can view it')
+            ->schema([
+                Toggle::make('is_visible')
+                    ->label('Visible to customers.')
+                    ->default(true),
+            ]),
+    ])
+```
+
 ### Setting a modal heading, subheading, and button label
 
 You may customize the heading, subheading and button label of the modal:
@@ -224,7 +267,7 @@ BulkAction::make('delete')
 
 ## Authorization
 
-You may conditionally hide actions and bulk actions for certain users using the `hidden()` method, passing a closure:
+You may conditionally show or hide actions and bulk actions for certain users using either the `visible()` or `hidden()` methods, passing a closure:
 
 ```php
 use App\Models\Post;
@@ -232,7 +275,7 @@ use Filament\Tables\Actions\Action;
 
 Action::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
-    ->hidden(fn (Post $record): bool => auth()->user()->can('update', $record))
+    ->visible(fn (Post $record): bool => auth()->user()->can('update', $record))
 ```
 
 This is useful for authorization of certain actions to only users who have permission.
@@ -303,7 +346,11 @@ ReplicateAction::make('replicate')
 By default, the row actions in your table will be aligned to the right in the final cell. To change the default alignment, update the configuration value inside of the package config:
 
 ```
-'action_alignment' => 'right', // `right`, `left` or `center`
+'actions' => [
+    'cell' => [
+        'alignment' => 'right', // `right`, `left` or `center`
+    ],
+]
 ```
 
 ## Tooltips

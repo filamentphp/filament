@@ -121,6 +121,11 @@ class CreateRecord extends Page implements HasFormActions
             ->keyBindings(['mod+s']);
     }
 
+    protected function getSubmitFormAction(): Action
+    {
+        return $this->getCreateFormAction();
+    }
+
     protected function getCreateAndCreateAnotherFormAction(): Action
     {
         return Action::make('createAnother')

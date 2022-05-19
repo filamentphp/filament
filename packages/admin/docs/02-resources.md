@@ -140,6 +140,71 @@ Forms\Components\TextInput::make('password')
 
 For more information about closure customization, see the [form builder documentation](/docs/forms/advanced#using-closure-customisation).
 
+### Wizards
+
+You may easily transform resource [pages](#pages) into multi-step form wizards.
+
+On the create or edit page class, add the corresponding `HasWizard` trait:
+
+```php
+use App\Filament\Resources\CategoryResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateCategory extends CreateRecord
+{
+    use CreateRecord\Concerns\HasWizard;
+    
+    protected static string $resource = CategoryResource::class;
+
+    protected function getSteps(): array
+    {
+        return [
+            // ...
+        ];
+    }
+}
+```
+
+Inside the `getSteps()` array, return your [wizard steps](../forms/layout#wizard):
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Wizard\Step;
+
+protected function getSteps(): array
+{
+    return [
+        Step::make('Name')
+            ->description('Give the category a clear and unique name')
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->reactive()
+                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
+                TextInput::make('slug')
+                    ->disabled()
+                    ->required()
+                    ->unique(Category::class, 'slug', fn ($record) => $record),
+            ]),
+        Step::make('Description')
+            ->description('Add some extra details')
+            ->schema([
+                MarkdownEditor::make('description')
+                    ->columnSpan('full'),
+            ]),
+        Step::make('Visibility')
+            ->description('Control who can view it')
+            ->schema([
+                Toggle::make('is_visible')
+                    ->label('Visible to customers.')
+                    ->default(true),
+            ]),
+    ];
+}
+```
+
 ## Tables
 
 Resource classes contain a static `table()` method that is used to build the table on the list page:
@@ -521,6 +586,8 @@ public static function table(Table $table): Table
 }
 ```
 
+Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
+
 When you attach record with the `Attach` button, you may wish to define a custom form to add pivot attributes to the relationship:
 
 ```php
@@ -539,6 +606,39 @@ public static function attachForm(Form $form): Form
 ```
 
 As included in the above example, you may use `getAttachFormRecordSelect()` to create a select field for the record to attach.
+
+#### Handling duplicates
+
+By default, you will not be allowed to attach a record more than once. This is because you must also set up a primary `id` column on the pivot table for this feature to work.
+
+Please ensure that the `id` attribute is listed in the `withPivot()` method of the relationship *and* inverse relationship.
+
+Finally, add the `$allowsDuplicates` property to the relation manager:
+
+```php
+protected bool $allowsDuplicates = true;
+```
+
+### Grouping relation managers
+
+You may choose to group relation managers together into one tab. To do this, you may wrap multiple managers in a `RelationGroup` object, with a label:
+
+```php
+
+use Filament\Resources\RelationManagers\RelationGroup;
+
+public static function getRelations(): array
+{
+    return [
+        // ...
+        RelationGroup::make('Contacts', [
+            RelationManagers\IndividualsRelationManager::class,
+            RelationManagers\OrganizationsRelationManager::class,
+        ]),
+        // ...
+    ];
+}
+```
 
 ### `HasOne`, `BelongsTo` and `MorphOne`
 

@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Component;
+use Illuminate\Support\Str;
 
 trait HasState
 {
@@ -115,11 +116,15 @@ trait HasState
         return $this;
     }
 
-    public function fillMissingStateWithNull(): static
+    public function fillStateWithNull(bool $ifMissing = false): static
     {
         $livewire = $this->getLivewire();
 
-        data_fill($livewire, $this->getStatePath(), null);
+        if ($ifMissing) {
+            data_fill($livewire, $this->getStatePath(), null);
+        } else {
+            data_set($livewire, $this->getStatePath(), null);
+        }
 
         return $this;
     }
@@ -208,37 +213,51 @@ trait HasState
     protected function getGetCallback(): Closure
     {
         return function (Component | string $path, bool $isAbsolute = false) {
-            if ($path instanceof Component) {
-                $path = $path->getStatePath();
-            } elseif (
-                (! $isAbsolute) &&
-                ($containerPath = $this->getContainer()->getStatePath())
-            ) {
-                $path = "{$containerPath}.{$path}";
-            }
-
             $livewire = $this->getLivewire();
 
-            return data_get($livewire, $path);
+            return data_get(
+                $livewire,
+                $this->generateStatePathForCallback($path, $isAbsolute)
+            );
         };
     }
 
     protected function getSetCallback(): Closure
     {
         return function (string | Component $path, $state, bool $isAbsolute = false) {
-            if ($path instanceof Component) {
-                $path = $path->getStatePath();
-            } elseif (
-                (! $isAbsolute) &&
-                ($containerPath = $this->getContainer()->getStatePath())
-            ) {
-                $path = "{$containerPath}.{$path}";
-            }
-
             $livewire = $this->getLivewire();
-            data_set($livewire, $path, $this->evaluate($state));
+
+            data_set(
+                $livewire,
+                $this->generateStatePathForCallback($path, $isAbsolute),
+                $this->evaluate($state),
+            );
 
             return $state;
         };
+    }
+
+    protected function generateStatePathForCallback(string | Component $path, bool $isAbsolute = false): string
+    {
+        if ($path instanceof Component) {
+            return $path->getStatePath();
+        }
+
+        if ($isAbsolute) {
+            return $path;
+        }
+
+        $containerPath = $this->getContainer()->getStatePath();
+
+        if (blank($containerPath)) {
+            return $path;
+        }
+
+        while (Str::of($path)->startsWith('../')) {
+            $containerPath = (string) Str::of($containerPath)->beforeLast('.');
+            $path = (string) Str::of($path)->after('../');
+        }
+
+        return "{$containerPath}.{$path}";
     }
 }

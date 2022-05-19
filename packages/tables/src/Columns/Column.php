@@ -16,7 +16,6 @@ class Column extends ViewComponent
     use Concerns\CanBeToggled;
     use Concerns\CanCallAction;
     use Concerns\CanOpenUrl;
-    use Concerns\EvaluatesClosures;
     use Concerns\HasAlignment;
     use Concerns\HasExtraHeaderAttributes;
     use Concerns\HasLabel;
@@ -28,6 +27,7 @@ class Column extends ViewComponent
     use Conditionable;
     use HasExtraAttributes;
 
+    protected string $evaluationIdentifier = 'column';
     protected string $viewIdentifier = 'column';
 
     final public function __construct(string $name)
@@ -41,5 +41,13 @@ class Column extends ViewComponent
         $static->setUp();
 
         return $static;
+    }
+
+    protected function getDefaultEvaluationParameters(): array
+    {
+        return array_merge(parent::getDefaultEvaluationParameters(), [
+            'livewire' => $this->getLivewire(),
+            'record' => $this->getRecord(),
+        ]);
     }
 }

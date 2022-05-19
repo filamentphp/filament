@@ -6,32 +6,6 @@ return [
         'filepond_locale' => 'fa_ir',
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'آیا برای انجام این کار مطمئن هستید؟',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'لغو',
-                ],
-
-                'confirm' => [
-                    'label' => 'تایید',
-                ],
-
-                'submit' => [
-                    'label' => 'ثبت',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'builder' => [
 
         'collapsed' => 'محتوا جمع شد',

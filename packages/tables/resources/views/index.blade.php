@@ -285,9 +285,9 @@
                         @foreach ($records as $record)
                             <x-tables::row
                                 :record-url="$getRecordUrl($record)"
-                                wire:key="{{ $record->getKey() }}"
+                                wire:key="{{ $this->getTableRecordKey($record) }}"
                                 x-bind:class="{
-                                    'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $record->getKey() }}'),
+                                    'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $this->getTableRecordKey($record) }}'),
                                 }"
                             >
                                 @if ($isSelectionEnabled())
@@ -295,7 +295,7 @@
                                         <x-slot
                                             name="checkbox"
                                             x-model="selectedRecords"
-                                            :value="$record->getKey()"
+                                            :value="$this->getTableRecordKey($record)"
                                             class="table-row-checkbox"
                                         ></x-slot>
                                     </x-tables::checkbox-cell>
@@ -396,13 +396,15 @@
                     {{ $getMountedActionForm() }}
                 @endif
 
-                <x-slot name="footer">
-                    <x-tables::modal.actions :full-width="$action->isModalCentered()">
-                        @foreach ($action->getModalActions() as $modalAction)
-                            {{ $modalAction }}
-                        @endforeach
-                    </x-tables::modal.actions>
-                </x-slot>
+                @if (count($action->getModalActions()))
+                    <x-slot name="footer">
+                        <x-tables::modal.actions :full-width="$action->isModalCentered()">
+                            @foreach ($action->getModalActions() as $modalAction)
+                                {{ $modalAction }}
+                            @endforeach
+                        </x-tables::modal.actions>
+                    </x-slot>
+                @endif
             @endif
         </x-tables::modal>
     </form>
@@ -436,13 +438,15 @@
                     {{ $getMountedBulkActionForm() }}
                 @endif
 
-                <x-slot name="footer">
-                    <x-tables::modal.actions :full-width="$action->isModalCentered()">
-                        @foreach ($action->getModalActions() as $modalAction)
-                            {{ $modalAction }}
-                        @endforeach
-                    </x-tables::modal.actions>
-                </x-slot>
+                @if (count($action->getModalActions()))
+                    <x-slot name="footer">
+                        <x-tables::modal.actions :full-width="$action->isModalCentered()">
+                            @foreach ($action->getModalActions() as $modalAction)
+                                {{ $modalAction }}
+                            @endforeach
+                        </x-tables::modal.actions>
+                    </x-slot>
+                @endif
             @endif
         </x-tables::modal>
     </form>

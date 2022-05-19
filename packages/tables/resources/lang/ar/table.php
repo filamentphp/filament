@@ -53,28 +53,20 @@ return [
             'label' => 'فتح الإجراءات',
         ],
 
+        'toggle_columns' => [
+            'label' => 'تبديل الأعمدة',
+        ],
+
     ],
 
     'actions' => [
 
-        'modal' => [
+        'replicate' => [
 
-            'requires_confirmation_subheading' => 'هل أنت متأكد من القيام بهذا؟',
+            'label' => 'نسخة',
 
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'إلغاء',
-                ],
-
-                'confirm' => [
-                    'label' => 'تأكيد',
-                ],
-
-                'submit' => [
-                    'label' => 'إعتماد',
-                ],
-
+            'messages' => [
+                'replicated' => 'تم نسخ السجل',
             ],
 
         ],

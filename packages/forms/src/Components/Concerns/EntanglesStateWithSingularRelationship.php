@@ -51,7 +51,7 @@ trait EntanglesStateWithSingularRelationship
 
             $record = new $relatedModel();
 
-            if ($activeLocale && method_exists($relatedModel, 'setLocale')) {
+            if ($activeLocale && method_exists($record, 'setLocale')) {
                 $record->setLocale($activeLocale);
             }
 

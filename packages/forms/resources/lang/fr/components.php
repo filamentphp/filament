@@ -4,6 +4,8 @@ return [
 
     'builder' => [
 
+        'collapsed' => 'Contenu plié',
+
         'buttons' => [
 
             'create_item' => [
@@ -23,7 +25,23 @@ return [
             ],
 
             'move_item_up' => [
-                'label' => 'Move up',
+                'label' => 'Déplacer vers le haut',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Plier',
+            ],
+
+            'expand_item' => [
+                'label' => 'Déplier',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Tout plier',
+            ],
+
+            'expand_all' => [
+                'label' => 'Tout déplier',
             ],
 
         ],
@@ -76,6 +94,7 @@ return [
     ],
 
     'repeater' => [
+        'collapsed' => 'Contenu plié',
 
         'buttons' => [
 
@@ -95,6 +114,21 @@ return [
                 'label' => 'Déplacer vers le haut',
             ],
 
+            'collapse_item' => [
+                'label' => 'Plier',
+            ],
+
+            'expand_item' => [
+                'label' => 'Déplier',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Tout plier',
+            ],
+
+            'expand_all' => [
+                'label' => 'Tout déplier',
+            ],
         ],
 
     ],
@@ -138,9 +172,37 @@ return [
     ],
 
     'select' => [
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Créer',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Créer',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+        'loading_message' => 'En chargement...',
+
         'no_search_results_message' => 'Aucune option ne correspond à votre recherche.',
+
         'placeholder' => 'Sélectionnez une option',
+
+        'searching_message' => 'En recherche...',
+
         'search_prompt' => 'Commencez à taper pour rechercher...',
+
     ],
 
     'tags_input' => [

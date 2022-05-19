@@ -4,14 +4,12 @@ return [
 
     'builder' => [
 
+        'collapsed' => 'Contenido contraido',
+
         'buttons' => [
 
             'create_item' => [
                 'label' => 'Añadir a :label',
-            ],
-
-            'create_item_between' => [
-                'label' => 'Añadir entre',
             ],
 
             'delete_item' => [
@@ -24,6 +22,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Subir',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Contraer',
+            ],
+
+            'expand_item' => [
+                'label' => 'Expandir',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Contraer todo',
+            ],
+
+            'expand_all' => [
+                'label' => 'Expandir todo',
             ],
 
         ],
@@ -67,8 +81,8 @@ return [
             'code_block' => 'Código',
             'edit' => 'Escribir',
             'italic' => 'Cursiva',
-            'link' => 'Link',
-            'ordered_list' => 'Números',
+            'link' => 'Enlace',
+            'ordered_list' => 'Lista numerada',
             'preview' => 'Vista previa',
             'strike' => 'Tachado',
         ],
@@ -76,6 +90,8 @@ return [
     ],
 
     'repeater' => [
+
+        'collapsed' => 'Contenido contraido',
 
         'buttons' => [
 
@@ -95,6 +111,22 @@ return [
                 'label' => 'Subir',
             ],
 
+            'collapse_item' => [
+                'label' => 'Contraer',
+            ],
+
+            'expand_item' => [
+                'label' => 'Expandir',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Contraer todo',
+            ],
+
+            'expand_all' => [
+                'label' => 'Expandir todo',
+            ],
+
         ],
 
     ],
@@ -106,13 +138,13 @@ return [
             'link' => [
 
                 'buttons' => [
-                    'link' => 'Link',
-                    'unlink' => 'Quitar link',
+                    'link' => 'Enlace',
+                    'unlink' => 'Quitar enlace',
                 ],
 
                 'label' => 'URL',
 
-                'placeholder' => 'Insertar una URL',
+                'placeholder' => 'Teclee un enlace URL',
 
             ],
 
@@ -126,21 +158,51 @@ return [
             'code_block' => 'Código',
             'h1' => 'Título',
             'h2' => 'Encabezado',
-            'h3' => 'Subtítulo',
+            'h3' => 'Subencabezado',
             'italic' => 'Cursiva',
-            'link' => 'Link',
-            'ordered_list' => 'Números',
+            'link' => 'Enlace',
+            'ordered_list' => 'Lista numerada',
             'redo' => 'Rehacer',
-            'strike' => 'Tachado',
+            'strike' => 'Tachar',
             'undo' => 'Deshacer',
         ],
 
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Nuevo',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Crear',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'loading_message' => 'Cargando...',
+
         'no_search_results_message' => 'No se encontraron coincidencias con su búsqueda.',
-        'placeholder' => 'Selecciona una opción',
-        'search_prompt' => 'Escribe para buscar...',
+
+        'placeholder' => 'Seleccione una opción',
+
+        'searching_message' => 'Buscando...',
+
+        'search_prompt' => 'Teclee para buscar...',
+
     ],
 
     'tags_input' => [
