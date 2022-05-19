@@ -20,6 +20,8 @@ class ImageColumn extends Column
 
     protected int | string | Closure | null $width = null;
 
+    protected array | Closure $extraImgAttributes = [];
+
     protected function setUp(): void
     {
         $this->disk(config('tables.default_filesystem_disk'));
@@ -137,5 +139,17 @@ class ImageColumn extends Column
     public function isRounded(): bool
     {
         return $this->evaluate($this->isRounded);
+    }
+
+    public function extraImgAttributes(array | Closure $attributes): static
+    {
+        $this->extraImgAttributes = $attributes;
+
+        return $this;
+    }
+
+    public function getExtraImgAttributes(): array
+    {
+        return $this->evaluate($this->extraImgAttributes);
     }
 }

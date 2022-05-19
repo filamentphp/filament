@@ -11,6 +11,7 @@
             ></div>
         @else
             <img
+                {!! $attributes->merge($getExtraImgAttributes()) !!}
                 src="{{ $path }}"
                 style="
                     {!! ($height = $getHeight()) !== null ? "height: {$height};" : null !!}
