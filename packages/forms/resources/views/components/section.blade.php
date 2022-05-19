@@ -7,7 +7,7 @@
         ]) }}
     {{ $getExtraAlpineAttributeBag() }}>
     <div @class([
-        'flex items-center px-4 py-2 bg-gray-100 rtl:space-x-reverse overflow-hidden rounded-t-xl',
+        'flex items-center px-4 py-2 bg-gray-100 rtl:space-x-reverse overflow-hidden rounded-t-xl min-h-[56px]',
         'dark:bg-gray-900' => config('forms.dark_mode'),
     ]) @if ($isCollapsible())
         x-bind:class="{ 'rounded-b-xl': isCollapsed }"
