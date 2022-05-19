@@ -195,7 +195,7 @@ return [
 
         'loading_message' => 'Loading...',
 
-        'no_search_results_message' => 'Tidak ada data yang sesuai dengan pencarian anda',
+        'no_search_results_message' => 'Tidak ada data yang sesuai dengan pencarian anda.',
 
         'placeholder' => 'Pilih salah satu opsi',
 
