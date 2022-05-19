@@ -7,7 +7,7 @@ use Exception;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\HtmlString;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Select extends Field
 {
@@ -44,11 +44,11 @@ class Select extends Field
 
     protected string | Closure | null $loadingMessage = null;
 
-    protected string | HtmlString | Closure | null $noSearchResultsMessage = null;
+    protected string | Htmlable | Closure | null $noSearchResultsMessage = null;
 
     protected string | Closure | null $searchingMessage = null;
 
-    protected string | HtmlString | Closure | null $searchPrompt = null;
+    protected string | Htmlable | Closure | null $searchPrompt = null;
 
     protected function setUp(): void
     {
@@ -246,7 +246,7 @@ class Select extends Field
         return $this;
     }
 
-    public function noSearchResultsMessage(string | HtmlString | Closure | null $message): static
+    public function noSearchResultsMessage(string | Htmlable | Closure | null $message): static
     {
         $this->noSearchResultsMessage = $message;
 
@@ -260,7 +260,7 @@ class Select extends Field
         return $this;
     }
 
-    public function searchPrompt(string | HtmlString | Closure | null $message): static
+    public function searchPrompt(string | Htmlable | Closure | null $message): static
     {
         $this->searchPrompt = $message;
 
@@ -287,12 +287,12 @@ class Select extends Field
         return $labels;
     }
 
-    public function getNoSearchResultsMessage(): string | HtmlString
+    public function getNoSearchResultsMessage(): string | Htmlable
     {
         return $this->evaluate($this->noSearchResultsMessage);
     }
 
-    public function getSearchPrompt(): string | HtmlString
+    public function getSearchPrompt(): string | Htmlable
     {
         return $this->evaluate($this->searchPrompt);
     }

@@ -103,6 +103,8 @@ trait CanCreateRecords
             ->label(__('filament::resources/relation-managers/create.action.label'))
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
+            ->modalSubmitAction($this->getCreateActionCreateModalAction())
+            ->modalCancelAction($this->getCreateActionCancelModalAction())
             ->modalActions($this->getCreateActionModalActions())
             ->modalHeading(__('filament::resources/relation-managers/create.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->create())

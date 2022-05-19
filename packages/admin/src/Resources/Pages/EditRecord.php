@@ -205,6 +205,11 @@ class EditRecord extends Page implements HasFormActions
             ->keyBindings(['mod+s']);
     }
 
+    protected function getSubmitFormAction(): Action
+    {
+        return $this->getSaveFormAction();
+    }
+
     protected function getCancelFormAction(): Action
     {
         return Action::make('cancel')

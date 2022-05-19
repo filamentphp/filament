@@ -9,6 +9,7 @@ abstract class Action extends BaseAction
     use Concerns\CanRequireConfirmation;
     use Concerns\HasAction;
     use Concerns\HasFormSchema;
+    use Concerns\HasWizard;
 
     public function call(array $data = [])
     {

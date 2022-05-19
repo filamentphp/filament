@@ -35,6 +35,8 @@ trait CanCreateRecords
             ->url(null)
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
+            ->modalSubmitAction($this->getCreateActionCreateModalAction())
+            ->modalCancelAction($this->getCreateActionCancelModalAction())
             ->modalActions($this->getCreateActionModalActions())
             ->modalHeading(__('filament::resources/pages/list-records.actions.create.modal.heading', ['label' => Str::title(static::getResource()::getLabel())]))
             ->action(fn () => $this->create());

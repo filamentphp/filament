@@ -1,5 +1,5 @@
 <div
-    x-data="{ tab: '{{ count($getTabsConfig()) ? array_key_first($getTabsConfig()) : null }}', tabs: {{ json_encode($getTabsConfig()) }} }"
+    x-data="{ tab: '{{ count($getConfig()) ? array_key_first($getConfig()) : null }}', tabs: @js($getConfig()) }"
     x-on:expand-concealing-component.window="if ($event.detail.id in tabs) tab = $event.detail.id"
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
@@ -17,7 +17,7 @@
             'dark:bg-gray-800' => config('forms.dark_mode'),
         ])
     >
-        @foreach ($getTabsConfig() as $tabId => $tabLabel)
+        @foreach ($getConfig() as $tabId => $tabLabel)
             <button
                 type="button"
                 aria-controls="{{ $tabId }}"

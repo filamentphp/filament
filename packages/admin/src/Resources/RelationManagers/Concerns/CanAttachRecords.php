@@ -203,6 +203,8 @@ trait CanAttachRecords
             ->label(__('filament::resources/relation-managers/attach.action.label'))
             ->form($this->getAttachFormSchema())
             ->mountUsing(fn () => $this->fillAttachForm())
+            ->modalSubmitAction($this->getAttachActionAttachModalAction())
+            ->modalCancelAction($this->getAttachActionCancelModalAction())
             ->modalActions($this->getAttachActionModalActions())
             ->modalHeading(__('filament::resources/relation-managers/attach.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->modalWidth('lg')

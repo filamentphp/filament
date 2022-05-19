@@ -108,7 +108,10 @@
 
                             <div class="flex-1"></div>
 
-                            <ul class="flex divide-x dark:divide-gray-700">
+                            <ul @class([
+                                'flex divide-x',
+                                'dark:divide-gray-700' => config('forms.dark_mode'),
+                            ])>
                                 @unless ($isItemDeletionDisabled)
                                     <li>
                                         <button

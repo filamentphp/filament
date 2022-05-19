@@ -40,8 +40,8 @@ class Block extends Component
     public function getLabel(): string
     {
         return parent::getLabel() ?? (string) Str::of($this->getName())
-                ->kebab()
-                ->replace(['-', '_'], ' ')
-                ->ucfirst();
+            ->kebab()
+            ->replace(['-', '_'], ' ')
+            ->ucfirst();
     }
 }

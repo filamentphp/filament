@@ -75,7 +75,11 @@
                     default => 'max-w-7xl',
                 },
             ])>
+                {{ \Filament\Facades\Filament::renderHook('content.start') }}
+
                 {{ $slot }}
+
+                {{ \Filament\Facades\Filament::renderHook('content.end') }}
             </div>
 
             <div class="py-4 shrink-0 filament-main-footer">

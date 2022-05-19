@@ -396,13 +396,15 @@
                     {{ $getMountedActionForm() }}
                 @endif
 
-                <x-slot name="footer">
-                    <x-tables::modal.actions :full-width="$action->isModalCentered()">
-                        @foreach ($action->getModalActions() as $modalAction)
-                            {{ $modalAction }}
-                        @endforeach
-                    </x-tables::modal.actions>
-                </x-slot>
+                @if (count($action->getModalActions()))
+                    <x-slot name="footer">
+                        <x-tables::modal.actions :full-width="$action->isModalCentered()">
+                            @foreach ($action->getModalActions() as $modalAction)
+                                {{ $modalAction }}
+                            @endforeach
+                        </x-tables::modal.actions>
+                    </x-slot>
+                @endif
             @endif
         </x-tables::modal>
     </form>
@@ -436,13 +438,15 @@
                     {{ $getMountedBulkActionForm() }}
                 @endif
 
-                <x-slot name="footer">
-                    <x-tables::modal.actions :full-width="$action->isModalCentered()">
-                        @foreach ($action->getModalActions() as $modalAction)
-                            {{ $modalAction }}
-                        @endforeach
-                    </x-tables::modal.actions>
-                </x-slot>
+                @if (count($action->getModalActions()))
+                    <x-slot name="footer">
+                        <x-tables::modal.actions :full-width="$action->isModalCentered()">
+                            @foreach ($action->getModalActions() as $modalAction)
+                                {{ $modalAction }}
+                            @endforeach
+                        </x-tables::modal.actions>
+                    </x-slot>
+                @endif
             @endif
         </x-tables::modal>
     </form>

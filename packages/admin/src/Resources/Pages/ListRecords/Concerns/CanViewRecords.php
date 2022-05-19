@@ -26,12 +26,13 @@ trait CanViewRecords
             ->form($this->getViewFormSchema())
             ->mountUsing(fn () => $this->fillViewForm())
             ->modalHeading(fn (Model $record) => __('filament::resources/pages/list-records.table.actions.view.modal.heading', ['label' => $resource::hasRecordTitle() ? $resource::getRecordTitle($record) : Str::title($resource::getLabel())]))
-            ->modalActions([
+            ->modalCancelAction(
                 ModalAction::make('close')
                     ->label(__('filament::resources/pages/list-records.table.actions.view.modal.actions.close.label'))
                     ->cancel()
                     ->color('secondary'),
-            ])
+            )
+            ->modalActions(fn (Tables\Actions\Action $action): array => [$action->getModalCancelAction()])
             ->action(function () {
             })
             ->hidden(fn (Model $record) => ! $resource::canView($record));

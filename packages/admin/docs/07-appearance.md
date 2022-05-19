@@ -234,9 +234,11 @@ The available hooks are as follows:
 
 - `body.start` - after `<body>`
 - `body.end` - before `</body>`
-- `global-search.start` - before [global search](resources#global-search) input
-- `global-search.end` - after [global search](resources#global-search) input
 - `head.start` - after `<head>`
 - `head.end` - before `</head>`
+- `content.start` - before page content
+- `content.after` - after page content
 - `sidebar.start` - before [sidebar](navigation) content
 - `sidebar.end` - after [sidebar](navigation) content
+- `global-search.start` - before [global search](resources#global-search) input
+- `global-search.end` - after [global search](resources#global-search) input
