@@ -28,6 +28,7 @@
     :tooltip="$action->getTooltip()"
     :disabled="$action->isDisabled()"
     :icon="$action->getIcon()"
+    :size="$action->getSize()"
 >
     {{ $slot }}
 </x-dynamic-component>
