@@ -8,7 +8,7 @@ return [
 
         'create' => [
 
-            'label' => ':label baru',
+            'label' => ':Label baru',
 
             'modal' => [
 
@@ -21,7 +21,7 @@ return [
                     ],
 
                     'create_and_create_another' => [
-                        'label' => 'Buat & Buat lainnya',
+                        'label' => 'Buat & buat lainnya',
                     ],
 
                 ],
@@ -29,7 +29,7 @@ return [
             ],
 
             'messages' => [
-                'created' => 'Telah dibuat',
+                'created' => 'Data berhasil dibuat',
             ],
 
         ],
@@ -42,10 +42,14 @@ return [
 
             'delete' => [
 
-                'label' => 'Delete',
+                'label' => 'Hapus',
+
+                'modal' => [
+                    'heading' => 'Hapus :label',
+                ],
 
                 'messages' => [
-                    'deleted' => 'Deleted',
+                    'deleted' => 'Data berhasil dihapus',
                 ],
 
             ],
@@ -61,7 +65,7 @@ return [
                     'actions' => [
 
                         'save' => [
-                            'label' => 'Save',
+                            'label' => 'Simpan',
                         ],
 
                     ],
@@ -69,13 +73,29 @@ return [
                 ],
 
                 'messages' => [
-                    'saved' => 'Saved',
+                    'saved' => 'Data berhasil disimpan',
                 ],
 
             ],
 
             'view' => [
+
                 'label' => 'Lihat',
+
+                'modal' => [
+
+                    'heading' => 'Lihat :label',
+
+                    'actions' => [
+
+                        'close' => [
+                            'label' => 'Tutup',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
         ],
@@ -84,10 +104,10 @@ return [
 
             'delete' => [
 
-                'label' => 'Hapus yang dipilih ',
+                'label' => 'Hapus yang dipilih',
 
                 'messages' => [
-                    'deleted' => 'Hapus',
+                    'deleted' => 'Data berhasil dihapus',
                 ],
 
             ],

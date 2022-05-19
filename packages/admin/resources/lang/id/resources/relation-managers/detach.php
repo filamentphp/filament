@@ -4,28 +4,28 @@ return [
 
     'action' => [
 
-        'label' => 'Lepas',
+        'label' => 'Lepas lampiran',
 
         'modal' => [
-            'heading' => 'Lepas :label',
+            'heading' => 'Lepas lampiran :label',
         ],
 
         'messages' => [
-            'detached' => 'Telah dilepas',
+            'detached' => 'Lampiran berhasil dilepas',
         ],
 
     ],
 
     'bulk_action' => [
 
-        'label' => 'Lepaskan yang dipilih',
+        'label' => 'Lepaskan lampiran yang dipilih',
 
         'modal' => [
-            'heading' => 'Lepaskan yang dipilih  :label',
+            'heading' => 'Lepaskan lampiran yang dipilih :label',
         ],
 
         'messages' => [
-            'detached' => 'Telah dilepas',
+            'detached' => 'Lampiran berhasil dilepas',
         ],
 
     ],

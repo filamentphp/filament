@@ -4,11 +4,11 @@ return [
 
     'action' => [
 
-        'label' => 'Lampirkan',
+        'label' => 'Kaitkan',
 
         'modal' => [
 
-            'heading' => 'Lampirkan :label',
+            'heading' => 'Kaitkan :label',
 
             'fields' => [
 
@@ -20,12 +20,12 @@ return [
 
             'actions' => [
 
-                'attach' => [
-                    'label' => 'Data',
+                'associate' => [
+                    'label' => 'Kaitkan',
                 ],
 
-                'attach_and_attach_another' => [
-                    'label' => 'Lampirkan & lampirkan lainnya',
+                'associate_and_associate_another' => [
+                    'label' => 'Kaitkan & kaitkan lainnya',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Data berhasil dilampirkan',
+            'associated' => 'Data berhasil dikaitkan',
         ],
 
     ],
