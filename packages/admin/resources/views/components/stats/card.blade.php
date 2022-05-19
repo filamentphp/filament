@@ -10,10 +10,11 @@
     'label' => null,
     'tag' => 'div',
     'value' => null,
+    'extraAttributes' => [],
 ])
 
 <{!! $tag !!}
-    {{ $attributes->class([
+    {{ $attributes->merge($extraAttributes)->class([
         'relative p-6 rounded-2xl bg-white shadow filament-stats-card',
         'dark:bg-gray-800' => config('filament.dark_mode'),
     ]) }}
