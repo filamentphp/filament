@@ -14,6 +14,8 @@ trait CanFormatState
 {
     protected ?Closure $formatStateUsing = null;
 
+    protected ?int $limit = null;
+
     protected string | Closure | null $prefix = null;
 
     protected string | Closure | null $suffix = null;
@@ -54,6 +56,8 @@ trait CanFormatState
 
     public function limit(int $length = 100, string $end = '...'): static
     {
+        $this->limit = $length;
+
         $this->formatStateUsing(static function ($state) use ($length, $end): ?string {
             if (blank($state)) {
                 return null;
@@ -127,6 +131,11 @@ trait CanFormatState
         }
 
         return $state;
+    }
+    
+    public function getLimit(): ?int
+    {
+        return $this->limit;
     }
 
     public function time(?string $format = null, ?string $timezone = null): static
