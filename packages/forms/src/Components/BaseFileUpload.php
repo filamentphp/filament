@@ -411,7 +411,7 @@ class BaseFileUpload extends Field
 
     public function getUploadedFileUrls(): ?array
     {
-        $uploadedFileUrls = collect($this->getState() ?? [])
+        return collect($this->getState() ?? [])
             ->mapWithKeys(function (TemporaryUploadedFile | string $file, string $fileKey): array {
                 if ($file instanceof TemporaryUploadedFile) {
                     return [$fileKey => null];
@@ -428,9 +428,8 @@ class BaseFileUpload extends Field
                 ]);
 
                 return [$fileKey => ($url ?: null)];
-            })->toArray();
-
-        return $uploadedFileUrls;
+            })
+            ->toArray();
     }
 
     public function saveUploadedFiles(): void
