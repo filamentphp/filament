@@ -26,7 +26,10 @@
         x-tooltip.raw="{{ $tooltip }}"
     @endif
 >
-    <div wire:loading.remove>
+    <div
+        wire:loading.remove
+        wire:target="{{ config('tables.layout.loading_targets') }}"
+    >
         @if ($action || ((! $url) && $recordAction))
             <button
                 wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
@@ -50,5 +53,8 @@
             {{ $slot }}
         @endif
     </div>
-    <x-tables::loading-cell-content wire:loading.block />
+    <x-tables::loading-cell-content
+        wire:loading.block
+        wire:target="{{ config('tables.layout.loading_targets') }}"
+    />
 </td>

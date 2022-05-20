@@ -13,8 +13,17 @@
         'flex items-center justify-center w-16 h-16 text-primary-500 rounded-full bg-primary-50',
         'dark:bg-gray-700' => config('tables.dark_mode'),
     ])>
-        <x-dynamic-component :component="$icon" class="w-6 h-6" wire:loading.remove />
-        <x-filament-support::loading-icon class="w-6 h-6" wire:loading />
+        <x-dynamic-component
+            :component="$icon"
+            class="w-6 h-6"
+            wire:loading.remove
+            wire:target="{{ config('tables.layout.loading_targets') }}"
+        />
+        <x-filament-support::loading-icon
+            class="w-6 h-6"
+            wire:loading
+            wire:target="{{ config('tables.layout.loading_targets') }}"
+        />
     </div>
 
     <div class="max-w-xs space-y-1">

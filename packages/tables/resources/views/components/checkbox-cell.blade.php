@@ -5,6 +5,7 @@
             'dark:bg-gray-700 dark:border-gray-600 dark:checked:bg-primary-500' => config('tables.dark_mode'),
         ]) }}
         wire:loading.attr="disabled"
+        wire:target="{{ config('tables.layout.loading_targets') }}"
         type="checkbox"
     />
 </th>
