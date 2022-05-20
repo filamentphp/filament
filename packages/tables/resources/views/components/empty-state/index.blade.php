@@ -14,7 +14,7 @@
         'dark:bg-gray-700' => config('tables.dark_mode'),
     ])>
         <x-dynamic-component :component="$icon" class="w-6 h-6" wire:loading.remove />
-        <x-filament-suport::loading-icon class="w-6 h-6" wire:loading />
+        <x-filament-support::loading-icon class="w-6 h-6" wire:loading />
     </div>
 
     <div class="max-w-xs space-y-1">
