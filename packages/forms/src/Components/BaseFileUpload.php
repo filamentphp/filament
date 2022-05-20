@@ -7,6 +7,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -61,7 +62,7 @@ class BaseFileUpload extends Field
             }
 
             $files = collect(Arr::wrap($state))
-                ->mapWithKeys(static fn (string $file): array => [(string) Str::uuid() => $file])
+                ->mapWithKeys(static fn (string $file): array => [((string) Str::uuid()) => $file])
                 ->toArray();
 
             $component->state($files);
@@ -410,7 +411,7 @@ class BaseFileUpload extends Field
 
     public function getUploadedFileUrls(): ?array
     {
-        $uploadedFileUrls = collect($this->getState() ?? [])
+        return collect($this->getState() ?? [])
             ->mapWithKeys(function (TemporaryUploadedFile | string $file, string $fileKey): array {
                 if ($file instanceof TemporaryUploadedFile) {
                     return [$fileKey => null];
@@ -427,9 +428,8 @@ class BaseFileUpload extends Field
                 ]);
 
                 return [$fileKey => ($url ?: null)];
-            })->toArray();
-
-        return $uploadedFileUrls;
+            })
+            ->toArray();
     }
 
     public function saveUploadedFiles(): void
