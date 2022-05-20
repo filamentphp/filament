@@ -61,7 +61,8 @@ class BaseFileUpload extends Field
             }
 
             $files = collect(Arr::wrap($state))
-                ->mapWithKeys(static fn (string $file): array => [(string) Str::uuid() => $file])
+                ->filter(static fn (string $file) => blank($file) || $component->getDisk()->exists($file))
+                ->mapWithKeys(static fn (string $file): array => [((string) Str::uuid()) => $file])
                 ->toArray();
 
             $component->state($files);
