@@ -25107,7 +25107,7 @@ var select_default = (Alpine) => {
             return;
           }
           this.isStateBeingUpdated = true;
-          this.state = this.select.getValue(true);
+          this.state = this.select.getValue(true) ?? null;
           this.$nextTick(() => this.isStateBeingUpdated = false);
         });
         if (hasDynamicOptions) {
