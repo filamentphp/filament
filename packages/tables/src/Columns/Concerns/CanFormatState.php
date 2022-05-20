@@ -18,6 +18,8 @@ trait CanFormatState
 
     protected string | Closure | null $suffix = null;
 
+    protected ?int $limit = null;
+
     public function date(?string $format = null, ?string $timezone = null): static
     {
         $format ??= config('tables.date_format');
@@ -47,6 +49,8 @@ trait CanFormatState
 
     public function limit(int $length = 100, string $end = '...'): static
     {
+        $this->limit = $length;
+        
         $this->formatStateUsing(static function ($state) use ($length, $end): ?string {
             if (blank($state)) {
                 return null;
