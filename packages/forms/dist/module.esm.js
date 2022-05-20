@@ -12104,7 +12104,7 @@ var date_time_picker_default = (Alpine) => {
         return date;
       },
       openPicker: function() {
-        this.focusedDate = this.getSelectedDate() ?? esm_default().tz(timezone2);
+        this.focusedDate = this.getSelectedDate() ?? this.getMinDate() ?? esm_default().tz(timezone2);
         this.setupDaysGrid();
         this.open = true;
         this.$nextTick(() => {
