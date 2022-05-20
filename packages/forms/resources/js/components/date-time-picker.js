@@ -365,7 +365,7 @@ export default (Alpine) => {
             },
 
             openPicker: function () {
-                this.focusedDate = this.getSelectedDate() ?? dayjs().tz(timezone)
+                this.focusedDate = this.getSelectedDate() ?? this.getMinDate() ?? dayjs().tz(timezone)
 
                 this.setupDaysGrid()
 
