@@ -38,6 +38,13 @@ trait CanFormatState
         return $this;
     }
 
+    public function since(?string $timezone = null): static
+    {
+        $this->formatStateUsing(static fn ($state): ?string => $state ? Carbon::parse($state)->setTimezone($timezone)->diffForHumans() : null);
+
+        return $this;
+    }
+    
     public function enum(array | Arrayable $options, $default = null): static
     {
         $this->formatStateUsing(static fn ($state): ?string => $options[$state] ?? ($default ?? $state));
