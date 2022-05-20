@@ -138,16 +138,14 @@ trait HasState
                 }
             }
 
-            $this->fillComponentStateWithNull(ifMissing: true);
-
             $this->loadStateFromRelationships();
 
             $this->callAfterStateHydrated();
         } else {
-            $this->fillComponentStateWithNull();
-
             $this->hydrateDefaultState();
         }
+
+        $this->fillComponentStateWithNull();
 
         return $this;
     }
@@ -166,15 +164,15 @@ trait HasState
         return $this;
     }
 
-    public function fillComponentStateWithNull(bool $ifMissing = false): static
+    public function fillComponentStateWithNull(): static
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
             if ($component->hasChildComponentContainer()) {
                 foreach ($component->getChildComponentContainers() as $container) {
-                    $container->fillComponentStateWithNull($ifMissing);
+                    $container->fillComponentStateWithNull();
                 }
             } else {
-                $component->fillStateWithNull($ifMissing);
+                $component->fillStateWithNull();
             }
         }
 
