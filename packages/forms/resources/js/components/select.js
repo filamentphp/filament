@@ -69,7 +69,7 @@ export default (Alpine) => {
                     }
 
                     this.isStateBeingUpdated = true
-                    this.state = this.select.getValue(true)
+                    this.state = this.select.getValue(true) ?? null
                     this.$nextTick(() => this.isStateBeingUpdated = false)
                 })
 
