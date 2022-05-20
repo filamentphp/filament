@@ -23,7 +23,7 @@ trait HasRelationship
 
         if ($relationship instanceof MorphToMany) {
             $keyColumn = $relationship->getQualifiedRelatedKeyName();
-        } elseif ($relationship instanceof HasOneThrough){
+        } elseif ($relationship instanceof HasOneThrough) {
             $keyColumn = $relationship->getQualifiedForeignKeyName();
         } else {
             /** @var BelongsTo $relationship */
