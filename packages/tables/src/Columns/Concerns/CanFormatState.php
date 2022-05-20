@@ -132,7 +132,7 @@ trait CanFormatState
 
         return $state;
     }
-    
+
     public function getLimit(): ?int
     {
         return $this->limit;
