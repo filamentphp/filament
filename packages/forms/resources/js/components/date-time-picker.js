@@ -84,7 +84,7 @@ export default (Alpine) => {
                 this.setDayLabels()
 
                 if (isAutofocused) {
-                    this.openPicker()
+                    this.$nextTick(() => this.openPicker())
                 }
 
                 dayjs.addLocaleListeners(() => {

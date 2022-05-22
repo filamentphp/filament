@@ -11903,7 +11903,7 @@ var date_time_picker_default = (Alpine) => {
         this.setMonths();
         this.setDayLabels();
         if (isAutofocused) {
-          this.openPicker();
+          this.$nextTick(() => this.openPicker());
         }
         esm_default.addLocaleListeners(() => {
           this.setDisplayText();
