@@ -2,11 +2,13 @@
 
 namespace Filament\Forms\Components;
 
+use Carbon\Exceptions\InvalidFormatException;
 use Closure;
 use DateTime;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Carbon;
 use Illuminate\View\ComponentAttributeBag;
+use Throwable;
 
 class DateTimePicker extends Field
 {
@@ -43,7 +45,11 @@ class DateTimePicker extends Field
             }
 
             if (! $state instanceof DateTime) {
-                $state = Carbon::createFromFormat($component->getFormat(), $state);
+                try {
+                    $state = Carbon::createFromFormat($component->getFormat(), $state);
+                } catch (InvalidFormatException $exception) {
+                    $state = Carbon::parse($state);
+                }
             }
 
             $component->state((string) $state);
