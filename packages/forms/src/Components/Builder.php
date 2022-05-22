@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 
 class Builder extends Field
 {
+    use Concerns\CanBeCollapsed;
     use Concerns\CanLimitItemsLength;
 
     protected string $view = 'forms::components.builder';
@@ -82,6 +83,8 @@ class Builder extends Field
                     $component->getChildComponentContainers()[$newUuid]->fill();
 
                     $component->hydrateDefaultItemState($newUuid);
+
+                    $component->collapsed(false);
                 },
             ],
             'builder::deleteItem' => [

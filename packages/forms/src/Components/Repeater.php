@@ -54,7 +54,8 @@ class Repeater extends Field
                     $component->getChildComponentContainers()[$newUuid]->fill();
 
                     $component->hydrateDefaultItemState($newUuid);
-                    $component->collapse(false);
+
+                    $component->collapsed(false);
                 },
             ],
             'repeater::deleteItem' => [
