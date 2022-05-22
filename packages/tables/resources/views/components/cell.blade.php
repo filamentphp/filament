@@ -28,7 +28,7 @@
 >
     <div
         wire:loading.remove
-        wire:target="{{ config('tables.layout.loading_targets') }}"
+        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
     >
         @if ($action || ((! $url) && $recordAction))
             <button
@@ -53,8 +53,9 @@
             {{ $slot }}
         @endif
     </div>
+
     <x-tables::loading-cell-content
         wire:loading.block
-        wire:target="{{ config('tables.layout.loading_targets') }}"
+        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
     />
 </td>

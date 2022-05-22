@@ -17,12 +17,13 @@
             :component="$icon"
             class="w-6 h-6"
             wire:loading.remove
-            wire:target="{{ config('tables.layout.loading_targets') }}"
+            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
         />
-        <x-filament-support::loading-icon
+
+        <x-filament-support::loading-indicator
             class="w-6 h-6"
             wire:loading
-            wire:target="{{ config('tables.layout.loading_targets') }}"
+            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
         />
     </div>
 

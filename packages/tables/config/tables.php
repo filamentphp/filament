@@ -52,7 +52,6 @@ return [
     */
 
     'layout' => [
-        'loading_targets' => 'gotoPage,tableFilters,resetTableFiltersForm,tableSearchQuery,tableRecordsPerPage',
         'actions' => [
             'cell' => [
                 'alignment' => 'right',

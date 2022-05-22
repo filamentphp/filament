@@ -9,7 +9,8 @@
             'dark:text-gray-400' => config('filament.dark_mode'),
         ])>
             <x-heroicon-o-search class="w-5 h-5" wire:loading.remove wire:target="searchQuery" />
-            <x-filament-support::loading-icon class="w-5 h-5" wire:loading wire:target="searchQuery" />
+
+            <x-filament-support::loading-indicator class="w-5 h-5" wire:loading wire:target="searchQuery" />
         </span>
 
         <input

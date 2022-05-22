@@ -59,6 +59,8 @@ class Table extends ViewComponent
 
     protected string $viewIdentifier = 'table';
 
+    public const LOADING_TARGETS = ['gotoPage', 'tableFilters', 'resetTableFiltersForm', 'tableSearchQuery', 'tableRecordsPerPage'];
+
     final public function __construct(HasTable $livewire)
     {
         $this->livewire($livewire);
