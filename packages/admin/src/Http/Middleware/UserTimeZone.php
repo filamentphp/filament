@@ -8,7 +8,7 @@ use Filament\Models\Contracts\FilamentUser;
 
 class UserTimeZone
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, \Closure $next)
     {
         $this->setTimeZone($request);
         return $next($request);
