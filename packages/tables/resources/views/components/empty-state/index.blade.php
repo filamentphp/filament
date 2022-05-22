@@ -16,13 +16,13 @@
         <x-dynamic-component
             :component="$icon"
             class="w-6 h-6"
-            wire:loading.remove
+            wire:loading.remove.delay
             wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
         />
 
         <x-filament-support::loading-indicator
             class="w-6 h-6"
-            wire:loading
+            wire:loading.delay
             wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
         />
     </div>

@@ -5,8 +5,6 @@
 
 <td {{ $attributes->class(['px-4 py-3 whitespace-nowrap filament-tables-actions-cell']) }}>
     <div
-        wire:loading.remove
-        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
         {{ $attributes->class([
             'flex items-center gap-4',
             match (config('tables.layout.action_alignment', config('tables.layout.actions.cell.alignment'))) {

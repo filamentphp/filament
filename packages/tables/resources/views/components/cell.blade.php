@@ -26,36 +26,26 @@
         x-tooltip.raw="{{ $tooltip }}"
     @endif
 >
-    <div
-        wire:loading.remove
-        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
-    >
-        @if ($action || ((! $url) && $recordAction))
-            <button
-                wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
-                wire:target="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
-                wire:loading.attr="disabled"
-                wire:loading.class="opacity-70 cursor-wait"
-                type="button"
-                class="block text-left"
-            >
-                {{ $slot }}
-            </button>
-        @elseif ($url || $recordUrl)
-            <a
-                href="{{ $url ?: $recordUrl }}"
-                {{ $shouldOpenUrlInNewTab ? 'target="_blank"' : null }}
-                class="block"
-            >
-                {{ $slot }}
-            </a>
-        @else
+    @if ($action || ((! $url) && $recordAction))
+        <button
+            wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
+            wire:target="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
+            wire:loading.attr.delay="disabled"
+            wire:loading.class.delay="opacity-70 cursor-wait"
+            type="button"
+            class="block text-left"
+        >
             {{ $slot }}
-        @endif
-    </div>
-
-    <x-tables::loading-cell-content
-        wire:loading.block
-        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
-    />
+        </button>
+    @elseif ($url || $recordUrl)
+        <a
+            href="{{ $url ?: $recordUrl }}"
+            {{ $shouldOpenUrlInNewTab ? 'target="_blank"' : null }}
+            class="block"
+        >
+            {{ $slot }}
+        </a>
+    @else
+        {{ $slot }}
+    @endif
 </td>
