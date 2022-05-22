@@ -40,6 +40,14 @@ class DateTimePicker extends Field
         parent::setUp();
 
         $this->afterStateHydrated(static function (DateTimePicker $component, $state): void {
+            if (blank($state)) {
+                return;
+            }
+
+            if (! $state instanceof DateTime) {
+                $state = Carbon::createFromFormat($component->getFormat(), $state);
+            }
+
             $component->state((string) $state);
         });
 
