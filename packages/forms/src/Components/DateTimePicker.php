@@ -42,9 +42,27 @@ class DateTimePicker extends Field
                 return;
             }
 
-            $state = $state->format($component->getFormat());
+            $state = $state->setTimezone( config('request.user.timezone') ?? config('app.timezone'))->format($component->getFormat());
 
             $component->state($state);
+        });
+
+        $this->mutateDehydratedStateUsing(static function (DateTimePicker $component, $state)  {
+            if (blank($state)) {
+                return $state;
+            }
+
+            try {
+                return Carbon::createFromFormat(
+                    $component->getFormat(),
+                    $state, 
+                    config('request.user.timezone') ?? config('app.timezone')
+                )->setTimezone(config('app.timezone'))
+                ->format($component->getFormat());
+            }catch(\Throwable){
+                return $state;
+            }
+
         });
 
         $this->rule(

@@ -24,7 +24,7 @@ trait CanFormatState
     {
         $format ??= config('tables.date_format');
 
-        $timezone ??= config('app.timezone');
+        $timezone ??= config('request.user.timezone') ?? config('app.timezone');
 
         $this->formatStateUsing(static fn ($state): ?string => $state ? Carbon::parse($state)->setTimezone($timezone)->translatedFormat($format) : null);
 
