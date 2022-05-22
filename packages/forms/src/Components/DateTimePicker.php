@@ -8,7 +8,6 @@ use DateTime;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Carbon;
 use Illuminate\View\ComponentAttributeBag;
-use Throwable;
 
 class DateTimePicker extends Field
 {
