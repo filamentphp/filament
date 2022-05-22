@@ -42,7 +42,6 @@
         },
 
     }"
-    x-on:expand-concealing-component.window="if ($event.detail.id in steps) step = $event.detail.id"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}

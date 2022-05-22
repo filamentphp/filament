@@ -1,6 +1,11 @@
 <div
     x-data="{ tab: '{{ count($getConfig()) ? array_key_first($getConfig()) : null }}', tabs: @js($getConfig()) }"
-    x-on:expand-concealing-component.window="if ($event.detail.id in tabs) tab = $event.detail.id"
+    x-on:expand-concealing-component.window="
+        if ($event.detail.id in tabs) {
+            tab = $event.detail.id
+            $el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+    "
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
     {{ $attributes->merge($getExtraAttributes())->class([
