@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 class Repeater extends Field
 {
     use Concerns\CanLimitItemsLength;
+    use Concerns\CanBeCollapsed;
 
     protected string $view = 'forms::components.repeater';
 
