@@ -317,14 +317,28 @@
                                         :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
                                         :url="$column->getUrl()"
                                         :class="$getHiddenClasses($column)"
+                                        wire:loading.remove.delay
+                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                     >
                                         {{ $column }}
                                     </x-tables::cell>
                                 @endforeach
 
                                 @if (count($actions))
-                                    <x-tables::actions-cell :actions="$actions" :record="$record"/>
+                                    <x-tables::actions-cell
+                                        :actions="$actions"
+                                        :record="$record"
+                                        wire:loading.remove.delay
+                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                    />
                                 @endif
+
+                                <x-tables::loading-cell
+                                    :colspan="$columnsCount"
+                                    wire:loading.class.remove.delay="hidden"
+                                    class="hidden"
+                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                />
                             </x-tables::row>
                         @endforeach
 

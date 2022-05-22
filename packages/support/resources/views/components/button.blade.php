@@ -75,8 +75,8 @@
             x-tooltip.raw="{{ $tooltip }}"
         @endif
         type="{{ $type }}"
-        wire:loading.attr="disabled"
-        {!! $hasLoadingIndicator ? 'wire:loading.class="opacity-70 cursor-wait"' : '' !!}
+        wire:loading.attr.delay="disabled"
+        {!! $hasLoadingIndicator ? 'wire:loading.class.delay="opacity-70 cursor-wait"' : '' !!}
         {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
         {!! $disabled ? 'disabled' : '' !!}
         x-data="{
@@ -103,7 +103,7 @@
             <x-dynamic-component :component="$icon" :class="$iconClasses"/>
         @elseif ($hasLoadingIndicator)
             <x-filament-support::loading-indicator
-                wire:loading
+                wire:loading.delay
                 :wire:target="$loadingIndicatorTarget"
                 :class="$iconClasses"
             />
