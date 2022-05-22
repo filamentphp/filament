@@ -109,7 +109,7 @@ class DateTimePicker extends Field
     {
         $this->maxDate = $date;
 
-        $this->rule(static function (DateTimePicker $component) use ($date) {
+        $this->rule(static function (DateTimePicker $component) {
             return "before_or_equal:{$component->getMaxDate()}";
         }, static fn (DateTimePicker $component): bool => (bool) $component->getMaxDate());
 
