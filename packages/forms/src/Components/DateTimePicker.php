@@ -8,7 +8,6 @@ use DateTime;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Carbon;
 use Illuminate\View\ComponentAttributeBag;
-use Throwable;
 
 class DateTimePicker extends Field
 {
@@ -109,7 +108,7 @@ class DateTimePicker extends Field
     {
         $this->maxDate = $date;
 
-        $this->rule(static function (DateTimePicker $component) use ($date) {
+        $this->rule(static function (DateTimePicker $component) {
             return "before_or_equal:{$component->getMaxDate()}";
         }, static fn (DateTimePicker $component): bool => (bool) $component->getMaxDate());
 
