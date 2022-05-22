@@ -39,8 +39,16 @@ class DateTimePicker extends Field
         parent::setUp();
 
         $this->afterStateHydrated(static function (DateTimePicker $component, $state): void {
-            if (! $state instanceof CarbonInterface) {
+            if(blank($state)){
                 return;
+            }
+
+            if (! $state instanceof CarbonInterface) {
+                try {
+                   $state = Carbon::parse($state);
+                }catch(\Throwable $e){
+                    return;
+                }
             }
 
             $state = $state->setTimezone( config('request.user.timezone') ?? config('app.timezone'))->format($component->getFormat());
