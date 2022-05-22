@@ -27,7 +27,6 @@ export default (Alpine) => {
     Alpine.data('dateTimePickerFormComponent', ({
         displayFormat,
         firstDayOfWeek,
-        format,
         isAutofocused,
         state,
     }) => {
@@ -355,7 +354,7 @@ export default (Alpine) => {
             },
 
             getSelectedDate: function () {
-                let date = dayjs(this.state, format)
+                let date = dayjs(this.state)
 
                 if (! date.isValid()) {
                     return null
@@ -430,7 +429,7 @@ export default (Alpine) => {
                     .hour(this.hour ?? 0)
                     .minute(this.minute ?? 0)
                     .second(this.second ?? 0)
-                    .format(format)
+                    .format('YYYY-MM-DD HH:mm:ss')
 
                 this.setDisplayText()
             },
