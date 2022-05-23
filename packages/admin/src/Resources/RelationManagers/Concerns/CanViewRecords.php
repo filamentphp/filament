@@ -9,9 +9,15 @@ use Illuminate\Database\Eloquent\Model;
 
 trait CanViewRecords
 {
+    protected static bool $hasViewAction = false;
+
+    protected function hasViewAction(): bool
+    {
+        return static::$hasViewAction;
+    }
     protected function canView(Model $record): bool
     {
-        return $this->can('view', $record);
+        return $this->hasViewAction() && $this->can('view', $record);
     }
 
     protected function getViewFormSchema(): array
