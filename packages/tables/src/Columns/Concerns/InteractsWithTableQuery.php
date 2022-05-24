@@ -84,7 +84,7 @@ trait InteractsWithTableQuery
                     $activeLocale = $this->getLivewire()->getActiveTableLocale() ?: app()->getLocale();
 
                     return $query->{"{$whereClause}Raw"}(
-                        "lower(json_extract({$searchColumnName}, \"$.{$this->getLivewire()->activeLocale}\")) {$searchOperator} ?",
+                        "lower(json_extract({$searchColumnName}, \"$.{$activeLocale}\")) {$searchOperator} ?",
                         "%{$search}%",
                     );
                 },
