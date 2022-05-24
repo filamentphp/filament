@@ -94,7 +94,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             $media = $mediaAdder
                 ->usingFileName($filename)
-                ->usingName($component->getMediaName() ?? '')
+                ->usingName($component->getMediaName() ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                 ->withCustomProperties($component->getCustomProperties())
                 ->toMediaCollection($component->getCollection(), $component->getDiskName());
 
