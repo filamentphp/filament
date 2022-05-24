@@ -23,7 +23,6 @@
         x-data="dateTimePickerFormComponent({
             displayFormat: '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
-            format: '{{ convert_date_format($getFormat())->to('day.js') }}',
             isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
