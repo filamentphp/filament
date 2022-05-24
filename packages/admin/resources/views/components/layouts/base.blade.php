@@ -23,7 +23,7 @@
             <link rel="icon" href="{{ $favicon }}">
         @endif
 
-        <title>{{ $title ? "{$title} - " : null }} {{ config('app.name') }}</title>
+        <title>{{ $title ? "{$title} - " : null }} {{ config('filament.brand') }}</title>
 
         <style>
             [x-cloak=""], [x-cloak="1"] { display: none !important; }
