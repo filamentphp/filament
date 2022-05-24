@@ -38,13 +38,11 @@
     >
         @unless ($isDisabled())
             <input id="trix-value-{{ $getId() }}" type="hidden" />
-
+            
+            @if (count($getToolbarButtons()))
             <trix-toolbar id="trix-toolbar-{{ $getId() }}">
                 <div class="flex justify-between space-x-4 rtl:space-x-reverse overflow-x-auto items-stretch overflow-y-hidden">
-                    <div @class([
-                        'flex items-stretch space-x-4 rtl:space-x-reverse focus:outline-none',
-                        'hidden' => count($getToolbarButtons()) == 0,
-                    ])>
+                    <div class="flex items-stretch space-x-4 rtl:space-x-reverse focus:outline-none">
                         @if ($hasToolbarButton(['bold', 'italic', 'strike', 'link']))
                             <div data-trix-button-group="text-tools" class="flex items-stretch space-x-1 rtl:space-x-reverse">
                                 @if ($hasToolbarButton('bold'))
@@ -282,6 +280,7 @@
                     </div>
                 </div>
             </trix-toolbar>
+            @endif
 
             <trix-editor
                 wire:ignore
