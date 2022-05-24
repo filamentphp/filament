@@ -204,7 +204,7 @@ return [
         'sidebar' => [
             'is_collapsible_on_desktop' => false,
             'groups' => [
-                'is_collapsible' => true,
+                'are_collapsible' => true,
             ],
         ],
         'tables' => [

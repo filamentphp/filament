@@ -222,7 +222,7 @@ class FilamentManager
                 return [
                     $group => [
                         'items' => $groupedItems->get($group),
-                        'collapsible' => config('filament.layout.sidebar.groups.is_collapsible'),
+                        'collapsible' => config('filament.layout.sidebar.groups.are_collapsible'),
                     ],
                 ];
             })
