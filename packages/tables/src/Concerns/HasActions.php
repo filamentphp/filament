@@ -127,7 +127,11 @@ trait HasActions
 
     public function getMountedTableActionRecord(): ?Model
     {
-        return $this->resolveTableRecord($this->mountedTableActionRecord);
+        if (! ($this->mountedTableActionRecord instanceof Model)) {
+            $this->mountedTableActionRecord = $this->resolveTableRecord($this->mountedTableActionRecord);
+        }
+
+        return $this->mountedTableActionRecord;
     }
 
     protected function getCachedTableAction(string $name): ?Action
