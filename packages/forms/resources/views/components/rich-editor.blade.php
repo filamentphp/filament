@@ -41,7 +41,10 @@
 
             <trix-toolbar id="trix-toolbar-{{ $getId() }}">
                 <div class="flex justify-between space-x-4 rtl:space-x-reverse overflow-x-auto items-stretch overflow-y-hidden">
-                    <div class="{{ count($getToolbarButtons()) > 0 ? 'flex' : 'hidden' }} justify-between space-x-4 rtl:space-x-reverse overflow-x-auto items-stretch overflow-y-hidden">
+                    <div @class([
+                        'flex justify-between space-x-4 rtl:space-x-reverse overflow-x-auto items-stretch overflow-y-hidden',
+                        'hidden' => count($getToolbarButtons()) == 0,
+                    ])>
                         @if ($hasToolbarButton(['bold', 'italic', 'strike', 'link']))
                             <div data-trix-button-group="text-tools" class="flex items-stretch space-x-1 rtl:space-x-reverse">
                                 @if ($hasToolbarButton('bold'))
