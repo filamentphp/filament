@@ -22,6 +22,10 @@ trait CanSelectRecords
 
     public function getAllTableRecordsCount(): int
     {
+        if ($this->isTablePaginationEnabled()) {
+            return $this->records->total();
+        }
+
         return $this->getFilteredTableQuery()->count();
     }
 
