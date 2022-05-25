@@ -181,6 +181,14 @@ public static function table(Table $table): Table
 }
 ```
 
+## Authorization
+
+For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app.
+
+Users may access the List page if the `viewAny()` method of the model policy returns `true`.
+
+They also have the ability to bulk-delete records if the `deleteAny()` method of the policy returns `true`. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant.
+
 ## Custom view
 
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:

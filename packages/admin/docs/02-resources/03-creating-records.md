@@ -4,7 +4,7 @@ title: Creating Records
 
 ## Customizing data before saving
 
-You may define a `mutateFormDataBeforeCreate()` method to modify the form data before it is saved to the database:
+Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may define a `mutateFormDataBeforeCreate()` method, which accepts the `$data` as an array, and returns the modified version:
 
 ```php
 protected function mutateFormDataBeforeCreate(array $data): array
@@ -15,11 +15,27 @@ protected function mutateFormDataBeforeCreate(array $data): array
 }
 ```
 
+## Customizing the creation process
+
+You can tweak how the record is created using the `handleRecordCreation()` method:
+
+```php
+
+use Illuminate\Database\Eloquent\Model;
+
+protected function handleRecordCreation(array $data): Model
+{
+    return static::getModel()::create($data);
+}
+```
+
 ## Customizing form redirects
+
+By default, after saving the form, the user will be redirected to the [Edit page](editing-records) of the resource, or the [View page](viewing-records) if it is present.
 
 You may set up a custom redirect when the form is saved by overriding the `getRedirectUrl()` method.
 
-For example, the form can redirect back to the [List page](listing-records) when it is submitted:
+For example, the form can redirect back to the [List page](listing-records):
 
 ```php
 protected function getRedirectUrl(): string
@@ -28,9 +44,31 @@ protected function getRedirectUrl(): string
 }
 ```
 
+## Customizing the save notification
+
+When the record is successfully created, a notification is dispatched to the user, which indicates the success of their action.
+
+To customize the text content of this notification:
+
+```php
+protected function getCreatedNotificationMessage(): ?string
+{
+    return 'User registered';
+}
+```
+
+And to disable the notification altogether:
+
+```php
+protected function getCreatedNotificationMessage(): ?string
+{
+    return null;
+}
+```
+
 ## Lifecycle hooks
 
-Hooks may be used to execute methods at various points within a page's lifecycle, like before a form is saved. To set up a hook, create a protected method on the page class with the name of the hook:
+Hooks may be used to execute code at various points within a page's lifecycle, like before a form is saved. To set up a hook, create a protected method on the page class with the name of the hook:
 
 ```php
 protected function beforeCreate(): void
@@ -41,7 +79,7 @@ protected function beforeCreate(): void
 
 In this example, the code in the `beforeCreate()` method will be called before the data in the form is saved to the database.
 
-There are several available hooks for the create page:
+There are several available hooks for the Create page:
 
 ```php
 use Filament\Resources\Pages\CreateRecord;
@@ -81,6 +119,12 @@ class CreateUser extends CreateRecord
     }
 }
 ```
+
+## Authorization
+
+For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app.
+
+Users may access the Create page if the `create()` method of the model policy returns `true`.
 
 ## Wizards
 
@@ -147,7 +191,7 @@ protected function getSteps(): array
 }
 ```
 
-Now, visit the create page to see your wizard in action! The edit page will still use the form defined within the resource class.
+Now, visit the Create page to see your wizard in action! The Edit page will still use the form defined within the resource class.
 
 ### Sharing fields between the resource form and wizards
 

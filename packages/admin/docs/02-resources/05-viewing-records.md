@@ -2,17 +2,17 @@
 title: Viewing Records
 ---
 
-## Creating a resource with a view page
+## Creating a resource with a View page
 
-To create a new resource with a view page, you can use the `--view-page` flag:
+To create a new resource with a View page, you can use the `--view-page` flag:
 
 ```bash
 php artisan make:filament-resource User --view-page
 ```
 
-## Adding a view page to an existing resource
+## Adding a View page to an existing resource
 
-If you want to add a view page to an existing resource, create a new page in your resource's `Pages` directory:
+If you want to add a View page to an existing resource, create a new page in your resource's `Pages` directory:
 
 ```bash
 php artisan make:filament-page ViewUser --resource=UserResource --type=ViewRecord
@@ -31,6 +31,25 @@ public static function getPages(): array
     ];
 }
 ```
+
+## Customizing data before filling the form
+
+You may wish to modify the data from a record before it is filled into the form. To do this, you may define a `mutateFormDataBeforeFill()` method to modify the `$data` array, and return the modified version before it is filled into the form:
+
+```php
+protected function mutateFormDataBeforeFill(array $data): array
+{
+    $data['user_id'] = auth()->id();
+
+    return $data;
+}
+```
+
+## Authorization
+
+For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app.
+
+Users may access the View page if the `view()` method of the model policy returns `true`.
 
 ## Custom view
 

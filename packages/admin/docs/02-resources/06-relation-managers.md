@@ -2,7 +2,7 @@
 title: Relation managers
 ---
 
-"Relation managers" in Filament allow administrators to list, create, attach, associate, edit, detach, dissociate and delete related many records without leaving the resource's edit page. Resource classes contain a static `getRelations()` method that is used to register relation managers for your resource.
+"Relation managers" in Filament allow administrators to list, create, attach, associate, edit, detach, dissociate and delete related many records without leaving the resource's Edit page. Resource classes contain a static `getRelations()` method that is used to register relation managers for your resource.
 
 To create a relation manager, you can use one of the following commands, depending on the relationship type:
 
@@ -62,7 +62,7 @@ For relationships with unconventional naming conventions, you may wish to includ
 protected static ?string $inverseRelationship = 'section'; // Since the inverse related model is `Category`, this is normally `category`, not `section`.
 ```
 
-Once a table and form have been defined for the relation manager, visit the edit page of your resource to see it in action.
+Once a table and form have been defined for the relation manager, visit the Edit page of your resource to see it in action.
 
 ## Pivot attributes
 

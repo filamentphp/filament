@@ -58,7 +58,7 @@ When creating your resource, you may now use `--generate`:
 php artisan make:filament-resource Customer --generate
 ```
 
-### Generating a view page
+### Generating a View page
 
 By default, only List, Create and Edit pages are generated for your resource. If you'd also like a [View page](viewing-records), use the `--view-page` flag:
 
@@ -82,7 +82,7 @@ This is required for features like [global search](global-search) to work.
 
 ## Forms
 
-Resource classes contain a static `form()` method that is used to build the forms on the create and edit pages:
+Resource classes contain a static `form()` method that is used to build the forms on the create and Edit pages:
 
 ```php
 use Filament\Forms;
@@ -159,7 +159,7 @@ Forms\Components\TextInput::make('password')
 
 ## Tables
 
-Resource classes contain a static `table()` method that is used to build the table on the [list page](listing-records):
+Resource classes contain a static `table()` method that is used to build the table on the [List page](listing-records):
 
 ```php
 use Filament\Resources\Table;
@@ -250,7 +250,7 @@ For more information, see the [Form docs](../../forms/layout#saving-data-to-rela
 
 #### Relation manager
 
-"Relation managers" in Filament allow admins to list, create, associate, edit, dissociate and delete related many records without leaving the resource's edit page.
+"Relation managers" in Filament allow admins to list, create, associate, edit, dissociate and delete related many records without leaving the resource's Edit page.
 
 The related records are listed in a table, which has buttons to open a modal for each action.
 
@@ -277,7 +277,7 @@ From a UX perspective, this solution is only suitable if your related model only
 
 #### Relation manager
 
-"Relation managers" in Filament allow admins to list, create, associate, edit, dissociate and delete related many records without leaving the resource's edit page.
+"Relation managers" in Filament allow admins to list, create, associate, edit, dissociate and delete related many records without leaving the resource's Edit page.
 
 The related records are listed in a table, which has buttons to open a modal for each action.
 
@@ -313,7 +313,7 @@ More information about `BelongsToManyCheckboxList` is available in the [Form doc
 
 #### Relation manager
 
-"Relation managers" in Filament allow admins to list, create, attach, edit, detach and delete related many records without leaving the resource's edit page.
+"Relation managers" in Filament allow admins to list, create, attach, edit, detach and delete related many records without leaving the resource's Edit page.
 
 The related records are listed in a table, which has buttons to open a modal for each action.
 
@@ -346,7 +346,7 @@ For more information, see the [Form docs](../../forms/layout#saving-data-to-rela
 
 #### Relation manager
 
-"Relation managers" in Filament allow admins to list, create, associate, edit, dissociate and delete related many records without leaving the resource's edit page.
+"Relation managers" in Filament allow admins to list, create, associate, edit, dissociate and delete related many records without leaving the resource's Edit page.
 
 The related records are listed in a table, which has buttons to open a modal for each action.
 
@@ -373,7 +373,7 @@ From a UX perspective, this solution is only suitable if your related model only
 
 #### Relation manager
 
-"Relation managers" in Filament allow admins to list, create, attach, edit, detach and delete related many records without leaving the resource's edit page.
+"Relation managers" in Filament allow admins to list, create, attach, edit, detach and delete related many records without leaving the resource's Edit page.
 
 The related records are listed in a table, which has buttons to open a modal for each action.
 
