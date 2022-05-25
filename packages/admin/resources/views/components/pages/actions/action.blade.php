@@ -16,7 +16,7 @@
 <x-dynamic-component
     :component="$component"
     :dark-mode="config('filament.dark_mode')"
-    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes, $action->attributes)"
     :form="$action->getForm()"
     :tag="((! $action->getAction()) && $action->getUrl()) ? 'a' : 'button'"
     :wire:click="$action->isEnabled() ? $wireClickAction : null"
@@ -30,4 +30,5 @@
     :icon="$action->getIcon()"
 >
     {{ $slot }}
+    <x-filament-support::hr></x-filament-support::hr>
 </x-dynamic-component>
