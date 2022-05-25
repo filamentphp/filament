@@ -163,6 +163,14 @@ public static function form(Form $form): Form
 
 Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
+## Viewing records
+
+Filament is able to show information about a record in a modal. To enable this functionality, you may add the `$hasViewAction` property to the relation manager:
+
+```php
+protected static bool $hasViewAction = true;
+```
+
 ## Attaching and detaching records
 
 Filament is able to attach and detach records for `BelongsToMany` and `MorphToMany` relationships.
