@@ -16,8 +16,8 @@ return [
 
                     'label' => 'Fermer',
 
-                ]
-            ]
+                ],
+            ],
         ],
 
     ],
