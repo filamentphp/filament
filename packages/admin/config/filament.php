@@ -251,6 +251,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Output Default Font
+    |--------------------------------------------------------------------------
+    |
+    | Output the default `DM Sans` font to the front-end assets. You may disable
+    | this and load your own fonts.
+    |
+    */
+
+    'output_default_font' => env('FILAMENT_DEFAULT_FONT', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Middleware
     |--------------------------------------------------------------------------
     |
