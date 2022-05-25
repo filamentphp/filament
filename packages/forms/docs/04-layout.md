@@ -279,7 +279,7 @@ Wizard\Step::make('Order')
     ]),
 ```
 
-You may also add wizards to table [actions](../tables/actions#wizards) and admin [resource pages](../admin/resources#wizards).
+You may also add wizards to table [actions](../tables/actions#wizards) and admin [Create pages](../admin/creating-records#wizards).
 
 ## Section
 

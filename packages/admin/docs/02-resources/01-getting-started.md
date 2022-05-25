@@ -254,7 +254,7 @@ For more information, see the [Form docs](../../forms/layout#saving-data-to-rela
 
 The related records are listed in a table, which has buttons to open a modal for each action.
 
-For more information on relation managers, see the [full documentation](#relation-managers).
+For more information on relation managers, see the [full documentation](relation-managers).
 
 #### Repeater
 
@@ -281,7 +281,7 @@ From a UX perspective, this solution is only suitable if your related model only
 
 The related records are listed in a table, which has buttons to open a modal for each action.
 
-For more information on relation managers, see the [full documentation](#relation-managers).
+For more information on relation managers, see the [full documentation](relation-managers).
 
 ### `BelongsToMany`
 
@@ -317,7 +317,7 @@ More information about `BelongsToManyCheckboxList` is available in the [Form doc
 
 The related records are listed in a table, which has buttons to open a modal for each action.
 
-For more information on relation managers, see the [full documentation](#relation-managers).
+For more information on relation managers, see the [full documentation](relation-managers).
 
 ### `MorphOne`
 
@@ -350,7 +350,7 @@ For more information, see the [Form docs](../../forms/layout#saving-data-to-rela
 
 The related records are listed in a table, which has buttons to open a modal for each action.
 
-For more information on relation managers, see the [full documentation](#relation-managers).
+For more information on relation managers, see the [full documentation](relation-managers).
 
 #### Repeater
 
@@ -377,7 +377,7 @@ From a UX perspective, this solution is only suitable if your related model only
 
 The related records are listed in a table, which has buttons to open a modal for each action.
 
-For more information on relation managers, see the [full documentation](#relation-managers).
+For more information on relation managers, see the [full documentation](relation-managers).
 
 ## Authorization
 
