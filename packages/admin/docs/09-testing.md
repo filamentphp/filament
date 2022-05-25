@@ -27,7 +27,7 @@ protected function setUp(): void
 
 ##### Routing & render
 
-To ensure that the create page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
+To ensure that the Create page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
 
 ```php
 it('can render page', function () {
@@ -82,7 +82,7 @@ it('can validate input', function () {
 
 ##### Routing & render
 
-To ensure that the edit page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
+To ensure that the Edit page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
 
 ```php
 it('can render page', function () {
@@ -164,7 +164,7 @@ it('can validate input', function () {
 
 ##### Routing & render
 
-To ensure that the view page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
+To ensure that the View page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
 
 ```php
 it('can render page', function () {
