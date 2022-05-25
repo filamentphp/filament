@@ -17,6 +17,7 @@ class BelongsToManyRelationManager extends RelationManager
     use Concerns\CanDeleteRecords;
     use Concerns\CanDetachRecords;
     use Concerns\CanEditRecords;
+    use Concerns\CanViewRecords;
 
     protected bool $allowsDuplicates = false;
 
@@ -33,6 +34,7 @@ class BelongsToManyRelationManager extends RelationManager
             $table = Table::make();
 
             $table->actions([
+                $this->getViewAction(),
                 $this->getEditAction(),
                 $this->getDetachAction(),
                 $this->getDeleteAction(),

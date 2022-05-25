@@ -43,11 +43,21 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return lcfirst(class_basename(static::class));
     }
 
-    protected function getResourceForm(?int $columns = null): Form
+    protected function getResourceForm(?int $columns = null, bool $isDisabled = false): Form
     {
         return static::form(
-            Form::make()->columns($columns),
+            $this->getBaseResourceForm(
+                columns: $columns,
+                isDisabled: $isDisabled,
+            ),
         );
+    }
+
+    protected function getBaseResourceForm(?int $columns = null, bool $isDisabled = false): Form
+    {
+        return Form::make()
+            ->columns($columns)
+            ->disabled($isDisabled);
     }
 
     protected function callHook(string $hook): void
