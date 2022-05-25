@@ -4,11 +4,11 @@ return [
 
     'action' => [
 
-        'label' => 'Collega',
+        'label' => 'Associa',
 
         'modal' => [
 
-            'heading' => 'Collega :label',
+            'heading' => 'Associa :label',
 
             'fields' => [
 
@@ -20,12 +20,12 @@ return [
 
             'actions' => [
 
-                'attach' => [
-                    'label' => 'Collega',
+                'associate' => [
+                    'label' => 'Associa',
                 ],
 
-                'attach_and_attach_another' => [
-                    'label' => 'Collega & collega altro',
+                'associate_and_associate_another' => [
+                    'label' => 'Associa & associa altro',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Collegato',
+            'associated' => 'Associato',
         ],
 
     ],

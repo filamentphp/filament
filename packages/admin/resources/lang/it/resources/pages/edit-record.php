@@ -28,6 +28,9 @@ return [
 
             ],
 
+            'messages' => [
+                'deleted' => 'Eliminato',
+            ],
         ],
 
         'view' => [
