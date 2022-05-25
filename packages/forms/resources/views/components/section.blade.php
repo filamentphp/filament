@@ -1,6 +1,9 @@
 <div
     @if ($isCollapsible())
         x-data="{ isCollapsed: {{ $isCollapsed() ? 'true' : 'false' }} }"
+        x-on:open-filament-form-section.window="if($event.detail.id == $el.id) isCollapsed = false;"
+        x-on:close-filament-form-section.window="if($event.detail.id == $el.id) isCollapsed = true;"
+        x-on:toggle-filament-form-section.window="if($event.detail.id == $el.id) isCollapsed = !isCollapsed;"
         x-on:expand-concealing-component.window="
             if ($event.detail.id === $el.id) {
                 isCollapsed = false
