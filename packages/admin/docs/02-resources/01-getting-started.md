@@ -557,7 +557,7 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 
 If you'd like to delete a page from your resource, you can just delete the page file from the `Pages` directory of your resource, and its entry in the `getPages()` method.
 
-For example, you may have a resource with records that may not be created by anyone. Delete the `Create` page, and then remove it from `getPages()`:
+For example, you may have a resource with records that may not be created by anyone. Delete the `Create` page file, and then remove it from `getPages()`:
 
 ```php
 public static function getPages(): array
