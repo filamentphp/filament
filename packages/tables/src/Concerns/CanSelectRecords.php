@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 trait CanSelectRecords
 {
@@ -22,7 +23,7 @@ trait CanSelectRecords
 
     public function getAllTableRecordsCount(): int
     {
-        if ($this->isTablePaginationEnabled()) {
+        if ($this->records instanceof LengthAwarePaginator) {
             return $this->records->total();
         }
 
