@@ -1767,10 +1767,8 @@ trix-editor .attachment__metadata .attachment__size {
   border-right-width: 0 !important;
   border-color: rgb(209 213 219) !important;
 }
-.dark .choices__list--dropdown .choices__input::placeholder {
-  color: rgb(209 213 219) !important;
-}
 .dark .choices__list--dropdown .choices__input {
+  @apply placeholder-gray-300;
   border-color: rgb(75 85 99) !important;
 }
 .choices__input {
