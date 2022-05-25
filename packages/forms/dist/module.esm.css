@@ -1607,7 +1607,7 @@ trix-editor .attachment__metadata .attachment__size {
   @apply cursor-not-allowed;
 }
 .choices [hidden] {
-  @apply !hidden;
+  @apply hidden !important;
 }
 .choices[data-type*=select-one] {
   @apply cursor-pointer;
@@ -1760,16 +1760,18 @@ trix-editor .attachment__metadata .attachment__size {
   @apply opacity-100;
 }
 .choices__list--dropdown .choices__input {
-  @apply !px-3 !py-2 !border-x-0 !border-t-0 !border-b !border-gray-300;
+  @apply px-3 py-2 border-x-0 border-t-0 border-b border-gray-300 !important;
 }
 .dark .choices__list--dropdown .choices__input {
-  @apply placeholder-gray-300 !border-gray-600;
+  @apply placeholder-gray-300;
+  @apply border-gray-600 !important;
 }
 .choices__input {
-  @apply inline-block !bg-transparent border-0 !border-transparent max-w-full !p-0;
+  @apply inline-block border-0 max-w-full;
+  @apply border-transparent bg-transparent p-0 !important;
 }
 .choices__input:focus {
-  @apply !outline-none !ring-0;
+  @apply outline-none ring-0 !important;
 }
 .choices__input::-webkit-search-decoration,
 .choices__input::-webkit-search-cancel-button,
