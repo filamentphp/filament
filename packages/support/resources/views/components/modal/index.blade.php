@@ -47,8 +47,8 @@
         class="fixed inset-0 z-40 flex items-center min-h-screen p-4 overflow-y-auto transition"
     >
         <button
-            @if ($id)
-                x-on:click="$dispatch('{{ $closeEventName }}', {id: '{{ $id }}' })"
+            @if (filled($id))
+                x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
             @else
                 x-on:click="isOpen = false"
             @endif
@@ -60,8 +60,8 @@
         <div
             x-show="isOpen"
             x-trap="isOpen"
-            @if ($id)
-                x-on:keydown.window.escape="$dispatch('{{ $closeEventName }}', {id: '{{ $id }}' })"
+            @if (filled($id))
+                x-on:keydown.window.escape="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
             @else
                 x-on:keydown.window.escape="isOpen = false"
             @endif
