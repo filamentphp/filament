@@ -16,6 +16,7 @@
                     {!! ($height = $getHeight()) !== null ? "height: {$height};" : null !!}
                     {!! ($width = $getWidth()) !== null ? "width: {$width};" : null !!}
                 "
+                {{ $getExtraImgAttributeBag() }}
             >
         @endif
     @endif

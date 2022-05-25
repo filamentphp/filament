@@ -84,7 +84,7 @@ trait CanDetachRecords
             ->action(fn () => $this->detach())
             ->color('danger')
             ->icon('heroicon-s-x')
-            ->hidden(fn (Model $record): bool => ! static::canDetach($record));
+            ->hidden(fn (Model $record): bool => ! $this->canDetach($record));
     }
 
     protected function getDetachBulkAction(): Tables\Actions\BulkAction

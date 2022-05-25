@@ -111,6 +111,11 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return static::$title ?? Str::title(static::getPluralRecordLabel());
     }
 
+    public static function getTitleForRecord(Model $ownerRecord): string
+    {
+        return static::getTitle();
+    }
+
     public static function getRecordTitleAttribute(): ?string
     {
         return static::$recordTitleAttribute;

@@ -18,7 +18,7 @@ trait CanAssociateRecords
 
     protected static bool $canAssociateAnother = true;
 
-    protected static bool $shouldPreloadAttachFormRecordSelectOptions = false;
+    protected static bool $shouldPreloadAssociateFormRecordSelectOptions = false;
 
     protected static bool $hasAssociateAction = false;
 
@@ -121,6 +121,8 @@ trait CanAssociateRecords
                 $relationship = $livewire->getRelationship();
 
                 $displayColumnName = static::getRecordTitleAttribute();
+
+                $localKeyName = $relationship->getLocalKeyName();
 
                 return $relationship
                     ->getRelated()

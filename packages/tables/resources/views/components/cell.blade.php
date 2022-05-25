@@ -30,8 +30,8 @@
         <button
             wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
             wire:target="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
-            wire:loading.attr="disabled"
-            wire:loading.class="opacity-70 cursor-wait"
+            wire:loading.attr.delay="disabled"
+            wire:loading.class.delay="opacity-70 cursor-wait"
             type="button"
             class="block text-left"
         >

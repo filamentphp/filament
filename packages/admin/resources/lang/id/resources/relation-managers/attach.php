@@ -4,16 +4,16 @@ return [
 
     'action' => [
 
-        'label' => 'Tempel',
+        'label' => 'Lampirkan',
 
         'modal' => [
 
-            'heading' => 'Tempel :label',
+            'heading' => 'Lampirkan :label',
 
             'fields' => [
 
                 'record_ids' => [
-                    'label' => 'Records',
+                    'label' => 'Data',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'Records',
+                    'label' => 'Data',
                 ],
 
                 'attach_and_attach_another' => [
-                    'label' => 'Tempel & Tempel lainnya',
+                    'label' => 'Lampirkan & lampirkan lainnya',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Telah ditempel',
+            'attached' => 'Data berhasil dilampirkan',
         ],
 
     ],

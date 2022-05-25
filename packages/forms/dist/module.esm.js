@@ -11869,7 +11869,6 @@ var date_time_picker_default = (Alpine) => {
   Alpine.data("dateTimePickerFormComponent", ({
     displayFormat,
     firstDayOfWeek,
-    format: format4,
     isAutofocused,
     state: state2
   }) => {
@@ -11904,7 +11903,7 @@ var date_time_picker_default = (Alpine) => {
         this.setMonths();
         this.setDayLabels();
         if (isAutofocused) {
-          this.openPicker();
+          this.$nextTick(() => this.openPicker());
         }
         esm_default.addLocaleListeners(() => {
           this.setDisplayText();
@@ -12097,14 +12096,14 @@ var date_time_picker_default = (Alpine) => {
         return date.isValid() ? date : null;
       },
       getSelectedDate: function() {
-        let date = esm_default(this.state, format4);
+        let date = esm_default(this.state);
         if (!date.isValid()) {
           return null;
         }
         return date;
       },
       openPicker: function() {
-        this.focusedDate = this.getSelectedDate() ?? esm_default().tz(timezone2);
+        this.focusedDate = this.getSelectedDate() ?? this.getMinDate() ?? esm_default().tz(timezone2);
         this.setupDaysGrid();
         this.open = true;
         this.$nextTick(() => {
@@ -12148,7 +12147,7 @@ var date_time_picker_default = (Alpine) => {
         if (this.dateIsDisabled(date)) {
           return;
         }
-        this.state = date.hour(this.hour ?? 0).minute(this.minute ?? 0).second(this.second ?? 0).format(format4);
+        this.state = date.hour(this.hour ?? 0).minute(this.minute ?? 0).second(this.second ?? 0).format("YYYY-MM-DD HH:mm:ss");
         this.setDisplayText();
       },
       togglePickerVisibility: function() {
@@ -25107,7 +25106,7 @@ var select_default = (Alpine) => {
             return;
           }
           this.isStateBeingUpdated = true;
-          this.state = this.select.getValue(true);
+          this.state = this.select.getValue(true) ?? null;
           this.$nextTick(() => this.isStateBeingUpdated = false);
         });
         if (hasDynamicOptions) {

@@ -50,13 +50,31 @@ return [
         ],
 
         'open_actions' => [
-            'label' => 'Open actions',
+            'label' => 'Aksi',
+        ],
+
+        'toggle_columns' => [
+            'label' => 'Pilih kolom',
+        ],
+
+    ],
+
+    'actions' => [
+
+        'replicate' => [
+
+            'label' => 'Duplikat data',
+
+            'messages' => [
+                'replicated' => 'Data berhasil diduplikat',
+            ],
+
         ],
 
     ],
 
     'empty' => [
-        'heading' => 'Data tidak ditemukan',
+        'heading' => 'Tidak ada data yang ditemukan',
     ],
 
     'filters' => [
@@ -65,6 +83,10 @@ return [
 
             'reset' => [
                 'label' => 'Atur ulang filter',
+            ],
+
+            'close' => [
+                'label' => 'Tutup',
             ],
 
         ],

@@ -90,7 +90,7 @@ trait CanDissociateRecords
             ->action(fn () => $this->dissociate())
             ->color('danger')
             ->icon('heroicon-s-x')
-            ->hidden(fn (Model $record): bool => ! static::canDissociate($record));
+            ->hidden(fn (Model $record): bool => ! $this->canDissociate($record));
     }
 
     protected function getDissociateBulkAction(): Tables\Actions\BulkAction

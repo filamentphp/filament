@@ -23,6 +23,8 @@ class Card extends Component implements Htmlable
 
     protected ?string $descriptionColor = null;
 
+    protected array $extraAttributes = [];
+
     protected bool $shouldOpenUrlInNewTab = false;
 
     protected ?string $url = null;
@@ -82,6 +84,13 @@ class Card extends Component implements Htmlable
     public function descriptionIcon(?string $icon): static
     {
         $this->descriptionIcon = $icon;
+
+        return $this;
+    }
+
+    public function extraAttributes(array $attributes): static
+    {
+        $this->extraAttributes = $attributes;
 
         return $this;
     }
@@ -162,6 +171,11 @@ class Card extends Component implements Htmlable
     public function getDescriptionIcon(): ?string
     {
         return $this->descriptionIcon;
+    }
+
+    public function getExtraAttributes(): array
+    {
+        return $this->extraAttributes;
     }
 
     public function getUrl(): ?string

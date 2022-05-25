@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 class Repeater extends Field
 {
     use Concerns\CanLimitItemsLength;
+    use Concerns\CanBeCollapsed;
 
     protected string $view = 'forms::components.repeater';
 
@@ -53,6 +54,8 @@ class Repeater extends Field
                     $component->getChildComponentContainers()[$newUuid]->fill();
 
                     $component->hydrateDefaultItemState($newUuid);
+
+                    $component->collapsed(false);
                 },
             ],
             'repeater::deleteItem' => [
