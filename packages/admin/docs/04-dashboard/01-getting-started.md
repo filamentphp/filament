@@ -22,6 +22,14 @@ Each widget class contains a `$sort` property that may be used to change its ord
 protected static ?int $sort = 2;
 ```
 
+## Customizing widget width
+
+You may customize the width of a widget using the `$columnSpan` property. You may use a number between 1 and 12 to indicate how many columns the widget should span, or `full` to make it occupy the full width of the page:
+
+```php
+protected int | string | array $columnSpan = 'full';
+```
+
 ## Conditionally hiding widgets
 
 You may override the static `canView()` method on widgets to conditionally hide them:
@@ -42,14 +50,6 @@ By default, two widgets are displayed on the dashboard. These widgets can be dis
     // ...
     'register' => [],
 ],
-```
-
-## Customizing widget width
-
-You may customize the width of a widget using the `$columnSpan` property. You may use a number between 1 and 12 to indicate how many columns the widget should span, or `full` for all of them:
-
-```php
-protected int | string | array $columnSpan = 'full';
 ```
 
 ## Custom widgets

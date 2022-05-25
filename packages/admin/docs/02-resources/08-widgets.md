@@ -8,6 +8,8 @@ Filament allows you to display widgets inside pages, below the header and above 
 
 You can use an existing [dashboard widget](../dashboard), or create one specifically for the resource.
 
+## Creating a resource widget
+
 To get started building a resource widget:
 
 ```bash
@@ -26,6 +28,8 @@ public static function getWidgets(): array
     ];
 }
 ```
+
+## Displaying a widget on a resource page
 
 To display a widget on a resource page, use the `getHeaderWidgets()` or `getFooterWidgets()` methods for that page:
 
@@ -49,9 +53,11 @@ class ListCustomers extends ListRecords
 }
 ```
 
+`getHeaderWidgets()` returns an array of widgets to display above the page content, whereas `getFooterWidgets()` are displayed below.
+
 ## Accessing the current record
 
-If you're using a widget on an Edit or View page, you may access the current record by defining a `$record` property on the widget class:
+If you're using a widget on an [Edit](editing-records) or [View](viewing-records) page, you may access the current record by defining a `$record` property on the widget class:
 
 ```php
 use Illuminate\Database\Eloquent\Model;

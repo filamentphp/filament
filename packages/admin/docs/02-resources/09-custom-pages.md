@@ -24,8 +24,8 @@ public static function getPages(): array
 
 Any [parameters](https://laravel.com/docs/routing#route-parameters) defined in the route's path will be available to the page class, in an identical way to [Livewire](https://laravel-livewire.com/docs/rendering-components#route-params).
 
-To generate a URL for a resource route, you may call the static `getUrl()` method on the page class:
+To generate a URL for a resource route, you may call the static `getUrl()` method on the resource class:
 
 ```php
-SortUsers::getUrl($parameters = [], $absolute = true);
+UserResource::getUrl('sort');
 ```

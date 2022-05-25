@@ -2,13 +2,28 @@
 title: Global Search
 ---
 
-"Global search" is a feature that allows you to search across all of your resources.
+Global search allows you to search across all of your resource records, from anywhere in the admin panel.
+
+## Title
 
 To enable global search on your model, you must [set a title attribute](#setting-a-title-attribute) for your resource:
 
 ```php
 protected static ?string $recordTitleAttribute = 'title';
 ```
+
+This attribute is used to retrieve the search result title for that record.
+
+You may customise the title further by overriding `getGlobalSearchResultTitle()` method:
+
+```php
+public static function getGlobalSearchResultTitle(Model $record): string
+{
+    return $record->name;
+}
+```
+
+## Multi-column search
 
 If you would like to search across multiple columns of your resource, you may override the `getGloballySearchableAttributes()` method. "Dot-syntax" allows you to search inside of relationships:
 
@@ -18,6 +33,8 @@ public static function getGloballySearchableAttributes(): array
     return ['title', 'slug', 'author.name', 'category.name'];
 }
 ```
+
+## Details
 
 Search results can display "details" below their title, which gives the user more information about the record. To enable this feature, you must override the `getGlobalSearchResultDetails()` method:
 
@@ -40,14 +57,7 @@ protected static function getGlobalSearchEloquentQuery(): Builder
 }
 ```
 
-You may customise the record "title" displayed in global search results by overriding `getGlobalSearchResultTitle()` method:
-
-```php
-public static function getGlobalSearchResultTitle(Model $record): string
-{
-    return $record->name;
-}
-```
+## URL
 
 Global search results will link to the [Edit page](editing-records) of your resource, or the [View page](viewing-page) if the user does not have [edit permissions](editing-records#authorization). To customize this, you may override the `getGlobalSearchResultUrl()` method and return a route of your choice:
 

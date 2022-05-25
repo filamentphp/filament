@@ -42,3 +42,5 @@ class LatestOrders extends BaseWidget
 ```
 
 Now, check out your widget in the dashboard.
+
+Table widgets support all features of the [Table Builder](../../tables), including [filters](../../tables/filters) and [actions](../../tables/actions).

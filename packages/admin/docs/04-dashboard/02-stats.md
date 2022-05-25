@@ -37,6 +37,8 @@ class StatsOverviewWidget extends BaseWidget
 
 Now, check out your widget in the dashboard.
 
+## Card descriptions and icons
+
 You may add a `description()` to provide additional information, along with a `descriptionIcon()`:
 
 ```php
@@ -55,6 +57,8 @@ protected function getCards(): array
     ];
 }
 ```
+
+## Card colors
 
 You may also give cards a `color()` (`primary`, `success`, `warning` or `danger`):
 
@@ -77,6 +81,8 @@ protected function getCards(): array
     ];
 }
 ```
+
+## Card charts
 
 You may also add or chain a `chart()` to each card to provide historical data. The `chart()` method accepts an array of data points to plot:
 
