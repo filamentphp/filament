@@ -18,6 +18,8 @@ trait CanAssociateRecords
 
     protected static bool $canAssociateAnother = true;
 
+    protected static bool $shouldPreloadAssociateFormRecordSelectOptions = false;
+
     protected static bool $hasAssociateAction = false;
 
     protected function hasAssociateAction(): bool
@@ -110,6 +112,29 @@ trait CanAssociateRecords
                     ->toArray();
             })
             ->getOptionLabelUsing(static fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->query()->find($value)))
+            ->options(function (RelationManager $livewire): array {
+                if (! static::$shouldPreloadAssociateFormRecordSelectOptions) {
+                    return [];
+                }
+
+                /** @var HasMany $relationship */
+                $relationship = $livewire->getRelationship();
+
+                $displayColumnName = static::getRecordTitleAttribute();
+
+                $localKeyName = $relationship->getLocalKeyName();
+
+                return $relationship
+                    ->getRelated()
+                    ->query()
+                    ->orderBy($displayColumnName)
+                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): Builder {
+                        return $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                    })
+                    ->get()
+                    ->mapWithKeys(static fn (Model $record): array => [$record->{$localKeyName} => static::getRecordTitle($record)])
+                    ->toArray();
+            })
             ->disableLabel();
     }
 

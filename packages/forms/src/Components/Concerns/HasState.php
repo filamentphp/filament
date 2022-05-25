@@ -116,15 +116,16 @@ trait HasState
         return $this;
     }
 
-    public function fillStateWithNull(bool $ifMissing = false): static
+    public function fillStateWithNull(bool $shouldOverwrite = true): static
     {
         $livewire = $this->getLivewire();
 
-        if ($ifMissing) {
-            data_fill($livewire, $this->getStatePath(), null);
-        } else {
-            data_set($livewire, $this->getStatePath(), null);
-        }
+        data_set(
+            $livewire,
+            $this->getStatePath(),
+            null,
+            $shouldOverwrite,
+        );
 
         return $this;
     }

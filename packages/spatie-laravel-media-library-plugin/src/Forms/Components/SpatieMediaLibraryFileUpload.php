@@ -92,11 +92,15 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             $filename = $component->getUploadedFileNameForStorage($file);
 
-            $media = $mediaAdder
+            $mediaAdder
                 ->usingFileName($filename)
-                ->usingName($component->getMediaName() ?? '')
-                ->withCustomProperties($component->getCustomProperties())
-                ->toMediaCollection($component->getCollection(), $component->getDiskName());
+                ->withCustomProperties($component->getCustomProperties());
+
+            if (filled($mediaName = $component->getMediaName())) {
+                $mediaAdder->usingName($mediaName);
+            }
+
+            $media = $mediaAdder->toMediaCollection($component->getCollection(), $component->getDiskName());
 
             return $media->getAttributeValue('uuid');
         });

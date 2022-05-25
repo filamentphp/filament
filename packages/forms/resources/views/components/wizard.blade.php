@@ -42,7 +42,6 @@
         },
 
     }"
-    x-on:expand-concealing-component.window="if ($event.detail.id in steps) step = $event.detail.id"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
@@ -182,8 +181,8 @@
                 x-show="! isLastStep()"
                 x-cloak
                 x-on:click="$wire.dispatchFormEvent('wizard::nextStep', '{{ $getStatePath() }}', getStepIndex(step))"
-                wire:loading.attr="disabled"
-                wire:loading.class="opacity-70 cursor-wait"
+                wire:loading.attr.delay="disabled"
+                wire:loading.class.delay="opacity-70 cursor-wait"
                 size="sm"
             >
                 {{ __('forms::components.wizard.buttons.next_step.label') }}

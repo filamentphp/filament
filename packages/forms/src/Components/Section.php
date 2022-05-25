@@ -9,12 +9,11 @@ use Illuminate\Support\Str;
 
 class Section extends Component implements Contracts\CanConcealComponents, Contracts\CanEntangleWithSingularRelationships
 {
+    use Concerns\CanBeCollapsed;
     use Concerns\EntanglesStateWithSingularRelationship;
     use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.section';
-
-    protected bool | Closure $isCollapsed = false;
 
     protected bool | Closure $isCollapsible = false;
 
@@ -94,11 +93,6 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
         }
 
         return $id;
-    }
-
-    public function isCollapsed(): bool
-    {
-        return (bool) $this->evaluate($this->isCollapsed);
     }
 
     public function isCollapsible(): bool

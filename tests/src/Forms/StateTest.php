@@ -74,6 +74,26 @@ test('state can be hydrated from array', function () {
         ->getData()->toBe([$statePath => $state]);
 });
 
+test('hydrating array state can overwrite existing state', function () {
+    $statePath = Str::random();
+
+    ComponentContainer::make(
+        $livewire = Livewire::make()
+            ->data([
+                $statePath => Str::random(),
+            ]),
+    )
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($statePath),
+        ])
+        ->fill([]);
+
+    expect($livewire)
+        ->getData()->toBe([$statePath => null]);
+});
+
 test('state can be hydrated from defaults', function () {
     ComponentContainer::make($livewire = Livewire::make())
         ->statePath('data')
@@ -86,6 +106,98 @@ test('state can be hydrated from defaults', function () {
 
     expect($livewire)
         ->getData()->toBe([$statePath => $state]);
+});
+
+test('hydrating default state can overwrite existing state', function () {
+    $statePath = Str::random();
+
+    ComponentContainer::make(
+        $livewire = Livewire::make()
+            ->data([
+                $statePath => Str::random(),
+            ]),
+    )
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($statePath),
+        ])
+        ->fill();
+
+    expect($livewire)
+        ->getData()->toBe([$statePath => null]);
+});
+
+test('child component state is not lost by hydrating parent component', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($parentStatePath = Str::random())
+                ->schema([
+                    (new Component())
+                        ->statePath($statePath = Str::random())
+                        ->default($state = Str::random()),
+                ]),
+        ])
+        ->fill();
+
+    expect($livewire)
+        ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
+});
+
+test('child component state is not lost by hydrating parent component defaults', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($parentStatePath = Str::random())
+                ->schema([
+                    (new Component())
+                        ->statePath($statePath = Str::random())
+                        ->default($state = Str::random()),
+                ])
+                ->default([]),
+        ])
+        ->fill();
+
+    expect($livewire)
+        ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
+});
+
+test('child component state can be hydrated by parent component defaults', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($parentStatePath = Str::random())
+                ->schema([
+                    (new Component())
+                        ->statePath($statePath = Str::random()),
+                ])
+                ->default([$statePath => ($state = Str::random())]),
+        ])
+        ->fill();
+
+    expect($livewire)
+        ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
+});
+
+test('missing child component state can be filled with null', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($parentStatePath = Str::random())
+                ->schema([
+                    (new Component())->statePath($statePath = Str::random()),
+                ])
+                ->afterStateHydrated(fn (Component $component) => $component->state([])),
+        ])
+        ->fill();
+
+    expect($livewire)
+        ->getData()->toBe([$parentStatePath => [$statePath => null]]);
 });
 
 test('custom logic can be executed after state is hydrated', function () {

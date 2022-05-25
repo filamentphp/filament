@@ -3,6 +3,7 @@
 namespace Filament\Tables\Filters\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
@@ -22,6 +23,8 @@ trait HasRelationship
 
         if ($relationship instanceof MorphToMany) {
             $keyColumn = $relationship->getQualifiedRelatedKeyName();
+        } elseif ($relationship instanceof HasOneThrough) {
+            $keyColumn = $relationship->getQualifiedForeignKeyName();
         } else {
             /** @var BelongsTo $relationship */
             $keyColumn = $relationship->getQualifiedOwnerKeyName();
