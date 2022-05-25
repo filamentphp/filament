@@ -259,7 +259,7 @@ return [
     |
     */
 
-    'output_default_font' => env('FILAMENT_DEFAULT_FONT', false),
+    'output_default_font' => env('FILAMENT_DEFAULT_FONT', true),
 
     /*
     |--------------------------------------------------------------------------
