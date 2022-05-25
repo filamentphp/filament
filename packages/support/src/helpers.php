@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 
 if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
-    function prepare_inherited_attributes(ComponentAttributeBag $attributes, ComponentAttributeBag ...$extraAttributes): ComponentAttributeBag
+    function prepare_inherited_attributes(ComponentAttributeBag $attributes): ComponentAttributeBag
     {
         $attributes->setAttributes(
             collect($attributes->getAttributes())
@@ -14,10 +14,6 @@ if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
                 ->merge($attributes->getAttributes())
                 ->toArray(),
         );
-
-        foreach ($extraAttributes as $extra) {
-            $attributes = $attributes->merge($extra->getAttributes());
-        }
 
         return $attributes;
     }

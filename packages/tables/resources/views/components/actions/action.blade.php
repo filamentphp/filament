@@ -16,7 +16,7 @@
 <x-dynamic-component
     :component="$component"
     :dark-mode="config('tables.dark_mode')"
-    :attributes="\Filament\Support\prepare_inherited_attributes($attributes, $action->attributes)"
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes())"
     :tag="((! $action->getAction()) && $action->getUrl()) ? 'a' : 'button'"
     :wire:click="$action->isEnabled() ? $wireClickAction : null"
     :href="$action->isEnabled() ? $action->getUrl() : null"
