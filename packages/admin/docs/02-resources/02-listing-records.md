@@ -180,3 +180,11 @@ public static function table(Table $table): Table
         ]);
 }
 ```
+
+## Custom view
+
+For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
+
+```php
+protected static string $view = 'filament.resources.users.pages.list-users';
+```

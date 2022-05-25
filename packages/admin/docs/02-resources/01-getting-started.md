@@ -58,6 +58,14 @@ When creating your resource, you may now use `--generate`:
 php artisan make:filament-resource Customer --generate
 ```
 
+### Generating a view page
+
+By default, only List, Create and Edit pages are generated for your resource. If you'd also like a [View page](viewing-records), use the `--view-page` flag:
+
+```bash
+php artisan make:filament-resource Customer --view-page
+```
+
 ## Record titles
 
 A `$recordTitleAttribute` may be set for your resource, which is the name of the column on your model that can be used to identify it from others.
@@ -174,7 +182,7 @@ public static function table(Table $table): Table
 }
 ```
 
-Check out the [listing records](listing-records) docs to find out how to implement table columns, filters, sorting, actions, bulk actions and more.
+Check out the [listing records](listing-records) docs to find out how to implement table [columns](listing-records#columns), [filters](listing-records#filters), [actions](listing-records#actions), [bulk actions](listing-records#bulk-actions) and more.
 
 ## Relations
 
@@ -544,3 +552,20 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
     ],
 ],
 ```
+
+## Deleting pages
+
+If you'd like to delete a page from your resource, you can just delete the page file from the `Pages` directory of your resource, and its entry in the `getPages()` method.
+
+For example, you may have a resource with records that may not be created by anyone. Delete the `Create` page, and then remove it from `getPages()`:
+
+```php
+public static function getPages(): array
+{
+    return [
+        'index' => Pages\ListCustomers::route('/'),
+        'edit' => Pages\EditCustomer::route('/{record}/edit'),
+    ];
+}
+```
+

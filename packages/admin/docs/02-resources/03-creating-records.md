@@ -2,6 +2,86 @@
 title: Creating Records
 ---
 
+## Customizing data before saving
+
+You may define a `mutateFormDataBeforeCreate()` method to modify the form data before it is saved to the database:
+
+```php
+protected function mutateFormDataBeforeCreate(array $data): array
+{
+    $data['user_id'] = auth()->id();
+
+    return $data;
+}
+```
+
+## Customizing form redirects
+
+You may set up a custom redirect when the form is saved by overriding the `getRedirectUrl()` method.
+
+For example, the form can redirect back to the [List page](listing-records) when it is submitted:
+
+```php
+protected function getRedirectUrl(): string
+{
+    return $this->getResource()::getUrl('index');
+}
+```
+
+## Lifecycle hooks
+
+Hooks may be used to execute methods at various points within a page's lifecycle, like before a form is saved. To set up a hook, create a protected method on the page class with the name of the hook:
+
+```php
+protected function beforeCreate(): void
+{
+    // ...
+}
+```
+
+In this example, the code in the `beforeCreate()` method will be called before the data in the form is saved to the database.
+
+There are several available hooks for the create page:
+
+```php
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateUser extends CreateRecord
+{
+    // ...
+
+    protected function beforeFill(): void
+    {
+        // Runs before the form fields are populated with their default values.
+    }
+
+    protected function afterFill(): void
+    {
+        // Runs after the form fields are populated with their default values.
+    }
+
+    protected function beforeValidate(): void
+    {
+        // Runs before the form fields are validated when the form is submitted.
+    }
+
+    protected function afterValidate(): void
+    {
+        // Runs after the form fields are validated when the form is submitted.
+    }
+
+    protected function beforeCreate(): void
+    {
+        // Runs before the form fields are saved to the database.
+    }
+
+    protected function afterCreate(): void
+    {
+        // Runs after the form fields are saved to the database.
+    }
+}
+```
+
 ## Wizards
 
 You may easily transform the creation process into a multistep wizards.
@@ -131,4 +211,12 @@ class CreateCategory extends CreateRecord
         ];
     }
 }
+```
+
+## Custom view
+
+For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
+
+```php
+protected static string $view = 'filament.resources.users.pages.create-user';
 ```
