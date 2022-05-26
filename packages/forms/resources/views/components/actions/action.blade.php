@@ -20,7 +20,7 @@
     :color="$action->getColor()"
     :label="$action->getLabel()"
     :icon="$action->getIcon()"
-    :size="$getSize()"
+    :size="$action->getSize()"
 >
     {{ $slot }}
 </x-dynamic-component>
