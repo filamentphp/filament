@@ -17,6 +17,13 @@ class Livewire extends Component implements HasForms
         return new static();
     }
 
+    public function data($data): static
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
     public function getData()
     {
         return $this->data;

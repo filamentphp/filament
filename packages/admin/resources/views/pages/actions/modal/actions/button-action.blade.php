@@ -8,6 +8,7 @@
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
     :size="$getSize()"
+    :attributes="$getExtraAttributeBag()"
     class="filament-page-modal-button-action"
 >
     {{ $getLabel() }}

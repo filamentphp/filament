@@ -1,6 +1,6 @@
 <div @class([
     'grid gap-6 filament-forms-component-container',
-    'grid-cols-1' => $getColumns('default') === 1,
+    'grid-cols-1' => (! $getColumns('default')) || $getColumns('default') === 1,
     'grid-cols-2' => $getColumns('default') === 2,
     'grid-cols-3' => $getColumns('default') === 3,
     'grid-cols-4' => $getColumns('default') === 4,

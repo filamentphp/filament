@@ -26,7 +26,7 @@
                             'text-primary-600 shadow bg-white' => $activeManager == $managerKey,
                         ])
                     >
-                        {{ $manager instanceof \Filament\Resources\RelationManagers\RelationGroup ? $manager->getLabel() : $manager::getTitle() }}
+                        {{ $manager instanceof \Filament\Resources\RelationManagers\RelationGroup ? $manager->getLabel() : $manager::getTitleForRecord($ownerRecord) }}
                     </button>
                 @endforeach
             </x-filament::tabs>

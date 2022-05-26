@@ -14,6 +14,10 @@
         padding-left: 2.5rem;
         padding-right: 0.75rem;
     }
+
+    :root.dark {
+        color-scheme: dark;
+    }
 }
 
 @layer components {

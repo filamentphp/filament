@@ -3,6 +3,7 @@
 namespace Filament\Support\Actions;
 
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Support\Traits\Conditionable;
 
 abstract class BaseAction extends ViewComponent
@@ -15,6 +16,7 @@ abstract class BaseAction extends ViewComponent
     use Concerns\HasName;
     use Concerns\HasSize;
     use Conditionable;
+    use HasExtraAttributes;
 
     protected string $evaluationIdentifier = 'action';
     protected string $viewIdentifier = 'action';
@@ -30,5 +32,10 @@ abstract class BaseAction extends ViewComponent
         $static->setUp();
 
         return $static;
+    }
+
+    public function withAttributes(array $attributes): static
+    {
+        return $this->extraAttributes($attributes);
     }
 }

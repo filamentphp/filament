@@ -74,6 +74,26 @@ test('state can be hydrated from array', function () {
         ->getData()->toBe([$statePath => $state]);
 });
 
+test('hydrating array state can overwrite existing state', function () {
+    $statePath = Str::random();
+
+    ComponentContainer::make(
+        $livewire = Livewire::make()
+            ->data([
+                $statePath => Str::random(),
+            ]),
+    )
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($statePath),
+        ])
+        ->fill([]);
+
+    expect($livewire)
+        ->getData()->toBe([$statePath => null]);
+});
+
 test('state can be hydrated from defaults', function () {
     ComponentContainer::make($livewire = Livewire::make())
         ->statePath('data')
@@ -88,7 +108,27 @@ test('state can be hydrated from defaults', function () {
         ->getData()->toBe([$statePath => $state]);
 });
 
-test('child component state is not lost by parent component', function () {
+test('hydrating default state can overwrite existing state', function () {
+    $statePath = Str::random();
+
+    ComponentContainer::make(
+        $livewire = Livewire::make()
+            ->data([
+                $statePath => Str::random(),
+            ]),
+    )
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($statePath),
+        ])
+        ->fill();
+
+    expect($livewire)
+        ->getData()->toBe([$statePath => null]);
+});
+
+test('child component state is not lost by hydrating parent component', function () {
     ComponentContainer::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -106,7 +146,7 @@ test('child component state is not lost by parent component', function () {
         ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
 });
 
-test('child component state is not lost by parent component defaults', function () {
+test('child component state is not lost by hydrating parent component defaults', function () {
     ComponentContainer::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -125,7 +165,7 @@ test('child component state is not lost by parent component defaults', function 
         ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
 });
 
-test('child component state can be set by parent component defaults', function () {
+test('child component state can be hydrated by parent component defaults', function () {
     ComponentContainer::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -143,7 +183,7 @@ test('child component state can be set by parent component defaults', function (
         ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
 });
 
-test('missing child component state can be filled', function () {
+test('missing child component state can be filled with null', function () {
     ComponentContainer::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([

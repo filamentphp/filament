@@ -133,6 +133,18 @@ Filament::serving(function () {
 });
 ```
 
+### Loading Google Fonts
+
+If you specify a custom font family in your `tailwind.config.js`, you may wish to import it via Google Fonts.
+
+You must [publish the configuration](installation#publishing-the-configuration) in order to access this feature.
+
+Set the `google_fonts` config option to a new Google Fonts URL to load:
+
+```php
+'google_fonts' => 'https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap',
+```
+
 ## Changing the maximum content width
 
 Filament exposes a configuration option that allows you to change the maximum content width of all pages.
@@ -148,6 +160,12 @@ In `config/filament.php`, set the `layouts.max_content_width` to any value betwe
 ```
 
 The default is `7xl`.
+
+You may override the maximum content width for a specific page in the admin panel by using the `$maxContentWidth` property:
+
+```php
+protected ?string $maxContentWidth = 'full';
+```
 
 ## Including frontend assets
 
@@ -240,5 +258,5 @@ The available hooks are as follows:
 - `content.after` - after page content
 - `sidebar.start` - before [sidebar](navigation) content
 - `sidebar.end` - after [sidebar](navigation) content
-- `global-search.start` - before [global search](resources#global-search) input
-- `global-search.end` - after [global search](resources#global-search) input
+- `global-search.start` - before [global search](resources/global-search) input
+- `global-search.end` - after [global search](resources/global-search) input

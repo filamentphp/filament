@@ -203,6 +203,9 @@ return [
         ],
         'sidebar' => [
             'is_collapsible_on_desktop' => false,
+            'groups' => [
+                'are_collapsible' => true,
+            ],
         ],
         'tables' => [
             'actions' => [
@@ -245,6 +248,21 @@ return [
     */
 
     'default_filesystem_disk' => env('FILAMENT_FILESYSTEM_DRIVER', 'public'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Google Fonts
+    |--------------------------------------------------------------------------
+    |
+    | This is the URL for Google Fonts that should be loaded. You may use any
+    | font, or set to `null` to prevent any Google Fonts from loading.
+    |
+    | When using a custom font, you should also set the font family in your
+    | custom theme's `tailwind.config.js` file.
+    |
+    */
+
+    'google_fonts' => 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap',
 
     /*
     |--------------------------------------------------------------------------
