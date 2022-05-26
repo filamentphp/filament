@@ -19,9 +19,13 @@
 =======
     "/app.js": "/app.js?id=8537f796145a3f852f2bb11c65091d05",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "/app.css": "/app.css?id=411dc4c709d951118337675e6031c945"
 >>>>>>> 5e84ed30 (fix: preview pane not growing to full height)
 =======
     "/app.css": "/app.css?id=e9c0059698ecf2e2f2aab36b184395be"
 >>>>>>> 57e1a651 (fix: error state not showing on markdown editor)
+=======
+    "/app.css": "/app.css?id=c73f8602af731832b69c3dcd4aebe166"
+>>>>>>> 5b71f562 (fix: remove !important to work with sass/scss)
 }

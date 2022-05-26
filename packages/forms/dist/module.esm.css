@@ -2314,24 +2314,22 @@ span[data-img-src]::after {
   @apply hidden;
 }
 .EasyMDEContainer .CodeMirror {
-  @apply w-full h-full min-h-full border-none rounded-lg !important;
+  @apply w-full h-full min-h-full border-none rounded-lg;
 }
 .EasyMDEContainer .CodeMirror .CodeMirror-scroll {
-  @apply tracking-normal whitespace-pre-wrap font-mono text-sm !important;
+  @apply tracking-normal whitespace-pre-wrap font-mono text-sm;
 }
 .EasyMDEContainer .cm-header {
-  @apply text-sm !important;
+  @apply text-sm;
 }
 .EasyMDEContainer .cm-comment {
-  @apply bg-inherit text-gray-800 !important;
+  @apply bg-inherit text-gray-800;
 }
 .EasyMDEContainer .editor-toolbar.disabled-for-preview + .CodeMirror > :not(.editor-preview-full) {
-  display: none;
+  @apply hidden;
 }
 .EasyMDEContainer .editor-preview-full {
-  height: auto;
-  overflow: visible;
-  position: relative;
+  @apply h-auto overflow-visible relative;
 }
 
 /* packages/forms/resources/css/components/rich-editor.css */
