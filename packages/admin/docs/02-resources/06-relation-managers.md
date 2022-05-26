@@ -4,7 +4,7 @@ title: Relation managers
 
 ## Getting started
 
-"Relation managers" in Filament allow administrators to list, create, attach, associate, edit, detach, dissociate and delete related many records without leaving the resource's Edit page. Resource classes contain a static `getRelations()` method that is used to register relation managers for your resource.
+"Relation managers" in Filament allow administrators to list, create, attach, associate, edit, detach, dissociate and delete related records without leaving the resource's Edit page. Resource classes contain a static `getRelations()` method that is used to register relation managers for your resource.
 
 To create a relation manager, you can use one of the following commands, depending on the relationship type:
 
