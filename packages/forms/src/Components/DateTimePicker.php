@@ -176,20 +176,21 @@ class DateTimePicker extends Field
             return $format;
         }
 
-        $format = $this->hasDate() ? 'M j, Y' : '';
-
         if (! $this->hasTime()) {
-            return $format;
+            return config('forms.components.date_time_picker.display_formats.date');
         }
 
-        $format = $format ? "{$format} H:i" : 'H:i';
-
-        if (! $this->hasSeconds()) {
-            return $format;
+        if (! $this->hasDate()) {
+            return $this->hasSeconds() ?
+                config('forms.components.date_time_picker.display_formats.time_with_seconds') :
+                config('forms.components.date_time_picker.display_formats.time');
         }
 
-        return "{$format}:s";
+        return $this->hasSeconds() ?
+            config('forms.components.date_time_picker.display_formats.date_time_with_seconds') :
+            config('forms.components.date_time_picker.display_formats.date_time');
     }
+
 
     public function getExtraTriggerAttributes(): array
     {
