@@ -85,6 +85,7 @@ return [
             'ordered_list' => 'Numbered list',
             'preview' => 'Preview',
             'strike' => 'Strikethrough',
+            'upload_image' => 'Upload image',
         ],
 
     ],

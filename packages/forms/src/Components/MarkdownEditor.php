@@ -26,5 +26,6 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
         'orderedList',
         'preview',
         'strike',
+        'uploadImage',
     ];
 }
