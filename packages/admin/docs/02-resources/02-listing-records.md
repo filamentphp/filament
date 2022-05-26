@@ -236,9 +236,9 @@ As per the documentation on [editing records](editing-records), you may use all 
 
 ## Viewing records in modals
 
-If your resource is simple, you may wish to view records in modals rather than on the [Create page](creating-records).
+If your resource is simple, you may wish to view records in modals rather than on the [View page](viewing-records).
 
-If you set up a [modal resource](getting-started#simple-modal-resources) you'll already be able to do this. But, if you have a normal resource and want to open a modal for viewing records, add the `CanViewRecords` trait to the List page class:
+Simply add the `CanViewRecords` trait to the List page class:
 
 ```php
 use Filament\Resources\Pages\ListRecords;
