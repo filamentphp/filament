@@ -5,10 +5,10 @@ namespace Filament\Forms\Components;
 use Carbon\Exceptions\InvalidFormatException;
 use Closure;
 use DateTime;
+use Filament\Facades\Filament;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Carbon;
 use Illuminate\View\ComponentAttributeBag;
-use Illuminate\Support\Carbon;
 
 class DateTimePicker extends Field
 {
@@ -52,9 +52,7 @@ class DateTimePicker extends Field
                 }
             }
 
-            $state = $state
-                ->setTimezone(config('request.user.timezone') ?? config('app.timezone'))
-                ->format($component->getFormat());
+            $state->setTimezone(Filament::getUserTimezone(auth()->user()));
 
             $component->state((string) $state);
         });
@@ -68,25 +66,10 @@ class DateTimePicker extends Field
                 $state = Carbon::parse($state);
             }
 
+            $state->shiftTimezone(Filament::getUserTimezone(auth()->user()));
+            $state->setTimezone(config('app.timezone'));
+
             return $state->format($component->getFormat());
-        });
-
-        $this->mutateDehydratedStateUsing(static function (DateTimePicker $component, $state)  {
-            if (blank($state)) {
-                return $state;
-            }
-
-            try {
-                return Carbon::createFromFormat(
-                    $component->getFormat(),
-                    $state,
-                    config('request.user.timezone') ?? config('app.timezone')
-                )->setTimezone(config('app.timezone'))
-                ->format($component->getFormat());
-            }catch(\Throwable){
-                return $state;
-            }
-
         });
 
         $this->rule(

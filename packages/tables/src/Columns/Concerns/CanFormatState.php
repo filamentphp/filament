@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns\Concerns;
 
 use Akaunting\Money;
 use Closure;
+use Filament\Facades\Filament;
 use Filament\Tables\Columns\Column;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Carbon;
@@ -24,7 +25,7 @@ trait CanFormatState
     {
         $format ??= config('tables.date_format');
 
-        $timezone ??= config('request.user.timezone') ?? config('app.timezone');
+        $timezone ??= Filament::getUserTimezone(auth()->user());
 
         $this->formatStateUsing(static fn ($state): ?string => $state ? Carbon::parse($state)->setTimezone($timezone)->translatedFormat($format) : null);
 

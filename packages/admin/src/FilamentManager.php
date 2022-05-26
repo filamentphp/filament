@@ -9,11 +9,13 @@ use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
+use Filament\Models\Contracts\HasTimezone;
 use Filament\Navigation\UserMenuItem;
 use Filament\Tables\Actions\Action;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\HtmlString;
 
@@ -338,6 +340,17 @@ class FilamentManager
         }
 
         return $user->getAttributeValue('name');
+    }
+
+    public function getUserTimezone(Model $user): string
+    {
+        $appTimezone = config('app.timezone');
+
+        if ($user instanceof HasTimezone) {
+            return $user->getFilamentTimezone() ?? $appTimezone;
+        }
+
+        return $appTimezone;
     }
 
     public function getWidgets(): array

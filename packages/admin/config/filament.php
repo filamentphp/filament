@@ -289,7 +289,6 @@ return [
             SubstituteBindings::class,
             DispatchServingFilamentEvent::class,
             MirrorConfigToSubpackages::class,
-            UserTimeZone::class
         ],
     ],
 
