@@ -251,15 +251,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Output Default Font
+    | Google Font
     |--------------------------------------------------------------------------
     |
-    | Output the default `DM Sans` font to the front-end assets. You may disable
-    | this and load your own fonts.
+    | This is the URL for the font Filament will use. You may use any font on
+    | Google, or set to `NULL` to disable the default font. You should also
+    | override the `sans` font-family in your `tailwind.config.js` for
+    | your custom theme.
     |
     */
 
-    'output_default_font' => env('FILAMENT_DEFAULT_FONT', true),
+    'google_font' => env('FILAMENT_GOOGLE_FONT', 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap'),
 
     /*
     |--------------------------------------------------------------------------
