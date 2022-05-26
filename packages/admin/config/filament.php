@@ -251,17 +251,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Google Font
+    | Google Fonts
     |--------------------------------------------------------------------------
     |
-    | This is the URL for the font Filament will use. You may use any font on
-    | Google, or set to `NULL` to disable the default font. You should also
-    | override the `sans` font-family in your `tailwind.config.js` for
-    | your custom theme.
+    | This is the URL for Google Fonts that should be loaded. You may use any
+    | font, or set to `null` to prevent any Google Fonts from loading.
+    |
+    | When using a custom font, you should also set the font family in your
+    | custom theme's `tailwind.config.js` file.
     |
     */
 
-    'google_font' => env('FILAMENT_GOOGLE_FONT', 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap'),
+    'google_fonts' => 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap',
 
     /*
     |--------------------------------------------------------------------------

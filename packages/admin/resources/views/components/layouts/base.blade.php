@@ -33,10 +33,10 @@
 
         @livewireStyles
 
-        @if($font = config('filament.google_font'))
+        @if (filled($fontsUrl = config('filament.google_fonts')))
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-            <link href="{{$font}}" rel="stylesheet" />
+            <link href="{{ $fontsUrl }}" rel="stylesheet" />
         @endif
 
         @foreach (\Filament\Facades\Filament::getStyles() as $name => $path)
