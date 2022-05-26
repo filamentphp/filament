@@ -191,7 +191,6 @@ class DateTimePicker extends Field
             config('forms.components.date_time_picker.display_formats.date_time');
     }
 
-
     public function getExtraTriggerAttributes(): array
     {
         return $this->evaluate($this->extraTriggerAttributes);
