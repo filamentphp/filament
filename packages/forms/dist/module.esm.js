@@ -39938,7 +39938,6 @@ var markdown_editor_default = (Alpine) => {
     darkMode
   }) => {
     return {
-      preview: "",
       state: state2,
       tab,
       editor: null,
@@ -39949,7 +39948,7 @@ var markdown_editor_default = (Alpine) => {
           spellChecker: false,
           status: false,
           initialValue: this.state,
-          toolbar: ["upload-image"],
+          toolbar: ["upload-image", "preview"],
           styleSelectedText: false,
           blockStyles: {
             italic: "_"

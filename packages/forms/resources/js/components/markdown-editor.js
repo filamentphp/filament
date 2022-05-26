@@ -9,8 +9,6 @@ export default (Alpine) => {
         darkMode
     }) => {
         return {
-            preview: '',
-
             state,
 
             tab,
@@ -25,7 +23,7 @@ export default (Alpine) => {
                     spellChecker: false,
                     status: false,
                     initialValue: this.state,
-                    toolbar: ['upload-image'],
+                    toolbar: ['upload-image', 'preview'],
                     styleSelectedText: false,
                     blockStyles: {
                         italic: '_',

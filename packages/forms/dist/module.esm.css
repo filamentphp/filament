@@ -2325,6 +2325,14 @@ span[data-img-src]::after {
 .EasyMDEContainer .cm-comment {
   @apply bg-inherit text-gray-800 !important;
 }
+.EasyMDEContainer .editor-toolbar.disabled-for-preview + .CodeMirror > :not(.editor-preview-full) {
+  display: none;
+}
+.EasyMDEContainer .editor-preview-full {
+  height: auto;
+  overflow: visible;
+  position: relative;
+}
 
 /* packages/forms/resources/css/components/rich-editor.css */
 .dark .trix-button {
