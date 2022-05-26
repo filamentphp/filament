@@ -4,7 +4,6 @@ namespace Filament\Tables\Columns\Concerns;
 
 use Akaunting\Money;
 use Closure;
-use Filament\Facades\Filament;
 use Filament\Tables\Columns\Column;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Carbon;
