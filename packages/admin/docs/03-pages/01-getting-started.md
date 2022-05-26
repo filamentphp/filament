@@ -48,12 +48,6 @@ protected static ?string $navigationLabel = 'Custom Navigation Label';
 protected static ?string $slug = 'custom-url-slug';
 ```
 
-You may override the [maximum content width](https://filamentphp.com/docs/2.x/admin/appearance#changing-the-maximum-content-width) of a page using the `$maxContentWidth` property:
-
-```php
-protected static ?string $maxContentWidth = 'full';
-```
-
 You may also specify a custom header and footer view for any page. You may return them from the `getHeader()` and `getFooter()` methods:
 
 ```php
