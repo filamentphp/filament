@@ -15,7 +15,7 @@ trait CanPaginateRecords
 
     public $tableRecordsPerPage;
 
-    protected int $defaultTableRecordsPerPageSelectOption = 10;
+    protected int $defaultTableRecordsPerPageSelectOption = 0;
 
     public function updatedTableRecordsPerPage(): void
     {
@@ -53,7 +53,7 @@ trait CanPaginateRecords
         $perPage = session()->get($this->getTablePerPageSessionKey());
 
         if (! $perPage) {
-            $perPage = config('filament.layout.tables.default_table_records_per_page_select_option') ?: $this->defaultTableRecordsPerPageSelectOption;
+            $perPage = $this->defaultTableRecordsPerPageSelectOption ?: config('filament.layout.tables.default_table_records_per_page_select_option');
         }
 
         if (in_array($perPage, $this->getTableRecordsPerPageSelectOptions())) {
