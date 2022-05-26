@@ -180,25 +180,23 @@
             @endunless
 
             <div class="relative w-full h-full" style="min-height: 150px;">
-                <div>
-                    <textarea
-                        {!! $isAutofocused() ? 'autofocus' : null !!}
-                        id="{{ $getId() }}"
-                        {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
-                        x-model="state"
-                        dusk="filament.forms.{{ $getStatePath() }}"
-                        x-ref="textarea"
-                        @if (! $isConcealed())
-                            {!! $isRequired() ? 'required' : null !!}
-                        @endif
-                        @class([
-                            'dark:caret-white' => config('forms.dark_mode'),
-                            'border-gray-300' => ! $errors->has($getStatePath()),
-                            'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                            'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
-                        ])
-                    ></textarea>
-                </div>
+                <textarea
+                    {!! $isAutofocused() ? 'autofocus' : null !!}
+                    id="{{ $getId() }}"
+                    {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
+                    x-model="state"
+                    dusk="filament.forms.{{ $getStatePath() }}"
+                    x-ref="textarea"
+                    @if (! $isConcealed())
+                        {!! $isRequired() ? 'required' : null !!}
+                    @endif
+                    @class([
+                        'dark:caret-white' => config('forms.dark_mode'),
+                        'border-gray-300' => ! $errors->has($getStatePath()),
+                        'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
+                        'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+                    ])
+                ></textarea>
             </div>
         </div>
     </div>
