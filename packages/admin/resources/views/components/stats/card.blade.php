@@ -32,7 +32,16 @@
             <span>{{ $label }}</span>
         </div>
 
-        <div class="text-3xl">
+        <div @class([
+                "text-3xl",
+                match ($color) {
+                    'danger' => 'text-danger-600',
+                    'primary' => 'text-primary-600',
+                    'success' => 'text-success-600',
+                    'warning' => 'text-warning-600',
+                    default => 'text-gray-600',
+                }
+])>
             {{ $value }}
         </div>
 
