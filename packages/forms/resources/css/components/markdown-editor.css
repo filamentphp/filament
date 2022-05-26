@@ -5,7 +5,7 @@
 }
 
 .EasyMDEContainer .CodeMirror {
-    @apply w-full h-full min-h-full transition duration-75 rounded-lg shadow-sm border border-gray-300 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600 caret-black !important;
+    @apply w-full h-full min-h-full border-none rounded-lg !important;
 }
 
 .EasyMDEContainer .CodeMirror .CodeMirror-scroll {

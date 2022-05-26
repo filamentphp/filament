@@ -16,7 +16,7 @@
             tab: '{{ $isDisabled() ? 'preview' : 'edit' }}',
             darkMode: @js(config('forms.dark_mode')),
         })"
-        wire:ignore
+        wire:ignore.self
         {{ $attributes->merge($getExtraAttributes())->class('filament-forms-markdown-editor-component') }}
         {{ $getExtraAlpineAttributeBag() }}
     >
@@ -179,24 +179,25 @@
                 </div>
             @endunless
 
-            <div class="relative w-full h-full" style="min-height: 150px;">
-                <textarea
-                    {!! $isAutofocused() ? 'autofocus' : null !!}
-                    id="{{ $getId() }}"
-                    {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
-                    x-model="state"
-                    dusk="filament.forms.{{ $getStatePath() }}"
-                    x-ref="textarea"
-                    @if (! $isConcealed())
-                        {!! $isRequired() ? 'required' : null !!}
-                    @endif
-                    @class([
-                        'dark:caret-white' => config('forms.dark_mode'),
-                        'border-gray-300' => ! $errors->has($getStatePath()),
-                        'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                        'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
-                    ])
-                ></textarea>
+            <div class="relative w-full h-full min-h-[150px]">
+                <div @class([
+                    'transition duration-75 rounded-lg shadow-sm border focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600 min-h-[150px]',
+                    'border-gray-300' => ! $errors->has($getStatePath()),
+                    'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
+                    'border border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+                ])>
+                    <div wire:ignore>
+                        <textarea
+                            {!! $isAutofocused() ? 'autofocus' : null !!}
+                            id="{{ $getId() }}"
+                            {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
+                            x-model="state"
+                            dusk="filament.forms.{{ $getStatePath() }}"
+                            x-ref="textarea"
+                            class="hidden"
+                        ></textarea>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
