@@ -133,6 +133,18 @@ Filament::serving(function () {
 });
 ```
 
+### Loading Google Fonts
+
+If you specify a custom font family in your `tailwind.config.js`, you may wish to import it via Google Fonts.
+
+You must [publish the configuration](installation#publishing-the-configuration) in order to access this feature.
+
+Set the `google_fonts` config option to a new Google Fonts URL to load:
+
+```php
+'google_fonts' => 'https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap',
+```
+
 ## Changing the maximum content width
 
 Filament exposes a configuration option that allows you to change the maximum content width of all pages.
