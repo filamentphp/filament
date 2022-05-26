@@ -25,7 +25,7 @@
     :color="$action->getColor()"
     :tooltip="$action->getTooltip()"
     :icon="$action->getIcon()"
-    size="sm"
+    :size="$getSize() ?? 'sm'"
 >
     {{ $slot }}
 </x-dynamic-component>
