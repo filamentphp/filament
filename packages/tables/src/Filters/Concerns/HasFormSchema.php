@@ -3,7 +3,6 @@
 namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Checkbox;
 
 trait HasFormSchema
 {
