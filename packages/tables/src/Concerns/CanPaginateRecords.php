@@ -52,7 +52,7 @@ trait CanPaginateRecords
     {
         $perPage = session()->get(
             $this->getTablePerPageSessionKey(),
-            $this->defaultTableRecordsPerPageSelectOption ?? config('tables.pagination.default_records_per_page')
+            $this->defaultTableRecordsPerPageSelectOption ?: config('tables.pagination.default_records_per_page'),
         );
 
         if (in_array($perPage, $this->getTableRecordsPerPageSelectOptions())) {
