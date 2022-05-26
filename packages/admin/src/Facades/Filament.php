@@ -30,7 +30,6 @@ use Illuminate\Support\HtmlString;
  * @method static string | null getUserAvatarUrl(Authenticatable $user)
  * @method static array getUserMenuItems()
  * @method static string getUserName(Authenticatable $user)
- * @method static string getUserTimezone(Authenticatable $user)
  * @method static array getWidgets()
  * @method static void globalSearchProvider(string $provider)
  * @method static Action makeTableAction(string $name)

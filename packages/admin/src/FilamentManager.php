@@ -342,17 +342,6 @@ class FilamentManager
         return $user->getAttributeValue('name');
     }
 
-    public function getUserTimezone(Model $user): string
-    {
-        $appTimezone = config('app.timezone');
-
-        if ($user instanceof HasTimezone) {
-            return $user->getFilamentTimezone() ?? $appTimezone;
-        }
-
-        return $appTimezone;
-    }
-
     public function getWidgets(): array
     {
         return collect($this->widgets)

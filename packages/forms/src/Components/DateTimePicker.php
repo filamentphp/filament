@@ -35,6 +35,8 @@ class DateTimePicker extends Field
 
     protected DateTime | string | Closure | null $minDate = null;
 
+    protected string | Closure | null $timezone = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -52,7 +54,7 @@ class DateTimePicker extends Field
                 }
             }
 
-            $state->setTimezone(Filament::getUserTimezone(auth()->user()));
+            $state->setTimezone($component->getTimezone());
 
             $component->state((string) $state);
         });
@@ -66,7 +68,7 @@ class DateTimePicker extends Field
                 $state = Carbon::parse($state);
             }
 
-            $state->shiftTimezone(Filament::getUserTimezone(auth()->user()));
+            $state->shiftTimezone($component->getTimezone());
             $state->setTimezone(config('app.timezone'));
 
             return $state->format($component->getFormat());
@@ -135,6 +137,13 @@ class DateTimePicker extends Field
     public function resetFirstDayOfWeek(): static
     {
         $this->firstDayOfWeek(null);
+
+        return $this;
+    }
+
+    public function timezone(string | Closure | null $timezone): static
+    {
+        $this->timezone = $timezone;
 
         return $this;
     }
@@ -243,6 +252,11 @@ class DateTimePicker extends Field
     public function getMinDate(): ?string
     {
         return $this->evaluate($this->minDate);
+    }
+
+    public function getTimezone(): string
+    {
+        return $this->evaluate($this->timezone) ?? config('app.timezone');
     }
 
     public function hasDate(): bool

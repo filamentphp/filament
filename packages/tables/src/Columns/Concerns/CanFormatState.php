@@ -25,7 +25,7 @@ trait CanFormatState
     {
         $format ??= config('tables.date_format');
 
-        $timezone ??= Filament::getUserTimezone(auth()->user());
+        $timezone ??= config('app.timezone');
 
         $this->formatStateUsing(static fn ($state): ?string => $state ? Carbon::parse($state)->setTimezone($timezone)->translatedFormat($format) : null);
 
