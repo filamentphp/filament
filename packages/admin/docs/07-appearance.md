@@ -161,6 +161,12 @@ In `config/filament.php`, set the `layouts.max_content_width` to any value betwe
 
 The default is `7xl`.
 
+You may override the maximum content width for a specific page in the admin panel by using the `$maxContentWidth` property:
+
+```php
+protected ?string $maxContentWidth = 'full';
+```
+
 ## Including frontend assets
 
 You may register your own scripts and styles using the `registerScripts()` and `registerStyles()` methods in a service provider's `boot()` method:

@@ -37,6 +37,8 @@ class Page extends Component implements Forms\Contracts\HasForms
 
     protected static string | array $middlewares = [];
 
+    protected ?string $maxContentWidth = null;
+
     public static function registerNavigationItems(): void
     {
         if (! static::shouldRegisterNavigation()) {
@@ -177,11 +179,17 @@ class Page extends Component implements Forms\Contracts\HasForms
             ->title();
     }
 
+    protected function getMaxContentWidth(): ?string
+    {
+        return $this->maxContentWidth;
+    }
+
     protected function getLayoutData(): array
     {
         return [
             'breadcrumbs' => $this->getBreadcrumbs(),
             'title' => $this->getTitle(),
+            'maxContentWidth' => $this->getMaxContentWidth(),
         ];
     }
 
