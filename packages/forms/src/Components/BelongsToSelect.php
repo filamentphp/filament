@@ -23,7 +23,7 @@ class BelongsToSelect extends Select
     {
         parent::setUp();
 
-        $this->afterStateHydrated(static function (BelongsToSelect $component, $state): void {
+        $this->loadStateFromRelationshipsUsing(static function (BelongsToSelect $component, $state): void {
             if (filled($state)) {
                 return;
             }

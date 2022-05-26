@@ -4,7 +4,9 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Livewire\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
@@ -25,13 +27,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     {
         parent::setUp();
 
-        $this->afterStateHydrated(static function (SpatieMediaLibraryFileUpload $component, ?HasMedia $record): void {
-            if (! $record) {
-                $component->state([]);
-
-                return;
-            }
-
+        $this->loadStateFromRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component, ?HasMedia $record): void {
             $files = $record->getMedia($component->getCollection())
                 ->when(
                     ! $component->isMultiple(),
@@ -45,6 +41,14 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 ->toArray();
 
             $component->state($files);
+        });
+
+        $this->afterStateHydrated(static function (BaseFileUpload $component, string | array | null $state): void {
+            if (is_array($state)) {
+                return;
+            }
+
+            $component->state([]);
         });
 
         $this->beforeStateDehydrated(null);

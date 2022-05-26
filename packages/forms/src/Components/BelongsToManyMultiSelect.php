@@ -22,7 +22,7 @@ class BelongsToManyMultiSelect extends MultiSelect
     {
         parent::setUp();
 
-        $this->afterStateHydrated(static function (BelongsToManyMultiSelect $component, ?array $state): void {
+        $this->loadStateFromRelationshipsUsing(static function (BelongsToManyMultiSelect $component, ?array $state): void {
             $relationship = $component->getRelationship();
             $relatedModels = $relationship->getResults();
 

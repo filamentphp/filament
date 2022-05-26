@@ -15,13 +15,7 @@ class SpatieTagsInput extends TagsInput
     {
         parent::setUp();
 
-        $this->afterStateHydrated(static function (SpatieTagsInput $component, ?Model $record): void {
-            if (! $record) {
-                $component->state([]);
-
-                return;
-            }
-
+        $this->loadStateFromRelationshipsUsing(static function (SpatieTagsInput $component, ?Model $record): void {
             if (! method_exists($record, 'tagsWithType')) {
                 return;
             }
