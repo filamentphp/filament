@@ -164,7 +164,7 @@ The default is `7xl`.
 You may override the maximum content width for a specific page in the admin panel by using the `$maxContentWidth` property:
 
 ```php
-protected static ?string $maxContentWidth = 'full';
+protected ?string $maxContentWidth = 'full';
 ```
 
 ## Including frontend assets
