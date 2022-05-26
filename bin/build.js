@@ -8,7 +8,8 @@ esbuild.build({
     entryPoints: ['packages/forms/resources/js/index.js'],
     outfile: 'packages/forms/dist/module.esm.js',
     bundle: true,
-    platform: 'neutral',
+    platform: 'browser',
+    format: 'esm',
     mainFields: ['module', 'main'],
     watch: shouldWatch,
 }).catch(() => process.exit(1))

@@ -1,0 +1,5 @@
+@import 'easymde/dist/easymde.min.css';
+
+.EasyMDEContainer .editor-toolbar {
+    @apply hidden;
+}

@@ -20,6 +20,7 @@
         "chart.js": "^3.6.0",
         "choices.js": "^10.1.0",
         "dayjs": "^1.10.6",
+        "easymde": "^2.16.1",
         "esbuild": "^0.8.57",
         "filepond": "^4.28.2",
         "filepond-plugin-file-validate-size": "^2.2.4",
