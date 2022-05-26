@@ -26,13 +26,26 @@ export default (Alpine) => {
                     initialValue: this.state,
                     toolbar: ['upload-image'],
                     styleSelectedText: false,
-                    previewClass: `editor-preview-side editor-preview prose max-w-none rounded-lg border border-gray-300 bg-white p-3 shadow-sm ${darkMode ? 'dark:prose-invert dark:border-gray-600 dark:bg-gray-700' : ''}`.trim()
+                    blockStyles: {
+                        italic: '_',
+                    },
+                    unorderedListStyle: '-',
+                    previewClass: `prose w-full h-full max-w-none bg-white p-3 ${darkMode ? 'dark:prose-invert dark:bg-gray-700' : ''}`.trim(),
+                    minHeight: '150px',
                 })
 
                 this.editor.codemirror.on('change', () => {
                     this.isStateBeingUpdated = true
                     this.state = this.editor.value()
                     this.$nextTick(() => this.isStateBeingUpdated = false)
+                })
+
+                this.$watch('tab', () => {
+                    if (this.tab === 'preview' && this.editor.isPreviewActive() || this.tab === 'write' && ! this.editor.isPreviewActive()) {
+                        return
+                    }
+
+                    this.editor.togglePreview()
                 })
 
                 this.$watch('state', () => {
@@ -42,7 +55,7 @@ export default (Alpine) => {
 
                     this.editor.value(this.state)
                 })
-            },
+            }
         }
     })
 }

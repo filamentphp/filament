@@ -2313,6 +2313,18 @@ span[data-img-src]::after {
 .EasyMDEContainer .editor-toolbar {
   @apply hidden;
 }
+.EasyMDEContainer .CodeMirror {
+  @apply w-full h-full min-h-full transition duration-75 rounded-lg shadow-sm border border-gray-300 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600 caret-black !important;
+}
+.EasyMDEContainer .CodeMirror .CodeMirror-scroll {
+  @apply tracking-normal whitespace-pre-wrap font-mono text-sm !important;
+}
+.EasyMDEContainer .cm-header {
+  @apply text-sm !important;
+}
+.EasyMDEContainer .cm-comment {
+  @apply bg-inherit text-gray-800 !important;
+}
 
 /* packages/forms/resources/css/components/rich-editor.css */
 .dark .trix-button {
