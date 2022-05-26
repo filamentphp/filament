@@ -23,7 +23,7 @@ class BelongsToSelect extends Select
     {
         parent::setUp();
 
-        $this->afterStateHydrated(static function (BelongsToSelect $component, $state): void {
+        $this->loadStateFromRelationshipsUsing(static function (BelongsToSelect $component, $state): void {
             if (filled($state)) {
                 return;
             }
@@ -42,9 +42,34 @@ class BelongsToSelect extends Select
             );
         });
 
+        $this->getOptionLabelUsing(static function (BelongsToSelect $component, $value) {
+            $relationship = $component->getRelationship();
+
+            $record = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $value)->first();
+
+            if (! $record) {
+                return null;
+            }
+
+            if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                return $component->getOptionLabelFromRecord($record);
+            }
+
+            return $record->getAttributeValue($component->getDisplayColumnName());
+        });
+
+        $this->exists(
+            static fn (BelongsToSelect $component): string => $component->getRelationship()->getModel()::class,
+            static fn (BelongsToSelect $component): string => $component->getRelationship()->getOwnerKeyName(),
+        );
+
         $this->saveRelationshipsUsing(static function (BelongsToSelect $component, Model $record, $state) {
             $component->getRelationship()->associate($state);
             $record->save();
+        });
+
+        $this->createOptionUsing(static function (BelongsToSelect $component, array $data) {
+            return $component->getRelationship()->create($data)->getKey();
         });
     }
 
@@ -65,22 +90,6 @@ class BelongsToSelect extends Select
         $this->displayColumnName = $displayColumnName;
         $this->relationship = $relationshipName;
 
-        $this->getOptionLabelUsing(static function (BelongsToSelect $component, $value) {
-            $relationship = $component->getRelationship();
-
-            $record = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $value)->first();
-
-            if (! $record) {
-                return null;
-            }
-
-            if ($component->hasOptionLabelFromRecordUsingCallback()) {
-                return $component->getOptionLabelFromRecord($record);
-            }
-
-            return $record->getAttributeValue($component->getDisplayColumnName());
-        });
-
         $this->getSearchResultsUsing(static function (BelongsToSelect $component, ?string $searchQuery) use ($callback): array {
             $relationship = $component->getRelationship();
 
@@ -99,7 +108,7 @@ class BelongsToSelect extends Select
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->mapWithKeys(fn (Model $record) => [
+                    ->mapWithKeys(static fn (Model $record) => [
                         $record->{$relationship->getOwnerKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
@@ -128,7 +137,7 @@ class BelongsToSelect extends Select
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->mapWithKeys(fn (Model $record) => [
+                    ->mapWithKeys(static fn (Model $record) => [
                         $record->{$relationship->getOwnerKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
@@ -138,11 +147,6 @@ class BelongsToSelect extends Select
                 ->pluck($component->getDisplayColumnName(), $relationship->getOwnerKeyName())
                 ->toArray();
         });
-
-        $this->exists(
-            fn (BelongsToSelect $component): ?string => ($relationship = $component->getRelationship()) ? $relationship->getModel()::class : null,
-            fn (BelongsToSelect $component): string => $component->getRelationship()->getOwnerKeyName(),
-        );
 
         return $this;
     }
@@ -159,17 +163,21 @@ class BelongsToSelect extends Select
 
         $isFirst = true;
 
-        foreach ($this->getSearchColumns() as $searchColumnName) {
-            $whereClause = $isFirst ? 'where' : 'orWhere';
+        $query->where(function (Builder $query) use ($isFirst, $searchOperator, $searchQuery): Builder {
+            foreach ($this->getSearchColumns() as $searchColumnName) {
+                $whereClause = $isFirst ? 'where' : 'orWhere';
 
-            $query->{$whereClause}(
-                $searchColumnName,
-                $searchOperator,
-                "%{$searchQuery}%",
-            );
+                $query->{$whereClause}(
+                    $searchColumnName,
+                    $searchOperator,
+                    "%{$searchQuery}%",
+                );
 
-            $isFirst = false;
-        }
+                $isFirst = false;
+            }
+
+            return $query;
+        });
 
         return $query;
     }
@@ -209,7 +217,7 @@ class BelongsToSelect extends Select
         return parent::getLabel();
     }
 
-    public function getRelationship(): ?BelongsTo
+    public function getRelationship(): BelongsTo
     {
         return $this->getModelInstance()->{$this->getRelationshipName()}();
     }
@@ -227,5 +235,15 @@ class BelongsToSelect extends Select
     public function hasDynamicOptions(): bool
     {
         return $this->isPreloaded();
+    }
+
+    public function hasDynamicSearchResults(): bool
+    {
+        return ! $this->isPreloaded();
+    }
+
+    public function getActionFormModel(): Model | string | null
+    {
+        return $this->getRelationship()->getModel()::class;
     }
 }

@@ -4,24 +4,22 @@ namespace Filament\Tables;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\Layout;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\Tappable;
-use Illuminate\View\Component as ViewComponent;
 
-class Table extends ViewComponent implements Htmlable
+class Table extends ViewComponent
 {
     use Concerns\BelongsToLivewire;
-    use Macroable;
-    use Tappable;
+
+    protected ?View $content = null;
 
     protected ?View $contentFooter = null;
 
@@ -36,6 +34,8 @@ class Table extends ViewComponent implements Htmlable
     protected ?string $emptyStateIcon = null;
 
     protected ?string $filtersFormWidth = null;
+
+    protected ?string $filtersLayout = null;
 
     protected ?string $columnToggleFormWidth = null;
 
@@ -54,6 +54,12 @@ class Table extends ViewComponent implements Htmlable
     protected string $model;
 
     protected ?array $recordsPerPageSelectOptions = null;
+
+    protected string $view = 'tables::index';
+
+    protected string $viewIdentifier = 'table';
+
+    public const LOADING_TARGETS = ['gotoPage', 'tableFilters', 'resetTableFiltersForm', 'tableSearchQuery', 'tableRecordsPerPage', '$set'];
 
     final public function __construct(HasTable $livewire)
     {
@@ -107,6 +113,13 @@ class Table extends ViewComponent implements Htmlable
         return $this;
     }
 
+    public function content(?View $view): static
+    {
+        $this->content = $view;
+
+        return $this;
+    }
+
     public function contentFooter(?View $view): static
     {
         $this->contentFooter = $view;
@@ -117,6 +130,13 @@ class Table extends ViewComponent implements Htmlable
     public function filtersFormWidth(?string $width): static
     {
         $this->filtersFormWidth = $width;
+
+        return $this;
+    }
+
+    public function filtersLayout(?string $layout): static
+    {
+        $this->filtersLayout = $layout;
 
         return $this;
     }
@@ -185,6 +205,11 @@ class Table extends ViewComponent implements Htmlable
             ->toArray();
     }
 
+    public function getContent(): ?View
+    {
+        return $this->content;
+    }
+
     public function getContentFooter(): ?View
     {
         return $this->contentFooter;
@@ -235,12 +260,17 @@ class Table extends ViewComponent implements Htmlable
         return $this->filtersFormWidth;
     }
 
-    public function getTableColumnToggleForm(): ComponentContainer
+    public function getFiltersLayout(): string
+    {
+        return $this->filtersLayout ?? Layout::Popover;
+    }
+
+    public function getColumnToggleForm(): ComponentContainer
     {
         return $this->getLivewire()->getTableColumnToggleForm();
     }
 
-    public function getTableColumnToggleFormWidth(): ?string
+    public function getColumnToggleFormWidth(): ?string
     {
         return $this->columnToggleFormWidth;
     }
@@ -270,7 +300,7 @@ class Table extends ViewComponent implements Htmlable
         return $this->getLivewire()->getMountedTableAction();
     }
 
-    public function getMountedActionForm(): ComponentContainer
+    public function getMountedActionForm(): ?ComponentContainer
     {
         return $this->getLivewire()->getMountedTableActionForm();
     }
@@ -280,7 +310,7 @@ class Table extends ViewComponent implements Htmlable
         return $this->getLivewire()->getMountedTableBulkAction();
     }
 
-    public function getMountedBulkActionForm(): ComponentContainer
+    public function getMountedBulkActionForm(): ?ComponentContainer
     {
         return $this->getLivewire()->getMountedTableBulkActionForm();
     }
@@ -344,17 +374,5 @@ class Table extends ViewComponent implements Htmlable
     public function hasToggleableColumns(): bool
     {
         return $this->getLivewire()->hasToggleableTableColumns();
-    }
-
-    public function toHtml(): string
-    {
-        return $this->render()->render();
-    }
-
-    public function render(): View
-    {
-        return view('tables::index', array_merge($this->data(), [
-            'table' => $this,
-        ]));
     }
 }

@@ -94,6 +94,29 @@ use Filament\Forms\Components\Card;
 Card::make()->columns(1)
 ```
 
+### Saving data to relationships
+
+You may load and save the contents of a layout component to a `HasOne`, `BelongsTo` or `MorphOne` Eloquent relationship, using the `relationship()` method:
+
+```php
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+
+Fieldset::make('Metadata')
+    ->relationship('metadata')
+    ->schema([
+        TextInput::make('title'),
+        Textarea::make('description'),
+        FileUpload::make('image'),
+    ])
+```
+
+In this example, the `title`, `description` and `image` is automatically loaded from saved to the `metadata` relationship, and saved again when the form is submitted. If the `metadata` record does not exist, it is automatically created.
+
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
+
 ## Grid
 
 Generally, form fields are stacked on top of each other in one column. To change this, you may use a grid component:
@@ -212,6 +235,51 @@ Tabs::make('Heading')
             ]),
     ])
 ```
+
+## Wizard
+
+Similar to [tabs](#tabs), you may want to use a multistep form wizard to reduce the number of components that are visible at once. These are especially useful if your form has a definite chronological order, in which you want each step to be validated as the user progresses.
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard::make([
+    Wizard\Step::make('Order')
+        ->schema([
+            // ...
+        ]),
+    Wizard\Step::make('Delivery')
+        ->schema([
+            // ...
+        ]),
+    Wizard\Step::make('Billing')
+        ->schema([
+            // ...
+        ]),
+])
+```
+
+Each step has a mandatory label. You may optionally also add a description for extra detail:
+
+```php
+Wizard\Step::make('Order')
+    ->description('Review your basket')
+    ->schema([
+        // ...
+    ]),
+```
+
+Steps may also have an icon, which can be the name of any Blade icon component:
+
+```php
+Wizard\Step::make('Order')
+    ->icon('heroicon-o-shopping-bag')
+    ->schema([
+        // ...
+    ]),
+```
+
+You may also add wizards to table [actions](../tables/actions#wizards) and admin [Create pages](../admin/creating-records#wizards).
 
 ## Section
 

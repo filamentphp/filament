@@ -29,7 +29,7 @@ return [
             ],
 
             'messages' => [
-                'created' => 'Created',
+                'created' => 'Utworzono',
             ],
 
         ],
@@ -56,7 +56,7 @@ return [
 
                 'modal' => [
 
-                    'heading' => 'Edycja :label',
+                    'heading' => 'Edytuj :label',
 
                     'actions' => [
 

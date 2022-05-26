@@ -16,7 +16,7 @@ return [
 
                 'heading' => 'Hapus :label',
 
-                'subheading' => 'Apakah Anda yakin ingin melakukan ini? ',
+                'subheading' => 'Apakah Anda yakin ingin melakukan ini?',
 
                 'buttons' => [
 
@@ -29,7 +29,7 @@ return [
             ],
 
             'messages' => [
-                'deleted' => 'Telah dihapus',
+                'deleted' => 'Data berhasil dihapus',
             ],
 
         ],
@@ -57,7 +57,7 @@ return [
     ],
 
     'messages' => [
-        'saved' => 'Telah disimpan',
+        'saved' => 'Data berhasil disimpan',
     ],
 
 ];

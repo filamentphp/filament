@@ -5,7 +5,7 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Buscar',
+            'label' => 'Búsqueda',
             'placeholder' => 'Buscar',
         ],
 
@@ -53,28 +53,20 @@ return [
             'label' => 'Abrir acciones',
         ],
 
+        'toggle_columns' => [
+            'label' => 'Alternar columnas',
+        ],
+
     ],
 
     'actions' => [
 
-        'modal' => [
+        'replicate' => [
 
-            'requires_confirmation_subheading' => '¿Estás seguro de que quieres hacer esto?',
+            'label' => 'Repetir',
 
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Cancelar',
-                ],
-
-                'confirm' => [
-                    'label' => 'Confirmar',
-                ],
-
-                'submit' => [
-                    'label' => 'Enviar',
-                ],
-
+            'messages' => [
+                'replicated' => 'Registro replicado',
             ],
 
         ],

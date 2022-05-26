@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use Closure;
 use Illuminate\Support\Str;
 
 trait CanBeSortable
@@ -10,7 +11,9 @@ trait CanBeSortable
 
     protected ?array $sortColumns = [];
 
-    public function sortable(bool | array $condition = true): static
+    protected ?Closure $sortQuery = null;
+
+    public function sortable(bool | array $condition = true, ?Closure $query = null): static
     {
         if (is_array($condition)) {
             $this->isSortable = true;
@@ -19,6 +22,8 @@ trait CanBeSortable
             $this->isSortable = $condition;
             $this->sortColumns = null;
         }
+
+        $this->sortQuery = $query;
 
         return $this;
     }

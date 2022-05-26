@@ -3,20 +3,21 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Illuminate\Support\HtmlString;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
-class Section extends Component implements Contracts\CanConcealComponents
+class Section extends Component implements Contracts\CanConcealComponents, Contracts\CanEntangleWithSingularRelationships
 {
-    use Concerns\HasExtraAlpineAttributes;
+    use Concerns\CanBeCollapsed;
+    use Concerns\EntanglesStateWithSingularRelationship;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.section';
 
-    protected bool | Closure $isCollapsed = false;
-
     protected bool | Closure $isCollapsible = false;
 
-    protected string | HtmlString | Closure | null $description = null;
+    protected string | Htmlable | Closure | null $description = null;
 
     protected string | Closure $heading;
 
@@ -55,7 +56,7 @@ class Section extends Component implements Contracts\CanConcealComponents
         return $this;
     }
 
-    public function description(string | HtmlString | Closure | null $description = null): static
+    public function description(string | Htmlable | Closure | null $description = null): static
     {
         $this->description = $description;
 
@@ -69,7 +70,7 @@ class Section extends Component implements Contracts\CanConcealComponents
         return $this;
     }
 
-    public function getDescription(): string | HtmlString | null
+    public function getDescription(): string | Htmlable | null
     {
         return $this->evaluate($this->description);
     }
@@ -94,13 +95,13 @@ class Section extends Component implements Contracts\CanConcealComponents
         return $id;
     }
 
-    public function isCollapsed(): bool
-    {
-        return (bool) $this->evaluate($this->isCollapsed);
-    }
-
     public function isCollapsible(): bool
     {
         return (bool) $this->evaluate($this->isCollapsible);
+    }
+
+    public function canConcealComponents(): bool
+    {
+        return $this->isCollapsible();
     }
 }

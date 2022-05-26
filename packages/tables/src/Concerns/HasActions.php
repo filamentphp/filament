@@ -19,6 +19,9 @@ trait HasActions
 
     protected array $cachedTableActions;
 
+    protected ?Model $cachedMountedTableActionRecord = null;
+    protected $cachedMountedTableActionRecordKey = null;
+
     public function cacheTableActions(): void
     {
         $this->cachedTableActions = collect($this->getTableActions())
@@ -47,8 +50,11 @@ trait HasActions
         try {
             return $action->call($data);
         } finally {
+            $this->mountedTableAction = null;
+            $this->mountedTableActionRecord = null;
+
             $this->dispatchBrowserEvent('close-modal', [
-                'id' => static::class . '-action',
+                'id' => static::class . '-table-action',
             ]);
         }
     }
@@ -68,7 +74,10 @@ trait HasActions
             return;
         }
 
-        $this->cacheForm('mountedTableActionForm');
+        $this->cacheForm(
+            'mountedTableActionForm',
+            fn () => $this->getMountedTableActionForm(),
+        );
 
         app()->call($action->getMountUsing(), [
             'action' => $action,
@@ -83,7 +92,7 @@ trait HasActions
         $this->resetErrorBag();
 
         $this->dispatchBrowserEvent('open-modal', [
-            'id' => static::class . '-action',
+            'id' => static::class . '-table-action',
         ]);
     }
 
@@ -101,14 +110,35 @@ trait HasActions
         return $this->getCachedTableAction($this->mountedTableAction) ?? $this->getCachedTableEmptyStateAction($this->mountedTableAction) ?? $this->getCachedTableHeaderAction($this->mountedTableAction);
     }
 
-    public function getMountedTableActionForm(): ComponentContainer
+    public function getMountedTableActionForm(): ?ComponentContainer
     {
-        return $this->mountedTableActionForm;
+        $action = $this->getMountedTableAction();
+
+        if (! $action) {
+            return null;
+        }
+
+        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedTableActionForm')) {
+            return $this->getCachedForm('mountedTableActionForm');
+        }
+
+        return $this->makeForm()
+            ->schema($action->getFormSchema())
+            ->model($this->getMountedTableActionRecord() ?? $this->getTableQuery()->getModel()::class)
+            ->statePath('mountedTableActionData');
     }
 
     public function getMountedTableActionRecord(): ?Model
     {
-        return $this->resolveTableRecord($this->mountedTableActionRecord);
+        $recordKey = $this->mountedTableActionRecord;
+
+        if ($this->cachedMountedTableActionRecord && ($this->cachedMountedTableActionRecordKey === $recordKey)) {
+            return $this->cachedMountedTableActionRecord;
+        }
+
+        $this->cachedMountedTableActionRecordKey = $recordKey;
+
+        return $this->cachedMountedTableActionRecord = $this->resolveTableRecord($recordKey);
     }
 
     protected function getCachedTableAction(string $name): ?Action

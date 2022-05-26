@@ -127,25 +127,44 @@ trait HasState
 
     public function fill(?array $state = null): static
     {
-        if ($state !== null) {
+        if ($state === null) {
+            return $this->fillWithDefaults();
+        }
+
+        $livewire = $this->getLivewire();
+
+        if ($statePath = $this->getStatePath()) {
+            data_set($livewire, $statePath, $state);
+        } else {
+            $this->fillComponentStateWithNull();
+
+            foreach ($state as $key => $value) {
+                data_set($livewire, $key, $value);
+            }
+        }
+
+        $this->loadStateFromRelationships();
+
+        $this->callAfterStateHydrated();
+
+        $this->fillComponentStateWithNull(shouldOverwrite: false);
+
+        return $this;
+    }
+
+    protected function fillWithDefaults(): static
+    {
+        if ($statePath = $this->getStatePath()) {
             $livewire = $this->getLivewire();
 
-            if ($statePath = $this->getStatePath()) {
-                data_set($livewire, $statePath, $state);
-            } else {
-                foreach ($state as $key => $value) {
-                    data_set($livewire, $key, $value);
-                }
-            }
-
-            $this->fillMissingComponentStateWithNull();
-
-            $this->loadStateFromRelationships();
-
-            $this->callAfterStateHydrated();
+            data_set($livewire, $statePath, []);
         } else {
-            $this->hydrateDefaultState();
+            $this->fillComponentStateWithNull();
         }
+
+        $this->hydrateDefaultState();
+
+        $this->fillComponentStateWithNull(shouldOverwrite: false);
 
         return $this;
     }
@@ -164,15 +183,15 @@ trait HasState
         return $this;
     }
 
-    public function fillMissingComponentStateWithNull(): static
+    public function fillComponentStateWithNull(bool $shouldOverwrite = true): static
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
             if ($component->hasChildComponentContainer()) {
                 foreach ($component->getChildComponentContainers() as $container) {
-                    $container->fillMissingComponentStateWithNull();
+                    $container->fillComponentStateWithNull($shouldOverwrite);
                 }
             } else {
-                $component->fillMissingStateWithNull();
+                $component->fillStateWithNull($shouldOverwrite);
             }
         }
 

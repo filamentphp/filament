@@ -53,30 +53,21 @@ return [
             'label' => 'Azioni aperte',
         ],
 
+        'toggle_columns' => [
+            'label' => 'Alterna colonne',
+        ],
+
     ],
 
     'actions' => [
 
-        'modal' => [
+        'replicate' => [
 
-            'requires_confirmation_subheading' => 'Sei sicuro di volerlo fare?',
+            'label' => 'Duplica',
 
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Annulla',
-                ],
-
-                'confirm' => [
-                    'label' => 'Conferma',
-                ],
-
-                'submit' => [
-                    'label' => 'Invia',
-                ],
-
+            'messages' => [
+                'replicated' => 'Record duplicato',
             ],
-
         ],
 
     ],
@@ -85,12 +76,39 @@ return [
         'heading' => 'Nessun valore trovato',
     ],
 
-    'selection_indicator' => [
+    'filters' => [
 
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Azzera filtri',
+            ],
+
+            'close' => [
+                'label' => 'Chiudi',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Tutti',
+        ],
+
+        'select' => [
+            'placeholder' => 'Tutti',
+        ],
+    ],
+
+    'selection_indicator' => [
+        'selected_count' => '1 record selezionato.|:count records selezionati.',
         'buttons' => [
 
             'select_all' => [
                 'label' => 'Seleziona tutti i :count',
+            ],
+
+            'deselect_all' => [
+                'label' => 'Deseleziona tutti',
             ],
 
         ],

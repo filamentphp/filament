@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'ویرایش :label',
+    'title' => 'اصلاح :label',
 
-    'breadcrumb' => 'ویرایش',
+    'breadcrumb' => 'اصلاح',
 
     'actions' => [
 

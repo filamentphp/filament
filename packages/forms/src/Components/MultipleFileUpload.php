@@ -6,6 +6,7 @@ use Closure;
 
 /**
  * @deprecated Use `\Filament\Forms\Components\FileUpload` instead, with the `multiple()` method.
+ * @see FileUpload
  */
 class MultipleFileUpload extends Field
 {

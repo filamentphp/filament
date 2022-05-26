@@ -1,12 +1,17 @@
 @php
+    use Filament\Tables\Filters\Layout;
+
     $actions = $getActions();
     $columns = $getColumns();
+    $content = $getContent();
     $contentFooter = $getContentFooter();
     $header = $getHeader();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
     $isSearchVisible = $isSearchable();
-    $isFiltersDropdownVisible = $isFilterable();
+    $hasFilters = $isFilterable();
+    $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === Layout::Popover);
+    $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === Layout::AboveContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
 
     $columnsCount = count($columns);
@@ -136,7 +141,7 @@
 >
     <x-tables::container>
         <div
-            x-show="hasHeader = ({{ ($renderHeader = ($header || $heading || $headerActions || $isSearchVisible || $isFiltersDropdownVisible || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length)"
+            x-show="hasHeader = ({{ ($renderHeader = ($header || $heading || $headerActions || $isSearchVisible || $hasFilters || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length)"
             {!! ! $renderHeader ? 'x-cloak' : null !!}
         >
             @if ($header)
@@ -153,13 +158,23 @@
                         </x-slot>
                     </x-tables::header>
 
-                    <x-tables::hr x-show="{{ ($isSearchVisible || $isFiltersDropdownVisible || $isColumnToggleFormVisible) ? 'true' : 'false' }} || selectedRecords.length" />
+                    <x-tables::hr x-show="{{ ($isSearchVisible || $hasFilters || $isColumnToggleFormVisible) ? 'true' : 'false' }} || selectedRecords.length" />
+                </div>
+            @endif
+
+            @if ($hasFiltersAboveContent)
+                <div class="px-2 pt-2 space-y-2">
+                    <div class="p-4">
+                        <x-tables::filters :form="$getFiltersForm()" />
+                    </div>
+
+                    <x-tables::hr x-show="{{ ($isSearchVisible || $isColumnToggleFormVisible) ? 'true' : 'false' }} || selectedRecords.length" />
                 </div>
             @endif
 
             <div
-                x-show="{{ ($renderHeaderDiv = ($isSearchVisible || $isFiltersDropdownVisible || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length"
-                {!! ! $renderHeaderDiv ? 'x-cloak' : null !!}
+                x-show="{{ ($shouldRenderHeaderDiv = ($isSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)) ? 'true' : 'false' }} || selectedRecords.length"
+                {!! ! $shouldRenderHeaderDiv ? 'x-cloak' : null !!}
                 class="flex items-center justify-between p-2 h-14"
             >
                 <div>
@@ -170,26 +185,26 @@
                     />
                 </div>
 
-                @if ($isSearchVisible || $isFiltersDropdownVisible || $isColumnToggleFormVisible)
+                @if ($isSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)
                     <div class="w-full flex items-center justify-end gap-2 md:max-w-md">
                         @if ($isSearchVisible)
                             <div class="flex-1">
-                                <x-tables::search-input />
+                                <x-tables::search-input/>
                             </div>
-                        @endif
-
-                        @if ($isFiltersDropdownVisible)
-                            <x-tables::filters
-                                :form="$getFiltersForm()"
-                                :width="$getFiltersFormWidth()"
-                                class="shrink-0"
-                            />
                         @endif
 
                         @if ($isColumnToggleFormVisible)
                             <x-tables::toggleable
-                                :form="$getTableColumnToggleForm()"
-                                :width="$getTableColumnToggleFormWidth()"
+                                :form="$getColumnToggleForm()"
+                                :width="$getColumnToggleFormWidth()"
+                                class="shrink-0"
+                            />
+                        @endif
+
+                        @if ($hasFiltersPopover)
+                            <x-tables::filters.popover
+                                :form="$getFiltersForm()"
+                                :width="$getFiltersFormWidth()"
                                 class="shrink-0"
                             />
                         @endif
@@ -211,112 +226,129 @@
             }"
         >
             @if (($records = $getRecords())->count())
-                <x-tables::table>
-                    <x-slot name="header">
-                        @if ($isSelectionEnabled())
-                            <x-tables::checkbox-cell>
-                                <x-slot
-                                    name="checkbox"
-                                    x-on:click="toggleSelectRecordsOnPage"
-                                    x-bind:checked="
-                                        if (areRecordsSelected(getRecordsOnPage())) {
-                                            $el.checked = true
-
-                                            return 'checked'
-                                        }
-
-                                        $el.checked = false
-
-                                        return null
-                                    "
-                                ></x-slot>
-                            </x-tables::checkbox-cell>
-                        @endif
-
-                        @foreach ($columns as $column)
-                            <x-tables::header-cell
-                                :extra-attributes="$column->getExtraHeaderAttributes()"
-                                :is-sort-column="$getSortColumn() === $column->getName()"
-                                :name="$column->getName()"
-                                :alignment="$column->getAlignment()"
-                                :sortable="$column->isSortable()"
-                                :sort-direction="$getSortDirection()"
-                                :class="$getHiddenClasses($column)"
-                            >
-                                {{ $column->getLabel() }}
-                            </x-tables::header-cell>
-                        @endforeach
-
-                        @if (count($actions))
-                            <th class="w-5"></th>
-                        @endif
-                    </x-slot>
-
-                    @if ($isSelectionEnabled())
-                        <x-tables::selection-indicator
-                            :all-records-count="$getAllRecordsCount()"
-                            :colspan="$columnsCount"
-                            x-show="selectedRecords.length"
-                        >
-                            <x-slot name="selectedRecordsCount">
-                                <span x-text="selectedRecords.length"></span>
-                            </x-slot>
-                        </x-tables::selection-indicator>
-                    @endif
-
-                    @foreach ($records as $record)
-                        <x-tables::row
-                            :record-url="$getRecordUrl($record)"
-                            wire:key="{{ $record->getKey() }}"
-                            x-bind:class="{
-                                'bg-primary-500/10': isRecordSelected('{{ $record->getKey() }}'),
-                            }"
-                        >
+                @if ($content)
+                    {{ $content->with(['records' => $records]) }}
+                @else
+                    <x-tables::table>
+                        <x-slot name="header">
                             @if ($isSelectionEnabled())
                                 <x-tables::checkbox-cell>
                                     <x-slot
                                         name="checkbox"
-                                        x-model="selectedRecords"
-                                        :value="$record->getKey()"
-                                        class="table-row-checkbox"
+                                        x-on:click="toggleSelectRecordsOnPage"
+                                        x-bind:checked="
+                                            if (areRecordsSelected(getRecordsOnPage())) {
+                                                $el.checked = true
+
+                                                return 'checked'
+                                            }
+
+                                            $el.checked = false
+
+                                            return null
+                                        "
                                     ></x-slot>
                                 </x-tables::checkbox-cell>
                             @endif
 
                             @foreach ($columns as $column)
-                                @php
-                                    $column->record($record);
-                                @endphp
-
-                                <x-tables::cell
-                                    :action="$column->getAction()"
+                                <x-tables::header-cell
+                                    :extra-attributes="$column->getExtraHeaderAttributes()"
+                                    :is-sort-column="$getSortColumn() === $column->getName()"
                                     :name="$column->getName()"
                                     :alignment="$column->getAlignment()"
-                                    :record="$record"
-                                    :tooltip="$column->getTooltip()"
-                                    :record-action="$getRecordAction()"
-                                    :record-url="$getRecordUrl($record)"
-                                    :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
-                                    :url="$column->getUrl()"
+                                    :sortable="$column->isSortable()"
+                                    :sort-direction="$getSortDirection()"
                                     :class="$getHiddenClasses($column)"
                                 >
-                                    {{ $column }}
-                                </x-tables::cell>
+                                    {{ $column->getLabel() }}
+                                </x-tables::header-cell>
                             @endforeach
 
                             @if (count($actions))
-                                <x-tables::actions-cell :actions="$actions" :record="$record" />
+                                <th class="w-5"></th>
                             @endif
-                        </x-tables::row>
-                    @endforeach
-
-                    @if ($contentFooter)
-                        <x-slot name="footer">
-                            {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
                         </x-slot>
-                    @endif
 
-                </x-tables::table>
+                        @if ($isSelectionEnabled())
+                            <x-tables::selection-indicator
+                                :all-records-count="$getAllRecordsCount()"
+                                :colspan="$columnsCount"
+                                x-show="selectedRecords.length"
+                            >
+                                <x-slot name="selectedRecordsCount">
+                                    <span x-text="selectedRecords.length"></span>
+                                </x-slot>
+                            </x-tables::selection-indicator>
+                        @endif
+
+                        @foreach ($records as $record)
+                            <x-tables::row
+                                :record-url="$getRecordUrl($record)"
+                                wire:key="{{ $this->getTableRecordKey($record) }}"
+                                x-bind:class="{
+                                    'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $this->getTableRecordKey($record) }}'),
+                                }"
+                            >
+                                @if ($isSelectionEnabled())
+                                    <x-tables::checkbox-cell>
+                                        <x-slot
+                                            name="checkbox"
+                                            x-model="selectedRecords"
+                                            :value="$this->getTableRecordKey($record)"
+                                            class="table-row-checkbox"
+                                        ></x-slot>
+                                    </x-tables::checkbox-cell>
+                                @endif
+
+                                @foreach ($columns as $column)
+                                    @php
+                                        $column->record($record);
+                                    @endphp
+
+                                    <x-tables::cell
+                                        :action="$column->getAction()"
+                                        :name="$column->getName()"
+                                        :alignment="$column->getAlignment()"
+                                        :record="$record"
+                                        :tooltip="$column->getTooltip()"
+                                        :record-action="$getRecordAction()"
+                                        :record-url="$getRecordUrl($record)"
+                                        :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
+                                        :url="$column->getUrl()"
+                                        :class="$getHiddenClasses($column)"
+                                        wire:loading.remove.delay
+                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                    >
+                                        {{ $column }}
+                                    </x-tables::cell>
+                                @endforeach
+
+                                @if (count($actions))
+                                    <x-tables::actions-cell
+                                        :actions="$actions"
+                                        :record="$record"
+                                        wire:loading.remove.delay
+                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                    />
+                                @endif
+
+                                <x-tables::loading-cell
+                                    :colspan="$columnsCount"
+                                    wire:loading.class.remove.delay="hidden"
+                                    class="hidden"
+                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                />
+                            </x-tables::row>
+                        @endforeach
+
+                        @if ($contentFooter)
+                            <x-slot name="footer">
+                                {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
+                            </x-slot>
+                        @endif
+                    </x-tables::table>
+                @endif
             @else
                 @if ($emptyState = $getEmptyState())
                     {{ $emptyState }}
@@ -354,7 +386,7 @@
             $action = $getMountedAction();
         @endphp
 
-        <x-tables::modal :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-action'" :width="$action?->getModalWidth()" display-classes="block">
+        <x-tables::modal :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-table-action'" :visible="filled($action)" :width="$action?->getModalWidth()" display-classes="block">
             @if ($action)
                 @if ($action->isModalCentered())
                     <x-slot name="heading">
@@ -378,13 +410,15 @@
                     {{ $getMountedActionForm() }}
                 @endif
 
-                <x-slot name="footer">
-                    <x-tables::modal.actions :full-width="$action->isModalCentered()">
-                        @foreach ($action->getModalActions() as $modalAction)
-                            {{ $modalAction }}
-                        @endforeach
-                    </x-tables::modal.actions>
-                </x-slot>
+                @if (count($action->getModalActions()))
+                    <x-slot name="footer">
+                        <x-tables::modal.actions :full-width="$action->isModalCentered()">
+                            @foreach ($action->getModalActions() as $modalAction)
+                                {{ $modalAction }}
+                            @endforeach
+                        </x-tables::modal.actions>
+                    </x-slot>
+                @endif
             @endif
         </x-tables::modal>
     </form>
@@ -394,7 +428,7 @@
             $action = $getMountedBulkAction();
         @endphp
 
-        <x-tables::modal :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-bulk-action'" :width="$action?->getModalWidth()" display-classes="block">
+        <x-tables::modal :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-table-bulk-action'" :visible="filled($action)" :width="$action?->getModalWidth()" display-classes="block">
             @if ($action)
                 @if ($action->isModalCentered())
                     <x-slot name="heading">
@@ -418,13 +452,15 @@
                     {{ $getMountedBulkActionForm() }}
                 @endif
 
-                <x-slot name="footer">
-                    <x-tables::modal.actions :full-width="$action->isModalCentered()">
-                        @foreach ($action->getModalActions() as $modalAction)
-                            {{ $modalAction }}
-                        @endforeach
-                    </x-tables::modal.actions>
-                </x-slot>
+                @if (count($action->getModalActions()))
+                    <x-slot name="footer">
+                        <x-tables::modal.actions :full-width="$action->isModalCentered()">
+                            @foreach ($action->getModalActions() as $modalAction)
+                                {{ $modalAction }}
+                            @endforeach
+                        </x-tables::modal.actions>
+                    </x-slot>
+                @endif
             @endif
         </x-tables::modal>
     </form>

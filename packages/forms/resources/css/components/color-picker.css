@@ -5,7 +5,7 @@
 }
 
 .filament-forms-color-picker-preview::after {
+    @apply absolute inset-0;
     content: '';
     background: var(--color);
-    @apply absolute inset-0
 }

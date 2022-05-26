@@ -3,6 +3,7 @@
 namespace Filament\Resources\Concerns;
 
 use Exception;
+use Spatie\Translatable\HasTranslations;
 
 trait Translatable
 {
@@ -16,7 +17,7 @@ trait Translatable
         $model = static::getModel();
 
         if (! method_exists($model, 'getTranslatableAttributes')) {
-            throw new Exception("Model [{$model}] must use trait [Spatie\Translatable\HasTranslations].");
+            throw new Exception("Model [{$model}] must use trait [" . HasTranslations::class . '].');
         }
 
         $attributes = app($model)->getTranslatableAttributes();

@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -25,7 +26,13 @@ trait CanDetachRecords
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
-        $relationship->detach($this->getMountedTableActionRecord());
+        $recordToDetatch = $this->getMountedTableActionRecord();
+
+        if ($this->allowsDuplicates()) {
+            $recordToDetatch->{$relationship->getPivotAccessor()}->delete();
+        } else {
+            $relationship->detach($recordToDetatch);
+        }
 
         $this->callHook('afterDetach');
 
@@ -46,7 +53,15 @@ trait CanDetachRecords
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
-        $relationship->detach($this->getSelectedTableRecords());
+        $recordsToDetach = $this->getSelectedTableRecords();
+
+        if ($this->allowsDuplicates()) {
+            $recordsToDetach->each(
+                fn (Model $recordToDetach) => $recordToDetach->{$relationship->getPivotAccessor()}->delete(),
+            );
+        } else {
+            $relationship->detach($recordsToDetach);
+        }
 
         $this->callHook('afterBulkDetach');
 
@@ -62,14 +77,14 @@ trait CanDetachRecords
 
     protected function getDetachAction(): Tables\Actions\Action
     {
-        return config('filament.layout.tables.actions.type')::make('detach')
+        return Filament::makeTableAction('detach')
             ->label(__('filament::resources/relation-managers/detach.action.label'))
             ->requiresConfirmation()
             ->modalHeading(__('filament::resources/relation-managers/detach.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->detach())
             ->color('danger')
-            ->icon('heroicon-o-x')
-            ->hidden(fn (Model $record): bool => ! static::canDetach($record));
+            ->icon('heroicon-s-x')
+            ->hidden(fn (Model $record): bool => ! $this->canDetach($record));
     }
 
     protected function getDetachBulkAction(): Tables\Actions\BulkAction

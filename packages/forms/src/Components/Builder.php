@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 
 class Builder extends Field
 {
+    use Concerns\CanBeCollapsed;
     use Concerns\CanLimitItemsLength;
 
     protected string $view = 'forms::components.builder';
@@ -26,7 +27,9 @@ class Builder extends Field
 
     protected bool | Closure $isItemDeletionDisabled = false;
 
-    protected bool | Closure $showBlockLabels = false;
+    protected bool | Closure $hasBlockLabels = true;
+
+    protected bool | Closure $isInset = false;
 
     protected function setUp(): void
     {
@@ -36,7 +39,7 @@ class Builder extends Field
 
         $this->afterStateHydrated(static function (Builder $component, ?array $state): void {
             $items = collect($state ?? [])
-                ->mapWithKeys(fn ($itemData) => [(string) Str::uuid() => $itemData])
+                ->mapWithKeys(static fn ($itemData) => [(string) Str::uuid() => $itemData])
                 ->toArray();
 
             $component->state($items);
@@ -45,10 +48,6 @@ class Builder extends Field
         $this->registerListeners([
             'builder::createItem' => [
                 function (Builder $component, string $statePath, string $block, ?string $afterUuid = null): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($component->isItemCreationDisabled()) {
                         return;
                     }
@@ -84,14 +83,12 @@ class Builder extends Field
                     $component->getChildComponentContainers()[$newUuid]->fill();
 
                     $component->hydrateDefaultItemState($newUuid);
+
+                    $component->collapsed(false);
                 },
             ],
             'builder::deleteItem' => [
                 function (Builder $component, string $statePath, string $uuidToDelete): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($component->isItemDeletionDisabled()) {
                         return;
                     }
@@ -110,10 +107,6 @@ class Builder extends Field
             ],
             'builder::moveItemDown' => [
                 function (Builder $component, string $statePath, string $uuidToMoveDown): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($component->isItemMovementDisabled()) {
                         return;
                     }
@@ -130,10 +123,6 @@ class Builder extends Field
             ],
             'builder::moveItemUp' => [
                 function (Builder $component, string $statePath, string $uuidToMoveUp): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($component->isItemMovementDisabled()) {
                         return;
                     }
@@ -150,10 +139,6 @@ class Builder extends Field
             ],
             'builder::moveItems' => [
                 function (Builder $component, string $statePath, array $uuids): void {
-                    if ($component->isDisabled()) {
-                        return;
-                    }
-
                     if ($component->isItemMovementDisabled()) {
                         return;
                     }
@@ -225,6 +210,13 @@ class Builder extends Field
         return $this;
     }
 
+    public function inset(bool | Closure $condition = true): static
+    {
+        $this->isInset = $condition;
+
+        return $this;
+    }
+
     public function hydrateDefaultItemState(string $uuid): void
     {
         $this->getChildComponentContainers()[$uuid]->hydrateDefaultState();
@@ -232,7 +224,14 @@ class Builder extends Field
 
     public function showBlockLabels(bool | Closure $condition = true): static
     {
-        $this->showBlockLabels = $condition;
+        $this->withBlockLabels($condition);
+
+        return $this;
+    }
+
+    public function withBlockLabels(bool | Closure $condition = true): static
+    {
+        $this->hasBlockLabels = $condition;
 
         return $this;
     }
@@ -253,13 +252,15 @@ class Builder extends Field
     public function getChildComponentContainers(bool $withHidden = false): array
     {
         return collect($this->getState())
-            ->map(function ($itemData, $itemIndex): ComponentContainer {
-                return $this->getBlock($itemData['type'])
+            ->filter(fn (array $itemData): bool => $this->hasBlock($itemData['type']))
+            ->map(
+                fn (array $itemData, $itemIndex): ComponentContainer => $this
+                    ->getBlock($itemData['type'])
                     ->getChildComponentContainer()
                     ->getClone()
                     ->statePath("{$itemIndex}.data")
-                    ->inlineLabel(false);
-            })
+                    ->inlineLabel(false),
+            )
             ->toArray();
     }
 
@@ -280,21 +281,26 @@ class Builder extends Field
 
     public function isItemMovementDisabled(): bool
     {
-        return $this->evaluate($this->isItemMovementDisabled);
+        return $this->evaluate($this->isItemMovementDisabled) || $this->isDisabled();
     }
 
     public function isItemCreationDisabled(): bool
     {
-        return $this->evaluate($this->isItemCreationDisabled);
+        return $this->evaluate($this->isItemCreationDisabled) || $this->isDisabled() || (filled($this->getMaxItems()) && ($this->getMaxItems() <= $this->getItemsCount()));
     }
 
     public function isItemDeletionDisabled(): bool
     {
-        return $this->evaluate($this->isItemDeletionDisabled);
+        return $this->evaluate($this->isItemDeletionDisabled) || $this->isDisabled();
     }
 
-    public function shouldShowBlockLabels(): bool
+    public function hasBlockLabels(): bool
     {
-        return (bool) $this->evaluate($this->showBlockLabels);
+        return (bool) $this->evaluate($this->hasBlockLabels);
+    }
+
+    public function isInset(): bool
+    {
+        return (bool) $this->evaluate($this->isInset);
     }
 }

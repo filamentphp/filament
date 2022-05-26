@@ -1,5 +1,9 @@
+@props([
+    'maxContentWidth' => null,
+])
+
 <x-filament::layouts.base :title="$title">
-    <div class="flex min-h-screen w-full filament-app-layout">
+    <div class="flex min-h-screen overflow-x-hidden w-full filament-app-layout">
         <div
             x-data="{}"
             x-cloak
@@ -29,7 +33,7 @@
             ])>
                 <div @class([
                     'flex items-center w-full px-2 mx-auto sm:px-4 md:px-6 lg:px-8',
-                    match (config('filament.layout.max_content_width')) {
+                    match ($maxContentWidth ?? config('filament.layout.max_content_width')) {
                         'xl' => 'max-w-xl',
                         '2xl' => 'max-w-2xl',
                         '3xl' => 'max-w-3xl',
@@ -64,7 +68,7 @@
 
             <div @class([
                 'flex-1 w-full px-4 mx-auto md:px-6 lg:px-8 filament-main-content',
-                match (config('filament.layout.max_content_width')) {
+                match ($maxContentWidth ?? config('filament.layout.max_content_width')) {
                     'xl' => 'max-w-xl',
                     '2xl' => 'max-w-2xl',
                     '3xl' => 'max-w-3xl',
@@ -75,7 +79,11 @@
                     default => 'max-w-7xl',
                 },
             ])>
+                {{ \Filament\Facades\Filament::renderHook('content.start') }}
+
                 {{ $slot }}
+
+                {{ \Filament\Facades\Filament::renderHook('content.end') }}
             </div>
 
             <div class="py-4 shrink-0 filament-main-footer">

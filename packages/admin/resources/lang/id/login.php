@@ -4,7 +4,7 @@ return [
 
     'title' => 'Login',
 
-    'heading' => 'Masuk ke akun Anda ',
+    'heading' => 'Masuk ke akun Anda',
 
     'buttons' => [
 
@@ -31,7 +31,7 @@ return [
     ],
 
     'messages' => [
-        'failed' => 'Gagal tidak cocok dengan catatan kami.',
+        'failed' => 'Kredensial yang diberikan tidak dapat ditemukan.',
         'throttled' => 'Terlalu banyak mencoba masuk. Silahkan ulangi dalam :seconds detik.',
     ],
 

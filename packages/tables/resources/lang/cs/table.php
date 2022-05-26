@@ -53,28 +53,20 @@ return [
             'label' => 'Otevřít panel akcí',
         ],
 
+        'toggle_columns' => [
+            'label' => 'Skrýt/zobrazit sloupce',
+        ],
+
     ],
 
     'actions' => [
 
-        'modal' => [
+        'replicate' => [
 
-            'requires_confirmation_subheading' => 'Opravdu chcete tuto akci provést?',
+            'label' => 'Duplikovat',
 
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Zrušit',
-                ],
-
-                'confirm' => [
-                    'label' => 'Potvrdit',
-                ],
-
-                'submit' => [
-                    'label' => 'Odeslat',
-                ],
-
+            'messages' => [
+                'replicated' => 'Záznam duplikován',
             ],
 
         ],
@@ -83,6 +75,30 @@ return [
 
     'empty' => [
         'heading' => 'Žádné záznamy nenalezeny',
+    ],
+
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Resetovat filtry',
+            ],
+
+            'close' => [
+                'label' => 'Zavřít',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Vše',
+        ],
+
+        'select' => [
+            'placeholder' => 'Vše',
+        ],
+
     ],
 
     'selection_indicator' => [

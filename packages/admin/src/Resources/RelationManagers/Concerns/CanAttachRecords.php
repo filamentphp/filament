@@ -4,11 +4,12 @@ namespace Filament\Resources\RelationManagers\Concerns;
 
 use Filament\Forms\Components\Select;
 use Filament\Resources\Form;
+use Filament\Resources\RelationManagers\BelongsToManyRelationManager;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
-use Filament\Tables\Actions\Modal\Actions\ButtonAction;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
 
@@ -56,7 +57,8 @@ trait CanAttachRecords
         return Select::make('recordId')
             ->label(__('filament::resources/relation-managers/attach.action.modal.fields.record_id.label'))
             ->searchable()
-            ->getSearchResultsUsing(static function (Select $component, RelationManager $livewire, string $searchQuery): array {
+            ->getSearchResultsUsing(static function (Select $component, BelongsToManyRelationManager $livewire, string $searchQuery): array {
+                /** @var BelongsToMany $relationship */
                 $relationship = $livewire->getRelationship();
 
                 $displayColumnName = static::getRecordTitleAttribute();
@@ -77,23 +79,36 @@ trait CanAttachRecords
                 $searchColumns = $component->getSearchColumns() ?? [$displayColumnName];
                 $isFirst = true;
 
-                foreach ($searchColumns as $searchColumnName) {
-                    $whereClause = $isFirst ? 'where' : 'orWhere';
+                $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $searchQuery): Builder {
+                    foreach ($searchColumns as $searchColumnName) {
+                        $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                    $relationshipQuery->{$whereClause}(
-                        $searchColumnName,
-                        $searchOperator,
-                        "%{$searchQuery}%",
-                    );
+                        $query->{$whereClause}(
+                            $searchColumnName,
+                            $searchOperator,
+                            "%{$searchQuery}%",
+                        );
 
-                    $isFirst = false;
-                }
+                        $isFirst = false;
+                    }
+
+                    return $query;
+                });
+
+                $relatedKeyName = $relationship->getRelatedKeyName();
 
                 return $relationshipQuery
-                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
-                        $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
-                    })
-                    ->pluck($displayColumnName, $relationship->getRelated()->getKeyName())
+                    ->when(
+                        ! $livewire->allowsDuplicates(),
+                        static fn (Builder $query): Builder => $query->whereDoesntHave(
+                            $livewire->getInverseRelationshipName(),
+                            static function (Builder $query) use ($livewire): Builder {
+                                return $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                            }
+                        ),
+                    )
+                    ->get()
+                    ->mapWithKeys(static fn (Model $record): array => [$record->{$relatedKeyName} => static::getRecordTitle($record)])
                     ->toArray();
             })
             ->getOptionLabelUsing(static fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->query()->find($value)))
@@ -102,9 +117,12 @@ trait CanAttachRecords
                     return [];
                 }
 
+                /** @var BelongsToMany $relationship */
                 $relationship = $livewire->getRelationship();
 
                 $displayColumnName = static::getRecordTitleAttribute();
+
+                $relatedKeyName = $relationship->getRelatedKeyName();
 
                 return $relationship
                     ->getRelated()
@@ -113,7 +131,8 @@ trait CanAttachRecords
                     ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
                         $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
                     })
-                    ->pluck($displayColumnName, $relationship->getRelated()->getKeyName())
+                    ->get()
+                    ->mapWithKeys(static fn (Model $record): array => [$record->{$relatedKeyName} => static::getRecordTitle($record)])
                     ->toArray();
             })
             ->disableLabel();
@@ -178,17 +197,20 @@ trait CanAttachRecords
         $this->attach(another: true);
     }
 
-    protected function getAttachAction(): Tables\Actions\ButtonAction
+    protected function getAttachAction(): Tables\Actions\Action
     {
-        return Tables\Actions\ButtonAction::make('attach')
+        return Tables\Actions\Action::make('attach')
             ->label(__('filament::resources/relation-managers/attach.action.label'))
             ->form($this->getAttachFormSchema())
             ->mountUsing(fn () => $this->fillAttachForm())
+            ->modalSubmitAction($this->getAttachActionAttachModalAction())
+            ->modalCancelAction($this->getAttachActionCancelModalAction())
             ->modalActions($this->getAttachActionModalActions())
             ->modalHeading(__('filament::resources/relation-managers/attach.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->modalWidth('lg')
             ->action(fn () => $this->attach())
-            ->color('secondary');
+            ->color('secondary')
+            ->button();
     }
 
     protected function getAttachActionModalActions(): array
@@ -202,7 +224,7 @@ trait CanAttachRecords
 
     protected function getAttachActionAttachModalAction(): Tables\Actions\Modal\Actions\Action
     {
-        return ButtonAction::make('attach')
+        return Tables\Actions\Action::makeModalAction('attach')
             ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach.label'))
             ->submit('callMountedTableAction')
             ->color('primary');
@@ -210,7 +232,7 @@ trait CanAttachRecords
 
     protected function getAttachActionAttachAndAttachAnotherModalAction(): Tables\Actions\Modal\Actions\Action
     {
-        return ButtonAction::make('attachAndAttachAnother')
+        return Tables\Actions\Action::makeModalAction('attachAndAttachAnother')
             ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach_and_attach_another.label'))
             ->action('attachAndAttachAnother')
             ->color('secondary');
@@ -218,8 +240,8 @@ trait CanAttachRecords
 
     protected function getAttachActionCancelModalAction(): Tables\Actions\Modal\Actions\Action
     {
-        return ButtonAction::make('cancel')
-            ->label(__('tables::table.actions.modal.buttons.cancel.label'))
+        return Tables\Actions\Action::makeModalAction('cancel')
+            ->label(__('filament-support::actions.modal.buttons.cancel.label'))
             ->cancel()
             ->color('secondary');
     }

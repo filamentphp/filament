@@ -35,6 +35,8 @@ trait CanCreateRecords
             ->url(null)
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
+            ->modalSubmitAction($this->getCreateActionCreateModalAction())
+            ->modalCancelAction($this->getCreateActionCancelModalAction())
             ->modalActions($this->getCreateActionModalActions())
             ->modalHeading(__('filament::resources/pages/list-records.actions.create.modal.heading', ['label' => Str::title(static::getResource()::getLabel())]))
             ->action(fn () => $this->create());
@@ -49,26 +51,26 @@ trait CanCreateRecords
         );
     }
 
-    protected function getCreateActionCreateModalAction(): Modal\Actions\ButtonAction
+    protected function getCreateActionCreateModalAction(): Modal\Actions\Action
     {
-        return Modal\Actions\ButtonAction::make('create')
+        return Action::makeModalAction('create')
             ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create.label'))
             ->submit('callMountedAction')
             ->color('primary');
     }
 
-    protected function getCreateActionCreateAndCreateAnotherModalAction(): Modal\Actions\ButtonAction
+    protected function getCreateActionCreateAndCreateAnotherModalAction(): Modal\Actions\Action
     {
-        return Modal\Actions\ButtonAction::make('createAndCreateAnother')
+        return Action::makeModalAction('createAndCreateAnother')
             ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create_and_create_another.label'))
             ->action('createAndCreateAnother')
             ->color('secondary');
     }
 
-    protected function getCreateActionCancelModalAction(): Modal\Actions\ButtonAction
+    protected function getCreateActionCancelModalAction(): Modal\Actions\Action
     {
-        return Modal\Actions\ButtonAction::make('cancel')
-            ->label(__('tables::table.actions.modal.buttons.cancel.label'))
+        return Action::makeModalAction('cancel')
+            ->label(__('filament-support::actions.modal.buttons.cancel.label'))
             ->cancel()
             ->color('secondary');
     }

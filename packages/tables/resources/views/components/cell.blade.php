@@ -28,10 +28,10 @@
 >
     @if ($action || ((! $url) && $recordAction))
         <button
-            wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $record->getKey() }}')"
-            wire:target="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $record->getKey() }}')"
-            wire:loading.attr="disabled"
-            wire:loading.class="opacity-70 cursor-wait"
+            wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
+            wire:target="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
+            wire:loading.attr.delay="disabled"
+            wire:loading.class.delay="opacity-70 cursor-wait"
             type="button"
             class="block text-left"
         >

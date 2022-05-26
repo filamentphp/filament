@@ -2,24 +2,10 @@
 
 namespace Filament\Tables\Actions\Modal\Actions;
 
+/**
+ * @deprecated Use `\Filament\Tables\Actions\Modal\Actions\Action` instead.
+ * @see Action
+ */
 class ButtonAction extends Action
 {
-    use Concerns\CanBeOutlined;
-    use Concerns\HasIcon;
-
-    protected string $view = 'tables::actions.modal.actions.button-action';
-
-    protected ?string $iconPosition = null;
-
-    public function iconPosition(string $position): static
-    {
-        $this->iconPosition = $position;
-
-        return $this;
-    }
-
-    public function getIconPosition(): ?string
-    {
-        return $this->iconPosition;
-    }
 }

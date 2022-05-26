@@ -13,7 +13,7 @@ return [
             'fields' => [
 
                 'record_ids' => [
-                    'label' => 'اسناد',
+                    'label' => 'رکوردها',
                 ],
 
             ],

@@ -7,6 +7,6 @@ return [
         'placeholder' => 'Hledat',
     ],
 
-    'no_results_message' => 'Nenalezeny žádné záznamy.',
+    'no_results_message' => 'Nenalezeny žádné výsledky.',
 
 ];

@@ -8,12 +8,15 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 interface HasTable extends HasForms
 {
     public function callTableColumnAction(string $columnName, string $recordKey);
 
     public function deselectAllTableRecords(): void;
+
+    public function getActiveTableLocale(): ?string;
 
     public function getAllTableRecordKeys(): array;
 
@@ -33,11 +36,11 @@ interface HasTable extends HasForms
 
     public function getMountedTableAction(): ?Action;
 
-    public function getMountedTableActionForm(): ComponentContainer;
+    public function getMountedTableActionForm(): ?ComponentContainer;
 
     public function getMountedTableBulkAction(): ?BulkAction;
 
-    public function getMountedTableBulkActionForm(): ComponentContainer;
+    public function getMountedTableBulkActionForm(): ?ComponentContainer;
 
     public function getTableFiltersForm(): ComponentContainer;
 
@@ -58,4 +61,6 @@ interface HasTable extends HasForms
     public function isTableColumnToggledHidden(string $name): bool;
 
     public function getTableColumnToggleForm(): ComponentContainer;
+
+    public function getTableRecordKey(Model $record): string;
 }

@@ -5,9 +5,19 @@ return [
     'direction' => 'ltr',
 
     'buttons' => [
-        'logout' => [
-            'label' => 'Odhlásit',
+
+        'dark_mode' => [
+            'label' => 'Zapnout tmavý režim',
         ],
+
+        'light_mode' => [
+            'label' => 'Zapnout světlý režim',
+        ],
+
+        'logout' => [
+            'label' => 'Odhlásit se',
+        ],
+
     ],
 
 ];

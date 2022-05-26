@@ -46,13 +46,22 @@ trait InteractsWithTableQuery
         return $query;
     }
 
-    public function applySearchConstraint(Builder $query, string $searchQuery, bool &$isFirst): Builder
+    public function applySearchConstraint(Builder $query, string $search, bool &$isFirst): Builder
     {
         if ($this->isHidden()) {
             return $query;
         }
 
         if (! $this->isSearchable()) {
+            return $query;
+        }
+
+        if ($this->searchQuery) {
+            $this->evaluate($this->searchQuery, [
+                'query' => $query,
+                'search' => $search,
+            ]);
+
             return $query;
         }
 
@@ -71,16 +80,12 @@ trait InteractsWithTableQuery
 
             $query->when(
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName),
-                function (Builder $query) use ($searchColumnName, $searchOperator, $searchQuery, $whereClause): Builder {
-                    $livewire = $this->getLivewire();
-
-                    $locale = isset($livewire->activeLocale)
-                        ? $livewire->activeLocale
-                        : app()->getLocale();
+                function (Builder $query) use ($searchColumnName, $searchOperator, $search, $whereClause): Builder {
+                    $activeLocale = $this->getLivewire()->getActiveTableLocale() ?: app()->getLocale();
 
                     return $query->{"{$whereClause}Raw"}(
-                        "lower({$searchColumnName}->\"$.{$locale}\") {$searchOperator} ?",
-                        "%{$searchQuery}%",
+                        "lower(json_extract({$searchColumnName}, \"$.{$activeLocale}\")) {$searchOperator} ?",
+                        "%{$search}%",
                     );
                 },
                 fn (Builder $query): Builder => $query->when(
@@ -89,12 +94,12 @@ trait InteractsWithTableQuery
                         $this->getRelationshipName(),
                         $searchColumnName,
                         $searchOperator,
-                        "%{$searchQuery}%",
+                        "%{$search}%",
                     ),
                     fn (Builder $query): Builder => $query->{$whereClause}(
                         $searchColumnName,
                         $searchOperator,
-                        "%{$searchQuery}%",
+                        "%{$search}%",
                     ),
                 ),
             );
@@ -115,7 +120,16 @@ trait InteractsWithTableQuery
             return $query;
         }
 
-        foreach (array_reverse($this->getSortColumns()) as $sortColumnName) {
+        if ($this->sortQuery) {
+            $this->evaluate($this->sortQuery, [
+                'direction' => $direction,
+                'query' => $query,
+            ]);
+
+            return $query;
+        }
+
+        foreach (array_reverse($this->getSortColumns()) as $sortColumn) {
             $query->when(
                 $this->queriesRelationships(),
                 fn ($query) => $query->orderBy(
@@ -124,12 +138,12 @@ trait InteractsWithTableQuery
                         ->getRelationExistenceQuery(
                             $this->getRelatedModel($query)->query(),
                             $query,
-                            $sortColumnName,
+                            $sortColumn,
                         )
                         ->getQuery(),
                     $direction,
                 ),
-                fn ($query) => $query->orderBy($sortColumnName, $direction),
+                fn ($query) => $query->orderBy($sortColumn, $direction),
             );
         }
 

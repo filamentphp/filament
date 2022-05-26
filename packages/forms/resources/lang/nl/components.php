@@ -2,12 +2,6 @@
 
 return [
 
-    'multi_select' => [
-        'no_search_results_message' => 'Er zijn geen resultaten voor je zoekopdracht.',
-        'placeholder' => 'Selecteer een optie',
-        'search_prompt' => 'Geen opties om te selecteren.',
-    ],
-
     'rich_editor' => [
 
         'dialogs' => [
@@ -30,9 +24,9 @@ return [
         'toolbar_buttons' => [
             'attach_files' => 'Voeg bestanden toe',
             'blockquote' => 'Quote',
-            'bold' => 'Dikgedrukt',
+            'bold' => 'Vetdruk',
             'bullet_list' => 'Bullets',
-            'code_block' => 'codeBlock',
+            'code_block' => 'Codeblock',
             'h1' => 'Titel',
             'h2' => 'Hoofdtekst',
             'h3' => 'Sub hoofdtekst',
@@ -47,8 +41,23 @@ return [
     ],
 
     'select' => [
+        'actions' => [
+            'create_option' => [
+                'modal' => [
+                    'heading' => 'Creëer',
+                    'actions' => [
+                        'create' => [
+                            'label' => 'Creëer',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+
+        'loading_message' => 'Even geduld...',
         'no_search_results_message' => 'Er zijn geen resultaten voor je zoekopdracht.',
         'placeholder' => 'Selecteer een optie',
+        'searching_message' => 'Zoeken...',
         'search_prompt' => 'Start met typen om te zoeken...',
     ],
 
@@ -56,4 +65,15 @@ return [
         'placeholder' => 'Nieuwe tag',
     ],
 
+    'wizard' => [
+        'buttons' => [
+            'previous_step' => [
+                'label' => 'Vorige',
+            ],
+
+            'next_step' => [
+                'label' => 'Volgende',
+            ],
+        ],
+    ],
 ];

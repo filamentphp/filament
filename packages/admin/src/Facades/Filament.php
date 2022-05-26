@@ -5,6 +5,7 @@ namespace Filament\Facades;
 use Closure;
 use Filament\FilamentManager;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
+use Filament\Tables\Actions\Action;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +32,7 @@ use Illuminate\Support\HtmlString;
  * @method static string getUserName(Authenticatable $user)
  * @method static array getWidgets()
  * @method static void globalSearchProvider(string $provider)
+ * @method static Action makeTableAction(string $name)
  * @method static void navigation(\Closure $builder)
  * @method static void notify(string $status, string $message, bool $isAfterRedirect = false)
  * @method static void registerNavigationGroups(array $groups)
@@ -38,8 +40,7 @@ use Illuminate\Support\HtmlString;
  * @method static void registerPages(array $pages)
  * @method static void registerRenderHook(string $name, \Closure $callback)
  * @method static void registerResources(array $resources)
- * @method static void registerBeforeCoreScripts(array $scripts)
- * @method static void registerScripts(array $scripts)
+ * @method static void registerScripts(array $scripts, bool $shouldBeLoadedBeforeCoreScripts = false)
  * @method static void registerScriptData(array $data)
  * @method static void registerStyles(array $styles)
  * @method static void registerTheme(string $url)

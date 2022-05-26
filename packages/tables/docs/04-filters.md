@@ -49,6 +49,16 @@ use Filament\Tables\Filters\Filter;
 Filter::make('is_featured')->label('Featured')
 ```
 
+### Using a toggle button instead of a checkbox
+
+By default, filters use a checkbox to control the filter. Instead, you may switch to using a toggle button, using the `toggle()` method:
+
+```php
+use Filament\Tables\Filters\Filter;
+
+Filter::make('is_featured')->toggle()
+```
+
 ### Default filters
 
 You may set a filter to be enabled by default, using the `default()` method:
@@ -221,7 +231,7 @@ Filter::make('created_at')
     ])
 ```
 
-## Customizing popover columns
+## Appearance
 
 By default, filters are displayed in a thin popover on the right side of the table, in 1 column.
 
@@ -240,5 +250,18 @@ Adding more columns to the filter form will automatically widen the popover. To 
 protected function getTableFiltersFormWidth(): string
 {
     return '4xl';
+}
+```
+
+## Displaying filters above the table content
+
+To render the filters above the table content instead of in a popover, you may use:
+
+```php
+use Filament\Tables\Filters\Layout;
+
+protected function getTableFiltersLayout(): ?string
+{
+    return Layout::AboveContent;
 }
 ```

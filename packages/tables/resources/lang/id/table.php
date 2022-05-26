@@ -50,31 +50,23 @@ return [
         ],
 
         'open_actions' => [
-            'label' => 'Open actions',
+            'label' => 'Aksi',
+        ],
+
+        'toggle_columns' => [
+            'label' => 'Pilih kolom',
         ],
 
     ],
 
     'actions' => [
 
-        'modal' => [
+        'replicate' => [
 
-            'requires_confirmation_subheading' => 'Apakah Anda yakin ingin melakukan ini?',
+            'label' => 'Duplikat data',
 
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Batalkan',
-                ],
-
-                'confirm' => [
-                    'label' => 'Konfirmasi',
-                ],
-
-                'submit' => [
-                    'label' => 'Kirim',
-                ],
-
+            'messages' => [
+                'replicated' => 'Data berhasil diduplikat',
             ],
 
         ],
@@ -82,7 +74,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'Data tidak ditemukan',
+        'heading' => 'Tidak ada data yang ditemukan',
     ],
 
     'filters' => [
@@ -91,6 +83,10 @@ return [
 
             'reset' => [
                 'label' => 'Atur ulang filter',
+            ],
+
+            'close' => [
+                'label' => 'Tutup',
             ],
 
         ],

@@ -9,6 +9,7 @@ use Livewire\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Throwable;
 
 class SpatieMediaLibraryFileUpload extends FileUpload
 {
@@ -16,19 +17,15 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     protected string | Closure | null $conversion = null;
 
+    protected array | Closure | null $customProperties = null;
+
     protected string | Closure | null $mediaName = null;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->afterStateHydrated(static function (SpatieMediaLibraryFileUpload $component, ?HasMedia $record): void {
-            if (! $record) {
-                $component->state([]);
-
-                return;
-            }
-
+        $this->loadStateFromRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component, ?HasMedia $record): void {
             $files = $record->getMedia($component->getCollection())
                 ->when(
                     ! $component->isMultiple(),
@@ -42,6 +39,14 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 ->toArray();
 
             $component->state($files);
+        });
+
+        $this->afterStateHydrated(static function (BaseFileUpload $component, string | array | null $state): void {
+            if (is_array($state)) {
+                return;
+            }
+
+            $component->state([]);
         });
 
         $this->beforeStateDehydrated(null);
@@ -59,7 +64,13 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $media = $mediaClass::findByUuid($file);
 
             if ($component->getVisibility() === 'private') {
-                return $media?->getTemporaryUrl(now()->addMinutes(5));
+                try {
+                    return $media?->getTemporaryUrl(
+                        now()->addMinutes(5),
+                    );
+                } catch (Throwable $exception) {
+                    // This driver does not support creating temporary URLs.
+                }
             }
 
             if ($component->getConversion() && $media->hasGeneratedConversion($component->getConversion())) {
@@ -83,10 +94,15 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             $filename = $component->getUploadedFileNameForStorage($file);
 
-            $media = $mediaAdder
+            $mediaAdder
                 ->usingFileName($filename)
-                ->usingName($component->getMediaName() ?? '')
-                ->toMediaCollection($component->getCollection(), $component->getDiskName());
+                ->withCustomProperties($component->getCustomProperties());
+
+            if (filled($mediaName = $component->getMediaName())) {
+                $mediaAdder->usingName($mediaName);
+            }
+
+            $media = $mediaAdder->toMediaCollection($component->getCollection(), $component->getDiskName());
 
             return $media->getAttributeValue('uuid');
         });
@@ -125,6 +141,13 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
+    public function customProperties(array | Closure | null $properties): static
+    {
+        $this->customProperties = $properties;
+
+        return $this;
+    }
+
     public function getCollection(): string
     {
         return $this->evaluate($this->collection) ?? 'default';
@@ -133,6 +156,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     public function getConversion(): ?string
     {
         return $this->evaluate($this->conversion);
+    }
+
+    public function getCustomProperties(): array
+    {
+        return $this->evaluate($this->customProperties) ?? [];
     }
 
     public function mediaName(string | Closure | null $name): static

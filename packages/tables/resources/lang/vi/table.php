@@ -55,32 +55,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Bạn có chắc muốn thực hiện hành động này?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Hủy',
-                ],
-
-                'confirm' => [
-                    'label' => 'Xác nhận',
-                ],
-
-                'submit' => [
-                    'label' => 'Gửi',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Không có dữ liệu nào',
     ],

@@ -27,10 +27,7 @@ export default (Alpine) => {
     Alpine.data('dateTimePickerFormComponent', ({
         displayFormat,
         firstDayOfWeek,
-        format,
         isAutofocused,
-        maxDate,
-        minDate,
         state,
     }) => {
         const timezone = dayjs.tz.guess()
@@ -50,9 +47,7 @@ export default (Alpine) => {
 
             hour: null,
 
-            maxDate,
-
-            minDate,
+            isClearingState: false,
 
             minute: null,
 
@@ -69,24 +64,14 @@ export default (Alpine) => {
             init: function () {
                 this.focusedDate = dayjs().tz(timezone)
 
-                this.maxDate = dayjs(this.maxDate)
-                if (! this.maxDate.isValid()) {
-                    this.maxDate = null
-                }
-
-                this.minDate = dayjs(this.minDate)
-                if (! this.minDate.isValid()) {
-                    this.minDate = null
-                }
-
                 let date = this.getSelectedDate() ?? dayjs().tz(timezone)
                     .hour(0)
                     .minute(0)
                     .second(0)
 
-                if (this.maxDate !== null && date.isAfter(this.maxDate)) {
+                if (this.getMaxDate() !== null && date.isAfter(this.getMaxDate())) {
                     date = null
-                } else if (this.minDate !== null && date.isBefore(this.minDate)) {
+                } else if (this.getMinDate() !== null && date.isBefore(this.getMinDate())) {
                     date = null
                 }
 
@@ -99,7 +84,7 @@ export default (Alpine) => {
                 this.setDayLabels()
 
                 if (isAutofocused) {
-                    this.openPicker()
+                    this.$nextTick(() => this.openPicker())
                 }
 
                 dayjs.addLocaleListeners(() => {
@@ -174,6 +159,10 @@ export default (Alpine) => {
                         this.hour = hour
                     }
 
+                    if (this.isClearingState) {
+                        return
+                    }
+
                     let date = this.getSelectedDate() ?? this.focusedDate
 
                     this.setState(date.hour(this.hour ?? 0))
@@ -190,6 +179,10 @@ export default (Alpine) => {
                         this.minute = 59
                     } else {
                         this.minute = minute
+                    }
+
+                    if (this.isClearingState) {
+                        return
                     }
 
                     let date = this.getSelectedDate() ?? this.focusedDate
@@ -210,6 +203,10 @@ export default (Alpine) => {
                         this.second = second
                     }
 
+                    if (this.isClearingState) {
+                        return
+                    }
+
                     let date = this.getSelectedDate() ?? this.focusedDate
 
                     this.setState(date.second(this.second ?? 0))
@@ -218,10 +215,10 @@ export default (Alpine) => {
                 this.$watch('state', () => {
                     let date = this.getSelectedDate()
 
-                    if (this.maxDate !== null && date.isAfter(this.maxDate)) {
+                    if (this.getMaxDate() !== null && date.isAfter(this.getMaxDate())) {
                         date = null
                     }
-                    if (this.minDate !== null && date.isBefore(this.minDate)) {
+                    if (this.getMinDate() !== null && date.isBefore(this.getMinDate())) {
                         date = null
                     }
 
@@ -234,9 +231,13 @@ export default (Alpine) => {
             },
 
             clearState: function () {
+                this.isClearingState = true
+
                 this.setState(null)
 
                 this.closePicker()
+
+                this.$nextTick(() => this.isClearingState = false)
             },
 
             closePicker: function () {
@@ -244,10 +245,10 @@ export default (Alpine) => {
             },
 
             dateIsDisabled: function (date) {
-                if (this.maxDate && date.isAfter(this.maxDate)) {
+                if (this.getMaxDate() && date.isAfter(this.getMaxDate())) {
                     return true
                 }
-                if (this.minDate && date.isBefore(this.minDate)) {
+                if (this.getMinDate() && date.isBefore(this.getMinDate())) {
                     return true
                 }
 
@@ -340,8 +341,20 @@ export default (Alpine) => {
                 ]
             },
 
+            getMaxDate: function () {
+                let date = dayjs(this.$refs.maxDate.value)
+
+                return date.isValid() ? date : null
+            },
+
+            getMinDate: function () {
+                let date = dayjs(this.$refs.minDate.value)
+
+                return date.isValid() ? date : null
+            },
+
             getSelectedDate: function () {
-                let date = dayjs(this.state, format)
+                let date = dayjs(this.state)
 
                 if (! date.isValid()) {
                     return null
@@ -351,7 +364,7 @@ export default (Alpine) => {
             },
 
             openPicker: function () {
-                this.focusedDate = this.getSelectedDate() ?? dayjs().tz(timezone)
+                this.focusedDate = this.getSelectedDate() ?? this.getMinDate() ?? dayjs().tz(timezone)
 
                 this.setupDaysGrid()
 
@@ -403,21 +416,20 @@ export default (Alpine) => {
             setState: function (date) {
                 if (date === null) {
                     this.state = null
-
                     this.setDisplayText()
 
                     return
-                } else {
-                    if (this.dateIsDisabled(date)) {
-                        return
-                    }
+                }
+
+                if (this.dateIsDisabled(date)) {
+                    return
                 }
 
                 this.state = date
                     .hour(this.hour ?? 0)
                     .minute(this.minute ?? 0)
                     .second(this.second ?? 0)
-                    .format(format)
+                    .format('YYYY-MM-DD HH:mm:ss')
 
                 this.setDisplayText()
             },

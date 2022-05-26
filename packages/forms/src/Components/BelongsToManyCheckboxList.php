@@ -19,11 +19,7 @@ class BelongsToManyCheckboxList extends CheckboxList
     {
         parent::setUp();
 
-        $this->afterStateHydrated(static function (BelongsToManyCheckboxList $component, ?array $state): void {
-            if (count($state ?? [])) {
-                return;
-            }
-
+        $this->loadStateFromRelationshipsUsing(static function (BelongsToManyCheckboxList $component, ?array $state): void {
             $relationship = $component->getRelationship();
             $relatedModels = $relationship->getResults();
 
@@ -34,7 +30,7 @@ class BelongsToManyCheckboxList extends CheckboxList
                 // https://github.com/laravel-filament/filament/issues/1111
                 $relatedModels
                     ->pluck($relationship->getRelatedKeyName())
-                    ->map(fn ($key): string => strval($key))
+                    ->map(static fn ($key): string => strval($key))
                     ->toArray(),
             );
         });
@@ -65,7 +61,7 @@ class BelongsToManyCheckboxList extends CheckboxList
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
-                    ->mapWithKeys(fn (Model $record) => [
+                    ->mapWithKeys(static fn (Model $record) => [
                         $record->{$relationship->getRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();

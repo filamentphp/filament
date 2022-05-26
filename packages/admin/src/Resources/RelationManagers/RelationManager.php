@@ -28,8 +28,6 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     protected static ?string $inverseRelationship = null;
 
-    protected ?Form $resourceForm = null;
-
     protected ?Table $resourceTable = null;
 
     protected static ?string $label = null;
@@ -45,15 +43,21 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return lcfirst(class_basename(static::class));
     }
 
-    protected function getResourceForm(?int $columns = null): Form
+    protected function getResourceForm(?int $columns = null, bool $isDisabled = false): Form
     {
-        if (! $this->resourceForm) {
-            $this->resourceForm = static::form(
-                Form::make()->columns($columns),
-            );
-        }
+        return static::form(
+            $this->getBaseResourceForm(
+                columns: $columns,
+                isDisabled: $isDisabled,
+            ),
+        );
+    }
 
-        return $this->resourceForm;
+    protected function getBaseResourceForm(?int $columns = null, bool $isDisabled = false): Form
+    {
+        return Form::make()
+            ->columns($columns)
+            ->disabled($isDisabled);
     }
 
     protected function callHook(string $hook): void
@@ -98,7 +102,6 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     public function getInverseRelationshipName(): string
     {
         return static::$inverseRelationship ?? (string) Str::of(class_basename($this->ownerRecord))
-            ->lower()
             ->plural()
             ->camel();
     }
@@ -116,6 +119,11 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     public static function getTitle(): string
     {
         return static::$title ?? Str::title(static::getPluralRecordLabel());
+    }
+
+    public static function getTitleForRecord(Model $ownerRecord): string
+    {
+        return static::getTitle();
     }
 
     public static function getRecordTitleAttribute(): ?string

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Livewire\TemporaryUploadedFile;
+use Throwable;
 
 class BaseFileUpload extends Field
 {
@@ -60,7 +61,8 @@ class BaseFileUpload extends Field
             }
 
             $files = collect(Arr::wrap($state))
-                ->mapWithKeys(fn (string $file): array => [(string) Str::uuid() => $file])
+                ->filter(static fn (string $file) => blank($file) || $component->getDisk()->exists($file))
+                ->mapWithKeys(static fn (string $file): array => [((string) Str::uuid()) => $file])
                 ->toArray();
 
             $component->state($files);
@@ -101,10 +103,14 @@ class BaseFileUpload extends Field
             }
 
             if ($storage->getVisibility($file) === 'private') {
-                return $storage->temporaryUrl(
-                    $file,
-                    now()->addMinutes(5),
-                );
+                try {
+                    return $storage->temporaryUrl(
+                        $file,
+                        now()->addMinutes(5),
+                    );
+                } catch (Throwable $exception) {
+                    // This driver does not support creating temporary URLs.
+                }
             }
 
             return $storage->url($file);
@@ -397,7 +403,7 @@ class BaseFileUpload extends Field
         $fileKeys = array_flip($fileKeys);
 
         $state = collect($this->getState())
-            ->sortBy(fn ($file, $fileKey) => $fileKeys[$fileKey] ?? null) // $fileKey may not be present in $fileKeys if it was added to the state during the reorder call
+            ->sortBy(static fn ($file, $fileKey) => $fileKeys[$fileKey] ?? null) // $fileKey may not be present in $fileKeys if it was added to the state during the reorder call
             ->toArray();
 
         $this->state($state);
@@ -405,7 +411,7 @@ class BaseFileUpload extends Field
 
     public function getUploadedFileUrls(): ?array
     {
-        $uploadedFileUrls = collect($this->getState() ?? [])
+        return collect($this->getState() ?? [])
             ->mapWithKeys(function (TemporaryUploadedFile | string $file, string $fileKey): array {
                 if ($file instanceof TemporaryUploadedFile) {
                     return [$fileKey => null];
@@ -422,9 +428,8 @@ class BaseFileUpload extends Field
                 ]);
 
                 return [$fileKey => ($url ?: null)];
-            })->toArray();
-
-        return $uploadedFileUrls;
+            })
+            ->toArray();
     }
 
     public function saveUploadedFiles(): void

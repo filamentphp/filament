@@ -20,6 +20,15 @@ To get started with the admin panel, you can install it using the command:
 composer require filament/filament:"^2.0"
 ```
 
+Each time you upgrade Filament, you need to run the `filament:upgrade` command. We recommend adding this to your `composer.json`'s `post-update-cmd`:
+
+```json
+"post-update-cmd": [
+    // ...
+    "@php artisan filament:upgrade"
+],
+```
+
 If you don't have one, you may create a new user account using:
 
 ```bash

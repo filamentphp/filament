@@ -51,12 +51,6 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'Hittade inget som matchade din sökning.',
-        'placeholder' => 'Välj ett alternativ',
-        'search_prompt' => 'Finns inga alternativ.',
-    ],
-
     'rich_editor' => [
 
         'dialogs' => [

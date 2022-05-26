@@ -2,8 +2,12 @@
 
 namespace Filament\Forms\Components;
 
-class Grid extends Component
+use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
+
+class Grid extends Component implements CanEntangleWithSingularRelationships
 {
+    use Concerns\EntanglesStateWithSingularRelationship;
+
     protected string $view = 'forms::components.grid';
 
     final public function __construct(array | int | null $columns)

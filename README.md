@@ -9,7 +9,7 @@
     <a href="https://php.net"><img alt="PHP 8.0" src="https://img.shields.io/badge/PHP-8.0-777BB4?style=for-the-badge&logo=php"></a>
 </p>
 
-Filament is a collection of tools for rapidly building beautiful TALL stack interfaces, designed for humans.
+Filament is a collection of tools for rapidly building beautiful TALL stack apps, designed for humans.
 
 ## Packages
 
@@ -67,17 +67,22 @@ If you want to contribute to Filament packages, you may want to test it in a rea
 Install the packages in your app's `composer.json`:
 
 ```json
-"require": {
-    "filament/filament": "dev-fix/error-message as 2.x-dev",
-    "filament/forms": "dev-fix/error-message as 2.x-dev",
-    "filament/tables": "dev-fix/error-message as 2.x-dev",
-},
-"repositories": [
-    {
-        "type": "path",
-        "url": "filament/packages/*"
-    }
-]
+{
+    ...
+    "require": {
+        "filament/filament": "dev-fix/error-message as 2.x-dev",
+        "filament/forms": "dev-fix/error-message as 2.x-dev",
+        "filament/support": "dev-fix/error-message as 2.x-dev",
+        "filament/tables": "dev-fix/error-message as 2.x-dev"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "filament/packages/*"
+        }
+    ],
+    ...
+}
 ```
 
 Now, run `composer update`.

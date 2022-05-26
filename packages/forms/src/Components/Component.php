@@ -4,14 +4,10 @@ namespace Filament\Forms\Components;
 
 use Filament\Forms\Concerns\HasColumns;
 use Filament\Forms\Concerns\HasStateBindingModifiers;
-use Filament\Support\Concerns\Configurable;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\Tappable;
-use Illuminate\View\Component as ViewComponent;
+use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasExtraAttributes;
 
-class Component extends ViewComponent implements Htmlable
+class Component extends ViewComponent
 {
     use Concerns\BelongsToContainer;
     use Concerns\BelongsToModel;
@@ -20,9 +16,8 @@ class Component extends ViewComponent implements Htmlable
     use Concerns\CanBeHidden;
     use Concerns\CanSpanColumns;
     use Concerns\Cloneable;
-    use Concerns\EvaluatesClosures;
+    use Concerns\HasActions;
     use Concerns\HasChildComponents;
-    use Concerns\HasExtraAttributes;
     use Concerns\HasFieldWrapper;
     use Concerns\HasInlineLabel;
     use Concerns\HasId;
@@ -30,28 +25,27 @@ class Component extends ViewComponent implements Htmlable
     use Concerns\HasMaxWidth;
     use Concerns\HasMeta;
     use Concerns\HasState;
-    use Concerns\HasView;
     use Concerns\ListensToEvents;
-    use Configurable;
     use HasColumns;
+    use HasExtraAttributes;
     use HasStateBindingModifiers;
-    use Macroable;
-    use Tappable;
 
-    protected function setUp(): void
+    protected string $evaluationIdentifier = 'component';
+
+    protected function getDefaultEvaluationParameters(): array
     {
-        $this->configure();
+        return array_merge(parent::getDefaultEvaluationParameters(), [
+            'get' => $this->getGetCallback(),
+            'livewire' => $this->getLivewire(),
+            'model' => $this->getModel(),
+            'record' => $this->getRecord(),
+            'set' => $this->getSetCallback(),
+            'state' => $this->shouldEvaluateWithState() ? $this->getState() : null,
+        ]);
     }
 
-    public function toHtml(): string
+    protected function shouldEvaluateWithState(): bool
     {
-        return $this->render()->render();
-    }
-
-    public function render(): View
-    {
-        return view($this->getView(), array_merge($this->data(), [
-            'component' => $this,
-        ]));
+        return true;
     }
 }

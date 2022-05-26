@@ -7,8 +7,8 @@
     :outlined="$isOutlined()"
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
+    :attributes="$getExtraAttributeBag()"
     class="filament-tables-modal-button-action"
-
 >
     {{ $getLabel() }}
 </x-tables::button>

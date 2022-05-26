@@ -19,7 +19,7 @@ trait InteractsWithTable
     use HasActions;
     use HasBulkActions;
     use HasColumns;
-    use HasContentFooter;
+    use HasContent;
     use HasEmptyState;
     use HasFilters;
     use HasHeader;
@@ -27,6 +27,8 @@ trait InteractsWithTable
     use HasRecordAction;
     use HasRecordUrl;
     use Forms\Concerns\InteractsWithForms;
+
+    protected bool $hasMounted = false;
 
     protected Table $table;
 
@@ -40,11 +42,21 @@ trait InteractsWithTable
         $this->cacheTableHeaderActions();
 
         $this->cacheTableColumns();
+        $this->cacheForm('toggleTableColumnForm', $this->getTableColumnToggleForm());
 
         $this->cacheTableFilters();
-        $this->getTableFiltersForm()->fill($this->tableFilters);
+        $this->cacheForm('tableFiltersForm', $this->getTableFiltersForm());
 
-        $this->prepareToggledTableColumns();
+        if (! $this->hasMounted) {
+            $this->getTableColumnToggleForm()->fill(session()->get(
+                $this->getTableColumnToggleFormStateSessionKey(),
+                $this->getDefaultTableColumnToggleState()
+            ));
+
+            $this->getTableFiltersForm()->fill($this->tableFilters);
+
+            $this->hasMounted = true;
+        }
     }
 
     public function mountInteractsWithTable(): void
@@ -65,6 +77,7 @@ trait InteractsWithTable
     protected function getTable(): Table
     {
         return $this->makeTable()
+            ->content($this->getTableContent())
             ->contentFooter($this->getTableContentFooter())
             ->description($this->getTableDescription())
             ->emptyState($this->getTableEmptyState())
@@ -73,6 +86,7 @@ trait InteractsWithTable
             ->emptyStateIcon($this->getTableEmptyStateIcon())
             ->enablePagination($this->isTablePaginationEnabled())
             ->filtersFormWidth($this->getTableFiltersFormWidth())
+            ->filtersLayout($this->getTableFiltersLayout())
             ->recordAction($this->getTableRecordAction())
             ->getRecordUrlUsing($this->getTableRecordUrlUsing())
             ->header($this->getTableHeader())
@@ -100,27 +114,16 @@ trait InteractsWithTable
         return $this->getTableForms();
     }
 
+    public function getActiveTableLocale(): ?string
+    {
+        return null;
+    }
+
     protected function getTableForms(): array
     {
         return [
-            'mountedTableActionForm' => $this->makeForm()
-                ->schema(($action = $this->getMountedTableAction()) ? $action->getFormSchema() : [])
-                ->model($this->getMountedTableActionRecord() ?? $this->getTableQuery()->getModel()::class)
-                ->statePath('mountedTableActionData'),
-            'mountedTableBulkActionForm' => $this->makeForm()
-                ->schema(($action = $this->getMountedTableBulkAction()) ? $action->getFormSchema() : [])
-                ->model($this->getTableQuery()->getModel()::class)
-                ->statePath('mountedTableBulkActionData'),
-            'tableFiltersForm' => $this->makeForm()
-                ->schema($this->getTableFiltersFormSchema())
-                ->columns($this->getTableFiltersFormColumns())
-                ->statePath('tableFilters')
-                ->reactive(),
-            'toggleTableColumnForm' => $this->makeForm()
-                ->schema($this->getTableColumnToggleFormSchema())
-                ->columns($this->getTableColumnToggleFormColumns())
-                ->statePath('toggledTableColumns')
-                ->reactive(),
+            'mountedTableActionForm' => $this->getMountedTableActionForm(),
+            'mountedTableBulkActionForm' => $this->getMountedTableBulkActionForm(),
         ];
     }
 

@@ -11,7 +11,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Telah dihapus',
+            'deleted' => 'Data berhasil dihapus',
         ],
 
     ],
@@ -25,7 +25,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Telah dihapus',
+            'deleted' => 'Data berhasil dihapus',
         ],
 
     ],

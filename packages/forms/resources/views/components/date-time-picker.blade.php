@@ -23,10 +23,7 @@
         x-data="dateTimePickerFormComponent({
             displayFormat: '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
-            format: '{{ convert_date_format($getFormat())->to('day.js') }}',
             isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
-            maxDate: '{{ $getMaxDate() }}',
-            minDate: '{{ $getMinDate() }}',
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
         x-on:click.away="closePicker()"
@@ -35,6 +32,9 @@
         {{ $attributes->merge($getExtraAttributes())->class(['relative filament-forms-date-time-picker-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
+        <input x-ref="maxDate" type="hidden" value="{{ $getMaxDate() }}" />
+        <input x-ref="minDate" type="hidden" value="{{ $getMinDate() }}" />
+
         <button
             @unless($isDisabled())
                 x-ref="button"

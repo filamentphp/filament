@@ -2,26 +2,10 @@
 
 namespace Filament\Pages\Actions;
 
+/**
+ * @deprecated Use `\Filament\Pages\Actions\Action` instead.
+ * @see Action
+ */
 class ButtonAction extends Action
 {
-    use Concerns\CanBeOutlined;
-    use Concerns\CanSubmitForm;
-    use Concerns\HasIcon;
-    use Concerns\HasTooltip;
-
-    protected string $view = 'filament::pages.actions.button-action';
-
-    protected ?string $iconPosition = null;
-
-    public function iconPosition(string $position): static
-    {
-        $this->iconPosition = $position;
-
-        return $this;
-    }
-
-    public function getIconPosition(): ?string
-    {
-        return $this->iconPosition;
-    }
 }

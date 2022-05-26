@@ -79,7 +79,7 @@ trait CanBeValidated
 
         $this->rules = array_merge(
             $this->rules,
-            array_map(fn (string | object $rule) => [$rule, $condition], $rules),
+            array_map(static fn (string | object $rule) => [$rule, $condition], $rules),
         );
 
         return $this;
