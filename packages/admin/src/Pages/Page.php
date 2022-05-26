@@ -181,7 +181,7 @@ class Page extends Component implements Forms\Contracts\HasForms
 
     protected function getMaxContentWidth(): ?string
     {
-        return static::$maxContentWidth;
+        return $this->$maxContentWidth;
     }
 
     protected function getLayoutData(): array
