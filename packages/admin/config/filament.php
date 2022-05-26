@@ -211,6 +211,7 @@ return [
             'actions' => [
                 'type' => Action::class,
             ],
+            'default_table_records_per_page_select_option' => 50,
         ],
     ],
 
