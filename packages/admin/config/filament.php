@@ -1,7 +1,6 @@
 <?php
 
 use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\UserTimeZone;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
 use Filament\Pages;
@@ -291,15 +290,5 @@ return [
             MirrorConfigToSubpackages::class,
         ],
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Timezone
-    |--------------------------------------------------------------------------
-    |
-    | You may customise the displayed timezone
-    |
-    */
-    'user_timezone' => env('FILAMENT_TIMEZONE_DISPLAY', 'UTC')
 
 ];

@@ -97,7 +97,6 @@ class FilamentServiceProvider extends PackageServiceProvider
     protected function bootLivewireComponents(): void
     {
         Livewire::addPersistentMiddleware([
-            UserTimeZone::class,
             DispatchServingFilamentEvent::class,
             MirrorConfigToSubpackages::class,
         ]);
