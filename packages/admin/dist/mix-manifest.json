@@ -1,6 +1,7 @@
 {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     "/app.js": "/app.js?id=0578a7bea73b0764791e5c671ba87d3a",
     "/app.css": "/app.css?id=f5a5bdc8c9c1307b180c3eb5be3b7fb5"
 =======
@@ -9,6 +10,9 @@
 >>>>>>> 454bd34d (feature: minimal easymde implementation)
 =======
     "/app.js": "/app.js?id=d0b442252d7a120f46b7c50a5207af06",
+=======
+    "/app.js": "/app.js?id=694999b8a57fb2a277de3d8294597ca2",
+>>>>>>> 9f05e0ae (feature: get drag and drop file uploads working)
     "/app.css": "/app.css?id=cace8710f8dc6107aa5c83c4322fe7aa"
 >>>>>>> f468ad4a (feature: get markdown editor buttons working)
 }

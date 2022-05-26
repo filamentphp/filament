@@ -12,6 +12,7 @@
     <div
         x-data="markdownEditorFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+            statePath: @js($getStatePath()),
             tab: '{{ $isDisabled() ? 'preview' : 'edit' }}',
             darkMode: @js(config('forms.dark_mode')),
         })"
@@ -174,29 +175,6 @@
                         {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
                         x-model="state"
                         dusk="filament.forms.{{ $getStatePath() }}"
-                        x-on:keyup.enter="checkForAutoInsertion"
-                        x-on:file-attachment-accepted.window="
-                            attachment = $event.detail?.attachments?.[0]
-                            if (! attachment || ! attachment.file) return
-                            $wire.upload(`componentFileAttachments.{{ $getStatePath() }}`, attachment.file, () => {
-                                $wire.getComponentFileAttachmentUrl('{{ $getStatePath() }}').then((url) => {
-                                    if (! url) {
-                                        return
-                                    }
-                                    $refs.imageTrigger.click()
-                                    const urlStart = $refs.textarea.selectionStart + 2
-                                    const urlEnd = urlStart + 3
-                                    state = [
-                                        $refs.textarea.value.substring(0, urlStart),
-                                        url,
-                                        $refs.textarea.value.substring(urlEnd)
-                                    ].join('')
-                                    $refs.textarea.selectionStart = urlStart - 2
-                                    $refs.textarea.selectionEnd = urlStart - 2
-                                    render()
-                                })
-                            })
-                        "
                         x-ref="textarea"
                         @if (! $isConcealed())
                             {!! $isRequired() ? 'required' : null !!}

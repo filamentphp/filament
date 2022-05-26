@@ -39933,6 +39933,7 @@ var import_easymde = __toModule(require_easymde());
 var markdown_editor_default = (Alpine) => {
   Alpine.data("markdownEditorFormComponent", ({
     state: state2,
+    statePath,
     tab,
     darkMode
   }) => {
@@ -39955,7 +39956,19 @@ var markdown_editor_default = (Alpine) => {
           },
           unorderedListStyle: "-",
           previewClass: `prose w-full h-full max-w-none bg-white p-3 ${darkMode ? "dark:prose-invert dark:bg-gray-700" : ""}`.trim(),
-          minHeight: "150px"
+          minHeight: "150px",
+          uploadImage: true,
+          imageUploadFunction: (file2, onSuccess, onError) => {
+            if (!file2)
+              return;
+            this.$wire.upload(`componentFileAttachments.${statePath}`, file2, () => {
+              this.$wire.getComponentFileAttachmentUrl(statePath).then((url) => {
+                onSuccess(url);
+              });
+            }, () => {
+              onError("Failed to upload file.");
+            });
+          }
         });
         this.editor.codemirror.on("change", () => {
           this.isStateBeingUpdated = true;
