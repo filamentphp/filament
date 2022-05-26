@@ -92,12 +92,14 @@ class Select extends Field
         $this->placeholder(__('forms::components.select.placeholder'));
     }
 
-    public function boolean(string $trueLabel = 'Yes', string $falseLabel = 'No'): static
+    public function boolean(?string $trueLabel = null, ?string $falseLabel = null, ?string $placeholder = null): static
     {
         $this->options([
-            1 => $trueLabel,
-            0 => $falseLabel,
+            1 => $trueLabel ?? __('forms::components.select.boolean.true'),
+            0 => $falseLabel ?? __('forms::components.select.boolean.false'),
         ]);
+
+        $this->placeholder($placeholder ?? '-');
 
         return $this;
     }

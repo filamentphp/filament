@@ -81,12 +81,6 @@ return [
             'placeholder' => 'Alles',
         ],
 
-        'ternary' => [
-            'placeholder' => '-',
-            'true' => 'Ja',
-            'false' => 'Nee',
-        ],
-
     ],
 
     'selection_indicator' => [

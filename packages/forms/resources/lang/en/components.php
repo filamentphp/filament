@@ -193,6 +193,11 @@ return [
 
         ],
 
+        'boolean' => [
+            'true' => 'Yes',
+            'false' => 'No',
+        ],
+
         'loading_message' => 'Loading...',
 
         'no_search_results_message' => 'No options match your search.',

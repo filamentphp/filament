@@ -99,12 +99,6 @@ return [
             'placeholder' => 'All',
         ],
 
-        'ternary' => [
-            'placeholder' => '-',
-            'true' => 'Yes',
-            'false' => 'No',
-        ],
-
     ],
 
     'selection_indicator' => [
