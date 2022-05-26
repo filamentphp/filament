@@ -4,12 +4,12 @@ return [
 
     'title' => 'Login',
 
-    'heading' => 'Sign in to your account',
+    'heading' => 'Accedi al tuo account',
 
     'buttons' => [
 
         'submit' => [
-            'label' => 'Sign in',
+            'label' => 'Accedi',
         ],
 
     ],
