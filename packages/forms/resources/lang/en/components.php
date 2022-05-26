@@ -80,6 +80,7 @@ return [
             'bullet_list' => 'Bullet list',
             'code_block' => 'Code block',
             'edit' => 'Edit',
+            'heading' => 'Heading',
             'italic' => 'Italic',
             'link' => 'Link',
             'ordered_list' => 'Numbered list',

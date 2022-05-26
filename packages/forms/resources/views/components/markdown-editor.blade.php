@@ -29,6 +29,18 @@
                     >
                         @if ($hasToolbarButton(['bold', 'italic', 'strike', 'link']))
                             <div class="flex items-stretch space-x-1 rtl:space-x-reverse">
+                                @if ($hasToolbarButton('heading'))
+                                    <x-forms::markdown-editor.toolbar-button
+                                        title="{{ __('forms::components.markdown_editor.toolbar_buttons.heading') }}"
+                                        x-on:click="editor.toggleHeadingSmaller()"
+                                    >
+                                        <svg @class([
+                                            'h-4',
+                                            'dark:fill-current' => config('forms.dark_mode'),
+                                        ]) fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M448 96v320h32a16 16 0 0 1 16 16v32a16 16 0 0 1-16 16H320a16 16 0 0 1-16-16v-32a16 16 0 0 1 16-16h32V288H160v128h32a16 16 0 0 1 16 16v32a16 16 0 0 1-16 16H32a16 16 0 0 1-16-16v-32a16 16 0 0 1 16-16h32V96H32a16 16 0 0 1-16-16V48a16 16 0 0 1 16-16h160a16 16 0 0 1 16 16v32a16 16 0 0 1-16 16h-32v128h192V96h-32a16 16 0 0 1-16-16V48a16 16 0 0 1 16-16h160a16 16 0 0 1 16 16v32a16 16 0 0 1-16 16z"></path></svg>
+                                    </x-forms::markdown-editor.toolbar-button>
+                                @endif
+
                                 @if ($hasToolbarButton('bold'))
                                     <x-forms::markdown-editor.toolbar-button
                                         title="{{ __('forms::components.markdown_editor.toolbar_buttons.bold') }}"
