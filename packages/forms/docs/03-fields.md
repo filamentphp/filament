@@ -1034,6 +1034,18 @@ DateTimePicker::make('published_at')->weekStartsOnMonday()
 DateTimePicker::make('published_at')->weekStartsOnSunday()
 ```
 
+### Timezones
+
+If you'd like users to be able to manage dates in their own timezone, you can use the `timezone()` method:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('published_at')->timezone('America/New_York')
+```
+
+While dates will still be stored using the app's configured timezone, the date will now load in the new timezone, and it will be converted back when the form is saved.
+
 ## File upload
 
 The file upload field is based on [Filepond](https://pqina.nl/filepond).
