@@ -79,14 +79,19 @@ class SelectFilter extends BaseFilter
     public function getFormSchema(): array
     {
         return $this->formSchema ?? [
-            Select::make('value')
-                ->label($this->getLabel())
-                ->options($this->getOptions())
-                ->placeholder($this->getPlaceholder())
-                ->default($this->getDefaultState())
-                ->searchable($this->isSearchable())
-                ->columnSpan($this->getColumnSpan()),
+            $this->getFormSelectComponent(),
         ];
+    }
+
+    protected function getFormSelectComponent(): Select
+    {
+        return Select::make('value')
+            ->label($this->getLabel())
+            ->options($this->getOptions())
+            ->placeholder($this->getPlaceholder())
+            ->default($this->getDefaultState())
+            ->searchable($this->isSearchable())
+            ->columnSpan($this->getColumnSpan());
     }
 
     public function isSearchable(): bool

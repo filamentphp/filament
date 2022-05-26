@@ -24,7 +24,7 @@
 }
 
 .choices [hidden] {
-    @apply !hidden;
+    display: none !important;
 }
 
 .choices[data-type*=select-one] {
@@ -214,19 +214,29 @@
 /* !important is used to override default Tailwind input styling */
 
 .choices__list--dropdown .choices__input {
-    @apply !px-3 !py-2 !border-x-0 !border-t-0 !border-b !border-gray-300;
+    padding: 0.5rem 0.75rem !important;
+    border-top-width: 0 !important;
+    border-left-width: 0 !important;
+    border-bottom-width: 1px !important;
+    border-right-width: 0 !important;
+    border-color: rgb(209 213 219) !important;
 }
 
 .dark .choices__list--dropdown .choices__input {
-    @apply placeholder-gray-300 !border-gray-600;
+    @apply placeholder-gray-300;
+    border-color: rgb(75 85 99) !important;
 }
 
 .choices__input {
-    @apply inline-block !bg-transparent border-0 !border-transparent max-w-full !p-0;
+    @apply inline-block border-0 max-w-full;
+    border-color: transparent !important;
+    background-color: transparent !important;
+    padding: 0 !important;
 }
 
 .choices__input:focus {
-    @apply !outline-none !ring-0;
+    outline-color: transparent !important;
+    box-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
 }
 
 .choices__input::-webkit-search-decoration, .choices__input::-webkit-search-cancel-button, .choices__input::-webkit-search-results-button, .choices__input::-webkit-search-results-decoration {

@@ -19,11 +19,7 @@ class BelongsToManyCheckboxList extends CheckboxList
     {
         parent::setUp();
 
-        $this->afterStateHydrated(static function (BelongsToManyCheckboxList $component, ?array $state): void {
-            if (count($state ?? [])) {
-                return;
-            }
-
+        $this->loadStateFromRelationshipsUsing(static function (BelongsToManyCheckboxList $component, ?array $state): void {
             $relationship = $component->getRelationship();
             $relatedModels = $relationship->getResults();
 

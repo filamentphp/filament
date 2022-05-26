@@ -25,13 +25,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     {
         parent::setUp();
 
-        $this->afterStateHydrated(static function (SpatieMediaLibraryFileUpload $component, ?HasMedia $record): void {
-            if (! $record) {
-                $component->state([]);
-
-                return;
-            }
-
+        $this->loadStateFromRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component, ?HasMedia $record): void {
             $files = $record->getMedia($component->getCollection())
                 ->when(
                     ! $component->isMultiple(),
@@ -45,6 +39,14 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 ->toArray();
 
             $component->state($files);
+        });
+
+        $this->afterStateHydrated(static function (BaseFileUpload $component, string | array | null $state): void {
+            if (is_array($state)) {
+                return;
+            }
+
+            $component->state([]);
         });
 
         $this->beforeStateDehydrated(null);
@@ -92,11 +94,15 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             $filename = $component->getUploadedFileNameForStorage($file);
 
-            $media = $mediaAdder
+            $mediaAdder
                 ->usingFileName($filename)
-                ->usingName($component->getMediaName() ?? '')
-                ->withCustomProperties($component->getCustomProperties())
-                ->toMediaCollection($component->getCollection(), $component->getDiskName());
+                ->withCustomProperties($component->getCustomProperties());
+
+            if (filled($mediaName = $component->getMediaName())) {
+                $mediaAdder->usingName($mediaName);
+            }
+
+            $media = $mediaAdder->toMediaCollection($component->getCollection(), $component->getDiskName());
 
             return $media->getAttributeValue('uuid');
         });

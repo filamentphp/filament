@@ -2,10 +2,11 @@
 
 namespace Filament\Forms\Components;
 
-use Carbon\CarbonInterface;
+use Carbon\Exceptions\InvalidFormatException;
 use Closure;
 use DateTime;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Illuminate\Support\Carbon;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\Support\Carbon;
 
@@ -39,21 +40,35 @@ class DateTimePicker extends Field
         parent::setUp();
 
         $this->afterStateHydrated(static function (DateTimePicker $component, $state): void {
-            if(blank($state)){
+            if (blank($state)) {
                 return;
             }
 
-            if (! $state instanceof CarbonInterface) {
+            if (! $state instanceof DateTime) {
                 try {
-                   $state = Carbon::parse($state);
-                }catch(\Throwable $e){
-                    return;
+                    $state = Carbon::createFromFormat($component->getFormat(), $state);
+                } catch (InvalidFormatException $exception) {
+                    $state = Carbon::parse($state);
                 }
             }
 
-            $state = $state->setTimezone( config('request.user.timezone') ?? config('app.timezone'))->format($component->getFormat());
+            $state = $state
+                ->setTimezone(config('request.user.timezone') ?? config('app.timezone'))
+                ->format($component->getFormat());
 
-            $component->state($state);
+            $component->state((string) $state);
+        });
+
+        $this->dehydrateStateUsing(static function (DateTimePicker $component, $state) {
+            if (blank($state)) {
+                return null;
+            }
+
+            if (! $state instanceof DateTime) {
+                $state = Carbon::parse($state);
+            }
+
+            return $state->format($component->getFormat());
         });
 
         $this->mutateDehydratedStateUsing(static function (DateTimePicker $component, $state)  {
@@ -64,7 +79,7 @@ class DateTimePicker extends Field
             try {
                 return Carbon::createFromFormat(
                     $component->getFormat(),
-                    $state, 
+                    $state,
                     config('request.user.timezone') ?? config('app.timezone')
                 )->setTimezone(config('app.timezone'))
                 ->format($component->getFormat());
@@ -116,15 +131,9 @@ class DateTimePicker extends Field
     {
         $this->maxDate = $date;
 
-        $this->rule(static function (DateTimePicker $component) use ($date) {
-            $date = $component->evaluate($date);
-
-            if ($date instanceof DateTime) {
-                $date = $date->format('Y-m-d');
-            }
-
-            return "before_or_equal:{$date}";
-        }, static fn (DateTimePicker $component): bool => (bool) $component->evaluate($date));
+        $this->rule(static function (DateTimePicker $component) {
+            return "before_or_equal:{$component->getMaxDate()}";
+        }, static fn (DateTimePicker $component): bool => (bool) $component->getMaxDate());
 
         return $this;
     }
@@ -133,15 +142,9 @@ class DateTimePicker extends Field
     {
         $this->minDate = $date;
 
-        $this->rule(static function (DateTimePicker $component) use ($date) {
-            $date = $component->evaluate($date);
-
-            if ($date instanceof DateTime) {
-                $date = $date->format('Y-m-d');
-            }
-
-            return "after_or_equal:{$date}";
-        }, static fn (DateTimePicker $component): bool => (bool) $component->evaluate($date));
+        $this->rule(static function (DateTimePicker $component) {
+            return "after_or_equal:{$component->getMinDate()}";
+        }, static fn (DateTimePicker $component): bool => (bool) $component->getMinDate());
 
         return $this;
     }
@@ -196,19 +199,19 @@ class DateTimePicker extends Field
             return $format;
         }
 
-        $format = $this->hasDate() ? 'M j, Y' : '';
-
         if (! $this->hasTime()) {
-            return $format;
+            return config('forms.components.date_time_picker.display_formats.date');
         }
 
-        $format = $format ? "{$format} H:i" : 'H:i';
-
-        if (! $this->hasSeconds()) {
-            return $format;
+        if (! $this->hasDate()) {
+            return $this->hasSeconds() ?
+                config('forms.components.date_time_picker.display_formats.time_with_seconds') :
+                config('forms.components.date_time_picker.display_formats.time');
         }
 
-        return "{$format}:s";
+        return $this->hasSeconds() ?
+            config('forms.components.date_time_picker.display_formats.date_time_with_seconds') :
+            config('forms.components.date_time_picker.display_formats.date_time');
     }
 
     public function getExtraTriggerAttributes(): array
@@ -251,24 +254,12 @@ class DateTimePicker extends Field
 
     public function getMaxDate(): ?string
     {
-        $date = $this->evaluate($this->maxDate);
-
-        if ($date instanceof DateTime) {
-            $date = $date->format($this->getFormat());
-        }
-
-        return $date;
+        return $this->evaluate($this->maxDate);
     }
 
     public function getMinDate(): ?string
     {
-        $date = $this->evaluate($this->minDate);
-
-        if ($date instanceof DateTime) {
-            $date = $date->format($this->getFormat());
-        }
-
-        return $date;
+        return $this->evaluate($this->minDate);
     }
 
     public function hasDate(): bool

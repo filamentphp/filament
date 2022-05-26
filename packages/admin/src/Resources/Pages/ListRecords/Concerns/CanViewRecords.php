@@ -46,11 +46,13 @@ trait CanViewRecords
     protected function fillViewForm(): void
     {
         $this->callHook('beforeFill');
+        $this->callHook('beforeViewFill');
 
         $data = $this->getMountedTableActionRecord()->toArray();
 
         $this->getMountedTableActionForm()->fill($data);
 
         $this->callHook('afterFill');
+        $this->callHook('afterViewFill');
     }
 }

@@ -19,6 +19,9 @@ trait HasActions
 
     protected array $cachedTableActions;
 
+    protected ?Model $cachedMountedTableActionRecord = null;
+    protected $cachedMountedTableActionRecordKey = null;
+
     public function cacheTableActions(): void
     {
         $this->cachedTableActions = collect($this->getTableActions())
@@ -127,7 +130,15 @@ trait HasActions
 
     public function getMountedTableActionRecord(): ?Model
     {
-        return $this->resolveTableRecord($this->mountedTableActionRecord);
+        $recordKey = $this->mountedTableActionRecord;
+
+        if ($this->cachedMountedTableActionRecord && ($this->cachedMountedTableActionRecordKey === $recordKey)) {
+            return $this->cachedMountedTableActionRecord;
+        }
+
+        $this->cachedMountedTableActionRecordKey = $recordKey;
+
+        return $this->cachedMountedTableActionRecord = $this->resolveTableRecord($recordKey);
     }
 
     protected function getCachedTableAction(string $name): ?Action

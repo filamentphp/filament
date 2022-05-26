@@ -50,7 +50,7 @@
             >
                 @foreach ($containers as $uuid => $item)
                     <li
-                        x-data="{ isCollapsed: false }"
+                        x-data="{ isCollapsed: @js($isCollapsed()) }"
                         x-on:repeater-collapse.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = true)"
                         x-on:repeater-expand.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = false)"
                         wire:key="{{ $item->getStatePath() }}"

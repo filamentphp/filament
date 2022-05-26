@@ -7,6 +7,8 @@
     :outlined="$isOutlined()"
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
+    :size="$getSize()"
+    :attributes="$getExtraAttributeBag()"
     class="filament-tables-modal-button-action"
 >
     {{ $getLabel() }}
