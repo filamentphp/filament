@@ -68,7 +68,7 @@
 
             <div @class([
                 'flex-1 w-full px-4 mx-auto md:px-6 lg:px-8 filament-main-content',
-                match ($maxContentWidth ?: config('filament.layout.max_content_width')) {
+                match ($maxContentWidth ?? config('filament.layout.max_content_width')) {
                     'xl' => 'max-w-xl',
                     '2xl' => 'max-w-2xl',
                     '3xl' => 'max-w-3xl',
