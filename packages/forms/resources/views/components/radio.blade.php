@@ -16,7 +16,7 @@
                 'filament-forms-radio-component',
                 'flex flex-wrap gap-3' => $isInline(),
                 'grid gap-2' => ! $isInline(),
-                'grid-cols-1' => $getColumns('default') === 1,
+                'grid-cols-1' => (! $getColumns('default')) || $getColumns('default') === 1,
                 'grid-cols-2' => $getColumns('default') === 2,
                 'grid-cols-3' => $getColumns('default') === 3,
                 'grid-cols-4' => $getColumns('default') === 4,
