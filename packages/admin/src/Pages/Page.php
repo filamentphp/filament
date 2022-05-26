@@ -37,7 +37,7 @@ class Page extends Component implements Forms\Contracts\HasForms
 
     protected static string | array $middlewares = [];
 
-    protected static ?string $maxContentWidth = null;
+    protected ?string $maxContentWidth = null;
 
     public static function registerNavigationItems(): void
     {
