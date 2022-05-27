@@ -59,7 +59,7 @@
 
         <div
             x-show="isOpen"
-            x-trap="isOpen"
+            x-trap.inert.noscroll="isOpen"
             @if (filled($id))
                 x-on:keydown.window.escape="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
             @else
