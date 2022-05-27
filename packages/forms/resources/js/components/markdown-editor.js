@@ -29,7 +29,7 @@ export default (Alpine) => {
                         italic: '_',
                     },
                     unorderedListStyle: '-',
-                    previewClass: `prose w-full h-full max-w-none bg-white p-3 ${darkMode ? 'dark:prose-invert dark:bg-gray-700' : ''}`.trim(),
+                    previewClass: `prose w-full h-full max-w-none bg-white p-3 min-h-[150px] ${darkMode ? 'dark:prose-invert dark:bg-gray-700' : ''}`.trim(),
                     minHeight: '150px',
                     uploadImage: true,
                     direction: document.documentElement.dir,
