@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Hoa\File\Temporary\Temporary;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Livewire\TemporaryUploadedFile;
@@ -96,7 +97,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             $media = $mediaAdder
                 ->usingFileName($filename)
-                ->usingName($component->getMediaName() ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
+                ->usingName($component->getMediaName($file) ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                 ->withCustomProperties($component->getCustomProperties())
                 ->toMediaCollection($component->getCollection(), $component->getDiskName());
 
@@ -166,8 +167,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
-    public function getMediaName(): ?string
+    public function getMediaName(TemporaryUploadedFile $file): ?string
     {
-        return $this->evaluate($this->mediaName);
+        return $this->evaluate($this->mediaName, [
+            'file' => $file,
+        ]);
     }
 }
