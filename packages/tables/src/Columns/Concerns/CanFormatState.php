@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns\Concerns;
 use Akaunting\Money;
 use Closure;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
@@ -20,13 +21,23 @@ trait CanFormatState
 
     protected string | Closure | null $suffix = null;
 
+    protected string | Closure | null $timezone = null;
+
     public function date(?string $format = null, ?string $timezone = null): static
     {
         $format ??= config('tables.date_format');
 
-        $timezone ??= config('app.timezone');
+        $this->formatStateUsing(static function (Column $column, $state) use ($format, $timezone): ?string {
+            /** @var TextColumn $column */
 
-        $this->formatStateUsing(static fn ($state): ?string => $state ? Carbon::parse($state)->setTimezone($timezone)->translatedFormat($format) : null);
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($timezone ?? $column->getTimezone())
+                ->translatedFormat($format);
+        });
 
         return $this;
     }
@@ -42,7 +53,17 @@ trait CanFormatState
 
     public function since(?string $timezone = null): static
     {
-        $this->formatStateUsing(static fn ($state): ?string => $state ? Carbon::parse($state)->setTimezone($timezone)->diffForHumans() : null);
+        $this->formatStateUsing(static function (Column $column, $state) use ($timezone): ?string {
+            /** @var TextColumn $column */
+
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($timezone ?? $column->getTimezone())
+                ->diffForHumans();
+        });
 
         return $this;
     }
@@ -145,5 +166,17 @@ trait CanFormatState
         $this->date($format, $timezone);
 
         return $this;
+    }
+
+    public function timezone(string | Closure | null $timezone): static
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
+
+    public function getTimezone(): string
+    {
+        return $this->evaluate($this->timezone) ?? config('app.timezone');
     }
 }
