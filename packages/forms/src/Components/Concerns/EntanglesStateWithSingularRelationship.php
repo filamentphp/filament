@@ -23,7 +23,7 @@ trait EntanglesStateWithSingularRelationship
         $this->statePath($relationshipName);
 
         $this->loadStateFromRelationshipsUsing(static function (Component $component) {
-            /** @var Component|CanEntangleWithSingularRelationships $component */
+            /** @var Component | CanEntangleWithSingularRelationships $component */
 
             $component->clearCachedExistingRecord();
 
@@ -31,7 +31,7 @@ trait EntanglesStateWithSingularRelationship
         });
 
         $this->saveRelationshipsUsing(static function (Component $component, HasForms $livewire): void {
-            /** @var Component|CanEntangleWithSingularRelationships $component */
+            /** @var Component | CanEntangleWithSingularRelationships $component */
 
             $state = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
 
