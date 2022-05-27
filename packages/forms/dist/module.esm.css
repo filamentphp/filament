@@ -2316,6 +2316,9 @@ span[data-img-src]::after {
 .EasyMDEContainer .CodeMirror {
   @apply w-full h-full min-h-full border-none rounded-lg;
 }
+.dark .EasyMDEContainer .CodeMirror {
+  @apply bg-gray-700 text-white;
+}
 .EasyMDEContainer .CodeMirror .CodeMirror-scroll {
   @apply tracking-normal whitespace-pre-wrap font-mono text-sm;
 }

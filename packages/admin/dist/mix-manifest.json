@@ -41,6 +41,10 @@
 >>>>>>> 000ba573 (wip)
 =======
     "/app.js": "/app.js?id=f3e3ea33c7de038047df02a458d456fe",
+<<<<<<< HEAD
     "/app.css": "/app.css?id=c73f8602af731832b69c3dcd4aebe166"
 >>>>>>> 9c4bb07e (chore: assets)
+=======
+    "/app.css": "/app.css?id=7905c9d560fefb3e1ff9f6354224b167"
+>>>>>>> 424e0fc9 (fix: dark mode)
 }
