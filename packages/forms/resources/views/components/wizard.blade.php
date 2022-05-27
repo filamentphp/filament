@@ -13,6 +13,8 @@
             }
 
             this.step = this.getIndexedSteps()[nextStepIndex][0]
+
+            this.scrollToTop()
         },
 
         previousStep: function () {
@@ -23,6 +25,12 @@
             }
 
             this.step = this.getIndexedSteps()[previousStepIndex][0]
+
+            this.scrollToTop()
+        },
+
+        scrollToTop: function () {
+            this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' })
         },
 
         getStepIndex: function (step) {
