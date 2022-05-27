@@ -20,11 +20,13 @@ trait CanFormatState
 
     protected string | Closure | null $suffix = null;
 
+    protected string | Closure | null $timezone = null;
+
     public function date(?string $format = null, ?string $timezone = null): static
     {
         $format ??= config('tables.date_format');
 
-        $timezone ??= config('app.timezone');
+        $timezone ??= $this->getTimezone();
 
         $this->formatStateUsing(static fn ($state): ?string => $state ? Carbon::parse($state)->setTimezone($timezone)->translatedFormat($format) : null);
 
@@ -145,5 +147,17 @@ trait CanFormatState
         $this->date($format, $timezone);
 
         return $this;
+    }
+
+    public function timezone(string | Closure | null $timezone): static
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
+
+    public function getTimezone(): string
+    {
+        return $this->evaluate($this->timezone) ?? config('app.timezone');
     }
 }
