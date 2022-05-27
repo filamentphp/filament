@@ -2,8 +2,6 @@
 
 namespace Filament\Facades;
 
-use Livewire\Component;
-use Livewire\Response;
 use Illuminate\Support\Facades\Facade;
 
 /**
