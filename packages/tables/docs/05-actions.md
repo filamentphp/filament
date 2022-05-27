@@ -336,7 +336,7 @@ ReplicateAction::make('replicate')
 	->form([
 		TextInput::make('title')->required(),
 	])
-	->beforeSaving(function (Model $replica, array $data): void {
+	->beforeReplicaSaved(function (Model $replica, array $data): void {
 		$replica->fill($data);
 	})
 ```
