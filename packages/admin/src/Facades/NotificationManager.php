@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static void notify(string $status, string $message)
- * @method static Response handleLivewireResponses(Component $component, Response $response)
  *
  * @see \Filament\NotificationManager
  */
