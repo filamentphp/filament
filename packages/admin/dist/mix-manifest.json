@@ -5,6 +5,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     "/app.js": "/app.js?id=0578a7bea73b0764791e5c671ba87d3a",
     "/app.css": "/app.css?id=f5a5bdc8c9c1307b180c3eb5be3b7fb5"
 =======
@@ -45,6 +46,9 @@
     "/app.css": "/app.css?id=c73f8602af731832b69c3dcd4aebe166"
 >>>>>>> 9c4bb07e (chore: assets)
 =======
+=======
+    "/app.js": "/app.js?id=78c2dee8563ea095be67bbceb441bf00",
+>>>>>>> 09757fca (fix: rtl support)
     "/app.css": "/app.css?id=7905c9d560fefb3e1ff9f6354224b167"
 >>>>>>> 424e0fc9 (fix: dark mode)
 }

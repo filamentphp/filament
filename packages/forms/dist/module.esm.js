@@ -39957,6 +39957,7 @@ var markdown_editor_default = (Alpine) => {
           previewClass: `prose w-full h-full max-w-none bg-white p-3 ${darkMode ? "dark:prose-invert dark:bg-gray-700" : ""}`.trim(),
           minHeight: "150px",
           uploadImage: true,
+          direction: document.documentElement.dir,
           imageUploadFunction: (file2, onSuccess, onError) => {
             if (!file2)
               return;
