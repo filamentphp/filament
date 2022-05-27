@@ -3,6 +3,7 @@
 namespace Filament;
 
 use Filament\Facades\Filament;
+use Filament\Facades\NotificationManager as NotificationManagerFacade;
 use Filament\Http\Livewire\Auth\Login;
 use Filament\Http\Livewire\GlobalSearch;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -82,6 +83,10 @@ class FilamentServiceProvider extends PackageServiceProvider
             return app(FilamentManager::class);
         });
 
+        $this->app->scoped(NotificationManager::class, function (): NotificationManager {
+            return new NotificationManager;
+        });
+
         $this->app->bind(LoginResponseContract::class, LoginResponse::class);
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
 
@@ -100,7 +105,7 @@ class FilamentServiceProvider extends PackageServiceProvider
             MirrorConfigToSubpackages::class,
         ]);
 
-        Livewire::listen('component.dehydrate', [NotificationManager::class, 'handleLivewireResponses']);
+        Livewire::listen('component.dehydrate', [NotificationManagerFacade::class, 'handleLivewireResponses']);
 
         Livewire::component('filament.core.auth.login', Login::class);
         Livewire::component('filament.core.global-search', GlobalSearch::class);
