@@ -207,6 +207,12 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return $this->getResourceTable()->getFilters();
     }
 
+    protected function getTableFiltersLayout(): ?string
+    {
+        if (method_exists($this, 'getFilterslayout')) return $this->getFilterslayout();
+        return $this->getResourceTable()->getFiltersLayout();
+    }
+
     protected function getTableHeaderActions(): array
     {
         return $this->getResourceTable()->getHeaderActions();
