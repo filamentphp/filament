@@ -38,7 +38,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function getResourceTable(): Table
     {
-        if (! $this->resourceTable) {
+        if (!$this->resourceTable) {
             $table = Table::make();
 
             $resource = static::getResource();
@@ -87,7 +87,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->label(__('filament::resources/pages/list-records.table.actions.view.label'))
             ->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]))
             ->icon('heroicon-s-eye')
-            ->hidden(fn (Model $record): bool => ! $resource::canView($record));
+            ->hidden(fn (Model $record): bool => !$resource::canView($record));
     }
 
     protected function getEditAction(): Tables\Actions\Action
@@ -98,7 +98,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->label(__('filament::resources/pages/list-records.table.actions.edit.label'))
             ->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]))
             ->icon('heroicon-s-pencil')
-            ->hidden(fn (Model $record): bool => ! $resource::canEdit($record));
+            ->hidden(fn (Model $record): bool => !$resource::canEdit($record));
     }
 
     protected function getDeleteAction(): ?Tables\Actions\Action
@@ -147,7 +147,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function getActions(): array
     {
-        if (! $this->hasCreateAction()) {
+        if (!$this->hasCreateAction()) {
             return [];
         }
 
@@ -156,11 +156,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function hasCreateAction(): bool
     {
-        if (! static::getResource()::hasPage('create')) {
+        if (!static::getResource()::hasPage('create')) {
             return false;
         }
 
-        if (! static::getResource()::canCreate()) {
+        if (!static::getResource()::canCreate()) {
             return false;
         }
 
@@ -209,7 +209,10 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function getTableFiltersLayout(): ?string
     {
-        if (method_exists($this, 'getFiltersLayout')) return $this->getFilterslayout();
+        if (method_exists($this, 'getFiltersLayout')) {
+            return $this->getFilterslayout();
+        }
+
         return $this->getResourceTable()->getFiltersLayout();
     }
 
