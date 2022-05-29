@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use Filament\Pages\Page;
 use Livewire\Component;
 use Livewire\Response;
 
@@ -22,6 +23,10 @@ class NotificationManager
 
     public function handleLivewireResponses(Component $component, Response $response): Response
     {
+        if (! $component instanceof Page) {
+            return $response;
+        }
+
         if ($component->redirectTo !== null) {
             return $response;
         }
