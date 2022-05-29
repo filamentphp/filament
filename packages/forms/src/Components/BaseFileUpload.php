@@ -35,6 +35,8 @@ class BaseFileUpload extends Field
 
     protected int | Closure | null $minFiles = null;
 
+    protected bool | Closure $shouldDownload = false;
+
     protected bool | Closure $shouldPreserveFilenames = false;
 
     protected string | Closure $visibility = 'public';
@@ -168,6 +170,13 @@ class BaseFileUpload extends Field
     public function disablePreview(bool | Closure $condition = false): static
     {
         $this->canPreview = $condition;
+
+        return $this;
+    }
+
+    public function download(bool | Closure $condition = true): static
+    {
+        $this->shouldDownload = $condition;
 
         return $this;
     }
@@ -310,6 +319,11 @@ class BaseFileUpload extends Field
     public function getVisibility(): string
     {
         return $this->evaluate($this->visibility);
+    }
+
+    public function shouldDownload(): bool
+    {
+        return $this->evaluate($this->shouldDownload);
     }
 
     public function shouldPreserveFilenames(): bool

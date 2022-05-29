@@ -45,6 +45,7 @@ export default (Alpine) => {
         removeUploadedFileUsing,
         reorderUploadedFilesUsing,
         shouldAppendFiles,
+        shouldDownload,
         shouldTransformImage,
         state,
         uploadButtonPosition,
@@ -80,6 +81,7 @@ export default (Alpine) => {
                     ...(placeholder && {labelIdle: placeholder}),
                     maxFileSize: maxSize,
                     minFileSize: minSize,
+                    onactivatefile: this.downloadFile,
                     styleButtonProcessItemPosition: uploadButtonPosition,
                     styleButtonRemoveItemPosition: removeUploadedFileButtonPosition,
                     styleLoadIndicatorPosition: loadingIndicatorPosition,
@@ -213,6 +215,38 @@ export default (Alpine) => {
                 }
 
                 return shouldAppendFiles ? files : files.reverse()
+            },
+
+            downloadFile: async function(fileItem) {
+                if(! shouldDownload) {
+                    return
+                }
+
+                if(fileItem.origin !== FilePond.FileOrigin.LOCAL) {
+                    return
+                }
+
+                let file = fileItem.file
+
+                if (! file) {
+                    return
+                }
+
+                const blobURL = window.URL.createObjectURL(file)
+
+                const anchor = document.createElement('a')
+
+                anchor.style.display = 'none'
+                anchor.href = blobURL
+                anchor.download = file.name
+
+                document.body.appendChild(anchor)
+
+                anchor.click()
+
+                anchor.remove()
+
+                window.URL.revokeObjectURL(blobURL)
             }
         }
     })

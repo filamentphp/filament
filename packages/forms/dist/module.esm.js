@@ -21873,6 +21873,7 @@ var file_upload_default = (Alpine) => {
     removeUploadedFileUsing,
     reorderUploadedFilesUsing,
     shouldAppendFiles,
+    shouldDownload,
     shouldTransformImage,
     state: state2,
     uploadButtonPosition,
@@ -21903,6 +21904,7 @@ var file_upload_default = (Alpine) => {
           ...placeholder && {labelIdle: placeholder},
           maxFileSize: maxSize,
           minFileSize: minSize,
+          onactivatefile: this.downloadFile,
           styleButtonProcessItemPosition: uploadButtonPosition,
           styleButtonRemoveItemPosition: removeUploadedFileButtonPosition,
           styleLoadIndicatorPosition: loadingIndicatorPosition,
@@ -21998,6 +22000,27 @@ var file_upload_default = (Alpine) => {
           });
         }
         return shouldAppendFiles ? files : files.reverse();
+      },
+      downloadFile: async function(fileItem) {
+        if (!shouldDownload) {
+          return;
+        }
+        if (fileItem.origin !== FileOrigin$1.LOCAL) {
+          return;
+        }
+        let file2 = fileItem.file;
+        if (!file2) {
+          return;
+        }
+        const blobURL = window.URL.createObjectURL(file2);
+        const anchor = document.createElement("a");
+        anchor.style.display = "none";
+        anchor.href = blobURL;
+        anchor.download = file2.name;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        window.URL.revokeObjectURL(blobURL);
       }
     };
   });
