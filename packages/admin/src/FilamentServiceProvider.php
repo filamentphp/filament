@@ -80,11 +80,11 @@ class FilamentServiceProvider extends PackageServiceProvider
         });
 
         $this->app->scoped('filament', function (): FilamentManager {
-            return app(FilamentManager::class);
+            return new FilamentManager();
         });
 
         $this->app->scoped(NotificationManager::class, function (): NotificationManager {
-            return new NotificationManager;
+            return new NotificationManager();
         });
 
         $this->app->bind(LoginResponseContract::class, LoginResponse::class);
