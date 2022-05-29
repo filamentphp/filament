@@ -58,9 +58,10 @@ class Table
         return $this;
     }
 
-    public function filters(array $filters): static
+    public function filters(array $filters, ?string $layout): static
     {
         $this->filters = $filters;
+        $this->filtersLayout($layout);
 
         return $this;
     }
