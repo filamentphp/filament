@@ -28,6 +28,10 @@ return [
 
             ],
 
+            'messages' => [
+                'created' => 'Oluşturuldu',
+            ],
+
         ],
 
     ],
@@ -37,7 +41,17 @@ return [
         'actions' => [
 
             'delete' => [
+
                 'label' => 'Sil',
+
+                'modal' => [
+                    'heading' => 'Sil :label',
+                ],
+
+                'messages' => [
+                    'deleted' => 'Silindi',
+                ],
+
             ],
 
             'edit' => [
@@ -58,10 +72,30 @@ return [
 
                 ],
 
+                'messages' => [
+                    'saved' => 'Kaydedildi',
+                ],
+
             ],
 
             'view' => [
+
                 'label' => 'Görüntüle',
+
+                'modal' => [
+
+                    'heading' => 'Görüntüle :label',
+
+                    'actions' => [
+
+                        'close' => [
+                            'label' => 'Kapat',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
         ],
@@ -69,7 +103,13 @@ return [
         'bulk_actions' => [
 
             'delete' => [
+
                 'label' => 'Seçiliyi sil',
+
+                'messages' => [
+                    'deleted' => 'Silindi',
+                ],
+
             ],
 
         ],
