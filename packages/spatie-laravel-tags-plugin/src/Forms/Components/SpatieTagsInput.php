@@ -23,7 +23,7 @@ class SpatieTagsInput extends TagsInput
             $type = $component->getType();
             $tags = $record->tagsWithType($type);
 
-            $component->state($tags->pluck('name'));
+            $component->state($tags->pluck('name')->toArray());
         });
 
         $this->saveRelationshipsUsing(static function (SpatieTagsInput $component, ?Model $record, array $state) {
