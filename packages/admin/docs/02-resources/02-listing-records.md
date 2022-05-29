@@ -59,7 +59,7 @@ public static function table(Table $table): Table
             [
                 // ...
             ],
-            Layout::AboveContent,
+            layout: Layout::AboveContent,
         );
 }
 ```
