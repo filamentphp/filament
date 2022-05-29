@@ -464,4 +464,6 @@
             @endif
         </x-tables::modal>
     </form>
+
+    {{ $this->modal }}
 </div>
