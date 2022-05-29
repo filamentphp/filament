@@ -209,10 +209,6 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function getTableFiltersLayout(): ?string
     {
-        if (method_exists($this, 'getFiltersLayout')) {
-            return $this->getFilterslayout();
-        }
-
         return $this->getResourceTable()->getFiltersLayout();
     }
 
