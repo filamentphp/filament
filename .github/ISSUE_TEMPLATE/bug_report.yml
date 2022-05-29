@@ -65,7 +65,7 @@ body:
       id: steps
       attributes:
           label: Steps to reproduce
-          description: Which steps do we need to take to reproduce this error?
+          description: Which steps do we need to take to reproduce this error? Any code examples need to be **as short as possible**, remove any code that is unrelated to the bug. Please do not include any references to external classes as other developers do not have access to these when they're trying to solve your problem.
     - type: textarea
       id: logs
       attributes:
