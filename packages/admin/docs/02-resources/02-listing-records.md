@@ -47,6 +47,7 @@ To render the filters above the table content instead of in a popover, you may u
 
 ```php
 use Filament\Tables\Filters\Layout;
+use Filament\Resources\Table;
 
 public static function table(Table $table): Table
 {
@@ -54,10 +55,12 @@ public static function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->filters([
-            // ...
-        ])
-        ->filtersLayout(Layout::AboveContent);
+        ->filters(
+            [
+                // ...
+            ],
+            Layout::AboveContent,
+        );
 }
 ```
 
