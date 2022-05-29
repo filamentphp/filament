@@ -2,17 +2,18 @@
 
 namespace Filament\Facades;
 
+use Filament\NotificationManager;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static void notify(string $status, string $message)
  *
- * @see \Filament\NotificationManager
+ * @see NotificationManager
  */
-class NotificationManager extends Facade
+class FilamentNotification extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \Filament\NotificationManager::class;
+        return NotificationManager::class;
     }
 }
