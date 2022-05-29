@@ -65,7 +65,7 @@ class Table
         return $this;
     }
 
-    public function filtersLayout(string $filtersLayout): static
+    public function filtersLayout(?string $filtersLayout): static
     {
         $this->filtersLayout = $filtersLayout;
 
