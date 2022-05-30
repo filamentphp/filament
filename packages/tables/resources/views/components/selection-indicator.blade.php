@@ -12,7 +12,7 @@
                 class="inline-block animate-spin w-4 h-4 mr-3 text-primary-600"
             />
 
-            <span @class(['dark:text-white' => config('tables.dark_mode')]) x-text="$transChoice(@js(__('tables::table.selection_indicator.selected_count')), selectedRecords.length, {'count': selectedRecords.length})"></span>
+            <span @class(['dark:text-white' => config('tables.dark_mode')]) x-text="$transChoice(@js(__('tables::table.selection_indicator.selected_count')), selectedRecords.length, { count: selectedRecords.length })"></span>
 
             <span x-show="{{ $allRecordsCount }} !== selectedRecords.length">
                 <button x-on:click="selectAllRecords" class="text-primary-600 text-sm font-medium">
