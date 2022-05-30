@@ -27,7 +27,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         parent::setUp();
 
         $this->loadStateFromRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component, ?HasMedia $record): void {
-            $files = $record->getMedia($component->getCollection())
+            $files = $record->refresh()->getMedia($component->getCollection())
                 ->when(
                     ! $component->isMultiple(),
                     fn (Collection $files): Collection => $files->take(1),
