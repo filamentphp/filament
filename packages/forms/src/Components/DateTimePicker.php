@@ -191,18 +191,18 @@ class DateTimePicker extends Field
         }
 
         if (! $this->hasTime()) {
-            return config('forms.components.date_time_picker.display_formats.date');
+            return config('forms.components.date_time_picker.display_formats.date', 'M j, Y');
         }
 
         if (! $this->hasDate()) {
             return $this->hasSeconds() ?
-                config('forms.components.date_time_picker.display_formats.time_with_seconds') :
-                config('forms.components.date_time_picker.display_formats.time');
+                config('forms.components.date_time_picker.display_formats.time_with_seconds', 'H:i:s') :
+                config('forms.components.date_time_picker.display_formats.time', 'H:i');
         }
 
         return $this->hasSeconds() ?
-            config('forms.components.date_time_picker.display_formats.date_time_with_seconds') :
-            config('forms.components.date_time_picker.display_formats.date_time');
+            config('forms.components.date_time_picker.display_formats.date_time_with_seconds', 'M j, Y H:i:s') :
+            config('forms.components.date_time_picker.display_formats.date_time', 'M j, Y H:i');
     }
 
     public function getExtraTriggerAttributes(): array
