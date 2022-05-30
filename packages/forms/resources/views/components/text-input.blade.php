@@ -30,6 +30,10 @@
             </span>
         @endif
 
+        @if($icon = $getPrefixIcon())
+            <x-dynamic-component :component="$icon" class="w-6 h-6" />
+        @endif
+
         <div class="flex-1">
             <input
                 @unless ($hasMask())
@@ -75,6 +79,10 @@
             <span @class($affixLabelClasses)>
                 {{ $label }}
             </span>
+        @endif
+
+        @if($icon = $getSuffixIcon())
+            <x-dynamic-component :component="$icon" class="w-6 h-6" />
         @endif
 
         @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))
