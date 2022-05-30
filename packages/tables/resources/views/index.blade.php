@@ -466,14 +466,14 @@
     </form>
 
     {{ $this->modal }}
-    
+
     <script>
         /**
          * JS/Alpine implementation of
          * https://github.com/laravel/framework/blob/5299c22321c0f1ea8ff770b84a6c6469c4d6edec/src/Illuminate/Translation/MessageSelector.php#L15
          */
         document.addEventListener('alpine:init', () => {
-            window.Alpine.magic('pluralize', () => {
+            window.Alpine.magic('transChoice', () => {
                 return (text, number, variables) => {
                     function extract(segments, number) {
                         for (const part of segments) {
@@ -549,11 +549,7 @@
 
                     segments = stripConditions(segments);
 
-                    if (segments.length > 1) {
-                        return replace(number > 1 ? segments[1] : segments[0], variables);
-                    } else {
-                        return replace(segments[0], variables);
-                    }
+                    return replace(segments.length > 1 && number > 1 ? segments[1] : segments[0], variables);
                 }
             });
         })
