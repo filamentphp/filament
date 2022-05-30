@@ -50,7 +50,7 @@ To finish installing Tailwind, you must create a new `tailwind.config.js` file i
 In `tailwind.config.js`, register the plugins you installed, and add custom colors used by the form builder:
 
 ```js
-const colors = require('tailwindcss/colors')
+const colors = require('tailwindcss/colors') // [tl! focus]
 
 module.exports = {
     content: [

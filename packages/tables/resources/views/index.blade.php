@@ -465,6 +465,8 @@
         </x-tables::modal>
     </form>
 
+    {{ $this->modal }}
+    
     <script>
         /**
          * JS/Alpine implementation of

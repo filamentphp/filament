@@ -16,6 +16,8 @@ class Table
 
     protected array $filters = [];
 
+    protected ?string $filtersLayout = null;
+
     protected array $headerActions = [];
 
     final public function __construct()
@@ -56,9 +58,17 @@ class Table
         return $this;
     }
 
-    public function filters(array $filters): static
+    public function filters(array $filters, ?string $layout = null): static
     {
         $this->filters = $filters;
+        $this->filtersLayout($layout);
+
+        return $this;
+    }
+
+    public function filtersLayout(?string $filtersLayout): static
+    {
+        $this->filtersLayout = $filtersLayout;
 
         return $this;
     }
@@ -140,6 +150,11 @@ class Table
     public function getFilters(): array
     {
         return $this->filters;
+    }
+
+    public function getFiltersLayout(): ?string
+    {
+        return $this->filtersLayout;
     }
 
     public function getHeaderActions(): array

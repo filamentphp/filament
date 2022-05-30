@@ -147,6 +147,7 @@
                         <div class="flex items-center space-x-4 rtl:space-x-reverse">
                             @if ($hasToolbarButton('edit'))
                                 <button
+                                    type="button"
                                     x-on:click.prevent="tab = 'edit'"
                                     x-bind:class="{ 'text-gray-400 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': tab !== 'edit' }"
                                     class="text-sm hover:underline"
@@ -157,6 +158,7 @@
 
                             @if ($hasToolbarButton('preview'))
                                 <button
+                                    type="button"
                                     x-on:click.prevent="tab = 'preview'"
                                     x-bind:class="{ 'text-gray-400 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': tab !== 'preview' }"
                                     @class([

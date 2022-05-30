@@ -63,7 +63,7 @@ trait CanDeleteRecords
             ->action(fn () => $this->delete())
             ->color('danger')
             ->icon('heroicon-s-trash')
-            ->hidden(fn (Model $record): bool => ! static::canDelete($record));
+            ->hidden(fn (Model $record): bool => ! $this->canDelete($record));
     }
 
     protected function getDeleteBulkAction(): Tables\Actions\BulkAction

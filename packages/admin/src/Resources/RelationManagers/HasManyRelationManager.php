@@ -11,6 +11,7 @@ class HasManyRelationManager extends RelationManager
     use Concerns\CanDeleteRecords;
     use Concerns\CanDissociateRecords;
     use Concerns\CanEditRecords;
+    use Concerns\CanViewRecords;
 
     protected static string $view = 'filament::resources.relation-managers.has-many-relation-manager';
 
@@ -20,6 +21,7 @@ class HasManyRelationManager extends RelationManager
             $table = Table::make();
 
             $table->actions([
+                $this->getViewAction(),
                 $this->getEditAction(),
                 $this->getDissociateAction(),
                 $this->getDeleteAction(),

@@ -207,7 +207,7 @@ BulkAction::make('updateAuthor')
 
 #### Wizards
 
-You may easily transform action forms into multi-step wizards.
+You may easily transform action forms into multistep wizards.
 
 On the action, simply pass in the [wizard steps](../forms/layout#wizard) to the `steps()` method, instead of `form()`:
 
@@ -336,7 +336,7 @@ ReplicateAction::make('replicate')
 	->form([
 		TextInput::make('title')->required(),
 	])
-	->beforeSaving(function (Model $replica, array $data): void {
+	->beforeReplicaSaved(function (Model $replica, array $data): void {
 		$replica->fill($data);
 	})
 ```

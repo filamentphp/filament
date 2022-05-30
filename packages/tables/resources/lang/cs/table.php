@@ -53,10 +53,52 @@ return [
             'label' => 'Otevřít panel akcí',
         ],
 
+        'toggle_columns' => [
+            'label' => 'Skrýt/zobrazit sloupce',
+        ],
+
+    ],
+
+    'actions' => [
+
+        'replicate' => [
+
+            'label' => 'Duplikovat',
+
+            'messages' => [
+                'replicated' => 'Záznam duplikován',
+            ],
+
+        ],
+
     ],
 
     'empty' => [
         'heading' => 'Žádné záznamy nenalezeny',
+    ],
+
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Resetovat filtry',
+            ],
+
+            'close' => [
+                'label' => 'Zavřít',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Vše',
+        ],
+
+        'select' => [
+            'placeholder' => 'Vše',
+        ],
+
     ],
 
     'selection_indicator' => [

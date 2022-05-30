@@ -2,9 +2,9 @@
 
 namespace Filament\Forms\Components;
 
+use Carbon\CarbonInterface;
 use Carbon\Exceptions\InvalidFormatException;
 use Closure;
-use DateTime;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Carbon;
 use Illuminate\View\ComponentAttributeBag;
@@ -30,9 +30,11 @@ class DateTimePicker extends Field
 
     protected bool | Closure $isWithoutTime = false;
 
-    protected DateTime | string | Closure | null $maxDate = null;
+    protected CarbonInterface | string | Closure | null $maxDate = null;
 
-    protected DateTime | string | Closure | null $minDate = null;
+    protected CarbonInterface | string | Closure | null $minDate = null;
+
+    protected string | Closure | null $timezone = null;
 
     protected function setUp(): void
     {
@@ -43,13 +45,15 @@ class DateTimePicker extends Field
                 return;
             }
 
-            if (! $state instanceof DateTime) {
+            if (! $state instanceof CarbonInterface) {
                 try {
                     $state = Carbon::createFromFormat($component->getFormat(), $state);
                 } catch (InvalidFormatException $exception) {
                     $state = Carbon::parse($state);
                 }
             }
+
+            $state->setTimezone($component->getTimezone());
 
             $component->state((string) $state);
         });
@@ -59,9 +63,12 @@ class DateTimePicker extends Field
                 return null;
             }
 
-            if (! $state instanceof DateTime) {
+            if (! $state instanceof CarbonInterface) {
                 $state = Carbon::parse($state);
             }
+
+            $state->shiftTimezone($component->getTimezone());
+            $state->setTimezone(config('app.timezone'));
 
             return $state->format($component->getFormat());
         });
@@ -104,7 +111,7 @@ class DateTimePicker extends Field
         return $this;
     }
 
-    public function maxDate(DateTime | string | Closure | null $date): static
+    public function maxDate(CarbonInterface | string | Closure | null $date): static
     {
         $this->maxDate = $date;
 
@@ -115,7 +122,7 @@ class DateTimePicker extends Field
         return $this;
     }
 
-    public function minDate(DateTime | string | Closure | null $date): static
+    public function minDate(CarbonInterface | string | Closure | null $date): static
     {
         $this->minDate = $date;
 
@@ -129,6 +136,13 @@ class DateTimePicker extends Field
     public function resetFirstDayOfWeek(): static
     {
         $this->firstDayOfWeek(null);
+
+        return $this;
+    }
+
+    public function timezone(string | Closure | null $timezone): static
+    {
+        $this->timezone = $timezone;
 
         return $this;
     }
@@ -176,19 +190,19 @@ class DateTimePicker extends Field
             return $format;
         }
 
-        $format = $this->hasDate() ? 'M j, Y' : '';
-
         if (! $this->hasTime()) {
-            return $format;
+            return config('forms.components.date_time_picker.display_formats.date', 'M j, Y');
         }
 
-        $format = $format ? "{$format} H:i" : 'H:i';
-
-        if (! $this->hasSeconds()) {
-            return $format;
+        if (! $this->hasDate()) {
+            return $this->hasSeconds() ?
+                config('forms.components.date_time_picker.display_formats.time_with_seconds', 'H:i:s') :
+                config('forms.components.date_time_picker.display_formats.time', 'H:i');
         }
 
-        return "{$format}:s";
+        return $this->hasSeconds() ?
+            config('forms.components.date_time_picker.display_formats.date_time_with_seconds', 'M j, Y H:i:s') :
+            config('forms.components.date_time_picker.display_formats.date_time', 'M j, Y H:i');
     }
 
     public function getExtraTriggerAttributes(): array
@@ -237,6 +251,11 @@ class DateTimePicker extends Field
     public function getMinDate(): ?string
     {
         return $this->evaluate($this->minDate);
+    }
+
+    public function getTimezone(): string
+    {
+        return $this->evaluate($this->timezone) ?? config('app.timezone');
     }
 
     public function hasDate(): bool

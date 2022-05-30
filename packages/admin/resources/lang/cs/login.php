@@ -32,7 +32,7 @@ return [
 
     'messages' => [
         'failed' => 'Chybně zadané přihlašovací údaje.',
-        'throttled' => 'Příliš mnoho pokusů o přihlášení. Zkuste se prosím příhlásit znovu za :seconds vteřin.',
+        'throttled' => 'Příliš mnoho pokusů o přihlášení. Zkuste to znovu za :seconds vteřin.',
     ],
 
 ];

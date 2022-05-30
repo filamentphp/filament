@@ -53,6 +53,24 @@ return [
             'label' => 'Eylemleri aç',
         ],
 
+        'toggle_columns' => [
+            'label' => 'Sütunları göster/gizle',
+        ],
+
+    ],
+
+    'actions' => [
+
+        'replicate' => [
+
+            'label' => 'Çoğalt',
+
+            'messages' => [
+                'replicated' => 'Kayıt çoğaltıldı',
+            ],
+
+        ],
+
     ],
 
     'empty' => [
@@ -65,6 +83,10 @@ return [
 
             'reset' => [
                 'label' => 'Filtrelemeyi sıfırla',
+            ],
+
+            'close' => [
+                'label' => 'Kapat',
             ],
 
         ],

@@ -238,7 +238,7 @@ Tabs::make('Heading')
 
 ## Wizard
 
-Similar to [tabs](#tabs), you may want to use a multi-step form wizard to reduce the number of components that are visible at once. These are especially useful if your form has a definite chronological order, in which you want each step to be validated as the user progresses.
+Similar to [tabs](#tabs), you may want to use a multistep form wizard to reduce the number of components that are visible at once. These are especially useful if your form has a definite chronological order, in which you want each step to be validated as the user progresses.
 
 ```php
 use Filament\Forms\Components\Wizard;
@@ -279,7 +279,7 @@ Wizard\Step::make('Order')
     ]),
 ```
 
-You may also add wizards to table [actions](../tables/actions#wizards) and admin [resource pages](../admin/resources#wizards).
+You may also add wizards to table [actions](../tables/actions#wizards) and admin [Create pages](../admin/creating-records#wizards).
 
 ## Section
 

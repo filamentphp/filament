@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Hoa\File\Temporary\Temporary;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Livewire\TemporaryUploadedFile;
@@ -25,14 +26,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     {
         parent::setUp();
 
-        $this->afterStateHydrated(static function (SpatieMediaLibraryFileUpload $component, ?HasMedia $record): void {
-            if (! $record) {
-                $component->state([]);
+        $this->loadStateFromRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component, HasMedia $record): void {
+            /** @var Model&HasMedia $record */
 
-                return;
-            }
-
-            $files = $record->getMedia($component->getCollection())
+            $files = $record->refresh()->getMedia($component->getCollection())
                 ->when(
                     ! $component->isMultiple(),
                     fn (Collection $files): Collection => $files->take(1),
@@ -45,6 +42,14 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 ->toArray();
 
             $component->state($files);
+        });
+
+        $this->afterStateHydrated(static function (BaseFileUpload $component, string | array | null $state): void {
+            if (is_array($state)) {
+                return;
+            }
+
+            $component->state([]);
         });
 
         $this->beforeStateDehydrated(null);
@@ -94,7 +99,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             $media = $mediaAdder
                 ->usingFileName($filename)
-                ->usingName($component->getMediaName() ?? '')
+                ->usingName($component->getMediaName($file) ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                 ->withCustomProperties($component->getCustomProperties())
                 ->toMediaCollection($component->getCollection(), $component->getDiskName());
 
@@ -164,8 +169,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
-    public function getMediaName(): ?string
+    public function getMediaName(TemporaryUploadedFile $file): ?string
     {
-        return $this->evaluate($this->mediaName);
+        return $this->evaluate($this->mediaName, [
+            'file' => $file,
+        ]);
     }
 }

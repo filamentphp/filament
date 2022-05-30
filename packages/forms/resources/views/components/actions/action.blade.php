@@ -10,7 +10,7 @@
 <x-dynamic-component
     :component="$component"
     :dark-mode="config('forms.dark_mode')"
-    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes())"
     :tag="((! $action->getAction()) && $url) ? 'a' : 'button'"
     :wire:click="$action->isEnabled() ? $wireClickAction : null"
     :href="$action->isEnabled() ? $action->getUrl() : null"
@@ -20,6 +20,7 @@
     :color="$action->getColor()"
     :label="$action->getLabel()"
     :icon="$action->getIcon()"
+    :size="$action->getSize()"
 >
     {{ $slot }}
 </x-dynamic-component>

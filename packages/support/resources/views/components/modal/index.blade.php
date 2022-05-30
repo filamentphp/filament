@@ -46,17 +46,24 @@
         x-cloak
         class="fixed inset-0 z-40 flex items-center min-h-screen p-4 overflow-y-auto transition"
     >
-        <button
-            x-on:click="isOpen = false"
-            type="button"
+        <div
+            @if (filled($id))
+                x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
+            @else
+                x-on:click="isOpen = false"
+            @endif
             aria-hidden="true"
-            class="fixed inset-0 w-full h-full bg-black/50 focus:outline-none filament-modal-close-overlay"
-        ></button>
+            class="fixed inset-0 w-full h-full bg-black/50 cursor-pointer filament-modal-close-overlay"
+        ></div>
 
         <div
             x-show="isOpen"
-            x-trap="isOpen"
-            x-on:keydown.window.escape="isOpen = false"
+            x-trap.inert.noscroll="isOpen"
+            @if (filled($id))
+                x-on:keydown.window.escape="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
+            @else
+                x-on:keydown.window.escape="isOpen = false"
+            @endif
             x-transition:enter="ease duration-300"
             x-transition:enter-start="translate-y-8"
             x-transition:enter-end="translate-y-0"

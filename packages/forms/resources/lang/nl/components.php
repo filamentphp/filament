@@ -41,24 +41,44 @@ return [
     ],
 
     'select' => [
+
         'actions' => [
+
             'create_option' => [
+
                 'modal' => [
+
                     'heading' => 'Creëer',
+
                     'actions' => [
+
                         'create' => [
                             'label' => 'Creëer',
                         ],
+
                     ],
+
                 ],
+
             ],
+
+        ],
+
+        'boolean' => [
+            'true' => 'Ja',
+            'false' => 'Nee',
         ],
 
         'loading_message' => 'Even geduld...',
+
         'no_search_results_message' => 'Er zijn geen resultaten voor je zoekopdracht.',
+
         'placeholder' => 'Selecteer een optie',
+
         'searching_message' => 'Zoeken...',
+
         'search_prompt' => 'Start met typen om te zoeken...',
+
     ],
 
     'tags_input' => [

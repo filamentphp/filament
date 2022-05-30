@@ -53,18 +53,62 @@ return [
             'label' => 'Azioni aperte',
         ],
 
+        'toggle_columns' => [
+            'label' => 'Alterna colonne',
+        ],
+
+    ],
+
+    'actions' => [
+
+        'replicate' => [
+
+            'label' => 'Duplica',
+
+            'messages' => [
+                'replicated' => 'Record duplicato',
+            ],
+        ],
+
     ],
 
     'empty' => [
         'heading' => 'Nessun valore trovato',
     ],
 
-    'selection_indicator' => [
+    'filters' => [
 
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Azzera filtri',
+            ],
+
+            'close' => [
+                'label' => 'Chiudi',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Tutti',
+        ],
+
+        'select' => [
+            'placeholder' => 'Tutti',
+        ],
+    ],
+
+    'selection_indicator' => [
+        'selected_count' => '1 record selezionato.|:count records selezionati.',
         'buttons' => [
 
             'select_all' => [
                 'label' => 'Seleziona tutti i :count',
+            ],
+
+            'deselect_all' => [
+                'label' => 'Deseleziona tutti',
             ],
 
         ],
