@@ -15,6 +15,10 @@ trait HasAffixes
 
     protected string | Closure | null $prefixLabel = null;
 
+    protected string | Closure | null $prefixIcon = null;
+
+    protected string | Closure | null $suffixIcon = null;
+
     public function prefix(string | Closure | null $label): static
     {
         $this->prefixLabel = $label;
@@ -48,6 +52,20 @@ trait HasAffixes
         return $this;
     }
 
+    public function prefixIcon(string | Closure | null $iconName): static
+    {
+        $this->prefixIcon = $iconName;
+
+        return $this;
+    }
+
+    public function suffixIcon(string | Closure | null $iconName): static
+    {
+        $this->suffixIcon = $iconName;
+
+        return $this;
+    }
+
     public function getPrefixAction(): ?Action
     {
         return $this->evaluate($this->prefixAction);
@@ -71,5 +89,15 @@ trait HasAffixes
     public function getSuffixLabel()
     {
         return $this->evaluate($this->suffixLabel);
+    }
+
+    public function getPrefixIcon()
+    {
+        return $this->evaluate($this->prefixIcon);
+    }
+
+    public function getSuffixIcon()
+    {
+        return $this->evaluate($this->suffixIcon);
     }
 }
