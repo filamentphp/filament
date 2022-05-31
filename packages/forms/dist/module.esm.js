@@ -25090,7 +25090,8 @@ var select_default = (Alpine) => {
           renderChoiceLimit: 50,
           searchChoices: !hasDynamicSearchResults,
           searchFields: ["label"],
-          searchResultLimit: 50
+          searchResultLimit: 50,
+          shouldSort: false
         });
         await this.refreshChoices({withInitialOptions: true});
         if (![null, void 0, ""].includes(this.state)) {
