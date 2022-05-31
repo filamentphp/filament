@@ -1,18 +1,20 @@
 <div
     x-data="{
 
-        step: '{{ count($getConfig()) ? array_key_first($getConfig()) : null }}',
+        step: null,
 
-        steps: @js($getConfig()),
+        init: function () {
+            this.step = this.getSteps()[0]
+        },
 
         nextStep: function () {
             let nextStepIndex = this.getStepIndex(this.step) + 1
 
-            if (nextStepIndex >= Object.keys(this.steps).length) {
+            if (nextStepIndex >= this.getSteps().length) {
                 return
             }
 
-            this.step = this.getIndexedSteps()[nextStepIndex][0]
+            this.step = this.getSteps()[nextStepIndex]
 
             this.scrollToTop()
         },
@@ -24,7 +26,7 @@
                 return
             }
 
-            this.step = this.getIndexedSteps()[previousStepIndex][0]
+            this.step = this.getSteps()[previousStepIndex]
 
             this.scrollToTop()
         },
@@ -34,11 +36,11 @@
         },
 
         getStepIndex: function (step) {
-            return this.getIndexedSteps().findIndex((indexedStep) => indexedStep[0] === step)
+            return this.getSteps().findIndex((indexedStep) => indexedStep === step)
         },
 
-        getIndexedSteps: function () {
-            return Object.entries(this.steps)
+        getSteps: function () {
+            return JSON.parse(this.$refs.stepsData.value)
         },
 
         isFirstStep: function () {
@@ -46,7 +48,7 @@
         },
 
         isLastStep: function () {
-            return (this.getStepIndex(this.step) + 1) >= Object.keys(this.steps).length
+            return (this.getStepIndex(this.step) + 1) >= this.getSteps().length
         },
 
     }"
@@ -56,6 +58,17 @@
     {{ $attributes->merge($getExtraAttributes())->class(['space-y-6 filament-forms-wizard-component']) }}
     {{ $getExtraAlpineAttributeBag() }}
 >
+    <input
+        type="hidden"
+        value='{{
+            collect($getChildComponentContainer()->getComponents())
+                ->filter(static fn (\Filament\Forms\Components\Wizard\Step $step): bool => ! $step->isHidden())
+                ->map(static fn (\Filament\Forms\Components\Wizard\Step $step) => $step->getId())
+                ->toJson()
+        }}'
+        x-ref="stepsData"
+    />
+
     <ol
         {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}
         role="list"
