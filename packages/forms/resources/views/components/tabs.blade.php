@@ -13,7 +13,7 @@
 
     }"
     x-on:expand-concealing-component.window="
-        if ($event.detail.id in tabs) {
+        if (getTabs().includes($event.detail.id)) {
             tab = $event.detail.id
             $el.scrollIntoView({ behavior: 'smooth', block: 'start' })
         }
