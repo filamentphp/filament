@@ -19,9 +19,13 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div {{ $attributes->merge($getExtraAttributes())->class(['flex items-center space-x-1 rtl:space-x-reverse group filament-forms-text-input-component']) }}>
+    <div {{ $attributes->merge($getExtraAttributes())->class(['flex items-center space-x-2 rtl:space-x-reverse group filament-forms-text-input-component']) }}>
         @if (($prefixAction = $getPrefixAction()) && (! $prefixAction->isHidden()))
             {{ $prefixAction }}
+        @endif
+
+        @if ($icon = $getPrefixIcon())
+            <x-dynamic-component :component="$icon" class="w-5 h-5" />
         @endif
 
         @if ($label = $getPrefixLabel())
@@ -75,6 +79,10 @@
             <span @class($affixLabelClasses)>
                 {{ $label }}
             </span>
+        @endif
+
+        @if ($icon = $getSuffixIcon())
+            <x-dynamic-component :component="$icon" class="w-5 h-5" />
         @endif
 
         @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))
