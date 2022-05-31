@@ -21,7 +21,12 @@ trait HasActions
 
     public function getAction(string $name): ?Action
     {
-        return $this->actions[$name] ?? null;
+        return $this->getActions()[$name] ?? null;
+    }
+
+    public function getActions(): array
+    {
+        return $this->actions;
     }
 
     public function getActionFormModel(): Model | string | null
@@ -31,6 +36,6 @@ trait HasActions
 
     public function hasAction(string $name): bool
     {
-        return array_key_exists($name, $this->actions);
+        return array_key_exists($name, $this->getActions());
     }
 }
