@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components;
 
-use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Component as LivewireComponent;
