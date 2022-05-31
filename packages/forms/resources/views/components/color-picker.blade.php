@@ -22,6 +22,10 @@
             {{ $prefixAction }}
         @endif
 
+        @if ($icon = $getPrefixIcon())
+            <x-dynamic-component :component="$icon" class="w-5 h-5" />
+        @endif
+
         @if ($label = $getPrefixLabel())
             <span @class($affixLabelClasses)>
                 {{ $label }}
@@ -94,6 +98,10 @@
             <span @class($affixLabelClasses)>
                 {{ $label }}
             </span>
+        @endif
+
+        @if ($icon = $getSuffixIcon())
+            <x-dynamic-component :component="$icon" class="w-5 h-5" />
         @endif
 
         @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))
