@@ -134,7 +134,7 @@ class Select extends Field
             return null;
         }
 
-       return $createOptionAction;
+        return $createOptionAction;
     }
 
     public function getActions(): array
