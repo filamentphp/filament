@@ -39,14 +39,6 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
         $this->columnSpan('full');
     }
 
-    public function collapsed(bool | Closure $condition = true): static
-    {
-        $this->isCollapsed = $condition;
-        $this->collapsible(true);
-
-        return $this;
-    }
-
     public function description(string | Htmlable | Closure | null $description = null): static
     {
         $this->description = $description;
