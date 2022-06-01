@@ -84,7 +84,7 @@ class Builder extends Field
 
                     $component->hydrateDefaultItemState($newUuid);
 
-                    $component->collapsed(false);
+                    $component->collapsed(false, shouldMakeComponentCollapsible: false);
                 },
             ],
             'builder::deleteItem' => [
