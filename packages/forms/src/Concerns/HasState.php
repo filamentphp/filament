@@ -2,7 +2,9 @@
 
 namespace Filament\Forms\Concerns;
 
+use Filament\Forms\Components\BaseFileUpload;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 trait HasState
 {
@@ -28,6 +30,12 @@ trait HasState
                 return true;
             }
 
+            if ($component instanceof BaseFileUpload && Str::of($path)->startsWith("{$component->getStatePath()}.")) {
+                $component->callAfterStateUpdated();
+
+                return true;
+            }
+            
             foreach ($component->getChildComponentContainers() as $container) {
                 if ($container->callAfterStateUpdated($path)) {
                     return true;
