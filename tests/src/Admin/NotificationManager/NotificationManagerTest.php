@@ -4,11 +4,16 @@ use Filament\Tests\Admin\Fixtures\Pages\Settings;
 use Filament\Tests\Admin\NotificationManager\TestCase;
 use Illuminate\Support\Facades\Session;
 use Livewire\Livewire;
+use Livewire\LivewireManager;
 
 uses(TestCase::class);
 
 it('can immediately dispatch notify event to browser', function () {
-    Livewire::test(Settings::class)
+    $component = Livewire::test(Settings::class);
+
+    LivewireManager::$isLivewireRequestTestingOverride = true;
+
+    $component
         ->call('notificationManager')
         ->assertDispatchedBrowserEvent('notify');
 
