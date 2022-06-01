@@ -1410,6 +1410,32 @@ Repeater::make('members')
     ->maxItems(10)
 ```
 
+### Collapsible
+
+The repeater may be `collapsible()` to optionally hide content in long forms:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('qualifications')
+    ->schema([
+        // ...
+    ])
+    ->collapsible()
+```
+
+You may collapse all items by default:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('qualifications')
+    ->schema([
+        // ...
+    ])
+    ->collapsed()
+```
+
 ### Populating automatically from a `HasMany` relationship
 
 You may employ the `relationship()` method of the `HasManyRepeater` to configure a relationship to automatically retrieve and save repeater items:
@@ -1457,19 +1483,6 @@ HasManyRepeater::make('qualifications')
         // ...
     ])
     ->orderable('order_column')
-```
-
-### Collapsible
-Repeater (and `Builder`) may be `collapsible()` to optionally hide content in long forms:
-
-```php
-use Filament\Forms\Components\Section;
-
-Repeater::make('Heading')
-    ->schema([
-        // ...
-    ])
-    ->collapsible()
 ```
 
 ### Populating automatically from a `MorphMany` relationship
@@ -1592,6 +1605,32 @@ Builder::make('content')
     ])
     ->minItems(1)
     ->maxItems(10)
+```
+
+### Collapsible
+
+The builder may be `collapsible()` to optionally hide content in long forms:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->collapsible()
+```
+
+You may collapse all items by default:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->collapsed()
 ```
 
 ## Tags input
