@@ -24,19 +24,18 @@ trait HasState
     public function callAfterStateUpdated(string $path): bool
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component instanceof BaseFileUpload) {
-                $uuid = Str::after($path, "{$component->getStatePath()}.");
-                if (isset($component->getState()[$uuid])) {
-                    $component->callAfterStateUpdated();
-
-                    return true;
-                }
-            } elseif ($component->getStatePath() === $path) {
+            if ($component->getStatePath() === $path) {
                 $component->callAfterStateUpdated();
 
                 return true;
             }
 
+            if ($component instanceof BaseFileUpload && Str::of($path)->startsWith("{$component->getStatePath()}.")) {
+                $component->callAfterStateUpdated();
+
+                return true;
+            }
+            
             foreach ($component->getChildComponentContainers() as $container) {
                 if ($container->callAfterStateUpdated($path)) {
                     return true;
