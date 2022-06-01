@@ -35,7 +35,7 @@ trait HasState
 
                 return true;
             }
-            
+
             foreach ($component->getChildComponentContainers() as $container) {
                 if ($container->callAfterStateUpdated($path)) {
                     return true;
