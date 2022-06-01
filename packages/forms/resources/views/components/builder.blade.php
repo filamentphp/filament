@@ -17,7 +17,7 @@
         $isItemMovementDisabled = $isItemMovementDisabled();
     @endphp
 
-    @if (count($containers) > 1)
+    @if (count($containers) > 1 && $isCollapsible())
         <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
             <x-forms::link
                 x-on:click="$dispatch('builder-collapse', '{{ $getStatePath() }}')"
@@ -131,28 +131,30 @@
                                     </li>
                                 @endunless
 
-                                <li>
-                                    <button
-                                        x-on:click="isCollapsed = !isCollapsed"
-                                        type="button"
-                                        @class([
-                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',
-                                            'dark:text-gray-400 dark:hover:text-gray-500' => config('forms.dark_mode'),
-                                        ])
-                                    >
-                                        <x-heroicon-s-minus-sm class="w-4 h-4" x-show="! isCollapsed"/>
+                                @if($isCollapsible())
+                                    <li>
+                                        <button
+                                            x-on:click="isCollapsed = !isCollapsed"
+                                            type="button"
+                                            @class([
+                                                'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',
+                                                'dark:text-gray-400 dark:hover:text-gray-500' => config('forms.dark_mode'),
+                                            ])
+                                        >
+                                            <x-heroicon-s-minus-sm class="w-4 h-4" x-show="! isCollapsed"/>
 
-                                        <span class="sr-only" x-show="! isCollapsed">
-                                            {{ __('forms::components.builder.buttons.collapse_item.label') }}
-                                        </span>
+                                            <span class="sr-only" x-show="! isCollapsed">
+                                                {{ __('forms::components.builder.buttons.collapse_item.label') }}
+                                            </span>
 
-                                        <x-heroicon-s-plus-sm class="w-4 h-4" x-show="isCollapsed" x-cloak/>
+                                            <x-heroicon-s-plus-sm class="w-4 h-4" x-show="isCollapsed" x-cloak/>
 
-                                        <span class="sr-only" x-show="isCollapsed" x-cloak>
-                                            {{ __('forms::components.builder.buttons.expand_item.label') }}
-                                        </span>
-                                    </button>
-                                </li>
+                                            <span class="sr-only" x-show="isCollapsed" x-cloak>
+                                                {{ __('forms::components.builder.buttons.expand_item.label') }}
+                                            </span>
+                                        </button>
+                                    </li>
+                                @endif
                             </ul>
                         </header>
 

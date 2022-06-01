@@ -15,8 +15,6 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
 
     protected string $view = 'forms::components.section';
 
-    protected bool | Closure $isCollapsible = false;
-
     protected string | Htmlable | Closure | null $description = null;
 
     protected string | Closure $heading;
@@ -45,13 +43,6 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     {
         $this->isCollapsed = $condition;
         $this->collapsible(true);
-
-        return $this;
-    }
-
-    public function collapsible(bool | Closure $condition = true): static
-    {
-        $this->isCollapsible = $condition;
 
         return $this;
     }
@@ -93,11 +84,6 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
         }
 
         return $id;
-    }
-
-    public function isCollapsible(): bool
-    {
-        return (bool) $this->evaluate($this->isCollapsible);
     }
 
     public function canConcealComponents(): bool
