@@ -1459,6 +1459,19 @@ HasManyRepeater::make('qualifications')
     ->orderable('order_column')
 ```
 
+### Collapsible
+Repeater (and `Builder`) may be `collapsible()` to optionally hide content in long forms:
+
+```php
+use Filament\Forms\Components\Section;
+
+Repeater::make('Heading')
+    ->schema([
+        // ...
+    ])
+    ->collapsible()
+```
+
 ### Populating automatically from a `MorphMany` relationship
 
 You may employ the `relationship()` method of the `MorphManyRepeater` to configure a relationship to automatically retrieve and save repeater items:
