@@ -2,7 +2,9 @@
 
 namespace Filament\Forms\Concerns;
 
+use Filament\Forms\Components\BaseFileUpload;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 trait HasState
 {
@@ -22,7 +24,14 @@ trait HasState
     public function callAfterStateUpdated(string $path): bool
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->getStatePath() === $path) {
+            if ($component instanceof BaseFileUpload) {
+                $uuid = Str::after($path, "{$component->getStatePath()}.");
+                if (isset($component->getState()[$uuid])) {
+                    $component->callAfterStateUpdated();
+
+                    return true;
+                }
+            } elseif ($component->getStatePath() === $path) {
                 $component->callAfterStateUpdated();
 
                 return true;
