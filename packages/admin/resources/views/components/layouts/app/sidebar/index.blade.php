@@ -20,6 +20,7 @@
     ])>
         <a
             href="{{ config('filament.home_url') }}"
+            class="block w-full"
             @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
                 x-show="$store.sidebar.isOpen"
                 x-transition:enter="lg:transition delay-100"
