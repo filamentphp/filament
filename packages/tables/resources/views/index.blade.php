@@ -468,35 +468,32 @@
     {{ $this->modal }}
 
     <script>
-        /**
-         * JS/Alpine implementation of
-         * https://github.com/laravel/framework/blob/5299c22321c0f1ea8ff770b84a6c6469c4d6edec/src/Illuminate/Translation/MessageSelector.php#L15
-         */
+        // https://github.com/laravel/framework/blob/5299c22321c0f1ea8ff770b84a6c6469c4d6edec/src/Illuminate/Translation/MessageSelector.php#L15
         document.addEventListener('alpine:init', () => {
             window.Alpine.magic('transChoice', () => {
                 return (text, number, variables) => {
                     function extract(segments, number) {
                         for (const part of segments) {
-                            const line = extractFromString(part, number);
+                            const line = extractFromString(part, number)
                             if (line !== null) {
-                                return line;
+                                return line
                             }
                         }
                     }
 
                     function extractFromString(part, number) {
-                        const matches = part.match(/^[\{\[]([^\[\]\{\}]*)[\}\]](.*)/s);
+                        const matches = part.match(/^[\{\[]([^\[\]\{\}]*)[\}\]](.*)/s)
 
                         if (matches === null || matches.length !== 3) {
-                            return null;
+                            return null
                         }
 
-                        var condition = matches[1];
+                        const condition = matches[1]
 
-                        var value = matches[2];
+                        const value = matches[2]
 
                         if (condition.includes(",")) {
-                            const [from, to] = condition.split(",", 2);
+                            const [from, to] = condition.split(",", 2)
 
                             if (to === "*" && number >= from) {
                                 return value;
@@ -507,49 +504,49 @@
                             }
                         }
 
-                        return condition == number ? value : null;
+                        return condition == number ? value : null
                     }
 
                     function ucfirst(string) {
-                        return string.toString().charAt(0).toUpperCase() + string.toString().slice(1);
+                        return string.toString().charAt(0).toUpperCase() + string.toString().slice(1)
                     }
 
                     function replace(line, replace) {
 
                         if (replace.length === 0) {
-                            return line;
+                            return line
                         }
 
-                        const shouldReplace = {};
+                        const shouldReplace = {}
 
                         for (let [key, value] of Object.entries(replace)) {
-                            shouldReplace[":" + ucfirst(key ?? "")] = ucfirst(value ?? "");
-                            shouldReplace[":" + key.toUpperCase()] = value.toString().toUpperCase();
-                            shouldReplace[":" + key] = value;
+                            shouldReplace[":" + ucfirst(key ?? "")] = ucfirst(value ?? "")
+                            shouldReplace[":" + key.toUpperCase()] = value.toString().toUpperCase()
+                            shouldReplace[":" + key] = value
                         }
 
                         Object.entries(shouldReplace).forEach(([key, value]) => {
-                            line = line.replaceAll(key, value);
+                            line = line.replaceAll(key, value)
                         });
 
-                        return line;
+                        return line
                     }
 
                     function stripConditions(segments) {
-                        return segments.map(part => part.replace(/^[\{\[]([^\[\]\{\}]*)[\}\]]/, ''));
+                        return segments.map(part => part.replace(/^[\{\[]([^\[\]\{\}]*)[\}\]]/, ''))
                     }
 
-                    let segments = text.split("|");
+                    let segments = text.split("|")
 
-                    const value = extract(segments, number);
+                    const value = extract(segments, number)
 
                     if (value !== null && value !== undefined) {
-                        return replace(value.trim(), variables);
+                        return replace(value.trim(), variables)
                     }
 
-                    segments = stripConditions(segments);
+                    segments = stripConditions(segments)
 
-                    return replace(segments.length > 1 && number > 1 ? segments[1] : segments[0], variables);
+                    return replace(segments.length > 1 && number > 1 ? segments[1] : segments[0], variables)
                 }
             });
         })
