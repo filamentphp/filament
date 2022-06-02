@@ -127,6 +127,26 @@ class Resource
         return static::can('deleteAny');
     }
 
+    public static function canForceDelete(Model $record): bool
+    {
+        return static::can('forceDelete', $record);
+    }
+
+    public static function canForceDeleteAny(): bool
+    {
+        return static::can('forceDeleteAny');
+    }
+
+    public static function canRestore(Model $record): bool
+    {
+        return static::can('restore', $record);
+    }
+
+    public static function canRestoreAny(): bool
+    {
+        return static::can('restoreAny');
+    }
+
     public static function canGloballySearch(): bool
     {
         return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canViewAny();
