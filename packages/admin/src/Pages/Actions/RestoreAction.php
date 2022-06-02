@@ -14,27 +14,27 @@ class RestoreAction extends Action
     {
         $action = $this;
 
-        // @TODO: Set translation
-        // $this->label(__('tables::pages.actions.force_delete.label'));
-        $this->label('Restore');
+        $this->label(__('filament::resources/pages/edit-record.actions.restore.label'));
 
-        $this->modalButton(static fn (RestoreAction $action): string => $action->getLabel());
+        $this->color('secondary');
 
-        // @TODO: Set translation
-        // $this->notificationMessage(__('tables::pages.actions.force_delete.messages.deleted'));
-        $this->notificationMessage('Restored');
+        $this->notificationMessage(__('filament::resources/pages/edit-record.actions.restore.messages.restored'));
 
         $this->visible(fn () => method_exists($this->getLivewire()->record, 'trashed') && $this->getLivewire()->record->trashed());
 
         $this->requiresConfirmation();
 
-        $this->modalHeading(fn () => __('filament::resources/pages/edit-record.actions.delete.modal.heading', ['label' => 'BLA']));
-        $this->modalSubheading(__('filament::resources/pages/edit-record.actions.delete.modal.subheading'));
-        $this->modalButton(__('filament::resources/pages/edit-record.actions.delete.modal.buttons.delete.label'));
+        $this->modalHeading(fn () => __('filament::resources/pages/edit-record.actions.restore.modal.heading', ['label' => $this->getLivewire()::getResource()::getRecordTitle($this->getLivewire()->record)]));
+
+        $this->modalSubheading(__('filament::resources/pages/edit-record.actions.restore.modal.subheading'));
+
+        $this->modalButton(__('filament::resources/pages/edit-record.actions.restore.modal.buttons.restore.label'));
+
         $this->keyBindings(['mod+z']);
 
         $this->action(static function () use ($action) {
-            $record = $action->getLivewire()->record;
+            $livewire = $action->getLivewire();
+            $record = $livewire->record;
 
             $action->evaluate($action->beforeCallback, ['record' => $record]);
 
