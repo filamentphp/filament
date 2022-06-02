@@ -91,6 +91,6 @@ trait CanToggleColumns
     {
         $table = class_basename($this::class);
 
-        return $table . '_toggled_columns';
+        return 'filament.' . $table . '_toggled_columns';
     }
 }
