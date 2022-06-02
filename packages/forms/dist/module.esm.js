@@ -12000,6 +12000,9 @@ var date_time_picker_default = (Alpine) => {
           this.setState(date2.second(this.second ?? 0));
         });
         this.$watch("state", () => {
+          if (this.state === void 0) {
+            return;
+          }
           let date2 = this.getSelectedDate();
           if (this.getMaxDate() !== null && date2.isAfter(this.getMaxDate())) {
             date2 = null;
@@ -12007,9 +12010,18 @@ var date_time_picker_default = (Alpine) => {
           if (this.getMinDate() !== null && date2.isBefore(this.getMinDate())) {
             date2 = null;
           }
-          this.hour = date2?.hour() ?? 0;
-          this.minute = date2?.minute() ?? 0;
-          this.second = date2?.second() ?? 0;
+          const newHour = date2?.hour() ?? 0;
+          if (this.hour !== newHour) {
+            this.hour = newHour;
+          }
+          const newMinute = date2?.minute() ?? 0;
+          if (this.minute !== newMinute) {
+            this.minute = newMinute;
+          }
+          const newSecond = date2?.second() ?? 0;
+          if (this.second !== newSecond) {
+            this.second = newSecond;
+          }
           this.setDisplayText();
         });
       },
@@ -12096,6 +12108,9 @@ var date_time_picker_default = (Alpine) => {
         return date.isValid() ? date : null;
       },
       getSelectedDate: function() {
+        if (this.state === void 0) {
+          return null;
+        }
         let date = esm_default(this.state);
         if (!date.isValid()) {
           return null;

@@ -213,6 +213,10 @@ export default (Alpine) => {
                 })
 
                 this.$watch('state', () => {
+                    if (this.state === undefined) {
+                        return
+                    }
+
                     let date = this.getSelectedDate()
 
                     if (this.getMaxDate() !== null && date.isAfter(this.getMaxDate())) {
@@ -222,9 +226,20 @@ export default (Alpine) => {
                         date = null
                     }
 
-                    this.hour = date?.hour() ?? 0
-                    this.minute = date?.minute() ?? 0
-                    this.second = date?.second() ?? 0
+                    const newHour = date?.hour() ?? 0
+                    if (this.hour !== newHour) {
+                        this.hour = newHour
+                    }
+
+                    const newMinute = date?.minute() ?? 0
+                    if (this.minute !== newMinute) {
+                        this.minute = newMinute
+                    }
+
+                    const newSecond = date?.second() ?? 0
+                    if (this.second !== newSecond) {
+                        this.second = newSecond
+                    }
 
                     this.setDisplayText()
                 })
@@ -354,6 +369,10 @@ export default (Alpine) => {
             },
 
             getSelectedDate: function () {
+                if (this.state === undefined) {
+                    return null
+                }
+
                 let date = dayjs(this.state)
 
                 if (! date.isValid()) {
