@@ -474,7 +474,7 @@
                 return (text, number, variables) => {
                     function extract(segments, number) {
                         for (const part of segments) {
-                            const line = extractFromString(part, number);
+                            const line = extractFromString(part, number)
 
                             if (line !== null) {
                                 return line
@@ -493,12 +493,12 @@
 
                         const value = matches[2]
 
-                        if (condition.includes(",")) {
-                            const [from, to] = condition.split(",", 2)
+                        if (condition.includes(',')) {
+                            const [from, to] = condition.split(',', 2)
 
-                            if (to === "*" && number >= from) {
+                            if (to === '*' && number >= from) {
                                 return value;
-                            } else if (from === "*" && number <= to) {
+                            } else if (from === '*' && number <= to) {
                                 return value;
                             } else if (number >= from && number <= to) {
                                 return value;
@@ -521,9 +521,9 @@
                         const shouldReplace = {}
 
                         for (let [key, value] of Object.entries(replace)) {
-                            shouldReplace[":" + ucfirst(key ?? "")] = ucfirst(value ?? "")
-                            shouldReplace[":" + key.toUpperCase()] = value.toString().toUpperCase()
-                            shouldReplace[":" + key] = value
+                            shouldReplace[':' + ucfirst(key ?? '')] = ucfirst(value ?? '')
+                            shouldReplace[':' + key.toUpperCase()] = value.toString().toUpperCase()
+                            shouldReplace[':' + key] = value
                         }
 
                         Object.entries(shouldReplace).forEach(([key, value]) => {
@@ -537,7 +537,7 @@
                         return segments.map(part => part.replace(/^[\{\[]([^\[\]\{\}]*)[\}\]]/, ''))
                     }
 
-                    let segments = text.split("|")
+                    let segments = text.split('|')
 
                     const value = extract(segments, number)
 
