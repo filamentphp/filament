@@ -478,6 +478,7 @@
                     function extract(segments, number) {
                         for (const part of segments) {
                             const line = extractFromString(part, number);
+                            
                             if (line !== null) {
                                 return line;
                             }
