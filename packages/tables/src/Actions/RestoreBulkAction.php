@@ -20,7 +20,8 @@ class RestoreBulkAction extends BulkAction
 
         $this->color('secondary');
 
-        $this->visible(fn () =>
+        $this->visible(
+            fn () =>
             $this->getLivewire()::getResource()::canRestoreAny()
         );
 

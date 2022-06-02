@@ -19,7 +19,8 @@ class RestoreAction extends Action
 
         $this->color('secondary');
 
-        $this->visible(fn () =>
+        $this->visible(
+            fn () =>
             method_exists(($record = $this->getRecord()), 'trashed')
             && $record->trashed()
             && $this->getLivewire()::getResource()::canRestore($record)

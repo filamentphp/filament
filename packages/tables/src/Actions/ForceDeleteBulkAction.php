@@ -22,7 +22,8 @@ class ForceDeleteBulkAction extends BulkAction
 
         $this->color('danger');
 
-        $this->visible(fn () =>
+        $this->visible(
+            fn () =>
             $this->getLivewire()::getResource()::canForceDeleteAny()
         );
 
