@@ -59,6 +59,31 @@ return [
 
     ],
 
+
+    'bulk_actions' => [
+
+        'force_delete' => [
+
+            'label' => 'Force delete',
+
+            'messages' => [
+                'deleted' => 'Records deleted',
+            ],
+
+        ],
+
+        'restore' => [
+
+            'label' => 'Restore',
+
+            'messages' => [
+                'restored' => 'Records restored',
+            ],
+
+        ],
+
+    ],
+
     'actions' => [
 
         'force_delete' => [
