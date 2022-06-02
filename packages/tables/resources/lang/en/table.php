@@ -61,13 +61,22 @@ return [
 
     'actions' => [
 
-
         'force_delete' => [
 
             'label' => 'Force delete',
 
             'messages' => [
                 'deleted' => 'Record deleted',
+            ],
+
+        ],
+
+        'restore' => [
+
+            'label' => 'Restore',
+
+            'messages' => [
+                'restored' => 'Record restored',
             ],
 
         ],
