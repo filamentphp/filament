@@ -4,6 +4,8 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
+use Filament\Pages\Actions\ForceDeleteAction;
+use Filament\Pages\Actions\RestoreAction;
 use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -141,13 +143,20 @@ class EditRecord extends Page implements HasFormActions
         return __('filament::resources/pages/edit-record.actions.delete.messages.deleted');
     }
 
+    private function isSoftDeletable(): bool
+    {
+        return method_exists($this->record, 'trashed') && $this->record->trashed();
+    }
+
     protected function getActions(): array
     {
         $resource = static::getResource();
 
         return array_merge(
             (($resource::hasPage('view') && $resource::canView($this->record)) ? [$this->getViewAction()] : []),
-            ($resource::canDelete($this->record) ? [$this->getDeleteAction()] : []),
+            ($resource::canDelete($this->record) && ! $this->isSoftDeletable() ? [$this->getDeleteAction()] : []),
+            ($resource::canRestore($this->record) ? [RestoreAction::make('restore')] : []),
+            ($resource::canForceDelete($this->record) ? [ForceDeleteAction::make('force_delete')] : []),
         );
     }
 
