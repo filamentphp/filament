@@ -38,7 +38,6 @@ class ForceDeleteAction extends Action
         $this->keyBindings(['mod+d']);
 
         $this->action(static function () use ($action) {
-
             $record = $action->getLivewire()->record;
 
             $action->evaluate($action->beforeCallback, ['record' => $record]);
@@ -50,5 +49,4 @@ class ForceDeleteAction extends Action
             $action->evaluate($action->afterCallback, ['record' => $record]);
         });
     }
-
 }

@@ -12,7 +12,6 @@ class RestoreAction extends Action
 
     protected function setUp(): void
     {
-
         $action = $this;
 
         // @TODO: Set translation
@@ -35,7 +34,6 @@ class RestoreAction extends Action
         $this->keyBindings(['mod+z']);
 
         $this->action(static function () use ($action) {
-
             $record = $action->getLivewire()->record;
 
             $action->evaluate($action->beforeCallback, ['record' => $record]);
@@ -49,5 +47,4 @@ class RestoreAction extends Action
 
         parent::setUp();
     }
-
 }
