@@ -21,7 +21,8 @@ class ForceDeleteAction extends Action
 
         $this->color('danger');
 
-        $this->visible(fn () =>
+        $this->visible(
+            fn () =>
             method_exists(($record = $this->getRecord()), 'trashed')
             && $record->trashed()
             && $this->getLivewire()::getResource()::canForceDelete($record)
