@@ -61,6 +61,17 @@ return [
 
     'actions' => [
 
+
+        'force_delete' => [
+
+            'label' => 'Force delete',
+
+            'messages' => [
+                'deleted' => 'Record deleted',
+            ],
+
+        ],
+
         'replicate' => [
 
             'label' => 'Replicate',
