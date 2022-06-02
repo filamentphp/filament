@@ -4,9 +4,10 @@ namespace Filament\Tables\Actions;
 
 use Filament\Support\Actions\Concerns\CanNotify;
 use Filament\Support\Actions\Concerns\HasBeforeAfterCallbacks;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class ForceDeleteAction extends Action
+class ForceDeleteBulkAction extends BulkAction
 {
     use CanNotify;
     use HasBeforeAfterCallbacks;
@@ -22,23 +23,21 @@ class ForceDeleteAction extends Action
         $this->color('danger');
 
         $this->visible(fn () =>
-            method_exists(($record = $this->getRecord()), 'trashed')
-            && $record->trashed()
-            && $this->getLivewire()::getResource()::canForceDelete($record)
+            $this->getLivewire()::getResource()::canForceDeleteAny()
         );
 
-        $this->notificationMessage(__('tables::table.actions.force_delete.messages.deleted'));
+        $this->notificationMessage(__('tables::table.bulk_actions.force_delete.messages.deleted'));
 
         $this->requiresConfirmation();
 
-        $this->action(static function (ForceDeleteAction $action, Model $record) {
-            $action->evaluate($action->beforeCallback, ['record' => $record]);
+        $this->action(static function (ForceDeleteBulkAction $action, Collection $records) {
+            $action->evaluate($action->beforeCallback, ['records' => $records]);
 
-            $record->forceDelete();
+            $records->each(fn (Model $record) => $record->forceDelete());
 
             $action->notify();
 
-            return $action->evaluate($action->afterCallback, ['record' => $record]);
+            return $action->evaluate($action->afterCallback, ['records' => $records]);
         });
     }
 }

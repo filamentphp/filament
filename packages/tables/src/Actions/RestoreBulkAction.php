@@ -4,9 +4,10 @@ namespace Filament\Tables\Actions;
 
 use Filament\Support\Actions\Concerns\CanNotify;
 use Filament\Support\Actions\Concerns\HasBeforeAfterCallbacks;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class RestoreAction extends Action
+class RestoreBulkAction extends BulkAction
 {
     use CanNotify;
     use HasBeforeAfterCallbacks;
@@ -20,23 +21,21 @@ class RestoreAction extends Action
         $this->color('secondary');
 
         $this->visible(fn () =>
-            method_exists(($record = $this->getRecord()), 'trashed')
-            && $record->trashed()
-            && $this->getLivewire()::getResource()::canRestore($record)
+            $this->getLivewire()::getResource()::canRestoreAny()
         );
 
-        $this->notificationMessage(__('tables::table.actions.restore.messages.restored'));
+        $this->notificationMessage(__('tables::table.bulk_actions.restore.messages.restored'));
 
         $this->requiresConfirmation();
 
-        $this->action(static function (RestoreAction $action, Model $record) {
-            $action->evaluate($action->beforeCallback, ['record' => $record]);
+        $this->action(static function (RestoreBulkAction $action, Collection $records) {
+            $action->evaluate($action->beforeCallback, ['records' => $records]);
 
-            $record->restore();
+            $records->each(fn (Model $record) => $record->restore());
 
             $action->notify();
 
-            return $action->evaluate($action->afterCallback, ['record' => $record]);
+            return $action->evaluate($action->afterCallback, ['records' => $records]);
         });
 
         parent::setUp();
