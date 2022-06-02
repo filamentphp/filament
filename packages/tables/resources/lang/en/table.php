@@ -110,6 +110,12 @@ return [
             'placeholder' => 'All',
         ],
 
+        'soft_deletes' => [
+            'placeholder' => 'Without trashed records',
+            'true_label' => 'With trashed records',
+            'false_label' => 'Only trashed records',
+        ],
+
     ],
 
     'selection_indicator' => [
