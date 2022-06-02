@@ -32,7 +32,7 @@ class NotificationManager
         }
 
         $notifications = $this->notifications;
-        session()->forget('notifications');
+        session()->forget('filament.notifications');
 
         if (count($notifications) > 0) {
             $component->dispatchBrowserEvent('notify', $notifications);
