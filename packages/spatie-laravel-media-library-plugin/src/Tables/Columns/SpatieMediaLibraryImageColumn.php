@@ -3,12 +3,15 @@
 namespace Filament\Tables\Columns;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Filesystem\FilesystemAdapter;
 
 class SpatieMediaLibraryImageColumn extends ImageColumn
 {
     protected ?string $collection = null;
 
     protected string $conversion = '';
+
+    protected string | Closure $visibility = 'public';
 
     public function collection(string $collection): static
     {
@@ -24,6 +27,13 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         return $this;
     }
 
+    public function visibility(string | Closure | null $visibility): static
+    {
+        $this->visibility = $visibility;
+
+        return $this;
+    }
+
     public function getCollection(): ?string
     {
         return $this->collection ?? 'default';
@@ -32,6 +42,11 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
     public function getConversion(): string
     {
         return $this->conversion ?? '';
+    }
+
+    public function getVisibility(): string
+    {
+        return $this->evaluate($this->visibility);
     }
 
     public function getImagePath(): ?string
@@ -46,6 +61,10 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
 
         if (! method_exists($record, 'getFirstMediaUrl')) {
             return $state;
+        }
+
+        if ($this->getVisibility() === 'private') {
+            return $record->getFirstTemporaryUrl(now()->addMinutes(5), $this->getCollection(), $this->getConversion());
         }
 
         return $record->getFirstMediaUrl($this->getCollection(), $this->getConversion());
