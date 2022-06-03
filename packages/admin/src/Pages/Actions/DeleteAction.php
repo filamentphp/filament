@@ -27,7 +27,7 @@ class DeleteAction extends Action
             $page = invade($this->getLivewire());
 
             return __('filament::resources/pages/edit-record.actions.delete.modal.heading', [
-                'label' => $page->getRecordTitle() ?? $page::getResource()::getLabel()
+                'label' => $page->getRecordTitle() ?? $page::getResource()::getLabel(),
             ]);
         });
 
@@ -71,6 +71,7 @@ class DeleteAction extends Action
 
         if ($reflector->getDeclaringClass()->getName() !== EditRecord::class) {
             $page->delete();
+
             return;
         }
 
