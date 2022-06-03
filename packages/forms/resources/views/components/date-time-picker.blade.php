@@ -26,6 +26,7 @@
             isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
+        wire:key="{{ $getId() }}"
         x-on:click.away="closePicker()"
         x-on:keydown.escape.stop="closePicker()"
         x-on:blur="closePicker()"
