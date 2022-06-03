@@ -81,7 +81,6 @@ trait InteractsWithTableQuery
             $query->when(
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName),
                 function (Builder $query) use ($searchColumnName, $searchOperator, $search, $whereClause, $databaseConnection): Builder {
-
                     $activeLocale = $this->getLivewire()->getActiveTableLocale() ?: app()->getLocale();
 
                     $searchColumn = match ($databaseConnection->getDriverName()) {
