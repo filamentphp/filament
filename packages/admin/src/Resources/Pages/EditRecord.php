@@ -171,7 +171,7 @@ class EditRecord extends Page implements HasFormActions
      */
     protected function getDeleteAction(): Action
     {
-        return DeleteAction::make('delete')->livewire($this);
+        return DeleteAction::make('delete');
     }
 
     protected function getTitle(): string
