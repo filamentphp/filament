@@ -2,6 +2,8 @@
 
 namespace Filament\Pages\Actions;
 
+use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Actions\Concerns\CanNotify;
 use Filament\Support\Actions\Concerns\HasBeforeAfterCallbacks;
 
@@ -14,19 +16,31 @@ class ForceDeleteAction extends Action
     {
         parent::setUp();
 
-        $action = $this;
-
         $this->label(__('filament::resources/pages/edit-record.actions.force_delete.label'));
 
         $this->color('danger');
 
         $this->notificationMessage(__('filament::resources/pages/edit-record.actions.force_delete.messages.deleted'));
 
-        $this->visible(fn () => method_exists($this->getLivewire()->record, 'trashed') && $this->getLivewire()->record->trashed());
+        $this->visible(function () {
+            /** @var ViewRecord | EditRecord $page */
+            $page = $this->getLivewire();
+
+            return method_exists($page->record, 'trashed')
+                && $page->record->trashed();
+        });
 
         $this->requiresConfirmation();
 
-        $this->modalHeading(fn () => __('filament::resources/pages/edit-record.actions.force_delete.modal.heading', ['label' => $this->getLivewire()::getResource()::getRecordTitle($this->getLivewire()->record)]));
+        $this->modalHeading(function () {
+            /** @var ViewRecord | EditRecord $page */
+            $page = $this->getLivewire();
+
+            return __(
+                'filament::resources/pages/edit-record.actions.force_delete.modal.heading',
+                ['label' => $page::getResource()::getRecordTitle($page->record)]
+            );
+        });
 
         $this->modalSubheading(__('filament::resources/pages/edit-record.actions.force_delete.modal.subheading'));
 
@@ -34,20 +48,21 @@ class ForceDeleteAction extends Action
 
         $this->keyBindings(['mod+d']);
 
-        $this->action(static function () use ($action) {
-            $livewire = $action->getLivewire();
-            $resource = $livewire::getResource();
-            $record = $livewire->record;
+        $this->action(function () {
+            /** @var ViewRecord | EditRecord $page */
+            $page = $this->getLivewire();
+            $resource = $page::getResource();
+            $record = $page->record;
 
-            $action->evaluate($action->beforeCallback, ['record' => $record]);
+            $this->evaluate($this->beforeCallback, ['record' => $record]);
 
             $record->forceDelete();
 
-            $action->notify();
+            $this->notify();
 
-            $action->evaluate($action->afterCallback, ['record' => $record]);
+            $this->evaluate($this->afterCallback, ['record' => $record]);
 
-            return $livewire->redirect($resource::getUrl('index'));
+            $page->redirect($resource::getUrl('index'));
         });
     }
 }

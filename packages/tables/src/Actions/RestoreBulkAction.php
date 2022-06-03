@@ -2,10 +2,10 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Resources\Pages\Page;
 use Filament\Support\Actions\Concerns\CanNotify;
 use Filament\Support\Actions\Concerns\HasBeforeAfterCallbacks;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 class RestoreBulkAction extends BulkAction
 {
@@ -20,10 +20,11 @@ class RestoreBulkAction extends BulkAction
 
         $this->color('secondary');
 
-        $this->visible(
-            fn () =>
-            $this->getLivewire()::getResource()::canRestoreAny()
-        );
+        $this->visible(function () {
+            /** @var Page $page */
+            $page = $this->getLivewire();
+            return $page::getResource()::canRestoreAny();
+        });
 
         $this->notificationMessage(__('tables::table.bulk_actions.restore.messages.restored'));
 
@@ -32,7 +33,7 @@ class RestoreBulkAction extends BulkAction
         $this->action(static function (RestoreBulkAction $action, Collection $records) {
             $action->evaluate($action->beforeCallback, ['records' => $records]);
 
-            $records->each(fn (Model $record) => $record->restore());
+            $records->each(fn ($record) => $record->restore());
 
             $action->notify();
 

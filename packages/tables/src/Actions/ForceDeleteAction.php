@@ -2,9 +2,9 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Resources\Pages\Page;
 use Filament\Support\Actions\Concerns\CanNotify;
 use Filament\Support\Actions\Concerns\HasBeforeAfterCallbacks;
-use Illuminate\Database\Eloquent\Model;
 
 class ForceDeleteAction extends Action
 {
@@ -21,18 +21,21 @@ class ForceDeleteAction extends Action
 
         $this->color('danger');
 
-        $this->visible(
-            fn () =>
-            method_exists(($record = $this->getRecord()), 'trashed')
-            && $record->trashed()
-            && $this->getLivewire()::getResource()::canForceDelete($record)
-        );
+        $this->visible(function () {
+            /** @var Page $page */
+            $page = $this->getLivewire();
+            $record = $this->getRecord();
+
+            return method_exists($record, 'trashed')
+                && $record->trashed()
+                && $page::getResource()::canForceDelete($record);
+        });
 
         $this->notificationMessage(__('tables::table.actions.force_delete.messages.deleted'));
 
         $this->requiresConfirmation();
 
-        $this->action(static function (ForceDeleteAction $action, Model $record) {
+        $this->action(static function (ForceDeleteAction $action, $record) {
             $action->evaluate($action->beforeCallback, ['record' => $record]);
 
             $record->forceDelete();

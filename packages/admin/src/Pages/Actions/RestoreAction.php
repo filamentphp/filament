@@ -2,6 +2,8 @@
 
 namespace Filament\Pages\Actions;
 
+use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Actions\Concerns\CanNotify;
 use Filament\Support\Actions\Concerns\HasBeforeAfterCallbacks;
 
@@ -12,19 +14,31 @@ class RestoreAction extends Action
 
     protected function setUp(): void
     {
-        $action = $this;
-
         $this->label(__('filament::resources/pages/edit-record.actions.restore.label'));
 
         $this->color('secondary');
 
         $this->notificationMessage(__('filament::resources/pages/edit-record.actions.restore.messages.restored'));
 
-        $this->visible(fn () => method_exists($this->getLivewire()->record, 'trashed') && $this->getLivewire()->record->trashed());
+        $this->visible(function () {
+            /** @var ViewRecord | EditRecord $page */
+            $page = $this->getLivewire();
+
+            return method_exists($page->record, 'trashed')
+                && $page->record->trashed();
+        });
 
         $this->requiresConfirmation();
 
-        $this->modalHeading(fn () => __('filament::resources/pages/edit-record.actions.restore.modal.heading', ['label' => $this->getLivewire()::getResource()::getRecordTitle($this->getLivewire()->record)]));
+        $this->modalHeading(function () {
+            /** @var ViewRecord | EditRecord $page */
+            $page = $this->getLivewire();
+
+            return __(
+                'filament::resources/pages/edit-record.actions.restore.modal.heading',
+                ['label' => $page::getResource()::getRecordTitle($page->record)]
+            );
+        });
 
         $this->modalSubheading(__('filament::resources/pages/edit-record.actions.restore.modal.subheading'));
 
@@ -32,17 +46,18 @@ class RestoreAction extends Action
 
         $this->keyBindings(['mod+z']);
 
-        $this->action(static function () use ($action) {
-            $livewire = $action->getLivewire();
-            $record = $livewire->record;
+        $this->action(function () {
+            /** @var ViewRecord | EditRecord $page */
+            $page = $this->getLivewire();
+            $record = $page->record;
 
-            $action->evaluate($action->beforeCallback, ['record' => $record]);
+            $this->evaluate($this->beforeCallback, ['record' => $record]);
 
             $record->restore();
 
-            $action->notify();
+            $this->notify();
 
-            return $action->evaluate($action->afterCallback, ['record' => $record]);
+            return $this->evaluate($this->afterCallback, ['record' => $record]);
         });
 
         parent::setUp();

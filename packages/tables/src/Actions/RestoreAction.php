@@ -2,9 +2,9 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Resources\Pages\Page;
 use Filament\Support\Actions\Concerns\CanNotify;
 use Filament\Support\Actions\Concerns\HasBeforeAfterCallbacks;
-use Illuminate\Database\Eloquent\Model;
 
 class RestoreAction extends Action
 {
@@ -19,18 +19,21 @@ class RestoreAction extends Action
 
         $this->color('secondary');
 
-        $this->visible(
-            fn () =>
-            method_exists(($record = $this->getRecord()), 'trashed')
-            && $record->trashed()
-            && $this->getLivewire()::getResource()::canRestore($record)
-        );
+        $this->visible(function () {
+            /** @var Page $page */
+            $page = $this->getLivewire();
+            $record = $this->getRecord();
+
+            return method_exists($record, 'trashed')
+                && $record->trashed()
+                && $page::getResource()::canRestore($record);
+        });
 
         $this->notificationMessage(__('tables::table.actions.restore.messages.restored'));
 
         $this->requiresConfirmation();
 
-        $this->action(static function (RestoreAction $action, Model $record) {
+        $this->action(static function (RestoreAction $action, $record) {
             $action->evaluate($action->beforeCallback, ['record' => $record]);
 
             $record->restore();

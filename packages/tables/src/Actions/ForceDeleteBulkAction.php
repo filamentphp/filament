@@ -2,10 +2,10 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Resources\Pages\Page;
 use Filament\Support\Actions\Concerns\CanNotify;
 use Filament\Support\Actions\Concerns\HasBeforeAfterCallbacks;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 class ForceDeleteBulkAction extends BulkAction
 {
@@ -22,10 +22,11 @@ class ForceDeleteBulkAction extends BulkAction
 
         $this->color('danger');
 
-        $this->visible(
-            fn () =>
-            $this->getLivewire()::getResource()::canForceDeleteAny()
-        );
+        $this->visible(function () {
+            /** @var Page $page */
+            $page = $this->getLivewire();
+            return $page::getResource()::canForceDeleteAny();
+        });
 
         $this->notificationMessage(__('tables::table.bulk_actions.force_delete.messages.deleted'));
 
@@ -34,7 +35,7 @@ class ForceDeleteBulkAction extends BulkAction
         $this->action(static function (ForceDeleteBulkAction $action, Collection $records) {
             $action->evaluate($action->beforeCallback, ['records' => $records]);
 
-            $records->each(fn (Model $record) => $record->forceDelete());
+            $records->each(fn ($record) => $record->forceDelete());
 
             $action->notify();
 

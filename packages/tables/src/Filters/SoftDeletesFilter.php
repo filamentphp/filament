@@ -2,8 +2,6 @@
 
 namespace Filament\Tables\Filters;
 
-use Illuminate\Database\Eloquent\Builder;
-
 class SoftDeletesFilter extends TernaryFilter
 {
     protected function setUp(): void
@@ -17,9 +15,9 @@ class SoftDeletesFilter extends TernaryFilter
         $this->falseLabel(__('tables::table.filters.soft_deletes.false_label'));
 
         $this->queries(
-            true: fn (Builder $query) => $query->withTrashed(),
-            false: fn (Builder $query) => $query->onlyTrashed(),
-            blank: fn (Builder $query) => $query->withoutTrashed(),
+            true: fn ($query) => $query->withTrashed(),
+            false: fn ($query) => $query->onlyTrashed(),
+            blank: fn ($query) => $query->withoutTrashed(),
         );
     }
 }
