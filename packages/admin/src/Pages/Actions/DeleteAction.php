@@ -3,6 +3,7 @@
 namespace Filament\Pages\Actions;
 
 use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Actions\Concerns\CanNotify;
 use Filament\Support\Actions\Concerns\CanRedirect;
 use Filament\Support\Actions\Concerns\HasBeforeAfterCallbacks;
@@ -22,9 +23,13 @@ class DeleteAction extends Action
 
         $this->requiresConfirmation();
 
-        $this->modalHeading(
-            fn () => __('filament::resources/pages/edit-record.actions.delete.modal.heading', ['label' => invade($this->getLivewire())->getRecordTitle() ?? $this->getLivewire()::getResource()::getLabel()])
-        );
+        $this->modalHeading(function () {
+            $page = invade($this->getLivewire());
+
+            return __('filament::resources/pages/edit-record.actions.delete.modal.heading', [
+                'label' => $page->getRecordTitle() ?? $page::getResource()::getLabel()
+            ]);
+        });
 
         $this->modalSubheading(__('filament::resources/pages/edit-record.actions.delete.modal.subheading'));
 
@@ -49,18 +54,24 @@ class DeleteAction extends Action
 
     public function getRecord(): ?Model
     {
-        return $this->getLivewire()->record;
+        /** @var ViewRecord | EditRecord $page */
+        $page = $this->getLivewire();
+
+        return $page->record;
     }
 
     public function execute()
     {
+        /** @var ViewRecord | EditRecord $page */
         $page = $this->getLivewire();
+
+        // Compatiblity for V2
 
         $reflector = new \ReflectionMethod($page, 'delete');
 
         if ($reflector->getDeclaringClass()->getName() !== EditRecord::class) {
-            // Compatiblity for V2
-            return $page->delete();
+            $page->delete();
+            return;
         }
 
         // New implementation
