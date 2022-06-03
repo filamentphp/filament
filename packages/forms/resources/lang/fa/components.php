@@ -213,4 +213,20 @@ return [
         'placeholder' => 'تگ جدید',
     ],
 
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'قبلی',
+            ],
+
+            'next_step' => [
+                'label' => 'بعدی',
+            ],
+
+        ],
+
+    ],
+
 ];
