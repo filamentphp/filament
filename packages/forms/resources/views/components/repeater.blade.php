@@ -120,7 +120,6 @@
                     '2xl:grid-cols-11' => $getGrid('2xl') === 11,
                     '2xl:grid-cols-12' => $getGrid('2xl') === 12,
                 ])
-                class="space-y-6"
                 wire:sortable
                 wire:end.stop="dispatchFormEvent('repeater::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
             >
