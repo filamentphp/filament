@@ -437,6 +437,16 @@ use Filament\Tables\Columns\ImageColumn;
 ImageColumn::make('header_image')->disk('s3')
 ```
 
+### Private images
+
+Filament can generate temporary URLs to render private images, you may set the `visibility()` to `private`:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('header_image')->visibility('private')
+```
+
 ## Icon column
 
 Icon columns render a Blade icon component representing their contents:
