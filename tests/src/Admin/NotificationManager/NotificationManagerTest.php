@@ -17,7 +17,7 @@ it('can immediately dispatch notify event to browser', function () {
         ->call('notificationManager')
         ->assertDispatchedBrowserEvent('notify');
 
-    expect(Session::get('notifications'))->toBeEmpty();
+    expect(Session::get('filament.notifications'))->toBeEmpty();
 });
 
 it('will not dispatch notify event if Livewire component redirects', function () {
@@ -25,7 +25,7 @@ it('will not dispatch notify event if Livewire component redirects', function ()
         ->call('notificationManager', redirect: true)
         ->assertNotDispatchedBrowserEvent('notify');
 
-    expect(Session::get('notifications'))
+    expect(Session::get('filament.notifications'))
         ->toBeArray()
         ->toHaveLength(1)
         ->sequence(
