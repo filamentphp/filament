@@ -19,6 +19,8 @@ class ImageColumn extends Column
 
     protected bool | Closure $isRounded = false;
 
+    protected string | Closure $visibility = 'public';
+
     protected int | string | Closure | null $width = null;
 
     protected array | Closure $extraImgAttributes = [];
@@ -53,6 +55,13 @@ class ImageColumn extends Column
     {
         $this->width($size);
         $this->height($size);
+
+        return $this;
+    }
+
+    public function visibility(string | Closure $visibility): static
+    {
+        $this->visibility = $visibility;
 
         return $this;
     }
@@ -108,7 +117,7 @@ class ImageColumn extends Column
             return null;
         }
 
-        if ($storage->getVisibility($state) === 'private') {
+        if ($this->getVisibility() === 'private' || $storage->getVisibility($state) === 'private') {
             try {
                 return $storage->temporaryUrl(
                     $state,
@@ -120,6 +129,11 @@ class ImageColumn extends Column
         }
 
         return $storage->url($state);
+    }
+
+    public function getVisibility(): string
+    {
+        return $this->evaluate($this->visibility);
     }
 
     public function getWidth(): ?string
