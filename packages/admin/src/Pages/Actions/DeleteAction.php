@@ -2,6 +2,7 @@
 
 namespace Filament\Pages\Actions;
 
+use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Actions\Concerns\CanNotify;
 use Filament\Support\Actions\Concerns\CanRedirect;
 use Filament\Support\Actions\Concerns\HasBeforeAfterCallbacks;
@@ -37,13 +38,13 @@ class DeleteAction extends Action
 
         // Compatibility with V2
 
-        $this->notificationMessage(fn () => $this->getLivewire()->getDeletedNotificationMessage());
+        $this->notificationMessage(fn () => invade($this->getLivewire())->getDeletedNotificationMessage());
 
-        $this->redirectUrl(fn () => $this->getLivewire()->getDeleteRedirectUrl());
+        $this->redirectUrl(fn () => invade($this->getLivewire())->getDeleteRedirectUrl());
 
-        $this->callBefore(fn () => $this->getLivewire()->callHook('beforeDelete'));
+        $this->callBefore(fn () => invade($this->getLivewire())->callHook('beforeDelete'));
 
-        $this->callAfter(fn () => $this->getLivewire()->callHook('afterDelete'));
+        $this->callAfter(fn () => invade($this->getLivewire())->callHook('afterDelete'));
     }
 
     public function getRecord(): ?Model
@@ -56,7 +57,8 @@ class DeleteAction extends Action
         $page = $this->getLivewire();
 
         $reflector = new \ReflectionMethod($page, 'delete');
-        if ($reflector->getDeclaringClass()->getName() !== get_class($page)) {
+
+        if ($reflector->getDeclaringClass()->getName() !== EditRecord::class) {
             // Compatiblity for V2
             return $page->delete();
         }
