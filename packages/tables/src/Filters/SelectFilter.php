@@ -42,7 +42,7 @@ class SelectFilter extends BaseFilter
         if ($this->queriesRelationships()) {
             return $query->whereRelation(
                 $this->getRelationshipName(),
-                $this->getRelationshipKey(),
+                $this->getRelationshipDisplayColumnName(),
                 $data['value'],
             );
         }
