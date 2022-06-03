@@ -15202,18 +15202,6 @@ var require_marked_esm = __commonJS((exports) => {
               maskedSrc = maskedSrc.slice(0, match.index) + "[" + repeatString("a", match[0].length - 2) + "]" + maskedSrc.slice(this.tokenizer.rules.inline.reflinkSearch.lastIndex);
             }
           }
-<<<<<<< HEAD
-          let date2 = this.getSelectedDate() ?? this.focusedDate;
-          this.setState(date2.second(this.second ?? 0));
-        });
-        this.$watch("state", () => {
-          if (this.state === void 0) {
-            return;
-          }
-          let date2 = this.getSelectedDate();
-          if (this.getMaxDate() !== null && date2.isAfter(this.getMaxDate())) {
-            date2 = null;
-=======
         }
       }
       while ((match = this.tokenizer.rules.inline.blockSkip.exec(maskedSrc)) != null) {
@@ -15232,7 +15220,6 @@ var require_marked_esm = __commonJS((exports) => {
             src = src.substring(token.raw.length);
             tokens.push(token);
             return true;
->>>>>>> 454bd34d (feature: minimal easymde implementation)
           }
           return false;
         })) {
@@ -15252,37 +15239,7 @@ var require_marked_esm = __commonJS((exports) => {
           } else {
             tokens.push(token);
           }
-<<<<<<< HEAD
-          const newHour = date2?.hour() ?? 0;
-          if (this.hour !== newHour) {
-            this.hour = newHour;
-          }
-          const newMinute = date2?.minute() ?? 0;
-          if (this.minute !== newMinute) {
-            this.minute = newMinute;
-          }
-          const newSecond = date2?.second() ?? 0;
-          if (this.second !== newSecond) {
-            this.second = newSecond;
-          }
-          this.setDisplayText();
-        });
-      },
-      clearState: function() {
-        this.isClearingState = true;
-        this.setState(null);
-        this.closePicker();
-        this.$nextTick(() => this.isClearingState = false);
-      },
-      closePicker: function() {
-        this.open = false;
-      },
-      dateIsDisabled: function(date) {
-        if (this.getMaxDate() && date.isAfter(this.getMaxDate())) {
-          return true;
-=======
           continue;
->>>>>>> 454bd34d (feature: minimal easymde implementation)
         }
         if (token = this.tokenizer.link(src)) {
           src = src.substring(token.raw.length);
@@ -15320,33 +15277,10 @@ var require_marked_esm = __commonJS((exports) => {
           tokens.push(token);
           continue;
         }
-<<<<<<< HEAD
-        return [
-          ...labels.slice(firstDayOfWeek),
-          ...labels.slice(0, firstDayOfWeek)
-        ];
-      },
-      getMaxDate: function() {
-        let date = esm_default(this.$refs.maxDate.value);
-        return date.isValid() ? date : null;
-      },
-      getMinDate: function() {
-        let date = esm_default(this.$refs.minDate.value);
-        return date.isValid() ? date : null;
-      },
-      getSelectedDate: function() {
-        if (this.state === void 0) {
-          return null;
-        }
-        let date = esm_default(this.state);
-        if (!date.isValid()) {
-          return null;
-=======
         if (token = this.tokenizer.autolink(src, mangle)) {
           src = src.substring(token.raw.length);
           tokens.push(token);
           continue;
->>>>>>> 454bd34d (feature: minimal easymde implementation)
         }
         if (!this.state.inLink && (token = this.tokenizer.url(src, mangle))) {
           src = src.substring(token.raw.length);
@@ -29868,6 +29802,9 @@ var date_time_picker_default = (Alpine) => {
           this.setState(date2.second(this.second ?? 0));
         });
         this.$watch("state", () => {
+          if (this.state === void 0) {
+            return;
+          }
           let date2 = this.getSelectedDate();
           if (this.getMaxDate() !== null && date2.isAfter(this.getMaxDate())) {
             date2 = null;
@@ -29875,9 +29812,18 @@ var date_time_picker_default = (Alpine) => {
           if (this.getMinDate() !== null && date2.isBefore(this.getMinDate())) {
             date2 = null;
           }
-          this.hour = date2?.hour() ?? 0;
-          this.minute = date2?.minute() ?? 0;
-          this.second = date2?.second() ?? 0;
+          const newHour = date2?.hour() ?? 0;
+          if (this.hour !== newHour) {
+            this.hour = newHour;
+          }
+          const newMinute = date2?.minute() ?? 0;
+          if (this.minute !== newMinute) {
+            this.minute = newMinute;
+          }
+          const newSecond = date2?.second() ?? 0;
+          if (this.second !== newSecond) {
+            this.second = newSecond;
+          }
           this.setDisplayText();
         });
       },
@@ -29964,6 +29910,9 @@ var date_time_picker_default = (Alpine) => {
         return date.isValid() ? date : null;
       },
       getSelectedDate: function() {
+        if (this.state === void 0) {
+          return null;
+        }
         let date = esm_default(this.state);
         if (!date.isValid()) {
           return null;
