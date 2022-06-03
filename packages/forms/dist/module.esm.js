@@ -39881,19 +39881,19 @@ var key_value_default = (Alpine) => {
 var import_easymde = __toModule(require_easymde());
 var markdown_editor_default = (Alpine) => {
   Alpine.data("markdownEditorFormComponent", ({
+    darkMode,
     state: state2,
     statePath,
-    tab,
-    darkMode
+    tab
   }) => {
     return {
-      state: state2,
-      tab,
       editor: null,
       isStateBeingUpdated: false,
+      state: state2,
+      tab,
       init: function() {
         this.editor = new import_easymde.default({
-          element: this.$refs.textarea,
+          element: this.$refs.input,
           spellChecker: false,
           status: false,
           initialValue: this.state,
@@ -39903,13 +39903,14 @@ var markdown_editor_default = (Alpine) => {
             italic: "_"
           },
           unorderedListStyle: "-",
-          previewClass: `prose w-full h-full max-w-none bg-white p-3 min-h-[150px] ${darkMode ? "dark:prose-invert dark:bg-gray-700" : ""}`.trim(),
+          previewClass: `prose w-full h-full max-w-none px-1 bg-white min-h-[150px] ${darkMode ? "dark:prose-invert dark:bg-gray-700" : ""}`.trim(),
           minHeight: "150px",
           uploadImage: true,
           direction: document.documentElement.dir,
           imageUploadFunction: (file2, onSuccess, onError) => {
-            if (!file2)
+            if (!file2) {
               return;
+            }
             this.$wire.upload(`componentFileAttachments.${statePath}`, file2, () => {
               this.$wire.getComponentFileAttachmentUrl(statePath).then((url) => {
                 onSuccess(url);
