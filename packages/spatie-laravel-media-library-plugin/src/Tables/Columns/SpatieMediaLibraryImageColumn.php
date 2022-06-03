@@ -3,7 +3,6 @@
 namespace Filament\Tables\Columns;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Filesystem\FilesystemAdapter;
 
 class SpatieMediaLibraryImageColumn extends ImageColumn
 {
