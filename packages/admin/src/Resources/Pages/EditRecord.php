@@ -4,6 +4,7 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
+use Filament\Pages\Actions\DeleteAction;
 use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -116,6 +117,9 @@ class EditRecord extends Page implements HasFormActions
         ]);
     }
 
+    /**
+     * @deprecated
+     */
     public function delete(): void
     {
         abort_unless(static::getResource()::canDelete($this->record), 403);
@@ -136,6 +140,9 @@ class EditRecord extends Page implements HasFormActions
         $this->redirect($this->getDeleteRedirectUrl());
     }
 
+    /**
+     * @deprecated
+     */
     protected function getDeletedNotificationMessage(): ?string
     {
         return __('filament::resources/pages/edit-record.actions.delete.messages.deleted');
@@ -159,17 +166,12 @@ class EditRecord extends Page implements HasFormActions
             ->color('secondary');
     }
 
+    /**
+     * @deprecated
+     */
     protected function getDeleteAction(): Action
     {
-        return Action::make('delete')
-            ->label(__('filament::resources/pages/edit-record.actions.delete.label'))
-            ->requiresConfirmation()
-            ->modalHeading(__('filament::resources/pages/edit-record.actions.delete.modal.heading', ['label' => $this->getRecordTitle() ?? static::getResource()::getLabel()]))
-            ->modalSubheading(__('filament::resources/pages/edit-record.actions.delete.modal.subheading'))
-            ->modalButton(__('filament::resources/pages/edit-record.actions.delete.modal.buttons.delete.label'))
-            ->action('delete')
-            ->keyBindings(['mod+d'])
-            ->color('danger');
+        return DeleteAction::make('delete')->livewire($this);
     }
 
     protected function getTitle(): string
@@ -234,6 +236,9 @@ class EditRecord extends Page implements HasFormActions
         return null;
     }
 
+    /**
+     * @deprecated
+     */
     protected function getDeleteRedirectUrl(): ?string
     {
         return static::getResource()::getUrl('index');
