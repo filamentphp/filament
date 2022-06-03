@@ -44,10 +44,14 @@
         >
             @if ($managers[$activeManager] instanceof \Filament\Resources\RelationManagers\RelationGroup)
                 @foreach($managers[$activeManager]->getManagers(ownerRecord: $ownerRecord) as $groupedManager)
-                    @livewire(\Livewire\Livewire::getAlias($groupedManager, $groupedManager::getName()), ['ownerRecord' => $ownerRecord], key($activeManager))
+                    @livewire(\Livewire\Livewire::getAlias($groupedManager, $groupedManager::getName()), ['ownerRecord' => $ownerRecord], key($groupedManager))
                 @endforeach
             @else
-                @livewire(\Livewire\Livewire::getAlias($managers[$activeManager], $managers[$activeManager]::getName()), ['ownerRecord' => $ownerRecord], key($activeManager))
+                @php
+                    $manager = $managers[$activeManager];
+                @endphp
+
+                @livewire(\Livewire\Livewire::getAlias($manager, $manager::getName()), ['ownerRecord' => $ownerRecord], key($manager))
             @endif
         </div>
     @endif

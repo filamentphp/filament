@@ -11,7 +11,9 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class Select extends Field
 {
-    use Concerns\HasAffixes;
+    use Concerns\HasAffixes {
+        getSuffixAction as getBaseSuffixAction;
+    }
     use Concerns\HasExtraInputAttributes;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasOptions;
@@ -111,19 +113,47 @@ class Select extends Field
         return $this;
     }
 
-    public function createOptionForm(array | Closure $schema): static
+    public function createOptionForm(array | Closure | null $schema): static
     {
         $this->createOptionActionFormSchema = $schema;
 
-        $action = $this->getCreateOptionAction();
-
-        $this->registerActions([
-            'createOption' => $action,
-        ]);
-
-        $this->suffixAction($action);
-
         return $this;
+    }
+
+    public function getSuffixAction(): ?Action
+    {
+        $action = $this->getBaseSuffixAction();
+
+        if ($action) {
+            return $action;
+        }
+
+        $createOptionAction = $this->getCreateOptionAction();
+
+        if (! $createOptionAction) {
+            return null;
+        }
+
+        return $createOptionAction;
+    }
+
+    public function getActions(): array
+    {
+        $actions = parent::getActions();
+
+        $createOptionActionName = $this->getCreateOptionActionName();
+
+        if (array_key_exists($createOptionActionName, $actions)) {
+            return $actions;
+        }
+
+        $createOptionAction = $this->getCreateOptionAction();
+
+        if (! $createOptionAction) {
+            return $actions;
+        }
+
+        return array_merge([$createOptionActionName => $createOptionAction], $actions);
     }
 
     public function createOptionUsing(Closure $callback): static
@@ -152,14 +182,22 @@ class Select extends Field
         return $this->createOptionUsing;
     }
 
+    protected function getCreateOptionActionName(): string
+    {
+        return 'createOption';
+    }
+
     public function getCreateOptionAction(): ?Action
     {
-        if ($this->createOptionActionFormSchema === null) {
+        $actionFormSchema = $this->getCreateOptionActionFormSchema();
+
+        if (! $actionFormSchema) {
             return null;
         }
 
-        $action = Action::make('createOption')
-            ->form($this->getCreateOptionActionFormSchema())
+        $action = Action::make($this->getCreateOptionActionName())
+            ->component($this)
+            ->form($actionFormSchema)
             ->action(static function (Select $component, $data) {
                 if (! $component->getCreateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
@@ -193,11 +231,6 @@ class Select extends Field
     public function getCreateOptionActionFormSchema(): ?array
     {
         return $this->evaluate($this->createOptionActionFormSchema);
-    }
-
-    public function canCreateOption(): bool
-    {
-        return $this->getCreateOptionActionFormSchema() !== null;
     }
 
     public function getOptionLabelUsing(?Closure $callback): static
