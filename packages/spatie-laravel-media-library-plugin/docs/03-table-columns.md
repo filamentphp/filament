@@ -29,13 +29,3 @@ SpatieMediaLibraryImageColumn::make('avatar')->conversion('thumb'),
 ```
 
 The media library image column supports all the customization options of the [original image column](/docs/tables/columns#image-column).
-
-### Temporary URLS
-
-To use temporary urls, you may set the `visibility()` to private:
-
-```php
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
-
-SpatieMediaLibraryImageColumn::make('avatar')->visibility('private'),
-```
