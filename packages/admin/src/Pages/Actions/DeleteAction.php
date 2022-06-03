@@ -40,6 +40,10 @@ class DeleteAction extends Action
         $this->notificationMessage(fn () => $this->getLivewire()->getDeletedNotificationMessage());
 
         $this->redirectUrl(fn () => $this->getLivewire()->getDeleteRedirectUrl());
+
+        $this->callBefore(fn () => $this->getLivewire()->callHook('beforeDelete'));
+
+        $this->callAfter(fn () => $this->getLivewire()->callHook('afterDelete'));
     }
 
     public function getRecord(): ?Model
