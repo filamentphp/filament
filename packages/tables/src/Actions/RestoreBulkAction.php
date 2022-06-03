@@ -23,6 +23,7 @@ class RestoreBulkAction extends BulkAction
         $this->visible(function () {
             /** @var Page $page */
             $page = $this->getLivewire();
+
             return $page::getResource()::canRestoreAny();
         });
 
