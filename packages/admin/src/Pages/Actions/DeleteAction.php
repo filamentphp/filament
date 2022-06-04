@@ -4,18 +4,20 @@ namespace Filament\Pages\Actions;
 
 use Filament\Pages\Contracts\HasRecord;
 use Filament\Pages\Page;
-use Filament\Support\Actions\Concerns\CanRestoreRecords;
+use Filament\Support\Actions\Concerns\CanDeleteRecords;
 use Illuminate\Database\Eloquent\Model;
 
-class RestoreAction extends Action
+class DeleteAction extends Action
 {
-    use CanRestoreRecords {
+    use CanDeleteRecords {
         setUp as setUpTrait;
     }
 
     protected function setUp(): void
     {
         $this->setUpTrait();
+
+        $this->keyBindings(['mod+d']);
 
         $this->record(function (Page $livewire): ?Model {
             if (! $livewire instanceof HasRecord) {

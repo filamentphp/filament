@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 trait InteractsWithRecord
 {
-    protected function getRecord($key): Model
+    protected function resolveRecord($key): Model
     {
         $record = static::getResource()::resolveRecordRouteBinding($key);
 

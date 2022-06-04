@@ -4,16 +4,18 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
+use Filament\Pages\Actions\DeleteAction;
 use Filament\Pages\Actions\ForceDeleteAction;
 use Filament\Pages\Actions\RestoreAction;
 use Filament\Pages\Contracts\HasFormActions;
+use Filament\Pages\Contracts\HasRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
  */
-class EditRecord extends Page implements HasFormActions
+class EditRecord extends Page implements HasFormActions, HasRecord
 {
     use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;
@@ -39,11 +41,16 @@ class EditRecord extends Page implements HasFormActions
     {
         static::authorizeResourceAccess();
 
-        $this->record = $this->getRecord($record);
+        $this->record = $this->resolveRecord($record);
 
         abort_unless(static::getResource()::canEdit($this->record), 403);
 
         $this->fillForm();
+    }
+
+    public function getRecord(): Model
+    {
+        return $this->record;
     }
 
     protected function fillForm(): void
@@ -154,9 +161,7 @@ class EditRecord extends Page implements HasFormActions
 
         return array_merge(
             (($resource::hasPage('view') && $resource::canView($this->record)) ? [$this->getViewAction()] : []),
-            ($resource::canDelete($this->record) && ! $this->isSoftDeletable() ? [$this->getDeleteAction()] : []),
-            ($resource::canRestore($this->record) ? [RestoreAction::make('restore')] : []),
-            ($resource::canForceDelete($this->record) ? [ForceDeleteAction::make('force_delete')] : []),
+            ($resource::canDelete($this->record) ? [$this->getDeleteAction()] : []),
         );
     }
 
@@ -170,15 +175,8 @@ class EditRecord extends Page implements HasFormActions
 
     protected function getDeleteAction(): Action
     {
-        return Action::make('delete')
-            ->label(__('filament::resources/pages/edit-record.actions.delete.label'))
-            ->requiresConfirmation()
-            ->modalHeading(__('filament::resources/pages/edit-record.actions.delete.modal.heading', ['label' => $this->getRecordTitle() ?? static::getResource()::getLabel()]))
-            ->modalSubheading(__('filament::resources/pages/edit-record.actions.delete.modal.subheading'))
-            ->modalButton(__('filament::resources/pages/edit-record.actions.delete.modal.buttons.delete.label'))
-            ->action('delete')
-            ->keyBindings(['mod+d'])
-            ->color('danger');
+        return DeleteAction::make('delete')
+            ->action(fn () => $this->delete());
     }
 
     protected function getTitle(): string

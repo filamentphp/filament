@@ -4,13 +4,14 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Support\Actions\Action as BaseAction;
+use Filament\Support\Actions\Concerns\HasRecords;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 
 class BulkAction extends BaseAction
 {
     use Concerns\BelongsToTable;
     use Concerns\CanDeselectRecordsAfterCompletion;
-    use Concerns\HasRecords;
+    use HasRecords;
 
     protected string $view = 'tables::actions.bulk-action';
 

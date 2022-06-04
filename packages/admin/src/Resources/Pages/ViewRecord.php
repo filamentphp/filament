@@ -4,13 +4,14 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
+use Filament\Pages\Contracts\HasRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
  */
-class ViewRecord extends Page
+class ViewRecord extends Page implements HasRecord
 {
     use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;
@@ -36,11 +37,16 @@ class ViewRecord extends Page
     {
         static::authorizeResourceAccess();
 
-        $this->record = $this->getRecord($record);
+        $this->record = $this->resolveRecord($record);
 
         abort_unless(static::getResource()::canView($this->record), 403);
 
         $this->fillForm();
+    }
+
+    public function getRecord(): Model
+    {
+        return $this->record;
     }
 
     protected function fillForm(): void
