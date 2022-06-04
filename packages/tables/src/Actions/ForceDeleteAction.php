@@ -4,18 +4,15 @@ namespace Filament\Tables\Actions;
 
 use Filament\Resources\Pages\Page;
 use Filament\Support\Actions\Concerns\CanNotify;
-use Filament\Support\Actions\Concerns\HasBeforeAfterCallbacks;
+use Filament\Support\Actions\Concerns\HasLifecycleHooks;
 
 class ForceDeleteAction extends Action
 {
-    use CanNotify;
-    use HasBeforeAfterCallbacks;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label(__('tables::table.actions.force_delete.label'));
+        $this->label(__('filament-support::actions.force_delete.label'));
 
         $this->icon('heroicon-s-trash');
 
@@ -31,18 +28,14 @@ class ForceDeleteAction extends Action
                 && $page::getResource()::canForceDelete($record);
         });
 
-        $this->notificationMessage(__('tables::table.actions.force_delete.messages.deleted'));
+        $this->successNotification(__('filament-support::actions.force_delete.messages.deleted'));
 
         $this->requiresConfirmation();
 
-        $this->action(static function (ForceDeleteAction $action, $record) {
-            $action->evaluate($action->beforeCallback, ['record' => $record]);
-
+        $this->action(static function (ForceDeleteAction $action, $record): void {
             $record->forceDelete();
 
-            $action->notify();
-
-            return $action->evaluate($action->afterCallback, ['record' => $record]);
+            $action->sendSuccessNotification();
         });
     }
 }

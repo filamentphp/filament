@@ -9,18 +9,13 @@ abstract class Action extends BaseAction
     use Concerns\CanOpenModal;
     use Concerns\CanRequireConfirmation;
     use Concerns\HasAction;
+    use Concerns\HasLifecycleHooks;
     use Concerns\HasFormSchema;
     use Concerns\HasWizard;
 
-    public function call(array $data = [])
+    public function call()
     {
-        if ($this->isDisabled()) {
-            return;
-        }
-
-        return $this->evaluate($this->getAction(), [
-            'data' => $data,
-        ]);
+        return $this->evaluate($this->getAction());
     }
 
     abstract public function getLivewire();
@@ -28,6 +23,7 @@ abstract class Action extends BaseAction
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
+            'data' => $this->getFormData(),
             'livewire' => $this->getLivewire(),
         ]);
     }

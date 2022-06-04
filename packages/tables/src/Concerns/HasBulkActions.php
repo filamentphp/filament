@@ -35,17 +35,28 @@ trait HasBulkActions
             return;
         }
 
-        if ($action->isHidden()) {
+        if ($action->isDisabled()) {
             return;
         }
 
-        $data = $this->getMountedTableBulkActionForm()->getState();
+        if ($action->hasForm()) {
+            $action->callBeforeFormValidated();
+
+            $action->formData($this->getMountedTableBulkActionForm()->getState());
+
+            $action->callAfterFormValidated();
+        }
+
+        $action->callBefore();
+
+        $result = $action->call();
 
         try {
-            return $action->call($data);
+            return $action->callAfter() ?? $result;
         } finally {
             $this->mountedTableBulkAction = null;
             $this->selectedTableRecords = [];
+            $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => static::class . '-table-bulk-action',
@@ -64,7 +75,7 @@ trait HasBulkActions
             return;
         }
 
-        if ($action->isHidden()) {
+        if ($action->isDisabled()) {
             return;
         }
 
@@ -73,11 +84,19 @@ trait HasBulkActions
             fn () => $this->getMountedTableBulkActionForm(),
         );
 
+        if ($action->hasForm()) {
+            $action->callBeforeFormFilled();
+        }
+
         app()->call($action->getMountUsing(), [
             'action' => $action,
             'form' => $this->getMountedTableBulkActionForm(),
             'records' => $this->getSelectedTableRecords(),
         ]);
+
+        if ($action->hasForm()) {
+            $action->callAfterFormFilled();
+        }
 
         if (! $action->shouldOpenModal()) {
             return $this->callMountedTableBulkAction();

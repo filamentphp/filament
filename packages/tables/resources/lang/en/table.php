@@ -84,40 +84,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'force_delete' => [
-
-            'label' => 'Force delete',
-
-            'messages' => [
-                'deleted' => 'Record deleted',
-            ],
-
-        ],
-
-        'restore' => [
-
-            'label' => 'Restore',
-
-            'messages' => [
-                'restored' => 'Record restored',
-            ],
-
-        ],
-
-        'replicate' => [
-
-            'label' => 'Replicate',
-
-            'messages' => [
-                'replicated' => 'Record replicated',
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'No records found',
     ],
@@ -144,10 +110,16 @@ return [
             'placeholder' => 'All',
         ],
 
-        'soft_deletes' => [
-            'placeholder' => 'Without trashed records',
-            'true_label' => 'With trashed records',
-            'false_label' => 'Only trashed records',
+        'trashed' => [
+
+            'label' => 'Deleted records',
+
+            'only_trashed' => 'Only deleted records',
+
+            'with_trashed' => 'With deleted records',
+
+            'without_trashed' => 'Without deleted records',
+
         ],
 
     ],

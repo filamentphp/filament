@@ -28,16 +28,27 @@ trait HasActions
             return;
         }
 
-        if ($action->isHidden()) {
+        if ($action->isDisabled()) {
             return;
         }
 
-        $data = $this->getMountedActionForm()->getState();
+        if ($action->hasForm()) {
+            $action->callBeforeFormValidated();
+
+            $action->formData($this->getMountedActionForm()->getState());
+
+            $action->callAfterFormValidated();
+        }
+
+        $action->callBefore();
+
+        $result = $action->call();
 
         try {
-            return $action->call($data);
+            return $action->callAfter() ?? $result;
         } finally {
             $this->mountedAction = null;
+            $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => 'page-action',
@@ -55,7 +66,7 @@ trait HasActions
             return;
         }
 
-        if ($action->isHidden()) {
+        if ($action->isDisabled()) {
             return;
         }
 
@@ -64,10 +75,18 @@ trait HasActions
             fn () => $this->getMountedActionForm(),
         );
 
+        if ($action->hasForm()) {
+            $action->callBeforeFormFilled();
+        }
+
         app()->call($action->getMountUsing(), [
             'action' => $action,
             'form' => $this->getMountedActionForm(),
         ]);
+
+        if ($action->hasForm()) {
+            $action->callAfterFormFilled();
+        }
 
         if (! $action->shouldOpenModal()) {
             return $this->callMountedAction();

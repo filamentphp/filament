@@ -4,6 +4,8 @@ namespace Filament\Support\Actions\Concerns;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Support\Actions\Action;
+use Filament\Support\Actions\Contracts\ReplicatesRecords;
 use Filament\Tables\Actions\ReplicateAction;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,16 +21,16 @@ trait CanReplicateRecords
     {
         parent::setUp();
 
-        $this->label(__('tables::table.actions.replicate.label'));
+        $this->label(__('filament-support::actions.replicate.single.label'));
 
-        $this->modalButton(static fn (ReplicateAction $action): string => $action->getLabel());
+        $this->successNotification(__('filament-support::actions/replicate.single.messages.replicated'));
 
-        $this->successNotification(__('tables::table.actions.replicate.messages.replicated'));
+        $this->modalButton(__('filament-support::actions/replicate.single.buttons.replicate.label'));
 
         $this->icon('heroicon-s-duplicate');
 
-        $this->mountUsing(static function (ReplicateAction $action, Model $record, ?ComponentContainer $form = null): void {
-            if (! $action->shouldOpenModal()) {
+        $this->mountUsing(static function (Action $action, Model $record, ?ComponentContainer $form = null): void {
+            if (! $action->hasForm()) {
                 return;
             }
 
@@ -39,16 +41,20 @@ trait CanReplicateRecords
             $form->fill($record->toArray());
         });
 
-        $this->action(static function (ReplicateAction $action, Model $record, array $data = []) {
+        $this->action(static function (Action $action, Model $record) {
+            /** @var Action | ReplicatesRecords $action */
+
             $replica = $record->replicate($action->getExcludedAttributes());
 
-            $action->callBeforeReplicaSaved($replica, $data);
+            $action->callBeforeReplicaSaved($replica);
 
             $replica->save();
 
-            $action->sendSuccessNotification();
-
-            return $action->callAfterReplicaSaved($replica, $data);
+            try {
+                return $action->callAfterReplicaSaved($replica);
+            } finally {
+                $action->sendSuccessNotification();
+            }
         });
     }
 
@@ -73,18 +79,16 @@ trait CanReplicateRecords
         return $this;
     }
 
-    public function callBeforeReplicaSaved(Model $replica, array $data = []): void
+    public function callBeforeReplicaSaved(Model $replica): void
     {
         $this->evaluate($this->beforeReplicaSavedCallback, [
-            'data' => $data,
             'replica' => $replica,
         ]);
     }
 
-    public function callAfterReplicaSaved(Model $replica, array $data = [])
+    public function callAfterReplicaSaved(Model $replica)
     {
         return $this->evaluate($this->afterReplicaSavedCallback, [
-            'data' => $data,
             'replica' => $replica,
         ]);
     }

@@ -64,17 +64,6 @@ class Action extends BaseAction
         return $action;
     }
 
-    public function call(array $data = [])
-    {
-        if ($this->isDisabled()) {
-            return;
-        }
-
-        return app()->call($this->getAction(), [
-            'data' => $data,
-        ]);
-    }
-
     public function notify(string | Closure | null $status, string | Closure | null $message): void
     {
         Filament::notify($status, $message);

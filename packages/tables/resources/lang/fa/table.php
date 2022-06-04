@@ -59,20 +59,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'replicate' => [
-
-            'label' => 'تکثیر',
-
-            'messages' => [
-                'replicated' => 'رکورد تکثیر شد',
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'هیچ رکوردی یافت نشد',
     ],

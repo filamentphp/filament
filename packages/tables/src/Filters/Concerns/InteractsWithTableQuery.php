@@ -9,6 +9,8 @@ trait InteractsWithTableQuery
 {
     protected ?Closure $modifyQueryUsing = null;
 
+    protected array $globalScopesToRemove = [];
+
     public function apply(Builder $query, array $data = []): Builder
     {
         if ($this->isHidden()) {
@@ -34,6 +36,18 @@ trait InteractsWithTableQuery
         $this->modifyQueryUsing = $callback;
 
         return $this;
+    }
+
+    public function withoutGlobalScopes(array $scopes): static
+    {
+        $this->globalScopesToRemove = $scopes;
+
+        return $this;
+    }
+
+    public function getGlobalScopesToRemove(): array
+    {
+        return $this->globalScopesToRemove;
     }
 
     protected function hasQueryModificationCallback(): bool

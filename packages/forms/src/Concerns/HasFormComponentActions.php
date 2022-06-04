@@ -48,12 +48,27 @@ trait HasFormComponentActions
             return;
         }
 
-        $data = $this->getMountedFormComponentActionForm()->getState();
+        if ($action->isDisabled()) {
+            return;
+        }
+
+        if ($action->hasForm()) {
+            $action->callBeforeFormValidated();
+
+            $action->formData($this->getMountedFormComponentActionForm()->getState());
+
+            $action->callAfterFormValidated();
+        }
+
+        $action->callBefore();
+
+        $result = $action->call();
 
         try {
-            return $action->call($data);
+            return $action->callAfter() ?? $result;
         } finally {
             $this->mountedFormComponentAction = null;
+            $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => static::class . '-form-component-action',
@@ -81,7 +96,7 @@ trait HasFormComponentActions
             return;
         }
 
-        if ($action->isHidden()) {
+        if ($action->isDisabled()) {
             return;
         }
 
@@ -90,10 +105,18 @@ trait HasFormComponentActions
             fn () => $this->getMountedFormComponentActionForm(),
         );
 
+        if ($action->hasForm()) {
+            $action->callBeforeFormFilled();
+        }
+
         app()->call($action->getMountUsing(), [
             'action' => $action,
             'form' => $this->getMountedFormComponentActionForm(),
         ]);
+
+        if ($action->hasForm()) {
+            $action->callAfterFormFilled();
+        }
 
         if (! $action->shouldOpenModal()) {
             return $this->callMountedFormComponentAction();
