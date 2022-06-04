@@ -20,11 +20,11 @@ trait CanReplicateRecords
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions.replicate.single.label'));
-
-        $this->successNotification(__('filament-support::actions/replicate.single.messages.replicated'));
+        $this->label(__('filament-support::actions/replicate.single.label'));
 
         $this->modalButton(__('filament-support::actions/replicate.single.buttons.replicate.label'));
+
+        $this->successNotification(__('filament-support::actions/replicate.single.messages.replicated'));
 
         $this->icon('heroicon-s-duplicate');
 

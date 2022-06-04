@@ -5,17 +5,17 @@ namespace Filament\Support\Actions\Concerns;
 use Filament\Tables\Actions\ForceDeleteAction;
 use Illuminate\Database\Eloquent\Model;
 
-trait CanForceDeleteRecords
+trait CanDeleteRecords
 {
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/force-delete.single.label'));
+        $this->label(__('filament-support::actions/delete.single.label'));
 
-        $this->modalButton(__('filament-support::actions/force-delete.single.buttons.delete.label'));
+        $this->modalButton(__('filament-support::actions/delete.single.buttons.delete.label'));
 
-        $this->successNotification(__('filament-support::actions/force-delete.single.messages.deleted'));
+        $this->successNotification(__('filament-support::actions/delete.single.messages.deleted'));
 
         $this->color('danger');
 
@@ -24,14 +24,14 @@ trait CanForceDeleteRecords
         $this->requiresConfirmation();
 
         $this->action(static function (ForceDeleteAction $action, Model $record): void {
-            $record->forceDelete();
+            $record->delete();
 
             $action->sendSuccessNotification();
         });
 
-        $this->visible(static function (Model $record): bool {
+        $this->hidden(static function (Model $record): bool {
             if (! method_exists($record, 'trashed')) {
-                return false;
+                return true;
             }
 
             return $record->trashed();
