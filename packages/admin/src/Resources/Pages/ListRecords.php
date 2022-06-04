@@ -108,13 +108,8 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function getDeleteBulkAction(): Tables\Actions\BulkAction
     {
-        return Tables\Actions\BulkAction::make('delete')
-            ->label(__('filament::resources/pages/list-records.table.bulk_actions.delete.label'))
-            ->action(fn () => $this->bulkDelete())
-            ->requiresConfirmation()
-            ->deselectRecordsAfterCompletion()
-            ->color('danger')
-            ->icon('heroicon-o-trash');
+        return Tables\Actions\DeleteBulkAction::make('delete')
+            ->action(fn () => $this->bulkDelete());
     }
 
     public function bulkDelete(): void

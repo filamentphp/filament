@@ -6,6 +6,7 @@ use Filament\Support\Actions\Action as BaseAction;
 use Filament\Support\Actions\Concerns\CanBeDisabled;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
+use Filament\Support\Actions\Concerns\HasRecord;
 use Filament\Support\Actions\Concerns\HasTooltip;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 
@@ -15,7 +16,7 @@ class Action extends BaseAction
     use CanBeOutlined;
     use CanOpenUrl;
     use Concerns\BelongsToTable;
-    use Concerns\HasRecord;
+    use HasRecord;
     use HasTooltip;
 
     protected string $view = 'tables::actions.link-action';

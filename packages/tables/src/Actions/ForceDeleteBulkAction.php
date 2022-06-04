@@ -30,6 +30,8 @@ class ForceDeleteBulkAction extends BulkAction
             $action->sendSuccessNotification();
         });
 
+        $this->deselectRecordsAfterCompletion();
+
         $this->visible(true);
     }
 }

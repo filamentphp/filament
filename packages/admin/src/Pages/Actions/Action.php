@@ -11,6 +11,7 @@ use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
 use Filament\Support\Actions\Concerns\CanSubmitForm;
 use Filament\Support\Actions\Concerns\HasKeyBindings;
+use Filament\Support\Actions\Concerns\HasRecord;
 use Filament\Support\Actions\Concerns\HasTooltip;
 
 class Action extends BaseAction
@@ -21,6 +22,7 @@ class Action extends BaseAction
     use CanSubmitForm;
     use Concerns\BelongsToLivewire;
     use HasKeyBindings;
+    use HasRecord;
     use HasTooltip;
 
     protected string $view = 'filament::pages.actions.button-action';
