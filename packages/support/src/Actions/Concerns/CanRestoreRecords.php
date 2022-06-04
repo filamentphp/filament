@@ -3,6 +3,7 @@
 namespace Filament\Support\Actions\Concerns;
 
 use Filament\Tables\Actions\RestoreAction;
+use Illuminate\Database\Eloquent\Model;
 
 trait CanRestoreRecords
 {
@@ -10,9 +11,11 @@ trait CanRestoreRecords
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions.restore.single.label'));
+        $this->label(__('filament-support::actions/restore.single.label'));
 
-        $this->successNotification(__('filament-support::actions.restore.messages.restored'));
+        $this->modalButton(__('filament-support::actions/restore.single.buttons.restore.label'));
+
+        $this->successNotification(__('filament-support::actions/restore.single.messages.restored'));
 
         $this->color('secondary');
 
@@ -20,10 +23,22 @@ trait CanRestoreRecords
 
         $this->requiresConfirmation();
 
-        $this->action(static function (RestoreAction $action, $record): void {
+        $this->action(static function (RestoreAction $action, Model $record): void {
+            if (! method_exists($record, 'restore')) {
+                return;
+            }
+
             $record->restore();
 
             $action->sendSuccessNotification();
+        });
+
+        $this->visible(static function (Model $record): bool {
+            if (! method_exists($record, 'trashed')) {
+                return false;
+            }
+
+            return $record->trashed();
         });
     }
 }
