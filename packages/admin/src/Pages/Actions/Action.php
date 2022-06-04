@@ -2,6 +2,8 @@
 
 namespace Filament\Pages\Actions;
 
+use Closure;
+use Filament\Facades\Filament;
 use Filament\Pages\Actions\Modal\Actions\Action as ModalAction;
 use Filament\Support\Actions\Action as BaseAction;
 use Filament\Support\Actions\Concerns\CanBeDisabled;
@@ -71,5 +73,10 @@ class Action extends BaseAction
         return app()->call($this->getAction(), [
             'data' => $data,
         ]);
+    }
+
+    public function notify(string | Closure | null $status, string | Closure | null $message): void
+    {
+        Filament::notify($status, $message);
     }
 }
