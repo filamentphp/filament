@@ -544,5 +544,7 @@
         </x-tables::modal>
     </form>
 
-    {{ $this->modal }}
+    @if (! $this instanceof \Filament\Tables\Contracts\RendersFormComponentActionModal)
+        {{ $this->modal }}
+    @endif
 </div>
