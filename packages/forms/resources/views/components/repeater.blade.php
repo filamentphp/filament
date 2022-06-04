@@ -45,108 +45,117 @@
     ]) }}>
         @if (count($containers))
             <ul
-                class="space-y-6"
                 wire:sortable
                 wire:end.stop="dispatchFormEvent('repeater::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
             >
-                @foreach ($containers as $uuid => $item)
-                    <li
-                        x-data="{ isCollapsed: @js($isCollapsed()) }"
-                        x-on:repeater-collapse.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = true)"
-                        x-on:repeater-expand.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = false)"
-                        wire:key="{{ $item->getStatePath() }}"
-                        wire:sortable.item="{{ $uuid }}"
-                        @class([
-                            'bg-white border border-gray-300 shadow-sm rounded-xl relative',
-                            'dark:bg-gray-800 dark:border-gray-600' => config('forms.dark_mode'),
-                        ])
-                    >
-                        @if ((! $isItemMovementDisabled) || (! $isItemDeletionDisabled) || $isCollapsible)
-                            <header @class([
-                                'flex items-center h-10 overflow-hidden border-b bg-gray-50 rounded-t-xl',
-                                'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
-                            ])>
-                                @unless ($isItemMovementDisabled)
-                                    <button
-                                        wire:sortable.handle
-                                        wire:keydown.prevent.arrow-up="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
-                                        wire:keydown.prevent.arrow-down="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
-                                        type="button"
-                                        @class([
-                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r transition hover:text-gray-300',
-                                            'dark:text-gray-400 dark:border-gray-700 dark:hover:text-gray-500' => config('forms.dark_mode'),
-                                        ])
-                                    >
-                                        <span class="sr-only">
-                                            {{ __('forms::components.repeater.buttons.move_item_down.label') }}
-                                        </span>
-
-                                        <x-heroicon-s-switch-vertical class="w-4 h-4"/>
-                                    </button>
-                                @endunless
-
-                                <div class="flex-1"></div>
-
-                                <ul @class([
-                                    'flex divide-x',
-                                    'dark:divide-gray-700' => config('forms.dark_mode'),
+                <x-filament-support::grid
+                    :default="$getGridColumns('default')"
+                    :sm="$getGridColumns('sm')"
+                    :md="$getGridColumns('md')"
+                    :lg="$getGridColumns('lg')"
+                    :xl="$getGridColumns('xl')"
+                    :two-xl="$getGridColumns('2xl')"
+                    class="gap-6"
+                >
+                    @foreach ($containers as $uuid => $item)
+                        <li
+                            x-data="{ isCollapsed: @js($isCollapsed()) }"
+                            x-on:repeater-collapse.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = true)"
+                            x-on:repeater-expand.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = false)"
+                            wire:key="{{ $item->getStatePath() }}"
+                            wire:sortable.item="{{ $uuid }}"
+                            @class([
+                                'bg-white border border-gray-300 shadow-sm rounded-xl relative',
+                                'dark:bg-gray-800 dark:border-gray-600' => config('forms.dark_mode'),
+                            ])
+                        >
+                            @if ((! $isItemMovementDisabled) || (! $isItemDeletionDisabled) || $isCollapsible)
+                                <header @class([
+                                    'flex items-center h-10 overflow-hidden border-b bg-gray-50 rounded-t-xl',
+                                    'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
                                 ])>
-                                    @unless ($isItemDeletionDisabled)
-                                        <li>
-                                            <button
-                                                wire:click="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
-                                                type="button"
-                                                @class([
-                                                    'flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500',
-                                                    'dark:text-danger-500 dark:hover:text-danger-400' => config('forms.dark_mode'),
-                                                ])
-                                            >
-                                                <span class="sr-only">
-                                                    {{ __('forms::components.repeater.buttons.delete_item.label') }}
-                                                </span>
+                                    @unless ($isItemMovementDisabled)
+                                        <button
+                                            wire:sortable.handle
+                                            wire:keydown.prevent.arrow-up="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                            wire:keydown.prevent.arrow-down="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                            type="button"
+                                            @class([
+                                                'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r transition hover:text-gray-300',
+                                                'dark:text-gray-400 dark:border-gray-700 dark:hover:text-gray-500' => config('forms.dark_mode'),
+                                            ])
+                                        >
+                                            <span class="sr-only">
+                                                {{ __('forms::components.repeater.buttons.move_item_down.label') }}
+                                            </span>
 
-                                                <x-heroicon-s-trash class="w-4 h-4"/>
-                                            </button>
-                                        </li>
+                                            <x-heroicon-s-switch-vertical class="w-4 h-4"/>
+                                        </button>
                                     @endunless
 
-                                    @if ($isCollapsible)
-                                        <li>
-                                            <button
-                                                x-on:click="isCollapsed = !isCollapsed"
-                                                type="button"
-                                                @class([
-                                                    'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',
-                                                    'dark:text-gray-400 dark:hover:text-gray-500' => config('forms.dark_mode'),
-                                                ])
-                                            >
-                                                <x-heroicon-s-minus-sm class="w-4 h-4" x-show="! isCollapsed"/>
+                                    <div class="flex-1"></div>
 
-                                                <span class="sr-only" x-show="! isCollapsed">
-                                                    {{ __('forms::components.repeater.buttons.collapse_item.label') }}
-                                                </span>
+                                    <ul @class([
+                                        'flex divide-x',
+                                        'dark:divide-gray-700' => config('forms.dark_mode'),
+                                    ])>
+                                        @unless ($isItemDeletionDisabled)
+                                            <li>
+                                                <button
+                                                    wire:click="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    type="button"
+                                                    @class([
+                                                        'flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500',
+                                                        'dark:text-danger-500 dark:hover:text-danger-400' => config('forms.dark_mode'),
+                                                    ])
+                                                >
+                                                    <span class="sr-only">
+                                                        {{ __('forms::components.repeater.buttons.delete_item.label') }}
+                                                    </span>
 
-                                                <x-heroicon-s-plus-sm class="w-4 h-4" x-show="isCollapsed" x-cloak/>
+                                                    <x-heroicon-s-trash class="w-4 h-4"/>
+                                                </button>
+                                            </li>
+                                        @endunless
 
-                                                <span class="sr-only" x-show="isCollapsed" x-cloak>
-                                                    {{ __('forms::components.repeater.buttons.expand_item.label') }}
-                                                </span>
-                                            </button>
-                                        </li>
-                                    @endif
-                                </ul>
-                            </header>
-                        @endif
+                                        @if ($isCollapsible)
+                                            <li>
+                                                <button
+                                                    x-on:click="isCollapsed = !isCollapsed"
+                                                    type="button"
+                                                    @class([
+                                                        'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',
+                                                        'dark:text-gray-400 dark:hover:text-gray-500' => config('forms.dark_mode'),
+                                                    ])
+                                                >
+                                                    <x-heroicon-s-minus-sm class="w-4 h-4" x-show="! isCollapsed"/>
 
-                        <div class="p-6" x-show="! isCollapsed">
-                            {{ $item }}
-                        </div>
+                                                    <span class="sr-only" x-show="! isCollapsed">
+                                                        {{ __('forms::components.repeater.buttons.collapse_item.label') }}
+                                                    </span>
 
-                        <div class="p-2 text-xs text-center text-gray-400" x-show="isCollapsed" x-cloak>
-                            {{ __('forms::components.repeater.collapsed') }}
-                        </div>
-                    </li>
-                @endforeach
+                                                    <x-heroicon-s-plus-sm class="w-4 h-4" x-show="isCollapsed" x-cloak/>
+
+                                                    <span class="sr-only" x-show="isCollapsed" x-cloak>
+                                                        {{ __('forms::components.repeater.buttons.expand_item.label') }}
+                                                    </span>
+                                                </button>
+                                            </li>
+                                        @endif
+                                    </ul>
+                                </header>
+                            @endif
+
+                            <div class="p-6" x-show="! isCollapsed">
+                                {{ $item }}
+                            </div>
+
+                            <div class="p-2 text-xs text-center text-gray-400" x-show="isCollapsed" x-cloak>
+                                {{ __('forms::components.repeater.collapsed') }}
+                            </div>
+                        </li>
+                    @endforeach
+                </x-filament-support::grid>
             </ul>
         @endif
 
