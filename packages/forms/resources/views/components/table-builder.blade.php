@@ -1,3 +1,7 @@
+@php
+$deleteRows = $canDeleteRows()
+@endphp
+
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :id="$getId()"
@@ -81,9 +85,11 @@
                             </th>
                         </template>
 
-                        <th x-show="state.length > 1" class="w-10">
+                        @if($deleteRows)
+                            <th x-show="state.length > 1" class="w-10">
 
-                        </th>
+                            </th>
+                        @endif
                     </tr>
                 </thead>
 
@@ -106,17 +112,19 @@
                                 </td>
                             </template>
 
-                            <td x-show="state.length > 1" class="p-0">
-                                <div class="flex items-center justify-center">
-                                    <button
-                                        x-on:click="removeRow(index)"
-                                        type="button"
-                                        class="text-gray-400 hover:text-gray-600 focus:text-gray-600"
-                                    >
-                                        <x-heroicon-o-x class="w-4 h-4" />
-                                    </button>
-                                </div>
-                            </td>
+                            @if($deleteRows)
+                                <td x-show="state.length > 1" class="p-0">
+                                    <div class="flex items-center justify-center">
+                                        <button
+                                            x-on:click="removeRow(index)"
+                                            type="button"
+                                            class="text-gray-400 hover:text-gray-600 focus:text-gray-600"
+                                        >
+                                            <x-heroicon-o-x class="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </td>
+                            @endif
                         </tr>
                     </template>
                 </tbody>
@@ -124,9 +132,11 @@
         </div>
 
         <div class="mt-4 space-x-4">
-            <x-forms::button x-on:click="addRow" color="secondary" size="sm">
-                Add Row
-            </x-forms::button>
+            @if($canAddRows())
+                <x-forms::button x-on:click="addRow" color="secondary" size="sm">
+                    Add Row
+                </x-forms::button>
+            @endif
 
             <x-forms::button x-on:click="addColumn" color="secondary" size="sm">
                 Add Column
