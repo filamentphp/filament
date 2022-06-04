@@ -3,6 +3,7 @@
 namespace Filament\Support\Actions\Concerns;
 
 use Closure;
+use Filament\Support\Actions\Action;
 use Filament\Support\Actions\Modal\Actions\Action as ModalAction;
 
 trait CanOpenModal
@@ -122,7 +123,7 @@ trait CanOpenModal
         }
 
         return static::makeModalAction('cancel')
-            ->label(__('filament-support::actions.modal.buttons.cancel.label'))
+            ->label(__('filament-support::actions/modal.buttons.cancel.label'))
             ->cancel()
             ->color('secondary');
     }
@@ -134,10 +135,10 @@ trait CanOpenModal
         }
 
         if ($this->isConfirmationRequired()) {
-            return __('filament-support::actions.modal.buttons.confirm.label');
+            return __('filament-support::actions/modal.buttons.confirm.label');
         }
 
-        return __('filament-support::actions.modal.buttons.submit.label');
+        return __('filament-support::actions/modal.buttons.submit.label');
     }
 
     public function getModalHeading(): string
@@ -152,7 +153,7 @@ trait CanOpenModal
         }
 
         if ($this->isConfirmationRequired()) {
-            return __('filament-support::actions.modal.requires_confirmation_subheading');
+            return __('filament-support::actions/modal.confirmation');
         }
 
         return null;

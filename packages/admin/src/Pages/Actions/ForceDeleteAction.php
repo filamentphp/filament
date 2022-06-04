@@ -5,13 +5,10 @@ namespace Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Actions\Concerns\CanNotify;
-use Filament\Support\Actions\Concerns\HasBeforeAfterCallbacks;
+use Filament\Support\Actions\Concerns\HasLifecycleHooks;
 
 class ForceDeleteAction extends Action
 {
-    use CanNotify;
-    use HasBeforeAfterCallbacks;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -20,7 +17,7 @@ class ForceDeleteAction extends Action
 
         $this->color('danger');
 
-        $this->notificationMessage(__('filament::resources/pages/edit-record.actions.force_delete.messages.deleted'));
+        $this->successNotification(__('filament::resources/pages/edit-record.actions.force_delete.messages.deleted'));
 
         $this->visible(function () {
             /** @var ViewRecord | EditRecord $page */
@@ -54,13 +51,9 @@ class ForceDeleteAction extends Action
             $resource = $page::getResource();
             $record = $page->record;
 
-            $this->evaluate($this->beforeCallback, ['record' => $record]);
-
             $record->forceDelete();
 
-            $this->notify();
-
-            $this->evaluate($this->afterCallback, ['record' => $record]);
+            $this->sendSuccessNotification();
 
             $page->redirect($resource::getUrl('index'));
         });

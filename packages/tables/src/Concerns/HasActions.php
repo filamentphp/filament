@@ -41,17 +41,28 @@ trait HasActions
             return;
         }
 
-        if ($action->isHidden()) {
+        if ($action->isDisabled()) {
             return;
         }
 
-        $data = $this->getMountedTableActionForm()->getState();
+        if ($action->hasForm()) {
+            $action->callBeforeFormValidated();
+
+            $action->formData($this->getMountedTableActionForm()->getState());
+
+            $action->callAfterFormValidated();
+        }
+
+        $action->callBefore();
+
+        $result = $action->call();
 
         try {
-            return $action->call($data);
+            return $action->callAfter() ?? $result;
         } finally {
             $this->mountedTableAction = null;
             $this->mountedTableActionRecord = null;
+            $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => static::class . '-table-action',
@@ -70,7 +81,7 @@ trait HasActions
             return;
         }
 
-        if ($action->isHidden()) {
+        if ($action->isDisabled()) {
             return;
         }
 
@@ -79,11 +90,19 @@ trait HasActions
             fn () => $this->getMountedTableActionForm(),
         );
 
+        if ($action->hasForm()) {
+            $action->callBeforeFormFilled();
+        }
+
         app()->call($action->getMountUsing(), [
             'action' => $action,
             'form' => $this->getMountedTableActionForm(),
             'record' => $this->getMountedTableActionRecord(),
         ]);
+
+        if ($action->hasForm()) {
+            $action->callAfterFormFilled();
+        }
 
         if (! $action->shouldOpenModal()) {
             return $this->callMountedTableAction();

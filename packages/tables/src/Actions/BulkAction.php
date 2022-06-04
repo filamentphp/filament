@@ -16,20 +16,8 @@ class BulkAction extends BaseAction
 
     public function call(array $data = [])
     {
-        if ($this->isHidden()) {
-            return;
-        }
-
-        $action = $this->getAction();
-
-        if (! $action) {
-            return;
-        }
-
         try {
-            return $this->evaluate($action, [
-                'data' => $data,
-            ]);
+            return $this->evaluate($this->getAction());
         } finally {
             if ($this->shouldDeselectRecordsAfterCompletion()) {
                 $this->getLivewire()->deselectAllTableRecords();

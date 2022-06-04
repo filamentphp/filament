@@ -7,7 +7,11 @@ use Filament\Forms\Components\Wizard;
 
 trait HasFormSchema
 {
+    protected array $formData = [];
+
     protected array | Closure $formSchema = [];
+
+    protected ?Closure $mutateFormDataUsing = null;
 
     public function form(array | Closure $schema): static
     {
@@ -31,8 +35,45 @@ trait HasFormSchema
         return $schema;
     }
 
+    public function hasForm(): bool
+    {
+        return $this->hasFormSchema();
+    }
+
     public function hasFormSchema(): bool
     {
         return (bool) count($this->getFormSchema());
+    }
+
+    public function mutateFormDataUsing(?Closure $callback): static
+    {
+        $this->mutateFormDataUsing = $callback;
+
+        return $this;
+    }
+
+    public function formData(array $data, bool $shouldMutate = true): static
+    {
+        if ($shouldMutate && $this->mutateFormDataUsing) {
+            $data = $this->evaluate($this->mutateFormDataUsing, [
+                'data' => $data,
+            ]);
+        }
+
+        $this->formData = $data;
+
+        return $this;
+    }
+
+    public function resetFormData(): static
+    {
+        $this->formData([], shouldMutate: false);
+
+        return $this;
+    }
+
+    public function getFormData(): array
+    {
+        return $this->formData;
     }
 }

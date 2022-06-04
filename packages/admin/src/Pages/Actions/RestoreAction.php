@@ -5,20 +5,19 @@ namespace Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Actions\Concerns\CanNotify;
-use Filament\Support\Actions\Concerns\HasBeforeAfterCallbacks;
+use Filament\Support\Actions\Concerns\HasLifecycleHooks;
 
 class RestoreAction extends Action
 {
-    use CanNotify;
-    use HasBeforeAfterCallbacks;
-
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->label(__('filament::resources/pages/edit-record.actions.restore.label'));
 
         $this->color('secondary');
 
-        $this->notificationMessage(__('filament::resources/pages/edit-record.actions.restore.messages.restored'));
+        $this->successNotification(__('filament::resources/pages/edit-record.actions.restore.messages.restored'));
 
         $this->visible(function () {
             /** @var ViewRecord | EditRecord $page */
@@ -51,15 +50,9 @@ class RestoreAction extends Action
             $page = $this->getLivewire();
             $record = $page->record;
 
-            $this->evaluate($this->beforeCallback, ['record' => $record]);
-
             $record->restore();
 
-            $this->notify();
-
-            return $this->evaluate($this->afterCallback, ['record' => $record]);
+            $this->sendSuccessNotification();
         });
-
-        parent::setUp();
     }
 }

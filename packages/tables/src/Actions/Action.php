@@ -41,17 +41,6 @@ class Action extends BaseAction
         return $this;
     }
 
-    public function call(array $data = [])
-    {
-        if ($this->isHidden()) {
-            return;
-        }
-
-        return $this->evaluate($this->getAction(), [
-            'data' => $data,
-        ]);
-    }
-
     protected function getLivewireSubmitActionName(): string
     {
         return 'callMountedTableAction';

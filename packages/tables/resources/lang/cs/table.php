@@ -59,20 +59,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'replicate' => [
-
-            'label' => 'Duplikovat',
-
-            'messages' => [
-                'replicated' => 'Záznam duplikován',
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Žádné záznamy nenalezeny',
     ],

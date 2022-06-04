@@ -2,45 +2,28 @@
 
 namespace Filament\Tables\Actions;
 
-use Filament\Resources\Pages\Page;
-use Filament\Support\Actions\Concerns\CanNotify;
-use Filament\Support\Actions\Concerns\HasBeforeAfterCallbacks;
+use Filament\Support\Actions\Concerns\CanRestoreRecords;
+use Filament\Support\Actions\Contracts\ReplicatesRecords;
 use Illuminate\Database\Eloquent\Collection;
 
 class RestoreBulkAction extends BulkAction
 {
-    use CanNotify;
-    use HasBeforeAfterCallbacks;
+    use CanRestoreRecords {
+        setUp as setUpBaseTrait;
+    }
 
     protected function setUp(): void
     {
-        $this->label(__('tables::table.actions.restore.label'));
+        $this->setUpBaseTrait();
 
-        $this->icon('heroicon-s-reply');
+        $this->label(__('filament-support::actions/restore.bulk.label'));
 
-        $this->color('secondary');
+        $this->successNotification(__('filament-support::actions/restore.bulk.messages.restored'));
 
-        $this->visible(function () {
-            /** @var Page $page */
-            $page = $this->getLivewire();
-
-            return $page::getResource()::canRestoreAny();
-        });
-
-        $this->notificationMessage(__('tables::table.bulk_actions.restore.messages.restored'));
-
-        $this->requiresConfirmation();
-
-        $this->action(static function (RestoreBulkAction $action, Collection $records) {
-            $action->evaluate($action->beforeCallback, ['records' => $records]);
-
+        $this->action(static function (RestoreBulkAction $action, Collection $records): void {
             $records->each(fn ($record) => $record->restore());
 
-            $action->notify();
-
-            return $action->evaluate($action->afterCallback, ['records' => $records]);
+            $action->sendSuccessNotification();
         });
-
-        parent::setUp();
     }
 }
