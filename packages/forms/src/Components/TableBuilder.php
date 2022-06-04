@@ -24,7 +24,7 @@ class TableBuilder extends Field
     {
         parent::setUp();
 
-        $this->default([[null]]);
+        $this->default([[null, null, null]]);
     }
 
     public function disableAddingRows(bool | Closure $condition = true): static

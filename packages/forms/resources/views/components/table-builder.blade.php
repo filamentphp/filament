@@ -73,7 +73,7 @@ $deleteRows = $canDeleteRows()
                                 <div class="flex items-center justify-between">
                                     <span x-text="i"></span>
 
-                                    @if($canDeleteColumns())
+                                    @if($canDeleteColumns() && ! $isDisabled())
                                         <button
                                             x-on:click="removeColumn(i)"
                                             x-show="columns > 1"
@@ -87,7 +87,7 @@ $deleteRows = $canDeleteRows()
                             </th>
                         </template>
 
-                        @if($deleteRows)
+                        @if($deleteRows && ! $isDisabled())
                             <th x-show="state.length > 1" class="w-10">
 
                             </th>
@@ -109,12 +109,15 @@ $deleteRows = $canDeleteRows()
                                     <input
                                         type="text"
                                         x-model="row[column - 1]"
+                                        @if ($isDisabled())
+                                            disabled
+                                        @endif
                                         class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
                                     >
                                 </td>
                             </template>
 
-                            @if($deleteRows)
+                            @if($deleteRows && ! $isDisabled())
                                 <td x-show="state.length > 1" class="p-0">
                                     <div class="flex items-center justify-center">
                                         <button
@@ -133,18 +136,20 @@ $deleteRows = $canDeleteRows()
             </table>
         </div>
 
-        <div class="mt-4 space-x-4">
-            @if($canAddRows())
-                <x-forms::button x-on:click="addRow" color="secondary" size="sm">
-                    Add Row
-                </x-forms::button>
-            @endif
+        @unless($isDisabled())
+            <div class="mt-4 space-x-4">
+                @if($canAddRows())
+                    <x-forms::button x-on:click="addRow" color="secondary" size="sm">
+                        Add Row
+                    </x-forms::button>
+                @endif
 
-            @if($canAddColumns())
-                <x-forms::button x-on:click="addColumn" color="secondary" size="sm">
-                    Add Column
-                </x-forms::button>
-            @endif
-        </div>
+                @if($canAddColumns())
+                    <x-forms::button x-on:click="addColumn" color="secondary" size="sm">
+                        Add Column
+                    </x-forms::button>
+                @endif
+            </div>
+        @endif
     </div>
 </x-dynamic-component>
