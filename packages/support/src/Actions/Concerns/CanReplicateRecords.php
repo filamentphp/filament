@@ -6,7 +6,6 @@ use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Support\Actions\Action;
 use Filament\Support\Actions\Contracts\ReplicatesRecords;
-use Filament\Tables\Actions\ReplicateAction;
 use Illuminate\Database\Eloquent\Model;
 
 trait CanReplicateRecords

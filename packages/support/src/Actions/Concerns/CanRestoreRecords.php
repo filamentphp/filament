@@ -2,13 +2,7 @@
 
 namespace Filament\Support\Actions\Concerns;
 
-use Closure;
-use Filament\Facades\Filament;
-use Filament\Forms\ComponentContainer;
-use Filament\Resources\Pages\Page;
-use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Actions\RestoreAction;
-use Illuminate\Database\Eloquent\Model;
 
 trait CanRestoreRecords
 {

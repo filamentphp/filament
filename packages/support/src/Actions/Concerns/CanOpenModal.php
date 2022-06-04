@@ -3,7 +3,6 @@
 namespace Filament\Support\Actions\Concerns;
 
 use Closure;
-use Filament\Support\Actions\Action;
 use Filament\Support\Actions\Modal\Actions\Action as ModalAction;
 
 trait CanOpenModal
