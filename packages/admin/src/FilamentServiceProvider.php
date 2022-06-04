@@ -15,6 +15,8 @@ use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action as TableAction;
+use Filament\Tables\Actions\BulkAction as TableBulkAction;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Filament\Widgets\Widget;
@@ -96,6 +98,8 @@ class FilamentServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         $this->bootLivewireComponents();
+
+        $this->bootTableActionConfiguration();
     }
 
     protected function bootLivewireComponents(): void
@@ -114,6 +118,23 @@ class FilamentServiceProvider extends PackageServiceProvider
         Livewire::component('filament.core.widgets.filament-info-widget', FilamentInfoWidget::class);
 
         $this->registerLivewireComponentDirectory(config('filament.livewire.path'), config('filament.livewire.namespace'), 'filament.');
+    }
+
+    protected function bootTableActionConfiguration(): void
+    {
+        Filament::serving(function (): void {
+            $notify = function (string $status, string $message): void {
+                Filament::notify($status, $message);
+            };
+
+            TableAction::configureUsing(
+                fn (TableAction $action): TableAction => $action->notifyUsing($notify),
+            );
+
+            TableBulkAction::configureUsing(
+                fn (TableBulkAction $action): TableBulkAction => $action->notifyUsing($notify),
+            );
+        });
     }
 
     protected function discoverPages(): void
