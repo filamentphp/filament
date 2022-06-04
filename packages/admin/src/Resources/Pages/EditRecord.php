@@ -5,8 +5,6 @@ namespace Filament\Resources\Pages;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\DeleteAction;
-use Filament\Pages\Actions\ForceDeleteAction;
-use Filament\Pages\Actions\RestoreAction;
 use Filament\Pages\Contracts\HasFormActions;
 use Filament\Pages\Contracts\HasRecord;
 use Illuminate\Database\Eloquent\Model;
