@@ -15,6 +15,10 @@ class TableBuilder extends Field
 
     protected bool | Closure $shouldDisableDeletingRows = false;
 
+    protected bool | Closure $shouldDisableAddingColumns = false;
+
+    protected bool | Closure $shouldDisableDeletingColumns = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,5 +48,29 @@ class TableBuilder extends Field
     public function canDeleteRows(): bool
     {
         return ! $this->evaluate($this->shouldDisableDeletingRows);
+    }
+
+    public function disableAddingColumns(bool | Closure $condition = true): static
+    {
+        $this->shouldDisableAddingColumns = $condition;
+
+        return $this;
+    }
+
+    public function disableDeletingColumns(bool | Closure $condition = true): static
+    {
+        $this->shouldDisableDeletingColumns = $condition;
+
+        return $this;
+    }
+
+    public function canAddColumns(): bool
+    {
+        return ! $this->evaluate($this->shouldDisableAddingColumns);
+    }
+
+    public function canDeleteColumns(): bool
+    {
+        return ! $this->evaluate($this->shouldDisableDeletingColumns);
     }
 }
