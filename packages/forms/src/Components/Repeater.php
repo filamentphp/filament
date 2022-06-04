@@ -6,7 +6,6 @@ use Closure;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 use Filament\Forms\ComponentContainer;
-use Filament\Forms\Concerns\HasGridColumns;
 use Illuminate\Support\Str;
 
 class Repeater extends Field
