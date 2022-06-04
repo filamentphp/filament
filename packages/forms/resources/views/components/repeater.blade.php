@@ -49,12 +49,12 @@
                 wire:end.stop="dispatchFormEvent('repeater::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
             >
                 <x-filament-support::grid
-                    :default="$getGrid('default')"
-                    :sm="$getGrid('sm')"
-                    :md="$getGrid('md')"
-                    :lg="$getGrid('lg')"
-                    :xl="$getGrid('xl')"
-                    :two-xl="$getGrid('2xl')"
+                    :default="$getGridColumns('default')"
+                    :sm="$getGridColumns('sm')"
+                    :md="$getGridColumns('md')"
+                    :lg="$getGridColumns('lg')"
+                    :xl="$getGridColumns('xl')"
+                    :two-xl="$getGridColumns('2xl')"
                     class="gap-6"
                 >
                     @foreach ($containers as $uuid => $item)

@@ -1504,6 +1504,22 @@ MorphManyRepeater::make('qualifications')
 
 The `MorphManyRepeater` component also allows you to store the order of related records. Follow [these instructions](#ordering-items) to enable that functionality.
 
+### Grid layout
+
+You may organize repeater items into columns by using the `grid()` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->grid(2)
+```
+
+This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of grid columns at various breakpoints.
+
 ## Builder
 
 Similar to a [repeater](#repeater), the builder component allows you to output a JSON array of repeated form components. Unlike the repeater, which only defines one form schema to repeat, the builder allows you to define different schema "blocks", which you can repeat in any order. This makes it useful for building more advanced array structures.
