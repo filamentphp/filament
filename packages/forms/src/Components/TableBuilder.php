@@ -8,6 +8,7 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 class TableBuilder extends Field
 {
     use HasExtraAlpineAttributes;
+    use Concerns\CanLimitItemsLength;
 
     protected string $view = 'forms::components.table-builder';
 
