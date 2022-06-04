@@ -3,7 +3,6 @@
 namespace Filament\Tables\Actions;
 
 use Filament\Support\Actions\Concerns\CanRestoreRecords;
-use Filament\Support\Actions\Contracts\ReplicatesRecords;
 use Illuminate\Database\Eloquent\Collection;
 
 class RestoreBulkAction extends BulkAction

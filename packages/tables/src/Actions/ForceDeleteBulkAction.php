@@ -3,8 +3,6 @@
 namespace Filament\Tables\Actions;
 
 use Filament\Resources\Pages\Page;
-use Filament\Support\Actions\Concerns\CanNotify;
-use Filament\Support\Actions\Concerns\HasLifecycleHooks;
 use Illuminate\Database\Eloquent\Collection;
 
 class ForceDeleteBulkAction extends BulkAction

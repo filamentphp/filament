@@ -4,8 +4,6 @@ namespace Filament\Pages\Actions;
 
 use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Support\Actions\Concerns\CanNotify;
-use Filament\Support\Actions\Concerns\HasLifecycleHooks;
 
 class RestoreAction extends Action
 {

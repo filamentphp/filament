@@ -3,8 +3,6 @@
 namespace Filament\Tables\Actions;
 
 use Filament\Resources\Pages\Page;
-use Filament\Support\Actions\Concerns\CanNotify;
-use Filament\Support\Actions\Concerns\HasLifecycleHooks;
 
 class ForceDeleteAction extends Action
 {
