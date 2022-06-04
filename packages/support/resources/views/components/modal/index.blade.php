@@ -71,7 +71,7 @@
             x-transition:leave-start="translate-y-0"
             x-transition:leave-end="translate-y-8"
             x-cloak
-            {{ $attributes->class(['relative w-full mt-auto md:mb-auto cursor-pointer pointer-events-none']) }}
+            {{ $attributes->class(['relative w-full my-auto cursor-pointer pointer-events-none']) }}
         >
             <div
                 @class([
