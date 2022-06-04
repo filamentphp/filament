@@ -73,14 +73,16 @@ $deleteRows = $canDeleteRows()
                                 <div class="flex items-center justify-between">
                                     <span x-text="i"></span>
 
-                                    <button
-                                        x-on:click="removeColumn(i)"
-                                        x-show="columns > 1"
-                                        type="button"
-                                        class="text-gray-400 hover:text-gray-600 focus:text-gray-600"
-                                    >
-                                        <x-heroicon-o-x class="w-4 h-4" />
-                                    </button>
+                                    @if($canDeleteColumns())
+                                        <button
+                                            x-on:click="removeColumn(i)"
+                                            x-show="columns > 1"
+                                            type="button"
+                                            class="text-gray-400 hover:text-gray-600 focus:text-gray-600"
+                                        >
+                                            <x-heroicon-o-x class="w-4 h-4" />
+                                        </button>
+                                    @endif
                                 </div>
                             </th>
                         </template>
@@ -138,9 +140,11 @@ $deleteRows = $canDeleteRows()
                 </x-forms::button>
             @endif
 
-            <x-forms::button x-on:click="addColumn" color="secondary" size="sm">
-                Add Column
-            </x-forms::button>
+            @if($canAddColumns())
+                <x-forms::button x-on:click="addColumn" color="secondary" size="sm">
+                    Add Column
+                </x-forms::button>
+            @endif
         </div>
     </div>
 </x-dynamic-component>
