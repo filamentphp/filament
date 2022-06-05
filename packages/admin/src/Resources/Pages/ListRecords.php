@@ -3,7 +3,6 @@
 namespace Filament\Resources\Pages;
 
 use Closure;
-use Filament\Facades\Filament;
 use Filament\Pages\Actions\Action;
 use Filament\Resources\Table;
 use Filament\Tables;

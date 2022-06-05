@@ -2,9 +2,6 @@
 
 namespace Filament\Tables\Actions;
 
-use Filament\Pages\Contracts\HasRecord;
-use Filament\Pages\Page;
-use Filament\Support\Actions\Concerns\CanForceDeleteRecords;
 use Illuminate\Database\Eloquent\Model;
 
 class ForceDeleteAction extends Action

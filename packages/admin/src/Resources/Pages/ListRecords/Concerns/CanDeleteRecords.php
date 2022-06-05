@@ -2,10 +2,8 @@
 
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
-use Filament\Facades\Filament;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 trait CanDeleteRecords
 {

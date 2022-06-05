@@ -13,8 +13,8 @@ use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
 use Filament\Support\Actions\Concerns\CanSubmitForm;
 use Filament\Support\Actions\Concerns\HasKeyBindings;
-use Filament\Support\Actions\Concerns\InteractsWithRecord;
 use Filament\Support\Actions\Concerns\HasTooltip;
+use Filament\Support\Actions\Concerns\InteractsWithRecord;
 use Filament\Support\Actions\Contracts\HasRecord;
 use Illuminate\Database\Eloquent\Model;
 

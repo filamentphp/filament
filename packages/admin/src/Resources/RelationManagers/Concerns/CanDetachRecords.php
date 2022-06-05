@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
-use Filament\Facades\Filament;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

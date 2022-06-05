@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
-use Filament\Facades\Filament;
 use Filament\Tables;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Model;
