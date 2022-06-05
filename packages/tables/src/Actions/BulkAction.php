@@ -7,7 +7,6 @@ use Filament\Support\Actions\Action as BaseAction;
 use Filament\Support\Actions\Concerns\InteractsWithRecords;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 class BulkAction extends BaseAction
 {
