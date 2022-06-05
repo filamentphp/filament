@@ -53,7 +53,7 @@ $deleteRows = $canDeleteRows()
         {{ $getExtraAlpineAttributeBag() }}
     >
         <div @class([
-            'border border-gray-300 divide-y shadow-sm bg-white rounded-xl overflow-hidden',
+            'border border-gray-300 divide-y shadow-sm bg-white rounded-xl overflow-y-auto',
             'dark:bg-gray-700 dark:border-gray-600 dark:divide-gray-600' => config('forms.dark_mode'),
         ])>
             <table @class([
@@ -62,8 +62,8 @@ $deleteRows = $canDeleteRows()
             ])>
                 <thead>
                     <tr @class([
-                        'bg-gray-50 divide-x',
-                        'dark:bg-gray-800/60' => config('forms.dark_mode'),
+                        'bg-gray-50 divide-x rtl:divide-x-reverse',
+                        'dark:bg-gray-800/60 dark:divide-gray-600' => config('forms.dark_mode'),
                     ])>
                         <template x-for="i in columns">
                             <th @class([
@@ -78,9 +78,9 @@ $deleteRows = $canDeleteRows()
                                             x-on:click="removeColumn(i)"
                                             x-show="columns > 1"
                                             type="button"
-                                            class="text-gray-400 hover:text-gray-600 focus:text-gray-600"
+                                            class="text-danger-600 hover:text-danger-700 focus:text-danger-700"
                                         >
-                                            <x-heroicon-o-x class="w-4 h-4" />
+                                            <x-heroicon-o-trash class="w-4 h-4" />
                                         </button>
                                     @endif
                                 </div>
@@ -88,7 +88,7 @@ $deleteRows = $canDeleteRows()
                         </template>
 
                         @if($deleteRows && ! $isDisabled())
-                            <th x-show="state.length > 1" class="w-10">
+                            <th x-show="state.length > 1" class="w-12">
 
                             </th>
                         @endif
@@ -118,14 +118,14 @@ $deleteRows = $canDeleteRows()
                             </template>
 
                             @if($deleteRows && ! $isDisabled())
-                                <td x-show="state.length > 1" class="p-0">
+                                <td class="whitespace-nowrap" x-show="state.length > 1">
                                     <div class="flex items-center justify-center">
                                         <button
                                             x-on:click="removeRow(index)"
                                             type="button"
-                                            class="text-gray-400 hover:text-gray-600 focus:text-gray-600"
+                                            class="text-danger-600 hover:text-danger-700 focus:text-danger-700"
                                         >
-                                            <x-heroicon-o-x class="w-4 h-4" />
+                                            <x-heroicon-o-trash class="w-4 h-4" />
                                         </button>
                                     </div>
                                 </td>
@@ -137,16 +137,16 @@ $deleteRows = $canDeleteRows()
         </div>
 
         @unless($isDisabled())
-            <div class="mt-4 space-x-4">
+            <div class="mt-4 space-x-4 rtl:space-x-reverse">
                 @if($canAddRows())
                     <x-forms::button x-on:click="addRow" color="secondary" size="sm">
-                        Add Row
+                        {{ $getAddRowButtonLabel() }}
                     </x-forms::button>
                 @endif
 
                 @if($canAddColumns())
                     <x-forms::button x-on:click="addColumn" color="secondary" size="sm">
-                        Add Column
+                        {{ $getAddColumnButtonLabel() }}
                     </x-forms::button>
                 @endif
             </div>

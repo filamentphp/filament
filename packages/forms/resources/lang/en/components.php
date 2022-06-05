@@ -230,4 +230,22 @@ return [
 
     ],
 
+    'table_builder' => [
+        'buttons' => [
+
+            'row' => [
+                'add' => [
+                    'label' => 'Add Row'
+                ],
+            ],
+
+            'column' => [
+                'add' => [
+                    'label' => 'Add Column'
+                ],
+            ],
+
+        ],
+    ],
+
 ];
