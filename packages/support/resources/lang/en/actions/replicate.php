@@ -10,7 +10,7 @@ return [
 
             'heading' => 'Replicate :label',
 
-            'buttons' => [
+            'actions' => [
 
                 'replicate' => [
                     'label' => 'Replicate',

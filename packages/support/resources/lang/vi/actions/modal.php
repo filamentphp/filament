@@ -4,7 +4,7 @@ return [
 
     'confirmation' => 'Bạn có chắc chắn khi thực hiện hành động này?',
 
-    'buttons' => [
+    'actions' => [
 
         'cancel' => [
             'label' => 'Huỷ',

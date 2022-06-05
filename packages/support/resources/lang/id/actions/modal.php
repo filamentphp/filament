@@ -4,7 +4,7 @@ return [
 
     'confirmation' => 'Apakah Anda yakin ingin melakukan ini?',
 
-    'buttons' => [
+    'actions' => [
 
         'cancel' => [
             'label' => 'Batal',

@@ -8,7 +8,6 @@ use Filament\Pages\Actions\DeleteAction;
 use Filament\Pages\Contracts\HasFormActions;
 use Filament\Pages\Contracts\HasRecord;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
@@ -166,7 +165,7 @@ class EditRecord extends Page implements HasFormActions, HasRecord
 
     protected function getDeleteAction(): Action
     {
-        return DeleteAction::make('delete')
+        return DeleteAction::make()
             ->action(fn () => $this->delete());
     }
 

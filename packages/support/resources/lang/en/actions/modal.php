@@ -4,7 +4,7 @@ return [
 
     'confirmation' => 'Are you sure you would like to do this?',
 
-    'buttons' => [
+    'actions' => [
 
         'cancel' => [
             'label' => 'Cancel',

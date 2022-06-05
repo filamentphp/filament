@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TrashedFilter extends TernaryFilter
 {
+    public static function make(string $name = 'trashed'): static
+    {
+        return parent::make($name);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

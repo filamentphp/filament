@@ -8,17 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class ForceDeleteBulkAction extends BulkAction
 {
+    public static function make(string $name = 'forceDelete'): static
+    {
+        return parent::make($name);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/force-delete.bulk.label'));
+        $this->label(__('filament-support::actions/force-delete.multiple.label'));
 
-        $this->modalHeading(__('filament-support::actions/force-delete.bulk.modal.heading'));
+        $this->modalHeading(__('filament-support::actions/force-delete.multiple.modal.heading'));
 
-        $this->modalButton(__('filament-support::actions/force-delete.bulk.modal.buttons.delete.label'));
+        $this->modalButton(__('filament-support::actions/force-delete.multiple.modal.actions.delete.label'));
 
-        $this->successNotificationMessage(__('filament-support::actions/force-delete.bulk.messages.deleted'));
+        $this->successNotificationMessage(__('filament-support::actions/force-delete.multiple.messages.deleted'));
 
         $this->color('danger');
 

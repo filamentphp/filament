@@ -7,17 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class RestoreBulkAction extends BulkAction
 {
+    public static function make(string $name = 'restore'): static
+    {
+        return parent::make($name);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/restore.bulk.label'));
+        $this->label(__('filament-support::actions/restore.multiple.label'));
 
-        $this->modalHeading(__('filament-support::actions/restore.bulk.modal.heading'));
+        $this->modalHeading(__('filament-support::actions/restore.multiple.modal.heading'));
 
-        $this->modalButton(__('filament-support::actions/restore.bulk.modal.buttons.restore.label'));
+        $this->modalButton(__('filament-support::actions/restore.multiple.modal.actions.restore.label'));
 
-        $this->successNotificationMessage(__('filament-support::actions/restore.bulk.messages.restored'));
+        $this->successNotificationMessage(__('filament-support::actions/restore.multiple.messages.restored'));
 
         $this->color('secondary');
 

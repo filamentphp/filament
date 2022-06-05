@@ -4,7 +4,7 @@ return [
 
     'confirmation' => 'Bunu yapmak istediğinizden emin misiniz?',
 
-    'buttons' => [
+    'actions' => [
 
         'cancel' => [
             'label' => 'İptal',

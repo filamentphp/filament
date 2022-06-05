@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class RestoreAction extends Action
 {
+    public static function make(string $name = 'restore'): static
+    {
+        return parent::make($name);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -17,7 +22,7 @@ class RestoreAction extends Action
 
         $this->modalHeading(fn (RestoreAction $action): string => __('filament-support::actions/restore.single.modal.heading', ['label' => $action->getRecordTitle()]));
 
-        $this->modalButton(__('filament-support::actions/restore.single.modal.buttons.restore.label'));
+        $this->modalButton(__('filament-support::actions/restore.single.modal.actions.restore.label'));
 
         $this->successNotificationMessage(__('filament-support::actions/restore.single.messages.restored'));
 

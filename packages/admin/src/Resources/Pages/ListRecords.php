@@ -3,7 +3,6 @@
 namespace Filament\Resources\Pages;
 
 use Closure;
-use Filament\Facades\Filament;
 use Filament\Pages\Actions\Action;
 use Filament\Resources\Table;
 use Filament\Tables;
@@ -108,7 +107,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function getDeleteBulkAction(): Tables\Actions\BulkAction
     {
-        return Tables\Actions\DeleteBulkAction::make('delete')
+        return Tables\Actions\DeleteBulkAction::make()
             ->action(fn () => $this->bulkDelete());
     }
 

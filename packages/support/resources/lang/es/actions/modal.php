@@ -4,7 +4,7 @@ return [
 
     'confirmation' => '¿Está segura/o de hacer esto?',
 
-    'buttons' => [
+    'actions' => [
 
         'cancel' => [
             'label' => 'Cancelar',

@@ -4,7 +4,7 @@ return [
 
     'confirmation' => 'Weet je zeker dat je dit wilt doen?',
 
-    'buttons' => [
+    'actions' => [
 
         'cancel' => [
             'label' => 'Annuleren',
