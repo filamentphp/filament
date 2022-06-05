@@ -4,7 +4,7 @@ return [
 
     'confirmation' => 'क्या आप वाकई ऐसा करना चाहेंगे?',
 
-    'buttons' => [
+    'actions' => [
 
         'cancel' => [
             'label' => 'रद्द करें',

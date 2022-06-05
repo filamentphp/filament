@@ -10,7 +10,7 @@ return [
 
             'heading' => 'Restore :label',
 
-            'buttons' => [
+            'actions' => [
 
                 'restore' => [
                     'label' => 'Restore',
@@ -26,7 +26,7 @@ return [
 
     ],
 
-    'bulk' => [
+    'multiple' => [
 
         'label' => 'Restore selected',
 
@@ -34,7 +34,7 @@ return [
 
             'heading' => 'Restore selected',
 
-            'buttons' => [
+            'actions' => [
 
                 'restore' => [
                     'label' => 'Restore',

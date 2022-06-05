@@ -4,7 +4,7 @@ return [
 
     'confirmation' => 'ဒီလိုလုပ်ချင်တာသေချာလား',
 
-    'buttons' => [
+    'actions' => [
 
         'cancel' => [
             'label' => 'မလုပ်တော့ပါ',

@@ -4,7 +4,7 @@ return [
 
     'confirmation' => '이 작업을 수행하시겠습니까?',
 
-    'buttons' => [
+    'actions' => [
 
         'cancel' => [
             'label' => '취소',

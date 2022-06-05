@@ -289,7 +289,7 @@ This package includes an action to replicate table records. You may use it like 
 ```php
 use Filament\Tables\Actions\ReplicateAction;
 
-ReplicateAction::make('replicate')
+ReplicateAction::make()
 ```
 
 The `excludeAttributes()` method is used to instruct the action which columns to be excluded from replication:
@@ -297,7 +297,7 @@ The `excludeAttributes()` method is used to instruct the action which columns to
 ```php
 use Filament\Tables\Actions\ReplicateAction;
 
-ReplicateAction::make('replicate')->excludeAttributes('slug')
+ReplicateAction::make()->excludeAttributes('slug')
 ```
 
 The `beforeReplicaSaved()` method can be used to invoke a Closure before saving the replica:
@@ -306,7 +306,7 @@ The `beforeReplicaSaved()` method can be used to invoke a Closure before saving 
 use Filament\Tables\Actions\ReplicateAction;
 use Illuminate\Database\Eloquent\Model;
 
-ReplicateAction::make('replicate')
+ReplicateAction::make()
     ->beforeReplicaSaved(function (Model $replica): void {
         // ...
     })
@@ -318,7 +318,7 @@ The `afterReplicaSaved()` method can be used to invoke a Closure after saving th
 use Filament\Tables\Actions\ReplicateAction;
 use Illuminate\Database\Eloquent\Model;
 
-ReplicateAction::make('replicate')
+ReplicateAction::make()
     ->afterReplicaSaved(function (Model $replica): void {
         // ...
     })
@@ -331,7 +331,7 @@ Just like [normal actions](#custom-forms), you can provide a [form schema](/docs
 ```php
 use Filament\Tables\Actions\ReplicateAction;
 
-ReplicateAction::make('replicate')
+ReplicateAction::make()
 	->excludeAttributes(['title'])
 	->form([
 		TextInput::make('title')->required(),

@@ -4,7 +4,7 @@ return [
 
     'confirmation' => 'آیا برای انجام این کار مطمئن هستید؟',
 
-    'buttons' => [
+    'actions' => [
 
         'cancel' => [
             'label' => 'لغو',

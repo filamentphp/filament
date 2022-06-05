@@ -4,7 +4,7 @@ return [
 
     'confirmation' => '本当に実行しますか？',
 
-    'buttons' => [
+    'actions' => [
 
         'cancel' => [
             'label' => 'キャンセル',

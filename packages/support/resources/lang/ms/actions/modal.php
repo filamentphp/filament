@@ -4,7 +4,7 @@ return [
 
     'confirmation' => 'Adakah anda pasti mahu melakukan ini?',
 
-    'buttons' => [
+    'actions' => [
 
         'cancel' => [
             'label' => 'Batal',

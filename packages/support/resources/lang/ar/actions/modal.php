@@ -4,7 +4,7 @@ return [
 
     'confirmation' => 'هل أنت متأكد من القيام بهذه العملية؟',
 
-    'buttons' => [
+    'actions' => [
 
         'cancel' => [
             'label' => 'إلغاء',

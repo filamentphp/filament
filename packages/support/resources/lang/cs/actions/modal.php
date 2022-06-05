@@ -4,7 +4,7 @@ return [
 
     'confirmation' => 'Jste si jistí touto akcí?',
 
-    'buttons' => [
+    'actions' => [
 
         'cancel' => [
             'label' => 'Zrušit',

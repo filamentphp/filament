@@ -10,7 +10,7 @@ return [
 
             'heading' => 'Force delete :label',
 
-            'buttons' => [
+            'actions' => [
 
                 'delete' => [
                     'label' => 'Delete',
@@ -26,7 +26,7 @@ return [
 
     ],
 
-    'bulk' => [
+    'multiple' => [
 
         'label' => 'Force delete selected',
 
@@ -34,7 +34,7 @@ return [
 
             'heading' => 'Force delete selected',
 
-            'buttons' => [
+            'actions' => [
 
                 'delete' => [
                     'label' => 'Delete',

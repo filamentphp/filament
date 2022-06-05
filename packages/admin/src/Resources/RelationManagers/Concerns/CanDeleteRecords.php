@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
-use Filament\Facades\Filament;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 
@@ -56,14 +55,14 @@ trait CanDeleteRecords
 
     protected function getDeleteAction(): Tables\Actions\Action
     {
-        return Tables\Actions\DeleteAction::make('delete')
+        return Tables\Actions\DeleteAction::make()
             ->action(fn () => $this->delete())
             ->authorize(fn (Model $record): bool => $this->canDelete($record));
     }
 
     protected function getDeleteBulkAction(): Tables\Actions\BulkAction
     {
-        return Tables\Actions\DeleteBulkAction::make('delete')
+        return Tables\Actions\DeleteBulkAction::make()
             ->action(fn () => $this->bulkDelete());
     }
 }

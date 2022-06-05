@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class ForceDeleteAction extends Action
 {
+    public static function make(string $name = 'forceDelete'): static
+    {
+        return parent::make($name);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -17,7 +22,7 @@ class ForceDeleteAction extends Action
 
         $this->modalHeading(fn (ForceDeleteAction $action): string => __('filament-support::actions/force-delete.single.modal.heading', ['label' => $action->getRecordTitle()]));
 
-        $this->modalButton(__('filament-support::actions/force-delete.single.modal.buttons.delete.label'));
+        $this->modalButton(__('filament-support::actions/force-delete.single.modal.actions.delete.label'));
 
         $this->successNotificationMessage(__('filament-support::actions/force-delete.single.messages.deleted'));
 

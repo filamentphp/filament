@@ -2,10 +2,8 @@
 
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
-use Filament\Facades\Filament;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 trait CanDeleteRecords
 {
@@ -18,7 +16,7 @@ trait CanDeleteRecords
     {
         $resource = static::getResource();
 
-        return Tables\Actions\DeleteAction::make('delete')
+        return Tables\Actions\DeleteAction::make()
             ->action(fn () => $this->delete())
             ->authorize(fn (Model $record): bool => $resource::canDelete($record));
     }
