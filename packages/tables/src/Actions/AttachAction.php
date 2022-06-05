@@ -2,8 +2,6 @@
 
 namespace Filament\Tables\Actions;
 
-use Illuminate\Database\Eloquent\Model;
-
 class AttachAction extends Action
 {
     public static function make(string $name = 'attach'): static
