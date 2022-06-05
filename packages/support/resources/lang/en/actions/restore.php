@@ -6,10 +6,16 @@ return [
 
         'label' => 'Restore',
 
-        'buttons' => [
+        'modal' => [
 
-            'restore' => [
-                'label' => 'Restore',
+            'heading' => 'Restore :label',
+
+            'buttons' => [
+
+                'restore' => [
+                    'label' => 'Restore',
+                ],
+
             ],
 
         ],
@@ -22,12 +28,18 @@ return [
 
     'bulk' => [
 
-        'label' => 'Restore',
+        'label' => 'Restore selected',
 
-        'buttons' => [
+        'modal' => [
 
-            'restore' => [
-                'label' => 'Restore',
+            'heading' => 'Restore selected',
+
+            'buttons' => [
+
+                'restore' => [
+                    'label' => 'Restore',
+                ],
+
             ],
 
         ],

@@ -4,14 +4,16 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Support\Actions\Action as BaseAction;
-use Filament\Support\Actions\Concerns\HasRecords;
+use Filament\Support\Actions\Concerns\InteractsWithRecords;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class BulkAction extends BaseAction
 {
     use Concerns\BelongsToTable;
     use Concerns\CanDeselectRecordsAfterCompletion;
-    use HasRecords;
+    use InteractsWithRecords;
 
     protected string $view = 'tables::actions.bulk-action';
 
@@ -58,7 +60,17 @@ class BulkAction extends BaseAction
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'records' => $this->getRecords(),
+            'records' => $this->resolveEvaluationParameter(
+                'records',
+                fn (): Collection => $this->getRecords(),
+            ),
         ]);
+    }
+
+    protected function parseAuthorizationArguments(array $arguments): array
+    {
+        array_unshift($arguments, $this->getLivewire()->getTableModel());
+
+        return $arguments;
     }
 }

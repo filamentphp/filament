@@ -35,7 +35,7 @@ trait CanViewRecords
             ->modalActions(fn (Tables\Actions\Action $action): array => [$action->getModalCancelAction()])
             ->action(function () {
             })
-            ->hidden(fn (Model $record) => ! $resource::canView($record));
+            ->authorize(fn (Model $record) => $resource::canView($record));
     }
 
     protected function getViewFormSchema(): array

@@ -6,10 +6,16 @@ return [
 
         'label' => 'Delete',
 
-        'buttons' => [
+        'modal' => [
 
-            'delete' => [
-                'label' => 'Delete',
+            'heading' => 'Delete :label',
+
+            'buttons' => [
+
+                'delete' => [
+                    'label' => 'Delete',
+                ],
+
             ],
 
         ],
@@ -22,12 +28,18 @@ return [
 
     'bulk' => [
 
-        'label' => 'Delete',
+        'label' => 'Delete selected',
 
-        'buttons' => [
+        'modal' => [
 
-            'delete' => [
-                'label' => 'Delete',
+            'heading' => 'Delete selected',
+
+            'buttons' => [
+
+                'delete' => [
+                    'label' => 'Delete',
+                ],
+
             ],
 
         ],

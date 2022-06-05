@@ -9,22 +9,38 @@ use Illuminate\Database\Eloquent\Model;
 
 class DeleteAction extends Action
 {
-    use CanDeleteRecords {
-        setUp as setUpTrait;
-    }
-
     protected function setUp(): void
     {
-        $this->setUpTrait();
+        parent::setUp();
+
+        $this->label(__('filament-support::actions/delete.single.label'));
+
+        $this->modalHeading(fn (DeleteAction $action): string => __('filament-support::actions/delete.single.modal.heading', ['label' => $action->getRecordTitle()]));
+
+        $this->modalButton(__('filament-support::actions/delete.single.modal.buttons.delete.label'));
+
+        $this->successNotificationMessage(__('filament-support::actions/delete.single.messages.deleted'));
+
+        $this->action('delete');
+
+        $this->color('danger');
+
+        $this->requiresConfirmation();
 
         $this->keyBindings(['mod+d']);
 
-        $this->record(function (Page $livewire): ?Model {
-            if (! $livewire instanceof HasRecord) {
-                return null;
+        $this->hidden(static function (Model $record): bool {
+            if (! method_exists($record, 'trashed')) {
+                return false;
             }
 
-            return $livewire->getRecord();
+            return $record->trashed();
+        });
+
+        $this->action(static function (DeleteAction $action, Model $record): void {
+            $record->delete();
+
+            $action->success();
         });
     }
 }

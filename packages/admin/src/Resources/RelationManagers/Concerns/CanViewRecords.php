@@ -39,9 +39,9 @@ trait CanViewRecords
         $this->callHook('afterViewFill');
     }
 
-    protected function getViewAction(): ?Tables\Actions\Action
+    protected function getViewAction(): Tables\Actions\Action
     {
-        return Filament::makeTableAction('view')
+        return Tables\Actions\Action::make('view')
             ->label(__('filament::resources/relation-managers/view.action.label'))
             ->form($this->getViewFormSchema())
             ->mountUsing(fn () => $this->fillViewForm())
@@ -56,6 +56,6 @@ trait CanViewRecords
             ->action(function () {
             })
             ->icon('heroicon-s-eye')
-            ->hidden(fn (Model $record): bool => ! static::canView($record));
+            ->authorize(fn (Model $record): bool => static::canView($record));
     }
 }

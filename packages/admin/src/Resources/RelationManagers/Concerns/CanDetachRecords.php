@@ -77,14 +77,14 @@ trait CanDetachRecords
 
     protected function getDetachAction(): Tables\Actions\Action
     {
-        return Filament::makeTableAction('detach')
+        return Tables\Actions\Action::make('detach')
             ->label(__('filament::resources/relation-managers/detach.action.label'))
             ->requiresConfirmation()
             ->modalHeading(__('filament::resources/relation-managers/detach.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->detach())
             ->color('danger')
             ->icon('heroicon-s-x')
-            ->hidden(fn (Model $record): bool => ! $this->canDetach($record));
+            ->authorize(fn (Model $record): bool => $this->canDetach($record));
     }
 
     protected function getDetachBulkAction(): Tables\Actions\BulkAction

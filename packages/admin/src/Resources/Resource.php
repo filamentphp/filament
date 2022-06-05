@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use function Filament\Support\get_model_label;
 
 class Resource
 {
@@ -236,9 +237,7 @@ class Resource
 
     public static function getLabel(): string
     {
-        return static::$label ?? (string) Str::of(class_basename(static::getModel()))
-            ->kebab()
-            ->replace('-', ' ');
+        return static::$label ?? get_model_label(static::getModel());
     }
 
     public static function getModel(): string

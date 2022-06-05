@@ -56,25 +56,14 @@ trait CanDeleteRecords
 
     protected function getDeleteAction(): Tables\Actions\Action
     {
-        return Filament::makeTableAction('delete')
-            ->label(__('filament::resources/relation-managers/delete.action.label'))
-            ->requiresConfirmation()
-            ->modalHeading(__('filament::resources/relation-managers/delete.action.modal.heading', ['label' => static::getRecordLabel()]))
+        return Tables\Actions\DeleteAction::make('delete')
             ->action(fn () => $this->delete())
-            ->color('danger')
-            ->icon('heroicon-s-trash')
-            ->hidden(fn (Model $record): bool => ! $this->canDelete($record));
+            ->authorize(fn (Model $record): bool => $this->canDelete($record));
     }
 
     protected function getDeleteBulkAction(): Tables\Actions\BulkAction
     {
-        return Tables\Actions\BulkAction::make('delete')
-            ->label(__('filament::resources/relation-managers/delete.bulk_action.label'))
-            ->action(fn () => $this->bulkDelete())
-            ->requiresConfirmation()
-            ->modalHeading(__('filament::resources/relation-managers/delete.bulk_action.modal.heading', ['label' => static::getPluralRecordLabel()]))
-            ->deselectRecordsAfterCompletion()
-            ->color('danger')
-            ->icon('heroicon-o-trash');
+        return Tables\Actions\DeleteBulkAction::make('delete')
+            ->action(fn () => $this->bulkDelete());
     }
 }

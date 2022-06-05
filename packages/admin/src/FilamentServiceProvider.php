@@ -17,6 +17,8 @@ use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\BulkAction as TableBulkAction;
+use Filament\Tables\Actions\ButtonAction;
+use Filament\Tables\Actions\IconButtonAction;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Filament\Widgets\Widget;
@@ -127,13 +129,23 @@ class FilamentServiceProvider extends PackageServiceProvider
                 Filament::notify($status, $message);
             };
 
-            TableAction::configureUsing(
-                fn (TableAction $action): TableAction => $action->notifyUsing($notify),
-            );
+            TableAction::configureUsing(function (TableAction $action) use ($notify): TableAction {
+                match (config('filament.layout.tables.actions.type')) {
+                    ButtonAction::class => $action->button(),
+                    IconButtonAction::class => $action->iconButton(),
+                    default => $action->link(),
+                };
 
-            TableBulkAction::configureUsing(
-                fn (TableBulkAction $action): TableBulkAction => $action->notifyUsing($notify),
-            );
+                $action->notifyUsing($notify);
+
+                return $action;
+            });
+
+            TableBulkAction::configureUsing(function (TableBulkAction $action) use ($notify): TableBulkAction {
+                $action->notifyUsing($notify);
+
+                return $action;
+            });
         });
     }
 

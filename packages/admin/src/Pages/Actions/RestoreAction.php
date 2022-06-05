@@ -9,13 +9,41 @@ use Illuminate\Database\Eloquent\Model;
 
 class RestoreAction extends Action
 {
-    use CanRestoreRecords {
-        setUp as setUpTrait;
-    }
-
     protected function setUp(): void
     {
-        $this->setUpTrait();
+        parent::setUp();
+
+        $this->label(__('filament-support::actions/restore.single.label'));
+
+        $this->modalHeading(fn (RestoreAction $action): string => __('filament-support::actions/restore.single.modal.heading', ['label' => $action->getRecordTitle()]));
+
+        $this->modalButton(__('filament-support::actions/restore.single.modal.buttons.restore.label'));
+
+        $this->successNotificationMessage(__('filament-support::actions/restore.single.messages.restored'));
+
+        $this->color('secondary');
+
+        $this->icon('heroicon-s-reply');
+
+        $this->requiresConfirmation();
+
+        $this->action(static function (RestoreAction $action, Model $record): void {
+            if (! method_exists($record, 'restore')) {
+                return;
+            }
+
+            $record->restore();
+
+            $action->success();
+        });
+
+        $this->visible(static function (Model $record): bool {
+            if (! method_exists($record, 'trashed')) {
+                return false;
+            }
+
+            return $record->trashed();
+        });
 
         $this->record(function (Page $livewire): ?Model {
             if (! $livewire instanceof HasRecord) {

@@ -6,6 +6,8 @@ use Closure;
 
 trait CanNotify
 {
+    protected string | Closure | null $failureNotificationMessage = null;
+
     protected string | Closure | null $successNotificationMessage = null;
 
     protected ?Closure $notifyUsing = null;
@@ -29,6 +31,17 @@ trait CanNotify
         ]);
     }
 
+    public function sendFailureNotification(): static
+    {
+        $message = $this->evaluate($this->failureNotificationMessage);
+
+        if (filled($message)) {
+            $this->notify('failure', $message);
+        }
+
+        return $this;
+    }
+
     public function sendSuccessNotification(): static
     {
         $message = $this->evaluate($this->successNotificationMessage);
@@ -40,7 +53,14 @@ trait CanNotify
         return $this;
     }
 
-    public function successNotification(string | Closure | null $message): static
+    public function failureNotificationMessage(string | Closure | null $message): static
+    {
+        $this->failureNotificationMessage = $message;
+
+        return $this;
+    }
+
+    public function successNotificationMessage(string | Closure | null $message): static
     {
         $this->successNotificationMessage = $message;
 

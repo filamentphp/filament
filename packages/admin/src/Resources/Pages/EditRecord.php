@@ -22,8 +22,6 @@ class EditRecord extends Page implements HasFormActions, HasRecord
 
     protected static string $view = 'filament::resources.pages.edit-record';
 
-    public $record;
-
     public $data;
 
     protected $queryString = [
@@ -44,11 +42,6 @@ class EditRecord extends Page implements HasFormActions, HasRecord
         abort_unless(static::getResource()::canEdit($this->record), 403);
 
         $this->fillForm();
-    }
-
-    public function getRecord(): Model
-    {
-        return $this->record;
     }
 
     protected function fillForm(): void
@@ -183,14 +176,8 @@ class EditRecord extends Page implements HasFormActions, HasRecord
             return static::$title;
         }
 
-        if (filled($recordTitle = $this->getRecordTitle())) {
-            return __('filament::resources/pages/edit-record.title', [
-                'label' => $recordTitle,
-            ]);
-        }
-
         return __('filament::resources/pages/edit-record.title', [
-            'label' => Str::title(static::getResource()::getLabel()),
+            'label' => $this->getRecordTitle(),
         ]);
     }
 

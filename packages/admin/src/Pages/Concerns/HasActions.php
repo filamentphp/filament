@@ -5,6 +5,7 @@ namespace Filament\Pages\Concerns;
 use Filament\Forms;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Contracts;
+use Filament\Support\Actions\Exceptions\Hold;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -42,7 +43,11 @@ trait HasActions
 
         $action->callBefore();
 
-        $result = $action->call();
+        try {
+            $result = $action->call();
+        } catch (Hold $exception) {
+            return;
+        }
 
         try {
             return $action->callAfter() ?? $result;

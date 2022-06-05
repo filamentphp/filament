@@ -4,7 +4,9 @@ namespace Filament\Support\Actions\Concerns;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Pages\Actions\ReplicateAction;
 use Filament\Support\Actions\Action;
+use Filament\Support\Actions\Contracts\HasRecord;
 use Filament\Support\Actions\Contracts\ReplicatesRecords;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,11 +22,13 @@ trait CanReplicateRecords
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/replicate.single.label'));
+        $this->label(__('filament-support::actions/replicate.single.label.default'));
 
-        $this->modalButton(__('filament-support::actions/replicate.single.buttons.replicate.label'));
+        $this->modalHeading(fn (Action | HasRecord $action): string => __('filament-support::actions/replicate.single.modal.heading', ['label' => $action->getRecordTitle()]));
 
-        $this->successNotification(__('filament-support::actions/replicate.single.messages.replicated'));
+        $this->modalButton(__('filament-support::actions/replicate.single.modal.buttons.replicate.label'));
+
+        $this->successNotificationMessage(__('filament-support::actions/replicate.single.messages.replicated'));
 
         $this->icon('heroicon-s-duplicate');
 
@@ -40,9 +44,7 @@ trait CanReplicateRecords
             $form->fill($record->toArray());
         });
 
-        $this->action(static function (Action $action, Model $record) {
-            /** @var Action | ReplicatesRecords $action */
-
+        $this->action(static function (Action | ReplicatesRecords $action, Model $record) {
             $replica = $record->replicate($action->getExcludedAttributes());
 
             $action->callBeforeReplicaSaved($replica);
@@ -52,7 +54,7 @@ trait CanReplicateRecords
             try {
                 return $action->callAfterReplicaSaved($replica);
             } finally {
-                $action->sendSuccessNotification();
+                $action->success();
             }
         });
     }

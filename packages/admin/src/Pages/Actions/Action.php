@@ -5,16 +5,20 @@ namespace Filament\Pages\Actions;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Pages\Actions\Modal\Actions\Action as ModalAction;
+use Filament\Pages\Contracts\HasRecord as HasRecordContract;
+use Filament\Pages\Page;
 use Filament\Support\Actions\Action as BaseAction;
 use Filament\Support\Actions\Concerns\CanBeDisabled;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
 use Filament\Support\Actions\Concerns\CanSubmitForm;
 use Filament\Support\Actions\Concerns\HasKeyBindings;
-use Filament\Support\Actions\Concerns\HasRecord;
+use Filament\Support\Actions\Concerns\InteractsWithRecord;
 use Filament\Support\Actions\Concerns\HasTooltip;
+use Filament\Support\Actions\Contracts\HasRecord;
+use Illuminate\Database\Eloquent\Model;
 
-class Action extends BaseAction
+class Action extends BaseAction implements HasRecord
 {
     use CanBeDisabled;
     use CanBeOutlined;
@@ -22,10 +26,31 @@ class Action extends BaseAction
     use CanSubmitForm;
     use Concerns\BelongsToLivewire;
     use HasKeyBindings;
-    use HasRecord;
     use HasTooltip;
+    use InteractsWithRecord;
 
     protected string $view = 'filament::pages.actions.button-action';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->record(function (Page $livewire): ?Model {
+            if (! $livewire instanceof HasRecordContract) {
+                return null;
+            }
+
+            return $livewire->getRecord();
+        });
+
+        $this->recordTitle(function (Page $livewire): ?string {
+            if (! $livewire instanceof HasRecordContract) {
+                return null;
+            }
+
+            return $livewire->getRecordTitle();
+        });
+    }
 
     public function button(): static
     {
@@ -69,5 +94,15 @@ class Action extends BaseAction
     public function notify(string | Closure | null $status, string | Closure | null $message): void
     {
         Filament::notify($status, $message);
+    }
+
+    protected function getDefaultEvaluationParameters(): array
+    {
+        return array_merge(parent::getDefaultEvaluationParameters(), [
+            'record' => $this->resolveEvaluationParameter(
+                'record',
+                fn (): ?Model => $this->getRecord(),
+            ),
+        ]);
     }
 }

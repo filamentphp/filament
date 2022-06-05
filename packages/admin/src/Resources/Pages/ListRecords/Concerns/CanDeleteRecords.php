@@ -18,14 +18,9 @@ trait CanDeleteRecords
     {
         $resource = static::getResource();
 
-        return Filament::makeTableAction('delete')
-            ->label(__('filament::resources/pages/list-records.table.actions.delete.label'))
-            ->requiresConfirmation()
-            ->modalHeading(fn (Model $record) => __('filament::resources/pages/list-records.table.actions.delete.modal.heading', ['label' => $resource::hasRecordTitle() ? $resource::getRecordTitle($record) : Str::title($resource::getLabel())]))
+        return Tables\Actions\DeleteAction::make('delete')
             ->action(fn () => $this->delete())
-            ->color('danger')
-            ->icon('heroicon-s-trash')
-            ->hidden(fn (Model $record): bool => ! $resource::canDelete($record));
+            ->authorize(fn (Model $record): bool => $resource::canDelete($record));
     }
 
     public function delete(): void

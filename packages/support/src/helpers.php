@@ -2,6 +2,7 @@
 
 namespace Filament\Support;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 
@@ -16,5 +17,14 @@ if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
         );
 
         return $attributes;
+    }
+}
+
+if (! function_exists('Filament\Support\get_model_label')) {
+    function get_model_label(string $model): string
+    {
+        return (string) Str::of(class_basename($model))
+            ->kebab()
+            ->replace('-', ' ');
     }
 }

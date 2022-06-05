@@ -8,28 +8,30 @@ use Illuminate\Database\Eloquent\Model;
 
 class DeleteBulkAction extends BulkAction
 {
-    use CanDeleteRecords {
-        setUp as setUpTrait;
-    }
-
     protected function setUp(): void
     {
-        $this->setUpTrait();
+        parent::setUp();
 
         $this->label(__('filament-support::actions/delete.bulk.label'));
 
-        $this->modalButton(__('filament-support::actions/delete.bulk.buttons.delete.label'));
+        $this->modalHeading(__('filament-support::actions/delete.bulk.modal.heading'));
 
-        $this->successNotification(__('filament-support::actions/delete.bulk.messages.deleted'));
+        $this->modalButton(__('filament-support::actions/delete.bulk.modal.buttons.delete.label'));
+
+        $this->successNotificationMessage(__('filament-support::actions/delete.bulk.messages.deleted'));
+
+        $this->color('danger');
+
+        $this->icon('heroicon-s-trash');
+
+        $this->requiresConfirmation();
 
         $this->action(static function (DeleteBulkAction $action, Collection $records): void {
             $records->each(fn (Model $record) => $record->delete());
 
-            $action->sendSuccessNotification();
+            $action->success();
         });
 
         $this->deselectRecordsAfterCompletion();
-
-        $this->hidden(false);
     }
 }

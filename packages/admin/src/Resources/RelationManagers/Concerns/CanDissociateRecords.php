@@ -83,14 +83,14 @@ trait CanDissociateRecords
 
     protected function getDissociateAction(): Tables\Actions\Action
     {
-        return Filament::makeTableAction('dissociate')
+        return Tables\Actions\Action::make('dissociate')
             ->label(__('filament::resources/relation-managers/dissociate.action.label'))
             ->requiresConfirmation()
             ->modalHeading(__('filament::resources/relation-managers/dissociate.action.modal.heading', ['label' => static::getRecordLabel()]))
             ->action(fn () => $this->dissociate())
             ->color('danger')
             ->icon('heroicon-s-x')
-            ->hidden(fn (Model $record): bool => ! $this->canDissociate($record));
+            ->authorize(fn (Model $record): bool => $this->canDissociate($record));
     }
 
     protected function getDissociateBulkAction(): Tables\Actions\BulkAction
