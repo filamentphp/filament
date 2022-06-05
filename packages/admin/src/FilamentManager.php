@@ -353,15 +353,4 @@ class FilamentManager
     {
         return array_unique($this->meta);
     }
-
-    public function makeTableAction(string $name): Action
-    {
-        $type = config('filament.layout.tables.actions.type');
-
-        if (blank($type) || (! class_exists($type))) {
-            $type = Action::class;
-        }
-
-        return $type::make($name);
-    }
 }

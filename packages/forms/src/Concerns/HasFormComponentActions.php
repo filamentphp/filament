@@ -5,6 +5,7 @@ namespace Filament\Forms\Concerns;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
+use Filament\Support\Actions\Exceptions\Hold;
 
 /**
  * @property ComponentContainer $mountedFormComponentActionForm
@@ -62,7 +63,11 @@ trait HasFormComponentActions
 
         $action->callBefore();
 
-        $result = $action->call();
+        try {
+            $result = $action->call();
+        } catch (Hold $exception) {
+            return;
+        }
 
         try {
             return $action->callAfter() ?? $result;

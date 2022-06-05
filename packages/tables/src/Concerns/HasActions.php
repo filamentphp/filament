@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Forms\ComponentContainer;
+use Filament\Support\Actions\Exceptions\Hold;
 use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
 
@@ -55,7 +56,11 @@ trait HasActions
 
         $action->callBefore();
 
-        $result = $action->call();
+        try {
+            $result = $action->call();
+        } catch (Hold $exception) {
+            return;
+        }
 
         try {
             return $action->callAfter() ?? $result;

@@ -2,25 +2,28 @@
 
 namespace Filament\Tables\Actions;
 
-use Filament\Support\Actions\Concerns\CanRestoreRecords;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class RestoreBulkAction extends BulkAction
 {
-    use CanRestoreRecords {
-        setUp as setUpTrait;
-    }
-
     protected function setUp(): void
     {
-        $this->setUpTrait();
+        parent::setUp();
 
         $this->label(__('filament-support::actions/restore.bulk.label'));
 
-        $this->modalButton(__('filament-support::actions/restore.bulk.buttons.restore.label'));
+        $this->modalHeading(__('filament-support::actions/restore.bulk.modal.heading'));
 
-        $this->successNotification(__('filament-support::actions/restore.bulk.messages.restored'));
+        $this->modalButton(__('filament-support::actions/restore.bulk.modal.buttons.restore.label'));
+
+        $this->successNotificationMessage(__('filament-support::actions/restore.bulk.messages.restored'));
+
+        $this->color('secondary');
+
+        $this->icon('heroicon-s-reply');
+
+        $this->requiresConfirmation();
 
         $this->action(static function (RestoreBulkAction $action, Collection $records): void {
             $records->each(function (Model $record): void {
@@ -31,11 +34,9 @@ class RestoreBulkAction extends BulkAction
                 $record->restore();
             });
 
-            $action->sendSuccessNotification();
+            $action->success();
         });
 
         $this->deselectRecordsAfterCompletion();
-
-        $this->visible(true);
     }
 }

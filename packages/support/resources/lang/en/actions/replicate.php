@@ -6,10 +6,16 @@ return [
 
         'label' => 'Replicate',
 
-        'buttons' => [
+        'modal' => [
 
-            'replicate' => [
-                'label' => 'Replicate',
+            'heading' => 'Replicate :label',
+
+            'buttons' => [
+
+                'replicate' => [
+                    'label' => 'Replicate',
+                ],
+
             ],
 
         ],

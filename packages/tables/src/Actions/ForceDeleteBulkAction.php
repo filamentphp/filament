@@ -8,28 +8,30 @@ use Illuminate\Database\Eloquent\Model;
 
 class ForceDeleteBulkAction extends BulkAction
 {
-    use CanForceDeleteRecords {
-        setUp as setUpTrait;
-    }
-
     protected function setUp(): void
     {
-        $this->setUpTrait();
+        parent::setUp();
 
         $this->label(__('filament-support::actions/force-delete.bulk.label'));
 
-        $this->modalButton(__('filament-support::actions/force-delete.bulk.buttons.delete.label'));
+        $this->modalHeading(__('filament-support::actions/force-delete.bulk.modal.heading'));
 
-        $this->successNotification(__('filament-support::actions/force-delete.bulk.messages.deleted'));
+        $this->modalButton(__('filament-support::actions/force-delete.bulk.modal.buttons.delete.label'));
+
+        $this->successNotificationMessage(__('filament-support::actions/force-delete.bulk.messages.deleted'));
+
+        $this->color('danger');
+
+        $this->icon('heroicon-s-trash');
+
+        $this->requiresConfirmation();
 
         $this->action(static function (ForceDeleteBulkAction $action, Collection $records): void {
             $records->each(fn (Model $record) => $record->forceDelete());
 
-            $action->sendSuccessNotification();
+            $action->success();
         });
 
         $this->deselectRecordsAfterCompletion();
-
-        $this->visible(true);
     }
 }

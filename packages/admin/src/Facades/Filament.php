@@ -32,7 +32,6 @@ use Illuminate\Support\HtmlString;
  * @method static string getUserName(Authenticatable $user)
  * @method static array getWidgets()
  * @method static void globalSearchProvider(string $provider)
- * @method static Action makeTableAction(string $name)
  * @method static void navigation(\Closure $builder)
  * @method static void notify(string $status, string $message, bool $isAfterRedirect = false)
  * @method static void registerNavigationGroups(array $groups)

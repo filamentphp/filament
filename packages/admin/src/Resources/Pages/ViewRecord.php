@@ -20,8 +20,6 @@ class ViewRecord extends Page implements HasRecord
 
     protected static string $view = 'filament::resources.pages.view-record';
 
-    public $record;
-
     public $data;
 
     protected $queryString = [
@@ -42,11 +40,6 @@ class ViewRecord extends Page implements HasRecord
         abort_unless(static::getResource()::canView($this->record), 403);
 
         $this->fillForm();
-    }
-
-    public function getRecord(): Model
-    {
-        return $this->record;
     }
 
     protected function fillForm(): void
@@ -86,14 +79,8 @@ class ViewRecord extends Page implements HasRecord
             return static::$title;
         }
 
-        if (filled($recordTitle = $this->getRecordTitle())) {
-            return __('filament::resources/pages/view-record.title', [
-                'label' => $recordTitle,
-            ]);
-        }
-
         return __('filament::resources/pages/view-record.title', [
-            'label' => Str::title(static::getResource()::getLabel()),
+            'label' => $this->getRecordTitle(),
         ]);
     }
 

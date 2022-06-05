@@ -44,6 +44,8 @@ interface HasTable extends HasForms
 
     public function getTableFiltersForm(): ComponentContainer;
 
+    public function getTableModel(): string;
+
     public function getTableRecords(): Collection | Paginator;
 
     public function getTableSortColumn(): ?string;

@@ -6,18 +6,20 @@ use Filament\Support\Actions\Action as BaseAction;
 use Filament\Support\Actions\Concerns\CanBeDisabled;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
-use Filament\Support\Actions\Concerns\HasRecord;
+use Filament\Support\Actions\Concerns\InteractsWithRecord;
 use Filament\Support\Actions\Concerns\HasTooltip;
+use Filament\Support\Actions\Contracts\HasRecord;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
+use Illuminate\Database\Eloquent\Model;
 
-class Action extends BaseAction
+class Action extends BaseAction implements HasRecord
 {
     use CanBeDisabled;
     use CanBeOutlined;
     use CanOpenUrl;
     use Concerns\BelongsToTable;
-    use HasRecord;
     use HasTooltip;
+    use InteractsWithRecord;
 
     protected string $view = 'tables::actions.link-action';
 
@@ -63,7 +65,10 @@ class Action extends BaseAction
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'record' => $this->getRecord(),
+            'record' => $this->resolveEvaluationParameter(
+                'record',
+                fn (): Model => $this->getRecord(),
+            ),
         ]);
     }
 }
