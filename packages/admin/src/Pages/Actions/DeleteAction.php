@@ -2,7 +2,6 @@
 
 namespace Filament\Pages\Actions;
 
-use Filament\Support\Actions\Concerns\CanDeleteRecords;
 use Illuminate\Database\Eloquent\Model;
 
 class DeleteAction extends Action

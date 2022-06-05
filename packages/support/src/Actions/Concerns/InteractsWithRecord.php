@@ -3,8 +3,8 @@
 namespace Filament\Support\Actions\Concerns;
 
 use Closure;
-use Illuminate\Database\Eloquent\Model;
 use function Filament\Support\get_model_label;
+use Illuminate\Database\Eloquent\Model;
 
 trait InteractsWithRecord
 {
