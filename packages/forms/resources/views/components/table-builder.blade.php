@@ -53,7 +53,7 @@ $deleteRows = $canDeleteRows()
         {{ $getExtraAlpineAttributeBag() }}
     >
         <div @class([
-            'border border-gray-300 divide-y shadow-sm bg-white rounded-xl overflow-y-auto',
+            'border border-gray-300 divide-y shadow-sm bg-white rounded-xl overflow-x-auto',
             'dark:bg-gray-700 dark:border-gray-600 dark:divide-gray-600' => config('forms.dark_mode'),
         ])>
             <table @class([
