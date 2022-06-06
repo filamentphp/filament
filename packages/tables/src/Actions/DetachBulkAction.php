@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class DetachBulkAction extends BulkAction
 {
+    use Concerns\InteractsWithRelationship;
+
     public static function make(string $name = 'detach'): static
     {
         return parent::make($name);

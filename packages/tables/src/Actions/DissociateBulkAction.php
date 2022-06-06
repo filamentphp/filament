@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class DissociateBulkAction extends BulkAction
 {
+    use Concerns\InteractsWithRelationship;
+
     public static function make(string $name = 'dissociate'): static
     {
         return parent::make($name);

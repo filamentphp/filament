@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class AttachAction extends Action
 {
+    use Concerns\InteractsWithRelationship;
+
     public static function make(string $name = 'attach'): static
     {
         return parent::make($name);
