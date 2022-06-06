@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use function Filament\Support\get_model_label;
 
 class ListRecords extends Page implements Tables\Contracts\HasTable
 {

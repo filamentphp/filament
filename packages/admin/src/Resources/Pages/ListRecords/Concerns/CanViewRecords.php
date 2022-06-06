@@ -6,7 +6,6 @@ use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Filament\Tables;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 trait CanViewRecords
 {
