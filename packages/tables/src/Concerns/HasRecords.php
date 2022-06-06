@@ -6,6 +6,8 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use function Filament\Support\get_model_label;
 
 trait HasRecords
 {
@@ -57,5 +59,25 @@ trait HasRecords
     public function getTableRecordKey(Model $record): string
     {
         return $record->getKey();
+    }
+
+    public function getTableRecordTitle(Model $record): ?string
+    {
+        return $record->getKey();
+    }
+
+    public function getTableModelLabel(): ?string
+    {
+        return (string) get_model_label($this->getTableModel());
+    }
+
+    public function getTablePluralModelLabel(): ?string
+    {
+        return Str::plural($this->getTableModelLabel());
+    }
+
+    public function getTableRecordTitleAttribute(): ?string
+    {
+        return null;
     }
 }

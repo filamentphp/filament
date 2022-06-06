@@ -25,7 +25,7 @@ trait CanEditRecords
             ->form($this->getEditFormSchema())
             ->mountUsing(fn () => $this->fillEditForm())
             ->modalButton(__('filament::resources/pages/list-records.table.actions.edit.modal.actions.save.label'))
-            ->modalHeading(fn (Model $record) => __('filament::resources/pages/list-records.table.actions.edit.modal.heading', ['label' => $resource::hasRecordTitle() ? $resource::getRecordTitle($record) : Str::title($resource::getLabel())]))
+            ->modalHeading(fn (Model $record) => __('filament::resources/pages/list-records.table.actions.edit.modal.heading', ['label' => $resource::hasRecordTitle() ? $resource::getRecordTitle($record) : $resource::getModelLabel()]))
             ->action(fn () => $this->save())
             ->authorize(fn (Model $record) => $resource::canEdit($record));
     }

@@ -79,7 +79,7 @@ trait CanDetachRecords
         return Tables\Actions\Action::make('detach')
             ->label(__('filament::resources/relation-managers/detach.action.label'))
             ->requiresConfirmation()
-            ->modalHeading(__('filament::resources/relation-managers/detach.action.modal.heading', ['label' => static::getRecordLabel()]))
+            ->modalHeading(__('filament::resources/relation-managers/detach.action.modal.heading', ['label' => static::getModelLabel()]))
             ->action(fn () => $this->detach())
             ->color('danger')
             ->icon('heroicon-s-x')
@@ -92,7 +92,7 @@ trait CanDetachRecords
             ->label(__('filament::resources/relation-managers/detach.bulk_action.label'))
             ->action(fn () => $this->bulkDetach())
             ->requiresConfirmation()
-            ->modalHeading(__('filament::resources/relation-managers/detach.bulk_action.modal.heading', ['label' => static::getPluralRecordLabel()]))
+            ->modalHeading(__('filament::resources/relation-managers/detach.bulk_action.modal.heading', ['label' => static::getPluralModelLabel()]))
             ->deselectRecordsAfterCompletion()
             ->color('danger')
             ->icon('heroicon-o-x');

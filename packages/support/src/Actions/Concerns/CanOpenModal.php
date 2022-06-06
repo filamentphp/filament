@@ -7,6 +7,8 @@ use Filament\Support\Actions\Modal\Actions\Action as ModalAction;
 
 trait CanOpenModal
 {
+    protected array | Closure $extraModalActions = [];
+
     protected bool | Closure | null $isModalCentered = null;
 
     protected array | Closure | null $modalActions = null;
@@ -33,6 +35,13 @@ trait CanOpenModal
     public function modalActions(array | Closure | null $actions = null): static
     {
         $this->modalActions = $actions;
+
+        return $this;
+    }
+
+    public function extraModalActions(array | Closure $actions): static
+    {
+        $this->extraModalActions = $actions;
 
         return $this;
     }
@@ -79,7 +88,7 @@ trait CanOpenModal
         return $this;
     }
 
-    abstract protected function getLivewireSubmitActionName(): string;
+    abstract protected function getLivewireCallActionName(): string;
 
     public function getModalActions(): array
     {
@@ -91,10 +100,11 @@ trait CanOpenModal
             return $this->evaluate($this->modalActions);
         }
 
-        $actions = [
-            $this->getModalSubmitAction(),
-            $this->getModalCancelAction(),
-        ];
+        $actions = array_merge(
+            [$this->getModalSubmitAction()],
+            $this->getExtraModalActions(),
+            [$this->getModalCancelAction()],
+        );
 
         if ($this->isModalCentered()) {
             $actions = array_reverse($actions);
@@ -111,7 +121,7 @@ trait CanOpenModal
 
         return static::makeModalAction('submit')
             ->label($this->getModalButtonLabel())
-            ->submit($this->getLivewireSubmitActionName())
+            ->submit($this->getLivewireCallActionName())
             ->color($this->getColor());
     }
 
@@ -122,9 +132,14 @@ trait CanOpenModal
         }
 
         return static::makeModalAction('cancel')
-            ->label(__('filament-support::actions/modal.buttons.cancel.label'))
+            ->label(__('filament-support::actions/modal.actions.cancel.label'))
             ->cancel()
             ->color('secondary');
+    }
+
+    public function getExtraModalActions(): array
+    {
+        return $this->extraModalActions;
     }
 
     public function getModalButtonLabel(): string
@@ -134,10 +149,10 @@ trait CanOpenModal
         }
 
         if ($this->isConfirmationRequired()) {
-            return __('filament-support::actions/modal.buttons.confirm.label');
+            return __('filament-support::actions/modal.actions.confirm.label');
         }
 
-        return __('filament-support::actions/modal.buttons.submit.label');
+        return __('filament-support::actions/modal.actions.submit.label');
     }
 
     public function getModalHeading(): string
@@ -187,6 +202,13 @@ trait CanOpenModal
     public function shouldOpenModal(): bool
     {
         return $this->isConfirmationRequired() || $this->hasFormSchema();
+    }
+
+    protected function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction
+    {
+        return static::makeModalAction($name)
+            ->action($this->getLivewireCallActionName(), $arguments)
+            ->color('secondary');
     }
 
     protected static function getModalActionClass(): string

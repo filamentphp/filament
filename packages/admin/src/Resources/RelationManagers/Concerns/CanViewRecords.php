@@ -51,7 +51,7 @@ trait CanViewRecords
                     ->color('secondary'),
             )
             ->modalActions(fn (Tables\Actions\Action $action): array => [$action->getModalCancelAction()])
-            ->modalHeading(__('filament::resources/relation-managers/view.action.modal.heading', ['label' => static::getRecordLabel()]))
+            ->modalHeading(__('filament::resources/relation-managers/view.action.modal.heading', ['label' => static::getModelLabel()]))
             ->action(function () {
             })
             ->icon('heroicon-s-eye')

@@ -44,7 +44,7 @@ class Action extends BaseAction implements HasRecord
         return $this;
     }
 
-    protected function getLivewireSubmitActionName(): string
+    protected function getLivewireCallActionName(): string
     {
         return 'callMountedTableAction';
     }
@@ -67,8 +67,43 @@ class Action extends BaseAction implements HasRecord
         return array_merge(parent::getDefaultEvaluationParameters(), [
             'record' => $this->resolveEvaluationParameter(
                 'record',
-                fn (): Model => $this->getRecord(),
+                fn (): ?Model => $this->getRecord(),
             ),
         ]);
+    }
+
+    public function getModelLabel(): ?string
+    {
+        $label = $this->evaluate($this->modelLabel);
+
+        if (filled($label)) {
+            return $label;
+        }
+
+        return $this->getLivewire()->getTableModelLabel();
+    }
+
+    public function getPluralModelLabel(): ?string
+    {
+        $label = $this->evaluate($this->pluralModelLabel);
+
+        if (filled($label)) {
+            return $label;
+        }
+
+        return $this->getLivewire()->getTablePluralModelLabel();
+    }
+
+    public function getRecordTitleAttribute(?Model $record = null): ?string
+    {
+        $attribute = $this->evaluate($this->recordTitleAttribute, [
+            'record' => $record ?? $this->getRecord(),
+        ]);
+
+        if (filled($attribute)) {
+            return $attribute;
+        }
+
+        return $this->getLivewire()->getTableRecordTitleAttribute();
     }
 }

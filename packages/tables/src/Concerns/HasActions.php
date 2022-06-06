@@ -34,7 +34,7 @@ trait HasActions
             ->toArray();
     }
 
-    public function callMountedTableAction()
+    public function callMountedTableAction(?string $arguments = null)
     {
         $action = $this->getMountedTableAction();
 
@@ -46,10 +46,12 @@ trait HasActions
             return;
         }
 
+        $form = $this->getMountedTableActionForm();
+
         if ($action->hasForm()) {
             $action->callBeforeFormValidated();
 
-            $action->formData($this->getMountedTableActionForm()->getState());
+            $action->formData($form->getState());
 
             $action->callAfterFormValidated();
         }
@@ -57,7 +59,10 @@ trait HasActions
         $action->callBefore();
 
         try {
-            $result = $action->call();
+            $result = $action->call([
+                'arguments' => json_decode($arguments) ?? [],
+                'form' => $form,
+            ]);
         } catch (Hold $exception) {
             return;
         }

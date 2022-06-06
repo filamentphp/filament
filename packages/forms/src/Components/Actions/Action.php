@@ -24,7 +24,7 @@ class Action extends BaseAction
         return $this;
     }
 
-    protected function getLivewireSubmitActionName(): string
+    protected function getLivewireCallActionName(): string
     {
         return 'callMountedFormComponentAction';
     }

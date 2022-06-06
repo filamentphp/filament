@@ -23,6 +23,8 @@ class CreateAction extends Action
 
         $this->successNotificationMessage(__('filament-support::actions/create.single.messages.created'));
 
+        $this->button();
+
         $this->action(static function (CreateAction $action): void {
             //
 

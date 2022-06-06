@@ -23,6 +23,10 @@ class AttachAction extends Action
 
         $this->successNotificationMessage(__('filament-support::actions/attach.single.messages.attached'));
 
+        $this->color('secondary');
+
+        $this->button();
+
         $this->action(static function (AttachAction $action): void {
             //
 

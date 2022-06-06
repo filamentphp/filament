@@ -150,7 +150,7 @@ class CreateRecord extends Page implements HasFormActions
         }
 
         return __('filament::resources/pages/create-record.title', [
-            'label' => Str::title(static::getResource()::getLabel()),
+            'label' => static::getResource()::getModelLabel(),
         ]);
     }
 

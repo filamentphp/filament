@@ -21,7 +21,7 @@ trait HasActions
 
     protected ?array $cachedActions = null;
 
-    public function callMountedAction()
+    public function callMountedAction(?string $arguments = null)
     {
         $action = $this->getMountedAction();
 
@@ -33,10 +33,12 @@ trait HasActions
             return;
         }
 
+        $form = $this->getMountedActionForm();
+
         if ($action->hasForm()) {
             $action->callBeforeFormValidated();
 
-            $action->formData($this->getMountedActionForm()->getState());
+            $action->formData($form->getState());
 
             $action->callAfterFormValidated();
         }
@@ -44,7 +46,10 @@ trait HasActions
         $action->callBefore();
 
         try {
-            $result = $action->call();
+            $result = $action->call([
+                'arguments' => json_decode($arguments) ?? [],
+                'form' => $form,
+            ]);
         } catch (Hold $exception) {
             return;
         }

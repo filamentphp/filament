@@ -24,6 +24,8 @@ class Resource
 
     protected static ?string $label = null;
 
+    protected static ?string $modelLabel = null;
+
     protected static ?string $model = null;
 
     protected static ?string $navigationGroup = null;
@@ -39,6 +41,8 @@ class Resource
     protected static bool $shouldRegisterNavigation = true;
 
     protected static ?string $pluralLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
 
     protected static ?string $recordTitleAttribute = null;
 
@@ -235,9 +239,14 @@ class Resource
             ->filter();
     }
 
-    public static function getLabel(): string
+    public static function getLabel(): ?string
     {
-        return static::$label ?? get_model_label(static::getModel());
+        return static::$label;
+    }
+
+    public static function getModelLabel(): string
+    {
+        return static::$modelLabel ?? static::getLabel() ?? get_model_label(static::getModel());
     }
 
     public static function getModel(): string
@@ -252,9 +261,14 @@ class Resource
         return [];
     }
 
-    public static function getPluralLabel(): string
+    public static function getPluralLabel(): ?string
     {
-        return static::$pluralLabel ?? Str::plural(static::getLabel());
+        return static::$pluralLabel;
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return static::$pluralModelLabel ?? static::getPluralLabel() ?? Str::plural(static::getModelLabel());
     }
 
     public static function getRecordTitleAttribute(): ?string

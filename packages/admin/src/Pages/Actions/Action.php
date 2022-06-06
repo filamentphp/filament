@@ -73,7 +73,7 @@ class Action extends BaseAction implements HasRecord
         return $this;
     }
 
-    protected function getLivewireSubmitActionName(): string
+    protected function getLivewireCallActionName(): string
     {
         return 'callMountedAction';
     }

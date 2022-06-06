@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Filters\Concerns;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -51,7 +52,7 @@ trait HasRelationship
         return Str::of($this->getColumn())->contains('.');
     }
 
-    protected function getRelationship(): Relation
+    protected function getRelationship(): Relation | Builder
     {
         $model = app($this->getTable()->getModel());
 

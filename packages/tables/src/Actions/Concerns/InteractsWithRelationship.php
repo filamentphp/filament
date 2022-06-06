@@ -3,13 +3,16 @@
 namespace Filament\Tables\Actions\Concerns;
 
 use Closure;
+use Filament\Tables\Contracts\HasRelationshipTable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait InteractsWithRelationship
 {
     protected Relation | Closure | null $relationship = null;
 
-    protected Relation | Closure | null $inverseRelationship = null;
+    protected string | Closure | null $inverseRelationshipName = null;
 
     public function relationship(Relation | Closure | null $relationship = null): static
     {
@@ -18,30 +21,54 @@ trait InteractsWithRelationship
         return $this;
     }
 
-    public function inverseRelationship(Relation | Closure | null $relationship = null): static
+    public function inverseRelationshipName(string | Closure | null $relationship = null): static
     {
-        $this->inverseRelationship = $relationship;
+        $this->inverseRelationshipName = $relationship;
 
         return $this;
     }
 
     public function getRelationship(): ?Relation
     {
-        return $this->evaluate($this->relationship);
+        $relationship = $this->evaluate($this->relationship);
+
+        if ($relationship) {
+            return $relationship;
+        }
+
+        $livewire = $this->getLivewire();
+
+        if (! $livewire instanceof HasRelationshipTable) {
+            return null;
+        }
+
+        return $livewire->getRelationship();
     }
 
-    public function getInverseRelationship(): ?Relation
+    public function getInverseRelationshipName(): ?string
     {
-        return $this->evaluate($this->inverseRelationship);
+        $name = $this->evaluate($this->inverseRelationshipName);
+
+        if (filled($name)) {
+            return $name;
+        }
+
+        $livewire = $this->getLivewire();
+
+        if (! $livewire instanceof HasRelationshipTable) {
+            return null;
+        }
+
+        return $livewire->getInverseRelationshipName();
+    }
+
+    public function getInverseRelationshipFor(Model $record): Relation | Builder
+    {
+        return $record->{$this->getInverseRelationshipName()}();
     }
 
     public function hasRelationship(): bool
     {
         return (bool) $this->evaluate($this->relationship);
-    }
-
-    public function hasInverseRelationship(): bool
-    {
-        return (bool) $this->evaluate($this->inverseRelationship);
     }
 }

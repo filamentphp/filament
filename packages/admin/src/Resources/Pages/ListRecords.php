@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use function Filament\Support\get_model_label;
 
 class ListRecords extends Page implements Tables\Contracts\HasTable
 {
@@ -164,10 +165,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function getCreateAction(): Action
     {
         $resource = static::getResource();
-        $label = $resource::getLabel();
 
         return Action::make('create')
-            ->label(__('filament::resources/pages/list-records.actions.create.label', ['label' => $label]))
+            ->label(__('filament::resources/pages/list-records.actions.create.label', ['label' => $resource::getModelLabel()]))
             ->url(fn () => $resource::getUrl('create'));
     }
 
@@ -236,5 +236,27 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function getMountedActionFormModel(): string
     {
         return static::getModel();
+    }
+
+    public function getTableRecordTitle(Model $record): ?string
+    {
+        $resource = static::getResource();
+
+        return $resource::getRecordTitle($record);
+    }
+
+    public function getTableModelLabel(): ?string
+    {
+        return static::getResource()::getModelLabel();
+    }
+
+    public function getTablePluralModelLabel(): ?string
+    {
+        return static::getResource()::getPluralModelLabel();
+    }
+
+    public function getTableRecordTitleAttribute(): ?string
+    {
+        return static::getResource()::getRecordTitleAttribute();
     }
 }

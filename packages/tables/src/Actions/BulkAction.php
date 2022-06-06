@@ -16,10 +16,10 @@ class BulkAction extends BaseAction
 
     protected string $view = 'tables::actions.bulk-action';
 
-    public function call(array $data = [])
+    public function call(array $parameters = [])
     {
         try {
-            return $this->evaluate($this->getAction());
+            return $this->evaluate($this->getAction(), $parameters);
         } finally {
             if ($this->shouldDeselectRecordsAfterCompletion()) {
                 $this->getLivewire()->deselectAllTableRecords();
@@ -38,7 +38,7 @@ class BulkAction extends BaseAction
         return $action;
     }
 
-    protected function getLivewireSubmitActionName(): string
+    protected function getLivewireCallActionName(): string
     {
         return 'callMountedTableBulkAction';
     }
