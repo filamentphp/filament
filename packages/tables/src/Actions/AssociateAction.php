@@ -5,13 +5,11 @@ namespace Filament\Tables\Actions;
 use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Select;
-use Filament\Resources\RelationManagers\RelationManager;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 
 class AssociateAction extends Action
 {
@@ -42,7 +40,7 @@ class AssociateAction extends Action
 
         $this->extraModalActions([
             $this->makeExtraModalAction('andAssociateAnother', ['another' => true])
-                ->label(__('filament-support::actions/associate.single.modal.actions.associate_and_associate_another.label'))
+                ->label(__('filament-support::actions/associate.single.modal.actions.associate_and_associate_another.label')),
         ]);
 
         $this->successNotificationMessage(__('filament-support::actions/associate.single.messages.associated'));
@@ -165,7 +163,7 @@ class AssociateAction extends Action
         $select = Select::make('recordId')
             ->label(__('filament-support::actions/associate.single.modal.fields.record_id.label'))
             ->searchable()
-            ->getSearchResultsUsing(static fn (Select $component, string $searchQuery): array  => $getOptions(search: $searchQuery, searchColumns: $component->getSearchColumns()))
+            ->getSearchResultsUsing(static fn (Select $component, string $searchQuery): array => $getOptions(search: $searchQuery, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(fn ($value): ?string => $this->getRecordTitle($this->getRelationship()->getRelated()->query()->find($value)))
             ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])
             ->disableLabel();
