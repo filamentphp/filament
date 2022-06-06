@@ -2,8 +2,6 @@
 
 namespace Filament\Tables\Actions;
 
-use Illuminate\Database\Eloquent\Model;
-
 class CreateAction extends Action
 {
     use Concerns\InteractsWithRelationship;

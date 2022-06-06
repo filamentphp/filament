@@ -2,8 +2,6 @@
 
 namespace Filament\Pages\Actions;
 
-use Illuminate\Database\Eloquent\Model;
-
 class EditAction extends Action
 {
     public static function make(string $name = 'edit'): static
