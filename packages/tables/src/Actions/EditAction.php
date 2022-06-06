@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditAction extends Action
 {
+    use Concerns\InteractsWithRelationship;
+
     public static function make(string $name = 'edit'): static
     {
         return parent::make($name);
