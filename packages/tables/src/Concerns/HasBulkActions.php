@@ -28,7 +28,7 @@ trait HasBulkActions
             ->toArray();
     }
 
-    public function callMountedTableBulkAction()
+    public function callMountedTableBulkAction(?string $arguments = null)
     {
         $action = $this->getMountedTableBulkAction();
 
@@ -40,10 +40,12 @@ trait HasBulkActions
             return;
         }
 
+        $form = $this->getMountedTableBulkActionForm();
+
         if ($action->hasForm()) {
             $action->callBeforeFormValidated();
 
-            $action->formData($this->getMountedTableBulkActionForm()->getState());
+            $action->formData($form->getState());
 
             $action->callAfterFormValidated();
         }
@@ -51,7 +53,10 @@ trait HasBulkActions
         $action->callBefore();
 
         try {
-            $result = $action->call();
+            $result = $action->call([
+                'arguments' => json_decode($arguments) ?? [],
+                'form' => $form,
+            ]);
         } catch (Hold $exception) {
             return;
         }

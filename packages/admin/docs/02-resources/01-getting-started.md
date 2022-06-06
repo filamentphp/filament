@@ -389,39 +389,39 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `delete()` is used to prevent a single record from being deleted. `deleteAny()` is used to prevent records from being bulk deleted. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant.
 - `view()` is used to control [viewing a record](viewing-records).
 
-## Labels
+## Model labels
 
-Each resource has a "label" which is automatically generated from the model name. For example, an `App\Models\Customer` model will have a `customer` label.
+Each resource has a "model label" which is automatically generated from the model name. For example, an `App\Models\Customer` model will have a `customer` label.
 
-The label is used in several parts of the UI, and you may customise it using the `$label` property:
+The label is used in several parts of the UI, and you may customise it using the `$modelLabel` property:
 
 ```php
-protected static ?string $label = 'cliente';
+protected static ?string $modelLabel = 'cliente';
 ```
 
-Alternatively, you may use the `getLabel()` to define a dynamic label:
+Alternatively, you may use the `getModelLabel()` to define a dynamic label:
 
 ```php
-public static function getLabel(): string
+public static function getModelLabel(): string
 {
     return __('filament/resources/customer.label');
 }
 ```
 
-### Plural label
+### Plural model label
 
-Resources also have a "plural label" which is automatically generated from the label. For example, a `customer` label will be pluralized into `customers`.
+Resources also have a "plural model label" which is automatically generated from the model label. For example, a `customer` label will be pluralized into `customers`.
 
-You may customize the plural version of the label using the `$pluralLabel` property:
+You may customize the plural version of the label using the `$pluralModelLabel` property:
 
 ```php
-protected static ?string $pluralLabel = 'clientes';
+protected static ?string $pluralModelLabel = 'clientes';
 ```
 
-Alternatively, you may set a dynamic plural label in the `getPluralLabel()` method:
+Alternatively, you may set a dynamic plural label in the `getPluralModelLabel()` method:
 
 ```php
-public static function getPluralLabel(): string
+public static function getPluralModelLabel(): string
 {
     return __('filament/resources/customer.plural_label');
 }

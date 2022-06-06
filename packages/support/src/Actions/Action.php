@@ -16,9 +16,9 @@ abstract class Action extends BaseAction
     use Concerns\HasFormSchema;
     use Concerns\HasWizard;
 
-    public function call()
+    public function call(array $parameters = [])
     {
-        return $this->evaluate($this->getAction());
+        return $this->evaluate($this->getAction(), $parameters);
     }
 
     public function hold(): void

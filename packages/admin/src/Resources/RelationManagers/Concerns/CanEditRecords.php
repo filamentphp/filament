@@ -84,7 +84,7 @@ trait CanEditRecords
             ->form($this->getEditFormSchema())
             ->mountUsing(fn () => $this->fillEditForm())
             ->modalButton(__('filament::resources/relation-managers/edit.action.modal.actions.save.label'))
-            ->modalHeading(__('filament::resources/relation-managers/edit.action.modal.heading', ['label' => static::getRecordLabel()]))
+            ->modalHeading(__('filament::resources/relation-managers/edit.action.modal.heading', ['label' => static::getModelLabel()]))
             ->action(fn () => $this->save())
             ->icon('heroicon-s-pencil')
             ->authorize(fn (Model $record): bool => $this->canEdit($record));

@@ -19,12 +19,12 @@ it('can generate a slug based on the model name', function () {
 });
 
 it('can generate a label based on the model name', function () {
-    expect(PostResource::getLabel())
+    expect(PostResource::getModelLabel())
         ->toBe('post');
 });
 
 it('can generate a plural label based on the model name', function () {
-    expect(PostResource::getPluralLabel())
+    expect(PostResource::getPluralModelLabel())
         ->toBe('posts');
 });
 

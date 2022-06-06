@@ -14,8 +14,9 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use function Filament\Support\get_model_label;
 
-class RelationManager extends Component implements Tables\Contracts\HasTable
+class RelationManager extends Component implements Tables\Contracts\HasRelationshipTable, Tables\Contracts\HasTable
 {
     use CanNotify;
     use Tables\Concerns\InteractsWithTable;
@@ -33,6 +34,10 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     protected static ?string $label = null;
 
     protected static ?string $pluralLabel = null;
+
+    protected static ?string $modelLabel = null;
+
+    protected static ?string $pluralModelLabel = null;
 
     protected static ?string $title = null;
 
@@ -101,9 +106,14 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     public function getInverseRelationshipName(): string
     {
-        return static::$inverseRelationship ?? (string) Str::of(class_basename($this->ownerRecord))
+        return static::$inverseRelationship ?? (string) Str::of(class_basename($this->getOwnerRecord()))
             ->plural()
             ->camel();
+    }
+
+    public function getOwnerRecord(): Model
+    {
+        return $this->ownerRecord;
     }
 
     public static function table(Table $table): Table
@@ -118,7 +128,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     public static function getTitle(): string
     {
-        return static::$title ?? Str::title(static::getPluralRecordLabel());
+        return static::$title ?? Str::title(static::getPluralModelLabel());
     }
 
     public static function getTitleForRecord(Model $ownerRecord): string
@@ -133,17 +143,27 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     public static function getRecordTitle(?Model $record): ?string
     {
-        return $record?->getAttribute(static::getRecordTitleAttribute()) ?? $record?->getKey();
+        return $record?->getAttributeValue(static::getRecordTitleAttribute()) ?? $record?->getKey();
     }
 
-    protected static function getRecordLabel(): string
+    protected static function getRecordLabel(): ?string
     {
-        return static::$label ?? Str::singular(static::getPluralRecordLabel());
+        return static::$label;
     }
 
-    protected static function getPluralRecordLabel(): string
+    protected static function getModelLabel(): string
     {
-        return static::$pluralLabel ?? (string) Str::of(static::getRelationshipName())
+        return static::$modelLabel ?? static::getRecordLabel() ?? Str::singular(static::getPluralModelLabel());
+    }
+
+    protected static function getPluralRecordLabel(): ?string
+    {
+        return static::$pluralLabel;
+    }
+
+    protected static function getPluralModelLabel(): string
+    {
+        return static::$pluralModelLabel ?? static::getPluralRecordLabel() ?? (string) Str::of(static::getRelationshipName())
             ->kebab()
             ->replace('-', ' ');
     }
@@ -153,9 +173,9 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return $this->getRelationship()->getQuery()->getModel()::class;
     }
 
-    protected function getRelationship(): Relation | Builder
+    public function getRelationship(): Relation | Builder
     {
-        return $this->ownerRecord->{static::getRelationshipName()}();
+        return $this->getOwnerRecord()->{static::getRelationshipName()}();
     }
 
     protected function getInverseRelationshipFor(Model $record): Relation | Builder
@@ -180,6 +200,26 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     protected function getDefaultTableSortDirection(): ?string
     {
         return $this->getResourceTable()->getDefaultSortDirection();
+    }
+
+    public function getTableRecordTitle(Model $record): ?string
+    {
+        return static::getRecordTitle($record);
+    }
+
+    public function getTableModelLabel(): ?string
+    {
+        return static::getModelLabel();
+    }
+
+    public function getTablePluralModelLabel(): ?string
+    {
+        return static::getPluralModelLabel();
+    }
+
+    public function getTableRecordTitleAttribute(): ?string
+    {
+        return static::getRecordTitleAttribute();
     }
 
     protected function getTableActions(): array

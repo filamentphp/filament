@@ -105,7 +105,7 @@ trait CanAssociateRecords
 
                 return $relationshipQuery
                     ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): Builder {
-                        return $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                        return $query->where($livewire->getOwnerRecord()->getQualifiedKeyName(), $livewire->getOwnerRecord()->getKey());
                     })
                     ->get()
                     ->mapWithKeys(static fn (Model $record): array => [$record->{$localKeyName} => static::getRecordTitle($record)])
@@ -129,7 +129,7 @@ trait CanAssociateRecords
                     ->query()
                     ->orderBy($displayColumnName)
                     ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): Builder {
-                        return $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                        return $query->where($livewire->getOwnerRecord()->getQualifiedKeyName(), $livewire->getOwnerRecord()->getKey());
                     })
                     ->get()
                     ->mapWithKeys(static fn (Model $record): array => [$record->{$localKeyName} => static::getRecordTitle($record)])
@@ -176,7 +176,7 @@ trait CanAssociateRecords
         /** @var BelongsTo $inverseRelationship */
         $inverseRelationship = $this->getInverseRelationshipFor($recordToAssociate);
 
-        $inverseRelationship->associate($this->ownerRecord);
+        $inverseRelationship->associate($this->getOwnerRecord());
         $recordToAssociate->save();
 
         $this->callHook('afterAssociate');
@@ -188,57 +188,11 @@ trait CanAssociateRecords
         $this->notify('success', __('filament::resources/relation-managers/associate.action.messages.associated'));
     }
 
-    public function associateAndAssociateAnother(): void
-    {
-        $this->associate(another: true);
-    }
-
     protected function getAssociateAction(): Tables\Actions\Action
     {
-        return Tables\Actions\Action::make('associate')
-            ->label(__('filament::resources/relation-managers/associate.action.label'))
+        return Tables\Actions\AssociateAction::make()
             ->form($this->getAssociateFormSchema())
             ->mountUsing(fn () => $this->fillAssociateForm())
-            ->modalSubmitAction($this->getAssociateActionAssociateModalAction())
-            ->modalCancelAction($this->getAssociateActionCancelModalAction())
-            ->modalActions($this->getAssociateActionModalActions())
-            ->modalHeading(__('filament::resources/relation-managers/associate.action.modal.heading', ['label' => static::getRecordLabel()]))
-            ->modalWidth('lg')
-            ->action(fn () => $this->associate())
-            ->color('secondary')
-            ->button();
-    }
-
-    protected function getAssociateActionModalActions(): array
-    {
-        return array_merge(
-            [$this->getAssociateActionAssociateModalAction()],
-            static::canAssociateAnother() ? [$this->getAssociateActionAssociateAndAssociateAnotherModalAction()] : [],
-            [$this->getAssociateActionCancelModalAction()],
-        );
-    }
-
-    protected function getAssociateActionAssociateModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return Tables\Actions\Action::makeModalAction('associate')
-            ->label(__('filament::resources/relation-managers/associate.action.modal.actions.associate.label'))
-            ->submit('callMountedTableAction')
-            ->color('primary');
-    }
-
-    protected function getAssociateActionAssociateAndAssociateAnotherModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return Tables\Actions\Action::makeModalAction('associateAndAssociateAnother')
-            ->label(__('filament::resources/relation-managers/associate.action.modal.actions.associate_and_associate_another.label'))
-            ->action('associateAndAssociateAnother')
-            ->color('secondary');
-    }
-
-    protected function getAssociateActionCancelModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return Tables\Actions\Action::makeModalAction('cancel')
-            ->label(__('filament-support::actions/modal.buttons.cancel.label'))
-            ->cancel()
-            ->color('secondary');
+            ->action(fn (array $arguments) => $this->associate($arguments['another'] ?? false));
     }
 }

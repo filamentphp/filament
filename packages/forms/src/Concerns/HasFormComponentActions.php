@@ -41,7 +41,7 @@ trait HasFormComponentActions
             ->statePath('mountedFormComponentActionData');
     }
 
-    public function callMountedFormComponentAction()
+    public function callMountedFormComponentAction(?string $arguments = null)
     {
         $action = $this->getMountedFormComponentAction();
 
@@ -53,10 +53,12 @@ trait HasFormComponentActions
             return;
         }
 
+        $form = $this->getMountedFormComponentActionForm();
+
         if ($action->hasForm()) {
             $action->callBeforeFormValidated();
 
-            $action->formData($this->getMountedFormComponentActionForm()->getState());
+            $action->formData($form->getState());
 
             $action->callAfterFormValidated();
         }
@@ -64,7 +66,10 @@ trait HasFormComponentActions
         $action->callBefore();
 
         try {
-            $result = $action->call();
+            $result = $action->call([
+                'arguments' => json_decode($arguments) ?? [],
+                'form' => $form,
+            ]);
         } catch (Hold $exception) {
             return;
         }
