@@ -44,10 +44,7 @@
         'dark:bg-gray-500/10' => $isInset() && config('forms.dark_mode'),
     ]) }}>
         @if (count($containers))
-            <ul
-                wire:sortable
-                wire:end.stop="dispatchFormEvent('repeater::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
-            >
+            <ul>
                 <x-filament-support::grid
                     :default="$getGridColumns('default')"
                     :sm="$getGridColumns('sm')"
@@ -55,6 +52,8 @@
                     :lg="$getGridColumns('lg')"
                     :xl="$getGridColumns('xl')"
                     :two-xl="$getGridColumns('2xl')"
+                    wire:sortable
+                    wire:end.stop="dispatchFormEvent('repeater::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
                     class="gap-6"
                 >
                     @foreach ($containers as $uuid => $item)
