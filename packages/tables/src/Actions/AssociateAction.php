@@ -38,10 +38,12 @@ class AssociateAction extends Action
 
         $this->modalWidth('lg');
 
-        $this->extraModalActions([
-            $this->makeExtraModalAction('andAssociateAnother', ['another' => true])
-                ->label(__('filament-support::actions/associate.single.modal.actions.associate_and_associate_another.label')),
-        ]);
+        $this->extraModalActions(function (AssociateAction $action): array {
+            return $action->isAssociateAnotherDisabled ? [] : [
+                $this->makeExtraModalAction('associateAnother', ['another' => true])
+                    ->label(__('filament-support::actions/associate.single.modal.actions.associate_and_associate_another.label')),
+            ];
+        });
 
         $this->successNotificationMessage(__('filament-support::actions/associate.single.messages.associated'));
 
@@ -114,9 +116,9 @@ class AssociateAction extends Action
             /** @var HasMany $relationship */
             $relationship = $this->getRelationship();
 
-            $displayColumnName = $this->getRecordTitleAttribute();
+            $titleColumnName = $this->getRecordTitleAttribute();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
 
             if (filled($search)) {
                 $search = strtolower($search);
@@ -129,7 +131,7 @@ class AssociateAction extends Action
                     default => 'like',
                 };
 
-                $searchColumns ??= [$displayColumnName];
+                $searchColumns ??= [$titleColumnName];
                 $isFirst = true;
 
                 $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $search): Builder {

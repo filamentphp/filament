@@ -13,6 +13,6 @@ class CreateAction extends Action
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/create.single.label'));
+        $this->label(fn (CreateAction $action): string => __('filament-support::actions/create.single.modal.heading', ['label' => $action->getModelLabel()]));
     }
 }

@@ -61,10 +61,10 @@ trait CanAttachRecords
                 /** @var BelongsToMany $relationship */
                 $relationship = $livewire->getRelationship();
 
-                $displayColumnName = static::getRecordTitleAttribute();
+                $titleColumnName = static::getRecordTitleAttribute();
 
                 /** @var Builder $relationshipQuery */
-                $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
+                $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
 
                 $searchQuery = strtolower($searchQuery);
 
@@ -76,7 +76,7 @@ trait CanAttachRecords
                     default => 'like',
                 };
 
-                $searchColumns = $component->getSearchColumns() ?? [$displayColumnName];
+                $searchColumns = $component->getSearchColumns() ?? [$titleColumnName];
                 $isFirst = true;
 
                 $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $searchQuery): Builder {
@@ -104,7 +104,7 @@ trait CanAttachRecords
                             $livewire->getInverseRelationshipName(),
                             static function (Builder $query) use ($livewire): Builder {
                                 return $query->where($livewire->getOwnerRecord()->getQualifiedKeyName(), $livewire->getOwnerRecord()->getKey());
-                            }
+                            },
                         ),
                     )
                     ->get()
@@ -112,7 +112,7 @@ trait CanAttachRecords
                     ->toArray();
             })
             ->getOptionLabelUsing(static fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->query()->find($value)))
-            ->options(function (RelationManager $livewire): array {
+            ->options(function (BelongsToManyRelationManager $livewire): array {
                 if (! static::$shouldPreloadAttachFormRecordSelectOptions) {
                     return [];
                 }
@@ -120,17 +120,23 @@ trait CanAttachRecords
                 /** @var BelongsToMany $relationship */
                 $relationship = $livewire->getRelationship();
 
-                $displayColumnName = static::getRecordTitleAttribute();
+                $titleColumnName = static::getRecordTitleAttribute();
 
                 $relatedKeyName = $relationship->getRelatedKeyName();
 
                 return $relationship
                     ->getRelated()
                     ->query()
-                    ->orderBy($displayColumnName)
-                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
-                        $query->where($livewire->getOwnerRecord()->getQualifiedKeyName(), $livewire->getOwnerRecord()->getKey());
-                    })
+                    ->orderBy($titleColumnName)
+                    ->when(
+                        ! $livewire->allowsDuplicates(),
+                        static fn (Builder $query): Builder => $query->whereDoesntHave(
+                            $livewire->getInverseRelationshipName(),
+                            static function (Builder $query) use ($livewire): Builder {
+                                return $query->where($livewire->getOwnerRecord()->getQualifiedKeyName(), $livewire->getOwnerRecord()->getKey());
+                            },
+                        ),
+                    )
                     ->get()
                     ->mapWithKeys(static fn (Model $record): array => [$record->{$relatedKeyName} => static::getRecordTitle($record)])
                     ->toArray();
@@ -199,50 +205,9 @@ trait CanAttachRecords
 
     protected function getAttachAction(): Tables\Actions\Action
     {
-        return Tables\Actions\Action::make('attach')
-            ->label(__('filament::resources/relation-managers/attach.action.label'))
+        return Tables\Actions\AttachAction::make()
             ->form($this->getAttachFormSchema())
             ->mountUsing(fn () => $this->fillAttachForm())
-            ->modalSubmitAction($this->getAttachActionAttachModalAction())
-            ->modalCancelAction($this->getAttachActionCancelModalAction())
-            ->modalActions($this->getAttachActionModalActions())
-            ->modalHeading(__('filament::resources/relation-managers/attach.action.modal.heading', ['label' => static::getModelLabel()]))
-            ->modalWidth('lg')
-            ->action(fn () => $this->attach())
-            ->color('secondary')
-            ->button();
-    }
-
-    protected function getAttachActionModalActions(): array
-    {
-        return array_merge(
-            [$this->getAttachActionAttachModalAction()],
-            static::canAttachAnother() ? [$this->getAttachActionAttachAndAttachAnotherModalAction()] : [],
-            [$this->getAttachActionCancelModalAction()],
-        );
-    }
-
-    protected function getAttachActionAttachModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return Tables\Actions\Action::makeModalAction('attach')
-            ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach.label'))
-            ->submit('callMountedTableAction')
-            ->color('primary');
-    }
-
-    protected function getAttachActionAttachAndAttachAnotherModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return Tables\Actions\Action::makeModalAction('attachAndAttachAnother')
-            ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach_and_attach_another.label'))
-            ->action('attachAndAttachAnother')
-            ->color('secondary');
-    }
-
-    protected function getAttachActionCancelModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return Tables\Actions\Action::makeModalAction('cancel')
-            ->label(__('filament-support::actions/modal.actions.cancel.label'))
-            ->cancel()
-            ->color('secondary');
+            ->action(fn (array $arguments) => $this->attach($arguments['another'] ?? false));
     }
 }

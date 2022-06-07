@@ -72,4 +72,9 @@ class BulkAction extends BaseAction
 
         return $arguments;
     }
+
+    public function getModel(): ?string
+    {
+        return $this->getLivewire()->getTableModel();
+    }
 }
