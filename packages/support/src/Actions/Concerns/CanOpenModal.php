@@ -122,7 +122,10 @@ trait CanOpenModal
         return static::makeModalAction('submit')
             ->label($this->getModalButtonLabel())
             ->submit($this->getLivewireCallActionName())
-            ->color($this->getColor());
+            ->color(match ($color = $this->getColor()) {
+                'secondary' => 'primary',
+                default => $color,
+            });
     }
 
     public function getModalCancelAction(): ModalAction

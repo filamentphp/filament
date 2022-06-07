@@ -23,7 +23,7 @@ class DissociateBulkAction extends BulkAction
 
         $this->label(__('filament-support::actions/dissociate.multiple.label'));
 
-        $this->modalHeading(__('filament-support::actions/dissociate.multiple.modal.heading'));
+        $this->modalHeading(fn (): string => __('filament-support::actions/dissociate.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
 
         $this->modalButton(__('filament-support::actions/dissociate.multiple.modal.actions.dissociate.label'));
 
@@ -37,12 +37,12 @@ class DissociateBulkAction extends BulkAction
 
         $this->action(function (): void {
             $this->process(function (Collection $records): void {
-                $records->each(function (Model $recordToDissociate): void {
+                $records->each(function (Model $record): void {
                     /** @var BelongsTo $inverseRelationship */
-                    $inverseRelationship = $this->getInverseRelationshipFor($recordToDissociate);
+                    $inverseRelationship = $this->getInverseRelationshipFor($record);
 
                     $inverseRelationship->dissociate();
-                    $recordToDissociate->save();
+                    $record->save();
                 });
             });
 

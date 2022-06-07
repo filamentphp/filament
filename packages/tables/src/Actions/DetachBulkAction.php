@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
+use Closure;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,8 @@ class DetachBulkAction extends BulkAction
 {
     use CanCustomizeProcess;
     use Concerns\InteractsWithRelationship;
+
+    protected bool | Closure $allowsDuplicates = false;
 
     public static function make(string $name = 'detach'): static
     {
@@ -23,7 +26,7 @@ class DetachBulkAction extends BulkAction
 
         $this->label(__('filament-support::actions/detach.multiple.label'));
 
-        $this->modalHeading(__('filament-support::actions/detach.multiple.modal.heading'));
+        $this->modalHeading(fn (): string => __('filament-support::actions/detach.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
 
         $this->modalButton(__('filament-support::actions/detach.multiple.modal.actions.detach.label'));
 
@@ -40,14 +43,30 @@ class DetachBulkAction extends BulkAction
                 /** @var BelongsToMany $relationship */
                 $relationship = $this->getRelationship();
 
-                $records->each(
-                    fn (Model $recordToDetach) => $recordToDetach->{$relationship->getPivotAccessor()}->delete(),
-                );
+                if ($this->allowsDuplicates()) {
+                    $records->each(
+                        fn (Model $record) => $record->{$relationship->getPivotAccessor()}->delete(),
+                    );
+                } else {
+                    $relationship->detach($records);
+                }
             });
 
             $this->success();
         });
 
         $this->deselectRecordsAfterCompletion();
+    }
+
+    public function allowDuplicates(bool | Closure $condition = true): static
+    {
+        $this->allowsDuplicates = $condition;
+
+        return $this;
+    }
+
+    public function allowsDuplicates(): bool
+    {
+        return $this->evaluate($this->allowsDuplicates);
     }
 }
