@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'Scollega',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Scollega selezionato',
 
         'modal' => [
+
             'heading' => 'Scollega selezionato :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Scollega selezionato',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

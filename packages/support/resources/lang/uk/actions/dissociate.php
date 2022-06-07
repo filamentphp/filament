@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'dissociate' => [
                     'label' => 'Відокремити',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Відокремити вибране',
 
         'modal' => [
+
             'heading' => 'Відокремити вибране :label',
+
+            'actions' => [
+
+                'dissociate' => [
+                    'label' => 'Відокремити вибране',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

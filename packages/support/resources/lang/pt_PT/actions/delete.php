@@ -31,7 +31,17 @@ return [
         'label' => 'Remover selecionado',
 
         'modal' => [
+
             'heading' => 'Remover selecionado :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Remover selecionado',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

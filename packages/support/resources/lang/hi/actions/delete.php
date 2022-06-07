@@ -31,7 +31,17 @@ return [
         'label' => 'चयनित हटाएँ',
 
         'modal' => [
+
             'heading' => 'चयनित :label हटाएँ',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'चयनित हटाएँ',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

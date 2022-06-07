@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'अलग करें',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'चयनित अलग करे',
 
         'modal' => [
+
             'heading' => 'चयनित :label अलग करे',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'चयनित अलग करे',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

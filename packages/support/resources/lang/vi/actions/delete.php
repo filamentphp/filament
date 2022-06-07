@@ -31,7 +31,17 @@ return [
         'label' => 'Đã xóa những mục đã chọn',
 
         'modal' => [
+
             'heading' => 'Đã xóa :label được chọn',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Đã xóa những mục đã chọn',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

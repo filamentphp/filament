@@ -31,7 +31,17 @@ return [
         'label' => 'Hapus yang dipilih',
 
         'modal' => [
+
             'heading' => 'Hapus yang dipilih :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Hapus yang dipilih',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

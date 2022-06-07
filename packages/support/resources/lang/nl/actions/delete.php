@@ -31,7 +31,17 @@ return [
         'label' => 'Verwijder geselecteerde',
 
         'modal' => [
+
             'heading' => 'Verwijder geselecteerde :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Verwijder geselecteerde',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

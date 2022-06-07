@@ -30,6 +30,7 @@ trait CanCreateRecords
     protected function getCreateAction(): Action
     {
         return parent::getCreateAction()
+            ->url(null)
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
             ->action(fn (array $arguments) => $this->create($arguments['another'] ?? false));

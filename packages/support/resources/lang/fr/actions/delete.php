@@ -31,7 +31,17 @@ return [
         'label' => 'Supprimer la sélection',
 
         'modal' => [
+
             'heading' => 'Supprimer la sélection de :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Supprimer la sélection',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

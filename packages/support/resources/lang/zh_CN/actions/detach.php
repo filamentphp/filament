@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => '分离',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => '分离已选项目',
 
         'modal' => [
+
             'heading' => '分离已选的 :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => '分离已选项目',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

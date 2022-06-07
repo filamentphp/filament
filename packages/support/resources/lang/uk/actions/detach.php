@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'Від’єднати',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Від’єднати вибране',
 
         'modal' => [
+
             'heading' => 'Від’єднати вибране :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Від’єднати вибране',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

@@ -2,6 +2,7 @@
 
 namespace Filament\Pages\Actions;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Model;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 class CreateAction extends Action
 {
     use CanCustomizeProcess;
+
+    protected bool | Closure $isCreateAnotherDisabled = false;
 
     public static function make(string $name = 'create'): static
     {
@@ -60,5 +63,17 @@ class CreateAction extends Action
 
             $this->success();
         });
+    }
+
+    public function disableCreateAnother(bool | Closure $condition = true): static
+    {
+        $this->isCreateAnotherDisabled = $condition;
+
+        return $this;
+    }
+
+    public function isCreateAnotherDisabled(): bool
+    {
+        return $this->evaluate($this->isCreateAnotherDisabled);
     }
 }

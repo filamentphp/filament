@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'Koppla loss',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Koppla loss valda',
 
         'modal' => [
+
             'heading' => 'Koppla loss :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Koppla loss valda',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

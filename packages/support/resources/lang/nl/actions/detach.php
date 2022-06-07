@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'Ontkoppelen',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Ontkoppel geselecteerde',
 
         'modal' => [
+
             'heading' => 'Ontkoppel geselecteerde :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Ontkoppel geselecteerde',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

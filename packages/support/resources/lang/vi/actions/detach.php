@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'Hủy liên kết',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Hủy liên kết với những mục đã chọn',
 
         'modal' => [
+
             'heading' => 'Hủy liên kết :label đã chọn',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Hủy liên kết với những mục đã chọn',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

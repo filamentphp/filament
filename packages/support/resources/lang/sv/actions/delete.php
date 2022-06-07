@@ -31,7 +31,17 @@ return [
         'label' => 'Ta bort valda',
 
         'modal' => [
+
             'heading' => 'Ta bort valda :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Ta bort valda',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

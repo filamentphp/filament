@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'dissociate' => [
                     'label' => 'သီးခြား',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Dissociate selected',
 
         'modal' => [
+
             'heading' => 'Dissociate selected :label',
+
+            'actions' => [
+
+                'dissociate' => [
+                    'label' => 'Dissociate selected',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

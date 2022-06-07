@@ -31,7 +31,17 @@ return [
         'label' => 'Seçiliyi sil',
 
         'modal' => [
+
             'heading' => 'Seçiliyi sil: :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Seçiliyi sil',
+                ],
+
+            ],
+
         ],
 
         'messages' => [
