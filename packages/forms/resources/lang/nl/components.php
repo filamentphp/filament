@@ -129,7 +129,7 @@ return [
         ],
 
     ],
-    
+
     'rich_editor' => [
 
         'dialogs' => [
