@@ -99,48 +99,9 @@ trait CanCreateRecords
 
     protected function getCreateAction(): Tables\Actions\Action
     {
-        return Tables\Actions\Action::make('create')
-            ->label(__('filament::resources/relation-managers/create.action.label'))
+        return Tables\Actions\CreateAction::make()
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
-            ->modalSubmitAction($this->getCreateActionCreateModalAction())
-            ->modalCancelAction($this->getCreateActionCancelModalAction())
-            ->modalActions($this->getCreateActionModalActions())
-            ->modalHeading(__('filament::resources/relation-managers/create.action.modal.heading', ['label' => static::getModelLabel()]))
-            ->action(fn () => $this->create())
-            ->button();
-    }
-
-    protected function getCreateActionModalActions(): array
-    {
-        return array_merge(
-            [$this->getCreateActionCreateModalAction()],
-            static::canCreateAnother() ? [$this->getCreateActionCreateAndCreateAnotherModalAction()] : [],
-            [$this->getCreateActionCancelModalAction()],
-        );
-    }
-
-    protected function getCreateActionCreateModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return Tables\Actions\Action::makeModalAction('create')
-            ->label(__('filament::resources/relation-managers/create.action.modal.actions.create.label'))
-            ->submit('callMountedTableAction')
-            ->color('primary');
-    }
-
-    protected function getCreateActionCreateAndCreateAnotherModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return Tables\Actions\Action::makeModalAction('createAndCreateAnother')
-            ->label(__('filament::resources/relation-managers/create.action.modal.actions.create_and_create_another.label'))
-            ->action('createAndCreateAnother')
-            ->color('secondary');
-    }
-
-    protected function getCreateActionCancelModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return Tables\Actions\Action::makeModalAction('cancel')
-            ->label(__('filament-support::actions/modal.actions.cancel.label'))
-            ->cancel()
-            ->color('secondary');
+            ->action(fn (array $arguments) => $this->create($arguments['another'] ?? false));
     }
 }

@@ -31,47 +31,9 @@ trait CanCreateRecords
     protected function getCreateAction(): Action
     {
         return parent::getCreateAction()
-            ->url(null)
             ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
-            ->modalSubmitAction($this->getCreateActionCreateModalAction())
-            ->modalCancelAction($this->getCreateActionCancelModalAction())
-            ->modalActions($this->getCreateActionModalActions())
-            ->modalHeading(__('filament::resources/pages/list-records.actions.create.modal.heading', ['label' => static::getResource()::getModelLabel()]))
-            ->action(fn () => $this->create());
-    }
-
-    protected function getCreateActionModalActions(): array
-    {
-        return array_merge(
-            [$this->getCreateActionCreateModalAction()],
-            static::canCreateAnother() ? [$this->getCreateActionCreateAndCreateAnotherModalAction()] : [],
-            [$this->getCreateActionCancelModalAction()],
-        );
-    }
-
-    protected function getCreateActionCreateModalAction(): Modal\Actions\Action
-    {
-        return Action::makeModalAction('create')
-            ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create.label'))
-            ->submit('callMountedAction')
-            ->color('primary');
-    }
-
-    protected function getCreateActionCreateAndCreateAnotherModalAction(): Modal\Actions\Action
-    {
-        return Action::makeModalAction('createAndCreateAnother')
-            ->label(__('filament::resources/pages/list-records.actions.create.modal.actions.create_and_create_another.label'))
-            ->action('createAndCreateAnother')
-            ->color('secondary');
-    }
-
-    protected function getCreateActionCancelModalAction(): Modal\Actions\Action
-    {
-        return Action::makeModalAction('cancel')
-            ->label(__('filament-support::actions/modal.actions.cancel.label'))
-            ->cancel()
-            ->color('secondary');
+            ->action(fn (array $arguments) => $this->create($arguments['another'] ?? false));
     }
 
     protected function getCreateFormSchema(): array

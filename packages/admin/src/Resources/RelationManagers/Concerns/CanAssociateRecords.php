@@ -67,10 +67,10 @@ trait CanAssociateRecords
                 /** @var HasMany $relationship */
                 $relationship = $livewire->getRelationship();
 
-                $displayColumnName = static::getRecordTitleAttribute();
+                $titleColumnName = static::getRecordTitleAttribute();
 
                 /** @var Builder $relationshipQuery */
-                $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
+                $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
 
                 $searchQuery = strtolower($searchQuery);
 
@@ -82,7 +82,7 @@ trait CanAssociateRecords
                     default => 'like',
                 };
 
-                $searchColumns = $component->getSearchColumns() ?? [$displayColumnName];
+                $searchColumns = $component->getSearchColumns() ?? [$titleColumnName];
                 $isFirst = true;
 
                 $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $searchQuery): Builder {
@@ -120,14 +120,14 @@ trait CanAssociateRecords
                 /** @var HasMany $relationship */
                 $relationship = $livewire->getRelationship();
 
-                $displayColumnName = static::getRecordTitleAttribute();
+                $titleColumnName = static::getRecordTitleAttribute();
 
                 $localKeyName = $relationship->getLocalKeyName();
 
                 return $relationship
                     ->getRelated()
                     ->query()
-                    ->orderBy($displayColumnName)
+                    ->orderBy($titleColumnName)
                     ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): Builder {
                         return $query->where($livewire->getOwnerRecord()->getQualifiedKeyName(), $livewire->getOwnerRecord()->getKey());
                     })

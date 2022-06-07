@@ -4,6 +4,7 @@ namespace Filament\Resources\Pages;
 
 use Closure;
 use Filament\Pages\Actions\Action;
+use Filament\Pages\Actions\CreateAction;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
@@ -136,7 +137,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function getTitle(): string
     {
-        return static::$title ?? Str::title(static::getResource()::getPluralLabel());
+        return static::$title ?? Str::title(static::getResource()::getPluralModelLabel());
     }
 
     protected function getActions(): array
@@ -165,9 +166,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         $resource = static::getResource();
 
-        return Action::make('create')
-            ->label(__('filament::resources/pages/list-records.actions.create.label', ['label' => $resource::getModelLabel()]))
-            ->url(fn () => $resource::getUrl('create'));
+        return CreateAction::make()->url(fn () => $resource::getUrl('create'));
     }
 
     protected function getDefaultTableSortColumn(): ?string

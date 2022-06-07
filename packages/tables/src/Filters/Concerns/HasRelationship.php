@@ -11,9 +11,9 @@ use Illuminate\Support\Str;
 
 trait HasRelationship
 {
-    public function relationship(string $relationshipName, string $displayColumnName = null): static
+    public function relationship(string $relationshipName, string $titleColumnName = null): static
     {
-        $this->column("{$relationshipName}.{$displayColumnName}");
+        $this->column("{$relationshipName}.{$titleColumnName}");
 
         return $this;
     }
@@ -38,12 +38,12 @@ trait HasRelationship
     {
         $relationship = $this->getRelationship();
 
-        $displayColumnName = $this->getRelationshipDisplayColumnName();
+        $titleColumnName = $this->getRelationshipTitleColumnName();
 
-        $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
+        $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
 
         return $relationshipQuery
-            ->pluck($displayColumnName, $this->getRelationshipKey())
+            ->pluck($titleColumnName, $this->getRelationshipKey())
             ->toArray();
     }
 
@@ -64,7 +64,7 @@ trait HasRelationship
         return (string) Str::of($this->getColumn())->beforeLast('.');
     }
 
-    protected function getRelationshipDisplayColumnName(): string
+    protected function getRelationshipTitleColumnName(): string
     {
         return (string) Str::of($this->getColumn())->afterLast('.');
     }

@@ -85,6 +85,17 @@ trait InteractsWithRecord
         return $record->getKey();
     }
 
+    public function getModel(): ?string
+    {
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return null;
+        }
+
+        return $record::class;
+    }
+
     public function getModelLabel(): ?string
     {
         $label = $this->evaluate($this->modelLabel);
@@ -93,13 +104,13 @@ trait InteractsWithRecord
             return $label;
         }
 
-        $record = $this->getRecord();
+        $model = $this->getModel();
 
-        if (! $record) {
+        if (! $model) {
             return null;
         }
 
-        return get_model_label($record::class);
+        return get_model_label($model);
     }
 
     public function getPluralModelLabel(): ?string

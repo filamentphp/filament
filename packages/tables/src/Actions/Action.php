@@ -106,4 +106,9 @@ class Action extends BaseAction implements HasRecord
 
         return $this->getLivewire()->getTableRecordTitleAttribute();
     }
+
+    public function getModel(): ?string
+    {
+        return $this->getLivewire()->getTableModel();
+    }
 }

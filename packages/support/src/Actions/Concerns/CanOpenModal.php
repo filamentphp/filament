@@ -139,7 +139,7 @@ trait CanOpenModal
 
     public function getExtraModalActions(): array
     {
-        return $this->extraModalActions;
+        return $this->evaluate($this->extraModalActions);
     }
 
     public function getModalButtonLabel(): string
