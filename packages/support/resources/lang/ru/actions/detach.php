@@ -7,7 +7,17 @@ return [
         'label' => 'Отсоединить',
 
         'modal' => [
+
             'heading' => 'Отсоединить :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Отсоединить',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

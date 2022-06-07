@@ -7,7 +7,17 @@ return [
         'label' => 'Elimina',
 
         'modal' => [
+
             'heading' => 'Elimina :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Elimina',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

@@ -7,7 +7,17 @@ return [
         'label' => 'ဖျက်ပါ',
 
         'modal' => [
+
             'heading' => ':label ကိုဖျက်ပါ',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'ဖျက်ပါ',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

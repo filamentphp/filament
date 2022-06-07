@@ -7,7 +7,17 @@ return [
         'label' => 'Excluir',
 
         'modal' => [
+
             'heading' => 'Excluir :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Excluir',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

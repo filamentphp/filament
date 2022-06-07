@@ -7,7 +7,17 @@ return [
         'label' => 'Ontkoppelen',
 
         'modal' => [
+
             'heading' => 'Ontkoppel :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Ontkoppelen',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

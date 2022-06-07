@@ -7,7 +7,17 @@ return [
         'label' => 'Detach',
 
         'modal' => [
+
             'heading' => 'Detach :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Detach',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

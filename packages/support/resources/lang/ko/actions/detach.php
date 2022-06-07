@@ -7,7 +7,17 @@ return [
         'label' => '분리',
 
         'modal' => [
+
             'heading' => ':label 분리',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => '분리',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

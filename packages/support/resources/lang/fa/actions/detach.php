@@ -7,7 +7,17 @@ return [
         'label' => 'جدا کردن',
 
         'modal' => [
+
             'heading' => 'جدا کردن :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'جدا کردن',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

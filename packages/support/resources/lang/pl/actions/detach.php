@@ -7,7 +7,17 @@ return [
         'label' => 'Odłącz',
 
         'modal' => [
+
             'heading' => 'Odłącz :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Odłącz',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

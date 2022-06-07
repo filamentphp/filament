@@ -7,7 +7,17 @@ return [
         'label' => 'Ta bort',
 
         'modal' => [
+
             'heading' => 'Ta bort :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Ta bort',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

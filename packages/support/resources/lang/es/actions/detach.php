@@ -7,7 +7,17 @@ return [
         'label' => 'Desvincular',
 
         'modal' => [
+
             'heading' => 'Desvincular :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Desvincular',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

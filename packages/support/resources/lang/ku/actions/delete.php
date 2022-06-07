@@ -7,7 +7,17 @@ return [
         'label' => 'بیسڕەوە',
 
         'modal' => [
+
             'heading' => ':label بسڕەوە',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'بیسڕەوە',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

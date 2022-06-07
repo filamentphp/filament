@@ -7,7 +7,17 @@ return [
         'label' => '削除',
 
         'modal' => [
+
             'heading' => ':label削除',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => '削除',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

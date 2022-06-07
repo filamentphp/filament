@@ -7,7 +7,17 @@ return [
         'label' => 'Détacher',
 
         'modal' => [
+
             'heading' => 'Détacher :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Détacher',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

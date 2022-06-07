@@ -7,7 +7,17 @@ return [
         'label' => '分离',
 
         'modal' => [
+
             'heading' => '分离 :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => '分离',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

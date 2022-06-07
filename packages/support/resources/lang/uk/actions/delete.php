@@ -7,7 +7,17 @@ return [
         'label' => 'Видалити',
 
         'modal' => [
+
             'heading' => 'Видалити :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Видалити',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

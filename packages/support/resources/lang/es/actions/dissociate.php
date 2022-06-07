@@ -7,7 +7,17 @@ return [
         'label' => 'Disociar',
 
         'modal' => [
+
             'heading' => 'Disociar :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Disociar',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

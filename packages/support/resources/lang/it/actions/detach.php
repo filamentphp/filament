@@ -7,7 +7,17 @@ return [
         'label' => 'Scollega',
 
         'modal' => [
+
             'heading' => 'Scollega :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Scollega',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

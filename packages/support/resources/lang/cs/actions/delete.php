@@ -7,7 +7,17 @@ return [
         'label' => 'Smazat',
 
         'modal' => [
+
             'heading' => 'Smazat :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Smazat',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

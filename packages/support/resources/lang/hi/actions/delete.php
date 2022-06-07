@@ -7,7 +7,17 @@ return [
         'label' => 'हटाएँ',
 
         'modal' => [
+
             'heading' => ':label हटाएँ',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'हटाएँ',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

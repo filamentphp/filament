@@ -7,7 +7,17 @@ return [
         'label' => 'Trennen',
 
         'modal' => [
+
             'heading' => ':label trennen',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Trennen',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

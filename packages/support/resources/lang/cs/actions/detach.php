@@ -7,7 +7,17 @@ return [
         'label' => 'Odebrat',
 
         'modal' => [
+
             'heading' => 'Odebrat :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Odebrat',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

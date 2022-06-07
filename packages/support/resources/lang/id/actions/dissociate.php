@@ -7,7 +7,17 @@ return [
         'label' => 'Pisahkan',
 
         'modal' => [
+
             'heading' => 'Pisahkan :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Pisahkan',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

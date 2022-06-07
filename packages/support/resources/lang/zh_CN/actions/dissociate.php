@@ -7,7 +7,17 @@ return [
         'label' => '解除关联',
 
         'modal' => [
+
             'heading' => '解除 :label 的关联',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => '解除关联',
+                ],
+
+            ],
+
         ],
 
         'messages' => [
