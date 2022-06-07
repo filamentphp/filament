@@ -2,7 +2,7 @@
 
 return [
 
-    'action' => [
+    'single' => [
 
         'label' => 'Hủy liên kết',
 
@@ -16,7 +16,7 @@ return [
 
     ],
 
-    'bulk_action' => [
+    'multiple' => [
 
         'label' => 'Hủy liên kết với những mục đã chọn',
 

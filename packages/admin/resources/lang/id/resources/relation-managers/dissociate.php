@@ -2,7 +2,7 @@
 
 return [
 
-    'action' => [
+    'single' => [
 
         'label' => 'Pisahkan',
 
@@ -16,7 +16,7 @@ return [
 
     ],
 
-    'bulk_action' => [
+    'multiple' => [
 
         'label' => 'Pisahkan yang dipilih',
 

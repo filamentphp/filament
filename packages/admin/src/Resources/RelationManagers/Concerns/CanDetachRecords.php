@@ -36,7 +36,7 @@ trait CanDetachRecords
 
     protected function getDetachedNotificationMessage(): ?string
     {
-        return __('filament::resources/relation-managers/detach.action.messages.detached');
+        return __('filament-support::actions/detach.single.messages.detached');
     }
 
     public function bulkDetach(): void
@@ -59,7 +59,7 @@ trait CanDetachRecords
 
     protected function getBulkDetachedNotificationMessage(): ?string
     {
-        return __('filament::resources/relation-managers/detach.bulk_action.messages.detached');
+        return __('filament-support::actions/detach.multiple.messages.detached');
     }
 
     protected function getDetachAction(): Tables\Actions\Action

@@ -61,7 +61,7 @@ trait CanAssociateRecords
     protected static function getAssociateFormRecordSelect(): Select
     {
         return Select::make('recordId')
-            ->label(__('filament::resources/relation-managers/associate.action.modal.fields.record_id.label'))
+            ->label(__('filament-support::actions/associate.single.modal.fields.record_id.label'))
             ->searchable()
             ->getSearchResultsUsing(static function (Select $component, RelationManager $livewire, string $searchQuery): array {
                 /** @var HasMany $relationship */
@@ -185,7 +185,7 @@ trait CanAssociateRecords
             $form->fill();
         }
 
-        $this->notify('success', __('filament::resources/relation-managers/associate.action.messages.associated'));
+        $this->notify('success', __('filament-support::actions/associate.single.messages.associated'));
     }
 
     protected function getAssociateAction(): Tables\Actions\Action
