@@ -36,7 +36,7 @@ trait CanDeleteRecords
 
     protected function getDeletedNotificationMessage(): ?string
     {
-        return __('filament::resources/pages/list-records.table.actions.delete.messages.deleted');
+        return __('filament-support::actions/delete.single.messages.deleted');
     }
 
     protected function handleRecordDeletion(Model $record): void
