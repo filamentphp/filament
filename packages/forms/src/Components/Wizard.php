@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Component as LivewireComponent;
@@ -16,12 +17,12 @@ class Wizard extends Component
 
     protected string $view = 'forms::components.wizard';
 
-    final public function __construct(array $steps = [])
+    final public function __construct(array | Closure $steps = [])
     {
         $this->steps($steps);
     }
 
-    public static function make(array $steps = []): static
+    public static function make(array | Closure $steps = []): static
     {
         $static = app(static::class, ['steps' => $steps]);
         $static->setUp();
@@ -52,7 +53,7 @@ class Wizard extends Component
         ]);
     }
 
-    public function steps(array $steps): static
+    public function steps(array | Closure $steps): static
     {
         $this->childComponents($steps);
 
