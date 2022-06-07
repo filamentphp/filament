@@ -31,7 +31,17 @@ return [
         'label' => 'Delete selected',
 
         'modal' => [
+
             'heading' => 'Delete selected :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Delete selected',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

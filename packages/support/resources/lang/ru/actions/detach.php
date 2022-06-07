@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'Отсоединить',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Отсоединить выбранное',
 
         'modal' => [
+
             'heading' => 'Отсоединить выбранные :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Отсоединить выбранное',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

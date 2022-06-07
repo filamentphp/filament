@@ -31,7 +31,17 @@ return [
         'label' => 'Smazat vybrané',
 
         'modal' => [
+
             'heading' => 'Smazat vybrané :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Smazat vybrané',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

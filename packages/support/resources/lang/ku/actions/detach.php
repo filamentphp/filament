@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'لێکردنەوە',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'دیاریکراوەکان لێبکەرەوە',
 
         'modal' => [
+
             'heading' => 'دیاریکراوی :label لێبکەرەوە',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'دیاریکراوەکان لێبکەرەوە',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

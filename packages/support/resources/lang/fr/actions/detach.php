@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'Détacher',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Détacher la sélection',
 
         'modal' => [
+
             'heading' => 'Détacher la sélection de :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Détacher la sélection',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

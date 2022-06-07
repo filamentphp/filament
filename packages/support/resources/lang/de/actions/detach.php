@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'Trennen',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Ausgewählte trennen',
 
         'modal' => [
+
             'heading' => 'Ausgewählte :label trennen',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Ausgewählte trennen',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

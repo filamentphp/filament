@@ -31,7 +31,17 @@ return [
         'label' => '删除已选项目',
 
         'modal' => [
+
             'heading' => '删除已选的 :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => '删除已选项目',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

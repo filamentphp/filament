@@ -31,7 +31,17 @@ return [
         'label' => '選択の削除',
 
         'modal' => [
+
             'heading' => '選択した:labelを削除',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => '選択の削除',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

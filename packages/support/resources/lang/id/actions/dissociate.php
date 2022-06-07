@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'dissociate' => [
                     'label' => 'Pisahkan',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Pisahkan yang dipilih',
 
         'modal' => [
+
             'heading' => 'Pisahkan yang dipilih :label',
+
+            'actions' => [
+
+                'dissociate' => [
+                    'label' => 'Pisahkan yang dipilih',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

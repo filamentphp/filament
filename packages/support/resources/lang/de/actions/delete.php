@@ -31,7 +31,17 @@ return [
         'label' => 'Ausgewählte löschen',
 
         'modal' => [
+
             'heading' => 'Ausgewählte :label löschen',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Ausgewählte löschen',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

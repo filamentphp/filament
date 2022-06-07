@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'dissociate' => [
                     'label' => 'Odpojit',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Odpojit zvolené',
 
         'modal' => [
+
             'heading' => 'Odpojit zvolené :label',
+
+            'actions' => [
+
+                'dissociate' => [
+                    'label' => 'Odpojit zvolené',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

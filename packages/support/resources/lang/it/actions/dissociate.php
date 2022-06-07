@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'dissociate' => [
                     'label' => 'Dissocia',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Dissocia selezionato',
 
         'modal' => [
+
             'heading' => 'Dissocia selezionato :label',
+
+            'actions' => [
+
+                'dissociate' => [
+                    'label' => 'Dissocia selezionato',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'فصل',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'فصل المحدد',
 
         'modal' => [
+
             'heading' => 'فصل المحدد :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'فصل المحدد',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

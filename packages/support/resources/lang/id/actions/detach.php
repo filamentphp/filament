@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'Lepas lampiran',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Lepaskan lampiran yang dipilih',
 
         'modal' => [
+
             'heading' => 'Lepaskan lampiran yang dipilih :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Lepaskan lampiran yang dipilih',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

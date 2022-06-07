@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'Odłącz',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Odłącz zaznaczone',
 
         'modal' => [
+
             'heading' => 'Odłącz zaznaczone :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Odłącz zaznaczone',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

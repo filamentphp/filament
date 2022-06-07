@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'dissociate' => [
                     'label' => 'جداکردن',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'جداکردن انتخاب شده',
 
         'modal' => [
+
             'heading' => 'جداکردن انتخاب شده :label',
+
+            'actions' => [
+
+                'dissociate' => [
+                    'label' => 'جداکردن انتخاب شده',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

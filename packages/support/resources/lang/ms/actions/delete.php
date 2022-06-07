@@ -31,7 +31,17 @@ return [
         'label' => 'Padam pilihan',
 
         'modal' => [
+
             'heading' => 'Padam pilihan :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Padam pilihan',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

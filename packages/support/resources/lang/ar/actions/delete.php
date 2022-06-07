@@ -31,7 +31,17 @@ return [
         'label' => 'حذف المحدد',
 
         'modal' => [
+
             'heading' => 'حذف المحدد :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'حذف المحدد',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

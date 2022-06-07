@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'dissociate' => [
                     'label' => 'Usuń powiązanie',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Usuń powiązanie zaznaczonych',
 
         'modal' => [
+
             'heading' => 'Usuń powiązania zaznaczonych :label',
+
+            'actions' => [
+
+                'dissociate' => [
+                    'label' => 'Usuń powiązanie zaznaczonych',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'dissociate' => [
                     'label' => 'Ayır',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Seçiliyi ayır',
 
         'modal' => [
+
             'heading' => 'Seçiliyi ayır :label',
+
+            'actions' => [
+
+                'dissociate' => [
+                    'label' => 'Seçiliyi ayır',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

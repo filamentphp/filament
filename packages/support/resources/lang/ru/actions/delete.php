@@ -31,7 +31,17 @@ return [
         'label' => 'Удалить выбранное',
 
         'modal' => [
+
             'heading' => 'Удалить выбранные :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Удалить выбранное',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

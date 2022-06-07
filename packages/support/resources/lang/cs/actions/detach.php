@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'Odebrat',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Odebrat zvolené',
 
         'modal' => [
+
             'heading' => 'Odebrat zvolené :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Odebrat zvolené',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

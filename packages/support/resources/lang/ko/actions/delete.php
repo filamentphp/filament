@@ -31,7 +31,17 @@ return [
         'label' => '선택한 항목 삭제',
 
         'modal' => [
+
             'heading' => ':label 선택한 항목 삭제',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => '선택한 항목 삭제',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

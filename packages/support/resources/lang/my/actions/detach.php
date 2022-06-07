@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'ခွဲထုတ်ပါ',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Detach selected',
 
         'modal' => [
+
             'heading' => 'Detach selected :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Detach selected',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'Desvincular',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Desvincular seleccionado',
 
         'modal' => [
+
             'heading' => 'Desvincular seleccionado :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Desvincular seleccionado',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

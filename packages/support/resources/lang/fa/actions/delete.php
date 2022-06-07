@@ -31,7 +31,17 @@ return [
         'label' => 'حذف انتخاب شده‌',
 
         'modal' => [
+
             'heading' => 'حذف :label انتخاب شده',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'حذف انتخاب شده‌',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

@@ -31,7 +31,17 @@ return [
         'label' => 'Usuń zaznaczone',
 
         'modal' => [
+
             'heading' => 'Usuń zaznaczone :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Usuń zaznaczone',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

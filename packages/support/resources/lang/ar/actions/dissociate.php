@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'dissociate' => [
                     'label' => 'فك الارتباط',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'فك ارتباط المحدد',
 
         'modal' => [
+
             'heading' => 'فك ارتباط :label',
+
+            'actions' => [
+
+                'dissociate' => [
+                    'label' => 'فك ارتباط المحدد',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

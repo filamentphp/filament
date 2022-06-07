@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'Tanggalkan',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'Tanggalkan pilihan',
 
         'modal' => [
+
             'heading' => 'Tanggalkan pilihan :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Tanggalkan pilihan',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

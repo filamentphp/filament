@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'delete' => [
+                'detach' => [
                     'label' => 'ផ្ដាច់',
                 ],
 
@@ -31,7 +31,17 @@ return [
         'label' => 'ផ្ដាច់នៃការជ្រើសរើស',
 
         'modal' => [
+
             'heading' => 'បានផ្ដាច់នៃការជ្រើសរើស :label',
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'ផ្ដាច់នៃការជ្រើសរើស',
+                ],
+
+            ],
+
         ],
 
         'messages' => [
