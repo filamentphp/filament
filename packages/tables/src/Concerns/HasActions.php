@@ -82,7 +82,7 @@ trait HasActions
 
     public function mountedTableActionRecord($record): void
     {
-        $this->mountedTableActionRecord =$record;
+        $this->mountedTableActionRecord = $record;
     }
 
     public function mountTableAction(string $name, ?string $record = null)
