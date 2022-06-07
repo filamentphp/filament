@@ -30,7 +30,7 @@ trait CanReplicateRecords
 
         $this->label(__('filament-support::actions/replicate.single.label.default'));
 
-        $this->modalHeading(fn (Action | HasRecord $action): string => __('filament-support::actions/replicate.single.modal.heading', ['label' => $action->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-support::actions/replicate.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
         $this->modalButton(__('filament-support::actions/replicate.single.modal.actions.replicate.label'));
 
@@ -38,8 +38,8 @@ trait CanReplicateRecords
 
         $this->icon('heroicon-s-duplicate');
 
-        $this->mountUsing(static function (Action $action, Model $record, ?ComponentContainer $form = null): void {
-            if (! $action->hasForm()) {
+        $this->mountUsing(function (Model $record, ?ComponentContainer $form = null): void {
+            if (! $this->hasForm()) {
                 return;
             }
 
@@ -50,21 +50,21 @@ trait CanReplicateRecords
             $form->fill($record->toArray());
         });
 
-        $this->action(static function (Action | ReplicatesRecords $action) {
-            $result = $action->process(function (Model $record) use ($action) {
-                $replica = $record->replicate($action->getExcludedAttributes());
+        $this->action(function () {
+            $result = $this->process(function (Model $record) {
+                $replica = $record->replicate($this->getExcludedAttributes());
 
-                $action->callBeforeReplicaSaved($replica);
+                $this->callBeforeReplicaSaved($replica);
 
                 $replica->save();
 
-                return $action->callAfterReplicaSaved($replica);
+                return $this->callAfterReplicaSaved($replica);
             });
 
             try {
                 return $result;
             } finally {
-                $action->success();
+                $this->success();
             }
         });
     }

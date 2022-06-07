@@ -22,7 +22,7 @@ class DissociateAction extends Action
 
         $this->label(__('filament-support::actions/dissociate.single.label'));
 
-        $this->modalHeading(fn (DissociateAction $action): string => __('filament-support::actions/dissociate.single.modal.heading', ['label' => $action->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-support::actions/dissociate.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
         $this->modalButton(__('filament-support::actions/dissociate.single.modal.actions.dissociate.label'));
 
@@ -34,16 +34,16 @@ class DissociateAction extends Action
 
         $this->requiresConfirmation();
 
-        $this->action(static function (DissociateAction $action): void {
-            $action->process(static function (Model $record) use ($action): void {
+        $this->action(function (): void {
+            $this->process(function (Model $record): void {
                 /** @var BelongsTo $inverseRelationship */
-                $inverseRelationship = $action->getInverseRelationshipFor($record);
+                $inverseRelationship = $this->getInverseRelationshipFor($record);
 
                 $inverseRelationship->dissociate();
                 $record->save();
             });
 
-            $action->success();
+            $this->success();
         });
     }
 }

@@ -71,7 +71,7 @@ trait HasActions
             return $action->callAfter() ?? $result;
         } finally {
             $this->mountedTableAction = null;
-            $this->mountedTableActionRecord = null;
+            $this->mountedTableActionRecord(null);
             $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
@@ -80,10 +80,15 @@ trait HasActions
         }
     }
 
+    public function mountedTableActionRecord($record): void
+    {
+        $this->mountedTableActionRecord =$record;
+    }
+
     public function mountTableAction(string $name, ?string $record = null)
     {
         $this->mountedTableAction = $name;
-        $this->mountedTableActionRecord = $record;
+        $this->mountedTableActionRecord($record);
 
         $action = $this->getMountedTableAction();
 

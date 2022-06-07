@@ -35,18 +35,18 @@ class DissociateBulkAction extends BulkAction
 
         $this->requiresConfirmation();
 
-        $this->action(static function (DissociateBulkAction $action): void {
-            $action->process(static function (Collection $records) use ($action): void {
-                $records->each(function (Model $recordToDissociate) use ($action): void {
+        $this->action(function (): void {
+            $this->process(function (Collection $records): void {
+                $records->each(function (Model $recordToDissociate): void {
                     /** @var BelongsTo $inverseRelationship */
-                    $inverseRelationship = $action->getInverseRelationshipFor($recordToDissociate);
+                    $inverseRelationship = $this->getInverseRelationshipFor($recordToDissociate);
 
                     $inverseRelationship->dissociate();
                     $recordToDissociate->save();
                 });
             });
 
-            $action->success();
+            $this->success();
         });
 
         $this->deselectRecordsAfterCompletion();

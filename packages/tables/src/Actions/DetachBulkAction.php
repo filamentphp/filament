@@ -35,8 +35,8 @@ class DetachBulkAction extends BulkAction
 
         $this->requiresConfirmation();
 
-        $this->action(static function (DetachBulkAction $action): void {
-            $action->process(static function (Collection $records) use ($action): void {
+        $this->action(function (): void {
+            $this->process(function (Collection $records): void {
                 /** @var BelongsToMany $relationship */
                 $relationship = $this->getRelationship();
 
@@ -45,7 +45,7 @@ class DetachBulkAction extends BulkAction
                 );
             });
 
-            $action->success();
+            $this->success();
         });
 
         $this->deselectRecordsAfterCompletion();

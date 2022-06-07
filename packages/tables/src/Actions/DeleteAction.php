@@ -20,7 +20,7 @@ class DeleteAction extends Action
 
         $this->label(__('filament-support::actions/delete.single.label'));
 
-        $this->modalHeading(fn (DeleteAction $action): string => __('filament-support::actions/delete.single.modal.heading', ['label' => $action->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-support::actions/delete.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
         $this->modalButton(__('filament-support::actions/delete.single.modal.actions.delete.label'));
 
@@ -40,12 +40,12 @@ class DeleteAction extends Action
             return $record->trashed();
         });
 
-        $this->action(static function (DeleteAction $action): void {
-            $action->process(static function (Model $record): void {
+        $this->action(function (): void {
+            $this->process(static function (Model $record): void {
                 $record->delete();
             });
 
-            $action->success();
+            $this->success();
         });
     }
 }

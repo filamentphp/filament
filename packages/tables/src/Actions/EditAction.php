@@ -24,7 +24,7 @@ class EditAction extends Action
 
         $this->label(__('filament-support::actions/edit.single.label'));
 
-        $this->modalHeading(fn (DeleteAction $action): string => __('filament-support::actions/edit.single.modal.heading', ['label' => $action->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-support::actions/edit.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
         $this->modalButton(__('filament-support::actions/edit.single.modal.actions.edit.label'));
 
@@ -36,9 +36,9 @@ class EditAction extends Action
             $form->fill($record->toArray());
         });
 
-        $this->action(static function (EditAction $action): void {
-            $this->process(function (array $data, Model $record) use ($action) {
-                $relationship = $action->getRelationship();
+        $this->action(function (): void {
+            $this->process(function (array $data, Model $record) {
+                $relationship = $this->getRelationship();
 
                 if ($relationship instanceof BelongsToMany) {
                     $pivotColumns = $relationship->getPivotColumns();
@@ -54,7 +54,7 @@ class EditAction extends Action
                 $record->update($data);
             });
 
-            $action->success();
+            $this->success();
         });
     }
 }

@@ -28,7 +28,7 @@ trait InteractsWithRelationship
         return $this;
     }
 
-    public function getRelationship(): ?Relation
+    public function getRelationship(): Relation | Builder | null
     {
         $relationship = $this->evaluate($this->relationship);
 

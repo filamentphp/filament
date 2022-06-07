@@ -22,7 +22,7 @@ class DetachAction extends Action
 
         $this->label(__('filament-support::actions/detach.single.label'));
 
-        $this->modalHeading(fn (DetachAction $action): string => __('filament-support::actions/detach.single.modal.heading', ['label' => $action->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-support::actions/detach.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
         $this->modalButton(__('filament-support::actions/detach.single.modal.actions.detach.label'));
 
@@ -34,15 +34,15 @@ class DetachAction extends Action
 
         $this->requiresConfirmation();
 
-        $this->action(static function (DetachAction $action): void {
-            $action->process(static function (Model $record) use ($action): void {
+        $this->action(function (): void {
+            $this->process(function (Model $record): void {
                 /** @var BelongsToMany $relationship */
                 $relationship = $this->getRelationship();
 
                 $record->{$relationship->getPivotAccessor()}->delete();
             });
 
-            $action->success();
+            $this->success();
         });
     }
 }
