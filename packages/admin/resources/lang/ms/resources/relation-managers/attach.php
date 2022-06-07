@@ -24,7 +24,7 @@ return [
                     'label' => 'Lampirkan',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => 'Lampirkan & lampirkan yang lain',
                 ],
 

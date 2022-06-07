@@ -82,7 +82,7 @@ trait CanCreateRecords
         return __('filament::resources/relation-managers/create.action.messages.created');
     }
 
-    public function createAndCreateAnother(): void
+    public function createAnother(): void
     {
         $this->create(another: true);
     }

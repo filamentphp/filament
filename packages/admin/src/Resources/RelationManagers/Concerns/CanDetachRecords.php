@@ -25,13 +25,7 @@ trait CanDetachRecords
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
-        $recordToDetatch = $this->getMountedTableActionRecord();
-
-        if ($this->allowsDuplicates()) {
-            $recordToDetatch->{$relationship->getPivotAccessor()}->delete();
-        } else {
-            $relationship->detach($recordToDetatch);
-        }
+        $this->getMountedTableActionRecord()->{$relationship->getPivotAccessor()}->delete();
 
         $this->callHook('afterDetach');
 
@@ -52,15 +46,9 @@ trait CanDetachRecords
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
-        $recordsToDetach = $this->getSelectedTableRecords();
-
-        if ($this->allowsDuplicates()) {
-            $recordsToDetach->each(
-                fn (Model $recordToDetach) => $recordToDetach->{$relationship->getPivotAccessor()}->delete(),
-            );
-        } else {
-            $relationship->detach($recordsToDetach);
-        }
+        $this->getSelectedTableRecords()->each(
+            fn (Model $recordToDetach) => $recordToDetach->{$relationship->getPivotAccessor()}->delete(),
+        );
 
         $this->callHook('afterBulkDetach');
 
@@ -76,25 +64,14 @@ trait CanDetachRecords
 
     protected function getDetachAction(): Tables\Actions\Action
     {
-        return Tables\Actions\Action::make('detach')
-            ->label(__('filament::resources/relation-managers/detach.action.label'))
-            ->requiresConfirmation()
-            ->modalHeading(__('filament::resources/relation-managers/detach.action.modal.heading', ['label' => static::getModelLabel()]))
+        return Tables\Actions\DetachAction::make()
             ->action(fn () => $this->detach())
-            ->color('danger')
-            ->icon('heroicon-s-x')
             ->authorize(fn (Model $record): bool => $this->canDetach($record));
     }
 
     protected function getDetachBulkAction(): Tables\Actions\BulkAction
     {
-        return Tables\Actions\BulkAction::make('detach')
-            ->label(__('filament::resources/relation-managers/detach.bulk_action.label'))
-            ->action(fn () => $this->bulkDetach())
-            ->requiresConfirmation()
-            ->modalHeading(__('filament::resources/relation-managers/detach.bulk_action.modal.heading', ['label' => static::getPluralModelLabel()]))
-            ->deselectRecordsAfterCompletion()
-            ->color('danger')
-            ->icon('heroicon-o-x');
+        return Tables\Actions\DetachBulkAction::make()
+            ->action(fn () => $this->bulkDetach());
     }
 }

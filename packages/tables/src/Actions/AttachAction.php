@@ -5,6 +5,7 @@ namespace Filament\Tables\Actions;
 use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Select;
+use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +14,7 @@ use Illuminate\Support\Arr;
 
 class AttachAction extends Action
 {
+    use CanCustomizeProcess;
     use Concerns\InteractsWithRelationship;
 
     protected ?Closure $modifyRecordSelectUsing = null;
@@ -43,7 +45,7 @@ class AttachAction extends Action
         $this->extraModalActions(function (AttachAction $action): array {
             return $action->isAttachAnotherDisabled() ? [] : [
                 $this->makeExtraModalAction('attachAnother', ['another' => true])
-                    ->label(__('filament-support::actions/attach.single.modal.actions.attach_and_attach_another.label')),
+                    ->label(__('filament-support::actions/attach.single.modal.actions.attach_another.label')),
             ];
         });
 
@@ -55,16 +57,18 @@ class AttachAction extends Action
 
         $this->form(static fn (AttachAction $action): array => [$action->getRecordSelect()]);
 
-        $this->action(static function (AttachAction $action, array $arguments, array $data, ComponentContainer $form): void {
-            /** @var BelongsToMany $relationship */
-            $relationship = $action->getRelationship();
+        $this->action(static function (AttachAction $action, array $arguments, ComponentContainer $form): void {
+            $action->process(static function (array $data) use ($action) {
+                /** @var BelongsToMany $relationship */
+                $relationship = $action->getRelationship();
 
-            $recordToAttach = $relationship->getRelated()->query()->find($data['recordId']);
+                $recordToAttach = $relationship->getRelated()->query()->find($data['recordId']);
 
-            $relationship->attach(
-                $recordToAttach,
-                Arr::only($data, $relationship->getPivotColumns()),
-            );
+                $relationship->attach(
+                    $recordToAttach,
+                    Arr::only($data, $relationship->getPivotColumns()),
+                );
+            });
 
             if ($arguments['another'] ?? false) {
                 $form->fill();

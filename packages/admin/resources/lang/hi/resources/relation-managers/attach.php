@@ -24,7 +24,7 @@ return [
                     'label' => 'जोड़े',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => 'इसे जोड़े और एक और जोड़े',
                 ],
 

@@ -24,7 +24,7 @@ return [
                     'label' => 'Koppelen',
                 ],
 
-                'associate_and_associate_another' => [
+                'associate_another' => [
                     'label' => 'Koppelen & nieuwe koppelen',
                 ],
 

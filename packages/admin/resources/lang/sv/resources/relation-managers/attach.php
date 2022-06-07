@@ -24,7 +24,7 @@ return [
                     'label' => 'Koppla',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => 'Koppla & koppla en till',
                 ],
 

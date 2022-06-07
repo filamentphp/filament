@@ -20,7 +20,7 @@ return [
                         'label' => '创建',
                     ],
 
-                    'create_and_create_another' => [
+                    'create_another' => [
                         'label' => '保存并创建另一个',
                     ],
 

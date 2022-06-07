@@ -2,10 +2,15 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Forms\ComponentContainer;
+use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Arr;
 
 class EditAction extends Action
 {
+    use CanCustomizeProcess;
     use Concerns\InteractsWithRelationship;
 
     public static function make(string $name = 'edit'): static
@@ -27,8 +32,27 @@ class EditAction extends Action
 
         $this->icon('heroicon-s-pencil');
 
-        $this->action(static function (EditAction $action, Model $record): void {
-            //
+        $this->mountUsing(static function (ComponentContainer $form, Model $record): void {
+            $form->fill($record->toArray());
+        });
+
+        $this->action(static function (EditAction $action): void {
+            $this->process(function (array $data, Model $record) use ($action) {
+                $relationship = $action->getRelationship();
+
+                if ($relationship instanceof BelongsToMany) {
+                    $pivotColumns = $relationship->getPivotColumns();
+                    $pivotData = Arr::only($data, $pivotColumns);
+
+                    if (count($pivotColumns)) {
+                        $record->{$relationship->getPivotAccessor()}->update($pivotData);
+                    }
+
+                    $data = Arr::except($data, $pivotColumns);
+                }
+
+                $record->update($data);
+            });
 
             $action->success();
         });

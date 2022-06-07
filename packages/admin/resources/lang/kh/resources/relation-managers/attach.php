@@ -24,7 +24,7 @@ return [
                     'label' => 'ភ្ជាប់',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => 'ភ្ជាប់ & ភ្ជាប់ឡើងវិញ',
                 ],
 

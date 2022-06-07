@@ -24,7 +24,7 @@ return [
                     'label' => 'İlişkilendir',
                 ],
 
-                'associate_and_associate_another' => [
+                'associate_another' => [
                     'label' => 'İlişkilendir ve başka bir tane ilişkilendir',
                 ],
 

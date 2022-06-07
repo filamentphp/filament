@@ -16,7 +16,7 @@ return [
                 'label' => 'Skapa ny',
             ],
 
-            'create_and_create_another' => [
+            'create_another' => [
                 'label' => 'Skapa ny & skapa ny igen',
             ],
 

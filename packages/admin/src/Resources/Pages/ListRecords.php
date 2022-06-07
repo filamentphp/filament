@@ -83,10 +83,8 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         $resource = static::getResource();
 
-        return Tables\Actions\Action::make('view')
-            ->label(__('filament::resources/pages/list-records.table.actions.view.label'))
+        return Tables\Actions\ViewAction::make()
             ->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]))
-            ->icon('heroicon-s-eye')
             ->authorize(fn (Model $record): bool => $resource::canView($record));
     }
 
@@ -94,10 +92,8 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         $resource = static::getResource();
 
-        return Tables\Actions\Action::make('edit')
-            ->label(__('filament::resources/pages/list-records.table.actions.edit.label'))
+        return Tables\Actions\EditAction::make()
             ->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]))
-            ->icon('heroicon-s-pencil')
             ->authorize(fn (Model $record): bool => $resource::canEdit($record));
     }
 

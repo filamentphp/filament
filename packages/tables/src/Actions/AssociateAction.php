@@ -5,6 +5,7 @@ namespace Filament\Tables\Actions;
 use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Select;
+use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AssociateAction extends Action
 {
+    use CanCustomizeProcess;
     use Concerns\InteractsWithRelationship;
 
     protected ?Closure $modifyRecordSelectUsing = null;
@@ -41,7 +43,7 @@ class AssociateAction extends Action
         $this->extraModalActions(function (AssociateAction $action): array {
             return $action->isAssociateAnotherDisabled ? [] : [
                 $this->makeExtraModalAction('associateAnother', ['another' => true])
-                    ->label(__('filament-support::actions/associate.single.modal.actions.associate_and_associate_another.label')),
+                    ->label(__('filament-support::actions/associate.single.modal.actions.associate_another.label')),
             ];
         });
 
@@ -53,17 +55,19 @@ class AssociateAction extends Action
 
         $this->form(static fn (AssociateAction $action): array => [$action->getRecordSelect()]);
 
-        $this->action(static function (AssociateAction $action, array $arguments, array $data, ComponentContainer $form): void {
-            /** @var HasMany $relationship */
-            $relationship = $action->getRelationship();
+        $this->action(static function (AssociateAction $action, array $arguments, ComponentContainer $form): void {
+            $action->process(static function (array $data) use ($action) {
+                /** @var HasMany $relationship */
+                $relationship = $action->getRelationship();
 
-            $recordToAssociate = $relationship->getRelated()->query()->find($data['recordId']);
+                $recordToAssociate = $relationship->getRelated()->query()->find($data['recordId']);
 
-            /** @var BelongsTo $inverseRelationship */
-            $inverseRelationship = $action->getInverseRelationshipFor($recordToAssociate);
+                /** @var BelongsTo $inverseRelationship */
+                $inverseRelationship = $action->getInverseRelationshipFor($recordToAssociate);
 
-            $inverseRelationship->associate($relationship->getParent());
-            $recordToAssociate->save();
+                $inverseRelationship->associate($relationship->getParent());
+                $recordToAssociate->save();
+            });
 
             if ($arguments['another'] ?? false) {
                 $form->fill();

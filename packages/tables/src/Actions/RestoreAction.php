@@ -2,10 +2,13 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Model;
 
 class RestoreAction extends Action
 {
+    use CanCustomizeProcess;
+
     public static function make(string $name = 'restore'): static
     {
         return parent::make($name);
@@ -29,12 +32,16 @@ class RestoreAction extends Action
 
         $this->requiresConfirmation();
 
-        $this->action(static function (\Filament\Pages\Actions\RestoreAction $action, Model $record): void {
-            if (! method_exists($record, 'restore')) {
-                return;
-            }
+        $this->action(static function (RestoreAction $action): void {
+            $action->process(static function (Model $record) use ($action): void {
+                if (! method_exists($record, 'restore')) {
+                    $action->failure();
 
-            $record->restore();
+                    return;
+                }
+
+                $record->restore();
+            });
 
             $action->success();
         });

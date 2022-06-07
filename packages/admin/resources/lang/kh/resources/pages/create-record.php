@@ -18,7 +18,7 @@ return [
                 'label' => 'បង្កើត',
             ],
 
-            'create_and_create_another' => [
+            'create_another' => [
                 'label' => 'បង្កើត & បង្កើតឡើងវិញ',
             ],
 

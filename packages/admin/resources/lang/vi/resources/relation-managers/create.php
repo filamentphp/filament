@@ -16,7 +16,7 @@ return [
                     'label' => 'Tạo',
                 ],
 
-                'create_and_create_another' => [
+                'create_another' => [
                     'label' => 'Tạo & tiếp tục tạo mục khác',
                 ],
 

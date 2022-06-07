@@ -24,7 +24,7 @@ return [
                     'label' => 'بیلکێنە',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => 'لکاندن و دانەیەکی تر',
                 ],
 

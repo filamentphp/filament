@@ -24,7 +24,7 @@ return [
                     'label' => 'إرفاق',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => 'إرفاق وبدء إرفاق المزيد',
                 ],
 

@@ -88,7 +88,7 @@ class CreateRecord extends Page implements HasFormActions
         return __('filament::resources/pages/create-record.messages.created');
     }
 
-    public function createAndCreateAnother(): void
+    public function createAnother(): void
     {
         $this->create(another: true);
     }
@@ -107,7 +107,7 @@ class CreateRecord extends Page implements HasFormActions
     {
         return array_merge(
             [$this->getCreateFormAction()],
-            static::canCreateAnother() ? [$this->getCreateAndCreateAnotherFormAction()] : [],
+            static::canCreateAnother() ? [$this->getCreateAnotherFormAction()] : [],
             [$this->getCancelFormAction()],
         );
     }
@@ -125,11 +125,11 @@ class CreateRecord extends Page implements HasFormActions
         return $this->getCreateFormAction();
     }
 
-    protected function getCreateAndCreateAnotherFormAction(): Action
+    protected function getCreateAnotherFormAction(): Action
     {
         return Action::make('createAnother')
-            ->label(__('filament::resources/pages/create-record.form.actions.create_and_create_another.label'))
-            ->action('createAndCreateAnother')
+            ->label(__('filament::resources/pages/create-record.form.actions.create_another.label'))
+            ->action('createAnother')
             ->keyBindings(['mod+shift+s'])
             ->color('secondary');
     }

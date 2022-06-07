@@ -2,8 +2,12 @@
 
 namespace Filament\Pages\Actions;
 
+use Filament\Support\Actions\Concerns\CanCustomizeProcess;
+
 class EditAction extends Action
 {
+    use CanCustomizeProcess;
+
     public static function make(string $name = 'edit'): static
     {
         return parent::make($name);

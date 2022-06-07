@@ -4,10 +4,13 @@ namespace Filament\Pages\Actions;
 
 use Filament\Pages\Contracts\HasRecord;
 use Filament\Pages\Page;
+use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Model;
 
 class RestoreAction extends Action
 {
+    use CanCustomizeProcess;
+
     public static function make(string $name = 'restore'): static
     {
         return parent::make($name);
@@ -33,10 +36,12 @@ class RestoreAction extends Action
 
         $this->action(static function (RestoreAction $action, Model $record): void {
             if (! method_exists($record, 'restore')) {
+                $action->failure();
+
                 return;
             }
 
-            $record->restore();
+            $action->process(static fn () => $record->restore());
 
             $action->success();
         });

@@ -18,7 +18,7 @@ return [
                 'label' => '만들기',
             ],
 
-            'create_and_create_another' => [
+            'create_another' => [
                 'label' => '계속 만들기',
             ],
 

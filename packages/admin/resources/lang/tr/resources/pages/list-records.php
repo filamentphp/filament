@@ -20,7 +20,7 @@ return [
                         'label' => 'Oluştur',
                     ],
 
-                    'create_and_create_another' => [
+                    'create_another' => [
                         'label' => 'Oluştur ve başka bir tane oluştur',
                     ],
 
