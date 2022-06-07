@@ -33,12 +33,12 @@ class ForceDeleteBulkAction extends BulkAction
 
         $this->requiresConfirmation();
 
-        $this->action(static function (ForceDeleteBulkAction $action): void {
-            $action->process(static function (Collection $records): void {
+        $this->action(function (): void {
+            $this->process(static function (Collection $records): void {
                 $records->each(fn (Model $record) => $record->forceDelete());
             });
 
-            $action->success();
+            $this->success();
         });
 
         $this->deselectRecordsAfterCompletion();

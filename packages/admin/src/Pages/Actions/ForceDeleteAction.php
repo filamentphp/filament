@@ -22,7 +22,7 @@ class ForceDeleteAction extends Action
 
         $this->label(__('filament-support::actions/force-delete.single.label'));
 
-        $this->modalHeading(fn (ForceDeleteAction $action): string => __('filament-support::actions/force-delete.single.modal.heading', ['label' => $action->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-support::actions/force-delete.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
         $this->modalButton(__('filament-support::actions/force-delete.single.modal.actions.delete.label'));
 
@@ -32,10 +32,10 @@ class ForceDeleteAction extends Action
 
         $this->requiresConfirmation();
 
-        $this->action(static function (ForceDeleteAction $action): void {
-            $action->process(static fn (Model $record) => $record->forceDelete());
+        $this->action(function (): void {
+            $this->process(static fn (Model $record) => $record->forceDelete());
 
-            $action->success();
+            $this->success();
         });
 
         $this->visible(static function (Model $record): bool {

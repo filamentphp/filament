@@ -33,8 +33,8 @@ class RestoreBulkAction extends BulkAction
 
         $this->requiresConfirmation();
 
-        $this->action(static function (RestoreBulkAction $action): void {
-            $action->process(static function (Collection $records): void {
+        $this->action(function (): void {
+            $this->process(static function (Collection $records): void {
                 $records->each(function (Model $record): void {
                     if (! method_exists($record, 'restore')) {
                         return;
@@ -44,7 +44,7 @@ class RestoreBulkAction extends BulkAction
                 });
             });
 
-            $action->success();
+            $this->success();
         });
 
         $this->deselectRecordsAfterCompletion();

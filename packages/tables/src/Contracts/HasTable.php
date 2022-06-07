@@ -73,4 +73,6 @@ interface HasTable extends HasForms
     public function getTableModelLabel(): ?string;
 
     public function getTableRecordTitleAttribute(): ?string;
+
+    public function mountedTableActionRecord($record): void;
 }

@@ -22,7 +22,7 @@ class RestoreAction extends Action
 
         $this->label(__('filament-support::actions/restore.single.label'));
 
-        $this->modalHeading(fn (RestoreAction $action): string => __('filament-support::actions/restore.single.modal.heading', ['label' => $action->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-support::actions/restore.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
         $this->modalButton(__('filament-support::actions/restore.single.modal.actions.restore.label'));
 
@@ -34,16 +34,16 @@ class RestoreAction extends Action
 
         $this->requiresConfirmation();
 
-        $this->action(static function (RestoreAction $action, Model $record): void {
+        $this->action(function (Model $record): void {
             if (! method_exists($record, 'restore')) {
-                $action->failure();
+                $this->failure();
 
                 return;
             }
 
-            $action->process(static fn () => $record->restore());
+            $this->process(static fn () => $record->restore());
 
-            $action->success();
+            $this->success();
         });
 
         $this->visible(static function (Model $record): bool {

@@ -36,14 +36,14 @@ class AttachAction extends Action
 
         $this->label(__('filament-support::actions/attach.single.label'));
 
-        $this->modalHeading(fn (AttachAction $action): string => __('filament-support::actions/attach.single.modal.heading', ['label' => $action->getModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-support::actions/attach.single.modal.heading', ['label' => $this->getModelLabel()]));
 
         $this->modalButton(__('filament-support::actions/attach.single.modal.actions.attach.label'));
 
         $this->modalWidth('lg');
 
-        $this->extraModalActions(function (AttachAction $action): array {
-            return $action->isAttachAnotherDisabled() ? [] : [
+        $this->extraModalActions(function (): array {
+            return $this->isAttachAnotherDisabled() ? [] : [
                 $this->makeExtraModalAction('attachAnother', ['another' => true])
                     ->label(__('filament-support::actions/attach.single.modal.actions.attach_another.label')),
             ];
@@ -55,12 +55,12 @@ class AttachAction extends Action
 
         $this->button();
 
-        $this->form(static fn (AttachAction $action): array => [$action->getRecordSelect()]);
+        $this->form(fn (): array => [$this->getRecordSelect()]);
 
-        $this->action(static function (AttachAction $action, array $arguments, ComponentContainer $form): void {
-            $action->process(static function (array $data) use ($action) {
+        $this->action(function (array $arguments, ComponentContainer $form): void {
+            $this->process(function (array $data) {
                 /** @var BelongsToMany $relationship */
-                $relationship = $action->getRelationship();
+                $relationship = $this->getRelationship();
 
                 $recordToAttach = $relationship->getRelated()->query()->find($data['recordId']);
 
@@ -73,14 +73,14 @@ class AttachAction extends Action
             if ($arguments['another'] ?? false) {
                 $form->fill();
 
-                $action->sendSuccessNotification();
-                $action->callAfter();
-                $action->hold();
+                $this->sendSuccessNotification();
+                $this->callAfter();
+                $this->hold();
 
                 return;
             }
 
-            $action->success();
+            $this->success();
         });
     }
 

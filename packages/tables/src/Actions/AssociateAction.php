@@ -34,14 +34,14 @@ class AssociateAction extends Action
 
         $this->label(__('filament-support::actions/associate.single.label'));
 
-        $this->modalHeading(static fn (AssociateAction $action): string => __('filament-support::actions/associate.single.modal.heading', ['label' => $action->getModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-support::actions/associate.single.modal.heading', ['label' => $this->getModelLabel()]));
 
         $this->modalButton(__('filament-support::actions/associate.single.modal.actions.associate.label'));
 
         $this->modalWidth('lg');
 
-        $this->extraModalActions(function (AssociateAction $action): array {
-            return $action->isAssociateAnotherDisabled ? [] : [
+        $this->extraModalActions(function (): array {
+            return $this->isAssociateAnotherDisabled ? [] : [
                 $this->makeExtraModalAction('associateAnother', ['another' => true])
                     ->label(__('filament-support::actions/associate.single.modal.actions.associate_another.label')),
             ];
@@ -53,17 +53,17 @@ class AssociateAction extends Action
 
         $this->button();
 
-        $this->form(static fn (AssociateAction $action): array => [$action->getRecordSelect()]);
+        $this->form(fn (): array => [$this->getRecordSelect()]);
 
-        $this->action(static function (AssociateAction $action, array $arguments, ComponentContainer $form): void {
-            $action->process(static function (array $data) use ($action) {
+        $this->action(function (array $arguments, ComponentContainer $form): void {
+            $this->process(function (array $data) {
                 /** @var HasMany $relationship */
-                $relationship = $action->getRelationship();
+                $relationship = $this->getRelationship();
 
                 $recordToAssociate = $relationship->getRelated()->query()->find($data['recordId']);
 
                 /** @var BelongsTo $inverseRelationship */
-                $inverseRelationship = $action->getInverseRelationshipFor($recordToAssociate);
+                $inverseRelationship = $this->getInverseRelationshipFor($recordToAssociate);
 
                 $inverseRelationship->associate($relationship->getParent());
                 $recordToAssociate->save();
@@ -72,14 +72,14 @@ class AssociateAction extends Action
             if ($arguments['another'] ?? false) {
                 $form->fill();
 
-                $action->sendSuccessNotification();
-                $action->callAfter();
-                $action->hold();
+                $this->sendSuccessNotification();
+                $this->callAfter();
+                $this->hold();
 
                 return;
             }
 
-            $action->success();
+            $this->success();
         });
     }
 
