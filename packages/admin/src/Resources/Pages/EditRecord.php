@@ -138,7 +138,7 @@ class EditRecord extends Page implements HasFormActions, HasRecord
 
     protected function getDeletedNotificationMessage(): ?string
     {
-        return __('filament::resources/pages/edit-record.actions.delete.messages.deleted');
+        return __('filament-support::actions/delete.single.messages.deleted');
     }
 
     private function isSoftDeletable(): bool

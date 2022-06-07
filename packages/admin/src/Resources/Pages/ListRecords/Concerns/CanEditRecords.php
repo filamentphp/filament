@@ -77,7 +77,7 @@ trait CanEditRecords
 
     protected function getSavedNotificationMessage(): ?string
     {
-        return __('filament::resources/pages/list-records.table.actions.edit.messages.saved');
+        return __('filament-support::actions/edit.single.messages.saved');
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
