@@ -151,7 +151,6 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return $record?->getAttributeValue(static::getRecordTitleAttribute()) ?? $record?->getKey();
     }
 
-
     /**
      * @deprecated Use `getModelLabel()` instead.
      */
