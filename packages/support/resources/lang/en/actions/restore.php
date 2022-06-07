@@ -32,7 +32,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Restore selected',
+            'heading' => 'Restore selected :label',
 
             'actions' => [
 

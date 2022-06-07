@@ -32,7 +32,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Force delete selected',
+            'heading' => 'Force delete selected :label',
 
             'actions' => [
 

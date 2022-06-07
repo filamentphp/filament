@@ -21,7 +21,7 @@ class ForceDeleteBulkAction extends BulkAction
 
         $this->label(__('filament-support::actions/force-delete.multiple.label'));
 
-        $this->modalHeading(__('filament-support::actions/force-delete.multiple.modal.heading'));
+        $this->modalHeading(fn (): string => __('filament-support::actions/force-delete.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
 
         $this->modalButton(__('filament-support::actions/force-delete.multiple.modal.actions.delete.label'));
 

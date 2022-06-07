@@ -60,13 +60,13 @@ class AssociateAction extends Action
                 /** @var HasMany $relationship */
                 $relationship = $this->getRelationship();
 
-                $recordToAssociate = $relationship->getRelated()->query()->find($data['recordId']);
+                $record = $relationship->getRelated()->query()->find($data['recordId']);
 
                 /** @var BelongsTo $inverseRelationship */
-                $inverseRelationship = $this->getInverseRelationshipFor($recordToAssociate);
+                $inverseRelationship = $this->getInverseRelationshipFor($record);
 
                 $inverseRelationship->associate($relationship->getParent());
-                $recordToAssociate->save();
+                $record->save();
             });
 
             if ($arguments['another'] ?? false) {

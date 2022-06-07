@@ -62,10 +62,10 @@ class AttachAction extends Action
                 /** @var BelongsToMany $relationship */
                 $relationship = $this->getRelationship();
 
-                $recordToAttach = $relationship->getRelated()->query()->find($data['recordId']);
+                $record = $relationship->getRelated()->query()->find($data['recordId']);
 
                 $relationship->attach(
-                    $recordToAttach,
+                    $record,
                     Arr::only($data, $relationship->getPivotColumns()),
                 );
             });
