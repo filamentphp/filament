@@ -17,6 +17,9 @@ trait CanDeleteRecords
         return $this->can('deleteAny');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function delete(): void
     {
         $this->callHook('beforeDelete');
@@ -30,11 +33,17 @@ trait CanDeleteRecords
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getDeletedNotificationMessage(): ?string
     {
         return __('filament-support::actions/delete.single.messages.deleted');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function bulkDelete(): void
     {
         $this->callHook('beforeBulkDelete');
@@ -48,6 +57,9 @@ trait CanDeleteRecords
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getBulkDeletedNotificationMessage(): ?string
     {
         return __('filament-support::actions/delete.multiple.messages.deleted');

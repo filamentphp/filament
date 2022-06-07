@@ -116,6 +116,9 @@ class EditRecord extends Page implements HasFormActions, HasRecord
         ]);
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function delete(): void
     {
         abort_unless(static::getResource()::canDelete($this->record), 403);

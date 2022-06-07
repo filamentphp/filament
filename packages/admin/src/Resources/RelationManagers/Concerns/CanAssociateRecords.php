@@ -16,8 +16,14 @@ trait CanAssociateRecords
 {
     protected ?Form $resourceAssociateForm = null;
 
+    /**
+     * @deprecated Use `->disableAssociateAnother()` on the action instead.
+     */
     protected static bool $canAssociateAnother = true;
 
+    /**
+     * @deprecated Use `->preloadRecordSelect()` on the action instead.
+     */
     protected static bool $shouldPreloadAssociateFormRecordSelectOptions = false;
 
     protected static bool $hasAssociateAction = false;
@@ -32,11 +38,17 @@ trait CanAssociateRecords
         return $this->hasAssociateAction() && $this->can('associate');
     }
 
+    /**
+     * @deprecated Use `->disableAssociateAnother()` on the action instead.
+     */
     protected static function canAssociateAnother(): bool
     {
         return static::$canAssociateAnother;
     }
 
+    /**
+     * @deprecated Use `->disableAssociateAnother()` on the action instead.
+     */
     public static function disableAssociateAnother(): void
     {
         static::$canAssociateAnother = false;
@@ -58,6 +70,9 @@ trait CanAssociateRecords
         return $this->resourceAssociateForm;
     }
 
+    /**
+     * @deprecated Use `->recordSelect()` on the action instead.
+     */
     protected static function getAssociateFormRecordSelect(): Select
     {
         return Select::make('recordId')
@@ -143,6 +158,9 @@ trait CanAssociateRecords
         return $this->getResourceAssociateForm()->getSchema();
     }
 
+    /**
+     * @deprecated Use `->mountUsing()` on the action instead.
+     */
     protected function fillAssociateForm(): void
     {
         $this->callHook('beforeFill');
@@ -154,6 +172,9 @@ trait CanAssociateRecords
         $this->callHook('afterAssociateFill');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function associate(bool $another = false): void
     {
         $form = $this->getMountedTableActionForm();

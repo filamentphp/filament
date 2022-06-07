@@ -18,6 +18,9 @@ trait CanDetachRecords
         return $this->can('detachAny');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function detach(): void
     {
         $this->callHook('beforeDetach');
@@ -40,11 +43,17 @@ trait CanDetachRecords
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getDetachedNotificationMessage(): ?string
     {
         return __('filament-support::actions/detach.single.messages.detached');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function bulkDetach(): void
     {
         $this->callHook('beforeBulkDetach');
@@ -69,6 +78,9 @@ trait CanDetachRecords
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getBulkDetachedNotificationMessage(): ?string
     {
         return __('filament-support::actions/detach.multiple.messages.detached');

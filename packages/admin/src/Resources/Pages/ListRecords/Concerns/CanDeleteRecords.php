@@ -21,6 +21,9 @@ trait CanDeleteRecords
             ->authorize(fn (Model $record): bool => $resource::canDelete($record));
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function delete(): void
     {
         $this->callHook('beforeDelete');
@@ -34,11 +37,17 @@ trait CanDeleteRecords
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getDeletedNotificationMessage(): ?string
     {
         return __('filament-support::actions/delete.single.messages.deleted');
     }
 
+    /**
+     * @deprecated Use `->using()` on the action instead.
+     */
     protected function handleRecordDeletion(Model $record): void
     {
         $record->delete();
