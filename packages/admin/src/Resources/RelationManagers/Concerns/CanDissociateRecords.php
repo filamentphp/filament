@@ -32,6 +32,9 @@ trait CanDissociateRecords
         return $this->hasDissociateBulkAction() && $this->can('dissociateAny');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function dissociate(): void
     {
         $this->callHook('beforeDissociate');
@@ -51,11 +54,17 @@ trait CanDissociateRecords
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getDissociatedNotificationMessage(): ?string
     {
         return __('filament-support::actions/dissociate.single.messages.dissociated');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function bulkDissociate(): void
     {
         $this->callHook('beforeBulkDissociate');
@@ -75,6 +84,9 @@ trait CanDissociateRecords
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getBulkDissociatedNotificationMessage(): ?string
     {
         return __('filament-support::actions/dissociate.multiple.messages.dissociated');

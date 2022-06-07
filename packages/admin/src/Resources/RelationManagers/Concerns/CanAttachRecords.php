@@ -17,8 +17,14 @@ trait CanAttachRecords
 {
     protected ?Form $resourceAttachForm = null;
 
+    /**
+     * @deprecated Use `->disableAttachAnother()` on the action instead.
+     */
     protected static bool $canAttachAnother = true;
 
+    /**
+     * @deprecated Use `->preloadRecordSelect()` on the action instead.
+     */
     protected static bool $shouldPreloadAttachFormRecordSelectOptions = false;
 
     protected function canAttach(): bool
@@ -26,11 +32,17 @@ trait CanAttachRecords
         return $this->can('attach');
     }
 
+    /**
+     * @deprecated Use `->disableAttachAnother()` on the action instead.
+     */
     protected static function canAttachAnother(): bool
     {
         return static::$canAttachAnother;
     }
 
+    /**
+     * @deprecated Use `->disableAttachAnother()` on the action instead.
+     */
     public static function disableAttachAnother(): void
     {
         static::$canAttachAnother = false;
@@ -52,6 +64,9 @@ trait CanAttachRecords
         return $this->resourceAttachForm;
     }
 
+    /**
+     * @deprecated Use `->recordSelect()` on the action instead.
+     */
     protected static function getAttachFormRecordSelect(): Select
     {
         return Select::make('recordId')
@@ -149,6 +164,9 @@ trait CanAttachRecords
         return $this->getResourceAttachForm()->getSchema();
     }
 
+    /**
+     * @deprecated Use `->mountUsing()` on the action instead.
+     */
     protected function fillAttachForm(): void
     {
         $this->callHook('beforeFill');
@@ -160,6 +178,9 @@ trait CanAttachRecords
         $this->callHook('afterAttachFill');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function attach(bool $another = false): void
     {
         $form = $this->getMountedTableActionForm();
@@ -193,6 +214,9 @@ trait CanAttachRecords
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getAttachedNotificationMessage(): ?string
     {
         return __('filament-support::actions/attach.single.messages.attached');

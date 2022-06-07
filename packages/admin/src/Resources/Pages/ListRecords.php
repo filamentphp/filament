@@ -108,6 +108,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->action(fn () => $this->bulkDelete());
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function bulkDelete(): void
     {
         $this->callHook('beforeBulkDelete');
@@ -126,6 +129,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return __('filament::resources/pages/list-records.table.bulk_actions.delete.messages.deleted');
     }
 
+    /**
+     * @deprecated Use `->using()` on the action instead.
+     */
     protected function handleRecordBulkDeletion(Collection $records): void
     {
         $records->each(fn (Model $record) => $record->delete());

@@ -31,6 +31,9 @@ trait CanViewRecords
         return $this->getResourceForm(columns: 2, isDisabled: true)->getSchema();
     }
 
+    /**
+     * @deprecated Use `->mountUsing()` on the action instead.
+     */
     protected function fillViewForm(): void
     {
         $this->callHook('beforeFill');

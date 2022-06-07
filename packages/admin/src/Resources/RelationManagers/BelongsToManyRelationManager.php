@@ -56,6 +56,9 @@ class BelongsToManyRelationManager extends RelationManager
         return $this->resourceTable;
     }
 
+    /**
+     * @deprecated Use `->using()` on the action instead.
+     */
     protected function handleRecordCreation(array $data): Model
     {
         /** @var BelongsToMany $relationship */
@@ -72,6 +75,9 @@ class BelongsToManyRelationManager extends RelationManager
         return $record;
     }
 
+    /**
+     * @deprecated Use `->using()` on the action instead.
+     */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         /** @var BelongsToMany $relationship */

@@ -32,6 +32,9 @@ trait CanEditRecords
         return $this->getResourceForm(columns: 2)->getSchema();
     }
 
+    /**
+     * @deprecated Use `->mountUsing()` on the action instead.
+     */
     protected function fillEditForm(): void
     {
         $this->callHook('beforeFill');
@@ -47,11 +50,17 @@ trait CanEditRecords
         $this->callHook('afterEditFill');
     }
 
+    /**
+     * @deprecated Use `->mutateRecordDataUsing()` on the action instead.
+     */
     protected function mutateFormDataBeforeFill(array $data): array
     {
         return $data;
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function save(): void
     {
         $this->callHook('beforeValidate');
@@ -75,11 +84,17 @@ trait CanEditRecords
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getSavedNotificationMessage(): ?string
     {
         return __('filament-support::actions/edit.single.messages.saved');
     }
 
+    /**
+     * @deprecated Use `->using()` on the action instead.
+     */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $record->update($data);
@@ -87,6 +102,9 @@ trait CanEditRecords
         return $record;
     }
 
+    /**
+     * @deprecated Use `->mutateFormDataUsing()` on the action instead.
+     */
     protected function mutateFormDataBeforeSave(array $data): array
     {
         return $data;

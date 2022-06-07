@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 trait CanCreateRecords
 {
+    /**
+     * @deprecated Use `->disableCreateAnother()` on the action instead.
+     */
     protected static bool $canCreateAnother = true;
 
     protected function canCreate(): bool
@@ -14,11 +17,17 @@ trait CanCreateRecords
         return $this->can('create');
     }
 
+    /**
+     * @deprecated Use `->disableCreateAnother()` on the action instead.
+     */
     protected static function canCreateAnother(): bool
     {
         return static::$canCreateAnother;
     }
 
+    /**
+     * @deprecated Use `->disableCreateAnother()` on the action instead.
+     */
     public static function disableCreateAnother(): void
     {
         static::$canCreateAnother = false;
@@ -29,6 +38,9 @@ trait CanCreateRecords
         return $this->getResourceForm(columns: 2)->getSchema();
     }
 
+    /**
+     * @deprecated Use `->mountUsing()` on the action instead.
+     */
     protected function fillCreateForm(): void
     {
         $this->callHook('beforeFill');
@@ -40,6 +52,9 @@ trait CanCreateRecords
         $this->callHook('afterCreateFill');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function create(bool $another = false): void
     {
         $form = $this->getMountedTableActionForm();
@@ -77,21 +92,33 @@ trait CanCreateRecords
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getCreatedNotificationMessage(): ?string
     {
         return __('filament-support::actions/create.single.messages.created');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function createAnother(): void
     {
         $this->create(another: true);
     }
 
+    /**
+     * @deprecated Use `->using()` on the action instead.
+     */
     protected function handleRecordCreation(array $data): Model
     {
         return $this->getRelationship()->create($data);
     }
 
+    /**
+     * @deprecated Use `->mutateFormDataUsing()` on the action instead.
+     */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         return $data;
