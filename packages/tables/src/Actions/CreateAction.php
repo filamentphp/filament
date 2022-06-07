@@ -4,10 +4,14 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Arr;
 
 class CreateAction extends Action
 {
+    use CanCustomizeProcess;
     use Concerns\InteractsWithRelationship;
 
     protected bool | Closure $isCreateAnotherDisabled = false;
@@ -30,7 +34,7 @@ class CreateAction extends Action
         $this->extraModalActions(function (CreateAction $action): array {
             return $action->isCreateAnotherDisabled() ? [] : [
                 $this->makeExtraModalAction('createAnother', ['another' => true])
-                    ->label(__('filament-support::actions/create.single.modal.actions.create_and_create_another.label')),
+                    ->label(__('filament-support::actions/create.single.modal.actions.create_another.label')),
             ];
         });
 
@@ -38,14 +42,31 @@ class CreateAction extends Action
 
         $this->button();
 
-        $this->action(static function (CreateAction $action, array $data, ComponentContainer $form, HasTable $livewire): void {
+        $this->action(static function (CreateAction $action, ComponentContainer $form, HasTable $livewire): void {
             $model = $action->getModel();
 
-            if ($relationship = $action->getRelationship()) {
-                $record = $relationship->create($data);
-            } else {
-                $record = $action->getModel()::create($data);
-            }
+            $record = $action->process(static function (array $data) use ($action, $model) {
+                if ($relationship = $action->getRelationship()) {
+                    if ($relationship instanceof BelongsToMany) {
+                        $pivotColumns = $relationship->getPivotColumns();
+                        $data = Arr::except($data, $pivotColumns);
+                    }
+
+                    $record = $relationship->create($data);
+
+                    if ($relationship instanceof BelongsToMany) {
+                        $pivotData = Arr::only($data, $pivotColumns);
+
+                        if (count($pivotColumns)) {
+                            $record->{$relationship->getPivotAccessor()}->update($pivotData);
+                        }
+                    }
+
+                    return $record;
+                }
+
+                return $model::create($data);
+            });
 
             $form->model($record)->saveRelationships();
 

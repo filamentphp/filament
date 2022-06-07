@@ -20,7 +20,7 @@ return [
                         'label' => 'Cipta',
                     ],
 
-                    'create_and_create_another' => [
+                    'create_another' => [
                         'label' => 'Cipta & cipta yang lain',
                     ],
 

@@ -20,7 +20,7 @@ return [
                         'label' => 'Aanmaken',
                     ],
 
-                    'create_and_create_another' => [
+                    'create_another' => [
                         'label' => 'Aanmaken & nog een aanmaken',
                     ],
 

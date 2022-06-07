@@ -198,11 +198,6 @@ trait CanAttachRecords
         return __('filament::resources/relation-managers/attach.action.messages.attached');
     }
 
-    public function attachAndAttachAnother(): void
-    {
-        $this->attach(another: true);
-    }
-
     protected function getAttachAction(): Tables\Actions\Action
     {
         return Tables\Actions\AttachAction::make()

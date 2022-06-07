@@ -24,7 +24,7 @@ return [
                     'label' => 'တွဲဘက်',
                 ],
 
-                'associate_and_associate_another' => [
+                'associate_another' => [
                     'label' => 'သိမ်းဆည်းပြီး နောက်တစ်ခုကို ဖန်တီးပါ',
                 ],
 

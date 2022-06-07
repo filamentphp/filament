@@ -24,7 +24,7 @@ return [
                     'label' => 'ارتباط',
                 ],
 
-                'associate_and_associate_another' => [
+                'associate_another' => [
                     'label' => 'ارتباط و ارتباط دیگر',
                 ],
 

@@ -24,7 +24,7 @@ return [
                     'label' => 'Gắn',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => 'Liên kết & tiếp tục liên kết với mục khác',
                 ],
 

@@ -24,7 +24,7 @@ return [
                     'label' => 'Ekle',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => 'Ekle ve başka bir tane ekle',
                 ],
 

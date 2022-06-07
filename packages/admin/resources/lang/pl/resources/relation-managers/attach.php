@@ -24,7 +24,7 @@ return [
                     'label' => 'Dołącz',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => 'Dołącz i dołącz kolejny',
                 ],
 

@@ -40,21 +40,9 @@ trait CanViewRecords
 
     protected function getViewAction(): Tables\Actions\Action
     {
-        return Tables\Actions\Action::make('view')
-            ->label(__('filament::resources/relation-managers/view.action.label'))
+        return Tables\Actions\ViewAction::make()
             ->form($this->getViewFormSchema())
             ->mountUsing(fn () => $this->fillViewForm())
-            ->modalCancelAction(
-                ModalAction::make('close')
-                    ->label(__('filament::resources/relation-managers/view.action.modal.actions.close.label'))
-                    ->cancel()
-                    ->color('secondary'),
-            )
-            ->modalActions(fn (Tables\Actions\Action $action): array => [$action->getModalCancelAction()])
-            ->modalHeading(__('filament::resources/relation-managers/view.action.modal.heading', ['label' => static::getModelLabel()]))
-            ->action(function () {
-            })
-            ->icon('heroicon-s-eye')
             ->authorize(fn (Model $record): bool => static::canView($record));
     }
 }

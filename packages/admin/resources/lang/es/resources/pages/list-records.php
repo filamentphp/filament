@@ -20,7 +20,7 @@ return [
                         'label' => 'Nuevo',
                     ],
 
-                    'create_and_create_another' => [
+                    'create_another' => [
                         'label' => 'Guardar y crear otro',
                     ],
 

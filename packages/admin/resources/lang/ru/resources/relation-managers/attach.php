@@ -24,7 +24,7 @@ return [
                     'label' => 'Прикрепить',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => 'Прикрепить и Прикрепить еще',
                 ],
 

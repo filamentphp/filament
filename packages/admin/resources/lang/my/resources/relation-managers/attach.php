@@ -24,7 +24,7 @@ return [
                     'label' => 'ပူးတွဲရန်',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => 'သိမ်းဆည်းပြီး နောက်တစ်ခုကို ဖန်တီးပါ',
                 ],
 

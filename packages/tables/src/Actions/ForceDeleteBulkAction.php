@@ -2,11 +2,14 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class ForceDeleteBulkAction extends BulkAction
 {
+    use CanCustomizeProcess;
+
     public static function make(string $name = 'forceDelete'): static
     {
         return parent::make($name);
@@ -30,8 +33,10 @@ class ForceDeleteBulkAction extends BulkAction
 
         $this->requiresConfirmation();
 
-        $this->action(static function (ForceDeleteBulkAction $action, Collection $records): void {
-            $records->each(fn (Model $record) => $record->forceDelete());
+        $this->action(static function (ForceDeleteBulkAction $action): void {
+            $action->process(static function (Collection $records): void {
+                $records->each(fn (Model $record) => $record->forceDelete());
+            });
 
             $action->success();
         });

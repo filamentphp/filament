@@ -24,7 +24,7 @@ return [
                     'label' => 'Attach',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => 'Attach & attach another',
                 ],
 

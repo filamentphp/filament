@@ -18,7 +18,7 @@ return [
                 'label' => 'ဖန်တီးပါ',
             ],
 
-            'create_and_create_another' => [
+            'create_another' => [
                 'label' => 'သိမ်းဆည်းပြီး နောက်တစ်ခုကို ဖန်တီးပါ',
             ],
 

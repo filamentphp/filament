@@ -24,7 +24,7 @@ return [
                     'label' => '紐づける',
                 ],
 
-                'associate_and_associate_another' => [
+                'associate_another' => [
                     'label' => '保存して、続けて紐づける',
                 ],
 

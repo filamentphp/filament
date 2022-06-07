@@ -24,7 +24,7 @@ return [
                     'label' => 'Verknüpfen',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => 'Verknüpfen & weiterer Eintrag',
                 ],
 

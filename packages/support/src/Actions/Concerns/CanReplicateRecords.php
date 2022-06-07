@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 
 trait CanReplicateRecords
 {
+    use CanCustomizeProcess;
+
     protected ?Closure $afterReplicaSavedCallback = null;
 
     protected ?Closure $beforeReplicaSavedCallback = null;
@@ -48,15 +50,19 @@ trait CanReplicateRecords
             $form->fill($record->toArray());
         });
 
-        $this->action(static function (Action | ReplicatesRecords $action, Model $record) {
-            $replica = $record->replicate($action->getExcludedAttributes());
+        $this->action(static function (Action | ReplicatesRecords $action) {
+            $result = $action->process(function (Model $record) use ($action) {
+                $replica = $record->replicate($action->getExcludedAttributes());
 
-            $action->callBeforeReplicaSaved($replica);
+                $action->callBeforeReplicaSaved($replica);
 
-            $replica->save();
+                $replica->save();
+
+                return $action->callAfterReplicaSaved($replica);
+            });
 
             try {
-                return $action->callAfterReplicaSaved($replica);
+                return $result;
             } finally {
                 $action->success();
             }

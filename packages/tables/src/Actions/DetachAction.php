@@ -2,10 +2,13 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class DetachAction extends Action
 {
+    use CanCustomizeProcess;
     use Concerns\InteractsWithRelationship;
 
     public static function make(string $name = 'detach'): static
@@ -31,8 +34,13 @@ class DetachAction extends Action
 
         $this->requiresConfirmation();
 
-        $this->action(static function (DetachAction $action, Model $record): void {
-            //
+        $this->action(static function (DetachAction $action): void {
+            $action->process(static function (Model $record) use ($action): void {
+                /** @var BelongsToMany $relationship */
+                $relationship = $this->getRelationship();
+
+                $record->{$relationship->getPivotAccessor()}->delete();
+            });
 
             $action->success();
         });

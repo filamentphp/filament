@@ -84,11 +84,7 @@ class BelongsToManyRelationManager extends RelationManager
         $record->update($data);
 
         if (count($pivotColumns)) {
-            if ($this->allowsDuplicates()) {
-                $record->{$relationship->getPivotAccessor()}->update($pivotData);
-            } else {
-                $relationship->updateExistingPivot($record, $pivotData);
-            }
+            $record->{$relationship->getPivotAccessor()}->update($pivotData);
         }
 
         return $record;

@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\DeleteAction;
+use Filament\Pages\Actions\ViewAction;
 use Filament\Pages\Contracts\HasFormActions;
 use Filament\Pages\Contracts\HasRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -157,10 +158,8 @@ class EditRecord extends Page implements HasFormActions, HasRecord
 
     protected function getViewAction(): Action
     {
-        return Action::make('view')
-            ->label(__('filament::resources/pages/edit-record.actions.view.label'))
-            ->url(fn () => static::getResource()::getUrl('view', ['record' => $this->record]))
-            ->color('secondary');
+        return ViewAction::make()
+            ->url(fn () => static::getResource()::getUrl('view', ['record' => $this->record]));
     }
 
     protected function getDeleteAction(): Action

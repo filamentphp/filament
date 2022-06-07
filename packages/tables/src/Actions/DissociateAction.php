@@ -2,10 +2,14 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class DissociateAction extends Action
 {
+    use CanCustomizeProcess;
     use Concerns\InteractsWithRelationship;
 
     public static function make(string $name = 'dissociate'): static
@@ -31,8 +35,14 @@ class DissociateAction extends Action
 
         $this->requiresConfirmation();
 
-        $this->action(static function (DissociateAction $action, Model $record): void {
-            //
+        $this->action(static function (DissociateAction $action): void {
+            $action->process(static function (Model $record) use ($action): void {
+                /** @var BelongsTo $inverseRelationship */
+                $inverseRelationship = $action->getInverseRelationshipFor($record);
+
+                $inverseRelationship->dissociate();
+                $record->save();
+            });
 
             $action->success();
         });

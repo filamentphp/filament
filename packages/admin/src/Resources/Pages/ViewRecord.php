@@ -4,6 +4,7 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
+use Filament\Pages\Actions\EditAction;
 use Filament\Pages\Contracts\HasRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -67,8 +68,7 @@ class ViewRecord extends Page implements HasRecord
 
     protected function getEditAction(): Action
     {
-        return Action::make('edit')
-            ->label(__('filament::resources/pages/view-record.actions.edit.label'))
+        return EditAction::make()
             ->url(fn () => static::getResource()::getUrl('edit', ['record' => $this->record]));
     }
 

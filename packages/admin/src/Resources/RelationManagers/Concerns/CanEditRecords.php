@@ -79,14 +79,10 @@ trait CanEditRecords
 
     protected function getEditAction(): Tables\Actions\Action
     {
-        return Tables\Actions\Action::make('edit')
-            ->label(__('filament::resources/relation-managers/edit.action.label'))
+        return Tables\Actions\EditAction::make()
             ->form($this->getEditFormSchema())
             ->mountUsing(fn () => $this->fillEditForm())
-            ->modalButton(__('filament::resources/relation-managers/edit.action.modal.actions.save.label'))
-            ->modalHeading(__('filament::resources/relation-managers/edit.action.modal.heading', ['label' => static::getModelLabel()]))
             ->action(fn () => $this->save())
-            ->icon('heroicon-s-pencil')
             ->authorize(fn (Model $record): bool => $this->canEdit($record));
     }
 }

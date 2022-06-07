@@ -24,7 +24,7 @@ return [
                     'label' => 'افزودن',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => 'افزودن و افزودن یکی دیگر',
                 ],
 

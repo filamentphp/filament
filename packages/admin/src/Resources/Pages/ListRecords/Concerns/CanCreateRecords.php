@@ -94,7 +94,7 @@ trait CanCreateRecords
         return __('filament::resources/pages/list-records.actions.create.messages.created');
     }
 
-    public function createAndCreateAnother(): void
+    public function createAnother(): void
     {
         $this->create(another: true);
     }

@@ -24,7 +24,7 @@ return [
                     'label' => '保存',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => '保存并附加另一个',
                 ],
 

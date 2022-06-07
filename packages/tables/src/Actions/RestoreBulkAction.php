@@ -2,11 +2,14 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class RestoreBulkAction extends BulkAction
 {
+    use CanCustomizeProcess;
+
     public static function make(string $name = 'restore'): static
     {
         return parent::make($name);
@@ -30,13 +33,15 @@ class RestoreBulkAction extends BulkAction
 
         $this->requiresConfirmation();
 
-        $this->action(static function (RestoreBulkAction $action, Collection $records): void {
-            $records->each(function (Model $record): void {
-                if (! method_exists($record, 'restore')) {
-                    return;
-                }
+        $this->action(static function (RestoreBulkAction $action): void {
+            $action->process(static function (Collection $records): void {
+                $records->each(function (Model $record): void {
+                    if (! method_exists($record, 'restore')) {
+                        return;
+                    }
 
-                $record->restore();
+                    $record->restore();
+                });
             });
 
             $action->success();

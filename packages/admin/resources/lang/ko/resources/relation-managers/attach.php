@@ -24,7 +24,7 @@ return [
                     'label' => '추가',
                 ],
 
-                'attach_and_attach_another' => [
+                'attach_another' => [
                     'label' => '계속 추가',
                 ],
 

@@ -24,7 +24,7 @@ return [
                     'label' => '关联',
                 ],
 
-                'associate_and_associate_another' => [
+                'associate_another' => [
                     'label' => '关联并关联另一个',
                 ],
 

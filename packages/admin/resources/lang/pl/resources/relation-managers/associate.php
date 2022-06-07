@@ -24,7 +24,7 @@ return [
                     'label' => 'Powiąż',
                 ],
 
-                'associate_and_associate_another' => [
+                'associate_another' => [
                     'label' => 'Powiąż i powiąż kolejny',
                 ],
 
