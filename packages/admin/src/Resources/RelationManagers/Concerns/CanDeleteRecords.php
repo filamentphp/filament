@@ -32,7 +32,7 @@ trait CanDeleteRecords
 
     protected function getDeletedNotificationMessage(): ?string
     {
-        return __('filament::resources/relation-managers/delete.action.messages.deleted');
+        return __('filament-support::actions/delete.single.messages.deleted');
     }
 
     public function bulkDelete(): void
@@ -50,7 +50,7 @@ trait CanDeleteRecords
 
     protected function getBulkDeletedNotificationMessage(): ?string
     {
-        return __('filament::resources/relation-managers/delete.bulk_action.messages.deleted');
+        return __('filament-support::actions/delete.multiple.messages.deleted');
     }
 
     protected function getDeleteAction(): Tables\Actions\Action

@@ -55,7 +55,7 @@ trait CanAttachRecords
     protected static function getAttachFormRecordSelect(): Select
     {
         return Select::make('recordId')
-            ->label(__('filament::resources/relation-managers/attach.action.modal.fields.record_id.label'))
+            ->label(__('filament-support::actions/attach.single.modal.fields.record_id.label'))
             ->searchable()
             ->getSearchResultsUsing(static function (Select $component, BelongsToManyRelationManager $livewire, string $searchQuery): array {
                 /** @var BelongsToMany $relationship */
@@ -195,7 +195,7 @@ trait CanAttachRecords
 
     protected function getAttachedNotificationMessage(): ?string
     {
-        return __('filament::resources/relation-managers/attach.action.messages.attached');
+        return __('filament-support::actions/attach.single.messages.attached');
     }
 
     protected function getAttachAction(): Tables\Actions\Action

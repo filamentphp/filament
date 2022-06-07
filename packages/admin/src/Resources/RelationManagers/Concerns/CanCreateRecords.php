@@ -79,7 +79,7 @@ trait CanCreateRecords
 
     protected function getCreatedNotificationMessage(): ?string
     {
-        return __('filament::resources/relation-managers/create.action.messages.created');
+        return __('filament-support::actions/create.single.messages.created');
     }
 
     public function createAnother(): void

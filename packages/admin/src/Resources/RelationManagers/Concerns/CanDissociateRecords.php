@@ -53,7 +53,7 @@ trait CanDissociateRecords
 
     protected function getDissociatedNotificationMessage(): ?string
     {
-        return __('filament::resources/relation-managers/dissociate.action.messages.dissociated');
+        return __('filament-support::actions/dissociate.single.messages.dissociated');
     }
 
     public function bulkDissociate(): void
@@ -77,7 +77,7 @@ trait CanDissociateRecords
 
     protected function getBulkDissociatedNotificationMessage(): ?string
     {
-        return __('filament::resources/relation-managers/dissociate.bulk_action.messages.dissociated');
+        return __('filament-support::actions/dissociate.multiple.messages.dissociated');
     }
 
     protected function getDissociateAction(): Tables\Actions\Action
