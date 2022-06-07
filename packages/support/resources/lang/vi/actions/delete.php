@@ -7,7 +7,17 @@ return [
         'label' => 'Xóa',
 
         'modal' => [
+
             'heading' => 'Xóa :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Xóa',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

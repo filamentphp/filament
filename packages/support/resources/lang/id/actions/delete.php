@@ -7,7 +7,17 @@ return [
         'label' => 'Hapus',
 
         'modal' => [
+
             'heading' => 'Hapus :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Hapus',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

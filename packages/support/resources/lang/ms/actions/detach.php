@@ -7,7 +7,17 @@ return [
         'label' => 'Tanggalkan',
 
         'modal' => [
+
             'heading' => 'Tanggalkan :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Tanggalkan',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

@@ -7,7 +7,17 @@ return [
         'label' => 'Lepas lampiran',
 
         'modal' => [
+
             'heading' => 'Lepas lampiran :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Lepas lampiran',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

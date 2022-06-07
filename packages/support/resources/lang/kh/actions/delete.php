@@ -7,7 +7,17 @@ return [
         'label' => 'លុប',
 
         'modal' => [
+
             'heading' => 'លុប :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'លុប',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

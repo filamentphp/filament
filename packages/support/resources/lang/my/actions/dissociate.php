@@ -7,7 +7,17 @@ return [
         'label' => 'သီးခြား',
 
         'modal' => [
+
             'heading' => ':label သီးခြား',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'သီးခြား',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

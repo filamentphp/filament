@@ -7,7 +7,17 @@ return [
         'label' => 'Відокремити',
 
         'modal' => [
+
             'heading' => 'Відокремлено :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Відокремити',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

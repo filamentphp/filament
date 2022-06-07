@@ -7,7 +7,17 @@ return [
         'label' => 'Verwijderen',
 
         'modal' => [
+
             'heading' => 'Verwijder :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Verwijderen',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

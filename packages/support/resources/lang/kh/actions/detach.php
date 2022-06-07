@@ -7,7 +7,17 @@ return [
         'label' => 'ផ្ដាច់',
 
         'modal' => [
+
             'heading' => 'ផ្ដាច់ :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'ផ្ដាច់',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

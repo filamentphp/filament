@@ -7,7 +7,17 @@ return [
         'label' => 'Hủy liên kết',
 
         'modal' => [
+
             'heading' => 'Hủy liên kết :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Hủy liên kết',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

@@ -7,7 +7,17 @@ return [
         'label' => 'لێکردنەوە',
 
         'modal' => [
+
             'heading' => 'لێکردنەوەی :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'لێکردنەوە',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

@@ -7,7 +7,17 @@ return [
         'label' => 'Koppla loss',
 
         'modal' => [
+
             'heading' => 'Koppla loss :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Koppla loss',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

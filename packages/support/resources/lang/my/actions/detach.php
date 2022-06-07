@@ -7,7 +7,17 @@ return [
         'label' => 'ခွဲထုတ်ပါ',
 
         'modal' => [
+
             'heading' => ':label ခွဲထုတ်ပါ။',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'ခွဲထုတ်ပါ',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

@@ -7,7 +7,17 @@ return [
         'label' => 'فك الارتباط',
 
         'modal' => [
+
             'heading' => 'فك ربط :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'فك الارتباط',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

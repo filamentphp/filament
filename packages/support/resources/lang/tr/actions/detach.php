@@ -7,7 +7,17 @@ return [
         'label' => 'Ayır',
 
         'modal' => [
+
             'heading' => ':label Ayır',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Ayır',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

@@ -7,7 +7,17 @@ return [
         'label' => 'فصل',
 
         'modal' => [
+
             'heading' => 'فصل :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'فصل',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

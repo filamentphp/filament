@@ -7,7 +7,17 @@ return [
         'label' => 'Padam',
 
         'modal' => [
+
             'heading' => 'Padam :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Padam',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

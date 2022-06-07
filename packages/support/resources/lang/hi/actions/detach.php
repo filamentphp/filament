@@ -7,7 +7,17 @@ return [
         'label' => 'अलग करें',
 
         'modal' => [
+
             'heading' => ':label अलग करें',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'अलग करें',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

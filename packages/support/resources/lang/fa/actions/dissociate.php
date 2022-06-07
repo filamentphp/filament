@@ -7,7 +7,17 @@ return [
         'label' => 'جداکردن',
 
         'modal' => [
+
             'heading' => 'جداکردن :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'جداکردن',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

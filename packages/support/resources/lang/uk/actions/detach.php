@@ -7,7 +7,17 @@ return [
         'label' => 'Від’єднати',
 
         'modal' => [
+
             'heading' => 'Від’єднати :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Від’єднати',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

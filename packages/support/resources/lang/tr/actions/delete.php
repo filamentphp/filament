@@ -7,7 +7,17 @@ return [
         'label' => 'Sil',
 
         'modal' => [
+
             'heading' => 'Sil: :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Sil',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

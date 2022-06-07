@@ -7,7 +7,17 @@ return [
         'label' => 'Usuń powiązanie',
 
         'modal' => [
+
             'heading' => 'Usuń powiązanie :label',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Usuń powiązanie',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

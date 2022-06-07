@@ -7,7 +7,17 @@ return [
         'label' => 'Löschen',
 
         'modal' => [
+
             'heading' => ':label löschen',
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Löschen',
+                ],
+
+            ],
+
         ],
 
         'messages' => [
