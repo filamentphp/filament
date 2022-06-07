@@ -22,6 +22,9 @@ class Resource
 
     protected static bool $isGloballySearchable = true;
 
+    /**
+     * @deprecated Use `$modelLabel` instead.
+     */
     protected static ?string $label = null;
 
     protected static ?string $modelLabel = null;
@@ -40,6 +43,9 @@ class Resource
 
     protected static bool $shouldRegisterNavigation = true;
 
+    /**
+     * @deprecated Use `$pluralModelLabel` instead.
+     */
     protected static ?string $pluralLabel = null;
 
     protected static ?string $pluralModelLabel = null;
@@ -239,6 +245,9 @@ class Resource
             ->filter();
     }
 
+    /**
+     * @deprecated Use `getModelLabel()` instead.
+     */
     public static function getLabel(): ?string
     {
         return static::$label;
@@ -261,6 +270,9 @@ class Resource
         return [];
     }
 
+    /**
+     * @deprecated Use `getPluralModelLabel()` instead.
+     */
     public static function getPluralLabel(): ?string
     {
         return static::$pluralLabel;

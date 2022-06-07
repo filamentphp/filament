@@ -30,8 +30,14 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected ?Table $resourceTable = null;
 
+    /**
+     * @deprecated Use `$modelLabel` instead.
+     */
     protected static ?string $label = null;
 
+    /**
+     * @deprecated Use `$pluralModelLabel` instead.
+     */
     protected static ?string $pluralLabel = null;
 
     protected static ?string $modelLabel = null;
@@ -145,6 +151,10 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return $record?->getAttributeValue(static::getRecordTitleAttribute()) ?? $record?->getKey();
     }
 
+
+    /**
+     * @deprecated Use `getModelLabel()` instead.
+     */
     protected static function getRecordLabel(): ?string
     {
         return static::$label;
@@ -155,6 +165,9 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return static::$modelLabel ?? static::getRecordLabel() ?? Str::singular(static::getPluralModelLabel());
     }
 
+    /**
+     * @deprecated Use `getPluralModelLabel()` instead.
+     */
     protected static function getPluralRecordLabel(): ?string
     {
         return static::$pluralLabel;
