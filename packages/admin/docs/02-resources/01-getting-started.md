@@ -454,6 +454,15 @@ The `$navigationIcon` property supports the name of any Blade component. By defa
 protected static ?string $navigationIcon = 'heroicon-o-user-group';
 ```
 
+Alternatively, you may set a dynamic navigation icon in the `getNavigationIcon()` method:
+
+```php
+public static function getNavigationIcon(): string
+{
+    return 'heroicon-o-user-group';
+}
+```
+
 ### Sorting navigation items
 
 The `$navigationSort` property allows you to specify the order in which navigation items are listed:
