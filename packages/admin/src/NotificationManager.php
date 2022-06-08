@@ -12,13 +12,13 @@ class NotificationManager
 
     public function notify(string $status, string $message): void
     {
-        session()->push('notifications', [
+        session()->push('filament.notifications', [
             'id' => uniqid(),
             'status' => $status,
             'message' => $message,
         ]);
 
-        $this->notifications = session()->get('notifications');
+        $this->notifications = session()->get('filament.notifications');
     }
 
     public function handleLivewireResponses(Component $component, Response $response): Response
@@ -32,7 +32,7 @@ class NotificationManager
         }
 
         $notifications = $this->notifications;
-        session()->forget('notifications');
+        session()->forget('filament.notifications');
 
         if (count($notifications) > 0) {
             $component->dispatchBrowserEvent('notify', $notifications);

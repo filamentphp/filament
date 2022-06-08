@@ -20,7 +20,6 @@ protected function mutateFormDataBeforeCreate(array $data): array
 You can tweak how the record is created using the `handleRecordCreation()` method:
 
 ```php
-
 use Illuminate\Database\Eloquent\Model;
 
 protected function handleRecordCreation(array $data): Model

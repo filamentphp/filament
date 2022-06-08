@@ -12,6 +12,7 @@ class Repeater extends Field
 {
     use Concerns\CanBeCollapsed;
     use Concerns\CanLimitItemsLength;
+    use Concerns\HasContainerGridLayout;
 
     protected string $view = 'forms::components.repeater';
 

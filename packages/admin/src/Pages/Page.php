@@ -7,12 +7,13 @@ use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Http\Livewire\Concerns\CanNotify;
 use Filament\Navigation\NavigationItem;
+use Filament\Tables\Contracts\RendersFormComponentActionModal;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class Page extends Component implements Forms\Contracts\HasForms
+class Page extends Component implements Forms\Contracts\HasForms, RendersFormComponentActionModal
 {
     use CanNotify;
     use Concerns\HasActions;

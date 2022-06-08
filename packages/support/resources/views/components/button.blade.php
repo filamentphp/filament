@@ -104,6 +104,7 @@
         @elseif ($hasLoadingIndicator)
             <x-filament-support::loading-indicator
                 wire:loading.delay
+                x-cloak
                 :wire:target="$loadingIndicatorTarget"
                 :class="$iconClasses"
             />
@@ -113,10 +114,11 @@
             @if (($type === 'submit') && filled($form))
                 <x-filament-support::loading-indicator
                     x-show="isUploadingFile"
+                    x-cloak
                     :class="$iconClasses"
                 />
 
-                <span x-show="isUploadingFile">
+                <span x-show="isUploadingFile" x-cloak>
                     {{ __('filament-support::components/button.messages.uploading_file') }}
                 </span>
 
