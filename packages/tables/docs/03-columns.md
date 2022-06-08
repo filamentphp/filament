@@ -318,6 +318,14 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('created_at')->dateTime()
 ```
 
+You may use the `since()` method to format the column's state using [briannesbitt/Carbon  `diffForHumans`](https://carbon.nesbot.com/docs/#api-humandiff):
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('created_at')->since('Asia/Kolkata')
+```
+
 The `money()` method allows you to easily format monetary values, in any currency. This functionality uses [`akaunting/laravel-money`](https://github.com/akaunting/laravel-money) internally:
 
 ```php
