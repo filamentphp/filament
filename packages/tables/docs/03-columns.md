@@ -447,6 +447,16 @@ use Filament\Tables\Columns\ImageColumn;
 ImageColumn::make('header_image')->visibility('private')
 ```
 
+You may customize the extra attributes of image using `extraImgAttributes`
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ ImageColumn::make('logo')
+    ->extraAttributes(['class' => 'flex items-center h-16 w-32'])
+    ->extraImgAttributes(['class' => 'object-contain w-full h-full']),
+```
+
 ## Icon column
 
 Icon columns render a Blade icon component representing their contents:
