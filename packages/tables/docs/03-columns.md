@@ -540,6 +540,49 @@ BadgeColumn::make('status')
     ])
 ```
 
+Badges may also have a icon :
+
+```php
+use Filament\Tables\Columns\BadgeColumn;
+
+BadgeColumn::make('status')
+    ->icons([
+        'heroicon-o-x',
+        'heroicon-o-document' => 'draft',
+        'heroicon-o-refresh' => 'reviewing',
+        'heroicon-o-truck' => 'published',
+    ])
+```
+
+You may instead activate a icon using a callback, accepting the cell's `$state`:
+
+```php
+use Filament\Tables\Columns\BadgeColumn;
+
+BadgeColumn::make('status')
+    ->icons([
+        'heroicon-o-x',
+        'heroicon-o-document' => fn ($state): bool => $state === 'draft',
+        'heroicon-o-refresh' => fn ($state): bool => $state === 'reviewing',
+        'heroicon-o-truck' => fn ($state): bool => $state === 'published',
+    ])
+```
+
+You may also position a icon using `iconPosition()`:
+
+```php
+use Filament\Tables\Columns\BadgeColumn;
+
+BadgeColumn::make('status')
+    ->icons([
+        'heroicon-o-x',
+        'heroicon-o-document' => fn ($state): bool => $state === 'draft',
+        'heroicon-o-refresh' => fn ($state): bool => $state === 'reviewing',
+        'heroicon-o-truck' => fn ($state): bool => $state === 'published',
+    ])
+    ->iconPosition('after | before')
+```
+
 ## Tags column
 
 Tags columns render a list of tags from an array:
