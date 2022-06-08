@@ -82,7 +82,7 @@ This is required for features like [global search](global-search) to work.
 
 ## Forms
 
-Resource classes contain a static `form()` method that is used to build the forms on the create and Edit pages:
+Resource classes contain a static `form()` method that is used to build the forms on the Create and Edit pages:
 
 ```php
 use Filament\Forms;
