@@ -1,15 +1,15 @@
 @props([
     'actions',
     'color' => 'secondary',
-    'icon' => 'heroicon-o-dots-vertical',
     'darkMode' => false,
-    'tooltip' => null,
+    'icon' => 'heroicon-o-dots-vertical',
     'label' => __('filament-support::actions/group.trigger.label'),
+    'tooltip' => null,
 ])
 
-<div x-data="{ isOpen: false }" class="relative">
+<div x-data="{ isOpen: false }" {{ $attributes->class(['relative']) }}>
     <x-filament-support::icon-button
-        x-on:click="isOpen = !isOpen"
+        x-on:click="isOpen = ! isOpen"
         :color="$color"
         :dark-mode="$darkMode"
         :icon="$icon"
@@ -26,10 +26,10 @@
         x-on:click.away="isOpen = false"
         x-transition
         x-cloak
-        {{ $attributes->class([
+        @class([
             'absolute right-0 rtl:left-0 z-20 mt-4 shadow-xl ring-1 ring-gray-900/10 overflow-hidden rounded-xl w-52 filament-action-group-dropdown',
             'dark:ring-white/20' => $darkMode,
-        ]) }}
+        ])
     >
         <ul @class([
             'py-1 space-y-1 bg-white shadow rounded-xl',

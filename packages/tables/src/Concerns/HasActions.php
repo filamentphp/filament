@@ -186,26 +186,34 @@ trait HasActions
 
     protected function getCachedTableAction(string $name): ?Action
     {
+        return $this->findTableAction($name)?->record($this->getMountedTableActionRecord());
+    }
+
+    protected function findTableAction(string $name): ?Action
+    {
         $actions = $this->getCachedTableActions();
+
         $action = $actions[$name] ?? null;
 
-        if ($action === null) {
-            foreach ($actions as $action) {
-                if (! $action instanceof ActionGroup) {
-                    continue;
-                }
-
-                if ($groupedAction = $action->getActions()[$name] ?? null) {
-                    $action = $groupedAction;
-
-                    break;
-                }
-            }
+        if ($action) {
+            return $action;
         }
 
-        $action?->record($this->getMountedTableActionRecord());
+        foreach ($actions as $action) {
+            if (! $action instanceof ActionGroup) {
+                continue;
+            }
 
-        return $action;
+            $groupedAction = $action->getActions()[$name] ?? null;
+
+            if (! $groupedAction) {
+                continue;
+            }
+
+            return $groupedAction;
+        }
+
+        return null;
     }
 
     protected function getTableActions(): array
