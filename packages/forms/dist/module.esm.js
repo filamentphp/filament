@@ -21903,6 +21903,7 @@ var file_upload_default = (Alpine) => {
       init: async function() {
         this.pond = create$f(this.$refs.input, {
           acceptedFileTypes,
+          allowPaste: false,
           allowReorder: canReorder,
           allowImagePreview: canPreview,
           allowVideoPreview: canPreview,
