@@ -13,7 +13,7 @@ use Filament\Support\Actions\Contracts\HasRecord;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Model;
 
-class Action extends BaseAction implements HasRecord, CanBeGrouped
+class Action extends BaseAction implements CanBeGrouped, HasRecord
 {
     use CanBeDisabled;
     use CanBeOutlined;
