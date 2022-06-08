@@ -90,7 +90,7 @@
                     x-on:click="if (getStepIndex(step) > {{ $loop->index }}) step = '{{ $step->getId() }}'"
                     x-bind:aria-current="getStepIndex(step) === {{ $loop->index }} ? 'step' : null"
                     x-bind:class="{
-                        'cursor-not-allowed': getStepIndex(step) <= {{ $loop->index }},
+                        'cursor-not-allowed pointer-events-none': getStepIndex(step) <= {{ $loop->index }},
                     }"
                     role="step"
                     class="flex items-center h-full text-left w-full"

@@ -17,7 +17,7 @@
     $buttonClasses = array_merge([
         'inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset filament-button',
         'dark:focus:ring-offset-0' => $darkMode,
-        'opacity-70 cursor-not-allowed' => $disabled,
+        'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
         'h-9 px-4 text-sm' => $size === 'md',
         'h-8 px-3 text-sm' => $size === 'sm',
         'h-11 px-6 text-lg' => $size === 'lg',
