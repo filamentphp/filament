@@ -29,7 +29,6 @@ class Action extends BaseAction implements Groupable, HasRecord
     use HasTooltip;
     use InteractsWithRecord {
         getRecord as getBaseRecord;
-        getRecordTitle as getBaseRecordTitle;
     }
 
     protected string $view = 'filament::pages.actions.button-action';
