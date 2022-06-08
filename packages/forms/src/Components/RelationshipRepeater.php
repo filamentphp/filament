@@ -18,6 +18,8 @@ class RelationshipRepeater extends Repeater
 
     protected string | Closure | null $relationship = null;
 
+    protected ?Closure $modifyRelationshipQueryUsing = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -107,9 +109,10 @@ class RelationshipRepeater extends Repeater
         return $this;
     }
 
-    public function relationship(string | Closure $name): static
+    public function relationship(string | Closure $name, ?Closure $callback = null): static
     {
         $this->relationship = $name;
+        $this->modifyRelationshipQueryUsing = $callback;
 
         return $this;
     }
@@ -202,13 +205,21 @@ class RelationshipRepeater extends Repeater
         }
 
         $relationship = $this->getRelationship();
-        $localKeyName = $relationship->getLocalKeyName();
+        $relationshipQuery = $relationship->getQuery();
 
-        if ($orderColumn = $this->getOrderColumn()) {
-            $relationship->orderBy($orderColumn);
+        if ($this->modifyRelationshipQueryUsing) {
+            $this->evaluate($this->modifyRelationshipQueryUsing, [
+                'query' => $relationshipQuery,
+            ]);
         }
 
-        return $this->cachedExistingRecords = $relationship->getResults()->mapWithKeys(
+        if ($orderColumn = $this->getOrderColumn()) {
+            $relationshipQuery->orderBy($orderColumn);
+        }
+
+        $localKeyName = $relationship->getLocalKeyName();
+
+        return $this->cachedExistingRecords = $relationshipQuery->get()->mapWithKeys(
             fn (Model $item): array => ["record-{$item[$localKeyName]}" => $item],
         );
     }
