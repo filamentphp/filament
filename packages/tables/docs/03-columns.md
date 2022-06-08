@@ -318,12 +318,12 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('created_at')->dateTime()
 ```
 
-You may use the `since()` method to format the column's state using [briannesbitt/Carbon  `diffForHumans`](https://carbon.nesbot.com/docs/#api-humandiff):
+You may use the `since()` method to format the column's state using [Carbon's `diffForHumans()`](https://carbon.nesbot.com/docs/#api-humandiff):
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('created_at')->since('Asia/Kolkata')
+TextColumn::make('created_at')->since()
 ```
 
 The `money()` method allows you to easily format monetary values, in any currency. This functionality uses [`akaunting/laravel-money`](https://github.com/akaunting/laravel-money) internally:
@@ -339,7 +339,7 @@ You may `limit()` the length of the cell's value:
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('description')->limit('50')
+TextColumn::make('description')->limit(50)
 ```
 
 You may also reuse the value that is being passed to `limit()`:
@@ -348,8 +348,17 @@ You may also reuse the value that is being passed to `limit()`:
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('description')
-    ->limit('50')
-    ->tooltip(fn ($column): string => strlen($column->getState()) > $column->getLimit() ? $column->getState() : '')
+    ->limit(50)
+    ->tooltip(function (TextColumn $column): ?string {
+        $state = $column->getState();
+    
+        if (strlen($state) <= $column->getLimit()) {
+            return null;
+        }
+        
+        // Only render the tooltip if the column contents exceeds the length limit.
+        return $state;
+    })
 ```
 
 If your column value is HTML, you may render it using `html()`:
@@ -465,14 +474,13 @@ use Filament\Tables\Columns\ImageColumn;
 ImageColumn::make('header_image')->visibility('private')
 ```
 
-You may customize the extra attributes of image using `extraImgAttributes`
+You may customize the extra HTML attributes of the image using `extraImgAttributes()`:
 
 ```php
 use Filament\Tables\Columns\ImageColumn;
 
- ImageColumn::make('logo')
-    ->extraAttributes(['class' => 'flex items-center h-16 w-32'])
-    ->extraImgAttributes(['class' => 'object-contain w-full h-full']),
+ImageColumn::make('logo')
+    ->extraImgAttributes(['title' => 'Company logo']),
 ```
 
 ## Icon column
@@ -568,7 +576,7 @@ BadgeColumn::make('status')
     ])
 ```
 
-Badges may also have a icon :
+Badges may also have an icon:
 
 ```php
 use Filament\Tables\Columns\BadgeColumn;
@@ -582,7 +590,7 @@ BadgeColumn::make('status')
     ])
 ```
 
-You may instead activate a icon using a callback, accepting the cell's `$state`:
+Alternatively, you may conditionally display an icon using a closure:
 
 ```php
 use Filament\Tables\Columns\BadgeColumn;
@@ -596,7 +604,7 @@ BadgeColumn::make('status')
     ])
 ```
 
-You may also position a icon using `iconPosition()`:
+You may set the position of an icon using `iconPosition()`:
 
 ```php
 use Filament\Tables\Columns\BadgeColumn;
@@ -604,11 +612,11 @@ use Filament\Tables\Columns\BadgeColumn;
 BadgeColumn::make('status')
     ->icons([
         'heroicon-o-x',
-        'heroicon-o-document' => fn ($state): bool => $state === 'draft',
-        'heroicon-o-refresh' => fn ($state): bool => $state === 'reviewing',
-        'heroicon-o-truck' => fn ($state): bool => $state === 'published',
+        'heroicon-o-document' => 'draft',
+        'heroicon-o-refresh' => 'reviewing',
+        'heroicon-o-truck' => 'published',
     ])
-    ->iconPosition('after | before')
+    ->iconPosition('after') // `before` or `after`
 ```
 
 ## Tags column

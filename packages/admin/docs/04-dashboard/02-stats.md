@@ -82,9 +82,9 @@ protected function getCards(): array
 }
 ```
 
-## Card Extra Attributes
+## Card extra HTML attributes
 
-You may also pass extra attributes to cards using `extraAttributes()`:
+You may also pass extra HTML attributes to cards using `extraAttributes()`:
 
 ```php
 protected function getCards(): array
@@ -93,21 +93,10 @@ protected function getCards(): array
         Card::make('Processed', '192.1k')
             ->color('success')
             ->extraAttributes([
-                    'class' => 'cursor-pointer',
-                    'wire:click' => '$emitUp("filterStatus", "'Processed'")',
-                ]),
-        Card::make('Pending', '10.5k')
-            ->color('warning')
-            ->extraAttributes([
-                    'class' => 'cursor-pointer',
-                    'wire:click' => '$emitUp("filterStatus", "'Pending'")',
-                ]),
-        Card::make('Failed', '2k')
-            ->color('danger')
-            ->extraAttributes([
-                    'class' => 'cursor-pointer',
-                    'wire:click' => '$emitUp("filterStatus", "'Failed'")',
-                ]),
+                'class' => 'cursor-pointer',
+                'wire:click' => '$emitUp("setStatusFilter", "processed")',
+            ]),
+        // ...
     ];
 }
 ```

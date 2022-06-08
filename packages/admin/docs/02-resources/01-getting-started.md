@@ -471,7 +471,7 @@ The `$navigationSort` property allows you to specify the order in which navigati
 protected static ?int $navigationSort = 2;
 ```
 
-Alternatively, you may set a dynamic navigation sort in the `getNavigationSort()` method:
+Alternatively, you may set a dynamic navigation item order in the `getNavigationSort()` method:
 
 ```php
 public static function getNavigationSort(): ?int

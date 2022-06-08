@@ -262,20 +262,6 @@ protected function getTableFiltersFormWidth(): string
 }
 ```
 
-## Positioning the filter form
-
-By default filters will be rendered in a popover.
-To render it above the table content instead of in a popover, you may use:
-
-```php
-use Filament\Tables\Filters\Layout;
-
-protected function getTableFiltersLayout(): ?string
-{
-    return Layout::AboveContent;
-}
-```
-
 ## Displaying filters above the table content
 
 To render the filters above the table content instead of in a popover, you may use:
