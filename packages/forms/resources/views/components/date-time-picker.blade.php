@@ -154,7 +154,7 @@
                                         'bg-primary-50 @if (config('forms.dark_mode')) dark:bg-primary-100 dark:text-gray-600 @endif': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
                                         'bg-primary-200 @if (config('forms.dark_mode')) dark:text-gray-600 @endif': focusedDate.date() === day && ! dayIsSelected(day),
                                         'bg-primary-500 text-white': dayIsSelected(day),
-                                        'cursor-not-allowed': dayIsDisabled(day),
+                                        'cursor-not-allowed pointer-events-none': dayIsDisabled(day),
                                         'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                     }"
                                     x-bind:dusk="'filament.forms.{{ $getStatePath() }}' + '.focusedDate.' + day"
