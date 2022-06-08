@@ -342,6 +342,16 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('description')->limit('50')
 ```
 
+You may also reuse the value that is being passed to `limit()`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('description')
+    ->limit('50')
+    ->tooltip(fn ($column): string => strlen($column->getState()) > $column->getLimit() ? $column->getState() : '')
+```
+
 If your column value is HTML, you may render it using `html()`:
 
 ```php
