@@ -35,7 +35,7 @@ class EditAction extends Action
 
         $this->icon('heroicon-s-pencil');
 
-        $this->mountUsing(static function (ComponentContainer $form, Model $record): void {
+        $this->mountUsing(function (ComponentContainer $form, Model $record): void {
             $data = $record->toArray();
 
             if ($this->mutateRecordDataUsing) {
