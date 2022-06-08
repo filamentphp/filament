@@ -44,7 +44,11 @@ class ActionGroup extends ViewComponent
     public function getActions(): array
     {
         return collect($this->actions)
-            ->mapWithKeys(fn (Action | CanBeGrouped | HasRecord $action): array => [$action->getName() => $action->record($this->getRecord())->grouped()])
+            ->mapWithKeys(function (Action | CanBeGrouped | HasRecord $action): array {
+                $action->record($this->getRecord());
+
+                return [$action->getName() => $action->grouped()];
+            })
             ->toArray();
     }
 }
