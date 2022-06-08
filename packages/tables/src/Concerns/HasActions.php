@@ -5,6 +5,7 @@ namespace Filament\Tables\Concerns;
 use Filament\Forms\ComponentContainer;
 use Filament\Support\Actions\Exceptions\Hold;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -26,7 +27,15 @@ trait HasActions
     public function cacheTableActions(): void
     {
         $this->cachedTableActions = collect($this->getTableActions())
-            ->mapWithKeys(function (Action $action): array {
+            ->mapWithKeys(function (Action | ActionGroup $action, int $index): array {
+                if ($action instanceof ActionGroup) {
+                    foreach ($action->getActions() as $groupedAction) {
+                        $groupedAction->table($this->getCachedTable());
+                    }
+
+                    return [$index => $action];
+                }
+
                 $action->table($this->getCachedTable());
 
                 return [$action->getName() => $action];
@@ -177,7 +186,22 @@ trait HasActions
 
     protected function getCachedTableAction(string $name): ?Action
     {
-        $action = $this->getCachedTableActions()[$name] ?? null;
+        $actions = $this->getCachedTableActions();
+        $action = $actions[$name] ?? null;
+
+        if ($action === null) {
+            foreach ($actions as $action) {
+                if (! $action instanceof ActionGroup) {
+                    continue;
+                }
+
+                if ($groupedAction = $action->getActions()[$name] ?? null) {
+                    $action = $groupedAction;
+                    break;
+                }
+            }
+        }
+
         $action?->record($this->getMountedTableActionRecord());
 
         return $action;

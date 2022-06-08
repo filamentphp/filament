@@ -1,0 +1,50 @@
+<?php
+
+namespace Filament\Support\Actions;
+
+use Filament\Support\Actions\Concerns\CanBeHidden;
+use Filament\Support\Actions\Concerns\HasColor;
+use Filament\Support\Actions\Concerns\HasIcon;
+use Filament\Support\Actions\Concerns\HasLabel;
+use Filament\Support\Actions\Concerns\HasTooltip;
+use Filament\Support\Actions\Concerns\InteractsWithRecord;
+use Filament\Support\Components\ViewComponent;
+use Filament\Support\Actions\Contracts\CanBeGrouped;
+use Filament\Support\Actions\Contracts\HasRecord;
+
+class ActionGroup extends ViewComponent
+{
+    use CanBeHidden, InteractsWithRecord {
+        InteractsWithRecord::parseAuthorizationArguments insteadof CanBeHidden;
+    }
+    use HasIcon;
+    use HasTooltip;
+    use HasLabel;
+    use HasColor;
+
+    protected string $evaluationIdentifier = 'group';
+
+    protected string $viewIdentifier = 'group';
+
+    public function __construct(
+        protected array $actions,
+    ) {
+    }
+
+    public static function make(array $actions): static
+    {
+        return app(static::class, ['actions' => $actions]);
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->evaluate($this->label);
+    }
+
+    public function getActions(): array
+    {
+        return collect($this->actions)
+            ->mapWithKeys(fn (Action | CanBeGrouped | HasRecord $action): array => [$action->getName() => $action->record($this->getRecord())->grouped()])
+            ->toArray();
+    }
+}

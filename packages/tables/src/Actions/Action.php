@@ -8,11 +8,12 @@ use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
 use Filament\Support\Actions\Concerns\HasTooltip;
 use Filament\Support\Actions\Concerns\InteractsWithRecord;
+use Filament\Support\Actions\Contracts\CanBeGrouped;
 use Filament\Support\Actions\Contracts\HasRecord;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Model;
 
-class Action extends BaseAction implements HasRecord
+class Action extends BaseAction implements HasRecord, CanBeGrouped
 {
     use CanBeDisabled;
     use CanBeOutlined;
@@ -26,6 +27,13 @@ class Action extends BaseAction implements HasRecord
     public function button(): static
     {
         $this->view('tables::actions.button-action');
+
+        return $this;
+    }
+
+    public function grouped(): static
+    {
+        $this->view('tables::actions.grouped-action');
 
         return $this;
     }
