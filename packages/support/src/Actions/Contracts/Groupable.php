@@ -2,7 +2,7 @@
 
 namespace Filament\Support\Actions\Contracts;
 
-interface CanBeGrouped
+interface Groupable
 {
     public function grouped(): static;
 }

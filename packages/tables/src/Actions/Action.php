@@ -8,12 +8,12 @@ use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
 use Filament\Support\Actions\Concerns\HasTooltip;
 use Filament\Support\Actions\Concerns\InteractsWithRecord;
-use Filament\Support\Actions\Contracts\CanBeGrouped;
+use Filament\Support\Actions\Contracts\Groupable;
 use Filament\Support\Actions\Contracts\HasRecord;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Model;
 
-class Action extends BaseAction implements CanBeGrouped, HasRecord
+class Action extends BaseAction implements Groupable, HasRecord
 {
     use CanBeDisabled;
     use CanBeOutlined;

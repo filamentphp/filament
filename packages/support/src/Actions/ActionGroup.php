@@ -8,7 +8,7 @@ use Filament\Support\Actions\Concerns\HasIcon;
 use Filament\Support\Actions\Concerns\HasLabel;
 use Filament\Support\Actions\Concerns\HasTooltip;
 use Filament\Support\Actions\Concerns\InteractsWithRecord;
-use Filament\Support\Actions\Contracts\CanBeGrouped;
+use Filament\Support\Actions\Contracts\Groupable;
 use Filament\Support\Actions\Contracts\HasRecord;
 use Filament\Support\Components\ViewComponent;
 
@@ -44,7 +44,7 @@ class ActionGroup extends ViewComponent
     public function getActions(): array
     {
         return collect($this->actions)
-            ->mapWithKeys(function (Action | CanBeGrouped | HasRecord $action): array {
+            ->mapWithKeys(function (Action | Groupable | HasRecord $action): array {
                 $action->record($this->getRecord());
 
                 return [$action->getName() => $action->grouped()];
