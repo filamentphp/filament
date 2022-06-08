@@ -3,6 +3,7 @@
 namespace Filament\Pages;
 
 use Closure;
+use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Route;
 
 class Dashboard extends Page
@@ -23,6 +24,11 @@ class Dashboard extends Page
         return function () {
             Route::get('/', static::class)->name(static::getSlug());
         };
+    }
+
+    protected function getWidgets(): array
+    {
+        return Filament::getWidgets();
     }
 
     protected function getTitle(): string
