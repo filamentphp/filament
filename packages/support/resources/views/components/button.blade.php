@@ -82,10 +82,11 @@
         x-data="{
             form: null,
             label: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
+            disabled: {{ \Illuminate\Support\Js::from($disabled) }},
             isUploadingFile: false,
         }"
         x-bind:disabled="isUploadingFile"
-        x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
+        x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile, 'opacity-70' : disabled }"
         x-init="
             form = $el.closest('form')
 
