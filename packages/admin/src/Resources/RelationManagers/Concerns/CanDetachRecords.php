@@ -90,12 +90,14 @@ trait CanDetachRecords
     {
         return Tables\Actions\DetachAction::make()
             ->action(fn () => $this->detach())
-            ->authorize(fn (Model $record): bool => $this->canDetach($record));
+            ->authorize(fn (Model $record): bool => $this->canDetach($record))
+            ->allowDuplicates($this->allowsDuplicates());
     }
 
     protected function getDetachBulkAction(): Tables\Actions\BulkAction
     {
         return Tables\Actions\DetachBulkAction::make()
-            ->action(fn () => $this->bulkDetach());
+            ->action(fn () => $this->bulkDetach())
+            ->allowDuplicates($this->allowsDuplicates());
     }
 }
