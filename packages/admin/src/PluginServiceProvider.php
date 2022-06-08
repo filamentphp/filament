@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use Filament\Resources\RelationManagers\RelationGroup;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -81,7 +82,15 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         }
 
         foreach ($this->getRelationManagers() as $manager) {
-            Livewire::component($manager::getName(), $manager);
+            if ($manager instanceof RelationGroup) {
+                foreach ($manager->getManagers() as $groupedManager) {
+                    $this->registerRelationManager($groupedManager);
+                }
+
+                return;
+            }
+
+            $this->registerRelationManager($manager);
         }
 
         foreach ($this->getResources() as $resource) {
@@ -103,6 +112,11 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         }
 
         $this->registerMacros();
+    }
+
+    protected function registerRelationManager(string $manager): void
+    {
+        Livewire::component($manager::getName(), $manager);
     }
 
     protected function getCommands(): array
