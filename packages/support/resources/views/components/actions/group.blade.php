@@ -1,6 +1,6 @@
 @props([
     'actions',
-    'color' => 'secondary',
+    'color' => null,
     'darkMode' => false,
     'icon' => 'heroicon-o-dots-vertical',
     'label' => __('filament-support::actions/group.trigger.label'),
@@ -35,8 +35,10 @@
             'py-1 space-y-1 bg-white shadow rounded-xl',
             'dark:bg-gray-700 dark:divide-gray-600' => $darkMode,
         ])>
-            @foreach($actions as $action)
-                {{ $action }}
+            @foreach ($actions as $action)
+                @if (! $action->isHidden())
+                    {{ $action }}
+                @endif
             @endforeach
         </ul>
     </div>

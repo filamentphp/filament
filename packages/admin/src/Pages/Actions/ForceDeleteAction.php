@@ -45,13 +45,5 @@ class ForceDeleteAction extends Action
 
             return $record->trashed();
         });
-
-        $this->record(function (Page $livewire): ?Model {
-            if (! $livewire instanceof HasRecord) {
-                return null;
-            }
-
-            return $livewire->getRecord();
-        });
     }
 }

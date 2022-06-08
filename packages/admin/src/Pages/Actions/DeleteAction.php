@@ -2,6 +2,8 @@
 
 namespace Filament\Pages\Actions;
 
+use Filament\Pages\Contracts\HasRecord;
+use Filament\Pages\Page;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Model;
 

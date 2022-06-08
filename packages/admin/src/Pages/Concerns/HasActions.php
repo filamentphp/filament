@@ -4,6 +4,7 @@ namespace Filament\Pages\Concerns;
 
 use Filament\Forms;
 use Filament\Pages\Actions\Action;
+use Filament\Pages\Actions\ActionGroup;
 use Filament\Pages\Contracts;
 use Filament\Support\Actions\Exceptions\Hold;
 use Illuminate\Database\Eloquent\Model;
@@ -121,7 +122,15 @@ trait HasActions
     protected function cacheActions(): void
     {
         $this->cachedActions = collect($this->getActions())
-            ->mapWithKeys(function (Action $action): array {
+            ->mapWithKeys(function (Action | ActionGroup $action, int $index): array {
+                if ($action instanceof ActionGroup) {
+                    foreach ($action->getActions() as $groupedAction) {
+                        $groupedAction->livewire($this);
+                    }
+
+                    return [$index => $action];
+                }
+
                 $action->livewire($this);
 
                 return [$action->getName() => $action];
@@ -180,7 +189,29 @@ trait HasActions
 
     protected function getCachedAction(string $name): ?Action
     {
-        return $this->getCachedActions()[$name] ?? null;
+        $actions = $this->getCachedActions();
+
+        $action = $actions[$name] ?? null;
+
+        if ($action) {
+            return $action;
+        }
+
+        foreach ($actions as $action) {
+            if (! $action instanceof ActionGroup) {
+                continue;
+            }
+
+            $groupedAction = $action->getActions()[$name] ?? null;
+
+            if (! $groupedAction) {
+                continue;
+            }
+
+            return $groupedAction;
+        }
+
+        return null;
     }
 
     protected function getActions(): array

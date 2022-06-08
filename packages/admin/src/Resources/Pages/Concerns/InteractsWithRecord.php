@@ -34,6 +34,6 @@ trait InteractsWithRecord
             return Str::title($resource::getModelLabel());
         }
 
-        return $resource::getRecordTitle($this->record);
+        return $resource::getRecordTitle($this->getRecord());
     }
 }

@@ -6,7 +6,6 @@ use Closure;
 use Filament\Facades\Filament;
 use Filament\Pages\Actions\Modal\Actions\Action as ModalAction;
 use Filament\Pages\Contracts\HasRecord as HasRecordContract;
-use Filament\Pages\Page;
 use Filament\Support\Actions\Action as BaseAction;
 use Filament\Support\Actions\Concerns\CanBeDisabled;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
@@ -15,10 +14,11 @@ use Filament\Support\Actions\Concerns\CanSubmitForm;
 use Filament\Support\Actions\Concerns\HasKeyBindings;
 use Filament\Support\Actions\Concerns\HasTooltip;
 use Filament\Support\Actions\Concerns\InteractsWithRecord;
+use Filament\Support\Actions\Contracts\Groupable;
 use Filament\Support\Actions\Contracts\HasRecord;
 use Illuminate\Database\Eloquent\Model;
 
-class Action extends BaseAction implements HasRecord
+class Action extends BaseAction implements Groupable, HasRecord
 {
     use CanBeDisabled;
     use CanBeOutlined;
@@ -27,34 +27,75 @@ class Action extends BaseAction implements HasRecord
     use Concerns\BelongsToLivewire;
     use HasKeyBindings;
     use HasTooltip;
-    use InteractsWithRecord;
+    use InteractsWithRecord {
+        getRecord as getBaseRecord;
+        getRecordTitle as getBaseRecordTitle;
+    }
 
     protected string $view = 'filament::pages.actions.button-action';
 
-    protected function setUp(): void
+    public function getRecord(): ?Model
     {
-        parent::setUp();
+        $record = $this->getBaseRecord();
 
-        $this->record(function (Page $livewire): ?Model {
-            if (! $livewire instanceof HasRecordContract) {
-                return null;
-            }
+        if ($record) {
+            return $record;
+        }
 
-            return $livewire->getRecord();
-        });
+        $livewire = $this->getLivewire();
 
-        $this->recordTitle(function (Page $livewire): ?string {
-            if (! $livewire instanceof HasRecordContract) {
-                return null;
-            }
+        if (! $livewire instanceof HasRecordContract) {
+            return null;
+        }
 
-            return $livewire->getRecordTitle();
-        });
+        return $livewire->getRecord();
+    }
+
+    public function getRecordTitle(?Model $record = null): string
+    {
+        $record ??= $this->getRecord();
+
+        $title = $this->evaluate($this->recordTitle, ['record' => $record]);
+
+        if (filled($title)) {
+            return $title;
+        }
+
+        $livewire = $this->getLivewire();
+
+        $title = null;
+
+        if ($livewire instanceof HasRecordContract) {
+            $title = $livewire->getRecordTitle();
+        }
+
+        if (filled($title)) {
+            return $title;
+        }
+
+        if (! $record) {
+            return $this->getModelLabel();
+        }
+
+        $titleAttribute = $this->getRecordTitleAttribute($record);
+
+        if (filled($titleAttribute)) {
+            return $record->getAttributeValue($titleAttribute);
+        }
+
+        return $record->getKey();
     }
 
     public function button(): static
     {
         $this->view('filament::pages.actions.button-action');
+
+        return $this;
+    }
+
+    public function grouped(): static
+    {
+        $this->view('filament::pages.actions.grouped-action');
 
         return $this;
     }

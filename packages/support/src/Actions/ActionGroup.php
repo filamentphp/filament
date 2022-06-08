@@ -15,6 +15,7 @@ use Filament\Support\Components\ViewComponent;
 class ActionGroup extends ViewComponent
 {
     use CanBeHidden, InteractsWithRecord {
+        isHidden as baseIsHidden;
         InteractsWithRecord::parseAuthorizationArguments insteadof CanBeHidden;
     }
     use HasIcon;
@@ -50,5 +51,24 @@ class ActionGroup extends ViewComponent
                 return [$action->getName() => $action->grouped()];
             })
             ->toArray();
+    }
+
+    public function isHidden(): bool
+    {
+        $condition = $this->baseIsHidden();
+
+        if ($condition) {
+            return true;
+        }
+
+        foreach ($this->getActions() as $action) {
+            if (! $action->isHidden()) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }

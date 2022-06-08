@@ -62,7 +62,7 @@ trait InteractsWithRecord
         );
     }
 
-    public function getRecordTitle(?Model $record = null): ?string
+    public function getRecordTitle(?Model $record = null): string
     {
         $record ??= $this->getRecord();
 
