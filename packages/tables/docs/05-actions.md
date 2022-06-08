@@ -122,6 +122,20 @@ Action::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
 ```
 
+## Customizing the button size
+
+By default, the button size of the action is `sm`. You may customize this using the `size()` method:
+
+```php
+use App\Models\Post;
+use Filament\Tables\Actions\Action;
+
+Action::make('edit')
+    ->label('Edit post')
+    ->url(fn (Post $record): string => route('posts.edit', $record))
+    ->size('lg')
+```
+
 ## Setting a color
 
 Actions may have a color to indicate their significance. It may be either `primary`, `secondary`, `success`, `warning` or `danger`:
