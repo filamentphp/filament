@@ -247,7 +247,6 @@ protected static bool $shouldPreloadAssociateFormRecordSelectOptions = true;
 You may choose to group relation managers together into one tab. To do this, you may wrap multiple managers in a `RelationGroup` object, with a label:
 
 ```php
-
 use Filament\Resources\RelationManagers\RelationGroup;
 
 public static function getRelations(): array
