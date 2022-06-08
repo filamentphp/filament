@@ -65,6 +65,7 @@ export default (Alpine) => {
             init: async function () {
                 this.pond = FilePond.create(this.$refs.input, {
                     acceptedFileTypes,
+                    allowPaste: false,
                     allowReorder: canReorder,
                     allowImagePreview: canPreview,
                     allowVideoPreview: canPreview,
