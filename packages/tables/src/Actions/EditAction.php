@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,8 @@ class EditAction extends Action
 {
     use CanCustomizeProcess;
     use Concerns\InteractsWithRelationship;
+
+    protected ?Closure $mutateRecordDataUsing = null;
 
     public static function make(string $name = 'edit'): static
     {
@@ -33,7 +36,13 @@ class EditAction extends Action
         $this->icon('heroicon-s-pencil');
 
         $this->mountUsing(static function (ComponentContainer $form, Model $record): void {
-            $form->fill($record->toArray());
+            $data = $record->toArray();
+
+            if ($this->mutateRecordDataUsing) {
+                $data = $this->evaluate($this->mutateRecordDataUsing, ['data' => $data]);
+            }
+
+            $form->fill($data);
         });
 
         $this->action(function (): void {
@@ -56,5 +65,12 @@ class EditAction extends Action
 
             $this->success();
         });
+    }
+
+    public function mutateRecordDataUsing(?Closure $callback): static
+    {
+        $this->mutateRecordDataUsing = $callback;
+
+        return $this;
     }
 }

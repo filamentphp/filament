@@ -2,11 +2,14 @@
 
 namespace Filament\Tables\Actions;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
 use Illuminate\Database\Eloquent\Model;
 
 class ViewAction extends Action
 {
+    protected ?Closure $mutateRecordDataUsing = null;
+
     public static function make(string $name = 'view'): static
     {
         return parent::make($name);
@@ -29,11 +32,26 @@ class ViewAction extends Action
 
         $this->icon('heroicon-s-eye');
 
+        $this->disableForm();
+
         $this->mountUsing(static function (ComponentContainer $form, Model $record): void {
-            $form->fill($record->toArray());
+            $data = $record->toArray();
+
+            if ($this->mutateRecordDataUsing) {
+                $data = $this->evaluate($this->mutateRecordDataUsing, ['data' => $data]);
+            }
+
+            $form->fill($data);
         });
 
         $this->action(static function (): void {
         });
+    }
+
+    public function mutateRecordDataUsing(?Closure $callback): static
+    {
+        $this->mutateRecordDataUsing = $callback;
+
+        return $this;
     }
 }

@@ -3,6 +3,7 @@
 namespace Filament\Support\Actions\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Wizard;
 
 trait HasFormSchema
@@ -11,7 +12,16 @@ trait HasFormSchema
 
     protected array | Closure $formSchema = [];
 
+    protected bool | Closure $isFormDisabled = false;
+
     protected ?Closure $mutateFormDataUsing = null;
+
+    public function disableForm(bool | Closure $condition = true): static
+    {
+        $this->isFormDisabled = $condition;
+
+        return $this;
+    }
 
     public function form(array | Closure $schema): static
     {
@@ -28,7 +38,12 @@ trait HasFormSchema
             return [
                 Wizard::make($schema)
                     ->cancelAction($this->getModalCancelAction())
-                    ->submitAction($this->getModalSubmitAction()),
+                    ->submitAction($this->getModalSubmitAction())
+                    ->disabled($this->isFormDisabled()),
+            ];
+        } elseif ($this->isFormDisabled()) {
+            return [
+                Group::make($schema)->disabled(),
             ];
         }
 
@@ -75,5 +90,10 @@ trait HasFormSchema
     public function getFormData(): array
     {
         return $this->formData;
+    }
+
+    public function isFormDisabled(): bool
+    {
+        return $this->evaluate($this->isFormDisabled);
     }
 }
