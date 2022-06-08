@@ -1,7 +1,7 @@
 @import '../../../forms/dist/module.esm.css';
 
-@import '~tippy.js/dist/tippy.css';
-@import '~tippy.js/themes/light.css';
+@import 'tippy.js/dist/tippy.css';
+@import 'tippy.js/themes/light.css';
 
 @tailwind base;
 @tailwind components;
