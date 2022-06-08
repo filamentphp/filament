@@ -34,7 +34,7 @@ class ViewAction extends Action
 
         $this->disableForm();
 
-        $this->mountUsing(static function (ComponentContainer $form, Model $record): void {
+        $this->mountUsing(function (ComponentContainer $form, Model $record): void {
             $data = $record->toArray();
 
             if ($this->mutateRecordDataUsing) {
