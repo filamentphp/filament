@@ -2,7 +2,6 @@
 
 namespace Filament\Pages\Actions;
 
-use Filament\Support\Actions\Concerns\CanDeleteRecords;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Model;
 

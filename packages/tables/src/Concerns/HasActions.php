@@ -197,6 +197,7 @@ trait HasActions
 
                 if ($groupedAction = $action->getActions()[$name] ?? null) {
                     $action = $groupedAction;
+
                     break;
                 }
             }

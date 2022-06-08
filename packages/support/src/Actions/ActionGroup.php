@@ -8,9 +8,9 @@ use Filament\Support\Actions\Concerns\HasIcon;
 use Filament\Support\Actions\Concerns\HasLabel;
 use Filament\Support\Actions\Concerns\HasTooltip;
 use Filament\Support\Actions\Concerns\InteractsWithRecord;
-use Filament\Support\Components\ViewComponent;
 use Filament\Support\Actions\Contracts\CanBeGrouped;
 use Filament\Support\Actions\Contracts\HasRecord;
+use Filament\Support\Components\ViewComponent;
 
 class ActionGroup extends ViewComponent
 {
