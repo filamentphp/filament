@@ -82,6 +82,36 @@ protected function getCards(): array
 }
 ```
 
+## Card Extra Attributes
+
+You may also pass extra attributes to cards using `extraAttributes()`:
+
+```php
+protected function getCards(): array
+{
+    return [
+        Card::make('Processed', '192.1k')
+            ->color('success')
+            ->extraAttributes([
+                    'class' => 'cursor-pointer',
+                    'wire:click' => '$emitUp("filterStatus", "'Processed'")',
+                ]),
+        Card::make('Pending', '10.5k')
+            ->color('warning')
+            ->extraAttributes([
+                    'class' => 'cursor-pointer',
+                    'wire:click' => '$emitUp("filterStatus", "'Pending'")',
+                ]),
+        Card::make('Failed', '2k')
+            ->color('danger')
+            ->extraAttributes([
+                    'class' => 'cursor-pointer',
+                    'wire:click' => '$emitUp("filterStatus", "'Failed'")',
+                ]),
+    ];
+}
+```
+
 ## Card charts
 
 You may also add or chain a `chart()` to each card to provide historical data. The `chart()` method accepts an array of data points to plot:
