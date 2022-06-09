@@ -194,7 +194,7 @@ return [
         ],
 
         'boolean' => [
-            'true' => 'Yes',
+            'true' => 'Sí',
             'false' => 'No',
         ],
 
@@ -219,11 +219,11 @@ return [
         'buttons' => [
 
             'previous_step' => [
-                'label' => 'Back',
+                'label' => 'Anterior',
             ],
 
             'next_step' => [
-                'label' => 'Next',
+                'label' => 'Siguiente',
             ],
 
         ],
