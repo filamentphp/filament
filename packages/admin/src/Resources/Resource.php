@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
+use function Filament\locale_has_pluralization;
+
 class Resource
 {
     protected static ?string $breadcrumb = null;
@@ -235,7 +237,9 @@ class Resource
 
     public static function getPluralLabel(): string
     {
-        return static::$pluralLabel ?? Str::plural(static::getLabel());
+        return locale_has_pluralization()
+            ? static::$pluralLabel ?? Str::plural(static::getLabel())
+            : static::getLabel();
     }
 
     public static function getRecordTitleAttribute(): ?string

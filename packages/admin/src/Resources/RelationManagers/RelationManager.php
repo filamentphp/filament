@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
+use function Filament\locale_has_pluralization;
+
 class RelationManager extends Component implements Tables\Contracts\HasTable
 {
     use CanNotify;
@@ -138,11 +140,18 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     protected static function getRecordLabel(): string
     {
-        return static::$label ?? Str::singular(static::getPluralRecordLabel());
+        return static::$label ?? (string) Str::of(static::getRelationshipName())
+            ->kebab()
+            ->replace('-', ' ')
+            ->singular();
     }
 
     protected static function getPluralRecordLabel(): string
     {
+        if (! locale_has_pluralization()) {
+            return static::getRecordLabel();
+        }
+
         return static::$pluralLabel ?? (string) Str::of(static::getRelationshipName())
             ->kebab()
             ->replace('-', ' ');

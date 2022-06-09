@@ -23,9 +23,18 @@ it('can generate a label based on the model name', function () {
         ->toBe('post');
 });
 
-it('can generate a plural label based on the model name', function () {
+it('can generate a plural label based on locale and the model name', function () {
+    $originalLocale = app()->getLocale();
+
+    app()->setLocale('en');
     expect(PostResource::getPluralLabel())
         ->toBe('posts');
+
+    app()->setLocale('id');
+    expect(PostResource::getPluralLabel())
+        ->toBe('post');
+
+    app()->setLocale($originalLocale);
 });
 
 it('can retrieve a record\'s title', function () {
