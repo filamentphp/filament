@@ -43,6 +43,7 @@ class DateTimePicker extends Field
         $this->afterStateHydrated(static function (DateTimePicker $component, $state): void {
             if (blank($state)) {
                 $component->state(null);
+
                 return;
             }
 
