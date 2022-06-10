@@ -54,7 +54,7 @@ trait HasBulkActions
 
         try {
             $result = $action->call([
-                'arguments' => json_decode($arguments) ?? [],
+                'arguments' => json_decode($arguments, associative: true) ?? [],
                 'form' => $form,
             ]);
         } catch (Hold $exception) {

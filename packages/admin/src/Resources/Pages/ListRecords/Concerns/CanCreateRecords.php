@@ -87,20 +87,21 @@ trait CanCreateRecords
 
         $form->model($record)->saveRelationships();
 
-        $this->mountedTableActionRecord($record->getKey());
-
         $this->callHook('afterCreate');
 
         if ($another) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
             $form->model($record::class);
-            $this->mountedTableActionRecord(null);
 
             $form->fill();
         }
 
         if (filled($this->getCreatedNotificationMessage())) {
             $this->notify('success', $this->getCreatedNotificationMessage());
+        }
+
+        if ($another) {
+            $this->getMountedAction()->hold();
         }
     }
 
@@ -125,7 +126,7 @@ trait CanCreateRecords
      */
     protected function handleRecordCreation(array $data): Model
     {
-        return static::getModel()::create($data);
+        return $this->getModel()::create($data);
     }
 
     /**

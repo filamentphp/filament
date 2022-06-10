@@ -11,6 +11,8 @@ trait InteractsWithRecord
 {
     protected Model | Closure | null $record = null;
 
+    protected string | Closure | null $model = null;
+
     protected string | Closure | null $modelLabel = null;
 
     protected string | Closure | null $pluralModelLabel = null;
@@ -22,6 +24,13 @@ trait InteractsWithRecord
     public function record(Model | Closure | null $record): static
     {
         $this->record = $record;
+
+        return $this;
+    }
+
+    public function model(string | Closure | null $model): static
+    {
+        $this->model = $model;
 
         return $this;
     }
@@ -87,6 +96,12 @@ trait InteractsWithRecord
 
     public function getModel(): ?string
     {
+        $model = $this->evaluate($this->model);
+
+        if (filled($model)) {
+            return $model;
+        }
+
         $record = $this->getRecord();
 
         if (! $record) {

@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages;
 use Closure;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\CreateAction;
+use Filament\Pages\Contracts\HasModel;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class ListRecords extends Page implements Tables\Contracts\HasTable
+class ListRecords extends Page implements HasModel, Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
 
@@ -235,7 +236,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function getMountedActionFormModel(): string
     {
-        return static::getModel();
+        return $this->getModel();
     }
 
     public function getTableRecordTitle(Model $record): ?string
@@ -245,14 +246,24 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return $resource::getRecordTitle($record);
     }
 
-    public function getTableModelLabel(): ?string
+    public function getModelLabel(): ?string
     {
         return static::getResource()::getModelLabel();
     }
 
-    public function getTablePluralModelLabel(): ?string
+    public function getPluralModelLabel(): ?string
     {
         return static::getResource()::getPluralModelLabel();
+    }
+
+    public function getTableModelLabel(): ?string
+    {
+        return $this->getModelLabel();
+    }
+
+    public function getTablePluralModelLabel(): ?string
+    {
+        return $this->getPluralModelLabel();
     }
 
     public function getTableRecordTitleAttribute(): ?string

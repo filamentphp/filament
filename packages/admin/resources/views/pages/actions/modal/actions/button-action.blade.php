@@ -6,7 +6,7 @@
 
         if ($getActionArguments()) {
             $wireClickAction .= '(\'';
-            $wireClickAction = \Illuminate\Support\Str::of(json_encode($getActionArguments()))->replace('"', '\\"');
+            $wireClickAction .= \Illuminate\Support\Str::of(json_encode($getActionArguments()))->replace('"', '\\"');
             $wireClickAction .= '\')';
         }
     }

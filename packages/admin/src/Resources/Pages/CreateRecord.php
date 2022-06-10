@@ -95,7 +95,7 @@ class CreateRecord extends Page implements HasFormActions
 
     protected function handleRecordCreation(array $data): Model
     {
-        return static::getModel()::create($data);
+        return $this->getModel()::create($data);
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
@@ -157,7 +157,7 @@ class CreateRecord extends Page implements HasFormActions
     {
         return [
             'form' => $this->makeForm()
-                ->model(static::getModel())
+                ->model($this->getModel())
                 ->schema($this->getResourceForm(columns: config('filament.layout.forms.have_inline_labels') ? 1 : 2)->getSchema())
                 ->statePath('data')
                 ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
@@ -181,7 +181,7 @@ class CreateRecord extends Page implements HasFormActions
 
     protected function getMountedActionFormModel(): string
     {
-        return static::getModel();
+        return $this->getModel();
     }
 
     protected static function canCreateAnother(): bool
