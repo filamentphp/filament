@@ -17,9 +17,9 @@ use Filament\Support\Actions\Concerns\HasTooltip;
 use Filament\Support\Actions\Concerns\InteractsWithRecord;
 use Filament\Support\Actions\Contracts\Groupable;
 use Filament\Support\Actions\Contracts\HasRecord;
+use function Filament\Support\get_model_label;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use function Filament\Support\get_model_label;
 
 class Action extends BaseAction implements Groupable, HasRecord
 {
