@@ -46,7 +46,7 @@
                 }" type="button"
                 @class([
                     'flex items-center justify-center w-10 h-10 transform rounded-full text-primary-500 hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
-                    '-rotate-180' => !$isCollapsed(),
+                    '-rotate-180' => ! $isCollapsed(),
                 ])
             >
                 <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
