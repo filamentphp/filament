@@ -27,7 +27,9 @@ trait CanGenerateResources
             }
 
             if (Str::of($column->getName())->endsWith([
-                '_at',
+                'created_at',
+                'updated_at',
+                'deleted_at',
                 '_token',
             ])) {
                 continue;
