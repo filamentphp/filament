@@ -8,6 +8,7 @@ use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 class RelationshipRepeater extends Repeater
@@ -38,13 +39,14 @@ class RelationshipRepeater extends Repeater
             }
 
             $relationship = $component->getRelationship();
-            $localKeyName = $relationship->getLocalKeyName();
+            $relatedQualifiedKeyName = $relationship->getRelated()->getQualifiedKeyName();
+            $relatedKeyName = $relationship->getRelated()->getKeyName();
 
             $existingRecords = $component->getCachedExistingRecords();
 
             $recordsToDelete = [];
 
-            foreach ($existingRecords->pluck($localKeyName) as $keyToCheckForDeletion) {
+            foreach ($existingRecords->pluck($relatedKeyName) as $keyToCheckForDeletion) {
                 if (array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
                     continue;
                 }
@@ -53,7 +55,7 @@ class RelationshipRepeater extends Repeater
             }
 
             $relationship
-                ->whereIn($localKeyName, $recordsToDelete)
+                ->whereIn($relatedQualifiedKeyName, $recordsToDelete)
                 ->get()
                 ->each(static fn (Model $record) => $record->delete());
 
@@ -188,7 +190,7 @@ class RelationshipRepeater extends Repeater
         return $this->evaluate($this->orderColumn);
     }
 
-    public function getRelationship(): HasOneOrMany
+    public function getRelationship(): BelongsToMany|HasOneOrMany
     {
         return $this->getModelInstance()->{$this->getRelationshipName()}();
     }
@@ -217,10 +219,10 @@ class RelationshipRepeater extends Repeater
             $relationshipQuery->orderBy($orderColumn);
         }
 
-        $localKeyName = $relationship->getLocalKeyName();
+        $relatedKeyName = $relationship->getRelated()->getKeyName();
 
         return $this->cachedExistingRecords = $relationshipQuery->get()->mapWithKeys(
-            fn (Model $item): array => ["record-{$item[$localKeyName]}" => $item],
+            fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
         );
     }
 
