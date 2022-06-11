@@ -217,7 +217,10 @@ export default (Alpine) => {
                         return
                     }
 
-                    let date = this.getSelectedDate()
+                    let date = this.getSelectedDate() ?? dayjs().tz(timezone)
+                        .hour(0)
+                        .minute(0)
+                        .second(0)
 
                     if (this.getMaxDate() !== null && date.isAfter(this.getMaxDate())) {
                         date = null
