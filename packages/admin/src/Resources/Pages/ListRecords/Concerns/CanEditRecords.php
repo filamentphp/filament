@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 
 trait CanEditRecords
 {
-    use UsesResourceForm;
-
     protected function hasEditAction(): bool
     {
         return true;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Support\Actions\Concerns;
+namespace Filament\Tables\Actions\Concerns;
 
 use Closure;
 use function Filament\Support\get_model_label;
@@ -22,11 +22,6 @@ trait InteractsWithRecords
         return $this;
     }
 
-    public function getModel(): ?string
-    {
-        return $this->getLivewire()->getTableQuery()->getModel()::class;
-    }
-
     public function modelLabel(string | Closure | null $label): static
     {
         $this->modelLabel = $label;
@@ -41,7 +36,12 @@ trait InteractsWithRecords
         return $this;
     }
 
-    public function getModelLabel(): ?string
+    public function getModel(): string
+    {
+        return $this->getLivewire()->getTableModel();
+    }
+
+    public function getModelLabel(): string
     {
         $label = $this->evaluate($this->modelLabel);
 
@@ -49,16 +49,10 @@ trait InteractsWithRecords
             return $label;
         }
 
-        $model = $this->getModel();
-
-        if (! $model) {
-            return null;
-        }
-
-        return get_model_label($model);
+        return $this->getLivewire()->getTableModelLabel();
     }
 
-    public function getPluralModelLabel(): ?string
+    public function getPluralModelLabel(): string
     {
         $label = $this->evaluate($this->pluralModelLabel);
 
@@ -66,9 +60,7 @@ trait InteractsWithRecords
             return $label;
         }
 
-        $singularLabel = $this->getModelLabel();
-
-        return filled($singularLabel) ? Str::plural($singularLabel) : null;
+        return $this->getLivewire()->getTablePluralModelLabel();
     }
 
     public function getRecords(): ?Collection

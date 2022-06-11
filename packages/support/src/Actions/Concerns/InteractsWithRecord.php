@@ -19,8 +19,6 @@ trait InteractsWithRecord
 
     protected string | Closure | null $recordTitle = null;
 
-    protected string | Closure | null $recordTitleAttribute = null;
-
     public function record(Model | Closure | null $record): static
     {
         $this->record = $record;
@@ -56,13 +54,6 @@ trait InteractsWithRecord
         return $this;
     }
 
-    public function recordTitleAttribute(string | Closure | null $attribute): static
-    {
-        $this->recordTitleAttribute = $attribute;
-
-        return $this;
-    }
-
     public function getRecord(): ?Model
     {
         return $this->evaluate(
@@ -71,32 +62,19 @@ trait InteractsWithRecord
         );
     }
 
-    public function getRecordTitle(?Model $record = null): string
+    public function getRecordTitle(?Model $record = null): ?string
     {
-        $record ??= $this->getRecord();
+        return $this->getCustomRecordTitle($record) ?? $this->getModelLabel();
+    }
 
-        $title = $this->evaluate($this->recordTitle, ['record' => $record]);
-
-        if (filled($title)) {
-            return $title;
-        }
-
-        if (! $record) {
-            return $this->getModelLabel();
-        }
-
-        $titleAttribute = $this->getRecordTitleAttribute($record);
-
-        if (filled($titleAttribute)) {
-            return $record->getAttributeValue($titleAttribute);
-        }
-
-        return $record->getKey();
+    public function getCustomRecordTitle(?Model $record = null): ?string
+    {
+        return $this->evaluate($this->recordTitle, ['record' => $record ?? $this->getRecord()]);
     }
 
     public function getModel(): ?string
     {
-        $model = $this->evaluate($this->model);
+        $model = $this->getCustomModel();
 
         if (filled($model)) {
             return $model;
@@ -111,9 +89,14 @@ trait InteractsWithRecord
         return $record::class;
     }
 
+    public function getCustomModel(): ?string
+    {
+        return $this->evaluate($this->model);
+    }
+
     public function getModelLabel(): ?string
     {
-        $label = $this->evaluate($this->modelLabel);
+        $label = $this->getCustomModelLabel();
 
         if (filled($label)) {
             return $label;
@@ -128,9 +111,14 @@ trait InteractsWithRecord
         return get_model_label($model);
     }
 
+    public function getCustomModelLabel(): ?string
+    {
+        return $this->evaluate($this->modelLabel);
+    }
+
     public function getPluralModelLabel(): ?string
     {
-        $label = $this->evaluate($this->pluralModelLabel);
+        $label = $this->getCustomPluralModelLabel();
 
         if (filled($label)) {
             return $label;
@@ -138,14 +126,16 @@ trait InteractsWithRecord
 
         $singularLabel = $this->getModelLabel();
 
-        return filled($singularLabel) ? Str::plural($singularLabel) : null;
+        if (blank($singularLabel)) {
+            return null;
+        }
+
+        return Str::plural($singularLabel);
     }
 
-    public function getRecordTitleAttribute(?Model $record = null): ?string
+    public function getCustomPluralModelLabel(): ?string
     {
-        return $this->evaluate($this->recordTitleAttribute, [
-            'record' => $record ?? $this->getRecord(),
-        ]);
+        return $this->evaluate($this->pluralModelLabel);
     }
 
     protected function parseAuthorizationArguments(array $arguments): array

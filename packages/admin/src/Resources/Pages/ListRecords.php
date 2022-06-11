@@ -6,6 +6,7 @@ use Closure;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\CreateAction;
 use Filament\Pages\Contracts\HasModel;
+use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,9 +14,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class ListRecords extends Page implements HasModel, Tables\Contracts\HasTable
+class ListRecords extends Page implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
+    use UsesResourceForm;
 
     protected static string $view = 'filament::resources.pages.list-records';
 
@@ -152,24 +154,60 @@ class ListRecords extends Page implements HasModel, Tables\Contracts\HasTable
         return [$this->getCreateAction()];
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasCreateAction(): bool
     {
-        if (! static::getResource()::hasPage('create')) {
+        $resource = static::getResource();
+
+        if (! $resource::hasPage('create')) {
             return false;
         }
 
-        if (! static::getResource()::canCreate()) {
+        if (! $resource::canCreate()) {
             return false;
         }
 
         return true;
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getCreateAction(): Action
+    {
+        return CreateAction::make();
+    }
+
+    protected function getCreateFormSchema(): array
+    {
+        return $this->getResourceForm(columns: 2)->getSchema();
+    }
+
+    protected function configureAction(Action $action): void
+    {
+        if ($action instanceof CreateAction) {
+            $this->configureCreateAction($action);
+
+            return;
+        }
+    }
+
+    protected function configureCreateAction(CreateAction $action): void
     {
         $resource = static::getResource();
 
-        return CreateAction::make()->url(fn () => $resource::getUrl('create'));
+        $action
+            ->authorize($resource::canCreate())
+            ->model($this->getModel())
+            ->modelLabel($this->getModelLabel());
+
+        if ($resource::hasPage('create')) {
+            $action->url(fn () => $resource::getUrl('create'));
+        } else {
+            $action->form($this->getCreateFormSchema());
+        }
     }
 
     protected function getDefaultTableSortColumn(): ?string
@@ -239,35 +277,30 @@ class ListRecords extends Page implements HasModel, Tables\Contracts\HasTable
         return $this->getModel();
     }
 
-    public function getTableRecordTitle(Model $record): ?string
+    public function getTableRecordTitle(Model $record): string
     {
         $resource = static::getResource();
 
         return $resource::getRecordTitle($record);
     }
 
-    public function getModelLabel(): ?string
+    public function getModelLabel(): string
     {
         return static::getResource()::getModelLabel();
     }
 
-    public function getPluralModelLabel(): ?string
+    public function getPluralModelLabel(): string
     {
         return static::getResource()::getPluralModelLabel();
     }
 
-    public function getTableModelLabel(): ?string
+    public function getTableModelLabel(): string
     {
         return $this->getModelLabel();
     }
 
-    public function getTablePluralModelLabel(): ?string
+    public function getTablePluralModelLabel(): string
     {
         return $this->getPluralModelLabel();
-    }
-
-    public function getTableRecordTitleAttribute(): ?string
-    {
-        return static::getResource()::getRecordTitleAttribute();
     }
 }

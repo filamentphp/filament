@@ -80,43 +80,25 @@ class Action extends BaseAction implements Groupable, HasRecord
         ]);
     }
 
-    public function getModelLabel(): ?string
+    public function getRecordTitle(?Model $record = null): string
     {
-        $label = $this->evaluate($this->modelLabel);
+        $record ??= $this->getRecord();
 
-        if (filled($label)) {
-            return $label;
-        }
-
-        return $this->getLivewire()->getTableModelLabel();
+        return $this->getCustomRecordTitle($record) ?? $this->getLivewire()->getTableRecordTitle($record);
     }
 
-    public function getPluralModelLabel(): ?string
+    public function getModelLabel(): string
     {
-        $label = $this->evaluate($this->pluralModelLabel);
-
-        if (filled($label)) {
-            return $label;
-        }
-
-        return $this->getLivewire()->getTablePluralModelLabel();
+        return $this->getCustomModelLabel() ?? $this->getLivewire()->getTableModelLabel();
     }
 
-    public function getRecordTitleAttribute(?Model $record = null): ?string
+    public function getPluralModelLabel(): string
     {
-        $attribute = $this->evaluate($this->recordTitleAttribute, [
-            'record' => $record ?? $this->getRecord(),
-        ]);
-
-        if (filled($attribute)) {
-            return $attribute;
-        }
-
-        return $this->getLivewire()->getTableRecordTitleAttribute();
+        return $this->getPluralModelLabel() ?? $this->getLivewire()->getTablePluralModelLabel();
     }
 
-    public function getModel(): ?string
+    public function getModel(): string
     {
-        return $this->getLivewire()->getTableModel();
+        return $this->getCustomModel() ?? $this->getLivewire()->getTableModel();
     }
 }

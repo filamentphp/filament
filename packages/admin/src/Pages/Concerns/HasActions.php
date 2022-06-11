@@ -2,6 +2,7 @@
 
 namespace Filament\Pages\Concerns;
 
+use Closure;
 use Filament\Forms;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\ActionGroup;
@@ -121,7 +122,12 @@ trait HasActions
 
     protected function cacheActions(): void
     {
-        $this->cachedActions = collect($this->getActions())
+        $actions = Action::configureUsing(
+            Closure::fromCallable([$this, 'configureAction']),
+            fn (): array => $this->getActions(),
+        );
+
+        $this->cachedActions = collect($actions)
             ->mapWithKeys(function (Action | ActionGroup $action, int $index): array {
                 if ($action instanceof ActionGroup) {
                     foreach ($action->getActions() as $groupedAction) {
@@ -136,6 +142,10 @@ trait HasActions
                 return [$action->getName() => $action];
             })
             ->toArray();
+    }
+
+    protected function configureAction(Action $action): void
+    {
     }
 
     public function getMountedAction(): ?Action

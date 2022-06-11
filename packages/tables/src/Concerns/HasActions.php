@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Support\Actions\Exceptions\Hold;
 use Filament\Tables\Actions\Action;
@@ -26,7 +27,12 @@ trait HasActions
 
     public function cacheTableActions(): void
     {
-        $this->cachedTableActions = collect($this->getTableActions())
+        $actions = Action::configureUsing(
+            Closure::fromCallable([$this, 'configureTableAction']),
+            fn (): array => $this->getTableActions(),
+        );
+
+        $this->cachedTableActions = collect($actions)
             ->mapWithKeys(function (Action | ActionGroup $action, int $index): array {
                 if ($action instanceof ActionGroup) {
                     foreach ($action->getActions() as $groupedAction) {
@@ -41,6 +47,10 @@ trait HasActions
                 return [$action->getName() => $action];
             })
             ->toArray();
+    }
+
+    protected function configureTableAction(Action $action): void
+    {
     }
 
     public function callMountedTableAction(?string $arguments = null)

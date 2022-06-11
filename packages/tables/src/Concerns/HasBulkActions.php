@@ -2,8 +2,10 @@
 
 namespace Filament\Tables\Concerns;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Support\Actions\Exceptions\Hold;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 
 /**
@@ -19,13 +21,22 @@ trait HasBulkActions
 
     public function cacheTableBulkActions(): void
     {
-        $this->cachedTableBulkActions = collect($this->getTableBulkActions())
+        $actions = Action::configureUsing(
+            Closure::fromCallable([$this, 'configureTableBulkAction']),
+            fn (): array => $this->getTableBulkActions(),
+        );
+
+        $this->cachedTableBulkActions = collect($actions)
             ->mapWithKeys(function (BulkAction $action): array {
                 $action->table($this->getCachedTable());
 
                 return [$action->getName() => $action];
             })
             ->toArray();
+    }
+
+    protected function configureTableBulkAction(BulkAction $action): void
+    {
     }
 
     public function callMountedTableBulkAction(?string $arguments = null)

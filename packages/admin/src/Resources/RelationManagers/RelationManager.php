@@ -213,24 +213,19 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return $this->getResourceTable()->getDefaultSortDirection();
     }
 
-    public function getTableRecordTitle(Model $record): ?string
+    public function getTableRecordTitle(Model $record): string
     {
         return static::getRecordTitle($record);
     }
 
-    public function getTableModelLabel(): ?string
+    public function getTableModelLabel(): string
     {
         return static::getModelLabel();
     }
 
-    public function getTablePluralModelLabel(): ?string
+    public function getTablePluralModelLabel(): string
     {
         return static::getPluralModelLabel();
-    }
-
-    public function getTableRecordTitleAttribute(): ?string
-    {
-        return static::getRecordTitleAttribute();
     }
 
     protected function getTableActions(): array

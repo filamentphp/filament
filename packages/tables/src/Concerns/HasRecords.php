@@ -61,23 +61,18 @@ trait HasRecords
         return $record->getKey();
     }
 
-    public function getTableRecordTitle(Model $record): ?string
+    public function getTableRecordTitle(Model $record): string
     {
-        return $record->getKey();
+        return $this->getTableModelLabel();
     }
 
-    public function getTableModelLabel(): ?string
+    public function getTableModelLabel(): string
     {
         return (string) get_model_label($this->getTableModel());
     }
 
-    public function getTablePluralModelLabel(): ?string
+    public function getTablePluralModelLabel(): string
     {
         return Str::plural($this->getTableModelLabel());
-    }
-
-    public function getTableRecordTitleAttribute(): ?string
-    {
-        return null;
     }
 }

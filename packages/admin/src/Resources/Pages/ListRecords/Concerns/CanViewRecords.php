@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 
 trait CanViewRecords
 {
-    use UsesResourceForm;
-
     protected function hasViewAction(): bool
     {
         return true;

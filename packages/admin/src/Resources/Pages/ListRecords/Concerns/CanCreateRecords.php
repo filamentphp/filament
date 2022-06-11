@@ -3,18 +3,21 @@
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
 use Filament\Pages\Actions\Action;
-use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @deprecated Deleting the Create page now opens the action in a modal.
+ */
 trait CanCreateRecords
 {
-    use UsesResourceForm;
-
     /**
      * @deprecated Use `->disableCreateAnother()` on the action instead.
      */
     protected static bool $canCreateAnother = true;
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasCreateAction(): bool
     {
         return static::getResource()::canCreate();
@@ -36,18 +39,14 @@ trait CanCreateRecords
         static::$canCreateAnother = false;
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getCreateAction(): Action
     {
         return parent::getCreateAction()
-            ->url(null)
-            ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
             ->action(fn (array $arguments) => $this->create($arguments['another'] ?? false));
-    }
-
-    protected function getCreateFormSchema(): array
-    {
-        return $this->getResourceForm(columns: 2)->getSchema();
     }
 
     /**

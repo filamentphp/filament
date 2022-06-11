@@ -4,7 +4,7 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Support\Actions\Action as BaseAction;
-use Filament\Support\Actions\Concerns\InteractsWithRecords;
+use Filament\Tables\Actions\Concerns\InteractsWithRecords;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -12,7 +12,7 @@ class BulkAction extends BaseAction
 {
     use Concerns\BelongsToTable;
     use Concerns\CanDeselectRecordsAfterCompletion;
-    use InteractsWithRecords;
+    use Concerns\InteractsWithRecords;
 
     protected string $view = 'tables::actions.bulk-action';
 
@@ -71,10 +71,5 @@ class BulkAction extends BaseAction
         array_unshift($arguments, $this->getLivewire()->getTableModel());
 
         return $arguments;
-    }
-
-    public function getModel(): ?string
-    {
-        return $this->getLivewire()->getTableModel();
     }
 }
