@@ -4,7 +4,6 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Support\Actions\Action as BaseAction;
-use Filament\Tables\Actions\Concerns\InteractsWithRecords;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Collection;
 

@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
-use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 

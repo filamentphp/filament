@@ -5,7 +5,6 @@ namespace Filament\Resources\Pages;
 use Closure;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\CreateAction;
-use Filament\Pages\Contracts\HasModel;
 use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Filament\Resources\Table;
 use Filament\Tables;

@@ -3,9 +3,7 @@
 namespace Filament\Tables\Actions\Concerns;
 
 use Closure;
-use function Filament\Support\get_model_label;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Str;
 
 trait InteractsWithRecords
 {
