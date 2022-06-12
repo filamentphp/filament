@@ -66,7 +66,7 @@
                 init() {
                     chart = Chart.getChart(this.$refs.canvas);
 
-                    chart ? this.update(chart) : this.create();
+                    chart ? this.update(chart) : this.create()
                 },
 
                 create: function() {
