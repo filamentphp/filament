@@ -42,9 +42,7 @@ class CreateAction extends Action
         $this->action(function (array $arguments, ComponentContainer $form): void {
             $model = $this->getModel();
 
-            $record = $this->process(function (array $data) use ($model): Model {
-                return $model::create($data);
-            });
+            $record = $this->process(fn (array $data): Model => $model::create($data));
 
             $form->model($record)->saveRelationships();
 
