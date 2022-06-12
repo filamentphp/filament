@@ -64,7 +64,7 @@
                 values: {{ json_encode(array_values($chart)) }},
 
                 init() {
-                    chart = Chart.getChart(this.$refs.canvas);
+                    chart = Chart.getChart(this.$refs.canvas)
 
                     chart ? this.update(chart) : this.create()
                 },
