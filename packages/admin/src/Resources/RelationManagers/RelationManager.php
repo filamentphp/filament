@@ -71,65 +71,18 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected function configureTableAction(Tables\Actions\Action $action): void
     {
-        if ($action instanceof Tables\Actions\AssociateAction) {
-            $this->configureAssociateAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\AttachAction) {
-            $this->configureAttachAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\CreateAction) {
-            $this->configureCreateAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\DeleteAction) {
-            $this->configureDeleteAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\DetachAction) {
-            $this->configureDetachAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\DissociateAction) {
-            $this->configureDissociateAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\EditAction) {
-            $this->configureEditAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\ForceDeleteAction) {
-            $this->configureForceDeleteAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\RestoreAction) {
-            $this->configureRestoreAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\ViewAction) {
-            $this->configureViewAction($action);
-
-            return;
-        }
+        match (true) {
+            $action instanceof Tables\Actions\AssociateAction => $this->configureAssociateAction($action),
+            $action instanceof Tables\Actions\AttachAction => $this->configureAttachAction($action),
+            $action instanceof Tables\Actions\CreateAction => $this->configureCreateAction($action),
+            $action instanceof Tables\Actions\DeleteAction => $this->configureDeleteAction($action),
+            $action instanceof Tables\Actions\DetachAction => $this->configureDetachAction($action),
+            $action instanceof Tables\Actions\DissociateAction => $this->configureDissociateAction($action),
+            $action instanceof Tables\Actions\EditAction => $this->configureEditAction($action),
+            $action instanceof Tables\Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),
+            $action instanceof Tables\Actions\RestoreAction => $this->configureRestoreAction($action),
+            $action instanceof Tables\Actions\ViewAction => $this->configureViewAction($action),
+        };
     }
 
     protected function configureAssociateAction(Tables\Actions\AssociateAction $action): void
