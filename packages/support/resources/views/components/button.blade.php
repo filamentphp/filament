@@ -86,7 +86,7 @@
             isUploadingFile: false,
         }"
         x-bind:disabled="isUploadingFile"
-        x-bind:class="{ 'opacity-70': isUploadingFile || isDisabled, 'cursor-wait' : isUploadingFile }"
+        x-bind:class="{ 'opacity-70': isUploadingFile || isDisabled(), 'cursor-wait' : isUploadingFile }"
         x-init="
             form = $el.closest('form')
 
