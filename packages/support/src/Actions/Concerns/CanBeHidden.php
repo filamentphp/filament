@@ -86,7 +86,7 @@ trait CanBeHidden
 
         return match ($type) {
             'all' => $user->can($abilities, $arguments),
-            'any' => $user->canAny($abilities, $arguments,
+            'any' => $user->canAny($abilities, $arguments),
             default => false,
         };
     }

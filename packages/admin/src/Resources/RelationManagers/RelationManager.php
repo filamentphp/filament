@@ -82,6 +82,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
             $action instanceof Tables\Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),
             $action instanceof Tables\Actions\RestoreAction => $this->configureRestoreAction($action),
             $action instanceof Tables\Actions\ViewAction => $this->configureViewAction($action),
+            default => null,
         };
     }
 
@@ -173,6 +174,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
             $action instanceof Tables\Actions\DissociateBulkAction => $this->configureDissociateBulkAction($action),
             $action instanceof Tables\Actions\ForceDeleteBulkAction => $this->configureForceDeleteBulkAction($action),
             $action instanceof Tables\Actions\RestoreBulkAction => $this->configureRestoreBulkAction($action),
+            default => null,
         };
     }
 

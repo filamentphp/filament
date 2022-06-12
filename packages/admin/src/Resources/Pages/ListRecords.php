@@ -228,6 +228,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             $action instanceof Tables\Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),
             $action instanceof Tables\Actions\RestoreAction => $this->configureRestoreAction($action),
             $action instanceof Tables\Actions\ViewAction => $this->configureViewAction($action),
+            default => null,
         };
     }
 
@@ -293,6 +294,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             $action instanceof Tables\Actions\DeleteBulkAction => $this->configureDeleteBulkAction($action),
             $action instanceof Tables\Actions\ForceDeleteBulkAction => $this->configureForceDeleteBulkAction($action),
             $action instanceof Tables\Actions\RestoreBulkAction => $this->configureRestoreBulkAction($action),
+            default => null,
         };
     }
 

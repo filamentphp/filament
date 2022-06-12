@@ -155,9 +155,10 @@ class EditRecord extends Page implements HasFormActions
 
     protected function configureAction(Action $action): void
     {
-        return match (true) {
+        match (true) {
             $action instanceof DeleteAction => $this->configureDeleteAction($action),
             $action instanceof ViewAction => $this->configureViewAction($action),
+            default => null,
         };
     }
 
