@@ -215,9 +215,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
         if ($resource::hasPage('create')) {
             $action->url(fn (): string => $resource::getUrl('create'));
-        } else {
-            $action->form($this->getCreateFormSchema());
+
+            return;
         }
+
+        $action->form($this->getCreateFormSchema());
     }
 
     protected function configureTableAction(Tables\Actions\Action $action): void
@@ -252,9 +254,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
         if ($resource::hasPage('edit')) {
             $action->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]));
-        } else {
-            $action->form($this->getEditFormSchema());
+
+            return;
         }
+
+        $action->form($this->getEditFormSchema());
     }
 
     protected function configureForceDeleteAction(Tables\Actions\ForceDeleteAction $action): void
@@ -283,9 +287,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
         if ($resource::hasPage('view')) {
             $action->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]));
-        } else {
-            $action->form($this->getViewFormSchema());
+
+            return;
         }
+
+        $action->form($this->getViewFormSchema());
     }
 
     protected function configureTableBulkAction(BulkAction $action): void

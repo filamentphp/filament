@@ -172,10 +172,12 @@ class EditRecord extends Page implements HasFormActions
             ->recordTitle($this->getRecordTitle());
 
         if ($resource::hasPage('view')) {
-            $action->url(fn () => static::getResource()::getUrl('view', ['record' => $this->getRecord()]));
-        } else {
-            $action->form($this->getFormSchema());
+            $action->url(fn (): string => static::getResource()::getUrl('view', ['record' => $this->getRecord()]));
+
+            return;
         }
+
+        $action->form($this->getFormSchema());
     }
 
     /**

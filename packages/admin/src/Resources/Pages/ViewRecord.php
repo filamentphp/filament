@@ -84,10 +84,12 @@ class ViewRecord extends Page
             ->recordTitle($this->getRecordTitle());
 
         if ($resource::hasPage('edit')) {
-            $action->url(fn () => static::getResource()::getUrl('edit', ['record' => $this->getRecord()]));
-        } else {
-            $action->form($this->getFormSchema());
+            $action->url(fn (): string => static::getResource()::getUrl('edit', ['record' => $this->getRecord()]));
+
+            return;
         }
+
+        $action->form($this->getFormSchema());
     }
 
     /**
