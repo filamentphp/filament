@@ -25,6 +25,13 @@ trait CanOpenUrl
         return $this;
     }
 
+    public function disableUrl(): static
+    {
+        $this->url = false;
+
+        return $this;
+    }
+
     public function getUrl(): ?string
     {
         return $this->evaluate($this->url);

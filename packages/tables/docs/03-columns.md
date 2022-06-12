@@ -153,6 +153,15 @@ TextColumn::make('title')
     ->openUrlInNewTab()
 ```
 
+Alternatively, you can also disable URL entirely:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->disableUrl()
+```
+
 ### Setting a default value
 
 To set a default value for fields with a `null` state, you may use the `default()` method:
@@ -351,11 +360,11 @@ TextColumn::make('description')
     ->limit(50)
     ->tooltip(function (TextColumn $column): ?string {
         $state = $column->getState();
-    
+
         if (strlen($state) <= $column->getLimit()) {
             return null;
         }
-        
+
         // Only render the tooltip if the column contents exceeds the length limit.
         return $state;
     })
