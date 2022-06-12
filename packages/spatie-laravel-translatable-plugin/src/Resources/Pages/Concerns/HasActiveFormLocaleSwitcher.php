@@ -4,7 +4,6 @@ namespace Filament\Resources\Pages\Concerns;
 
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\LocaleSwitcher;
-use Filament\Pages\Actions\SelectAction;
 
 /**
  * @deprecated Use `HasActiveLocaleSwitcher` instead.

@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Actions;
 
-use Closure;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;

@@ -2,13 +2,13 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Tables\Contracts\HasRelationshipTable;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use function Filament\Support\get_model_label;
+use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 trait HasRecords
