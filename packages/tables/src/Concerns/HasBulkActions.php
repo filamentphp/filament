@@ -5,7 +5,6 @@ namespace Filament\Tables\Concerns;
 use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Support\Actions\Exceptions\Hold;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 
 /**

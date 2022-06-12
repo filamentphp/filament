@@ -3,7 +3,6 @@
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Model;
 
 trait CanViewRecords
 {
