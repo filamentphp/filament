@@ -200,6 +200,22 @@ test('missing child component state can be filled with null', function () {
         ->getData()->toBe([$parentStatePath => [$statePath => null]]);
 });
 
+test('missing hidden child component state can be filled with null', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->hidden()
+                ->schema([
+                    (new Component())->statePath($statePath = Str::random()),
+                ]),
+        ])
+        ->fill();
+
+    expect($livewire)
+        ->getData()->toBe([$statePath => null]);
+});
+
 test('custom logic can be executed after state is hydrated', function () {
     ComponentContainer::make($livewire = Livewire::make())
         ->statePath('data')
