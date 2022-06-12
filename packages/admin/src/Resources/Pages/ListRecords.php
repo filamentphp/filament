@@ -5,6 +5,11 @@ namespace Filament\Resources\Pages;
 use Closure;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\CreateAction;
+use Filament\Pages\Actions\DeleteAction;
+use Filament\Pages\Actions\EditAction;
+use Filament\Pages\Actions\ForceDeleteAction;
+use Filament\Pages\Actions\ReplicateAction;
+use Filament\Pages\Actions\RestoreAction;
 use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Filament\Resources\Table;
 use Filament\Tables;
@@ -192,11 +197,10 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function configureAction(Action $action): void
     {
-        if ($action instanceof CreateAction) {
-            $this->configureCreateAction($action);
-
-            return;
-        }
+        match (true) {
+            $action instanceof CreateAction => $this->configureCreateAction($action),
+            default => null,
+        };
     }
 
     protected function getCreateFormSchema(): array
@@ -228,6 +232,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             $action instanceof Tables\Actions\DeleteAction => $this->configureDeleteAction($action),
             $action instanceof Tables\Actions\EditAction => $this->configureEditAction($action),
             $action instanceof Tables\Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),
+            $action instanceof Tables\Actions\ReplicateAction => $this->configureReplicateAction($action),
             $action instanceof Tables\Actions\RestoreAction => $this->configureRestoreAction($action),
             $action instanceof Tables\Actions\ViewAction => $this->configureViewAction($action),
             default => null,
@@ -265,6 +270,12 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         $action
             ->authorize(fn (Model $record): bool => static::getResource()::canForceDelete($record));
+    }
+
+    protected function configureReplicateAction(Tables\Actions\ReplicateAction $action): void
+    {
+        $action
+            ->authorize(fn (Model $record): bool => static::getResource()::canReplicate($record));
     }
 
     protected function configureRestoreAction(Tables\Actions\RestoreAction $action): void

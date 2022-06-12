@@ -80,6 +80,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
             $action instanceof Tables\Actions\DissociateAction => $this->configureDissociateAction($action),
             $action instanceof Tables\Actions\EditAction => $this->configureEditAction($action),
             $action instanceof Tables\Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),
+            $action instanceof Tables\Actions\ReplicateAction => $this->configureReplicateAction($action),
             $action instanceof Tables\Actions\RestoreAction => $this->configureRestoreAction($action),
             $action instanceof Tables\Actions\ViewAction => $this->configureViewAction($action),
             default => null,
@@ -146,6 +147,12 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
     {
         $action
             ->authorize(fn (Model $record): bool => $this->canForceDelete($record));
+    }
+
+    protected function configureReplicateAction(Tables\Actions\ReplicateAction $action): void
+    {
+        $action
+            ->authorize(fn (Model $record): bool => $this->canReplicate($record));
     }
 
     protected function configureRestoreAction(Tables\Actions\RestoreAction $action): void
@@ -455,6 +462,11 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
     protected function canForceDeleteAny(): bool
     {
         return $this->can('forceDeleteAny');
+    }
+
+    protected function canReplicate(Model $record): bool
+    {
+        return $this->can('replicate', $record);
     }
 
     protected function canRestore(Model $record): bool

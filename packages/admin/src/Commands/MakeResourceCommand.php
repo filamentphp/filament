@@ -150,7 +150,7 @@ class MakeResourceCommand extends Command
                 ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass
             ) : $this->indentString('//', 4),
             'tableFilters' => $this->indentString(
-                $this->option('soft-deletes') ? 'Tables\Filters\TrashedFilter::make()' : '//',
+                $this->option('soft-deletes') ? 'Tables\Filters\TrashedFilter::make(),' : '//',
                 4,
             ),
         ]);

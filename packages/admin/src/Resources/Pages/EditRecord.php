@@ -5,6 +5,9 @@ namespace Filament\Resources\Pages;
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\DeleteAction;
+use Filament\Pages\Actions\ForceDeleteAction;
+use Filament\Pages\Actions\ReplicateAction;
+use Filament\Pages\Actions\RestoreAction;
 use Filament\Pages\Actions\ViewAction;
 use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
@@ -157,6 +160,9 @@ class EditRecord extends Page implements HasFormActions
     {
         match (true) {
             $action instanceof DeleteAction => $this->configureDeleteAction($action),
+            $action instanceof ForceDeleteAction => $this->configureForceDeleteAction($action),
+            $action instanceof ReplicateAction => $this->configureReplicateAction($action),
+            $action instanceof RestoreAction => $this->configureRestoreAction($action),
             $action instanceof ViewAction => $this->configureViewAction($action),
             default => null,
         };
@@ -186,6 +192,33 @@ class EditRecord extends Page implements HasFormActions
     protected function getViewAction(): Action
     {
         return ViewAction::make();
+    }
+
+    protected function configureForceDeleteAction(ForceDeleteAction $action): void
+    {
+        $resource = static::getResource();
+
+        $action
+            ->authorize($resource::canForceDelete($this->getRecord()))
+            ->record($this->getRecord())
+            ->recordTitle($this->getRecordTitle())
+            ->successRedirectUrl($resource::getUrl('index'));
+    }
+
+    protected function configureReplicateAction(ReplicateAction $action): void
+    {
+        $action
+            ->authorize(static::getResource()::canReplicate($this->getRecord()))
+            ->record($this->getRecord())
+            ->recordTitle($this->getRecordTitle());
+    }
+
+    protected function configureRestoreAction(RestoreAction $action): void
+    {
+        $action
+            ->authorize(static::getResource()::canRestore($this->getRecord()))
+            ->record($this->getRecord())
+            ->recordTitle($this->getRecordTitle());
     }
 
     protected function configureDeleteAction(DeleteAction $action): void

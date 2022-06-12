@@ -148,6 +148,11 @@ class Resource
         return static::can('forceDeleteAny');
     }
 
+    public static function canReplicate(Model $record): bool
+    {
+        return static::can('replicate', $record);
+    }
+
     public static function canRestore(Model $record): bool
     {
         return static::can('restore', $record);

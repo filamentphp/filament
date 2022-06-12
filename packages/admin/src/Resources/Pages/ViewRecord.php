@@ -4,7 +4,12 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
+use Filament\Pages\Actions\DeleteAction;
 use Filament\Pages\Actions\EditAction;
+use Filament\Pages\Actions\ForceDeleteAction;
+use Filament\Pages\Actions\ReplicateAction;
+use Filament\Pages\Actions\RestoreAction;
+use Filament\Pages\Actions\ViewAction;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -67,11 +72,14 @@ class ViewRecord extends Page
 
     protected function configureAction(Action $action): void
     {
-        if ($action instanceof EditAction) {
-            $this->configureEditAction($action);
-
-            return;
-        }
+        match (true) {
+            $action instanceof DeleteAction => $this->configureDeleteAction($action),
+            $action instanceof EditAction => $this->configureEditAction($action),
+            $action instanceof ForceDeleteAction => $this->configureForceDeleteAction($action),
+            $action instanceof ReplicateAction => $this->configureReplicateAction($action),
+            $action instanceof RestoreAction => $this->configureRestoreAction($action),
+            default => null,
+        };
     }
 
     protected function configureEditAction(EditAction $action): void
@@ -98,6 +106,44 @@ class ViewRecord extends Page
     protected function getEditAction(): Action
     {
         return EditAction::make();
+    }
+
+    protected function configureForceDeleteAction(ForceDeleteAction $action): void
+    {
+        $resource = static::getResource();
+
+        $action
+            ->authorize($resource::canForceDelete($this->getRecord()))
+            ->record($this->getRecord())
+            ->recordTitle($this->getRecordTitle())
+            ->successRedirectUrl($resource::getUrl('index'));
+    }
+
+    protected function configureReplicateAction(ReplicateAction $action): void
+    {
+        $action
+            ->authorize(static::getResource()::canReplicate($this->getRecord()))
+            ->record($this->getRecord())
+            ->recordTitle($this->getRecordTitle());
+    }
+
+    protected function configureRestoreAction(RestoreAction $action): void
+    {
+        $action
+            ->authorize(static::getResource()::canRestore($this->getRecord()))
+            ->record($this->getRecord())
+            ->recordTitle($this->getRecordTitle());
+    }
+
+    protected function configureDeleteAction(DeleteAction $action): void
+    {
+        $resource = static::getResource();
+
+        $action
+            ->authorize($resource::canDelete($this->getRecord()))
+            ->record($this->getRecord())
+            ->recordTitle($this->getRecordTitle())
+            ->successRedirectUrl($resource::getUrl('index'));
     }
 
     protected function getTitle(): string
