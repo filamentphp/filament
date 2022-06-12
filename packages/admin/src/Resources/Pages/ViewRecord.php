@@ -9,7 +9,6 @@ use Filament\Pages\Actions\EditAction;
 use Filament\Pages\Actions\ForceDeleteAction;
 use Filament\Pages\Actions\ReplicateAction;
 use Filament\Pages\Actions\RestoreAction;
-use Filament\Pages\Actions\ViewAction;
 use Illuminate\Database\Eloquent\Model;
 
 /**
