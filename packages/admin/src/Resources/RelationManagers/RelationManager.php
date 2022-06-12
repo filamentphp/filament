@@ -167,35 +167,13 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected function configureTableBulkAction(BulkAction $action): void
     {
-        if ($action instanceof Tables\Actions\DeleteBulkAction) {
-            $this->configureDeleteBulkAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\DetachBulkAction) {
-            $this->configureDetachBulkAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\DissociateBulkAction) {
-            $this->configureDissociateBulkAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\ForceDeleteBulkAction) {
-            $this->configureForceDeleteBulkAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\RestoreBulkAction) {
-            $this->configureRestoreBulkAction($action);
-
-            return;
-        }
+        match (true) {
+            $action instanceof Tables\Actions\DeleteBulkAction => $this->configureDeleteBulkAction($action),
+            $action instanceof Tables\Actions\DetachBulkAction => $this->configureDetachBulkAction($action),
+            $action instanceof Tables\Actions\DissociateBulkAction => $this->configureDissociateBulkAction($action),
+            $action instanceof Tables\Actions\ForceDeleteBulkAction => $this->configureForceDeleteBulkAction($action),
+            $action instanceof Tables\Actions\RestoreBulkAction => $this->configureRestoreBulkAction($action),
+        };
     }
 
     protected function configureDeleteBulkAction(Tables\Actions\DeleteBulkAction $action): void
