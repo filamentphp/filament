@@ -20,6 +20,10 @@ class RelationshipRepeater extends Repeater
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
+    protected ?Closure $mutateRelationshipDataBeforeCreateUsing = null;
+
+    protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -76,6 +80,8 @@ class RelationshipRepeater extends Repeater
                 if ($record = ($existingRecords[$itemKey] ?? null)) {
                     $activeLocale && method_exists($record, 'setLocale') && $record->setLocale($activeLocale);
 
+                    $itemData = $component->mutateRelationshipDataBeforeSaveUsing($itemData);
+
                     $record->fill($itemData)->save();
 
                     continue;
@@ -89,6 +95,8 @@ class RelationshipRepeater extends Repeater
                     $record->setLocale($activeLocale);
                 }
 
+                $itemData = $component->mutateRelationshipDataBeforeCreateUsing($itemData);
+
                 $record->fill($itemData);
 
                 $record = $relationship->save($record);
@@ -99,6 +107,42 @@ class RelationshipRepeater extends Repeater
         $this->dehydrated(false);
 
         $this->disableItemMovement();
+    }
+
+    public function mutateRelationshipDataBeforeCreate(Closure $callback): static
+    {
+        $this->mutateRelationshipDataBeforeCreateUsing = $callback;
+
+        return $this;
+    }
+
+    public function mutateRelationshipDataBeforeCreateUsing(array $data): array
+    {
+        if ($this->mutateRelationshipDataBeforeCreateUsing instanceof Closure) {
+            $data = $this->evaluate($this->mutateRelationshipDataBeforeCreateUsing, [
+                'data' => $data,
+            ]);
+        }
+
+        return $data;
+    }
+
+    public function mutateRelationshipDataBeforeSave(Closure $callback): static
+    {
+        $this->mutateRelationshipDataBeforeSaveUsing = $callback;
+
+        return $this;
+    }
+
+    public function mutateRelationshipDataBeforeSaveUsing(array $data): array
+    {
+        if ($this->mutateRelationshipDataBeforeSaveUsing instanceof Closure) {
+            $data = $this->evaluate($this->mutateRelationshipDataBeforeSaveUsing, [
+                'data' => $data,
+            ]);
+        }
+
+        return $data;
     }
 
     public function orderable(string | Closure | null $column = 'sort'): static
