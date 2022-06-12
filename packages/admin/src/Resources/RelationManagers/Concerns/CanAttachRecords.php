@@ -238,7 +238,6 @@ trait CanAttachRecords
         return Tables\Actions\AttachAction::make()
             ->form($this->getAttachFormSchema())
             ->mountUsing(fn () => $this->fillAttachForm())
-            ->action(fn (array $arguments) => $this->attach($arguments['another'] ?? false))
-            ->allowDuplicates($this->allowsDuplicates());
+            ->action(fn (array $arguments) => $this->attach($arguments['another'] ?? false));
     }
 }

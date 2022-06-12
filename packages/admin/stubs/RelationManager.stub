@@ -4,11 +4,13 @@ namespace {{ namespace }};
 
 use Filament\Forms;
 use Filament\Resources\Form;
-use Filament\Resources\RelationManagers\MorphToManyRelationManager;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class {{ managerClass }} extends MorphToManyRelationManager
+class {{ managerClass }} extends RelationManager
 {
     protected static string $relationship = '{{ relationship }}';
 
@@ -29,7 +31,16 @@ class {{ managerClass }} extends MorphToManyRelationManager
                 //
             ])
             ->filters([
-                //
+{{ tableFilters }}
+            ])
+            ->headerActions([
+{{ tableHeaderActions }}
+            ])
+            ->actions([
+{{ tableActions }}
+            ])
+            ->bulkActions([
+{{ tableBulkActions }}
             ]);
-    }
+    }{{ eloquentQuery }}
 }

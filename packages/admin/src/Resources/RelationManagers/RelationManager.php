@@ -392,11 +392,6 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return static::getTitle();
     }
 
-    protected function getTableQuery(): Builder
-    {
-        return $this->getRelationship()->getQuery();
-    }
-
     public function render(): View
     {
         return view(static::$view, $this->getViewData());

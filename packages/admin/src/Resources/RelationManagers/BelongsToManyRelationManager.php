@@ -19,20 +19,7 @@ class BelongsToManyRelationManager extends RelationManager
     use Concerns\CanEditRecords;
     use Concerns\CanViewRecords;
 
-    /**
-     * @deprecated Use `->allowDuplicates()` on the action instead.
-     */
-    protected bool $allowsDuplicates = false;
-
     protected static string $view = 'filament::resources.relation-managers.belongs-to-many-relation-manager';
-
-    /**
-     * @deprecated Use `->allowDuplicates()` on the action instead.
-     */
-    public function allowsDuplicates(): bool
-    {
-        return $this->allowsDuplicates;
-    }
 
     protected function getResourceTable(): Table
     {
@@ -96,87 +83,5 @@ class BelongsToManyRelationManager extends RelationManager
         }
 
         return $record;
-    }
-
-    protected function getTableQuery(): Builder
-    {
-        $query = parent::getTableQuery();
-
-        /** @var BelongsToMany $relationship */
-        $relationship = $this->getRelationship();
-
-        // https://github.com/laravel/framework/issues/4962
-        if (! $this->allowsDuplicates()) {
-            $this->selectPivotDataInQuery($query);
-        }
-
-        // https://github.com/laravel-filament/filament/issues/2079
-        $query->withCasts(
-            app($relationship->getPivotClass())->getCasts(),
-        );
-
-        return $query;
-    }
-
-    protected function resolveTableRecord(?string $key): ?Model
-    {
-        if (! $this->allowsDuplicates()) {
-            return parent::resolveTableRecord($key);
-        }
-
-        /** @var BelongsToMany $relationship */
-        $relationship = $this->getRelationship();
-
-        $pivotClass = $relationship->getPivotClass();
-        $pivotKeyName = app($pivotClass)->getKeyName();
-
-        $record = $this->selectPivotDataInQuery(
-            $relationship->wherePivot($pivotKeyName, $key),
-        )->first();
-
-        return $record?->setRawAttributes($record->getRawOriginal());
-    }
-
-    public function getSelectedTableRecords(): Collection
-    {
-        if (! $this->allowsDuplicates()) {
-            return parent::getSelectedTableRecords();
-        }
-
-        /** @var BelongsToMany $relationship */
-        $relationship = $this->getRelationship();
-
-        $pivotClass = $relationship->getPivotClass();
-        $pivotKeyName = app($pivotClass)->getKeyName();
-
-        return $this->selectPivotDataInQuery(
-            $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords),
-        )->get();
-    }
-
-    protected function selectPivotDataInQuery(Builder | Relation $query): Builder | Relation
-    {
-        /** @var BelongsToMany $relationship */
-        $relationship = $this->getRelationship();
-
-        return $query->select(
-            $relationship->getTable().'.*',
-            $query->getModel()->getTable().'.*',
-        );
-    }
-
-    public function getTableRecordKey(Model $record): string
-    {
-        if (! $this->allowsDuplicates()) {
-            return parent::getTableRecordKey($record);
-        }
-
-        /** @var BelongsToMany $relationship */
-        $relationship = $this->getRelationship();
-
-        $pivotClass = $relationship->getPivotClass();
-        $pivotKeyName = app($pivotClass)->getKeyName();
-
-        return $record->getAttributeValue($pivotKeyName);
     }
 }

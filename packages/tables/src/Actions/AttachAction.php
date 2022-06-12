@@ -20,8 +20,6 @@ class AttachAction extends Action
 
     protected ?Closure $modifyRecordSelectUsing = null;
 
-    protected bool | Closure $allowsDuplicates = false;
-
     protected bool | Closure $isAttachAnotherDisabled = false;
 
     protected bool | Closure $isRecordSelectPreloaded = false;
@@ -101,13 +99,6 @@ class AttachAction extends Action
         return $this;
     }
 
-    public function allowDuplicates(bool | Closure $condition = true): static
-    {
-        $this->allowsDuplicates = $condition;
-
-        return $this;
-    }
-
     public function disableAttachAnother(bool | Closure $condition = true): static
     {
         $this->isAttachAnotherDisabled = $condition;
@@ -141,11 +132,6 @@ class AttachAction extends Action
         }
 
         return $attribute;
-    }
-
-    public function allowsDuplicates(): bool
-    {
-        return $this->evaluate($this->allowsDuplicates);
     }
 
     public function getRecordSelect(): Select
@@ -193,7 +179,7 @@ class AttachAction extends Action
 
             return $relationshipQuery
                 ->when(
-                    ! $this->allowsDuplicates(),
+                    ! $this->getLivewire()->allowsDuplicates(),
                     fn (Builder $query): Builder => $query->whereDoesntHave(
                         $this->getInverseRelationshipName(),
                         function (Builder $query): Builder {

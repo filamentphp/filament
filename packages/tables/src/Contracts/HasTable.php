@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 
 interface HasTable extends HasForms
 {
+    public function allowsDuplicates(): bool;
+
     public function callTableColumnAction(string $columnName, string $recordKey);
 
     public function deselectAllTableRecords(): void;

@@ -2,6 +2,8 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Tables\Contracts\HasRelationshipTable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use function Filament\Support\get_model_label;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,7 +13,14 @@ use Illuminate\Support\Str;
 
 trait HasRecords
 {
+    protected bool $allowsDuplicates = false;
+
     protected Collection | Paginator | null $records = null;
+
+    public function allowsDuplicates(): bool
+    {
+        return $this->allowsDuplicates;
+    }
 
     protected function getFilteredTableQuery(): Builder
     {
@@ -48,7 +57,21 @@ trait HasRecords
 
     protected function resolveTableRecord(?string $key): ?Model
     {
-        return $this->getTableQuery()->find($key);
+        if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && $this->allowsDuplicates())) {
+            return $this->getTableQuery()->find($key);
+        }
+
+        /** @var BelongsToMany $relationship */
+        $relationship = $this->getRelationship();
+
+        $pivotClass = $relationship->getPivotClass();
+        $pivotKeyName = app($pivotClass)->getKeyName();
+
+        $record = $this->selectPivotDataInQuery(
+            $relationship->wherePivot($pivotKeyName, $key),
+        )->first();
+
+        return $record?->setRawAttributes($record->getRawOriginal());
     }
 
     public function getTableModel(): string
@@ -58,7 +81,17 @@ trait HasRecords
 
     public function getTableRecordKey(Model $record): string
     {
-        return $record->getKey();
+        if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && $this->allowsDuplicates())) {
+            return $record->getKey();
+        }
+
+        /** @var BelongsToMany $relationship */
+        $relationship = $this->getRelationship();
+
+        $pivotClass = $relationship->getPivotClass();
+        $pivotKeyName = app($pivotClass)->getKeyName();
+
+        return $record->getAttributeValue($pivotKeyName);
     }
 
     public function getTableRecordTitle(Model $record): string

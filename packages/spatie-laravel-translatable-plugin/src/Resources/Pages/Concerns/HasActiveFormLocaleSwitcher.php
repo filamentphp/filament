@@ -2,25 +2,29 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
+use Filament\Pages\Actions\Action;
+use Filament\Pages\Actions\LocaleSwitcher;
 use Filament\Pages\Actions\SelectAction;
 
-trait HasActiveFormLocaleSelect
+/**
+ * @deprecated Use `HasActiveLocaleSwitcher` instead.
+ */
+trait HasActiveFormLocaleSwitcher
 {
+    public $activeLocale = null;
+
     public $activeFormLocale = null;
 
     public ?array $translatableLocales = null;
 
-    protected function getActiveFormLocaleSelectAction(): SelectAction
+    protected function getActiveFormLocaleSelectAction(): Action
     {
-        return SelectAction::make('activeFormLocale')
-            ->label(__('filament-spatie-laravel-translatable-plugin::actions.active_locale.label'))
-            ->options(
-                collect($this->getTranslatableLocales())
-                    ->mapWithKeys(function (string $locale): array {
-                        return [$locale => locale_get_display_name($locale, app()->getLocale())];
-                    })
-                    ->toArray(),
-            );
+        return LocaleSwitcher::make();
+    }
+
+    public function updatedActiveLocale(): void
+    {
+        $this->activeFormLocale = $this->activeLocale;
     }
 
     protected function getRecordTitle(): ?string
