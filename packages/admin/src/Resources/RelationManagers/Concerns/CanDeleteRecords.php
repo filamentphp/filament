@@ -7,16 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 trait CanDeleteRecords
 {
-    protected function canDelete(Model $record): bool
-    {
-        return $this->can('delete', $record);
-    }
-
-    protected function canDeleteAny(): bool
-    {
-        return $this->can('deleteAny');
-    }
-
     /**
      * @deprecated Use `->action()` on the action instead.
      */
@@ -65,13 +55,18 @@ trait CanDeleteRecords
         return __('filament-support::actions/delete.multiple.messages.deleted');
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getDeleteAction(): Tables\Actions\Action
     {
         return Tables\Actions\DeleteAction::make()
-            ->action(fn () => $this->delete())
-            ->authorize(fn (Model $record): bool => $this->canDelete($record));
+            ->action(fn () => $this->delete());
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getDeleteBulkAction(): Tables\Actions\BulkAction
     {
         return Tables\Actions\DeleteBulkAction::make()

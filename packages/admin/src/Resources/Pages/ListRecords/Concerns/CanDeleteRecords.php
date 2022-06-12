@@ -5,20 +5,26 @@ namespace Filament\Resources\Pages\ListRecords\Concerns;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @deprecated You may add a `DeleteAction` to the resource table.
+ */
 trait CanDeleteRecords
 {
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasDeleteAction(): bool
     {
         return true;
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getDeleteAction(): Tables\Actions\Action
     {
-        $resource = static::getResource();
-
         return Tables\Actions\DeleteAction::make()
-            ->action(fn () => $this->delete())
-            ->authorize(fn (Model $record): bool => $resource::canDelete($record));
+            ->action(fn () => $this->delete());
     }
 
     /**

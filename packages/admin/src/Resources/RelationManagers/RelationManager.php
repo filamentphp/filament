@@ -7,6 +7,7 @@ use Filament\Http\Livewire\Concerns\CanNotify;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -27,8 +28,6 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
     protected static string $relationship;
 
     protected static ?string $inverseRelationship = null;
-
-    protected ?Table $resourceTable = null;
 
     /**
      * @deprecated Use `$modelLabel` instead.
@@ -68,6 +67,212 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return Form::make()
             ->columns($columns)
             ->disabled($isDisabled);
+    }
+
+    protected function configureTableAction(Tables\Actions\Action $action): void
+    {
+        if ($action instanceof Tables\Actions\AssociateAction) {
+            $this->configureAssociateAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\AttachAction) {
+            $this->configureAttachAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\CreateAction) {
+            $this->configureCreateAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\DeleteAction) {
+            $this->configureDeleteAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\DetachAction) {
+            $this->configureDetachAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\DissociateAction) {
+            $this->configureDissociateAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\EditAction) {
+            $this->configureEditAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\ForceDeleteAction) {
+            $this->configureForceDeleteAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\RestoreAction) {
+            $this->configureRestoreAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\ViewAction) {
+            $this->configureViewAction($action);
+
+            return;
+        }
+    }
+
+    protected function configureAssociateAction(Tables\Actions\AssociateAction $action): void
+    {
+        $action
+            ->authorize($this->canAssociate())
+            ->recordTitleAttribute(static::getRecordTitleAttribute());
+    }
+
+    protected function configureAttachAction(Tables\Actions\AttachAction $action): void
+    {
+        $action
+            ->authorize($this->canAttach())
+            ->recordTitleAttribute(static::getRecordTitleAttribute());
+    }
+
+    protected function getCreateFormSchema(): array
+    {
+        return $this->getResourceForm(columns: 2)->getSchema();
+    }
+
+    protected function configureCreateAction(Tables\Actions\CreateAction $action): void
+    {
+        $action
+            ->authorize($this->canCreate())
+            ->form($this->getCreateFormSchema());
+    }
+
+    protected function configureDeleteAction(Tables\Actions\DeleteAction $action): void
+    {
+        $action
+            ->authorize(fn (Model $record): bool => $this->canDelete($record));
+    }
+
+    protected function configureDetachAction(Tables\Actions\DetachAction $action): void
+    {
+        $action
+            ->authorize(fn (Model $record): bool => $this->canDetach($record));
+    }
+
+    protected function configureDissociateAction(Tables\Actions\DissociateAction $action): void
+    {
+        $action
+            ->authorize(fn (Model $record): bool => $this->canDissociate($record));
+    }
+
+    protected function getEditFormSchema(): array
+    {
+        return $this->getResourceForm(columns: 2)->getSchema();
+    }
+
+    protected function configureEditAction(Tables\Actions\EditAction $action): void
+    {
+        $action
+            ->authorize(fn (Model $record): bool => $this->canEdit($record))
+            ->form($this->getEditFormSchema());
+    }
+
+    protected function configureForceDeleteAction(Tables\Actions\ForceDeleteAction $action): void
+    {
+        $action
+            ->authorize(fn (Model $record): bool => $this->canForceDelete($record));
+    }
+
+    protected function configureRestoreAction(Tables\Actions\RestoreAction $action): void
+    {
+        $action
+            ->authorize(fn (Model $record): bool => $this->canRestore($record));
+    }
+
+    protected function getViewFormSchema(): array
+    {
+        return $this->getResourceForm(columns: 2, isDisabled: true)->getSchema();
+    }
+
+    protected function configureViewAction(Tables\Actions\ViewAction $action): void
+    {
+        $action
+            ->authorize(fn (Model $record): bool => $this->canView($record))
+            ->form($this->getViewFormSchema());
+    }
+
+    protected function configureTableBulkAction(BulkAction $action): void
+    {
+        if ($action instanceof Tables\Actions\DeleteBulkAction) {
+            $this->configureDeleteBulkAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\DetachBulkAction) {
+            $this->configureDetachBulkAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\DissociateBulkAction) {
+            $this->configureDissociateBulkAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\ForceDeleteBulkAction) {
+            $this->configureForceDeleteBulkAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\RestoreBulkAction) {
+            $this->configureRestoreBulkAction($action);
+
+            return;
+        }
+    }
+
+    protected function configureDeleteBulkAction(Tables\Actions\DeleteBulkAction $action): void
+    {
+        $action
+            ->authorize($this->canDeleteAny());
+    }
+
+    protected function configureDetachBulkAction(Tables\Actions\DetachBulkAction $action): void
+    {
+        $action
+            ->authorize($this->canDetachAny());
+    }
+
+    protected function configureDissociateBulkAction(Tables\Actions\DissociateBulkAction $action): void
+    {
+        $action
+            ->authorize($this->canDissociateAny());
+    }
+
+    protected function configureForceDeleteBulkAction(Tables\Actions\ForceDeleteBulkAction $action): void
+    {
+        $action
+            ->authorize($this->canForceDeleteAny());
+    }
+
+    protected function configureRestoreBulkAction(Tables\Actions\RestoreBulkAction $action): void
+    {
+        $action
+            ->authorize($this->canRestoreAny());
     }
 
     protected function callHook(string $hook): void
@@ -196,11 +401,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected function getResourceTable(): Table
     {
-        if (! $this->resourceTable) {
-            $this->resourceTable = Table::make();
-        }
-
-        return $this->resourceTable;
+        return $this->table(Table::make());
     }
 
     protected function getDefaultTableSortColumn(): ?string
@@ -266,6 +467,81 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
     public function render(): View
     {
         return view(static::$view, $this->getViewData());
+    }
+
+    protected function canAssociate(): bool
+    {
+        return $this->can('associate');
+    }
+
+    protected function canAttach(): bool
+    {
+        return $this->can('attach');
+    }
+
+    protected function canCreate(): bool
+    {
+        return $this->can('create');
+    }
+
+    protected function canDelete(Model $record): bool
+    {
+        return $this->can('delete', $record);
+    }
+
+    protected function canDeleteAny(): bool
+    {
+        return $this->can('deleteAny');
+    }
+
+    protected function canDetach(Model $record): bool
+    {
+        return $this->can('detach', $record);
+    }
+
+    protected function canDetachAny(): bool
+    {
+        return $this->can('detachAny');
+    }
+
+    protected function canDissociate(Model $record): bool
+    {
+        return $this->can('dissociate', $record);
+    }
+
+    protected function canDissociateAny(): bool
+    {
+        return $this->can('dissociateAny');
+    }
+
+    protected function canEdit(Model $record): bool
+    {
+        return $this->can('update', $record);
+    }
+
+    protected function canForceDelete(Model $record): bool
+    {
+        return $this->can('forceDelete', $record);
+    }
+
+    protected function canForceDeleteAny(): bool
+    {
+        return $this->can('forceDeleteAny');
+    }
+
+    protected function canRestore(Model $record): bool
+    {
+        return $this->can('restore', $record);
+    }
+
+    protected function canRestoreAny(): bool
+    {
+        return $this->can('restoreAny');
+    }
+
+    protected function canView(Model $record): bool
+    {
+        return $this->can('view', $record);
     }
 
     protected function getViewData(): array

@@ -8,16 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait CanDetachRecords
 {
-    protected function canDetach(Model $record): bool
-    {
-        return $this->can('detach', $record);
-    }
-
-    protected function canDetachAny(): bool
-    {
-        return $this->can('detachAny');
-    }
-
     /**
      * @deprecated Use `->action()` on the action instead.
      */
@@ -86,14 +76,19 @@ trait CanDetachRecords
         return __('filament-support::actions/detach.multiple.messages.detached');
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getDetachAction(): Tables\Actions\Action
     {
         return Tables\Actions\DetachAction::make()
             ->action(fn () => $this->detach())
-            ->authorize(fn (Model $record): bool => $this->canDetach($record))
             ->allowDuplicates($this->allowsDuplicates());
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getDetachBulkAction(): Tables\Actions\BulkAction
     {
         return Tables\Actions\DetachBulkAction::make()

@@ -17,29 +17,25 @@ class HasManyRelationManager extends RelationManager
 
     protected function getResourceTable(): Table
     {
-        if (! $this->resourceTable) {
-            $table = Table::make();
+        $table = Table::make();
 
-            $table->actions([
-                $this->getViewAction(),
-                $this->getEditAction(),
-                $this->getDissociateAction(),
-                $this->getDeleteAction(),
-            ]);
+        $table->actions([
+            $this->getViewAction(),
+            $this->getEditAction(),
+            $this->getDissociateAction(),
+            $this->getDeleteAction(),
+        ]);
 
-            $table->bulkActions(array_merge(
-                ($this->canDeleteAny() ? [$this->getDeleteBulkAction()] : []),
-                ($this->canDissociateAny() ? [$this->getDissociateBulkAction()] : []),
-            ));
+        $table->bulkActions(array_merge(
+            ($this->canDeleteAny() ? [$this->getDeleteBulkAction()] : []),
+            ($this->canDissociateAny() ? [$this->getDissociateBulkAction()] : []),
+        ));
 
-            $table->headerActions(array_merge(
-                ($this->canCreate() ? [$this->getCreateAction()] : []),
-                ($this->canAssociate() ? [$this->getAssociateAction()] : []),
-            ));
+        $table->headerActions(array_merge(
+            ($this->canCreate() ? [$this->getCreateAction()] : []),
+            ($this->canAssociate() ? [$this->getAssociateAction()] : []),
+        ));
 
-            $this->resourceTable = static::table($table);
-        }
-
-        return $this->resourceTable;
+        return $this->table($table);
     }
 }

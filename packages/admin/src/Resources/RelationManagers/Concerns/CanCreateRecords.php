@@ -12,11 +12,6 @@ trait CanCreateRecords
      */
     protected static bool $canCreateAnother = true;
 
-    protected function canCreate(): bool
-    {
-        return $this->can('create');
-    }
-
     /**
      * @deprecated Use `->disableCreateAnother()` on the action instead.
      */
@@ -31,11 +26,6 @@ trait CanCreateRecords
     public static function disableCreateAnother(): void
     {
         static::$canCreateAnother = false;
-    }
-
-    protected function getCreateFormSchema(): array
-    {
-        return $this->getResourceForm(columns: 2)->getSchema();
     }
 
     /**
@@ -90,6 +80,10 @@ trait CanCreateRecords
         if (filled($this->getCreatedNotificationMessage())) {
             $this->notify('success', $this->getCreatedNotificationMessage());
         }
+
+        if ($another) {
+            $this->getMountedTableAction()->hold();
+        }
     }
 
     /**
@@ -124,10 +118,12 @@ trait CanCreateRecords
         return $data;
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getCreateAction(): Tables\Actions\Action
     {
         return Tables\Actions\CreateAction::make()
-            ->form($this->getCreateFormSchema())
             ->mountUsing(fn () => $this->fillCreateForm())
             ->action(fn (array $arguments) => $this->create($arguments['another'] ?? false));
     }

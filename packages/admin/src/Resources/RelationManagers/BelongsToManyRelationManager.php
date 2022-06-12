@@ -19,10 +19,16 @@ class BelongsToManyRelationManager extends RelationManager
     use Concerns\CanEditRecords;
     use Concerns\CanViewRecords;
 
+    /**
+     * @deprecated Use `->allowDuplicates()` on the action instead.
+     */
     protected bool $allowsDuplicates = false;
 
     protected static string $view = 'filament::resources.relation-managers.belongs-to-many-relation-manager';
 
+    /**
+     * @deprecated Use `->allowDuplicates()` on the action instead.
+     */
     public function allowsDuplicates(): bool
     {
         return $this->allowsDuplicates;
@@ -30,30 +36,26 @@ class BelongsToManyRelationManager extends RelationManager
 
     protected function getResourceTable(): Table
     {
-        if (! $this->resourceTable) {
-            $table = Table::make();
+        $table = Table::make();
 
-            $table->actions([
-                $this->getViewAction(),
-                $this->getEditAction(),
-                $this->getDetachAction(),
-                $this->getDeleteAction(),
-            ]);
+        $table->actions([
+            $this->getViewAction(),
+            $this->getEditAction(),
+            $this->getDetachAction(),
+            $this->getDeleteAction(),
+        ]);
 
-            $table->bulkActions(array_merge(
-                ($this->canDeleteAny() ? [$this->getDeleteBulkAction()] : []),
-                ($this->canDetachAny() ? [$this->getDetachBulkAction()] : []),
-            ));
+        $table->bulkActions(array_merge(
+            ($this->canDeleteAny() ? [$this->getDeleteBulkAction()] : []),
+            ($this->canDetachAny() ? [$this->getDetachBulkAction()] : []),
+        ));
 
-            $table->headerActions(array_merge(
-                ($this->canCreate() ? [$this->getCreateAction()] : []),
-                ($this->canAttach() ? [$this->getAttachAction()] : []),
-            ));
+        $table->headerActions(array_merge(
+            ($this->canCreate() ? [$this->getCreateAction()] : []),
+            ($this->canAttach() ? [$this->getAttachAction()] : []),
+        ));
 
-            $this->resourceTable = static::table($table);
-        }
-
-        return $this->resourceTable;
+        return $this->table($table);
     }
 
     /**

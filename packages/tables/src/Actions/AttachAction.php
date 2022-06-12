@@ -3,6 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
+use Exception;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Select;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
@@ -24,6 +25,8 @@ class AttachAction extends Action
     protected bool | Closure $isAttachAnotherDisabled = false;
 
     protected bool | Closure $isRecordSelectPreloaded = false;
+
+    protected string | Closure | null $recordTitleAttribute = null;
 
     public static function make(string $name = 'attach'): static
     {
@@ -91,6 +94,13 @@ class AttachAction extends Action
         return $this;
     }
 
+    public function recordTitleAttribute(string | Closure | null $attribute): static
+    {
+        $this->recordTitleAttribute = $attribute;
+
+        return $this;
+    }
+
     public function allowDuplicates(bool | Closure $condition = true): static
     {
         $this->allowsDuplicates = $condition;
@@ -120,6 +130,17 @@ class AttachAction extends Action
     public function isRecordSelectPreloaded(): bool
     {
         return $this->evaluate($this->isRecordSelectPreloaded);
+    }
+
+    public function getRecordTitleAttribute(): string
+    {
+        $attribute = $this->evaluate($this->recordTitleAttribute);
+
+        if (blank($attribute)) {
+            throw new Exception('Attach table action must have a `recordTitleAttribute()` defined, which is used to identify records to attach.');
+        }
+
+        return $attribute;
     }
 
     public function allowsDuplicates(): bool

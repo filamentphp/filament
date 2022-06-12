@@ -7,25 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 
 trait CanViewRecords
 {
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasViewAction(): bool
     {
         return true;
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getViewAction(): Tables\Actions\Action
     {
-        $resource = static::getResource();
-
         return parent::getViewAction()
-            ->url(null)
-            ->form($this->getViewFormSchema())
-            ->mountUsing(fn () => $this->fillViewForm())
-            ->authorize(fn (Model $record) => $resource::canView($record));
-    }
-
-    protected function getViewFormSchema(): array
-    {
-        return $this->getResourceForm(columns: 2, isDisabled: true)->getSchema();
+            ->mountUsing(fn () => $this->fillViewForm());
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
+use Exception;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Select;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
@@ -22,6 +23,8 @@ class AssociateAction extends Action
     protected bool | Closure $isAssociateAnotherDisabled = false;
 
     protected bool | Closure $isRecordSelectPreloaded = false;
+
+    protected string | Closure | null $recordTitleAttribute = null;
 
     public static function make(string $name = 'associate'): static
     {
@@ -90,6 +93,13 @@ class AssociateAction extends Action
         return $this;
     }
 
+    public function recordTitleAttribute(string | Closure | null $attribute): static
+    {
+        $this->recordTitleAttribute = $attribute;
+
+        return $this;
+    }
+
     public function disableAssociateAnother(bool | Closure $condition = true): static
     {
         $this->isAssociateAnotherDisabled = $condition;
@@ -112,6 +122,17 @@ class AssociateAction extends Action
     public function isRecordSelectPreloaded(): bool
     {
         return $this->evaluate($this->isRecordSelectPreloaded);
+    }
+
+    public function getRecordTitleAttribute(): string
+    {
+        $attribute = $this->evaluate($this->recordTitleAttribute);
+
+        if (blank($attribute)) {
+            throw new Exception('Associate table action must have a `recordTitleAttribute()` defined, which is used to identify records to associate.');
+        }
+
+        return $attribute;
     }
 
     public function getRecordSelect(): Select

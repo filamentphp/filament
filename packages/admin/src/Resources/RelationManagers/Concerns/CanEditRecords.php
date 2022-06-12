@@ -7,16 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 trait CanEditRecords
 {
-    protected function canEdit(Model $record): bool
-    {
-        return $this->can('update', $record);
-    }
-
-    protected function getEditFormSchema(): array
-    {
-        return $this->getResourceForm(columns: 2)->getSchema();
-    }
-
     /**
      * @deprecated Use `->mountUsing()` on the action instead.
      */
@@ -95,12 +85,13 @@ trait CanEditRecords
         return $data;
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getEditAction(): Tables\Actions\Action
     {
         return Tables\Actions\EditAction::make()
-            ->form($this->getEditFormSchema())
             ->mountUsing(fn () => $this->fillEditForm())
-            ->action(fn () => $this->save())
-            ->authorize(fn (Model $record): bool => $this->canEdit($record));
+            ->action(fn () => $this->save());
     }
 }

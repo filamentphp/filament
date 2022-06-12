@@ -8,7 +8,7 @@ use Illuminate\Support\Arr;
 
 trait CanBeHidden
 {
-    protected array $authorizations = [];
+    protected $authorization = null;
 
     protected bool | Closure $isHidden = false;
 
@@ -17,13 +17,13 @@ trait CanBeHidden
     public function authorize($abilities, Model | array | null $arguments = null): static
     {
         if (is_string($abilities) || is_array($abilities)) {
-            $this->authorizations[] = [
+            $this->authorization = [
                 'type' => 'all',
                 'abilities' => Arr::wrap($abilities),
                 'arguments' => Arr::wrap($arguments),
             ];
         } else {
-            $this->authorizations[] = $abilities;
+            $this->authorization = $abilities;
         }
 
         return $this;
@@ -31,7 +31,7 @@ trait CanBeHidden
 
     public function authorizeAny(string | array $abilities, Model | array | null $arguments = null): static
     {
-        $this->authorizations[] = [
+        $this->authorization = [
             'type' => 'any',
             'abilities' => Arr::wrap($abilities),
             'arguments' => Arr::wrap($arguments),
@@ -74,26 +74,15 @@ trait CanBeHidden
 
     public function isAuthorized(): bool
     {
-        foreach ($this->authorizations as $authorization) {
-            if (! $this->checkAuthorization($authorization)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    protected function checkAuthorization($authorization): bool
-    {
         $user = auth()->user();
 
-        if (! is_array($authorization)) {
-            return $this->evaluate($authorization);
+        if (! is_array($this->authorization)) {
+            return (bool) $this->evaluate($this->authorization);
         }
 
-        $abilities = $authorization['abilities'] ?? [];
-        $arguments = $this->parseAuthorizationArguments($authorization['arguments'] ?? []);
-        $type = $authorization['type'] ?? null;
+        $abilities = $this->authorization['abilities'] ?? [];
+        $arguments = $this->parseAuthorizationArguments($this->authorization['arguments'] ?? []);
+        $type = $this->authorization['type'] ?? null;
 
         if ($type === 'all') {
             return $user->can($abilities, $arguments);

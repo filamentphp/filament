@@ -21,7 +21,7 @@ trait HasBulkActions
 
     public function cacheTableBulkActions(): void
     {
-        $actions = Action::configureUsing(
+        $actions = BulkAction::configureUsing(
             Closure::fromCallable([$this, 'configureTableBulkAction']),
             fn (): array => $this->getTableBulkActions(),
         );

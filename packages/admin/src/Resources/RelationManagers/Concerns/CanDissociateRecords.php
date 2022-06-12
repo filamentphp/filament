@@ -8,15 +8,27 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 trait CanDissociateRecords
 {
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected static bool $hasDissociateAction = false;
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected static bool $hasDissociateBulkAction = false;
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasDissociateAction(): bool
     {
         return static::$hasDissociateAction;
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasDissociateBulkAction(): bool
     {
         return static::$hasDissociateBulkAction;
@@ -92,13 +104,18 @@ trait CanDissociateRecords
         return __('filament-support::actions/dissociate.multiple.messages.dissociated');
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getDissociateAction(): Tables\Actions\Action
     {
         return Tables\Actions\DissociateAction::make()
-            ->action(fn () => $this->dissociate())
-            ->authorize(fn (Model $record): bool => $this->canDissociate($record));
+            ->action(fn () => $this->dissociate());
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getDissociateBulkAction(): Tables\Actions\BulkAction
     {
         return Tables\Actions\DissociateBulkAction::make()

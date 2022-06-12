@@ -8,6 +8,7 @@ use Filament\Pages\Actions\CreateAction;
 use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -19,8 +20,6 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     use UsesResourceForm;
 
     protected static string $view = 'filament::resources.pages.list-records';
-
-    protected ?Table $resourceTable = null;
 
     protected $queryString = [
         'tableSortColumn',
@@ -40,37 +39,42 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function getResourceTable(): Table
     {
-        if (! $this->resourceTable) {
-            $table = Table::make();
+        $table = Table::make();
 
-            $resource = static::getResource();
+        $resource = static::getResource();
 
-            $table->actions(array_merge(
-                ($this->hasViewAction() ? [$this->getViewAction()] : []),
-                ($this->hasEditAction() ? [$this->getEditAction()] : []),
-                ($this->hasDeleteAction() ? [$this->getDeleteAction()] : []),
-            ));
+        $table->actions(array_merge(
+            ($this->hasViewAction() ? [$this->getViewAction()] : []),
+            ($this->hasEditAction() ? [$this->getEditAction()] : []),
+            ($this->hasDeleteAction() ? [$this->getDeleteAction()] : []),
+        ));
 
-            if ($resource::canDeleteAny()) {
-                $table->bulkActions([$this->getDeleteBulkAction()]);
-            }
-
-            $this->resourceTable = $this->table($table);
+        if ($resource::canDeleteAny()) {
+            $table->bulkActions([$this->getDeleteBulkAction()]);
         }
 
-        return $this->resourceTable;
+        return $this->table($table);
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasDeleteAction(): bool
     {
         return $this->getDeleteAction() !== null;
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasEditAction(): bool
     {
         return static::getResource()::hasPage('edit');
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasViewAction(): bool
     {
         return static::getResource()::hasPage('view');
@@ -81,29 +85,33 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return static::getResource()::table($table);
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getViewAction(): Tables\Actions\Action
     {
-        $resource = static::getResource();
-
-        return Tables\Actions\ViewAction::make()
-            ->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]))
-            ->authorize(fn (Model $record): bool => $resource::canView($record));
+        return Tables\Actions\ViewAction::make();
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getEditAction(): Tables\Actions\Action
     {
-        $resource = static::getResource();
-
-        return Tables\Actions\EditAction::make()
-            ->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]))
-            ->authorize(fn (Model $record): bool => $resource::canEdit($record));
+        return Tables\Actions\EditAction::make();
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getDeleteAction(): ?Tables\Actions\Action
     {
         return null;
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getDeleteBulkAction(): Tables\Actions\BulkAction
     {
         return Tables\Actions\DeleteBulkAction::make()
@@ -126,6 +134,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getBulkDeletedNotificationMessage(): ?string
     {
         return __('filament::resources/pages/list-records.table.bulk_actions.delete.messages.deleted');
@@ -179,11 +190,6 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return CreateAction::make();
     }
 
-    protected function getCreateFormSchema(): array
-    {
-        return $this->getResourceForm(columns: 2)->getSchema();
-    }
-
     protected function configureAction(Action $action): void
     {
         if ($action instanceof CreateAction) {
@@ -191,6 +197,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
             return;
         }
+    }
+
+    protected function getCreateFormSchema(): array
+    {
+        return $this->getResourceForm(columns: 2)->getSchema();
     }
 
     protected function configureCreateAction(CreateAction $action): void
@@ -203,10 +214,138 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->modelLabel($this->getModelLabel());
 
         if ($resource::hasPage('create')) {
-            $action->url(fn () => $resource::getUrl('create'));
+            $action->url(fn (): string => $resource::getUrl('create'));
         } else {
             $action->form($this->getCreateFormSchema());
         }
+    }
+
+    protected function configureTableAction(Tables\Actions\Action $action): void
+    {
+        if ($action instanceof Tables\Actions\DeleteAction) {
+            $this->configureDeleteAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\EditAction) {
+            $this->configureEditAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\ForceDeleteAction) {
+            $this->configureForceDeleteAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\RestoreAction) {
+            $this->configureRestoreAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\ViewAction) {
+            $this->configureViewAction($action);
+
+            return;
+        }
+    }
+
+    protected function configureDeleteAction(Tables\Actions\DeleteAction $action): void
+    {
+        $action
+            ->authorize(fn (Model $record): bool => static::getResource()::canDelete($record));
+    }
+
+    protected function getEditFormSchema(): array
+    {
+        return $this->getResourceForm(columns: 2)->getSchema();
+    }
+
+    protected function configureEditAction(Tables\Actions\EditAction $action): void
+    {
+        $resource = static::getResource();
+
+        $action
+            ->authorize(fn (Model $record): bool => $resource::canEdit($record));
+
+        if ($resource::hasPage('edit')) {
+            $action->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]));
+        } else {
+            $action->form($this->getEditFormSchema());
+        }
+    }
+
+    protected function configureForceDeleteAction(Tables\Actions\ForceDeleteAction $action): void
+    {
+        $action
+            ->authorize(fn (Model $record): bool => static::getResource()::canForceDelete($record));
+    }
+
+    protected function configureRestoreAction(Tables\Actions\RestoreAction $action): void
+    {
+        $action
+            ->authorize(fn (Model $record): bool => static::getResource()::canRestore($record));
+    }
+
+    protected function getViewFormSchema(): array
+    {
+        return $this->getResourceForm(columns: 2, isDisabled: true)->getSchema();
+    }
+
+    protected function configureViewAction(Tables\Actions\ViewAction $action): void
+    {
+        $resource = static::getResource();
+
+        $action
+            ->authorize(fn (Model $record): bool => $resource::canView($record));
+
+        if ($resource::hasPage('view')) {
+            $action->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]));
+        } else {
+            $action->form($this->getViewFormSchema());
+        }
+    }
+
+    protected function configureTableBulkAction(BulkAction $action): void
+    {
+        if ($action instanceof Tables\Actions\DeleteBulkAction) {
+            $this->configureDeleteBulkAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\ForceDeleteBulkAction) {
+            $this->configureForceDeleteBulkAction($action);
+
+            return;
+        }
+
+        if ($action instanceof Tables\Actions\RestoreBulkAction) {
+            $this->configureRestoreBulkAction($action);
+
+            return;
+        }
+    }
+
+    protected function configureDeleteBulkAction(Tables\Actions\DeleteBulkAction $action): void
+    {
+        $action
+            ->authorize(static::getResource()::canDeleteAny());
+    }
+
+    protected function configureForceDeleteBulkAction(Tables\Actions\ForceDeleteBulkAction $action): void
+    {
+        $action
+            ->authorize(static::getResource()::canForceDeleteAny());
+    }
+
+    protected function configureRestoreBulkAction(Tables\Actions\RestoreBulkAction $action): void
+    {
+        $action
+            ->authorize(static::getResource()::canRestoreAny());
     }
 
     protected function getDefaultTableSortColumn(): ?string

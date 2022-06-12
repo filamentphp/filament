@@ -27,11 +27,6 @@ trait CanAttachRecords
      */
     protected static bool $shouldPreloadAttachFormRecordSelectOptions = false;
 
-    protected function canAttach(): bool
-    {
-        return $this->can('attach');
-    }
-
     /**
      * @deprecated Use `->disableAttachAnother()` on the action instead.
      */
@@ -48,6 +43,9 @@ trait CanAttachRecords
         static::$canAttachAnother = false;
     }
 
+    /**
+     * @deprecated Use `->form()` on the action instead.
+     */
     public static function attachForm(Form $form): Form
     {
         return $form->schema([
@@ -55,6 +53,9 @@ trait CanAttachRecords
         ]);
     }
 
+    /**
+     * @deprecated Use `->form()` on the action instead.
+     */
     protected function getResourceAttachForm(): Form
     {
         if (! $this->resourceAttachForm) {
@@ -159,6 +160,9 @@ trait CanAttachRecords
             ->disableLabel();
     }
 
+    /**
+     * @deprecated Use `->form()` on the action instead.
+     */
     protected function getAttachFormSchema(): array
     {
         return $this->getResourceAttachForm()->getSchema();
@@ -212,6 +216,10 @@ trait CanAttachRecords
         if (filled($this->getAttachedNotificationMessage())) {
             $this->notify('success', $this->getAttachedNotificationMessage());
         }
+
+        if ($another) {
+            $this->getMountedTableAction()->hold();
+        }
     }
 
     /**
@@ -222,6 +230,9 @@ trait CanAttachRecords
         return __('filament-support::actions/attach.single.messages.attached');
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getAttachAction(): Tables\Actions\Action
     {
         return Tables\Actions\AttachAction::make()

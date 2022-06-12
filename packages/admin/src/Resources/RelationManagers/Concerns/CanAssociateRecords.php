@@ -26,8 +26,14 @@ trait CanAssociateRecords
      */
     protected static bool $shouldPreloadAssociateFormRecordSelectOptions = false;
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected static bool $hasAssociateAction = false;
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasAssociateAction(): bool
     {
         return static::$hasAssociateAction;
@@ -54,6 +60,9 @@ trait CanAssociateRecords
         static::$canAssociateAnother = false;
     }
 
+    /**
+     * @deprecated Use `->form()` on the action instead.
+     */
     public static function associateForm(Form $form): Form
     {
         return $form->schema([
@@ -61,6 +70,9 @@ trait CanAssociateRecords
         ]);
     }
 
+    /**
+     * @deprecated Use `->form()` on the action instead.
+     */
     protected function getResourceAssociateForm(): Form
     {
         if (! $this->resourceAssociateForm) {
@@ -153,6 +165,9 @@ trait CanAssociateRecords
             ->disableLabel();
     }
 
+    /**
+     * @deprecated Use `->form()` on the action instead.
+     */
     protected function getAssociateFormSchema(): array
     {
         return $this->getResourceAssociateForm()->getSchema();
@@ -207,8 +222,15 @@ trait CanAssociateRecords
         }
 
         $this->notify('success', __('filament-support::actions/associate.single.messages.associated'));
+
+        if ($another) {
+            $this->getMountedTableAction()->hold();
+        }
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getAssociateAction(): Tables\Actions\Action
     {
         return Tables\Actions\AssociateAction::make()

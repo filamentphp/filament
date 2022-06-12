@@ -7,26 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 
 trait CanEditRecords
 {
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasEditAction(): bool
     {
         return true;
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getEditAction(): Tables\Actions\Action
     {
-        $resource = static::getResource();
-
         return parent::getEditAction()
-            ->url(null)
-            ->form($this->getEditFormSchema())
             ->mountUsing(fn () => $this->fillEditForm())
-            ->action(fn () => $this->save())
-            ->authorize(fn (Model $record) => $resource::canEdit($record));
-    }
-
-    protected function getEditFormSchema(): array
-    {
-        return $this->getResourceForm(columns: 2)->getSchema();
+            ->action(fn () => $this->save());
     }
 
     /**
