@@ -113,7 +113,7 @@
                     )
                 },
 
-                update(chart) {
+                update: function(chart) {
                     chart.data.labels = this.labels
                     chart.data.datasets[0].data = this.values
                     chart.update()
