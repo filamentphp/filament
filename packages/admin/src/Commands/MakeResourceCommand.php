@@ -86,10 +86,10 @@ class MakeResourceCommand extends Command
         $tableActions = [];
 
         if (! $this->option('view')) {
-            $tableActions[] = 'View';
+            $tableActions[] = 'ViewAction::make(),';
         }
 
-        $tableActions[] = 'Edit';
+        $tableActions[] = 'EditAction::make(),';
 
         if (! $this->option('simple')) {
             $relations .= PHP_EOL . 'public static function getRelations(): array';
@@ -99,10 +99,10 @@ class MakeResourceCommand extends Command
             $relations .= PHP_EOL . '    ];';
             $relations .= PHP_EOL . '}' . PHP_EOL;
 
-            $tableActions[] = 'Delete';
+            $tableActions[] = 'DeleteAction::make(),';
         }
 
-        $tableActions = implode('Action::make(),' . PHP_EOL, $tableActions);
+        $tableActions = implode(PHP_EOL, $tableActions);
 
         $this->copyStubToApp('Resource', $resourcePath, [
             'formSchema' => $this->option('generate') ? $this->getResourceFormSchema(
@@ -155,12 +155,12 @@ class MakeResourceCommand extends Command
                     'resourcePageClass' => $viewResourcePageClass,
                 ]);
 
-                $editPageActions[] = 'Actions\View';
+                $editPageActions[] = 'Actions\ViewAction::make(),';
             }
 
-            $editPageActions[] = 'Actions\Delete';
+            $editPageActions[] = 'Actions\DeleteAction::make(),';
 
-            $editPageActions = implode('Action::make(),' . PHP_EOL, $editPageActions);
+            $editPageActions = implode(PHP_EOL, $editPageActions);
 
             $this->copyStubToApp('ResourceEditPage', $editResourcePagePath, [
                 'actions' => $this->indentString($editPageActions, 2),
