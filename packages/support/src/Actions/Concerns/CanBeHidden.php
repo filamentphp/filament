@@ -84,14 +84,10 @@ trait CanBeHidden
         $arguments = $this->parseAuthorizationArguments($this->authorization['arguments'] ?? []);
         $type = $this->authorization['type'] ?? null;
 
-        if ($type === 'all') {
-            return $user->can($abilities, $arguments);
-        }
-
-        if ($type === 'any') {
-            return $user->canAny($abilities, $arguments);
-        }
-
-        return false;
+        return match ($type) {
+            'all' => $user->can($abilities, $arguments),
+            'any' => $user->canAny($abilities, $arguments,
+            default => false,
+        };
     }
 }
