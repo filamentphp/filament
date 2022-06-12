@@ -69,7 +69,7 @@
                     chart ? this.update(chart) : this.create();
                 },
 
-                create() {
+                create: function() {
                     new Chart(
                         this.$refs.canvas,
                         {
