@@ -70,7 +70,10 @@ trait HasFilters
         $data = $this->getTableFiltersForm()->getState();
 
         foreach ($this->getCachedTableFilters() as $filter) {
-            $query->withoutGlobalScopes($filter->getGlobalScopesToRemove());
+            $filter->applyToBaseQuery(
+                $query,
+                $data[$filter->getName()] ?? [],
+            );
         }
 
         return $query->where(function (Builder $query) use ($data) {

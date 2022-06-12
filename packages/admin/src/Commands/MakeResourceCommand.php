@@ -3,6 +3,8 @@
 namespace Filament\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
 class MakeResourceCommand extends Command
@@ -13,7 +15,7 @@ class MakeResourceCommand extends Command
 
     protected $description = 'Creates a Filament resource class and default page classes.';
 
-    protected $signature = 'make:filament-resource {name?} {--view} {--G|generate} {--S|simple} {--F|force}';
+    protected $signature = 'make:filament-resource {name?} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--F|force}';
 
     public function handle(): int
     {
@@ -82,43 +84,76 @@ class MakeResourceCommand extends Command
             $pages .= PHP_EOL . "'edit' => Pages\\{$editResourcePageClass}::route('/{record}/edit'),";
         }
 
-        $relations = '';
         $tableActions = [];
 
-        if (! $this->option('view')) {
-            $tableActions[] = 'ViewAction::make(),';
+        if ($this->option('view')) {
+            $tableActions[] = 'Tables\Actions\ViewAction::make(),';
         }
 
-        $tableActions[] = 'EditAction::make(),';
+        $tableActions[] = 'Tables\Actions\EditAction::make(),';
+
+        $relations = '';
 
         if (! $this->option('simple')) {
+            $tableActions[] = 'Tables\Actions\DeleteAction::make(),';
+
+            if ($this->option('soft-deletes')) {
+                $tableActions[] = 'Tables\Actions\RestoreAction::make(),';
+                $tableActions[] = 'Tables\Actions\ForceDeleteAction::make(),';
+            }
+
             $relations .= PHP_EOL . 'public static function getRelations(): array';
             $relations .= PHP_EOL . '{';
             $relations .= PHP_EOL . '    return [';
             $relations .= PHP_EOL . '        //';
             $relations .= PHP_EOL . '    ];';
             $relations .= PHP_EOL . '}' . PHP_EOL;
-
-            $tableActions[] = 'DeleteAction::make(),';
         }
 
         $tableActions = implode(PHP_EOL, $tableActions);
 
+        $tableBulkActions = [];
+
+        $tableBulkActions[] = 'Tables\Actions\DeleteBulkAction::make(),';
+
+        $eloquentQuery = '';
+
+        if ($this->option('soft-deletes')) {
+            $tableBulkActions[] = 'Tables\Actions\RestoreBulkAction::make(),';
+            $tableBulkActions[] = 'Tables\Actions\ForceDeleteBulkAction::make(),';
+
+            $eloquentQuery .= PHP_EOL . PHP_EOL . 'public static function getEloquentQuery(): Builder';
+            $eloquentQuery .= PHP_EOL . '{';
+            $eloquentQuery .= PHP_EOL . '    return parent::getEloquentQuery()';
+            $eloquentQuery .= PHP_EOL . '        ->withoutGlobalScopes([';
+            $eloquentQuery .= PHP_EOL . '            SoftDeletingScope::class,';
+            $eloquentQuery .= PHP_EOL . '        ]);';
+            $eloquentQuery .= PHP_EOL . '}';
+        }
+
+        $tableBulkActions = implode(PHP_EOL, $tableBulkActions);
+
         $this->copyStubToApp('Resource', $resourcePath, [
+            'eloquentQuery' => $this->indentString($eloquentQuery, 1),
             'formSchema' => $this->option('generate') ? $this->getResourceFormSchema(
                 ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass,
             ) : $this->indentString('//', 4),
             'model' => $model === 'Resource' ? 'Resource as ResourceModel' : $model,
             'modelClass' => $model === 'Resource' ? 'ResourceModel' : $modelClass,
             'namespace' => 'App\\Filament\\Resources' . ($resourceNamespace !== '' ? "\\{$resourceNamespace}" : ''),
+            'pages' => $this->indentString($pages, 3),
+            'relations' => $this->indentString($relations, 1),
             'resource' => $resource,
             'resourceClass' => $resourceClass,
-            'tableActions' => $this->indentString($tableActions, 3),
+            'tableActions' => $this->indentString($tableActions, 4),
+            'tableBulkActions' => $this->indentString($tableBulkActions, 4),
             'tableColumns' => $this->option('generate') ? $this->getResourceTableColumns(
                 ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass
             ) : $this->indentString('//', 4),
-            'pages' => $this->indentString($pages, 3),
-            'relations' => $this->indentString($relations, 1),
+            'tableFilters' => $this->indentString(
+                $this->option('soft-deletes') ? 'Tables\Filters\TrashedFilter::make()' : '//',
+                4,
+            ),
         ]);
 
         if ($this->option('simple')) {
@@ -160,10 +195,15 @@ class MakeResourceCommand extends Command
 
             $editPageActions[] = 'Actions\DeleteAction::make(),';
 
+            if ($this->option('soft-deletes')) {
+                $editPageActions[] = 'Actions\RestoreAction::make(),';
+                $editPageActions[] = 'Actions\ForceDeleteAction::make(),';
+            }
+
             $editPageActions = implode(PHP_EOL, $editPageActions);
 
             $this->copyStubToApp('ResourceEditPage', $editResourcePagePath, [
-                'actions' => $this->indentString($editPageActions, 2),
+                'actions' => $this->indentString($editPageActions, 3),
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,
