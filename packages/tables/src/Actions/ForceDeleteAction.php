@@ -33,7 +33,7 @@ class ForceDeleteAction extends Action
         $this->requiresConfirmation();
 
         $this->action(function (): void {
-            $this->process(static fn (Model $record): void => $record->forceDelete());
+            $this->process(static fn (Model $record) => $record->forceDelete());
 
             $this->success();
         });
